@@ -30,12 +30,14 @@ class Bug44324Test extends Sugar_PHPUnit_Framework_TestCase
 	{
         $GLOBALS['current_language'] = 'en_us';
 
-        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('mod_strings',array('Contacts'));
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('mod_strings', array('Contacts'));
         SugarTestHelper::setUp('current_user');
-        
-        $this->contact = SugarTestContactUtilities::createContact();	
+
+        $this->contact = SugarTestContactUtilities::createContact();
         $this->contact->salutation = 'Ms.';
         $this->contact->first_name = 'Lady';
         $this->contact->last_name = 'Gaga';	

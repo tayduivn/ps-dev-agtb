@@ -25,10 +25,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 $globalteam = new Team();
-$globalteam->retrieve('1');
+$globalteam->retrieve($globalteam->global_team, true, false);
 if(isset($globalteam->name)){
    echo 'Global '.$mod_strings['LBL_UPGRADE_TEAM_EXISTS'].'<br>';
-		
+    if($globalteam->deleted)
+    {
+        $globalteam->mark_undeleted($globalteam->id);
+    }
+
 }else{
    $globalteam->create_team("Global", $mod_strings['LBL_GLOBAL_TEAM_DESC'], $globalteam->global_team);
 }

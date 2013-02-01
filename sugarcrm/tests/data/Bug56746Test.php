@@ -83,6 +83,7 @@ class Bug56746Test extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['service_object'] = $this->stored_service_object;
         }
 	    unset($this->account->field_defs['checkbox_c']);
+
         unset($this->account->field_defs['text_c']);
         parent::tearDown();
         SugarTestHelper::tearDown();

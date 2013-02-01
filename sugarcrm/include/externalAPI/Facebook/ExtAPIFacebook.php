@@ -110,7 +110,23 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
                 return array('success'=>FALSE,'errorMessage'=>'Facebook does not have the required libraries.');
             }
             $fbMessages = $this->fb->api('/me/home?limit='.$maxEntries);
-        } catch ( Exception $e ) {
+        }
+        catch (FacebookApiException $e)
+        {
+            // We should ask user about second login to facebook because our access_token is dead.
+            if ($e->getType() == 'OAuthException' && !empty($this->eapmBean->id))
+            {
+                return array(
+                    'success' => true,
+                    'messages' => array(
+                        array(
+                            'ID' => create_guid(),
+                            'sort_key' => time(),
+                            'NAME' => translate('LBL_ERR_OAUTH_FACEBOOK_1', 'EAPM') . ' <a href="#" onclick="window.open(\'index.php?module=EAPM&amp;refreshParentWindow=1&amp;closeWhenDone=1&amp;action=QuickSave&amp;application=Facebook\',\'EAPM\');">' . translate('LBL_ERR_OAUTH_FACEBOOK_2', 'EAPM') . '</a>.'
+                        )
+                    )
+                );
+            }
             $GLOBALS['log']->error('Facebook Error: '.$e->getMessage());
             return array('success'=>FALSE,'errorMessage'=>translate('LBL_ERR_FACEBOOK', 'EAPM'));
         }

@@ -4024,6 +4024,10 @@ ul.megamenu a, ul.moduleTabMore a, ul.sf-sub-modulelist a,
 	z-index: 99;
 }
 
+#moduleList > ul.sf-menu > li {
+    height: 43px;
+}
+
 #moduleList ul.sf-menu li:hover li ul,
 #moduleListul.sf-menu li.sfHover li ul {
 	top:			-999em;

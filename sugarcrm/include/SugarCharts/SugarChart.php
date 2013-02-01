@@ -757,6 +757,13 @@ class SugarChart {
 		*/
 		//END SUGARCRM flav=int ONLY
 
+        // Create dir if it doesn't exist
+        $dir = dirname($xmlFilename);
+        if (!sugar_is_dir($dir))
+        {
+            sugar_mkdir($dir, null, true);
+        }
+        
 		// open file
 		if (!$fh = sugar_fopen($xmlFilename, 'w')) {
 			$GLOBALS['log']->debug("Cannot open file ($xmlFilename)");

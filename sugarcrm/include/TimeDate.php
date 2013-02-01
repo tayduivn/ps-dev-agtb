@@ -1839,7 +1839,7 @@ class TimeDate
             return $date;
         }
         $fakeMerFormat = str_replace(array('a', 'A'), array('@~@', '@~@'), $format);
-        $noMerFormat = str_replace(array('a', 'A'), array('', ''), $format);
+        $noMerFormat = trim(str_replace(array('a', 'A'), array('', ''), $format));
         $newDate = $this->swap_formats($date, $noMerFormat, $fakeMerFormat);
         return str_replace('@~@', $mer, $newDate);
     }

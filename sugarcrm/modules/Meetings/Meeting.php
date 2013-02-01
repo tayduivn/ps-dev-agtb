@@ -96,6 +96,7 @@ class Meeting extends SugarBean {
 	// so you can run get_users() twice and run query only once
 	var $cached_get_users = null;
 	var $new_schema = true;
+    var $date_changed = false;
 
 	/**
 	 * sole constructor
@@ -299,9 +300,8 @@ class Meeting extends SugarBean {
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
-        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
-		if($custom_join)
-				$custom_join['join'] .= $relate_link_join;
+        $custom_join = $this->getCustomJoin(true, true, $where);
+        $custom_join['join'] .= $relate_link_join;
 		$contact_required = stristr($where, "contacts");
 
 		if($contact_required) {
@@ -309,9 +309,7 @@ class Meeting extends SugarBean {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join) {
-				$query .= $custom_join['select'];
-			}
+            $query .= $custom_join['select'];
 			$query .= " FROM contacts, meetings, meetings_contacts ";
 			$where_auto = " meetings_contacts.contact_id = contacts.id AND meetings_contacts.meeting_id = meetings.id AND meetings.deleted=0 AND contacts.deleted=0";
 		} else {
@@ -319,9 +317,7 @@ class Meeting extends SugarBean {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join) {
-				$query .= $custom_join['select'];
-			}
+            $query .= $custom_join['select'];
 			$query .= ' FROM meetings ';
 			$where_auto = "meetings.deleted=0";
 		}
@@ -332,9 +328,7 @@ class Meeting extends SugarBean {
 		//END SUGARCRM flav=pro ONLY
 		$query .= "  LEFT JOIN users ON meetings.assigned_user_id=users.id ";
 
-		if($custom_join) {
-			$query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 
 		if($where != "")
 			$query .= " where $where AND ".$where_auto;
@@ -627,6 +621,11 @@ class Meeting extends SugarBean {
 	 * Redefine method to attach ics file to notification email
 	 */
 	public function create_notification_email($notify_user){
+        // reset acceptance status for non organizer if date is changed
+        if (($notify_user->id != $GLOBALS['current_user']->id) && $this->date_changed) {
+            $this->set_accept_status($notify_user, 'none');
+        }
+
 		$notify_mail = parent::create_notification_email($notify_user);
 
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;

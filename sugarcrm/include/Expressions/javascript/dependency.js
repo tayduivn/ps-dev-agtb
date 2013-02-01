@@ -261,7 +261,7 @@ AH.getValue = function(variable, view, ignoreLinks) {
 	{
 		var asNum = SUGAR.expressions.unFormatNumber(field.value);
 		if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(asNum) != null ) {
-			return asNum;
+			return parseFloat(asNum);
 		}
 		return field.value;
 	}
@@ -810,7 +810,11 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 		else
 			value = AH.getValue(varname, this.formName);
 
-		if (typeof(value) == "string")
+        if(typeof(value) == 'number')
+        {
+            return toConst(value);
+        }
+		else if (typeof(value) == "string")
 		{
 			value = value.replace(/\n/g, "");
 			if ((/^(\s*)$/).exec(value) != null || value === "")

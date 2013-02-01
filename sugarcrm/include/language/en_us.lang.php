@@ -2936,7 +2936,8 @@ $app_strings = array (
     'ERROR_FULLY_EXPIRED'=> "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
     'ERROR_LICENSE_EXPIRED'=> "Your company's license for SugarCRM needs to be updated. Only admins may login",
     'ERROR_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated. Only admins may login",
-    'WARN_BROWSER_VERSION_WARNING' => '<p><b>Warning:</b>The browser or browser version you are using is not supported.</p><p>The following browser versions are recommended</p><ul><li>Internet Explorer 9</li><li>Mozilla Firefox 14, 15 </li><li>Safari 6</li><li>Google Chrome 22 (or latest version)</li></ul>',
+    'WARN_BROWSER_VERSION_WARNING' => "<b>Warning:</b> Your browser version is no longer supported or you are using an unsupported browser.<p></p>The following browser versions are recommended:<p></p><ul><li>Internet Explorer 9 (compatibility view not supported)<li>Firefox 17<li>Safari 5.1<li>Chrome 24</ul>",
+    'WARN_BROWSER_IE_COMPATIBILITY_MODE_WARNING' => "<b>Warning:</b> Your browser is in IE compatibility view which is not supported.",
     'WARN_LICENSE_SEATS'=>  "Warning: The number of active users is already the maximum number of licenses allowed.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
@@ -3569,6 +3570,7 @@ $app_strings = array (
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
     'LBL_PANEL_DEFAULT' => 'Default',
+    'ERR_BAD_RESPONSE_FROM_SERVER' => 'Bad response from the server',
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
