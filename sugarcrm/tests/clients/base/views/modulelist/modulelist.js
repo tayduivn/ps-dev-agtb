@@ -57,7 +57,7 @@ describe("Module List", function() {
             view.render();
 
             _.each(modules, function(module, key) {
-                expect(view.$el.find("[data-module='" + module+"']").length).not.toBe(0);
+                expect(view.$el.find('.' + module).length).not.toBe(0);
             });
         });
 
@@ -69,7 +69,7 @@ describe("Module List", function() {
             view.activeModule._moduleList = view;
             view.render();
 
-            expect(view.activeModule.isActive(view.$el.find("[data-module='" + moduleName+"']"))).toBe(true);
+            expect(view.activeModule.isActive(view.$el.find('.' + moduleName))).toBe(true);
 
             getModuleStub.restore();
         });
@@ -82,7 +82,7 @@ describe("Module List", function() {
             view.activeModule._moduleList = view;
             view.render();
 
-            expect(view.activeModule.isNext(view.$el.find("[data-module='Contacts']"))).toBe(true);
+            expect(view.activeModule.isNext(view.$el.find('.Contacts'))).toBe(true);
 
             getModuleStub.restore();
         });
