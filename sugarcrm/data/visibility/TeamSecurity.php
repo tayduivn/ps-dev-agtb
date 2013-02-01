@@ -61,7 +61,7 @@ class TeamSecurity extends SugarVisibility
                               AND {$team_table_alias}.user_id = '$current_user_id'
                               AND {$team_table_alias}.deleted=0)";
                 } else {
-                    $query .= "INNER JOIN (select tst.team_set_id from team_sets_teams tst";
+                    $query .= " INNER JOIN (select tst.team_set_id from team_sets_teams tst";
                     $query .= " INNER JOIN team_memberships {$team_table_alias} ON tst.team_id = {$team_table_alias}.team_id
                                         AND {$team_table_alias}.user_id = '$current_user_id'
                                         AND {$team_table_alias}.deleted=0 group by tst.team_set_id) {$table_alias}_tf on {$table_alias}_tf.team_set_id  = {$table_alias}.team_set_id ";

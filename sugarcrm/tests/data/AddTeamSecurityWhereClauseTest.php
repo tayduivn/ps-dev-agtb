@@ -48,10 +48,8 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->add_team_security_where_clause($query);
         $query = preg_replace("/[\t \n]+/", " ", $query);
 
-        $this->assertEquals(
-            "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
-                                    AND team_memberships.user_id = '{$GLOBALS['current_user']->id}'
-                                    AND team_memberships.deleted=0 group by tst.team_set_id) foo_tf on foo_tf.team_set_id = foo.team_set_id ",
+        $this->assertContains(
+            "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0 group by tst.team_set_id) foo_tf on foo_tf.team_set_id = foo.team_set_id ",
             $query
             );
     }
@@ -67,10 +65,8 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
 
         $bean->add_team_security_where_clause($query,'myfoo');
         $query = preg_replace("/[\t \n]+/", " ", $query);
-        $this->assertEquals(
-            "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_membershipsmyfoo ON tst.team_id = team_membershipsmyfoo.team_id
-                                    AND team_membershipsmyfoo.user_id = '{$GLOBALS['current_user']->id}'
-                                    AND team_membershipsmyfoo.deleted=0 group by tst.team_set_id) myfoo_tf on myfoo_tf.team_set_id = myfoo.team_set_id ",
+        $this->assertContains(
+            "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_membershipsmyfoo ON tst.team_id = team_membershipsmyfoo.team_id AND team_membershipsmyfoo.user_id = '{$GLOBALS['current_user']->id}' AND team_membershipsmyfoo.deleted=0 group by tst.team_set_id) myfoo_tf on myfoo_tf.team_set_id = myfoo.team_set_id ",
             $query
             );
     }
@@ -87,7 +83,7 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->add_team_security_where_clause($query,'','LEFT OUTER');
         $query = preg_replace("/[\t \n]+/", " ", $query);
 
-        $this->assertEquals(
+        $this->assertContains(
             "LEFT OUTER JOIN (select tst.team_set_id from team_sets_teams tst LEFT OUTER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0 group by tst.team_set_id) foo_tf on foo_tf.team_set_id = foo.team_set_id ",
             $query
             );
@@ -104,7 +100,7 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
 
         $bean->add_team_security_where_clause($query,'','INNER',false,true);
         $query = preg_replace("/[\t \n]+/", " ", $query);
-        $this->assertEquals(
+        $this->assertContains(
             "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0 group by tst.team_set_id) foo_tf on foo_tf.team_set_id = foo.team_set_id INNER JOIN teams ON teams.id = team_memberships.team_id AND teams.deleted=0 ",
             $query
         );
@@ -176,7 +172,7 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->add_team_security_where_clause($query,'','INNER',true);
         $query = preg_replace("/[\t \n]+/", " ", $query);
 
-        $this->assertEquals(
+        $this->assertContains(
             "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0 group by tst.team_set_id) foo_tf on foo_tf.team_set_id = foo.team_set_id ",
             $query
             );
