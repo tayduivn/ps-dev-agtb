@@ -1,12 +1,18 @@
 ({
     events: {
         'click .reply': 'showAddComment',
-        'click .postReply': 'addComment',
-        'click .more': 'showAllComments',
+        'click .reply-btn': 'addComment',
         'click .deleteRecord': 'deleteRecord',
         'click [name=show_more_button]': 'showMoreRecords',
-        'click .preview-stream': 'previewRecord'
+        'click .preview-stream': 'previewRecord',
+        'click .more': 'fetchComments',
+        'mouseenter .label-module, .comment, .preview, .avatar42': 'showTooltip',
+        'mouseleave .label-module, .comment, .preview, .avatar42': 'hideTooltip'
     },
+
+    tagName: "li",
+    className: "activitystream-posts-comments-container",
+    plugins: ['timeago'],
 
     initialize: function(options) {
         var self = this;
@@ -16,42 +22,37 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
-        this.layout.off("stream:more:fire", null, this);
-        this.layout.on("stream:more:fire", function(collection) {
-            app.events.trigger("preview:collection:change", collection);
-        }, this);
+        var lastComment = this.model.get("last_comment");
+        this.commentsCollection = app.data.createRelatedCollection(this.model, "comments");
 
-        // Check to see if we need to make a related activity stream.
-        if (this.module !== "Home") {
-            this.subcontext = this.context.getChildContext({module: "Home"});
-            this.subcontext.prepare();
-
-            this.opts = (this.context.get("model").id) ? { params: { module: this.module, id: this.context.get("model").id }} :
-            { params: { module: this.module }};
-
-            this.streamCollection = this.subcontext.get("collection");
-        } else {
-            this.streamCollection = this.collection;
+        if(lastComment) {
+            this.commentsCollection.reset([lastComment]);
         }
 
-        if (this.context.get("link")) {
-            this.opts.params.link = this.context.get("link");
-            this.opts.params.parent_module = this.layout.layout.module;
-            this.opts.params.parent_id = this.layout.layout.model.id;
+        this.model.set("comments", this.commentsCollection);
+
+        // If comment_count is 0, we don't want to decrement the count by 1 since -1 is truthy.
+        var count = parseInt(this.model.get('comment_count'), 10);
+        this.model.set("remaining_comments", 0);
+        this.more_tpl = "TPL_MORE_COMMENT";
+        if(count) {
+            this.model.set("remaining_comments", count - 1);
+
+            // Pluralize the comment count label
+            if (count > 2) {
+                this.more_tpl += "S";
+            }
         }
 
-        // By default, show all posts.
-        this.opts.params.filter = 'all';
-        this.opts.params.offset = 0;
-        this.opts.params.limit = 20;
-        //this.streamCollection.fetch(this.opts);
+        this.tpl = "TPL_ACTIVITY_" + this.model.get('activity_type').toUpperCase();
     },
 
-    showAnchor: function(event) {
-        var myId = this.$(event.currentTarget).data('id');
-
-        event.preventDefault();
-        $('html, body').animate({ scrollTop: $('#' + myId).offset().top - 50 }, 'slow');
+    fetchComments: function() {
+        var self = this;
+        this.commentsCollection.fetch({relate: true, success: function(collection) {
+            self.model.set("remaining_comments", 0);
+            self.render();
+        }});
     },
 
     showMoreRecords: function() {
@@ -103,15 +104,25 @@
      * @param {Event} event
      */
     addComment: function(event) {
+        // TODO: Change to using a content-editable box instead of input tag.
         var self = this,
-            myPost = this.$(event.currentTarget).closest('li'),
-            myPostId = this.$(event.currentTarget).data('id'),
-            myPostUrl = app.api.buildURL('ActivityStream/ActivityStream/' + myPostId),
-            myPostContents,
-            attachments = this.$(event.currentTarget).siblings('.activitystream-pending-attachment');
+            parentId = this.model.id,
+            attachments = this.$('.activitystream-pending-attachment'),
+            payload = {
+                parent_id: parentId,
+                data: {
+                    //value: this.layout._processTags(this.$('input.reply').val())
+                    value: this.$('input.reply').val()
+                }
+        };
 
-        myPostContents = this.layout._processTags(myPost.find('div.sayit'));
-        this.layout._addPostComment(myPostUrl, myPostContents, attachments);
+        var bean = app.data.createBean('Comments');
+        bean.save(payload, {
+            success: function(model) {
+                // Do something to refresh the view/add the last comment.
+                // We also need to add any attachments we may have over here.
+            }
+        });
     },
 
     deleteRecord: function(event) {
@@ -158,93 +169,38 @@
         }
     },
 
-    _focusOnPost: _.once(function() {
-        // Only focus on the home page. Change this when we have a home module.
-        if (this.module === "Home") {
-            _.defer(function() {
-                this.$(".activitystream-post .sayit").focus();
-            });
-        }
-    }),
-
-    _renderHtml: function() {
-        var self = this,
-            processAttachment = function(note, i, all) {
-                if (note.file_mime_type) {
-                    note.url = app.api.buildFileURL({module: 'Notes', field: 'filename', id: note.id});
-                    note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
-                    note.newline = (i % 2) == 1 && (i + 1) != all.length; // display two items in each row
-                }
-            },
-            processPicture = function(obj) {
-                var isModel = (obj instanceof Backbone.Model);
-                var created_by = obj.created_by || obj.get('created_by');
-                var url = app.config.siteUrl + "/styleguide/assets/img/profile.png";
-                if (obj.created_by_picture || (isModel && obj.get('created_by_picture'))) {
-                    url = app.api.buildFileURL({
-                        module: 'Users',
-                        id: created_by,
-                        field: 'picture'
-                    });
-                }
-                if (isModel) {
-                    obj.set('created_by_picture_url', url);
-                } else {
-                    obj.created_by_picture_url = url;
-                }
-            };
-
-        _.each(this.streamCollection.models, function(model) {
-            var activity_data = model.get("activity_data"),
-                comments = model.get("comments");
-
-            if (activity_data && activity_data.value) {
-                activity_data.value = self.layout._parseTags(activity_data.value);
-                model.set("activity_data", activity_data);
-            }
-
-            processPicture(model);
-
-            if (comments.length > 1) {
-                comments[1]['_starthidden'] = true;
-                comments[comments.length - 1]['_stophidden'] = true;
-                comments[comments.length - 1]['_morecomments'] = comments.length - 1;
-            }
-
-            _.each(comments, function(comment) {
-                comment.value = self.layout._parseTags(comment.value);
-                processPicture(comment);
-                _.each(comment.notes, processAttachment);
-            });
-
-            _.each(model.get("notes"), processAttachment);
-
-        }, this);
-
-        // Sets correct offset and limit for future fetch if we are 'showing more'
-        this.opts.params.offset = 0;
-
-        if (this.streamCollection.models.length > 0) {
-            this.opts.params.limit = this.streamCollection.models.length;
-            this.opts.params.max_num = this.streamCollection.models.length;
-        }
-
-        // Start the user focused in the activity stream input.
-        this._focusOnPost();
-
+    _renderHtml: function(model) {
+        this.processAvatars();
         return app.view.View.prototype._renderHtml.call(this);
+    },
+
+    processAvatars: function() {
+        var comments = this.model.get("comments");
+
+        if(this.model.get("activity_type") === "post") {
+            // TODO: Figure out a way to fall back to generic avatar if the user hasn't uploaded an avatar
+            this.model.set("picture_url" , app.config.siteUrl + "/styleguide/assets/img/profile.png");
+        }
+
+        if(comments) {
+            _.each(comments.models, function(commentsModel) {
+                commentsModel.set("picture_url" , app.config.siteUrl + "/styleguide/assets/img/profile.png");
+            });
+        }
+    },
+
+    showTooltip: function(e) {
+        this.$(e.currentTarget).tooltip("show");
+    },
+
+    hideTooltip: function(e) {
+        this.$(e.currentTarget).tooltip("hide");
     },
 
     /**
      * Data change event.
      */
     bindDataChange: function() {
-        if (this.model) {
-            this.model.on("change", function() {
-                // this.streamCollection.fetch(this.opts);
-            }, this);
-        }
-
         if (this.streamCollection) {
             this.streamCollection.on("reset", this.render, this);
         }

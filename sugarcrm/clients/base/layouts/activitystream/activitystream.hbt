@@ -1,2 +1,1 @@
-<div class="block filtered activitystream-layout">
-</div>
+<ul class="activitystream-list nav nav-tabs results"></ul>

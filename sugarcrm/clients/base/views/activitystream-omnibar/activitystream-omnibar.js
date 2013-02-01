@@ -3,6 +3,8 @@
         'click .addPost': 'addPost'
     },
 
+    className: "row omnibar activitystream-post",
+
 	initialize: function(options) {
 		app.view.View.prototype.initialize.call(this, options);
 
@@ -21,22 +23,25 @@
      */
     addPost: function() {
         var self = this,
-            myPost = this.$(".activitystream-post"),
-            myPostId = this.context.get("model").id,
-            myPostModule = this.module,
-            myPostUrl = 'ActivityStream',
-            myPostContents,
-            attachments = myPost.find('.activitystream-pending-attachment');
-
-        if (myPostModule !== "Home") {
-            myPostUrl += '/' + myPostModule;
-            if (!_.isUndefined(myPostId)) {
-                myPostUrl += '/' + myPostId;
+            parentId = this.context.parent.get("model").id,
+            parentType = this.context.parent.get("model").module,
+            attachments = this.$('.activitystream-pending-attachment'),
+            payload = {
+            activity_type: "post",
+            parent_id: parentId || null,
+            parent_type: parentType || null,
+            data: {
+                value: this.layout._processTags(this.$('div.sayit'))
             }
-        }
+        };
 
-        myPostUrl = app.api.buildURL(myPostUrl);
-        myPostContents = this.layout._processTags(myPost.find('div.sayit'));
-        this.layout._addPostComment(myPostUrl, myPostContents, attachments);
+        var bean = app.data.createBean('Activities');
+        bean.save(payload, {
+            success: function(model) {
+                // Do something like this.layout.addPost(model) to refresh the layout.
+                // We also need to add any attachments we may have over here.
+                //this.layout._addPostComment(myPostUrl, myPostContents, attachments);
+            }
+        });
     }
 })

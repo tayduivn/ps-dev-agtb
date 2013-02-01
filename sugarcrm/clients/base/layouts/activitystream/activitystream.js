@@ -11,11 +11,16 @@
         'click ul.typeahead.activitystream-tag-dropdown li': 'addTag'
     },
 
-    initialize: function(opts) {
-        _.bindAll(this);
-        this.template = app.template.get("l.activitystream");
+    className: "block filtered tabs-left activitystream-layout",
 
-        this.renderHtml();
+    initialize: function(opts) {
+        var self = this;
+        this.opts = opts;
+
+        // The layout needs to keep track of the collection of activities so it can feed each
+        // model for rendering via the activitystream view.
+        this.collection = opts.context.get('collection');
+        this.renderedActivites = [];
 
         app.view.Layout.prototype.initialize.call(this, opts);
 
@@ -23,12 +28,45 @@
         jQuery.event.props.push('dataTransfer');
     },
 
-    renderHtml: function() {
-        this.$el.html(this.template(this));
+    loadData: function(options) {
+        var self = this, endpoint = function(method, model, options, callbacks) {
+            var real_module = self.opts.context.parent.get('module'),
+                modelId = self.opts.context.parent.get('modelId'), url;
+            if (real_module !== "Home") {
+                url = app.api.buildURL(real_module, model.module, {id: modelId}, options.params);
+            } else {
+                url = app.api.buildURL(model.module, null, {}, options.params);
+            }
+            return app.api.call("read", url, null, callbacks);
+        };
+
+        options = _.extend({endpoint: endpoint}, options);
+        options = _.extend({success: function(collection) {
+            _.each(collection.models, function(model) {
+                if(!_.contains(self.renderedActivites, model.id)) {
+                    var view = app.view.createView({
+                        context: self.context,
+                        name: "activitystream",
+                        module: self.module,
+                        layout: self,
+                        model: model
+                    });
+                    self.addComponent(view);
+                    self.renderedActivites.push(model.id);
+                    view.render();
+                }
+            });
+        }}, options);
+        this.context.set("collectionOptions", options);
+        this.collection.fetch(options);
     },
 
     _placeComponent: function(component) {
-        this.$el.find(".activitystream-layout").append(component.el);
+        if(component.name === "activitystream") {
+            this.$el.find(".activitystream-list").append(component.el);
+        } else {
+            this.$el.prepend(component.el);
+        }
     },
 
     expandNewPost: function(event) {
