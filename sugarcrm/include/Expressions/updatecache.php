@@ -244,8 +244,6 @@ $cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
 
 
-require_once('include/Expressions/Expression/Numeric/constants.php');
-
 $cache_contents .= <<<EOQ
 /**
  * The function to object map that is used by the Parser
@@ -254,8 +252,8 @@ $cache_contents .= <<<EOQ
 SUGAR.NumericConstants = {
 
 EOQ;
-if ( isset($NUMERIC_CONSTANTS) && is_array($NUMERIC_CONSTANTS) ) {
-    foreach ( $NUMERIC_CONSTANTS as $key=>$value ) {
+if ( isset(Parser::$NUMERIC_CONSTANTS) && is_array(Parser::$NUMERIC_CONSTANTS) ) {
+    foreach ( Parser::$NUMERIC_CONSTANTS as $key=>$value ) {
         $cache_contents .= "\t'$key'\t:\t$value,";
     }
 }
