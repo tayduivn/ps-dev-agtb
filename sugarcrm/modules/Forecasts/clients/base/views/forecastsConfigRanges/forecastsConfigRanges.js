@@ -237,7 +237,7 @@
                 }(this.category, key, this.view);
             }
         }, {view: this, showElement:showElement, category: element.value});
-        showElement.append($('<p>' + app.lang.get("LBL_FORECASTS_CONFIG_CATEGORY_EXCLUDE_INFO", "Forecasts")+ '</p>'));
+        showElement.append($('<p>' + app.lang.get("LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO", "Forecasts")+ '</p>'));
     },
 
     /**
