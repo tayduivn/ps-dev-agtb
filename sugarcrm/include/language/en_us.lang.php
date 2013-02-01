@@ -340,8 +340,7 @@ $app_list_strings = array (
     'Closed Won' => 'Closed Won',
     'Closed Lost' => 'Closed Lost',
   ),
-    'sales_status_with_quote_dom' =>
-    array(
+    'sales_status_with_quote_dom' => array(
         'New' => 'New',
         'In Progress' => 'In Progress',
         'Closed Won' => 'Closed Won',
