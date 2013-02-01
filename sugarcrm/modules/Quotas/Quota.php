@@ -629,3 +629,14 @@ class Quota extends SugarBean
 
 }
 
+/**
+ * Function to allow for Quotas module reporting to display TimePeriods as a filter for timeperiod_id value
+ *
+ * @see modules/Quotas/vardefs.php
+ * @return array Array of TimePeriod names with TimePeriod instance id as key
+ */
+function getTimePeriodsDropDownForQuotas()
+{
+	return TimePeriod::get_timeperiods_dom();
+}
+

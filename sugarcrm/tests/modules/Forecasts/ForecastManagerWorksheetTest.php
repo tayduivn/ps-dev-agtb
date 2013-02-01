@@ -96,7 +96,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         $db = DBManagerFactory::getInstance();
-        $db->query("DELETE FROM forecast_manager_worksheet WHERE user_id = '".self::$user->id."'");
+        $db->query("DELETE FROM forecast_manager_worksheets WHERE user_id = '".self::$user->id."'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
