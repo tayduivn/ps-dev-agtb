@@ -5513,16 +5513,13 @@ h1 input[type="text"] {
   position: relative;
 }
 .controls.btn-group-fit.controls-four {
-  padding-right: 136px;
+  padding-right: 118px;
 }
 .controls.btn-group-fit.controls-three {
-  padding-right: 100px;
+  padding-right: 90px;
 }
 .controls.btn-group-fit.controls-two {
-  padding-right: 66px;
-}
-.controls.btn-group-fit.controls-one {
-  padding-right: 28px;
+  padding-right: 63px;
 }
 .controls.btn-group-fit .btn-group {
   position: absolute;
@@ -5541,16 +5538,16 @@ h1 input[type="text"] {
   padding: 6px 0;
   display: inline-block;
 }
-.form-horizontal .controls.controls-four {
+.form-horizontal .controls.btn-fit.controls-four {
   padding-right: 144px;
 }
-.form-horizontal .controls.controls-three {
+.form-horizontal .controls.btn-fit.controls-three {
   padding-right: 108px;
 }
-.form-horizontal .controls.controls-two {
+.form-horizontal .controls.btn-fit.controls-two {
   padding-right: 72px;
 }
-.form-horizontal .controls.controls-one {
+.form-horizontal .controls.btn-fit.controls-one {
   padding-right: 36px;
 }
 .form-horizontal .controls.btn-fit .tooltip {
