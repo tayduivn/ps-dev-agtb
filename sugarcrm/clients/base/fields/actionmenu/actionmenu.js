@@ -108,13 +108,14 @@
                     }
                 }, self);
             };
-
-            this.view.collection.on("reset", null, this);
-            this.view.collection.on("reset", function(){
-                if(massCollection.entire) {
-                    massCollection.reset();
-                }
-            }, this);
+            if(this.view.collection) {
+                this.view.collection.on("reset", null, this);
+                this.view.collection.on("reset", function(){
+                    if(massCollection.entire) {
+                        massCollection.reset();
+                    }
+                }, this);
+            }
 
             this.off("render", null, this);
             this.on("render", this.toggleShowSelectAll, this);
