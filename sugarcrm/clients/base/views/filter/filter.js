@@ -13,6 +13,7 @@
         this.currentQuery = ""; this.activeFilterId = "";
 
         this.searchFilterId = _.uniqueId("search_filter");
+        this.searchRelatedId = _.uniqueId("related_filter");
         this.getFilters();
         this.getPreviouslyUsedFilter();
 
@@ -36,6 +37,8 @@
             data = [],
             defaultId = this.activeFilterId || "";
 
+        //repeat for 'this.searchRelatedId'
+
         _.each(this.filters.models, function(model){
             data.push({id:model.id, text:model.get("name")});
         }, this);
@@ -46,17 +49,19 @@
 
         this.node = this.$("#" + this.searchFilterId);
         this.node.select2({
-            tags:data,
-            multiple:true,
-            maximumSelectionSize:2,
-            formatSelection: this.formatSelection,
+            data:data,
+            multiple:false,
+            minimumResultsForSearch:7,
+            formatSelection: this.formatSelectionFilter,
             placeholder: app.lang.get("LBL_MODULE_FILTER"),
             dropdownCss: {width:'auto'},
             dropdownCssClass: 'search-filter-dropdown'
         });
 
         if(defaultId){
-            this.node.select2("val", defaultId);
+            //this.node.select2("val", defaultId);
+            //couldn't get val to work so using data
+            this.node.select2("data", {id: "defaultId", text: "text"});
             this.sanitizeFilter({added:{id:defaultId}});
         }
         this.node.on("change", function(e){
@@ -64,11 +69,21 @@
         });
     },
 
-    formatSelection: function(item) {
+    formatSelectionFilter: function(item) {
         if (item.id === item.text) {
             return '<span>Name starts with</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
         } else {
-            return '<span>Filter</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
+            //return '<span>Filter</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
+            return '<div><span class="select2-choice-type">Filter<i class="icon-caret-down"></i></span><a class="select2-choice-related" href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a></div>';
+        }
+    },
+
+    formatSelectionRelated: function(item) {
+        if (item.id === item.text) {
+            return '<span>Name starts with</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
+        } else {
+            //return '<span>Filter</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
+            return '<div><span class="select2-choice-type">Related<i class="icon-caret-down"></i></span><a class="select2-choice-related" href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a></div>';
         }
     },
 
