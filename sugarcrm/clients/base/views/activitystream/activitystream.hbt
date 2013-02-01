@@ -24,7 +24,7 @@
             <img src="{{picture_url}}" alt="{{created_by_name}} avatar">
         </a>
         <p>
-           {{str "TPL_COMMENT" "Activities" this}}<br>
+           {{str "TPL_COMMENT" "Activities" data}}<br>
             <date class="date"><a href="#Users/{{created_by}}">{{created_by_name}}</a>{{timeago date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}</date>
         </p>
     </li>
