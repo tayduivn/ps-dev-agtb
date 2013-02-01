@@ -221,12 +221,32 @@ class TimePeriod extends SugarBean {
         //set the start/end date
         $this->start_date = $start_date;
 
-        $startDate = $timedate->fromDbDate($this->start_date);
+        $endDate = $this->determineEndDate($start_date);
+        $this->end_date = $endDate->asDbDate(false);
+    }
+
+    /**
+     * Determines the end date to hold to the contract of this being a time period
+     *
+     * @param $startDate db format date string to set the start date of the time period
+     */
+    public function determineEndDate($start_date) {
+        $timedate = TimeDate::getInstance();
+
+        $startDate = $timedate->fromDbDate($start_date);
 
         $startDateDay = $startDate->format('j');
 
         //Flag if the start date's day is the last day of the month
-        $isStartDateDayLastDayOfMonth = $startDateDay == $startDate->format('t');
+        if (isset($this->parent_id) && !empty($this->parent_id)) {
+            $parentTimePeriod = $this->getBean($this->parent_id);
+            $parentStartDate = $timedate->fromDbDate($parentTimePeriod->start_date);
+
+            $parentStartDateDay = $parentStartDate->format('j');
+            $isStartDateDayLastDayOfMonth = $parentStartDateDay == $parentStartDate->format('t');
+        } else {
+            $isStartDateDayLastDayOfMonth = $startDateDay == $startDate->format('t');
+        }
 
         $endDate = $startDate->modify($this->next_date_modifier);
 
@@ -240,9 +260,8 @@ class TimePeriod extends SugarBean {
         }
 
         $endDate->modify('-1 day');
-        $this->end_date = $endDate->asDbDate(false);
+        return $endDate;
     }
-
 
     public static function get_fiscal_year_dom()
     {
@@ -533,14 +552,13 @@ class TimePeriod extends SugarBean {
         $latestTimeperiod = TimePeriod::getLatest($this->type);
 
         if(empty($latestTimeperiod)) {
+            $targetEndDate = $this->determineEndDate($targetStartDate->asDbDate());
             //now we keep incrementing the targetStartDate until we reach the currentDate
-            if($targetStartDate < $currentDate) {
-                while($targetStartDate < $currentDate) {
-                    $targetStartDate->modify($this->next_date_modifier);
-                }
+            while($targetStartDate < $currentDate && $targetEndDate < $currentDate) {
+                $targetStartDate->modify($this->next_date_modifier);
+                $targetEndDate = $this->determineEndDate($targetStartDate->asDbDate());
             }
-            //Go back one timeperiod interval
-            $targetStartDate->modify($this->previous_date_modifier);
+
             $this->setStartDate($targetStartDate->asDbDate());
             $shownForwardDifference++;
         }
@@ -766,9 +784,9 @@ class TimePeriod extends SugarBean {
 
             for($x=1; $x <= $this->leaf_periods; $x++) {
                 $leafPeriod = TimePeriod::getByType($this->leaf_period_type);
+                $leafPeriod->parent_id = $timePeriod->id;
                 $leafPeriod->setStartDate($leafStartDate);
                 $leafPeriod->name = $leafPeriod->getTimePeriodName($x);
-                $leafPeriod->parent_id = $timePeriod->id;
                 $leafPeriod->leaf_cycle = $x;
                 $leafPeriod->save();
                 $created[] = $leafPeriod;
