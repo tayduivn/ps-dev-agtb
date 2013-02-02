@@ -87,6 +87,7 @@ function zip_dir( $zip_dir, $zip_archive )
         return false;
     }
     $zip = new ZipArchive();
+    touch($zip_archive);
     $zip->open(UploadFile::realpath($zip_archive), ZIPARCHIVE::CREATE|ZIPARCHIVE::OVERWRITE); // we need realpath here for PHP streams support
     $path = UploadFile::realpath($zip_dir);
     $chop = strlen($path)+1;
