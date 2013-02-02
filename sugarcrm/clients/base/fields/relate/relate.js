@@ -44,6 +44,9 @@
         var self = this;
         var result = app.view.Field.prototype._render.call(this);
         if(this.tplName === 'edit') {
+            var placeholderTemplate = Handlebars.compile(app.lang.getAppString("LBL_SEARCH_MODULE")),
+                moduleString = app.lang.getAppListStrings("moduleListSingular");
+
             this.$(this.fieldTag).select2({
                     width: 'element',
                     initSelection: function(el, callback) {
@@ -58,7 +61,9 @@
                     formatSearching: function() {
                         return app.lang.get("LBL_LOADING", self.module);
                     },
-                    placeholder: app.lang.get(self.getSearchModule(), self.module),
+                    placeholder: placeholderTemplate({
+                        module: moduleString[self.getSearchModule()]
+                    }),
                     allowClear: self.allow_single_deselect,
                     minimumInputLength: self.minChars,
                     query: self.search

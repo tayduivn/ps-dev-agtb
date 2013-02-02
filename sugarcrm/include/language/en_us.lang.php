@@ -2983,6 +2983,7 @@ $app_strings = array (
     'LBL_SEARCH_NO_RESULTS' => 'No results found for ',
     'LBL_SEARCH_FOR' => 'Search for ',
     'LBL_SEARCH_FOR_MORE' => 'Search for more...',
+    'LBL_SEARCH_MODULE' => 'Search {{module}}...',
     'LBL_DETAILVIEW'=>'Detail View',
     'LBL_LISTVIEW'=>'List View',
     'LBL_EDITVIEW'=>'Edit View',
