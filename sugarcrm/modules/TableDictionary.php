@@ -128,7 +128,6 @@ include("metadata/documents_quotesMetaData.php");
 include("metadata/forecast_treeMetaData.php");
 //END SUGARCRM flav=pro ONLY
 include("metadata/oauth_nonce.php");
-include("metadata/massupdate_queueMetaData.php");
 
 $defs = SugarAutoLoader::loadExtension('tabledictionary');
 if($defs) {

@@ -147,6 +147,7 @@ $mod_strings = array(
     'LBL_COMMIT_STAGE' => 'Commit Stage',
     'LBL_PROBABILITY' => 'Probability (%)',
     'LBL_SALES_STAGE' => 'Sales Stage',
+    'LBL_SALES_STATUS' => 'Product Line Status',
 );
 
 ?>

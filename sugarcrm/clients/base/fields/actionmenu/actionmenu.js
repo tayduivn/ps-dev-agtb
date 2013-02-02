@@ -12,6 +12,7 @@
         if(!massCollection) {
             var MassCollection = app.BeanCollection.extend({
                     reset: function() {
+                        this.filter = null;
                         this.entire = false;
                         Backbone.Collection.prototype.reset.call(this);
                     }
@@ -40,6 +41,8 @@
                 } else {
                     //entire selection
                     massCollection.add(this.view.collection.models);
+                    //TODO: verify that FilterAPI corresponds with the filter parameter
+                    massCollection.filter = this.view.collection.filter;
                 }
             } else { //if checkbox is unchecked
                 if(this.model.id) { //each selection
@@ -105,6 +108,17 @@
                     }
                 }, self);
             };
+            if(this.view.collection) {
+                this.view.collection.on("reset", null, this);
+                this.view.collection.on("reset", function(){
+                    if(massCollection.entire) {
+                        massCollection.reset();
+                    }
+                }, this);
+            }
+
+            this.off("render", null, this);
+            this.on("render", this.toggleShowSelectAll, this);
 
             massCollection.on("add", function(model) {
                 if(massCollection.length > 0) {
@@ -169,6 +183,7 @@
                     viewName: self.options.viewName,
                     model: self.model
                 });
+                field.on("render", self.setPlaceholder, self);
                 self.fields.push(field);
                 field.parent = self;
                 actionMenu += '<li>' + field.getPlaceholder() + '</li>';
@@ -184,5 +199,31 @@
         if(this.view.action === 'list' && this.action === 'edit') {
             this.template = app.template.empty;
         }
+    },
+    setPlaceholder: function() {
+        var index = 0;
+        _.each(this.fields, function(field){
+            var fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
+            if(field.isHidden) {
+                fieldPlaceholder.toggleClass('hide', true);
+                this.$el.append(fieldPlaceholder);
+            } else {
+                fieldPlaceholder.toggleClass('hide', false);
+                this.$(".dropdown-menu").append($('<li>').append(fieldPlaceholder));
+                index++;
+            }
+        }, this);
+
+
+        if(index <= 1) {
+            this.$(".dropdown-toggle").hide();
+        } else {
+            this.$(".dropdown-toggle").show();
+        }
+        this.$(".dropdown-menu").children("li").each(function(index, el){
+            if($(el).html() === '') {
+                $(el).remove();
+            }
+        });
     }
 })
