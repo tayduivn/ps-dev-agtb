@@ -47,7 +47,7 @@ describe("datepicker", function() {
         });
               
         it('should set possible characters from date format on initialization', function(){
-            var originalFormat, expected;
+            var expected;
             // First test with the prebuilt datepicker we already have
             expected = '0123456789-';
             expect(this.dp.possibleChars).toEqual(expected);
@@ -77,21 +77,95 @@ describe("datepicker", function() {
             expect(actual).toBeFalsy();
             actual = this.dp.verifyDate('1-1-1');
             expect(actual).toBeTruthy();
-        }); 
+        });
         it("should verify date string against current date format's separator", function(){
             var actual = this.dp.verifyDate('11.1999.11');
             expect(actual).toBeFalsy();
             actual = this.dp.verifyDate('11/1999/11');
             expect(actual).toBeFalsy();
         }); 
-        it('should verify date strings returning true if invalid string but still parsable', function(){
-            var actual = this.dp.verifyDate('xx-11-1999');
+        it('should verify date strings against date format but account for auto year corrections', function(){
+            var actual = this.dp.verifyDate('03-24-13');
             expect(actual).toBeTruthy();
-            actual = this.dp.verifyDate('11-xx-1999');
+            actual = this.dp.verifyDate('03-24-9');
+            expect(actual).toBeTruthy();
+        }); 
+        it('should verify date strings against date format and NOT auto year correct for 3 digits', function(){
+            var actual = this.dp.verifyDate('03-24-113');
+            expect(actual).toBeFalsy();
+        }); 
+        it('should replace two digit year entered with current century + entered in yyyy', function(){
+            //format is currently: "mm-dd-yyyy"
+            this.dp.update('03-24-13');
+            expect(this.dp.date.getMonth()).toEqual(2);
+            expect(this.dp.date.getDate()).toEqual(24);
+            expect(this.dp.date.getFullYear()).toEqual(2013);
+            this.dp.update('03-24-9');
+            expect(this.dp.date.getFullYear()).toEqual(2009);
+        });
+        it('should add current century + entered when in yy and auto correct', function(){
+            // Rebuild the datepicker from scratch again so we can try another format
+            this.component = 
+                $('<div class="date" id="datepicker"><input type="text"></div>')
+                            .appendTo(this.mainDiv);
+            this.input = this.component.find('input');
+            this.input.datepicker({format:"mm-dd-yy"});
+            this.addon = this.component.find('.add-on');
+            this.dp = this.input.data('datepicker');
+
+            var actual = this.dp.verifyDate('03-24-9');
+            expect(actual).toBeTruthy();
+            this.dp.update('03-24-9');
+            expect(this.dp.date.getFullYear()).toEqual(2009);
+
+            // Only auto correct (truncate) exactly four digits when in yy. Must be current century.
+            actual = this.dp.verifyDate('03-24-2013');
+            expect(actual).toBeTruthy();
+            actual = this.dp.verifyDate('03-24-1999');
+            expect(actual).toBeFalsy();
+        });
+
+        it("should verify that date format and value have the same number of separators", function(){
+            var actual = this.dp.verifyDate('10-31--2013');
+            expect(actual).toBeFalsy();
+            actual = this.dp.verifyDate('1031--2013');
+            expect(actual).toBeFalsy();
+            actual = this.dp.verifyDate('---');
+            expect(actual).toBeFalsy();
+        });
+        it("should verify that date format without surrounding values", function(){
+            var actual = this.dp.verifyDate('--');
+            expect(actual).toBeFalsy();
+            actual = this.dp.verifyDate('1-2-');
+            expect(actual).toBeFalsy();
+            actual = this.dp.verifyDate('1--3');
+            expect(actual).toBeFalsy();
+            actual = this.dp.verifyDate('-2-3');
+            expect(actual).toBeFalsy();
+            actual = this.dp.verifyDate('--3');
+            expect(actual).toBeFalsy();
+            actual = this.dp.verifyDate('1--');
+            expect(actual).toBeFalsy();
+            actual = this.dp.verifyDate('-2-');
+            expect(actual).toBeFalsy();
+        }); 
+        it('should verify date strings returning true if invalid string but still parsable', function(){
+            var actual = this.dp.verifyDate('1xx-11-1999');
+            expect(actual).toBeTruthy();
+            actual = this.dp.verifyDate('11-1xx-1999');
             expect(actual).toBeTruthy();
             actual = this.dp.verifyDate('11-11-19xx');
             expect(actual).toBeTruthy();
             actual = this.dp.verifyDate('x1x-x1x-x1x');
+            expect(actual).toBeFalsy();
+        }); 
+        it('should allow zeroes for years only', function(){
+            // year can be zero (since we auto correct those <century> + 0)
+            var actual = this.dp.verifyDate('0-11-11');//zero day no
+            expect(actual).toBeFalsy();
+            actual = this.dp.verifyDate('11-0-11');//zero month no
+            expect(actual).toBeFalsy();
+            actual = this.dp.verifyDate('11-11-0');//zero year ok
             expect(actual).toBeTruthy();
         }); 
         it('should dissallow invalid characters', function(){

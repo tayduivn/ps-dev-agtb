@@ -218,8 +218,11 @@
 				dateInput,
 				this.format
 			).dateObject;
-			this.viewDate = new Date(this.date.getFullYear(), this.date.getMonth(), 1, 0, 0, 0, 0);
-			this.fill();
+			try {
+				//might be an invalid date (since we now leave those so validation framework can uniformly handle)
+				this.viewDate = new Date(this.date.getFullYear(), this.date.getMonth(), 1, 0, 0, 0, 0);
+				this.fill();
+			} catch(e) {}
 			return true;
 		},
 		fillDow: function(){
@@ -314,6 +317,7 @@
 				case 40: // down
 				case 32: // space
 				case 13: // enter
+				case 8:  // backspace 
 					break;
 				default: 
 					// '/', '.', '-' separators not reliable in keydown,
@@ -639,7 +643,7 @@
 		parseDate: function(dateIn, format) {
 			var parts = dateIn.split(format.separator),
 				date = new Date(), isLegalDate = true,
-				val, i, cnt, originalDate, 
+				val, i, cnt, originalDate, len, 
 				monthsSet = false, dayValue = null, isValid = true;
 
 			// First check separator is correct
@@ -662,14 +666,28 @@
 					isValid = false;
 				}
 			}
+			
 			function _isInRange(val, min, max) {
 				var value = parseInt(val, 10);
 				return (!isNaN(value) && value >= min && value <= max);
 			}
 
+			function century() {return new Date().getFullYear().toString().substr(0, 2);}
+
+			function twoDigitString (n) {
+				return n.toString().length === 1 ? '0' + n : n.toString();
+			}
+
 			if (parts.length === format.parts.length) {
+
 				for (i=0, cnt = format.parts.length; i < cnt; i++) {
-					val = parseInt(parts[i], 10)||1;
+					
+					// ensures date string has "surrounding values" e.g. not: 11--1999
+					if (!parts[i]) {
+						return false;
+					}
+
+					val = parseInt(parts[i], 10);
 					switch(format.parts[i]) {
 						case 'dd':
 						case 'd':
@@ -701,21 +719,39 @@
 							}
 							break;
 						case 'yy':
-							if (_isInRange(val, 0, 99)) {
-								date.setFullYear(2000 + val);
+							len = val.toString().length;
+							// Auto correct when exactly four digits and current century
+							if (len === 4 && century() === val.toString().substr(0, 2)) {
+								date.setFullYear(century() + val.toString().substr(-2));
+							}
+							else if (_isInRange(val, 0, 99)) {
+								date.setFullYear(century() + twoDigitString(val));
 							} else {
 								isValid = false;
 							}
 							break;
 						case 'yyyy':
+							len = val.toString().length;
 							if (_isInRange(val, 0, 9999)) {
-								date.setFullYear(val);
+
+								// year length is 1 or 2 (already disallowed empty "surrounding" parts)
+								if (len < 3) {
+									date.setFullYear(century() + twoDigitString(val));
+								}
+								// e.g. no reasonable way to handle 2000 + 113 
+								else if (len === 3) {
+									isValid = false;
+								} else {
+									date.setFullYear(val);
+								}
 							} else {
 								isValid = false;
 							}
 							break;
 					}
 				}
+			} else {
+				isValid = false;
 			}
 			return {'dateObject': date, 'inputDateStringWasValid': isValid};
 		},
