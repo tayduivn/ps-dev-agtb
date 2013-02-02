@@ -144,7 +144,6 @@
                 isAdmin: isAdmin,
                 saveClicked: this.context.forecasts.get('saveClicked')
             },
-            location = this.getRedirectURL(state),
             self = this;
 
         /**
@@ -170,13 +169,13 @@
 
                 //add alert listener for the close click, in case user clicks the X instead of the confirm button.
                 alert.getCloseSelector().on('click', function() {
-                    self.displaySuccessAndReload(location);
+                    self.displaySuccessAndReload();
                 });
             } else {
-                this.displaySuccessAndReload(location);
+                this.displaySuccessAndReload();
             }
         } else {
-            window.location = location;
+            window.location.hash = this.getRedirectURL(state);
         }
     },
 
@@ -198,9 +197,9 @@
          */
         if (!state.isAdmin || (state.isAdmin && state.isSetup == 0 && state.saveClicked == false)) {
             // this should only ever happen on the wizard view and if the user accessing is not an admin
-            return 'index.php?module=Home';
+            return '#Home';
         } else {
-            return 'index.php?action=sidecar#Forecasts';
+            return '#Forecasts';
         }
     },
 
