@@ -114,7 +114,7 @@ abstract class SugarApi {
 
         $bean = BeanFactory::getBean($args['module'],$args['record']);
 
-        if ( $bean == FALSE ) {
+        if ( $bean == FALSE || $bean->deleted == 1) {
             // Couldn't load the bean
             throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);
         }
@@ -153,7 +153,7 @@ abstract class SugarApi {
 
         //BEGIN SUGARCRM flav=pro ONLY
         if(isset($args['my_favorite'])) {
-            $this->toggleFavorites($bean->module_dir, $id, $args['my_favorite']);
+            $this->toggleFavorites($bean, $args['my_favorite']);
         }
         //END SUGARCRM flav=pro ONLY
 
@@ -170,18 +170,20 @@ abstract class SugarApi {
 
     /**
      * Toggle Favorites
-     * @param type $module
-     * @param type $id
+     * @param SugarBean $module
      * @param type $favorite
      * @return bool
      */
 
-    protected function toggleFavorites($module, $record, $favorite)
+    protected function toggleFavorites($bean, $favorite)
     {
         
         $reindexBean = false;
 
         $favorite = (bool) $favorite;
+
+        $module = $bean->module_dir;
+        $record = $bean->id;
 
         $fav_id = SugarFavorites::generateGUID($module,$record);
 
@@ -209,17 +211,18 @@ abstract class SugarApi {
             $reindexBean = true;
         }
 
+        $bean->my_favorite = $favorite;
+
         // Bug59888 - If a Favorite is toggled, we need to reindex the bean for FTS engines so that the document will be updated with this change
         if($reindexBean === true) {
             $searchEngine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig());
 
             if($searchEngine instanceof SugarSearchEngineAbstractBase) {
-                $searchEngine->indexSingleBean(BeanFactory::getBean($module, $record));
+                $searchEngine->indexSingleBean($bean);
             }
         }
 
         return true;
-
 
     }
 
