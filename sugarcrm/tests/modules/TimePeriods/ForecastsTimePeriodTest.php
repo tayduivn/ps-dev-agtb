@@ -974,7 +974,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedKey, $chartLabelKey);
     }
 
-
     /**
      * This is a test for checking the edge time periods and crossed timeperiods
      *
@@ -998,14 +997,17 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timeZoneA = new DateTimeZone($timeZones[0]);
         $timeZoneANow = new SugarDateTime("now", $timeZoneA);
         $timeZoneADay = $timeZoneANow->format("j");
+        $timeZoneAMonth = $timeZoneANow->format("n");
         foreach($timeZones as $tz) {
             $timeZoneB = new DateTimeZone($tz);
             $timeZoneBNow = new SugarDateTime("now", $timeZoneB);
             $timeZoneBDay = $timeZoneBNow->format("j");
+            $timeZoneBMonth = $timeZoneBNow->format("n");
+
             if($timeZoneBDay != $timeZoneADay)
             {
                 //check if they are in reverse order, we want A to come before B
-                if($timeZoneBDay < $timeZoneADay)
+                if($timeZoneBDay < $timeZoneADay && $timeZoneBMonth == $timeZoneAMonth)
                 {
                     $timeZoneB = new DateTimeZone($timeZones[0]);
                     $timeZoneA = new DateTimeZone($tz);
@@ -1066,7 +1068,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         //get timeperiod per userA's timezone
         $timeZoneACurrentTimePeriod = TimePeriod::getCurrentTimePeriod();
-
         //make assertions, Users should have timeperiods based on timezones
         $this->assertNotEquals($timeZoneACurrentTimePeriod->id, $timeZoneBCurrentTimePeriod->id, "time periods were equal, users were in same time zone");
 
@@ -1079,4 +1080,231 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         //reset current user back to the original user
         $GLOBALS['current_user'] = $user;
     }
+
+    /**
+     * This is a test for checking the end of the month scenario to make sure the end date of the leaf doesn't overlap the next time period
+     *
+     * @group forecasts
+     * @group timeperiods
+     * @outputBuffering disabled
+     */
+    public function testCurrentTimePeriodNoOverlap () {
+        //store the current global user
+        $user = $GLOBALS['current_user'];
+        $GLOBALS['disable_date_format'] = 0;
+        //get timeDate instance
+        $timedate = TimeDate::getInstance();
+
+        //destroy existing time periods created by setup
+        $db = DBManagerFactory::getInstance();
+
+        $db->query("UPDATE timeperiods set deleted = 1");
+
+        $admin = BeanFactory::newBean('Administration');
+
+        //change settings as needed to reset dates
+        $currentForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
+        $currentForecastSettings['is_upgrade'] = 0;
+
+        //set start date to be today by the later time zone standards, which may be today or tomorrow
+        $currentForecastSettings['timeperiod_start_date'] = '2013-11-30';
+
+        //rebuild time periods
+        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
+        $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
+
+        //add all of the newly created timePeriods to the test utils
+        $result = $db->query('SELECT id, name, start_date, end_date, type FROM timeperiods WHERE deleted = 0 and parent_id  is not null order by start_date asc');
+        $createdTimePeriods = array();
+
+        while($row = $db->fetchByAssoc($result))
+        {
+            $createdTimePeriods[] = TimePeriod::getBean($row['id']);
+        }
+
+        SugarTestTimePeriodUtilities::setCreatedTimePeriods($createdTimePeriods);
+
+        $currentTimePeriod = TimePeriod::getCurrentTimePeriod();
+
+        $overlappingPeriodId = $db->getOne("SELECT id FROM timeperiods WHERE type = '{$currentTimePeriod->type}' AND deleted = 0 and end_date = '{$currentTimePeriod->start_date}'");
+
+        $this->assertFalse($overlappingPeriodId, "Overlapping timeperiod found.  This means a timeperiod has the same end date as the current time period's start date.  TimePeriods should not overlap");
+    }
+
+    /**
+      * This is the dataProvider function for the testOddEdgeCases function.  We return a multi-dimensional Array where each
+      * entry of the top level Array contains the arguments in the following order:
+      * 1) TimePeriod type as String
+      * 2) TimePeriod start date as String
+      * 3) TimePeriod End Date as a String
+      * 4) an associative array containing the expected start and end dates of the leaf periods
+      *
+      * @return array
+      */
+    public function getOddEdgeCasesProvider()
+    {
+         //get timeDate instance
+        $timedate = TimeDate::getInstance();
+
+        $currentDate = $timedate->getNow();
+        $currentYear = $currentDate->format('Y');
+        $febEndDate = $currentYear % 4 == 0 ? 29 : 28;
+        return array(
+            array(TimePeriod::ANNUAL_TYPE,
+                  TimePeriod::QUARTER_TYPE,
+                  ($currentYear-1).'-11-30',
+                  $currentYear.'-11-29',
+                  array(
+                      array('expectedStartDate' => ($currentYear-1).'-11-30', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate-1)),
+                      array('expectedStartDate' => ($currentYear).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear).'-05-30'),
+                      array('expectedStartDate' => ($currentYear).'-05-31', 'expectedEndDate' => ($currentYear).'-08-30'),
+                      array('expectedStartDate' => ($currentYear).'-08-31', 'expectedEndDate' => ($currentYear).'-11-29'),
+                  )
+            ),
+            array(TimePeriod::ANNUAL_TYPE,
+                  TimePeriod::QUARTER_TYPE,
+                  ($currentYear).'-01-31',
+                  ($currentYear+1).'-01-30',
+                  array(
+                      array('expectedStartDate' => ($currentYear).'-01-31', 'expectedEndDate' => ($currentYear).'-04-29'),
+                      array('expectedStartDate' => ($currentYear).'-04-30', 'expectedEndDate' => ($currentYear).'-07-30'),
+                      array('expectedStartDate' => ($currentYear).'-07-31', 'expectedEndDate' => ($currentYear).'-10-30'),
+                      array('expectedStartDate' => ($currentYear).'-10-31', 'expectedEndDate' => ($currentYear+1).'-01-30'),
+                  )
+            ),
+            array(TimePeriod::ANNUAL_TYPE,
+                  TimePeriod::QUARTER_TYPE,
+                  ($currentYear-1).'-02-'.($febEndDate),
+                  ($currentYear).'-02-'.($febEndDate-1),
+                  array(
+                      array('expectedStartDate' => ($currentYear-1).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear-1).'-05-27'),
+                      array('expectedStartDate' => ($currentYear-1).'-05-28', 'expectedEndDate' => ($currentYear-1).'-08-27'),
+                      array('expectedStartDate' => ($currentYear-1).'-08-28', 'expectedEndDate' => ($currentYear-1).'-11-27'),
+                      array('expectedStartDate' => ($currentYear-1).'-11-28', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate-1)),
+                  )
+            ),
+            array(TimePeriod::ANNUAL_TYPE,
+                  TimePeriod::QUARTER_TYPE,
+                  ($currentYear-1).'-03-31',
+                  ($currentYear).'-03-30',
+                  array(
+                      array('expectedStartDate' => ($currentYear-1).'-03-31', 'expectedEndDate' => ($currentYear-1).'-06-29'),
+                      array('expectedStartDate' => ($currentYear-1).'-06-30', 'expectedEndDate' => ($currentYear-1).'-09-29'),
+                      array('expectedStartDate' => ($currentYear-1).'-09-30', 'expectedEndDate' => ($currentYear-1).'-12-30'),
+                      array('expectedStartDate' => ($currentYear-1).'-12-31', 'expectedEndDate' => ($currentYear).'-03-30'),
+                  )
+            ),
+            array(TimePeriod::ANNUAL_TYPE,
+                  TimePeriod::QUARTER_TYPE,
+                  ($currentYear-1).'-04-30',
+                  ($currentYear).'-04-29',
+                  array(
+                      array('expectedStartDate' => ($currentYear-1).'-04-30', 'expectedEndDate' => ($currentYear-1).'-07-30'),
+                      array('expectedStartDate' => ($currentYear-1).'-07-31', 'expectedEndDate' => ($currentYear-1).'-10-30'),
+                      array('expectedStartDate' => ($currentYear-1).'-10-31', 'expectedEndDate' => ($currentYear).'-01-30'),
+                      array('expectedStartDate' => ($currentYear).'-01-31', 'expectedEndDate' => ($currentYear).'-04-29'),
+                  )
+            ),
+            array(TimePeriod::ANNUAL_TYPE,
+                  TimePeriod::QUARTER_TYPE,
+                  ($currentYear-1).'-05-31',
+                  ($currentYear).'-05-30',
+                  array(
+                      array('expectedStartDate' => ($currentYear-1).'-05-31', 'expectedEndDate' => ($currentYear-1).'-08-30'),
+                      array('expectedStartDate' => ($currentYear-1).'-08-31', 'expectedEndDate' => ($currentYear-1).'-11-29'),
+                      array('expectedStartDate' => ($currentYear-1).'-11-30', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate-1)),
+                      array('expectedStartDate' => ($currentYear).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear).'-05-30'),
+                  )
+            ),
+            array(TimePeriod::ANNUAL_TYPE,
+                  TimePeriod::QUARTER_TYPE,
+                  ($currentYear-1).'-11-28',
+                  ($currentYear).'-11-27',
+                  array(
+                      array('expectedStartDate' => ($currentYear-1).'-11-28', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate-1)),
+                      array('expectedStartDate' => ($currentYear).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear).'-05-27'),
+                      array('expectedStartDate' => ($currentYear).'-05-28', 'expectedEndDate' => ($currentYear).'-08-27'),
+                      array('expectedStartDate' => ($currentYear).'-08-28', 'expectedEndDate' => ($currentYear).'-11-27'),
+                  )
+            ),
+            array(TimePeriod::QUARTER_TYPE,
+                  TimePeriod::MONTH_TYPE,
+                  ($currentYear).'-01-01',
+                  ($currentYear).'-03-31',
+                  array(
+                      array('expectedStartDate' => ($currentYear).'-01-01', 'expectedEndDate' => ($currentYear).'-01-31'),
+                      array('expectedStartDate' => ($currentYear).'-02-01', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate)),
+                      array('expectedStartDate' => ($currentYear).'-03-01', 'expectedEndDate' => ($currentYear).'-03-31'),
+                  )
+            ),
+            array(TimePeriod::QUARTER_TYPE,
+                  TimePeriod::MONTH_TYPE,
+                  ($currentYear).'-01-31',
+                  ($currentYear).'-04-29',
+                  array(
+                      array('expectedStartDate' => ($currentYear).'-01-31', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate-1)),
+                      array('expectedStartDate' => ($currentYear).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear).'-03-30'),
+                      array('expectedStartDate' => ($currentYear).'-03-31', 'expectedEndDate' => ($currentYear).'-04-29'),
+                  )
+            ),
+        );
+    }
+
+     /**
+      * This is a test to check odd conditions around edge cases for end of month start date scenarios
+      *
+      * @dataProvider getOddEdgeCasesProvider
+      * @group timeperiods
+      * @group forecasts
+      */
+     public function testOddEdgeCases($tpType, $tpLeafType, $tpStartDate, $tpExpectedCloseDate, $tpExpectedLeafDatesArray)
+     {
+        //get timeDate instance
+        $timedate = TimeDate::getInstance();
+
+        //destroy existing time periods created by setup
+        $db = DBManagerFactory::getInstance();
+
+        $db->query("UPDATE timeperiods set deleted = 1");
+
+        $admin = BeanFactory::newBean('Administration');
+
+        //change settings as needed to reset dates
+        $currentForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
+        $currentForecastSettings['is_upgrade'] = 0;
+
+        //set start date to be today by the later time zone standards, which may be today or tomorrow
+        $currentForecastSettings['timeperiod_start_date'] = $tpStartDate;
+        $currentForecastSettings['timeperiod_interval'] = $tpType;
+        $currentForecastSettings['timeperiod_leaf_interval'] = $tpLeafType;
+
+        //rebuild time periods
+        $timePeriod = TimePeriod::getByType($tpType);
+        $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
+
+        //add all of the newly created timePeriods to the test utils
+        $result = $db->query('SELECT id, name, start_date, end_date, type FROM timeperiods WHERE deleted = 0 and parent_id  is not null order by start_date asc');
+        $createdTimePeriods = array();
+
+        while($row = $db->fetchByAssoc($result))
+        {
+            $createdTimePeriods[] = TimePeriod::getBean($row['id']);
+        }
+
+        SugarTestTimePeriodUtilities::setCreatedTimePeriods($createdTimePeriods);
+
+        $currentTimePeriod = TimePeriod::getCurrentTimePeriod($tpType);
+
+        $this->assertEquals($tpStartDate, $currentTimePeriod->start_date, "current time period's start date doesn't not match what was set by dataprovider");
+
+        $this->assertEquals($tpExpectedCloseDate, $currentTimePeriod->end_date, "current time period's end date doesn't not match expected end date.");
+
+        $leavesArray = $currentTimePeriod->getLeaves();
+
+        for($i = 0; $i < sizeof($leavesArray); $i++) {
+            $this->assertEquals($tpExpectedLeafDatesArray[$i]['expectedStartDate'], $leavesArray[$i]->start_date, "Quarter " . $i+1 . " start date does not match expected start date from data provider.");
+            $this->assertEquals($tpExpectedLeafDatesArray[$i]['expectedEndDate'], $leavesArray[$i]->end_date, "Quarter " . $i+1 . " end date does not match expected end date from data provider.");
+        }
+
+     }
 }

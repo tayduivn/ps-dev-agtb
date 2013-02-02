@@ -221,10 +221,47 @@ class TimePeriod extends SugarBean {
         //set the start/end date
         $this->start_date = $start_date;
 
-        //the end date is set to the the increment of the date_modifier value minus one day
-        $this->end_date = $timedate->fromDbDate($start_date)->modify($this->next_date_modifier)->modify('-1 day')->asDbDate();
+        $endDate = $this->determineEndDate($start_date);
+        $this->end_date = $endDate->asDbDate(false);
     }
 
+    /**
+     * Determines the end date to hold to the contract of this being a time period
+     *
+     * @param $startDate db format date string to set the start date of the time period
+     */
+    public function determineEndDate($start_date) {
+        $timedate = TimeDate::getInstance();
+
+        $startDate = $timedate->fromDbDate($start_date);
+
+        $startDateDay = $startDate->format('j');
+
+        //Flag if the start date's day is the last day of the month
+        if (isset($this->parent_id) && !empty($this->parent_id)) {
+            $parentTimePeriod = $this->getBean($this->parent_id);
+            $parentStartDate = $timedate->fromDbDate($parentTimePeriod->start_date);
+
+            $parentStartDateDay = $parentStartDate->format('j');
+            $isStartDateDayLastDayOfMonth = $parentStartDateDay == $parentStartDate->format('t');
+        } else {
+            $isStartDateDayLastDayOfMonth = $startDateDay == $startDate->format('t');
+        }
+
+        $endDate = $startDate->modify($this->next_date_modifier);
+
+        $endDateDay = $endDate->format('j');
+
+        //Handle special cases where start date day is towards the last days of the month
+        if($startDateDay > 28 && $endDateDay < 4) {
+            $endDate->modify("-{$endDateDay} day");
+        } else if($isStartDateDayLastDayOfMonth) {
+            $endDate->setDate($endDate->format('Y'), $endDate->format('n'), $endDate->format('t'));
+        }
+
+        $endDate->modify('-1 day');
+        return $endDate;
+    }
 
     public static function get_fiscal_year_dom()
     {
@@ -515,14 +552,13 @@ class TimePeriod extends SugarBean {
         $latestTimeperiod = TimePeriod::getLatest($this->type);
 
         if(empty($latestTimeperiod)) {
+            $targetEndDate = $this->determineEndDate($targetStartDate->asDbDate());
             //now we keep incrementing the targetStartDate until we reach the currentDate
-            if($targetStartDate < $currentDate) {
-                while($targetStartDate < $currentDate) {
-                    $targetStartDate->modify($this->next_date_modifier);
-                }
+            while($targetStartDate < $currentDate && $targetEndDate < $currentDate) {
+                $targetStartDate->modify($this->next_date_modifier);
+                $targetEndDate = $this->determineEndDate($targetStartDate->asDbDate());
             }
-            //Go back one timeperiod interval
-            $targetStartDate->modify($this->previous_date_modifier);
+
             $this->setStartDate($targetStartDate->asDbDate());
             $shownForwardDifference++;
         }
@@ -748,16 +784,16 @@ class TimePeriod extends SugarBean {
 
             for($x=1; $x <= $this->leaf_periods; $x++) {
                 $leafPeriod = TimePeriod::getByType($this->leaf_period_type);
+                $leafPeriod->parent_id = $timePeriod->id;
                 $leafPeriod->setStartDate($leafStartDate);
                 $leafPeriod->name = $leafPeriod->getTimePeriodName($x);
-                $leafPeriod->parent_id = $timePeriod->id;
                 $leafPeriod->leaf_cycle = $x;
                 $leafPeriod->save();
                 $created[] = $leafPeriod;
-                $leafStartDate = $timedate->fromDbDate($leafStartDate)->modify($leafPeriod->next_date_modifier)->asDbDate();
+                $leafStartDate = $timedate->fromDbDate($leafPeriod->end_date)->modify('+1 day')->asDbDate(false);
             }
 
-            $startDate = $timedate->fromDbDate($startDate)->modify($dateModifier)->asDbDate();
+            $startDate = $timedate->fromDbDate($startDate)->modify($dateModifier)->asDbDate(false);
         }
 
         return $created;
