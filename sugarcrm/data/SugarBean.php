@@ -1786,7 +1786,10 @@ class SugarBean
             $this->track_view($current_user->id, $this->module_dir, 'save');
         }
 
-        $this->call_custom_logic('after_save', '');
+        $this->call_custom_logic('after_save', array(
+            'isUpdate' => $isUpdate,
+            'dataChanges' => $auditDataChanges,
+        ));
 
         //Now that the record has been saved, we don't want to insert again on further saves
         $this->new_with_id = false;
