@@ -33,7 +33,7 @@
             <ul class="dropdown-menu left carettop" id="progressDisplayOptions">
                 <div class="datasetOptions">
                 {{#eachOptions progressDataSet}}
-                <li><a href="#"><label data-set="{{this.key}}" class="radio checked"><i class="icon-ok"></i>&nbsp;{{this.value}}</label></a></li>
+                <li><a href="javascript:void(0);"><label data-set="{{this.key}}" class="radio checked"><i class="icon-ok"></i>&nbsp;{{this.value}}</label></a></li>
                 {{/eachOptions}}
                 </div>
             </ul>

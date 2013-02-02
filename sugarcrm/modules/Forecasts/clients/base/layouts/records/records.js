@@ -47,7 +47,7 @@
     /**
      * this is used to defer the render until the forecasts initialization returns with the data
      */
-    deferredRender: new $.Deferred(),
+    deferredRender: '',
 
     /**
      * This is used to hold the path for the forecasts specific JS
@@ -57,6 +57,9 @@
     initialize: function(options) {
         var self = this,
             url = app.api.buildURL("Forecasts/init");
+
+        // we need this to be set here so anytime this gets initialized, it will work.
+        this.deferredRender = new $.Deferred();
         app.api.call('GET', url, null, {
             success: function(data) {
                 return self.initForecastsModule(data, options, self);
