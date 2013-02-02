@@ -5,6 +5,7 @@
         'click .deleteRecord': 'deleteRecord',
         'click [name=show_more_button]': 'showMoreRecords',
         'click .preview-stream': 'previewRecord',
+        'click .comment': 'toggleReplyBar',
         'click .more': 'fetchComments',
         'mouseenter .label-module, .comment, .preview, .avatar42': 'showTooltip',
         'mouseleave .label-module, .comment, .preview, .avatar42': 'hideTooltip'
@@ -171,7 +172,18 @@
 
     _renderHtml: function(model) {
         this.processAvatars();
-        return app.view.View.prototype._renderHtml.call(this);
+
+        // Save state of the reply bar before rendering
+        var isReplyBarOpen = this.$(".comment").hasClass("active") && this.$(".comment").is(":visible"),
+            replyVal = this.$(".reply").val();
+
+        app.view.View.prototype._renderHtml.call(this);
+
+        // If the reply bar was previously open, keep it open (render hides it by default)
+        if(isReplyBarOpen) {
+            this.toggleReplyBar();
+            this.$(".reply").val(replyVal);
+        }
     },
 
     processAvatars: function() {
@@ -187,6 +199,11 @@
                 commentsModel.set("picture_url" , app.config.siteUrl + "/styleguide/assets/img/profile.png");
             });
         }
+    },
+
+    toggleReplyBar: function() {
+        this.$(".comment").toggleClass("active");
+        this.$(".acomment").toggleClass("hide");
     },
 
     showTooltip: function(e) {

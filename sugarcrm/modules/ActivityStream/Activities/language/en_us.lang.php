@@ -2,7 +2,7 @@
 
 $mod_strings = array(
     'TPL_ACTIVITY_CREATE' => 'Added {{object.name}} {{object.type}}.',
-    'TPL_ACTIVITY_POST' => 'Posted {{value}} {{#if target}}on {{target.name}}{{/if}}.',
+    'TPL_ACTIVITY_POST' => 'Posted {{value}}{{#if target}} on {{target.name}}{{/if}}.',
     'TPL_ACTIVITY_LINK' => 'Related {{object.name}} to {{target.name}}',
     'TPL_ACTIVITY_UNLINK' => 'Unrelated {{object.name}} to {{target.name}}',
     'TPL_ACTIVITY_UPLOAD' => 'Added {{subject.name}} file.',

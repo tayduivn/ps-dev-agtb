@@ -15,8 +15,8 @@
         <a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
     </date>
 </p>
-{{#if comment_count}}
 <ul class="commented">
+{{#if comment_count}}
     {{#each comments.models}}
     {{#with attributes}}
     <li>
@@ -24,8 +24,8 @@
             <img src="{{picture_url}}" alt="{{created_by_name}} avatar">
         </a>
         <p>
-           {{str "TPL_COMMENT" "Activities" data}}<br>
-            <date class="date"><a href="#Users/{{created_by}}">{{created_by_name}}</a>{{timeago date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}</date>
+            {{str "TPL_COMMENT" "Activities" data}}<br>
+            <date class="date"><a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}</date>
         </p>
     </li>
     {{/with}}
@@ -38,6 +38,7 @@
         </a>
     </li>
     {{/if}}
+{{/if}}
     <li class="acomment hide">
         <div class="control-group form-horizontal">
             <input placeholder="Add your comment" class="reply span11">
@@ -45,8 +46,7 @@
         </div>
     </li>
 </ul>
-{{/if}}
- <div class="actions btn-group">
+<div class="actions btn-group">
     <a class="btn btn-mini comment" rel="tooltip" data-title="Comment" data-original-title="">
         <i class="icon-comment"></i>
     </a>
