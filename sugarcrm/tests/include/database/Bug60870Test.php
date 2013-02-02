@@ -32,6 +32,8 @@ class Bug60780Test extends Sugar_PHPUnit_Framework_TestCase
     {
         global $sugar_config;
 
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
         $this->has_disable_count_query_enabled = !empty($sugar_config['disable_count_query']);
         if(!$this->has_disable_count_query_enabled) {
