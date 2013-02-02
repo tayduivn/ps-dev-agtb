@@ -289,78 +289,78 @@ a.badge:hover {
   background-color: #3f4041;
   color: #fff;
 }
-.label-opportunity,
-.badge-opportunity {
+.label-Opportunities,
+.badge-Opportunities {
   background-color: #7D12B2;
   color: #fff;
   text-shadow: 0 -1px 1px #5c0d84;
   box-shadow: inset 0 -2px 0 #5c0d84, inset 0 0 1px #5c0d84;
 }
-.label-opportunity[href],
-.badge-opportunity[href] {
+.label-Opportunities[href],
+.badge-Opportunities[href] {
   background-color: #7D12B2;
   color: #fff;
   text-shadow: 0 -1px 1px #5c0d84;
   box-shadow: inset 0 -2px 0 #5c0d84, inset 0 0 1px #5c0d84;
 }
-.label-files,
-.label-files[href],
-.badge-files,
-.badge-files[href] {
+.label-Files,
+.label-Files[href],
+.badge-Files,
+.badge-Files[href] {
   background-color: #E57417;
   color: #fff;
   text-shadow: 0 -1px 1px #b75d12;
   box-shadow: inset 0 -2px 0 #b75d12, inset 0 0 1px #b75d12;
 }
-.label-contacts,
-.label-contacts[href],
-.badge-contacts,
-.badge-contacts[href] {
+.label-Contacts,
+.label-Contacts[href],
+.badge-Contacts,
+.badge-Contacts[href] {
   background-color: #25B2F1;
   color: #fff;
   text-shadow: 0 -1px 1px #0e98d5;
   box-shadow: inset 0 -2px 0 #0e98d5, inset 0 0 1px #0e98d5;
 }
-.label-account,
-.label-accounts[href],
-.badge-account,
-.badge-accounts[href] {
+.label-Accounts,
+.label-Accounts[href],
+.badge-Accounts,
+.badge-Accounts[href] {
   background-color: #3FB300;
   color: #fff;
   text-shadow: 0 -1px 1px #2d8000;
   box-shadow: inset 0 -2px 0 #2d8000, inset 0 0 1px #2d8000;
 }
-.label-notes,
-.label-notes[href],
-.badge-notes,
-.badge-notes[href] {
+.label-Notes,
+.label-Notes[href],
+.badge-Notes,
+.badge-Notes[href] {
   background-color: #6e5e0c;
   color: #fff;
   text-shadow: 0 -1px 1px #2d8000;
   box-shadow: inset 0 -2px 0 #2d8000, inset 0 0 1px #2d8000;
 }
-.label-cases,
-.label-cases[href],
-.badge-cases,
-.badge-cases[href] {
+.label-Cases,
+.label-Cases[href],
+.badge-Cases,
+.badge-Cases[href] {
   background-color: #55c3f4;
   color: #fff;
   text-shadow: 0 -1px 1px #2d8000;
   box-shadow: inset 0 -2px 0 #2d8000, inset 0 0 1px #2d8000;
 }
-.label-bugs,
-.label-bugs[href],
-.badge-bugs,
-.badge-bugs[href] {
+.label-Bugs,
+.label-Bugs[href],
+.badge-Bugs,
+.badge-Bugs[href] {
   background-color: #E61718;
   color: #fff;
   text-shadow: 0 -1px 1px #b81213;
   box-shadow: inset 0 -2px 0 #b81213, inset 0 0 1px #b81213;
 }
-.label-kbdocuments,
-.label-kbdocuments[href],
-.badge-kbdocuments,
-.badge-kbdocuments[href] {
+.label-KBDocuments,
+.label-KBDocuments[href],
+.badge-KBDocuments,
+.badge-KBDocuments[href] {
   background-color: #b23eec;
   color: #fff;
   text-shadow: 0 -1px 1px #1b0427;
@@ -4938,6 +4938,7 @@ article .actions,
 }
 .form-search-related .extend article.filter-header {
   padding: 9px 8px 7px 20px;
+  line-height: 28px;
   -webkit-box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
   box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
