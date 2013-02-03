@@ -105,39 +105,42 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      */
     public function getChartLabels($chartData)
     {
+        $timedate = TimeDate::getInstance();
         $months = array();
-        $start = strtotime($this->start_date);
-        $startDate = strtotime($this->start_date);
-        $startDay = date('j', $start);
-        $isFirst = date('j', $start) == 1;
-        $end = strtotime($this->end_date);
+        $startDate = $timedate->fromDbDate($this->start_date);
+        $nextDate = $timedate->fromDbDate($this->start_date);
+        $endDate = $timedate->fromDbDate($this->end_date);
+        $startDay = $startDate->format('j');
+        $isFirst = $startDay == 1;
+        $isLastDayOfMonth = $startDay == $startDate->format('t');
         $count = 0;
-        $monthsToAdd = 1;
 
-        while ($start <= $end) {
+        while($count < 3) {
             $val = $chartData;
-            $next = strtotime("+{$monthsToAdd} month", $startDate); //increment by one month
 
-            if($isFirst) {
-                $val['label'] = date($this->chart_label, $start);
-            } else {
-                $timedate = TimeDate::getInstance();
-                $nextDay = date('j', $next);
+            $nextDate->modify($this->chart_data_modifier);
+            $startDay = $startDate->format('j');
+            $nextDay = $nextDate->format('j');
 
-                //If the startDay was greater than the 28th and the nextDay is less than the 4th we know we have skipped a month
-                //and so we subtract out the number of days we have gone over
-                if($startDay > 28 && $nextDay < 4) {
-                    $next = $timedate->fromTimestamp($next)->modify("-{$nextDay} day")->getTimestamp();
-                }
-                //When we build out the interval, the next day is modified to be -1 day
-                $val['label'] = date('n/j', $start) . '-' . $timedate->fromTimestamp($next)->modify('-1 day')->format('n/j');
+            //If the startDay was greater than the 28th and the nextDay is less than the 4th we know we have skipped a month
+            //and so we subtract out the number of days we have gone over
+            if($startDay > 28 && $nextDay < 4) {
+                $nextDate->modify("-{$nextDay} day");
+            } else if($isLastDayOfMonth) {
+                $nextDate->setDate($nextDate->format('Y'), $nextDate->format('n'), $endDate->format('t'));
             }
 
-            $months[$count++] = $val;
-            $start = $next;
-            $monthsToAdd++;
-        }
+            if($isFirst) {
+                $val['label'] = $startDate->format($this->chart_label);
+            } else if ($count == 2) {
+                $val['label'] = $startDate->format('n/j') . '-' . $timedate->fromDbDate($this->end_date)->format('n/j');
+            } else {
+                $val['label'] = $startDate->format('n/j') . '-' . $timedate->fromDbDate($nextDate->asDbDate())->modify('-1 day')->format('n/j');
+            }
 
+            $startDate = $timedate->fromDbDate($nextDate->asDbDate());
+            $months[$count++] = $val;
+        }
         return $months;
     }
 
@@ -150,30 +153,58 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      */
     public function getChartLabelsKey($dateClosed)
     {
-        $start = strtotime($this->start_date);
-        $startDate = strtotime($this->start_date);
-        $startDay = date('j', $start);
-        $end = strtotime($dateClosed);
-        $count = -1;
-        $monthsToAdd = 1;
+        $key = $this->id . ':keys';
+        $keys = sugar_cache_retrieve($key);
+        $timedate = TimeDate::getInstance();
+        $ts = $timedate->fromDbDate($dateClosed)->getTimestamp();
 
-        while ($start <= $end) {
-            $next = strtotime("+{$monthsToAdd} month", $startDate); //increment by one month
-            $count++;
+        if(!empty($keys)) {
+            foreach($keys as $timestamp=>$count) {
+               if($ts <= $timestamp) {
+                   return $count;
+               }
+            }
+            return 2;
+        }
 
-            $timedate = TimeDate::getInstance();
-            $nextDay = date('j', $next);
+        $keys = array();
+        $startDate = $timedate->fromDbDate($this->start_date);
+        $nextDate = $timedate->fromDbDate($this->start_date);
+        $endDate = $timedate->fromDbDate($this->end_date);
+        $startDay = $startDate->format('j');
+        $isLastDayOfMonth = $startDay == $startDate->format('t');
+        $count = 0;
+
+        while($count < 3) {
+            $nextDate->modify($this->chart_data_modifier);
+            $startDay = $startDate->format('j');
+            $nextDay = $nextDate->format('j');
 
             //If the startDay was greater than the 28th and the nextDay is less than the 4th we know we have skipped a month
             //and so we subtract out the number of days we have gone over
             if($startDay > 28 && $nextDay < 4) {
-                $next = $timedate->fromTimestamp($next)->modify("-{$nextDay} day")->getTimestamp();
+                $nextDate->modify("-{$nextDay} day");
+            } else if($isLastDayOfMonth) {
+                $nextDate->setDate($nextDate->format('Y'), $nextDate->format('n'), $endDate->format('t'));
             }
 
-            $start = $next;
-            $monthsToAdd++;
+            if($count == 2) {
+                $tsKey = $timedate->fromDbDate($this->end_date)->getTimestamp();
+            } else {
+                $tsKey = $timedate->fromDbDate($nextDate->asDbDate())->modify('-1 day')->getTimestamp();
+            }
+
+            $keys[$tsKey] = $count;
+            $startDate = $timedate->fromDbDate($nextDate->asDbDate());
+            $count++;
         }
 
-        return $count;
+        sugar_cache_put($key, $keys);
+        foreach($keys as $tsKey=>$count) {
+            if($ts <= $tsKey) {
+                return $count;
+            }
+        }
+        return 2;
     }
 }

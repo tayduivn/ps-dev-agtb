@@ -96,6 +96,7 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         $start = strtotime($this->start_date);
         $end = strtotime($this->end_date);
         $count = 0;
+
         while ($start <= $end) {
             //Find out how many days are left for this period
             $remainingDays = floor(abs($end - $start) / 86400);
@@ -124,14 +125,41 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
      */
     public function getChartLabelsKey($dateClosed)
     {
-        $start = strtotime($this->start_date);
-        $end = strtotime($dateClosed);
-        $count = -1;
-        while ($start <= $end) {
-            $count++;
-            $start = strtotime($this->chart_data_modifier, $start);
+        $timedate = TimeDate::getInstance();
+        $ts = $timedate->fromDbDate($dateClosed)->getTimestamp();
+
+        $key = $this->id . ':keys';
+        $keys = sugar_cache_retrieve($key);
+
+        if(!empty($keys)) {
+            foreach($keys as $timestamp=>$count) {
+               if($ts < $timestamp) {
+                   return $count;
+               }
+            }
+            return count($keys);
         }
 
-        return $count;
+        $keys = array();
+        $start = $timedate->fromDbDate($this->start_date);
+        $end = $timedate->fromDbDate($this->end_date);
+        $count = 0;
+
+        while ($start <= $end) {
+            $start->modify($this->chart_data_modifier);
+            $tsKey = $start->getTimestamp();
+            $keys[$tsKey] = $count;
+            $count++;
+        }
+
+        sugar_cache_put($key, $keys);
+
+        foreach($keys as $tsKey=>$count) {
+            if($ts < $tsKey) {
+                return $count;
+            }
+        }
+
+        return count($keys);
     }
 }

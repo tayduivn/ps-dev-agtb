@@ -226,30 +226,25 @@ class TimePeriod extends SugarBean {
     }
 
     /**
-     * Determines the end date to hold to the contract of this being a time period
+     * Determines the end date to hold to the contract of this being a TimePeriod
      *
-     * @param $startDate db format date string to set the start date of the time period
+     * @param $startDate String of the TimePeriod start_date in db format
      */
     public function determineEndDate($start_date) {
         $timedate = TimeDate::getInstance();
-
         $startDate = $timedate->fromDbDate($start_date);
-
         $startDateDay = $startDate->format('j');
 
         //Flag if the start date's day is the last day of the month
-        if (isset($this->parent_id) && !empty($this->parent_id)) {
-            $parentTimePeriod = $this->getBean($this->parent_id);
+        if(!empty($this->parent_id)) {
+            $parentTimePeriod = TimePeriod::getBean($this->parent_id);
             $parentStartDate = $timedate->fromDbDate($parentTimePeriod->start_date);
-
-            $parentStartDateDay = $parentStartDate->format('j');
-            $isStartDateDayLastDayOfMonth = $parentStartDateDay == $parentStartDate->format('t');
+            $isStartDateDayLastDayOfMonth = $parentStartDate->format('j') == $parentStartDate->format('t');
         } else {
             $isStartDateDayLastDayOfMonth = $startDateDay == $startDate->format('t');
         }
 
         $endDate = $startDate->modify($this->next_date_modifier);
-
         $endDateDay = $endDate->format('j');
 
         //Handle special cases where start date day is towards the last days of the month
@@ -708,10 +703,9 @@ class TimePeriod extends SugarBean {
         $created[] = $newCurrentTimePeriod;
 
         //We set it back once here since the buildTimePeriods code triggers the modification immediately
-        $targetStartDate->modify($timePeriod->previous_date_modifier);
+        //$targetStartDate->modify($timePeriod->previous_date_modifier);
         $timePeriod->setStartDate($targetStartDate->asDbDate());
-
-        return array_merge($created, $timePeriod->buildTimePeriods($currentSettings['timeperiod_shown_forward'], $timePeriod->next_date_modifier, 'forward'));
+        return array_merge($created, $timePeriod->buildTimePeriods($currentSettings['timeperiod_shown_forward'], 'forward'));
     }
 
     /**
@@ -728,6 +722,7 @@ class TimePeriod extends SugarBean {
     public function buildLeaves($shownBackwardDifference, $shownForwardDifference)
     {
           $created = array();
+          $timedate = TimeDate::getInstance();
 
           if($shownBackwardDifference > 0) {
               $earliestTimePeriod = $this->getEarliest($this->type);
@@ -735,8 +730,8 @@ class TimePeriod extends SugarBean {
                   $earliestTimePeriod = TimePeriod::getByType($this->type);
                   $earliestTimePeriod->setStartDate($this->start_date);
               }
-
-              $created = $earliestTimePeriod->buildTimePeriods($shownBackwardDifference, $this->previous_date_modifier, 'backward');
+              $earliestTimePeriod->start_date = $timedate->fromDbDate($earliestTimePeriod->start_date)->modify($earliestTimePeriod->previous_date_modifier)->asDbDate(false);
+              $created = $earliestTimePeriod->buildTimePeriods($shownBackwardDifference, 'backward');
           }
 
           if($shownForwardDifference > 0) {
@@ -745,8 +740,8 @@ class TimePeriod extends SugarBean {
                   $latestTimePeriod = TimePeriod::getByType($this->type);
                   $latestTimePeriod->setStartDate($this->start_date);
               }
-
-              $created = array_merge($created, $latestTimePeriod->buildTimePeriods($shownForwardDifference, $this->next_date_modifier, 'forward'));
+              $latestTimePeriod->start_date = $timedate->fromDbDate($latestTimePeriod->start_date)->modify($latestTimePeriod->next_date_modifier)->asDbDate(false);
+              $created = array_merge($created, $latestTimePeriod->buildTimePeriods($shownForwardDifference, 'forward'));
           }
 
           return $created;
@@ -756,22 +751,23 @@ class TimePeriod extends SugarBean {
      * buildTimePeriods
      *
      * @param $timePeriods int value of the number of parent level TimePeriods to create
-     * @param $dateModifier String value of the date modifier (1 year, -1 year, etc.) to use when creating the parent level TimePeriods
      * @param $direction String value of the direction we are building leaves ('forward' or 'backward')
      * @return Array of TimePeriod instances created
      */
-    protected function buildTimePeriods($timePeriods, $dateModifier, $direction)
+    public function buildTimePeriods($timePeriods, $direction)
     {
         $created = array();
         $timedate = TimeDate::getInstance();
-        $startDate = $timedate->fromDbDate($this->start_date)->modify($dateModifier)->asDbDate();
+        $startDate = $timedate->fromDbDate($this->start_date); //->modify($dateModifier);
 
         for($i=0; $i < $timePeriods; $i++) {
             //Create the parent TimePeriod instance
             $timePeriod = TimePeriod::getByType($this->type);
-            $timePeriod->setStartDate($startDate);
+            $timePeriod->setStartDate($startDate->asDbDate(false));
+            $startDateDay = $timedate->fromDbDate($timePeriod->start_date)->format('j');
+
             $remainder = $i % $this->periods_in_year;
-            $year = $timedate->fromDbDate($startDate)->format('Y');
+
             if($direction == 'forward') {
                 $timePeriod->name = $timePeriod->getTimePeriodName($remainder == 0 ? 1 : $remainder + 1);
             } else {
@@ -781,6 +777,7 @@ class TimePeriod extends SugarBean {
             $created[] = $timePeriod;
 
             $leafStartDate = $timePeriod->start_date;
+            $leavesCreated = array();
 
             for($x=1; $x <= $this->leaf_periods; $x++) {
                 $leafPeriod = TimePeriod::getByType($this->leaf_period_type);
@@ -789,11 +786,21 @@ class TimePeriod extends SugarBean {
                 $leafPeriod->name = $leafPeriod->getTimePeriodName($x);
                 $leafPeriod->leaf_cycle = $x;
                 $leafPeriod->save();
+                $leavesCreated[] = $leafPeriod;
                 $created[] = $leafPeriod;
                 $leafStartDate = $timedate->fromDbDate($leafPeriod->end_date)->modify('+1 day')->asDbDate(false);
             }
 
-            $startDate = $timedate->fromDbDate($startDate)->modify($dateModifier)->asDbDate(false);
+            if($direction == 'forward') {
+                //Use the last leaf period's end date and add one day from there
+                $startDate = $timedate->fromDbDate($leafPeriod->end_date)->modify('+1 day');
+            } else {
+                $startDate = $timedate->fromDbDate($leavesCreated[0]->start_date)->modify($timePeriod->previous_date_modifier);
+                $newStartDateDay = $startDate->format('j');
+                if($startDateDay > 28 && $newStartDateDay < 4) {
+                    $startDate->modify("-{$newStartDateDay} day");
+                }
+            }
         }
 
         return $created;
