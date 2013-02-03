@@ -35,6 +35,10 @@ $viewdefs['Forecasts']['base']['view']['forecastsTimeperiod'] = array(
                     'name' => 'selectedTimePeriod',
                     'label' => 'LBL_TIMEPERIOD_NAME',
                     'type' => 'enum',
+                    'enum_width' => '100%',
+                    'dropdown_class' => 'topline-timeperiod-dropdown',
+                    'dropdown_width' => 'auto',
+                    'searchBarThreshold' => 5,
                     'view' => 'edit',
                     // options are set dynamically in the view
                     'default' => true,
