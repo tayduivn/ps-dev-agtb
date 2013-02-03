@@ -9,7 +9,10 @@
             self = this;
         if(this.tplName === 'edit') {
             this.checkAcl('access', this.model.get('parent_type'));
-            this.$(this.typeFieldTag).select2().on("change", function(e) {
+            this.$(this.typeFieldTag).select2({
+                width : '100%',
+                minimumResultsForSearch: 5
+            }).on("change", function(e) {
                 var module = e.val;
                 self.checkAcl.call(self, 'edit', module);
                 self.setValue({
@@ -31,7 +34,7 @@
             }
             this.$(this.typeFieldTag).trigger("liszt:updated");
         } else if(this.tplName === 'disabled'){
-            this.$(this.typeFieldTag).attr("disabled", "disabled").not(".chzn-done").chosen();
+            this.$(this.typeFieldTag).attr("disabled", "disabled").select2();
         }
         return result;
     },

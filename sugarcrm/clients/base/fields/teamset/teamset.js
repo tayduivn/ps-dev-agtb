@@ -118,6 +118,9 @@
     }, 0),
     bindDomChange: function() {
         //To avoid re-render on change the field
+    },
+    getFieldElement: function() {
+        return this.$el;
     }
     //TODO: Handle validation error
 })
