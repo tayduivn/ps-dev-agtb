@@ -1,14 +1,13 @@
 .topline {
   position: relative;
 
-
   //this is the container = .chzn-container-single
   .control-group.datefilter {
     float: left;
 
     //this is the anchor styled as select
-    .select2-choice,
-    .chzn-single {
+    .select2-choice {
+      //get rid of select box styling
       border: 0px none;
       background-image: none;
       background-color: transparent;
@@ -17,28 +16,20 @@
       //this is the font and text
       span {
         font-size: 22px;
-        .rtlMargin(@direction,0 0 0 26px);
+        .rtlMargin(@direction,0 0 0 22px);
         .rtl(@direction,ltr);
       }
       //this is the caret
       div {
-        right: 22px;
+        right: 5px;
         .rtlLeft(@direction,22px);
         .rtlRight(@direction,auto);
       }
     }
 
-    .select2-choice:focus,
-    .chzn-single:focus {
+    .select2-choice:focus {
       .box-shadow(none);
       border: 0 none;
-    }
-
-    .chzn-container-single {
-      //this is the select option filter input
-      .chzn-search {
-        display: none;
-      }
     }
 
     select {
@@ -56,9 +47,6 @@
     font-size: 20px;
     line-height: 28px;
     display: inline;
-  }
-  //nutmeg
-  h2 {
     margin-right: -2px;
   }
 
@@ -85,6 +73,7 @@
     .rtlMargin(@direction,0 20px 0 0);
     .rtlPadding(@direction,10px 0 0 10px);
   }
+
   .datapoints {
     float: right;
     text-align: right;
@@ -129,12 +118,12 @@
     .datapoint2 {
       right: 20px;
     }
-
     .title {
       padding: 0px 20px 10px 0;
       .rtlPadding(@direction,0 0 10px 20px);
     }
   }
+
   //nutmeg
   .datapoint1,
   .log .datapoint1 {
@@ -144,6 +133,7 @@
   .log .datapoint2 {
     right: 110px;
   }
+
   div.divider {
     float: left;
     right: auto;
@@ -186,6 +176,35 @@
   div.results {
     max-height: 118px;
     overflow-y: scroll;
+  }
+}
+
+.topline-timeperiod-dropdown {
+  border: 1px solid @grayLight;
+  width: auto;
+  margin-top: 5px;
+  .caret-top(12px,11px,auto,auto);
+  .result-selected {
+    display: block;
+    font-weight: bold;
+  }
+  .select2-search {
+    padding-top: 4px;
+  }
+  .select2-results {
+    margin: 0;
+    padding: 0;
+    max-height: 235px;
+
+    li {
+      line-height: 26px;
+      border-bottom: 1px solid darken(@grayLighter, 5%);
+    }
+    li:hover,
+    .select2-highlighted {
+      background: @dropdownLinkBackgroundHover;
+      color: @dropdownLinkColorHover;
+    }
   }
 }
 
