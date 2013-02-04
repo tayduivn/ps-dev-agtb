@@ -6,7 +6,7 @@
   <link href="../css/sugar.css" rel="stylesheet">
   <script>
     var page = {
-        "title": "Emails"
+        "title": "Record View"
       , "description": ""
       , "templates": [
           {"file":"common/head","target":"head","method":"append"}
@@ -14,14 +14,18 @@
         , {"file":"common/header","target":"#view .headerpane","method":"replace"}
         , {"file":"common/footer-master","target":"#footer","method":"append"}
         , {"file":"common/edit-drawer","target":".module-view","method":"append"}
-        , {"file":"common/search-filter","target":"#view .search-filter","method":"replace"}
-        , {"file":"common/data-table","target":"#view .main-content","method":"replace"}
+        , {"file":"opportunity/opportunity-view","target":"#view .record","method":"replace"}
+
         , {"file":"widget/widget-control","target":"#overview","method":"replace"}
+        , {"file":"widget/interactions-widget","target":"#overview","method":"append"}
+        , {"file":"widget/stats-widget","target":"#overview","method":"append"}
         , {"file":"widget/email-widget","target":"#overview","method":"append"}
       ]
     };
+
   </script>
 </head>
+
 <body>
   <div id="sugarcrm">
     <div id="sidecar">
@@ -29,21 +33,6 @@
       <div id="header"></div>
       <div id="content">
         <div class="layout_Leads">
-          <div class="row-fluid module-edit">
-
-            <div class="main-pane span8" id="edit">
-              <div class="headerpane ellipsis"></div>
-              <div class="record"></div>
-              <div class="main-content"></div>
-            </div>
-
-            <div class="side sidebar-content span4">
-              <div class="side-pane active" id="overview-edit"></div>
-              <div class="preview-pane" id="preview-edit"></div>
-            </div>
-
-          </div>
-
           <div class="row-fluid module-view">
 
             <div class="main-pane span8" id="view">
@@ -51,6 +40,7 @@
                 <div>
                   <div data-tour="tour-Leads-businesscard">
                     <div class="headerpane ellipsis"></div>
+                    <div class="change_log_container"></div>
                     <div class="record"></div>
                     <div class="moreless"></div>
                   </div>
@@ -70,6 +60,23 @@
 
           </div>
 
+
+
+          <div class="row-fluid module-edit">
+
+            <div class="main-pane span8" id="edit">
+              <div class="headerpane ellipsis"></div>
+              <div class="record"></div>
+              <div class="main-content"></div>
+            </div>
+
+            <div class="side sidebar-content span4">
+              <div class="side-pane active" id="overview-edit"></div>
+              <div class="preview-pane" id="preview-edit"></div>
+            </div>
+
+          </div>
+
         </div>
       </div>
       <div id="footer"></div>
@@ -84,7 +91,7 @@
   <script src="../../assets/js/bootstrap.min.js"></script>
   <script src="../../assets/js/bootstrapx-clickover.js"></script>
   <script src="../../assets/js/bootstrap-datepicker.js"></script>
-  <script type="text/javascript" src="../../assets/js/jquery.form.js"></script>
+  <script src="../../assets/js/jquery.form.js"></script>
 
   <script src="../js/jquery.datatables.js"></script>
   <script src="../js/FixedColumns.min.js"></script>
@@ -93,6 +100,8 @@
   <script src="../js/jquery.prettynumber.js"></script>
   <script src="../js/jquery.nouislider.min.js"></script>
   <script src="../js/select2.min.js"></script>
+
+  <script src="../../assets/js/jquery-ui-1.10.0.custom.min.js"></script>
 
   <!-- new D3 charting library files -->
   <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
@@ -103,5 +112,37 @@
   <script src="../js/cookie.js"></script>
 
   <script src="../js/application.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#overview").sortable({
+        items: ".thumbnail.widget",
+        axis: "y",
+      });
+      $('body').on('click', '#example td input[type=checkbox]', function(){
+        var ltbl = $('#example')
+        if (ltbl.hasClass('checkbox_strike')===false) {
+          ltbl.addClass('checkbox_strike')
+        } else {
+          ltbl.find('thead .dropdown-menu li.merge').removeClass('disabled');
+        }
+      });
+      $('body').on('click', '.dropdown-menu li.merge', function(){
+        drawer(true);
+        loadPartials([
+          {"file":"merge/merge-interface-header.html","target":"#edit .headerpane","method":"replace"},
+          {"file":"merge/merge-interface.html","target":"#edit .record","method":"replace"},
+          {"file":"merge/merge-interface-sidebar.html","target":".sidebar-content .side-pane","method":"replace"}
+        ]);
+      });
+      $('body').on('click', '.view_change_log', function(){
+        loadPartials([
+          {"file":"common/drawer-container.html","target":".change_log_container","method":"replace"},
+        ]);
+        $('#pageConfig .dropdown-toggle').trigger('click');
+        return false;
+      });
+    });
+
+  </script>
 </body>
 </html>

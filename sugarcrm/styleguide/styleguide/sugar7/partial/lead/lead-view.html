@@ -99,13 +99,16 @@
 </form>
 
 <script>
-  page.record = {'title':'Tameka Dammann - called to ask about upgrading their professional license to enterprise'};
+  page.record = {
+      'title':'Tameka Dammann - called to ask about upgrading their professional license to enterprise'
+    , 'avatar': 'avatar_mia.jpg'
+  };
 
   loadPartials([
     {"file":"common/header-view","target":"#view .headerpane","method":"replace"},
     //{"file":"common/related-tabs","target":"#view .related-tabs","method":"replace"},
-    {"file":"common/search-filter","target":"#view .search-filter","method":"replace"},
-    {"file":"lead/lead-activitystream","target":"#view .main-content","method":"replace"}
+    {"file":"common/search-filter-related","target":"#view .search-filter","method":"replace"},
+    {"file":"common/record-activitystream","target":"#view .main-content","method":"replace"}
   ]);
 
   $(document).ready(function() {

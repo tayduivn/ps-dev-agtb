@@ -20,14 +20,15 @@
 
 
 <script>
-  page.record = {'title':'Plato&squo;s LED MFT'};
+  page.record = {
+      'title':"Plato's LED MFT"
+    , 'avatar': 'logo_weyland.png'
+  };
 
   loadPartials([
-    {"file":"opportunity/opportunity-view-header","target":"#view .headerpane","method":"replace"},
-    {"file":"common/related-tabs","target":"#view .related-tabs","method":"replace"},
-    {"file":"common/search-filter","target":"#view .search-filter","method":"replace"},
-    {"file":"common/omnibar","target":"#view .main-content","method":"replace"},
-    {"file":"opportunity/opportunity-activitystream","target":"#view .main-content","method":"append"}
+      {"file":"common/header-view","target":"#view .headerpane","method":"replace"}
+    , {"file":"common/search-filter-related","target":"#view .search-filter","method":"replace"}
+    , {"file":"common/record-activitystream","target":"#view .main-content","method":"replace"}
   ]);
 
   $(document).ready(function() {
