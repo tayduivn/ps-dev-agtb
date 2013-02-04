@@ -277,6 +277,41 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group duplicatecheck
      */
+    public function testBuildDupeCheckFilter_NoDataForAllFieldsInSection_RemovesWholeSection() {
+        $bean             = self::getMock("Lead");
+        $filterDuplicateCheckCaller = new FilterDuplicateCheckCaller($bean, $this->metadata);
+
+        $expected = array(
+            array(
+                '$and' => array(
+                    array(
+                        '$or' => array(
+                            array(
+                                'status' => array(
+                                    '$not_equals' => 'Converted',
+                                ),
+                            ),
+                            array(
+                                'status' => array(
+                                    '$is_null' => '',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        );
+        $actual   = $filterDuplicateCheckCaller->buildDupeCheckFilterCaller();
+
+        // compare the complete arrays
+        self::assertEquals($expected,
+            $actual,
+            "The original filters were lost or the new filter is not constructed properly.");
+    }
+
+    /**
+     * @group duplicatecheck
+     */
     public function testAddFilterForEdits_AddsANotEqualsFilterToTheFilterArrayToPreventMatchesOnTheSpecifiedId() {
         $bean                       = self::getMock("Lead");
         $bean->id                   = "1";
