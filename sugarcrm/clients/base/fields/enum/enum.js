@@ -62,7 +62,7 @@
         /* From http://ivaynberg.github.com/select2/#documentation:
          * "Calculate the width of the container div to the source element"
          */
-        select2Options.width = this.def.enum_width ? this.def.enum_width : 'element';
+        select2Options.width = this.def.enum_width ? this.def.enum_width : '100%';
 
         /* Because the select2 dropdown is appended to <body>, we need to be able
          * to pass a classname to the constructor to allow for custom styling
