@@ -64,11 +64,22 @@
          */
         select2Options.width = this.def.enum_width ? this.def.enum_width : '100%';
 
-        /*
-         The forecasts module requirements indicate that the search bar only shows up for fields with 5 or more values,
-         this adds the ability to specify that threshold in metadata.
-          */
-        select2Options.minimumResultsForSearch = this.def.searchBarThreshold?this.def.searchBarThreshold:0;
+        /* Because the select2 dropdown is appended to <body>, we need to be able
+         * to pass a classname to the constructor to allow for custom styling
+         */
+        select2Options.dropdownCssClass = this.def.dropdown_class ? this.def.dropdown_class : '';
+
+        /* Because the select2 dropdown is calculated at render to be as wide as container
+         * to make it differ the dropdownCss.width must be set (i.e.,100%,auto)
+         */
+        if (this.def.dropdown_width) {
+            select2Options.dropdownCss = {width: this.def.dropdown_width};
+        }
+
+        /* All select2 dropdowns should only show the search bar for fields with 7 or more values,
+         * this adds the ability to specify that threshold in metadata.
+         */
+        select2Options.minimumResultsForSearch = this.def.searchBarThreshold?this.def.searchBarThreshold:7;
 
         if(this.tplName === 'edit') {
             this.$(this.fieldTag).select2(select2Options);
