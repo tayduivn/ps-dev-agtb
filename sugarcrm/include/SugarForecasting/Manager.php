@@ -436,7 +436,7 @@ GROUP BY u.user_name";
         $settings = $admin->getConfigForModule('Forecasts');
         if (!isset($settings['has_commits']) || !$settings['has_commits']) {
             $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
-            MetaDataManager::clearAPICache();
+            MetaDataManager::refreshCache();
         }
 
         $seed->setWorksheetArgs($this->getArgs());

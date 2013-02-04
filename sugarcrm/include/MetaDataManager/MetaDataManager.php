@@ -120,6 +120,16 @@ class MetaDataManager {
             $platforms = array('base');
         }
         
+        // We should have an array of platforms
+        if (!is_array($platforms)) {
+            $platforms = (array) $platforms;
+        }
+        
+        // Base needs to be in place if it isn't
+        if (!in_array('base', $platforms)) {
+            $platforms[] = 'base';
+        }
+        
         $this->platforms = $platforms;
         $this->public = $public;
         
@@ -316,7 +326,7 @@ class MetaDataManager {
         }
         //END SUGARCRM flav=pro ONLY
 
-        $data["_hash"] = md5(serialize($data));
+        $data["_hash"] = $this->getMetadataHash($data);
 
         return $data;
     }
@@ -350,7 +360,7 @@ class MetaDataManager {
             unset($data[$relKey]['relationships']);
         }
 
-        $data["_hash"] = md5(serialize($data));
+        $data["_hash"] = $this->getMetadataHash($data);
 
         return $data;
     }
@@ -505,7 +515,7 @@ class MetaDataManager {
                 }
             }
         }
-        $outputAcl['_hash'] = md5(serialize($outputAcl));
+        $outputAcl['_hash'] = $this->getMetadataHash($outputAcl);
         return $outputAcl;
     }
 
@@ -720,6 +730,17 @@ class MetaDataManager {
             }
         }
     }
+
+    /**
+     * Determines if a section is valid for this visibility
+     * 
+     * @param string $section
+     * @return bool
+     */
+    protected function isValidSection($section) 
+    {
+        return in_array($section, self::$sections[$this->visibility]);
+    }
     
     protected function refreshModulesSection($data) 
     {
@@ -730,7 +751,7 @@ class MetaDataManager {
             }
         }
 
-        $data['full_module_list']['_hash'] = md5(serialize($data['full_module_list']));
+        $data['full_module_list']['_hash'] = $this->getMetadataHash($data['full_module_list']);
         
         return $data;
     }
@@ -747,8 +768,46 @@ class MetaDataManager {
         return $data;
     }
     
-    public function rebuildCacheSection($section = '', $modules = array())
+    public function rebuildModulesCache($modules, $data = array()) {
+        // Only write if were actually asked for
+        $write = false;
+        
+        // Only process if there are modules to work on
+        if (!empty($modules) && $this->isValidSection('modules')) {
+            // If there was no metadata payload given, get the metadata from the source
+            if (empty($data)) {
+                $data = $this->getMetadata();
+            }
+            
+            // Handle the module(s)
+            foreach ((array) $modules as $module) {
+                // Only work on modules that was have already grabbed
+                if (isset($data['modules'][$module])) {
+                    $bean = BeanFactory::newBean($module);
+                    if ($bean) {
+                        $data['modules'][$module] = $this->getModuleData($module);
+                        $this->_relateFields($data, $module, $bean);
+    
+                        if (!$write) {
+                            $write = true;
+                        }
+                    }
+                }
+            }
+            
+            // Now cache the new data if there is a need
+            if ($write) {
+                $data['_hash'] = $this->getMetadataHash($data);
+                $this->putMetadataCache($data, $this->platforms[0], $this->public);
+            }
+        }
+    }
+    
+    public function rebuildSectionCache($section = '')
     {
+        // Only write if the section or module(s) were actually found and gettable
+        $write = false;
+        
         // If there is no section passed then do nothing
         if (!empty($section)) {
             // We will always need the metadata for this process
@@ -756,7 +815,7 @@ class MetaDataManager {
             
             // Handle the section(s)
             foreach ((array) $section as $index) {
-                if (isset($this->sectionMap[$index])) {
+                if (isset($this->sectionMap[$index]) && $this->isValidSection($index)) {
                     if ($this->sectionMap[$index] === false) {
                         $method = 'refresh' . ucfirst($index) . 'Section';
                         $data = $this->$method($data);
@@ -764,27 +823,33 @@ class MetaDataManager {
                         $method = $this->sectionMap[$index];
                         $data[$index] = $this->$method();
                     }
-                }
-            }
-            
-            // Now handle modules, if there are any
-            if (!empty($modules)) {
-                foreach ((array) $modules as $module) {
-                    if (isset($data['modules'][$module])) {
-                        $bean = BeanFactory::newBean($module);
-                        $data['modules'][$module] = $this->getModuleData($module);
-                        $this->_relateFields($data, $module, $bean);
+                    
+                    if (!$write) {
+                        $write = true;
                     }
                 }
             }
             
-            // Now cache the new data
-            $this->putMetadataCache($data, $this->platforms[0], $this->public);
+            // Now cache the new data if there is a need
+            if ($write) {
+                $data['_hash'] = $this->getMetadataHash($data);
+                $this->putMetadataCache($data, $this->platforms[0], $this->public);
+            }
         }
     }
     
     public function rebuildCache() 
     {
+        // Clear the module client cache first
+        MetaDataFiles::clearModuleClientCache();
+        
+        // Clear our cache file
+        $file = $this->getMetadataCacheFileName();
+        if (file_exists($file)) {
+            unlink($file);
+        }
+        
+        // Rebuild it
         $method = 'load' . ($this->public ? 'Public' : '') . 'Metadata';
         $data = $this->$method();
         $this->putMetadataCache($data, $this->platforms[0], $this->public);
@@ -810,7 +875,7 @@ class MetaDataManager {
         }
     }
     
-    public static function refreshCacheSection($section = '', $modules = array(), $platforms = array())
+    public static function refreshSectionCache($section = '', $platforms = array())
     {
         if (empty($platforms)) {
             $platforms = self::getPlatformList();
@@ -819,8 +884,22 @@ class MetaDataManager {
         foreach ((array) $platforms as $platform) {
             foreach (array(true, false) as $public) {
                 $mm = self::getManagerNew($platform, $public);
-                $mm->rebuildCacheSection($section, $modules);
+                $mm->rebuildSectionCache($section);
             }
+        }
+    }
+    
+    public static function refreshModulesCache($modules = array(), $platforms = array())
+    {
+        if (empty($platforms)) {
+            $platforms = self::getPlatformList();
+        }
+        
+        // This only needs to be done for private visibility since modules are not
+        // in public metadata
+        foreach ((array) $platforms as $platform) {
+            $mm = self::getManagerNew($platform);
+            $mm->rebuildModulesCache($modules);
         }
     }
     
@@ -909,7 +988,7 @@ class MetaDataManager {
             "Login" => array("fields" => array()));
         $data['config']           = $this->getConfigs();
         $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);        
-        $data["_hash"] = md5(serialize($data));
+        $data["_hash"] = $this->getMetadataHash($data);
         
         return $data;
     }
@@ -927,7 +1006,7 @@ class MetaDataManager {
             }
         }
 
-        $data['full_module_list']['_hash'] = md5(serialize($data['full_module_list']));
+        $data['full_module_list']['_hash'] = $this->getMetadataHash($data['full_module_list']);
 
         $data['currencies'] = $this->getSystemCurrencies();
         $data['fields']  = $this->getSugarFields();
@@ -937,7 +1016,7 @@ class MetaDataManager {
         $data['relationships'] = $this->getRelationshipData();
         $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
         $data['server_info'] = $this->getServerInfo();
-        $hash = md5(serialize($data));
+        $hash = $this->getMetadataHash($data);
         $data["_hash"] = $hash;
 
         return $data;
@@ -986,7 +1065,7 @@ class MetaDataManager {
             $moduleList[$module] = $module;
         }
 
-        $moduleList['_hash'] = md5(serialize($moduleList));
+        $moduleList['_hash'] = $this->getMetadataHash($moduleList);
         return $moduleList;
     }
 
@@ -1190,7 +1269,7 @@ class MetaDataManager {
             foreach ($stringData['app_list_strings'] as $listIndex => $listArray) {
                 $stringData['app_list_strings'][$listIndex] = (object) $listArray;
             }
-            $stringData['_hash'] = md5(serialize($stringData));
+            $stringData['_hash'] = $this->getMetadataHash($stringData);
             $fileList[$language] = sugar_cached('api/metadata/lang_'.$language.'_'.$stringData['_hash'].'.json');
             sugar_file_put_contents_atomic($fileList[$language],json_encode($stringData));
         }
@@ -1202,7 +1281,7 @@ class MetaDataManager {
 
         // We need the default language somewhere, how about here?
         $urlList['default'] = $GLOBALS['sugar_config']['default_language'];
-        $urlList['_hash'] = md5(serialize($urlList));
+        $urlList['_hash'] = $this->getMetadataHash($urlList);
 
         return $urlList;
     }
@@ -1251,12 +1330,7 @@ class MetaDataManager {
 
     protected function putMetadataCache($data, $platform, $isPublic)
     {
-        if ( $isPublic ) {
-            $type = 'public';
-        } else {
-            $type = 'private';
-        }
-        $cacheFile = sugar_cached('api/metadata/metadata_'.$platform.'_'.$type.'.php');
+        $cacheFile = $this->getMetadataCacheFileName($platform, $isPublic);
         create_cache_directory($cacheFile);
         write_array_to_file('metadata', $data, $cacheFile);
     }
@@ -1267,18 +1341,34 @@ class MetaDataManager {
             return null;
         }
 
-        if ( $isPublic ) {
-            $type = 'public';
-        } else {
-            $type = 'private';
-        }
-        $cacheFile = sugar_cached('api/metadata/metadata_'.$platform.'_'.$type.'.php');
+        $cacheFile = $this->getMetadataCacheFileName($platform, $isPublic);
         if ( file_exists($cacheFile) ) {
             require $cacheFile;
             return $metadata;
         } else {
             return null;
         }
+    }
+
+    /**
+     * Gets the name of the cache file for this manager
+     * 
+     * @param string $platform
+     * @param boolean $public
+     * @return string
+     */
+    public function getMetadataCacheFileName($platform = null, $public = null)
+    {
+        if (empty($platform)) {
+            $platform = $this->platforms[0];
+        }
+        
+        if ($public === null) {
+            $public = $this->public;
+        }
+        
+        $type = $public ? 'public' : 'private';
+        return sugar_cached('api/metadata/metadata_'.$platform.'_'.$type.'.php');
     }
 
     /**
@@ -1300,5 +1390,18 @@ class MetaDataManager {
         }
         
         return $data;
+    }
+
+    /**
+     * Calculates a metadata hash. Removes any existing first level _hash index
+     * prior to calculation.
+     * 
+     * @param array $data
+     * @return string
+     */
+    protected function getMetadataHash($data) 
+    {
+        unset($data['_hash']);
+        return md5(serialize($data));
     }
 }

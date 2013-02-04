@@ -60,7 +60,9 @@ class SugarRelationshipFactory {
 
     public static function rebuildCache()
     {
-        self::getInstance()->buildRelationshipCache();
+        $rf = self::getInstance();
+        $rf->buildRelationshipCache();
+        $rf->refreshMetadataAPICache();
     }
 
     public static function deleteCache()
@@ -70,9 +72,6 @@ class SugarRelationshipFactory {
         {
             unlink($file);
         }
-        
-        //clear out the api metadata cache
-        MetaDataManager::clearAPICache();
     }
 
     /**
@@ -208,6 +207,16 @@ class SugarRelationshipFactory {
 		return sugar_cached("Relationships/relationships.cache.php");
 	}
 
+    /**
+     * Refreshes the relationship section of the metadata api cache
+     */
+    protected function refreshMetadataAPICache() {
+        // Clear out the relationships section of the API metadata but only when
+        // not installing
+        if (empty($GLOBALS['installing'])) {
+            MetaDataManager::refreshSectionCache(array('relationships'));
+        }
+    }
 
 
 }
