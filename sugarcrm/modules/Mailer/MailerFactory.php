@@ -37,22 +37,6 @@ require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.
  */
 class MailerFactory
 {
-    // protected members
-
-    // Maps the mode from a OutboundEmailConfiguration to the class that represents the sending strategy for that
-    // configuration.
-    // key = mode; value = mailer class
-    protected static $modeToMailerMap = array(
-        OutboundEmailConfigurationPeer::MODE_SMTP => array(
-            "path"  => "modules/Mailer", // the path to the class file without trailing slash ("/")
-            "class" => "SmtpMailer",     // the name of the class
-        ),
-        OutboundEmailConfigurationPeer::MODE_WEB  => array(
-            "path"  => "modules/Mailer",
-            "class" => "WebMailer",
-        ),
-    );
-
     /**
      * In many cases, the correct Mailer is the one that is produced from the configuration associated with a
      * particular user. This method makes the necessary calls to produce that Mailer, in order to obey the DRY
@@ -64,12 +48,12 @@ class MailerFactory
      */
     public static function getMailerForUser(User $user) {
         // get the configuration that the Mailer needs
-        $mailConfiguration = self::getOutboundEmailConfiguration($user);
+        $mailConfiguration = static::getOutboundEmailConfiguration($user);
         // Bug #59513
         // until PHP 5.3 is standard on test environments, static:: cannot be used for late static binding
 
         // generate the Mailer
-        $mailer = self::getMailer($mailConfiguration);
+        $mailer = static::getMailer($mailConfiguration);
 
         return $mailer;
     }
@@ -87,8 +71,8 @@ class MailerFactory
      * @throws MailerException Allows MailerExceptions to bubble up.
      */
     public static function getMailer(OutboundEmailConfiguration $config) {
-        $headers = self::buildHeadersForMailer($config->getFrom(), $config->getReplyTo());
-        $mailer  = self::buildMailer($config);
+        $headers = static::buildHeadersForMailer($config->getFrom(), $config->getReplyTo());
+        $mailer  = static::buildMailer($config);
         $mailer->setHeaders($headers);
 
         return $mailer;
@@ -105,32 +89,29 @@ class MailerFactory
      * @throws MailerException
      */
     private static function buildMailer(OutboundEmailConfiguration $config) {
-        $mode  = $config->getMode();
+        $mode     = $config->getMode();
+        $strategy = static::getStrategy($mode);
+        $mailer   = null;
 
-        if (!array_key_exists($mode, self::$modeToMailerMap)) {
+        if (is_null($strategy)) {
             throw new MailerException(
-                "Invalid Mailer: Could not find mode '{$mode}'",
+                "Invalid Mailer: Could not find a strategy for mode '{$mode}'",
                 MailerException::InvalidMailer
             );
         }
 
-        $path  = self::$modeToMailerMap[$mode]["path"];
-        $class = self::$modeToMailerMap[$mode]["class"];
-
-        if (!class_exists($class)) {
-            // import the file where the class is defined
-            $file = "{$path}/{$class}.php";
-            @include_once $file; // suppress errors
+        if (class_exists($strategy)) {
+            $mailer = new $strategy($config);
         }
 
-        if (!class_exists($class)) {
+        if (!($mailer instanceof $strategy)) {
             throw new MailerException(
-                "Invalid Mailer: Could not find class '{$class}'",
+                "Invalid Mailer: Could not find the strategy defined by class '{$strategy}'",
                 MailerException::InvalidMailer
             );
         }
 
-        return new $class($config);
+        return $mailer;
     }
 
     /**
@@ -169,5 +150,39 @@ class MailerFactory
      */
     protected static function getOutboundEmailConfiguration(User $user) {
         return OutboundEmailConfigurationPeer::getSystemMailConfiguration($user);
+    }
+
+    /**
+     * Maps the mode from a OutboundEmailConfiguration to the class that represents the sending strategy for that
+     * configuration.
+     *
+     * @static
+     * @access protected
+     * @return array key = mode; value = mailer class
+     */
+    protected static function getStrategies() {
+        return array(
+            OutboundEmailConfigurationPeer::MODE_SMTP => "SmtpMailer",
+            OutboundEmailConfigurationPeer::MODE_WEB  => "WebMailer",
+        );
+    }
+
+    /**
+     * Returns the class name for the sending strategy that is used for the defined mode.
+     *
+     * @static
+     * @access protected
+     * @param $mode
+     * @return null|string The class name for the chosen strategy.
+     */
+    protected static function getStrategy($mode) {
+        $strategy   = null;
+        $strategies = static::getStrategies();
+
+        if (array_key_exists($mode, $strategies)) {
+            $strategy = $strategies[$mode];
+        }
+
+        return $strategy;
     }
 }
