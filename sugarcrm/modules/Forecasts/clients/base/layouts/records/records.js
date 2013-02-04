@@ -62,7 +62,15 @@
         this.deferredRender = new $.Deferred();
         app.api.call('GET', url, null, {
             success: function(data) {
-                return self.initForecastsModule(data, options, self);
+
+                // Add Forecasts-specific stuff to the app.user object
+                app.user.set(data.initData.userData);
+
+                if(data.initData.forecasts_setup === 0) {
+                    window.location.hash = "#Forecasts/layout/config";
+                } else {
+                    return self.initForecastsModule(data, options, self);
+                }
             }
         });
     },
@@ -74,13 +82,6 @@
         // get default selections for filter and range
         app.defaultSelections = forecastData.defaultSelections;
         app.initData = forecastData.initData;
-
-        // Add Forecasts-specific stuff to the app.user object
-        app.user.set(app.initData.userData);
-
-        if(forecastData.initData.forecasts_setup === 0) {
-            window.location.hash = "#Forecasts/layout/config";
-        }
 
         ctx.componentsMeta = options.meta.components;
 

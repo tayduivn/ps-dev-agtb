@@ -214,12 +214,6 @@
                     meta: app.metadata.getField('range')
                 };
 
-                //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-                if(this.view.disableCategories) {
-                    fieldSettings.viewName = 'detail';
-                    fieldSettings.def.view = 'detail';
-                }
-
                 rangeField = app.view.createField(fieldSettings);
                 this.showElement.append('<b>'+ label +':</b>').append(rangeField.el);
                 rangeField.render();
@@ -401,12 +395,6 @@
         fieldSettings.def.view = 'forecastsCustomRange';
         // enable slider
         fieldSettings.def.enabled = true;
-
-        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-        if(this.disableCategories) {
-            fieldSettings.viewName = 'detail';
-            fieldSettings.def.view = 'detail';
-        }
 
         rangeField = app.view.createField(fieldSettings);
         currentPlh.append(rangeField.el);

@@ -347,6 +347,12 @@ $app_list_strings = array (
         'Closed Lost' => 'Closed Lost',
         'Converted to Quote' => 'Converted to Quote'
     ),
+    'sales_status_dom' => array(
+        'New' => 'New',
+        'In Progress' => 'In Progress',
+        'Closed Won' => 'Closed Won',
+        'Closed Lost' => 'Closed Lost',
+    ),
 
   'commit_stage_binary_dom' => array (
     'include' => 'Include',
