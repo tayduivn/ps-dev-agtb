@@ -395,4 +395,16 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         
         return $headers;
     }
+
+    /**
+     * Asserts that the response included the expected HTTP status code.
+     *
+     * @param array $response
+     * @param int   $expectedCode
+     * @return void
+     */
+    protected function assertHttpStatus($response, $expectedCode = 200) {
+        $httpStatus = $response["info"]["http_code"];
+        $this->assertEquals($expectedCode, $httpStatus, "Unexpected HTTP Status: {$httpStatus}\n");
+    }
 }
