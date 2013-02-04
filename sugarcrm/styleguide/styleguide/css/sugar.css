@@ -3796,11 +3796,6 @@ span.icon-white {
   list-style: none;
   position: relative;
 }
-.block h4 {
-  padding: 0 0 10px;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
 .span2 .block .actions {
   position: absolute;
   top: 5px;
@@ -8915,6 +8910,12 @@ table.duplicates.highlight tbody td {
   -moz-box-shadow: 0 0 1px #aaaaaa;
   box-shadow: 0 0 1px #aaaaaa;
 }
+.merge-interface .col .box .merge-edit {
+  display: none;
+}
+.merge-interface .col .box .merge-view {
+  display: block;
+}
 .merge-interface .col:first-child .box {
   background: #F7F7F7;
   border: 1px solid #CECECE;
@@ -8922,6 +8923,12 @@ table.duplicates.highlight tbody td {
 .merge-interface .col:first-child .box .merge-row.even,
 .merge-interface .col:first-child .box .merge-row.odd {
   background: none;
+}
+.merge-interface .col:first-child .box .merge-edit {
+  display: block;
+}
+.merge-interface .col:first-child .box .merge-view {
+  display: none;
 }
 .merge-interface .label-div aside {
   margin-left: 10px;
