@@ -26,6 +26,6 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-
-<a rel="tooltip" title="{{#if value}}{{value}}{{/if}}" {{#if def.link_target}}target="{{def.link_target}}"{{/if}} href="{{#if value}}{{value}}{{else}}javascript:void(0){{/if}}">{{#if value}}{{value}}{{/if}}</a>
-
+{{#if value}}
+<a class="ellipsis_inline" data-placement="bottom" data-title="{{value}}" {{#if def.link_target}}target="{{def.link_target}}"{{/if}} href="{{value}}">{{value}}</a>
+{{/if}}

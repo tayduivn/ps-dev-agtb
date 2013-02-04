@@ -27,18 +27,15 @@
  ********************************************************************************/
 
 $viewdefs['Forecasts']['base']['view']['forecastsTimeperiod'] = array(
-    'panels' =>
-    array(
-        0 =>
+    'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',
-            'fields' =>
-            array(
+            'fields' => array(
                 array(
-                    'name' => 'timeperiod',
+                    'name' => 'selectedTimePeriod',
                     'label' => 'LBL_TIMEPERIOD_NAME',
                     'type' => 'enum',
-                    'view' => 'forecastsTimeperiod',
+                    'view' => 'edit',
                     // options are set dynamically in the view
                     'default' => true,
                     'enabled' => true,

@@ -31,13 +31,15 @@ describe("forecast commitStage field", function() {
         
         app = SugarTest.app;
         app.user.id = "tester";
-        app.lang.getAppListStrings = function(){
+        sinon.stub(app.lang, "getAppListStrings", function(){
             return {test:"test"};
-        };
+        });
         context = app.context.getContext();
     });
     
     afterEach(function(){
+        app.lang.getAppListStrings.restore();
+        app.user.id = null;
         delete app;
     });
     

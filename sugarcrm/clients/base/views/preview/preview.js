@@ -89,7 +89,7 @@
         if (model && collection) {
             // Create a corresponding Bean and Context for clicked search result. It
             // might be a Case, a Bug, etc...we don't know, so we build dynamically.
-            this.model = app.data.createBean(model.get('_module'), model.toJSON());
+            this.model = app.data.createBean(model.get('_module') || model.module, model.toJSON());
             this.collection = app.data.createBeanCollection(model.get('_module'), collection.models);
             this.context.set({
                 'model': this.model,

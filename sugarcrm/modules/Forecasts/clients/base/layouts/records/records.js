@@ -38,7 +38,7 @@
     componentsMeta: {},
 
     /**
-     * Stores the initial data models coming from view.sidecar.php
+     * Stores the initial data models
      * todo: use this to populate models that we already have data for; currently only holds filters, chartoptions, & user
      *
      */
@@ -47,7 +47,7 @@
     /**
      * this is used to defer the render until the forecasts initialization returns with the data
      */
-    deferredRender: new $.Deferred(),
+    deferredRender: '',
 
     /**
      * This is used to hold the path for the forecasts specific JS
@@ -57,9 +57,20 @@
     initialize: function(options) {
         var self = this,
             url = app.api.buildURL("Forecasts/init");
+
+        // we need this to be set here so anytime this gets initialized, it will work.
+        this.deferredRender = new $.Deferred();
         app.api.call('GET', url, null, {
             success: function(data) {
-                return self.initForecastsModule(data, options, self);
+
+                // Add Forecasts-specific stuff to the app.user object
+                app.user.set(data.initData.userData);
+
+                if(data.initData.forecasts_setup === 0) {
+                    window.location.hash = "#Forecasts/layout/config";
+                } else {
+                    return self.initForecastsModule(data, options, self);
+                }
             }
         });
     },
@@ -71,13 +82,6 @@
         // get default selections for filter and range
         app.defaultSelections = forecastData.defaultSelections;
         app.initData = forecastData.initData;
-
-        // Add Forecasts-specific stuff to the app.user object
-        app.user.set(app.initData.userData);
-
-        if(forecastData.initData.forecasts_setup === 0) {
-            window.location.hash = "#Forecasts/layout/config";
-        }
 
         ctx.componentsMeta = options.meta.components;
 
