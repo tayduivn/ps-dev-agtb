@@ -118,7 +118,6 @@ class SugarACLUsers extends SugarACLStrategy
             return true;
         }
 
-<<<<<<< HEAD
         if ( !$myself && $view == 'field' && !empty($this->no_access_fields[$context['field']])) {
             // This isn't us, these aren't fields we should be poking around in.
             return false;
@@ -126,10 +125,6 @@ class SugarACLUsers extends SugarACLStrategy
 
         if(!empty($this->view_checks[$view])) {
             if($view == 'field' && ($context['field'] == 'password' || $context['field'] == 'user_hash') ) {
-=======
-        if($view == 'view' || $view == 'ListView' || $view == 'list' || $view == 'export' || $view == 'Export' || $view == 'field' || $view == 'DetailView' || $view == 'detail' || $view == 'team_security' ) {
-            if($view == 'field' && $context['field'] == 'password') {
->>>>>>> 6_6_2
                 return false;
             }
             if( $view == 'field'
