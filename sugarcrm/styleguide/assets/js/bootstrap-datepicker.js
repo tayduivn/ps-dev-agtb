@@ -304,6 +304,13 @@
 			yearCont.html(html);
 		},
 		keypress: function(e) {
+			function isFirefoxDeleteOrTabKey() {
+				if (e.keyCode===46 && e.which===0 || e.keyCode===9 && e.which===0) {
+					return true;
+				}
+				return false;
+			}
+
 			switch(e.keyCode){
 				// Ignore all these
 				case 27: // escape
@@ -323,9 +330,12 @@
 					// '/', '.', '-' separators not reliable in keydown,
 					// so, we handle here using keypress event instead ;-)
 					// http://unixpapa.com/js/key.html
-					var chr = String.fromCharCode(e.which);
-					if (!this.verifyInput(chr)) {
-						e.preventDefault();
+					// if not firefox delete key
+					if (!isFirefoxDeleteOrTabKey()) {
+						var chr = String.fromCharCode(e.which);
+						if (!this.verifyInput(chr)) {
+							e.preventDefault();
+						}
 					}
 					break;
 			}
