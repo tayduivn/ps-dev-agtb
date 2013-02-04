@@ -484,7 +484,6 @@ direction: rtl;
 }
 
 #footer #partner {
-    border-left: 1px solid #CCCCCC;
     float: left;
     border-right: 0;
 }
@@ -520,8 +519,6 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 }
 
 #footer #help {
-    border-left: 1px solid #CCCCCC;
-    border-right: 0px none;
     float: left;
 }
 
@@ -529,13 +526,17 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
     float: left;
 }
 
+
+#arrow.up i.icon-chevron-down {
+    margin-left: 8px;
+}
+
 #footer .copyright {
-    float: right;
+  direction: rtl;
 }
 
 #footer #productTour {
     float: left;
-    border-right: 1px solid #CCCCCC;
     border-left: 0px none;
 }
 
