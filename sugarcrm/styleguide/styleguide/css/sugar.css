@@ -1861,7 +1861,10 @@ article:hover {
   -moz-box-shadow: none;
   box-shadow: none;
 }
-.btn-group + .btn-group {
+.btn-group + .btn-group,
+.btn-group + span .btn-group,
+.span .btn-group + .btn-group,
+.span .btn-group + span.btn-group {
   margin-left: 8px;
 }
 .btn-toolbar {
@@ -5609,8 +5612,21 @@ h1 input[type="text"] {
 .mu.extend .fieldPlaceHolder {
   margin-left: 4px;
 }
-.image_field span {
-  margin-left: 0;
+.image_preview img {
+  z-index: 900;
+}
+.image_btn {
+  z-index: 901;
+}
+.image_input {
+  z-index: 902;
+}
+.image_btn.delete {
+  z-index: 903 !important;
+}
+.image_field * {
+  margin: 0;
+  padding: 0;
 }
 .image_field {
   text-align: center;
@@ -5618,49 +5634,95 @@ h1 input[type="text"] {
 }
 .image_field.image_edit {
   border: 3px dashed #CCC;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  top: -3px;
+  left: -3px;
 }
 .image_field > label {
   display: block !important;
   padding: 0 !important;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
 }
-.image_field > label:hover {
-  cursor: pointer !important;
+.image_input {
+  position: relative;
+  height: 100%;
+  width: 100%;
 }
 .image_input input {
-  z-index: 999;
-  line-height: 0;
-  font-size: 50px;
-  position: absolute !important;
-  top: -2px;
-  left: -700px !important;
+  position: absolute;
+  top: 0;
+  right: 0;
+  float: right;
+  height: 100%;
+  font-size: 600px;
+  border: none;
+  opacity: 0;
+  filter: alpha(opacity=0);
   opacity: 0;
   filter: alpha(opacity=0);
   -ms-filter: "alpha(opacity=0)";
-  cursor: pointer;
+  cursor: pointer !important;
   _cursor: hand;
-  margin: 0;
-  padding: 0;
+}
+.image_input input:focus {
+  outline: none;
+}
+.image_field > label:hover {
+  cursor: pointer !important;
+  _cursor: hand;
+}
+.image_rounded img {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
 }
 .image_btn {
   position: absolute;
-  bottom: -3px;
-  left: -3px;
-  height: 15px;
-  line-height: 15px;
-  background-color: black;
+  height: 10px;
+  line-height: 10px;
+  font-size: 10px;
   display: inline-block;
   width: 100%;
   color: white;
+}
+.image_btn.image_btn_label {
+  position: absolute;
+  bottom: -3px;
+  left: -3px;
+  font-size: 10px;
+  background-color: black;
+  display: inline-block;
   border: 3px solid black;
+  text-align: left;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-bottom-left-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-bottom-right-radius: 3px;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+  opacity: 0.6;
+  filter: alpha(opacity=60);
 }
 .image_btn.delete {
   left: auto;
   right: 0px;
-  width: 20px;
+  bottom: 0;
+  width: 14px;
   z-index: 1;
-  line-height: 18px;
-}
-.image_btn.delete:hover {
+  font-size: 14px;
+  text-align: right;
   cursor: pointer;
 }
 .image_preview {
@@ -5673,6 +5735,9 @@ h1 input[type="text"] {
 }
 .image_preview img {
   vertical-align: top !important;
+}
+.image_preview i.icon-plus {
+  display: block;
 }
 .control-group.error .image_field,
 .error.image_field {

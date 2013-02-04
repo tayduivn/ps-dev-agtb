@@ -6,14 +6,20 @@
         <form id="imageform" method="post" enctype="multipart/form-data" action='ajaximage.php'>
         <div class="row-fluid control-group">
             <div class="span12">
-              <span sfuuid="1">
-                <span class="upload-field-custom btn avatar">
-                  <label class="file-upload">
-                    <span><strong>Edit</strong></span>
-                    <input type="file" name="photoimg" id="photoimg" />
-                </span>
-              </span>
-              <p class="avatar preview" id="preview1"><span><i class="icon-plus"></i></span></p>
+                <span sfuuid="1">
+                    <div class="image_field image_edit" style="max-width: 42px; height: 42px; min-height: 42px; line-height: 42px;">
+                        <label style="line-height: 42px;">
+                            <span class="image_input">
+                                <input type="file" name="picture">
+                            </span>
+                            <span class="image_btn image_btn_label">Edit</span>
+                            <span class="image_preview">
+                                <i class="icon-plus" style="line-height: 32px;"></i>
+                            </span>
+                        </label>
+                    </div>
+                    <p class="help-block"></p>
+                    </span>
             </div>
         </div>
         </form>
