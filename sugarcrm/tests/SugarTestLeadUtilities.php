@@ -43,7 +43,7 @@ class SugarTestLeadUtilities
         if (isset($leadValues['last_name'])) {
             $lead->last_name = $leadValues['last_name'];
         } else {
-            $lead->last_name = 'SugarleadLast';
+            $lead->last_name = 'SugarLeadLast';
         }
         if (isset($leadValues['email'])) {
             $lead->email1 = $leadValues['email'];
