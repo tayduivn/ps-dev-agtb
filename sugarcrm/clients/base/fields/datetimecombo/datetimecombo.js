@@ -107,7 +107,7 @@
         };
         this.timeValue = value['time'];
         this.dateValue = value['date'];
-        this._setDatepickerValue(this.dateValue);
+        this.$(".datepicker").datepicker('update', this.dateValue);
 
         return value;
     },
@@ -334,11 +334,9 @@
 
         return o;
     },
-
     val: function() {
         return this._val({currentTarget: this.$('.ui-timepicker-input')});
     },
-
     _val: function(ev) {
         var dateValue, hrsMins, timeAsDate, hours, minutes,
             timepicker = ev.currentTarget;

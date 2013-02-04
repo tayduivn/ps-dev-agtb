@@ -214,14 +214,6 @@ describe("date field", function() {
             expect(field.dateValue).toEqual(expectedValValue);
             expect(field.timeValue).toBeFalsy();
         });
-        it('should toggle datepicker hidden or shown', function() {
-            field.datepickerVisible = true;
-            field._toggleDatepicker();
-            expect(datepickerStub.calledWithExactly('hide')).toBeTruthy();
-            field.datepickerVisible = false;
-            field._toggleDatepicker();
-            expect(datepickerStub.calledWithExactly('show')).toBeTruthy();
-        });
 
         it('should update model when datepicker selected for datetimecombo', function() {
             var stub, stubDatepickerInputValue, stubVerifyDateString, conditionallyCalledStub, expected;
