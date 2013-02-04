@@ -30,22 +30,35 @@ class SugarTestLeadUtilities
 
     private function __construct() {}
 
-    public static function createLead($id = '') 
+    public static function createLead($id = '', $leadValues = array())
     {
         $time = mt_rand();
-    	$first_name = 'SugarLeadFirst';
-    	$last_name = 'SugarLeadLast';
-    	$email1 = 'lead@sugar.com';
-    	$lead = new Lead();
-        $lead->first_name = $first_name . $time;
-        $lead->last_name = $last_name ;
-        $lead->email1 = 'lead@'. $time. 'sugar.com';
+        $lead = new Lead();
+
+        if (isset($leadValues['first_name'])) {
+            $lead->first_name = $leadValues['first_name'];
+        } else {
+            $lead->first_name = 'SugarLeadFirst' . $time;
+        }
+        if (isset($leadValues['last_name'])) {
+            $lead->last_name = $leadValues['last_name'];
+        } else {
+            $lead->last_name = 'SugarleadLast';
+        }
+        if (isset($leadValues['email'])) {
+            $lead->email1 = $leadValues['email'];
+        } else {
+            $lead->email1 = 'lead@'. $time. 'sugar.com';
+        }
+
         if(!empty($id))
         {
             $lead->new_with_id = true;
             $lead->id = $id;
         }
+
         $lead->save();
+        $GLOBALS['db']->commit();
         self::$_createdLeads[] = $lead;
         return $lead;
     }
@@ -93,4 +106,3 @@ class SugarTestLeadUtilities
         return $lead_ids;
     }
 }
-?>
