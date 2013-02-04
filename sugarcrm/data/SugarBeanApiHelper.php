@@ -52,7 +52,7 @@ class SugarBeanApiHelper
         $sfh = new SugarFieldHandler();
 
         $data = array();
-        if(!SugarACL::moduleSupportsACL($bean->module_name) || $bean->ACLAccess('view')) {
+        if(!SugarACL::moduleSupportsACL($bean->module_name) || ($bean->ACLAccess('view') || $bean->ACLAccess('list'))) {
             foreach ( $bean->field_defs as $fieldName => $properties ) {
                 // Prune fields before ACL check because it can be expensive (Bug58133)
                 if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
