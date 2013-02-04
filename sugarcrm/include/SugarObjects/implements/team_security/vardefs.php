@@ -182,7 +182,7 @@ $vardefs = array(
 //END SUGARCRM flav=pro ONLY
 ),
 'indices' => array(
-		array(
+		'team_set_'.strtolower($table_name) => array(
 			'name' => 'idx_'.strtolower($table_name).'_tmst_id',
 			'type' => 'index',
 			'fields' => array('team_set_id')

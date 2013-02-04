@@ -35,6 +35,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('mod_strings', array('Products'));
         parent::setUpBeforeClass();
     }
@@ -68,6 +69,36 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($this->product->date_closed);
     }
 
+    
+    /**
+     * This is a test to check that the create_new_list_query function returns a where clause to filter
+     * "opportunity_id is null" so that products created for opportunities are not displayed by default
+     * @group forecasts
+     * @group products
+     */
+    public function testCreateNewListQuery() {
+        $ret_array = $this->product->create_new_list_query('', '', array(), array(), 0, '', true);
+        $this->assertContains('products.opportunity_id is null', $ret_array['where'], 'Did not find products.opportunity_id is null clause');
+
+        $query = $this->product->create_new_list_query('', '', array(), array(), 0, '', false);
+        $this->assertContains('products.opportunity_id is null', $query, 'Did not find products.opportunity_id is null clause');
+    }
+
+
+    /**
+     * This is a test to check that the create_export_query function returns a where clause to filter
+     * "opportunity_id is null" so that products created for opportunities are not displayed by default
+     * @group forecasts
+     * @group products
+     */
+    public function testCreateExportQuery() {
+        $orderBy = '';
+        $where = '';
+        $query = $this->product->create_export_query($orderBy, $where);
+        $this->assertContains('products.opportunity_id is null', $query, 'Did not find products.opportunity_id is null clause');
+    }
+    
+    
     /**
      * @group products
      */

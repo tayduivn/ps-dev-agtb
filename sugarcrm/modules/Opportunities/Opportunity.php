@@ -365,9 +365,9 @@ class Opportunity extends SugarBean
             $idequals .= "currency_id='$f'";
         }
 
-        if (!empty($idequals)) {
-            $query = "select amount, id from opportunities where (" . $idequals . ") and deleted=0 and opportunities.sales_stage <> 'Closed Won' AND opportunities.sales_stage <> 'Closed Lost';";
-            $result = $this->db->query($query);
+		if ( !empty($idequals) ) {
+			$query  = "select amount, id from opportunities where (" . $idequals . ") and deleted=0 and opportunities.sales_stage <> '".self::STAGE_CLOSED_WON."' AND opportunities.sales_stage <> '".self::STAGE_CLOSED_LOST."';";
+			$result = $this->db->query($query);
 
             while ($row = $this->db->fetchByAssoc($result)) {
                 $query = sprintf(

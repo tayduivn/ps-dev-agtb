@@ -390,7 +390,8 @@
             // e.g. new Date("2011-10-10" ) // in my version of chrome browser returns
             // Sun Oct 09 2011 17:00:00 GMT-0700 (PDT)
             parts = value.match(/(\d+)/g);
-            if (parts) {
+            // Bug 59827: In IE and FF, when changing from 100/23/2013 to 1//2013, got NaN/NaN/NaN. 
+            if (parts && parts.length > 2) {
                 jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
                 value  = app.date.format(jsDate, this.usersDatePrefs);
             } else {

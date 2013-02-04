@@ -34,8 +34,15 @@ require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElastic.php';
 class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
+    public $bean;
+
     public function setUp()
     {
+        // create a Bean..doesn't need to be saved
+        $this->bean = BeanFactory::newBean('Accounts');
+        $this->bean->id = create_guid();
+        $this->bean->name = 'Test';
+        $this->bean->assigned_user_id = create_guid();
     }
 
     public function providerQueryStringData()
@@ -63,6 +70,14 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $stub->canAppendWildcard($queryString);
 
         $this->assertEquals($canAppend, $result, 'Expect different value from canAppendWildcard()');
+    }
+
+    public function testCreateIndexDocument() {
+        $stub = new SugarSearchEngineElasticTestStub();
+        $document = $stub->createIndexDocument($this->bean);
+        $data = $document->getData();
+        $this->assertEquals(str_replace('-','', strval($this->bean->assigned_user_id)), $data['doc_owner']);
+        
     }
 
 }

@@ -25,7 +25,11 @@ class SidecarView extends SugarView
      */
     public function preDisplay()
     {
-
+        //Rebuild config file if it doesn't exist
+        if(!file_exists('config.js')) {
+           require_once('install/install_utils.php');
+           handleSidecarConfig();
+        }
         $this->ss->assign("configFile", $this->configFile);
 
         $sugarSidecarPath = sugar_cached("include/javascript/sugar_sidecar.min.js");

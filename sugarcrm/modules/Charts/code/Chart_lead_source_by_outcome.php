@@ -277,7 +277,7 @@ global  $timedate;
 				if($row['lead_source'] == ''){
 					$row['lead_source'] = $current_module_strings['NTC_NO_LEGENDS'];
 				}
-				if($row['sales_stage'] == 'Closed Won' || $row['sales_stage'] == 'Closed Lost'){
+				if($row['sales_stage'] == Opportunity::STAGE_CLOSED_WON || $row['sales_stage'] == Opportunity::STAGE_CLOSED_LOST){
 					$salesStage = $row['sales_stage'];
 					$salesStageT = $app_list_strings['sales_stage_dom'][$row['sales_stage']];
 				} else {

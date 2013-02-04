@@ -54,7 +54,7 @@ class SugarTestForecastUtilities
         $forecast->best_case = 100;
         $forecast->likely_case = 100;
         $forecast->worst_case = 100;
-        $forecast->forecast_type = 'DIRECT';
+        $forecast->forecast_type = 'Direct';
         $forecast->user_id = $user->id;
         $forecast->date_modified = db_convert("'" . TimeDate::getInstance()->nowDb() . "'", 'datetime');
         $forecast->date_entered = $forecast->date_modified;
@@ -184,8 +184,8 @@ class SugarTestForecastUtilities
                  * setting it up.
                  */
                 /* @var $product Product */
-                $product = BeanFactory::getBean("Products");
-				$product->retrieve_by_string_fields(array("opportunity_id"=>$opp->id));
+                $product = BeanFactory::getBean('Products');
+				$product->retrieve_by_string_fields(array('opportunity_id'=>$opp->id));
 				$product->name = $opp->name;
 		        $product->best_case = $opp->best_case;
 		        $product->likely_case = $opp->amount;
@@ -215,7 +215,8 @@ class SugarTestForecastUtilities
                         $worksheet = SugarTestWorksheetUtilities::createWorksheet();
                         $worksheet->user_id = $user->id;
                         $worksheet->related_id = $product->id;
-                        $worksheet->forecast_type = "Direct";
+                        $worksheet->related_forecast_type = 'Product';
+                        $worksheet->forecast_type = 'Direct';
                         $worksheet->timeperiod_id = $config['timeperiod_id'];
                         $worksheet->best_case = $opp->best_case;
                         $worksheet->likely_case = $opp->amount;
@@ -232,8 +233,6 @@ class SugarTestForecastUtilities
 
                 $return['opportunities_total'] += $opp_amount;
 
-                
-
                 $opportunities[] = $opp;
 
                 $return['opportunities'][] = $opp;
@@ -245,6 +244,8 @@ class SugarTestForecastUtilities
                 $forecast->best_case = $forecast_best_total;
                 $forecast->worst_case = $forecast_worst_total;
                 $forecast->likely_case = $forecast_likely_total;
+                $forecast->forecast_type = "Direct";
+                $forecast->opp_count = $config['opportunities']['include_in_forecast'];
                 $forecast->currency_id = $config['currency_id'];
                 $forecast->save();
 
@@ -256,7 +257,7 @@ class SugarTestForecastUtilities
                 $quota->user_id = $user->id;
                 $quota->created_by = 1;
                 $quota->modified_user_id = 1;
-                $quota->quota_type = (empty($user->reports_to_id)) ? "Direct" : "Rollup";
+                $quota->quota_type = (empty($user->reports_to_id)) ? 'Direct' : 'Rollup';
                 $quota->timeperiod_id = $config['timeperiod_id'];
                 $quota->team_set_id = 1;
                 $quota->currency_id = $config['currency_id'];
@@ -270,7 +271,9 @@ class SugarTestForecastUtilities
                 $worksheet = SugarTestWorksheetUtilities::createWorksheet();
                 $worksheet->user_id = (empty($user->reports_to_id)) ? $user->id : $user->reports_to_id;
                 $worksheet->related_id = $user->id;
-                $worksheet->forecast_type = "Rollup";
+                $worksheet->related_forecast_type = 'User';
+                $worksheet->forecast_type = 'Rollup';
+                $worksheet->forecast_type = 'Rollup';
                 $worksheet->timeperiod_id = $config['timeperiod_id'];
                 $worksheet->best_case = $forecast_best_total + 100;
                 $worksheet->likely_case = $forecast_likely_total + 100;
@@ -294,6 +297,7 @@ class SugarTestForecastUtilities
     public static function createManagerRollupForecast($manager, $user)
     {
         $users = array($user);
+                
         $numargs = func_num_args();
         if ($numargs > 2) {
             for ($i = 2; $i < $numargs; $i++) {
@@ -304,15 +308,23 @@ class SugarTestForecastUtilities
         $tmpForecast->best_case = $manager['forecast']->best_case;
         $tmpForecast->worst_case = $manager['forecast']->worst_case;
         $tmpForecast->likely_case = $manager['forecast']->likely_case;
-        $tmpForecast->forecast_type = "ROLLUP";
+        $tmpForecast->forecast_type = 'Rollup';
 
+        //grab the users
         foreach($users as $user) {
             if($user['user']->reports_to_id == $manager['user']->id) {
                 $tmpForecast->best_case += $user['forecast']->best_case;
                 $tmpForecast->worst_case += $user['forecast']->worst_case;
                 $tmpForecast->likely_case += $user['forecast']->likely_case;
+                $tmpForecast->opp_count += $user['forecast']->opp_count;
             }
         }
+        //finish off with the manager
+        $tmpForecast->best_case += $manager['forecast']->best_case;
+        $tmpForecast->worst_case += $manager['forecast']->worst_case;
+        $tmpForecast->likely_case += $manager['forecast']->likely_case;
+        $tmpForecast->opp_count += $manager['forecast']->opp_count;
+        
         $tmpForecast->save();
 
         return $tmpForecast;
