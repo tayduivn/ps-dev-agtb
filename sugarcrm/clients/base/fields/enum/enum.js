@@ -76,7 +76,7 @@
             select2Options.dropdownCss = {width: this.def.dropdown_width};
         }
 
-        /* All select2 dropdowns should only show the search bar for fields with 5 or more values,
+        /* All select2 dropdowns should only show the search bar for fields with 7 or more values,
          * this adds the ability to specify that threshold in metadata.
          */
         select2Options.minimumResultsForSearch = this.def.searchBarThreshold?this.def.searchBarThreshold:7;
