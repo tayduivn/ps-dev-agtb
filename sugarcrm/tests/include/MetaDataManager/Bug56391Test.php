@@ -73,7 +73,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                     'edit' => 'no',
                                     'delete' => 'no',
                                     'import' => 'no',
-                                    'export' => 'no',
+                                    'export' => 'yes',
                                     'massupdate' => 'no',
                                 );
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
@@ -321,7 +321,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $expected_bean_result['access'] = array(
                                 'access' => 'yes',
                                 'admin' => 'no',
-                                'create' => 'no',
+                                'create' => 'yes',
                                 'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'yes',
@@ -377,7 +377,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $expected_bean_result['access'] = array(
                                 'access' => 'yes',
                                 'admin' => 'no',
-                                'create' => 'no',
+                                'create' => 'yes',
                                 'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'yes',
@@ -425,7 +425,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $expected_bean_result['access'] = array(
                                 'access' => 'yes',
                                 'admin' => 'no',
-                                'create' => 'no',
+                                'create' => 'yes',
                                 'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'yes',

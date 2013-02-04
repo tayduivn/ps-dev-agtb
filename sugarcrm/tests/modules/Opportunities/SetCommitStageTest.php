@@ -113,7 +113,7 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUpdateForecastAndCommitStage()
     {
-        $this->opp->sales_stage = "Closed Lost";
+        $this->opp->sales_stage = Opportunity::STAGE_CLOSED_LOST;
         $this->opp->save();
         $this->assertEquals('exclude', $this->opp->commit_stage, "commit_stage should be set to exclude");
     }

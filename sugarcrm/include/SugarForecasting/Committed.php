@@ -104,6 +104,11 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         }
         $forecast->save();
 
+        // roll up the committed forecast to that person manager view
+        /* @var $mgr_worksheet ForecastManagerWorksheet */
+        $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $mgr_worksheet->reporteeForecastRollUp($current_user, $args);
+
         //If there are any new worksheet entries that need created, do that here.
         foreach($args["worksheetData"]["new"] as $sheet)
         {
@@ -195,6 +200,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $job->retry_count = 0;
         $job->assigned_user_id = $current_user->id;
         $job->save();
+
+        $mgr_worksheet->commitManagerForecast($current_user, $args['timeperiod_id']);
 
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         $admin = BeanFactory::getBean('Administration');

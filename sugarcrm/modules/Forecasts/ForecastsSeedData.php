@@ -35,6 +35,7 @@ class ForecastsSeedData {
 
         require_once('modules/Forecasts/ForecastDirectReports.php');
         require_once('modules/Forecasts/Common.php');
+        require_once('modules/Forecasts/ForecastManagerWorksheet.php');
 
         global $timedate, $current_user, $app_list_strings;
 
@@ -61,31 +62,7 @@ class ForecastsSeedData {
                         continue;
                     }
 
-                    $forecast = new Forecast();
-                    $forecast->timeperiod_id=$timeperiod_id;
-                    $forecast->user_id =  $commit_type_array[0];
-                    $forecast->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
-                    $forecast->opp_weigh_value=$opp_summary_array['WEIGHTEDVALUENUMBER'];
                     $multiplier = mt_rand(1,6);
-                    $forecast->best_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + (($multiplier+1) * 100);
-                    $forecast->worst_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
-                    $forecast->likely_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + (($multiplier-1) * 100);
-                    $forecast->forecast_type='Direct';
-                    $forecast->date_committed = $timedate->asDb($timedate->getNow());
-                    $forecast->save();
-
-                    //Create a previous forecast to simulate change
-                    $forecast2 = new Forecast();
-                    $forecast2->timeperiod_id=$timeperiod_id;
-                    $forecast2->user_id =  $commit_type_array[0];
-                    $forecast2->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
-                    $forecast2->opp_weigh_value=$opp_summary_array['WEIGHTEDVALUENUMBER'];
-                    $forecast2->best_case=$forecast->best_case - 100;
-                    $forecast2->worst_case=$forecast->worst_case - 100;
-                    $forecast2->likely_case=$forecast->likely_case - 100;
-                    $forecast2->forecast_type='Direct';
-                    $forecast2->date_committed = $timedate->asDb($timedate->getNow()->modify("+1 day"));
-                    $forecast2->save();
 
                     $quota = new Quota();
                     $quota->timeperiod_id=$timeperiod_id;
@@ -130,6 +107,36 @@ class ForecastsSeedData {
 
                         $quotaRollup->save();
                     }
+
+                    $forecast = new Forecast();
+                    $forecast->timeperiod_id=$timeperiod_id;
+                    $forecast->user_id =  $commit_type_array[0];
+                    $forecast->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
+                    $forecast->opp_weigh_value=$opp_summary_array['WEIGHTEDVALUENUMBER'];
+                    $forecast->best_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + (($multiplier+1) * 100);
+                    $forecast->worst_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
+                    $forecast->likely_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + (($multiplier-1) * 100);
+                    $forecast->forecast_type='Direct';
+                    $forecast->date_committed = $timedate->asDb($timedate->getNow());
+                    $forecast->save();
+
+                    self::createManagerWorksheet($commit_type_array[0], $forecast->toArray());
+
+                    //Create a previous forecast to simulate change
+                    $forecast2 = new Forecast();
+                    $forecast2->timeperiod_id=$timeperiod_id;
+                    $forecast2->user_id =  $commit_type_array[0];
+                    $forecast2->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
+                    $forecast2->opp_weigh_value=$opp_summary_array['WEIGHTEDVALUENUMBER'];
+                    $forecast2->best_case=$forecast->best_case - 100;
+                    $forecast2->worst_case=$forecast->worst_case - 100;
+                    $forecast2->likely_case=$forecast->likely_case - 100;
+                    $forecast2->forecast_type='Direct';
+                    $forecast2->date_committed = $timedate->asDb($timedate->getNow()->modify("+1 day"));
+                    $forecast2->save();
+
+                    self::createManagerWorksheet($commit_type_array[0], $forecast2->toArray());
+
                 } else {
                     //create where clause....
                     $where  = " users.deleted=0 ";
@@ -141,19 +148,7 @@ class ForecastsSeedData {
                     $DirReportsFocus->current_timeperiod_id=$timeperiod_id;
                     $DirReportsFocus->compute_rollup_totals('',$where,false);
 
-                    $forecast = new Forecast();
-                    $forecast->timeperiod_id=$timeperiod_id;
-                    $forecast->user_id =  $commit_type_array[0];
-                    $forecast->opp_count= $DirReportsFocus->total_opp_count;
-                    $forecast->opp_weigh_value=$DirReportsFocus->total_weigh_value_number;
                     $multiplier = mt_rand(1,6);
-                    $forecast->likely_case=$DirReportsFocus->total_weigh_value_number + (($multiplier+1) * 100);
-                    $forecast->best_case=$DirReportsFocus->total_weigh_value_number + ($multiplier * 100);
-                    $forecast->worst_case=$DirReportsFocus->total_weigh_value_number + (($multiplier-1) * 100);
-                    $forecast->forecast_type='Rollup';
-                    $forecast->date_committed = $timedate->to_display_date_time(date($timedate->get_db_date_time_format(), time()), true);
-                    $forecast->save();
-
 
                     $quota = new Quota();
                     $quota->timeperiod_id=$timeperiod_id;
@@ -166,6 +161,21 @@ class ForecastsSeedData {
                     if (!isset($quota->amount_base_currency)) $quota->amount_base_currency = $quota->amount;
                     $quota->committed=1;
                     $quota->save();
+
+                    $forecast = new Forecast();
+                    $forecast->timeperiod_id=$timeperiod_id;
+                    $forecast->user_id =  $commit_type_array[0];
+                    $forecast->opp_count= $DirReportsFocus->total_opp_count;
+                    $forecast->opp_weigh_value=$DirReportsFocus->total_weigh_value_number;
+                    $forecast->likely_case=$DirReportsFocus->total_weigh_value_number + (($multiplier+1) * 100);
+                    $forecast->best_case=$DirReportsFocus->total_weigh_value_number + ($multiplier * 100);
+                    $forecast->worst_case=$DirReportsFocus->total_weigh_value_number + (($multiplier-1) * 100);
+                    $forecast->forecast_type='Rollup';
+                    $forecast->date_committed = $timedate->to_display_date_time(date($timedate->get_db_date_time_format(), time()), true);
+                    $forecast->save();
+
+                    self::createManagerWorksheet($commit_type_array[0], $forecast->toArray());
+
                 }
             }
         }
@@ -176,5 +186,13 @@ class ForecastsSeedData {
         // TODO-sfa - remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         // this locks the forecasts ranges configs if the apps is installed with demo data and already has commits
         $admin->saveSetting('Forecasts', 'has_commits', 1, 'base');
+    }
+
+    protected static function createManagerWorksheet($user_id, $data)
+    {
+        /* @var $user User */
+        $user = BeanFactory::getBean('Users', $user_id);
+        $worksheet = new ForecastManagerWorksheet();
+        $worksheet->reporteeForecastRollUp($user, $data);
     }
 }
