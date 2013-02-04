@@ -369,21 +369,21 @@ describe("Record View", function() {
         it("Should create panel grid with all fields fitting within the maximum allowable span when the panel def specifies a field whose span is out of range", function () {
             var results,
                 panelDefs = [{
-                                 "name":         "panel_body",
-                                 "label":        "LBL_PANEL_2",
-                                 "columns":      2,
-                                 "labels":       true,
-                                 "labelsOnTop":  false,
-                                 "placeholders": true,
-                                 "fields":       [
-                                     {
-                                         'name': 'description',
-                                         'span': 12 // out of range for a panel with inline labels
-                                     },
-                                     "case_number",
-                                     "type"
-                                 ]
-                             }];
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      2,
+                    "labels":       true,
+                    "labelsOnTop":  false,
+                    "placeholders": true,
+                    "fields":       [
+                        {
+                            'name': 'description',
+                            'span': 12 // out of range for a panel with inline labels
+                        },
+                        "case_number",
+                        "type"
+                    ]
+                }];
 
             view._renderPanels(panelDefs);
             results = panelDefs[0].grid;
@@ -391,9 +391,13 @@ describe("Record View", function() {
             expect(results.length).toBe(2);
             expect(results[0].length).toBe(1);
             expect(results[1].length).toBe(2);
-            expect(results[0][0].span).toBe(8); // the description field's span should have been reset to 8 since 12 won't fit
-            expect(results[1][0].span).toBe(4); // verifying that the field span is calculated correctly when labels are inline
-            expect(results[1][1].span).toBe(4); // verifying that the field span is calculated correctly when labels are inline
+            // the description field's span should have been reset to 8 since 12 won't fit
+            // the label only takes up span2, so the additional span2 will be added to the field's span8
+            expect(results[0][0].span).toBe(10);
+            // verifying that the field span is calculated correctly when labels are inline
+            expect(results[1][0].span).toBe(4);
+            // verifying that the field span is calculated correctly when labels are inline
+            expect(results[1][1].span).toBe(4);
         });
     });
 
