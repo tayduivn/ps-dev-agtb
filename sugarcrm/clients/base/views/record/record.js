@@ -137,14 +137,37 @@
                     field.labelSpan = Math.floor(4 / columns);
                 }
 
-                // this is new to prevent a span of 0
+                // prevent a span of 0
                 if (field.span < 1) {
                     field.span = 1;
                 }
 
-                // this is new to prevent a labelSpan of 0
+                // prevent a labelSpan of 0
                 if (field.labelSpan < 1) {
                     field.labelSpan = 1;
+                }
+
+                // it is concluded that when the field span matches the max span the intention is to show this field
+                // on a row by itself, so force the field span to fill any empty space on the row
+                // an example of this is in a 2-column grid with inline labels:
+                // the field span will be calculated to be 8 and the label span to be 2, which leaves an additional
+                // span of 2 that can be absorbed for the field span
+                if (field.span == maxSpan) {
+                    // calculate the amount of occupied space
+                    var occupiedSpan = isLabelInline ? (field.span + field.labelSpan) : field.span;
+
+                    // add unoccupied space to the field span
+                    field.span += (rowSpanMax - occupiedSpan);
+                }
+
+                if (_.isUndefined(field.dismiss_label)) {
+                    field.dismiss_label = false;
+                }
+
+                // if the label is inline and is to be dismissed, then the field should take up it's space plus the
+                // space set aside for its label, as long as that won't overflow the row
+                if (isLabelInline && field.dismiss_label === true && (field.span + field.labelSpan) <= rowSpanMax) {
+                    field.span += field.labelSpan;
                 }
 
                 totalFieldCount++;
@@ -155,7 +178,7 @@
 
                 // if the labels are to the left of the field then the field takes up the space
                 // specified by its span plus the space its label takes up
-                if (isLabelInline) {
+                if (isLabelInline && field.dismiss_label === false) {
                     fieldSpan += field.labelSpan;
                 }
 
