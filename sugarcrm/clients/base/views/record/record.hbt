@@ -24,12 +24,8 @@
             {{/unless}}
                 <div class="btn-toolbar pull-right dropdown">
                     <div class="btn-group btn-group-previous-next">
-                        {{#if collection.previous}}
-                          <a href="#{{buildRoute context collection.previous def.route.action def.route.options}}" class="btn previous-row"><i class="icon-chevron-left"></i></a>
-                        {{/if}}
-                        {{#if collection.next}}
-                          <a href="#{{buildRoute context collection.next def.route.action def.route.options}}" class="btn next-row"><i class="icon-chevron-right"></i></a>
-                        {{/if}}
+                          <a href="{{#if collection.previous}}#{{modelRoute collection.previous def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn previous-row{{#unless collection.previous}} disabled{{/unless}}"><i class="icon-chevron-left"></i></a>
+                          <a href="#{{#if collection.next}}#{{modelRoute collection.next def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn next-row{{#unless collection.next}} disabled{{/unless}}"><i class="icon-chevron-right"></i></a>
                     </div>
                     {{#if hasAccess}}
                         {{#each meta.buttons}}

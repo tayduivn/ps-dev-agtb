@@ -29,7 +29,7 @@
 
         this.layout.off("stream:more:fire", null, this);
         this.layout.on("stream:more:fire", function(collection) {
-            self.context.trigger("preview:collection:change", collection);
+            app.events.trigger("preview:collection:change", collection);
         }, this);
 
         // Check to see if we need to make a related activity stream.
@@ -547,8 +547,8 @@
             model.fetch({
                 success: function(model) {
                     model.set("_module", module);
-                    self.context.trigger("preview:open");
-                    self.context.trigger("preview:render", model, self.streamCollection);
+                    app.events.trigger("preview:open");
+                    app.events.trigger("preview:render", model, self.streamCollection);
                 }
             });
         } else {

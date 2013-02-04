@@ -4,8 +4,8 @@
 
         app.view.View.prototype.initialize.call(this, opts);
 
-        this.context.off("preview:render", null, this);
-        this.context.on("preview:render", this.togglePreviewList);
+        app.events.off("preview:render", null, this);
+        app.events.on("preview:render", this.togglePreviewList);
 
         this.streamCollection = app.data.createBeanCollection("ActivityStream");
         this.bindDataChange();
