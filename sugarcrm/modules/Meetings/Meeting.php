@@ -97,6 +97,7 @@ class Meeting extends SugarBean {
 	// so you can run get_users() twice and run query only once
 	var $cached_get_users = null;
 	var $new_schema = true;
+    var $date_changed = false;
 
 	public $send_invites = false;
 
@@ -187,6 +188,7 @@ class Meeting extends SugarBean {
 
 		global $disable_date_format;
 
+<<<<<<< HEAD
 	    if(isset($this->date_start) && (isset($this->duration_hours) || isset($this->duration_minutes)))
         {
             // Set the duration hours and minutes to 0 if one of them isn't set but the other one is.
@@ -205,6 +207,31 @@ class Meeting extends SugarBean {
 				
 		$check_notify = $this->send_invites;
 		if($this->send_invites == false) {
+=======
+        if(isset($this->date_start))
+        {
+            $td = $timedate->fromDb($this->date_start);
+            if(!$td){
+            		$this->date_start = $timedate->to_db($this->date_start);
+            		$td = $timedate->fromDb($this->date_start);
+            }
+            if($td)
+            {
+                if (isset($this->duration_hours) && $this->duration_hours != '')
+                {
+                    $td->modify("+{$this->duration_hours} hours");
+                }
+                if (isset($this->duration_minutes) && $this->duration_minutes != '')
+                {
+                    $td->modify("+{$this->duration_minutes} mins");
+                }
+                $this->date_end = $td->asDb();
+            }
+        }
+
+		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
+		if(empty($_REQUEST['send_invites'])) {
+>>>>>>> 6_6_2
 			if(!empty($this->id)) {
 				$old_record = new Meeting();
 				$old_record->retrieve($this->id);
@@ -474,16 +501,25 @@ class Meeting extends SugarBean {
 		if(empty($this->id) && !empty($_REQUEST['date_start'])){
 			$this->date_start = $_REQUEST['date_start'];
 		}
-		if(!empty($this->date_start)) {
-		    $start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$this->date_start);
-		    if (!empty($start)) {
-		        if (!empty($this->duration_hours) || !empty($this->duration_minutes)) {
-		            $this->date_end = $start->modify("+{$this->duration_hours} Hours +{$this->duration_minutes} Minutes")
-		            ->format($GLOBALS['timedate']->get_date_time_format());
+        if(!empty($this->date_start))
+        {
+            $td = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$this->date_start);
+            if (!empty($td)) 
+            {
+    	        if (!empty($this->duration_hours) && $this->duration_hours != '')
+                {
+		            $td = $td->modify("+{$this->duration_hours} hours");
 		        }
-		    } else {
-		        $GLOBALS['log']->fatal("Meeting::save: Bad date {$this->date_start} for format ".$GLOBALS['timedate']->get_date_time_format());
-		    }
+                if (!empty($this->duration_minutes) && $this->duration_minutes != '')
+                {
+                    $td = $td->modify("+{$this->duration_minutes} mins");
+                }
+                $this->date_end = $td->format($GLOBALS['timedate']->get_date_time_format());
+            } 
+            else 
+            {
+                $GLOBALS['log']->fatal("Meeting::save: Bad date {$this->date_start} for format ".$GLOBALS['timedate']->get_date_time_format());
+            }
 		}
 
 		global $app_list_strings;
@@ -655,6 +691,11 @@ class Meeting extends SugarBean {
 	 * Redefine method to attach ics file to notification email
 	 */
 	public function create_notification_email($notify_user){
+        // reset acceptance status for non organizer if date is changed
+        if (($notify_user->id != $GLOBALS['current_user']->id) && $this->date_changed) {
+            $this->set_accept_status($notify_user, 'none');
+        }
+
 		$notify_mail = parent::create_notification_email($notify_user);
 
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;

@@ -702,6 +702,11 @@ function get_team_name($team_id)
  */
 function get_team_array($add_blank = FALSE) {
 	global  $current_user;
+    if (empty($current_user) || empty($current_user->id))
+    {
+        return array();
+    }
+
 	$team_array = get_register_value('team_array', $add_blank.'ADDBLANK'.$current_user->id);
 
 	if(!empty($team_array))
@@ -1074,9 +1079,13 @@ function _mergeCustomAppListStrings($file , $app_list_strings)
     // FG - bug 45525 - Specific codelists must NOT be overwritten
 	$exemptDropdowns[] = "moduleList";
 	$exemptDropdowns[] = "moduleListSingular";
+<<<<<<< HEAD
 	$exemptDropdowns[] = "parent_type_display";
     $exemptDropdowns[] = "record_type_display";
     $exemptDropdowns[] = "record_type_display_notes";
+=======
+        $exemptDropdowns = array_merge($exemptDropdowns, getTypeDisplayList());
+>>>>>>> 6_6_2
 
 	foreach($app_list_strings as $key=>$value)
 	{
@@ -1769,14 +1778,16 @@ function get_select_options_with_id_separate_key ($label_list, $key_list, $selec
 
 /**
  * Call this method instead of die().
- * Then we call the die method with the error message that is passed in.
+ * We print the error message and then die with an appropriate
+ * exit code.
  */
-function sugar_die($error_message)
+function sugar_die($error_message, $exit_code = 1)
 {
 	@header("HTTP/1.0 500 Server Error");
 	@header("Status: 500 Server Error");
 	sugar_cleanup();
-	die($error_message);
+	echo $error_message;
+	die($exit_code);
 }
 
 
@@ -4852,7 +4863,7 @@ function create_export_query_relate_link_patch($module, $searchFields, $where){
 			}
 		}
 	}
-	$ret_array = array('where'=>$where, 'join'=>$join['join']);
+    $ret_array = array('where'=>$where, 'join'=> isset($join['join']) ? $join['join'] : '');
 	return $ret_array;
 }
 
@@ -5350,7 +5361,58 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
             $select_array[$key] .= ' (' . $key . ')';
         }
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6_6_2
     asort($select_array);
     return $select_array;
 }
+
+/**
+ * Gets the list of "*type_display*".
+ * 
+ * @return array
+ */
+function getTypeDisplayList()
+{
+    return array('record_type_display', 'parent_type_display', 'record_type_display_notes');
+}
+
+/**
+ * Breaks given string into substring according
+ * to 'db_concat_fields' from field definition 
+ * and assigns values to corresponding properties
+ * of bean.
+ *
+ * @param SugarBean $bean
+ * @param array $fieldDef
+ * @param string $value
+ */
+function assignConcatenatedValue(SugarBean $bean, $fieldDef, $value)
+{
+    $valueParts = explode(' ',$value);
+    $valueParts = array_filter($valueParts);
+    $fieldNum   = count($fieldDef['db_concat_fields']);
+
+    if (count($valueParts) == 1 && $fieldDef['db_concat_fields'] == array('first_name', 'last_name'))
+    {
+        $bean->last_name = $value;
+    }
+    // elseif ($fieldNum >= count($valueParts))
+    else
+    {
+        for ($i = 0; $i < $fieldNum; $i++)
+        {
+            $fieldValue = array_shift($valueParts);
+            $fieldName  = $fieldDef['db_concat_fields'][$i];
+            $bean->$fieldName = $fieldValue !== false ? $fieldValue : '';
+        }
+
+        if (!empty($valueParts))
+        {
+            $bean->$fieldName .= ' ' . implode(' ', $valueParts);
+        }
+    }
+}
+

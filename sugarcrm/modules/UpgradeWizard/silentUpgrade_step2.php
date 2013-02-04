@@ -81,6 +81,7 @@ $errors = array();
 touch($argv[2]);
 $path = realpath($argv[2]); // custom log file, if blank will use ./upgradeWizard.log
 
+<<<<<<< HEAD
 $cwd = $argv[3];
 chdir($cwd);
 global $sugar_config;
@@ -91,6 +92,62 @@ require_once("include/dir_inc.php");
 require_once("include/utils/sugar_file_utils.php");
 require_once("include/utils/file_utils.php");
 require_once("include/utils.php");
+=======
+	require('config.php');
+	if(isset($argv[3])) {
+		if(is_dir($argv[3])) {
+			$cwd = $argv[3];
+			chdir($cwd);
+		}
+	}
+
+	require_once("{$cwd}/sugar_version.php"); // provides $sugar_version & $sugar_flavor
+
+	global $sugar_config;
+	$configOptions = $sugar_config['dbconfig'];
+
+    $GLOBALS['log']	= LoggerManager::getLogger('SugarCRM');
+	$patchName		= basename($argv[1]);
+	$zip_from_dir	= substr($patchName, 0, strlen($patchName) - 4); // patch folder name (minus ".zip")
+	$path			= $argv[2]; // custom log file, if blank will use ./upgradeWizard.log
+    $db				= &DBManagerFactory::getInstance();
+	$UWstrings		= return_module_language('en_us', 'UpgradeWizard', true);
+	$adminStrings	= return_module_language('en_us', 'Administration', true);
+    $app_list_strings = return_app_list_strings_language('en_us');
+	$mod_strings	= array_merge($adminStrings, $UWstrings);
+	$subdirs		= array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
+	global $unzip_dir;
+    $license_accepted = false;
+    if(isset($argv[5]) && (strtolower($argv[5])=='yes' || strtolower($argv[5])=='y')){
+    	$license_accepted = true;
+	 }
+	//////////////////////////////////////////////////////////////////////////////
+	//Adding admin user to the silent upgrade
+
+	$current_user = new User();
+	if(isset($argv[4])) {
+	   //if being used for internal upgrades avoid admin user verification
+	   $user_name = $argv[4];
+	   $q = "select id from users where user_name = '" . $user_name . "' and is_admin=1";
+	   $result = $GLOBALS['db']->query($q, false);
+	   $logged_user = $GLOBALS['db']->fetchByAssoc($result);
+	   if(isset($logged_user['id']) && $logged_user['id'] != null){
+		//do nothing
+	    $current_user->retrieve($logged_user['id']);
+	   }
+	   else{
+	   	echo "Not an admin user in users table. Please provide an admin user\n";
+		exit(1);
+	   }
+	}
+	else {
+		echo "*******************************************************************************\n";
+		echo "*** ERROR: 4th parameter must be a valid admin user.\n";
+		echo $usage;
+		echo "FAILURE\n";
+		exit(1);
+	}
+>>>>>>> 6_6_2
 
 $_SERVER['SERVER_SOFTWARE'] = '';
 
@@ -346,6 +403,7 @@ if(empty($errors)) {
             $errors[] = 'Could not write config.php!';
         }
 
+<<<<<<< HEAD
 		logThis('post_install() done.', $path);
 }
 
@@ -402,6 +460,25 @@ if(empty($errors)) {
 		       	}
 		   }
 		}
+=======
+include("$unzip_dir/manifest.php");
+$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt'  || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
+$sugar_version = getSilentUpgradeVar('origVersion');
+if (!$sugar_version)
+{
+    global $silent_upgrade_vars_loaded;
+    logThis("Error retrieving silent upgrade var for sugar_version: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
+}
+
+//BEGIN SUGARCRM flav=pro ONLY
+// If going from pre 610 to 610+, migrate the report favorites
+// At this point in the upgrade, the db and sugar_version have already been updated to 6.1 so we need to add a mechanism of preserving the original version
+// so that we can check against that in 6.1.1.
+logThis("Begin: Update custom module built using module builder to add favorites", $path);
+add_custom_modules_favorites_search();
+logThis("Complete: Update custom module built using module builder to add favorites", $path);
+//END SUGARCRM flav=pro ONLY
+>>>>>>> 6_6_2
 
 //delete cache/themes
 		$cachedir = sugar_cached('themes');
@@ -452,6 +529,7 @@ if($ce_to_pro_ent){
 fix_report_relationships($path);
 //END SUGARCRM flav=pro ONLY
 
+<<<<<<< HEAD
 if($ce_to_pro_ent)
 {
         //check to see if there are any new files that need to be added to systems tab
@@ -537,8 +615,42 @@ if(count($errors) > 0) {
 		logThis("****** SilentUpgrade ERROR: {$error}", $path);
 	}
 	echo "FAILED\n";
+=======
+/*
+//BEGIN SUGARCRM flav=int ONLY
+if($origVersion < '620'){
+	//bug: 39757 - upgrade the calls and meetings end_date to a datetime field
+	upgradeDateTimeFields($path);
+	//upgrade the documents and meetings for lotus support
+	upgradeDocumentTypeFields($path);
 }
+//END SUGARCRM flav=int ONLY
+*/
 
+//bug: 37214 - merge config_si.php settings if available
+logThis('Begin merge_config_si_settings', $path);
+merge_config_si_settings(true, '', '', $path);
+logThis('End merge_config_si_settings', $path);
+
+//Upgrade connectors
+logThis('Begin upgrade_connectors', $path);
+upgrade_connectors();
+logThis('End upgrade_connectors', $path);
+
+//BEGIN SUGARCRM flav=pro ONLY
+if (version_compare($sugar_version, '6.5.0', '<'))
+{
+    // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
+    $db->query("UPDATE email_templates SET type = 'workflow' WHERE
+        coalesce(" . $db->convert("base_module", "length") . ",0) > 0
+        AND
+        coalesce(" . $db->convert("type", "length") . ",0) = 0
+    ");
+>>>>>>> 6_6_2
+}
+//END SUGARCRM flav=pro ONLY
+
+<<<<<<< HEAD
 ///////////////////////////////////////////////////////////////////////////////
 ////	UTILITIES THAT MUST BE LOCAL :(
 //Bug 24890, 24892. default_permissions not written to config.php. Following function checks and if
@@ -560,6 +672,12 @@ function checkConfigForPermissions(){
 			//writing to the file
 		}
 	}
+=======
+//Unlink files that have been removed
+if(function_exists('unlinkUpgradeFiles'))
+{
+	unlinkUpgradeFiles($sugar_version);
+>>>>>>> 6_6_2
 }
 function checkLoggerSettings(){
 	if(file_exists('config.php')){
@@ -586,6 +704,7 @@ function checkLoggerSettings(){
 	}
 }
 
+<<<<<<< HEAD
 function checkLeadConversionSettings() {
 	if (file_exists('config.php')) {
 		require('config.php');
@@ -598,6 +717,12 @@ function checkLeadConversionSettings() {
 			//writing to the file
 		}
 	}
+=======
+//Run repairUpgradeHistoryTable
+if (version_compare($sugar_version, '6.5.0', '<') && function_exists('repairUpgradeHistoryTable'))
+{
+    repairUpgradeHistoryTable();
+>>>>>>> 6_6_2
 }
 
 function checkResourceSettings(){
@@ -806,6 +931,7 @@ function repairTableDictionaryExtFile()
 		} //if
 	}
 }
+<<<<<<< HEAD
 
 class FakeLogger
 {
@@ -823,3 +949,5 @@ class FakeLogger
 
 ////	END UTILITIES THAT MUST BE LOCAL :(
 ///////////////////////////////////////////////////////////////////////////////
+=======
+>>>>>>> 6_6_2

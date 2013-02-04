@@ -328,7 +328,7 @@ function multiFiles( list_target){
                 fileName = filePathComponents[filePathComponents.length - 1],
 
                 // constants
-                allowedTypes = ['gif', 'bmp', 'png', 'jpg', 'jpeg'],
+                allowedTypes = ['png', 'jpg', 'jpeg'],
                 imglocation = 'cache/images/';
 
             //check if filetype is valid

@@ -103,9 +103,10 @@ class WorkFlowGlue {
                 if (!empty($vardef['type']) && ($vardef['type'] == 'date' || $vardef['type'] == 'datetime'))
                 {
                     // Adding an isset check for fetched_row since new records don't have it
-                    return  " ( isset(\$focus->".$shell_object->field.") && isset(\$focus->fetched_row['".$shell_object->field."']) && "
+                    return " ( (empty(\$focus->fetched_row['".$shell_object->field."']) && !empty(\$focus->".$shell_object->field.") ) ||"
+                                  ." ( isset(\$focus->".$shell_object->field.") && isset(\$focus->fetched_row['".$shell_object->field."']) && "
                                   . "\$GLOBALS['timedate']->to_display_date_time(\$focus->fetched_row['".$shell_object->field."'])"
-                                  . " != \$GLOBALS['timedate']->to_display_date_time(\$focus->".$shell_object->field.")) ";
+                                  . " != \$GLOBALS['timedate']->to_display_date_time(\$focus->".$shell_object->field."))) ";
 
 
                 }

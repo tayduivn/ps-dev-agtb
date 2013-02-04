@@ -748,12 +748,20 @@ function upgradeUWFiles($file) {
     if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
         $allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
     }
+<<<<<<< HEAD
     // users
     if(file_exists("$from_dir/modules/Users")) {
         $allFiles[] = findAllFiles("$from_dir/modules/Users", array());
     }
     if(file_exists("$from_dir/include/utils/autoloader.php")) {
     	$allFiles[] = "$from_dir/include/utils/autoloader.php";
+=======
+    if(file_exists("$from_dir/include/utils/autoloader.php")) {
+        $allFiles[] = "$from_dir/include/utils/autoloader.php";
+    }
+    if(file_exists("$from_dir/include/utils/autoloader.php")) {
+        $allFiles[] = "$from_dir/include/utils/autoloader.php";
+>>>>>>> 6_6_2
     }
 
     upgradeUWFilesCopy($allFiles, $from_dir);
@@ -4021,7 +4029,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	} else {
 	   if($write_to_upgrade_log)
 	   {
-	      logThis('config.php values are in sync with config_si.php values.  Skipped merging.');
+	      logThis('config.php values are in sync with config_si.php values.  Skipped merging.', $path);
 	   }
 	   return false;
 	}
@@ -4223,6 +4231,60 @@ function add_unified_search_to_custom_modules_vardefs()
 
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * change from using the older SugarCache in 6.1 and below to the new one in 6.2
+ */
+function upgradeSugarCache($file)
+{
+	global $sugar_config;
+	$cacheUploadUpgradesTemp = mk_temp_dir(sugar_cached('upgrades/temp'));
+
+	unzip($file, $cacheUploadUpgradesTemp);
+
+	if(!file_exists(clean_path("{$cacheUploadUpgradesTemp}/manifest.php"))) {
+		logThis("*** ERROR: no manifest file detected while bootstraping upgrade wizard files!");
+		return;
+	} else {
+		include(clean_path("{$cacheUploadUpgradesTemp}/manifest.php"));
+	}
+
+	$from_dir = "{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}";
+	$allFiles = array();
+	if(file_exists("$from_dir/include/SugarCache")) {
+		$allFiles = findAllFiles("$from_dir/include/SugarCache", $allFiles);
+	}
+	if(file_exists("$from_dir/include/database")) {
+		$allFiles = findAllFiles("$from_dir/include/database", $allFiles);
+	}
+	if(file_exists("$from_dir/include/utils/external_cache.php")) {
+		$allFiles[] = "$from_dir/include/utils/external_cache.php";
+	}
+	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
+		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
+	}
+	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
+		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
+	}
+	if(file_exists("$from_dir/include/utils/autoloader.php")) {
+		$allFiles[] = "$from_dir/include/utils/autoloader.php";
+	}
+
+	foreach($allFiles as $k => $file) {
+		$destFile = str_replace($from_dir."/", "", $file);
+       if(!is_dir(dirname($destFile))) {
+			mkdir_recursive(dirname($destFile)); // make sure the directory exists
+		}
+		if ( stristr($file,'uw_main.tpl') )
+            logThis('Skipping "'.$file.'" - file copy will during commit step.');
+        else {
+            logThis('updating UpgradeWizard code: '.$destFile);
+            copy_recursive($file, $destFile);
+        }
+	}
+}
+>>>>>>> 6_6_2
 
 /**
  * unlinkUpgradeFiles
@@ -4258,6 +4320,7 @@ function unlinkUpgradeFiles($version, $path='')
 
                 //Check to make sure we should load and run this UpgradeRemoval instance
                 $upgradeInstance = new $upgradeClass();
+<<<<<<< HEAD
                 if ($upgradeInstance instanceof UpgradeRemoval && version_compare($upgradeInstance->version, $version, '>='))
                 {
                     logThis('Running UpgradeRemoval instance ' . $upgradeClass, $path);
@@ -4266,6 +4329,16 @@ function unlinkUpgradeFiles($version, $path='')
                     foreach($files as $file)
                     {
                        logThis($file, $path);
+=======
+                if ($upgradeInstance instanceof UpgradeRemoval && version_compare($upgradeInstance->version, $version, '<='))
+                {
+                    logThis('Running UpgradeRemoval instance ' . $upgradeClass);
+                    logThis('Files will be backed up to custom/backup');
+                    $files = $upgradeInstance->getFilesToRemove($version);
+                    foreach($files as $file)
+                    {
+                       logThis($file);
+>>>>>>> 6_6_2
                     }
                     $upgradeInstance->processFilesToRemove($files);
                 }

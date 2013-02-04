@@ -37,6 +37,7 @@ class Person extends Basic
     var $createLocaleFormattedName = true;
 
     /**
+<<<<<<< HEAD
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct
@@ -48,6 +49,13 @@ class Person extends Basic
     }
 
 	public function __construct()
+=======
+     * @var Link2
+     */
+    public $email_addresses;
+
+	public function Person()
+>>>>>>> 6_6_2
 	{
 		parent::__construct();
 		$this->emailAddress = new SugarEmailAddress();

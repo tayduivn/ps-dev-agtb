@@ -49,8 +49,16 @@ class ProjectTaskViewList extends ViewList
                 $current_query_by_page = unserialize(base64_decode($_REQUEST['current_query_by_page']));
                 foreach($current_query_by_page as $search_key=>$search_value) {
                     if($search_key != $module.'2_'.strtoupper($this->bean->object_name).'_offset' && !in_array($search_key, $blockVariables)) {
-						$_REQUEST[$search_key] = $GLOBALS['db']->quote($search_value);
-					}
+                        if (!is_array($search_value)) {
+                            $_REQUEST[$search_key] = $GLOBALS['db']->quote($search_value);
+                        }
+                        else {
+                            foreach ($search_value as $key=>&$val) {
+                                $val = $GLOBALS['db']->quote($val);
+                            }
+                            $_REQUEST[$search_key] = $search_value;
+                        }
+                    }
                 }
             }
         }
@@ -83,16 +91,7 @@ class ProjectTaskViewList extends ViewList
 		    }
 		}
 
-		global $current_user;
-
-		if (!is_admin($current_user)){
-			$params = array( 'massupdate' => false );
-			$lv->export = false;
-            $lv->multiSelect = false;
-		}
-		else{
-			$params = array( 'massupdate' => true, 'export' => true);
-		}
+        $params = array( 'massupdate' => true, 'export' => true);
 
 		if(!empty($_REQUEST['orderBy'])) {
 		    $params['orderBy'] = $_REQUEST['orderBy'];
@@ -135,11 +134,35 @@ class ProjectTaskViewList extends ViewList
 		}else{
 			$use_old_search = false;
 			require_once('include/SearchForm/SearchForm2.php');
+<<<<<<< HEAD
             $defs = SugarAutoLoader::loadWithMetafiles($this->module, 'searchdefs');
             if($defs) {
                 require $defs;
             }
             $searchFields = SugarAutoLoader::loadSearchFields($this->module);
+=======
+
+
+			if (file_exists('custom/modules/'.$this->module.'/metadata/searchdefs.php'))
+			{
+			    require_once('custom/modules/'.$this->module.'/metadata/searchdefs.php');
+			}
+			elseif (!empty($metafiles[$this->module]['searchdefs']))
+			{
+				require_once($metafiles[$this->module]['searchdefs']);
+			}
+			elseif (file_exists('modules/'.$this->module.'/metadata/searchdefs.php'))
+			{
+			    require_once('modules/'.$this->module.'/metadata/searchdefs.php');
+			}
+
+
+			if(!empty($metafiles[$this->module]['searchfields']))
+                require($metafiles[$this->module]['searchfields']);
+			elseif(file_exists('modules/'.$this->module.'/metadata/SearchFields.php'))
+                require('modules/'.$this->module.'/metadata/SearchFields.php');
+
+>>>>>>> 6_6_2
 
 			$searchForm = new SearchForm($this->seed, $this->module, $this->action);
 			$searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl', $view, $listViewDefs);
@@ -184,15 +207,22 @@ class ProjectTaskViewList extends ViewList
 		}
 		if(!$headers)
 			return;
+         /*
+         * Bug 50575 - related search columns not inluded in query in a proper way
+         */
+         $lv->searchColumns = $searchForm->searchColumns;
 
 		if(empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false){
-			if (!is_admin($current_user)){
-				$lv->setup($seed, 'include/ListView/ListViewNoMassUpdate.tpl', $where, $params);
-			}
-			else {
-				$lv->setup($seed, 'include/ListView/ListViewGeneric.tpl', $where, $params);
-			}
-			$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
+            //Bug 58841 - mass update form was not displayed for non-admin users that should have access
+            if(ACLController::checkAccess($module, 'massupdate') || ACLController::checkAccess($module, 'export'))
+            {
+                $lv->setup($seed, 'include/ListView/ListViewGeneric.tpl', $where, $params);
+            }
+            else
+            {
+                $lv->setup($seed, 'include/ListView/ListViewNoMassUpdate.tpl', $where, $params);
+            }
+
 			echo $lv->display();
 		}
  	}

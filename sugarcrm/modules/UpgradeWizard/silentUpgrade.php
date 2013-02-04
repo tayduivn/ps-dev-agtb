@@ -84,5 +84,21 @@ for($step=1;$step<=3;$step++) {
     }
 }
 
+<<<<<<< HEAD
 echo "***************         SUCCESS!\n";
 exit(0);
+=======
+if($run_dce_upgrade) {
+	$has_error = $output == 0 ? false : true;
+	if(!$has_error) {
+	   $step3 = $php_path."php -f {$php_dir}silentUpgrade_dce_step2.php " . build_argument_string($argv);
+	   passthru($step3, $output);
+	}
+}
+
+if($output != 0) {
+   echo "***************         silentupgrade failed         ***************: $output\n";
+}
+exit($output);
+?>
+>>>>>>> 6_6_2

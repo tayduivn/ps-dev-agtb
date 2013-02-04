@@ -562,6 +562,7 @@ class Quota extends SugarBean
         }
     }
 
+<<<<<<< HEAD
 
     /**
      * function getTopLevelRecord. For the current user, get the record
@@ -574,6 +575,155 @@ class Quota extends SugarBean
     public function getTopLevelRecord($timeperiod_id)
     {
         global $current_user;
+=======
+/**
+ * function getGroupQuota. Function to retrieve the total quota for a manager's
+ * entire group.  
+ * @param $timeperiod_id
+ * @param $formatted - boolean to test if output should be formatted
+ * @param $id - to pass in an user_id in case it is necessary
+ */	
+	function getGroupQuota($timeperiod_id, $formatted = true, $id=NULL){
+		global $current_user;
+		if ($id == NULL)
+			$id = $current_user->id;
+		
+	    $query = "SELECT {$this->db->convert('SUM(quotas.amount_base_currency)', 'ifnull', array(0))} as group_amount" .
+				" FROM users, quotas " .
+				" WHERE quotas.timeperiod_id = '" . $timeperiod_id . "'" .
+				" AND quotas.deleted = 0" .
+				" AND users.id = quotas.user_id" .
+                " AND users.deleted = 0" .
+				" AND quotas.created_by = '" .$id . "'" .
+				" AND (users.reports_to_id = '" . $id . "' " .
+				" OR (users.id = '" . $id . "'" .
+				     " AND quotas.quota_type <> 'Rollup'))"; //for top-level manager
+		
+		$result = $this->db->query($query, true, 'Error retrieving Group Quota: ');
+		$row = $this->db->fetchByAssoc($result);
+		
+		if ($formatted)
+			return format_number($row['group_amount'], 2, 2, array('convert' => true, 'currency_symbol' => true));
+		else 
+			return $row['group_amount'];	// return an unformmated version (for insertion/update into DB)
+	}
+	
+	function resetGroupQuota($timeperiod_id)
+	{
+		global $current_user;
+		
+		$query = "UPDATE quotas SET quotas.amount=0, quotas.amount_base_currency=0" .
+				" WHERE quotas.timeperiod_id = '" . $timeperiod_id . "'" . 
+				" AND quotas.quota_type = 'Rollup'" .
+				" AND quotas.user_id = '" . $current_user->id . "'";
+		
+		$this->db->query($query, true, 'Error Updating Group Quota: ');	
+	}
+/**
+ * function getUserManagedSelectList. Function to populate <SELECT> tag
+ * for the manager's direct reports.  
+ * @param $timeperiod_id
+ * @param $id - if the id is given, use this idea as the selected choice
+ */		
+	function getUserManagedSelectList($timeperiod_id, $id = ''){
+		global $mod_strings;
+		global $locale;
+		
+        $data = $this->getUserManagedSelectData($timeperiod_id);
+		$options = '';
+
+		if ($id == NULL)
+			$options .= '<option value="?action=index&module=Quotas" SELECTED>' 
+						 . $mod_strings['LBL_SELECT_USER']  
+						 . '</option>' ;
+						 		
+        foreach($data as $row)
+        {
+			
+			if ($row['user_id'] == $id)
+				$options .= '<option value="?edit=true&action=index&module=Quotas&record=' 
+						 . $row['quota_id'] 
+						 . '&user_id=' . $row['user_id'] 
+				 		 . '&timeperiod_id=' . $timeperiod_id
+						 . '" SELECTED>' 
+						 . $locale->getLocaleFormattedName($row['first_name'], $row['last_name']) 
+						 . '</option>';
+			else{
+				if ($row['quota_id'] == NULL){
+					$options .= '<option value="?edit=true&action=index&module=Quotas&record=new' 
+						 . '&user_id=' . $row['user_id'] 
+				 		 . '&timeperiod_id=' . $timeperiod_id
+						 . '">' 
+						 . $locale->getLocaleFormattedName($row['first_name'], $row['last_name']) 
+						 . '</option>' ;
+				}
+				else{
+					$options .= '<option value="?edit=true&action=index&module=Quotas&record=' 
+						 . $row['quota_id'] 
+						 . '&user_id=' . $row['user_id'] 
+				 		 . '&timeperiod_id=' . $timeperiod_id							 
+						 . '">' 
+						 . $locale->getLocaleFormattedName($row['first_name'], $row['last_name']) 
+						 . '</option>' ;
+				}
+			}
+		}
+		
+		return $options;
+	}
+
+    /**
+     * Return data for building options in Quota::getUserManagedSelectList
+     * @param string $timeperiod_id
+     * @return array
+     */
+    protected function getUserManagedSelectData($timeperiod_id)
+    {
+        $result = array();
+        global $current_user;
+        $query = "SELECT U.id as user_id, Q.id as quota_id, Q.timeperiod_id as timeperiod_id, user_name, first_name, last_name " .
+                "FROM users U " .
+                "LEFT OUTER JOIN (SELECT quotas.id, quotas.user_id, quotas.timeperiod_id, quotas.quota_type " .
+                "FROM quotas, users " .
+                "WHERE quotas.timeperiod_id = {$this->db->quoted($timeperiod_id)}" .
+                "AND quotas.user_id = users.id " .
+                "AND quotas.created_by = {$this->db->quoted($current_user->id)}" .
+                "AND (users.reports_to_id = {$this->db->quoted($current_user->id)}" .
+                "OR (quotas.quota_type = 'Direct' AND users.id = {$this->db->quoted($current_user->id)}) ) ) Q " .
+                "ON Q.user_id = U.id  " .
+                "WHERE (U.reports_to_id = {$this->db->quoted($current_user->id)}" .
+                " OR U.id = {$this->db->quoted($current_user->id)}) AND U.deleted = 0  " .
+                "ORDER BY first_name";
+        $resource = $this->db->query($query, true, 'Error retrieving quotas for managed users for current user: ');
+        while($row = $this->db->fetchByAssoc($resource))
+        {
+            array_push($result, $row);
+        }
+        return $result;
+    }
+/**
+ * function isManager. The purpose of this function is to determine whether
+ * the given user is a manager  
+ * @param $id - id of the user in question
+ */		
+	
+	function isManager($id)
+	{
+		global $current_user;
+		
+		$qry = "SELECT * " .
+			   "FROM users " .
+			   "WHERE reports_to_id = '" . $id . "'";
+		
+		$result = $this->db->query($this->create_list_count_query($qry),true, 'Error retrieving row count from quotas: ');	
+		$row = $this->db->fetchByAssoc($result);
+		
+		if ($row['c'] > 0)
+			return true;
+		else
+			return false;
+	}
+>>>>>>> 6_6_2
 
         $qry = "SELECT id " .
             "FROM quotas " .

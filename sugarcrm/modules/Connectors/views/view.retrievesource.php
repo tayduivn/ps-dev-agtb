@@ -27,8 +27,17 @@ require_once('include/json_config.php');
 require_once('include/MVC/View/views/view.list.php');
 
 require_once('include/connectors/ConnectorFactory.php');
+<<<<<<< HEAD
 class ViewRetrieveSource extends ViewList
 {
+=======
+class ViewRetrieveSource extends ViewList {
+   
+ 	function ViewRetrieveSource(){
+ 		parent::ViewList();
+ 	}
+
+>>>>>>> 6_6_2
     function display() {
 
         $source_id = $_REQUEST['source_id'];
@@ -159,4 +168,3 @@ class ViewRetrieveSource extends ViewList
     }
 }
 
-?>

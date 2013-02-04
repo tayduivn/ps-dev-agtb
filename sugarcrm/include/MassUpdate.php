@@ -1296,7 +1296,8 @@ EOQ;
         }
 	/* bug 31271: using false to not add all bean fields since some beans - like SavedReports
 	   can have fields named 'module' etc. which may break the query */
-        $searchForm->populateFromArray(unserialize(base64_decode($query)), null, true); // see bug 31271
+        $query = unserialize(base64_decode($query));
+        $searchForm->populateFromArray($query, null, true);
         $this->searchFields = $searchForm->searchFields;
         $where_clauses = $searchForm->generateSearchWhere(true, $module);
         if (count($where_clauses) > 0 ) {
@@ -1309,17 +1310,49 @@ EOQ;
 
     protected function getSearchDefs($module)
     {
+<<<<<<< HEAD
      	$searchdefs_file = SugarAutoLoader::loadWithMetafiles($module, 'searchdefs');
  		if($searchdefs_file) {
  			require $searchdefs_file;
  		}
+=======
+        if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
+        {
+            require('custom/modules/'.$module.'/metadata/searchdefs.php');
+        }
+        elseif (!empty($metafiles[$module]['searchdefs']))
+        {
+            require($metafiles[$module]['searchdefs']);
+        }
+        elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
+        {
+            require('modules/'.$module.'/metadata/searchdefs.php');
+        }
+>>>>>>> 6_6_2
 
         return isset($searchdefs) ? $searchdefs : array();
     }
 
     protected function getSearchFields($module)
     {
+<<<<<<< HEAD
         return SugarAutoLoader::loadSearchFields($module);
+=======
+        if (file_exists('custom/modules/' . $module . '/metadata/SearchFields.php'))
+        {
+            require('custom/modules/' . $module . '/metadata/SearchFields.php');
+        }
+        elseif(!empty($metafiles[$module]['searchfields']))
+        {
+            require($metafiles[$module]['searchfields']);
+        }
+        elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
+        {
+            require('modules/'.$module.'/metadata/SearchFields.php');
+        }
+
+        return isset($searchFields) ? $searchFields : array();
+>>>>>>> 6_6_2
     }
     /**
      * This is kinda a hack how it is implimented, but will tell us whether or not a focus has

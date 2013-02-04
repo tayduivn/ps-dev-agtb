@@ -50,7 +50,11 @@ class Bug57902Test extends Sugar_PHPUnit_Framework_TestCase
                     'table_alias' => 'calls',
                     'table_key' => 'self'
                 ),
+<<<<<<< HEAD
                 'count ASC'
+=======
+                'calls__count ASC'
+>>>>>>> 6_6_2
             ),
             array(
                 array(

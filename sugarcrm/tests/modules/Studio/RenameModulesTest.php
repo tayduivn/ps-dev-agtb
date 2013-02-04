@@ -96,9 +96,15 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $_REQUEST['dropdown_name'] = 'moduleList';
 
         global $app_list_strings;
-        if (!isset($app_list_strings['parent_type_display'][$module])) {
-            $app_list_strings['parent_type_display'][$module] = 'Account';
+        
+        foreach(getTypeDisplayList() as $typeDisplay) 
+        {
+            if (!isset($app_list_strings[$typeDisplay][$module])) 
+            {
+                $app_list_strings[$typeDisplay][$module] = 'Account';
+            }
         }
+        
         $rm->save(FALSE);
         SugarAutoLoader::buildCache();
 
@@ -106,7 +112,10 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $app_list_string = return_app_list_strings_language('en_us');
         $this->assertEquals($newSingular, $app_list_string['moduleListSingular'][$module] );
         $this->assertEquals($newPlural, $app_list_string['moduleList'][$module] );
-        $this->assertEquals($newSingular, $app_list_string['parent_type_display'][$module] );
+        foreach(getTypeDisplayList() as $typeDisplay) 
+        {
+            $this->assertEquals($newSingular, $app_list_string[$typeDisplay][$module] );
+        }
 
         //Test module strings for account
         $accountStrings = return_module_language('en_us','Accounts', TRUE);
@@ -219,8 +228,13 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $_REQUEST['dropdown_name'] = 'moduleList';
 
         global $app_list_strings;
-        if (!isset($app_list_strings['parent_type_display'][$module])) {
-            $app_list_strings['parent_type_display'][$module] = 'Account';
+
+        foreach(getTypeDisplayList() as $typeDisplay) 
+        {
+            if (!isset($app_list_strings[$typeDisplay][$module])) 
+            {
+                $app_list_strings[$typeDisplay][$module] = 'Account';
+            }
         }
         $rm->save(FALSE);
 
@@ -259,8 +273,13 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $_REQUEST['dropdown_name'] = 'moduleList';
 
         global $app_list_strings;
-        if (!isset($app_list_strings['parent_type_display'][$module])) {
-            $app_list_strings['parent_type_display'][$module] = 'Account';
+        
+        foreach(getTypeDisplayList() as $typeDisplay) 
+        {
+            if (!isset($app_list_strings[$typeDisplay][$module])) 
+            {
+                $app_list_strings[$typeDisplay][$module] = 'Account';
+            }
         }
         $rm->save(FALSE);
 
