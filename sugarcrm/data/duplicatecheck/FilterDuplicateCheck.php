@@ -103,6 +103,9 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
             foreach ($filterDef as $field => &$filter) {
                 if ($field == '$or' || $field == '$and') {
                     $filter = $this->buildDupeCheckFilter($filter);
+                    if (empty($filter)) {
+                        unset($filterDef[$field]);
+                    }
                 } else {
                     foreach ($filter as $op => &$value) {
                         $inField = $this->getIncomingFieldFromPlaceholder($value);
