@@ -162,8 +162,12 @@
             if(!isSetup){
                 //issue notice about setting up Opportunities
                 var alert = app.alert.show('forecast_opp_notice', {
-                    level:'confirmation',
-                    showCancel:false,
+                    level:'warning',
+                    autoClose:true,
+                    closeable:true,
+                    onAutoClose: _.bind(function() {
+                        this.displaySuccessAndReload();
+                    }, this),
                     messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
                 });
 
