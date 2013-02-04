@@ -83,6 +83,7 @@ class SugarAutoLoader
 	    "data/duplicatecheck/",
 	    "include/SugarSearchEngine/",
 	    "include/",
+        "modules/Mailer/",
 	);
 
 	/**

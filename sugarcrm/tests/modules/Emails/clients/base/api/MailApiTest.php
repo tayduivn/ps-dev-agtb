@@ -187,11 +187,10 @@ class MailApiTest extends RestTestBase {
         $this->input["status"] = "draft";
 
         $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
+        $this->assertHttpStatus($post_response);
 
         $reply = $post_response['reply'];
 
-        $http_status = $post_response['info']['http_code'];
-        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
         if (isset($reply['error'])) {
             echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
@@ -225,10 +224,10 @@ class MailApiTest extends RestTestBase {
         );
 
         $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
+        $this->assertHttpStatus($post_response);
+
         $reply = $post_response['reply'];
 
-        $http_status = $post_response['info']['http_code'];
-        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
         if (isset($reply['error'])) {
             echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
@@ -270,10 +269,10 @@ class MailApiTest extends RestTestBase {
         );
 
         $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
+        $this->assertHttpStatus($post_response);
+
         $reply = $post_response['reply'];
 
-        $http_status = $post_response['info']['http_code'];
-        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
         if (isset($reply['error'])) {
             echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
@@ -309,11 +308,10 @@ class MailApiTest extends RestTestBase {
         );
 
         $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
-        $reply = $post_response['reply'];
-        // print_r($reply);
+        $this->assertHttpStatus($post_response);
 
-        $http_status = $post_response['info']['http_code'];
-        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
+        $reply = $post_response['reply'];
+
         if (isset($reply['error'])) {
             echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
@@ -352,11 +350,10 @@ class MailApiTest extends RestTestBase {
         );
 
         $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
-        $reply = $post_response['reply'];
-        // print_r($reply);
+        $this->assertHttpStatus($post_response);
 
-        $http_status = $post_response['info']['http_code'];
-        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
+        $reply = $post_response['reply'];
+
         if (isset($reply['error'])) {
             echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
@@ -484,11 +481,10 @@ class MailApiTest extends RestTestBase {
         $this->input["bcc_addresses"] = null;
 
         $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
-        $reply = $post_response['reply'];
-        // print_r($reply);
+        $this->assertHttpStatus($post_response);
 
-        $http_status = $post_response['info']['http_code'];
-        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
+        $reply = $post_response['reply'];
+
         if (isset($reply['error'])) {
             echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
