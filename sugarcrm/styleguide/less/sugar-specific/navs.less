@@ -45,15 +45,20 @@
 
 // Actual tabs (as links)
 .nav-tabs > li > a {
-  background-color: @grayLight;
+  background-color: transparent;
   color: @gray;
   margin: 0 4px;
-  border: 1px solid darken(@grayLight, 5%);
-  padding: 6px 0 4px 0;
+  //border: 1px solid darken(@grayLight, 5%);
+  padding: 6px 8px;
+  border-bottom: 1px solid @grayLight;
   &:hover {
-    background-color: darken(@grayLight, 10%);
-    border: 1px solid darken(@grayLight, 5%);
-    color: darken(@gray, 5%);
+    //border: 1px solid darken(@grayLight, 5%);
+    color: @dropdownLinkColorHover;
+    text-decoration: none;
+    //this causes sharp corners on dropdown-menu
+    //fixed by setting border radius on li > a
+    background: @dropdownLinkBackgroundHover;
+    //background-color: transparent;
   }
 }
 
