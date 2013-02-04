@@ -197,11 +197,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         
         foreach($user_ids AS $user_id) {
             // need to replace -'s for elastic search, same as team_set_ids
-<<<<<<< HEAD
-            $module_favorites_user[] = $this->formatGuidFields($fav->assigned_user_id);
-=======
-            $keyValues['user_favorites'][] = str_replace('-', '', strval($user_id));
->>>>>>> 6_6_2
+            $keyValues['user_favorites'][] = $this->formatGuidFields($user_id);
+
         }
         //END SUGARCRM flav=pro ONLY
  
