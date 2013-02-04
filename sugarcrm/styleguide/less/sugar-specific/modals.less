@@ -7,7 +7,6 @@
   .border-radius(8px);
 }
 
-
 //Generate fixed spanX modal widths
 .spanModalX (@index) when (@index > 0) {
   (~".modal.span@{index},.row-fluid .modal.span@{index}") { .spanModal(@index); }
@@ -79,6 +78,7 @@ body.modal-open {
   overflow: auto;
   height: 310px;
 }
+
 .modal-body textarea {
   text-align: left;
 }
@@ -86,8 +86,7 @@ body.modal-open {
 /* created for admin settings */
 .modal-wizard-start {
   position: relative;
-  top: 5px;
-  //padding-top: 6px;
+  //top: 5px;
 }
 
 .modal-navigation {
@@ -126,19 +125,18 @@ body.modal-open {
 .layout_Forecasts {
 
   .modal-wizard-start {
-    padding-top: 6px;
-    position: relative;
-    top: 5px;
+    padding-top: 0px;
   }
 
   .modal-body {
-    min-height: 400px;
-    padding: 0;
+    //min-height: 400px;
+    //padding: 0;
     &.with-nav {
-      margin-top: 56px;
+      //margin-top: 56px;
     }
     &.with-tab-nav {
-      margin-top: 36px;
+      //margin-top: 36px;
+      padding-top: 36px;
     }
     .tab-content {
       overflow: auto;
@@ -149,13 +147,15 @@ body.modal-open {
     }
   }
 
+  .modal-content {
+    overflow-y: auto;
+    //margin-top: 37px;
+    max-height: 264px;
+  }
+
   .modal-navigation {
-    position: absolute;
-    top: 46px;
-    width: 100%;
-    background-color: @grayLighter;
-    border-bottom: 1px solid @grayLight;
-    padding: 3px 0 0;
+    top: 0;
+    padding: 0;
 
     .breadcrumb.two {
       padding-bottom: 3px;
@@ -208,9 +208,7 @@ body.modal-open {
         }
       }
     }
-    .nav-tabs {
-      margin: 0 4px;
-      border-bottom: 0 none @trasparent;
-    }
+
   }
+
 }
