@@ -36,6 +36,7 @@
         return value;
     },
     format:function(value){
+        value = value || this.def.default || "";
         if (value && !value.match(/^(http|https):\/\//)) {
             value = "http://" + value.trim();
         }

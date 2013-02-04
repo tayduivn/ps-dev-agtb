@@ -2,14 +2,14 @@
     events: {
         'click .add' : 'addItem',
         'click .remove' : 'removeItem',
-        'click .btn[name=update_button]' : 'save',
-        'click .btn.cancel_button' : 'hide'
+        'click .btn[name=update_button]' : 'saveClicked',
+        'click .btn.cancel_button' : 'cancelClicked'
     },
     visible: false,
     fieldOptions: null,
     fieldValues: null,
     defaultOption: null,
-    fieldPlaceHolderTag: '.fieldPlaceHolder',
+    fieldPlaceHolderTag: '[name=fieldPlaceHolder]',
     initialize: function(options) {
         this.fieldValues = [{}];
         this.setMetadata(options);
@@ -31,16 +31,19 @@
                     if(field.name === 'team_name') {
                         var team_field = _.clone(field);
                         team_field.type = 'teamset';
+                        team_field.css_class = 'span9';
                         field = {
                             type: 'fieldset',
                             name: team_field.name,
                             label: team_field.label,
+                            css_class : 'row-fluid',
                             fields: [
                                 team_field,
                                 {
                                     'name' : 'team_name_type',
                                     'type' : 'bool',
-                                    'label' : 'LBL_SELECT_APPEND_TEAMS'
+                                    'text' : 'LBL_SELECT_APPEND_TEAMS',
+                                    'css_class' : 'span3'
                                 }
                             ]
                         };
@@ -59,9 +62,14 @@
         var result = app.view.View.prototype._render.call(this),
             self = this;
 
-        this.$(".chzn-select.attribute").chosen({disable_search_threshold: 5}).change(function(evt) {
-            var $el = $(evt.currentTarget),
-                name = $el.val(),
+        this.$(".select2.mu_attribute")
+            .select2({
+                width: '100%',
+                minimumResultsForSearch: 5
+            })
+            .on("change", function(evt) {
+            var $el = $(this),
+                name = $el.select2('val'),
                 index = $el.data('index');
             var option = _.find(self.fieldOptions, function(field){
                 return field.name == name;
@@ -69,7 +77,7 @@
             self.replaceUpdateField(option, index);
             self.placeField($el);
         });
-        this.$(".chzn-select.attribute").each(function(){
+        this.$(".select2.mu_attribute").each(function(){
             self.placeField($(this));
         });
         this.layout.off("list:massupdate:fire", null, this);
@@ -85,7 +93,7 @@
         return result;
     },
     placeField: function($el) {
-        var name = $el.val(),
+        var name = $el.select2('val'),
             index = $el.data('index'),
             fieldEl = this.getField(name).$el;
 
@@ -159,18 +167,19 @@
                         error: options.error,
                         complete: options.complete
                     },
-                    method = options.method || this.defaultMethod;
-                app.api.records(this.defaultMethod, 'MassUpdate', this.getAttributes(method, options.attributes), options.params, callbacks);
+                    method = options.method || this.defaultMethod,
+                    data = this.getAttributes(options.attributes),
+                    url = app.api.buildURL(module, this.module, data, options.params);
+                app.api.call(method, url, data, callbacks);
             },
             defaultMethod: 'update',
             module: 'MassUpdate',
-            getAttributes: function(method, attributes) {
+            getAttributes: function(attributes) {
                 return {
                     massupdate_params: _.extend({
                         'uid' : (this.entire) ? null : this.pluck('id'),
-                        'module' : module,
                         'entire' : this.entire,
-                        'delete' : (method == 'delete') ? true : null
+                        'filter' : (this.entire) ? this.filter : null
                     }, attributes)
                 };
             }
@@ -252,6 +261,7 @@
                         },
                         success: function(data, response) {
                             massUpdate.reset();
+                            self.hide();
                             if(response.status == 'done') {
                                 app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_SUCCESS'), autoClose: true});
                                 self.layout.trigger("list:search:fire");
@@ -328,8 +338,8 @@
         this.setDefault();
 
         var massModel = this.context.get("mass_collection");
-        massModel.off("remove reset", null, this);
-        massModel.on("remove reset", this.autoHide, this);
+        massModel.off("add remove reset", null, this);
+        massModel.on("add remove reset", this.setDisabled, this);
 
         this.$el.show();
         this.render();
@@ -338,10 +348,20 @@
         this.visible = false;
         this.$el.hide();
     },
-    autoHide: function() {
+    setDisabled: function() {
         var massUpdate = this.getMassUpdateModel(this.module);
         if(massUpdate.length == 0) {
-            this.hide();
+            this.$(".btn[name=update_button]").addClass("disabled");
+        } else {
+            this.$(".btn[name=update_button]").removeClass("disabled");
         }
+    },
+    saveClicked: function(evt) {
+        if(this.$(".btn[name=update_button]").hasClass("disabled") === false) {
+            this.save();
+        }
+    },
+    cancelClicked: function(evt) {
+        this.hide();
     }
 })

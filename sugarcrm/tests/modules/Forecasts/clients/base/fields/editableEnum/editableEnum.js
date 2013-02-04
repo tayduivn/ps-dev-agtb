@@ -84,7 +84,8 @@ describe("forecast editableEnum field", function() {
                             select2: function(){
                                 return "select2";
                             },
-                            val: function(){}
+                            val: function(){},
+                            keydown:function(){}
                     }
                             
                 });

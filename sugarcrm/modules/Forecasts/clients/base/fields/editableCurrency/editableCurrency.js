@@ -22,12 +22,60 @@
 
     initialize: function (options) {
 
-        app.view.fields.IntField.prototype.initialize.call(this, options);
+        app.view.fields.CurrencyField.prototype.initialize.call(this, options);
 
         this.checkIfCanEdit();
 
         this.symbol = app.currency.getCurrencySymbol(this.model.get('currency_id'));
     },
+
+
+    /**
+     * Begin Override
+     *
+     * This is because the base field is broken with our custom code in forecasts.
+     *
+     * todo-sfa: check that if these are moved when SFA-462 is done that it can work with the base field
+     */
+    _render: function() {
+
+        // bypass the currencyField render and just go all the way up
+        app.view.Field.prototype._render.call(this);
+        return this;
+    },
+
+    format: function(value) {
+
+        if (this.tplName === 'edit') {
+            return app.utils.formatNumberLocale(value);
+        }
+
+        // TODO review this forecasts requirement and make it work with css defined on metadata
+        if (this.def.convertToBase &&
+            this.def.showTransactionalAmount &&
+            this.model.get(this.def.currency_field || 'currency_id') !== app.currency.getBaseCurrencyId()
+        ) {
+
+            this.transactionValue = app.currency.formatAmountLocale(
+                this.model.get(this.name),
+                this.model.get(this.def.currency_field || 'currency_id')
+            );
+        }
+
+        var baseRate = this.model.get(this.def.base_rate_field || 'base_rate');
+        var currencyId = this.model.get(this.def.currency_field || 'currency_id');
+
+        if (this.def.convertToBase) {
+            value = app.currency.convertWithRate(value, baseRate);
+            currencyId = app.currency.getBaseCurrencyId();
+        }
+        return app.currency.formatAmountLocale(value, currencyId);
+    },
+    /**
+     * End Override
+     */
+
+
 
     /**
      * Utility Method to check if we can edit again.

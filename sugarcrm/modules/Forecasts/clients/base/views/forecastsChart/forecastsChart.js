@@ -312,7 +312,7 @@
                             , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
                             // bar group data (x-axis)
                             , 'groupData': (!json.values.filter(function(d) { return d.values.length }).length) ? [] :
-                                json.label.map( function(d,i){
+                                json.values.map( function(d,i){
                                     return {
                                         'group': i
                                         , 'l': json.values[i].label

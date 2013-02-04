@@ -34,7 +34,7 @@
 
     initialize: function(options) {
         _.bindAll(this);
-
+        options.meta = _.extend({}, app.metadata.getView(null, 'record'), options.meta);
         app.view.views.EditableView.prototype.initialize.call(this, options);
 
         this.buttons = {};
@@ -137,6 +137,16 @@
                     field.labelSpan = Math.floor(4 / columns);
                 }
 
+                // this is new to prevent a span of 0
+                if (field.span < 1) {
+                    field.span = 1;
+                }
+
+                // this is new to prevent a labelSpan of 0
+                if (field.labelSpan < 1) {
+                    field.labelSpan = 1;
+                }
+
                 totalFieldCount++;
                 field.index = totalFieldCount;
 
@@ -185,7 +195,7 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            if ( field.type === "img" || field.type === "buttondropdown" || field.parent || (field.name && this.buttons[field.name])) {
+            if ( field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
@@ -203,12 +213,11 @@
     initButtons: function() {
         if(this.options.meta && this.options.meta.buttons) {
             _.each(this.options.meta.buttons, function(button) {
-                if (button.type === 'buttondropdown') {
+                this.registerFieldAsButton(button.name);
+                if (button.buttons) {
                     _.each(button.buttons, function(dropdownButton) {
                         this.registerFieldAsButton(dropdownButton.name);
                     }, this);
-                } else if (button.type === 'button') {
-                    this.registerFieldAsButton(button.name);
                 }
             }, this);
         }
@@ -416,7 +425,8 @@
         this.currentState = state;
 
         _.each(this.buttons, function(field) {
-            if (_.isUndefined(field.showOn()) || (field.showOn() === state)) {
+            var showOn = field.def.showOn;
+            if (_.isUndefined(showOn) || (showOn === state)) {
                 field.show();
             } else {
                 field.hide();
