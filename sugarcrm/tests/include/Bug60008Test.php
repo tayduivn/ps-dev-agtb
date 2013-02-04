@@ -37,6 +37,13 @@ class Bug60008Test extends Sugar_PHPUnit_Framework_TestCase
             $this->_backedUp = true;
         } 
         
+        // For cases in which this test runs before the custom include directory
+        // is created
+        $custDir = dirname($this->_custFile);
+        if (!is_dir($custDir)) {
+            mkdir_recursive($custDir);
+        }
+        
         copy($this->_testCustFile, $this->_custFile);
         
         // File map cache this bad boy

@@ -552,6 +552,15 @@ class SugarTestHelper
     public static function tearDown()
     {
         self::init();
+        
+        // Handle current_user placing on the end since there are some things
+        // that need current user for the clean up
+        if (isset(self::$registeredVars['current_user'])) {
+            $cu = self::$registeredVars['current_user'];
+            unset(self::$registeredVars['current_user']);
+            self::$registeredVars['current_user'] = $cu;
+        }
+                
         foreach(self::$registeredVars as $varName => $isCalled)
         {
             if ($isCalled)
