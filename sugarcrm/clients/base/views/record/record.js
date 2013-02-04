@@ -144,6 +144,11 @@
                     field.labelSpan = 1;
                 }
 
+                // this is new to disable the pencil icon if the user doesn't have ACLs
+                if (!app.acl.hasAccess('edit', this.module, this.model.get('assigned_user_id'), field.name)) {
+                    field.noedit = true;
+                }
+
                 totalFieldCount++;
                 field.index = totalFieldCount;
 
@@ -192,7 +197,8 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            if ( field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
+            //Exclude non editable fields
+            if (field.def.noedit || field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
