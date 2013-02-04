@@ -431,4 +431,25 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals(count($legacyFields), count($currentFields), 'Field count differs between legacy and current metadata');
         }
         //END SUGARCRM flav=pro ONLY
+    public function testGetEmployee()
+    {
+        // make sure the current_user isn't an admin
+        $GLOBALS['current_user']->is_admin = 0;
+        $GLOBALS['current_user']->save();
+
+        $whereClause = "";
+        $module = 'Employees';
+        $orderBy = 'first_name';
+        $offset = 0;
+        $returnFields = array('id','first_name');
+
+        $result = $this->_login(); // Logging in just before the REST call as this will also commit any pending DB changes
+        $session = $result['id'];
+        $result = $this->_makeRESTCall('get_entry_list', array($session, $module, $whereClause, $orderBy,$offset, $returnFields));
+        $this->assertNotEmpty($result, "Should have returned at least 1 record");
+
+        $GLOBALS['current_user']->is_admin = 1;
+        $GLOBALS['current_user']->save();
+
+    }        
 }

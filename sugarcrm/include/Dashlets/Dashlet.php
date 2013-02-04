@@ -173,7 +173,7 @@ class Dashlet
 
         $str = '<div ';
         if(empty($sugar_config['lock_homepage']) || $sugar_config['lock_homepage'] == false) $str .= 'onmouseover="this.style.cursor = \'move\';" ';
-        $str .= 'id="dashlet_header_' . $this->id . '" class="hd"><div class="tl"></div><div class="hd-center">' . get_form_header($this->title, $title, false) . '</div><div class="tr"></div></div><div class="bd"><div class="ml"></div><div class="bd-center">';
+        $str .= 'id="dashlet_header_' . $this->id . '" class="hd"><div class="hd-center">' . get_form_header($this->title, $title, false) . '</div></div><div class="bd"><div class="bd-center">';
 
         return $str;
     }
@@ -185,7 +185,7 @@ class Dashlet
      */
     public function getFooter()
     {
-        $footer = '</div><div class="mr"></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div>';
+        $footer = '</div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div>';
 
         return $footer;
     }

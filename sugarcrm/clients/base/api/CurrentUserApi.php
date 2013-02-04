@@ -353,9 +353,29 @@ class CurrentUserApi extends SugarApi {
         $user_data['preferences']['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
         $user_data['module_list'] = $this->getModuleList();
 
-        if(isset($current_user->preferred_language)) {
-            $user_data['preferences']['language'] = $current_user->preferred_language;
+        // use their current auth language if it exists
+        if(!empty($_SESSION['authenticated_user_language'])) {
+            $language = $_SESSION['authenticated_user_language'];
         }
+        // if current auth language doesn't exist get their preferred lang from the user obj
+        elseif(!empty($current_user->preferred_language)) {
+            $language = $current_user->preferred_language;
+        }
+        // if nothing exists, get the sugar_config default language
+        else {
+            $language = $GLOBALS['sugar_config']['default_language'];
+        }
+
+        $user_data['preferences']['language'] = $language;
+
+
+        // email preferences
+        $user_data['preferences']['email_signature_default'] = $current_user->getPreference('signature_default');
+        $user_data['preferences']['email_signature_prepend'] = $current_user->getPreference('signature_prepend') ? 'true' : 'false';
+
+        // outbound email configuration preferences
+        $hasValidOutboundEmailConfiguration = OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($current_user);
+        $user_data['preferences']['has_outbound_email_config'] = $hasValidOutboundEmailConfiguration ? 'true' : 'false';
 
         return $user_data;
     }

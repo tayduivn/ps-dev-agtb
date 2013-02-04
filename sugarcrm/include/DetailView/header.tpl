@@ -34,7 +34,7 @@
 <script language="javascript">
 {literal}
 SUGAR.util.doWhen(function(){
-    return $("#contentTable").length == 0;
+    return $("#contentTable").length == 0 && YAHOO.util.Event.DOMReady;
 }, SUGAR.themes.actionMenu);
 {/literal}
 </script>

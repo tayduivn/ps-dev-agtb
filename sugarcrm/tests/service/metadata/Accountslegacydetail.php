@@ -44,6 +44,7 @@ $viewdefs['Accounts']['DetailView'] = array(
     'panels' => array(
     	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
 	    array('phone_office'),
+		array('phone_alternate'),
 		array(array('name'=>'website', 'displayParams'=>array('type'=>'link'))),
 		array('email1'),
 		array('billing_address_street'),
@@ -51,6 +52,11 @@ $viewdefs['Accounts']['DetailView'] = array(
 		array('billing_address_state'),
 		array('billing_address_postalcode'),
 		array('billing_address_country'),
+		array('shipping_address_street'),
+		array('shipping_address_city'),
+		array('shipping_address_state'),
+		array('shipping_address_postalcode'),
+		array('shipping_address_country'),
 		array('assigned_user_name'),
 		array('team_name'),
 

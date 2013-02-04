@@ -36,7 +36,8 @@ SUGAR.ajaxUI = {
         var cont;
         if (typeof window.onbeforeunload == "function")
             window.onbeforeunload = null;
-        scroll(0,0);
+        if (typeof scroll == "function")
+            scroll(0,0);
         //BEGIN SUGARCRM flav=pro ONLY
         SUGAR.forms.AssignmentHandler.reset();
         //END SUGARCRM flav=pro ONLY
