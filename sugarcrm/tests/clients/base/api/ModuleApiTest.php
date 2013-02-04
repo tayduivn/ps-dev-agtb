@@ -45,6 +45,10 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
         SugarTestHelper::setUp("current_user");        
         // load up the unifiedSearchApi for good times ahead
         $this->moduleApi = new ModuleApi();
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = "ModulaApiTest setUp Account";
+        $account->save();
+        $this->accounts[] = $account;
     }
 
     public function tearDown() {
@@ -53,82 +57,57 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
         foreach($this->accounts AS $account) {
             $account->mark_deleted($account->id);
         }
-        // unset unifiedSearchApi
-        unset($this->unifiedSearchApi);
-        unset($this->moduleApi);
-        // clean up all roles created
-        foreach($this->roles AS $role) {
-            $role->mark_deleted($role->id);
-            $role->mark_relationships_deleted($role->id);
-        }
-        unset($_SESSION['ACL']);
         SugarTestHelper::tearDown();
         parent::tearDown();        
     }
 
-    // test that when you have create only you at least get the id back when a create is successful
-    // @Bug 60228
-    public function testCreateOnly() {
-        // create role that is all fields read only
-        $this->roles[] = $role = $this->createRole('MODULEAPI - UNIT TEST ' . create_guid(), array('Accounts'), array('access', 'create',));
-
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);        
-        // test I can create
-        $result = $this->moduleApi->createRecord(new ModuleApiServiceMockUp, array('module' => 'Accounts', 'name' => 'ModuleApi Create - ' . create_guid()));
-
-        $this->assertEquals(count($result), 1, "There is more than 1 entry in the result");
-        $this->assertTrue(isset($result['id']), "ID was not set");
-        $this->assertNotEmpty($result['id'], "ID was empty");
-        $this->accounts[] = BeanFactory::getBean('Accounts', $result['id']);
+    // test set favorite
+    public function testSetFavorite() {
+        $result = $this->moduleApi->setFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
     }
+    // test remove favorite
+    public function testRemoveFavorite() {
+        $result = $this->moduleApi->setFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
 
-    protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
-        $role = new ACLRole();
-        $role->name = $name;
-        $role->description = $name;
-        $role->save();
-        $GLOBALS['db']->commit();
+        $result = $this->moduleApi->unsetFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        $this->assertFalse((bool) $result['my_favorite'], "Was not set to false");
+    }
+    // test set favorite of deleted record
+    public function testSetFavoriteDeleted() {
+        $this->accounts[0]->mark_deleted($this->accounts[0]->id);
+        $this->setExpectedException(
+          'SugarApiExceptionNotFound', "Could not find record: {$this->accounts[0]->id} in module: Accounts"
+        );
+        $result = $this->moduleApi->setFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        
+    }
+    // test remove favorite of deleted record
+    public function testRemoveFavoriteDeleted() {
+        $result = $this->moduleApi->setFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
 
-        $roleActions = $role->getRoleActions($role->id);
+        $this->accounts[0]->deleted = 1;
+        $this->accounts[0]->save();
+        $this->setExpectedException(
+          'SugarApiExceptionNotFound', "Could not find record: {$this->accounts[0]->id} in module: Accounts"
+        );
 
-        foreach ($roleActions as $moduleName => $actions) {
-            // enable allowed modules
-            if (isset($actions['module']['access']['id']) && !in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_DISABLED);
-            } elseif (isset($actions['module']['access']['id']) && in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_ENABLED);
-            } else {
-                foreach ($actions as $action => $actionName) {
-                    if (isset($actions[$action]['access']['id'])) {
-                        $role->setAction($role->id, $actions[$action]['access']['id'], ACL_ALLOW_DISABLED);
-                    }
-                }
-            }
+        $result = $this->moduleApi->setFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+    }
+    // test set my_favorite on bean
+    public function testSetFavoriteOnBean() {
+        $result = $this->moduleApi->updateRecord(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => true));
+        $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
+    }
+    // test remove my_favorite on bean
+    public function testRemoveFavoriteOnBean() {
+        $result = $this->moduleApi->updateRecord(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => true));
+        $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
 
-            if (in_array($moduleName, $allowedModules)) {
-                foreach ($actions['module'] as $actionName => $action) {
-
-                    if(in_array($actionName, $ownerActions)) {
-                        $aclAllow = ACL_ALLOW_OWNER;
-                    } elseif (in_array($actionName, $allowedActions)) {
-                        $aclAllow = ACL_ALLOW_ALL;
-                    } else {
-                        $aclAllow = ACL_ALLOW_NONE;
-                    }
-                    $role->setAction($role->id, $action['id'], $aclAllow);
-                }
-            }
-
-        }
-        return $role;
+        $result = $this->moduleApi->updateRecord(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => false));
+        $this->assertFalse((bool) $result['my_favorite'], "Was not set to False");        
     }
 
 }

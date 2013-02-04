@@ -44,7 +44,8 @@ class QuotaTests extends Sugar_PHPUnit_Framework_TestCase
      * of currency_id
      *
      */
-    public function testQuotaRate() {
+    public function testQuotaRate()
+    {
         $quota = SugarTestQuotaUtilities::createQuota(500);
         $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
         // if Euro does not exist, will use default currency
@@ -53,6 +54,113 @@ class QuotaTests extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(
             sprintf('%.6f',$quota->base_rate),
             sprintf('%.6f',$currency->conversion_rate)
+        );
+    }
+
+    public function testGetRollupQuotaReturnsArrayForEmptyQuota()
+    {
+        $quota = SugarTestQuotaUtilities::createQuota();
+        $quota->db = $this->getMock("DBManager", array(
+            "quote",
+            "convert",
+            "fromConvert",
+            "query",
+            "freeDbResult",
+            "renameColumnSQL",
+            "get_indices",
+            "get_columns",
+            "add_drop_constraint",
+            "getFieldsArray",
+            "getTablesArray",
+            "version",
+            "tableExists",
+            "fetchRow",
+            "connect",
+            "changeColumnSQL",
+            "disconnect",
+            "lastDbError",
+            "validateQuery",
+            "valid",
+            "dbExists",
+            "tablesLike",
+            "createDatabase",
+            "dropDatabase",
+            "getDbInfo",
+            "userExists",
+            "createDbUser",
+            "full_text_indexing_installed",
+            "getFulltextQuery",
+            "installConfig",
+            "getGuidSQL",
+            "limitQuery",
+            "fetchByAssoc",
+            "createTableSQLParams",
+            "getFromDummyTable",
+        ));
+        $quota->db->expects($this->any())->method('limitQuery')->will($this->returnValue('foo'));
+        $quota->db->expects($this->any())->method('fetchByAssoc')->will($this->returnValue(false));
+        $this->assertEquals(
+            array(
+                'currency_id' => -99,
+                'amount' => 0,
+                'formatted_amount' => '$0.00',
+            ),
+            $quota->getRollupQuota(1)
+        );
+    }
+
+    public function testGetRollupQuota()
+    {
+        $quota = SugarTestQuotaUtilities::createQuota(10);
+        $quota->db = $this->getMock("DBManager", array(
+            "quote",
+            "convert",
+            "fromConvert",
+            "query",
+            "limitQuery",
+            "freeDbResult",
+            "renameColumnSQL",
+            "get_indices",
+            "get_columns",
+            "add_drop_constraint",
+            "getFieldsArray",
+            "getTablesArray",
+            "version",
+            "tableExists",
+            "fetchRow",
+            "connect",
+            "changeColumnSQL",
+            "disconnect",
+            "lastDbError",
+            "validateQuery",
+            "valid",
+            "dbExists",
+            "tablesLike",
+            "createDatabase",
+            "dropDatabase",
+            "getDbInfo",
+            "userExists",
+            "createDbUser",
+            "full_text_indexing_installed",
+            "getFulltextQuery",
+            "installConfig",
+            "getGuidSQL",
+            "fetchByAssoc",
+            "createTableSQLParams",
+            "getFromDummyTable",
+        ));
+        $quota->db->expects($this->any())->method('limitQuery')->will($this->returnValue('foo'));
+        $quota->db->expects($this->any())->method('fetchByAssoc')->will($this->returnValue(array(
+            'currency_id' => -99,
+            'amount' => 10,
+        )));
+        $this->assertEquals(
+            array(
+                'currency_id' => -99,
+                'amount' => 10,
+                'formatted_amount' => '$10.00',
+            ),
+            $quota->getRollupQuota(1)
         );
     }
 }

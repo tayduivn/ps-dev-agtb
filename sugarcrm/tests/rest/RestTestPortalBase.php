@@ -274,8 +274,7 @@ class RestTestPortalBase extends RestTestBase {
     protected function _getPortalACLRole()
     {
         $allowedModules = array('Accounts','Bugs', 'Cases', 'Notes', 'KBDocuments', 'Contacts');
-        $allowedActions = array('create', 'edit', 'admin', 'access', 'list', 'view');
-        $allowedCreate = array('Bugs', 'Cases', 'Notes', 'Contacts', );
+        $allowedActions = array('edit', 'admin', 'access', 'list', 'view');
         $role = new ACLRole();
         $role->retrieve_by_string_fields(array('name' => 'Customer Self-Service Portal Role'));
         $role->name = "Customer Self-Service Portal Role";
@@ -301,13 +300,9 @@ class RestTestPortalBase extends RestTestBase {
                 $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_ENABLED);
                 $role->setAction($role->id, $actions['module']['admin']['id'], ACL_ALLOW_ALL);
                 foreach ($actions['module'] as $actionName => $action) {
-                    if ($actionName != 'create' && in_array($actionName, $allowedActions)) {
+                    if (in_array($actionName, $allowedActions)) {
                         $aclAllow = ACL_ALLOW_ALL;
-                    } 
-                    elseif($actionName == 'create' && in_array($moduleName, $allowedCreate) && in_array($actionName, $allowedActions)) {
-                        $aclAllow = ACL_ALLOW_ALL;
-                    }
-                    else {
+                    } else {
                         $aclAllow = ACL_ALLOW_NONE;
                     }
                     if ($moduleName == 'KBDocuments' && $actionName == 'edit') {

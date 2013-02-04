@@ -39,7 +39,7 @@ $module_menu = array();
 // the link url, display text for the link, and the icon name.
 
 // Create Project
-if(ACLController::checkAccess('Project', 'create', true)) {
+if(ACLController::checkAccess('Project', 'edit', true)) {
     $module_menu[] = array(
         'index.php?module=Project&action=EditView&return_module=Project&return_action=DetailView',
         isset($mod_strings['LNK_NEW_PROJECT']) ? $mod_strings['LNK_NEW_PROJECT'] : '',
@@ -49,7 +49,7 @@ if(ACLController::checkAccess('Project', 'create', true)) {
 
 //BEGIN SUGARCRM flav=pro ONLY
 // Create Project Template
-if(ACLController::checkAccess('Project', 'create', true)) {
+if(ACLController::checkAccess('Project', 'edit', true)) {
     $module_menu[] = array(
         'index.php?module=Project&action=ProjectTemplatesEditView&return_module=Project&return_action=ProjectTemplatesDetailView',
         isset($mod_strings['LNK_NEW_PROJECT_TEMPLATES']) ? $mod_strings['LNK_NEW_PROJECT_TEMPLATES'] : '',

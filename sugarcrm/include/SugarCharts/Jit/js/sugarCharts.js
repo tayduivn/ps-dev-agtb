@@ -706,7 +706,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
         generateLegend: function(chart, chartId) {
             var list = $jit.id('legend'+chartId);
             var legend = chart.getLegend();
-            if(legend['wmlegend']['name'].length > 0) {
+            if(typeof legend['wmlegend'] != "undefined" && legend['wmlegend']['name'].length > 0) {
                 var table = "<div class='col'>";
             } else {
                 var table = "<div class='row'>";
@@ -726,7 +726,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
             table += "</div>";
 
 
-            if(legend['wmlegend']['name'].length > 0) {
+            if(typeof legend['wmlegend'] != "undefined" && legend['wmlegend']['name'].length > 0) {
 
                 table += "<div class='col2'>";
                 for(var i=0;i<legend['wmlegend']['name'].length;i++) {
@@ -747,7 +747,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                 chartWidth = chartWidth - 20;
                 $('#legend'+chartId).width(chartWidth);
                 var legendGroupWidth = new Array();
-                if(legend['wmlegend']['name'].length > 0) {
+                if(typeof legend['wmlegend'] != "undefined" && legend['wmlegend']['name'].length > 0) {
                     var sel = ".col .legendGroup";
                 } else {
                     var sel = ".row .legendGroup";

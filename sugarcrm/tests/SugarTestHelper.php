@@ -831,7 +831,7 @@ class SugarTestHelper
     {
         foreach ( self::$oldFiles as $filename => $filecontents ) {
             if(SHADOW_ENABLED) {
-                if(substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && file_exists($filename)) {
+                if(substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && $filename != 'config_override.php' && file_exists($filename)) {
                     // Delete shadow files always
                     @SugarAutoLoader::unlink($filename, false);
                     continue;

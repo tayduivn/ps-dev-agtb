@@ -145,7 +145,7 @@ class SugarWidgetSubPanelTopCreateTaskButton extends SugarWidgetSubPanelTopButto
 	function display($defines, $additionalFormFields = null)
 	{
 	    $focus = new Task;
-		if ( !$focus->ACLAccess('create') ) {
+		if ( !$focus->ACLAccess('EditView') ) {
 		    return '';
 	    }
 		

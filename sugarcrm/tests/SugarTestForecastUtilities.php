@@ -54,7 +54,7 @@ class SugarTestForecastUtilities
         $forecast->best_case = 100;
         $forecast->likely_case = 100;
         $forecast->worst_case = 100;
-        $forecast->forecast_type = 'DIRECT';
+        $forecast->forecast_type = 'Direct';
         $forecast->user_id = $user->id;
         $forecast->date_modified = db_convert("'" . TimeDate::getInstance()->nowDb() . "'", 'datetime');
         $forecast->date_entered = $forecast->date_modified;
@@ -244,6 +244,8 @@ class SugarTestForecastUtilities
                 $forecast->best_case = $forecast_best_total;
                 $forecast->worst_case = $forecast_worst_total;
                 $forecast->likely_case = $forecast_likely_total;
+                $forecast->forecast_type = "Direct";
+                $forecast->opp_count = $config['opportunities']['include_in_forecast'];
                 $forecast->currency_id = $config['currency_id'];
                 $forecast->save();
 
@@ -295,6 +297,7 @@ class SugarTestForecastUtilities
     public static function createManagerRollupForecast($manager, $user)
     {
         $users = array($user);
+                
         $numargs = func_num_args();
         if ($numargs > 2) {
             for ($i = 2; $i < $numargs; $i++) {
@@ -305,15 +308,23 @@ class SugarTestForecastUtilities
         $tmpForecast->best_case = $manager['forecast']->best_case;
         $tmpForecast->worst_case = $manager['forecast']->worst_case;
         $tmpForecast->likely_case = $manager['forecast']->likely_case;
-        $tmpForecast->forecast_type = 'ROLLUP';
+        $tmpForecast->forecast_type = 'Rollup';
 
+        //grab the users
         foreach($users as $user) {
             if($user['user']->reports_to_id == $manager['user']->id) {
                 $tmpForecast->best_case += $user['forecast']->best_case;
                 $tmpForecast->worst_case += $user['forecast']->worst_case;
                 $tmpForecast->likely_case += $user['forecast']->likely_case;
+                $tmpForecast->opp_count += $user['forecast']->opp_count;
             }
         }
+        //finish off with the manager
+        $tmpForecast->best_case += $manager['forecast']->best_case;
+        $tmpForecast->worst_case += $manager['forecast']->worst_case;
+        $tmpForecast->likely_case += $manager['forecast']->likely_case;
+        $tmpForecast->opp_count += $manager['forecast']->opp_count;
+        
         $tmpForecast->save();
 
         return $tmpForecast;

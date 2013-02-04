@@ -71,7 +71,13 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
 
         if(empty($latestTimePeriod))
         {
-            $GLOBALS['log']->error(string_format($app_strings['ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST'], array($timeperiodLeafInterval)));
+            $GLOBALS['log']->error(string_format($app_strings['ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST'], array($timeperiodLeafInterval)) . '[latest]');
+            return false;
+        } else if(empty($currentTimePeriod)) {
+            $GLOBALS['log']->error(string_format($app_strings['ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST'], array($timeperiodLeafInterval)) . ' [current]');
+            return false;
+        } else if(empty($parentTimePeriod)) {
+            $GLOBALS['log']->error(string_format($app_strings['ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST'], array($timeperiodLeafInterval)) . ' [parent]');
             return false;
         }
 

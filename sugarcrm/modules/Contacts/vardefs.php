@@ -77,7 +77,7 @@ array (
 			'rname' => 'id',
 			'id_name' => 'account_id',
 			'vname' => 'LBL_ACCOUNT_ID',
-			'type' => 'relate',
+			'type' => 'id',
 			'table' => 'accounts',
 			'isnull' => 'true',
 			'module' => 'Accounts',
@@ -87,7 +87,7 @@ array (
 			'massupdate' => false,
             'duplicate_merge'=> 'disabled',
             'hideacl'=>true,
-
+			'link' => 'accounts',
 		),
 	'opportunity_role_fields' =>
 		array (

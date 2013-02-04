@@ -39,13 +39,7 @@ if(!empty($args['reporter']->saved_report)) {
     $context = array();
 }
 
-$aclaction = 'edit';
-
-if((empty($context['bean']) || empty($context['bean']->id) || $context['bean']->new_with_id == true)) {
-	$aclaction = 'create';
-}
-
-if(!SugarACL::checkAccess('Reports', $aclaction, $context))
+if(!SugarACL::checkAccess('Reports', 'edit', $context))
 {
     ACLController::displayNoAccess(true);
     sugar_cleanup(true);

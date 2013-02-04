@@ -510,7 +510,7 @@ class EditView
                 }
             }
             //BEGIN SUGARCRM flav=pro ONLY
-            $this->focus->ACLFilterFieldList($this->fieldDefs, array('bean' => $this->focus), array("add_acl" => true,));
+            $this->focus->ACLFilterFieldList($this->fieldDefs, array(), array("add_acl" => true));
             //END SUGARCRM flav=pro ONLY
         }
 

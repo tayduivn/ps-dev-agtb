@@ -94,7 +94,7 @@ class MyOpportunitiesGaugeDashlet extends DashletGenericChart
 		return "SELECT count(*) AS num " . 
 				 "FROM opportunities " .
 				 "WHERE assigned_user_id = '{$GLOBALS['current_user']->id}' " .
-                    "AND sales_stage = 'Closed Won' AND deleted=0" ;
+                    "AND sales_stage = '".Opportunity::STAGE_CLOSED_WON."' AND deleted=0" ;
     }
     
     /**
