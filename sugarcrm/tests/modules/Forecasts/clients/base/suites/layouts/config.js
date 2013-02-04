@@ -169,8 +169,8 @@ describe("The forecasts config layout controller", function(){
             options.context.forecasts = new Backbone.Model({});
             baseIndexLayout = new app.view.layouts.ForecastsRecordsLayout(options);
             testLayout = new app.view.layouts.ForecastsConfigLayout(options);
-            homeLocation = 'index.php?module=Home';
-            forecastsLocation = 'index.php?action=sidecar#Forecasts';
+            homeLocation = '#Home';
+            forecastsLocation = '#Forecasts';
         });
 
         afterEach(function() {
