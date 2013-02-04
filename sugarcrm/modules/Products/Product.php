@@ -82,6 +82,15 @@ class Product extends SugarBean {
     var $assigned_user_id;
     var $opportunity_id;
 
+    /**
+     * @var String      The Current Sales Stage
+     */
+    public $sales_stage;
+    /**
+     * @var String      The Current Sales Status
+     */
+    public $sales_status;
+
 	// These are for related fields
 	var $type_name;
 	var $type_id;
@@ -533,7 +542,7 @@ class Product extends SugarBean {
 		return $the_where;
 	}
 
-	function save($check_notify = FALSE) {
+	function save($check_notify = false) {
 
 		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 		// RPS - begin - decimals cant be null in sql server
@@ -569,6 +578,9 @@ class Product extends SugarBean {
 	    	  	$this->discount_amount_usdollar = $currency->convertToDollar($this->discount_amount);
             }
         }
+
+        $this->handleSalesStatus();
+
 		$id = parent::save($check_notify);
 
 		// We need to update the associated product bundle and quote totals that might be impacted by this product.
@@ -667,6 +679,35 @@ class Product extends SugarBean {
 		}
 		return $id;
 	}
+
+
+    /**
+     * Code to make sure that the Sales Status field is mapped correctly with the Sales Stage field
+     *
+     * TODO: handle when this item gets converted to a quote
+     */
+    protected function handleSalesStatus()
+    {
+        // in this class we use the values from the Opportunity module constants as they are directly mapped 1-to-1 with
+        // products
+
+        // only run this when the sales_status doesn't change and the sales_stage does
+        if(($this->fetched_row['sales_status'] == $this->sales_status) && $this->fetched_row['sales_stage'] != $this->sales_stage) {
+            // handle closed lost and closed won
+            if($this->sales_stage == Opportunity::STAGE_CLOSED_LOST || $this->sales_stage == Opportunity::STAGE_CLOSED_WON) {
+                $this->sales_status = $this->sales_stage;
+            } else {
+                // move it to in progress
+                $this->sales_status = Opportunity::STATUS_IN_PROGRESS;
+            }
+        }
+
+        // if we have a new bean, set the sales_status to be 'New'
+        if(empty($this->id) || $this->new_with_id == true) {
+            // we have a new record set the sales_status to new;
+            $this->sales_status = Opportunity::STATUS_NEW;
+        }
+    }
 
 
 	function bean_implements($interface) {

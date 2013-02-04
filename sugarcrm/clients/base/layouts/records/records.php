@@ -47,15 +47,19 @@ $layout->push('main', array(
 ));
 
 $layout->push('main', array(
-        'layout' => array(
-            'type' => 'drawer',
-            'showEvent' => array(
-                "drawer:vcard:import:fire"
-            )
-        ),
-    ));
+    'layout' => array(
+        'type' => 'drawer',
+        'showEvent' => array(
+            "drawer:vcard:import:fire"
+        )
+    ),
+));
+
+$listLayout = MetaDataManager::getLayout("FilterPanelLayout");
+$listLayout->push(array('layout' => 'list'));
+
 $layout->push('main', array('view' => 'headerpane'));
-$layout->push('main', array('layout' => 'list'));
+$layout->push('main', array('layout' => $listLayout->getLayout(true)));
 $layout->push('side', array('layout' => 'list-sidebar'));
 $layout->push('preview', array('layout' => 'preview'));
 $viewdefs['base']['layout']['records'] = $layout->getLayout();

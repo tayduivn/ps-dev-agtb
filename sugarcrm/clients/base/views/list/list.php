@@ -80,6 +80,7 @@ $viewdefs['base']['view']['list'] = array(
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
                 'icon' => 'icon-eye-open',
+                'value' => 'view',
             ),
             array(
                 'type' => 'rowaction',
@@ -87,6 +88,7 @@ $viewdefs['base']['view']['list'] = array(
                 'icon' => 'icon-pencil',
                 'label' => 'LBL_EDIT_BUTTON',
                 'event' => 'list:editrow:fire',
+                'value' => 'edit',                
             ),
 
             array(
@@ -94,6 +96,7 @@ $viewdefs['base']['view']['list'] = array(
                 'icon' => 'icon-trash',
                 'event' => 'list:deleterow:fire',
                 'label' => 'LBL_DELETE_BUTTON',
+                'value' => 'delete',                
             ),
         ),
     ),

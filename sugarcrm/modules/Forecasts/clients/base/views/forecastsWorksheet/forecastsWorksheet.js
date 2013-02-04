@@ -507,7 +507,7 @@
         // tab key was pressed, we cycle to the next/prev field
         // get list of editable fields
         var editableFields = this.$el.find('span.editable,span.edit'),
-            currentFieldIdx = editableFields.index(field.$el.find('span.edit')),
+            currentFieldIdx = editableFields.index(field.$el.find('span.editable,span.edit')),
             targetFieldIdx = 0;
         if(!isShift) {
             if (currentFieldIdx != (editableFields.length - 1)) {

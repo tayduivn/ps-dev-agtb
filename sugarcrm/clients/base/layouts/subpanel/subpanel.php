@@ -1,4 +1,4 @@
 <?php
 
-$layout = MetaDataManager::getLayout("FilterPanelLayout", array("notabs" => true));
+$layout = MetaDataManager::getLayout("FilterPanelLayout");
 $viewdefs['base']['layout']['subpanel'] = $layout->getLayout();

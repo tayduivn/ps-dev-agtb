@@ -203,13 +203,6 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
                 0,
                 "No duplicate matches, should returns 0 results",
             ),
-            array(
-                array(
-                    "foo_name" => $this->newLeadLastName,
-                ),
-                0,
-                "None of the filter template fields are passed, should return 0 results",
-            ),
         );
     }
 

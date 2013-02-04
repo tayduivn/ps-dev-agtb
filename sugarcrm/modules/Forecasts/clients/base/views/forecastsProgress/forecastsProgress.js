@@ -47,6 +47,7 @@
      * event handler to update which dataset is used.
      */
     changeDisplayOptions : function(evt) {
+        evt.preventDefault();
         this.handleOptionChange(evt);
     },
 

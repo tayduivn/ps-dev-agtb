@@ -137,6 +137,16 @@
                     field.labelSpan = Math.floor(4 / columns);
                 }
 
+                // this is new to prevent a span of 0
+                if (field.span < 1) {
+                    field.span = 1;
+                }
+
+                // this is new to prevent a labelSpan of 0
+                if (field.labelSpan < 1) {
+                    field.labelSpan = 1;
+                }
+
                 totalFieldCount++;
                 field.index = totalFieldCount;
 

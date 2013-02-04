@@ -1,28 +1,8 @@
 ({
-    favRowTemplate: Handlebars.compile(
-      '{{#each models}}<li><a tabindex="-1" class="favoriteLink" href="#{{modelRoute this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
-    ),
-    recentRowTemplate: Handlebars.compile(
-        '{{#each models}}<li><a tabindex="-1" class="recentLink" href="#{{modelRoute this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
-    ),
     events: {
-        'click #module_list li a': 'onModuleTabClicked',
-        'mouseover .dtoggle': 'toggleDropdown',
-        'click .more': 'showMore',
-        'mouseover .more': 'showMore',
-        'mouseleave .more-drop-container' : 'hideMore',
-        'mouseleave .more' : 'hideMore',
-        'mouseleave .dropdown-menu': 'hideMenu'
+        'click #module_list li a': 'onModuleTabClicked'
     },
-    hideMenu: function(event) {
-        this.$(event.target).dropdown('toggle');
-    },
-    showMore: function(event) {
-        this.$('.more-drop-container').show();
-    },
-    hideMore: function(event) {
-        this.$('.more-drop-container').hide();
-    },
+
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
         app.events.on("app:view:change", this.render, this);
@@ -34,72 +14,7 @@
             this.layout.on("view:resize", this.resize, this);
         }
     },
-    /**
-     * toggles dropdowns on mouseover
-     * @param event
-     */
-    toggleDropdown:function (event) {
-        if (!this.$(event.target).parent().parent().hasClass('more-drop-container')) {
-            this.$(event.target).dropdown('toggle');
-            var module = this.$(event.target).parent().data('module');
-            var moduleMeta = app.metadata.getModule(module);
-            if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
-                this.populateFavorites(module);
-                this.populateRecents(module);
-            }
-        }
 
-
-    },
-    /**
-     * Populates favorites on open menu
-     * @param module
-     */
-    populateFavorites: function(module) {
-        var self = this;
-        var rowCollection = app.data.createBeanCollection(module);
-        rowCollection.fetch({
-            favorites:true,
-            limit:3,
-            success:function (collection) {
-               if (collection.models && collection.models.length >  0) {
-                   self.$('[data-module=' + module + '] .favoritesAnchor').show();
-                   self.$('[data-module=' + module + '] .favoritesContainer').html(self.favRowTemplate(collection));
-               }
-           }
-        });
-    },
-    /**
-     * Populates recents on open menu
-     * @param module
-     */
-    populateRecents:function (module) {
-        var self = this;
-        var filter = {
-            "filter":[
-                {
-                    "date_modified":{
-                        "$tracker":"-7 DAY"
-                    }
-                }
-            ],
-            "max_num":3
-        };
-        var url = app.api.buildURL(module, 'read', {id:"filter"});
-        app.api.call('create', url, filter, {
-            success:function (data) {
-                if (data.records && data.records.length > 0) {
-                    var beans = [];
-                    _.each(data.records, function (recordData) {
-                        beans.push(app.data.createBean(module, recordData));
-                    });
-                    var collection = app.data.createBeanCollection(module, beans);
-                    self.$('[data-module=' + module + '] .recentAnchor').show();
-                    self.$('[data-module=' + module + '] .recentContainer').html(self.recentRowTemplate(collection));
-                }
-
-            }});
-    },
     /**
      * Render list of modules
      * @private
@@ -116,49 +31,25 @@
                     self.module_list[val] = app.lang.get('LBL_MODULE_NAME', val);
                 });
             }
-            this.module_list = this.completeMenuMeta(this.module_list);
+
             app.view.View.prototype._renderHtml.call(this);
             this.resetMenu();
             this.activeModule.set(app.controller.context.get("module"));
         }
     },
 
-    completeMenuMeta: function(module_list) {
-        var actions, meta, returnList = [];
-        _.each(module_list, function(value, key) {
-            actions = {
-                label: value,
-                name: key
-            };
-            meta = app.metadata.getModule(key);
-            if (meta && meta.menu && meta.menu.header) {
-                actions.menu = meta.menu.header.meta;
-            } else {
-                actions.menu = [];
-            }
-            returnList.push(actions);
-
-        });
-        return returnList;
-    },
-
     /**
      * When user clicks tab navigation in header
      */
     onModuleTabClicked: function(evt) {
-        var module = this.$(evt.currentTarget).closest('li').data('module');
-        this.activeModule.set(module);
-        if (module) {
-            app.router.navigate(module, {trigger: true});
-        }
-
+        this.activeModule.set(this.$(evt.currentTarget).closest('li').attr('class'));
     },
 
     /**
      * Reset the module list to the full list
      */
     resetMenu: function() {
-        this.$('.more').before(this.$('#module_list .more-drop-container').children());
+        this.$('.more').before(this.$('#module_list .dropdown-menu').children());
         this.$('.dropdown.open').removeClass('open');
     },
 
@@ -208,7 +99,7 @@
      * @param width
      */
     addModulesToList: function($modules, width) {
-        var $dropdown = $modules.find('.more-drop-container'),
+        var $dropdown = $modules.find('.dropdown-menu'),
             $moduleToInsert = $dropdown.children("li:first"),
             $more = $modules.find('.more'),
             $lastModuleInList, $nextModule,
@@ -246,7 +137,7 @@
      * @param width
      */
     removeModulesFromList: function($modules, width) {
-        var $dropdown = $modules.find('.more-drop-container'),
+        var $dropdown = $modules.find('.dropdown-menu'),
             $module = $modules.find('.more').prev(),
             $next, currentWidth = $modules.outerWidth(true),
 
@@ -286,7 +177,8 @@
                 this.reset();
 
                 $modules = this._moduleList.$('#module_list');
-                $module = $modules.find("[data-module='" + module+"']");
+                $module = $modules.find('.' + module);
+
                 $module.addClass(this._class);
 
                 // remember which module is supposed to be next to the active module so that
@@ -294,7 +186,7 @@
                 if (!this._next) {
                     $next = $module.next();
                     if ($next.hasClass('more')) {
-                        $next = $modules.find('.more-drop-container li:first');
+                        $next = $modules.find('.dropdown-menu li:first');
                     }
                     this._next = $next.attr('class');
                 }

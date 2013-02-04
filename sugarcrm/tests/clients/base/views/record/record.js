@@ -481,6 +481,34 @@ describe("Record View", function() {
         });
     });
 
+    describe("_renderPanels corner cases", function() {
+        it("Should create panel grid with no span0's when the column count is greater than 4 and labels are inline", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      5,
+                    "labels":       true,
+                    "labelsOnTop":  false,
+                    "placeholders": true,
+                    "fields":       [
+                        "case_number",
+                        "description",
+                        "type",
+                        "account_name",
+                        "name"
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(1);
+            expect(results[0][0].span).toBe(1);
+            expect(results[0][0].labelSpan).toBe(1);
+        });
+    });
+
     describe('Switching to next and previous record', function() {
 
         beforeEach(function() {

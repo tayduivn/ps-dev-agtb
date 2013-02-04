@@ -25,21 +25,54 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    fieldSelector: '.htmlareafield', //iframe selector
+
+    /**
+     * {@inheritdoc}
+     *
+     * The html area is always a non editable field.
+     * (see htmleditable for an editable html field)
+     */
+    initialize: function(options) {
+        options.def.noedit = true;
+        app.view.Field.prototype.initialize.call(this, options);
+    },
+
+    /**
+     * {@inheritdoc}
+     *
+     * Set the name of the field on the iframe as well as the contents
+     *
+     * @private
+     */
     _render: function() {
         app.view.Field.prototype._render.call(this);
-        if(this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled");
+
+        this._getFieldElement().attr('name', this.name);
+        this.setViewContent();
+    },
+
+    /**
+     * Sets read only html content in the iframe
+     */
+    setViewContent: function(){
+        var value = this.value || this.def.default_value;
+        var field = this._getFieldElement();
+        if(field && !_.isEmpty(field.get(0).contentDocument)) {
+            if(field.contents().find('body').length > 0){
+                field.contents().find('body').html(value);
+            }
         }
     },
-    unformat:function(value){
-        value = this.$el.find(".checkbox").prop("checked") ? "1" : "0";
-        return value
-    },
-    format:function(value){
-        value = (value=="1") ? true : false;
-        return value
-    },
-    getFieldElement: function() {
-        return this.$el;
+
+    /**
+     * Finds iframe element in the field template
+     *
+     * @return {HTMLElement} element from field template
+     * @private
+     */
+    _getFieldElement: function() {
+        return this.$el.find(this.fieldSelector);
     }
+
 })
