@@ -39,10 +39,12 @@
         return this.$(this.fieldTag);
     },
     /**
-     * Decorate error gets called when this Field has a validation error.
+     * Decorate error gets called when this Field has a validation error.  This function applies custom error
+     * styling appropriate for this field.
      * The field is put into 'edit' mode prior to this this being called.
      *
-     * Fields SHOULD override this function to provide custom error styling for different field types
+     * Fields should override/implement this when they need to provide custom error styling for different field
+     * types (like e-mail, etc).  Make sure to implement clearErrorDecoration too.
      *
      * @param {Object} errors The validation error(s) affecting this field
      */
@@ -50,7 +52,7 @@
         var self = this;
 
         // need to add error styling to parent view element
-        self.$el.parents('.record-cell').addClass("inline-error");
+
         var ftag = this.fieldTag || '';
 
         self.$('.help-block').html('');
@@ -66,5 +68,17 @@
         });
         $('<span class="add-on"><i class="icon-exclamation-sign"></i></span>').insertBefore(self.$('.help-block'));
 
+    },
+    /**
+     * Remove error decoration from field if it exists.
+     * Fields should override this with the decorateError function as needed.
+     */
+    clearErrorDecoration: function(){
+        this.$('.help-block').html('');
+        // Remove previous exclamation then add back.
+        this.$('.add-on').remove();
+        this.$el.removeClass('input-append');
+        var ftag = this.fieldTag || '';
+        this.$el.removeClass(ftag);
     }
 })

@@ -164,15 +164,35 @@ describe("Record View", function() {
             var descriptionField = _.find(view.fields, function(field){
                 return field.name === 'description';
             });
-            var stub = sinon.stub(descriptionField, 'decorateError');
+            var stub = sinon.stub(descriptionField, 'decorateError', $.noop());
             //Simulate a 'required' error on description field
             view.model.trigger('error:validation', {description: {required : true}});
             //Defer expectations since decoration is deferred
             _.defer(function(stub){
-                expect(stub).toHaveBeenCalledWith({required: true});
+                expect(stub.toHaveBeenCalledWith({required: true})).toBe("true");
                 stub.restore();
             }, stub);
 
+        });
+
+        it("should call clearErrorDecoration on fields when Cancel is clicked", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            var descriptionField = _.find(view.fields, function(field){
+                return field.name === 'description';
+            });
+            var stub = sinon.stub(descriptionField, 'clearErrorDecoration', $.noop());
+            view.model.trigger('error:validation', {description: {required : true}});
+            view.cancelClicked();
+            //Defer expectations since decoration is deferred
+            _.defer(function(stub){
+                expect(stub.calledOnce).toBe(true);
+                stub.restore();
+            }, stub);
         });
 
         it("Should display all 8 editable fields when more link is clicked", function() {

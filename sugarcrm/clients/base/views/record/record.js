@@ -49,20 +49,7 @@
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
-        this.model.on("error:validation", function(errors){
-            var errorFields = _.filter(this.editableFields,function(field){
-                return errors[field.name];
-            });
-            this.toggleFields(errorFields, true);
-            _.defer(function(errorFields){ //Must defer this because field toggling is deferred as well
-                _.each(errorFields, function(field){
-                    if(field.decorateError){
-                        field.decorateError(errors[field.name]);
-                    }
-                });
-            }, errorFields);
-
-        }, this);
+        this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
 
         this.delegateButtonEvents();
@@ -74,6 +61,29 @@
 
     setLabel: function(context, value) {
         this.$(".record-label[data-name=" + value.field + "]").text(value.label);
+    },
+
+    /**
+     * Handle validation errors on save of Record.
+     * Makes the fields editable and decorates the fields that have errors.
+     * Fields decorate themselves because they may have customized HTML/CSS
+     *
+     * @param errors Validation errors
+     */
+    handleValidationError: function(errors){
+        var errorFields = _.filter(this.editableFields,function(field){
+            return errors[field.name];
+        });
+        this.toggleFields(errorFields, true);  // Set field to edit mode before decorating it
+        _.defer(function(errorFields, self){ // Must defer decorating because field toggling is deferred
+            _.each(errorFields, function(field){
+                field.$el.parents('.record-cell').addClass("inline-error");
+                if(field.decorateError){
+                    field.decorateError(errors[field.name]);
+                }
+            });
+        }, errorFields, this);
+
     },
 
     delegateButtonEvents: function() {
@@ -327,6 +337,23 @@
     cancelClicked: function() {
         this.setButtonStates(this.STATE.VIEW);
         this.handleCancel();
+        this.clearValidationErrors(this.editableFields);
+    },
+    /**
+     * Remove validation error decoration from fields
+     *
+     * @param fields Fields to remove error from
+     */
+    clearValidationErrors: function(fields){
+        _.defer(function(){
+            _.each(fields, function(field){
+                field.$el.parents('.record-cell').removeClass("inline-error");
+                if(field.clearErrorDecoration){
+                    field.clearErrorDecoration();
+                }
+            });
+        }, fields);
+
     },
 
     deleteClicked: function() {
