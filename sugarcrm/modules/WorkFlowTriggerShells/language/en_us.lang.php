@@ -61,7 +61,7 @@ $mod_strings = array (
   'LBL_FILTER_LIST_STATEMEMT' => 'Filter objects based on the following: ',
 
   'NTC_REMOVE_TRIGGER' => 'Are you sure you want to remove this trigger?',
-
+  'NTC_REMOVE_TRIGGER_PRIMARY' => 'Removing a primary trigger will remove all triggers.',
 
 
     'LNK_NEW_WORKFLOW' => 'Create Workflow',
@@ -146,6 +146,10 @@ $mod_strings = array (
 	'LBL_SELECT_AMOUNT' => 'You must select the amount',
 	'LBL_SELECT_1ST_FILTER' => 'You must select a valid 1st filter field',
 	'LBL_SELECT_2ND_FILTER' => 'You must select a valid 2nd filter field',
+
+	'ERR_DELETE_RECORD' => 'A record number must be specified to delete the opportunity.',
+	'ERR_DELETE_EMPTY' => 'The record is already deleted or non-existent.',
+
 );
 
 $mod_process_order_strings = array(

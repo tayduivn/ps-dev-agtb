@@ -277,6 +277,12 @@ class SugarBean
     var $listview_inner_join = array();
 
     /**
+     * The ListView row count
+     * (Used to handle Primary trigger deletes)
+     */
+    public $_listview_row_count;
+
+    /**
      * Set to true in <modules>/Import/views/view.step4.php if a module is being imported
      */
     var $in_import = false;

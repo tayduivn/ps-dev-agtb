@@ -1426,15 +1426,8 @@ function repair_workflow(){
              $controller->delete_adjust_order($this->base_module);
          }
 
-        $query =  "     SELECT id FROM workflow_schedules WHERE workflow_schedules.workflow_id = '".$id."'";
-        $result = $this->db->query($query,true," Error getting workflow_schedules for workflow_id: ".$id);
-
-        // Remove each workflow schedule by id
-        $w_schedule = new WorkFlowSchedule();
-        while($row = $this->db->fetchByAssoc($result))
-        {
-            $w_schedule->remove_expired($row['id']);
-        }
+        // Delete the schedules
+        $this->deleteSchedules();
 
         //mark deleted the workflow object if delete_workflow_on_cascade is set to true
         if($this->delete_workflow_on_cascade)
@@ -1454,5 +1447,98 @@ function getActiveWorkFlowCount() {
     $activeCount = $row['active_count'];
     return $activeCount;
 }
+
+    /**
+     * Delete all schedules for the workflow
+     *
+     * @return void
+     */
+    public function deleteSchedules()
+    {
+        $query =  "SELECT id FROM workflow_schedules WHERE workflow_schedules.workflow_id = '" . $this->db->quote($this->id) . "'";
+        $result = $this->db->query($query, true, "Error getting workflow_schedules for workflow_id: " . $this->id);
+
+        // Remove each workflow schedule by id
+        $workflowSchedule = new WorkFlowSchedule();
+        while ($row = $this->db->fetchByAssoc($result)) {
+            $workflowSchedule->remove_expired($row['id']);
+        }
+    }
+
+    /**
+     * Delete all workflow triggers
+     *
+     * @return void
+     */
+    public function deleteTriggers()
+    {
+        $trigger_object_list = $this->get_linked_beans('triggers', 'WorkFlowTriggerShell');
+
+        foreach ($trigger_object_list as $trigger_object) {
+            //mark delete trigger components and sub expression components
+            mark_delete_components($trigger_object->get_linked_beans('future_triggers', 'Expression'));
+            mark_delete_components($trigger_object->get_linked_beans('past_triggers', 'Expression'));
+            $trigger_object->mark_deleted($trigger_object->id);
+        }
+    }
+
+    /**
+     * Deletes all trigger filters from the workflow
+     *
+     * @return void
+     */
+    public function deleteTriggerFilters()
+    {
+        $trigger_object_list = $this->get_linked_beans('trigger_filters', 'WorkFlowTriggerShell');
+
+        foreach ($trigger_object_list as $trigger_object) {
+            //mark delete trigger filter components and sub expression components
+            mark_delete_components($trigger_object->get_linked_beans('expressions', 'Expression'));
+            $trigger_object->mark_deleted($trigger_object->id);
+        }
+    }
+
+    /**
+     * Deletes all alerts for the workflow
+     *
+     * @return void
+     */
+    public function deleteAlerts()
+    {
+        $alert_object_list = $this->get_linked_beans('alerts', 'WorkFlowAlertShell');
+
+        foreach ($alert_object_list as $alert_object) {
+            $alert_object_list2 = $alert_object->get_linked_beans('alert_components', 'WorkFlowAlert');
+            foreach ($alert_object_list2 as $alert_object2) {
+                mark_delete_components($alert_object2->get_linked_beans('expressions', 'Expression'));
+                mark_delete_components($alert_object2->get_linked_beans('rel1_alert_fil', 'Expression'));
+                mark_delete_components($alert_object2->get_linked_beans('rel2_alert_fil', 'Expression'));
+                $alert_object2->mark_deleted($alert_object2->id);
+            }
+
+            $alert_object->mark_deleted($alert_object->id);
+        }
+    }
+
+    /**
+     * Deletes all actions for the workflow
+     *
+     * @return void
+     */
+    public function deleteActions()
+    {
+        $action_shell_list = $this->get_linked_beans('actions', 'WorkFlowActionShell');
+
+        foreach ($action_shell_list as $action_shell_object) {
+            //check for bridged child (invites for meetings/calls
+            $action_shell_object->check_for_child_bridge(true);
+
+            //mark delete actionshell sub components and actionshell
+            mark_delete_components($action_shell_object->get_linked_beans('actions', 'WorkFlowAction'));
+            mark_delete_components($action_shell_object->get_linked_beans('rel1_action_fil', 'Expression'));
+            $action_shell_object->mark_deleted($action_shell_object->id);
+        }
+    }
+
 //end class
 }
