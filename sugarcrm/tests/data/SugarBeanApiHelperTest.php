@@ -73,6 +73,7 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         foreach($this->roles AS $role) {
             $role->mark_deleted($role->id);
             $role->mark_relationships_deleted($role->id);
+            $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
         }
         unset($_SESSION['ACL']);
         SugarTestHelper::tearDown();
@@ -130,6 +131,40 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertEquals($meeting->id, $data['id'], "ID Doesn't Match");
         $this->assertEquals($meeting->name, $data['name'], "Name Doesn't Match");
     }
+
+    public function testListCertainFieldsNoAccess() {
+        // create role that is all fields read only
+        $this->roles[] = $role = $this->createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), array('Accounts'), array('access', 'list', 'view'), array('view'));
+
+        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
+            $GLOBALS['current_user']->load_relationship('aclroles');
+            $GLOBALS['current_user']->aclroles->add($role);
+            $GLOBALS['current_user']->save();
+        }
+
+        $id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+        
+        // set the name field as Read Only
+        $aclField = new ACLField();
+
+        $aclField->setAccessControl('Accounts', $role->id, 'website', -99);
+
+        unset($_SESSION['ACL']);
+
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
+
+        // create a meeting not owned by current user
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = 'SugarBeanApiHelperTest Meeting';
+        $account->assigned_user_id = 1;
+        $account->id = create_guid();
+
+        $data = $this->beanApiHelper->formatForApi($account, array('id', 'name', 'website'));
+
+        $this->assertNotEmpty($data['_acl']['fields']->website, "Website did not come back and should have.  The acls were: " . print_r($data['_acl'], true));
+
+    }    
 
     protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
         $role = new ACLRole();

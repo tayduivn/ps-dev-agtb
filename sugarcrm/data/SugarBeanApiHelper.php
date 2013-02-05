@@ -59,12 +59,7 @@ class SugarBeanApiHelper
                     // They want to skip this field
                     continue;
                 }
-                //BEGIN SUGARCRM flav=pro ONLY
-                if ( !$bean->ACLFieldAccess($fieldName,'read') ) { 
-                    // No read access to this field, skip it.
-                    continue;
-                }
-                //END SUGARCRM flav=pro ONLY
+
                 
                 $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
                 if ( $type == 'link' ) {
@@ -76,6 +71,14 @@ class SugarBeanApiHelper
                 if ( $field != null && isset($bean->$fieldName) ) {
                      $field->apiFormatField($data, $bean, $options, $fieldName, $properties);
                 }
+
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ( !$bean->ACLFieldAccess($fieldName,'read') ) { 
+                    // No read access to this field, skip it.
+                    //continue;
+                    unset($data[$fieldName]);
+                }
+                //END SUGARCRM flav=pro ONLY                
             }
 
             if (isset($bean->field_defs['email']) &&
@@ -117,7 +120,7 @@ class SugarBeanApiHelper
 
             // set ACL
             // if not an admin and the hashes differ, send back bean specific acl's
-            $data['_acl'] = self::getBeanAcl($bean);
+            $data['_acl'] = self::getBeanAcl($bean, $fieldList);
         } else {
             if(isset($bean->id)) {
                 $data['id'] = $bean->id;
@@ -130,17 +133,19 @@ class SugarBeanApiHelper
 
     /**
      * Get the beans ACL's to pass back any that differ
-     * @param type SugarBean $bean 
+     * @param SugarBean $bean 
+     * @param array $fieldList
      * @return array
      */
-    public function getBeanAcl(SugarBean $bean) {
+    public function getBeanAcl(SugarBean $bean, array $fieldList) {
         $acl = array('fields' => (object) array());
         if(SugarACL::moduleSupportsACL($bean->module_dir)) {
             $mm = new MetaDataManager($GLOBALS['current_user']);
             $moduleAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user']);
 
             $beanAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user'], $bean);
-            if($beanAcl['_hash'] != $moduleAcl['_hash']) {
+            if($beanAcl['_hash'] != $moduleAcl['_hash'] || !empty($fieldList)) {
+
                 // diff the fields separately, they are usually empty anyway so we won't diff these often.
                 $moduleAclFields = $moduleAcl['fields'];
                 $beanAclFields = $beanAcl['fields'];
@@ -199,6 +204,12 @@ class SugarBeanApiHelper
                     }
                 }
 
+                foreach($fieldList AS $fieldName) {
+                    if(empty($fieldAcls[$fieldName]) && isset($moduleAclFields[$fieldName])) {
+                        $fieldAcls[$fieldName] = $moduleAclFields[$fieldName];
+                    }    
+                }
+                
                 $acl['fields'] = (object)$fieldAcls;
             }
 

@@ -68,21 +68,7 @@ abstract class SugarListApi extends SugarApi {
                 $userFields[] = $defaultField;
             }
         }
-        
-        if ( $seed != null ) {
-            foreach ( $userFields as $field ) {
-                if ( !isset($seed->field_defs[$field]) ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$field.' in module: '.$args['module']);
-                }
-                
-                //BEGIN SUGARCRM flav=pro ONLY
-                if ( $this->checkAcls && ( !$seed->ACLFieldAccess($field,'read') || !isset($seed->field_defs[$field]) ) ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$field.' in module: '.$args['module']);
-                }
-                //END SUGARCRM flav=pro ONLY
-            }
-        }
-            
+                    
         $orderBy = '';
         if ( isset($args['order_by']) ) {
             if ( strpos($args['order_by'],',') !== 0 ) {
@@ -109,11 +95,13 @@ abstract class SugarListApi extends SugarApi {
                 if ( $seed != null ) {
                     //BEGIN SUGARCRM flav=pro ONLY
                     if ( $this->checkAcls && !$seed->ACLFieldAccess($column,'list') ) {
-                        throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$seed->module_dir);
+                        // skip it because we can't order by something we don't have access to
+                        continue;
                     }
                     //END SUGARCRM flav=pro ONLY
                     if ( !isset($seed->field_defs[$column]) ) {
-                        throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$seed->module_dir);
+                        // skip it because we can't order by something we don't have access to
+                        continue;
                     }
                 }
                 
