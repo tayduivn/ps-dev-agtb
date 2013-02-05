@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,7 +24,27 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-{{#if value}}
-    <a class="ellipsis_inline" data-placement="bottom" data-title="{{value}}" {{#if def.link_target}}target="{{def.link_target}}"{{/if}} href="{{value}}">{{value}}</a>
-{{/if}}
+({
+    events: {
+        'click [data-direction]': 'triggerPagination',
+        'click .preview-headerbar .closeSubdetail': 'triggerClose'
+    },
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+        if (this.layout) {
+            this.layout.off("preview:pagination:update", null, this);
+            this.layout.on("preview:pagination:update", this.render, this);
+        }
+    },
+
+    triggerPagination: function(e) {
+        var direction = this.$(e.currentTarget).data();
+        this.layout.trigger("preview:pagination:fire", direction);
+    },
+
+    triggerClose: function() {
+        app.events.trigger("list:preview:decorate", null, this);
+        app.events.trigger("preview:close:fire");
+    }
+
+})

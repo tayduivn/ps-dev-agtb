@@ -30,7 +30,7 @@
  * forecasts:commitButtons:disabled
  *      on: context
  *      by: change:selectedUser, change:selectedTimePeriod
- * 
+ *
  * forecasts:worksheet:saveWorksheet
  *      on:context
  *      by: triggerCommit(), triggerSaveDraft()
@@ -38,7 +38,7 @@
  * modal:forecastsTabbedConfig:open - to cause modal.js to pop up
  *      on: layout
  *      by: triggerConfigModal()
- *      
+ *
  * forecasts:committed:commit
  *      on: context
  *      by: triggerCommit()
@@ -63,7 +63,7 @@
      * Used to determine whether the config setting cog button is displayed
      */
     showConfigButton: false,
-    
+
     /**
      * Used to know which version to save, draft or live
      */
@@ -73,7 +73,7 @@
      * Track if the inspector is visible
      */
     inspectorVisible: false,
-            
+
     /**
      * Adds event listener to elements
      */
@@ -152,9 +152,9 @@
             if(this.commitButtonEnabled) {
                 this.$el.find('a[id=commit_forecast]').removeClass('disabled');
             } else {
-                this.$el.find('a[id=commit_forecast]').addClass('disabled');               
+                this.$el.find('a[id=commit_forecast]').addClass('disabled');
             }
-        }        
+        }
     },
 
     /**
@@ -165,10 +165,10 @@
     	var savebtn = this.$el.find('#save_draft');
     	commitbtn.addClass("disabled");
     	savebtn.addClass("disabled");
-    	
+
     	this.commitButtonEnabled = true;
     },
-    
+
     /**
      * Event handler to disable/reset the commit button
      */
@@ -185,11 +185,11 @@
     triggerCommit: function() {
     	var commitbtn =  this.$el.find('#commit_forecast'),
     	    savebtn = this.$el.find('#save_draft');
-    	
+
         if(!commitbtn.hasClass("disabled")){
             var self = this;
             this.disableCommitButton();
-            
+
             wkstCallBack = function(totalSaved, worksheet){
                 // turn off the event
                 self.context.off('forecasts:worksheet:saved', wkstCallBack);
@@ -207,7 +207,7 @@
      */
     triggerSaveDraft: function() {
     	var savebtn = this.$el.find('#save_draft');
-    	
+
     	if(!savebtn.hasClass("disabled")){
             this.context.trigger("forecasts:worksheet:saveWorksheet", true);
     	    savebtn.addClass("disabled");
@@ -231,7 +231,7 @@
         // we need to use currentTarget so we always get the a and not any child that was clicked on
 
         var el = $(evt.currentTarget);
-        el.find('i').toggleClass('icon-chevron-right icon-chevron-left');
+        el.find('i').toggleClass('icon-double-angle-right icon-double-angle-left');
 
         if(!this.inspectorVisible) {
             var container = el.parents('#contentflex').find('>div.row-fluid');
@@ -254,7 +254,7 @@
         url += (this.context.get("currentWorksheet") == 'worksheetmanager') ?  'ExportManagerWorksheet' : 'ExportWorksheet';
         url += '&user_id=' + this.context.get('selectedUser').id;
         url += '&timeperiod_id=' + $("#timeperiod").val();
-        
+
         if(savebtn.length > 0 && !savebtn.hasClass("disabled")){
             if(confirm(app.lang.get("LBL_WORKSHEET_EXPORT_CONFIRM", "Forecasts"))){
                 this.runExport(url);
@@ -264,7 +264,7 @@
             this.runExport(url);
         }
     },
-    
+
     /**
      * runExport
      * triggers the browser to download the exported file

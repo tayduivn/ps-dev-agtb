@@ -26,6 +26,15 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#if value}}
-    <a class="ellipsis_inline" data-placement="bottom" data-title="{{value}}" {{#if def.link_target}}target="{{def.link_target}}"{{/if}} href="{{value}}">{{value}}</a>
-{{/if}}
+<div class="preview-headerbar">
+    <h1>{{str "LBL_PREVIEW"}}</h1>
+    <div class="btn-toolbar pull-right">
+        <div class="btn-group">
+            <a class="btn{{#unless layout.previous}} disabled{{/unless}}" data-direction="left"><i class="icon-chevron-left"></i></a>
+            <a class="btn{{#unless layout.next}} disabled{{/unless}}" data-direction="right"><i class="icon-chevron-right"></i></a>
+        </div>
+        <div class="btn-group">
+            <a class="btn btn-invisible closeSubdetail" data-toggle="tab"><i class="icon-remove"></i></a>
+        </div>
+    </div>
+</div>
