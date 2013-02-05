@@ -88,8 +88,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                         'entity_encoding' => "raw",
 
                         // Theme options
-                        'theme_advanced_buttons1' => "code,help,separator,bold,italic,underline,strikethrough,separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,
-	                     					justifyfull,separator,forecolor,backcolor,separator,spellchecker,seperator,styleselect,formatselect,fontselect,fontsizeselect",
+                        'theme_advanced_buttons1' => "code,help,separator,bold,italic,underline,strikethrough,separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,justifyfull,separator,forecolor,backcolor,separator,spellchecker,seperator,styleselect,formatselect,fontselect,fontsizeselect",
                         'theme_advanced_toolbar_location' => "top",
                         'theme_advanced_toolbar_align' => "left",
                         'theme_advanced_statusbar_location' => "bottom",

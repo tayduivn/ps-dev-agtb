@@ -31,5 +31,4 @@ $layout->push('main', array(
     ));
 
 $layout->push('main', array('view'=>'compose'));
-$layout->push('side', array('layout'=>'compose-sidebar'));
 $viewdefs['Emails']['base']['layout']['compose'] = $layout->getLayout();
