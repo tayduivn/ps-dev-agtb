@@ -263,15 +263,13 @@
     },
 
     duplicateClicked: function() {
-        app.cache.set("duplicate"+this.module, this.model.attributes);
-        this.layout.trigger("drawer:create:fire", {
-            components: [{
-                layout : 'create',
-                context: {
-                    create: true
-                }
-            }]
-        }, this);
+        app.drawer.open({
+            layout : 'create',
+            context: {
+                create: true,
+                duplicateModel: this.model.attributes
+            }
+        });
     },
     
     editClicked: function() {

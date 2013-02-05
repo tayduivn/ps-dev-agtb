@@ -25,6 +25,10 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    events: {
+        'click a[name=create_button]': 'create'
+    },
+
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
@@ -43,5 +47,18 @@
         this.title = app.lang.get(title, this.module);
 
         app.view.View.prototype._renderHtml.call(this);
+    },
+
+    create: function() {
+        app.drawer.open({
+            layout: 'create',
+            context: {
+                create: true
+            }
+        }, _.bind(function(refresh) {
+            if (refresh) {
+                this.collection.fetch();
+            }
+        }, this));
     }
 })

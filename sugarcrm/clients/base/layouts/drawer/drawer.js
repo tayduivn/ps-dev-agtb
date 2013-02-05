@@ -1,174 +1,298 @@
 ({
-    extendsFrom: 'ModalLayout',
+    expandTabHtml: '<div class="drawer-tab"><a href="#" class="btn"><i class="icon-chevron-up"></i></a></div>',
+    backdropHtml: "<div class='drawer-backdrop'></div>",
 
-    expandTabHtml: '<div class="drawer-tab"><a href="#" title="Collapse list pane" class="btn edit-expand">'
-        + '<i class="icon-chevron-down"></i></a></div>',
-    $expandTab: null,
-
-    backdropHtml: "<div class='drawer-squeezed drawer-backdrop'></div>",
-    $backdrop: null,
-
-    baseComponents: [], //override modal's baseComponent
+    onCloseCallback: null, //callbacks to be called once drawers are closed
 
     initialize: function(options) {
-        app.view.layouts.ModalLayout.prototype.initialize.call(this, options, true);
-        this.$el.addClass("drawer").hide();
-    },
-
-    _placeComponent: function(component) {
-        app.view.Layout.prototype._placeComponent.call(this, component);
-    },
-
-    /**
-     * Add components to the drawer layout and initialize
-     * @param components
-     * @private
-     */
-    _initializeComponents: function(components) {
-        //stops for empty component elements
-        if(components.length == 0) {
-            app.logger.error("Unable to display drawer layout: no components exist");
-            return false;
+        if (!this.$el.is('#drawers')) {
+            app.logger.error('Drawer layout can only be included as an Additional Component.');
+            return;
         }
 
-        //if previous modal-body exists, remove it.
-        if(!_.isUndefined(this._initComponentSize)) {
-            for(var i = 0; i < this._components.length; i++) {
-                this._components[this._components.length - 1].$el.remove();
-                this.removeComponent(this._components.length - 1);
-            }
-        } else {
-            //attach the el above all other content
-            this.$el.insertBefore("#content>div>div:first");
-            this._initComponentSize = this._components.length;
-        }
+        app.drawer = this;
+        this.onCloseCallback = [];
 
-        this._addComponentsFromDef(components);
-    },
-
-    /**
-     * Show/open the drawer
-     * @param params
-     * @param callback
-     * @return {Boolean}
-     */
-    show: function(params, callback) {
-        if (!this.triggerBefore("show")) return false;
-
-        this._setupEventDelegation(params, callback);
-
-        var components = (params.components || this.metaComponents || []);
-        if (this._initializeComponents(components) === false) {
-            return false;
-        }
-
-        this._showDrawer();
-
-        this.loadData();
-        this.render();
-
-        this.$el.show();
-        this.trigger("show");
-
-        return true;
-    },
-
-    /**
-     * Hide/close the drawer
-     * @return {Boolean}
-     */
-    hide: function() {
-        if (!this.triggerBefore("hide")) return false;
-
-        this.$el.hide();
-        this._hideDrawer();
-        this.trigger("hide");
-
-        return true;
-    },
-
-    _dispose : function(){
-        delete this.$backdrop;
-        delete this.$expandTab;
-    },
-
-    _setupEventDelegation: function(params, callback) {
-        if (params.before){
-            _.each(params.before, function(callback, event){
-                this.offBefore(event);
-                this.before(event, callback);
-            }, this);
-        }
-
-        this.context.off("drawer:callback");
-        this.context.on("drawer:callback", function(model) {
-            callback(model);
-            this.hide();
+        //clear out drawers before routing to another page
+        var before = app.routing.before;
+        app.routing.before = _.bind(function(route, args) {
+            this.reset();
+            return before(route, args);
         }, this);
 
-        this.context.off("drawer:hide");
-        this.context.on("drawer:hide", this.hide, this);
+        app.view.Layout.prototype.initialize.call(this, options);
     },
 
     /**
-     * Open the drawer
-     * @private
+     * Open the specified layout in a drawer
+     * @param layoutDef
+     * @param onClose
      */
-    _showDrawer: function() {
-        var $existingContent = this.$el.next();
-        $existingContent.toggleClass("drawer-squeezed", true);
+    open: function(layoutDef, onClose) {
+        var layout;
 
-        if (!this.$backdrop) {
-            this.$backdrop = $(this.backdropHtml);
-            this.$el.parent().append(this.$backdrop);
+        //store the callback function to be called later
+        if (_.isUndefined(onClose)) {
+            this.onCloseCallback.push(function(){});
+        } else {
+            this.onCloseCallback.push(onClose);
         }
 
-        if (!this.$expandTab) {
-            this.$expandTab = $(this.expandTabHtml);
-            $existingContent.prepend(this.$expandTab);
+        //initialize layout definition components
+        this._addComponentsFromDef([layoutDef]);
 
-            // handle drawer tab behavior
-            this.$expandTab.on('click', _.bind(function(event) {
-                this._toggleDrawer(event.currentTarget);
-                return false;
-            }, this));
+        //open the drawer
+        this._animateOpenDrawer();
+
+        //load and render new layout in drawer
+        layout = this._components[this._components.length-1];
+        layout.loadData();
+        layout.render();
+    },
+
+    /**
+     * Close the top-most drawer
+     * @param any parameters passed into the close method will be passed to the callback
+     */
+    close: function() {
+        var self = this,
+            args = Array.prototype.slice.call(arguments, 0);
+
+        if (this._components.length > 0) {
+            //close the drawer
+            this._animateCloseDrawer(function() {
+                self._components.pop().dispose(); //dispose top-most drawer
+                (self.onCloseCallback.pop()).apply(this, args); //execute callback
+            });
         }
-        this.$backdrop.show();
-        this.$expandTab.show();
-
-        this.$el.toggleClass('expand', true);
-        this.$backdrop.toggleClass('collapse', true);
-        this.$el.next().toggleClass('collapse', true);
     },
 
     /**
-     * Close the drawer
-     * @private
+     * Reload the current drawer with a new layout
+     * @param layoutDef
      */
-    _hideDrawer: function() {
-        this.$el.removeClass('expand');
-        this.$el.next().removeClass('collapse drawer-squeezed');
-        $('i', this.$expandTab)
-            .addClass('icon-chevron-down')
-            .removeClass('icon-chevron-up');
+    load: function(layoutDef) {
+        var layout = this._components[this._components.length-1];
 
-        this.$expandTab.hide();
+        this._components.pop().dispose();
+        this._addComponentsFromDef([layoutDef]);
 
-        this.$backdrop.removeClass('collapse');
-        this.$backdrop.hide();
+        layout.loadData();
+        layout.render();
     },
 
     /**
-     * Toggle the drawer
-     * @param target
+     * Remove all drawers and reset
+     */
+    reset: function() {
+        var $main = app.$contentEl.children().first();
+
+        _.each(this._components, function(component) {
+            component.dispose();
+        }, this);
+
+        this._components = [];
+        this.onCloseCallback = [];
+
+        if ($main.hasClass('drawer')) {
+            $main
+                .removeClass('drawer')
+                .css('top','');
+            $main.find('.drawer-tab').remove(); //remove drawer tab
+            $main.find('.drawer-backdrop').remove(); //remove backdrop
+        }
+    },
+
+    /**
+     * Animate opening of a new drawer
      * @private
      */
-    _toggleDrawer: function(target) {
-        $('i', target)
-            .toggleClass('icon-chevron-up')
-            .toggleClass('icon-chevron-down');
-        this.$el.toggleClass('expand');
-        this.$backdrop.toggleClass('collapse');
-        this.$el.next().toggleClass('collapse');
+    _animateOpenDrawer: function() {
+        if (this._components.length === 0) {
+            return;
+        }
+
+        var $main = app.$contentEl.children().first(),
+            $newDrawer = this._components[this._components.length-1].$el,
+            $topDrawer,
+            $bottomDrawer,
+            drawerHeight = this._determineDrawerHeight();
+
+        //identify top and bottom drawers
+        if (this._components.length === 1) {
+            $topDrawer = $main;
+            $topDrawer.addClass('drawer');
+        } else if (this._components.length === 2) {
+            $topDrawer = this._components[this._components.length-2].$el;
+            $bottomDrawer = $main;
+            this._expandDrawer($topDrawer, $bottomDrawer); //expand current drawer if collapsed
+        } else {
+            $topDrawer = this._components[this._components.length-2].$el;
+            $bottomDrawer = this._components[this._components.length-3].$el;
+            this._expandDrawer($topDrawer, $bottomDrawer); //expand current drawer if collapsed
+        }
+
+        //add the expand tab and the backdrop to the top drawer
+        $topDrawer
+            .append(this.expandTabHtml)
+            .append(this.backdropHtml);
+
+        //add expand/collapse tab behavior
+        this._handleTabBehavior($newDrawer, $topDrawer);
+
+        //set the height of the new drawer
+        $newDrawer.css('height', drawerHeight);
+        //set the animation starting point for the new drawer
+        $newDrawer.css('top', $topDrawer.offset().top-drawerHeight);
+
+        //start animation
+        _.defer(_.bind(function() {
+            if ($bottomDrawer) {
+                $bottomDrawer.css('top', $bottomDrawer.offset().top + drawerHeight);
+            }
+            $topDrawer.css('top', this._components.length === 1 ? drawerHeight : $topDrawer.offset().top + drawerHeight);
+            $newDrawer
+                .addClass('drawer')
+                .css('top','');
+        }, this));
+    },
+
+    /**
+     * Animate closing of the top-most drawer
+     * @param callback
+     * @private
+     */
+    _animateCloseDrawer: function(callback) {
+        if (this._components.length === 0) {
+            return;
+        }
+
+        var $main = app.$contentEl.children().first(),
+            $topDrawer = this._components[this._components.length-1].$el,
+            $bottomDrawer,
+            $hiddenDrawer,
+            drawerHeight = this._determineDrawerHeight();
+
+        //identify bottom and hidden drawers
+        if (this._components.length === 1) {
+            $bottomDrawer = $main;
+        } else if (this._components.length === 2) {
+            $bottomDrawer = this._components[this._components.length-2].$el;
+            $hiddenDrawer = $main;
+        } else {
+            $bottomDrawer = this._components[this._components.length-2].$el;
+            $hiddenDrawer = this._components[this._components.length-3].$el;
+        }
+
+        //once the animation is done, reset to original state and execute callback parameter
+        $bottomDrawer.one('webkitTransitionEnd oTransitionEnd otransitionend transitionend msTransitionEnd', _.bind(function(){
+            this._removeTabBehavior($topDrawer); //remove expand/collapse tab event handlers
+            $bottomDrawer.find('.drawer-tab').remove(); //remove drawer tab
+            $bottomDrawer.find('.drawer-backdrop').remove(); //remove backdrop
+            if (this._components.length === 1) {
+                $bottomDrawer.removeClass('drawer');
+            }
+            callback();
+        }, this));
+
+        //start the animation to close the drawer
+        $topDrawer.css('top', $topDrawer.offset().top-drawerHeight);
+        $bottomDrawer.css('top','');
+        if ($hiddenDrawer) {
+            $hiddenDrawer.css('top', this._components.length === 2 ? drawerHeight : $hiddenDrawer.offset().top - drawerHeight);
+        }
+    },
+
+    /**
+     * Calculate how far down the drawer should drop down, i.e. the height of the drawer
+     * @param $mainContent
+     * @return {Number}
+     * @private
+     */
+    _determineDrawerHeight: function() {
+        var windowHeight = $(window).height(),
+            headerHeight = $('#header .navbar').outerHeight(),
+            footerHeight = $('footer').outerHeight();
+
+        return windowHeight - headerHeight - footerHeight - 64; //64px above the footer
+    },
+
+    /**
+     * Calculate how much to collapse the drawer
+     * @return {Number}
+     * @private
+     */
+    _determineCollapsedHeight: function() {
+        return $(window).height()/2; //middle of the window
+    },
+
+    /**
+     * Add the ability to expand and collapse the drawer when the tab is clicked
+     * @param $top
+     * @param $bottom
+     * @private
+     */
+    _handleTabBehavior: function($top, $bottom) {
+        $bottom.find('.drawer-tab').on('click', _.bind(function(event) {
+            if ($('i', event.currentTarget).hasClass('icon-chevron-up')) {
+                this._collapseDrawer($top, $bottom);
+            } else {
+                this._expandDrawer($top, $bottom);
+            }
+            return false;
+        }, this));
+    },
+
+    /**
+     * Remove the event listener that handles the ability to expand and collapse the drawer
+     * @param $drawer
+     * @private
+     */
+    _removeTabBehavior: function($drawer) {
+        $drawer.find('.drawer-tab').off('click');
+    },
+
+    /**
+     * Expand the drawer
+     * @param $top
+     * @param $bottom
+     * @private
+     */
+    _expandDrawer: function($top, $bottom) {
+        var expandHeight = this._determineDrawerHeight();
+        $top.css('height', expandHeight);
+
+        if ($bottom.closest('#drawers').length > 0) {
+            $bottom.css('top', expandHeight + $top.offset().top);
+        } else {
+            $bottom.css('top', expandHeight);
+        }
+
+        $bottom
+            .find('.drawer-tab i')
+            .removeClass('icon-chevron-down')
+            .addClass('icon-chevron-up');
+    },
+
+    /**
+     * Collapse the drawer
+     * @param $top
+     * @param $bottom
+     * @private
+     */
+    _collapseDrawer: function($top, $bottom) {
+        var collapseHeight = this._determineCollapsedHeight();
+        $top.css('height', collapseHeight);
+
+        if ($bottom.closest('#drawers').length > 0) {
+            $bottom.css('top', collapseHeight + $top.offset().top);
+        } else {
+            $bottom.css('top', collapseHeight);
+        }
+
+        $bottom
+            .find('.drawer-tab i')
+            .removeClass('icon-chevron-up')
+            .addClass('icon-chevron-down');
     }
 })

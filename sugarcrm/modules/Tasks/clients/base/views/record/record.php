@@ -66,15 +66,13 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                         'click' => 'function(e){
                             var attributes = $.extend({}, this.model.attributes);
                             attributes.status = "Not Started";
-                            app.cache.set("duplicate"+this.module, attributes);
-                            this.view.layout.trigger("drawer:create:fire", {
-                                components: [{
-                                    layout : "create",
-                                    context: {
-                                        create: true
-                                    }
-                                }]
-                            }, this);
+                            app.drawer.open({
+                                layout : "create",
+                                context: {
+                                    create: true,
+                                    duplicateModel: attributes
+                                }
+                            });
                             e.stopPropagation();
                         }',
                     ),                        
@@ -93,15 +91,13 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                                 app.alert.dismiss("close_task");
                                 var attributes = $.extend({}, self.model.attributes);
                                 attributes.status = "Not Started";
-                                app.cache.set("duplicate"+self.module, attributes);
-                                self.view.layout.trigger("drawer:create:fire", {
-                                    components: [{
-                                        layout : "create",
-                                        context: {
-                                            create: true
-                                        }
-                                    }]
-                                }, self);
+                                app.drawer.open({
+                                    layout : "create",
+                                    context: {
+                                        create: true,
+                                        duplicateModel: attributes
+                                    }
+                                });
                             },
                             error:function(error) {
                                 app.alert.dismiss("close_task");
