@@ -7,10 +7,10 @@
           <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
           <ul class="dropdown-menu"><span class="ext"></span>
             <li><a href="#">Email</a></li>
-            <li><span><a href="#" class="tmu">Mass Update</a></span></li>
+            <li class="mass_update"><a href="mass-update/form.html" data-toggle="proto" data-target=".mu">Mass Update</a></li>
             <li class="merge disabled"><a href="#">Merge</a></li>
-            <li class="add_to_target_list"><a href="partial/add-to-target/filter.html" data-toggle="proto" data-target=".add-to-target-container">Add to Target List</a></li>
-            <li><span><a href="#" class="disabled">Export</a></span></li>
+            <li class="add_to_target_list"><a href="add-to-target/filter.html" data-toggle="proto" data-target=".att">Add to Target List</a></li>
+            <li><a href="#" class="disabled">Export</a></li>
           </ul>
         </div>
       </th>
@@ -32,7 +32,7 @@
   <tbody id="listed">
     <tr>
       <td><input type="checkbox"> <span><i class="icon-favorite" rel="tooltip" data-title="Add to favorites"></i></span></td>
-      <td><span sfuuid=""><a id="8fRfg" href="{{module}}/{{module}}-view.html" data-toggle="proto" data-target="#view .record" data-mode="view">Plato's LED MFT</a></span></td>
+      <td><span sfuuid=""><a href="{{module}}/{{module}}-view.html" data-toggle="proto" data-target="#view .record" data-mode="view">Plato's LED MFT</a></span></td>
       <td><span class="dblclick">Cupertino</span></td>
       <td><span class="dblclick">USA</span></td>
       <td><span class="textarea" sfuuid="">This is a description field, usually very long, and will be cut off and treated as if it was a regular text field. This is a description field, usually very long, and will be cut off and treated as if it was a regular text field. </span></td>
@@ -220,27 +220,8 @@
 <script src="js/datatables.js"></script>
 <script>
   $(document).ready(function() {
-    // table - mass update
-    $('body').on('click', '.tmu', function(e) {
-        $('.mu').show();
-        e.stopPropagation();
-        e.preventDefault();
-    });
-
-
-    $('body').on('click', '.add_to_target_list', function(e){
-        loadContent('add-to-target/filter.html', '.att', undefined, 'replace');
-        $('.att').removeClass('hide');
-    });
-
 
     // $('.form-search .actions .btn').removeClass('active');
     $('.form-search .actions a[data-view="list"]').addClass('active');
-
-    $('body').on('click', 'a.convert_lead', function(){
-      $('#8fRfg').trigger('click');
-      window.location = '#trigger_convert_lead';
-      return false;
-    });
   });
 </script>

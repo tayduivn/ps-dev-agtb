@@ -58,7 +58,7 @@
         {"file":"add-to-target/add-to-target-filter-row","target":"#add-to-target-filters","method":"append"}
       ]);
       initSelect2('select.select2');
-      var row = $(e.target).parents('.filter-body');
+      var row = $(e.target).parents('.inset-form-body');
       console.log(e.target)
       row.find('.addme').removeClass('disabled');
       row.find('.addme').after(

@@ -7,6 +7,8 @@
   <script>
     var page = {
         "title": "Leads"
+      , "module": "lead"
+      , "mode": "list"
       , "description": ""
       , "convertLead": function () {
           return function (text, render) {
@@ -21,7 +23,7 @@
         , {"file":"common/header","target":"#view .headerpane","method":"replace"}
         , {"file":"common/footer-master","target":"#footer","method":"append"}
         , {"file":"common/edit-drawer","target":".module-view","method":"append"}
-        , {"file":"common/search-filter-list","target":"#view .search-filter","method":"replace"}
+        , {"file":"common/search-filter-related","target":"#view .search-filter","method":"replace"}
         , {"file":"common/data-table","target":"#view .main-content","method":"replace"}
         , {"file":"widget/widget-control","target":"#overview","method":"replace"}
         , {"file":"widget/interactions-widget","target":"#overview","method":"append"}
@@ -66,8 +68,6 @@
             </div>
 
           </div>
-
-
 
           <div class="row-fluid module-edit">
 

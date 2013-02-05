@@ -1,8 +1,8 @@
 <!-- extend header row -->
-<article class="filter-header">
+<article class="inset-form-header">
     <div class="row-fluid">
         <div class="controls span6">
-            <label><strong>Add to target list</strong></label>
+            <strong>Add to target list</strong>
         </div>
         <div class="span6">
             <div class="pull-right">
@@ -21,11 +21,13 @@
       // define global elements
       var _form = $('.att').parents('form'),
           _options = $('.att'),
-          _header = $('.att .filter-header'),
+          _header = $('.att .inset-form-header'),
           _choices,
           _results;
 
       initSelect2('.att select.select2');
+
+      _options.removeClass('hide');
 
       $('body').off('click','a[href="#cancel-drawer"]').on('click', 'a[href="#cancel-drawer"]', function(e){
           drawer(false);
@@ -45,7 +47,7 @@
               drawer(true);
           }
           enableUpdateTargetButton();
-          $(e.target).parents('.filter-body').find('.addme').removeClass('disabled');
+          $(e.target).parents('.inset-form-body').find('.addme').removeClass('disabled');
       });
 
       // close att to target extend
@@ -81,7 +83,7 @@
 
       // add new target row
       _options.off('click','.addme').on('click', '.addme', function(e) {
-          var row = $(this).parents('.filter-body'),
+          var row = $(this).parents('.inset-form-body'),
               isNewRow = (row.attr('id')==='filter_row_new'?true:false),
               filterRows = _options.find('article[id*="filter_row_"]');
           if (isNewRow) {
@@ -96,7 +98,7 @@
 
       // remove target row
       _options.off('click','.removeme').on('click', '.removeme', function(e) {
-          var row = $(this).parents('.filter-body');
+          var row = $(this).parents('.inset-form-body');
           row.remove();
           e.preventDefault();
           e.stopPropagation();

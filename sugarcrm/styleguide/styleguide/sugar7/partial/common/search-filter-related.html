@@ -1,4 +1,4 @@
-<!-- synced dom with sidecar on 11/21/2112 -->
+<!-- synced dom with sidecar on 2/1/2113 -->
 <form class="form-search-related" action="" id="{{sourceid}}">
 
     <div class="control-group">
@@ -19,8 +19,8 @@
         </div>
     </div>
 
-    <div class="filter-options extend hide">
-        <article class="filter-header">
+    <div class="filter-options inset-form extend hide">
+        <article class="inset-form-header">
             <div class="row-fluid">
                 <div class="controls span6">
                     <input name="filter" type="text" value="" class="inherit-width" placeholder="Enter new filter name...">
@@ -35,7 +35,7 @@
                 </div>
             </div>
         </article>
-        <article class="filter-body">
+        <article class="inset-form-body">
           <div class="row-fluid">
             <div class="controls span3">
                 <input type="text" value="Module" disabled="disabled" class="disabled inherit-width">
@@ -49,43 +49,10 @@
         </article>
     </div>
 
-    <div class="mu extend hide">
-        <article class="filter-header">
-            <strong>
-                Mass Update
-            </strong>
-            <div class="pull-right">
-                <a href="#" class="btn btn-primary">Update</a>
-                <a href="#" class="btn btn-invisible"><i class="icon-remove"></i></a>
-            </div>
-        </article>
-        <article class="filter-body">
-            <div class="row-fluid">
-                <div class="controls span3">
-                    <select name="field" class="select2 inherit-width buildit">
-                        <option data-values="matches,contains,not matches,not contains" data-text="true" data-enabled="true">Name</option>
-                        <option data-values="matches" data-text="true" data-enabled="false">Assigned to</option>
-                        <option data-values="prospecting,value proposition,closed won,closed lost" data-text="false" data-enabled="true">Sales Stage</option>
-                        <option data-values="true" data-text="false" data-enabled="false">Favorite</option>
-                    </select>
-                </div>
-                <div class="controls span3">
-                    <select name="opera" class="select2 inherit-width">
-                        <option>matches</option>
-                        <option>contains</option>
-                        <option>not matches</option>
-                        <option>not matches</option>
-                    </select>
-                </div>
-                <div class="filter-value controls span6">
-                    <input name="value" type="text" class="inherit-width" placeholder="Enter a name...">
-                    <a href="" class="btn btn-invisible addme"><i class="icon-plus"></i></a>
-                </div>
-            </div>
-        </article>
+    <div class="mu inset-form extend hide">
     </div>
 
-    <div class="att extend hide">
+    <div class="att inset-form extend hide">
     </div>
 
 </form>
@@ -170,25 +137,18 @@
           _related = $('#{{sourceid}} #related_filter'),
           _filter = $('#{{sourceid}} #search_filter'),
           _options = $('#{{sourceid}} .filter-options'),
-          _header = $('#{{sourceid}} .filter-header'),
+          _header = $('#{{sourceid}} .inset-form-header'),
           _related_choices,
           _related_results,
           _filter_choices,
-          _filter_results;
+          _filter_results,
+          _hasRelated = (!page.mode || page.mode!=='list')?true:false;
 
-      // set up filter result options
-      // $.each(availableFilters, function(index,value){
-      //     _filter.append(
-      //         '<option value="'+ value.id +'"'+
-      //         ' class="custom-choice custom-result '+ (value.classes!==''?value.classes:'') +'"' +
-      //         (value.selected?' selected="selected"':'') +
-      //         (value.disabled?' disabled="disabled"':'') +'>'+
-      //         value.label +
-      //         '</option>'
-      //     );
-      // });
-
-      var related_data = availableFilters
+      if ( _hasRelated ) {
+        //var related_data = [{"label":"{{title}}", "id":"filter_module", "disabled":true, "selected":true, "classes":"result-related filter-disabled", "spec":[]}];
+        var related_data = [];
+      } else {
+        var related_data = availableFilters
                   .filter(function(d){
                     if (d.disabled===true) {
                       return false;
@@ -201,6 +161,7 @@
                   .map(function(d,i){
                     return {"id":d.id,"text":d.label,"classes":d.classes};
                   });
+      }
 
       var filter_data = availableFilters
                   .filter(function(d){
@@ -216,17 +177,16 @@
                     return {"id":d.id,"text":d.label,"classes":d.classes};
                   });
 
-      //if ( page.mode && page.mode !== 'list' ) {
         _related.select2({
             data:related_data,
             multiple:false,
             minimumResultsForSearch:7,
-            placeholder: 'Related',
+            placeholder: (_hasRelated?'Related':'Module'),
             formatSelection: function(item) {
                 if (item.id === item.text) {
                     return item.text;
                 } else {
-                    return '<div class="'+ item.classes +'"><span class="select2-choice-type">Related<i class="icon-caret-down"></i></span><a class="select2-choice-related" href="javascript:void(0)" rel="' + item.id.replace('filter_','') +'">'+ item.text +'</a></div>';
+                    return '<div class="'+ item.classes +'"><span class="select2-choice-type">'+ (_hasRelated?'Related':'Module') +'<i class="icon-caret-down"></i></span><a class="select2-choice-related" href="javascript:void(0)" rel="' + item.id.replace('filter_','') +'">'+ item.text +'</a></div>';
                 }
             },
             formatResult: function (option) {
@@ -236,8 +196,10 @@
             dropdownCss: {width:'auto'},
             dropdownCssClass: 'search-related-dropdown'
         });
-        _related.select2("data", {id: "filter_4", text: "Contacts"});
-      //}
+        _related.select2("data", {id: "filter_module", text: "{{title}}"});
+        if (!_hasRelated) {
+            _related.select2("disable", true);
+        }
 
       _filter.select2({
           data:filter_data,
@@ -353,7 +315,7 @@
 
           // add filter row
           _options.off('click','.addme').on('click', '.addme', function(e) {
-              var row = $(this).parents('.filter-body'),
+              var row = $(this).parents('.inset-form-body'),
                   isNewRow = (row.attr('id')==='filter_row_new'?true:false),
                   filterRows = _options.find('article[id*="filter_row_"]');
 
@@ -372,7 +334,7 @@
 
           // remove filter row
           _options.off('click','.removeme').on('click', '.removeme', function(e) {
-              var row = $(this).parents('.filter-body'),
+              var row = $(this).parents('.inset-form-body'),
                   id = 's2id_search_filter_f_'+ parseInt(row.attr('id').substr(11),10);
               _filter_choices.find('#'+id).remove();
               row.remove();
