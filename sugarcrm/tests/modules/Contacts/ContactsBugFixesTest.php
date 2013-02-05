@@ -107,11 +107,13 @@ class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->contacts[] = BeanFactory::getBean("Contacts", $return['id']);
 
         $args['sync_contact'] = '0';
-        $return = $mapi->createRecord($sm, $args);
-        $this->assertTrue(!empty($return['id']), "Bean was not created");
+        $args['record'] = $return['id'];
+        $return = $mapi->updateRecord($sm, $args);
+        
         $sync_contact = (bool)$return['sync_contact'];
+        
         $this->assertFalse($sync_contact, "Sync Contact was not set to false - " . print_r($return, true));
-        $this->contacts[] = BeanFactory::getBean("Contacts", $return['id']);
+        
     }
 }
 
