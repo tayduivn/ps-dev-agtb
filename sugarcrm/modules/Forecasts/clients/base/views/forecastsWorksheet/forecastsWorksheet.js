@@ -172,6 +172,7 @@
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
         this.updateWorksheetBySelectedRanges(app.defaultSelections.ranges);
         this._collection.url = this.createURL();
+        this.safeFetch()
     },
 
     /**
