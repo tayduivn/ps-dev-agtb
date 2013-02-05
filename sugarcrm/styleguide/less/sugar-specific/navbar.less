@@ -147,7 +147,7 @@
     }
     .dropdownMinWidth();
     margin-top: 0;
-    top: 44px;
+    top: 50px;
     /*right: -8px;*/
     left: auto;
     .border-radius(4px);
@@ -259,11 +259,82 @@
         }
       }
     }
+
+    &#module_list{
+      > li.dropdown {
+        border-left: 1px solid transparent;
+        border-right: 1px solid transparent;
+        &.open {
+          border-left: 1px solid @black;
+          border-right: 1px solid @grayDark;
+        }
+        div.btn-group {
+          margin: 0;
+          a.btn-invisible.btn-link {
+            text-shadow: none;
+            color: lighten(@black,80%);
+            .caret {
+              border-top-color: @white;
+              border-bottom-color: @white;
+            }
+            &:hover {
+              color: lighten(@black,100%) !important;
+              text-decoration: none;
+            }
+            &:not(.dropdown-toggle) {
+              padding-right: 0;
+            }
+          }
+          border-left: 1px solid transparent;
+          border-right: 1px solid transparent;
+          &.open {
+            .box-shadow(~"inset 2px 4px 12px rgba(255,255,255,.25)");
+            border-left:1px solid lighten(@gray,10%);
+            border-right:1px solid @black;
+            .dropdown-toggle {
+              background: none;
+            }
+            ul.dropdown-menu {
+              &:before {
+                content: '';
+                display: inline-block;
+                border-left:   7px solid transparent;
+                border-right:  7px solid transparent;
+                border-bottom: 7px solid #ccc;
+                border-bottom-color: @dropdownBorder;
+                position: absolute;
+                top: -7px;
+                left: 9px;
+              }
+              &:after {
+                content: '';
+                display: inline-block;
+                border-left:   6px solid transparent;
+                border-right:  6px solid transparent;
+                border-bottom: 6px solid @dropdownBackground;
+                position: absolute;
+                top: -6px;
+                left: 10px;
+              }
+            }
+          }
+        }
+        &.more {
+          ul.dropdown-menu.more-drop-container {
+            li.dropdown {
+              div.btn-group {
+                height:34px;
+              }
+            }
+          }
+        }
+      }
+    }
+
     // Dropdown toggle caret
     li.dropdown > .dropdown-toggle .caret,
     .open.dropdown .caret {
       border-top-color: @white;
-      margin-left: 6px;
     }
     // Active nav items
     .active > a,
