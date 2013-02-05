@@ -1,0 +1,3 @@
+{{#each configs}}
+<option value="{{id}}">{{display}}</option>
+{{/each}}
