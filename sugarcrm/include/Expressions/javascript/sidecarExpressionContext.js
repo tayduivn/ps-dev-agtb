@@ -149,79 +149,18 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         if (model && model.fields && model.fields[variable])
             return model.fields[variable];
     },
-    cacheRelatedField : function(link, ftype, value, view)
-    {
-        if (!view) view = AH.lastView;
 
-        if(!AH.LINKS[view][link])
-            return false;
-
-        //If there is already a value cached for this link, we need to merge in the new field values
-        if (typeof(AH.LINKS[view][link][ftype]) == "object" && typeof(value == "object"))
-        {
-            for(var i in value)
-            {
-                AH.LINKS[view][link][ftype][i] = value[i];
-            }
-        }
-        else
-            AH.LINKS[view][link][ftype] = value;
-
-        return true;
-    },
-    getCachedRelatedField : function(link, ftype, view)
-    {
-        if (!view) view = AH.lastView;
-
-        if(!AH.LINKS[view][link] || AH.LINKS[view][link][ftype])
-            return null;
-
-        return AH.LINKS[view][link][ftype];
-    },
     showError : function(variable, error)
     {
-    	// retrieve the variable
-    	var field = AH.getElement(variable);
-
-    	if ( field == null )
-    		return null;
-
-    	add_error_style(field.form.name, field, error, false);
+    	//TODO
     },
     clearError : function(variable)
     {
-    	// retrieve the variable
-    	var field = AH.getElement(variable);
-    	if ( field == null )
-    		return;
-
-    	for(var i in inputsWithErrors)
-    	{
-    		if (inputsWithErrors[i] == field)
-    		{
-    			if ( field.parentNode.className.indexOf('x-form-field-wrap') != -1 )
-                {
-    				field.parentNode.parentNode.removeChild(field.parentNode.parentNode.lastChild);
-                }
-                else
-                {
-                	field.parentNode.removeChild(field.parentNode.lastChild);
-                }
-    			delete inputsWithErrors[i];
-    			return;
-    		}
-    	}
+    	//TODO
     },
     setStyle : function(variable, styles)
     {
-    	// retrieve the variable
-    	var field = AH.getElement(variable);
-    	if ( field == null )	return null;
-
-    	// set the styles
-    	for ( var property in styles ) {
-    		YAHOO.util.Dom.setStyle(field, property + "", styles[property]);
-    	}
+    	//TODO
     },
     setRelatedFields : function(fields){
         var model = this.view.context.get("model");
@@ -327,22 +266,8 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         }
         return ret;
     },
-    clearRelatedFieldCache : function(link, view){
-        if (!view) view = AH.lastView;
-
-        if(!AH.LINKS[view][link])
-            return false;
-
-        delete (AH.LINKS[view][link]["relId"]);
-        delete (AH.LINKS[view][link]["related"]);
-
-        return true;
-    },
     fireOnLoad : function(dep) {
         this.view.model.once("change", SUGAR.forms.Trigger.fire, dep.trigger);
-    },
-    reset : function() {
-
     }
 });
 
@@ -380,6 +305,14 @@ SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad, co
 
 }
 
+    /**
+     *  Creates a Dependency from the given metadata.
+     *
+     * @static
+     * @param meta {object} metadata that defines this dependency
+     * @param context {ExpressionContext} to attach to this dependency
+     * @return Dependency object created from metadata
+     */
 SUGAR.forms.Dependency.fromMeta = function(meta, context){
     var condition = meta.trigger || "true",
         triggerFields = meta.triggerFields || SEC.parser.getFieldsFromExpression(condition),
