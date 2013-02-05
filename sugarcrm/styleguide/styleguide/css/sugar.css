@@ -8872,6 +8872,13 @@ table.duplicates.highlight tbody td {
 .carousel.slide .thumbnails .thumbnail .caption {
   text-align: center;
 }
+h4.merge-interface-header {
+  margin-left: 20px;
+  margin-right: 10px;
+}
+h4.merge-interface-header .preview {
+  padding-top: 0;
+}
 .merge-interface {
   height: auto;
   margin: 10px 0 0;
