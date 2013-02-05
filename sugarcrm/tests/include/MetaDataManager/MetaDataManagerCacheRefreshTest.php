@@ -233,7 +233,7 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
             //END SUGARCRM flav=ent ONLY
             //BEGIN SUGARCRM flav=pro ONLY
             array('platform' => 'mobile', 'manager' => 'MetaDataManagerMobile'),
-            //BEGIN SUGARCRM flav=pro ONLY
+            //END SUGARCRM flav=pro ONLY
             array('platform' => 'base', 'manager' => 'MetaDataManager'),
         );
     }
@@ -246,7 +246,7 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
             //END SUGARCRM flav=ent ONLY
             //BEGIN SUGARCRM flav=pro ONLY
             array('platform' => 'mobile'),
-            //BEGIN SUGARCRM flav=pro ONLY
+            //END SUGARCRM flav=pro ONLY
             array('platform' => 'base'),
         );
     }
