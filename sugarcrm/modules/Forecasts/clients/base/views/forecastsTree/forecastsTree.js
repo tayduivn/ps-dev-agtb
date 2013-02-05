@@ -64,25 +64,25 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
-        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        if(this.context) this.context.off(null, null, this);
         app.view.View.prototype.unbindData.call(this);
     },
 
     /**
-     * Handles if data changes on the context.forecasts.tree model (and when tree first initializes)
+     * Handles if data changes on the context.tree model (and when tree first initializes)
      * Tree is not handled like other components on Forecasts as it uses a 3rdParty lib (jstree)
      * to handle it's data model. The event handler is added here only because bindDataChange is
      * where other event handlers are added in other models and it fires once during initialization
      */
     bindDataChange:function () {
-        if (this.context.forecasts) {
-            this.context.forecasts.on("change:selectedUser", this.checkRender, this);
+        if (this.context) {
+            this.context.on("change:selectedUser", this.checkRender, this);
         }
     },
 
     /**
      * Function to give a final check before rendering to see if we really need to render
-     * Any time the selectedUser changes on context.forecasts we run through this function to
+     * Any time the selectedUser changes on context we run through this function to
      * see if we should render the tree again
      *
      * @param context
@@ -196,7 +196,7 @@
                     },
                     "ui":{
                         // when the tree re-renders, initially select the root node
-                        "initially_select":[ 'jstree_node_' + self.context.forecasts.get('selectedUser').user_name ]
+                        "initially_select":[ 'jstree_node_' + self.context.get('selectedUser').user_name ]
                     },
                     "types":{
                         "types":{
@@ -213,7 +213,7 @@
                         var jsData = data.inst.get_json();
                         var nodeType = jsData[0].attr.rel;
                         var userData = jsData[0].metadata;
-                        var contextUser = self.context.forecasts.get("selectedUser");
+                        var contextUser = self.context.get("selectedUser");
 
                         var showOpps = false;
 
@@ -234,7 +234,7 @@
                         };
 
                         // update context with selected user which will trigger checkRender
-                        self.context.forecasts.set("selectedUser", selectedUser);
+                        self.context.set("selectedUser", selectedUser);
                     });
 
                 if (treeData) {

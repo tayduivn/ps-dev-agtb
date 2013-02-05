@@ -27,12 +27,12 @@
      * Utility Method to check if we can edit again.
      */
     checkIfCanEdit: function() {
-        var selectedUser = this.context.forecasts.get('selectedUser');
-        if (!_.isUndefined(this.context.forecasts) && !_.isUndefined(this.context.forecasts.config)) {
+        var selectedUser = this.context.get('selectedUser');
+        if (!_.isUndefined(this.context) && !_.isUndefined(this.context.config)) {
             this._canEdit = _.isEqual(app.user.get('id'), selectedUser.id) && !_.contains(
                 // join the two variable together from the config
-                this.context.forecasts.config.get("sales_stage_won").concat(
-                    this.context.forecasts.config.get("sales_stage_lost")
+                this.context.config.get("sales_stage_won").concat(
+                    this.context.config.get("sales_stage_lost")
                 ), this.model.get('sales_stage'));
         }
     },
@@ -184,7 +184,7 @@
         if(evt.which == 9) {
             evt.preventDefault();
             // tab key pressed, trigger event from context
-            this.context.forecasts.trigger('forecasts:tabKeyPressed', evt.shiftKey, this);
+            this.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, this);
         }
     },
 

@@ -97,12 +97,12 @@
             // include metadata from config into the config model by default
             defaults: app.metadata.getModule('Forecasts').config
         });
-        options.context.forecasts.config = new ConfigModel();
+        options.context.config = new ConfigModel();
 
         var defaultSelections = app.defaultSelections;
 
         // Set initial selected data on the context
-        options.context.forecasts.set({
+        options.context.set({
             selectedTimePeriod : defaultSelections.timeperiod_id,
             selectedCategory: defaultSelections.ranges,
             selectedGroupBy : defaultSelections.group_by,
@@ -125,7 +125,6 @@
              */
             currentWorksheet: "",
 
-
             /**
              * used across Forecasts to contain sales rep worksheet totals
              */
@@ -144,23 +143,6 @@
              * can check this variable to know which button was clicked
              */
             saveClicked : false,
-
-            // todo: the following three booleans need to be refactored out and made into events, not flags/booleans
-            /**
-             * boolean to use across components to enable commit button or not
-             */
-            reloadCommitButton : false,
-
-            /**
-             * forecastsCommitButtons triggers this flag to tell forecastsCommitted to call commitForecast()
-             */
-            commitForecastFlag : false,
-
-            /**
-             * hiddenSidebar: Is the sidebar hidden or not.
-             */
-            hiddenSidebar : false
-
         });
 
         // grab a copy of the init data for forecasts to use
@@ -195,15 +177,15 @@
         _.each(this.componentsMeta, function(component) {
 
             if(component.model && component.model.name){
-                self.context.forecasts[component.model.name.toLowerCase()].fetch();
+                self.context[component.model.name.toLowerCase()].fetch();
             }
 
             if(component.contextCollection && component.contextCollection.name) {
-                self.context.forecasts[component.contextCollection.name.toLowerCase()].fetch();
+                self.context[component.contextCollection.name.toLowerCase()].fetch();
             }
 
             if(component.collection && component.collection.name) {
-                self.context.forecasts[component.collection.name.toLowerCase()].fetch();
+                self.context[component.collection.name.toLowerCase()].fetch();
             }
 
         });
@@ -214,21 +196,11 @@
      * @return {Object} new instance of the main model, which contains instances of the sub-models for each view
      * as defined in metadata.
      */
-    initializeAllModels: function(existingModel) {
+    initializeAllModels: function() {
         var self = this,
             componentsMetadata = this.componentsMeta,
-            module = "forecasts",
-            models = {},
-            existingModel = existingModel || {};
+            models = {};
 
-        // creates the context.forecasts topmost model, if it's not already set on the models
-        if(_.isUndefined(existingModel[module])) {
-            models[module] = app.data.createBean(module);
-            // creates the config model as a special case
-            self.namespace(models, module);
-        } else {
-            models[module] = existingModel[module];
-        }
         // Loops through components from the metadata, and creates their models/collections, as defined
         _.each(componentsMetadata, function(component) {
             var name,
@@ -238,23 +210,18 @@
 
             if (modelMetadata) {
                 name = modelMetadata.name.toLowerCase();
-                self.namespace(models, module);
-                models[module][name] = self.createModel(modelMetadata, "Forecasts");
+                models[name] = self.createModel(modelMetadata, "Forecasts");
             }
 
             if(context) {
-                var name = context.name.toLowerCase();
-                var moduleContext = context.module;
-                self.namespace(models, module);
-
-                models[module][name] = self.createCollection();
+                name = context.name.toLowerCase();
+                models[name] = self.createCollection();
             }
 
             if (collectionMetadata) {
                 name = collectionMetadata.name.toLowerCase();
-                self.namespace(models, module);
-                models[module][name] = self.createCollection();
-                models[module][name].url = app.config.serverUrl + '/Forecasts/' + name;
+                models[name] = self.createCollection();
+                models[name].url = app.config.serverUrl + '/Forecasts/' + name;
             }
         });
 
@@ -308,12 +275,6 @@
 
         });
         return new Collection();
-    },
-
-    namespace: function(target, namespace) {
-        if (!target[namespace]) {
-            target[namespace] = {};
-        }
     },
 
     /**

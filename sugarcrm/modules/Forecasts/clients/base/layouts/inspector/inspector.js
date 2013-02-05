@@ -42,15 +42,15 @@
      */
     bindDataChange: function () {
         var self = this;
-        this.context.forecasts.on('change:hiddenSidebar', function (context, value) {
+        this.context.on('forecasts:commitButtons:sidebarHidden', function (value) {
             // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
             self.toggleSidebar = value;
         });
-        this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
+        this.context.on("change:selectedTimePeriod", function(context, timePeriod) {
             // when the time-period changes, we need to hide this.
             self.hide();
         });
-        this.context.forecasts.on('forecasts:change:worksheetRows', function(newRows) {
+        this.context.on('forecasts:change:worksheetRows', function(newRows) {
             var row = self.removeHighlight(self.findHighlighted());
             self.setRows(newRows, row);
         });

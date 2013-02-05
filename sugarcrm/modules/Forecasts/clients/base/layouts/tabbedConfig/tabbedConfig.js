@@ -49,7 +49,7 @@
         settingsModel.fetch({
             success: function(def, self) {
                 return function(model, response) {
-                    self.context.forecasts.config = model;
+                    self.context.config = model;
                     def.resolve();
                 }
             }(this.deferredRender, this)
@@ -78,8 +78,8 @@
         });
 
         // jQuery.extend is used with the `true` parameter to do a deep copy
-        return (_.has(options.context,'forecasts') && _.has(options.context.forecasts,'config')) ?
-            new SettingsModel($.extend(true, {}, options.context.forecasts.config.attributes)) :
+        return (_.has(options.context,'config')) ?
+            new SettingsModel($.extend(true, {}, options.context.config.attributes)) :
             new SettingsModel();
     },
 

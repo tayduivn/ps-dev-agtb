@@ -97,8 +97,8 @@
     _render: function() {
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         // This will be set to true if the forecasts ranges setup should be disabled
-        this.disableRanges = this.context.forecasts.config.get('has_commits');
-        this.selection = this.context.forecasts.config.get('forecast_ranges');
+        this.disableRanges = this.context.config.get('has_commits');
+        this.selection = this.context.config.get('forecast_ranges');
 
         app.view.View.prototype._render.call(this);
 

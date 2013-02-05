@@ -55,8 +55,8 @@
 
         var self = this;
 
-        if (this.context && this.context.forecasts) {
-            this.context.forecasts.on("change:selectedUser", function (context, user) {
+        if (this.context && this.context) {
+            this.context.on("change:selectedUser", function (context, user) {
                 self.selectedUser = user;
                 this.toggleRangesFieldVisibility();
             }, this);
@@ -102,8 +102,8 @@
      * @private
      */
     _setUpFilters: function() {
-        var selectedRanges = this.context.forecasts.has("selectedRanges") ?
-            this.context.forecasts.get("selectedRanges") :
+        var selectedRanges = this.context.has("selectedRanges") ?
+            this.context.get("selectedRanges") :
             app.defaultSelections.ranges;
 
         this.node.select2({
@@ -132,7 +132,7 @@
                 view: this
             },
             function(event) {
-                event.data.view.context.forecasts.set("selectedRanges", event.val);
+                event.data.view.context.set("selectedRanges", event.val);
             }
         );
     },
@@ -143,7 +143,7 @@
      * @return {Array} array of the selected ranges
      */
     _getRangeFilters: function() {
-        var options = this.context.forecasts.config.get('buckets_dom') || 'commit_stage_binary_dom';
+        var options = this.context.config.get('buckets_dom') || 'commit_stage_binary_dom';
 
         return _.map(app.lang.getAppListStrings(options), function(value, key)  {
             return {id: key, text: value};
