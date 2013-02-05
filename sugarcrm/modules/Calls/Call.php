@@ -685,27 +685,30 @@ class Call extends SugarBean {
 		}
 
 		foreach($this->users_arr as $user_id) {
-			$notify_user = new User();
-			$notify_user->retrieve($user_id);
-			$notify_user->new_assigned_user_name = $notify_user->full_name;
-			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[$notify_user->id] = $notify_user;
+			$notify_user = BeanFactory::getBean('Users', $user_id);
+			if(!empty($notify_user->id)) {
+				$notify_user->new_assigned_user_name = $notify_user->full_name;
+				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
+				$list[$notify_user->id] = $notify_user;
+			}
 		}
 
 		foreach($this->contacts_arr as $contact_id) {
-			$notify_user = new Contact();
-			$notify_user->retrieve($contact_id);
-			$notify_user->new_assigned_user_name = $notify_user->full_name;
-			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[$notify_user->id] = $notify_user;
+			$notify_user = BeanFactory::getBean('Contacts', $contact_id);
+			if(!empty($notify_user->id) && !empty($notify_user->email1)) {
+				$notify_user->new_assigned_user_name = $notify_user->full_name;
+				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
+				$list[$notify_user->id] = $notify_user;
+			}
 		}
 
         foreach($this->leads_arr as $lead_id) {
-			$notify_user = new Lead();
-			$notify_user->retrieve($lead_id);
-			$notify_user->new_assigned_user_name = $notify_user->full_name;
-			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[$notify_user->id] = $notify_user;
+			$notify_user = BeanFactory::getBean('Leads', $lead_id);
+			if(!empty($notify_user->id)) {
+				$notify_user->new_assigned_user_name = $notify_user->full_name;
+				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
+				$list[$notify_user->id] = $notify_user;
+			}
 		}
 //		$GLOBALS['log']->debug('Call.php->get_notification_recipients():'.print_r($list,true));
 		return $list;
