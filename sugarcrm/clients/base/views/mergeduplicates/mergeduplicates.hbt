@@ -1,8 +1,7 @@
-<?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
+ * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -16,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
+ *  (i) the ""Powered by SugarCRM"" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -26,19 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-$layout = MetaDataManager::getLayout("FilterPanelLayout", array("override" => true, "notabs" => true));
-$listLayout = MetaDataManager::getLayout("GenericLayout", array("name" => "list"));
-$listLayout->push(array("layout" => array(
-    'type' => 'drawer',
-    'showEvent' => array(
-        "drawer:selection:fire",
-        "drawer:mergeduplicates:fire",
-    )
-)));
-$listLayout->push(array("view" => "massupdate"));
-$listLayout->push(array("view" => "massaddtolist"));
-$listLayout->push(array("view" => "recordlist", "primary" => true));
-$listLayout->push(array('view' => 'list-bottom'));
-$layout->push(array("toggles" => $listLayout->getLayout(true)));
-$viewdefs['base']['layout']['list'] = $layout->getLayout();
+}}
+<div class="record record-merge-interface">
+Merge Duplicates
+</div>

@@ -28,6 +28,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $viewdefs['base']['view']['subpanel-list'] = array(
     'favorite' => true,
+                'name' => 'merge_button',
+                'type' => 'button',
+                'label' => 'LBL_MERGE_DUPLICATES',
+                'value' => 'edit',
+                'primary' => true,
+                'events' => array(
+                    'click' => 'function(e){
+                        this.view.layout.trigger("drawer:mergeduplicates:fire", {
+                            components: [{
+                                view : "mergeduplicates",
+                            }]
+                        }, this);
+                     }',  
+                ),
+            ),            
+            array(
     'rowactions' => array(
         'css_class' => 'pull-right',
         'actions' => array(
