@@ -26,9 +26,6 @@
   .subpanel-header .btn-toolbar > .btn-group {
     margin-left: 16px;
   }
-
-  .subpanel-list {
-  }
 </style>
 
 <div class="filtered tabbable tabs-left" id="moduleActivity">
@@ -67,9 +64,9 @@
 <script>
   $(document).ready(function() {
 
-    loadPartials([
-      {"file":"common/omnibar","target":"#view .main-content","method":"prepend"}
-    ]);
+    // loadPartials([
+    //   {"file":"common/omnibar","target":"#view .main-content","method":"prepend"}
+    // ]);
 
     $('#moduleActivity .results > li').each(function(){
         var $this = $(this);
