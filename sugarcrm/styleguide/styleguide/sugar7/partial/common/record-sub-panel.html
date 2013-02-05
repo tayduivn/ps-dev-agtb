@@ -1,0 +1,119 @@
+<style>
+  .subpanel.out .subpanel-list {
+    display: none;
+  }
+
+  .subpanel.out i.icon-chevron-down::before {
+    content: "\f077";
+  }
+
+  .subpanel-header {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .subpanel-header .label-module-sm {
+    width: 21px;
+    height: 26px;
+    margin: 9px 20px;
+  }
+
+  .subpanel-header a.btn {
+    width: 28px;
+    box-sizing: border-box;
+  }
+
+  .subpanel-header .btn-toolbar > .btn-group {
+    margin-left: 16px;
+  }
+
+  .subpanel-list {
+  }
+</style>
+
+<div class="filtered tabbable tabs-left" id="moduleActivity">
+  <ul class="nav results">
+    <li id="sp_files" class="subpanel">
+      <div class="subpanel-header">
+        <div class="label label-module-sm label-Files" rel="tooltip" data-title="File">
+          Fi
+        </div>
+      </div>
+    </li>
+    <li id="sp_opportunities" class="subpanel">
+      <div class="subpanel-header">
+        <div class="label label-module-sm label-Opportunities" rel="tooltip" data-title="Opportunity">
+          Op
+        </div>
+      </div>
+    </li>
+    <li id="sp_bugs" class="subpanel">
+      <div class="subpanel-header">
+        <div class="label label-module-sm label-Bugs" rel="tooltip" data-title="Bug">
+          Bu
+        </div>
+      </div>
+    </li>
+    <li id="sp_accounts" class="subpanel">
+      <div class="subpanel-header">
+        <div class="label label-module-sm label-Accounts" rel="tooltip" data-title="Account">
+          Ac
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<script>
+  $(document).ready(function() {
+
+    loadPartials([
+      {"file":"common/omnibar","target":"#view .main-content","method":"prepend"}
+    ]);
+
+    $('#moduleActivity .results > li').each(function(){
+        var $this = $(this);
+        page.panel_id = '#'+$this.attr('id') + ' .subpanel-list';
+        page.panel_title = $this.find('.label').data('title');
+        console.log(page.panel_title)
+        loadPartials([
+          {"file":"common/subpanel-controls","target":'#'+$this.attr('id') + ' .subpanel-header',"method":"append"},
+          {"file":"common/subpanel-list","target":'#'+$this.attr('id'),"method":"append"},
+
+        ]);
+    });
+
+    $('#moduleActivity')
+        .off('click', '.subpanel-controls a[data-toggle="subpanel"]')
+        .on('click', '.subpanel-controls a[data-toggle="subpanel"]', function(){
+            $(this).parents('.subpanel').toggleClass('out');
+        });
+
+    $('.comment').toggle(
+      function () {
+        $(this).parent().parent().parent().find('.acomment').remove();
+        $(this).parent().parent().find('ul').append('<li class="acomment"><div class="control-group form-horizontal"><input placeholder="Add your comment..." class="reply span11"> <input type="submit" class="btn btn-primary" value="Reply"></div></li>');
+        $(this).addClass('active');
+        return false;
+      },
+      function () {
+        $(this).parent().parent().parent().find('.acomment').remove();
+        $(this).removeClass('active');
+        return false;
+      }
+    );
+
+    // toggle more hide
+    $('.commented .more').toggle(
+      function () {
+        $(this).parent().prev('.extend').removeClass('hide');
+        return false;
+      },
+      function () {
+        $(this).parent().prev('.extend').addClass('hide');
+        $(this).html('2 more comments...');
+        return false;
+      }
+    );
+  });
+</script>
