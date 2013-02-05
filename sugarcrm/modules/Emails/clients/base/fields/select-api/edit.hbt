@@ -1,1 +1,0 @@
-<select data-placeholder=" " name="{{name}}" {{#if def.css_class}}class="{{def.css_class}}"{{/if}}></select>

@@ -279,6 +279,7 @@
         evt.stopPropagation();
         evt.preventDefault();
 
+        // this is temporary until we have stacking drawers - for right now we are just loading this view up
         app.controller.loadView({
             module:         "Emails",
             layout:         "compose",

@@ -42,16 +42,6 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
             'placeholders' => true,
             'fields'       => array(
                 array(
-                    'name'      => 'email_config',
-                    'label'     => 'LBL_FROM',
-                    'type'      => 'select-api',
-                    'css_class' => 'inherit-width',
-                    'endpoint'  => array(
-                        'module' => 'OutboundEmailConfiguration',
-                        'action' => 'list',
-                    )
-                ),
-                array(
                     "name"                => "to_addresses",
                     "type"                => "recipients",
                     "label"               => "LBL_TO_ADDRS",
