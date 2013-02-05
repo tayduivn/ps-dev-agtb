@@ -1,6 +1,6 @@
 describe("Preview View", function() {
 
-    var preview, app, meta;
+    var preview, layout, app, meta;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -33,7 +33,9 @@ describe("Preview View", function() {
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
         sinonSandbox = sinon.sandbox.create();
+        layout = SugarTest.createLayout('base', "Cases", "preview");
         preview = SugarTest.createView("base", "Cases", "preview", null, null);
+        preview.layout = layout;
         app = SUGAR.App;
         meta = app.metadata.getView('Cases', 'record');
     });
@@ -91,7 +93,7 @@ describe("Preview View", function() {
             dummyCollection.models = [dummyModel];
             var openPreviewFired = false;
             var listPreviewDecorateFired = false;
-            var triggerStub = sinon.stub(preview.context,"trigger", function(event, model){
+            var triggerStub = sinon.stub(app.events,"trigger", function(event, model){
                 expect(event).not.toBeEmpty();
                 if(event == "preview:open"){
                     openPreviewFired = true;
@@ -113,10 +115,60 @@ describe("Preview View", function() {
                expect(model).toEqual(dummyModel);
                expect(collection).toEqual(dummyCollection);
             });
-            preview.context.trigger("preview:render", dummyModel, dummyCollection, false);
+            app.events.trigger("preview:render", dummyModel, dummyCollection, false);
             expect(renderPreviewStub).toHaveBeenCalled();
             renderPreviewStub.restore();
         });
     });
 
+    describe('Switching to next and previous record', function() {
+
+        var createListCollection;
+
+        beforeEach(function() {
+            createListCollection = function(nbModels, offsetSelectedModel) {
+                     preview.collection = new Backbone.Collection();
+
+                     var modelIds = [];
+                     for (var i=0;i<=nbModels;i++) {
+                         var model = new Backbone.Model(),
+                             id = i + '__' + Math.random().toString(36).substr(2,16);
+
+                         model.set({id: id});
+                         if (i === offsetSelectedModel) {
+                             preview.model.set(model.toJSON());
+                             preview.collection.add(model);
+                         }
+                         preview.collection.add(model);
+                         modelIds.push(id);
+                     }
+                     return modelIds;
+                 };
+        });
+
+        it("Should find previous and next model from list collection", function() {
+            var modelIds = createListCollection(5, 3);
+            preview.showPreviousNextBtnGroup();
+            expect(preview.layout.previous).toBeDefined();
+            expect(preview.layout.next).toBeDefined();
+            expect(preview.layout.previous.get('id')).toEqual(modelIds[2]);
+            expect(preview.layout.next.get('id')).toEqual(modelIds[4]);
+        });
+
+        it("Should find previous model from list collection", function() {
+            var modelIds = createListCollection(5, 5);
+            preview.showPreviousNextBtnGroup();
+            expect(preview.layout.previous).toBeDefined();
+            expect(preview.layout.next).not.toBeDefined();
+            expect(preview.layout.previous.get('id')).toEqual(modelIds[4]);
+        });
+
+        it("Should find next model from list collection", function() {
+            var modelIds = createListCollection(5, 0);
+            preview.showPreviousNextBtnGroup();
+            expect(preview.layout.previous).not.toBeDefined();
+            expect(preview.layout.next).toBeDefined();
+            expect(preview.layout.next.get('id')).toEqual(modelIds[1]);
+        });
+    });
 });

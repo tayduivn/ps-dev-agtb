@@ -26,21 +26,15 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="block preview-data">
-{{#each meta.panels}}
-{{#each fields}}
-<div class="row-fluid {{#if ../hide}} hide panel_hidden{{/if}}">
-        <div class="span5">{{str  this.label ../../this.model.module}}</div>
-        <div class="span7" name="{{this.name}}">
-            {{field ../../this ../../model}}
+<div class="preview-headerbar">
+    <h1>{{str "LBL_PREVIEW"}}</h1>
+    <div class="btn-toolbar pull-right">
+        <div class="btn-group">
+            <a class="btn{{#unless layout.previous}} disabled{{/unless}}" data-direction="left"><i class="icon-chevron-left"></i></a>
+            <a class="btn{{#unless layout.next}} disabled{{/unless}}" data-direction="right"><i class="icon-chevron-right"></i></a>
         </div>
-    </div>
-{{/each}}
-{{/each}}
-    <div class="row-fluid">
-        <div class="{{#unless hiddenPanelExists}} hide{{/unless}} span5 show-hide-toggle">
-            <a href="javascript:void(0)" class="more">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
-            <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
+        <div class="btn-group">
+            <a class="btn btn-invisible closeSubdetail" data-toggle="tab"><i class="icon-remove"></i></a>
         </div>
     </div>
 </div>

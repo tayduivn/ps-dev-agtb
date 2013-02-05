@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,22 +24,27 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="block preview-data">
-{{#each meta.panels}}
-{{#each fields}}
-<div class="row-fluid {{#if ../hide}} hide panel_hidden{{/if}}">
-        <div class="span5">{{str  this.label ../../this.model.module}}</div>
-        <div class="span7" name="{{this.name}}">
-            {{field ../../this ../../model}}
-        </div>
-    </div>
-{{/each}}
-{{/each}}
-    <div class="row-fluid">
-        <div class="{{#unless hiddenPanelExists}} hide{{/unless}} span5 show-hide-toggle">
-            <a href="javascript:void(0)" class="more">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
-            <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
-        </div>
-    </div>
-</div>
+({
+    events: {
+        'click [data-direction]': 'triggerPagination',
+        'click .preview-headerbar .closeSubdetail': 'triggerClose'
+    },
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+        if (this.layout) {
+            this.layout.off("preview:pagination:update", null, this);
+            this.layout.on("preview:pagination:update", this.render, this);
+        }
+    },
+
+    triggerPagination: function(e) {
+        var direction = this.$(e.currentTarget).data();
+        this.layout.trigger("preview:pagination:fire", direction);
+    },
+
+    triggerClose: function() {
+        app.events.trigger("list:preview:decorate", null, this);
+        app.events.trigger("preview:close:fire");
+    }
+
+})
