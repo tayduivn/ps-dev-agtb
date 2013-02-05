@@ -138,6 +138,7 @@ $mod_strings = array (
   'LBL_DASHLET_CONFIGURE_TITLE' => 'Title',
   'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS' => 'Display Rows',
 
+  'LBL_DASHLET_ADD' => 'Add a Dashlet',
   'LBL_DASHLET_DELETE' => 'Delete Sugar Dashlet',
   'LBL_DASHLET_REFRESH' => 'Refresh Sugar Dashlet',
   'LBL_DASHLET_EDIT' => 'Edit Sugar Dashlet',

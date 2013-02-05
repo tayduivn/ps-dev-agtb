@@ -163,7 +163,30 @@ class CurrentUserApi extends SugarApi
         $user_data['preferences']['default_teams'] = $defaultTeams;
 
         //END SUGARCRM flav=pro ONLY
+
+        $user_data['dashboards'] = $this->getDashboardList($api, $args, $current_user);
+
         return array('current_user' => $user_data);
+    }
+
+    /**
+     * Fetches the custom dashboards for the user
+     *
+     * @param ServiceBase $api The base API service
+     * @param array $args The args passed in to the api call
+     * @param User $args The current user
+     * @return array A list of dashboard url's that override the default layouts/views
+     */
+    protected function getDashboardList(ServiceBase $api, array $args, User $user)
+    {
+        $dashboards = BeanFactory::newBean('Dashboards')->getDashboardsForUser($user);
+
+        $sortedResults = array();
+        foreach ( $dashboards as $dashboard ) {
+            $sortedResults[] = array('id'=>$dashboard->id,'name'=>$dashboard->name, 'url' => $api->getResourceURI('Dashboards/'.$dashboard->id));
+        }
+        
+        return $sortedResults;
     }
 
     /**

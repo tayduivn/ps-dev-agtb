@@ -1,0 +1,14 @@
+<div class="card2">
+    <div class="row-fluid control-group">
+        <input type="hidden" name="view" value="list" />
+        <div class="span2">Module</div>
+        <div class="span10 controls">
+            <select name="modules">
+              <option value="Contacts">Contacts</option>
+              <option value="Accounts">Accounts</option>
+              <option value="Opportunities">Opportunities</option>
+            </select>
+            <p class="help-block"></p>
+        </div>
+    </div>
+</div>
