@@ -425,7 +425,7 @@ abstract class DBManager
 	 */
 	protected function addDistinctClause(&$sql)
 	{
-	    preg_match("|^\w*(\w+)|i", $sql, $firstword);
+	    preg_match("|^\W*(\w+)|i", $sql, $firstword);
 	    if(empty($firstword[1]) || strtolower($firstword[1]) != 'select') {
 	        // take first word of the query, if it's not SELECT - ignore it
 	        return;
@@ -443,6 +443,10 @@ abstract class DBManager
 			    $start = 0;
 			    while(true) {
     			    $selectPos = stripos($part , 'select', $start);
+    			    if($part[$selectPos+6] != ' ' && $part[$selectPos+6] != "\n" && $part[$selectPos+6] != "\t") {
+    			        $start = $selectPos+1;
+    			        continue;
+    			    }
 	    		    if($selectPos !== false){
 		    	        $distinctPos = stripos($part , 'distinct', $selectPos);
 			        	if($distinctPos === false || $distinctPos > 20){
