@@ -39,26 +39,35 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'showOn' => 'edit',
         ),
         array(
-            'type' => 'buttondropdown',
+            'type' => 'actiondropdown',
             'name' => 'main_dropdown',
+            'css_class' => 'btn-primary',
             'buttons' => array(
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:edit_button:click',
                     'name' => 'edit_button',
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
                     'showOn' => 'view',
                 ),
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:save_button:click',
                     'name' => 'save_button',
                     'label' => 'LBL_SAVE_BUTTON_LABEL',
                     'primary' => true,
                     'showOn' => 'edit',
                 ),
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'showOn' => 'view',
                 ),
                 array(
+                    'type' => 'rowaction',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'showOn' => 'view',
@@ -78,6 +87,7 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     ),                        
                 ),
                 array(
+                    'type' => 'rowaction',
                     'name' => 'record-close-new',
                     'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_TITLE',
                     'showOn' => 'view',
@@ -108,6 +118,7 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     }'),
                 ),
                 array(
+                    'type' => 'rowaction',
                     'name' => 'record-close',
                     'label' => 'LBL_CLOSE_BUTTON_TITLE',
                     'showOn' => 'view',

@@ -62,7 +62,7 @@ class MyClosedOpportunitiesDashlet extends Dashlet
 		$row = $this->seedBean->db->fetchByAssoc($result);
 
 		$this->total_opportunities = $row['c'];
-        $qry = "SELECT * from opportunities WHERE assigned_user_id = '" . $current_user->id . "' AND sales_stage = 'Closed Won'  AND deleted=0";
+        $qry = "SELECT * from opportunities WHERE assigned_user_id = '" . $current_user->id . "' AND sales_stage = '".Opportunity::STAGE_CLOSED_WON."' AND deleted=0";
 		$result = $this->seedBean->db->query($this->seedBean->create_list_count_query($qry));	
 		$row = $this->seedBean->db->fetchByAssoc($result);
 

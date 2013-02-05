@@ -41,11 +41,9 @@
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        this.timePeriodId = app.defaultSelections.timeperiod_id.id;
-
         _.each(this.meta.panels, function(panel) {
             this.timeperiod = _.find(panel.fields, function (item){
-                return _.isEqual(item.name, 'timeperiod');
+                return _.isEqual(item.name, 'selectedTimePeriod');
             });
         }, this);
     },
@@ -58,7 +56,7 @@
      * @protected
      */
     _renderField: function(field) {
-        if (field.name == "timeperiod") {
+        if (field.name == "selectedTimePeriod") {
             field = this._setUpTimeperiodField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
@@ -72,32 +70,39 @@
      */
     _setUpTimeperiodField: function (field) {
 
-        field.events = _.extend({"change select": "_updateSelections"}, field.events);
-        field.bindDomChange = function() {};
+        /**
+         * The model for the field should be context, since that is where the value gets set for all the
+         * views using it.
+         */
+        field.model = this.context;
 
         /**
-         * updates the selection when a change event is triggered from a dropdown
-         * @param event the event that was triggered
-         * @param input the (de)selection
-         * @private
+         * Overtake the way the field sets the value, since we need it set on context as an
+         * object containing the id and the label of the selected timeperiod
          */
-        field._updateSelections = function(event, input) {
-            var label = this.$el.find('option:[value='+input.selected+']').text();
-            //Set the default selection so that when render is called on the view it will use the newly selected value
-            app.defaultSelections.timeperiod_id.id = input.selected;
-            this.view.context.forecasts.set('selectedTimePeriod', {"id": input.selected, "label": label});
-            // make it close the container to act like a normal dropdown
-            this.$el.find('div.chzn-container-active').removeClass('chzn-container-active');
-        };
+        field.unformat = _.bind(
+            function(value) {
+                return {id: value, label: this.$el.find('option:[value=' + value + ']').text()};
+            },
+            field
+        );
 
-        // INVESTIGATE: Should this be retrieved from the model, instead of directly?
-        app.api.call("read", app.api.buildURL("Forecasts", "timeperiod"), '', {success: function(results) {
-            this.field.def.options = results;
-            if(!this.field.disposed) {
-                this.field.render();
+        /**
+         * Populates the dropdown from the endpoint with the timeperiods that were created by the admin when they set up
+         * forecasts module
+         */
+        app.api.call("read", app.api.buildURL("Forecasts", "timeperiod"), '', {
+            success: function(results) {
+                this.field.def.options = results;
+                if(!this.field.disposed) {
+                    this.field.render();
+                }
             }
-        }}, {field: field, view: this});
+        }, {field: field, view: this});
 
+        /**
+         * Set the initial selection value from app defaults, eventually, this should probably come from a user pref.
+         */
         field.def.value = app.defaultSelections.timeperiod_id.id;
         return field;
     }

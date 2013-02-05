@@ -60,13 +60,13 @@
     bindDataChange: function() {
         var self = this;
 
-        if(self.context && self.context.forecasts) {
+        if(self.context && self.context) {
             //Bind to the worksheetmanager render event so we know that the view has been rendered
-            self.context.forecasts.on("forecasts:worksheetmanager:rendered", function() {
+            self.context.on("forecasts:worksheetmanager:rendered", function() {
                 self.mDeferred.resolve();
             });
             //Bind to the committed model being reset so we know that the model has been updated
-            self.context.forecasts.committed.on("reset", function() {
+            self.context.committed.on("reset", function() {
                 self.wDeferred.resolve();
             });
         }
@@ -112,8 +112,8 @@
                fieldDate = new Date(this.model.get('date_modified'));
             }
             
-            if(!_.isEmpty(this.context.forecasts.committed.models)) {
-                var lastCommittedDate = new Date(_.first(this.context.forecasts.committed.models).get('date_modified'));
+            if(!_.isEmpty(this.context.committed.models)) {
+                var lastCommittedDate = new Date(_.first(this.context.committed.models).get('date_modified'));
 
                 // if fieldDate is newer than the forecast commitDate value, then we want to show the field
                 if (_.isDate(fieldDate) && _.isDate(lastCommittedDate)) {

@@ -37,7 +37,6 @@
             options.meta = this.switchListView(options.meta, options.context.get('dupelisttype'));
         }
         app.view.Layout.prototype.initialize.call(this, options);
-        this.context.on("dupecheck:fetch:fire", this.fetchDuplicates);
     },
 
     switchListView: function(meta, dupelisttype) {
@@ -46,23 +45,5 @@
         });
         listView.view = dupelisttype;
         return meta;
-    },
-
-    loadData: function(options) {
-        options = options || {};
-        options.endpoint = this.endpoint;
-        app.view.Layout.prototype.loadData.call(this, options);
-    },
-
-    fetchDuplicates: function(model, options) {
-        this.model = model;
-        options = options || {};
-        options.endpoint = this.endpoint;
-        this.collection.fetch(options);
-    },
-
-    endpoint: function(method, model, options, callbacks) {
-        var url = app.api.buildURL(this.module, "duplicateCheck");
-        return app.api.call('create', url, this.model.attributes, callbacks); //Dupe Check API requires POST
     }
 })

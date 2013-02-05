@@ -112,6 +112,12 @@ class MetadataApi extends SugarApi {
             $data = $this->loadMetadata();
             $this->putMetadataCache($data, $this->platforms[0], false);
         }
+        
+        // Bug 60345 - Default currency id of -99 was failing hard on 64bit 5.2.X
+        // PHP builds. This was causing metadata to store a different value in the 
+        // cache than -99. The fix was to add a space arround the -99 to force it
+        // to string. This trims that value prior to sending it to the client.
+        $data = $this->normalizeCurrencyIds($data);
 
         generateETagHeader($data['_hash']);
 
@@ -596,7 +602,14 @@ class MetadataApi extends SugarApi {
                 $currency['name'] = $current->name;
                 $currency['date_entered'] = $current->date_entered;
                 $currency['date_modified'] = $current->date_modified;
-                $currencies[$current->id] = $currency;
+                
+                // Bug 60345 - Default currency id of -99 was failing hard on 64bit 5.2.X
+                // PHP builds when writing to the cache because of how PHP was
+                // handling negative int array indexes. This was causing metadata 
+                // to store a different value in the cache than -99. The fix was 
+                // to add a space arround the -99 to force it to string.
+                $id = $current->id == -99 ? '-99 ': $current->id;
+                $currencies[$id] = $currency;
             }
         }
         return $currencies;
@@ -641,5 +654,25 @@ class MetadataApi extends SugarApi {
     {
         MetaDataManager::clearAPICache();
     }
-    
+
+    /**
+     * Bug 60345
+     * 
+     * Normalizes the -99 currency id to remove the space added to the index prior
+     * to storing in the cache.
+     * 
+     * @param array $data The metadata
+     * @return array
+     */
+    protected function normalizeCurrencyIds($data) {
+        if (isset($data['currencies']['-99 '])) {
+            // Change the spaced index back to normal
+            $data['currencies']['-99'] = $data['currencies']['-99 '];
+            
+            // Ditch the spaced index
+            unset($data['currencies']['-99 ']);
+        }
+        
+        return $data;
+    }
 }

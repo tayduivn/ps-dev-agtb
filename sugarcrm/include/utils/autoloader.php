@@ -42,7 +42,6 @@ class SugarAutoLoader
         'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
         'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
         'SugarCurrency'=>'include/SugarCurrency/SugarCurrency.php',
-        'MassUpdateJob'=>'include/MassUpdateJob.php',
 	);
 
 	/**
@@ -84,6 +83,7 @@ class SugarAutoLoader
 	    "data/duplicatecheck/",
 	    "include/SugarSearchEngine/",
 	    "include/",
+        "modules/Mailer/",
 	);
 
 	/**
@@ -234,6 +234,11 @@ class SugarAutoLoader
 		if(self::getFilenameForSugarWidget($class)) {
 			return true;
 		}
+        //BEGIN SUGARCRM flav=pro ONLY
+        if(self::getFilenameForExpressionClass($class)) {
+            return true;
+        }
+        //END SUGARCRM flav=pro ONLY
 
 		// Try known dirs
 		foreach(self::$dirMap as $dir) {
@@ -499,6 +504,33 @@ class SugarAutoLoader
         }
         return false;
     }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * getFilenameForExpressionClass
+     *
+     * Used to autoload classes that end in "Expression". It will check in all directories found in
+     * custom/include/Expressions/Expression and include/Expressions/Expression .
+     * This method is allows for easy loading of arbitrary expression classes by the SugarLogic Expression parser.
+     *
+     * @static
+     * @param $class String name of the class to load
+     * @return String file of the Expression class; false if none found
+     */
+    protected static function getFilenameForExpressionClass($class)
+    {
+        if(substr($class, -10) == 'Expression') {
+            if(self::requireWithCustom("include/Expressions/Expression/{$class}.php"))
+                return true;
+            $types = array("Boolean", "Date", "Enum", "Generic", "Numeric", "Relationship", "String", "Time");
+            foreach($types as $type) {
+                if(self::requireWithCustom("include/Expressions/Expression/{$type}/{$class}.php"))
+                    return true;
+            }
+        }
+        return false;
+    }
+    //END SUGARCRM flav=pro ONLY
 
     /**
      * Load all classes in self::$map

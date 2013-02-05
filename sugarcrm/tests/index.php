@@ -49,7 +49,14 @@ if (file_exists('../config.js')) {
 
     $exclude = array("jshelpers", "jssource", "PHPUnit", 'ci');
 
-    $dirItr = new RecursiveDirectoryIterator('.');
+    $path = '.';
+    if(isset($_GET['module'])) {
+        $module = $_GET['module'];
+        if(is_dir('modules/' . $module)) {
+            $path = 'modules/' . $module;
+        }
+    }
+    $dirItr = new RecursiveDirectoryIterator($path);
     $itrItr = new RecursiveIteratorIterator($dirItr);
     foreach($itrItr as $path => $file) {
         if (substr(basename($path), -3) != ".js")

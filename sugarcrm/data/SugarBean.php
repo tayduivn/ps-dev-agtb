@@ -1727,7 +1727,6 @@ class SugarBean
                 $dataChanges=$this->db->getDataChanges($this);
             }
         }
-
         $this->_sendNotifications($check_notify);
 
         if ($isUpdate) {
@@ -2575,9 +2574,18 @@ class SugarBean
                         $reformatted = true;
                     }
                     break;
-                case 'double':
                 case 'decimal':
                 case 'currency':
+                    if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
+                        continue;
+                    }
+                    // always want string for currency/decimal values
+                    if(!is_string($this->$field) || !is_numeric($this->$field)) {
+                        $this->$field = (string)unformat_number($this->$field);
+                        $reformatted = true;
+                    }
+                    break;
+                case 'double':
                 case 'float':
                     if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
                         continue;
@@ -6256,18 +6264,13 @@ class SugarBean
             $admin = Administration::getSettings();
             $sendNotifications = false;
 
-            if ($admin->settings['notify_on'])
-            {
+            if ($admin->settings['notify_on']) {
                 $GLOBALS['log']->info("Notifications: user assignment has changed, checking if user receives notifications");
                 $sendNotifications = true;
-            }
-            elseif(isset($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == 1)
-            {
+            } elseif(isset($this->send_invites) && $this->send_invites == true) {
                 // cn: bug 5795 Send Invites failing for Contacts
                 $sendNotifications = true;
-            }
-            else
-            {
+            } else {
                 $GLOBALS['log']->info("Notifications: not sending e-mail, notify_on is set to OFF");
             }
 

@@ -68,7 +68,8 @@
      * renders the edit view, opens the dropdown and sets up the close and window.click events.
      */
     clickToEdit: function(e){
-        var self = this;
+        var self = this,
+            select = null;
         if(!self.disabled){
             //prevent this click from filtering up to the window.click
             e.preventDefault();
@@ -76,13 +77,18 @@
             self.$el.off("click");
             self.def.view = "edit";
             self.render();
-            self.currentVal = self.$("select").select2("val");
-            self.$("select").select2("open");
-            self.$("select").on("close", function(){
-                if(_.isEqual(self.currentVal, self.$("select").select2("val"))){
+            select = self.$("select");
+            self.currentVal = select.select2("val");
+            select.select2("open");
+            select.on("close", function(){
+                if(_.isEqual(self.currentVal, select.select2("val"))){
                     self.resetField();
                 }
+            });            
+            self.$(".select2-input").keydown(function(e){
+                self.onKeyDown(e);
             });
+            
            
             //custom namespaced window click event to destroy the chosen dropdown on "blur".
             //this is removed in this.resetField
@@ -100,6 +106,20 @@
     changed: function(){
         var self = this;
         self.resetField();
+    },
+    
+    /**
+     * Handle event when key is pressed down (tab)
+     *
+     * @param evt
+     */
+    onKeyDown: function(evt) {
+        var self = this;
+        if(evt.which == 9) {
+            evt.preventDefault();
+            // tab key pressed, trigger event from context
+            self.context.forecasts.trigger('forecasts:tabKeyPressed', evt.shiftKey, self);
+        }
     },
     
     /**
@@ -164,7 +184,7 @@
         self.disabled = false;
         
         //Check to see if you're a manager on someone else's sheet, disable changes
-        if(self.context.forecasts.get("selectedUser")["id"] != app.user.id){
+        if(self.context.get("selectedUser")["id"] != app.user.id){
             self.disabled = true; 
         }
     },

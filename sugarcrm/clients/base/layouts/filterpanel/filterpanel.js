@@ -6,6 +6,7 @@
     availableToggles: {
         "activitystream" : "icon-th-list",
         "timeline" : "icon-time",
+        "subpanel" : "icon-table",
         "list" : "icon-table"
     },
 

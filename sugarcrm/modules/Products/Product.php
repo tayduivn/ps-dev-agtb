@@ -82,6 +82,15 @@ class Product extends SugarBean {
     var $assigned_user_id;
     var $opportunity_id;
 
+    /**
+     * @var String      The Current Sales Stage
+     */
+    public $sales_stage;
+    /**
+     * @var String      The Current Sales Status
+     */
+    public $sales_status;
+
 	// These are for related fields
 	var $type_name;
 	var $type_id;
@@ -162,32 +171,48 @@ class Product extends SugarBean {
 	 * Contributor(s): ______________________________________..
 	*/
 	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean = null, $singleSelect = false){
-		if (!empty($filter) && (isset($filter['discount_amount']) || isset($filter['deal_calc']))) {
+
+        if (!empty($filter) && (isset($filter['discount_amount']) || isset($filter['deal_calc']))) {
 			$filter['discount_select'] = 1;
 			$filter['deal_calc_usdollar'] = 1;
 			$filter['discount_amount_usdollar'] = 1;
 		}
-		$ret_array = parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
-		$ret_array['from'] = $ret_array['from']. " LEFT JOIN contacts on contacts.id = products.contact_id";
 
-		return $ret_array;
+        $ret_array = parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
+
+        //If return_array is set to true, return as an Array
+        if($return_array) {
+            $ret_array['from'] = $ret_array['from']. " LEFT JOIN contacts on contacts.id = products.contact_id";
+            //Add clause to remove opportunity related products
+            $ret_array['where'] = $ret_array['where']. " AND products.opportunity_id is null";
+            return $ret_array;
+        }
+
+        return str_replace('where products.deleted=0', 'where products.deleted=0 AND products.opportunity_id is null', $ret_array);
 	}
 
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
         $custom_join = $this->custom_fields->getJOIN(true, true,$where);
-		if($custom_join)
-				$custom_join['join'] .= $relate_link_join;
-		$query = "SELECT $this->table_name.* ";
-		if($custom_join){
-   								$query .= $custom_join['select'];
+
+        if($custom_join){
+            $custom_join['join'] .= $relate_link_join;
+        }
+
+        $query = "SELECT $this->table_name.* ";
+
+        if($custom_join){
+            $query .= $custom_join['select'];
  		}
+
  		$query .= " FROM $this->table_name ";
- 		if($custom_join){
-  				$query .= $custom_join['join'];
+
+        if($custom_join){
+            $query .= $custom_join['join'];
 		}
-		$where_auto = "$this->table_name.deleted=0";
+
+        $where_auto = "$this->table_name.deleted=0 AND $this->table_name.opportunity_id is null";
 
 /*
                                 $query = "SELECT
@@ -206,16 +231,18 @@ class Product extends SugarBean {
 								";
 */
 
-                if($where != "")
-                        $query .= "where ($where) AND ".$where_auto;
-                else
-                        $query .= "where ".$where_auto;
-
-                if(!empty($order_by))
-                        $query .= " ORDER BY $order_by";
-
-                return $query;
+        if($where != ""){
+            $query .= "where ($where) AND ".$where_auto;
+        } else {
+            $query .= "where ".$where_auto;
         }
+
+        if(!empty($order_by)){
+            $query .= " ORDER BY $order_by";
+        }
+
+        return $query;
+    }
 
 
 
@@ -515,7 +542,7 @@ class Product extends SugarBean {
 		return $the_where;
 	}
 
-	function save($check_notify = FALSE) {
+	function save($check_notify = false) {
 
 		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 		// RPS - begin - decimals cant be null in sql server
@@ -551,6 +578,9 @@ class Product extends SugarBean {
 	    	  	$this->discount_amount_usdollar = $currency->convertToDollar($this->discount_amount);
             }
         }
+
+        $this->handleSalesStatus();
+
 		$id = parent::save($check_notify);
 
 		// We need to update the associated product bundle and quote totals that might be impacted by this product.
@@ -651,6 +681,35 @@ class Product extends SugarBean {
 	}
 
 
+    /**
+     * Code to make sure that the Sales Status field is mapped correctly with the Sales Stage field
+     *
+     * TODO: handle when this item gets converted to a quote
+     */
+    protected function handleSalesStatus()
+    {
+        // in this class we use the values from the Opportunity module constants as they are directly mapped 1-to-1 with
+        // products
+
+        // only run this when the sales_status doesn't change and the sales_stage does
+        if(($this->fetched_row['sales_status'] == $this->sales_status) && $this->fetched_row['sales_stage'] != $this->sales_stage) {
+            // handle closed lost and closed won
+            if($this->sales_stage == Opportunity::STAGE_CLOSED_LOST || $this->sales_stage == Opportunity::STAGE_CLOSED_WON) {
+                $this->sales_status = $this->sales_stage;
+            } else {
+                // move it to in progress
+                $this->sales_status = Opportunity::STATUS_IN_PROGRESS;
+            }
+        }
+
+        // if we have a new bean, set the sales_status to be 'New'
+        if(empty($this->id) || $this->new_with_id == true) {
+            // we have a new record set the sales_status to new;
+            $this->sales_status = Opportunity::STATUS_NEW;
+        }
+    }
+
+
 	function bean_implements($interface) {
 		switch($interface){
 			case 'ACL': return true;
@@ -704,49 +763,4 @@ class Product extends SugarBean {
 		return $array_assign;
 	}
 
-
-    function getExperts()
-    {
-        $query = "SELECT pt.category_id category_id FROM product_templates pt WHERE pt.id = '$this->id'";
-
-        $result = $this->db->query($query,true, "Error getting product category id: ");
-
-        $row = $this->db->fetchByAssoc($result);
-
-        if($row != null)
-        {
-            $this->product_category_id = $row['category_id'];
-            $this->getProductOwners($this->product_category_id);
-        }
-        else
-        {
-            $this->experts = '';
-        }
-    }
-
-    function getProductOwners($category_id)
-    {
-        $query = "SELECT assigned_user_id, parent_id FROM product_categories pc WHERE id = '$category_id'";
-
-        $result = $this->db->query($query, true, "Error getting product category additional fields: ");
-        $row = $this->db->fetchByAssoc($result);
-
-        if ($row != null)
-        {
-            $this->experts[] = $row['assigned_user_id'];
-            $this->getProductOwners($row['parent_id']);
-            $this->expert_id = $row['assigned_user_id'];
-        }
-        else
-        {
-            $this->expert_id = '';
-        }
-    }
-}
-
-
-function get_expert_array()
-{
-    require_once("include/utils.php");
-    return get_user_array();
 }

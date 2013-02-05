@@ -34,24 +34,28 @@
  * Events Triggered
  *
  * forecasts:commitButtons:enabled
- *      on: context.forecasts
+ *      on: context
  *      by: _render()
  *      when: done rendering if enableCommit is true
  *
  * forecasts:worksheetmanager:rendered
- *      on: context.forecasts
+ *      on: context
  *      by: _render()
  *      when: done rendering
  *
  * forecasts:worksheet:saved
- *      on: context.forecasts
+ *      on: context
  *      by: saveWorksheet()
  *      when: saving the worksheet.
  * 
  * forecasts:worksheet:dirty
- *      on: context.forecasts
+ *      on: context
  *      by: change:worksheet
  *      when: the worksheet is changed.
+ *
+ * forecasts:worksheetManager:reloadCommitButton
+ *      on: context
+ *      by: safeFetch()
  */
 ({
     url: 'rest/v10/ForecastManagerWorksheets',
@@ -128,7 +132,7 @@
         this.timePeriod = app.defaultSelections.timeperiod_id.id
         this.ranges = app.defaultSelections.ranges.id
 
-        this._collection = this.context.forecasts.worksheetmanager;
+        this._collection = this.context.worksheetmanager;
         this._collection.url = this.createURL();
 
         this.totalModel = new (Backbone.Model.extend(
@@ -160,7 +164,7 @@
         if(!this.showMe()){
         	return false;
         }
-        this.context.forecasts.worksheetmanager.url = this.createURL();
+        this.context.worksheetmanager.url = this.createURL();
         this.safeFetch(true);
     },
 
@@ -169,8 +173,8 @@
      */
     unbindData : function() {
         if(this._collection) this._collection.off(null, null, this);
-        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
-        if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
+        if(this.context) this.context.off(null, null, this);
+        if(this.context.worksheetmanager) this.context.worksheetmanager.off(null, null, this);
         //if we don't unbind this, then recycle of this view if a change in rendering occurs will result in multiple bound events to possibly out of date functions
         $(window).unbind("beforeunload");
         app.view.View.prototype.unbindData.call(this);
@@ -187,36 +191,36 @@
             this._collection.on("change", function(model, changed) {
                 // The Model has changed via CTE. save it in the isDirty
                 this.dirtyModels.add(model);
-                this.context.forecasts.trigger('forecasts:worksheet:dirty', model, changed);
+                this.context.trigger('forecasts:worksheet:dirty', model, changed);
             }, this);
         }
         // listening for updates to context for selectedUser:change
-        if (this.context.forecasts) {
+        if (this.context) {
             var self = this;
 
-            this.context.forecasts.on("change:selectedUser",
+            this.context.on("change:selectedUser",
                 function(context, selectedUser) {
                     this.updateWorksheetBySelectedUser(selectedUser);
                 }, this);
-            this.context.forecasts.on("change:selectedTimePeriod",
+            this.context.on("change:selectedTimePeriod",
                 function(context, timePeriod) {
                     this.updateWorksheetBySelectedTimePeriod(timePeriod);
                 }, this);
-            this.context.forecasts.on("change:selectedRanges",
+            this.context.on("change:selectedRanges",
                 function(context, ranges) {
                     this.updateWorksheetBySelectedRanges(ranges);
                 },this);
-            this.context.forecasts.worksheetmanager.on("change", function() {
+            this.context.worksheetmanager.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
+            this.context.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
             	if(this.showMe()){
-            		this.context.forecasts.worksheetmanager.url = this.createURL();
+            		this.context.worksheetmanager.url = this.createURL();
             		this.safeFetch();
             	}
             }, this);
 
-            this.context.forecasts.on('forecasts:committed:saved', function() {
+            this.context.on('forecasts:committed:saved', function() {
                 if(this.showMe()) {
                     // display a success message
                     app.alert.show('success', {
@@ -228,31 +232,31 @@
                 }
             }, this);
 
-            this.context.forecasts.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
+            this.context.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
                 this.saveWorksheet(isDraft);
             }, this);
 
-            this.context.forecasts.on('forecasts:tabKeyPressed', function(isShift, field) {
+            this.context.on('forecasts:tabKeyPressed', function(isShift, field) {
                 this.editableFieldNavigate(isShift, field);
             }, this);
 
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
-            this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
+            this.context.config.on('change:show_worksheet_likely', function(context, value) {
                 // only trigger if this component is rendered
                 if(!_.isEmpty(self.el.innerHTML)) {
                     self.setColumnVisibility(['likely_case', 'likely_adjusted'], value, self);
                 }
             });
 
-            this.context.forecasts.config.on('change:show_worksheet_best', function(context, value) {
+            this.context.config.on('change:show_worksheet_best', function(context, value) {
                 // only trigger if this component is rendered
                 if(!_.isEmpty(self.el.innerHTML)) {
                     self.setColumnVisibility(['best_case', 'best_adjusted'], value, self);
                 }
             });
 
-            this.context.forecasts.config.on('change:show_worksheet_worst', function(context, value) {
+            this.context.config.on('change:show_worksheet_worst', function(context, value) {
                 // only trigger if this component is rendered
                 if(!_.isEmpty(self.el.innerHTML)) {
                     self.setColumnVisibility(['worst_case', 'worst_adjusted'], value, self);
@@ -282,7 +286,7 @@
         // tab key was pressed, we cycle to the next/prev field
         // get list of editable fields
         var editableFields = this.$el.find('span.editable,span.edit'),
-            currentFieldIdx = editableFields.index(field.$el.find('span.edit')),
+            currentFieldIdx = editableFields.index(field.$el.find('span.editable,span.edit')),
             targetFieldIdx = 0;
         if(!isShift) {
             if (currentFieldIdx != (editableFields.length - 1)) {
@@ -366,7 +370,7 @@
                         messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
                     });
                 }
-                this.context.forecasts.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', isDraft);
+                this.context.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', isDraft);
             }
         }
 
@@ -397,7 +401,7 @@
                         messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
                     });
                 }
-                self.context.forecasts.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', saveObj.isDraft);
+                self.context.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', saveObj.isDraft);
             }
         }, silent: true});
     },
@@ -451,7 +455,7 @@
      * @return {*} returns null if not found in the keymap, returns true/false if it did find it
      */
     checkConfigForColumnVisibility: function(colKey) {
-        return app.forecasts.utils.getColumnVisFromKeyMap(colKey, this.name, this.context.forecasts.config);
+        return app.utils.getColumnVisFromKeyMap(colKey, this.name, this.context.config);
     },
 
     /**
@@ -474,17 +478,17 @@
     	if(this.isDirty()){
     		//unsaved changes, ask if you want to save.
     		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
-                self.context.forecasts.set({reloadCommitButton: true});
+                self.context.trigger('forecasts:worksheetManager:reloadCommitButton');
                 var svWkFn = function() {
-                    self.context.forecasts.off('forecasts:worksheet:saved', svWkFn);
+                    self.context.off('forecasts:worksheet:saved', svWkFn);
                     collection.fetch();
                 };
 
-                self.context.forecasts.on('forecasts:worksheet:saved', svWkFn);
+                self.context.on('forecasts:worksheet:saved', svWkFn);
                 this.saveWorksheet()
 		    } else {
     			//ignore, fetch still
-    			self.context.forecasts.set({reloadCommitButton: true});
+    			self.context.trigger('forecasts:worksheetManager:reloadCommitButton');
     			if(fetch){
     				collection.fetch();
     			}
@@ -524,7 +528,7 @@
         }
         $("#view-sales-rep").addClass('hide').removeClass('show');
         $("#view-manager").addClass('show').removeClass('hide');
-        this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
+        this.context.set({currentWorksheet: "worksheetmanager"});
         
         app.view.View.prototype._render.call(this);
 
@@ -586,11 +590,11 @@
             return false;            
         }, this);
         if (_.isObject(enableCommit)) {
-            self.context.forecasts.trigger("forecasts:commitButtons:enabled");
+            self.context.trigger("forecasts:commitButtons:enabled");
         }
 
         this.calculateTotals();
-        self.context.forecasts.trigger('forecasts:worksheetmanager:rendered');
+        self.context.trigger('forecasts:worksheetmanager:rendered');
 
     },
 
@@ -655,7 +659,7 @@
                     }
 
                     // create the history log
-                    outputLog = app.forecasts.utils.createHistoryLog(oldestModel,newestModel,this.context.forecasts.config);
+                    outputLog = app.utils.createHistoryLog(oldestModel,newestModel,this.context.config);
                     // update the div that was created earlier and set the html to what was the commit log
                     $(nTr).next().children("td").children("div").html(this.commitLogTemplate(outputLog));
                 }
@@ -678,7 +682,7 @@
 
         if(!this.showMe()){
             // if we don't show this worksheet set it all to zero
-            this.context.forecasts.set({
+            this.context.set({
                 updatedManagerTotals : {
                     'amount' : amount,
                     'quota' : quota,
@@ -730,8 +734,8 @@
         };
 
         // we need to remove it, just in case it's the same to force it to re-render
-        this.context.forecasts.unset("updatedManagerTotals", {silent: true});
-        this.context.forecasts.set("updatedManagerTotals", totals);
+        this.context.unset("updatedManagerTotals", {silent: true});
+        this.context.set("updatedManagerTotals", totals);
     },
 
     /**
@@ -749,13 +753,13 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedRanges:function (params) {
-        if (this.context.forecasts.config.get('forecast_ranges') != 'show_binary') {
+        if (this.context.config.get('forecast_ranges') != 'show_binary') {
             // TODO: this.
         } else {
             this.ranges = _.first(params);
         }
 
-        var model = this.context.forecasts.worksheetmanager;
+        var model = this.context.worksheetmanager;
         if(!this.showMe()){
             return false;
         }
@@ -775,7 +779,7 @@
             this.draftTimeperiod = this.timePeriod;
         }
     	this.timePeriod = params.id;
-        var model = this.context.forecasts.worksheetmanager;
+        var model = this.context.worksheetmanager;
         if(!this.showMe()){
         	return false;
         }

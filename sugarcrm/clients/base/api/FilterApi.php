@@ -132,10 +132,8 @@ class FilterApi extends SugarApi {
         if ( !isset($args['filter']) || !is_array($args['filter']) ) {
             $args['filter'] = array();
         }
-
-        $notDeleted = $q->where()->equals("deleted", 0)->queryAnd();
-
-        $this->addFilters($args['filter'], $notDeleted,$q);
+        $this->addFilters($args['filter'], $q->where(), $q);
+        $q->where()->equals("deleted",0);
 
 
         foreach ( $options['order_by'] as $orderBy ) {
@@ -145,7 +143,7 @@ class FilterApi extends SugarApi {
         $q->limit($options['limit']+1);
         $q->offset($options['offset']);
 
-        $GLOBALS['log']->info($q->compileSql());
+        $GLOBALS['log']->info("Filter SQL: ".$q->compileSql());
         $idRows = $q->execute();
         // return $idRows;
 
@@ -240,9 +238,11 @@ class FilterApi extends SugarApi {
                                 $where->gte($field,$value);
                                 break;
                             case '$fromDays':
+                                // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
                                 $where->addRaw("{$field} >= DATE_ADD(NOW(), INTERVAL {$value} DAY)");
                                 break;
                             case '$tracker':
+                                // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
                                 $where->addRaw("{$q->from->getTableName()}.id in
                                 (select item_id from tracker
                                     where module_name='{$q->from->module_name}'

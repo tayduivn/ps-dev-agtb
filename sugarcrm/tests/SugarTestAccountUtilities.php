@@ -30,14 +30,23 @@ class SugarTestAccountUtilities
 
     private function __construct() {}
 
-    public static function createAccount($id = '') 
+    public static function createAccount($id = '', $accountValues = array())
     {
         $time = mt_rand();
-    	$name = 'SugarAccount';
-    	$email1 = 'account@sugar.com';
-    	$account = new Account();
-        $account->name = $name . $time;
-        $account->email1 = 'account@'. $time. 'sugar.com';
+        $account = new Account();
+
+        if (isset($accountValues['name'])) {
+            $account->name = $accountValues['name'];
+        } else {
+            $account->name = 'SugarAccount' . $time;
+        }
+
+        if (isset($accountValues['email'])) {
+            $account->email1 = $accountValues['email'];
+        } else {
+            $account->email1 = 'account@'. $time. 'sugar.com';
+        }
+
         if(!empty($id))
         {
             $account->new_with_id = true;
@@ -72,4 +81,3 @@ class SugarTestAccountUtilities
         return $account_ids;
     }
 }
-?>

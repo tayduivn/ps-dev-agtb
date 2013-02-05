@@ -28,7 +28,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-require_once('include/MassUpdateJob.php');
+require_once('include/SugarQueue/jobs/SugarJobMassUpdate.php');
+require_once('include/api/SugarApi.php');
 
 /*
  * Mass Update API implementation
@@ -40,12 +41,22 @@ class MassUpdateApi extends SugarApi {
      */
     public function registerApiRest() {
         return array(
-            'massUpdate' => array(
+            'massUpdatePut' => array(
                 'reqType' => 'PUT',
-                'path' => array('MassUpdate'),
-                'pathVars' => array(''),
+                'path' => array('<module>','MassUpdate'),
+                'pathVars' => array('module',''),
+                'jsonParams' => array('filter'),
                 'method' => 'massUpdate',
                 'shortHelp' => 'An API to handle mass update.',
+                'longHelp' => 'include/api/help/massUpdate.html',
+            ),
+            'massUpdateDelete' => array(
+                'reqType' => 'DELETE',
+                'path' => array('<module>','MassUpdate'),
+                'pathVars' => array('module',''),
+                'jsonParams' => array('filter'),
+                'method' => 'massDelete',
+                'shortHelp' => 'An API to handle mass delete.',
                 'longHelp' => 'include/api/help/massUpdate.html',
             ),
         );
@@ -67,6 +78,21 @@ class MassUpdateApi extends SugarApi {
     protected $jobId = null;
 
     /**
+     * To perform mass delete
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return String
+     */
+    public function massDelete($api, $args)
+    {
+        $this->requireArgs($args, array('massupdate_params', 'module'));
+        $this->delete = true;
+        $args['massupdate_params']['Delete'] = true;
+
+        return $this->massUpdate($api, $args);
+    }
+
+    /**
      * To perform massupdate, either update or delete, based on the args parameter
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
      * @param $args array The arguments array passed in from the API
@@ -74,10 +100,10 @@ class MassUpdateApi extends SugarApi {
      */
     public function massUpdate($api, $args)
     {
-        $this->requireArgs($args, array('massupdate_params'));
-        $this->requireArgs($args['massupdate_params'], array('module'));
+        $this->requireArgs($args, array('massupdate_params', 'module'));
 
         $mu_params = $args['massupdate_params'];
+        $mu_params['module'] = $args['module'];
 
         // should have either uid or entire specified
         if (empty($mu_params['uid']) && empty($mu_params['entire']))
@@ -85,11 +111,12 @@ class MassUpdateApi extends SugarApi {
             throw new SugarApiExceptionMissingParameter("You must mass update at least one record");
         }
 
-        if (!empty($mu_params['delete'])) {
-            // mass delete
-            $this->delete = true;
-            $mu_params['Delete'] = $mu_params['delete'] = true;
+        // special handling for Sync due to front end and back end inconsistency
+        if ($mu_params['module']=='Contacts' && isset($mu_params['sync_contact'])) {
+            $mu_params['Sync'] = $mu_params['sync_contact'];
+            unset($mu_params['sync_contact']);
         }
+
         if (isset($mu_params['entire']) && empty($mu_params['entire'])) {
             unset($mu_params['entire']);
         }
@@ -104,6 +131,9 @@ class MassUpdateApi extends SugarApi {
 
         // check ACL
         $bean = BeanFactory::newBean($mu_params['module']);
+        if (!$bean instanceof SugarBean) {
+            throw new SugarApiExceptionInvalidParameter("Invalid bean, is module valid?");
+        }
         $action = $this->delete? 'delete': 'save';
         if (!$bean->ACLAccess($action))
         {
@@ -119,22 +149,17 @@ class MassUpdateApi extends SugarApi {
         if (!empty($mu_params['entire']) || ($uidCount>$asyncThreshold))
         {
             // create a job queue consumer for this
-            $massUpdateJob = new MassUpdateJob();
+            $massUpdateJob = new SugarJobMassUpdate();
             $this->jobId = $massUpdateJob->createJobQueueConsumer($mu_params);
 
             return array('status'=>'queued', 'jobId'=>$this->jobId);
         }
 
-        MassUpdateJob::preProcess($mu_params);
+        SugarJobMassUpdate::preProcess($mu_params);
 
         require_once("include/MassUpdate.php");
         $mass = new MassUpdate();
         $mass->setSugarBean($bean);
-
-        // to generate the where clause for search
-        if(isset($mu_params['entire']) && empty($mu_params['mass'])) {
-            $mass->generateSearchWhere($mu_params['module'], base64_encode(serialize($mu_params['current_query_by_page'])));
-        }
 
         // action
         $mass->handleMassUpdate(false, true);
@@ -160,7 +185,6 @@ class MassUpdateApi extends SugarApi {
         if (is_array($mu_params)) {
             $this->convertUID($mu_params);
             $this->convertTeamArray($mu_params);
-            $this->convertSearchArray($mu_params);
         }
     }
 
@@ -191,33 +215,6 @@ class MassUpdateApi extends SugarApi {
                     if (!empty($team['primary'])) {
                         $mu_params['primary_team_name_collection'] = $idx;
                     }
-                }
-            }
-        }
-    }
-
-    /**
-     * This function converts the search array to the format expected by downstream classes.
-     * @param $mu_params reference to massupdate parameters
-     */
-    protected function convertSearchArray(&$mu_params)
-    {
-        if (!empty($mu_params['entire']) && !isset($mu_params['current_search'])) {
-            $mu_params['current_query_by_page'] = array('searchFormTab'=>'basic_Search');
-        }
-
-        if (isset($mu_params['current_search']) && is_array($mu_params['current_search'])) {
-            $mu_params['current_query_by_page'] = array();
-            if (!isset($mu_params['current_search']['search_type'])) {
-                // if search type not specified, use basic search by default
-                $mu_params['current_search']['search_type'] = 'basic';
-            }
-            $searchType = $mu_params['current_search']['search_type'];
-            foreach ($mu_params['current_search'] as $key=>$val) {
-                if ($key == 'search_type') {
-                    $mu_params['current_query_by_page']['searchFormTab'] = $val.'_search';
-                } else {
-                    $mu_params['current_query_by_page'][$key.'_'.$searchType] = $val;
                 }
             }
         }

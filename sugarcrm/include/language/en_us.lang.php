@@ -340,6 +340,19 @@ $app_list_strings = array (
     'Closed Won' => 'Closed Won',
     'Closed Lost' => 'Closed Lost',
   ),
+    'sales_status_with_quote_dom' => array(
+        'New' => 'New',
+        'In Progress' => 'In Progress',
+        'Closed Won' => 'Closed Won',
+        'Closed Lost' => 'Closed Lost',
+        'Converted to Quote' => 'Converted to Quote'
+    ),
+    'sales_status_dom' => array(
+        'New' => 'New',
+        'In Progress' => 'In Progress',
+        'Closed Won' => 'Closed Won',
+        'Closed Lost' => 'Closed Lost',
+    ),
 
   'commit_stage_binary_dom' => array (
     'include' => 'Include',
@@ -2589,8 +2602,8 @@ $app_strings = array (
     'LBL_LISTVIEW_OPTION_ENTIRE' => 'Select All',
     'LBL_LISTVIEW_OPTION_SELECTED' => 'Selected Records',
     'LBL_LISTVIEW_SELECTED_OBJECTS' => 'Selected: ',
-    'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this result set.  <a href="javascript:void(0);">Clear selections</a>',
-    'LBL_LISTVIEW_SELECT_ALL_RECORDS' => 'You have selected all {num} records in this view.  <a href="javascript:void(0);">Select all records in the result set</a>',
+    'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this result set.  <a href="javascript:void(0);">Clear selections</a>.',
+    'LBL_LISTVIEW_SELECT_ALL_RECORDS' => 'You have selected all {num} records in this view.  <a href="javascript:void(0);">Select all records</a> in the result set.',
     'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
     'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
@@ -2976,6 +2989,7 @@ $app_strings = array (
     'LBL_SEARCH_NO_RESULTS' => 'No results found for ',
     'LBL_SEARCH_FOR' => 'Search for ',
     'LBL_SEARCH_FOR_MORE' => 'Search for more...',
+    'LBL_SEARCH_MODULE' => 'Search {{module}}...',
     'LBL_DETAILVIEW'=>'Detail View',
     'LBL_LISTVIEW'=>'List View',
     'LBL_EDITVIEW'=>'Edit View',
@@ -3421,6 +3435,7 @@ $app_strings = array (
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
+    'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
@@ -3456,7 +3471,7 @@ $app_strings = array (
     'LBL_TOUR_SCREEN_1_TITLE' => 'Now you can do forecasting in Sugar',
     'LBL_TOUR_SCREEN_1_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Set up your forecasting parameters</li><li class="icon-ok">Keep track of your projected sales</li><li class="icon-ok">Forecast your sales team\'s projected sales</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen1-thumb.png" width="220" id="thumbnail_1" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_2_TITLE' => 'Setup your Forecasting Parameters',
-    'LBL_TOUR_SCREEN_2_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select Fiscal Year start date</li><li class="icon-ok">Choose Yearly or Quarterly time periods</li><li class="icon-ok">Select number of Time Periods to Forecast over</li><li class="icon-ok">Select Categories to include in Forecast</li><li class="icon-ok">Select Range to forecast, such as likely, best or worst</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="220" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_2_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select Fiscal Year start date</li><li class="icon-ok">Choose Yearly or Quarterly time periods</li><li class="icon-ok">Select number of Time Periods to Forecast over</li><li class="icon-ok">Select Categories to include in Forecast</li><li class="icon-ok">Select Range to forecast, such as likely, best or worst</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="167" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_3_TITLE' => 'Manage your Sales Teams Projected Sales',
     'LBL_TOUR_SCREEN_3_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period to view</li><li class="icon-ok">See your sales team\'s committed worksheets and adjust their forecasts</li><li class="icon-ok">See Alerts when your sales team members commit new forecasts</li><li class="icon-ok">Save your Worksheet without committing or;</li><li class="icon-ok">Commit Forecast to Manager and view History of previous Commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen3-thumb.png" width="220" id="thumbnail_3" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_4_TITLE' => 'Manage your Sales Teams Projected Sales',
@@ -4545,10 +4560,7 @@ $app_list_strings['oauth_type_dom'] = array(
 );
 $app_list_strings['oauth_client_type_dom'] = array(
     'user' => 'Sugar User',
-    'mobile' => 'Mobile Client',
-    'plugin' => 'Plug-in',
     'support_portal' => 'Support Portal',
-    'other' => 'other',
 );
 
 $app_list_strings ['emailTemplates_type_list'] = array (

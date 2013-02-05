@@ -27,12 +27,16 @@
  ********************************************************************************/
 }}
 {{#each value}}
-    <div class="controls">
-        <input type="hidden" name="blah" data-placeholder="{{str "LBL_SELECT_TEAM"}}" class="select2 inherit-width" value="{{name}}" data-id="{{id}}" data-index="{{@index}}">
+    <div class="row-fluid">
+        <div class="span8">
+            <input type="hidden" name="{{../name}}" data-placeholder="{{str "LBL_SELECT_TEAM"}}" class="select2 inherit-width" value="{{name}}" data-id="{{id}}" data-index="{{@index}}">
+        </div>
+        <div class="span4">
         <a href="javascript:void(0);" class="btn {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}"><i class="icon-star"></i></a>
         <a href="javascript:void(0);" class="btn" name="remove" data-index="{{@index}}"><i class="icon-minus"></i></a>
         {{#if add_button}}
             <a href="javascript:void(0);" class="btn" name="add"><i class="icon-plus"></i></a>
         {{/if}}
+        </div>
     </div>
 {{/each}}

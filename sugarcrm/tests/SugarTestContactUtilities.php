@@ -30,24 +30,35 @@ class SugarTestContactUtilities
 
     private function __construct() {}
 
-    public static function createContact($id = '') 
+    public static function createContact($id = '', $contactValues = array())
     {
         $time = mt_rand();
-    	$first_name = 'SugarContactFirst';
-    	$last_name = 'SugarContactLast';
-    	$email1 = 'contact@sugar.com';
-    	$contact = new Contact();
-        $contact->first_name = $first_name . $time;
-        $contact->last_name = $last_name ;
-        $contact->email1 = 'contact@'. $time. 'sugar.com';
+        $contact = new Contact();
+
+        if (isset($contactValues['first_name'])) {
+            $contact->first_name = $contactValues['first_name'];
+        } else {
+            $contact->first_name = 'SugarContactFirst' . $time;
+        }
+        if (isset($contactValues['last_name'])) {
+            $contact->last_name = $contactValues['last_name'];
+        } else {
+            $contact->last_name = 'SugarContactLast';
+        }
+        if (isset($contactValues['email'])) {
+            $contact->email1 = $contactValues['email'];
+        } else {
+            $contact->email1 = 'contact@'. $time. 'sugar.com';
+        }
+
         if(!empty($id))
         {
             $contact->new_with_id = true;
             $contact->id = $id;
         }
         $contact->save();
-        self::$_createdContacts[] = $contact;
         $GLOBALS['db']->commit();
+        self::$_createdContacts[] = $contact;
         return $contact;
     }
 
@@ -94,4 +105,3 @@ class SugarTestContactUtilities
         return $contact_ids;
     }
 }
-?>

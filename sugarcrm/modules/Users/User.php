@@ -2198,7 +2198,79 @@ EOQ;
         $count = $GLOBALS['db']->getOne($query);
         return $count > 0;
     }
-
+    
+    /**
+     * @static
+     * This function returns an array of reportees and their corresponding reportee count
+     * 
+     * @param String user_id The id of the user to check
+     * @param boolean included_deleted Boolean Value indicating whether or not to include deleted records (defaults to false)
+     * @return array Array of reportee IDs and their leaf count
+     */
+     public static function getReporteesWithLeafCount($user_id, $include_deleted = false)
+     {
+        $db = DBManagerFactory::getInstance();
+        $deleted = ($include_deleted? 1:0);
+        $returnArray = array();
+        $query      = "SELECT u.id, count(u2.id) as total FROM users u " .
+                          "LEFT JOIN users u2 " .
+                              "ON u.id = u2.reports_to_id ";
+        if(!$include_deleted){
+            $query .=         "AND u2.deleted = 0 ";
+        }        
+        $query     .=   "WHERE u.reports_to_id = {$db->quoted(clean_string($user_id))} ";
+        if(!$include_deleted){
+            $query .=       "AND u.deleted = {$deleted} ";
+        }
+        $query     .=   "GROUP BY u.id";
+        
+        $result = $db->query($query);
+        while($row = $db->fetchByAssoc($result)){
+            $returnArray[$row["id"]] = $row["total"]; 
+        }
+        
+        return $returnArray;
+     }
+     
+     /**
+      * @static
+      * This function returns an array of reportee IDs that are managers
+      * 
+      * @param String user_id The id of the user to check
+      * @param boolean included_deleted Boolean Value indicating whether or not to include deleted records (defaults to false)
+      * @return array Array of manager reportee IDs 
+      */
+     public static function getReporteeManagers($user_id, $include_deleted = false)
+     {
+        $returnArray = array();
+        $reportees = User::getReporteesWithLeafCount($user_id, $include_deleted);
+        foreach($reportees as $key=>$value){
+            if($value > 0){
+               $returnArray[] = $key;
+            }
+        }
+        return $returnArray;
+     }
+     
+     /**
+      * @static
+      * This function returns an array of reportee IDs that are sales reps
+      * 
+      * @param String user_id The id of the user to check
+      * @param boolean included_deleted Boolean Value indicating whether or not to include deleted records (defaults to false)
+      * @return array Array of rep reportee IDs 
+      */
+     public static function getReporteeReps($user_id, $include_deleted = false)
+     {
+        $returnArray = array();
+        $reportees = User::getReporteesWithLeafCount($user_id, $include_deleted);
+        foreach($reportees as $key=>$value){
+            if($value == 0){
+               $returnArray[] = $key;
+            }
+        }
+        return $returnArray;
+     } 
 
     /**
      * @static

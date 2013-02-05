@@ -148,7 +148,8 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source' => 'non-db',
     'comment' => 'checkbox indicating whether or not the reminder value is set (Meta-data only)',
     'massupdate' => false,
-   ),
+    'studio' => array('wirelesseditview'=>false),
+  ),
   'reminder_time' =>
   array (
     'name' => 'reminder_time',
@@ -159,7 +160,8 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'reportable' => false,
     'massupdate' => false,
     'default'=> -1,
-    'comment' => 'Specifies when a reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start'
+    'comment' => 'Specifies when a reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start',
+    'studio' => array('wirelesseditview'=>false),
   ),
   'email_reminder_checked' => array(
     'name' => 'email_reminder_checked',
@@ -168,6 +170,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source' => 'non-db',
     'comment' => 'checkbox indicating whether or not the email reminder value is set (Meta-data only)',
     'massupdate' => false,
+    'studio' => array('wirelesseditview'=>false),
    ),
   'email_reminder_time' =>
   array (
@@ -179,7 +182,8 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'reportable' => false,
     'massupdate' => false,
     'default'=> -1,
-    'comment' => 'Specifies when a email reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start'
+    'comment' => 'Specifies when a email reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start',
+    'studio' => array('wirelesseditview'=>false),
   ),
   'email_reminder_sent' => array( 
     'name' => 'email_reminder_sent',
@@ -429,6 +433,14 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'reportable' => false,
     'studio' => false,
   ),
+  'send_invites' => array(
+    'name' => 'send_invites',
+    'vname' => 'LBL_SEND_INVITES',
+    'type' => 'bool',
+    'source' => 'non-db',
+    'comment' => 'checkbox indicating whether or not to send out invites (Meta-data only)',
+    'massupdate' => false,
+   ),  
 ),
 'indices' => array (
 	array(

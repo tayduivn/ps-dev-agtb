@@ -139,7 +139,8 @@ class ConfiguratorController extends SugarController
         $configurator->saveConfig();
 
         // Bug 37310 - Delete any existing currency that matches the one we've just set the default to during the admin wizard
-        $currency = BeanFactory::getBean('Currencies', $currency->retrieve_id_by_name($_REQUEST['default_currency_name']));
+        $currency = BeanFactory::getBean('Currencies');
+        $currency->retrieve_id_by_name($_REQUEST['default_currency_name']);
         if ( !empty($currency->id)
                 && $currency->symbol == $_REQUEST['default_currency_symbol']
                 && $currency->iso4217 == $_REQUEST['default_currency_iso4217'] ) {

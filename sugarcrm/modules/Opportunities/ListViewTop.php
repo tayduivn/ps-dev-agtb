@@ -35,7 +35,7 @@ $current_module_strings = return_module_language($current_language, "Opportuniti
 $seedOpportunity = BeanFactory::getBean('Opportunities');
 	
 //build top 5 opportunity list
-$where = "opportunities.sales_stage <> 'Closed Won' AND opportunities.sales_stage <> 'Closed Lost' AND opportunities.assigned_user_id='".$current_user->id."'";
+$where = "opportunities.sales_stage <> '".$seedOpportunity::STAGE_CLOSED_LOST."' AND opportunities.sales_stage <> '".$seedOpportunity::STAGE_CLOSED_WON."' AND opportunities.assigned_user_id='".$current_user->id."'";
 $header_text = '';
 if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
 		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=ListView&from_module=Opportunities'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";

@@ -289,5 +289,16 @@ class RestFilterTest extends RestTestBase
 
     }
 
+    /*
+     * @group rest
+     */
+    public function testNoFilter()
+    {
+        $reply = $this->_restCall('Accounts/filter?max_num=10');
+        $this->assertNotEmpty($reply['reply'], "Empty filter returned no results.");
+        $this->assertEquals(10,$reply['reply']['next_offset'], "Empty filter did not return at least 10 results.");
+        
+    }
+
 
 }

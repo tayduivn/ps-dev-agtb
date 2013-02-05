@@ -130,7 +130,7 @@
         //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
         this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
-        this.chartDataSet = app.forecasts.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', this.context.forecasts.config);
+        this.chartDataSet = app.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', this.context.config);
         this.chartGroupByOptions = app.metadata.getStrings('app_list_strings').forecasts_chart_options_group || [];
         this.defaultDataset = app.defaultSelections.dataset;
         this.defaultGroupBy = app.defaultSelections.group_by;
@@ -173,9 +173,9 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
-        if(this.context.forecasts.worksheet) this.context.forecasts.worksheet.off(null, null, this);
-        if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
-        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        if(this.context.worksheet) this.context.worksheet.off(null, null, this);
+        if(this.context.worksheetmanager) this.context.worksheetmanager.off(null, null, this);
+        if(this.context) this.context.off(null, null, this);
         if(this.values) this.values.off(null, null, this);
         app.view.View.prototype.unbindData.call(this);
     },
@@ -188,40 +188,40 @@
         
         //This is fired when anything in the worksheets is saved.  We want to wait until this happens
         //before we go and grab new chart data.
-        this.context.forecasts.on("forecasts:committed:saved", function(){
+        this.context.on("forecasts:committed:saved", function(){
             self.renderChart();
         });
 
-        this.context.forecasts.on("forecasts:worksheet:saved", function(totalSaved, worksheet, isDraft) {
+        this.context.on("forecasts:worksheet:saved", function(totalSaved, worksheet, isDraft) {
             // we only want this to run if the totalSaved was greater than zero and we are saving the draft version
             if(totalSaved > 0 && isDraft == true) {
                 self.renderChart();
             }
         });
 
-        this.context.forecasts.on('change:selectedUser', function (context, user) {
+        this.context.on('change:selectedUser', function (context, user) {
             if(!_.isEmpty(self.chart)) {
                 self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
                 self.toggleRepOptionsVisibility();
             }
         });
-        this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
+        this.context.on('change:selectedTimePeriod', function (context, timePeriod) {
             if(!_.isEmpty(self.chart)) {
                 self.timeperiod_label = timePeriod.label;
                 self.handleRenderOptions({timeperiod_id: timePeriod.id});
             }
         });
-        this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
+        this.context.on('change:selectedGroupBy', function (context, groupBy) {
             if(!_.isEmpty(self.chart)) {
                 self.handleRenderOptions({group_by: groupBy});
             }
         });
-        this.context.forecasts.on('change:selectedRanges', function(context, value) {
+        this.context.on('change:selectedRanges', function(context, value) {
             if(!_.isEmpty(self.chart)) {
                 self.handleRenderOptions({ranges: value});
             }
         });
-        this.context.forecasts.on('change:hiddenSidebar', function(context, value){
+        this.context.on('forecasts:commitButtons:sidebarHidden', function(value){
             // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
             self.stopRender = value;
             // if the sidebar is not hidden
@@ -311,29 +311,31 @@
                             'title': json.properties[0].title
                             , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
                             // bar group data (x-axis)
-                            , 'groupData': json.values.map( function(d,i){
-                                return {
-                                    'group': i
-                                    , 'l': json.values[i].label
-                                    , 't': json.values[i].values.reduce( function(p, c, i, a){
-                                        return parseInt(p,10) + parseInt(c,10);
-                                    })
-                                }
-                            })
+                            , 'groupData': (!json.values.filter(function(d) { return d.values.length }).length) ? [] :
+                                json.values.map( function(d,i){
+                                    return {
+                                        'group': i
+                                        , 'l': json.values[i].label
+                                        , 't': json.values[i].values.reduce( function(p, c, i, a){
+                                            return parseInt(p,10) + parseInt(c,10);
+                                        })
+                                    }
+                                })
                         }
                         // series data
-                        , 'data': json.label.map( function(d,i){
-                            return {
-                                'key': d
-                                , 'type': 'bar'
-                                , 'series': i
-                                , 'values': json.values.map( function(e,j){
-                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
-                                })
-                                , 'valuesOrig': json.values.map( function(e,j){
-                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
-                                })
-                            }
+                        , 'data': (!json.values.filter(function(d) { return d.values.length }).length) ? [] :
+                            json.label.map( function(d,i){
+                                return {
+                                    'key': d
+                                    , 'type': 'bar'
+                                    , 'series': i
+                                    , 'values': json.values.map( function(e,j){
+                                        return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                    })
+                                    , 'valuesOrig': json.values.map( function(e,j){
+                                        return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                    })
+                                }
                         }).concat(
                             json.properties[0].goal_marker_label.filter( function(d,i){
                                 return d !== 'Quota';

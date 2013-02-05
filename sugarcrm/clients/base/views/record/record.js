@@ -13,11 +13,8 @@
         'mouseenter .ellipsis_inline':'addTooltip'
     },
     addTooltip: function(event){
-        var $el = this.$(event.target);
-        if( $el[0].offsetWidth < $el[0].scrollWidth ) {
-            $el.tooltip('show');
-        } else {
-            $el.tooltip('destroy');
+        if (_.isFunction(app.utils.handleTooltip)) {
+            app.utils.handleTooltip(event, this);
         }
     },
     // button fields defined in view definition
@@ -34,7 +31,7 @@
 
     initialize: function(options) {
         _.bindAll(this);
-
+        options.meta = _.extend({}, app.metadata.getView(null, 'record'), options.meta);
         app.view.views.EditableView.prototype.initialize.call(this, options);
 
         this.buttons = {};
@@ -67,6 +64,7 @@
         this.context.on('button:save_button:click', this.saveClicked, this);
         this.context.on('button:delete_button:click', this.deleteClicked, this);
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
+        this.context.on('button:find_duplicates_button:click', this.findDuplicatesClicked, this);
     },
 
     _renderPanels: function(panels) {
@@ -136,6 +134,16 @@
                     field.labelSpan = Math.floor(4 / columns);
                 }
 
+                // this is new to prevent a span of 0
+                if (field.span < 1) {
+                    field.span = 1;
+                }
+
+                // this is new to prevent a labelSpan of 0
+                if (field.labelSpan < 1) {
+                    field.labelSpan = 1;
+                }
+
                 totalFieldCount++;
                 field.index = totalFieldCount;
 
@@ -184,7 +192,7 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            if ( field.type === "img" || field.type === "buttondropdown" || field.parent || (field.name && this.buttons[field.name])) {
+            if ( field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
@@ -202,12 +210,11 @@
     initButtons: function() {
         if(this.options.meta && this.options.meta.buttons) {
             _.each(this.options.meta.buttons, function(button) {
-                if (button.type === 'buttondropdown') {
+                this.registerFieldAsButton(button.name);
+                if (button.buttons) {
                     _.each(button.buttons, function(dropdownButton) {
                         this.registerFieldAsButton(dropdownButton.name);
                     }, this);
-                } else if (button.type === 'button') {
-                    this.registerFieldAsButton(button.name);
                 }
             }, this);
         }
@@ -272,6 +279,18 @@
         });
     },
     
+    findDuplicatesClicked: function() {
+        this.layout.trigger("drawer:find-duplicates:fire", {
+            components: [{
+                layout : 'find-duplicates',
+                context: {
+                    dupeCheckModel: this.model,
+                    dupelisttype: 'dupecheck-list-multiselect'
+                }
+            }]
+        }, this);
+    },
+
     editClicked: function() {
         this.previousModelState = this.model.previousAttributes();
         this.setButtonStates(this.STATE.EDIT);
@@ -401,7 +420,8 @@
         this.currentState = state;
 
         _.each(this.buttons, function(field) {
-            if (_.isUndefined(field.showOn()) || (field.showOn() === state)) {
+            var showOn = field.def.showOn;
+            if (_.isUndefined(showOn) || (showOn === state)) {
                 field.show();
             } else {
                 field.hide();

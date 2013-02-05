@@ -66,19 +66,4 @@ describe("Base.Layout.DupeCheck", function() {
         expect(layout._components[1].name).toEqual(expectedListView);
     });
 
-    it("should be calling the duplicate check api", function() {
-        var loadDataStub, ajaxStub;
-
-        var layout = SugarTest.createLayout("base", moduleName, "dupecheck", defaultMeta);
-        loadDataStub = sinon.stub(layout.context, 'loadData', function(options) {
-            options.endpoint(options, {'success':$.noop})
-        })
-        ajaxStub = sinon.stub($, 'ajax', $.noop)
-        layout.loadData();
-
-        expect(ajaxStub.lastCall.args[0].url).toMatch(/.*\/Contacts\/duplicateCheck/);
-        loadDataStub.restore();
-        ajaxStub.restore();
-    });
-
 });

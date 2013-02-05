@@ -36,11 +36,11 @@
     extendsFrom:"ForecastsRecordsLayout",
 
     initialize:function (options) {
-        // If is_setup == 1 and users come back to config, the context.forecasts will already be here
+        // If is_setup == 1 and users come back to config, the context will already be here
         // so only make this new config mode there is no forecasts object on the context
-        if(_.isUndefined(options.context.forecasts)) {
+        if(_.isUndefined(options.context)) {
             options.context = _.extend(options.context, this.initializeAllModels(options.context));
-            options.context.forecasts = new Backbone.Model({'saveClicked' : false});
+            options.context = new Backbone.Model({'saveClicked' : false});
 
             // Initialize the config model
             var modelUrl = app.api.buildURL("Forecasts", "config"),
@@ -48,7 +48,7 @@
                     var url = _.isFunction(model.url) ? model.url() : model.url;
                     return app.api.call(method, url, model, options);
                 };
-            options.context.forecasts.config = this._getConfigModel(options, modelUrl, modelSync);
+            options.context.config = this._getConfigModel(options, modelUrl, modelSync);
 
         }
 
@@ -76,8 +76,8 @@
         });
 
         // jQuery.extend is used with the `true` parameter to do a deep copy
-        return (_.has(options.context,'forecasts') && _.has(options.context.forecasts,'config')) ?
-            new SettingsModel($.extend(true, {}, options.context.forecasts.config.attributes)) :
+        return (_.has(options.context,'config')) ?
+            new SettingsModel($.extend(true, {}, options.context.config.attributes)) :
             new SettingsModel();
     },
 
@@ -98,7 +98,7 @@
     _showModal:function () {
         var self = this,
             isAdmin = app.user.getAcls()['Forecasts'].admin == "yes",
-            isSetup = this.context.forecasts.config.get('is_setup');
+            isSetup = this.context.config.get('is_setup');
 
         if (isAdmin) {
             // begin building params to pass to modal
@@ -111,7 +111,7 @@
                     }
                 },
                 components: [
-                    { layout: (this.context.forecasts.config.get('is_setup') == 1) ? "tabbedConfig" : "wizardConfig", bodyComponent: true }
+                    { layout: (this.context.config.get('is_setup') == 1) ? "tabbedConfig" : "wizardConfig" }
                 ]
             };
             // callback has to be a function returning the checkSettingsAndRedirect function
@@ -142,9 +142,8 @@
         var state = {
                 isSetup: isSetup,
                 isAdmin: isAdmin,
-                saveClicked: this.context.forecasts.get('saveClicked')
+                saveClicked: this.context.get('saveClicked')
             },
-            location = this.getRedirectURL(state),
             self = this;
 
         /**
@@ -163,20 +162,24 @@
             if(!isSetup){
                 //issue notice about setting up Opportunities
                 var alert = app.alert.show('forecast_opp_notice', {
-                    level:'confirmation',
-                    showCancel:false,
+                    level:'warning',
+                    autoClose:true,
+                    closeable:true,
+                    onAutoClose: _.bind(function() {
+                        this.displaySuccessAndReload();
+                    }, this),
                     messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
                 });
 
                 //add alert listener for the close click, in case user clicks the X instead of the confirm button.
                 alert.getCloseSelector().on('click', function() {
-                    self.displaySuccessAndReload(location);
+                    self.displaySuccessAndReload();
                 });
             } else {
-                this.displaySuccessAndReload(location);
+                this.displaySuccessAndReload();
             }
         } else {
-            window.location = location;
+            window.location.hash = this.getRedirectURL(state);
         }
     },
 
@@ -198,9 +201,9 @@
          */
         if (!state.isAdmin || (state.isAdmin && state.isSetup == 0 && state.saveClicked == false)) {
             // this should only ever happen on the wizard view and if the user accessing is not an admin
-            return 'index.php?module=Home';
+            return '#Home';
         } else {
-            return 'index.php?action=sidecar#Forecasts';
+            return '#Forecasts';
         }
     },
 

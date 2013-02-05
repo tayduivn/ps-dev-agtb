@@ -36,46 +36,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Opportunities']['base']['view']['record'] = array(
-    'buttons' => array(
-        array(
-            'type' => 'button',
-            'name' => 'cancel_button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'edit',
-        ),
-        array(
-            'type' => 'buttondropdown',
-            'name' => 'main_dropdown',
-            'buttons' => array(
-                array(
-                    'name' => 'edit_button',
-                    'label' => 'LBL_EDIT_BUTTON_LABEL',
-                    'primary' => true,
-                    'showOn' => 'view',
-                ),
-                array(
-                    'name' => 'save_button',
-                    'label' => 'LBL_SAVE_BUTTON_LABEL',
-                    'primary' => true,
-                    'showOn' => 'edit',
-                ),
-                array(
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                ),
-                array(
-                    'name' => 'duplicate_button',
-                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'showOn' => 'view'
-                ),
-            ),
-        ),
-        array(
-            'name' => 'sidebar_toggle',
-            'type' => 'sidebartoggle',
-        ),
-    ),
     'panels' => array(
         array(
             'name' => 'panel_header',
@@ -102,6 +62,8 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'fields' => array(
                 'account_name',
                 'date_closed',
+                'sales_stage',
+                'sales_status',
                 array(
                     'name' => 'amount',
                     'type' => 'currency',

@@ -28,8 +28,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 $layout = MetaDataManager::getLayout('SideBarLayout');
+
+$listLayout = MetaDataManager::getLayout("FilterPanelLayout");
+$listLayout->push(array('layout' => 'list'));
+
 $layout->push('main', array('view' => 'headerpane'));
-$layout->push('main', array('layout' => 'list'));
+$layout->push('main', array('layout' => $listLayout->getLayout(true)));
 $layout->push('side', array('layout' => 'list-sidebar'));
 $layout->push('preview', array('layout' => 'preview'));
 $viewdefs['base']['layout']['records'] = $layout->getLayout();

@@ -168,6 +168,7 @@ class MailApi extends ModuleApi
 
         $mailRecord = new MailRecord($current_user);
 
+        $mailRecord->mailConfig   = $args["email_config"];
         $mailRecord->toAddresses  = $args["to_addresses"];
         $mailRecord->ccAddresses  = $args["cc_addresses"];
         $mailRecord->bccAddresses = $args["bcc_addresses"];
