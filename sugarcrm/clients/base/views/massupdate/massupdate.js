@@ -257,13 +257,13 @@
     },
     mergeDuplicates: function(evt) {
         this.hide();
-        var selectedDuplicates = this.context.get("mass_collection");
-        if (selectedDuplicates) {
+        var mergeCollection = this.context.get("mass_collection");
+        if (mergeCollection) {
             this.layout.trigger("drawer:mergeduplicates:fire", {
                 components: [{
                     layout : "merge-duplicates",
                     context: {
-                        selectedDuplicates: selectedDuplicates
+                        selectedDuplicates: mergeCollection.models
                     }
                 }]
             }, this);
