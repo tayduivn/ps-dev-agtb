@@ -7,8 +7,8 @@
         'click .preview-stream': 'previewRecord',
         'click .comment': 'toggleReplyBar',
         'click .more': 'fetchComments',
-        'mouseenter .label-module, .comment, .preview, .avatar42': 'showTooltip',
-        'mouseleave .label-module, .comment, .preview, .avatar42': 'hideTooltip'
+        'mouseenter [rel="tooltip"]': 'showTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
 
     tagName: "li",
