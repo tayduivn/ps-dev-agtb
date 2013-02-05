@@ -3776,6 +3776,7 @@ article .actions,
 }
 .form-search .extend {
   background: #e8e8e8;
+  margin-top: -1px;
   text-align: left;
 }
 .form-search .extend article:nth-child(even),
@@ -3795,9 +3796,6 @@ article .actions,
   -webkit-box-shadow: inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5);
   box-shadow: inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5);
-}
-.form-search .mu.extend {
-  margin-top: -1px;
 }
 .form-search .mu.extend .fieldPlaceHolder {
   margin-left: 4px;
@@ -4032,7 +4030,7 @@ article .actions,
   border-bottom: 1px solid #e8e8e8;
 }
 .form-search-related .control-group {
-  padding: 5px 10px 4px;
+  padding: 5px 10px;
 }
 .form-search-related .search-name {
   position: absolute;
@@ -4064,6 +4062,12 @@ article .actions,
   -moz-border-radius: 2px;
   border-radius: 2px;
 }
+.form-search-related .filter-view .select2-container.select2-container-disabled .select2-choice div {
+  background: none;
+}
+.form-search-related .filter-view .select2-container.select2-container-disabled .select2-choice div .icon-caret-down {
+  display: none;
+}
 .form-search-related .filter-view .select2-container .select2-choice {
   padding: 0;
   margin: 2px 0 2px 4px;
@@ -4076,6 +4080,58 @@ article .actions,
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
+}
+.form-search-related .filter-view .select2-container .select2-choice span {
+  display: inline;
+  margin-right: 0;
+}
+.form-search-related .filter-view .select2-container .select2-choice div {
+  display: inline-block;
+  width: auto;
+  height: auto;
+  position: relative;
+  right: auto;
+  top: auto;
+}
+.form-search-related .filter-view .select2-container .select2-choice span.select2-choice-type {
+  -webkit-border-radius: 10px 0 0 10px;
+  -moz-border-radius: 10px 0 0 10px;
+  border-radius: 10px 0 0 10px;
+  color: #777;
+  padding: 2px 4px 2px 6px;
+  margin-right: 2px;
+  background: #f5f5f5;
+}
+.form-search-related .filter-view .select2-container .select2-choice span.select2-choice-type i[class^="icon-"] {
+  margin-left: 4px;
+}
+.form-search-related .filter-view .select2-container .select2-choice a.select2-choice-related,
+.form-search-related .filter-view .select2-container .select2-choice a.select2-choice-filter {
+  -webkit-border-radius: 0 10px 10px 0;
+  -moz-border-radius: 0 10px 10px 0;
+  border-radius: 0 10px 10px 0;
+  padding: 2px 6px 2px 4px;
+}
+.form-search-related .filter-view .select2-container .select2-choice a.select2-choice-related {
+  background: #c0f0ca;
+  color: #407648;
+}
+.form-search-related .filter-view .select2-container .select2-choice a.select2-choice-filter {
+  background: #E5F4FB;
+}
+.form-search-related .filter-view .select2-container .select2-choice a:hover {
+  text-decoration: none;
+}
+.form-search-related .filter-view .select2-container .select2-choice a.select2-search-choice-close {
+  display: none;
+}
+.form-search-related .filter-view .select2-container .select2-choice .filter-disabled a {
+  background: #f5f5f5;
+  color: #58595B;
+  cursor: pointer;
+}
+.form-search-related .filter-view .select2-container .select2-choice .filter-disabled a:hover {
+  color: #58595B;
 }
 .form-search-related .filter-view:focus {
   border-color: rgba(82,168,236,0.8);
@@ -4101,58 +4157,6 @@ article .actions,
   -moz-box-shadow: none;
   box-shadow: none;
 }
-.form-search-related .select2-container .select2-choice span {
-  display: inline;
-  margin-right: 0;
-}
-.form-search-related .select2-container .select2-choice div {
-  display: inline-block;
-  width: auto;
-  height: auto;
-  position: relative;
-  right: auto;
-  top: auto;
-}
-.form-search-related .select2-container .select2-choice span.select2-choice-type {
-  -webkit-border-radius: 10px 0 0 10px;
-  -moz-border-radius: 10px 0 0 10px;
-  border-radius: 10px 0 0 10px;
-  color: #777;
-  padding: 2px 4px 2px 6px;
-  margin-right: 2px;
-  background: #f5f5f5;
-}
-.form-search-related .select2-container .select2-choice span.select2-choice-type i[class^="icon-"] {
-  margin-left: 4px;
-}
-.form-search-related .select2-container .select2-choice a.select2-choice-related,
-.form-search-related .select2-container .select2-choice a.select2-choice-filter {
-  -webkit-border-radius: 0 10px 10px 0;
-  -moz-border-radius: 0 10px 10px 0;
-  border-radius: 0 10px 10px 0;
-  padding: 2px 6px 2px 4px;
-}
-.form-search-related .select2-container .select2-choice a.select2-choice-related {
-  background: #c0f0ca;
-  color: #407648;
-}
-.form-search-related .select2-container .select2-choice a.select2-choice-filter {
-  background: #E5F4FB;
-}
-.form-search-related .select2-container .select2-choice a:hover {
-  text-decoration: none;
-}
-.form-search-related .select2-container .select2-choice a.select2-search-choice-close {
-  display: none;
-}
-.form-search-related .select2-container .select2-choice .filter-disabled a {
-  background: #f5f5f5;
-  color: #58595B;
-  cursor: pointer;
-}
-.form-search-related .select2-container .select2-choice .filter-disabled a:hover {
-  color: #58595B;
-}
 .form-search-related .select2-container .select2-select-legend .icon-plus {
   margin-top: 3px;
   line-height: 4px;
@@ -4174,7 +4178,6 @@ article .actions,
 }
 .form-search-related .extend {
   background: #e8e8e8;
-  margin-top: -1px;
   text-align: left;
 }
 .form-search-related .extend article:nth-child(even),
@@ -4184,12 +4187,14 @@ article .actions,
   border-bottom: 1px solid #CDCCCB;
   padding: 7px 8px 7px 20px;
 }
-.form-search-related .extend article.filter-header {
+.form-search-related .extend article.filter-header,
+.form-search-related .extend .inset-form-header {
   padding: 9px 8px 7px 20px;
   line-height: 28px;
   -webkit-box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
   box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
+  border-top: none;
 }
 .form-search-related .extend article:last-child {
   -webkit-box-shadow: inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5);
@@ -5943,6 +5948,11 @@ header .subnav {
 .headerpane .span12,
 .main-pane.span8 .subnav.subnav-fixed .span12 {
   margin-left: 0;
+}
+#contentflex #headerbar .btn-group-previous-next,
+.headerpane .btn-group-previous-next,
+.main-pane.span8 .subnav.subnav-fixed .btn-group-previous-next {
+  margin: 0 8px;
 }
 #contentflex #headerbar .drawerTrig,
 .headerpane .drawerTrig,
