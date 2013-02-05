@@ -3,7 +3,6 @@ describe("Subnav View", function() {
     var app, view;
 
     beforeEach(function() {
-        SugarTest.seedMetadata(true);
         app = SugarTest.app;
         var context = app.context.getContext();
         view = SugarTest.createView("base","Cases", "subnav", null, context);
