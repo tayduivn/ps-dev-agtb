@@ -7894,6 +7894,13 @@ table.duplicates.highlight tbody td {
 .carousel.slide .thumbnails .thumbnail .caption {
   text-align: center;
 }
+h4.merge-interface-header {
+  margin-left: 20px;
+  margin-right: 10px;
+}
+h4.merge-interface-header .preview {
+  padding-top: 0;
+}
 .merge-interface {
   height: auto;
   margin: 10px 0 0;
@@ -7903,7 +7910,7 @@ table.duplicates.highlight tbody td {
   padding-bottom: 4px;
 }
 .merge-interface .fixed-div {
-  width: 280px;
+  width: 140px;
 }
 .merge-interface .fixed-div aside,
 .merge-interface .fixed-div label {
@@ -7929,9 +7936,31 @@ table.duplicates.highlight tbody td {
   -moz-box-shadow: 0 0 1px #aaaaaa;
   box-shadow: 0 0 1px #aaaaaa;
 }
-.merge-interface .col .box.border.primary {
+.merge-interface .col .box .merge-edit {
+  display: none;
+}
+.merge-interface .col .box .merge-view {
+  display: block;
+}
+.merge-interface .col:first-child .box {
   background: #F7F7F7;
   border: 1px solid #CECECE;
+}
+.merge-interface .col:first-child .box .merge-row.even,
+.merge-interface .col:first-child .box .merge-row.odd {
+  background: none;
+}
+.merge-interface .col:first-child .box .merge-edit {
+  display: block;
+}
+.merge-interface .col:first-child .box .merge-view {
+  display: none;
+}
+.merge-interface .label-div aside {
+  margin-left: 10px;
+}
+.merge-interface .label-div aside a:hover i {
+  text-decoration: none;
 }
 .merge-interface input[type=text] {
   width: 86px;
@@ -7943,6 +7972,7 @@ table.duplicates.highlight tbody td {
   line-height: 30px;
   height: 30px;
   padding: 0 5px;
+  white-space: nowrap;
 }
 .merge-interface .merge-row.odd {
   background: #FEFBF4;

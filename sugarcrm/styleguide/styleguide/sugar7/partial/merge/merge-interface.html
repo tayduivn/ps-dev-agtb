@@ -1,17 +1,10 @@
-/*  background-image: url('@{textureSecondary}');*/
-<!--<div class="" style="background-image: url('../../assets/img/texture/furley_bg.png'); line-height: 40px; padding: 0 10px 0 22px">-->
-<div class="" style="line-height: 40px; padding: 0 10px 0 22px">
-	Trait Institute Inc
-	<a class="pull-right btn btn-link btn-invisible preview check-if-collapsed" href="preview/lead-preview.html" rel="tooltip" data-toggle="proto" data-target="#preview-edit" data-mode="preview" data-original-title="Preview" style="padding-top:8px;"><i class="icon-eye-open"></i></a>
-</div>
+<h4 class="merge-interface-header">Trait Institute Inc
+<a class="pull-right btn btn-link btn-invisible preview check-if-collapsed" href="preview/lead-preview.html" rel="tooltip" data-placement="bottom" data-toggle="proto" data-target="#preview-edit" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
+</h4>
 
 
   <script>
     $(document).ready(function() {
-      $(".merge-primary-controller").sortable({
-        items: ".col.d",
-        axis: "x",
-      });
     });
     $('.main-pane .record').addClass('record-merge-interface');
     $('body').on('click', '.merge-interface', function(){
@@ -34,11 +27,14 @@
 		}
     });
 
+	$(".fluid-div").sortable({
+		items: ".col",
+        axis: "x",
+	});
   </script>
 
 
-
-<div class="merge-interface">
+<div class="merge-interface row-fluid">
 
 	<div class="merge-primary-controller">
         <div class="col">&nbsp;</div>
@@ -49,7 +45,8 @@
         <div class="col d">&nbsp;</div>
 	</div>
 
-	<div class="pull-left fixed-div">
+
+	<div class="label-div">
         <div class="col pull-left">
 			<div class="merge-row"><label for="">Account Name:</label></div>
 			<div class="merge-row"><label for="">Industry:</label></div>
@@ -66,91 +63,176 @@
 			</div>
 			<aside><a href="#" class="show_extra">More <i class="icon-caret-down"></i></a></aside>
         </div>
-		<div class="col pull-left">
-			<div class="box border primary">
-				<div class="merge-row"><input type="radio" name="merge11"> <input type="text" value="Trait Institute Inc" ></div>
-				<div class="merge-row"><input type="radio" name="merge12"> <input type="text" value="Telecommunication" ></div>
-				<div class="merge-row"><input type="radio" name="merge13"> <input type="text" value="San Jose" ></div>
-				<div class="merge-row"><input type="radio" name="merge14"> <input type="text" value="53697" ></div>
-				<div class="merge-row"><input type="radio" name="merge15"> <input type="text" value="720-888-5596" ></div>
-				<div class="merge-row"><input type="radio" name="merge16"> <input type="text" value="www.beansinfo.com" ></div>
-				<div class="merge-row"><input type="radio" name="merge17"> <input type="text" value="San Jose" ></div>
-				<div class="merge-row"><input type="radio" name="merge18"> <input type="text" value="53697" ></div>
-				<div class="merge-row"><input type="checkbox" name="merge19"> <input type="text" value="West, North" ></div>
-				<div class="extra hide">
-					<div class="merge-row"><input type="radio" name="merge20"> <input type="text" value="IBM" ></div>
-					<div class="merge-row"><input type="radio" name="merge21"> <input type="text" value="Director" ></div>
-				</div>
-			</div>
-		</div>
 	</div>
 
 	<div class="fluid-div">
         <div class="col">
 			<div class="box">
-				<div class="merge-row odd"><input type="radio" name="merge11"> Trait Institute Inc</div>
-				<div class="merge-row even"><input type="radio" name="merge12"> Telecommunication</div>
-				<div class="merge-row odd"><input type="radio" name="merge13"> San Jose</div>
-				<div class="merge-row even"><input type="radio" name="merge14"> 53697</div>
-				<div class="merge-row odd"><input type="radio" name="merge15"> 720-888-5596</div>
-				<div class="merge-row even"><input type="radio" name="merge16"> www.beansinfo.com</div>
-				<div class="merge-row odd"><input type="radio" name="merge17"> San Jose</div>
-				<div class="merge-row even"><input type="radio" name="merge18"> 53697</div>
-				<div class="merge-row odd"><input type="checkbox" name="merge19"> West, North</div>
-				<div class="extra hide">
-					<div class="merge-row even"><input type="radio" name="merge20"> IBM</div>
-					<div class="merge-row odd"><input type="radio" name="merge21"> Director</div>
+				<div class="merge-view">
+					<div class="merge-row odd"><input type="radio" name="merge11"> Trait Institute Inc</div>
+					<div class="merge-row even"><input type="radio" name="merge12"> Telecommunication</div>
+					<div class="merge-row odd"><input type="radio" name="merge13"> San Jose</div>
+					<div class="merge-row even"><input type="radio" name="merge14"> 53697</div>
+					<div class="merge-row odd"><input type="radio" name="merge15"> 720-888-5596</div>
+					<div class="merge-row even"><input type="radio" name="merge16"> www.beansinfo.com</div>
+					<div class="merge-row odd"><input type="radio" name="merge17"> San Jose</div>
+					<div class="merge-row even"><input type="radio" name="merge18"> 53697</div>
+					<div class="merge-row odd"><input type="checkbox" name="merge19"> West, North</div>
+					<div class="extra hide">
+						<div class="merge-row even"><input type="radio" name="merge20"> IBM</div>
+						<div class="merge-row odd"><input type="radio" name="merge21"> Director</div>
+					</div>
 				</div>
-			</div>
-        </div>
-		<div class="col">
-			<div class="box">
-				<div class="merge-row odd"><input type="radio" name="merge11"> Trait Institute Inc</div>
-				<div class="merge-row even"><input type="radio" name="merge12"> Telecommunication</div>
-				<div class="merge-row odd"><input type="radio" name="merge13"> San Jose</div>
-				<div class="merge-row even"><input type="radio" name="merge14"> 53697</div>
-				<div class="merge-row odd"><input type="radio" name="merge15"> 720-888-5596</div>
-				<div class="merge-row even"><input type="radio" name="merge16"> www.beansinfo.com</div>
-				<div class="merge-row odd"><input type="radio" name="merge17"> San Jose</div>
-				<div class="merge-row even"><input type="radio" name="merge18"> 53697</div>
-				<div class="merge-row odd"><input type="checkbox" name="merge19"> West, North</div>
-				<div class="extra hide">
-					<div class="merge-row even"><input type="radio" name="merge20"> IBM</div>
-					<div class="merge-row odd"><input type="radio" name="merge21"> Director</div>
+                <div class="merge-edit">
+					<div class="merge-row"><input type="radio" name="merge11"> <input type="text" value="Trait Institute Inc" ></div>
+					<div class="merge-row"><input type="radio" name="merge12"> <input type="text" value="Telecommunication" ></div>
+					<div class="merge-row"><input type="radio" name="merge13"> <input type="text" value="San Jose" ></div>
+					<div class="merge-row"><input type="radio" name="merge14"> <input type="text" value="53697" ></div>
+					<div class="merge-row"><input type="radio" name="merge15"> <input type="text" value="720-888-5596" ></div>
+					<div class="merge-row"><input type="radio" name="merge16"> <input type="text" value="www.beansinfo.com" ></div>
+					<div class="merge-row"><input type="radio" name="merge17"> <input type="text" value="San Jose" ></div>
+					<div class="merge-row"><input type="radio" name="merge18"> <input type="text" value="53697" ></div>
+					<div class="merge-row"><input type="checkbox" name="merge19"> <input type="text" value="West, North" ></div>
+					<div class="extra hide">
+						<div class="merge-row"><input type="radio" name="merge20"> <input type="text" value="IBM" ></div>
+						<div class="merge-row"><input type="radio" name="merge21"> <input type="text" value="Director" ></div>
+					</div>
 				</div>
 			</div>
 		</div>
         <div class="col">
 			<div class="box">
-				<div class="merge-row odd"><input type="radio" name="merge11"> Trait Institute Inc</div>
-				<div class="merge-row even"><input type="radio" name="merge12"> Telecommunication</div>
-				<div class="merge-row odd"><input type="radio" name="merge13"> San Jose</div>
-				<div class="merge-row even"><input type="radio" name="merge14"> 53697</div>
-				<div class="merge-row odd"><input type="radio" name="merge15"> 720-888-5596</div>
-				<div class="merge-row even"><input type="radio" name="merge16"> www.beansinfo.com</div>
-				<div class="merge-row odd"><input type="radio" name="merge17"> San Jose</div>
-				<div class="merge-row even"><input type="radio" name="merge18"> 53697</div>
-				<div class="merge-row odd"><input type="checkbox" name="merge19"> West, North</div>
-				<div class="extra hide">
-					<div class="merge-row even"><input type="radio" name="merge20"> IBM</div>
-					<div class="merge-row odd"><input type="radio" name="merge21"> Director</div>
+				<div class="merge-view">
+					<div class="merge-row odd"><input type="radio" name="merge11"> TTTc</div>
+					<div class="merge-row even"><input type="radio" name="merge12"> Telecommunication</div>
+					<div class="merge-row odd"><input type="radio" name="merge13"> San Jose</div>
+					<div class="merge-row even"><input type="radio" name="merge14"> 53697</div>
+					<div class="merge-row odd"><input type="radio" name="merge15"> 720-888-5596</div>
+					<div class="merge-row even"><input type="radio" name="merge16"> www.beansinfo.com</div>
+					<div class="merge-row odd"><input type="radio" name="merge17"> San Jose</div>
+					<div class="merge-row even"><input type="radio" name="merge18"> 53697</div>
+					<div class="merge-row odd"><input type="checkbox" name="merge19"> West, North</div>
+					<div class="extra hide">
+						<div class="merge-row even"><input type="radio" name="merge20"> IBM</div>
+						<div class="merge-row odd"><input type="radio" name="merge21"> Director</div>
+					</div>
+				</div>
+				<div class="merge-edit">
+					<div class="merge-row"><input type="radio" name="merge11"> <input type="text" value="TTTc" ></div>
+					<div class="merge-row"><input type="radio" name="merge12"> <input type="text" value="Telecommunication" ></div>
+					<div class="merge-row"><input type="radio" name="merge13"> <input type="text" value="San Jose" ></div>
+					<div class="merge-row"><input type="radio" name="merge14"> <input type="text" value="53697" ></div>
+					<div class="merge-row"><input type="radio" name="merge15"> <input type="text" value="720-888-5596" ></div>
+					<div class="merge-row"><input type="radio" name="merge16"> <input type="text" value="www.beansinfo.com" ></div>
+					<div class="merge-row"><input type="radio" name="merge17"> <input type="text" value="San Jose" ></div>
+					<div class="merge-row"><input type="radio" name="merge18"> <input type="text" value="53697" ></div>
+					<div class="merge-row"><input type="checkbox" name="merge19"> <input type="text" value="West, North" ></div>
+					<div class="extra hide">
+						<div class="merge-row"><input type="radio" name="merge20"> <input type="text" value="IBM" ></div>
+						<div class="merge-row"><input type="radio" name="merge21"> <input type="text" value="Director" ></div>
+					</div>
 				</div>
 			</div>
         </div>
 		<div class="col">
 			<div class="box">
-				<div class="merge-row odd"><input type="radio" name="merge11"> Trait Institute Inc</div>
-				<div class="merge-row even"><input type="radio" name="merge12"> Telecommunication</div>
-				<div class="merge-row odd"><input type="radio" name="merge13"> San Jose</div>
-				<div class="merge-row even"><input type="radio" name="merge14"> 53697</div>
-				<div class="merge-row odd"><input type="radio" name="merge15"> 720-888-5596</div>
-				<div class="merge-row even"><input type="radio" name="merge16"> www.beansinfo.com</div>
-				<div class="merge-row odd"><input type="radio" name="merge17"> San Jose</div>
-				<div class="merge-row even"><input type="radio" name="merge18"> 53697</div>
-				<div class="merge-row odd"><input type="checkbox" name="merge19"> West, North</div>
-				<div class="extra hide">
-					<div class="merge-row even"><input type="radio" name="merge20"> IBM</div>
-					<div class="merge-row odd"><input type="radio" name="merge21"> Director</div>
+				<div class="merge-view">
+					<div class="merge-row odd"><input type="radio" name="merge11"> LLC</div>
+					<div class="merge-row even"><input type="radio" name="merge12"> Telecommunication</div>
+					<div class="merge-row odd"><input type="radio" name="merge13"> San Jose</div>
+					<div class="merge-row even"><input type="radio" name="merge14"> 53697</div>
+					<div class="merge-row odd"><input type="radio" name="merge15"> 720-888-5596</div>
+					<div class="merge-row even"><input type="radio" name="merge16"> www.beansinfo.com</div>
+					<div class="merge-row odd"><input type="radio" name="merge17"> San Jose</div>
+					<div class="merge-row even"><input type="radio" name="merge18"> 53697</div>
+					<div class="merge-row odd"><input type="checkbox" name="merge19"> West, North</div>
+					<div class="extra hide">
+						<div class="merge-row even"><input type="radio" name="merge20"> IBM</div>
+						<div class="merge-row odd"><input type="radio" name="merge21"> Director</div>
+					</div>
+				</div>
+				<div class="merge-edit">
+					<div class="merge-row"><input type="radio" name="merge11"> <input type="text" value="LLC" ></div>
+					<div class="merge-row"><input type="radio" name="merge12"> <input type="text" value="Telecommunication" ></div>
+					<div class="merge-row"><input type="radio" name="merge13"> <input type="text" value="San Jose" ></div>
+					<div class="merge-row"><input type="radio" name="merge14"> <input type="text" value="53697" ></div>
+					<div class="merge-row"><input type="radio" name="merge15"> <input type="text" value="720-888-5596" ></div>
+					<div class="merge-row"><input type="radio" name="merge16"> <input type="text" value="www.beansinfo.com" ></div>
+					<div class="merge-row"><input type="radio" name="merge17"> <input type="text" value="San Jose" ></div>
+					<div class="merge-row"><input type="radio" name="merge18"> <input type="text" value="53697" ></div>
+					<div class="merge-row"><input type="checkbox" name="merge19"> <input type="text" value="West, North" ></div>
+					<div class="extra hide">
+						<div class="merge-row"><input type="radio" name="merge20"> <input type="text" value="IBM" ></div>
+						<div class="merge-row"><input type="radio" name="merge21"> <input type="text" value="Director" ></div>
+					</div>
+				</div>
+			</div>
+		</div>
+        <div class="col">
+			<div class="box">
+				<div class="merge-view">
+					<div class="merge-row odd"><input type="radio" name="merge11"> IBM</div>
+					<div class="merge-row even"><input type="radio" name="merge12"> Telecommunication</div>
+					<div class="merge-row odd"><input type="radio" name="merge13"> San Jose</div>
+					<div class="merge-row even"><input type="radio" name="merge14"> 53697</div>
+					<div class="merge-row odd"><input type="radio" name="merge15"> 720-888-5596</div>
+					<div class="merge-row even"><input type="radio" name="merge16"> www.beansinfo.com</div>
+					<div class="merge-row odd"><input type="radio" name="merge17"> San Jose</div>
+					<div class="merge-row even"><input type="radio" name="merge18"> 53697</div>
+					<div class="merge-row odd"><input type="checkbox" name="merge19"> West, North</div>
+					<div class="extra hide">
+						<div class="merge-row even"><input type="radio" name="merge20"> IBM</div>
+						<div class="merge-row odd"><input type="radio" name="merge21"> Director</div>
+					</div>
+				</div>
+				<div class="merge-edit">
+					<div class="merge-row"><input type="radio" name="merge11"> <input type="text" value="IBM" ></div>
+					<div class="merge-row"><input type="radio" name="merge12"> <input type="text" value="Telecommunication" ></div>
+					<div class="merge-row"><input type="radio" name="merge13"> <input type="text" value="San Jose" ></div>
+					<div class="merge-row"><input type="radio" name="merge14"> <input type="text" value="53697" ></div>
+					<div class="merge-row"><input type="radio" name="merge15"> <input type="text" value="720-888-5596" ></div>
+					<div class="merge-row"><input type="radio" name="merge16"> <input type="text" value="www.beansinfo.com" ></div>
+					<div class="merge-row"><input type="radio" name="merge17"> <input type="text" value="San Jose" ></div>
+					<div class="merge-row"><input type="radio" name="merge18"> <input type="text" value="53697" ></div>
+					<div class="merge-row"><input type="checkbox" name="merge19"> <input type="text" value="West, North" ></div>
+					<div class="extra hide">
+						<div class="merge-row"><input type="radio" name="merge20"> <input type="text" value="IBM" ></div>
+						<div class="merge-row"><input type="radio" name="merge21"> <input type="text" value="Director" ></div>
+					</div>
+				</div>
+			</div>
+        </div>
+		<div class="col">
+			<div class="box">
+				<div class="merge-view">
+					<div class="merge-row odd"><input type="radio" name="merge11"> SalesForce</div>
+					<div class="merge-row even"><input type="radio" name="merge12"> Telecommunication</div>
+					<div class="merge-row odd"><input type="radio" name="merge13"> San Jose</div>
+					<div class="merge-row even"><input type="radio" name="merge14"> 53697</div>
+					<div class="merge-row odd"><input type="radio" name="merge15"> 720-888-5596</div>
+					<div class="merge-row even"><input type="radio" name="merge16"> www.beansinfo.com</div>
+					<div class="merge-row odd"><input type="radio" name="merge17"> San Jose</div>
+					<div class="merge-row even"><input type="radio" name="merge18"> 53697</div>
+					<div class="merge-row odd"><input type="checkbox" name="merge19"> West, North</div>
+					<div class="extra hide">
+						<div class="merge-row even"><input type="radio" name="merge20"> IBM</div>
+						<div class="merge-row odd"><input type="radio" name="merge21"> Director</div>
+					</div>
+				</div>
+				<div class="merge-edit">
+					<div class="merge-row"><input type="radio" name="merge11"> <input type="text" value="SalesForce" ></div>
+					<div class="merge-row"><input type="radio" name="merge12"> <input type="text" value="Telecommunication" ></div>
+					<div class="merge-row"><input type="radio" name="merge13"> <input type="text" value="San Jose" ></div>
+					<div class="merge-row"><input type="radio" name="merge14"> <input type="text" value="53697" ></div>
+					<div class="merge-row"><input type="radio" name="merge15"> <input type="text" value="720-888-5596" ></div>
+					<div class="merge-row"><input type="radio" name="merge16"> <input type="text" value="www.beansinfo.com" ></div>
+					<div class="merge-row"><input type="radio" name="merge17"> <input type="text" value="San Jose" ></div>
+					<div class="merge-row"><input type="radio" name="merge18"> <input type="text" value="53697" ></div>
+					<div class="merge-row"><input type="checkbox" name="merge19"> <input type="text" value="West, North" ></div>
+					<div class="extra hide">
+						<div class="merge-row"><input type="radio" name="merge20"> <input type="text" value="IBM" ></div>
+						<div class="merge-row"><input type="radio" name="merge21"> <input type="text" value="Director" ></div>
+					</div>
 				</div>
 			</div>
 		</div>
