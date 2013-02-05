@@ -1,0 +1,51 @@
+<div class="record record-merge-interface">
+    <div class="" style="line-height: 40px; padding: 0 10px 0 22px">
+        Trait Institute Inc
+        <a class="pull-right btn btn-link btn-invisible preview check-if-collapsed" href="preview/lead-preview.html" rel="tooltip" data-toggle="proto" data-target="#preview-edit" data-mode="preview" data-original-title="Preview" style="padding-top:8px;"><i class="icon-eye-open"></i></a>
+    </div>
+
+    <div class="merge-interface row-fluid">
+
+
+        <div class="label-div">
+            <div class="col pull-left">
+                {{#each meta.panels}}
+                    {{#if hide}}
+                        <div class="extra hide">
+                        {{#each fields}}
+                            <div class="merge-row"><label for="">{{str label ../../../module}}</label></div>
+                        {{/each}}
+                        </div>
+                    {{else}}
+                        {{#each fields}}
+                            <div class="merge-row"><label for="">{{str label ../../../module}}</label></div>
+                        {{/each}}
+                    {{/if}}
+                {{/each}}
+                <aside><a href="javascript:void(0);" class="show_extra">More <i class="icon-caret-down"></i></a></aside>
+            </div>
+        </div>
+
+        <div class="fluid-div ui-sortable">
+            {{#each collection.models}}
+            <div class="col">
+                <div class="box">
+                    {{#each ../meta.panels}}
+                        {{#if hide}}
+                            <div class="extra hide">
+                            {{#each fields}}
+                                <div class="merge-row odd" style="overflow: hidden;">{{field ../../../../this ../../../this "list"}}</div>
+                            {{/each}}
+                            </div>
+                        {{else}}
+                            {{#each fields}}
+                                <div class="merge-row odd" style="overflow: hidden;">{{field ../../../../this ../../../this "list"}}</div>
+                            {{/each}}
+                        {{/if}}
+                    {{/each}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
