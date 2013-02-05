@@ -126,7 +126,9 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         //Test related link renames
         $contactStrings = return_module_language('en_us','Contacts', TRUE);
         $this->assertEquals('Company Name:', $contactStrings['LBL_ACCOUNT_NAME'], "Rename related links failed for module.");
-        $this->assertEquals('Company ID:', $contactStrings['LBL_ACCOUNT_ID'], "Rename related links failed for module.");
+
+        //The next test is invalidated by the vardef change made in b2ed73ffbfc6cb912a0befffb5d9691526993240 which changes the account_id field to be of type id instead of relate
+        //$this->assertEquals('Company ID:', $contactStrings['LBL_ACCOUNT_ID'], "Rename related links failed for module.");
 
         //Test subpanel renames
         $campaignStrings = return_module_language('en_us','Campaigns', TRUE);
