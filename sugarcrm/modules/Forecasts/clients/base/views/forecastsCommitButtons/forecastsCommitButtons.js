@@ -94,7 +94,6 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
-        if(this.context.worksheet) this.context.worksheet.off(null, null, this);
         if(this.context.worksheetmanager) this.context.worksheetmanager.off(null, null, this);
         if(this.context) this.context.off(null, null, this);
         app.view.View.prototype.unbindData.call(this);
@@ -105,32 +104,29 @@
      */
     bindDataChange: function() {
         var self = this;
-        if(this.context && this.context) {
+        if(this.context) {
             this.context.on("change:selectedUser", function(context, user) {
-                var oldShowButtons = self.showCommitButton;
-                self.showCommitButton = self.checkShowCommitButton(user.id);
+                var oldShowButtons = this.showCommitButton;
+                this.showCommitButton = self.checkShowCommitButton(user.id);
                 // if show buttons has changed, need to re-render
-                if(self.showCommitButton != oldShowButtons) {
-                    self._render();
+                if(this.showCommitButton != oldShowButtons) {
+                    this._render();
                 }
-            });
-            // these are separate so they can be tested
+                this.context.trigger("forecasts:commitButtons:disabled");
+            }, this);
             this.context.on("forecasts:worksheet:reloadCommitButton", function(){
-                self._render();
-            }, self);
+            	this._render();
+            }, this);
             this.context.on("forecasts:worksheetManager:reloadCommitButton", function(){
                 self._render();
             }, self);
-            //this.context.worksheet.on("change", this.showSaveButton, self);
+            //this.context.forecasts.worksheet.on("change", this.showSaveButton, self);
             this.context.on('forecasts:worksheet:dirty', function(model, changed){
                 this.$el.find('#save_draft').removeClass("disabled");
 		        this.context.trigger("forecasts:commitButtons:enabled");
             }, self);
             this.context.on("forecasts:commitButtons:triggerCommit", this.triggerCommit, self);
             this.context.on("forecasts:commitButtons:triggerSaveDraft", this.triggerSaveDraft, self);
-            this.context.on("change:selectedUser", function(){
-            	this.context.trigger("forecasts:commitButtons:disabled");
-            }, this);
             this.context.on("change:selectedTimePeriod", function(){
             	this.context.trigger("forecasts:commitButtons:disabled");
             }, this);
@@ -139,8 +135,8 @@
         }
 
         this.layout.on('inspectorVisible', function(visible) {
-            self.inspectorVisible = visible;
-        })
+            this.inspectorVisible = visible;
+        }, this)
     },
 
     /**
@@ -183,8 +179,7 @@
      * as long as commit button is not disabled
      */
     triggerCommit: function() {
-    	var commitbtn =  this.$el.find('#commit_forecast'),
-    	    savebtn = this.$el.find('#save_draft');
+    	var commitbtn =  this.$el.find('#commit_forecast');
 
         if(!commitbtn.hasClass("disabled")){
             var self = this;
