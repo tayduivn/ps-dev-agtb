@@ -39,8 +39,14 @@
      * @param event
      */
     toggleDropdown:function (event) {
-        if (!this.$(event.target).parent().parent().hasClass('more-drop-container') && !this.$(event.target).hasClass('actionLink')) {
-            var module = this.$(event.target).parent().parent().data('module');
+        var $currentTarget = $(event.currentTarget);
+        if ($currentTarget.next('.dropdown-menu').is(":visible")) {
+            $currentTarget.next('.dropdown-menu').dropdown('toggle');
+            $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
+            return false;
+        }
+        if (!$currentTarget.parent().parent().hasClass('more-drop-container') && !$currentTarget.hasClass('actionLink')) {
+            var module = $currentTarget.parent().parent().data('module');
             var moduleMeta = app.metadata.getModule(module);
             if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
                 this.populateFavorites(module);
@@ -48,11 +54,11 @@
             }
             // NOTE: this is a workaround for bootstrap dropdowns lack of support for events
             // we manually turn this into a dropdown and get rid of its events and reapply our own
-            this.$(event.currentTarget).attr("data-toggle", "dropdown").dropdown('toggle');
-            this.$(event.currentTarget).off();
+            $currentTarget.attr("data-toggle", "dropdown").dropdown('toggle');
+            $currentTarget.off();
             this.delegateEvents();
 
-            $(event.target).closest('.btn-group').closest('li.dropdown').toggleClass('open');
+            $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
         }
     },
     /**
@@ -151,8 +157,8 @@
      */
     onModuleTabClicked: function(evt) {
         var module = this.$(evt.currentTarget).closest('li').data('module');
-        this.activeModule.set(module);
         if (module) {
+            this.activeModule.set(module);
             app.router.navigate(module, {trigger: true});
         }
 
@@ -232,6 +238,10 @@
             currentWidth = $modules.outerWidth(true);
             $moduleToInsert = $nextModule;
 
+            //hide the drop down toggle
+            $moduleToInsert.find('.btn-group').show();
+            $moduleToInsert.find('.moreLink').hide();
+
             // remove the last added module if the width is wider than desired
             if (currentWidth >= width) {
                 this.removeModulesFromList($modules, width);
@@ -240,7 +250,7 @@
         }
 
         if( $dropdown.children().length === 0 && $modules.find('.dropdown').is(":visible") ) {
-            $modules.find('.dropdown').hide();
+            this.$('.more').hide();
         }
     },
 
@@ -266,12 +276,15 @@
             $next = $module.prev();
             $dropdown.prepend($module);
 
+            //hide the drop down toggle
+            $module.find('.btn-group').hide();
+            $module.find('.moreLink').show();
+
             currentWidth = $modules.outerWidth(true);
             $module = $next;
         }
-
-        if( $dropdown.children().length !== 0 && !$modules.find('.dropdown').is(":visible") ) {
-            $modules.find('.dropdown').show();
+        if( $dropdown.children().length !== 0 && $modules.find('.dropdown').is(":visible") ) {
+            this.$('.more').show();
         }
     },
 
