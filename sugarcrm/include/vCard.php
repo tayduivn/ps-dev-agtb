@@ -163,13 +163,12 @@ class vCard
 
 	function importVCard($filename, $module='Contacts'){
 		global $current_user;
-		$lines =	file($filename);
+		$lines = file($filename);
 		$start = false;
-		$contact = BeanFactory::getBean($module);
 
-		$contact->title = 'imported';
-		$contact->assigned_user_id = $current_user->id;
-		$fullname = '';
+        $bean = BeanFactory::getBean($module);
+        $bean->title = 'imported';
+        $bean->assigned_user_id = $current_user->id;
         $email_suffix = 1;
 
 		for($index = 0; $index < sizeof($lines); $index++){
@@ -193,8 +192,8 @@ class vCard
 			if($start){
 				//VCARD is done
 				if(substr_count(strtoupper($line), 'END:VCARD')){
-					if(!isset($contact->last_name)){
-						$contact->last_name = $fullname;
+					if(!isset($bean->last_name) && !empty($fullname)){
+                        $bean->last_name = $fullname;
 					}
                     break;
 				}
@@ -214,35 +213,35 @@ class vCard
 					if($keys[0] == 'TEL'){
 						if(substr_count($key, 'WORK') > 0){
 								if(substr_count($key, 'FAX') > 0){
-										if(!isset($contact->phone_fax)){
-											$contact->phone_fax = $value;
+										if(!isset($bean->phone_fax)){
+											$bean->phone_fax = $value;
 										}
 								}else{
-									if(!isset($contact->phone_work)){
-											$contact->phone_work = $value;
+									if(!isset($bean->phone_work)){
+											$bean->phone_work = $value;
 									}
 								}
 						}
 						if(substr_count($key, 'HOME') > 0){
 								if(substr_count($key, 'FAX') > 0){
-										if(!isset($contact->phone_fax)){
-											$contact->phone_fax = $value;
+										if(!isset($bean->phone_fax)){
+											$bean->phone_fax = $value;
 										}
 								}else{
-									if(!isset($contact->phone_home)){
-											$contact->phone_home = $value;
+									if(!isset($bean->phone_home)){
+											$bean->phone_home = $value;
 									}
 								}
 						}
 						if(substr_count($key, 'CELL') > 0){
-								if(!isset($contact->phone_mobile)){
-										$contact->phone_mobile = $value;
+								if(!isset($bean->phone_mobile)){
+										$bean->phone_mobile = $value;
 								}
 
 						}
 						if(substr_count($key, 'FAX') > 0){
-										if(!isset($contact->phone_fax)){
-											$contact->phone_fax = $value;
+										if(!isset($bean->phone_fax)){
+											$bean->phone_fax = $value;
 						}
 
 						}
@@ -250,11 +249,11 @@ class vCard
 					}
 					if($keys[0] == 'N'){
 						if(sizeof($values) > 0)
-							$contact->last_name = $values[0];
+							$bean->last_name = $values[0];
 						if(sizeof($values) > 1)
-							$contact->first_name = $values[1];
+							$bean->first_name = $values[1];
 						if(sizeof($values) > 2)
-							$contact->salutation = $values[2];
+							$bean->salutation = $values[2];
 
 
 
@@ -269,34 +268,34 @@ class vCard
 					if($keys[0] == 'ADR'){
 						if(substr_count($key, 'WORK') > 0 && (substr_count($key, 'POSTAL') > 0|| substr_count($key, 'PARCEL') == 0)){
 
-								if(!isset($contact->primary_address_street) && sizeof($values) > 2){
+								if(!isset($bean->primary_address_street) && sizeof($values) > 2){
                                         $textBreaks = array("\n", "\r");
                                         $vcardBreaks = array("=0A", "=0D");
-										$contact->primary_address_street = str_replace($vcardBreaks, $textBreaks, $values[2]);
+										$bean->primary_address_street = str_replace($vcardBreaks, $textBreaks, $values[2]);
 								}
-								if(!isset($contact->primary_address_city) && sizeof($values) > 3){
-										$contact->primary_address_city = $values[3];
+								if(!isset($bean->primary_address_city) && sizeof($values) > 3){
+										$bean->primary_address_city = $values[3];
 								}
-								if(!isset($contact->primary_address_state) && sizeof($values) > 4){
-										$contact->primary_address_state = $values[4];
+								if(!isset($bean->primary_address_state) && sizeof($values) > 4){
+										$bean->primary_address_state = $values[4];
 								}
-								if(!isset($contact->primary_address_postalcode) && sizeof($values) > 5){
-										$contact->primary_address_postalcode = $values[5];
+								if(!isset($bean->primary_address_postalcode) && sizeof($values) > 5){
+										$bean->primary_address_postalcode = $values[5];
 								}
-								if(!isset($contact->primary_address_country) && sizeof($values) > 6){
-										$contact->primary_address_country = $values[6];
+								if(!isset($bean->primary_address_country) && sizeof($values) > 6){
+										$bean->primary_address_country = $values[6];
 								}
 						}
 					}
 
 					if($keys[0] == 'TITLE'){
-						$contact->title = $value;
+						$bean->title = $value;
 
 					}
 					if($keys[0] == 'EMAIL'){
                         $field = 'email' . $email_suffix;
-						if(!isset($contact->$field)) {
-						   $contact->$field = $value;
+						if(!isset($bean->$field)) {
+						   $bean->$field = $value;
 						}
 
 						if($email_suffix == 1) {
@@ -310,7 +309,7 @@ class vCard
                         $GLOBALS['log']->debug('I found a company name');
 						if(!empty($value)){
                             $GLOBALS['log']->debug('I found a company name (fer real)');
-                            if ( $contact instanceof Contact || $contact instanceof Lead ) {
+                            if ( $bean instanceof Contact || $bean instanceof Lead ) {
                                 $GLOBALS['log']->debug('And Im dealing with a person!');
                                 $accountBean = BeanFactory::getBean('Accounts');
                                 // It's a contact, we better try and match up an account
@@ -335,19 +334,19 @@ class vCard
                                     $result = $accountBean->retrieve_by_string_fields(array('name' => $short_company_name, 'deleted' => 0));
                                 }
 
-                                if ( $contact instanceof Lead || ! isset($result->id) ) {
+                                if ( $bean instanceof Lead || ! isset($result->id) ) {
                                     // We could not find a parent account, or this is a lead so only copy the name, no linking
                                     $GLOBALS['log']->debug("Did not find a matching company ($full_company_name)");
-                                    $contact->account_id = '';
-                                    $contact->account_name = $full_company_name;
+                                    $bean->account_id = '';
+                                    $bean->account_name = $full_company_name;
                                 } else {
                                     $GLOBALS['log']->debug("Found a matching company: ".$result->name);
-                                    $contact->account_id = $result->id;
-                                    $contact->account_name = $result->name;
+                                    $bean->account_id = $result->id;
+                                    $bean->account_name = $result->name;
                                 }
-                                $contact->department = $values[1];
+                                $bean->department = $values[1];
                             } else{
-								$contact->department = $value;
+								$bean->department = $value;
                             }
 						}
 
@@ -365,22 +364,33 @@ class vCard
 
 		}
 
-        if ( $contact instanceof Contact && empty($contact->account_id) && !empty($contact->account_name) ) {
-            $GLOBALS['log']->debug("Look ma! I'm creating a new account: ".$contact->account_name);
+        foreach ($bean->get_import_required_fields() as $key => $value)
+        {
+            $GLOBALS['log']->fatal("Required field is not set: $key");
+            if (empty($bean->$key))
+            {
+                return;
+            }
+        }
+
+        if ( $bean instanceof Contact && empty($bean->account_id) && !empty($bean->account_name) ) {
+            $GLOBALS['log']->debug("Look ma! I'm creating a new account: ".$bean->account_name);
             // We need to create a new account
             $accountBean = BeanFactory::getBean('Accounts');
             // Populate the newly created account with all of the contact information
-            foreach ( $contact->field_defs as $field_name => $field_def ) {
-                if ( !empty($contact->$field_name) ) {
-                    $accountBean->$field_name = $contact->$field_name;
+            foreach ( $bean->field_defs as $field_name => $field_def ) {
+                if ( !empty($bean->$field_name) ) {
+                    $accountBean->$field_name = $bean->$field_name;
                 }
             }
-            $accountBean->name = $contact->account_name;
+            $accountBean->name = $bean->account_name;
             $accountBean->save();
-            $contact->account_id = $accountBean->id;
+            $bean->account_id = $accountBean->id;
         }
 
-        $contactId = $contact->save();
-        return $contactId;
+        $beanId = $bean->save();
+        return $beanId;
 	}
-}
+	}
+
+?>
