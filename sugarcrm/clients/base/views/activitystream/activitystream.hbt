@@ -9,7 +9,7 @@
 </div>
 {{/eq}}
 <p>
-    {{str ../tpl "Activities" data}}
+    {{{str ../tpl "Activities" data}}}
     <br>
     <date class="date">
         <a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
@@ -41,8 +41,8 @@
 {{/if}}
     <li class="acomment hide">
         <div class="control-group form-horizontal">
-            <input placeholder="Add your comment" class="reply span11">
-            <input type="submit" class="btn btn-primary span1" value="Reply">
+            <input class="reply span11" placeholder="Add your comment">
+            <input class="btn btn-primary span1 reply-btn" type="submit" value="Reply">
         </div>
     </li>
 </ul>

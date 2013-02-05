@@ -46,6 +46,24 @@
         }
 
         this.tpl = "TPL_ACTIVITY_" + this.model.get('activity_type').toUpperCase();
+
+        if(this.model.get('activity_type') === "update") {
+            var updateTpl = Handlebars.compile(app.lang.get('TPL_ACTIVITY_UPDATE_FIELD', 'Activities')),
+                parentType = this.model.get("parent_type"),
+                fields = app.metadata.getModule(parentType).fields,
+                data = this.model.get('data');
+
+            data.updateStr = _.reduce(data.changes, function(memo, changeObj) {
+                changeObj.field_label = app.lang.get(fields[changeObj.field_name].vname, parentType);
+
+                if(memo) {
+                    return updateTpl(changeObj) + ', ' + memo;
+                }
+                return updateTpl(changeObj);
+            }, '');
+
+            this.model.set('data', data);
+        }
     },
 
     fetchComments: function() {
