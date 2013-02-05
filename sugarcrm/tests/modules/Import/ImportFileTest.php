@@ -30,17 +30,18 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
     }
 
     public function tearDown()
     {
         SugarTestImportUtilities::removeAllCreatedFiles();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         foreach($this->unlink as $file) {
             @unlink($file);
         }
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
     }
 
     /**
