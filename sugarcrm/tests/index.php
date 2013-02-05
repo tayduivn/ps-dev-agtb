@@ -15,8 +15,6 @@ if (file_exists('../config.js')) {
     echo '<script src="../sidecar/tests/config.js" type="text/javascript"></script>';
 }
 ?>
-    <script type="text/javascript" src="../include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
-    <script type="text/javascript" src="../include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
     <script type="text/javascript" src="../include/javascript/jquery/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="../styleguide/assets/js/bootstrap-collapse.js"></script>
 
