@@ -74,8 +74,7 @@ class SugarBeanApiHelper
 
                 //BEGIN SUGARCRM flav=pro ONLY
                 if ( !$bean->ACLFieldAccess($fieldName,'read') ) { 
-                    // No read access to this field, skip it.
-                    //continue;
+                    // No read access to the file, eh?  Unset the field from the array of data returned
                     unset($data[$fieldName]);
                 }
                 //END SUGARCRM flav=pro ONLY                
