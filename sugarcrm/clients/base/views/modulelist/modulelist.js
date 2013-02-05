@@ -15,7 +15,7 @@
         'mouseleave .dropdown-menu': 'hideMenu'
     },
     hideMenu: function(event) {
-        this.$(event.target).dropdown('toggle');
+        this.$(event.target).dropdown('toggle').closest('li.dropdown.open').removeClass('open');
     },
     showMore: function(event) {
         this.$('.more-drop-container').show();
@@ -51,6 +51,8 @@
             this.$(event.currentTarget).attr("data-toggle", "dropdown").dropdown('toggle');
             this.$(event.currentTarget).off();
             this.delegateEvents();
+
+            $(event.target).closest('.btn-group').closest('li.dropdown').toggleClass('open');
         }
     },
     /**
