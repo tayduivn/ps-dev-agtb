@@ -7940,6 +7940,9 @@ h4.merge-interface-header .preview {
   display: inline-block;
   margin: 2px 0 0 10px;
 }
+.merge-interface .col .primary-lbl {
+  visibility: hidden;
+}
 .merge-interface .col .box {
   border-radius: 3px;
   -webkit-box-shadow: 0 0 1px #aaaaaa;
@@ -7951,6 +7954,20 @@ h4.merge-interface-header .preview {
 }
 .merge-interface .col .box .merge-view {
   display: block;
+}
+.merge-interface .col:first-child .primary-lbl {
+  visibility: visible;
+  width: 80%;
+  margin-left: 10%;
+  margin-bottom: 5%;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  background: #E9E9E9;
+  text-align: center;
+  font-size: 11px;
+  text-shadow: -1px -1px 1px #fff;
 }
 .merge-interface .col:first-child .box {
   background: #F7F7F7;
@@ -7989,28 +8006,6 @@ h4.merge-interface-header .preview {
 }
 .merge-interface .merge-row.even {
   background: #FDF9EA;
-}
-.merge-interface .merge-primary-controller {
-  width: 100%;
-  height: 30px;
-  white-space: nowrap;
-}
-.merge-interface .merge-primary-controller .col {
-  height: 18px;
-  width: 100px;
-  margin-left: 20px;
-  margin-right: 20px;
-}
-.merge-interface .merge-primary-controller .col.prim {
-  border: 1px solid #ccc;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  background: #E9E9E9;
-  text-align: center;
-  font-size: 11px;
-  text-shadow: -1px -1px 1px #fff;
-  cursor: move;
 }
 .record-merge-interface {
   overflow-y: scroll !important;
@@ -8609,11 +8604,11 @@ h1 .select2-container .select2-choice div {
   margin: 0 0 0 8px;
 }
 .record .record-cell[data-type="textarea"] .normal > span {
-  display: block !important;
+  display: inline !important;
   margin-bottom: 9px;
 }
 .record .record-cell[data-type="textarea"] .textarea-text {
-  display: block !important;
+  display: inline !important;
   padding: 7px 0;
 }
 .record .record-cell[data-type="url"] .normal > span {
