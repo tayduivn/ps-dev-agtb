@@ -14,12 +14,10 @@
     },
 
     bindDataChange: function() {
-        var self = this;
-
         if (this.model) {
             this.model.on("change:" + this.name, function() {
-                self.model.set(self.name + "_collection", self._splitRecipients(self.model.get(self.name)));
-                self.render();
+                this.model.set(this.name + "_collection", this._splitRecipients(this.model.get(this.name)));
+                this.render();
             }, this);
         }
 
@@ -29,8 +27,7 @@
     },
 
     _addRecipients: function(models) {
-        var self               = this,
-            existingRecipients = this.model.get(this.name);
+        var existingRecipients = this.model.get(this.name);
 
         if (models instanceof Backbone.Collection) {
             // get the raw array of models to be added since collection.add takes an a single model or array of models
@@ -47,10 +44,10 @@
         }
 
         _.each(models, function(recipient) {
-            recipient = self._formatRecipient(recipient);
+            recipient = this._formatRecipient(recipient);
 
             // only the add the recipient if the recipient isn't already in the field's value
-            if (!self._hasRecipient(recipient, existingRecipients)) {
+            if (!this._hasRecipient(recipient, existingRecipients)) {
                 if (!_.isEmpty(existingRecipients)) {
                     existingRecipients += ",";
                 }
@@ -63,8 +60,7 @@
     },
 
     _removeRecipients: function(models) {
-        var self               = this,
-            existingRecipients = this.model.get(this.name);
+        var existingRecipients = this.model.get(this.name);
 
         if (models instanceof Backbone.Collection) {
             // get the raw array of models to be added since collection.remove takes an a single model or array of models
@@ -81,7 +77,7 @@
         }
 
         _.each(models, function(recipient) {
-            existingRecipients = self._findAndRemoveRecipient(self._formatRecipient(recipient), existingRecipients);
+            existingRecipients = this._findAndRemoveRecipient(this._formatRecipient(recipient), existingRecipients);
         }, this);
 
         this.model.set(this.name, existingRecipients);

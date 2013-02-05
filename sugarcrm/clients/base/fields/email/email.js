@@ -47,7 +47,7 @@
 
         // determine if the app should send email according to the has_outbound_email_config user preference
         var hasOutboundEmailConfig = app.user.getPreference("has_outbound_email_config");
-        this.sendEmailFromApp      = (hasOutboundEmailConfig === "true") ? true : false;
+        this.sendEmailFromApp      = (hasOutboundEmailConfig === "true");
     },
     /**
      * Event handler for change of the .newEmail input, we want to test if a new e-mail needs to be added
