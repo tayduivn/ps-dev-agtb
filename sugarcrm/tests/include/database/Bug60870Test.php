@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,67 +22,48 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+require_once 'modules/Bugs/Bug.php';
 
-require_once 'include/api/RestService.php';
-require_once 'clients/base/api/RelateRecordApi.php';
-
-class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
+class Bug60780Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected $createdBeans = array();
+    protected $has_disable_count_query_enabled;
 
     public function setUp()
     {
+        global $sugar_config;
+
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
+        $this->has_disable_count_query_enabled = !empty($sugar_config['disable_count_query']);
+        if(!$this->has_disable_count_query_enabled) {
+           $sugar_config['disable_count_query'] = true;
+        }
     }
 
     public function tearDown()
     {
-        foreach($this->createdBeans as $bean)
-        {
-            $bean->retrieve($bean->id);
-            $bean->mark_deleted($bean->id);
+        global $sugar_config;
+        if(!empty($this->bugid)) {
+            $GLOBALS['db']->query("DELETE FROM bugs WHERE id='{$this->bugid}'");
+        }
+        if(!$this->has_disable_count_query_enabled) {
+           unset($sugar_config['disable_count_query']);
         }
         SugarTestHelper::tearDown();
     }
 
-    public function testCreateRelatedNote() {
-        $contact = BeanFactory::getBean("Contacts");
-        $contact->last_name = "Related Record Unit Test Contact";
-        $contact->save();
-        // Get the real data that is in the system, not the partial data we have saved
-        $contact->retrieve($contact->id);
-        $this->createdBeans[] = $contact;
-        $noteName = "Related Record Unit Test Note";
+    public function testCreateBug()
+    {
+        $bug = BeanFactory::newBean('Bugs');
+        $bug->id = $this->bugid = create_guid();
+        $bug->new_with_id = true;
+        $bug->name = "Module Contains Field With 'select'; Test Info";
+        $bug->description = file_get_contents(dirname(__FILE__)."/bug_60870_text.txt");
+        $bug->save();
 
-        $api = new RestService();
-        //Fake the security
-        $api->user = $GLOBALS['current_user'];
-
-
-        $args = array(
-            "module" => "Contacts",
-            "record" => $contact->id,
-            "link_name" => "notes",
-            "name" => $noteName,
-            "assigned_user_id" => $GLOBALS['current_user']->id,
-        );
-        $apiClass = new RelateRecordApi();
-        $result = $apiClass->createRelatedRecord($api, $args);
-
-        $this->assertNotEmpty($result['record']);
-        $this->assertNotEmpty($result['related_record']['id']);
-        $this->assertEquals($noteName, $result['related_record']['name']);
-
-        $note = BeanFactory::getBean("Notes", $result['related_record']['id']);
-        // Get the real data that is in the system, not the partial data we have saved
-        $note->retrieve($note->id);
-        $this->createdBeans[] = $note;
-
-        $contact->load_relationship("notes");
-        $relatedNoteIds = $contact->notes->get();
-        $this->assertNotEmpty($relatedNoteIds);
-        $this->assertEquals($note->id, $relatedNoteIds[0]);
+        $bug = new Bug();
+        $bug->retrieve($this->bugid);
+        $this->assertEquals($this->bugid, $bug->id);
     }
 }

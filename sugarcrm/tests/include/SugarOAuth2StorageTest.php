@@ -99,6 +99,7 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         SugarTestHelper::tearDown();
 
         parent::tearDown();
+        $_SESSION=array();
     }
 
     /**
