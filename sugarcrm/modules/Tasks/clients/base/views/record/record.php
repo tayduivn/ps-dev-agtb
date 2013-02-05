@@ -1,8 +1,5 @@
 <?php
 //FILE SUGARCRM flav=pro || flav=sales ONLY
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -39,9 +36,18 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'showOn' => 'edit',
         ),
         array(
+            'type' => 'rowaction',
+            'event' => 'button:save_button:click',
+            'name' => 'save_button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class' => 'btn btn-primary',
+            'showOn' => 'edit',
+        ),
+        array(
             'type' => 'actiondropdown',
             'name' => 'main_dropdown',
             'primary' => true,
+            'showOn' => 'view',
             'buttons' => array(
                 array(
                     'type' => 'rowaction',
@@ -49,75 +55,30 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     'name' => 'edit_button',
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
-                    'showOn' => 'view',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:save_button:click',
-                    'name' => 'save_button',
-                    'label' => 'LBL_SAVE_BUTTON_LABEL',
-                    'primary' => true,
-                    'showOn' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:delete_button:click',
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'showOn' => 'view',
                 ),
                 array(
                     'type' => 'rowaction',
                     'name' => 'duplicate_button',
                     'event' => 'button:duplicate_button:click',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'showOn' => 'view',
                 ),
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'closebutton',
                     'name' => 'record-close-new',
                     'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_TITLE',
-                    'showOn' => 'view',
-                    'events' => array(
-                        'click' => 'function(e){
-                        var self = this;
-                        app.alert.show("close_task", {level: "process", title: app.lang.getAppString("LBL_PROCESSING_REQUEST")});
-                        this.model.set("status", "Completed", {silent:true});
-                        this.model.save({}, {
-                            success: function() {
-                                app.alert.dismiss("close_task");
-                                self.view.duplicateClicked();
-                            },
-                            error:function(error) {
-                                app.alert.dismiss("close_task");
-                                app.alert.show("close_task_error", {level: "error", autoClose: true, title: app.lang.getAppString("ERR_AJAX_LOAD")});
-                                app.logger.error("Failed to close a task. " + error);
-                            }
-                        });
-                    }'),
+                    'value' => 'edit',
                 ),
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'closebutton',
                     'name' => 'record-close',
                     'label' => 'LBL_CLOSE_BUTTON_TITLE',
-                    'showOn' => 'view',
-                    'events' => array(
-                        'click' => 'function(e){
-                        var self = this;
-                        app.alert.show("close_task", {level: "process", title: app.lang.getAppString("LBL_PROCESSING_REQUEST")});
-                        this.model.set("status", "Completed", {silent:true});
-                        this.model.save({}, {
-                            success: function() {
-                                app.alert.dismiss("close_task");
-                                self.render();
-                            },
-                            error:function(error) {
-                                app.alert.dismiss("close_task");
-                                app.alert.show("close_task_error", {level: "error", autoClose: true, title: app.lang.getAppString("ERR_AJAX_LOAD")});
-                                app.logger.error("Failed to close a task. " + error);
-                            }
-                        });
-                    }'),
+                    'value' => 'edit',
                 ),
             ),
         ),
