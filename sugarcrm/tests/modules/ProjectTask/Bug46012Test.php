@@ -46,16 +46,13 @@ class Bug46012Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-<<<<<<< HEAD
-        $GLOBALS['current_user'] = $this->user = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('current_user');
         $this->project = SugarTestProjectUtilities::createProject();
-=======
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user');
         $this->user = $GLOBALS['current_user'];
         $this->project = new Project();
->>>>>>> 6_6_2
+
         $this->project->name = 'Bug46012Test';
         $this->project->team_id = $this->user->team_id;
         $this->project->team_set_id = $this->user->team_set_id;

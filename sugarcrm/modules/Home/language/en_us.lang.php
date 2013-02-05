@@ -242,16 +242,7 @@ $mod_strings = array (
   'LBL_SOURCE_PHPJS' => 'php.js - Use PHP functions in JavaScript',
   'LBL_SOURCE_PHPSQL' => 'PHP SQL Parser',
   'LBL_SOURCE_HTMLPURIFIER' => 'HTML Purifier - A standards-compliant HTML filtering library.',
-<<<<<<< HEAD
-=======
   'LBL_SOURCE_XHPROF' => 'XHProf - A function-level hierarchical profiler for PHP.',
-//BEGIN SUGARCRM flav=dce ONLY
-  'LNK_NEW_DCEINSTANCE' => 'Create Instance',
-  'LNK_NEW_DCECLUSTER' => 'Create Cluster',
-  'LNK_NEW_DCETEMPLATE' => 'Create Template',
-//END SUGARCRM flav=dce ONLY
->>>>>>> 6_6_2
-
   'LBL_DASHLET_TITLE' => 'My Sites',
   'LBL_DASHLET_OPT_TITLE' => 'Title',
   'LBL_DASHLET_OPT_URL' => 'Website Location',

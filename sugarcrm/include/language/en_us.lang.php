@@ -3631,7 +3631,7 @@ $app_strings = array (
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
     'LBL_PANEL_DEFAULT' => 'Default',
-<<<<<<< HEAD
+    'ERR_BAD_RESPONSE_FROM_SERVER' => 'Bad response from the server',
 
     //BEGIN SUGARCRM flav=pro ONLY
     //These are for the timeperiod name formats
@@ -3639,9 +3639,6 @@ $app_strings = array (
     'LBL_QUARTER_TIMEPERIOD_FORMAT' => 'Q{0} ({1} - {2})',
     'LBL_MONTH_TIMEPERIOD_FORMAT' => '{0} - {1}',
     //END SUGARCRM flav=pro ONLY
-=======
-    'ERR_BAD_RESPONSE_FROM_SERVER' => 'Bad response from the server',
->>>>>>> 6_6_2
 );
 
 

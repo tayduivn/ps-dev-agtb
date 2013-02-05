@@ -521,16 +521,6 @@ class SchedulersJob extends Basic
             if($tmpJob instanceof RunnableSchedulerJob)
             {
                 $tmpJob->setJob($this);
-<<<<<<< HEAD
-                $result = $tmpJob->run($this->data);
-                if($result) {
-                    $this->resolveJob(self::JOB_SUCCESS);
-                    return true;
-                }  else {
-                    $this->resolveJob(self::JOB_FAILURE);
-                    return false;
-                }
-=======
                 $return_status = $tmpJob->run($this->data);
 				if($return_status) {
 					$this->resolveJob(self::JOB_SUCCESS);
@@ -539,7 +529,6 @@ class SchedulersJob extends Basic
 					$this->resolveJob(self::JOB_FAILURE);
 					return false;
 				}
->>>>>>> 6_6_2
             }
             else {
                 $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target)));

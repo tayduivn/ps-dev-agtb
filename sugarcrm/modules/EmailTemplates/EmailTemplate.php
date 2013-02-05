@@ -99,8 +99,9 @@ class EmailTemplate extends SugarBean {
 		'accept_status_name',
 	);
 
+    protected $storedVariables = array();
+
     /**
-<<<<<<< HEAD
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct
@@ -113,14 +114,7 @@ class EmailTemplate extends SugarBean {
 
 	public function __construct() {
 		parent::__construct();
-=======
-     * @var array temp storage for template variables while cleanBean
-     */
-    protected $storedVariables = array();
 
-	function EmailTemplate() {
-		parent::SugarBean();
->>>>>>> 6_6_2
 		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		if(!empty($current_user)) {
@@ -761,4 +755,3 @@ class EmailTemplate extends SugarBean {
         return $this->storedVariables[$text[0]];
     }
 }
-?>

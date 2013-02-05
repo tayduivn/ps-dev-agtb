@@ -390,7 +390,8 @@ class ModuleBuilderController extends SugarController
     {
         if (!empty ($_REQUEST ['view_module']) && !empty($_REQUEST ['labelValue'])) {
             $_REQUEST ["label_" . $_REQUEST ['label']] = $_REQUEST ['labelValue'];
-<<<<<<< HEAD
+
+            require_once 'modules/ModuleBuilder/parsers/parser.label.php';
             $parser = new ParserLabel ($_REQUEST['view_module'], isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null);
             $parser->handleSave($_REQUEST, $GLOBALS ['current_language']);
             
@@ -399,9 +400,6 @@ class ModuleBuilderController extends SugarController
             // set here so that it isn't called again in methods that call this 
             // method.
             $this->metadataApiCacheCleared;
-=======
-            require_once 'modules/ModuleBuilder/parsers/parser.label.php';
->>>>>>> 6_6_2
 
             $modules = array();
             $relate_arr = array('Users' => 'Employees',

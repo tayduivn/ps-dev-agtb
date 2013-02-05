@@ -132,13 +132,10 @@ if (version_compare(phpversion(),'5.2.0') >=0) {
 	$anyScriptChanges = '';
 	$db =& DBManagerFactory::getInstance();
 
-<<<<<<< HEAD
-=======
 	//Quickcreatedefs on the basis of editviewdefs
     updateQuickCreateDefs();
 	upgradeSugarCache($_SESSION['install_file']);
 
->>>>>>> 6_6_2
 	if((count($errors) == 1)) { // only diffs
 		logThis('file preflight check passed successfully.');
 		$stop = false;

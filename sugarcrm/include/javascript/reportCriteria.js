@@ -642,12 +642,7 @@ function addFilterInput(cell,filter) {
 		else {
 			addFilterInputSelectSingle(row,users_array,filter);
 		}
-	} 
-<<<<<<< HEAD
-	else if (field_type == 'enum' || field_type == 'multienum' || field_type == 'parent_type' || field_type == 'timeperiod') {
-=======
-	else if (field_type == 'enum' || field_type == 'multienum' || field_type == 'parent_type' || field_type == 'currency_id') {
->>>>>>> 6_6_2
+	} else if (field_type == 'enum' || field_type == 'multienum' || field_type == 'parent_type' || field_type == 'timeperiod' || field_type == 'currency_id') {
 		if (qualifier_name == 'one_of' || qualifier_name == 'not_one_of') {
 			addFilterInputSelectMultiple(row,field.options,filter);
 		}

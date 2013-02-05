@@ -3083,12 +3083,8 @@ SUGAR.reports = function() {
 					SUGAR.reports.addFilterInputSelectSingle(row,users_array,filter,rowId);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				}
-			} 
-<<<<<<< HEAD
-			else if (field_type == 'enum' || field_type == 'multienum'  || field_type == 'radioenum' || field_type == 'parent_type' || field_type == 'timeperiod') {
-=======
-			else if (field_type == 'enum' || field_type == 'multienum'  || field_type == 'radioenum' || field_type == 'parent_type' || field_type == 'currency_id') {
->>>>>>> 6_6_2
+			} else if (field_type == 'enum' || field_type == 'multienum'  || field_type == 'radioenum' || field_type == 'parent_type' || field_type == 'timeperiod' || field_type == 'currency_id') {
+
 				if (qualifier_name == 'one_of' || qualifier_name == 'not_one_of') {
 					SUGAR.reports.addFilterInputSelectMultiple(row,field.options,filter,rowId);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		

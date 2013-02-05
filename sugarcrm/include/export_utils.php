@@ -198,11 +198,8 @@ function getExportContentFromResult(
     }
 
     // setup the "header" line with proper delimiters
-<<<<<<< HEAD
-    $content = "\"".implode("\"". $delimiter ."\"", array_values($field_labels))."\"\r\n";
-=======
     $content .= "\"".implode("\"".getDelimiter()."\"", array_values($field_labels))."\"\r\n";
->>>>>>> 6_6_2
+
     $pre_id = '';
 
     if($populate){

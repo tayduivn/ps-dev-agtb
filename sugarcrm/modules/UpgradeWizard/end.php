@@ -298,21 +298,6 @@ logThis('Begin upgrade_connectors', $path);
 upgrade_connectors();
 logThis('End upgrade_connectors', $path);
 
-<<<<<<< HEAD
-=======
-//BEGIN SUGARCRM flav=pro ONLY
->>>>>>> 6_6_2
-if (version_compare($_SESSION['current_db_version'], '6.5.0', '<'))
-{
-    // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
-    $db->query("UPDATE email_templates SET type = 'workflow' WHERE
-        coalesce(" . $db->convert("base_module", "length") . ",0) > 0
-        AND
-        coalesce(" . $db->convert("type", "length") . ",0) = 0
-    ");
-}
-//END SUGARCRM flav=pro ONLY
-
 if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 {
     rebuildSprites(true);
@@ -329,7 +314,6 @@ upgrade_custom_relationships();
 
 require_once('modules/UpgradeWizard/uw_utils.php');
 
-<<<<<<< HEAD
 //Patch for bug57431 : Module name isn't updated in portal layout editor
 updateRenamedModulesLabels();
 
@@ -343,8 +327,6 @@ if(version_compare($_SESSION['current_db_version'], '6.7.0', '<'))
 }
 //END SUGARCRM flav=PRO ONLY
 
-=======
->>>>>>> 6_6_2
 //Update the license
 logThis('Start Updating the license ', $path);
 ob_start();

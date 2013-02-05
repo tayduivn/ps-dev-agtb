@@ -576,11 +576,8 @@ qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings
 filter_defs['enum'] = qualifiers;
 filter_defs['radioenum'] = qualifiers;
 filter_defs['parent_type'] = qualifiers;
-<<<<<<< HEAD
 filter_defs['timeperiod'] = qualifiers;
-=======
 filter_defs['currency_id'] = qualifiers;
->>>>>>> 6_6_2
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};

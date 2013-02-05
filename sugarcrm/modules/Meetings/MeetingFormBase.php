@@ -337,13 +337,9 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
                 handleRedirect('', 'Meetings');
             }
 
-<<<<<<< HEAD
-
-            $focus->setContactInvitees($focus->contacts_arr, $existingContacts);
-=======
             $focus->setUserInvitees($userInvitees, $existingUsers);
             $focus->setContactInvitees($contactInvitees, $existingContacts);
->>>>>>> 6_6_2
+
             //BEGIN SUGARCRM flav!=sales ONLY
             $focus->setLeadInvitees($focus->leads_arr, $existingLeads);
             //END SUGARCRM flav!=sales ONLY

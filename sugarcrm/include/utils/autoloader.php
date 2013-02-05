@@ -205,7 +205,6 @@ class SugarAutoLoader
         if(self::getFilenameForExpressionClass($class)) {
             return true;
         }
-<<<<<<< HEAD
         //END SUGARCRM flav=pro ONLY
 
 		// Try known dirs
@@ -225,15 +224,6 @@ class SugarAutoLoader
 		        return true;
 		    }
 		}
-=======
-        //BEGIN SUGARCRM flav=pro ONLY
-        $expression = self::getFilenameForExpressionClass($class);
-        if (!empty($expression)) {
-            require_once($expression);
-            return true;
-        }
-        //END SUGARCRM flav=pro ONLY
->>>>>>> 6_6_2
 
   		return false;
 	}
@@ -447,41 +437,29 @@ class SugarAutoLoader
     protected static function getFilenameForExpressionClass($class)
     {
         if(substr($class, -10) == 'Expression') {
-<<<<<<< HEAD
-            if(self::requireWithCustom("include/Expressions/Expression/{$class}.php"))
+            if(self::requireWithCustom("include/Expressions/Expression/{$class}.php")) {
                 return true;
-            $types = array("Boolean", "Date", "Enum", "Generic", "Numeric", "Relationship", "String", "Time");
-            foreach($types as $type) {
-                if(self::requireWithCustom("include/Expressions/Expression/{$type}/{$class}.php"))
-                    return true;
-=======
-            $file = get_custom_file_if_exists("include/Expressions/Expression/{$class}.php");
-            if (file_exists($file))
-                return $file;
+            }
 
             $types = array("Boolean", "Date", "Enum", "Generic", "Numeric", "Relationship", "String", "Time");
+
             foreach($types as $type) {
-                $file = get_custom_file_if_exists("include/Expressions/Expression/{$type}/{$class}.php");
-                if (file_exists($file))
-                    return $file;
->>>>>>> 6_6_2
+                if(self::requireWithCustom("include/Expressions/Expression/{$type}/{$class}.php")) {
+                    return true;
+                }
             }
         }
         return false;
     }
     //END SUGARCRM flav=pro ONLY
 
-<<<<<<< HEAD
+
     /**
      * Load all classes in self::$map
      */
 	public static function loadAll()
 	{
 		foreach(self::$map as $class=>$file){
-=======
-	public static function loadAll(){
-		foreach(SugarAutoLoader::$map as $class=>$file){
->>>>>>> 6_6_2
 			require_once($file);
 		}
 		if(isset($GLOBALS['beanFiles'])){

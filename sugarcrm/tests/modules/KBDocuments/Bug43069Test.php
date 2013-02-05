@@ -27,81 +27,11 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-<<<<<<< HEAD
-    /**
-     * Bug #43069
-     *
-     * User Still Able To Create Knowledge Base Articles With Module Access Disabled Via Roles
-     * @ticket 43069
-     * @author arymarchik@sugarcrm.com
-     */
-
-class Bug43069Test extends Sugar_PHPUnit_Framework_OutputTestCase
-{
-    public function setUp()
-    {
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('current_user');
-
-        $_SESSION['ACL'] = array();
-        $_SESSION['ACL'][$GLOBALS['current_user']->id]['KBDocuments'] =
-        array(
-            'module' => array(
-                'access' =>
-                array(
-                    'id' => '576ff3d9-ae73-4332-bf9f-4f196ec6b887',
-                    'aclaccess' => '-98',
-                    'isDefault' => false,
-                ),
-                'admin' => array(
-                    'id' => '4b3f757d-f5c4-2c55-2253-4f196e813bc7',
-                    'aclaccess' => '1',
-                    'isDefault' => true,
-                ),
-                'delete' => array(
-                    'id' => '94c5715e-225d-85ff-1405-4f196ef5fcf4',
-                    'aclaccess' => '90',
-                    'isDefault' => true,
-                ),
-                'edit' => array(
-                    'id' => '866f6463-8c7b-0108-f2c2-4f196e14cb70',
-                    'aclaccess' => '90',
-                    'isDefault' => true,
-                ),
-                'export' => array(
-                    'id' => 'b55c8527-15f4-308e-762a-4f196e414a41',
-                    'aclaccess' => '90',
-                    'isDefault' => true,
-                ),
-                'import' => array(
-                    'id' => 'a302ad84-6808-9301-62b0-4f196ee27ed9',
-                    'aclaccess' => '90',
-                    'isDefault' => true,
-                ),
-                'list' => array(
-                    'id' => '762b0348-4d7e-a65d-b4db-4f196e586388',
-                    'aclaccess' => '90',
-                    'isDefault' => true,
-                ),
-                'view' => array(
-                    'id' => '65b3bd7e-114d-eb10-2c73-4f196efc3550',
-                    'aclaccess' => '90',
-                    'isDefault' => true,
-                ),
-            ),
-            'fields' => array(),
-        );
-        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ACL');
-        // reset cached ACLs
-        SugarACL::$acls = array();
-=======
 
 /**
  * Bug #43069
  *
- *  User Still Able To Create Knowledge Base Articles With Module Access Disabled Via Roles
+ * User Still Able To Create Knowledge Base Articles With Module Access Disabled Via Roles
  * @ticket 43069
  * @author arymarchik@sugarcrm.com
  */
@@ -127,19 +57,15 @@ class Bug43069Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $this->role->load_relationship('users');
         $this->role->users->add($current_user);
         $this->role->save();
->>>>>>> 6_6_2
     }
 
     /**
      * Creating KBDocument bean and try to display view for action EditView for user with access rights
      *
      * @group 43069
-     *
      */
     public function testAccessToKBDocument()
     {
-<<<<<<< HEAD
-=======
         global $current_user;
 
         $acl = new ACLAction();
@@ -198,30 +124,19 @@ class Bug43069Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     protected function render()
     {
->>>>>>> 6_6_2
         $controller = new KBDocument();
         $view_object_map = array('remap_action' => 'edit');
         $view = ViewFactory::loadView('classic', 'KBDocuments', $controller, $view_object_map, null);
-<<<<<<< HEAD
-        $this->expectOutputRegex('/.*' . quotemeta($GLOBALS['mod_strings']['LBL_NO_ACCESS']) . '.*/');
-        $view->action='EditView';
-=======
         $view->action = 'EditView';
->>>>>>> 6_6_2
         $GLOBALS['current_view'] = $view;
         $view->display();
     }
 
     public function tearDown()
     {
-<<<<<<< HEAD
-        SugarTestHelper::tearDown();
-        unset($_SESSION['ACL']);
-=======
         ACLAction::removeActions('KBDocuments');
         $this->role->mark_deleted($this->role->id);
         unset($_SESSION['ACL']);
         SugarTestHelper::tearDown();
->>>>>>> 6_6_2
     }
 }

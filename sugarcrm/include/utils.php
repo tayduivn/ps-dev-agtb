@@ -1079,13 +1079,7 @@ function _mergeCustomAppListStrings($file , $app_list_strings)
     // FG - bug 45525 - Specific codelists must NOT be overwritten
 	$exemptDropdowns[] = "moduleList";
 	$exemptDropdowns[] = "moduleListSingular";
-<<<<<<< HEAD
-	$exemptDropdowns[] = "parent_type_display";
-    $exemptDropdowns[] = "record_type_display";
-    $exemptDropdowns[] = "record_type_display_notes";
-=======
-        $exemptDropdowns = array_merge($exemptDropdowns, getTypeDisplayList());
->>>>>>> 6_6_2
+    $exemptDropdowns = array_merge($exemptDropdowns, getTypeDisplayList());
 
 	foreach($app_list_strings as $key=>$value)
 	{
@@ -5361,10 +5355,7 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
             $select_array[$key] .= ' (' . $key . ')';
         }
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> 6_6_2
     asort($select_array);
     return $select_array;
 }

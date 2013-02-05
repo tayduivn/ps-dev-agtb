@@ -186,28 +186,6 @@ class Meeting extends SugarBean {
 		global $timedate;
 		global $current_user;
 
-		global $disable_date_format;
-
-<<<<<<< HEAD
-	    if(isset($this->date_start) && (isset($this->duration_hours) || isset($this->duration_minutes)))
-        {
-            // Set the duration hours and minutes to 0 if one of them isn't set but the other one is.
-            $this->duration_hours = empty($this->duration_hours) ? 0 : $this->duration_hours;
-            $this->duration_minutes = empty($this->duration_minutes) ? 0 : $this->duration_minutes;
-            $td = $timedate->fromDb($this->date_start);
-            if(!$td){
-                $this->date_start = $timedate->to_db($this->date_start);
-                $td = $timedate->fromDb($this->date_start);
-            }
-            if($td)
-            {
-                $this->date_end = $td->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
-            }
-		}
-				
-		$check_notify = $this->send_invites;
-		if($this->send_invites == false) {
-=======
         if(isset($this->date_start))
         {
             $td = $timedate->fromDb($this->date_start);
@@ -229,9 +207,8 @@ class Meeting extends SugarBean {
             }
         }
 
-		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
+		$check_notify = (!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
 		if(empty($_REQUEST['send_invites'])) {
->>>>>>> 6_6_2
 			if(!empty($this->id)) {
 				$old_record = new Meeting();
 				$old_record->retrieve($this->id);
@@ -743,8 +720,6 @@ class Meeting extends SugarBean {
 
 	function get_invite_meetings(&$user) {
 		$template = $this;
-		// First, get the list of IDs.
-		$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
 		$query = "SELECT meetings_users.required, meetings_users.accept_status, meetings_users.meeting_id from meetings_users where meetings_users.user_id='$user->id' AND( meetings_users.accept_status IS NULL OR	meetings_users.accept_status='none') AND meetings_users.deleted=0";
 		$result = $this->db->query($query, true);
 		$list = Array();

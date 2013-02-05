@@ -55,8 +55,7 @@ class Bug40003Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
     }
-<<<<<<< HEAD
-=======
+
     
     public function tearDown()
     {
@@ -64,7 +63,7 @@ class Bug40003Test extends Sugar_PHPUnit_Framework_TestCase
         $_POST = array();
         SugarTestHelper::tearDown();
     }
->>>>>>> 6_6_2
+
 
     /**
      * @dataProvider provider
