@@ -219,6 +219,7 @@
                 'include/javascript/phpjs/htmlentities.js' => 'include/javascript/sugar_grp1.js',
 				//BEGIN SUGARCRM flav=pro ONLY
 	            //Expression Engine
+                "sidecar/lib/backbone/underscore.js" => "include/javascript/sugar_grp1.js",
 	            'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
 	            'include/Expressions/javascript/dependency.js'   => 'include/javascript/sugar_grp1.js',
 	            //END SUGARCRM flav=pro ONLY

@@ -88,28 +88,6 @@ class RelatedFieldExpression extends GenericExpression
 
 			if (typeof(linkField) == "string" && linkField != "")
 			{
-                /*
-                All of this should be in the context class
-                //We just have a field name, assume its the name of a link field
-                //and the parent module is the current module.
-                //Try and get the current module and record ID
-                var module = AH.getValue("module");
-                var record = AH.getValue("record");
-                var linkDef = AH.getLink(linkField);
-                var linkId = false, url = "index.php?";
-                
-                if (linkDef && linkDef.id_name && linkDef.module) {
-                    var idField = document.getElementById(linkDef.id_name);
-                    if (idField && (idField.tagName == "INPUT" || idField.hasAttribute("data-id-value")))
-                    {
-                        linkId = AH.getValue(linkDef.id_name, false, true);
-                        module = linkDef.module;
-                    }
-                    //Clear the cache for this link if the id has changed
-                    if (linkDef.relId && linkDef.relId != linkId)
-                        AH.clearRelatedFieldCache(linkField);
-                }*/
-
                 return this.context.getRelatedField(linkField, 'related', relField);
 			} else if (typeof(rel) == "object") {
 			    //Assume we have a Link object that we can delve into.
