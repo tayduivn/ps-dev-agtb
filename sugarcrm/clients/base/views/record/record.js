@@ -4,6 +4,8 @@
     previousModelState: null,
     extendsFrom: 'EditableView',
 
+    plugins: ['SugarLogic'],
+
     enableHeaderPane: true,
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
@@ -49,14 +51,6 @@
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
-
-        this.deps = [];
-        slContext = new SUGAR.expressions.SidecarExpressionContext(this);
-        _.each(options.meta.dependencies, function(dep) {
-            var newDep = SUGAR.forms.Dependency.fromMeta(dep, slContext);
-            if (newDep)
-                this.deps.push(newDep);
-        }, this);
 
         this.model.on("error:validation", this.handleValidationError, this);
     },

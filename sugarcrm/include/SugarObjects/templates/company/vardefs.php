@@ -109,7 +109,6 @@ $vardefs= array (
     'unified_search' => true,
     'full_text_search' => array('boost' => 1),
     'comment' => 'The fax phone number of this company',
-    'dependency' => 'greaterThan(5, strlen($name))',
   ), 
   
   'billing_address_street' => 

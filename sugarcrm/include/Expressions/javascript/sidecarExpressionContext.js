@@ -87,7 +87,7 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
             this.lockedFields[varname] = true;
             var el = this.getElement(varname);
             if (el) {
-                SUGAR.forms.FlashField(el, null, varname);
+                SUGAR.forms.FlashField($(el).parents('[data-fieldname="' + varname + '"]'), null, varname);
             }
             var ret = this.view.context.get("model").set(varname, value);
             this.lockedFields = [];
@@ -227,7 +227,8 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         var model = this.view.context.get("model");
         for (var link in fields)
         {
-            model.set(link, fields);
+            var value = _.extend(model.get(link) || {}, fields[link]);
+            model.set(link, value);
         }
     },
     getRelatedFieldValues : function(fields, module, record)
@@ -264,54 +265,67 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         return null;
     },
     getRelatedField : function(link, ftype, field){
-        console.log(this.view);
-        var self = this;
-        var linkDef = this.getLink(link),
+        var linkDef = _.extend({}, this.getLink(link)),
+            linkValues = this.view.model.get(link) || {},
             currId;
 
         if (ftype == "related"){
-            var relContext = this.view.context.getChildContext(linkDef);
-            var col = relContext.get("collection"),
-                fields = relContext.get('fields');
-
-            if (field && !_.contains(fields, field)) {
-                fields.push(field);
-                if (relContext._dataFetched){
-                    relContext.resetLoadFlag();
-                    relContext.loadData();
-                }
-            }
-            if (relContext._dataFetched && col.length > 0) {
-                return col.models[0].get(field);
-            } else {
-                col.once("add", function(q) {
-                    console.log("related field " + field + " fetched for link" + link);
-                    self.trigger("change:" + link);
-                });
-            }
+            return this._handleRelateExpression(link, field);
         }
         //Run server side ajax Call
         else {
-            var params = {link: link, type: ftype};
-            if (field)
-                params.relate = field;
-            this.getRelatedFieldValues([params]);
+            if (typeof(linkValues[ftype]) == "undefined" || typeof(linkValues[ftype][field]) == "undefined")
+            {
+                var params = {link: link, type: ftype};
+                if (field)
+                    params.relate = field;
+                this.getRelatedFieldValues([params]);
+            } else {
+                return linkValues[ftype][field];
+            }
         }
 
-        if (typeof(linkDef[ftype]) == "undefined")
-            return null;
+        if (typeof(linkValues[ftype]) == "undefined")
+            return "";
 
-        //Everything but count requires specifying a related field to use, so make sure to check that field retrieved correctly
-        if (field) {
-            //If we didn't load the field we wanted, return null
-            if (typeof(linkDef[ftype][field]) == "undefined")
-                return null;
-            else
-                return linkDef[ftype][field];
+        return linkValues[ftype];
+
+    },
+    _handleRelateExpression : function(link, field){
+        var relContext = this.view.context.getChildContext({link:link}),
+            col = relContext.get("collection"),
+            fields = relContext.get('fields') || [],
+            self = this,
+            //If we can't get related data, return blank.
+            ret = "";
+
+        if (field && !_.contains(fields, field)) {
+            fields.push(field);
+            relContext.prepare();
+            col = relContext.get("collection");
+            //Call set in case fields was not already on the context
+            relContext.set('fields', fields);
+            if (relContext._dataFetched){
+                relContext.resetLoadFlag();
+            }
+            relContext.loadData({success:function(){
+                // We will fire the link change event once the load is complete to re-fire the dependency with the correct data.
+                self.view.model.trigger("change:" + link);
+            }});
         }
-
-        return linkDef[ftype];
-
+        else if (relContext._dataFetched && col.page > 0) {
+            if (col.length > 0) {
+                ret =  col.models[0].get(field);
+            }
+        } else {
+            // This link is currently being loaded (with the field we need). Collection's don't fire a sync/fetch event,
+            // so we need to use doWhen to known when the load is complete.
+            // We will fire the link change event once the load is complete to re-fire the dependency with the correct data.
+            SUGAR.App.utils.doWhen(function(){return col.page > 0}, function(){
+                self.view.model.trigger("change:" + link);
+            });
+        }
+        return ret;
     },
     clearRelatedFieldCache : function(link, view){
         if (!view) view = AH.lastView;
@@ -323,6 +337,9 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         delete (AH.LINKS[view][link]["related"]);
 
         return true;
+    },
+    fireOnLoad : function(dep) {
+        this.view.model.once("change", SUGAR.forms.Trigger.fire, dep.trigger);
     },
     reset : function() {
 
@@ -395,7 +412,7 @@ SUGAR.forms.Dependency.fromMeta = function(meta, context){
 
     return new SUGAR.forms.Dependency(
         new SUGAR.forms.Trigger(triggerFields, condition, context),
-        actionObjects, falseActionObjects, false, context
+        actionObjects, falseActionObjects, onLoad, context
     );
 }
 
@@ -582,5 +599,26 @@ SUGAR.forms.Dependency.prototype.getRelatedFields = function () {
                 delete SUGAR.forms.flashInProgress[key];
             });
         });
+    };
+
+    //Register SugarLogic as a plugin to sidecar.
+    if (SUGAR.App && SUGAR.App.plugins) {
+        SUGAR.App.plugins.register('SugarLogic', 'view', {
+            onAttach: function() {
+                this.on("init", function(){
+                    this.deps = [];
+                    var slContext = new SUGAR.expressions.SidecarExpressionContext(this);
+                    _.each(this.options.meta.dependencies, function(dep) {
+                        var newDep = SUGAR.forms.Dependency.fromMeta(dep, slContext);
+                        if (newDep)
+                            this.deps.push(newDep);
+                    }, this);
+                });
+           }
+       });
+    } else if (console.error) {
+        console.error("unable to find the plugin manager");
     }
+
+
 })();
