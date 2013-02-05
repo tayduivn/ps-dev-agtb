@@ -255,6 +255,20 @@
                 });
         }
     },
+    mergeDuplicates: function(evt) {
+        this.hide();
+        var selectedDuplicates = this.context.get("mass_collection");
+        if (selectedDuplicates) {
+            this.layout.trigger("drawer:mergeduplicates:fire", {
+                components: [{
+                    layout : "merge-duplicates",
+                    context: {
+                        selectedDuplicates: selectedDuplicates
+                    }
+                }]
+            }, this);
+        }
+    },    
     save: function() {
         var massUpdate = this.getMassUpdateModel(this.module),
             attributes = this.getAttributes(),

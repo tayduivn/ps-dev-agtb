@@ -45,6 +45,10 @@
         }
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'list';
+        
+        var selectedDuplicates = this.context.get('selectedDuplicates');
+        this.primaryModel = selectedDuplicates.models[0];
+        this.name = this.primaryModel.attributes['name'] || '';
     },
     showMore: function(evt) {
         this.$(".col .extra").toggleClass('hide');

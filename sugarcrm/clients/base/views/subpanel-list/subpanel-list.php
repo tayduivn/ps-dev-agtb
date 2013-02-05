@@ -35,15 +35,8 @@ $viewdefs['base']['view']['subpanel-list'] = array(
                 'primary' => true,
                 'events' => array(
                     'click' => 'function(e){
-                        this.view.layout.trigger("drawer:mergeduplicates:fire", {
-                            components: [{
-                                layout : "merge-duplicates",
-                                context: {
-                                    selectedDuplicates: {}
-                                }
-                            }]
-                        }, this);
-                     }',  
+                    this.view.layout.trigger("list:mergeduplicates:fire");
+                    }' 
                 ),
             ),            
             array(
