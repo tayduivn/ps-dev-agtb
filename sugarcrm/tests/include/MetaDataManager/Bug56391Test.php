@@ -23,34 +23,24 @@
  ********************************************************************************/
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
-
+require_once 'tests/SugarTestACLUtilities.php';
 /**
  * Bug 56391 - ACL's used in the MetadataManager were the static ones.  Have switched to use the SugarACL methods
  */
 class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    public $roles = array();
-    public function setUp()
-    {
+    public function setUp() {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         $this->accounts = array();
         SugarACL::$acls = array();
     }
 
-    public function tearDown()
-    {
+    public function tearDown() {
         foreach($this->accounts AS $account_id) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account_id}'");
         }
-
-        foreach($this->roles AS $role) {
-            $role->mark_deleted($role->id);
-            $role->mark_relationships_deleted($role->id);
-            $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
-        }
-        unset($_SESSION['ACL']);
-        
+        SugarTestACLUtilities::tearDown();    
         SugarTestHelper::tearDown();
     }
 
@@ -59,11 +49,9 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
      *
      * @group Bug56391
      */
-    public function testUsersModule()
-    {
+    public function testUsersModule() {
         $mm = new MetaDataManager($GLOBALS['current_user']);
         // because the user is not an admin the user should only have view and list access
-        unset($_SESSION['ACL']);
         $expected_result = array(
                                     'access' => 'yes',
                                     'admin' => 'no',
@@ -95,7 +83,6 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $mm = new MetaDataManager($GLOBALS['current_user']);
         // because the user is not an admin the user should only have view and list access
-        unset($_SESSION['ACL']);
         $expected_result = array(
                                     'user_name' => array('write' => 'no', 'create' => 'no'),
                                     'user_hash' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
@@ -135,7 +122,6 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         // set current user as an admin
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
-        unset($_SESSION['ACL']);
         $mm = new MetaDataManager($GLOBALS['current_user']);
         // because the user is not an admin the user should only have view and list access
 
@@ -225,17 +211,8 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'no',
                             );
 
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'export'));
-
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
-
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'export'));
+        SugarTestACLUtilities::setupUser($role);
 
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
@@ -282,21 +259,11 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'yes',
                             );
 
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','import', 'export', 'massupdate'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','import', 'export', 'massupdate'));
 
-        $aclField = new ACLField();
-        $aclField->setAccessControl('Accounts', $role->id, 'website', -99);
+        SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', -99);
 
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
-        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
-
+        SugarTestACLUtilities::setupUser($role);
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
         foreach($modules AS $module) {
@@ -333,16 +300,9 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
 
 
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit', 'delete'));
+        $this->roles[] = $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit', 'delete'));
 
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
+        SugarTestACLUtilities::setupUser($role);
 
         $account = BeanFactory::newBean('Accounts');
         $account->name = 'Unit Test ' . create_guid();
@@ -389,16 +349,9 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
 
 
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('create', 'edit'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('create', 'edit'));
 
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
+        SugarTestACLUtilities::setupUser($role);
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
 
@@ -437,16 +390,9 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
 
 
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('create', 'edit'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('create', 'edit'));
 
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
+        SugarTestACLUtilities::setupUser($role);
 
         $account = BeanFactory::newBean('Accounts');
         $account->new_with_id = true;
@@ -486,16 +432,10 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $this->accounts['no_access'] = $account->id;
 
         unset($account);
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'export', 'create'), array('edit','create'));
+        
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'export', 'create'), array('edit','create'));
 
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
+        SugarTestACLUtilities::setupUser($role);
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
 
@@ -525,24 +465,13 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         unset($account);
 
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
 
-        // set the name field as Read Only
-        $aclField = new ACLField();
-        $aclField->setAccessControl('Accounts', $role->id, 'name', ACL_READ_OWNER_WRITE);
-        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
+        SugarTestACLUtilities::createField($role->id, 'Acconts', 'name', ACL_READ_OWNER_WRITE);
 
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
+        SugarTestACLUtilities::setupUser($role);
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
-
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['access']));
         unset($acls['_hash']);
@@ -569,23 +498,11 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $this->accounts['no_access'] = $account->id;
 
         unset($account);
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
 
-        // set the name field as Read Only
-        $aclField = new ACLField();
-        $aclField->setAccessControl('Accounts', $role->id, 'name', 60);
+        SugarTestACLUtilities::createField($role->id, 'Accounts', 'name', 60);
 
-
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
-        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
-
+        SugarTestACLUtilities::setupUser($role);
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
 
@@ -598,48 +515,4 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected_bean_result['field_no_access'], $fields, 'No Field Access Failed');
 
     }
-
-
-    protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
-        $role = new ACLRole();
-        $role->name = $name;
-        $role->description = $name;
-        $role->save();
-        $GLOBALS['db']->commit();
-
-        $roleActions = $role->getRoleActions($role->id);
-        foreach ($roleActions as $moduleName => $actions) {
-            // enable allowed modules
-            if (isset($actions['module']['access']['id']) && !in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_DISABLED);
-            } elseif (isset($actions['module']['access']['id']) && in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_ENABLED);
-            } else {
-                foreach ($actions as $action => $actionName) {
-                    if (isset($actions[$action]['access']['id'])) {
-                        $role->setAction($role->id, $actions[$action]['access']['id'], ACL_ALLOW_DISABLED);
-                    }
-                }
-            }
-
-            if (in_array($moduleName, $allowedModules)) {
-                foreach ($actions['module'] as $actionName => $action) {
-                    if(in_array($actionName, $allowedActions) && in_array($actionName, $ownerActions)) {
-                        $aclAllow = ACL_ALLOW_OWNER;
-                    }
-                    elseif (in_array($actionName, $allowedActions)) {
-                        $aclAllow = ACL_ALLOW_ALL;
-                    } else {
-                        $aclAllow = ACL_ALLOW_NONE;
-                    }
-
-                    $role->setAction($role->id, $action['id'], $aclAllow);
-                }
-            }
-
-        }
-        return $role;
-    }
-
-
 }

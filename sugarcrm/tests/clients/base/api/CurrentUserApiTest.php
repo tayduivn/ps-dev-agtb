@@ -25,12 +25,8 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-
-
-require_once ('include/api/RestService.php');
+require_once ("include/api/SugarApi.php");
 require_once ("clients/base/api/CurrentUserApi.php");
-
 
 /**
  * @group ApiTests
@@ -72,10 +68,4 @@ class CurrentUserApiMock extends CurrentUserApi {
     public function getBasicInfo() {
         return parent::getBasicUserInfo();
     }
-}
-
-class CurrentUserApiServiceMockUp extends RestService
-{
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
 }

@@ -27,11 +27,8 @@
  ********************************************************************************/
 
 
-
-require_once ('include/api/RestService.php');
 require_once ("clients/base/api/ModuleApi.php");
-
-
+require_once ("tests/SugarTestRestUtilities.php");
 /**
  * @group ApiTests
  */
@@ -40,6 +37,7 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
     public $accounts;
     public $roles;
     public $moduleApi;
+    public $serviceMock;
 
     public function setUp() {
         SugarTestHelper::setUp("current_user");        
@@ -49,6 +47,7 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $account->name = "ModulaApiTest setUp Account";
         $account->save();
         $this->accounts[] = $account;
+        $this->serviceMock = SugarTestRestUtilities::getMock();
     }
 
     public function tearDown() {
@@ -63,15 +62,15 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
 
     // test set favorite
     public function testSetFavorite() {
-        $result = $this->moduleApi->setFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        $result = $this->moduleApi->setFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
         $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
     }
     // test remove favorite
     public function testRemoveFavorite() {
-        $result = $this->moduleApi->setFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        $result = $this->moduleApi->setFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
         $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
 
-        $result = $this->moduleApi->unsetFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        $result = $this->moduleApi->unsetFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
         $this->assertFalse((bool) $result['my_favorite'], "Was not set to false");
     }
     // test set favorite of deleted record
@@ -80,12 +79,12 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->setExpectedException(
           'SugarApiExceptionNotFound', "Could not find record: {$this->accounts[0]->id} in module: Accounts"
         );
-        $result = $this->moduleApi->setFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        $result = $this->moduleApi->setFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
         
     }
     // test remove favorite of deleted record
     public function testRemoveFavoriteDeleted() {
-        $result = $this->moduleApi->setFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        $result = $this->moduleApi->setFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
         $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
 
         $this->accounts[0]->deleted = 1;
@@ -94,26 +93,20 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
           'SugarApiExceptionNotFound', "Could not find record: {$this->accounts[0]->id} in module: Accounts"
         );
 
-        $result = $this->moduleApi->setFavorite(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        $result = $this->moduleApi->setFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
     }
     // test set my_favorite on bean
     public function testSetFavoriteOnBean() {
-        $result = $this->moduleApi->updateRecord(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => true));
+        $result = $this->moduleApi->updateRecord($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => true));
         $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
     }
     // test remove my_favorite on bean
     public function testRemoveFavoriteOnBean() {
-        $result = $this->moduleApi->updateRecord(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => true));
+        $result = $this->moduleApi->updateRecord($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => true));
         $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
 
-        $result = $this->moduleApi->updateRecord(new ModuleApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => false));
+        $result = $this->moduleApi->updateRecord($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => false));
         $this->assertFalse((bool) $result['my_favorite'], "Was not set to False");        
     }
 
-}
-
-class ModuleApiServiceMockUp extends RestService
-{
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
 }
