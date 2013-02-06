@@ -97,7 +97,7 @@ class DropdownUpgradeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('X2', $als['zzz_test_list'], "Bug 60393 - dropdown values not picked up");
         $this->assertEquals($als['zzz_test_list']['X2'], 'X2 Z', "Bug 60393 - proper dropdown value not picked up");
         
-        // Asser that app_list_strings overriding GLOBALS work
+        // Assert that app_list_strings overriding GLOBALS work
         $this->assertArrayHasKey('yyy_test_list', $als, "Bug 60393 - second dropdown not picked up");
         $this->assertArrayHasKey('Y2', $als['yyy_test_list'], "Bug 60393 - second dropdown values not picked up");
         $this->assertEquals($als['yyy_test_list']['Y2'], 'Y2 Q', "Bug 60393 - proper dropdown value not picked up for second dropdown");
