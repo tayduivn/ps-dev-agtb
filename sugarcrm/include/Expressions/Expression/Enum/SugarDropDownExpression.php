@@ -48,20 +48,20 @@ class SugarDropDownExpression extends EnumExpression
 	static function getJSEvaluate() {
 		return <<<EOQ
 			var dd = this.getParameters().evaluate(),
-			    arr, ret = [];
+				arr, ret = [];
 			if (App){
-			    arr = App.lang.getAppListStrings(dd);
+				arr = App.lang.getAppListStrings(dd);
 			}
 			else {
-			    arr = SUGAR.language.get('app_list_strings', dd);
+				arr = SUGAR.language.get('app_list_strings', dd);
 			}
 			if (arr && arr != "undefined")
 			{
-                for (var i in arr) {
-                    if (typeof i == "string")
-                        ret[ret.length] = i;
-                }
-            }
+				for (var i in arr) {
+					if (typeof i == "string")
+						ret[ret.length] = i;
+				}
+			}
 			return ret;
 EOQ;
 	}

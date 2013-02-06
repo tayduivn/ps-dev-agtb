@@ -313,9 +313,8 @@ class RepairAndClear
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARVADEFS']}</h3>";
 		if(!empty($this->module_list) && is_array($this->module_list) && !in_array( translate('LBL_ALL_MODULES'),$this->module_list))
 		{
-			foreach($this->module_list as $module_name_singular ) {
-                $this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular), 'vardefs.php');
-            }
+			foreach($this->module_list as $module_name_singular )
+				$this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular), 'vardefs.php');
 		}
 		else
 			$this->_clearCache(sugar_cached('modules/'), 'vardefs.php');

@@ -51,8 +51,6 @@
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
-
-        this.model.on("error:validation", this.handleValidationError, this);
     },
 
     /**
@@ -609,42 +607,5 @@
             this.context.off(null, null, this);
             this.context = null;
         }
-    },
-
-    /**
-     * Highlights all fields that fails field validation during save.
-     * @param {object} Object containing the fields that failed validation.
-     */
-    handleValidationError:function (errors) {
-        var self = this;
-        debugger;
-
-        _.each(errors, function (fieldErrors, fieldName) {
-            //retrieve the field by name
-            var field = self.getField(fieldName);
-            var ftag = this.fieldTag || '';
-
-            if (field) {
-                var controlGroup = field.$el.parents('.record-cell:first');
-
-                if (controlGroup.length > 0) {
-                    controlGroup.addClass("error");
-                    controlGroup.find('.add-on').remove();
-                    controlGroup.find('.help-block').html("");
-
-                    if (field.$el.parent().parent().find('.input-append').length > 0) {
-                        field.$el.unwrap()
-                    }
-                    // Add error styling
-                    field.$el.wrap('<div class="input-append  '+ftag+'">');
-
-                    _.each(fieldErrors, function (errorContext, errorName) {
-                        controlGroup.find('.help-block').append(app.error.getErrorString(errorName, errorContext));
-                    });
-
-                    $('<span class="add-on"><i class="icon-exclamation-sign"></i></span>').insertBefore(controlGroup.find('.help-block'));
-                }
-            }
-        });
     }
 })

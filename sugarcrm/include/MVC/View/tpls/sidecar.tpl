@@ -33,7 +33,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
 
         <!-- App Scripts -->
-        {if !empty($smarty.request.debug)}
+        {if !empty($developerMode)}
             <script src='sidecar/minified/sidecar.js'></script>
         {else}
             <script src='sidecar/minified/sidecar.min.js'></script>

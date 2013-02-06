@@ -147,7 +147,7 @@
                                     name: "login_button",
                                     type: "button",
                                     label: "LBL_LOGIN_BUTTON_LABEL",
-                                    'css_class': "login-submit pull-right",
+                                    'class': "login-submit pull-right",
                                     value: "login",
                                     primary: true
                                 },
@@ -156,7 +156,7 @@
                                     type: "button",
                                     label: "LBL_SIGNUP_BUTTON_LABEL",
                                     value: "signup",
-                                    'css_class': 'pull-left'
+                                    'class': 'pull-left'
                                 }
                             ],
                             "panels": [

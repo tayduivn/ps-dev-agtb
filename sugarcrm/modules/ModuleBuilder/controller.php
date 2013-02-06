@@ -550,9 +550,7 @@ class ModuleBuilderController extends SugarController
         $mi->rebuild_extensions();
 
         $repair = new RepairAndClear();
-        $repair->repairAndClearAll(array('clearVardefs', 'clearTpls', 'clearAdditionalCaches'),
-            array($class_name), true, false);
-        VardefManager::clearVardef($module, BeanFactory::getObjectName($module));
+        $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($class_name), true, false);
         //#28707 ,clear all the js files in cache
         $repair->module_list = array();
         $repair->clearJsFiles();

@@ -47,12 +47,12 @@ class SidecarView extends SugarView
         //Load sidecar theme css
         $theme = new SidecarTheme();
         $this->ss->assign("css_url", $theme->getCSSURL());
-
+        $this->ss->assign("developerMode", inDeveloperMode());
+        
         //Loading label
         $this->ss->assign('LBL_LOADING', $app_strings['LBL_ALERT_TITLE_LOADING']);
 
-
-        $slFunctionsPath = !empty($_REQUEST['debug']) ? sugar_cached("Expressions/functions_cache_debug.js") : sugar_cached("Expressions/functions_cache.js");
+        $slFunctionsPath = inDeveloperMode() ? sugar_cached("Expressions/functions_cache_debug.js") : sugar_cached("Expressions/functions_cache.js");
         if (!is_file($slFunctionsPath)) {
             $GLOBALS['updateSilent'] = true;
             include("include/Expressions/updatecache.php");
