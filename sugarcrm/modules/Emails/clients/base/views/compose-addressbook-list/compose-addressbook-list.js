@@ -7,14 +7,24 @@
         this.context.on("compose:addressbook:search", this._search, this);
     },
 
-    sync: function (method, model, options) {
+    /**
+     * This view uses a MixedBeanCollection, which by default uses the global search API as the source of its data, in
+     * order to support the notion that an address book can look for potential recipients in a number of different
+     * modules. The global search API currently has a limitation in which it can't/won't search the Users module due to
+     * security concerns, and the Users module is one of the modules the address book must be able to search. Until the
+     * global search API meets the requirements of the address book, sync must be overridden to call on a custom API.
+     *
+     * @param method
+     * @param model
+     * @param options
+     */
+    sync: function(method, model, options) {
         var callbacks,
             url;
 
         options             = options || {};
         options.module_list = options.module_list || ["all"];
 
-        //TODO:
         // this is a hack to make pagination work while trying to minimize the affect on existing configurations
         // there is a bug that needs to be fixed before the correct approach (config.maxQueryResult vs. options.limit)
         // can be determined
@@ -30,9 +40,14 @@
         app.api.call("read", url, null, callbacks);
     },
 
+    /**
+     * Overrides _render to hook in additional triggers as the mass_collection is updated (rows are checked on/off in
+     * the actionmenu field). Also attempts to pre-check any rows when the list is refreshed and selected recipients
+     * are found within the new result set (this behavior occurs when the user searches the address book).
+     *
+     * @private
+     */
     _render: function() {
-        var self = this;
-
         // need to destroy the mass_collection so that mass_collection's event listeners are created appropriately
         // by actionmenu::bindDataChange
         // must do this before rendering the view, which renders the actionmenu field, which creates the listeners
@@ -51,18 +66,18 @@
             // add the new event listeners
             massCollection.on("add", function(model) {
                 if (model.id) {
-                    self.context.trigger("recipients:compose_addressbook_selected_recipients:add", model);
+                    this.context.trigger("recipients:compose_addressbook_selected_recipients:add", model);
                 }
             }, this);
 
             massCollection.on("remove", function(model) {
                 if (model.id) {
-                    self.context.trigger("recipients:compose_addressbook_selected_recipients:remove", model);
+                    this.context.trigger("recipients:compose_addressbook_selected_recipients:remove", model);
                 }
             }, this);
 
             massCollection.on("reset", function() {
-                self.context.trigger("recipients:compose_addressbook_selected_recipients:replace");
+                this.context.trigger("recipients:compose_addressbook_selected_recipients:replace");
             }, this);
 
             // find any currently selected recipients and add them to mass_collection so the checkboxes on the
@@ -85,6 +100,13 @@
         }
     },
 
+    /**
+     * Performs a fetch on the view's collection when a search request is fired.
+     *
+     * @param module_list A list of comma-delimited module names.
+     * @param term        The term on which to filter.
+     * @private
+     */
     _search: function(module_list, term) {
         this.collection.fetch({query: term, module_list: [module_list], offset: 0}); // reset offset to 0 on a search
     }
