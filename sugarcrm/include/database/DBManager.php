@@ -443,15 +443,13 @@ abstract class DBManager
 			    $start = 0;
 			    while(true) {
     			    $selectPos = stripos($part , 'select', $start);
-    			    if($part[$selectPos+6] != ' ' && $part[$selectPos+6] != "\n" && $part[$selectPos+6] != "\t") {
-    			        $start = $selectPos+1;
-    			        continue;
-    			    }
 	    		    if($selectPos !== false){
-		    	        $distinctPos = stripos($part , 'distinct', $selectPos);
-			        	if($distinctPos === false || $distinctPos > 20){
-			            	$part = substr($part, 0, $selectPos + 6) .' DISTINCT ' . substr( $part, $selectPos + 7);
-			    	    }
+	    		        if($part[$selectPos+6] == ' ' || $part[$selectPos+6] == "\n" || $part[$selectPos+6] == "\t") {
+    	    		        $distinctPos = stripos($part , 'distinct', $selectPos);
+	    		        	if($distinctPos === false || $distinctPos > 20){
+		    	            	$part = substr($part, 0, $selectPos + 6) .' DISTINCT ' . substr( $part, $selectPos + 7);
+			        	    }
+	    		        }
 	    		    } else {
 	    		        break;
 	    		    }
