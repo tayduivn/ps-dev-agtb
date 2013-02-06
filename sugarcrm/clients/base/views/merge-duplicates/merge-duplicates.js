@@ -3,8 +3,6 @@
     events: {
         'click .show_extra' : 'showMore',
         'click .preview' : 'previewRecord',
-        'mouseenter .preview': 'showTooltip',
-        'mouseleave .preview': 'hideTooltip',        
     },
     MAX_RECORDS: 5, // the number of records we can merge, by fiat
     rowFields: {},
