@@ -258,6 +258,7 @@
                 return this.sync('read', this, options);
             },
             sync: function (method, model, options) {
+                this.trigger("data:sync:start", method, model, options);
                 myURL = app.api.buildURL(module, modelMetadata.name.toLowerCase());
                 return app.api.call(method, myURL, null, options);
             }
@@ -296,6 +297,7 @@
                     return this.sync('read', this, options);
                 },
                 sync: function (method, model, options) {
+                    this.trigger("data:sync:start", method, model, options);
                     var url = _.isFunction(model.url) ? model.url() : model.url;
                     return app.api.call(method, url, model, options);
                 }
@@ -309,6 +311,7 @@
              * @return {*}
              */
             sync: function (method, model, options) {
+                this.trigger("data:sync:start", method, model, options);
                 var url = _.isFunction(model.url) ? model.url() : model.url;
                 return app.api.call(method, url, null, options);
             },
