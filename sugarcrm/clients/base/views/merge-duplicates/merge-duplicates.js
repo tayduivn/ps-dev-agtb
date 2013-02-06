@@ -1,7 +1,10 @@
 ({
     extendsFrom: 'BaselistView',
     events: {
-        'click .show_extra' : 'showMore'
+        'click .show_extra' : 'showMore',
+        'click .preview' : 'previewRecord',
+        'mouseenter .preview': 'showTooltip',
+        'mouseleave .preview': 'hideTooltip',        
     },
     MAX_RECORDS: 5, // the number of records we can merge, by fiat
     rowFields: {},
@@ -14,7 +17,7 @@
             self = this;
 
         this.getPrimaryRecord(options.context);
-        this.name = this.primaryRecord.attributes['name'] || '';
+        this.recordName = this.primaryRecord.attributes['name'] || '';
 
         _.each(meta.panels, function(panel) {
             var fields;
@@ -62,9 +65,15 @@
         }
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'list';
-
-
     },
+    /**
+     * Display a Preview for the primary record
+     */
+    previewRecord: function() {
+        var previewModels = [this.primaryRecord];        
+        var previewCollection = app.data.createBeanCollection(this.primaryRecord.get('_module'), previewModels);
+        this.context.trigger("preview:render", this.primaryRecord, previewCollection);
+    },    
     /**
      * utility method for taking a fieldlist with possible nested fields,
      * and returning a flat array of fields
