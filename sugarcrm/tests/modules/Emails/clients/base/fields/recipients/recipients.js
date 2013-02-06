@@ -238,6 +238,11 @@ describe("Emails.fields.recipients", function() {
                     '"Westin, Will" <will@example.com>,"Sarah Smith" <sarah@example.com>',
                     2,
                     "should get back an array of 2 Backbone models because the first ',' isn't a recognized as a delimiter"
+                ],
+                [
+                    '"Will Westin" <will@example.com> ,     "Sarah Smith" <sarah@example.com>',
+                    2,
+                    "should get back an array of 2 Backbone models even when there is white space around the delimiter"
                 ]
             ];
 
