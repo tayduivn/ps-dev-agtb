@@ -195,15 +195,11 @@
     },
 
     _formatRecipientForRegex: function(recipient) {
-        if (!RegExp.escape) {
-            // needed for escaping special characters in a string to be used within a regular expression
-            // source: http://stackoverflow.com/a/13157996/1771599
-            RegExp.escape = function(value) {
-                return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
-            }
-        }
+        // need to escape special characters in a string to be used within a regular expression
+        // source: http://stackoverflow.com/a/13157996/1771599
+        recipient = recipient.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
 
-        recipient = RegExp.escape(recipient);
+        // build the string to pass into the RegExp constructor
         recipient = "(?:^|[,])" + recipient + "([,]|$)";
 
         return new RegExp(recipient, "gi");
