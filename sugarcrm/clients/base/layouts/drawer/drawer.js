@@ -4,6 +4,8 @@
 
     onCloseCallback: null, //callbacks to be called once drawers are closed
 
+    pixelsFromFooter: 60, //how many pixels from the footer the drawer will drop down to
+
     initialize: function(options) {
         if (!this.$el.is('#drawers')) {
             app.logger.error('Drawer layout can only be included as an Additional Component.');
@@ -45,7 +47,7 @@
         this._animateOpenDrawer();
 
         //load and render new layout in drawer
-        layout = this._components[this._components.length-1];
+        layout = _.last(this._components);
         layout.loadData();
         layout.render();
     },
@@ -72,11 +74,27 @@
      * @param layoutDef
      */
     load: function(layoutDef) {
-        var layout = this._components[this._components.length-1];
+        var layout = this._components.pop(),
+            top = layout.$el.css('top'),
+            height = layout.$el.css('height'),
+            drawers;
 
-        this._components.pop().dispose();
+        layout.dispose();
         this._addComponentsFromDef([layoutDef]);
 
+        drawers = this._getDrawers(true);
+        drawers.$next
+            .addClass('drawer')
+            .css({
+                top: top,
+                height: height
+            });
+
+        //refresh tab and backdrop
+        this._removeTabAndBackdrop(drawers.$top);
+        this._createTabAndBackdrop(drawers.$next, drawers.$top);
+
+        layout = _.last(this._components);
         layout.loadData();
         layout.render();
     },
@@ -98,8 +116,7 @@
             $main
                 .removeClass('drawer')
                 .css('top','');
-            $main.find('.drawer-tab').remove(); //remove drawer tab
-            $main.find('.drawer-backdrop').remove(); //remove backdrop
+            this._removeTabAndBackdrop($main);
         }
     },
 
@@ -112,46 +129,33 @@
             return;
         }
 
-        var $main = app.$contentEl.children().first(),
-            $newDrawer = this._components[this._components.length-1].$el,
-            $topDrawer,
-            $bottomDrawer,
+        var drawers = this._getDrawers(true),
             drawerHeight = this._determineDrawerHeight();
 
-        //identify top and bottom drawers
-        if (this._components.length === 1) {
-            $topDrawer = $main;
-            $topDrawer.addClass('drawer');
-        } else if (this._components.length === 2) {
-            $topDrawer = this._components[this._components.length-2].$el;
-            $bottomDrawer = $main;
-            this._expandDrawer($topDrawer, $bottomDrawer); //expand current drawer if collapsed
+        if (this._isMainAppContent(drawers.$top)) {
+            //make sure that the main application content is set as a drawer
+            drawers.$top.addClass('drawer');
+            $('body').css('overflow', 'hidden');
         } else {
-            $topDrawer = this._components[this._components.length-2].$el;
-            $bottomDrawer = this._components[this._components.length-3].$el;
-            this._expandDrawer($topDrawer, $bottomDrawer); //expand current drawer if collapsed
+            //expand current drawer if collapsed
+            this._expandDrawer(drawers.$top, drawers.$bottom);
         }
 
         //add the expand tab and the backdrop to the top drawer
-        $topDrawer
-            .append(this.expandTabHtml)
-            .append(this.backdropHtml);
-
-        //add expand/collapse tab behavior
-        this._handleTabBehavior($newDrawer, $topDrawer);
+        this._createTabAndBackdrop(drawers.$next, drawers.$top);
 
         //set the height of the new drawer
-        $newDrawer.css('height', drawerHeight);
+        drawers.$next.css('height', drawerHeight);
         //set the animation starting point for the new drawer
-        $newDrawer.css('top', $topDrawer.offset().top-drawerHeight);
+        drawers.$next.css('top', drawers.$top.offset().top-drawerHeight);
 
         //start animation
         _.defer(_.bind(function() {
-            if ($bottomDrawer) {
-                $bottomDrawer.css('top', $bottomDrawer.offset().top + drawerHeight);
+            if (drawers.$bottom) {
+                drawers.$bottom.css('top', drawers.$bottom.offset().top + drawerHeight);
             }
-            $topDrawer.css('top', this._components.length === 1 ? drawerHeight : $topDrawer.offset().top + drawerHeight);
-            $newDrawer
+            drawers.$top.css('top', this._isMainAppContent(drawers.$top) ? drawerHeight : drawers.$top.offset().top + drawerHeight);
+            drawers.$next
                 .addClass('drawer')
                 .css('top','');
         }, this));
@@ -167,40 +171,73 @@
             return;
         }
 
-        var $main = app.$contentEl.children().first(),
-            $topDrawer = this._components[this._components.length-1].$el,
-            $bottomDrawer,
-            $hiddenDrawer,
+        var drawers = this._getDrawers(false),
             drawerHeight = this._determineDrawerHeight();
 
-        //identify bottom and hidden drawers
-        if (this._components.length === 1) {
-            $bottomDrawer = $main;
-        } else if (this._components.length === 2) {
-            $bottomDrawer = this._components[this._components.length-2].$el;
-            $hiddenDrawer = $main;
-        } else {
-            $bottomDrawer = this._components[this._components.length-2].$el;
-            $hiddenDrawer = this._components[this._components.length-3].$el;
-        }
-
         //once the animation is done, reset to original state and execute callback parameter
-        $bottomDrawer.one('webkitTransitionEnd oTransitionEnd otransitionend transitionend msTransitionEnd', _.bind(function(){
-            this._removeTabBehavior($topDrawer); //remove expand/collapse tab event handlers
-            $bottomDrawer.find('.drawer-tab').remove(); //remove drawer tab
-            $bottomDrawer.find('.drawer-backdrop').remove(); //remove backdrop
-            if (this._components.length === 1) {
-                $bottomDrawer.removeClass('drawer');
+        drawers.$bottom.one('webkitTransitionEnd oTransitionEnd otransitionend transitionend msTransitionEnd', _.bind(function(){
+            this._removeTabAndBackdrop(drawers.$bottom);
+            if (this._isMainAppContent(drawers.$bottom)) {
+                drawers.$bottom.removeClass('drawer');
+                $('body').css('overflow', '');
             }
             callback();
         }, this));
 
         //start the animation to close the drawer
-        $topDrawer.css('top', $topDrawer.offset().top-drawerHeight);
-        $bottomDrawer.css('top','');
-        if ($hiddenDrawer) {
-            $hiddenDrawer.css('top', this._components.length === 2 ? drawerHeight : $hiddenDrawer.offset().top - drawerHeight);
+        drawers.$top.css('top', drawers.$top.offset().top-drawerHeight);
+        drawers.$bottom.css('top','');
+        if (drawers.$next) {
+            drawers.$next.css('top', this._isMainAppContent(drawers.$next) ? drawerHeight : drawers.$next.offset().top - drawerHeight);
         }
+    },
+
+    /**
+     * Get all (top, bottom, next) drawers layouts depending upon whether or not a drawer is being opened or closed
+     * @param open
+     * @return {Object}
+     * @private
+     */
+    _getDrawers: function(open) {
+        var $main = app.$contentEl.children().first(),
+            $nextDrawer, $topDrawer, $bottomDrawer,
+            open = _.isUndefined(open) ? true : open,
+            drawerCount = this._components.length;
+
+        switch (drawerCount) {
+            case 0: //no drawers
+                break;
+            case 1: //only one drawer
+                $nextDrawer = open ? this._components[drawerCount-1].$el : undefined;
+                $topDrawer = open ? $main : this._components[drawerCount-1].$el;
+                $bottomDrawer = open? undefined : $main;
+                break;
+            case 2: //two drawers
+                $nextDrawer = open ? this._components[drawerCount-1].$el : $main;
+                $topDrawer = open ? this._components[drawerCount-2].$el : this._components[drawerCount-1].$el;
+                $bottomDrawer = open? $main : this._components[drawerCount-2].$el;
+                break;
+            default: //more than two drawers
+                $nextDrawer = open ? this._components[drawerCount-1].$el : this._components[drawerCount-3].$el;
+                $topDrawer = open ? this._components[drawerCount-2].$el : this._components[drawerCount-1].$el;
+                $bottomDrawer = open? this._components[drawerCount-3].$el : this._components[drawerCount-2].$el;
+        }
+
+        return {
+            $next: $nextDrawer,
+            $top: $topDrawer,
+            $bottom: $bottomDrawer
+        };
+    },
+
+    /**
+     * Is this drawer the main application content area?
+     * @param $layout
+     * @return {Boolean}
+     * @private
+     */
+    _isMainAppContent: function($layout) {
+        return !$layout.parent().is(this.$el);
     },
 
     /**
@@ -214,7 +251,7 @@
             headerHeight = $('#header .navbar').outerHeight(),
             footerHeight = $('footer').outerHeight();
 
-        return windowHeight - headerHeight - footerHeight - 64; //64px above the footer
+        return windowHeight - headerHeight - footerHeight - this.pixelsFromFooter;
     },
 
     /**
@@ -227,12 +264,18 @@
     },
 
     /**
-     * Add the ability to expand and collapse the drawer when the tab is clicked
+     * Create tab and the backdrop. Add the ability to expand and collapse the drawer when the tab is clicked
      * @param $top
      * @param $bottom
      * @private
      */
-    _handleTabBehavior: function($top, $bottom) {
+    _createTabAndBackdrop: function($top, $bottom) {
+        //add the expand tab and the backdrop to the top drawer
+        $bottom
+            .append(this.expandTabHtml)
+            .append(this.backdropHtml);
+
+        //add expand/collapse tab behavior
         $bottom.find('.drawer-tab').on('click', _.bind(function(event) {
             if ($('i', event.currentTarget).hasClass('icon-chevron-up')) {
                 this._collapseDrawer($top, $bottom);
@@ -244,12 +287,19 @@
     },
 
     /**
-     * Remove the event listener that handles the ability to expand and collapse the drawer
+     * Remove the tab and the backdrop and the event listener that handles the ability to expand and collapse the drawer.
      * @param $drawer
      * @private
      */
-    _removeTabBehavior: function($drawer) {
-        $drawer.find('.drawer-tab').off('click');
+    _removeTabAndBackdrop: function($drawer) {
+        //remove drawer tab
+        $drawer.find('.drawer-tab')
+            .off('click')
+            .remove();
+
+        //remove backdrop
+        $drawer.find('.drawer-backdrop')
+            .remove();
     },
 
     /**

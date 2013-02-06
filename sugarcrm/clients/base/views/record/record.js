@@ -280,15 +280,13 @@
     },
     
     findDuplicatesClicked: function() {
-        this.layout.trigger("drawer:find-duplicates:fire", {
-            components: [{
-                layout : 'find-duplicates',
-                context: {
-                    dupeCheckModel: this.model,
-                    dupelisttype: 'dupecheck-list-multiselect'
-                }
-            }]
-        }, this);
+        app.drawer.open({
+            layout : 'find-duplicates',
+            context: {
+                dupeCheckModel: this.model,
+                dupelisttype: 'dupecheck-list-multiselect'
+            }
+        });
     },
 
     editClicked: function() {
