@@ -205,6 +205,7 @@
             ),
            $sugar_grp1 = array(
                 //scripts loaded on first page
+                "sidecar/lib/backbone/underscore.js" => "include/javascript/sugar_grp1.js",
                 'include/javascript/sugar_3.js'         => 'include/javascript/sugar_grp1.js',
                 'include/javascript/ajaxUI.js'          => 'include/javascript/sugar_grp1.js',
                 'include/javascript/cookie.js'          => 'include/javascript/sugar_grp1.js',
@@ -219,11 +220,10 @@
                 'include/javascript/phpjs/htmlentities.js' => 'include/javascript/sugar_grp1.js',
 				//BEGIN SUGARCRM flav=pro ONLY
 	            //Expression Engine
-                "sidecar/lib/backbone/underscore.js" => "include/javascript/sugar_grp1.js",
-	            'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
+                'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
 	            'include/Expressions/javascript/dependency.js'   => 'include/javascript/sugar_grp1.js',
 	            //END SUGARCRM flav=pro ONLY
-               'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
+                'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
             ),
 			// solo jquery libraries
 			$sugar_grp_jquery_core = getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_jquery_core.js'),
