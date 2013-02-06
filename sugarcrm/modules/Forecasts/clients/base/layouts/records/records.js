@@ -222,7 +222,6 @@
                 name = collectionMetadata.name.toLowerCase();
                 models[name] = self.createCollection();
                 models[name].url = app.config.serverUrl + '/Forecasts/' + name;
-                debugger;
             }
         });
 
@@ -251,7 +250,11 @@
                     if (success) success(model, resp, options);
                     model.trigger('sync', model, resp, options);
                 };
-                wrapError(this, options);
+                var error = options.error;
+                options.error = function (resp) {
+                    if (error) error(model, resp, options);
+                    model.trigger('error', model, resp, options);
+                };
                 return this.sync('read', this, options);
             },
             sync: function (method, model, options) {
@@ -295,7 +298,7 @@
                 sync: function (method, model, options) {
                     var url = _.isFunction(model.url) ? model.url() : model.url;
                     return app.api.call(method, url, model, options);
-                },
+                }
             }),
             /**
              * Custom sync to use the app api to call the url (o-auth headers are inserted here)
