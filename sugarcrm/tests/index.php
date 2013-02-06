@@ -45,7 +45,7 @@ if (file_exists('../config.js')) {
  * jasmine test generator. This file will recursively search the test directory for .js test files and include them.
  */
 
-    $exclude = array("jshelpers", "jssource", "PHPUnit", 'ci');
+    $exclude = array("jshelpers", "jssource", "PHPUnit", "/ci/");
 
     $dirItr = new RecursiveDirectoryIterator('.');
     $itrItr = new RecursiveIteratorIterator($dirItr);
