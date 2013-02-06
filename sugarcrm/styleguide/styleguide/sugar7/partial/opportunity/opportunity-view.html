@@ -20,9 +20,13 @@
 
 
 <script>
-  page.record = {
-      'title':"Plato's LED MFT"
-    , 'avatar': 'logo_weyland.png'
+  page = {
+        "title": "Opportunities"
+      , "module": "opportunity"
+      , "record": {
+          'title':"Plato's LED MFT"
+        , 'avatar': 'logo_weyland.png'
+      }
   };
 
   loadPartials([
@@ -33,5 +37,14 @@
 
   $(document).ready(function() {
     $('body').addClass('view');
+    $('.form-search-related #related_filter').on('change',function(e){
+      var module = $(this).select2('val').replace('filter_','sp_');
+
+      $('#moduleActivity .results > li').each(function(){
+        var $this = $(this);
+        console.log($this.attr('id') +'='+ module)
+        $this.toggle(module==='sp_all' || $this.attr('id')===module);
+      });
+    });
   });
 </script>

@@ -17,6 +17,11 @@
         </div> <h4 class="pull-left">Module name</h4>
       </div>
     </li>
+    <li id="sp_null" class="subpanel clearfix">
+      <div class="subpanel-header">
+        <h4 class="tcenter">No records selected, <a href="#">view all records</a> or <a href="#">choose a predefined filter view</a>.</h4>
+      </div>
+    </li>
   </ul>
 </div>
 
@@ -27,16 +32,18 @@
     //   {"file":"common/omnibar","target":"#view .main-content","method":"prepend"}
     // ]);
 
+    $('.form-search-related .filter .actions a[data-view="activitystream"]').button('toggle');
+
     $('#moduleActivity .results > li').each(function(){
         var $this = $(this);
-        page.panel_id = '#'+$this.attr('id') + ' .subpanel-list';
-        page.panel_title = $this.find('.label').data('title');
-        console.log(page.panel_title)
-        loadPartials([
-          {"file":"common/subpanel-controls","target":'#'+$this.attr('id') + ' .subpanel-header',"method":"append"},
-          {"file":"common/subpanel-list","target":'#'+$this.attr('id'),"method":"append"},
-
-        ]);
+        if ($this.attr('id')!=='sp_null') {
+          page.panel_id = '#'+$this.attr('id') + ' .subpanel-list';
+          page.panel_title = $this.find('.label').data('title');
+          loadPartials([
+            {"file":"common/subpanel-controls","target":'#'+$this.attr('id') + ' .subpanel-header',"method":"append"},
+            {"file":"common/subpanel-list","target":'#'+$this.attr('id'),"method":"append"}
+          ]);
+        }
     });
 
     $('#moduleActivity')
