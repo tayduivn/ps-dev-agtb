@@ -100,7 +100,11 @@ input[type="hidden"] {
 }
 
 // Placeholder text gets special styles; can't be bundled together though for some reason
-.placeholder(@grayLight);
+//.placeholder(@grayLight);
+::-webkit-input-placeholder { color:@grayLight; font-style: italic; font-weight: normal; }
+::-moz-placeholder { color:@grayLight; font-style: italic; font-weight: normal; } /* firefox 19+ */
+:-ms-input-placeholder { color:@grayLight; font-style: italic; font-weight: normal; } /* ie */
+input:-moz-placeholder { color:@grayLight; font-style: italic; font-weight: normal; }
 
 .error .input-append > .add-on {
   position:absolute;
@@ -222,6 +226,12 @@ h1 input[type="text"] {
   }
   input{
     .border-radius(@inputBorderRadius);
+  }
+  .ui-timepicker-list {
+    font-size: 12px;
+    li {
+      color: lighten(@gray, 20%);
+    }
   }
 }
 

@@ -78,7 +78,7 @@ h1 {
       margin-left: -7px !important;
       font-size: 14px;
       padding: 6px;
-      color: lighten(@gray, 30%);
+      color: lighten(@gray, 20%);
       width: 100%;
     }
 
@@ -101,6 +101,7 @@ h1 {
 
     .help-block {
       margin: 0 0 0 8px;
+      min-height: 18px;
     }
 
     &[data-type="textarea"] {
@@ -162,6 +163,9 @@ h1 {
           }
         }
       }
+      .help-block {
+        min-height: 0;
+      }
       .control-group.email:first-child .input-append.widget input[type="text"] {
         .border-top-left-radius(3px);
         .border-top-right-radius(3px);
@@ -173,15 +177,14 @@ h1 {
       }
     }
 
-
     &[data-type="bool"] {
       label {
         margin-bottom: 0;
       }
     }
 
-
-    &[data-type="enum"] {
+    &[data-type="enum"],
+    &[data-type="relate"] {
       .normal > span {
         display: block !important;
         white-space: nowrap;
@@ -196,6 +199,14 @@ h1 {
       }
     }
 
+    &[data-type="teamset"] {
+      .normal .row-fluid {
+        margin-bottom: 4px;
+        .select2-container {
+          margin: 0 0 0 -9px;
+        }
+      }
+    }
 
     &[data-type="datetimecombo"] {
       .normal > span {
@@ -219,7 +230,6 @@ h1 {
         }
       }
     }
-
 
     &[data-type="fieldset"] {
       margin-bottom: 9px;
@@ -248,7 +258,9 @@ h1 {
           .border-bottom-right-radius(3px);
         }
       }
-
+      .help-block {
+        min-height: 0;
+      }
 
       h1 {
         .select2-container {
