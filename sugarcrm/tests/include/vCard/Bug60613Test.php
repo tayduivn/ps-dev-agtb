@@ -32,6 +32,7 @@ require_once 'include/vCard.php';
  */
 class Bug60613Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    // Since we are creating Beans using vCard Import, must save IDs for cleaning
     private $createdContacts = array();
     private $filename;
 
@@ -46,6 +47,7 @@ class Bug60613Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        // Clean the Contacts created using vCard Import
         foreach ($this->createdContacts as $contactId)
         {
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$contactId}'");

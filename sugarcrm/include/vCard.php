@@ -366,7 +366,7 @@ class vCard
 
         foreach ($bean->get_import_required_fields() as $key => $value)
         {
-            $GLOBALS['log']->fatal("Required field is not set: $key");
+            $GLOBALS['log']->error("Cannot import vCard, required field is not set: $key");
             if (empty($bean->$key))
             {
                 return;
