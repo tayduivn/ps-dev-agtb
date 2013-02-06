@@ -6453,7 +6453,7 @@ class SugarBean
 	 */
 	public function getCopy()
 	{
-	    return BeanFactory::getBean($this->module_dir);
+        return BeanFactory::getBean($this->module_name);
 	}
 
     /**
