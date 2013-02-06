@@ -76,7 +76,7 @@
                 selectedUser.last_name = data.last_name;
                 selectedUser.isManager = data.isManager;
 
-                self.context.forecasts.set({selectedUser : selectedUser})
+                self.context.set({selectedUser : selectedUser})
             }
         };
 
@@ -90,8 +90,5 @@
     hideIcon: function(){
         // hide icons
         $('.pull-right').hide();
-
-        // remove event listener
-        this.context.forecasts.off('change:commitForecastFlag', this.hideIcon);
     }
 })

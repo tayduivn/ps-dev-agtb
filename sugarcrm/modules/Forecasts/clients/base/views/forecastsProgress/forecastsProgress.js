@@ -109,9 +109,9 @@
             pipeline : 0
         });
 
-        this.selectedUser = this.context.forecasts.get("selectedUser");
+        this.selectedUser = this.context.get("selectedUser");
         this.shouldRollup = this.isManagerView();
-        this.selectedTimePeriod = this.context.forecasts.get("selectedTimePeriod");
+        this.selectedTimePeriod = this.context.get("selectedTimePeriod");
         this.likelyTotal = 0;
         this.bestTotal = 0;
         this.worstTotal = 0;
@@ -122,7 +122,7 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
-        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        if(this.context) this.context.off(null, null, this);
         app.view.View.prototype.unbindData.call(this);
     },
 
@@ -138,38 +138,38 @@
             this.model.on("change reset", self.render, this);
         }
 
-        if (this.context.forecasts) {
+        if (this.context) {
             //update user
-            this.context.forecasts.on("change:selectedUser reset:selectedUser",
+            this.context.on("change:selectedUser reset:selectedUser",
             function(context, selectedUser) {
                 this.updateProgressForSelectedUser(selectedUser);
                 this.updateProgress();
             }, this);
 
             //commits could have changed quotas or any other number being used in the projected panel, do a fresh pull
-            this.context.forecasts.on("forecasts:committed:commit", function(context, flag) {
+            this.context.on("forecasts:committed:commit", function(context, flag) {
                     this.updateProgress();
             }, this);
-            this.context.forecasts.on("forecasts:worksheet:saved forecasts:committed:saved", function(){
+            this.context.on("forecasts:worksheet:saved forecasts:committed:saved", function(){
                 self.updateProgress();
             });
 
 
             //update timeperiod
-            this.context.forecasts.on("change:selectedTimePeriod reset:selectedTimePeriod",
+            this.context.on("change:selectedTimePeriod reset:selectedTimePeriod",
             function(context, selectedTimePeriod) {
                 this.updateProgressForSelectedTimePeriod(selectedTimePeriod);
                 this.updateProgress();
             }, this);
 
             //Manager totals model has changed
-            this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
+            this.context.on("change:updatedManagerTotals", function(context, totals) {
                 if(self.shouldRollup) {
                     self.recalculateManagerTotals(totals);
                 }
             });
             //Rep totals model has changed
-            this.context.forecasts.on("change:updatedTotals", function(context, totals) {
+            this.context.on("change:updatedTotals", function(context, totals) {
                 if(!self.shouldRollup) {
                     self.recalculateRepTotals(totals);
                 }
@@ -304,7 +304,7 @@
 
     _renderHtml: function (ctx, options) {
         _.extend(this, this.model.toJSON());
-        this.progressDataSet = app.forecasts.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', this.context.forecasts.config);
+        this.progressDataSet = app.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', this.context.config);
         this.handleRenderOptions();
 
         app.view.View.prototype._renderHtml.call(this, ctx, options);
