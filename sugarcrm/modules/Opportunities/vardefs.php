@@ -572,19 +572,23 @@ $dictionary['Opportunity'] = array(
         ),
         //END SUGARCRM flav=pro ONLY
     ),
+
     'duplicate_check' => array(
         'FilterDuplicateCheck' => array(
             'filter_template' => array(
-                array('name' => array('$starts' => '$name')),
+                array('$and' => array(
+                    array('name' => array('$starts' => '$name')),
+                    array('sales_status' => array('$not_equals' => 'Closed')),
+                    array('accounts.id' => array('$equals' => '$account_id')),
+                )),
             ),
             'ranking_fields' => array(
                 array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
             )
         )
-    )
+    ),
 
 //This enables optimistic locking for Saves From EditView
-,
     'optimistic_locking' => true,
 );
 VardefManager::createVardef(
