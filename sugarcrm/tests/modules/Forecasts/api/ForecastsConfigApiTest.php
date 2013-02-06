@@ -63,7 +63,6 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             "module" => "Forecasts",
-            "platform" => "base",
             "testSetting" => "testValue",
         );
         $apiClass = new ForecastsConfigApi();
@@ -95,7 +94,6 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             "module" => "Forecasts",
-            "platform" => "base",
         );
         $apiClass = new ForecastsConfigApi();
         $result = $apiClass->config($api, $args);
@@ -119,7 +117,6 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             "module" => "Forecasts",
-            "platform" => "base",
             "testSetting" => strrev($testSetting),
         );
         $apiClass = new ForecastsConfigApi();
@@ -150,7 +147,6 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             "module" => "Forecasts",
-            "platform" => "base",
             "testSetting" => "testValue",
         );
         $apiClass = new ForecastsConfigApi();
@@ -183,7 +179,6 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             "module" => "Forecasts",
-            "platform" => "base"
         );
 
         $args = array_merge($args, $priorSettings);
@@ -298,8 +293,7 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api->user = $GLOBALS['current_user'];
 
         $args = array(
-            "module" => "Forecasts",
-            "platform" => "base"
+            "module" => "Forecasts"
         );
 
         $args = array_merge($args, $priorSettings);

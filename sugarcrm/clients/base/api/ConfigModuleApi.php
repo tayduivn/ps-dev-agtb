@@ -61,12 +61,26 @@ class ConfigModuleApi extends ModuleApi {
      */
     public function config($api, $args) {
         $this->requireArgs($args,array('module'));
+        $seed = BeanFactory::newBean($args['module']);
         $adminBean = BeanFactory::getBean("Administration");
 
-        $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
+        //acl check
+        if(!$seed->ACLAccess('access')) {
+            // No create access so we construct an error message and throw the exception
+            $moduleName = null;
+            if(isset($args['module'])){
+                $failed_module_strings = return_module_language($GLOBALS['current_language'], $args['module']);
+                $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
+            }
+            $args = null;
+            if(!empty($moduleName)){
+                $args = array('moduleName' => $moduleName);
+            }
+            throw new SugarApiExceptionNotAuthorized($GLOBALS['app_strings']['EXCEPTION_ACCESS_MODULE_CONFIG_NOT_AUTHORIZED'], $args);
+        }
 
         if (!empty($args['module'])) {
-            return $adminBean->getConfigForModule($args['module'], $platform);
+            return $adminBean->getConfigForModule($args['module'], $api->platform);
         }
         return;
     }
@@ -80,37 +94,37 @@ class ConfigModuleApi extends ModuleApi {
         $this->requireArgs($args,array('module'));
 
         $module = $args['module'];
-        $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
 
         // these are not part of the config values, so unset
         unset($args['module']);
-        unset($args['platform']);
         unset($args['__sugar_url']);
 
         //acl check, only allow if they are module admin
-        if(!$this->hasAccess($module)) {
-            throw new SugarApiExceptionNotAuthorized("Current User not authorized to change ".$module." configuration settings");
+        if(!$api->user->isAdminForModule($module)) {
+            // No create access so we construct an error message and throw the exception
+            $moduleName = null;
+            if(isset($args['module'])){
+                $failed_module_strings = return_module_language($GLOBALS['current_language'], $args['module']);
+                $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
+            }
+            $args = null;
+            if(!empty($moduleName)){
+                $args = array('moduleName' => $moduleName);
+            }
+            throw new SugarApiExceptionNotAuthorized($GLOBALS['app_strings']['EXCEPTION_CHANGE_MODULE_CONFIG_NOT_AUTHORIZED'], $args);
         }
 
         $admin = BeanFactory::getBean('Administration');
 
         foreach ($args as $name => $value) {
             if(is_array($value)) {
-                $admin->saveSetting($module, $name, json_encode($value), $platform);
+                $admin->saveSetting($module, $name, json_encode($value), $api->platform);
             } else {
-                $admin->saveSetting($module, $name, $value, $platform);
+                $admin->saveSetting($module, $name, $value, $api->platform);
             }
         }
 
-        MetaDataManager::clearAPICache(false);
-
-        return $admin->getConfigForModule($module, $platform);
-    }
-
-
-    public function hasAccess($module) {
-        global $current_user;
-        return $current_user->isAdminForModule($module);
+        return $admin->getConfigForModule($module, $api->platform);
     }
 
 }
