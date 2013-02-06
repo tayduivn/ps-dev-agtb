@@ -256,9 +256,26 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search'
    array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
    'rhs_module'=> 'Cases', 'rhs_table'=> 'cases', 'rhs_key' => 'created_by',
    'relationship_type'=>'one-to-many')
-)
+    ),
+
+    'duplicate_check' => array(
+        'FilterDuplicateCheck' => array(
+            'filter_template' => array(
+                array('$and' => array(
+                    array('name' => array('$starts' => '$name')),
+                    array('status' => array('$not_equals' => 'Closed')),
+                    array('account_id' => array('$equals' => '$account_id')),
+                )),
+            ),
+            'ranking_fields' => array(
+                array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
+                array('in_field_name' => 'account_id', 'dupe_field_name' => 'account_id'),
+            )
+        )
+    ),
+
 //This enables optimistic locking for Saves From EditView
-	,'optimistic_locking'=>true,
+    'optimistic_locking'=>true,
 );
 VardefManager::createVardef('Cases','Case', array('default', 'assignable',
 //BEGIN SUGARCRM flav=pro ONLY
