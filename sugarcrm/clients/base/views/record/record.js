@@ -121,16 +121,6 @@
                 isLabelInline = (panel.labelsOnTop === false && panel.labels);
                 maxFieldSpan  = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
 
-                if (_.isUndefined(field.dismiss_label)) {
-                    field.dismiss_label = false;
-                }
-
-                // if the label is to be dismissed, then the field should be allowed to take up the space that
-                // was originally dedicated for the label, which is similar to saying that labels are on top
-                if (field.dismiss_label === true) {
-                    maxFieldSpan = maxSpanForFieldWithLabelOnTop;
-                }
-
                 // calculate the 2/3 ratio for the field span
                 if (_.isUndefined(field.span)) {
                     field.span = Math.floor(maxFieldSpan / columns);
@@ -151,10 +141,18 @@
                     field.labelSpan = 1;
                 }
 
+                if (_.isUndefined(field.dismiss_label)) {
+                    field.dismiss_label = false;
+                }
+
                 // if the label is inline and is to be dismissed, then the field should take up its space plus the
-                // space set aside for its label, as long as that won't overflow the row
+                // space set aside for its label
                 if (isLabelInline && field.dismiss_label === true) {
                     field.span += field.labelSpan;
+
+                    // the field should be allowed to take up the space that was originally dedicated for the label,
+                    // which is similar to saying that labels are on top
+                    maxFieldSpan = maxSpanForFieldWithLabelOnTop;
                 }
 
                 // fields can't be greater than the maximum allowable span
