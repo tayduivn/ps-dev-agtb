@@ -1,7 +1,5 @@
 <?php
-
-$layout = MetaDataManager::getLayout("FilterPanelLayout");
-
+$layout = MetaDataManager::getLayout("GenericLayout", array("type" => "subpanel"));
 // Eventually change this to the proper syntax when we have subpanel lists.
 $layout->push(array("name" => "Member Organizations", "context" => array("link" => "members")));
 $layout->push(array("name" => "Contacts", "context" => array("link" => "contacts")));
