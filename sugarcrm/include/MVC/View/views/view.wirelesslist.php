@@ -65,6 +65,7 @@ class ViewWirelesslist extends SugarWirelessListView
 			$searchForm = new SearchForm($this->bean, $GLOBALS['module'], 'wirelesslist');
 			$defs = SearchForm::retrieveSearchDefs($GLOBALS['module']);
 			$searchForm->setup($defs['searchdefs'], $defs['searchFields'], 'SearchFormGeneric.tpl');
+			$searchdefs = $defs['searchdefs'];
 		}
 		else{
 			require_once('include/SearchForm/SearchForm.php');

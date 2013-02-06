@@ -1923,7 +1923,8 @@ class SugarBean
             $sendToEmail = $notify_user->emailAddress->getPrimaryAddress($notify_user);
             $sendEmail = TRUE;
             if(empty($sendToEmail)) {
-                $GLOBALS['log']->warn("Notifications: no e-mail address set for user {$notify_user->user_name}, cancelling send");
+                // this cannot be a user_name, the bean could be a contact or a lead, neither of which has a user_name
+                $GLOBALS['log']->warn("Notifications: no e-mail address set for {$notify_user->module_name} - {$notify_user->id}, cancelling send");
                 $sendEmail = FALSE;
             }
 

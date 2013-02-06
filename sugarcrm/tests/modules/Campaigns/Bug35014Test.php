@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,11 +21,11 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	private $campaign_id;
-	
+
 	public function setUp()
     {
 
@@ -41,7 +41,7 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
-    
+
     public function testLeadCaptureResponse()
     {
         // SET GLOBAL PHP VARIABLES
@@ -56,7 +56,7 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
             'team_set_id' => 'Global',
             'req_id' => 'last_name;',
         );
-        
+
         // RUN TEST 1
         $postString = '';
         foreach($_POST as $k => $v)
@@ -64,28 +64,29 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
             $postString .= "{$k}=".urlencode($v)."&";
         }
         $postString = rtrim($postString, "&");
-        
+
         $ch = curl_init("{$GLOBALS['sugar_config']['site_url']}/index.php?entryPoint=WebToLeadCapture");
         curl_setopt($ch, CURLOPT_POST, count($_POST) + 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
         curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         ob_start();
         $return = curl_exec($ch);
         $output = ob_get_clean();
-        
+
         $matches = array();
         preg_match("/Location: .*/", $output, $matches);
         $this->assertTrue(count($matches) > 0, "Could not get the header information for the response");
-        
+
         $location = '';
         if(count($matches) > 0){
             $location = str_replace("Location :", "", $matches[0]);
         }
-        
+
         $query_string = substr($location, strpos($location, "?") + 1);
         $query_string_array = explode("&", $query_string);
-        
+
         $post_compare_array = array();
         $skipKeys = array('module', 'action', 'entryPoint', 'client_id_address');
         foreach($query_string_array as $key_val)
@@ -95,13 +96,13 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
                 continue;
             $post_compare_array[$key_val_array[0]] = $key_val_array[1];
         }
-        
+
         // the redirect_url doesn't get returned, so we unset it
         unset($_POST['redirect_url']);
-        
+
         $this->assertEquals($_POST, $post_compare_array, "The returned get location doesn't match that of the post passed in");
-        
-        
+
+
         // SET GLOBAL PHP VARIABLES
         $_POST = array
         (
@@ -113,7 +114,7 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
             'team_id' => '1',
             'team_set_id' => 'Global',
             'req_id' => 'last_name;',
-            'SuperLongGetVar' => 
+            'SuperLongGetVar' =>
             	'PneumonoultramicroscopicsilicovolcanoconiosisPneumonoultramicroscopicsilicovolcanoconiosis'.
             	'PneumonoultramicroscopicsilicovolcanoconiosisPneumonoultramicroscopicsilicovolcanoconiosis'.
         		'PneumonoultramicroscopicsilicovolcanoconiosisPneumonoultramicroscopicsilicovolcanoconiosis'.
@@ -157,8 +158,8 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
             	'PneumonoultramicroscopicsilicovolcanoconiosisPneumonoultramicroscopicsilicovolcanoconiosis'.
         		'PneumonoultramicroscopicsilicovolcanoconiosisPneumonoultramicroscopicsilicovolcanoconiosis',
         );
-        
-        
+
+
         // RUN TEST 1
         $postString = '';
         foreach($_POST as $k => $v)
@@ -166,7 +167,7 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
             $postString .= "{$k}=".urlencode($v)."&";
         }
         $postString = rtrim($postString, "&");
-        
+
         $ch = curl_init("{$GLOBALS['sugar_config']['site_url']}/index.php?entryPoint=WebToLeadCapture");
         curl_setopt($ch, CURLOPT_POST, count($_POST) + 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
@@ -175,7 +176,7 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
         ob_start();
         $return = curl_exec($ch);
         $output = ob_get_clean();
-        
+
         $matches = array();
         preg_match('/form name="redirect"/', $output, $matches);
         $this->assertTrue(count($matches) > 0, "Should have output a form since we have a long get string");
