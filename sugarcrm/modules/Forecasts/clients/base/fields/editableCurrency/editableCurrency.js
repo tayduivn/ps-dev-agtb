@@ -359,14 +359,16 @@
      */
     showErrors : function() {
         // attach error styles
-        var self = this;
-        this.$el.find('.error-message').html(this.errorMessage);
-        this.$el.find('.control-group').addClass('error');
-        this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
+        //var self = this;
+        this.$el.find('.error-tooltip').attr('data-original-title',this.errorMessage);
+        this.$el.find('.error-tooltip').attr('style','display: inline-block;');
+        this.$el.find('input').addClass('local-error');
+        /*
         // make error message button cancel edits
         this.$el.find('.btn.btn-danger').on("click", function(evt) {
             self.cancelEdits.call(self, evt);
         });
+        */
     }
 
 })
