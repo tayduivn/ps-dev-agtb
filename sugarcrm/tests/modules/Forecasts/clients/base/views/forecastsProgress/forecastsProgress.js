@@ -24,8 +24,6 @@ describe("The Forecasts Progress Calculations display", function() {
     var app, view, context;
 
     beforeEach(function() {
-        SugarTest.seedMetadata(true);
-        SugarTest.seedApp();
         app = SugarTest.app;
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsProgress", "forecastsProgress", "js", function(d) {return eval(d); });
     });

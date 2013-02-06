@@ -23,8 +23,6 @@ describe("The forecasts worksheet totals calculation test", function(){
     var app, view, context, formatWithRateStub;
 
     beforeEach(function() {
-        SugarTest.seedMetadata(true);
-        SugarTest.seedApp();
         app = SugarTest.app;
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) { return eval(d); });
         var model1 = new Backbone.Model({amount: 100, sales_stage: 'Closed Won', probability: 70, commit_stage: 'include',  best_case : 100, likely_case : 100, base_rate : 1 });
