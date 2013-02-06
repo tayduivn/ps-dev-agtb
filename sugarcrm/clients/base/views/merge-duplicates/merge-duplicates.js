@@ -3,16 +3,32 @@
     events: {
         'click .show_extra' : 'showMore'
     },
+    MAX_RECORDS: 5, // the number of records we can merge, by fiat
     rowFields: {},
+    primaryRecord: {},
+    alternativeRecords: {},
     initialize: function(options) {
-
         var meta = app.metadata.getView(options.module, 'record'),
             visibleFields = [],
-            hiddenFields = [];
-        _.each(meta.panels, function(panel) {
+            hiddenFields = [],
+            self = this;
 
-            _.each(panel.fields, function(field, index){
-                panel.fields[index] = {
+        this.getPrimaryRecord(options.context);
+        this.name = this.primaryRecord.attributes['name'] || '';
+
+        _.each(meta.panels, function(panel) {
+            var fields;
+
+            fields = this.flattenFieldsets(panel.fields);
+
+            _.each(fields, function(field, index){
+                function isSimilar(field, primary, alternatives) {
+                    return _.every(alternatives, function(alt) {
+                       return (alt.get(field.name) == primary.get(field.name));
+                    });
+                }
+
+                var fieldMeta = {
                     type: 'fieldset',
                     label: field.label,
                     fields: [
@@ -23,13 +39,14 @@
                         field
                     ]
                 };
-            }, this);
 
-            if(panel.hide) {
-                hiddenFields = _.union(hiddenFields, panel.fields);
-            } else {
-                visibleFields = _.union(visibleFields, panel.fields);
-            }
+                if(isSimilar(field, self.primaryRecord, self.alternativeRecords)) {
+                    hiddenFields.push(fieldMeta);
+                }
+                else {
+                    visibleFields.push(fieldMeta);
+                }
+            }, this);
         }, this);
         options.meta = {
             type: 'list',
@@ -45,10 +62,44 @@
         }
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'list';
-        
-        var selectedDuplicates = this.context.get('selectedDuplicates');
-        this.primaryModel = selectedDuplicates[0];
-        this.name = this.primaryModel.attributes['name'] || '';
+
+
+    },
+    /**
+     * utility method for taking a fieldlist with possible nested fields,
+     * and returning a flat array of fields
+     *
+     * coming soon - type filtering
+     * @param {Array} defs - unprocessed list of fields from metadata
+     * @return {Array} fields - flat list of fields
+     */
+    flattenFieldsets: function(defs) {
+        var fields,
+           fieldsets,
+           fieldsetFilter = function(field) {
+                return field.type && field.type === 'fieldset' && _.isArray(field.fields);
+           };
+
+        fields = _.reject(defs, fieldsetFilter);
+        fieldsets = _.filter(defs, fieldsetFilter);
+
+        while (fieldsets.length) {
+            // fieldsets need to be broken into component fields
+            fieldsets = _.chain(fieldsets)
+                .pluck('fields')
+                .flatten()
+                .value();
+
+            // now collect the raw fields from the press
+            fields = _.chain(fieldsets)
+                .reject(fieldsetFilter)
+                .union(fields)
+                .value();
+
+            // do we have any more fieldsets to squash?
+            fieldsets = _.filter(fieldsets, fieldsetFilter);
+        }
+        return fields;
     },
     showMore: function(evt) {
         this.$(".col .extra").toggleClass('hide');
@@ -75,5 +126,29 @@
             this.toggleFields(this.rowFields[primary_model.id], true);
             //app.view.views.ListView.prototype.toggleRow.call(this, primary_model.id, true);
         }
+    },
+    getPrimaryRecord: function(context) {
+        var records = context.get("selectedDuplicates");
+
+        // bomb out if we don't have between 2 and MAX_RECORDS
+        if (!records.length || records.length < 2 || records.length > this.MAX_RECORDS) {
+            app.alert.show('invalid-record-count',{
+                level: 'error',
+                messages: 'Invalid number of records passed.',
+                autoClose: true
+            });
+            return;
+        }
+
+        if (context.has("primary_record")) {
+            this.primaryRecord = this.get("primary_record");
+        }
+        else {
+            this.primaryRecord = records[0];
+        }
+
+        this.alternativeRecords = _.reject(records, function(record) {
+            return record.id == this.primaryRecord.id;
+        }, this);
     }
 })
