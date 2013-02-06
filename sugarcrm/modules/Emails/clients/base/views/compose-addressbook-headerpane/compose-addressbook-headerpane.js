@@ -13,14 +13,10 @@
             this.context.parent.trigger("recipients:" + target + ":add", recipients);
         }
 
-        this._close();
+        this._cancel();
     },
 
     _cancel: function() {
-        this._close();
-    },
-
-    _close: function() {
         if (this.context.parent) {
             this.context.parent.trigger("drawer:hide");
         }
