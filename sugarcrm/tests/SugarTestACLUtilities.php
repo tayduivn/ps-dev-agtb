@@ -29,6 +29,14 @@ class SugarTestACLUtilities
 
     private function __construct() {}
 
+    /**
+     * Create a Role for use in a Unit Test
+     * @param string $name - name of the role
+     * @param array $allowedModules - modules you want to give access to
+     * @param array $allowedActions - actions user is allowed to have
+     * @param array $ownerActions - any owner actions [Edit Owner, etc] the user needs 
+     * @return SugarBean role
+     */
     public static function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
         self::$_modules = array_merge($allowedModules, self::$_modules);
 
@@ -73,6 +81,14 @@ class SugarTestACLUtilities
         return $role;
     }
 
+    /**
+     * Create a field
+     * @param string $role_id - the role to add this to
+     * @param string $module - the module that has the field
+     * @param string $field_name - the field name to apply the access to 
+     * @param int $access_level - the access level from ACLField/actiondefs.php
+     * @return SugarBean field
+     */
     public static function createField($role_id, $module, $field_name, $access_level) {
         self::$_modules[] = $module;
         // set the name field as Read Only
@@ -82,6 +98,11 @@ class SugarTestACLUtilities
         return $field;
     }
 
+    /**
+     * Give the Global current user a role
+     * @param SugarBean $role 
+     * @return null
+     */
     public static function setupUser($role) {
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
@@ -100,8 +121,11 @@ class SugarTestACLUtilities
         
     }
 
+    /**
+     * TearDown method to remove any roles and fields setup
+     * @return null
+     */
     public static function tearDown() {
-
         foreach(self::$_createdRoles AS $role) {
             $role->mark_deleted($role->id);
             $role->mark_relationships_deleted($role->id);

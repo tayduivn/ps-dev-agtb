@@ -28,7 +28,10 @@ require_once ('include/api/RestService.php');
 class SugarTestRestUtilities
 {
     private function __construct() {}
-    
+    /**
+     * Get the RestServiceMock
+     * @return object SugarTestRestService
+     */
     public static function getMock() {
         return new SugarTestRestServiceMock();
     }
