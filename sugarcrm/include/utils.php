@@ -1067,7 +1067,7 @@ function _mergeCustomAppListStrings($file , $app_list_strings)
         $app_list_strings = array_merge($GLOBALS['app_list_strings'], $app_list_strings);
     }
     
-    if(empty($app_list_strings) || !is_array($app_list_strings)){
+    if (empty($app_list_strings) || !is_array($app_list_strings)) {
         return $app_list_strings_original;
     }
     //Bug 25347: We should not merge custom dropdown fields unless they relate to parent fields or the module list.
@@ -1078,10 +1078,8 @@ function _mergeCustomAppListStrings($file , $app_list_strings)
     $exemptDropdowns[] = "record_type_display";
     $exemptDropdowns[] = "record_type_display_notes";
 
-    foreach($app_list_strings as $key=>$value)
-    {
-        if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original))
-        {
+    foreach($app_list_strings as $key=>$value) {
+        if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original)) {
             unset($app_list_strings_original[$key]);
         }
     }
