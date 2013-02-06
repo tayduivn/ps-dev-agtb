@@ -1042,14 +1042,14 @@ function return_app_list_strings_language($language)
  //jchi 25347
 function _mergeCustomAppListStrings($file , $app_list_strings)
 {
-	$app_list_strings_original = $app_list_strings;
-	unset($app_list_strings);
+    $app_list_strings_original = $app_list_strings;
+    unset($app_list_strings);
     // FG - bug 45525 - $exemptDropdown array is defined (once) here, not inside the foreach
     //                  This way, language file can add items to save specific standard codelist from being overwritten
     $exemptDropdowns = array();
-	include($file);
+    include($file);
     
-	// Bug 60008 + Bugs 60607, 60608, 60609, 60612
+    // Bug 60008 + Bugs 60607, 60608, 60609, 60612
     // There is a chance that some app_list_strings were in fact in $GLOBALS['app_list_strings'].
     // In case of that, the customizations end up being blown away because they 
     // are written to the global app_list_strings, not the function scope $app_list_strings.
@@ -1067,26 +1067,26 @@ function _mergeCustomAppListStrings($file , $app_list_strings)
         $app_list_strings = array_merge($GLOBALS['app_list_strings'], $app_list_strings);
     }
     
-	if(empty($app_list_strings) || !is_array($app_list_strings)){
-		return $app_list_strings_original;
-	}
-	//Bug 25347: We should not merge custom dropdown fields unless they relate to parent fields or the module list.
+    if(empty($app_list_strings) || !is_array($app_list_strings)){
+        return $app_list_strings_original;
+    }
+    //Bug 25347: We should not merge custom dropdown fields unless they relate to parent fields or the module list.
     // FG - bug 45525 - Specific codelists must NOT be overwritten
-	$exemptDropdowns[] = "moduleList";
-	$exemptDropdowns[] = "moduleListSingular";
-	$exemptDropdowns[] = "parent_type_display";
+    $exemptDropdowns[] = "moduleList";
+    $exemptDropdowns[] = "moduleListSingular";
+    $exemptDropdowns[] = "parent_type_display";
     $exemptDropdowns[] = "record_type_display";
     $exemptDropdowns[] = "record_type_display_notes";
 
-	foreach($app_list_strings as $key=>$value)
-	{
-		if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original))
-		{
-	   		unset($app_list_strings_original[$key]);
-		}
-   }
-   $app_list_strings = sugarArrayMergeRecursive($app_list_strings_original , $app_list_strings);
-   return $app_list_strings;
+    foreach($app_list_strings as $key=>$value)
+    {
+        if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original))
+        {
+            unset($app_list_strings_original[$key]);
+        }
+    }
+    $app_list_strings = sugarArrayMergeRecursive($app_list_strings_original , $app_list_strings);
+    return $app_list_strings;
 }
 
 /**
