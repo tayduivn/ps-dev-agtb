@@ -29,11 +29,11 @@
     sendEmailFromApp: false,
     events: {
         'change .existingAddress': 'updateExistingAddress',
-        'click  .btn-edit':        'updateExistingProperty',
-        'click  .removeEmail':     'remove',
-        'click  .addEmail':        'add',
-        'change .newEmail':        'newEmailChanged',
-        "click  .composeEmail":    "composeEmail"
+        'click  .btn-edit':        'toggleExistingAddressProperty',
+        'click  .removeEmail':     'removeExistingAddress',
+        'click  .addEmail':        'addNewAddress',
+        'change .newEmail':        'addNewAddress',
+        'click  .composeEmail':    'composeEmail'
     },
     initialize: function(options) {
         options     = options || {};
@@ -50,46 +50,209 @@
         this.sendEmailFromApp      = (hasOutboundEmailConfig === "true");
     },
     /**
-     * Event handler for change of the .newEmail input, we want to test if a new e-mail needs to be added
-     * @param {Event} evt
+     * Event handlers
      */
-    newEmailChanged:function(evt){
-        if($(evt.currentTarget).val().length > 0){
-            this.add(evt, $(evt.currentTarget).val());
-        }
+    addNewAddress:function(evt){
+        if (!evt) return;
+        //This event can either be triggered by the newEmail input or the removeEmail button
+        var email = this.$(evt.currentTarget).val() || this.$('.newEmail').val();
+
+        this._addNewAddress(email);
     },
-    // Tracks if we're currently adding email
-    _adding: false,
+    updateExistingAddress: function(evt) {
+        if (!evt) return;
+
+        var $inputs = this.$('input'),
+            $input = this.$(evt.currentTarget),
+            index = $inputs.index($input),
+            newEmail = $input.val();
+        this._updateExistingAddress(index, newEmail);
+    },
+    removeExistingAddress: function(evt) {
+        if (!evt) return;
+
+        this._removeTooltips(evt);
+
+        var $deleteButtons = this.$('.removeEmail'),
+            $deleteButton = this.$(evt.currentTarget),
+            index = $deleteButtons.index($deleteButton);
+        this._removeExistingAddress(index);
+    },
+    toggleExistingAddressProperty: function(evt) {
+        if (!evt) return;
+
+        this._removeTooltips(evt);
+
+        var $property = this.$(evt.currentTarget),
+            property = $property.data('emailproperty'),
+            $properties = this.$('[data-emailproperty='+property+']'),
+            index = $properties.index($property);
+        this._toggleExistingAddressProperty(index, property);
+    },
     /**
-     * Adds email address to dom and model. Note added emails only get checked
-     * upon Save button being clicked (which triggers the model validations).
-     * @param {Event} evt DOM event
-     * @param {String} [newEmail] E-Mail string to be added, will default to value currently in .newEmail input if not provided
+     * Manipulations of the emails object
      */
-    add:function (evt, newEmail) {
-        if (!evt || this._adding) return;  //if event isn't valid or if add() is currently being called, don't add new e-mail
-        this._adding = true;
-        // Destroy the tooltips open on this button because they wont go away if we re-render
-        if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
-        var newAddress = (newEmail) ? newEmail : this.$('.newEmail').val();
+    _addNewAddress:function (email) {
         var existingAddresses = _.clone(this.model.get(this.name)) || [];
-        var newObj = {email_address:newAddress};
+        var newObj = {email_address:email};
+        //If no address exists, set this one as the primary
         if (existingAddresses.length < 1) {
             newObj.primary_address = "1";
         }
         existingAddresses.push(newObj);
 
         this.updateModel(existingAddresses);
-        this._adding = false;
+    },
+    _updateExistingAddress: function(index, newEmail) {
+        var existingAddresses = _.clone(this.model.get(this.name));
+        //Simply update the email address
+        existingAddresses[index].email_address = newEmail;
+        this.updateModel(existingAddresses);
+    },
+    _toggleExistingAddressProperty:function (index, property) {
+        var existingAddresses = _.clone(this.model.get(this.name));
+        //If property is primary_address, we want to make sure one and only one primary email is set
+        //As a consequence we reset all the primary_address properties to 0 then we toggle property for this index.
+        if (property === 'primary_address') {
+            existingAddresses[index][property] = "0";
+            _.find(existingAddresses, function(email, i) {
+                if (email[property] == "1") {
+                    existingAddresses[i][property] = "0";
+                }
+            })
+        }
+        // Toggle property for this email
+        if (existingAddresses[index][property] == "1") {
+            existingAddresses[index][property] = "0";
+        } else {
+            existingAddresses[index][property] = "1";
+        }
+        this.updateModel(existingAddresses);
+    },
+    _removeExistingAddress: function(index) {
+        var existingAddresses = _.clone(this.model.get(this.name)),
+            wasPrimary = existingAddresses[index]['primary_address'] == '1';
+
+        //Reject this index from existing addresses
+        existingAddresses = _.reject(existingAddresses, function (emailInfo, i) { return i == index; });
+
+        // If a removed address was the primary email, we still need at least one address to be set as the primary email
+        if (wasPrimary) {
+            //Let's pick the first one
+            var address = _.first(existingAddresses);
+            if (address) {
+                address.primary_address = '1';
+            }
+        }
+        this.updateModel(existingAddresses);
     },
     /**
-     * On render, determine which e-mail addresses need anchor tag included
-     * @param {string|Array} value single email address or set of email addresses
+     * Updates model and triggers appropriate change events;
+     * @param value
+     */
+    updateModel:function(value) {
+        this.model.set(this.name, value);
+        this.model.trigger('change');
+        this.model.trigger('change:'+this.name);
+    },
+    /**
+     * Mass updates a property for all email addresses
+     * @param {Array} emails emails array off a model
+     * @param {String} propName
+     * @param {Mixed} value
+     * @return {Array}
+     */
+    massUpdateProperty:function (emails, propName, value) {
+        _.each(emails, function (emailInfo, index) {
+            emails[index][propName] = value;
+        });
+        return emails;
+    },
+    /**
+     * Custom error styling for the e-mail field
+     * @param {Object} errors
+     * @override BaseField
+     */
+    decorateError: function(errors){
+        var emails;
+
+        this._removeErrorDecoration();
+
+        //Select all existing emails
+        emails = this.$('input:not(.newEmail)');
+
+        _.each(errors, function(errorContext, errorName) {
+            //For `email` validator the error is specific to an email
+            if (errorName === 'email' || errorName === 'duplicateEmail') {
+
+                // For each of our `sub-email` fields
+                _.each(emails, function(e) {
+                    var $email = this.$(e),
+                        email = $email.val();
+
+                    var isError = _.find(errorContext, function(emailError) { return emailError === email; });
+                    // if we're on an email sub field where error occurred, add error styling
+                    if(!_.isUndefined(isError)) {
+                        this._addErrorDecoration($email, errorName, [isError]);
+                    }
+                }, this);
+            //For required or primaryEmail we want to decorate only the first email
+            } else {
+                var $email = this.$('input:first');
+                this._addErrorDecoration($email, errorName, errorContext);
+            }
+        }, this);
+    },
+    _removeErrorDecoration: function() {
+        //Remove existing error classes
+        this.$el.find('.control-group.email').removeClass("inline-error");
+        //Remove error message
+        this.$('.help-block').html('');
+        // Remove previous exclamation marks.
+        this.$('.add-on').remove();
+    },
+    _addErrorDecoration: function($input, errorName, errorContext) {
+        $input.closest('.control-group.email').addClass("inline-error");
+        var $addon = $('<span class="add-on" data-placement="bottom"><i class="icon-exclamation-sign"></i></span>');
+        $addon.data("title", app.error.getErrorString(errorName, errorContext)).insertAfter($input);
+        if (_.isFunction($addon.tooltip)) {
+            $addon.tooltip();
+        }
+    },
+    /**
+     * Binds DOM changes to set field value on model.
+     * @param {Backbone.Model} model model this field is bound to.
+     * @param {String} fieldName field name.
+     */
+    bindDomChange:function () {
+
+        // Bind all tooltips on page
+        function bindAll(sel) {
+            this.$(sel).each(function (index) {
+                $(this).tooltip({
+                    placement:"bottom"
+                });
+            });
+        }
+
+        bindAll('.btn-edit');
+        bindAll('.addEmail');
+        bindAll('.removeEmail');
+
+        if(this.tplName === 'list-edit') {
+            app.view.Field.prototype.bindDomChange.call(this);
+        }
+    },
+
+    /**
+     * Format and unformat
+     * @param {String|Array} value single email address or set of email addresses
      */
     format: function(value) {
         if (_.isArray(value) && value.length > 0) {
             // got an array of email addresses
             _.each(value, function(email) {
+                // On render, determine which e-mail addresses need anchor tag included
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
                 email.hasAnchor = this.def.link && email.opt_out != "1" && email.invalid_email != "1";
             }, this);
@@ -105,6 +268,10 @@
 
         return value;
     },
+    /**
+     * Unformat
+     * @param {String|Array} value single email address or set of email addresses
+     */
     unformat: function(value) {
         var originalNonArrayValue = null;
         if(this.view.action === 'list') {
@@ -153,161 +320,6 @@
 
         return value;
     },
-    /**
-     * Removes email address from dom and model
-     * @param {Object} evt DOM event
-     */
-    remove:function (evt) {
-        if (!evt) return;
-        // Destroy the tooltips open on this button because they wont go away if we rerender
-        if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
-        var emailAddress = $(evt.target).data('parentemail') || $(evt.target).parent().data('parentemail'),
-            existingAddresses = _.clone(this.model.get(this.name));
-        var wasPrimary = false;
-        existingAddresses = _.filter(existingAddresses, function (emailInfo, index) {
-            if (emailInfo.email_address == emailAddress) {
-                // Remove deleted e-mails
-                if(!wasPrimary){
-                    wasPrimary = existingAddresses[index]['primary_address'] == '1';
-                }
-                return false;
-            } else {
-                return true;
-            }
-        });
-        // If a removed address was the primary e-mail, we need to pick an existing e-mail and make it the new primary
-        if(wasPrimary){
-            var address = _.first(existingAddresses);
-            if(address){
-                address['primary_address'] = '1';
-            }
-        }
-        this.updateModel(existingAddresses);
-    },
-    /**
-     * Updates true false properties on field
-     * @param {Event} evt DOM event
-     */
-    updateExistingProperty:function (evt) {
-        if (!evt) return;
-        // Destroy the tooltips open on this button because they wont go away if we rerender
-        if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
-        var existingAddresses, emailAddress, parent, target, property;
-        target = $(evt.currentTarget);
-        parent = target.parent();
-        emailAddress = parent.data('parentemail') || parent.parent().data('parentemail');
-        property = target.data('emailproperty') || parent.data('emailproperty');
-        // need a shallow clone or we won't update the model later
-        existingAddresses = _.clone(this.model.get(this.name));
-
-        // Remove all active classes and set all with emails with this property false
-        if (property == 'primary_address') {
-            existingAddresses = this.massUpdateProperty(existingAddresses, property, "0");
-        }
-
-        // Toggle property for clicked button
-        _.each(existingAddresses, function (emailInfo, index) {
-            if (emailInfo.email_address == emailAddress) {
-                if (existingAddresses[index][property] == "1") {
-                    existingAddresses[index][property] = "0";
-                } else {
-                    existingAddresses[index][property] = "1";
-                }
-            }
-        });
-
-        this.updateModel(existingAddresses);
-    },
-    /**
-     * Updates model and triggers appropriate change events;
-     * @param value
-     */
-    updateModel:function(value) {
-        this.model.set(this.name, value);
-        this.model.trigger('change');
-        this.model.trigger('change:'+this.name);
-    },
-    /**
-     * Mass updates a property for all email addresses
-     * @param {Array} emails emails array off a model
-     * @param {String} propName
-     * @param {Mixed} value
-     * @return {Array}
-     */
-    massUpdateProperty:function (emails, propName, value) {
-        _.each(emails, function (emailInfo, index) {
-            emails[index][propName] = value;
-        });
-        return emails;
-    },
-    /**
-     * Updates existing address that change event was fired on
-     * @param {Object} evt DOM event
-     */
-    updateExistingAddress:function (evt) {
-        if (evt && $(evt.currentTarget).val() != $(evt.currentTarget).data('id')) {
-            var oldEmail = $(evt.currentTarget).data('id');
-            var newEmail = $(evt.currentTarget).val();
-            var existingEmails = _.clone(this.model.get(this.name));
-            _.each(existingEmails, function (emailInfo, index) {
-                if (emailInfo.email_address == oldEmail) {
-                    existingEmails[index].email_address = newEmail;
-                }
-            });
-            this.updateModel(existingEmails);
-        }
-    },
-    /**
-     * Custom error styling for the e-mail field
-     * TODO Determine appropriate error styling for e-mail field widget
-     * @param errors
-     * @override
-     */
-    decorateError: function(errors){
-
-        var emails, emailErrorsArray;
-        emailErrorsArray = errors.email;
-        this.$el.find('.control-group.email').removeClass("inline-error");
-        emails = this.$el.find('.control-group.email');
-
-        _.each(emailErrorsArray, function(emailWithError, i) {
-
-            // For each of our "sub-email" fields
-            _.each(emails, function(e) {
-                var emailFieldValue = $(e).data('emailaddress');
-
-                // if we're on an email sub field where error occurred, add error styling
-                if(emailFieldValue === emailWithError) {
-                    $(e).addClass("inline-error");
-                }
-            });
-        });
-
-    },
-    /**
-     * Binds DOM changes to set field value on model.
-     * @param {Backbone.Model} model model this field is bound to.
-     * @param {String} fieldName field name.
-     */
-    bindDomChange:function () {
-
-        // Bind all tooltips on page
-        function bindAll(sel) {
-            this.$(sel).each(function (index) {
-                $(this).tooltip({
-                    placement:"bottom"
-                });
-            });
-        }
-
-        bindAll('.btn-edit');
-        bindAll('.addEmail');
-        bindAll('.removeEmail');
-
-        if(this.tplName === 'list-edit') {
-            app.view.Field.prototype.bindDomChange.call(this);
-        }
-    },
     focus:function () {
         this.$('input').first().focus();
     },
@@ -330,5 +342,12 @@
                 forceNew:true
             }
         });
+    },
+    /**
+     * Destroy the tooltips open on this button because they wont go away if we rerender
+     */
+    _removeTooltips: function(evt) {
+        var $el = this.$(evt.currentTarget);
+        if (_.isFunction($el.tooltip)) $el.tooltip('hide');
     }
 })
