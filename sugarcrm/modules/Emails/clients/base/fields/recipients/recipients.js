@@ -39,7 +39,11 @@
             // it's probably a string like:
             // "Foo Bar" <foo@bar.com>,<foo@bar.com>,foo@bar.com
             // that we want to turn into:
-            // [{email:"foo@bar.com", name:"Foo Bar"},{email:"foo@bar.com", name:""},{email:"foo@bar.com", name:""}]
+            // [
+            //     new Backbone.Model({email:"foo@bar.com", name:"Foo Bar"}),
+            //     new Backbone.Model({email:"foo@bar.com", name:""}),
+            //     new Backbone.Model({email:"foo@bar.com", name:""})
+            // ]
             models = this._splitRecipients(models);
         }
 
