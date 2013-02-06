@@ -45,11 +45,6 @@ class ForecastsApiTest extends RestTestBase
     {
         parent::setUpBeforeClass();
 
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-
         self::$currentUser = SugarTestUserUtilities::createAnonymousUser();
         self::$currentUser->user_name = 'employee0';
         self::$currentUser->save();
