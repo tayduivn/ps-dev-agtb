@@ -145,7 +145,8 @@
         // Bind Timepicker to proxy functions
         this.$('.ui-timepicker-input').on({
             changeTime: _.bind(this.changeTime, this),
-            blur: _.bind(this._handleTimepickerBlur, this)
+            blur: _.bind(this._handleTimepickerBlur, this),
+            focus: function(){$('.datepicker.dropdown-menu').hide()}
         });
 
     },
