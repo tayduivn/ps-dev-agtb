@@ -23,10 +23,12 @@
                 {{/each}}
             {{/unless}}
                 <div class="btn-toolbar pull-right dropdown">
+                    {{#unless createMode}}
                     <div class="btn-group btn-group-previous-next">
                           <a href="{{#if collection.previous}}#{{modelRoute collection.previous def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn previous-row{{#unless collection.previous}} disabled{{/unless}}"><i class="icon-chevron-left"></i></a>
                           <a href="#{{#if collection.next}}#{{modelRoute collection.next def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn next-row{{#unless collection.next}} disabled{{/unless}}"><i class="icon-chevron-right"></i></a>
                     </div>
+                    {{/unless}}
                     {{#if hasAccess}}
                         {{#each meta.buttons}}
                             {{field ../this}}
