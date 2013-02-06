@@ -5163,16 +5163,8 @@ class SugarBean
             $module_name = $this->module_name;
         }
 
-        if (!empty($listview_def))
-        {
-            $temp_field_defs = $this->field_defs;
-            $this->field_defs = array_intersect_ukey($this->field_defs, $listview_def, 'strcasecmp');
-            $this->updateDependentField();
-            $this->field_defs = array_merge($temp_field_defs, $this->field_defs);
-        } else {
-            $this->updateDependentField();
-        }
-		$this->is_updated_dependent_fields = true;
+        $this->updateDependentField($filter_fields);
+        $this->is_updated_dependent_fields = true;
     }
 	//END SUGARCRM flav=pro ONLY
 

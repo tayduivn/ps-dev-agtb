@@ -45,13 +45,12 @@ class Bug48901Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         parent::setUp();
 
-        $this->_timeperiod = new TimePeriod();
-        $this->_timeperiod->is_fiscal_year = 0;
-        $this->_timeperiod->save();
+        $this->_timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
     }
 
     /**
      * @group 48901
+     * @outputBuffering disabled
      */
     public function testQuotasDeletedUsers()
     {
@@ -102,7 +101,7 @@ class Bug48901Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        $this->_timeperiod->mark_deleted($this->_timeperiod->id);
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestHelper::tearDown();
     }
 }
