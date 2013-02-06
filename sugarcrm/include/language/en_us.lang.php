@@ -2535,6 +2535,7 @@ $app_strings = array (
     'LBL_EDIT_AS_NEW_BUTTON_LABEL' => 'Edit As New',
     'LBL_EDIT_AS_NEW_BUTTON_TITLE' => 'Edit As New',
     'LBL_FAVORITES' => 'Favorites',
+    'LBL_FILTER' => 'Filter',
     'LBL_FILTER_MENU_BY' => 'Filter Menu By',
     'LBL_FILTER_SELECT_FIELD' => 'Select field...',
     'LBL_FILTER_SELECT_OPERATOR' => 'Select operator...',

@@ -10,7 +10,8 @@
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, opts);
 
-        this.currentQuery = ""; this.activeFilterId = "";
+        this.currentQuery = "";
+        this.activeFilterId = "";
 
         this.searchFilterId = _.uniqueId("search_filter");
         this.getFilters();
@@ -32,73 +33,117 @@
     },
 
     render: function() {
-        var self = this,
-            data = [],
-            defaultId = this.activeFilterId || "";
+        if(this.filters.length) {
+            var self = this,
+                relatedModuleList = [],
+                customFilterList = [],
+                defaultId = this.activeFilterId || "";
+            this.layoutType = this.layout.context.get("layout") || app.controller.context.get("layout");
 
-        _.each(this.filters.models, function(model){
-            data.push({id:model.id, text:model.get("name")});
-        }, this);
+            _.each(this.filters.models, function(model){
+                customFilterList.push({id:model.id, text:model.get("name")});
+            }, this);
 
-		data.push({id:-1, text:"Create New"});
+            customFilterList.push({id:-1, text:"Create New"});
 
-        app.view.View.prototype.render.call(this);
+            if(this.layoutType === "record") {
+                relatedModuleList.push({id: "default", text: app.lang.get("LBL_TABGROUP_ALL")});
 
-        this.node = this.$("#" + this.searchFilterId);
-        this.node.select2({
-            tags:data,
-            multiple:true,
-            maximumSelectionSize:2,
-            formatSelection: this.formatSelection,
-            placeholder: app.lang.get("LBL_MODULE_FILTER"),
-            dropdownCss: {width:'auto'},
-            dropdownCssClass: 'search-filter-dropdown'
-        });
+                // TODO: Fix this when we have a more concrete way of retrieving a list of related modules.
+                var subpanels = app.metadata.getModule(this.module).subpanels.subpanel_setup;
+                _.each(subpanels, function(value, key){
+                    relatedModuleList.push({id:key, text:app.lang.get(value.title_key, self.module)});
+                }, this);
+            }
 
-        if(defaultId){
-            this.node.select2("val", defaultId);
-            this.sanitizeFilter({added:{id:defaultId}});
+            app.view.View.prototype.render.call(this);
+
+            this.relatedFilterNode = this.$(".related-filter");
+            this.customFilterNode = this.$(".search-filter");
+
+            this.relatedFilterNode.select2({
+                data: relatedModuleList,
+                multiple: false,
+                minimumResultsForSearch: 7,
+                formatSelection: this.formatRelatedSelection,
+                formatResult: this.formatResult,
+                dropdownCss: {width:'auto'},
+                dropdownCssClass: 'search-related-dropdown',
+                initSelection: this.initSelection
+            });
+
+            this.customFilterNode.select2({
+                data: customFilterList,
+                multiple: false,
+                minimumResultsForSearch: 7,
+                formatSelection: this.formatCustomSelection,
+                formatResult: this.formatResult,
+                dropdownCss: {width:'auto'},
+                dropdownCssClass: 'search-filter-dropdown',
+                initSelection: this.initSelection
+            });
+
+            // TODO: find out if recently viewed as a default is the desired behaviour. Also remove hardcoded string.
+            // For the custom filter, apply the previous filter, otherwise apply recently viewed
+            var default_filter = this.filters.first(),
+                selectedId = defaultId || default_filter.id;
+
+            if(this.layoutType !== "record") {
+                this.relatedFilterNode.select2("disable", true);
+            }
+            this.relatedFilterNode.select2("val", "default");
+            this.customFilterNode.select2("val", selectedId);
+            this.sanitizeFilter({added:{id: selectedId}});
+
+            this.customFilterNode.on("change", function(e) {
+                self.sanitizeFilter(e);
+            });
         }
-        this.node.on("change", function(e){
-            self.sanitizeFilter(e);
-        });
     },
 
-    formatSelection: function(item) {
-        if (item.id === item.text) {
-            return '<span>Name starts with</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
+    initSelection: function(el, callback) {
+        var data, model;
+        if(el.is(this.customFilterNode)) {
+            model = this.filters.get(el.val());
+            data = {id: model.id, text: model.get('name')};
         } else {
-            return '<span>Filter</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
+            data = {id: "default", text: (this.layoutType === 'record')? app.lang.get("LBL_TABGROUP_ALL") : this.module};
         }
+        callback(data);
     },
 
+    formatCustomSelection: function(item) {
+        return '<span class="select2-choice-type">' + app.lang.get("LBL_FILTER") + '<i class="icon-caret-down"></i></span><a class="select2-choice-filter" href="javascript:void(0)">'+ item.text +'</a>';
+    },
+    formatRelatedSelection: function(item) {
+        var selectionLabel = app.lang.get("LBL_RELATED") + '<i class="icon-caret-down"></i>';
+        if(this.layoutType !== "record") {
+            selectionLabel = app.lang.get("LBL_MODULE");
+        }
+        return '<span class="select2-choice-type">' + selectionLabel + '</span><a class="select2-choice-related" href="javascript:void(0)">'+ item.text +'</a>';
+    },
+    formatResult: function (option) {
+        // TODO: Determine whether active filters should be highlighted in bold in this menu.
+        return '<div><span class="select2-match"></span>'+ option.text +'</div>';
+    },
     /**
      * Contains business logic to control the behavior of new filters being added.
      */
     sanitizeFilter: function(e){
-        var id, val = this.node.select2("val"), newVal = [], i, self = this;
+        var id, val = this.customFilterNode.select2("val"), newVal, i, self = this;
         if(!_.isUndefined(e.added) && !_.isUndefined(e.added.id)) {
             id = e.added.id;
 
-            if( id === -1 && !this.isInFilters(id) )  {
+            if( id === -1 )  {
                 // Create a new filter.
                 val = _.without(val, id.toString());
                 this.activeFilterId = "";
-                for(i = 0; i < val.length; i++) {
-                    if(!this.isInFilters(val[i])) {
-                        newVal.push(val[i]);
-                    }
-                }
+                newVal = "";
                 this.openPanel();
             } else if( this.isInFilters(id) ) {
                 // Is a valid filter.
                 this.activeFilterId = id;
-                for(i = 0; i < val.length; i++) {
-                    if(!this.isInFilters(val[i])) {
-                        newVal.push(val[i]);
-                    }
-                }
-                newVal.push(id);
+                newVal = id;
                 if(!this.layout.$(".filter-options").hasClass('hide')) {
                     self.openPanel(self.filters.get(id));
                 }
@@ -108,14 +153,9 @@
                     });
                 }, this);
             } else {
-                // It's a quick-search word.
-                this.currentQuery = $.trim(id);
-                for(i = 0; i < val.length; i++) {
-                    if(this.isInFilters(val[i])) {
-                        newVal.push(val[i]);
-                    }
-                }
-                newVal.push(id);
+                // It's not a valid filter.
+                this.activeFilterId = "";
+                newVal = "";
             }
         } else if(!_.isUndefined(e.removed) && !_.isUndefined(e.removed.id)) {
             id = e.removed.id;
@@ -124,13 +164,10 @@
             if( this.isInFilters(id) ) {
                 // Removing a filter.
                 this.activeFilterId = "";
-            } else {
-                // Removing a quick-search word.
-                this.currentQuery = "";
             }
         }
 
-        this.node.select2("val", newVal);
+        this.customFilterNode.select2("val", newVal);
         this.filterDataSetAndSearch(this.currentQuery, this.activeFilterId);
     },
 
