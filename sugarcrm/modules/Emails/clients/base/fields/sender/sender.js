@@ -19,13 +19,10 @@
             app.api.call('GET', myURL, null,{
                     success: this.populateValues,
                     error: function(e) {
-                        console.log('Failed to retrieve the outbound configs: ' + e);
+                        app.logger.error('Failed to retrieve the outbound configs: ' + e);
                     }
                 }
             );
-        }
-        else if(this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled").select2();
         }
 
         return result;
