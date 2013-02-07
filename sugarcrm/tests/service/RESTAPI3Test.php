@@ -531,6 +531,10 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetVardefsMD5()
     {
+        // Since translate falls back to mod strings, and mod_strings is global
+        // for the Accounts module, we need to get rid of it for the direct soapHelper
+        // call.
+        unset($GLOBALS['mod_strings']);
         $GLOBALS['reload_vardefs'] = TRUE;
         $result = $this->_login();
         $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
