@@ -134,7 +134,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
         overlays[overlays.length - 1].hide();
     }
     
-    DCMenu.closeOverlay = function(depth){
+    DCMenu.closeOverlay = function(depth,parentid){
         DCMenu.closeQView();
     	var i=0;
         while(i < overlays.length){
@@ -158,6 +158,9 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
                     }
                     overlays[i].hide();
                     overlays[i].set('bodyContent', "");
+                    if(parentid){
+                        $('#'+parentid).removeClass("focused");
+                    }
                 }
             }
             i++;
@@ -186,7 +189,6 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 				return false;
     		DCMenu.closeOverlay(depth);
     		var overlay = getOverlay(depth, params.modal);
-
     		ua = navigator.userAgent.toLowerCase();
     		isIE7 = ua.indexOf('msie 7')!=-1;
 
@@ -208,7 +210,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 	    			content += '<div style="float:left"><a href="' +data.url + '">' + data.title + '</a></div>';
 	    		}
 
-                 content += '<div class="close"><a id="dcmenu_close_link" href="#" onclick="DCMenu.closeOverlay(); return false;">[x]</a><a href="#" onclick="DCMenu.minimizeOverlay(); return false;">[-]</a></div></div>';
+                 content += '<div class="close"><a id="dcmenu_close_link" href="#" onclick="DCMenu.closeOverlay(\'\',\''+parentid+'\'); return false;">[x]</a><a href="#" onclick="DCMenu.minimizeOverlay(); return false;">[-]</a></div></div>';
     		}
     		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'"><div class="dashletPanel dc"><div class="hd" id="dchead">';
 			if ( title !== undefined )
@@ -221,7 +223,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
             if ( typeof(extraButton) == "string" ) {
                 content += extraButton
             }
-            content += '<a id="dcmenu_close_link" href="#" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay(); return false;"><i class="icon-remove icon-sm"></i></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
+            content += '<a id="dcmenu_close_link" href="#" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay(\'\',\''+parentid+'\'); return false;"><i class="icon-remove icon-sm"></i></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
 
 
             //"resetEvalBool" will only be set to true if an eval() has completed succesfully from a previous request.  It will not get reset again within a request.
@@ -629,6 +631,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 		var dcmenuSugarCubeWidth = dcmenuSugarCube.get('offsetWidth');
 		var dcboxbodyWidth = dcboxbody.get('offsetWidth');
 		overlay.set('x',(dcmenuSugarCubeX + dcmenuSugarCubeWidth) - dcboxbodyWidth);
+        $('#dcmenuSugarCube').addClass("focused");
 		
 		
 		if(isRTL) {

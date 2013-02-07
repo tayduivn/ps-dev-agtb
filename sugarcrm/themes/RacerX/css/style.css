@@ -5954,6 +5954,37 @@ span.dcmenuitem:hover{
     padding: 0px 0px 0 2px;
     height: 43px;
 }
+#dcmenuSugarCube.focused {
+    background-color: #000;
+}
+
+#dcboxbody.dcmenuSugarCube {
+    width: 320px;
+}
+#dcboxbody.dcmenuSugarCube .dashletPanel.dc .hd  {
+    background-color: #fff;
+    background-image: none;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+#dcboxbody.dcmenuSugarCube .dashletPanel.dc {
+    border: 0px none;
+}
+
+#dcboxbody.dcmenuSugarCube .dashletPanel.dc .hd #dctitle {
+    color: #cdcccb;
+    font-weight: normal;
+}
+
+#dcboxbody.dcmenuSugarCube .dashletPanel.dc .hd .icon-remove {
+    position: relative;
+    top:7px;
+    margin-right: 2px;
+    color: #cdcccb;
+}
+#dcboxbody.dcmenuSugarCube .dashletPanel.dc .hd .icon-remove:before {
+    font-size: 15px;
+}
 
 #dcmenuSugarCubeEmpty {
     padding: 0px;
@@ -6123,7 +6154,6 @@ li div.follow {float:none;}
 .follow div:hover {cursor:pointer;}
 
 #SpotResults {
-	font-weight:bold;
 }
 #SpotResults div{
 	font-size:14px;
@@ -6144,7 +6174,7 @@ color: #0B578F;
 	
 }
 #SpotResults ul{
-	padding: 0px 10px 0px 0px;
+	padding: 0px 0px 0px 0px;
 	margin-left:0px;
 }
 #SpotResults ul li{
@@ -6158,7 +6188,15 @@ color: #0B578F;
 
 #SpotResults li p.error
 {
-    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 9px;
+    border-bottom: 1px solid #f5f5f5;
+    color:#58595b;
+}
+
+#SpotResults li:last-child p.error {
+    border-bottom: 0px none;
+    padding-bottom: 0px;
 }
 
 #SpotResults li p.error a
