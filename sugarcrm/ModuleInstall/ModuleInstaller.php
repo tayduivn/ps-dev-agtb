@@ -2043,7 +2043,7 @@ private function dir_file_count($path){
 					echo '<div id ="displayLoglink" ><a href="#" onclick="toggleDisplay(\'displayLog\')">'.$app_strings['LBL_DISPLAY_LOG'].'</a> </div><div id="displayLog" style="display:none">';
 				}
 
-				require_once($this->base_dir . '/manifest.php');
+				require($this->base_dir . '/manifest.php');
 				if($is_upgrade && !empty($previous_version)){
 					//check if the upgrade path exists
 					if(!empty($upgrade_manifest)){
@@ -2113,7 +2113,7 @@ private function dir_file_count($path){
 					echo '<div id ="displayLoglink" ><a href="#" onclick="toggleDisplay(\'displayLog\')">'.$app_strings['LBL_DISPLAY_LOG'].'</a> </div><div id="displayLog" style="display:none">';
 				}
 
-				require_once($this->base_dir . '/manifest.php');
+				require($this->base_dir . '/manifest.php');
 				$this->installdefs = $installdefs;
 				$this->id_name = $this->installdefs['id'];
 				$installed_modules = array();
