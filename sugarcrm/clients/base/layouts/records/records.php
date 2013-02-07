@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $layout = MetaDataManager::getLayout('SideBarLayout');
 
-$layout->push('main', array('view' => 'headerpane'));
+$layout->push('main', array('view' => 'list-headerpane'));
 
 $listLayout = MetaDataManager::getLayout("FilterPanelLayout", array("default" => "list"));
 $listLayout->push(array('layout' => 'list'));
