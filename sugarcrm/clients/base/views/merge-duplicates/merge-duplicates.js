@@ -1,5 +1,6 @@
 ({
     extendsFrom: 'BaselistView',
+    isPreviewOpen: false,
     events: {
         'click .show_extra' : 'showMore',
         'click .preview' : 'previewRecord'
@@ -58,14 +59,6 @@
         this.action = 'list';
     },
     /**
-     * Display a Preview for the primary record
-     */
-    previewRecord: function() {
-        var previewModels = [this.primaryRecord];        
-        var previewCollection = app.data.createBeanCollection(this.module, previewModels);
-        this.context.trigger("preview:render", this.primaryRecord, previewCollection);
-    },
-    /**
      * Create a two panel viewdews metadata (visible, hidden) given list of fields
      * and the collection
      * @param {Array} fields the list of fields for the module
@@ -122,7 +115,24 @@
                 }
             ]
         };
-    },
+    },    
+    /**
+     * Display a Preview for the primary record
+     */
+    previewRecord: function(togglePreview) {
+        if(_.isUndefined(togglePreview) || togglePreview) {
+            if(this.isPreviewOpen) {
+                app.events.trigger("preview:close");
+                this.isPreviewOpen = false;
+                return;
+            } 
+        }         
+        var previewModel = this.primaryRecord;
+        var previewModels = [previewModel];        
+        var previewCollection = app.data.createBeanCollection(previewModel.get('_module') || previewModel.module, previewModels);
+        app.events.trigger("preview:render", previewModel, previewCollection, false);
+        this.isPreviewOpen = true;
+    },    
     /**
      * utility method for taking a fieldlist with possible nested fields,
      * and returning a flat array of fields
@@ -183,10 +193,40 @@
         var primary_record = this.collection.get(primary.id);
 
         if(primary_record) {
-            this.primaryRecord = primary_record;
+            this.setPrimaryRecord(primary_record);            
             this.context.set("primary_record", primary_record);
             this.toggleFields(this.rowFields[primary_record.id], true);
             //app.view.views.ListView.prototype.toggleRow.call(this, primary_record.id, true);
         }
+    },
+    getPrimaryRecord: function(context) {
+        var records = context.get("selectedDuplicates");
+
+        // bomb out if we don't have between 2 and MAX_RECORDS
+        if (!records.length || records.length < 2 || records.length > this.MAX_RECORDS) {
+            app.alert.show('invalid-record-count',{
+                level: 'error',
+                messages: 'Invalid number of records passed.',
+                autoClose: true
+            });
+            return;
+        }
+
+        if (!context.has("primary_record")) {
+            context.set("primary_record",records[0]);
+        }
+        this.setPrimaryRecord(context.get("primary_record"));
+        
+        this.alternativeRecords = _.reject(records, function(record) {
+            return record.id == this.primaryRecord.id;
+        }, this);
+    },
+    setPrimaryRecord: function(model) {
+        this.primaryRecord = model;
+        this.primaryRecord.on("change", function(){
+            app.events.trigger('preview:close');
+            this.previewRecord(false);
+        }, this);  
+        this.recordName = this.primaryRecord.get('name') || '';        
     }
 })

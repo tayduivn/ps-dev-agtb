@@ -1,7 +1,7 @@
 <div class="record record-merge-interface">
     <h4 class="merge-interface-header">
     {{recordName}}
-    <a class="pull-right btn btn-link btn-invisible preview check-if-collapsed" href="javascript:void(0)" data-placement="bottom" data-toggle="proto" data-target="#preview-edit" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
+    <a class="pull-right btn btn-link btn-invisible preview check-if-collapsed" href="javascript:void(0)" data-placement="bottom" data-toggle="proto" data-target="#preview-edit" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
     </h4>
 
     <div class="merge-interface row-fluid">
