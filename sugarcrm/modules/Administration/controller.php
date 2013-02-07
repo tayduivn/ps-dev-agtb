@@ -234,17 +234,18 @@ class AdministrationController extends SugarController
     	 	 echo "false";
     	 }
     }
-
+/*
     public function action_UpdateAjaxUI()
     {
-        require_once('modules/Configurator/Configurator.php');
-        $cfg = new Configurator();
-        $disabled = json_decode(html_entity_decode  ($_REQUEST['disabled_modules'], ENT_QUOTES));
-        $cfg->config['addAjaxBannedModules'] = empty($disabled) ? FALSE : $disabled;
-        $cfg->handleOverride();
-        $this->view = "configureajaxui";
+        // TODO check if we need to use this to update the bwc widget.
+//        require_once('modules/Configurator/Configurator.php');
+//        $cfg = new Configurator();
+//        $disabled = json_decode(html_entity_decode  ($_REQUEST['disabled_modules'], ENT_QUOTES));
+//        $cfg->config['addAjaxBannedModules'] = empty($disabled) ? FALSE : $disabled;
+//        $cfg->handleOverride();
+//        $this->view = "configureajaxui";
     }
-
+*/
 
     /*
      * action_callRebuildSprites

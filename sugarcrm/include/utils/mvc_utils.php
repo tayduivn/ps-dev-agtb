@@ -34,127 +34,22 @@ function loadParentView($type)
 
 function getPrintLink()
 {
-    if (isset($_REQUEST['action']) && $_REQUEST['action'] == "ajaxui")
-    {
-        return "javascript:SUGAR.ajaxUI.print();";
-    }
+//    if (isset($_REQUEST['action']) && $_REQUEST['action'] == "ajaxui")
+//    {
+//        return "javascript:SUGAR.ajaxUI.print();";
+//    }
     return "javascript:void window.open('index.php?{$GLOBALS['request_string']}',"
          . "'printwin','menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1')";
 }
 
-
-function ajaxBannedModules(){
-    $bannedModules = array(
-        'Calendar',
-        //BEGIN SUGARCRM flav=pro ONLY
-        'Reports',
-        //END SUGARCRM flav=pro ONLY
-        'Emails',
-        'Campaigns',
-        'Documents',
-        'DocumentRevisions',
-        'Project',
-        'ProjectTask',
-        'EmailMarketing',
-        'CampaignLog',
-        'CampaignTrackers',
-        'Releases',
-        'Groups',
-        'EmailMan',
-        //BEGIN SUGARCRM flav=pro ONLY
-        'ACLFields',
-        'ACLRoles',
-        'ACLActions',
-        'TrackerSessions',
-        'TrackerPerfs',
-        'TrackerQueries',
-        'Teams',
-        'TeamMemberships',
-        'TeamSets',
-        'TeamSetModules',
-        'Quotes',
-        'Products',
-        'ProductBundles',
-        'ProductBundleNotes',
-        'ProductTemplates',
-        'ProductTypes',
-        'ProductCategories',
-        'Manufacturers',
-        'Shippers',
-        'TaxRates',
-        'TeamNotices',
-        'TimePeriods',
-        'Forecasts',
-        'ForecastSchedule',
-        'Worksheet',
-        'ForecastOpportunities',
-        'Quotas',
-        'WorkFlow',
-        'WorkFlowTriggerShells',
-        'WorkFlowAlertShells',
-        'WorkFlowAlerts',
-        'WorkFlowActionShells',
-        'WorkFlowActions',
-        'Expressions',
-        'Contracts',
-        'KBDocuments',
-        'KBDocumentRevisions',
-        'KBTags',
-        'KBDocumentKBTags',
-        'KBContents',
-        'ContractTypes',
-        'Holidays',
-        'ProjectResources',
-        //END SUGARCRM flav=pro ONLY
-        //BEGIN SUGARCRM flav=ent ONLY
-        'CustomQueries',
-        'DataSets',
-        'ReportMaker',
-        //END SUGARCRM flav=ent ONLY
-        "Administration",
-        "ModuleBuilder",
-        'Schedulers',
-        'SchedulersJobs',
-        'DynamicFields',
-        'EditCustomFields',
-        'EmailTemplates',
-//BEGIN SUGARCRM flav=pro ONLY
-		'PdfManager',
-//END SUGARCRM flav=pro ONLY
-        'Users',
-        'Currencies',
-        'Trackers',
-        'Connectors',
-        'Import_1',
-        'Import_2',
-        'Versions',
-        'vCals',
-        'CustomFields',
-        'Roles',
-        'Audit',
-        'InboundEmail',
-        'SavedSearch',
-        'UserPreferences',
-        'MergeRecords',
-        'EmailAddresses',
-        'Relationships',
-        'Employees',
-        'Import',
-        'OAuthKeys'
-    );
-
-    if(!empty($GLOBALS['sugar_config']['addAjaxBannedModules'])){
-        $bannedModules = array_merge($bannedModules, $GLOBALS['sugar_config']['addAjaxBannedModules']);
-    }
-    if(!empty($GLOBALS['sugar_config']['overrideAjaxBannedModules'])){
-        $bannedModules = $GLOBALS['sugar_config']['overrideAjaxBannedModules'];
-    }
-
-    return $bannedModules;
-}
-
+/**
+ * @deprecated since 7.0
+ * @return the $url given
+ */
 function ajaxLink($url)
 {
+    return $url;
+    /*
     global $sugar_config;
     $match = array();
     $javascriptMatch = array();
@@ -176,6 +71,7 @@ function ajaxLink($url)
     {
         return "?action=ajaxui#ajaxUILoc=" . urlencode($url);
     }
+    */
 }
 
 ?>

@@ -85,7 +85,7 @@
                             'include/javascript/jquery/jquery.hoverIntent.js'            =>   $target,
                             'include/javascript/jquery/jquery.hoverscroll.js'            =>   $target,
                             'include/javascript/jquery/jquery.hotkeys.js'                =>   $target,
-                            'include/javascript/jquery/jquery.superfish.js'              =>   $target,
+//                            'include/javascript/jquery/jquery.superfish.js'              =>   $target,
                             'include/javascript/jquery/jquery.tipTip.js'              	 =>   $target,
                             'include/javascript/jquery/jquery.sugarMenu.js'              =>   $target,
                             'include/javascript/jquery/jquery.highLight.js'              =>   $target,

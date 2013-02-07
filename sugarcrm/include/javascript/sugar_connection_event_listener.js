@@ -26,6 +26,8 @@
  */
 
 // $Id: sugar_connection_event_listener.js 
+// TODO remove this file
+
 SUGAR_callsInProgress = 0;
 
 YAHOO.util.Connect.completeEvent.subscribe(function(event, data){

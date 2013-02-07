@@ -18,6 +18,7 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+// TODO REMOVE THIS FILE
 $viewdefs ['Meetings'] =
 array (
   'QuickCreate' =>
@@ -143,12 +144,12 @@ array (
                 {sugar_getscript file="modules/Meetings/duration_dependency.js"}
                 <script type="text/javascript">
                     var date_time_format = "{$CALENDAR_FORMAT}";
-                    {literal}
-                    SUGAR.util.doWhen(function(){return typeof DurationDependency != "undefined" && typeof document.getElementById("duration") != "undefined"}, function(){
-                        var duration_dependency = new DurationDependency("date_start","date_end","duration",date_time_format);
-                        initEditView(YAHOO.util.Selector.query(\'select#duration\')[0].form);
-                    });
-                    {/literal}
+//                    {literal}
+//                    SUGAR.util.doWhen(function(){return typeof DurationDependency != "undefined" && typeof document.getElementById("duration") != "undefined"}, function(){
+//                        var duration_dependency = new DurationDependency("date_start","date_end","duration",date_time_format);
+//                        initEditView(YAHOO.util.Selector.query(\'select#duration\')[0].form);
+//                    });
+//                    {/literal}
                 </script>            
             ',
           ),          

@@ -300,6 +300,8 @@ var {{$form_name}}_tabs = new YAHOO.widget.TabView("{{$form_name}}_tabs");
 {{$form_name}}_tabs.selectTab(0);
 </script>
 {{/if}}
+{*
+TODO REMOVE THIS CODE
 <script type="text/javascript">
 YAHOO.util.Event.onContentReady("{{$form_name}}",
     function () {ldelim} initEditView(document.forms.{{$form_name}}) {rdelim});
@@ -318,3 +320,4 @@ $(document).ready(function() {ldelim}
 {rdelim}
 
 </script>
+*}

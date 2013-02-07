@@ -97,9 +97,9 @@ if(isset($_SESSION['authenticated_user_id'])) {
 $url = 'Location: '.$url;
 //BEGIN SUGARCRM flav=pro ONLY
 // check for presence of a mobile device, redirect accordingly
-if(isset($_SESSION['isMobile'])){
-    $url = $url . '&mobile=1';
-}
+//if(isset($_SESSION['isMobile'])){
+//    $url = $url . '&mobile=1';
+//}
 //END SUGARCRM flav=pro ONLY
 
 //adding this for bug: 21712.
@@ -108,5 +108,5 @@ if(!empty($GLOBALS['app'])) {
 }
 if (!defined('SUGAR_PHPUNIT_RUNNER')) {
     sugar_cleanup();
-    header($url);
+//    header($url);
 }

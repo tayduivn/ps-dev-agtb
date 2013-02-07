@@ -26,6 +26,8 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 *}
+{*
+<!--FIXME no longer needed-->
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <form name="ConfigureAjaxUI" method="POST"  method="POST" action="index.php">
 	<input type="hidden" name="module" value="Administration">
@@ -117,3 +119,4 @@
 	}
 {/literal}
 </script>
+*}
