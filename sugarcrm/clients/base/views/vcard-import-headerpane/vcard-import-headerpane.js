@@ -36,10 +36,6 @@
     },
 
     initiateCancel : function() {
-        this.context.trigger("drawer:hide");
-        if (this.context.parent) {
-            this.context.parent.trigger("drawer:hide");
-        }
-
+        app.drawer.close();
     }
 })
