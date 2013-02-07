@@ -46,6 +46,8 @@
             return false;
         }
         if (!$currentTarget.parent().parent().hasClass('more-drop-container') && !$currentTarget.hasClass('actionLink')) {
+            // clear any open dropdown styling
+            this.$('.open').toggleClass('open');
             var module = $currentTarget.parent().parent().data('module');
             var moduleMeta = app.metadata.getModule(module);
             if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
