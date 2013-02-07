@@ -1,6 +1,6 @@
 ({
     events: {
-        "click .actions a": "toggleView"
+        "click .toggle-actions a": "toggleView"
     },
 
     availableToggles: {
