@@ -46,13 +46,17 @@
         }
     },
     initialize: function(options) {
-        options.meta = $.extend(true, {}, app.metadata.getView(options.module, 'baselist') || {}, options.meta);
-        options.meta.type = options.meta.type || 'list';
-        _.each(options.meta.panels, function(panel) {
-            panel = this.populatePanelMetadata(panel, options);
+        var optionsCopy = $.extend(true, {}, options || {}),
+            viewMeta = $.extend(true, {}, app.metadata.getView(options.module, 'baselist') || {});
+
+        optionsCopy.meta = _.extend({}, viewMeta, optionsCopy.meta);
+
+        optionsCopy.meta.type = optionsCopy.meta.type || 'list';
+        _.each(optionsCopy.meta.panels, function(panel) {
+            panel = this.populatePanelMetadata(panel, optionsCopy);
         }, this);
 
-        app.view.View.prototype.initialize.call(this, options);
+        app.view.View.prototype.initialize.call(this, optionsCopy);
         this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
         this.fallbackFieldTemplate = 'list-header';
 
