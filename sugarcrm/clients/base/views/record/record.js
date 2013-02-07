@@ -308,27 +308,23 @@
     },
 
     duplicateClicked: function() {
-        app.cache.set("duplicate"+this.module, this.model.attributes);
-        this.layout.trigger("drawer:create:fire", {
-            components: [{
-                layout : 'create',
-                context: {
-                    create: true
-                }
-            }]
-        }, this);
+        app.drawer.open({
+            layout : 'create',
+            context: {
+                create: true,
+                duplicateModel: this.model.attributes
+            }
+        });
     },
     
     findDuplicatesClicked: function() {
-        this.layout.trigger("drawer:find-duplicates:fire", {
-            components: [{
-                layout : 'find-duplicates',
-                context: {
-                    dupeCheckModel: this.model,
-                    dupelisttype: 'dupecheck-list-multiselect'
-                }
-            }]
-        }, this);
+        app.drawer.open({
+            layout : 'find-duplicates',
+            context: {
+                dupeCheckModel: this.model,
+                dupelisttype: 'dupecheck-list-multiselect'
+            }
+        });
     },
 
     editClicked: function() {

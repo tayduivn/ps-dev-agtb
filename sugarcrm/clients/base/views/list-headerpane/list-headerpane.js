@@ -1,8 +1,6 @@
-<?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
+ * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -16,7 +14,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
+ *  (i) the ""Powered by SugarCRM"" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -26,11 +24,23 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+({
+    extendsFrom: 'HeaderpaneView',
 
-$layout = MetaDataManager::getLayout("GenericLayout");
-$listLayout = MetaDataManager::getLayout("GenericLayout", array("name" => "list"));
-$listLayout->push(array("view" => "massupdate"));
-$listLayout->push(array("view" => "list"));
-$listLayout->push(array('view' => 'list-bottom'));
-$layout->push($listLayout->getLayout(true));
-$viewdefs['base']['layout']['list'] = $layout->getLayout();
+    events: {
+        'click a[name=create_button]': 'create'
+    },
+
+    create: function() {
+        app.drawer.open({
+            layout: 'create',
+            context: {
+                create: true
+            }
+        }, _.bind(function(refresh) {
+            if (refresh) {
+                this.collection.fetch();
+            }
+        }, this));
+    }
+})
