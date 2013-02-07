@@ -44,10 +44,12 @@ try {
     $modulesFile = array_diff(scandir($modulesRoot), array(".", "..", ".DS_Store"));
 
     foreach ($modulesFile as $module) {
-        $files[] = array(
-            'in' => $modulesRoot . '/' . $module,
-            'out' => '../styleguide/css/' . str_replace('.less', '.css', $module),
-        );
+        if ( substr_count($module,'.less') ) {
+            $files[] = array(
+                    'in' => $modulesRoot . '/' . $module,
+                    'out' => '../styleguide/css/' . str_replace('.less', '.css', $module),
+            );
+        }
     }
 
     // Set up the parser.
