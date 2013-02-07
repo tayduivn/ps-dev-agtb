@@ -8,7 +8,7 @@
                         {{#each fields}}
                             <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
                                 <h1>
-                                    <span class='index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
+                                    <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
                                         {{field ../../../this ../../../this.model ../../../this.action}}
                                     </span>
                                     {{#unless noedit}}
@@ -42,7 +42,7 @@
                         {{#each fields}}
                             <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
                                 <h1>
-                                    <span class='index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
+                                    <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
                                         {{field ../../../this ../../../this.model ../../../this.action}}
                                     </span>
                                     {{#unless noedit}}
@@ -62,30 +62,32 @@
                     {{#each grid}}
                         <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
                             {{#each this}}
-                                    {{#unless ../../this.labelsOnTop}}
-                                        {{#if ../../../this.labels}}
-                                            <label class="span{{../this.labelSpan}} tright record-label" data-name="{{../../this.name}}">{{str ../this.label ../../../../../../this.model.module}}</label>
+                                {{#unless ../../this.labelsOnTop}}
+                                    {{#unless ../this.dismiss_label}}
+                                        {{#if ../../../../../this.labels}}
+                                            <label class="span{{../../this.labelSpan}} tright record-label" data-name="{{../../../this.name}}">{{str ../../this.label ../../../../../../../this.model.module}}</label>
                                         {{/if}}
                                     {{/unless}}
-                                    <div class="span{{this.span}} record-cell{{#if cell_css}} {{cell_css}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
-                                        {{#if ../../this.labelsOnTop}}
-                                            {{#if ../../../this.labels}}
-                                        <div class='record-label' data-name="{{../../this.name}}">{{str ../this.label ../../../../../../this.model.module}}</div>
-                                            {{/if}}
+                                {{/unless}}
+                                <div class="span{{this.span}} record-cell{{#if cell_css}} {{cell_css}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
+                                    {{#if ../../this.labelsOnTop}}
+                                        {{#if ../../../this.labels}}
+                                            <div class="record-label" data-name="{{../../this.name}}">{{#unless ../../this.dismiss_label}}{{str ../../this.label ../../../../../../../this.model.module}}{{/unless}}</div>
                                         {{/if}}
-                                        {{#if name}}
-                                            <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../this.module}}-{{name}}">
-                                                {{field ../../../../../this ../../../../../../this.model ../../../../../../this.action}}
+                                    {{/if}}
+                                    {{#if name}}
+                                        <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../this.module}}-{{name}}">
+                                            {{field ../../../../../this ../../../../../../this.model ../../../../../../this.action}}
+                                        </span>
+                                    {{/if}}
+                                    {{#unless ../../../../../createMode}}
+                                        {{#unless noedit}}
+                                            <span class="record-edit-link-wrapper" data-name="{{../name}}">
+                                                <a class="record-edit-link btn btn-invisible" data-type="{{../type}}" data-name="{{../name}}"><i class="icon-pencil"></i></a>
                                             </span>
-                                        {{/if}}
-                                        {{#unless ../../../../../createMode}}
-                                            {{#unless noedit}}
-                                                <span class="record-edit-link-wrapper" data-name="{{../name}}">
-                                                    <a class="record-edit-link btn btn-invisible" data-type="{{../type}}" data-name="{{../name}}"><i class="icon-pencil"></i></a>
-                                                </span>
-                                            {{/unless}}
                                         {{/unless}}
-                                    </div>
+                                    {{/unless}}
+                                </div>
                             {{/each}}
                         </div>
                     {{/each}}

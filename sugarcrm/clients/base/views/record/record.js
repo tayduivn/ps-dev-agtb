@@ -118,16 +118,16 @@
             }
 
             _.each(panel.fields, function(field, index) {
-                var maxSpan,
-                    isLabelInline,
+                var isLabelInline,
                     fieldSpan,
+                    maxFieldSpan,
                     maxSpanForFieldWithInlineLabel = 8,
                     maxSpanForFieldWithLabelOnTop  = 12;
 
                 //The code below assumes that the field is an object but can be a string
                 if(_.isString(field)) {
                     field = {
-                        'name': field
+                        name: field
                     };
                 }
 
@@ -137,35 +137,49 @@
                 if (_.isUndefined(panel.labels)) {
                     panel.labels = true;
                 }
+
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
                 isLabelInline = (panel.labelsOnTop === false && panel.labels);
-                maxSpan       = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
+                maxFieldSpan  = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
 
+                // calculate the 2/3 ratio for the field span
                 if (_.isUndefined(field.span)) {
-                    field.span = Math.floor(maxSpan / columns);
+                    field.span = Math.floor(maxFieldSpan / columns);
                 }
 
-                // reset the field span if it's greater than the max span since no field can be greater than the
-                // maximum allowable span
-                // this is likely to only occur when labels are inline with the field, but that can't be guaranteed
-                // to be the only plausible scenario
-                if (field.span > maxSpan) {
-                    field.span = maxSpan;
-                }
-
-                //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
-                if (_.isUndefined(field.labelSpan)) {
-                    field.labelSpan = Math.floor(4 / columns);
-                }
-
-                // this is new to prevent a span of 0
+                // prevent a span of 0
                 if (field.span < 1) {
                     field.span = 1;
                 }
 
-                // this is new to prevent a labelSpan of 0
+                // 4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
+                if (_.isUndefined(field.labelSpan)) {
+                    field.labelSpan = Math.floor(4 / columns);
+                }
+
+                // prevent a labelSpan of 0
                 if (field.labelSpan < 1) {
                     field.labelSpan = 1;
+                }
+
+                if (_.isUndefined(field.dismiss_label)) {
+                    field.dismiss_label = false;
+                }
+
+                // if the label is inline and is to be dismissed, then the field should take up its space plus the
+                // space set aside for its label
+                if (isLabelInline && field.dismiss_label === true) {
+                    field.span += field.labelSpan;
+
+                    // the field should be allowed to take up the space that was originally dedicated for the label,
+                    // which is similar to saying that labels are on top
+                    maxFieldSpan = maxSpanForFieldWithLabelOnTop;
+                }
+
+                // fields can't be greater than the maximum allowable span
+                // however, there is no policing of (field.span + field.labelSpan) so overflow is still possible
+                if (field.span > maxFieldSpan) {
+                    field.span = maxFieldSpan;
                 }
 
                 totalFieldCount++;
@@ -176,7 +190,7 @@
 
                 // if the labels are to the left of the field then the field takes up the space
                 // specified by its span plus the space its label takes up
-                if (isLabelInline) {
+                if (isLabelInline && field.dismiss_label === false) {
                     fieldSpan += field.labelSpan;
                 }
 
