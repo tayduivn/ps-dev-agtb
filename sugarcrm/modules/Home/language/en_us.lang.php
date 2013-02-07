@@ -142,12 +142,16 @@ $mod_strings = array (
   'LBL_DASHLET_DELETE' => 'Delete Sugar Dashlet',
   'LBL_DASHLET_REFRESH' => 'Refresh Sugar Dashlet',
   'LBL_DASHLET_EDIT' => 'Edit Sugar Dashlet',
+  'LBL_DASHBOARD_TITLE' => 'Dashboard',
+  'LBL_DASHBOARD_EDIT' => 'Edit Dashboard',
 
   'LBL_TRAINING_TITLE' => 'Training',
 
   'LBL_CREATING_NEW_PAGE' => 'Creating New Page...',
   'LBL_NEW_PAGE_FEEDBACK' => 'You have created a new page. You can add new content with the Add Sugar Dashlets option.',
   'LBL_DELETE_PAGE_CONFIRM' => 'Are you sure you want to delete this page?',
+  'LBL_DELETE_DASHBOARD_CONFIRM' => 'Are you sure you want to delete this dashboard?',
+  'LBL_DELETE_DASHBOARD_SUCCSS' => 'The dashboard "{{name}}" has been deleted.',
   'LBL_SAVING_PAGE_TITLE' => 'Saving Page Title...',
   'LBL_RETRIEVING_PAGE' => 'Retrieving Page...',
 

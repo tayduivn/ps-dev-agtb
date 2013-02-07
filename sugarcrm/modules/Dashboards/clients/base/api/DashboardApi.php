@@ -31,17 +31,17 @@ class DashboardApi extends SugarApi
      */
     public function registerApiRest()
     {
-        $parentApi = array(
+        $dashboardApi = array(
             'dashboard' => array(
                 'reqType' => 'GET',
-                'path' => array('Home'),
+                'path' => array('Dashboards'),
                 'pathVars' => array(),
                 'method' => 'dashboard',
                 'shortHelp' => 'Home page dashboard',
                 //'longHelp' => 'modules/Forecasts/api/help/ForecastChartApi.html',
             ),
         );
-        return $parentApi;
+        return $dashboardApi;
     }
 
     /**
@@ -53,7 +53,17 @@ class DashboardApi extends SugarApi
      */
     public function dashboard($api, $args)
     {
-        //TODO: Implement a dashboard API
-        return array();
+        global $current_user;
+        $dashboards = BeanFactory::newBean('Dashboards')->getDashboardsForUser($current_user);
+
+        $sortedResults = array();
+        foreach ( $dashboards as $dashboard ) {
+            $sortedResults[] = array('id'=>$dashboard->id,'name'=>$dashboard->name, 'url' => $api->getResourceURI('Dashboards/'.$dashboard->id));
+        }
+
+        return array(
+            "next_offset" => -1,
+            "records" => $sortedResults
+        );
     }
 }

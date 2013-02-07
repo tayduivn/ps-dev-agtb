@@ -1,0 +1,5 @@
+<div class="btn-group" data-toggle="buttons-radio">
+    <button class="btn layout{{#eq value 1}} active{{/eq}}" rel="tooltip" data-original-title="1 column layout" data-value="1"><i class="icon-list-alt"></i></button>
+    <button class="btn layout{{#eq value 2}} active{{/eq}}" rel="tooltip" data-original-title="2 column layout" data-value="2"><i class="icon-columns"></i></button>
+    <button class="btn layout{{#eq value 3}} active{{/eq}}" rel="tooltip" data-original-title="3 column layout" data-value="3"><i class="icon-table"></i></button>
+</div>

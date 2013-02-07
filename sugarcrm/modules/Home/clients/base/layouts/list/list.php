@@ -1,5 +1,5 @@
 <?php
-
+/*
 $layout = MetaDataManager::getLayout('GenericLayout');
 
 // first col
@@ -62,6 +62,7 @@ $layout->push(
         ),
     )
 );
+*/
 
 
 //$layout->push(
@@ -91,6 +92,14 @@ $layout->push(
 //);
 
 // TODO make a Dashboard layout that extends from GenericLayout
+/*
 $viewdefs['Home']['base']['layout']['list'] = $layout->getLayout();
 $viewdefs['Home']['base']['layout']['list']['type'] = 'dashboard';
 $viewdefs['Home']['base']['layout']['list']['css_class'] = 'dashboard';
+*/
+$layout = MetaDataManager::getLayout("GenericLayout");
+$layout->push(array("view" => "dashboard-headerpane"));
+//$layout->push(array("layout" => "dashlets"));
+
+$viewdefs['Home']['base']['layout']['list'] = $layout->getLayout();
+$viewdefs['Home']['base']['layout']['list']['type'] = 'dashboard';
