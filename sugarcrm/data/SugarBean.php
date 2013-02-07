@@ -2088,7 +2088,13 @@ class SugarBean
             $this->load_relationship($rel_link);
             if ( !empty($this->$rel_link) && $this->$rel_link->getRelationshipObject() && $this->$rel_link->getRelationshipObject()->getLHSModule() == $this->$rel_link->getRelationshipObject()->getRHSModule() )
             {
-                $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
+                // It's a self-referencing relationship
+                if ( $this->$rel_link->getRelationshipObject()->getLHSLink() != $this->$rel_link->getRelationshipObject()->getRHSLink() ) {
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getRHSLink();
+                } else {
+                    // Doesn't have a right hand side, so let's just use the LHS
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
+                }
             }
             else
             {
