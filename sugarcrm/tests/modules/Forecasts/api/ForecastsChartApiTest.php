@@ -81,6 +81,11 @@ class ForecastsChartApiTest extends RestTestBase
     {
     }
 
+    private function buildBaseChartUrl($timeperiod_id, $user_id, $display_manager)
+    {
+        return 'Forecasts/' . $timeperiod_id . '/' . $user_id . '/chart/' . $display_manager;
+    }
+
     /**
      * @group forecastapi
      * @group forecasts
@@ -88,8 +93,7 @@ class ForecastsChartApiTest extends RestTestBase
      */
     public function testQuotaIsReturned()
     {
-        // url
-        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$user["user"]->id . '&group_by=sales_stage&dataset=likely';
+        $url = $this->buildBaseChartUrl(self::$timeperiod->id, self::$user['user']->id, 'false') . '?group_by=sales_stage&dataset=likely';
         $return = $this->_restCall($url);
 
         $chart = $return['reply'];
@@ -104,7 +108,7 @@ class ForecastsChartApiTest extends RestTestBase
      */
     public function testDataSetValueReturned($key, $dataset)
     {    	
-        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$user["user"]->id . '&group_by=sales_stage&dataset=' . $dataset;
+        $url = $this->buildBaseChartUrl(self::$timeperiod->id, self::$user['user']->id, 'false') . '?group_by=sales_stage&dataset=' . $dataset;
         $return = $this->_restCall($url);
         $chart = $return['reply'];        
         $found = false;
@@ -138,7 +142,7 @@ class ForecastsChartApiTest extends RestTestBase
      */
     public function testGoalMarkerLabelSetCorrectly()
     {
-        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$user["user"]->id . '&group_by=sales_stage&dataset=likely';
+        $url = $this->buildBaseChartUrl(self::$timeperiod->id, self::$user['user']->id, 'false') . '?group_by=sales_stage&dataset=likely';
         $return = $this->_restCall($url);
 
         $chart = $return['reply'];
@@ -153,7 +157,7 @@ class ForecastsChartApiTest extends RestTestBase
      */
     public function testGroupByReturnTheProperLabelName($actual, $group_by)
     {
-        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$user["user"]->id . '&group_by=' . $group_by . '&dataset=likely';
+        $url = $this->buildBaseChartUrl(self::$timeperiod->id, self::$user['user']->id, 'false') . '?group_by=' . $group_by . '&dataset=likely';
         $return = $this->_restCall($url);
 
         $chart = $return['reply'];
@@ -192,7 +196,7 @@ class ForecastsChartApiTest extends RestTestBase
         $user2->user_name = "user2";
         $user2->save();
 
-        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . $user1->id . '&group_by=sales_stage&dataset=likely&display_manager=true';
+        $url = $this->buildBaseChartUrl(self::$timeperiod->id, $user1->id, 'true') . '?group_by=sales_stage&dataset=likely';
         $return = $this->_restCall($url);
 
         $chart = $return['reply'];
@@ -211,7 +215,7 @@ class ForecastsChartApiTest extends RestTestBase
 
         $mod_strings = return_module_language($current_language, 'Forecasts');
 
-        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$user["user"]->id . '&dataset=likely';
+        $url = $this->buildBaseChartUrl(self::$timeperiod->id, self::$user['user']->id, 'false') . '?dataset=likely';
         $return = $this->_restCall($url);
 
         $chart = $return['reply'];

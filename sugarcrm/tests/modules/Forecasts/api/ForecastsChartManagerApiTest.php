@@ -107,7 +107,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
      */
     protected function runRestCommand($dataset = 'likely')
     {
-        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$manager['user']->id . '&group_by=sales_stage&dataset=' . $dataset . '&display_manager=true';
+        $url = 'Forecasts/' . self::$timeperiod->id . '/' . self::$manager['user']->id . '/chart/true?group_by=sales_stage&dataset=' . $dataset;
         $restReply = $this->_restCall($url);
 
         return $restReply['reply'];
