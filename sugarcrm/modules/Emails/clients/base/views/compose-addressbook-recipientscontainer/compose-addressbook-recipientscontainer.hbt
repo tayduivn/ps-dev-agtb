@@ -1,4 +1,4 @@
-<div style="overflow: auto;">
+<div>
     {{#each meta.panels}}
         {{#each fields}}
             <b>{{label}}</b> {{field ../../this}}
