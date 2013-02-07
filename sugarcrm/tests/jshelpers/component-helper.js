@@ -73,7 +73,7 @@
         });
     };
 
-    test.createLayout = function(client, module, layoutName, meta, context, loadFromModule) {
+    test.createLayout = function(client, module, layoutName, meta, context, loadFromModule, params) {
         if (loadFromModule) {
             test.loadComponent(client, "layout", layoutName, module);
         } else {
@@ -88,12 +88,12 @@
             context.prepare();
         }
 
-        return app.view.createLayout({
+        return app.view.createLayout(_.extend({
             name : layoutName,
             context : context,
             module : module,
             meta : meta
-        });
+        }, params));
     };
 
     test.testMetadata = {
