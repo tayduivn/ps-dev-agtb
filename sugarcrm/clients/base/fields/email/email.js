@@ -26,12 +26,14 @@
  ********************************************************************************/
 ({
     extendsFrom: 'ListeditableField',
-    events:{
+    sendEmailFromApp: false,
+    events: {
         'change .existingAddress': 'updateExistingAddress',
         'click  .btn-edit':        'updateExistingProperty',
         'click  .removeEmail':     'remove',
         'click  .addEmail':        'add',
-        'change .newEmail':        'newEmailChanged'
+        'change .newEmail':        'newEmailChanged',
+        "click  .composeEmail":    "composeEmail"
     },
     initialize: function(options) {
         options     = options || {};
@@ -42,6 +44,10 @@
         }
         
         app.view.Field.prototype.initialize.call(this, options);
+
+        // determine if the app should send email according to the has_outbound_email_config user preference
+        var hasOutboundEmailConfig = app.user.getPreference("has_outbound_email_config");
+        this.sendEmailFromApp      = (hasOutboundEmailConfig === "true");
     },
     /**
      * Event handler for change of the .newEmail input, we want to test if a new e-mail needs to be added
@@ -295,5 +301,16 @@
     },
     getFieldElement: function() {
         return this.$(this.fieldTag);
+    },
+    composeEmail: function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        // this is temporary until we have stacking drawers - for right now we are just loading this view up
+        app.controller.loadView({
+            module:         "Emails",
+            layout:         "compose",
+            recipientModel: this.model
+        });
     }
 })
