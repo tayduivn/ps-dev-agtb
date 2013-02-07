@@ -32,7 +32,7 @@ class SugarTestRestUtilities
      * Get the RestServiceMock
      * @return object SugarTestRestService
      */
-    public static function getMock() {
+    public static function getRestServiceMock() {
         return new SugarTestRestServiceMock();
     }
 }
