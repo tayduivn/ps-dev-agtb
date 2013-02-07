@@ -165,8 +165,8 @@ class Contact extends Person {
 	 * @return string - the beans guid
 	 */
 	public function save($check_notify = FALSE) {
-		// if sync contact exists set it to whatever is passed in [only happens via API]
-		if(isset($this->sync_contact)) {
+		// if sync contact exists, and contacts_user_id is empty we want to populate it
+		if(isset($this->sync_contact) && empty($this->contacts_users_id)) {
 			$this->sync_contact = (bool)$this->sync_contact;
 			if($this->sync_contact == true) {
 				$this->setUserContactsUserId($GLOBALS['current_user']->id);
@@ -174,6 +174,7 @@ class Contact extends Person {
 			elseif($this->sync_contact == false) {
 				$this->removeUserContactsUserId($GLOBALS['current_user']->id);
 			}
+
 		}
 		return parent::save($check_notify);
 	}

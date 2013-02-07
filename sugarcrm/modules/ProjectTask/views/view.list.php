@@ -193,13 +193,11 @@ class ProjectTaskViewList extends ViewList
 
 		if(empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false) {
             //Bug 58841 - mass update form was not displayed for non-admin users that should have access
-            if(ACLController::checkAccess($module, 'massupdate') || ACLController::checkAccess($module, 'export'))
-            {
+            if(ACLController::checkAccess($module, 'massupdate') || ACLController::checkAccess($module, 'export')){
                 $lv->setup($seed, 'include/ListView/ListViewGeneric.tpl', $where, $params);
             } else {
                 $lv->setup($seed, 'include/ListView/ListViewNoMassUpdate.tpl', $where, $params);
             }
-
 			echo $lv->display();
 		}
  	}
