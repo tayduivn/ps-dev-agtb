@@ -231,9 +231,9 @@
                 }
                 self.updateTotals(totals);
             }, this);
-            this.context.on("change:updatedManagerTotals", function(context, totals) {
-                if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
-                    self.updateTotals(totals);
+            this.context.on("forecasts:worksheetManager:updateTotals", function(totals) {
+                if(this.selectedUser.isManager == true && this.selectedUser.showOpps == false) {
+                    this.updateTotals(totals);
                 }
             }, this);
             this.context.on("forecasts:committed:commit", function(context, flag) {
@@ -248,15 +248,19 @@
      * @param totals
      */
     updateTotals : function (totals) {
-        var self = this;  
-         
+        var self = this;
+
+        // we need to clone this to not affect other views
+        var _totals = _.clone(totals);
+
+
         // these fields don't matter when it comes to tracking these values so just 0 them out.
         // we don't care about this field
-        if(!_.isUndefined(totals.quota)) {
-            totals.quota = 0;
+        if(!_.isUndefined(_totals.quota)) {
+            _totals.quota = 0;
         }
 
-        if(!_.isEqual(self.totals, totals)) {
+        if(!_.isEqual(self.totals, _totals)) {
             var best = {};
             var likely = {};
             var worst = {};
@@ -273,7 +277,7 @@
             }
 
             if(this.runningFetch == true) {
-               self.savedTotal = totals;
+               self.savedTotal = _totals;
                return;
             } else if (!_.isEmpty(self.savedTotal)) {
                 //This line is needed since we need to clean up savedTotals if it has something and you are processing a set of totals.
@@ -283,20 +287,20 @@
 
             if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                 // management view
-                best.bestCaseCls = this.getColorArrow(totals.best_adjusted, previousCommit.get('best_case'));
-                best.bestCase = app.currency.formatAmountLocale(totals.best_adjusted);
-                likely.likelyCaseCls = this.getColorArrow(totals.likely_adjusted, previousCommit.get('likely_case'));
-                likely.likelyCase = app.currency.formatAmountLocale(totals.likely_adjusted);
-                worst.worstCaseCls = this.getColorArrow(totals.worst_adjusted, previousCommit.get('worst_case'));
-                worst.worstCase = app.currency.formatAmountLocale(totals.worst_adjusted);
+                best.bestCaseCls = this.getColorArrow(_totals.best_adjusted, previousCommit.get('best_case'));
+                best.bestCase = app.currency.formatAmountLocale(_totals.best_adjusted);
+                likely.likelyCaseCls = this.getColorArrow(_totals.likely_adjusted, previousCommit.get('likely_case'));
+                likely.likelyCase = app.currency.formatAmountLocale(_totals.likely_adjusted);
+                worst.worstCaseCls = this.getColorArrow(_totals.worst_adjusted, previousCommit.get('worst_case'));
+                worst.worstCase = app.currency.formatAmountLocale(_totals.worst_adjusted);
             } else {
                 // sales rep view
-                best.bestCaseCls = this.getColorArrow(totals.best_case, previousCommit.get('best_case'));
-                best.bestCase = app.currency.formatAmountLocale(totals.best_case);
-                likely.likelyCaseCls = this.getColorArrow(totals.amount, previousCommit.get('likely_case'));
-                likely.likelyCase = app.currency.formatAmountLocale(totals.amount);
-                worst.worstCaseCls = this.getColorArrow(totals.worst_case, previousCommit.get('worst_case'));
-                worst.worstCase = app.currency.formatAmountLocale(totals.worst_case);
+                best.bestCaseCls = this.getColorArrow(_totals.best_case, previousCommit.get('best_case'));
+                best.bestCase = app.currency.formatAmountLocale(_totals.best_case);
+                likely.likelyCaseCls = this.getColorArrow(_totals.amount, previousCommit.get('likely_case'));
+                likely.likelyCase = app.currency.formatAmountLocale(_totals.amount);
+                worst.worstCaseCls = this.getColorArrow(_totals.worst_case, previousCommit.get('worst_case'));
+                worst.worstCase = app.currency.formatAmountLocale(_totals.worst_case);
             }
             
             if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls))
@@ -317,7 +321,7 @@
 
         }
 
-        self.totals = totals;
+        self.totals = _totals;
     },
 
     /**
@@ -341,50 +345,50 @@
      *
      */
     commitForecast: function() {
-        var self = this;
         
-        self.context.trigger("forecasts:commitButtons:disabled");
+        this.context.trigger("forecasts:commitButtons:disabled");
 
         //If the totals have not been set, don't save
-        if(!self.totals) {
+        if(!this.totals) {
             return;
         }
 
+
         var forecast = new this.collection.model();
-        forecast.url = self.url;
+        forecast.url = this.url;
         
         var forecastData = {};
        
-        if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
-            forecastData.best_case = self.totals.best_adjusted;
-            forecastData.likely_case = self.totals.likely_adjusted;
-            forecastData.worst_case = self.totals.worst_adjusted;
+        if(this.selectedUser.isManager == true && this.selectedUser.showOpps == false) {
+            forecastData.best_case = this.totals.best_adjusted;
+            forecastData.likely_case = this.totals.likely_adjusted;
+            forecastData.worst_case = this.totals.worst_adjusted;
         } else {
-            forecastData.best_case = self.totals.best_case;
-            forecastData.likely_case = self.totals.amount;
-            forecastData.worst_case = self.totals.worst_case;
+            forecastData.best_case = this.totals.best_case;
+            forecastData.likely_case = this.totals.amount;
+            forecastData.worst_case = this.totals.worst_case;
         }
 
         forecastData.currency_id = -99; //Always default to the base currency
         forecastData.base_rate = 1; //Base rate is always 1
-        forecastData.timeperiod_id = self.timePeriodId;
-        forecastData.forecast_type = self.forecastType;
-        forecastData.amount = self.totals.amount;
-        forecastData.opp_count = self.totals.included_opp_count;
+        forecastData.timeperiod_id = this.timePeriodId;
+        forecastData.forecast_type = this.forecastType;
+        forecastData.amount = this.totals.amount;
+        forecastData.opp_count = this.totals.included_opp_count;
 
         // apply data to model then save
         forecast.set(forecastData);
-        forecast.save({}, {success:function(){
-        	self.context.trigger("forecasts:committed:saved");
-        }});
+        forecast.save({}, { success:_.bind(function(){
+        	this.context.trigger("forecasts:committed:saved");
+        }, this), silent: true});
 
         // clear out the arrows
-        self.likelyCaseCls = '';
-        self.bestCaseCls = '';
-        self.worstCaseCls = '';
+        this.likelyCaseCls = '';
+        this.bestCaseCls = '';
+        this.worstCaseCls = '';
 
-        self.previous = self.totals;
-        self.collection.url = self.url;
-        self.collection.unshift(forecast);
+        this.previous = this.totals;
+        this.collection.url = this.url;
+        this.collection.unshift(forecast);
     }
 })

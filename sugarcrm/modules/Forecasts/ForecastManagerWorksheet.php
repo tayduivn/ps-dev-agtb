@@ -182,6 +182,10 @@ class ForecastManagerWorksheet extends SugarBean
 
         $this->copyValues($copyMap, $data);
 
+        // set the team to the default ones from the passed in user
+        $this->team_set_id = $reportee->team_set_id;
+        $this->team_id = $reportee->team_id;
+
         $this->name = $reportee->full_name;
         $this->user_id = $reportee->id;
         $this->assigned_user_id = $reports_to;

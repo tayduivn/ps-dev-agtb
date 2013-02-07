@@ -182,17 +182,12 @@
     	var commitbtn =  this.$el.find('#commit_forecast');
 
         if(!commitbtn.hasClass("disabled")){
-            var self = this;
             this.disableCommitButton();
 
-            wkstCallBack = function(totalSaved, worksheet){
-                // turn off the event
-                self.context.off('forecasts:worksheet:saved', wkstCallBack);
+            this.context.once('forecasts:worksheet:saved', function(){
                 // now actually commit the forecast
-                self.context.trigger('forecasts:committed:commit');
-            };
-
-            self.context.on('forecasts:worksheet:saved', wkstCallBack);
+                this.context.trigger('forecasts:committed:commit');
+            }, this);
             this.context.trigger("forecasts:worksheet:saveWorksheet", false);            
     	}        
     },

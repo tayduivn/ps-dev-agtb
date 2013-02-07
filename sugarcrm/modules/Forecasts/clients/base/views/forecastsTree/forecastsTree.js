@@ -230,11 +230,11 @@
                             'first_name':userData.first_name,
                             'last_name':userData.last_name,
                             'isManager':(nodeType != 'rep'),
-                            'showOpps':showOpps
+                            'showOpps':showOpps,
+                            'reportees':[]
                         };
 
-                        // update context with selected user which will trigger checkRender
-                        self.context.set("selectedUser", selectedUser);
+                        app.utils.getSelectedUsersReportees(selectedUser, self.context);
                     });
 
                 if (treeData) {

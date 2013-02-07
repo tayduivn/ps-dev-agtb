@@ -249,6 +249,11 @@ class SugarTestForecastUtilities
                 $forecast->currency_id = $config['currency_id'];
                 $forecast->save();
 
+                // roll forecast up to manager
+                /* @var $mgr_worksheet ForecastManagerWorksheet */
+                $mgr_worksheet = BeanFactory::getBean("ForecastManagerWorksheets");
+                $mgr_worksheet->reporteeForecastRollUp($user, $forecast->toArray());
+
                 $return['forecast'] = $forecast;
             }
 
@@ -326,6 +331,11 @@ class SugarTestForecastUtilities
         $tmpForecast->opp_count += $manager['forecast']->opp_count;
         
         $tmpForecast->save();
+
+        // roll forecast up to manager
+        /* @var $mgr_worksheet ForecastManagerWorksheet */
+        $mgr_worksheet = BeanFactory::getBean("ForecastManagerWorksheets");
+        $mgr_worksheet->reporteeForecastRollUp($manager['user'], $tmpForecast->toArray());
 
         return $tmpForecast;
     }

@@ -154,6 +154,11 @@
             "bPaginate": false
         };
 
+        // we need a custom model and collection in this view, so just create them on the options
+        // before we call the parent method
+        options.model = app.data.createBean('Forecasts');
+        options.collection = app.data.createBeanCollection('Forecasts');
+
         app.view.View.prototype.initialize.call(this, options);
 
         //set up base selected user

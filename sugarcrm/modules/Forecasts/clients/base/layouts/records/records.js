@@ -131,11 +131,6 @@
             updatedTotals: {},
 
             /**
-             * used across Forecasts to contain manager worksheet totals
-             */
-            updatedManagerTotals: {},
-
-            /**
              * todo-sfa keep track of changes to modal.js and when they have proper events being passed
              * we can do away with this
              *

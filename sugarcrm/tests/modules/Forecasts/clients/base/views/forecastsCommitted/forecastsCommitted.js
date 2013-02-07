@@ -90,7 +90,7 @@ describe("The forecasts committed view", function () {
             var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, worst_case : 80, base_rate : 1 }),
                 model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, worst_case : 90, base_rate : 1 }),
                 model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, worst_case : 100, base_rate : 1 });
-            view.collection = new Backbone.Collection([model1, model2, model3]);
+                view.collection = new Backbone.Collection([model1, model2, model3]);
         });
 
         it("should show up for best, worst and likely", function () {
