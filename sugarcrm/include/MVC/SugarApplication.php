@@ -43,10 +43,25 @@ class SugarApplication
         insert_charset_header();
         $this->setupPrint();
         $this->controller = ControllerFactory::getController($module);
+        // make sidecar view load faster
+        // TODO the rest of the code will be removed as soon as we migrate all modules to sidecar
+        if ($this->controller->action === 'sidecar' ||
+            ($this->controller->action === 'index' && $this->controller->module === 'Home') ||
+            empty($_REQUEST)
+        ) {
+            $this->controller->action = 'sidecar';
+            $this->controller->execute();
+            return;
+        } elseif ($this->controller->action === 'Login' && $this->controller->module === 'Users') {
+            // TODO remove this when we are "iFrame free"
+            echo '<script>parent.SUGAR.App.bwcLogin("' . $this->getLoginRedirect() . '");</script>';
+            return;
+        }
         // If the entry point is defined to not need auth, then don't authenticate.
         if (empty($_REQUEST['entryPoint'])
             || $this->controller->checkEntryPointRequiresAuth($_REQUEST['entryPoint'])
         ) {
+            $this->startSession();
             $this->loadUser();
             $this->ACLFilter();
             $this->preProcess();
@@ -81,7 +96,7 @@ class SugarApplication
         $user_unique_key = (isset($_SESSION['unique_key'])) ? $_SESSION['unique_key'] : '';
         $server_unique_key = (isset($sugar_config['unique_key'])) ? $sugar_config['unique_key'] : '';
         $allowed_actions = (!empty($this->controller->allowed_actions)) ? $this->controller->allowed_actions
-            : $allowed_actions = array('Authenticate', 'Login', 'LoggedOut', 'sidecar');
+            : $allowed_actions = array('Authenticate', 'Login', 'LoggedOut');
 
         if (($user_unique_key != $server_unique_key) && (!in_array($this->controller->action, $allowed_actions))
             && (!isset($_SESSION['login_error']))
@@ -147,12 +162,6 @@ class SugarApplication
                 }
             }
             //END SUGARCRM flav=pro ONLY
-        } elseif (!($this->controller->action == "sidecar"
-            || ($this->controller->module == 'Users' && in_array($this->controller->action, $allowed_actions)))
-        ) {
-            session_destroy();
-            SugarApplication::redirect($this->getUnauthenticatedHomeUrl());
-            die();
         }
         $GLOBALS['log']->debug('Current user is: ' . $GLOBALS['current_user']->user_name);
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_load_user');
@@ -238,29 +247,14 @@ class SugarApplication
 	             }else{
 					$this->handleOfflineClient();
 				 }
-			}else{
-				$ut = $GLOBALS['current_user']->getPreference('ut');
-			    if(empty($ut)
-			            && $this->controller->action != 'AdminWizard'
-			            && $this->controller->action != 'EmailUIAjax'
-			            && $this->controller->action != 'Wizard'
-			            && $this->controller->action != 'SaveAdminWizard'
-			            && $this->controller->action != 'SaveUserWizard'
-			            && $this->controller->action != 'SaveTimezone'
-			            && $this->controller->action != 'Logout') {
-					$this->controller->module = 'Users';
-					$this->controller->action = 'SetTimezone';
-					$record = $GLOBALS['current_user']->id;
-				}else{
-					if($this->controller->action != 'AdminWizard'
-			            && $this->controller->action != 'EmailUIAjax'
-			            && $this->controller->action != 'Wizard'
-			            && $this->controller->action != 'SaveAdminWizard'
-			            && $this->controller->action != 'SaveUserWizard'){
-							$this->handleOfflineClient();
-			            }
-				}
-			}
+            } elseif ($this->controller->action != 'AdminWizard'
+                    && $this->controller->action != 'EmailUIAjax'
+                    && $this->controller->action != 'Wizard'
+                    && $this->controller->action != 'SaveAdminWizard'
+                    && $this->controller->action != 'SaveUserWizard'
+            ){
+                $this->handleOfflineClient();
+            }
 		}
 		$this->handleAccessControl();
 	}
@@ -728,31 +722,32 @@ class SugarApplication
         $url
     )
     {
+        // FIXME need to review this code to redirect to sidecar modules
         /*
            * If the headers have been sent, then we cannot send an additional location header
            * so we will output a javascript redirect statement.
            */
-        if (!empty($_REQUEST['ajax_load'])) {
-            ob_get_clean();
-            $ajax_ret = array(
-                'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
-                'menu' => array(
-                    'module' => $_REQUEST['module'],
-                    'label' => translate($_REQUEST['module']),
-                ),
-            );
-            $json = getJSONobj();
-            echo $json->encode($ajax_ret);
-        } else {
-            if (headers_sent()) {
-                echo "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n";
-            } else {
+//        if (!empty($_REQUEST['ajax_load'])) {
+//            ob_get_clean();
+//            $ajax_ret = array(
+//                'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
+//                'menu' => array(
+//                    'module' => $_REQUEST['module'],
+//                    'label' => translate($_REQUEST['module']),
+//                ),
+//            );
+//            $json = getJSONobj();
+//            echo $json->encode($ajax_ret);
+//        } else {
+//            if (headers_sent()) {
+//                echo "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n";
+//            } else {
                 //@ob_end_clean(); // clear output buffer
                 session_write_close();
                 header('HTTP/1.1 301 Moved Permanently');
                 header("Location: " . $url);
-            }
-        }
+//            }
+//        }
         exit();
     }
 
@@ -921,10 +916,6 @@ class SugarApplication
 
         if ( $addLoginVars ) {
             $url .= $this->createLoginVars();
-        }
-
-        if ( $this->shouldUseSidecar() ) {
-            $url = "index.php?action=sidecar#Home";
         }
 
         return $url;

@@ -118,7 +118,7 @@
         if(evt.which == 9) {
             evt.preventDefault();
             // tab key pressed, trigger event from context
-            self.context.forecasts.trigger('forecasts:tabKeyPressed', evt.shiftKey, self);
+            self.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, self);
         }
     },
     

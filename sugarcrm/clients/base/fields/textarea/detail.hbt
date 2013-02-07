@@ -26,4 +26,4 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<span class="textarea-text">{{nl2br value}}</span>{{#if isTooLong}} <a href="javascript:void(0)" class="show-more-text"></a>{{/if}}
+{{nl2br value}}{{#if isTooLong}}<a href="javascript:void(0)" class="show-more-text"></a>{{/if}}

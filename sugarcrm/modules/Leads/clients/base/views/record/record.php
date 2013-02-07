@@ -41,7 +41,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
         array(
             'type'    => 'actiondropdown',
             'name'    => 'main_dropdown',
-            'css_class' => 'btn-primary',
+            'primary' => true,
             'buttons' => array(
                 array(
                     'type' => 'rowaction',
