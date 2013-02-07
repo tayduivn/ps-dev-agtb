@@ -48,6 +48,7 @@
         app.drawer.load({
             layout : 'merge-duplicates',
             context: {
+                primaryRecord: this.context.get('dupeCheckModel'),
                 selectedDuplicates: this.context.get('mass_collection')
             }
         });

@@ -46,8 +46,11 @@
         }
     },
     initialize: function(options) {
-        options.meta = $.extend(true, {}, app.metadata.getView(options.module, 'baselist') || {}, options.meta);
+        var viewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'baselist') || {}));
+        options.meta = JSON.parse(JSON.stringify(options.meta || {}));
+        options.meta = _.extend({}, viewMeta, options.meta);
         options.meta.type = options.meta.type || 'list';
+
         _.each(options.meta.panels, function(panel) {
             panel = this.populatePanelMetadata(panel, options);
         }, this);
