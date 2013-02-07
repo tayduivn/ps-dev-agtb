@@ -12,7 +12,7 @@
             </div>
             <div class="actions">
               <div class="btn-group" data-toggle="buttons-radio">
-                <a href="{{module}}/{{module}}-activitystream.html" class="btn" data-view="activitystream" data-toggle="proto" data-target="#view .main-content" data-mode="view" rel="tooltip" data-original-title="Activity stream"><i class="icon-th-list"></i></a>
+                <a href="common/record-sub-panel.html" class="btn" data-view="activitystream" data-toggle="proto" data-target="#view .main-content" data-mode="view" rel="tooltip" data-original-title="Activity stream"><i class="icon-th-list"></i></a>
                 <a href="common/data-table.html" class="btn" data-view="list" data-toggle="proto" data-target="#view .main-content" data-mode="view" rel="tooltip" data-original-title="List"><i class="icon-table"></i></a>
               </div>
             </div>
@@ -59,38 +59,40 @@
 
 <script>
   var availableFilters = [
-    {"label":"Recent", "id":"filter_1", "disabled":false, "selected":false, "classes":"", "spec":[
+    {"label":"Recent", "id":"filter_recent", "disabled":false, "selected":false, "classes":"", "spec":[
       {'field':'created','opera':'Last 7 days','value':''}
     ]},
-    {"label":"Favorites", "id":"filter_2", "disabled":false, "selected":false, "classes":"", "spec":[
+    {"label":"Favorites", "id":"filter_favorites", "disabled":false, "selected":false, "classes":"", "spec":[
       {'field':'favorite','opera':'true'}
     ]},
-    {"label":"My Saved Filter", "id":"filter_3", "disabled":false, "selected":false, "classes":"", "spec":[
+    {"label":"My Saved Filter", "id":"filter_saved", "disabled":false, "selected":false, "classes":"", "spec":[
       {'field':'assigned','opera':'matches','value':'westin'},
       {'field':'stage','opera':'closed won'},
       {'field':'created','opera':'Last 7 days'}
     ]},
-    {"label":"Contacts", "id":"filter_4", "disabled":false, "selected":false, "editor":true, "classes":"result-related result-separator", "spec":[
-      {'field':'module','opera':'Contacts','value':''},
+    {"label":"All", "id":"filter_all", "disabled":false, "selected":false, "editor":false, "classes":"result-related result-separator", "spec":[
+    ]},
+    {"label":"Files", "id":"filter_files", "disabled":false, "selected":false, "editor":true, "classes":"result-related result-separator", "spec":[
+      {'field':'module','opera':'Files','value':''},
       {'field':'related','opera':'true','value':''}
     ]},
-    {"label":"Accounts", "id":"filter_5", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
-      {'field':'module','opera':'Accounts','value':''},
-      {'field':'related','opera':'true','value':''}
-    ]},
-    {"label":"Leads", "id":"filter_6", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
-      {'field':'module','opera':'Leads','value':''},
-      {'field':'related','opera':'true','value':''}
-    ]},
-    {"label":"Opportunities", "id":"filter_7", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
+    {"label":"Opportunities", "id":"filter_opportunities", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
       {'field':'module','opera':'Opportunities','value':''},
       {'field':'related','opera':'true','value':''}
     ]},
-    {"label":"History", "id":"filter_8", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
+    {"label":"Bugs", "id":"filter_bugs", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
+      {'field':'module','opera':'Bugs','value':''},
+      {'field':'related','opera':'true','value':''}
+    ]},
+    {"label":"Accounts", "id":"filter_accounts", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
+      {'field':'module','opera':'Accounts','value':''},
+      {'field':'related','opera':'true','value':''}
+    ]},
+    {"label":"History", "id":"filter_null", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
       {'field':'module','opera':'History','value':''},
       {'field':'related','opera':'true','value':''}
     ]},
-    {"label":"Quotes", "id":"filter_9", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
+    {"label":"Quotes", "id":"filter_quotes", "disabled":true, "selected":false, "editor":true, "classes":"result-related", "spec":[
       {'field':'module','opera':'Quotes','value':''},
       {'field':'related','opera':'true','value':''}
     ]},
@@ -144,8 +146,7 @@
           _filter_results,
           _hasRelated = (!page.mode || page.mode!=='list')?true:false;
 
-      if ( _hasRelated ) {
-        //var related_data = [{"label":"{{title}}", "id":"filter_module", "disabled":true, "selected":true, "classes":"result-related filter-disabled", "spec":[]}];
+      if ( !_hasRelated ) {
         var related_data = [];
       } else {
         var related_data = availableFilters
@@ -181,7 +182,6 @@
             data:related_data,
             multiple:false,
             minimumResultsForSearch:7,
-            placeholder: (_hasRelated?'Related':'Module'),
             formatSelection: function(item) {
                 if (item.id === item.text) {
                     return item.text;
@@ -196,7 +196,7 @@
             dropdownCss: {width:'auto'},
             dropdownCssClass: 'search-related-dropdown'
         });
-        _related.select2("data", {id: "filter_module", text: "{{title}}"});
+        _related.select2("data", {id: "filter_module", text: (_hasRelated?'All':'{{title}}')});
         if (!_hasRelated) {
             _related.select2("disable", true);
         }
@@ -205,7 +205,6 @@
           data:filter_data,
           multiple:false,
           minimumResultsForSearch:7,
-          placeholder: 'Filter',
           formatSelection: function(item) {
               if (item.id === item.text) {
                   return item.text;
@@ -220,7 +219,7 @@
           dropdownCss: {width:'auto'},
           dropdownCssClass: 'search-filter-dropdown'
       });
-      _filter.select2("data", {id: "filter_1", text: "Recent"});
+      _filter.select2("data", {id: "filter_recent", text: "Recent"});
 
       // add the current module as default select2 filter
       // if ( window.location.pathname.split('/').pop() !== 'dashboard.html') {
@@ -299,8 +298,8 @@
           });
 
           _header.find('a[href="#delete"]').off('click').on('click', function(e){
-                removeFilter(index,data);
-                  _options.addClass('hide');
+              removeFilter(index,data);
+              _options.addClass('hide');
           });
 
           // close filter option extend
