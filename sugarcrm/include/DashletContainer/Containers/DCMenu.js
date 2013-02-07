@@ -221,7 +221,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
             if ( typeof(extraButton) == "string" ) {
                 content += extraButton
             }
-            content += '<a id="dcmenu_close_link" href="#" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay(); return false;"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
+            content += '<a id="dcmenu_close_link" href="#" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay(); return false;"><i class="icon-remove icon-sm"></i></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
 
 
             //"resetEvalBool" will only be set to true if an eval() has completed succesfully from a previous request.  It will not get reset again within a request.
@@ -621,7 +621,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 		quickRequest('notifications', 'index.php?to_pdf=1&module=Notifications&action=quicklist', notificationsListDisplay );
 	}
 	notificationsListDisplay = function(id, data){
-		var overlay = setBody(data.responseText, 0, 'dcmenuSugarCube');
+		var overlay = setBody(data.responseText, 0, 'dcmenuSugarCube',"",SUGAR.language.get('app_strings', 'LBL_NOTIFICATIONS'));
         var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
    		var dcboxbody = Y.one('#dcboxbody');
 		Y.one('#dcboxbody').setStyle('visibility','visible');
@@ -717,7 +717,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
             return;
         }
 
-        content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;"><div class="dashletPanel dc"><div class="hd"><div><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="bd"><div class="bd-center"><div class="dccontent" id="dcgscontent"><br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div></div></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div></div></div></div></div></div>';
+        content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;"><div class="dashletPanel dc"><div class="hd"><div><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()"><i class="icon-remove icon-sm"></i></a></div></div><div class="bd"><div class="bd-center"><div class="dccontent" id="dcgscontent"><br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div></div></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div></div></div></div></div></div>';
 
         overlays[qvDepth].set("bodyContent", content);
         overlays[qvDepth].set("align", {node:"#dcboxbody",
@@ -770,11 +770,11 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
             if(SUGAR.themes.theme_name == 'RTL')
             {
                 content += '<div><div style="float:right"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
-                content += '<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png">';
+                content += '<i class="icon-remove icon-sm"></i>';
                 content += '</a></div></div></div><div class="tr"></div><div class="bd">';
             } else {
                 content += '<div><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
-                content += '<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png">';
+                content += '<i class="icon-remove icon-sm"></i>';
                 content += '</a></div></div><div class="tr"></div><div class="bd">';
             }
             content += '<div><div class="dccontent" id="dcgscontent">' +  data.responseText;
