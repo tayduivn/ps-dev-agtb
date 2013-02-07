@@ -33,14 +33,14 @@
         <ul class="dropdown-menu left carettop" id="chartDisplayOptions">
             <div class="datasetOptions">
             {{#eachOptions chartDataSet}}
-            <li><a href="#"><label data-set="{{this.key}}" class="radio{{#eq this.key ../defaultDataset}} checked{{/eq}}"><i class="icon-ok"></i>&nbsp;{{this.value}}</label></a></li>
+            <li><a href="javascript:void(0);"><label data-set="{{this.key}}" class="radio{{#eq this.key ../defaultDataset}} checked{{/eq}}"><i class="icon-ok"></i>&nbsp;{{this.value}}</label></a></li>
             {{/eachOptions}}
             </div>
             {{#if chartGroupByOptions}}
             <div class="groupByOptions">
             <li class="divider"></li>
             {{#eachOptions chartGroupByOptions}}
-            <li><a href="#"><label data-set="{{this.key}}" class="radio{{#eq this.key ../defaultGroupBy}} checked{{/eq}}"><i class="icon-ok"></i>&nbsp;{{this.value}}</label></a></li>
+            <li><a href="javascript:void(0);"><label data-set="{{this.key}}" class="radio{{#eq this.key ../defaultGroupBy}} checked{{/eq}}"><i class="icon-ok"></i>&nbsp;{{this.value}}</label></a></li>
             {{/eachOptions}}
             </div>
             {{/if}}

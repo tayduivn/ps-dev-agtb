@@ -196,7 +196,11 @@ class Administration extends SugarBean {
     public function saveSetting($category, $key, $value, $platform = '') {
         // platform is always lower case
         $platform = strtolower($platform);
-        $result = $this->db->query("SELECT count(*) AS the_count FROM config WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'");
+        if (empty($platform)) {
+            $result = $this->db->query("SELECT count(*) AS the_count FROM config WHERE category = '{$category}' AND name = '{$key}' AND (platform = '{$platform}' OR platform IS NULL)");
+        } else {
+            $result = $this->db->query("SELECT count(*) AS the_count FROM config WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'");
+        }
         $row = $this->db->fetchByAssoc($result);
         $row_count = $row['the_count'];
 
@@ -207,7 +211,11 @@ class Administration extends SugarBean {
             $result = $this->db->query("INSERT INTO config (value, category, name, platform) VALUES ('$value','$category', '$key', '$platform')");
         }
         else{
-            $result = $this->db->query("UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'");
+            if (empty($platform)) {
+                $result = $this->db->query("UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND (platform = '{$platform}' OR platform IS NULL)");
+            } else {
+                $result = $this->db->query("UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'");
+            }
         }
         sugar_cache_clear('admin_settings_cache');
 

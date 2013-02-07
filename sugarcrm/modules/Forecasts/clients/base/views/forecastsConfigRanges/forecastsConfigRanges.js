@@ -97,8 +97,8 @@
     _render: function() {
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         // This will be set to true if the forecasts ranges setup should be disabled
-        this.disableRanges = this.context.forecasts.config.get('has_commits');
-        this.selection = this.context.forecasts.config.get('forecast_ranges');
+        this.disableRanges = this.context.config.get('has_commits');
+        this.selection = this.context.config.get('forecast_ranges');
 
         app.view.View.prototype._render.call(this);
 
@@ -214,12 +214,6 @@
                     meta: app.metadata.getField('range')
                 };
 
-                //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-                if(this.view.disableCategories) {
-                    fieldSettings.viewName = 'detail';
-                    fieldSettings.def.view = 'detail';
-                }
-
                 rangeField = app.view.createField(fieldSettings);
                 this.showElement.append('<b>'+ label +':</b>').append(rangeField.el);
                 rangeField.render();
@@ -237,7 +231,7 @@
                 }(this.category, key, this.view);
             }
         }, {view: this, showElement:showElement, category: element.value});
-        showElement.append($('<p>' + app.lang.get("LBL_FORECASTS_CONFIG_CATEGORY_EXCLUDE_INFO", "Forecasts")+ '</p>'));
+        showElement.append($('<p>' + app.lang.get("LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO", "Forecasts")+ '</p>'));
     },
 
     /**
@@ -401,12 +395,6 @@
         fieldSettings.def.view = 'forecastsCustomRange';
         // enable slider
         fieldSettings.def.enabled = true;
-
-        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-        if(this.disableCategories) {
-            fieldSettings.viewName = 'detail';
-            fieldSettings.def.view = 'detail';
-        }
 
         rangeField = app.view.createField(fieldSettings);
         currentPlh.append(rangeField.el);

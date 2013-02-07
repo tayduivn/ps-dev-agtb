@@ -24,7 +24,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
- 
+ // TODO REMOVE THIS FILE!
 var CAL = {};
 
 CAL.fillRepeatForm = function(data) {
@@ -79,14 +79,12 @@ CAL.fillRepeatForm = function(data) {
 }
 
 CAL.editAllRecurrences = function() {
-    disableOnUnloadEditView();
     document.forms['EditView'].elements['action'].value = 'editAllRecurrences';
     document.forms['EditView'].submit();
 }
 
 CAL.removeAllRecurrences = function() {
     if (confirm(SUGAR.language.get(document.forms['EditView'].elements['module'].value, 'LBL_CONFIRM_REMOVE_ALL_RECURRENCES'))) {
-        disableOnUnloadEditView();
         document.forms['EditView'].elements['action'].value = 'removeAllRecurrences';
         document.forms['EditView'].submit();
     }

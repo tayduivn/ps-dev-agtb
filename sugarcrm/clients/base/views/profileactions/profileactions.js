@@ -13,6 +13,7 @@
      */
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
+        this.showAdmin = app.acl.hasAccess('admin', 'Administration');
         app.view.View.prototype._renderHtml.call(this);
     },
 

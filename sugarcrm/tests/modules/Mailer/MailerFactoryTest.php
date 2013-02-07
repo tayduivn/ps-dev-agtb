@@ -24,21 +24,25 @@ require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer cl
 class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp() {
-        $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp("files");
+        SugarTestHelper::setUp("current_user");
     }
 
     public function tearDown() {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS["current_user"]);
+        SugarTestHelper::tearDown();
     }
 
     /**
+     * @group bug59513
      * @group email
      * @group mailer
      */
-    public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSmtpMailer() {
+
+    public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSmtpMailerWithExpectedFromEmailAddress() {
+        $expected = "foo@bar.com";
+
         $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $outboundSmtpEmailConfiguration->setFrom("foo@bar.com", "Foo Bar");
+        $outboundSmtpEmailConfiguration->setFrom($expected, "Foo Bar");
         $outboundSmtpEmailConfiguration->setMode("smtp");
 
         $mockMailerFactory = self::getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
@@ -46,8 +50,64 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("getOutboundEmailConfiguration")
             ->will(self::returnValue($outboundSmtpEmailConfiguration));
 
-        $expected = "SmtpMailer";
-        $actual   = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        $mailer = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        $from   = $mailer->getHeader(EmailHeaders::From);
+        $actual = $from->getEmail();
+        self::assertEquals(
+            $expected,
+            $actual,
+            "The mailer should have been an SmtpMailer instance with '{$expected}' as the From email address");
+    }
+
+    /**
+     * @group bug59513
+     * @group email
+     * @group mailer
+     * @group functional
+     */
+    public function testGetMailerForUser_UsesACustomSendingStrategy_MailConfigurationExists_ReturnsCustomMailer() {
+        SugarTestHelper::ensureDir("custom/modules/Mailer");
+
+        $expected = "FooMailer_" . ((int)microtime(true)); // the name of the custom strategy that is expected
+
+        $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $outboundSmtpEmailConfiguration->setFrom("foo@bar.com", "Foo Bar");
+        $outboundSmtpEmailConfiguration->setMode("smtp");
+
+        $strategies = array(
+            "smtp" => $expected,
+        );
+
+        $mockMailerFactory = self::getMockClass(
+            "MailerFactory",
+            array(
+                "getOutboundEmailConfiguration",
+                "getStrategies",
+            )
+        );
+        $mockMailerFactory::staticExpects(self::any())
+            ->method("getOutboundEmailConfiguration")
+            ->will(self::returnValue($outboundSmtpEmailConfiguration));
+        $mockMailerFactory::staticExpects(self::any())
+            ->method("getStrategies")
+            ->will(self::returnValue($strategies));
+
+        $file = "custom/modules/Mailer/{$expected}.php";
+        SugarTestHelper::saveFile($file);
+
+        $customMailer = <<<PHP
+<?php
+require_once "modules/Mailer/BaseMailer.php";
+
+class {$expected} extends BaseMailer
+{
+    public function send() {}
+}
+
+PHP;
+        SugarAutoLoader::put($file, $customMailer, true);
+
+        $actual = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
         self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }
 
@@ -64,7 +124,6 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         // until PHP 5.3 is standard on test environments, this test must be skipped.
         // Reference about mocking static methods in PHP Unit:
         // http://sebastian-bergmann.de/archives/883-Stubbing-and-Mocking-Static-Methods.html
-        self::markTestSkipped("This is a 7.0+ test only, which requires ");
         $mockMailerFactory = self::getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
         $mockMailerFactory::staticExpects(self::any())
             ->method("getOutboundEmailConfiguration")

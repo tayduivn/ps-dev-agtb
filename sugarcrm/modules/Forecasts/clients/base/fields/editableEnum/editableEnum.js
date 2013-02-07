@@ -118,7 +118,7 @@
         if(evt.which == 9) {
             evt.preventDefault();
             // tab key pressed, trigger event from context
-            self.context.forecasts.trigger('forecasts:tabKeyPressed', evt.shiftKey, self);
+            self.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, self);
         }
     },
     
@@ -184,7 +184,7 @@
         self.disabled = false;
         
         //Check to see if you're a manager on someone else's sheet, disable changes
-        if(self.context.forecasts.get("selectedUser")["id"] != app.user.id){
+        if(self.context.get("selectedUser")["id"] != app.user.id){
             self.disabled = true; 
         }
     },

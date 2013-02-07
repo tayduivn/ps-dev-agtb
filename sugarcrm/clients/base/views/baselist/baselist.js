@@ -37,7 +37,13 @@
         'mouseenter .rowaction': 'showTooltip',
         'mouseleave .rowaction': 'hideTooltip',
         'mouseenter tr':'showActions',
-        'mouseleave tr':'hideActions'
+        'mouseleave tr':'hideActions',
+        'mouseenter .ellipsis_inline':'addTooltip'
+    },
+    addTooltip: function(event){
+        if (_.isFunction(app.utils.handleTooltip)) {
+            app.utils.handleTooltip(event, this);
+        }
     },
     initialize: function(options) {
         options.meta = $.extend(true, {}, app.metadata.getView(options.module, 'baselist') || {}, options.meta);
@@ -49,8 +55,14 @@
         app.view.View.prototype.initialize.call(this, options);
         this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
         this.fallbackFieldTemplate = 'list-header';
-        this.context.on("list:preview:fire", this.previewRecord, this);
-        this.context.on("list:preview:decorate", this.decorateRow, this);
+
+        //When clicking on eye icon, we need to trigger preview:render with model&collection
+        this.context.on("list:preview:fire", function(model) {
+            app.events.trigger("preview:render", model, this.collection);
+        }, this);
+
+        //When switching to next/previous record from the preview panel, we need to update the highlighted row
+        app.events.on("list:preview:decorate", this.decorateRow, this);
     },
     populatePanelMetadata: function(panel, options) {
         var meta = options.meta;
@@ -78,7 +90,11 @@
         this.layout.off("list:search:fire", null, this);
         this.layout.off("list:paginate:success", null, this);
         this.layout.on("list:search:fire", this.fireSearch, this);
-        this.layout.on("list:paginate:success", this.render, this);
+        this.layout.on("list:paginate:success", function() {
+            //When fetching more records, we need to update the preview collection
+            app.events.trigger("preview:collection:change", this.collection);
+            this.render();
+        }, this);
         this.layout.off("list:filter:toggled", null, this);
         this.layout.on("list:filter:toggled", this.filterToggled, this);
         this.layout.off("list:alert:show", null, this);
@@ -86,14 +102,9 @@
         this.layout.off("list:alert:hide", null, this);
         this.layout.on("list:alert:hide", this.hideAlert, this);
         this.layout.off("list:sort:fire", null, this);
-        this.layout.on("list:sort:fire", function(collection) {
-            if( _.isUndefined(self.context._callbacks) ) {
-                // Sorting on a related module, need the parent context instead
-                self.context.parent.trigger("preview:collection:change", collection);
-            }
-            else {
-                self.context.trigger("preview:collection:change", collection);
-            }
+        this.layout.on("list:sort:fire", function() {
+            //When sorting the list view, we need to close the preview panel
+            app.events.trigger("preview:close");
         }, this);
 
         // Dashboard layout injects shared context with limit: 5. 
@@ -188,12 +199,18 @@
         // amount. Also, add true will make it append to already loaded records.
         options.limit = self.limit || null;
         options.success = function () {
+            // Hide loading message
+            app.alert.dismiss('loading_' + self.cid);
+
             self.layout.trigger("list:sort:fire", collection, self);
             self.render();
         };
         if (this.context.get('link')) {
             options.relate = true;
         }
+
+        // Display Loading message
+        app.alert.show('loading_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_LOADING')});
 
         // refetch the collection
         collection.fetch(options);
@@ -223,24 +240,10 @@
         return options;
     },
     /**
-     * Display a Preview for a record in the list view
-     * @param model Model for the record to be displayed in Preview
-     */
-    previewRecord: function(model) {
-        if( _.isUndefined(this.context._callbacks) ) {
-            // Clicking preview on a related module, need the parent context instead
-            this.context.parent.trigger("preview:render", model, this.collection);
-        }
-        else {
-            this.context.trigger("preview:render", model, this.collection);
-        }
-    },
-    /**
      * Decorate a row in the list that is being shown in Preview
      * @param model Model for row to be decorated.  Pass a falsy value to clear decoration.
-     * @param preview Preview view that changed
      */
-    decorateRow: function(model, preview){
+    decorateRow: function(model){
         this.$("tr.highlighted").removeClass("highlighted current above below");
         if(model){
             var rowName = model.module+"_"+ model.get("id");

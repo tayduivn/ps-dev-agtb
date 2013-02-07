@@ -63,6 +63,7 @@ $viewdefs['Opportunities']['base']['view']['baselist'] = array(
                     'label' => 'LBL_LIST_SALES_STAGE',
                     'default' => true
                 ),
+                'sales_status',
                 array (
                     'name' => 'amount',
                     'width' => 10,

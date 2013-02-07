@@ -53,12 +53,10 @@
                 <div id="alerts" class="alert-top"></div>
                 <div id="header"></div>
                 <div id="content">
-                    <div class="container welcome">
-                        <div class="alert alert-process">
-                            <strong>Loading</strong>
-                            <div class="loading">
-                                <span class="l1"></span><span class="l2"></span><span class="l3"></span>
-                            </div>
+                    <div class="alert alert-process">
+                        <strong>Loading</strong>
+                        <div class="loading">
+                            <span class="l1"></span><span class="l2"></span><span class="l3"></span>
                         </div>
                     </div>
                 </div>

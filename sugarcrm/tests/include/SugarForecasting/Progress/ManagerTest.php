@@ -148,17 +148,19 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
             ),
         ));
         
+        SugarTestForecastUtilities::createManagerRollupForecast($manager, $reportee1, $reportee2);
+        
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
             "user_id" => $manager["user"]->id
         ));
         $data = $obj->process();
-        
+       
         //Make sure the pipeline count includes committed ops from reps
         $this->assertNotEquals("0", $data["opportunities"]);
         
         //Make sure that the pipeline revenue includes committed ops from reps
-        $this->assertNotEquals("0", $data["pipeline_revenue"]);     
+        $this->assertNotEquals("0", $data["pipeline_revenue"]);    
      }
      
      /**
@@ -240,6 +242,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
             ),
         ));
         
+        SugarTestForecastUtilities::createManagerRollupForecast($manager, $reportee1, $reportee2);
+        
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
             "user_id" => $manager["user"]->id
@@ -285,6 +289,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
                 'include_in_forecast' => 2
             ),
         ));
+        
+        SugarTestForecastUtilities::createManagerRollupForecast($manager, $reportee1, $reportee2);
         
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
@@ -332,6 +338,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
             ),
         ));
         
+        SugarTestForecastUtilities::createManagerRollupForecast($manager, $reportee1, $reportee2);
+        
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
             "user_id" => $manager["user"]->id
@@ -346,12 +354,12 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
      }
      
      /**
-     * Check for manager with some committed forecasts and reps with all committed forecasts, but some closed lost
+     * Check for a manager with submanagers with reps with committed opps.. make sure the cascade works.
      * 
      * @group forecasts
      * @group forecastsprogress
      */
-     public function testManagerSomeOpsRepsCommiteedOpsClosedLost()
+     public function testManagerWithSubManagerWithReps()
      {
         $manager = SugarTestForecastUtilities::createForecastUser(array(
             'opportunities' => array(
@@ -359,146 +367,55 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
                 'include_in_forecast' => 1
             )
         ));
-        $reportee1 = SugarTestForecastUtilities::createForecastUser(array(
+        $subManager1 = SugarTestForecastUtilities::createForecastUser(array(
             'user' => array(
                 'reports_to' => $manager["user"]->id
             ),
-            'opportunities' => array(
-                'total' => 2,
-                'include_in_forecast' => 2
-            ),
-        ));
-        $reportee1["opportunities"][0]->sales_stage = "Closed Lost";
-        $reportee1["opportunities"][0]->save();
-        
-        $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
-            'user' => array(
-                'reports_to' => $manager["user"]->id
-            ),
-            'opportunities' => array(
-                'total' => 2,
-                'include_in_forecast' => 2
-            ),
-        ));
-        
-        $reportee2["opportunities"][0]->sales_stage = "Closed Lost";
-        $reportee2["opportunities"][0]->save();
-        
-        $obj = new SugarForecasting_Progress_Manager(array(
-            "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
-            "user_id" => $manager["user"]->id
-        ));
-        
-        $data = $obj->process();
-        
-        //Make sure the pipeline count includes all manager ops and only committed rep ops that aren't closed Lost
-        $this->assertEquals("4", $data["opportunities"]);
-        
-         //Make sure that the pipeline revenue has something in it.
-        $this->assertNotEquals("0", $data["pipeline_revenue"]);     
-     }
-     
-     /**
-     * Check for manager with some committed forecasts and reps with all committed forecasts, but some closed won
-     * 
-     * @group forecasts
-     * @group forecastsprogress
-     */
-     public function testManagerSomeOpsRepsCommiteedOpsClosedWon()
-     {
-        $manager = SugarTestForecastUtilities::createForecastUser(array(
             'opportunities' => array(
                 'total' => 2,
                 'include_in_forecast' => 1
-            )
+            ),
         ));
-        $reportee1 = SugarTestForecastUtilities::createForecastUser(array(
+        $subManager2 = SugarTestForecastUtilities::createForecastUser(array(
             'user' => array(
                 'reports_to' => $manager["user"]->id
             ),
-            'opportunities' => array(
-                'total' => 2,
-                'include_in_forecast' => 2
-            ),
-        ));
-        $reportee1["opportunities"][0]->sales_stage = "Closed Won";
-        $reportee1["opportunities"][0]->save();
-        
-        $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
-            'user' => array(
-                'reports_to' => $manager["user"]->id
-            ),
-            'opportunities' => array(
-                'total' => 2,
-                'include_in_forecast' => 2
-            ),
-        ));
-        
-        $reportee2["opportunities"][0]->sales_stage = "Closed Won";
-        $reportee2["opportunities"][0]->save();
-        
-        $obj = new SugarForecasting_Progress_Manager(array(
-            "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
-            "user_id" => $manager["user"]->id
-        ));
-        
-        $data = $obj->process();
-        
-        //Make sure the pipeline count includes all manager ops and only committed rep ops that aren't closed Won
-        $this->assertEquals("4", $data["opportunities"]);
-        
-         //Make sure that the pipeline revenue has something in it.
-        $this->assertNotEquals("0", $data["pipeline_revenue"]);     
-     }
-     
-     /**
-     * Check for manager with some committed forecasts and reps with all committed forecasts, but some closed lost or closed won
-     * 
-     * @group forecasts
-     * @group forecastsprogress
-     */
-     public function testManagerSomeOpsRepsCommiteedOpsClosedLostWon()
-     {
-        $manager = SugarTestForecastUtilities::createForecastUser(array(
             'opportunities' => array(
                 'total' => 2,
                 'include_in_forecast' => 1
-            )
+            ),
         ));
         $reportee1 = SugarTestForecastUtilities::createForecastUser(array(
             'user' => array(
-                'reports_to' => $manager["user"]->id
+                'reports_to' => $subManager1["user"]->id
             ),
             'opportunities' => array(
                 'total' => 2,
-                'include_in_forecast' => 2
+                'include_in_forecast' => 1
             ),
         ));
-        $reportee1["opportunities"][0]->sales_stage = "Closed Lost";
-        $reportee1["opportunities"][0]->save();
-        
         $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
             'user' => array(
-                'reports_to' => $manager["user"]->id
+                'reports_to' => $subManager2["user"]->id
             ),
             'opportunities' => array(
                 'total' => 2,
-                'include_in_forecast' => 2
+                'include_in_forecast' => 1
             ),
         ));
         
-        $reportee2["opportunities"][0]->sales_stage = "Closed Won";
-        $reportee2["opportunities"][0]->save();
+        SugarTestForecastUtilities::createManagerRollupForecast($subManager1, $reportee1);
+        SugarTestForecastUtilities::createManagerRollupForecast($subManager2, $reportee2);        
+        SugarTestForecastUtilities::createManagerRollupForecast($manager, $subManager1, $subManager2);
         
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
             "user_id" => $manager["user"]->id
         ));
-        
         $data = $obj->process();
         
-        //Make sure the pipeline count includes all manager ops and only committed rep ops that aren't Closed Lost or Closed Won
-        $this->assertEquals("4", $data["opportunities"]);
+        //Make sure the pipeline count includes all manager ops and only committed rep ops
+        $this->assertEquals("6", $data["opportunities"]);
         
          //Make sure that the pipeline revenue has something in it.
         $this->assertNotEquals("0", $data["pipeline_revenue"]);     
@@ -586,8 +503,5 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         }
         //compare expected and actual
         $this->assertEquals($expectedQuotaAmount, $quotaAmount, "Quota not matching expected amount.  Expected: ".$expectedQuotaAmount." Actual: ".$quotaAmount);
-
     }
-
-
 }

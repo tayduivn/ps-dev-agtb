@@ -99,7 +99,7 @@
         if (evt.which == 9) {
             evt.preventDefault();
             // tab key pressed, trigger event from context
-            this.context.forecasts.trigger('forecasts:tabKeyPressed', evt.shiftKey, this);
+            this.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, this);
         }
     },
 

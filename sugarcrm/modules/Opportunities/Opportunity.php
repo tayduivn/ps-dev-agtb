@@ -1,6 +1,6 @@
 <?php
-if ( !defined('sugarEntry') || !sugarEntry ) {
-	die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
 }
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -25,83 +25,101 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
 // Opportunity is used to store customer information.
 class Opportunity extends SugarBean
 {
-	const STAGE_CLOSED_WON  = 'Closed Won';
-	const STAGE_CLOSED_LOST = 'Closed Lost';
+    const STAGE_CLOSED_WON = 'Closed Won';
+    const STAGE_CLOSED_LOST = 'Closed Lost';
 
     const STATUS_NEW = 'New';
     const STATUS_IN_PROGRESS = 'In Progress';
 
-	var $field_name_map;
-	// Stored fields
-	var $id;
-	var $lead_source;
-	var $date_entered;
-	var $date_modified;
-	var $modified_user_id;
-	var $assigned_user_id;
-	var $created_by;
-	var $created_by_name;
-	var $modified_by_name;
-	var $description;
-	var $name;
-	var $opportunity_type;
-	var $amount;
-	var $amount_usdollar;
-	var $currency_id;
-    var $base_rate;
-	var $date_closed;
-    var $date_closed_timestamp;
-	var $next_step;
-	var $sales_stage;
-	var $probability;
-	var $campaign_id;
-	//BEGIN SUGARCRM flav=pro ONLY
-	var $team_name;
-	var $team_id;
-	var $quote_id;
-	//END SUGARCRM flav=pro ONLY
+    public $field_name_map;
+    // Stored fields
+    public $id;
+    public $lead_source;
+    public $date_entered;
+    public $date_modified;
+    public $modified_user_id;
+    public $assigned_user_id;
+    public $created_by;
+    public $created_by_name;
+    public $modified_by_name;
+    public $description;
+    public $name;
+    public $opportunity_type;
+    public $amount;
+    public $amount_usdollar;
+    public $currency_id;
+    public $base_rate;
+    public $date_closed;
+    public $date_closed_timestamp;
+    public $next_step;
+    public $sales_stage;
+    public $sales_status;
+    public $probability;
+    public $campaign_id;
+    //BEGIN SUGARCRM flav=pro ONLY
+    public $team_name;
+    public $team_id;
+    public $quote_id;
+    //END SUGARCRM flav=pro ONLY
 
-	// These are related
-	var $account_name;
-	var $account_id;
-	var $contact_id;
-	var $task_id;
-	var $note_id;
-	var $meeting_id;
-	var $call_id;
-	var $email_id;
-	var $assigned_user_name;
+    // These are related
+    public $account_name;
+    public $account_id;
+    public $contact_id;
+    public $task_id;
+    public $note_id;
+    public $meeting_id;
+    public $call_id;
+    public $email_id;
+    public $assigned_user_name;
 
-	var $table_name = "opportunities";
-	var $rel_account_table = "accounts_opportunities";
-	var $rel_contact_table = "opportunities_contacts";
-	var $module_dir = "Opportunities";
+    public $table_name = "opportunities";
+    public $rel_account_table = "accounts_opportunities";
+    public $rel_contact_table = "opportunities_contacts";
+    public $module_dir = "Opportunities";
 //BEGIN SUGARCRM flav=pro ONLY
-	var $rel_quote_table = "quotes_opportunities";
-	var $best_case;
-	var $worst_case;
-    var $timeperiod_id;
-	var $commit_stage;
+    public $rel_quote_table = "quotes_opportunities";
+    public $best_case;
+    public $worst_case;
+    public $timeperiod_id;
+    public $commit_stage;
 //END SUGARCRM flav=pro ONLY
 
-	var $importable = true;
-	var $object_name = "Opportunity";
+    public $importable = true;
+    public $object_name = "Opportunity";
 
-	// This is used to retrieve related fields from form posts.
-	var $additional_column_fields = Array('assigned_user_name', 'assigned_user_id', 'account_name', 'account_id', 'contact_id', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id'
-		//BEGIN SUGARCRM flav=pro ONLY
-	, 'quote_id'
-		//END SUGARCRM flav=pro ONLY
-	);
+    // This is used to retrieve related fields from form posts.
+    public $additional_column_fields = Array(
+        'assigned_user_name',
+        'assigned_user_id',
+        'account_name',
+        'account_id',
+        'contact_id',
+        'task_id',
+        'note_id',
+        'meeting_id',
+        'call_id',
+        'email_id'
+        //BEGIN SUGARCRM flav=pro ONLY
+    ,
+        'quote_id'
+        //END SUGARCRM flav=pro ONLY
+    );
 
-	var $relationship_fields = Array('task_id'     => 'tasks', 'note_id'=> 'notes', 'account_id'=> 'accounts',
-	                                 'meeting_id'  => 'meetings', 'call_id'=> 'calls', 'email_id'=> 'emails', 'project_id'=> 'project',
-		// Bug 38529 & 40938
-	                                 'currency_id' => 'currencies',
-		//BEGIN SUGARCRM flav=pro ONLY
-	                                 'quote_id'    => 'quotes',
-		//END SUGARCRM flav=pro ONLY
-	);
+    public $relationship_fields = Array(
+        'task_id' => 'tasks',
+        'note_id' => 'notes',
+        'account_id' => 'accounts',
+        'meeting_id' => 'meetings',
+        'call_id' => 'calls',
+        'email_id' => 'emails',
+        'project_id' => 'project',
+        // Bug 38529 & 40938
+        'currency_id' => 'currencies',
+        //BEGIN SUGARCRM flav=pro ONLY
+        'quote_id' => 'quotes',
+        //END SUGARCRM flav=pro ONLY
+    );
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -115,64 +133,63 @@ class Opportunity extends SugarBean
     }
 
 
-	public function __construct()
-	{
-		parent::__construct();
-		global $sugar_config;
+    public function __construct()
+    {
+        parent::__construct();
+        global $sugar_config;
 
-		if(empty($sugar_config['require_accounts'])){
-			unset($this->required_fields['account_name']);
-		}
-		//BEGIN SUGARCRM flav=pro ONLY
-		global $current_user;
-		if ( !empty($current_user) ) {
-			$this->team_id = $current_user->default_team; //default_team is a team id
-		}
-		else {
-			$this->team_id = 1; // make the item globally accessible
-		}
-		//END SUGARCRM flav=pro ONLY
-	}
-
-
-	var $new_schema = true;
+        if (empty($sugar_config['require_accounts'])) {
+            unset($this->required_fields['account_name']);
+        }
+        //BEGIN SUGARCRM flav=pro ONLY
+        global $current_user;
+        if (!empty($current_user)) {
+            $this->team_id = $current_user->default_team; //default_team is a team id
+        } else {
+            $this->team_id = 1; // make the item globally accessible
+        }
+        //END SUGARCRM flav=pro ONLY
+    }
 
 
-	function get_summary_text()
-	{
-		return "$this->name";
-	}
+    public $new_schema = true;
 
 
-	function create_list_query( $order_by, $where, $show_deleted = 0 )
-	{
+    public function get_summary_text()
+    {
+        return "$this->name";
+    }
 
-		$custom_join = $this->custom_fields->getJOIN();
-		$query       = "SELECT ";
 
-		$query .= "
+    public function create_list_query($order_by, $where, $show_deleted = 0)
+    {
+
+        $custom_join = $this->custom_fields->getJOIN();
+        $query = "SELECT ";
+
+        $query .= "
                             accounts.id as account_id,
                             accounts.name as account_name,
                             accounts.assigned_user_id account_id_owner,
                             users.user_name as assigned_user_name ";
-		//BEGIN SUGARCRM flav=pro ONLY
-		$query .= ",teams.name AS team_name ";
-		//END SUGARCRM flav=pro ONLY
-		if ( $custom_join ) {
-			$query .= $custom_join['select'];
-		}
-		$query .= " ,opportunities.*
+        //BEGIN SUGARCRM flav=pro ONLY
+        $query .= ",teams.name AS team_name ";
+        //END SUGARCRM flav=pro ONLY
+        if ($custom_join) {
+            $query .= $custom_join['select'];
+        }
+        $query .= " ,opportunities.*
                             FROM opportunities ";
 
 //BEGIN SUGARCRM flav=pro ONLY
-		// We need to confirm that the user is a member of the team of the item.
-		$this->add_team_security_where_clause($query);
+        // We need to confirm that the user is a member of the team of the item.
+        $this->add_team_security_where_clause($query);
 //END SUGARCRM flav=pro ONLY
-		$query .= "LEFT JOIN users
+        $query .= "LEFT JOIN users
                             ON opportunities.assigned_user_id=users.id ";
-		//BEGIN SUGARCRM flav=pro ONLY
-		$query .= getTeamSetNameJoin('opportunities');
-		//END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+        $query .= getTeamSetNameJoin('opportunities');
+        //END SUGARCRM flav=pro ONLY
 
         //BEGIN SUGARCRM flav=pro ONLY
         $query .= " LEFT JOIN timeperiods
@@ -180,247 +197,252 @@ class Opportunity extends SugarBean
                         AND timeperiods.end_date_timestamp >= opportunities.date_closed_timestamp ";
         //END SUGARCRM flav=pro ONLY
 
-		$query .= "LEFT JOIN $this->rel_account_table
+        $query .= "LEFT JOIN $this->rel_account_table
                             ON opportunities.id=$this->rel_account_table.opportunity_id
                             LEFT JOIN accounts
                             ON $this->rel_account_table.account_id=accounts.id ";
-		if ( $custom_join ) {
-			$query .= $custom_join['join'];
-		}
-		$where_auto = '1=1';
-		if ( $show_deleted == 0 ) {
-			$where_auto = "
+        if ($custom_join) {
+            $query .= $custom_join['join'];
+        }
+        $where_auto = '1=1';
+        if ($show_deleted == 0) {
+            $where_auto = "
 			($this->rel_account_table.deleted is null OR $this->rel_account_table.deleted=0)
 			AND (accounts.deleted is null OR accounts.deleted=0)
 			AND opportunities.deleted=0";
-		}
-		else {
-			if ( $show_deleted == 1 ) {
-				$where_auto = " opportunities.deleted=1";
-			}
-		}
+        } else {
+            if ($show_deleted == 1) {
+                $where_auto = " opportunities.deleted=1";
+            }
+        }
 
-		if ( $where != "" ) {
-			$query .= "where ($where) AND " . $where_auto;
-		}
-		else {
-			$query .= "where " . $where_auto;
-		}
+        if ($where != "") {
+            $query .= "where ($where) AND " . $where_auto;
+        } else {
+            $query .= "where " . $where_auto;
+        }
 
-		if ( $order_by != "" ) {
-			$query .= " ORDER BY $order_by";
-		}
-		else {
-			$query .= " ORDER BY opportunities.name";
-		}
+        if ($order_by != "") {
+            $query .= " ORDER BY $order_by";
+        } else {
+            $query .= " ORDER BY opportunities.name";
+        }
 
-		return $query;
-	}
+        return $query;
+    }
 
 
-	function create_export_query( &$order_by, &$where, $relate_link_join = '' )
-	{
-		$custom_join = $this->custom_fields->getJOIN(true, true, $where);
-		if ( $custom_join ) {
-			$custom_join['join'] .= $relate_link_join;
-		}
-		$query = "SELECT
+    public function create_export_query(&$order_by, &$where, $relate_link_join = '')
+    {
+        $custom_join = $this->custom_fields->getJOIN(true, true, $where);
+        if ($custom_join) {
+            $custom_join['join'] .= $relate_link_join;
+        }
+        $query = "SELECT
                                 opportunities.*,
                                 accounts.name as account_name,
                                 users.user_name as assigned_user_name ";
-		//BEGIN SUGARCRM flav=pro ONLY
-		$query .= ", teams.name AS team_name ";
-		//END SUGARCRM flav=pro ONLY
-		if ( $custom_join ) {
-			$query .= $custom_join['select'];
-		}
-		$query .= " FROM opportunities ";
+        //BEGIN SUGARCRM flav=pro ONLY
+        $query .= ", teams.name AS team_name ";
+        //END SUGARCRM flav=pro ONLY
+        if ($custom_join) {
+            $query .= $custom_join['select'];
+        }
+        $query .= " FROM opportunities ";
 //BEGIN SUGARCRM flav=pro ONLY
-		// We need to confirm that the user is a member of the team of the item.
-		$this->add_team_security_where_clause($query);
+        // We need to confirm that the user is a member of the team of the item.
+        $this->add_team_security_where_clause($query);
 //END SUGARCRM flav=pro ONLY
-		$query .= "LEFT JOIN users
+        $query .= "LEFT JOIN users
                                 ON opportunities.assigned_user_id=users.id";
-		//BEGIN SUGARCRM flav=pro ONLY
-		$query .= " LEFT JOIN teams ON opportunities.team_id=teams.id";
-		//END SUGARCRM flav=pro ONLY
-		$query .= " LEFT JOIN $this->rel_account_table
+        //BEGIN SUGARCRM flav=pro ONLY
+        $query .= " LEFT JOIN teams ON opportunities.team_id=teams.id";
+        //END SUGARCRM flav=pro ONLY
+        $query .= " LEFT JOIN $this->rel_account_table
                                 ON opportunities.id=$this->rel_account_table.opportunity_id
                                 LEFT JOIN accounts
                                 ON $this->rel_account_table.account_id=accounts.id ";
-		if ( $custom_join ) {
-			$query .= $custom_join['join'];
-		}
-		$where_auto = "
+        if ($custom_join) {
+            $query .= $custom_join['join'];
+        }
+        $where_auto = "
 			($this->rel_account_table.deleted is null OR $this->rel_account_table.deleted=0)
 			AND (accounts.deleted is null OR accounts.deleted=0)
 			AND opportunities.deleted=0";
 
-		if ( $where != "" ) {
-			$query .= "where $where AND " . $where_auto;
-		}
-		else {
-			$query .= "where " . $where_auto;
-		}
+        if ($where != "") {
+            $query .= "where $where AND " . $where_auto;
+        } else {
+            $query .= "where " . $where_auto;
+        }
 
-		if ( $order_by != "" ) {
-			$query .= " ORDER BY opportunities.$order_by";
-		}
-		else {
-			$query .= " ORDER BY opportunities.name";
-		}
-		return $query;
-	}
+        if ($order_by != "") {
+            $query .= " ORDER BY opportunities.$order_by";
+        } else {
+            $query .= " ORDER BY opportunities.name";
+        }
+        return $query;
+    }
 
 
-	function fill_in_additional_list_fields()
-	{
-		if ( $this->force_load_details == true ) {
-			$this->fill_in_additional_detail_fields();
-		}
-	}
+    public function fill_in_additional_list_fields()
+    {
+        if ($this->force_load_details == true) {
+            $this->fill_in_additional_detail_fields();
+        }
+    }
 
 
-	function fill_in_additional_detail_fields()
-	{
-		parent::fill_in_additional_detail_fields();
+    public function fill_in_additional_detail_fields()
+    {
+        parent::fill_in_additional_detail_fields();
 
-		if ( !empty($this->currency_id) ) {
-			$currency = BeanFactory::getBean('Currencies', $this->currency_id);
-			if ( $currency->id != $this->currency_id || $currency->deleted == 1 ) {
-				$this->amount      = $this->amount_usdollar;
-				$this->currency_id = $currency->id;
-			}
-		}
-		//get campaign name
-		if ( !empty($this->campaign_id) ) {
-			$camp = BeanFactory::getBean('Campaigns', $this->campaign_id);
-			$this->campaign_name = $camp->name;
-		}
-		$this->account_name = '';
-		$this->account_id   = '';
-		if ( !empty($this->id) ) {
-			$ret_values = Opportunity::get_account_detail($this->id);
-			if ( !empty($ret_values) ) {
-				$this->account_name     = $ret_values['name'];
-				$this->account_id       = $ret_values['id'];
-				$this->account_id_owner = $ret_values['assigned_user_id'];
-			}
-		}
-	}
-
-
-	/** Returns a list of the associated contacts
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved..
-	 * Contributor(s): ______________________________________..
-	 */
-	function get_contacts()
-	{
-		$this->load_relationship('contacts');
-		$query_array = $this->contacts->getQuery(true);
-
-		//update the select clause in the retruned query.
-		$query_array['select'] = "SELECT contacts.id, contacts.first_name, contacts.last_name, contacts.title, contacts.email1, contacts.phone_work, opportunities_contacts.contact_role as opportunity_role, opportunities_contacts.id as opportunity_rel_id ";
-
-		$query = '';
-		foreach ( $query_array as $qstring ) {
-			$query .= ' ' . $qstring;
-		}
-		$temp = Array('id', 'first_name', 'last_name', 'title', 'email1', 'phone_work', 'opportunity_role', 'opportunity_rel_id');
-		return $this->build_related_list2($query, BeanFactory::getBean('Contacts'), $temp);
-	}
+        if (!empty($this->currency_id)) {
+            $currency = BeanFactory::getBean('Currencies', $this->currency_id);
+            if ($currency->id != $this->currency_id || $currency->deleted == 1) {
+                $this->amount = $this->amount_usdollar;
+                $this->currency_id = $currency->id;
+            }
+        }
+        //get campaign name
+        if (!empty($this->campaign_id)) {
+            $camp = BeanFactory::getBean('Campaigns', $this->campaign_id);
+            $this->campaign_name = $camp->name;
+        }
+        $this->account_name = '';
+        $this->account_id = '';
+        if (!empty($this->id)) {
+            $ret_values = Opportunity::get_account_detail($this->id);
+            if (!empty($ret_values)) {
+                $this->account_name = $ret_values['name'];
+                $this->account_id = $ret_values['id'];
+                $this->account_id_owner = $ret_values['assigned_user_id'];
+            }
+        }
+    }
 
 
-	function update_currency_id( $fromid, $toid )
-	{
-		$idequals = '';
+    /** Returns a list of the associated contacts
+     * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
+     * All Rights Reserved..
+     * Contributor(s): ______________________________________..
+     */
+    public function get_contacts()
+    {
+        $this->load_relationship('contacts');
+        $query_array = $this->contacts->getQuery(true);
 
-		$currency = BeanFactory::getBean('Currencies', $toid);
-		foreach ( $fromid as $f ) {
-			if ( !empty($idequals) ) {
-				$idequals .= ' or ';
-			}
-			$idequals .= "currency_id='$f'";
-		}
+        //update the select clause in the retruned query.
+        $query_array['select'] = "SELECT contacts.id, contacts.first_name, contacts.last_name, contacts.title, contacts.email1, contacts.phone_work, opportunities_contacts.contact_role as opportunity_role, opportunities_contacts.id as opportunity_rel_id ";
+
+        $query = '';
+        foreach ($query_array as $qstring) {
+            $query .= ' ' . $qstring;
+        }
+        $temp = Array(
+            'id',
+            'first_name',
+            'last_name',
+            'title',
+            'email1',
+            'phone_work',
+            'opportunity_role',
+            'opportunity_rel_id'
+        );
+        return $this->build_related_list2($query, BeanFactory::getBean('Contacts'), $temp);
+    }
+
+
+    public function update_currency_id($fromid, $toid)
+    {
+        $idequals = '';
+
+        $currency = BeanFactory::getBean('Currencies', $toid);
+        foreach ($fromid as $f) {
+            if (!empty($idequals)) {
+                $idequals .= ' or ';
+            }
+            $idequals .= "currency_id='$f'";
+        }
 
 		if ( !empty($idequals) ) {
-			$query  = "select amount, id from opportunities where (" . $idequals . ") and deleted=0 and opportunities.sales_stage <> 'Closed Won' AND opportunities.sales_stage <> 'Closed Lost';";
+			$query  = "select amount, id from opportunities where (" . $idequals . ") and deleted=0 and opportunities.sales_stage <> '".self::STAGE_CLOSED_WON."' AND opportunities.sales_stage <> '".self::STAGE_CLOSED_LOST."';";
 			$result = $this->db->query($query);
 
-			while ( $row = $this->db->fetchByAssoc($result) ) {
-                $query = sprintf("update opportunities set currency_id='%s',
-                    amount_usdollar='%s',
-                    base_rate='%s'
-                    where id='%s';",
+            while ($row = $this->db->fetchByAssoc($result)) {
+                $query = sprintf(
+                    "update opportunities set currency_id='%s',
+                                        amount_usdollar='%s',
+                                        base_rate='%s'
+                                        where id='%s';",
                     $currency->id,
                     SugarCurrency::convertAmountToBase($row['amount']),
                     $currency->conversion_rate,
                     $row['id']
                 );
                 $this->db->query($query);
-			}
-		}
-	}
+            }
+        }
+    }
 
 
-	function get_list_view_data()
-	{
-		global $locale, $current_language, $current_user, $mod_strings, $app_list_strings, $sugar_config;
-		$app_strings = return_application_language($current_language);
-		$params      = array();
+    public function get_list_view_data()
+    {
+        global $locale, $current_language, $current_user, $mod_strings, $app_list_strings, $sugar_config;
+        $app_strings = return_application_language($current_language);
+        $params = array();
 
-		$temp_array                 = $this->get_list_view_array();
-		$temp_array['SALES_STAGE']  = empty($temp_array['SALES_STAGE']) ? '' : $temp_array['SALES_STAGE'];
-		$temp_array["ENCODED_NAME"] = $this->name;
-		return $temp_array;
-	}
-
-
-	function get_currency_symbol()
-	{
-		if ( isset($this->currency_id) ) {
-			$cur_qry = "select * from currencies where id ='" . $this->currency_id . "'";
-			$cur_res = $this->db->query($cur_qry);
-			if ( !empty($cur_res) ) {
-				$cur_row = $this->db->fetchByAssoc($cur_res);
-				if ( isset($cur_row['symbol']) ) {
-					return $cur_row['symbol'];
-				}
-			}
-		}
-		return '';
-	}
+        $temp_array = $this->get_list_view_array();
+        $temp_array['SALES_STAGE'] = empty($temp_array['SALES_STAGE']) ? '' : $temp_array['SALES_STAGE'];
+        $temp_array["ENCODED_NAME"] = $this->name;
+        return $temp_array;
+    }
 
 
-	/**
-	builds a generic search based on the query string using or
-	do not include any $this-> because this is called on without having the class instantiated
-	 */
-	function build_generic_where_clause( $the_query_string )
-	{
-		$where_clauses    = Array();
-		$the_query_string = $GLOBALS['db']->quote($the_query_string);
-		array_push($where_clauses, "opportunities.name like '$the_query_string%'");
-		array_push($where_clauses, "accounts.name like '$the_query_string%'");
+    public function get_currency_symbol()
+    {
+        if (isset($this->currency_id)) {
+            $cur_qry = "select * from currencies where id ='" . $this->currency_id . "'";
+            $cur_res = $this->db->query($cur_qry);
+            if (!empty($cur_res)) {
+                $cur_row = $this->db->fetchByAssoc($cur_res);
+                if (isset($cur_row['symbol'])) {
+                    return $cur_row['symbol'];
+                }
+            }
+        }
+        return '';
+    }
 
-		$the_where = "";
-		foreach ( $where_clauses as $clause ) {
-			if ( $the_where != "" ) {
-				$the_where .= " or ";
-			}
-			$the_where .= $clause;
-		}
 
-		return $the_where;
-	}
+    /**
+    builds a generic search based on the query string using or
+    do not include any $this-> because this is called on without having the class instantiated
+     */
+    public function build_generic_where_clause($the_query_string)
+    {
+        $where_clauses = Array();
+        $the_query_string = $GLOBALS['db']->quote($the_query_string);
+        array_push($where_clauses, "opportunities.name like '$the_query_string%'");
+        array_push($where_clauses, "accounts.name like '$the_query_string%'");
 
-	function save( $check_notify = FALSE )
-	{
-		// Bug 32581 - Make sure the currency_id is set to something
-		global $current_user, $app_list_strings;
+        $the_where = "";
+        foreach ($where_clauses as $clause) {
+            if ($the_where != "") {
+                $the_where .= " or ";
+            }
+            $the_where .= $clause;
+        }
 
-        if(empty($this->currency_id)) {
+        return $the_where;
+    }
+
+    public function save($check_notify = false)
+    {
+        // Bug 32581 - Make sure the currency_id is set to something
+        global $current_user, $app_list_strings;
+
+        if (empty($this->currency_id)) {
             // use user preferences for currency
             $currency = SugarCurrency::getUserLocaleCurrency();
             $this->currency_id = $currency->id;
@@ -432,144 +454,176 @@ class Opportunity extends SugarBean
         $this->amount_usdollar = $this->amount * $this->base_rate;
 
         //if probablity isn't set, set it based on the sales stage
-		if ( !isset($this->probability) && !empty($this->sales_stage) ) {
-			$prob_arr = $app_list_strings['sales_probability_dom'];
-			if ( isset($prob_arr[$this->sales_stage]) ) {
-				$this->probability = $prob_arr[$this->sales_stage];
-			}
-		}
+        if (!isset($this->probability) && !empty($this->sales_stage)) {
+            $prob_arr = $app_list_strings['sales_probability_dom'];
+            if (isset($prob_arr[$this->sales_stage])) {
+                $this->probability = $prob_arr[$this->sales_stage];
+            }
+        }
 
-		SugarAutoLoader::requireWithCustom('modules/Opportunities/SaveOverload.php');
-		perform_save($this);
+        SugarAutoLoader::requireWithCustom('modules/Opportunities/SaveOverload.php');
+        perform_save($this);
 
-		return parent::save($check_notify);
-	}
+        // handle chaing the sales status field
+        $this->handleSalesStatus();
 
+        return parent::save($check_notify);
+    }
 
-	function save_relationship_changes( $is_update )
-	{
-		//if account_id was replaced unlink the previous account_id.
-		//this rel_fields_before_value is populated by sugarbean during the retrieve call.
-		if ( !empty($this->account_id) and !empty($this->rel_fields_before_value['account_id']) and
-				(trim($this->account_id) != trim($this->rel_fields_before_value['account_id']))
-		) {
-			//unlink the old record.
-			$this->load_relationship('accounts');
-			$this->accounts->delete($this->id, $this->rel_fields_before_value['account_id']);
-		}
-		// Bug 38529 & 40938 - exclude currency_id
-		parent::save_relationship_changes($is_update, array('currency_id'));
+    /**
+     * Code to make sure that the Sales Status field is mapped correctly with the Sales Stage field
+     */
+    protected function handleSalesStatus()
+    {
+        // in this class we use the values from the Opportunity module constants as they are directly mapped 1-to-1 with
+        // products
 
-		if (!empty($this->contact_id)) {
-			$this->set_opportunity_contact_relationship($this->contact_id);
-		}
-	}
+        // only run this when the sales_status doesn't change and the sales_stage does
+        if(($this->fetched_row['sales_status'] == $this->sales_status) && $this->fetched_row['sales_stage'] != $this->sales_stage) {
+            // handle closed lost and closed won
+            if($this->sales_stage == Opportunity::STAGE_CLOSED_LOST || $this->sales_stage == Opportunity::STAGE_CLOSED_WON) {
+                $this->sales_status = $this->sales_stage;
+            } else {
+                // move it to in progress
+                $this->sales_status = Opportunity::STATUS_IN_PROGRESS;
+            }
+        }
 
-
-	function set_opportunity_contact_relationship( $contact_id )
-	{
-		global $app_list_strings;
-		$default = $app_list_strings['opportunity_relationship_type_default_key'];
-		$this->load_relationship('contacts');
-		$this->contacts->add($contact_id, array('contact_role'=> $default));
-	}
-
-
-	function set_notification_body( $xtpl, $oppty )
-	{
-		global $app_list_strings;
-
-		$xtpl->assign("OPPORTUNITY_NAME", $oppty->name);
-		$xtpl->assign("OPPORTUNITY_AMOUNT", $oppty->amount);
-		$xtpl->assign("OPPORTUNITY_CLOSEDATE", $oppty->date_closed);
-		$xtpl->assign("OPPORTUNITY_STAGE", (isset($oppty->sales_stage) ? $app_list_strings['sales_stage_dom'][$oppty->sales_stage] : ""));
-		$xtpl->assign("OPPORTUNITY_DESCRIPTION", $oppty->description);
-
-		return $xtpl;
-	}
+        // if we have a new bean, set the sales_status to be 'New'
+        if(empty($this->id) || $this->new_with_id == true) {
+            // we have a new record set the sales_status to new;
+            $this->sales_status = Opportunity::STATUS_NEW;
+        }
+    }
 
 
-	function bean_implements( $interface )
-	{
-		switch ( $interface ) {
-			case 'ACL':
-				return true;
-		}
-		return false;
-	}
+    public function save_relationship_changes($is_update)
+    {
+        //if account_id was replaced unlink the previous account_id.
+        //this rel_fields_before_value is populated by sugarbean during the retrieve call.
+        if (!empty($this->account_id) and !empty($this->rel_fields_before_value['account_id']) and
+            (trim($this->account_id) != trim($this->rel_fields_before_value['account_id']))
+        ) {
+            //unlink the old record.
+            $this->load_relationship('accounts');
+            $this->accounts->delete($this->id, $this->rel_fields_before_value['account_id']);
+        }
+        // Bug 38529 & 40938 - exclude currency_id
+        parent::save_relationship_changes($is_update, array('currency_id'));
+
+        if (!empty($this->contact_id)) {
+            $this->set_opportunity_contact_relationship($this->contact_id);
+        }
+    }
 
 
-	function listviewACLHelper()
-	{
-		$array_assign = parent::listviewACLHelper();
-		$is_owner     = false;
-		if ( !empty($this->account_id) ) {
-
-			if ( !empty($this->account_id_owner) ) {
-				global $current_user;
-				$is_owner = $current_user->id == $this->account_id_owner;
-			}
-		}
-		if ( !ACLController::moduleSupportsACL('Accounts') || ACLController::checkAccess('Accounts', 'view', $is_owner) ) {
-			$array_assign['ACCOUNT'] = 'a';
-		}
-		else {
-			$array_assign['ACCOUNT'] = 'span';
-		}
-
-		return $array_assign;
-	}
+    public function set_opportunity_contact_relationship($contact_id)
+    {
+        global $app_list_strings;
+        $default = $app_list_strings['opportunity_relationship_type_default_key'];
+        $this->load_relationship('contacts');
+        $this->contacts->add($contact_id, array('contact_role' => $default));
+    }
 
 
-	/**
-	 * Static helper function for getting releated account info.
-	 */
-	function get_account_detail( $opp_id )
-	{
-		$ret_array = array();
-		$db        = DBManagerFactory::getInstance();
-		$query     = "SELECT acc.id, acc.name, acc.assigned_user_id "
-				. "FROM accounts acc, accounts_opportunities a_o "
-				. "WHERE acc.id=a_o.account_id"
-				. " AND a_o.opportunity_id='$opp_id'"
-				. " AND a_o.deleted=0"
-				. " AND acc.deleted=0";
-		$result    = $db->query($query, true, "Error filling in opportunity account details: ");
-		$row       = $db->fetchByAssoc($result);
-		if ( $row != NULL ) {
-			$ret_array['name']             = $row['name'];
-			$ret_array['id']               = $row['id'];
-			$ret_array['assigned_user_id'] = $row['assigned_user_id'];
-		}
-		return $ret_array;
-	}
+    public function set_notification_body($xtpl, $oppty)
+    {
+        global $app_list_strings;
 
-	//BEGIN SUGARCRM flav=pro ONLY
-	/**
-	 * getProducts
-	 *
-	 * This is a convenience function to return the product lines entries associated with the opportunity
-	 *
-	 */
-	public function getProducts()
-	{
-		return $this->get_linked_beans('products', BeanFactory::getBean('Products'));
-	}
+        $xtpl->assign("OPPORTUNITY_NAME", $oppty->name);
+        $xtpl->assign("OPPORTUNITY_AMOUNT", $oppty->amount);
+        $xtpl->assign("OPPORTUNITY_CLOSEDATE", $oppty->date_closed);
+        $xtpl->assign(
+            "OPPORTUNITY_STAGE",
+            (isset($oppty->sales_stage) ? $app_list_strings['sales_stage_dom'][$oppty->sales_stage] : "")
+        );
+        $xtpl->assign("OPPORTUNITY_DESCRIPTION", $oppty->description);
 
-	/**
-	 * deleteProducts
-	 *
-	 */
-	public function deleteProducts()
-	{
-		$query = "UPDATE products SET deleted = 0 WHERE opportunity_id = '{$this->id}'";
-		$this->db->query($query);
-	}
-	//END SUGARCRM flav=pro ONLY
+        return $xtpl;
+    }
+
+
+    public function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return true;
+        }
+        return false;
+    }
+
+
+    public function listviewACLHelper()
+    {
+        $array_assign = parent::listviewACLHelper();
+        $is_owner = false;
+        if (!empty($this->account_id)) {
+
+            if (!empty($this->account_id_owner)) {
+                global $current_user;
+                $is_owner = $current_user->id == $this->account_id_owner;
+            }
+        }
+        if (!ACLController::moduleSupportsACL('Accounts') ||
+            ACLController::checkAccess('Accounts', 'view', $is_owner)) {
+            $array_assign['ACCOUNT'] = 'a';
+        } else {
+            $array_assign['ACCOUNT'] = 'span';
+        }
+
+        return $array_assign;
+    }
+
+
+    /**
+     * Static helper function for getting releated account info.
+     */
+    public function get_account_detail($opp_id)
+    {
+        $ret_array = array();
+        $db = DBManagerFactory::getInstance();
+        $query = "SELECT acc.id, acc.name, acc.assigned_user_id "
+            . "FROM accounts acc, accounts_opportunities a_o "
+            . "WHERE acc.id=a_o.account_id"
+            . " AND a_o.opportunity_id='$opp_id'"
+            . " AND a_o.deleted=0"
+            . " AND acc.deleted=0";
+        $result = $db->query($query, true, "Error filling in opportunity account details: ");
+        $row = $db->fetchByAssoc($result);
+        if ($row != null) {
+            $ret_array['name'] = $row['name'];
+            $ret_array['id'] = $row['id'];
+            $ret_array['assigned_user_id'] = $row['assigned_user_id'];
+        }
+        return $ret_array;
+    }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * getProducts
+     *
+     * This is a convenience function to return the product lines entries associated with the opportunity
+     *
+     */
+    public function getProducts()
+    {
+        return $this->get_linked_beans('products', BeanFactory::getBean('Products'));
+    }
+
+    /**
+     * deleteProducts
+     *
+     */
+    public function deleteProducts()
+    {
+        $query = "UPDATE products SET deleted = 0 WHERE opportunity_id = '{$this->id}'";
+        $this->db->query($query);
+    }
+    //END SUGARCRM flav=pro ONLY
 }
 
 
 function getTimePeriodsDropDown()
 {
-	return TimePeriod::get_timeperiods_dom();
+    return TimePeriod::get_timeperiods_dom();
 }

@@ -13,11 +13,8 @@
         'mouseenter .ellipsis_inline':'addTooltip'
     },
     addTooltip: function(event){
-        var $el = this.$(event.target);
-        if( $el[0].offsetWidth < $el[0].scrollWidth ) {
-            $el.tooltip('show');
-        } else {
-            $el.tooltip('destroy');
+        if (_.isFunction(app.utils.handleTooltip)) {
+            app.utils.handleTooltip(event, this);
         }
     },
     // button fields defined in view definition

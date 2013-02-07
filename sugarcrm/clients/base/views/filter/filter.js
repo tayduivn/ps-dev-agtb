@@ -218,6 +218,7 @@
         app.api.call(method, url, filterDef, {
             success: function(data) {
                 ctx.get('collection').reset(data.records);
+                app.events.trigger("list:preview:decorate", null, self);
                 var url = app.api.buildURL('Filters/' + self.module + '/used', "update");
                 app.api.call("update", url, {filters: [self.activeFilterId]}, {});
             }

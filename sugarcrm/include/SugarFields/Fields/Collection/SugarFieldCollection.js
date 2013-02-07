@@ -213,7 +213,8 @@ if(typeof(SUGAR.collection) == "undefined") {
                 }
                 c.js_more();
                 // Update the "hash" of the unchanged form, because this is just adding data, not actually changing anything
-                initEditView(document.forms[c.form]);
+                // TODO remove this
+//                initEditView(document.forms[c.form]);
             }, this);
         },
         /*

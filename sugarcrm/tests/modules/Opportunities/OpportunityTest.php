@@ -32,7 +32,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
+        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2.0);
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
         self::$isSetup = $settings['is_setup'];
@@ -95,9 +95,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $tp = TimePeriod::retrieveFromDate('2009-02-15');
 
-        if(empty($tp))
-        {
-           $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        if (empty($tp)) {
+            $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
         }
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
@@ -125,9 +124,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $tp = TimePeriod::retrieveFromDate('2009-02-15');
 
-        if(empty($tp))
-        {
-           $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        if (empty($tp)) {
+            $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
         }
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
@@ -156,9 +154,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $tp = TimePeriod::retrieveFromDate('2009-02-15');
 
-        if(empty($tp))
-        {
-           $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        if (empty($tp)) {
+            $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
         }
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
@@ -174,6 +171,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertLessThan($opp->date_closed_timestamp, $tp->start_date_timestamp);
         $this->assertGreaterThanOrEqual($opp->date_closed_timestamp, $tp->end_date_timestamp);
     }
+
     //END SUGARCRM flav=pro ONLY
 
     /*
@@ -195,8 +193,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         //END SUGARCRM flav=pro ONLY
         $opportunity->save();
         $this->assertEquals(
-            sprintf('%.6f',$opportunity->base_rate),
-            sprintf('%.6f',$currency->conversion_rate)
+            sprintf('%.6f', $opportunity->base_rate),
+            sprintf('%.6f', $currency->conversion_rate)
         );
     }
 
@@ -220,8 +218,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->save();
 
         $this->assertEquals(
-            sprintf('%.6f',$opportunity->base_rate),
-            sprintf('%.6f',$currency->conversion_rate)
+            sprintf('%.6f', $opportunity->base_rate),
+            sprintf('%.6f', $currency->conversion_rate)
         );
     }
 
@@ -234,13 +232,13 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     public function testProductEntryWasCreated()
     {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $product = BeanFactory::getBean('Products');
-        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+        $opportunity = BeanFactory::getBean('Products');
+        $opportunity->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
 
-        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+        SugarTestProductUtilities::setCreatedProduct(array($opportunity->id));
 
         $expected = array($opp->name, $opp->amount, $opp->best_case, $opp->worst_case);
-        $actual = array($product->name, $product->likely_case, $product->best_case, $product->worst_case);
+        $actual = array($opportunity->name, $opportunity->likely_case, $opportunity->best_case, $opportunity->worst_case);
 
         $this->assertEquals($expected, $actual);
     }
@@ -250,24 +248,28 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
      * This method tests that subsequent changes to an opportunity will also update the associated product's data
      * @group forecasts
      * @group opportunities
-     * @group products
+     * @group opportunities
      * @bug 56433
      */
     public function testOpportunityChangesUpdateRelatedProduct()
     {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $product = BeanFactory::getBean('Products');
-        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+        $opportunity = BeanFactory::getBean('Products');
+        $opportunity->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
 
-        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+        SugarTestProductUtilities::setCreatedProduct(array($opportunity->id));
 
         //Now we change the opportunity's values again
         $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
         $opp->currency_id = $currency->id;
         $opp->save();
 
-        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
-        $this->assertEquals($opp->currency_id, $product->currency_id, 'The opportunity and product currency_id values differ');
+        $opportunity->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+        $this->assertEquals(
+            $opp->currency_id,
+            $opportunity->currency_id,
+            'The opportunity and product currency_id values differ'
+        );
     }
 
     /*
@@ -283,11 +285,146 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNotEquals($opp->best_case, $opp->amount);
         $this->assertNotEquals($opp->worst_case, $opp->amount);
-        $opp->sales_stage = 'Closed Won';
+        $opp->sales_stage = Opportunity::STAGE_CLOSED_WON;
         $opp->save();
 
         $this->assertEquals($opp->best_case, $opp->amount);
         $this->assertEquals($opp->worst_case, $opp->amount);
     }
     //END SUGARCRM flav=pro ONLY
+    
+    /**
+     * @group opportunities
+     */
+    public function testSalesStatusIsNewWhenProductCreatedWithOutId()
+    {
+        $opportunity = new MockOpportunityBean();
+        $opportunity->handleSalesStatus();
+
+        $this->assertEquals('New', $opportunity->sales_status);
+        unset($opportunity);
+    }
+
+    /**
+     * @group opportunities
+     */
+    public function testSalesStatusIsNewWhenProductsCreatedWithId()
+    {
+        $opportunity = new MockOpportunityBean();
+        $opportunity->id = "test_id";
+        $opportunity->new_with_id = true;
+        $opportunity->handleSalesStatus();
+
+        $this->assertEquals('New', $opportunity->sales_status);
+        unset($opportunity);
+    }
+
+    /**
+     * @group opportunities
+     */
+    public function testSalesStatusChangesFromNewToInProgressWhenSalesStageChanges()
+    {
+        $opportunity = new MockOpportunityBean();
+        $opportunity->id = "test_id";
+        $opportunity->sales_status = 'New';
+        $opportunity->sales_stage = 'test2';
+        $opportunity->fetched_row = array(
+            'sales_status' => 'New',
+            'sales_stage' => 'test1'
+        );
+
+        $opportunity->handleSalesStatus();
+
+        $this->assertEquals('In Progress', $opportunity->sales_status);
+        unset($opportunity);
+    }
+
+    /**
+     * @group opportunities
+     */
+    public function testSalesStatusChangesFromInProgressToClosedWonWhenSalesStageEqualsClosedWon()
+    {
+        $opportunity = new MockOpportunityBean();
+        $opportunity->id = "test_id";
+        $opportunity->sales_status = 'In Progress';
+        $opportunity->sales_stage = 'Closed Won';
+        $opportunity->fetched_row = array(
+            'sales_status' => 'In Progress',
+            'sales_stage' => 'test1'
+        );
+
+        $opportunity->handleSalesStatus();
+
+        $this->assertEquals('Closed Won', $opportunity->sales_status);
+        unset($opportunity);
+    }
+
+    /**
+     * @group opportunities
+     */
+    public function testSalesStatusChangesInProgressToClosedLostWhenSalesStageEqualsClosedLost()
+    {
+        $opportunity = new MockOpportunityBean();
+        $opportunity->id = "test_id";
+        $opportunity->sales_status = 'In Progress';
+        $opportunity->sales_stage = 'Closed Lost';
+        $opportunity->fetched_row = array(
+            'sales_status' => 'In Progress',
+            'sales_stage' => 'test1'
+        );
+
+        $opportunity->handleSalesStatus();
+
+        $this->assertEquals('Closed Lost', $opportunity->sales_status);
+        unset($opportunity);
+    }
+
+    /**
+     * @group opportunities
+     */
+    public function testSalesStatusDoesNotChangeWhenStatusAndStageChange()
+    {
+        $opportunity = new MockOpportunityBean();
+        $opportunity->id = "test_id";
+        $opportunity->sales_status = 'In Progress';
+        $opportunity->sales_stage = 'Closed Lost';
+        $opportunity->fetched_row = array(
+            'sales_status' => 'New',
+            'sales_stage' => 'test1'
+        );
+
+        $opportunity->handleSalesStatus();
+
+        $this->assertEquals('In Progress', $opportunity->sales_status);
+        unset($opportunity);
+    }
+
+    /**
+     * @group opportunities
+     */
+    public function testSalesStatusDoesNotChangeWhenSalesStageDoesNotChange()
+    {
+        $opportunity = new MockOpportunityBean();
+        $opportunity->id = "test_id";
+        $opportunity->sales_status = 'New';
+        $opportunity->sales_stage = 'test1';
+        $opportunity->fetched_row = array(
+            'sales_status' => 'New',
+            'sales_stage' => 'test1'
+        );
+
+        $opportunity->handleSalesStatus();
+
+        $this->assertEquals('New', $opportunity->sales_status);
+        unset($opportunity);
+    }
+}
+
+
+class MockOpportunityBean extends Opportunity
+{
+    public function handleSalesStatus()
+    {
+        parent::handleSalesStatus();
+    }
 }

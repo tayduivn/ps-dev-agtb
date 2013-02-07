@@ -332,9 +332,10 @@ class RepairAndClear
 			foreach($this->module_list as $module_name_singular )
 				$this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular), '.js');
 		}
+		else {
+            $this->_clearCache(sugar_cached('modules/'), '.js');
+        }
 
-		else
-			$this->_clearCache(sugar_cached('modules/'), '.js');
 
 	}
 	public function clearJsLangFiles()
@@ -426,6 +427,9 @@ class RepairAndClear
         // Moving this out so it is accessible without the need to wipe out the 
         // API service dictionary cache 
         $this->clearMetadataAPICache();
+
+        //Remove cached js component files
+        $this->_clearCache(sugar_cached('javascript/'), '.js');
     }
 
     /**

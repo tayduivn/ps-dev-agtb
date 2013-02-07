@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -22,32 +22,33 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/api/ConfigModuleApi.php');
 
-class ForecastsConfigApi extends ConfigModuleApi {
+class ForecastsConfigApi extends ConfigModuleApi
+{
 
     public function registerApiRest()
     {
         return
-            array (
+            array(
                 'forecastsConfigGet' => array(
                     'reqType' => 'GET',
-                    'path' => array('Forecasts','config'),
-                    'pathVars' => array('module',''),
+                    'path' => array('Forecasts', 'config'),
+                    'pathVars' => array('module', ''),
                     'method' => 'config',
                     'shortHelp' => 'Retrieves the config settings for a given module',
                     'longHelp' => 'include/api/help/config_get_help.html',
                 ),
-                'forecastsConfigCreate' => array (
+                'forecastsConfigCreate' => array(
                     'reqType' => 'POST',
-                    'path' => array('Forecasts','config'),
-                    'pathVars' => array('module',''),
+                    'path' => array('Forecasts', 'config'),
+                    'pathVars' => array('module', ''),
                     'method' => 'forecastsConfigSave',
                     'shortHelp' => 'Creates the config entries for the Forecasts module.',
                     'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsConfigPut.html',
                 ),
-                'forecastsConfigUpdate' => array (
+                'forecastsConfigUpdate' => array(
                     'reqType' => 'PUT',
-                    'path' => array('Forecasts','config'),
-                    'pathVars' => array('module',''),
+                    'path' => array('Forecasts', 'config'),
+                    'pathVars' => array('module', ''),
                     'method' => 'forecastsConfigSave',
                     'shortHelp' => 'Updates the config entries for the Forecasts module',
                     'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsConfigPut.html',
@@ -60,13 +61,14 @@ class ForecastsConfigApi extends ConfigModuleApi {
      * @param $api
      * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
-    public function forecastsConfigSave($api, $args) {
+    public function forecastsConfigSave($api, $args)
+    {
         //acl check, only allow if they are module admin
-        if(!parent::hasAccess("Forecasts")) {
+        if (!parent::hasAccess("Forecasts")) {
             throw new SugarApiExceptionNotAuthorized("Current User not authorized to change Forecasts configuration settings");
         }
 
-        $platform = (isset($args['platform']) && !empty($args['platform'])) ?$args['platform'] : 'base';
+        $platform = (isset($args['platform']) && !empty($args['platform'])) ? $args['platform'] : 'base';
 
         $admin = BeanFactory::getBean('Administration');
         //track what settings have changed to determine if timeperiods need rebuilt
@@ -74,28 +76,24 @@ class ForecastsConfigApi extends ConfigModuleApi {
 
         //If this is a first time setup, default prior settings for timeperiods to 0 so we may correctly recalculate
         //how many timeperiods to build forward and backward.  If we don't do this we would need the defaults to be 0
-        if (empty($prior_forecasts_settings['is_setup']))
-        {
+        if (empty($prior_forecasts_settings['is_setup'])) {
             $prior_forecasts_settings['timeperiod_shown_forward'] = 0;
             $prior_forecasts_settings['timeperiod_shown_backward'] = 0;
         }
-        
+
         $upgraded = 0;
-        if (!empty($prior_forecasts_settings['is_upgrade']))
-        {
+        if (!empty($prior_forecasts_settings['is_upgrade'])) {
             $db = DBManagerFactory::getInstance();
             // check if we need to upgrade opportunities when coming from version below 6.7.x.
             $upgraded = $db->getOne("SELECT count(id) as total FROM upgrade_history WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'");
-            if ($upgraded == 1)
-            {
+            if ($upgraded == 1) {
                 //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
                 $args['has_commits'] = true;
             }
         }
 
         //BEGIN SUGARCRM flav=ent ONLY
-        if ( isset($args['show_custom_buckets_options']) )
-        {
+        if (isset($args['show_custom_buckets_options'])) {
             $json = getJSONobj();
             $_args = array(
                 'dropdown_lang' => isset($_SESSION['authenticated_user_language']) ? $_SESSION['authenticated_user_language'] : $GLOBALS['current_language'],
@@ -110,18 +108,17 @@ class ForecastsConfigApi extends ConfigModuleApi {
             unset($args['show_custom_buckets_options']);
         }
         //END SUGARCRM flav=ent ONLY
-        
-        if($upgraded || empty($prior_forecasts_settings['is_setup']))
-        {
-        	 require_once('modules/UpgradeWizard/uw_utils.php');
-             updateOpportunitiesForForecasting();
+
+        if ($upgraded || empty($prior_forecasts_settings['is_setup'])) {
+            require_once('modules/UpgradeWizard/uw_utils.php');
+            updateOpportunitiesForForecasting();
         }
 
         //reload the settings to get the current settings
         $current_forecasts_settings = parent::configSave($api, $args);
 
         //if primary settings for timeperiods have changed, then rebuild them
-        if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
+        if ($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
             $timePeriod = TimePeriod::getByType($current_forecasts_settings['timeperiod_interval']);
             $timePeriod->rebuildForecastingTimePeriods($prior_forecasts_settings, $current_forecasts_settings);
         }
@@ -136,23 +133,24 @@ class ForecastsConfigApi extends ConfigModuleApi {
      *
      * @return boolean
      */
-    public function timePeriodSettingsChanged($priorSettings, $currentSettings) {
-        if(!isset($priorSettings['timeperiod_shown_backward']) || (isset($currentSettings['timeperiod_shown_backward']) && ($currentSettings['timeperiod_shown_backward'] != $priorSettings['timeperiod_shown_backward']))) {
+    public function timePeriodSettingsChanged($priorSettings, $currentSettings)
+    {
+        if (!isset($priorSettings['timeperiod_shown_backward']) || (isset($currentSettings['timeperiod_shown_backward']) && ($currentSettings['timeperiod_shown_backward'] != $priorSettings['timeperiod_shown_backward']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiod_shown_forward']) || (isset($currentSettings['timeperiod_shown_forward']) && ($currentSettings['timeperiod_shown_forward'] != $priorSettings['timeperiod_shown_forward']))) {
+        if (!isset($priorSettings['timeperiod_shown_forward']) || (isset($currentSettings['timeperiod_shown_forward']) && ($currentSettings['timeperiod_shown_forward'] != $priorSettings['timeperiod_shown_forward']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiod_interval']) || (isset($currentSettings['timeperiod_interval']) && ($currentSettings['timeperiod_interval'] != $priorSettings['timeperiod_interval']))) {
+        if (!isset($priorSettings['timeperiod_interval']) || (isset($currentSettings['timeperiod_interval']) && ($currentSettings['timeperiod_interval'] != $priorSettings['timeperiod_interval']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiod_type']) || (isset($currentSettings['timeperiod_type']) && ($currentSettings['timeperiod_type'] != $priorSettings['timeperiod_type']))) {
+        if (!isset($priorSettings['timeperiod_type']) || (isset($currentSettings['timeperiod_type']) && ($currentSettings['timeperiod_type'] != $priorSettings['timeperiod_type']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiod_start_date']) || (isset($currentSettings['timeperiod_start_date']) && ($currentSettings['timeperiod_start_date'] != $priorSettings['timeperiod_start_date']))) {
+        if (!isset($priorSettings['timeperiod_start_date']) || (isset($currentSettings['timeperiod_start_date']) && ($currentSettings['timeperiod_start_date'] != $priorSettings['timeperiod_start_date']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiod_leaf_interval']) || (isset($currentSettings['timeperiod_leaf_interval']) && ($currentSettings['timeperiod_leaf_interval'] != $priorSettings['timeperiod_leaf_interval']))) {
+        if (!isset($priorSettings['timeperiod_leaf_interval']) || (isset($currentSettings['timeperiod_leaf_interval']) && ($currentSettings['timeperiod_leaf_interval'] != $priorSettings['timeperiod_leaf_interval']))) {
             return true;
         }
 

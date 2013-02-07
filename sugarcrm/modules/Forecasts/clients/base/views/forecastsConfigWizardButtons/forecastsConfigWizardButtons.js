@@ -111,11 +111,11 @@
             });
             
             // push this model back to the main config model
-            this.context.forecasts.config.set(this.model.toJSON());
+            this.context.config.set(this.model.toJSON());
 
-            this.context.forecasts.set({ saveClicked : true }, {silent:true});
+            this.context.set({ saveClicked : true }, {silent:true});
 
-            this.context.forecasts.config.save({}, {
+            this.context.config.save({}, {
                 success: function() {
                     var url = app.api.buildURL("Forecasts/init");
                     app.api.call('GET', url, null, {success: function(forecastData) {

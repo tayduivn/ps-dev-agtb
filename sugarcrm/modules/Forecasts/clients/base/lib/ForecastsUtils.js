@@ -25,10 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 (function(app) {
-    if(!_.has(app, 'forecasts')) {
-        app.forecasts = {}
-    }
-    app.forecasts.utils = {
+    forecastsUtils = {
 
         /**
          * Takes two Forecasts models and returns HTML for the history log
@@ -288,7 +285,7 @@
 
         /**
          * Contains a list of column names from metadata and maps them to correct config param
-         * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
+         * e.g. 'likely_case' column is controlled by the context.config.get('show_worksheet_likely') param
          * Used by forecastsWorksheetManager, forecastsWorksheetManagerTotals
          *
          * @property tableColumnsConfigKeyMapManager
@@ -305,7 +302,7 @@
 
         /**
          * Contains a list of column names from metadata and maps them to correct config param
-         * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
+         * e.g. 'likely_case' column is controlled by the context.config.get('show_worksheet_likely') param
          * Used by forecastsWorksheet, forecastsWorksheetTotals
          *
          * @property tableColumnsConfigKeyMapRep
@@ -371,7 +368,14 @@
             }, self);
             return returnDs;
         }
-
-
     };
+
+    // play nice with other modules, check if utils already exists
+    if(!_.has(app, 'utils')) {
+        // if not, forecastsUtils should be the utils
+        app.utils = forecastsUtils
+    } else {
+        // if utils already exists, add forecastsUtils to it
+        app.utils = _.extend(app.utils, forecastsUtils);
+    }
 })(SUGAR.App);

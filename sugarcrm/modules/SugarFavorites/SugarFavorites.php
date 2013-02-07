@@ -64,11 +64,7 @@ class SugarFavorites extends Basic
 	    $record
 	    )
 	{
-	global $app_strings;
-		if ($on)
-			return '<div class="star"><div class="on"   title="'.$app_strings['LBL_REMOVE_FROM_FAVORITES'].'" onclick="DCMenu.removeFromFavorites(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';
-		else
-			return '<div class="star"><div class="off"  title="'.$app_strings['LBL_ADD_TO_FAVORITES'].'" onclick="DCMenu.addToFavorites(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';
+        return '<div class="star"><div class="'. ($on ? 'on': 'off') .'" onclick="var self=this; parent.SUGAR.App.api.favorite(\''.$module. '\',  \''.$record. '\', $(self).hasClass(\'off\'), { success: function() {$(self).toggleClass(\'on off\');} });">&nbsp;</div></div>';
 	}
 
 	public static function generateGUID(

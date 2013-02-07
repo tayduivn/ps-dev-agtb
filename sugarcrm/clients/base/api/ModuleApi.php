@@ -72,7 +72,7 @@ class ModuleApi extends SugarApi {
                 'pathVars' => array('module','record', 'favorite'),
                 'method' => 'unsetFavorite',
                 'shortHelp' => 'This method unsets a record of the specified type as a favorite',
-                'longHelp' => 'include/api/help/module_favorite_help.html',
+                'longHelp' => 'include/api/help/module_unfavorite_help.html',
             ),            
             'unfavorite' => array(
                 'reqType' => 'PUT',
@@ -80,7 +80,7 @@ class ModuleApi extends SugarApi {
                 'pathVars' => array('module','record', 'unfavorite'),
                 'method' => 'unsetFavorite',
                 'shortHelp' => 'This method unsets a record of the specified type as a favorite',
-                'longHelp' => 'include/api/help/module_favorite_help.html',
+                'longHelp' => 'include/api/help/module_unfavorite_help.html',
             ),
             'enum' => array(
                 'reqType' => 'GET',
@@ -208,16 +208,16 @@ class ModuleApi extends SugarApi {
 
     public function setFavorite($api, $args) {
         $this->requireArgs($args, array('module', 'record'));
-        $this->toggleFavorites($args['module'], $args['record'], true);
         $bean = $this->loadBean($api, $args, 'view');
+        $this->toggleFavorites($bean, true);
         $data = $this->formatBean($api, $args, $bean);
         return $data;
     }
 
     public function unsetFavorite($api, $args) {
         $this->requireArgs($args, array('module', 'record'));
-        $this->toggleFavorites($args['module'], $args['record'], false);
         $bean = $this->loadBean($api, $args, 'view');
+        $this->toggleFavorites($bean, false);
         $data = $this->formatBean($api, $args, $bean);
         return $data;
     }
