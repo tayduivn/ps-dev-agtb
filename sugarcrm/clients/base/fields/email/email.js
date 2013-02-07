@@ -240,6 +240,33 @@
         }
     },
     /**
+     * Custom error styling for the e-mail field
+     * TODO Determine appropriate error styling for e-mail field widget
+     * @param errors
+     * @override
+     */
+    decorateError: function(errors){
+
+        var emails, emailErrorsArray;
+        emailErrorsArray = errors.email;
+        this.$el.find('.control-group.email').removeClass("inline-error");
+        emails = this.$el.find('.control-group.email');
+
+        _.each(emailErrorsArray, function(emailWithError, i) {
+
+            // For each of our "sub-email" fields
+            _.each(emails, function(e) {
+                var emailFieldValue = $(e).data('emailaddress');
+
+                // if we're on an email sub field where error occurred, add error styling
+                if(emailFieldValue === emailWithError) {
+                    $(e).addClass("inline-error");
+                }
+            });
+        });
+
+    },
+    /**
      * Binds DOM changes to set field value on model.
      * @param {Backbone.Model} model model this field is bound to.
      * @param {String} fieldName field name.

@@ -9,6 +9,7 @@ describe("Record View", function() {
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
+        SugarTest.loadComponent('base', 'field', 'base');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'fieldset');
@@ -187,6 +188,47 @@ describe("Record View", function() {
 
             expect(editableFields).toBe(7);
             expect(_.size(view.editableFields)).toBe(7);
+        });
+
+        it("should call decorateError on error fields during 'error:validation' events", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            var descriptionField = _.find(view.fields, function(field){
+                return field.name === 'description';
+            });
+            var stub = sinon.stub(descriptionField, 'decorateError', $.noop());
+            //Simulate a 'required' error on description field
+            view.model.trigger('error:validation', {description: {required : true}});
+            //Defer expectations since decoration is deferred
+            _.defer(function(stub){
+                expect(stub.toHaveBeenCalledWith({required: true})).toBe("true");
+                stub.restore();
+            }, stub);
+
+        });
+
+        it("should call clearErrorDecoration on fields when Cancel is clicked", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            var descriptionField = _.find(view.fields, function(field){
+                return field.name === 'description';
+            });
+            var stub = sinon.stub(descriptionField, 'clearErrorDecoration', $.noop());
+            view.model.trigger('error:validation', {description: {required : true}});
+            view.cancelClicked();
+            //Defer expectations since decoration is deferred
+            _.defer(function(stub){
+                expect(stub.calledOnce).toBe(true);
+                stub.restore();
+            }, stub);
         });
 
         it("Should display all 8 editable fields when more link is clicked", function() {
