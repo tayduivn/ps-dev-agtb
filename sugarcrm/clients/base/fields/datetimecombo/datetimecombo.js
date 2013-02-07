@@ -200,6 +200,7 @@
      */
     _handleTimepickerBlur: function(ev) {
         this.model.set(this.name, this._val(ev), {silent: true});
+        this.model.trigger("change");
     },
     _setTimeValue: function() {
         this.timeValue = this.$('.ui-timepicker-input').val();

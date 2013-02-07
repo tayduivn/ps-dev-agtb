@@ -162,11 +162,14 @@
             };
         }
         dateValue = this._getDatepickerValue();
+        // If date isn't good we set it raw and let sidecar catch upstream in validation. Also, we don't
+        // want to trigger a re-render so we use silent: true (but still trigger change on the model itself once done)
         if (this._verifyDateString(dateValue)) {
             model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
         } else {
             model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes, {silent: true});
         }
+        this.model.trigger("change");
     },
     _verifyDateString: function(value) {
         var dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';
