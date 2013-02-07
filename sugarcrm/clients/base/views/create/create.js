@@ -154,6 +154,7 @@
      * @param callback
      */
     initiateSave: function(callback) {
+        this.$('.inline-error').removeClass('inline-error');
         async.waterfall([
             _.bind(this.validateModelWaterfall, this),
             _.bind(this.dupeCheckWaterfall, this),
