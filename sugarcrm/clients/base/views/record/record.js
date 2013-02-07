@@ -145,7 +145,7 @@
                 }
 
                 // this is new to disable the pencil icon if the user doesn't have ACLs
-                if (!app.acl.hasAccess('edit', this.module, this.model.get('assigned_user_id'), field.name)) {
+                if (!app.acl.hasAccessToModel('edit', this.model, field.name)) {
                     field.noedit = true;
                 }
 
