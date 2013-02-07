@@ -266,6 +266,29 @@
             }];
         }
 
+        value = this.addFlagLabels(value);
+        return value;
+    },
+    addFlagLabels:function (value) {
+        var flagStr = "", flagArray;
+        var flag2Lbl = {
+            primary_address:"LBL_EMAIL_PRIMARY",
+            opt_out:"LBL_EMAIL_OPT_OUT",
+            invalid_email:"LBL_EMAIL_INVALID"
+        };
+        _.each(value, function (emailObj, key) {
+            flagArray = _.map(emailObj, function (flagValue, key) {
+                if (flag2Lbl[key] && flagValue == "1") {
+                    return app.lang.get(flag2Lbl[key]);
+                }
+            });
+            flagArray = _.without(flagArray, undefined);
+            if (flagArray.length > 0) {
+                flagStr = "(" + flagArray.join(", ") + ")";
+            }
+            emailObj.flagLabel = flagStr;
+        })
+
         return value;
     },
     /**
