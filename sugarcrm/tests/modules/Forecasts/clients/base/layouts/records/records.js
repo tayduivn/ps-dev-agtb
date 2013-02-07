@@ -31,7 +31,6 @@ describe("The forecasts records layout controller", function(){
                 components: {}
             }
         };
-
         app = SugarTest.app;
         var recordsController = SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/records", "records", "js", function(d) {
             return eval(d);
@@ -65,6 +64,8 @@ describe("The forecasts records layout controller", function(){
             };
         }));
         stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
+
+        stubs.push(sinon.stub(app.api, "call"));
 
         layout = SugarTest.createComponent('Layout', {
             name: "records",

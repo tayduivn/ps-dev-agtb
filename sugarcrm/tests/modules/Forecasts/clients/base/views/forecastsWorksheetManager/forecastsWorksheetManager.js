@@ -145,11 +145,13 @@ describe("The forecasts manager worksheet", function(){
         beforeEach(function(){
             m = new Backbone.Model({'hello' : 'world'});
             saveStub = sinon.stub(m, 'save', function(){});
+            sinon.stub(view.context, "trigger");
             view._collection.add(m);
     	});
 
     	afterEach(function(){
             view._collection.reset();
+            view.context.trigger.restore();
             saveStub.restore();
             m = undefined;
     	});
