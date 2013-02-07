@@ -1,7 +1,9 @@
 describe("Emails.fields.recipients", function() {
     var app,
         field,
-        model;
+        model,
+        dataProvider,
+        haystack = '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>';
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -20,351 +22,357 @@ describe("Emails.fields.recipients", function() {
         field = null;
     });
 
-    it("should add new recipients to the field's value", function() {
-        var dataProvider = [
-            [
+    // add recipients
+    dataProvider = [
+        {
+            message:    "should add 1 recipient to the field's value",
+            recipients: new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
+            expected:   '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>'
+        },
+        {
+            message:    "should add 1 recipient to the field's value",
+            recipients: new Backbone.Collection([
+                new Backbone.Model({ email: "will@example.com", name: "Will Westin" })
+            ]),
+            expected:   '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>'
+        },
+        {
+            message:    "should add 3 recipients to the field's value",
+            recipients: new Backbone.Collection([
                 new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
-                '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>',
-                "should add 1 recipient to the field's value"
-            ],
-            [
-                new Backbone.Collection([
-                    new Backbone.Model({ email: "will@example.com", name: "Will Westin" })
-                ]),
-                '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>',
-                "should add 1 recipient to the field's value"
-            ],
-            [
-                new Backbone.Collection([
-                    new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
-                    new Backbone.Model({ email: "sarah@example.com", name: "Sarah Smith" }),
-                    new Backbone.Model({ email: "sally@example.com", name: "Sally Bronsen" })
-                 ]),
-                '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>',
-                "should add 3 recipients to the field's value"
-            ],
-            [
-                '"Will Westin" <will@example.com>,<sarah@example.com>,sally@example.com',
-                '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>,"sarah@example.com" <sarah@example.com>,"sally@example.com" <sally@example.com>',
-                "should add 3 recipients to the field's value"
-            ],
-            [
-                new Backbone.Collection([
-                    new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
-                    new Backbone.Model({ email: "will@example.com", name: "Will Westin" })
-                ]),
-                '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>',
-                "should only add 1 recipient to the field's value because the 2nd is a duplicate"
-            ]
-        ];
+                new Backbone.Model({ email: "sarah@example.com", name: "Sarah Smith" }),
+                new Backbone.Model({ email: "sally@example.com", name: "Sally Bronsen" })
+            ]),
+            expected:   '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>'
+        },
+        {
+            message:    "should add 3 recipients to the field's value",
+            recipients: '"Will Westin" <will@example.com>,<sarah@example.com>,sally@example.com',
+            expected:   '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>,"sarah@example.com" <sarah@example.com>,"sally@example.com" <sally@example.com>'
+        },
+        {
+            message:    "should only add 1 recipient to the field's value because the 2nd is a duplicate",
+            recipients: new Backbone.Collection([
+                new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
+                new Backbone.Model({ email: "will@example.com", name: "Will Westin" })
+            ]),
+            expected:   '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>'
+        }
+    ];
 
-        _.each(dataProvider, function(data) {
+    _.each(dataProvider, function(data) {
+        it(data.message, function() {
             var actual;
             // seed the model with a value to make sure we're only adding to it
             field.model.set("recipients", '"Max Jensen" <tom@example.com>');
-            field._addRecipients(data[0]);
+            field._addRecipients(data.recipients);
             actual = field.model.get("recipients");
-            expect(actual).toBe(data[1]);
-        }, this);
-    });
+            expect(actual).toBe(data.expected);
+        });
+    }, this);
 
-    it("should remove recipients from the field's value", function() {
-        var dataProvider = [
-            [
+    // remove recipients
+    dataProvider = [
+        {
+            message:    "should remove 1 recipient from the field's value",
+            recipients: new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
+            expected:   '"Max Jensen" <tom@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>'
+        },
+        {
+            message:    "should remove 1 recipient from the field's value",
+            recipients: new Backbone.Collection([
+                new Backbone.Model({ email: "will@example.com", name: "Will Westin" })
+            ]),
+            expected:   '"Max Jensen" <tom@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>'
+        },
+        {
+            message:    "should remove 2 recipients from the field's value",
+            recipients: new Backbone.Collection([
                 new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
-                '"Max Jensen" <tom@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>',
-                "should remove 1 recipient from the field's value"
-            ],
-            [
-                new Backbone.Collection([
-                    new Backbone.Model({ email: "will@example.com", name: "Will Westin" })
-                ]),
-                '"Max Jensen" <tom@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>',
-                "should remove 1 recipient from the field's value"
-            ],
-            [
-                new Backbone.Collection([
-                    new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
-                    new Backbone.Model({ email: "sarah@example.com", name: "Sarah Smith" })
-                ]),
-                '"Max Jensen" <tom@example.com>,"Sally Bronsen" <sally@example.com>',
-                "should remove 2 recipients from the field's value"
-            ],
-            [
-                new Backbone.Collection([
-                    new Backbone.Model({ email: "tom@example.com", name: "Max Jensen" }),
-                    new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
-                    new Backbone.Model({ email: "sarah@example.com", name: "Sarah Smith" }),
-                    new Backbone.Model({ email: "sally@example.com", name: "Sally Bronsen" })
-                ]),
-                "",
-                "should remove all recipients from the field's value"
-            ],
-            [
-                '"Will Westin" <will@example.com>',
-                '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>',
-                "should not remove any recipients from the field's value"
-            ]
-        ];
+                new Backbone.Model({ email: "sarah@example.com", name: "Sarah Smith" })
+            ]),
+            expected:   '"Max Jensen" <tom@example.com>,"Sally Bronsen" <sally@example.com>'
+        },
+        {
+            message:    "should remove all recipients from the field's value",
+            recipients: new Backbone.Collection([
+                new Backbone.Model({ email: "tom@example.com", name: "Max Jensen" }),
+                new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
+                new Backbone.Model({ email: "sarah@example.com", name: "Sarah Smith" }),
+                new Backbone.Model({ email: "sally@example.com", name: "Sally Bronsen" })
+            ]),
+            expected:   ""
+        },
+        {
+            message:    "should not remove any recipients from the field's value",
+            recipients: '"Will Westin" <will@example.com>',
+            expected:   '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>'
+        }
+    ];
 
-        _.each(dataProvider, function(data) {
+    _.each(dataProvider, function(data) {
+        it(data.message, function() {
             var actual;
             // seed the model with a value to make sure there is the same data to delete for each test case
             field.model.set("recipients", '"Max Jensen" <tom@example.com>,"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>');
-            field._removeRecipients(data[0]);
+            field._removeRecipients(data.recipients);
             actual = field.model.get("recipients");
-            expect(actual).toBe(data[1]);
-        }, this);
-    });
+            expect(actual).toBe(data.expected);
+        });
+    }, this);
 
-    it("should replace the field's value with new recipients", function() {
-        var dataProvider = [
-            [
-                undefined,
-                "",
-                "should reset the field's value to an empty string"
-            ],
-            [
-                {},
-                "",
-                "should reset the field's value to an empty string"
-            ],
-            [
+    // replace recipients
+    dataProvider = [
+        {
+            recipients: undefined,
+            expected:   "",
+            message:    "should reset the field's value to an empty string"
+        },
+        {
+            recipients: {},
+            expected:   "",
+            message:    "should reset the field's value to an empty string"
+        },
+        {
+            recipients: new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
+            expected:   '"Will Westin" <will@example.com>',
+            message:    "should reset the field's value to contain 1 recipient"
+        },
+        {
+            recipients: new Backbone.Collection([
+                new Backbone.Model({ email: "will@example.com", name: "Will Westin" })
+            ]),
+            expected:   '"Will Westin" <will@example.com>',
+            message:    "should reset the field's value to contain 1 recipient"
+        },
+        {
+            recipients: new Backbone.Collection([
                 new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
-                '"Will Westin" <will@example.com>',
-                "should reset the field's value to contain 1 recipient"
-            ],
-            [
-                new Backbone.Collection([
-                    new Backbone.Model({ email: "will@example.com", name: "Will Westin" })
-                ]),
-                '"Will Westin" <will@example.com>',
-                "should reset the field's value to contain 1 recipient"
-            ],
-            [
-                new Backbone.Collection([
-                    new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
-                    new Backbone.Model({ email: "sarah@example.com", name: "Sarah Smith" }),
-                    new Backbone.Model({ email: "sally@example.com", name: "Sally Bronsen" })
-                ]),
-                '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>',
-                "should reset the field's value to contain 3 recipients"
-            ]
-        ];
+                new Backbone.Model({ email: "sarah@example.com", name: "Sarah Smith" }),
+                new Backbone.Model({ email: "sally@example.com", name: "Sally Bronsen" })
+            ]),
+            expected:   '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>',
+            message:    "should reset the field's value to contain 3 recipients"
+        }
+    ];
 
-        _.each(dataProvider, function(data) {
+    _.each(dataProvider, function(data) {
+        it(data.message, function() {
             var actual;
             // seed the model with a value to make sure it gets replaced
             field.model.set("recipients", '"Max Jensen" <tom@example.com>');
-            field._replaceRecipients(data[0]);
+            field._replaceRecipients(data.recipients);
             actual = field.model.get("recipients");
-            expect(actual).toBe(data[1]);
-        }, this);
-    });
+            expect(actual).toBe(data.expected);
+        });
+    }, this);
 
-    it("should turn a recipient Backbone model into a string formatted for display", function() {
-        var dataProvider = [
-            [
-                new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
-                '"Will Westin" <will@example.com>',
-                "should get back a string with an email and a name"
-            ],
-            [
-                new Backbone.Model({ email: "will@example.com", name: "" }),
-                '"will@example.com" <will@example.com>',
-                "should get back a string with an email and a name that matches the email"
-            ],
-            [
-                new Backbone.Model({ email: "will@example.com"}),
-                '"will@example.com" <will@example.com>',
-                "should get back a string with an email and a name that matches the email"
-            ]
-        ];
+    // format recipient
+    dataProvider = [
+        {
+            message:   "should get back a string with an email and a name",
+            recipient: new Backbone.Model({ email: "will@example.com", name: "Will Westin" }),
+            expected:  '"Will Westin" <will@example.com>'
+        },
+        {
+            message:   "should get back a string with an email and a name that matches the email",
+            recipient: new Backbone.Model({ email: "will@example.com", name: "" }),
+            expected:  '"will@example.com" <will@example.com>'
+        },
+        {
+            message:   "should get back a string with an email and a name that matches the email",
+            recipient: new Backbone.Model({ email: "will@example.com"}),
+            expected:  '"will@example.com" <will@example.com>'
+        }
+    ];
 
-        _.each(dataProvider, function(data) {
-            var actual = field._formatRecipient(data[0]);
-            expect(actual).toEqual(data[1]);
-        }, this);
-    });
+    _.each(dataProvider, function(data) {
+        it(data.message, function() {
+            var actual = field._formatRecipient(data.recipient);
+            expect(actual).toEqual(data.expected);
+        });
+    }, this);
 
-    it("should turn a recipient string into an object with an email and name", function() {
-        var dataProvider = [
-            [
-                '"Will Westin" <will@example.com>',
-                { email: "will@example.com", name: "Will Westin" },
-                "should get back an object with an email and a name"
-            ],
-            [
-                '<will@example.com>',
-                { email: "will@example.com", name: "" },
-                "should get back an object with an email and an empty name"
-            ],
-            [
-                'will@example.com',
-                { email: "will@example.com", name: "" },
-                "should get back an object with an email and an empty name"
-            ]
-        ];
+    // unformat recipient
+    dataProvider = [
+        {
+            message:   "should get back an object with an email and a name",
+            recipient: '"Will Westin" <will@example.com>',
+            expected:  { email: "will@example.com", name: "Will Westin" }
+        },
+        {
+            message:   "should get back an object with an email and an empty name",
+            recipient: '<will@example.com>',
+            expected:  { email: "will@example.com", name: "" }
+        },
+        {
+            message:   "should get back an object with an email and an empty name",
+            recipient: 'will@example.com',
+            expected:  { email: "will@example.com", name: "" }
+        }
+    ];
 
-        _.each(dataProvider, function(data) {
-            var actual = field._unformatRecipient(data[0]);
-            expect(actual).toEqual(data[1]);
-        }, this);
-    });
+    _.each(dataProvider, function(data) {
+        it(data.message, function() {
+            var actual = field._unformatRecipient(data.recipient);
+            expect(actual).toEqual(data.expected);
+        });
+    }, this);
 
-    it("should split the recipients string into an array of recipients Backbone models", function() {
-        var dataProvider = [
-                [
-                    '"Will Westin" <will@example.com>',
-                    1,
-                    "should get back an array of 1 Backbone model"
-                ],
-                [
-                    '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>',
-                    2,
-                    "should get back an array of 2 Backbone models"
-                ],
-                [
-                    '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>',
-                    6,
-                    "should get back an array of 6 Backbone models"
-                ],
-                [
-                    '"Will Westin" <will@example.com>;"Sarah Smith" <sarah@example.com>',
-                    1,
-                    "should get back an array of 1 Backbone model because ';' isn't a valid delimiter"
-                ],
-                [
-                    '"Westin, Will" <will@example.com>,"Sarah Smith" <sarah@example.com>',
-                    2,
-                    "should get back an array of 2 Backbone models because the first ',' isn't a recognized as a delimiter"
-                ],
-                [
-                    '"Will Westin" <will@example.com> ,     "Sarah Smith" <sarah@example.com>',
-                    2,
-                    "should get back an array of 2 Backbone models even when there is white space around the delimiter"
-                ]
-            ];
+    // split recipients
+    dataProvider = [
+        {
+            message:    "should get back an array of 1 Backbone model",
+            recipients: '"Will Westin" <will@example.com>',
+            expected:   1
+        },
+        {
+            message:    "should get back an array of 2 Backbone models",
+            recipients: '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>',
+            expected:   2
+        },
+        {
+            message:    "should get back an array of 6 Backbone models",
+            recipients: '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>',
+            expected:   6
+        },
+        {
+            message:    "should get back an array of 1 Backbone model because ';' isn't a valid delimiter",
+            recipients: '"Will Westin" <will@example.com>;"Sarah Smith" <sarah@example.com>',
+            expected:   1
+        },
+        {
+            message:    "should get back an array of 2 Backbone models because the first ',' isn't a recognized as a delimiter",
+            recipients: '"Westin, Will" <will@example.com>,"Sarah Smith" <sarah@example.com>',
+            expected:   2
+        },
+        {
+            message:    "should get back an array of 2 Backbone models even when there is white space around the delimiter",
+            recipients: '"Will Westin" <will@example.com> ,     "Sarah Smith" <sarah@example.com>',
+            expected:   2
+        }
+    ];
 
-        _.each(dataProvider, function(data) {
-            var actual = field._splitRecipients(data[0]);
-            expect(actual.length).toBe(data[1]);
+    _.each(dataProvider, function(data) {
+        it(data.message, function() {
+            var actual = field._splitRecipients(data.recipients);
+            expect(actual.length).toBe(data.expected);
 
             _.each(actual, function(model) {
                 expect(model instanceof Backbone.Model).toBeTruthy();
             }, this);
-        }, this);
-    });
+        });
+    }, this);
 
-    it("should return a string that no longer contains the recipient", function() {
-        var haystack    = '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>',
-            dataProvider = [
-                [
-                    haystack,
-                    '"Will Westin" <will@example.com>',
-                    '"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>',
-                    "should remove the first recipient"
-                ],
-                [
-                    haystack,
-                    '"Sally Bronsen" <sally@example.com>',
-                    '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>',
-                    "should remove a middle recipient"
-                ],
-                [
-                    haystack,
-                    '"Chris Olliver" <chris@example.com>',
-                    '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>',
-                    "should remove the last recipient"
-                ],
-                [
-                    haystack,
-                    '"Foo Bar" <foo@bar.com>',
-                    '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>',
-                    "should not remove any recipients because the one to remove doesn't exist in the string"
-                ],
-                [
-                    haystack,
-                    '"Dr. Sarah Smith" <sarah@example.com>',
-                    '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>',
-                    "should not remove any recipients because the one to remove isn't an exact match (prefix of Dr.)"
-                ],
-                [
-                    haystack,
-                    '"Sara Smith" <sara@example.com>',
-                    '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>',
-                    "should not remove any recipients because the one to remove isn't an exact match (Sarah != Sara)"
-                ],
-                [
-                    haystack + ',"Max Jensen" <tom@example.com>',
-                    '"Max Jensen" <tom@example.com>',
-                    '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>',
-                    "should remove both instances of the recipient"
-                ],
-                [
-                    haystack,
-                    '"sally bronsen" <Sally@Example.COM>',
-                    '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>',
-                    "should remove a recipient regardless of character case"
-                ],
-                [
-                    '"Wi|| $mith" <will@smith.com>',
-                    '"Wi|| $mith" <will@smith.com>',
-                    "",
-                    "should remove a recipient that has special characters"
-                ]
-            ];
+    // find and remove a recipient
+    dataProvider = [
+        {
+            message:  "should remove the first recipient",
+            haystack: haystack,
+            needle:   '"Will Westin" <will@example.com>',
+            expected: '"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>'
+        },
+        {
+            message:  "should remove a middle recipient",
+            haystack: haystack,
+            needle:   '"Sally Bronsen" <sally@example.com>',
+            expected: '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>'
+        },
+        {
+            message:  "should remove the last recipient",
+            haystack: haystack,
+            needle:   '"Chris Olliver" <chris@example.com>',
+            expected: '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>'
+        },
+        {
+            message:  "should not remove any recipients because the one to remove doesn't exist in the string",
+            haystack: haystack,
+            needle:   '"Foo Bar" <foo@bar.com>',
+            expected: '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>'
+        },
+        {
+            message:  "should not remove any recipients because the one to remove isn't an exact match (prefix of Dr.)",
+            haystack: haystack,
+            needle:   '"Dr. Sarah Smith" <sarah@example.com>',
+            expected: '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>'
+        },
+        {
+            message:  "should not remove any recipients because the one to remove isn't an exact match (Sarah != Sara)",
+            haystack: haystack,
+            needle:   '"Sara Smith" <sara@example.com>',
+            expected: '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>'
+        },
+        {
+            message:  "should remove both instances of the recipient",
+            haystack: haystack + ',"Max Jensen" <tom@example.com>',
+            needle:   '"Max Jensen" <tom@example.com>',
+            expected: '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>'
+        },
+        {
+            message:  "should remove a recipient regardless of character case",
+            haystack: haystack,
+            needle:   '"sally bronsen" <Sally@Example.COM>',
+            expected: '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>'
+        },
+        {
+            message:  "should remove a recipient that has special characters",
+            haystack: '"Wi|| $mith" <will@smith.com>',
+            needle:   '"Wi|| $mith" <will@smith.com>',
+            expected: ""
+        }
+    ];
 
-        _.each(dataProvider, function(data) {
-            var actual = field._findAndRemoveRecipient(data[1], data[0]);
-            expect(actual).toBe(data[2]);
-        }, this);
-    });
+    _.each(dataProvider, function(data) {
+        it(data.message, function() {
+            var actual = field._findAndRemoveRecipient(data.needle, data.haystack);
+            expect(actual).toBe(data.expected);
+        });
+    }, this);
 
-    it("should indicate whether or not the field contains the recipient", function() {
-        var haystack    = '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Sally Bronsen" <sally@example.com>,"Max Jensen" <tom@example.com>,"Jim Brennan" <jim@example.com>,"Chris Olliver" <chris@example.com>',
-            dataProvider = [
-                [
-                    haystack,
-                    '"Will Westin" <will@example.com>',
-                    true,
-                    "should find the first recipient"
-                ],
-                [
-                    haystack,
-                    '"Sally Bronsen" <sally@example.com>',
-                    true,
-                    "should find a middle recipient"
-                ],
-                [
-                    haystack,
-                    '"Chris Olliver" <chris@example.com>',
-                    true,
-                    "should find the last recipient"
-                ],
-                [
-                    haystack,
-                    '"Foo Bar" <foo@bar.com>',
-                    false,
-                    "should not find the recipient because it doesn't exist in the string"
-                ],
-                [
-                    haystack + ',"Max Jensen" <tom@example.com>',
-                    '"Max Jensen" <tom@example.com>',
-                    true,
-                    "should find at least one of two matching recipients"
-                ],
-                [
-                    '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Bronsen, Sally" <sally@example.com>',
-                    '"Bronsen, Sally" <sally@example.come>',
-                    false,
-                    "should find a recipient even with a comma in the name"
-                ]
-            ];
+    // is a recipient in the field's value?
+    dataProvider = [
+        {
+            message:  "should find the first recipient",
+            haystack: haystack,
+            needle:   '"Will Westin" <will@example.com>',
+            expected: true
+        },
+        {
+            message:  "should find a middle recipient",
+            haystack: haystack,
+            needle:   '"Sally Bronsen" <sally@example.com>',
+            expected: true
+        },
+        {
+            message:  "should find the last recipient",
+            haystack: haystack,
+            needle:   '"Chris Olliver" <chris@example.com>',
+            expected: true
+        },
+        {
+            message:  "should not find the recipient because it doesn't exist in the string",
+            haystack: haystack,
+            needle:   '"Foo Bar" <foo@bar.com>',
+            expected: false
+        },
+        {
+            message:  "should find at least one of two matching recipients",
+            haystack: haystack + ',"Max Jensen" <tom@example.com>',
+            needle:   '"Max Jensen" <tom@example.com>',
+            expected: true
+        },
+        {
+            message:  "should find a recipient even with a comma in the name",
+            haystack: '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>,"Bronsen, Sally" <sally@example.com>',
+            needle:   '"Bronsen, Sally" <sally@example.com>',
+            expected: true
+        }
+    ];
 
-        _.each(dataProvider, function(data) {
-            var actual = field._hasRecipient(data[1], data[0]);
-            expect(actual).toBe(data[2]);
-        }, this);
-    });
+    _.each(dataProvider, function(data) {
+        it(data.message, function() {
+            var actual = field._hasRecipient(data.needle, data.haystack);
+            expect(actual).toBe(data.expected);
+        });
+    }, this);
 });
