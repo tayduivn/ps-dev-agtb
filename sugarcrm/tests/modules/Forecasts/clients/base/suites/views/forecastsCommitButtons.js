@@ -21,11 +21,22 @@
 
 describe("Forecasts Commit Buttons Component", function(){
 
-    var app, view;
+    var app, view, metaStub;
 
     beforeEach(function() {
         app = SugarTest.app;
+        metaStub = sinon.stub(app.user, 'getAcls', function() {
+            return {
+                'Forecasts': {
+                    admin: 'yes'
+                }
+            }
+        });
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitButtons", "forecastsCommitButtons", "js", function(d) { return eval(d); });
+    });
+
+    afterEach(function() {
+        metaStub.restore();
     });
 
     describe("test showCommitButton", function() {
@@ -53,7 +64,7 @@ describe("Forecasts Commit Buttons Component", function(){
     });
 
     describe("test showConfigButton", function() {
-        var testStub, metaStub;
+        var testStub;
 
         beforeEach(function() {
             testStub = sinon.stub(app.view.View.prototype, "initialize");
@@ -66,26 +77,18 @@ describe("Forecasts Commit Buttons Component", function(){
         });
         afterEach(function() {
             testStub.restore();
-            //metaStub.restore();
             view.context = null;
         });
 
-        // todo-sfa: removed test as we're not using getACLs, restore test when ACLs are being used again
-        xit("variable should be true an admin", function() {
-            metaStub = sinon.stub(app.user, 'getAcls', function() {
-                return {
-                    'Forecasts': {
-                        admin: 'yes'
-                    }
-                }
-            });
+        it("variable should be true an admin", function() {
             var options = {};
             view.initialize(options);
             expect(view.showConfigButton).toBeTruthy();
         });
 
-        // todo-sfa: removed test as we're not using getACLs, restore test when ACLs are being used again
-        xit("variable should be false for a non-admin", function(){
+        it("variable should be false for a non-admin", function(){
+            // resetting metaStub for just this one test
+            metaStub.restore();
             metaStub = sinon.stub(app.user, 'getAcls', function() {
                 return {
                     'Forecasts': {
@@ -93,30 +96,6 @@ describe("Forecasts Commit Buttons Component", function(){
                     }
                 }
             });
-            var options = {};
-            view.initialize(options);
-            expect(view.showConfigButton).toBeFalsy();
-        });
-
-        // todo-sfa: removed this test when we're using getACLs
-        it("variable should be true for an admin", function() {
-            view.context.forecasts.set({
-                currentUser : {
-                    admin : "yes"
-                }
-            })
-            var options = {};
-            view.initialize(options);
-            expect(view.showConfigButton).toBeTruthy();
-        });
-
-        // todo-sfa: removed this test when we're using getACLs
-        it("variable should be false for a non-admin", function(){
-            view.context.forecasts.set({
-                currentUser : {
-                    admin : "no"
-                }
-            })
             var options = {};
             view.initialize(options);
             expect(view.showConfigButton).toBeFalsy();

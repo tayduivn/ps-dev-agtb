@@ -162,7 +162,7 @@ function getExportContentFromResult(
     $populate=false
 ) {
 
-    global $current_user;
+    global $current_user, $locale;
     $sampleRecordNum = 5;
     $delimiter = getDelimiter();
     $timedate = TimeDate::getInstance();

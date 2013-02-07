@@ -45,8 +45,6 @@ class CallsApiHelper extends SugarBeanApiHelper
         $bean->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
 
         $bean->users_arr = $userInvitees;
-
-        $bean->save(true);
         
         return $data;
     }
