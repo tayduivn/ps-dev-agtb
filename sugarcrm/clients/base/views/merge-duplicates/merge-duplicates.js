@@ -12,42 +12,44 @@
         var meta = app.metadata.getView(options.module, 'record'),
             visibleFields = [],
             hiddenFields = [],
-            self = this;
+            self = this,
+            fields = _.chain(meta.panels)
+                        .map(function(panel) {return this.flattenFieldsets(panel.fields); }, this)
+                        .flatten()
+                        .reject(function(field) { return !field.name; })
+                        .value();
 
+        // here we need to figure out which is the primary record, and which are the alternatives.
         this.getPrimaryRecord(options.context);
         this.recordName = this.primaryRecord.attributes['name'] || '';
 
-        _.each(meta.panels, function(panel) {
-            var fields;
 
-            fields = this.flattenFieldsets(panel.fields);
 
-            _.each(fields, function(field, index){
-                function isSimilar(field, primary, alternatives) {
-                    return _.every(alternatives, function(alt) {
-                       return (alt.get(field.name) == primary.get(field.name));
-                    });
-                }
+        _.each(fields, function(field, index){
+            function isSimilar(field, primary, alternatives) {
+                return _.every(alternatives, function(alt) {
+                   return (alt.get(field.name) == primary.get(field.name));
+                });
+            }
 
-                var fieldMeta = {
-                    type: 'fieldset',
-                    label: field.label,
-                    fields: [
-                        {
-                            'name' : field.name,
-                            'type' : 'duplicatecopy'
-                        },
-                        field
-                    ]
-                };
+            var fieldMeta = {
+                type: 'fieldset',
+                label: field.label,
+                fields: [
+                    {
+                        'name' : field.name,
+                        'type' : 'duplicatecopy'
+                    },
+                    field
+                ]
+            };
 
-                if(isSimilar(field, self.primaryRecord, self.alternativeRecords)) {
-                    hiddenFields.push(fieldMeta);
-                }
-                else {
-                    visibleFields.push(fieldMeta);
-                }
-            }, this);
+            if(isSimilar(field, self.primaryRecord, self.alternativeRecords)) {
+                hiddenFields.push(fieldMeta);
+            }
+            else {
+                visibleFields.push(fieldMeta);
+            }
         }, this);
         options.meta = {
             type: 'list',
@@ -60,7 +62,14 @@
                     fields: hiddenFields
                 }
             ]
+        };
+
+        var mergeCollection = options.context.get('collection');
+        var records = options.context.get('selectedDuplicates');
+        if (mergeCollection) {
+            mergeCollection.filterDef = [{ "id": { "$in" : _.pluck(records,'id')}}];
         }
+
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'list';
     },
@@ -98,10 +107,7 @@
                 .value();
 
             // now collect the raw fields from the press
-            fields = _.chain(fieldsets)
-                .reject(fieldsetFilter)
-                .union(fields)
-                .value();
+            fields = fields.concat(_.reject(fieldsets, fieldsetFilter));
 
             // do we have any more fieldsets to squash?
             fieldsets = _.filter(fieldsets, fieldsetFilter);
