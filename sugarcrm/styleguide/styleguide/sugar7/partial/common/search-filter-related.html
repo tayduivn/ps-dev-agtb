@@ -100,11 +100,11 @@
   ];
 
   // add the current module as default select2 filter
-  if ( window.location.pathname.split('/').pop() !== 'dashboard.html') {
-      availableFilters.unshift(
-          {"label":"{{title}}", "id":"filter_module", "disabled":true, "selected":true, "classes":"filter-disabled", "spec":[]}
-      );
-  }
+  // if ( window.location.pathname.split('/').pop() !== 'dashboard.html') {
+  //     availableFilters.unshift(
+  //         {"label":"{{title}}", "id":"filter_module", "disabled":true, "selected":true, "classes":"filter-disabled", "spec":[]}
+  //     );
+  // }
 
   // disable related record filter for current module
   $.each(availableFilters, function(index,value){
@@ -150,6 +150,9 @@
         var related_data = [];
       } else {
         var related_data = availableFilters
+                  .map(function(d,i){
+                    return {"id":d.id,"text":d.label,"classes":d.classes,"index":i};
+                  })
                   .filter(function(d){
                     if (d.disabled===true) {
                       return false;
@@ -158,13 +161,13 @@
                       return false;
                     }
                     return true;
-                  })
-                  .map(function(d,i){
-                    return {"id":d.id,"text":d.label,"classes":d.classes};
                   });
       }
 
       var filter_data = availableFilters
+                  .map(function(d,i){
+                    return {"id":d.id,"text":d.label,"classes":d.classes,"index":i};
+                  })
                   .filter(function(d){
                     if (d.disabled===true) {
                       return false;
@@ -173,9 +176,6 @@
                       return false;
                     }
                     return true;
-                  })
-                  .map(function(d,i){
-                    return {"id":d.id,"text":d.label,"classes":d.classes};
                   });
 
         _related.select2({
@@ -186,7 +186,7 @@
                 if (item.id === item.text) {
                     return item.text;
                 } else {
-                    return '<div class="'+ item.classes +'"><span class="select2-choice-type">'+ (_hasRelated?'Related':'Module') +'<i class="icon-caret-down"></i></span><a class="select2-choice-related" href="javascript:void(0)" rel="' + item.id.replace('filter_','') +'">'+ item.text +'</a></div>';
+                    return '<div class="'+ item.classes +'"><span class="select2-choice-type">'+ (_hasRelated?'Related':'Module') +'<i class="icon-caret-down"></i></span><a class="select2-choice-related" href="javascript:void(0)" data-id="' + item.id.replace('filter_','') +'" rel="'+item.index+'">'+ item.text +'</a></div>';
                 }
             },
             formatResult: function (option) {
@@ -206,10 +206,11 @@
           multiple:false,
           minimumResultsForSearch:7,
           formatSelection: function(item) {
+              console.log(item)
               if (item.id === item.text) {
                   return item.text;
               } else {
-                  return '<div class="'+ item.classes +'"><span class="select2-choice-type">Filter<i class="icon-caret-down"></i></span><a class="select2-choice-filter" href="javascript:void(0)" rel="' + item.id.replace('filter_','') +'">'+ item.text +'</a></div>';
+                  return '<div class="'+ item.classes +'"><span class="select2-choice-type">Filter<i class="icon-caret-down"></i></span><a class="select2-choice-filter" href="javascript:void(0)" data-id="' + item.id.replace('filter_','') +'" rel="'+item.index+'">'+ item.text +'</a></div>';
               }
           },
           formatResult: function (option) {
@@ -248,10 +249,9 @@
       });
 
       //edit existing filter
-      _filter_choices.on('click', '.select2-choice-filter', function(e){
-          //if ( !$(this).parents('li').hasClass('filter-disabled') ) {
-              editFilterForm( $(this).attr('rel'), false );
-          //}
+      _filter_choices.on('mousedown', 'a.select2-choice-filter', function(e){
+          var index = isNaN($(this).attr('rel'))?0:$(this).attr('rel');
+          editFilterForm( index, false );
           e.preventDefault();
           e.stopPropagation();
       });

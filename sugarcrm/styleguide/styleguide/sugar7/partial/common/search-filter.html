@@ -8,7 +8,7 @@
         <div class="actions pull-right">
           <div class="btn-group" data-toggle="buttons-radio">
             <a href="{{module}}/{{module}}-activitystream.html" class="btn" data-view="activitystream" data-toggle="proto" data-target="#view .main-content" data-mode="view" rel="tooltip" data-original-title="Activity stream"><i class="icon-th-list"></i></a>
-            <a href="common/data-table.html" class="btn" data-view="list" data-toggle="proto" data-target="#view .main-content" data-mode="view" rel="tooltip" data-original-title="List"><i class="icon-table"></i></a>
+            <a href="common/module-list.html" class="btn" data-view="list" data-toggle="proto" data-target="#view .main-content" data-mode="view" rel="tooltip" data-original-title="List"><i class="icon-table"></i></a>
           </div>
         </div>
     </div>
@@ -229,22 +229,6 @@
 
       // prepend legend to .select2-choices
       // _choices.prepend('<legend class="select2-legend">Filter <i class="icon-caret-down"></i></legend>');
-
-      // // select related module filter
-      // _results.find('li').on('click', function(e){
-      //     var $selected = $(this)
-      //       , id = parseInt($selected.attr('id').substr(21),10); //s2id_search_filter_o_1
-
-      //     if ($selected.hasClass('result-related')) {
-      //       editFilterForm( id, true );
-      //       _select.trigger("liszt:close");
-      //       if ($selected.text()==='History' && $selected.hasClass('result-selected')) {
-      //         loadContent('{{module}}/{{module}}-activitystream.html', '#view .main-content', undefined, 'replace');
-      //       } else {
-      //         loadContent('common/data-table.html', '#view .main-content', undefined, 'replace');
-      //       }
-      //     }
-      // });
 
       // create new filter
       _results.on('mouseup', '.select2-result-label', function(e){
