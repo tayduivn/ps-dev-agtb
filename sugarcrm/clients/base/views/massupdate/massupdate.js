@@ -263,7 +263,7 @@
                 components: [{
                     layout : "merge-duplicates",
                     context: {
-                        selectedDuplicates: mergeCollection.models
+                        selectedDuplicates: mergeCollection.models,
                     }
                 }]
             }, this);

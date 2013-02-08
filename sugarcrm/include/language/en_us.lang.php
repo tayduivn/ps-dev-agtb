@@ -3609,6 +3609,8 @@ $app_strings = array (
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
+    'LBL_MERGE_DUPLICATES_CONFIRM' => 'This action will delete following record(s):',
+    'LBL_MERGE_DUPLICATES_PROCEED' => 'Do you want to proceed?',
     'LBL_SUCCESS' => 'Success',
 
     //for sugar7 errors

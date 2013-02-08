@@ -36,7 +36,7 @@
         records = [primary].concat(_.without(records, primary));
         this.primaryRecord = primary;
         this.recordName = this.primaryRecord.get('name') || '';
-
+        
         // these are the fields we'll need to pull our records
         this.mergeFields = _.chain(meta.panels)
             .map(function(panel) {return this.flattenFieldsets(panel.fields); }, this)
@@ -57,7 +57,59 @@
 
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'list';
+        this.layout.on('mergeduplicates:save:fire', this.save, this);
     },
+    /**
+     * Save primary and delete other records
+     */    
+    save: function() {
+        var self = this, alternativeModelNames = [];
+        var alternativeModels = this.collection.without(this.primaryRecord); 
+        _.each(alternativeModels, function(model) {
+            alternativeModelNames.push(model.get('name') || "");
+        });
+        app.alert.show('merge_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('LBL_MERGE_DUPLICATES_CONFIRM') + " "+ alternativeModelNames.join(", ") + ". "+ app.lang.get('LBL_MERGE_DUPLICATES_PROCEED'),
+            onConfirm: function() {
+                self.primaryRecord.save({}, {
+                    success: function() {
+                        _.each(alternativeModels, function(model) {
+                            model.destroy();
+                        }); 
+                        self.context.trigger("drawer:hide");
+                        if (self.context.parent) {
+                            self.context.parent.trigger("drawer:hide");
+                        }
+                    },
+                    error: function() {
+                        app.alert.show('server-error', {
+                            level: 'error',
+                            messages: app.lang.get('ERR_AJAX_LOAD_FAILURE'),
+                            autoClose: false
+                        });
+                    }
+                });
+            }
+        });    	
+    }, 
+    /**
+     * Display a Preview for the primary record
+     */
+    previewRecord: function(togglePreview) {
+        if(_.isUndefined(togglePreview) || togglePreview) {
+            if(this.isPreviewOpen) {
+                app.events.trigger("preview:close");
+                this.isPreviewOpen = false;
+                return;
+            } 
+        }         
+        var previewModel = this.primaryRecord;
+        var previewModels = [previewModel];        
+        var previewCollection = app.data.createBeanCollection(previewModel.get('_module') || previewModel.module, previewModels);
+        app.events.trigger("preview:render", previewModel, previewCollection, false);
+        this.isPreviewOpen = true;
+    },        
     /**
      * Create a two panel viewdews metadata (visible, hidden) given list of fields
      * and the collection
