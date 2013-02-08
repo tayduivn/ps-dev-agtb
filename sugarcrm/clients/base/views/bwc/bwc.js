@@ -188,6 +188,7 @@
             'PdfManager',
             'ProductBundleNotes',
             'ProductBundles',
+            'ProductTemplates',
             'ProductTypes',
             'Project',
             'ProjectResources',
