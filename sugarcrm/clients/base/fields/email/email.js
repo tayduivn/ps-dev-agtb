@@ -87,7 +87,7 @@
      * @param {string|Array} value single email address or set of email addresses
      */
     format: function(value) {
-        if (_.isArray(value)) {
+        if (_.isArray(value) && value.length > 0) {
             // got an array of email addresses
             _.each(value, function(email) {
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
@@ -118,6 +118,18 @@
                     }
                 }
             }, this);
+
+            // Adding a new email
+            if (emails.length == 0) {
+                emails.push({
+                    email_address:   value,
+                    primary_address: "1",
+                    hasAnchor:       false,
+                    _wasNotArray:    true
+                });
+                changed = true;
+            }
+
             if(changed) {
                 this.updateModel(changed);
             }
