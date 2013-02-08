@@ -22,10 +22,10 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class Bug60008Test extends Sugar_PHPUnit_Framework_TestCase
+class DropdownUpgradeTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $_language = 'en_us'; // Test against English
-    protected $_testCustFile = array('include' => 'tests/include/Bug60008TestCustFile.php', 'ext' => 'tests/include/Bug60008-60607TestCustomFile.php');
+    protected $_testCustFile = array('include' => 'tests/include/DropdownUpgradeTestCustFile.php', 'ext' => 'tests/include/Bug60008-60607TestCustomFile.php');
     protected $_custFile = array('include' => 'custom/include/language/en_us.lang.php', 'ext' => 'custom/application/Ext/Language/en_us.lang.ext.php');
     protected $_custDir = array('include' => 'custom/include/language/', 'ext' => 'custom/application/Ext/Language/');
     protected $_backedUp = false;
@@ -92,5 +92,15 @@ class Bug60008Test extends Sugar_PHPUnit_Framework_TestCase
         // Assert that the indexes actually have elements
         $this->assertArrayHasKey('boop', $als['bbb_test_list'], "An element of the first app_list_strings array was not found");
         $this->assertArrayHasKey('sam', $als['ccc_test_list'], "An element of the second GLOBALS array not found");
+        
+        // Assert that GLOBALS overriding $app_list_strings work
+        $this->assertArrayHasKey('zzz_test_list', $als, "Bug 60393 - dropdown not picked up");
+        $this->assertArrayHasKey('X2', $als['zzz_test_list'], "Bug 60393 - dropdown values not picked up");
+        $this->assertEquals($als['zzz_test_list']['X2'], 'X2 Z', "Bug 60393 - proper dropdown value not picked up");
+        
+        // Assert that app_list_strings overriding GLOBALS work
+        $this->assertArrayHasKey('yyy_test_list', $als, "Bug 60393 - second dropdown not picked up");
+        $this->assertArrayHasKey('Y2', $als['yyy_test_list'], "Bug 60393 - second dropdown values not picked up");
+        $this->assertEquals($als['yyy_test_list']['Y2'], 'Y2 Q', "Bug 60393 - proper dropdown value not picked up for second dropdown");
     }
 }

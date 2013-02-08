@@ -101,6 +101,7 @@ class RestFileTestBase extends RestTestBase {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $addedHeaders);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         if (is_array($addedOpts) && !empty($addedOpts)) {
             // I know curl_setopt_array() exists, just wasn't sure if it was hurting stuff

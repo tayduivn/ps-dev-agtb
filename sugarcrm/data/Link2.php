@@ -456,7 +456,7 @@ class Link2 {
                 }
                 //Populate any relationship fields
                 foreach($relationshipFields as $rfName => $field) {
-                    if (!empty($vals[$rfName]))
+                    if (isset($vals[$rfName]))
                     {
                         if (!empty($result[$id])) {
                             $result[$id]->$field = $vals[$rfName];
