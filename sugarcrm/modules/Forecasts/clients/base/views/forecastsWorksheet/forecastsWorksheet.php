@@ -53,7 +53,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'enabled' => true,
                     'type' => 'relate',
                     'module' => 'Opportunities',
-                    'id_name' => 'id',
+                    'id_name' => 'parent_id',
                 ),
 
                 array(
@@ -124,7 +124,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'sortable' => false,
                     'default' => true,
                     'enabled' => true,
-                    'uid_field' => 'id'
+                    'uid_field' => 'parent_id'
                 ),
             ),
         ),

@@ -1,0 +1,11 @@
+<div class="compose-sender-options pull-left">
+{{#if showCC }}
+<span data-ccfield="cc_addresses" class="cc-option">{{str "LBL_ADD_CC" this.module}}</span>
+{{/if}}
+{{#if showSeperator}}
+<span class="cc-seperator"> | </span>
+{{/if}}
+{{#if showBCC}}
+<span data-ccfield="bcc_addresses" class="bcc-option">{{str "LBL_ADD_BCC" this.module}}</span>
+{{/if}}
+</div>

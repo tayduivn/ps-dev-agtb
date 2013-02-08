@@ -170,8 +170,8 @@
             currID = id || this.model.get("postId") || this.model.get("id"),
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
 
-        if( this.switching ) {
-            // We're currently switching previews, so ignore any pagination click events.
+        if( this.switching || this.collection.models.length < 2) {
+            // We're currently switching previews or we don't have enough models, so ignore any pagination click events.
             return;
         }
         this.switching = true;

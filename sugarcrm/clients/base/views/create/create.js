@@ -41,12 +41,11 @@
         this.model.off("change", null, this);
 
         //duplicate a record
-        if(app.cache.has("duplicate"+this.module)) {
-            _.each(app.cache.get("duplicate"+this.module), function(value, key) {
-                if(key != 'id') this.model.set(key, value);
-            }, this);  
-            app.cache.cut("duplicate"+this.module);
-        }  
+        var duplicate = this.context.get('duplicateModel');
+        if (duplicate) {
+            delete duplicate.id;
+            this.model.set(duplicate);
+        }
         
         //keep track of what post-save action was chosen in case user chooses to ignore dupes
         this.context.lastSaveAction = null;
@@ -98,8 +97,8 @@
      */
     saveAndClose: function() {
         this.initiateSave(_.bind(function() {
-            this.cancel();
             this.alerts.showSuccess();
+            app.drawer.close(true);
         }, this));
     },
 
@@ -107,9 +106,7 @@
      * Handle click on the cancel link
      */
     cancel: function() {
-        this.context.trigger("drawer:hide");
-        if (this.context.parent)
-            this.context.parent.trigger("drawer:hide");
+        app.drawer.close();
     },
 
     /**
@@ -154,6 +151,7 @@
      * @param callback
      */
     initiateSave: function(callback) {
+        this.$('.inline-error').removeClass('inline-error');
         async.waterfall([
             _.bind(this.validateModelWaterfall, this),
             _.bind(this.dupeCheckWaterfall, this),

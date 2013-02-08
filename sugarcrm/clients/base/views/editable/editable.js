@@ -8,7 +8,9 @@
     toggleFields: function(fields, isEdit) {
         var viewName = (isEdit) ? 'edit' : this.action;
         _.each(fields, function(field) {
-
+            if(field.action == viewName){
+                return; //don't toggle if it's the same
+            }
             _.defer(function(field){
                 field.setMode(viewName);
             }, field);

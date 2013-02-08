@@ -1,5 +1,5 @@
-<div class="sugareditable">
+<span class="editable" cid="{{cid}}">
     <span class="click format">
         {{langValue}}
     </span>
-</div>
+</span>
