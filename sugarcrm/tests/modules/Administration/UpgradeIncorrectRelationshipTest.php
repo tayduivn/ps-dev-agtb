@@ -48,7 +48,7 @@ class UpgradeIncorrectRelationshipTest extends Sugar_PHPUnit_Framework_TestCase 
     {
         $testFile = 'custom/Extension/modules/unittest_rel/Ext/Vardefs/bad_relate_example.php';
 
-        $badExample = <<<'EOF'
+        $badExample = <<<EOF
 <?php
 // created: 2013-01-04 17:09:07
 $dictionary["Testrel"]["fields"]["t_person_testrels"] = array (
