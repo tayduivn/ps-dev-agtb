@@ -276,7 +276,8 @@
             opt_out:"LBL_EMAIL_OPT_OUT",
             invalid_email:"LBL_EMAIL_INVALID"
         };
-        _.each(value, function (emailObj, key) {
+        _.each(value, function(emailObj, key) {
+            flagStr = "";
             flagArray = _.map(emailObj, function (flagValue, key) {
                 if (flag2Lbl[key] && flagValue == "1") {
                     return app.lang.get(flag2Lbl[key]);

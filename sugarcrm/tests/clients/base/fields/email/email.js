@@ -132,6 +132,23 @@ describe("Email field", function() {
     });
 
     describe("format and unformat", function() {
+        it("should create flag email strings", function() {
+            var testAddresses =[
+                {
+                    email_address: "test1@test.com",
+                    primary_address: "1"
+                },
+                {
+                    email_address: "test2@test.com",
+                    primary_address: "1",
+                    opt_out: "1"
+                }
+            ];;
+            field.addFlagLabels(testAddresses);
+            expect(testAddresses[0].flagLabel).toEqual("(LBL_EMAIL_PRIMARY)");
+            expect(testAddresses[1].flagLabel).toEqual("(LBL_EMAIL_PRIMARY, LBL_EMAIL_OPT_OUT)");
+        });
+
         it("should make an email address a link when metadata allows for links and the address is not opted out or invalid", function() {
             var emails = [
                     {
@@ -210,7 +227,8 @@ describe("Email field", function() {
                     email_address:   "foo@bar.com",
                     primary_address: "1",
                     hasAnchor:       false,
-                    _wasNotArray:    true
+                    _wasNotArray:    true,
+                    flagLabel: "(LBL_EMAIL_PRIMARY)"
                 },
                 actual;
 
