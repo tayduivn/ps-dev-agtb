@@ -28,9 +28,6 @@
     extendsFrom: 'BaselistView',
 
     initialize: function(options) {
-        _.bindAll(this);
-
-        //turn off sorting & links for dupe check lists
         app.view.views.BaselistView.prototype.initialize.call(this, options);
 
         _.each(this.meta.panels, function(panel) {
