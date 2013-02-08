@@ -4831,6 +4831,12 @@ class SugarBean
             // call the custom business logic
             $this->call_custom_logic("after_delete", $custom_logic_arguments);
         }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $searchEngine->delete($this);
+        //END SUGARCRM flav=pro ONLY        
     }
 
     /**
