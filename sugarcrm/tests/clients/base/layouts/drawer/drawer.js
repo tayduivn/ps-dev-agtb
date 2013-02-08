@@ -1,15 +1,15 @@
 describe("Drawer Layout", function() {
     var moduleName = 'Contacts',
         layoutName = 'drawer',
-        viewName = 'create',
-        sinonSandbox, layout, context;
+        sinonSandbox,
+        $drawers,
+        drawer,
+        components;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
-        SugarTest.loadComponent('base', 'field', 'button');
-        SugarTest.loadComponent('base', 'layout', 'modal');
         SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.addViewDefinition('record', {
@@ -46,116 +46,359 @@ describe("Drawer Layout", function() {
                 }
             ]
         }, moduleName);
-        SugarTest.loadComponent('base', 'view', viewName);
-        SugarTest.testMetadata.addViewDefinition(viewName, {
-            "type":"record",
-            "buttons":[
-                {
-                    "name":"cancel_button",
-                    "type":"button",
-                    "label":"LBL_CANCEL_BUTTON_LABEL",
-                    "css_class":"btn-invisible btn-link"
-                }, {
-                    "name":"restore_button",
-                    "type":"button",
-                    "label":"LBL_RESTORE",
-                    "css_class":"hide btn-invisible btn-link"
-                }, {
-                    "name":"save_create_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_AND_CREATE_ANOTHER",
-                    "css_class":"hide btn-invisible btn-link"
-                }, {
-                    "name":"save_view_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_AND_VIEW",
-                    "css_class":"hide btn-invisible btn-link"
-                }, {
-                    "name":"save_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_BUTTON_LABEL",
-                    "css_class":"disabled"
-                }, {
-                    "name":"sidebar_toggle",
-                    "type":"sidebartoggle"
-                }
-            ]
-        }, moduleName);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
 
         sinonSandbox = sinon.sandbox.create();
 
-        context = SugarTest.app.context.getContext();
-        context.set({
-            module: moduleName,
-            create: true
+        $drawers = $('<div id="drawers"></div>');
+        SugarTest.createLayout('base', moduleName, layoutName, {}, undefined, false, {
+            el: $drawers
         });
-        context.prepare();
 
-        layout = SugarTest.createLayout('base', moduleName, layoutName, {
-            "type": "drawer",
-            "components": [
-                {"view":"create"}
-            ]
-        }, context);
+        drawer = SugarTest.app.drawer;
+        components = drawer._components;
     });
 
     afterEach(function() {
-        SugarTest.app.view.reset();
         SugarTest.testMetadata.dispose();
         sinonSandbox.restore();
+        delete SugarTest.app.drawer;
     });
 
-    describe('Initialization', function() {
-        it("Should not initialize any components", function() {
-            expect(layout._components.length).toBe(0);
-        });
-    });
-
-    describe('Show', function() {
-        it("Should render create view", function() {
-            layout.render();
-            layout.show({});
-
-            expect(layout._components.length).toBe(1);
-            expect(layout._components[0].name).toBe('create');
-        });
-
-        it("Should call _showDrawer", function() {
-            var showDrawerSpy = sinonSandbox.spy(layout, '_showDrawer');
-
-            layout.render();
-            layout.show({});
-
-            expect(showDrawerSpy.calledOnce).toBe(true);
-        });
-
-        it("Should show the drawer", function() {
-            layout.render();
-            layout.show({});
-
-            expect(layout.$el.css('display')).not.toBe('none');
+    describe('Initialize', function() {
+        it('Should not have any components and the close callback should be empty', function() {
+            expect(drawer._components.length).toBe(0);
+            expect(drawer.onCloseCallback.length).toBe(0);
         });
     });
 
-    describe('Hide', function() {
-        it("Should call _showDrawer", function() {
-            var hideDrawerSpy = sinonSandbox.spy(layout, '_hideDrawer');
+    describe('Open', function() {
+        it('Should add drawers every time it is called', function() {
+            sinon.stub(drawer, '_animateOpenDrawer', function(){});
 
-            layout.render();
-            layout.show({});
-            layout.hide();
+            drawer.open({
+                layout: {
+                    "name": "foo",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            });
 
-            expect(hideDrawerSpy.calledOnce).toBe(true);
+            expect(components.length).toBe(1);
+            expect(components[components.length-1].name).toBe('foo');
+
+            drawer.open({
+                layout: {
+                    "name": "bar",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            });
+
+            expect(components.length).toBe(2);
+            expect(components[components.length-1].name).toBe('bar');
+        });
+    });
+
+    describe('Close', function() {
+        it('Should remove drawers every time it is called', function() {
+            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+            sinon.stub(drawer, '_animateCloseDrawer', function(callback){
+                callback();
+            });
+
+            drawer.open({
+                layout: {
+                    "name": "foo",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            });
+            drawer.open({
+                layout: {
+                    "name": "bar",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            });
+
+            expect(components.length).toBe(2);
+            expect(components[components.length-1].name).toBe('bar');
+
+            drawer.close();
+
+            expect(components.length).toBe(1);
+            expect(components[components.length-1].name).toBe('foo');
+
+            drawer.close();
+
+            expect(components.length).toBe(0);
         });
 
-        it("Should hide the drawer", function() {
-            layout.render();
-            layout.show({});
-            layout.hide();
+        it('Should call the onClose callback function', function() {
+            var spy = sinon.spy();
+            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+            sinon.stub(drawer, '_animateCloseDrawer', function(callback){
+                callback();
+            });
 
-            expect(layout.$el.css('display')).toBe('none');
+            drawer.open({
+                layout: {
+                    "name": "foo",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            }, spy);
+
+            expect(drawer.onCloseCallback.length).toBe(1);
+
+            drawer.close('foo');
+
+            expect(spy.calledWith('foo')).toBe(true);
+            expect(drawer.onCloseCallback.length).toBe(0);
+        });
+    });
+
+    describe('Load', function() {
+        it('Should replace the top-most drawer', function() {
+            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+
+            drawer.open({
+                layout: {
+                    "name": "foo",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            });
+
+            expect(components.length).toBe(1);
+            expect(components[components.length-1].name).toBe('foo');
+
+            drawer.load({
+                layout: {
+                    "name": "bar",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            });
+
+            expect(components.length).toBe(1);
+            expect(components[components.length-1].name).toBe('bar');
+        });
+    });
+
+    describe('Reset', function() {
+        it('Should remove all drawers', function() {
+            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            expect(drawer._components.length).toBe(2);
+            expect(drawer.onCloseCallback.length).toBe(2);
+
+            drawer.reset();
+
+            expect(drawer._components.length).toBe(0);
+            expect(drawer.onCloseCallback.length).toBe(0);
+        });
+    });
+
+    describe('_getDrawers(true)', function() {
+        var $contentEl, $mainDiv;
+
+        beforeEach(function() {
+            $contentEl = SugarTest.app.$contentEl;
+            $mainDiv = $('<div></div>');
+
+            SugarTest.app.$contentEl = $('<div id="content"></div>').append($mainDiv);
+            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+        });
+
+        afterEach(function() {
+            SugarTest.app.$contentEl = $contentEl;
+        });
+
+        it('Should return no drawers when there are none opened', function() {
+            var result = drawer._getDrawers(true);
+
+            expect(result.$next).not.toBeDefined();
+            expect(result.$top).not.toBeDefined();
+            expect(result.$bottom).not.toBeDefined();
+        });
+
+        it('Should return the correct drawers when there is one open', function() {
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            var result = drawer._getDrawers(true);
+
+            expect(result.$next.is(components[components.length-1].$el)).toBe(true);
+            expect(result.$top.is($mainDiv)).toBe(true);
+            expect(result.$bottom).not.toBeDefined();
+        });
+
+        it('Should return the correct drawers when there are two open', function() {
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            var result = drawer._getDrawers(true);
+
+            expect(result.$next.is(components[components.length-1].$el)).toBe(true);
+            expect(result.$top.is(components[components.length-2].$el)).toBe(true);
+            expect(result.$bottom.is($mainDiv)).toBe(true);
+        });
+
+        it('Should return the correct drawers when there are three open', function() {
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            var result = drawer._getDrawers(true);
+
+            expect(result.$next.is(components[components.length-1].$el)).toBe(true);
+            expect(result.$top.is(components[components.length-2].$el)).toBe(true);
+            expect(result.$bottom.is(components[components.length-3].$el)).toBe(true);
+        });
+    });
+
+    describe('_getDrawers(false)', function() {
+        var $contentEl, $mainDiv;
+
+        beforeEach(function() {
+            $contentEl = SugarTest.app.$contentEl;
+            $mainDiv = $('<div></div>');
+
+            SugarTest.app.$contentEl = $('<div id="content"></div>').append($mainDiv);
+            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+        });
+
+        afterEach(function() {
+            SugarTest.app.$contentEl = $contentEl;
+        });
+
+        it('Should return no drawers when there are none opened', function() {
+            var result = drawer._getDrawers(false);
+
+            expect(result.$next).not.toBeDefined();
+            expect(result.$top).not.toBeDefined();
+            expect(result.$bottom).not.toBeDefined();
+        });
+
+        it('Should return the correct drawers when there is one open', function() {
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            var result = drawer._getDrawers(false);
+
+            expect(result.$next).not.toBeDefined();
+            expect(result.$top.is(components[components.length-1].$el)).toBe(true);
+            expect(result.$bottom.is($mainDiv)).toBe(true);
+        });
+
+        it('Should return the correct drawers when there are two open', function() {
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            var result = drawer._getDrawers(false);
+
+            expect(result.$next.is($mainDiv)).toBe(true);
+            expect(result.$top.is(components[components.length-1].$el)).toBe(true);
+            expect(result.$bottom.is(components[components.length-2].$el)).toBe(true);
+        });
+
+        it('Should return the correct drawers when there are three open', function() {
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            var result = drawer._getDrawers(false);
+
+            expect(result.$next.is(components[components.length-3].$el)).toBe(true);
+            expect(result.$top.is(components[components.length-1].$el)).toBe(true);
+            expect(result.$bottom.is(components[components.length-2].$el)).toBe(true);
+        });
+    });
+
+    describe('_isMainAppContent()', function() {
+        var $contentEl, $mainDiv;
+
+        beforeEach(function() {
+            $contentEl = SugarTest.app.$contentEl;
+            $mainDiv = $('<div></div>');
+
+            SugarTest.app.$contentEl = $('<div id="content"></div>').append($mainDiv);
+            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+        });
+
+        afterEach(function() {
+            SugarTest.app.$contentEl = $contentEl;
+        });
+
+        it('Should return false for a drawer', function() {
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            expect(drawer._isMainAppContent(components[components.length-1].$el)).toBe(false);
+        });
+
+        it('Should return true for the main application content area', function() {
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+
+            expect(drawer._isMainAppContent($mainDiv)).toBe(true);
         });
     });
 });

@@ -58,11 +58,6 @@ class ForecastWorksheet extends SugarBean
      */
     public function saveWorksheet($check_notify = false)
     {
-        $commitForecast = true;
-        if ($this->draft == 1) {
-            $commitForecast = false;
-        }
-
         $opp_id = $this->findOpportunityId();
 
         //Update the Opportunities bean -- should update the product line item as well through SaveOverload.php
@@ -76,38 +71,6 @@ class ForecastWorksheet extends SugarBean
         $opp->worst_case = $this->worst_case;
         $opp->commit_stage = $this->commit_stage;
         $opp->save($check_notify);
-
-        if ($commitForecast) {
-            // find the product
-            /* @var $product Product */
-            $product = BeanFactory::getBean('Products');
-            $product->retrieve_by_string_fields(array(
-                    'opportunity_id'=>$opp->id
-                ));
-
-            //Update the Worksheet bean
-            /* @var $worksheet Worksheet */
-            $worksheet = BeanFactory::getBean('Worksheet');
-            $worksheet->retrieve_by_string_fields(array(
-                    'related_id' => $product->id,
-                    'related_forecast_type' => 'Product',
-                    'forecast_type' => 'Direct'
-            ));
-            $worksheet->timeperiod_id = $this->timeperiod_id;
-            $worksheet->user_id = $this->assigned_user_id;
-            $worksheet->best_case = $this->best_case;
-            $worksheet->likely_case = $this->likely_case;
-            $worksheet->worst_case = $this->worst_case;
-            $worksheet->op_probability = $this->probability;
-            $worksheet->commit_stage = $this->commit_stage;
-            $worksheet->forecast_type = 'Direct';
-            $worksheet->related_forecast_type = 'Product';
-            $worksheet->related_id = $product->id;
-            $worksheet->currency_id = $this->currency_id;
-            $worksheet->base_rate = $this->base_rate;
-            $worksheet->version = 1; // default it to 1 as it will always be on since this is always
-            $worksheet->save($check_notify);
-        }
     }
 
     /**
@@ -197,6 +160,10 @@ class ForecastWorksheet extends SugarBean
         $this->save(false);
 
 
+        // remove the relationship if it exists as it could cause errors with the cached beans in the BeanFactory
+        if(isset($opp->products)) {
+            unset($opp->products);
+        }
         // now save all related products to the opportunity
         // commit every product associated with the Opportunity
         $products = $opp->get_linked_beans('products', 'Products');

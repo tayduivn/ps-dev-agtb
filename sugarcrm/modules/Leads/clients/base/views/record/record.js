@@ -27,14 +27,12 @@
     },
 
     initiateDrawer: function() {
-        this.layout.trigger("drawer:lead:convert:fire", {
-            components: [{
-                layout : "convert",
-                context: {
-                    module: 'Leads',
-                    leadsModel: this.model
-                }
-            }]
-        }, this);
+        app.drawer.open({
+            layout : "convert",
+            context: {
+                module: 'Leads',
+                leadsModel: this.model
+            }
+        });
     }
 })

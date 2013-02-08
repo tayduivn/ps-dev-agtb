@@ -74,7 +74,6 @@ class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
         $returnValue = $sugarSpot->searchAndDisplay('','');
 
         $this->assertRegExp('/Bar/',$returnValue);
-        $this->assertRegExp('/DCMenu\.showQuickView\s*?\(\'Foo\'/',$returnValue);
     }
 
     /**

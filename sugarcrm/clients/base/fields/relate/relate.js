@@ -84,13 +84,11 @@
                 }).on("searchmore", function() {
                     self.beforeSearchMore();
                     self.setValue({id: '', value: ''});
-                    self.view.layout.trigger("drawer:selection:fire", {
-                        components: [{
-                            layout : 'selection-list',
-                            context: {
-                                module: self.getSearchModule()
-                            }
-                        }]
+                    app.drawer.open({
+                        layout : 'selection-list',
+                        context: {
+                            module: self.getSearchModule()
+                        }
                     }, self.setValue);
                 }).on("change", function(e) {
                     var id = e.val,
@@ -105,9 +103,11 @@
     },
     beforeSearchMore: function() {},
     setValue: function(model) {
-        var silent = model.silent || false;
-        this.model.set(this.def.id_name, model.id, {silent: silent});
-        this.model.set(this.def.name, model.value, {silent: silent});
+        if (model) {
+            var silent = model.silent || false;
+            this.model.set(this.def.id_name, model.id, {silent: silent});
+            this.model.set(this.def.name, model.value, {silent: silent});
+        }
     },
     /**
      * {@inheritdoc}

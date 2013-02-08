@@ -210,8 +210,12 @@
                 this.updateTotals(this.savedTotal);
             }
         }, this);
+        this.collection.on('data:sync:start', function() {
+            // when a request start up, tell the class that the fetch is running
+            this.runningFetch = true;
+        }, this);
 
-        if(this.context && this.context) {
+        if(this.context) {
             this.context.on("change:selectedUser", function(context, user) {
                 self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
                 self.selectedUser = user;              
@@ -258,10 +262,9 @@
             var worst = {};
             // get the last committed value
             var previousCommit = null;
-            if(!_.isEmpty(this.collection.models))
-            {
+            if(!_.isEmpty(this.collection.models)) {
                previousCommit = _.first(this.collection.models);
-            } else {              
+            } else {
                previousCommit = new Backbone.Model({
                     best_case : 0,
                     likely_case : 0,
@@ -326,9 +329,7 @@
      */
     getColorArrow: function(newValue, currentValue)
     {
-        var cls = '';
-
-        cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+        var cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
         cls = (newValue == currentValue) ? '' : cls;
 
         return cls
@@ -341,25 +342,6 @@
      */
     commitForecast: function() {
         var self = this;
-        var worksheetData = {};
-        worksheetData["new"] = {};
-        worksheetData["current"] = {};
-        
-        var currentWorksheet = self.context.get("currentWorksheet");
-        
-        if(currentWorksheet == "worksheet"){
-        	var worksheetDataCurrent = [];
-        	var worksheetDataNew = [];
-        	_.each(self.context[currentWorksheet].models, function(item){
-    			if(_.isEmpty(item.get("worksheet_id"))){
-        			worksheetDataNew.push(item.attributes);
-        		}
-        		else{
-        			worksheetDataCurrent.push(item.attributes);
-        		}        		
-        	});
-        	worksheetData = {"current": worksheetDataCurrent, "new": worksheetDataNew};
-        } 
         
         self.context.trigger("forecasts:commitButtons:disabled");
 
@@ -389,7 +371,6 @@
         forecastData.forecast_type = self.forecastType;
         forecastData.amount = self.totals.amount;
         forecastData.opp_count = self.totals.included_opp_count;
-        forecastData.worksheetData = worksheetData;
 
         // apply data to model then save
         forecast.set(forecastData);

@@ -21,7 +21,7 @@
 
 describe("The forecasts worksheet", function(){
 
-    var app, view, field, _renderFieldStub, testMethodStub, testValue;
+    var app, view, testMethodStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -41,9 +41,12 @@ describe("The forecasts worksheet", function(){
                 ranges: {}
             };
 
+        var collection = new Backbone.Collection();
+        sinon.stub(collection, 'fetch');
+
         var context = app.context.getContext();
         context.set({'selectedTimePeriod' : new Backbone.Model({'id' : 'fake_id'})});
-        context.worksheet = new Backbone.Collection();
+        context.set({'collection' : collection});
         context.config = new (Backbone.Model.extend({
             "defaults": fixtures.metadata.modules.Forecasts.config
         }));
@@ -52,7 +55,7 @@ describe("The forecasts worksheet", function(){
             panels : [{'fields' : []}]
         };
 
-        view = SugarTest.createView('../modules/Forecasts/clients/base', 'Forecasts', "forecastsWorksheet", meta, context);
+        view = SugarTest.createView('base', 'Forecasts', 'forecastsWorksheet', meta, context, true);
 
         // remove the window watcher event
         $(window).unbind("beforeunload");
@@ -60,6 +63,7 @@ describe("The forecasts worksheet", function(){
 
     afterEach(function() {
         app.user.unset('id');
+        view.collection.fetch.restore();
         view.unbindData();
     });
 
@@ -116,38 +120,38 @@ describe("The forecasts worksheet", function(){
     });
    
     describe("Forecast Worksheet collection.fetch", function(){
-    	beforeEach(function(){
-    		view._collection.fetch = function(){};
-    	});
-    	 
-    	afterEach(function(){
-    	
-    	});
-    	
-    	it("should not have been called with safeFetch(false) ", function(){
-    		sinon.spy(view._collection, "fetch");
-    		view.safeFetch(false);
-    		expect(view._collection.fetch).not.toHaveBeenCalled();
-    	});
-    	
-    	it("should have been called with safeFetch(true) ", function(){
-    		sinon.spy(view._collection, "fetch");
-    		view.safeFetch();
-    		expect(view._collection.fetch).toHaveBeenCalled();
-    	});
+        beforeEach(function(){
+            view.collection.fetch = function(){};
+        });
+         
+        afterEach(function(){
+        
+        });
+        
+        it("should not have been called with safeFetch(false) ", function(){
+            sinon.spy(view.collection, "fetch");
+            view.safeFetch(false);
+            expect(view.collection.fetch).not.toHaveBeenCalled();
+        });
+        
+        it("should have been called with safeFetch(true) ", function(){
+            sinon.spy(view.collection, "fetch");
+            view.safeFetch();
+            expect(view.collection.fetch).toHaveBeenCalled();
+        });
     });
 
     describe('Forecasts Worksheet Dirty Models', function() {
         var m;
         beforeEach(function(){
             m = new Backbone.Model({'hello' : 'world'});
-            view._collection.add(m);
-    	});
+            view.collection.add(m);
+        });
 
-    	afterEach(function(){
-            view._collection.reset();
+        afterEach(function(){
+            view.collection.reset();
             m = undefined;
-    	});
+        });
 
         it('isDirty should return false', function() {
             expect(view.isDirty()).toBeFalsy();
@@ -161,7 +165,7 @@ describe("The forecasts worksheet", function(){
         it('should not be dirty after main collection reset', function() {
             m.set({'hello' : 'jon1'});
             expect(view.isDirty()).toBeTruthy();
-            view._collection.reset();
+            view.collection.reset();
             expect(view.isDirty()).toBeFalsy();
         })
     });
@@ -171,14 +175,14 @@ describe("The forecasts worksheet", function(){
         beforeEach(function(){
             m = new Backbone.Model({'hello' : 'world'});
             saveStub = sinon.stub(m, 'save', function(){});
-            view._collection.add(m);
-    	});
+            view.collection.add(m);
+        });
 
-    	afterEach(function(){
-            view._collection.reset();
+        afterEach(function(){
+            view.collection.reset();
             saveStub.restore();
             m = undefined;
-    	});
+        });
 
         it('should return zero with no dirty models', function() {
             expect(view.saveWorksheet()).toEqual(0);
@@ -197,15 +201,15 @@ describe("The forecasts worksheet", function(){
             m = new Backbone.Model({'hello' : 'world'});
             saveStub = sinon.stub(m, 'save', function(){});
             safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
-            view._collection.add(m);
-    	});
+            view.collection.add(m);
+        });
 
-    	afterEach(function(){
-            view._collection.reset();
+        afterEach(function(){
+            view.collection.reset();
             saveStub.restore();
             safeFetchStub.restore();
             m = undefined;
-    	});
+        });
 
         it('model should contain the old timeperiod id', function() {
             m.set({'hello':'jon1'});
@@ -226,17 +230,14 @@ describe("The forecasts worksheet", function(){
             m = new Backbone.Model({'hello' : 'world'});
             saveStub = sinon.stub(m, 'save', function(){});
             safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
-            view._collection.add(m);
-            viewStub = sinon.stub(view._collection, 'fetch', function(){});
+            view.collection.add(m);
+        });
 
-    	});
-
-    	afterEach(function(){
-            view._collection.reset();
+        afterEach(function(){
             saveStub.restore();
             safeFetchStub.restore();
             m = undefined;
-    	});
+        });
 
         it('model should contain the old userid', function() {
             m.set({'hello':'jon1'});
@@ -253,71 +254,57 @@ describe("The forecasts worksheet", function(){
 
     
     describe("Forecasts worksheet bindings ", function(){
-    	beforeEach(function(){
-    		sinon.spy(view.context, "on");
-    		sinon.spy(view.context.worksheet, "on");
-    		sinon.spy(view.context.config, "on");
-    		view.bindDataChange();
-    	});
-    	
-    	afterEach(function(){
-    		view.context.on.restore();
-    		view.context.worksheet.on.restore();
-    		view.context.config.on.restore();
-    	});
-    	
-    	it("collection.on should have been called with reset", function(){
-    		expect(view._collection.on).toHaveBeenCalledWith("reset");
-    	});
-    	
-    	it("forecasts.on should have been called with selectedUser", function(){
-    		expect(view.context.on).toHaveBeenCalledWith("change:selectedUser");
-    	});
-    	
-    	it("forecasts.on should have been called with selectedTimePeriod", function(){
-    		expect(view.context.on).toHaveBeenCalledWith("change:selectedTimePeriod");
-    	});
-    	
-    	it("forecasts.on should have been called with selectedRanges", function(){
-    		expect(view.context.on).toHaveBeenCalledWith("change:selectedRanges");
-    	});
-    	
-    	it("forecasts.worksheet.on should have been called with change", function(){
-    		expect(view.context.worksheet.on).toHaveBeenCalledWith("change");
-    	});
-    	
-    	it("forecasts.on should have been called with forecasts:committed:saved", function(){
-    		expect(view.context.on).toHaveBeenCalledWith("forecasts:committed:saved");
-    	});
-    	
-    	it("forecasts.on should have been called with forecasts:commitButtons:enabled", function(){
-    		expect(view.context.on).toHaveBeenCalledWith("forecasts:commitButtons:enabled");
-    	});
-    	
-    	it("forecasts.on should have been called with forecasts:commitButtons:disabled", function(){
-    		expect(view.context.on).toHaveBeenCalledWith("forecasts:commitButtons:disabled");
-    	});
+        beforeEach(function(){
+            sinon.spy(view.collection, "on");
+            sinon.spy(view.context, "on");
+            sinon.spy(view.context.config, "on");
+            view.bindDataChange();
+        });
+        
+        afterEach(function(){
+            view.context.on.restore();
+            view.collection.on.restore();
+            view.context.config.on.restore();
+        });
+        
+        it("collection.on should have been called with reset", function(){
+            expect(view.collection.on).toHaveBeenCalledWith("reset");
+        });
+
+        it("forecasts.worksheet.on should have been called with change", function(){
+            expect(view.collection.on).toHaveBeenCalledWith("change");
+        });
+        
+        it("forecasts.on should have been called with selectedUser", function(){
+            expect(view.context.on).toHaveBeenCalledWith("change:selectedUser");
+        });
+        
+        it("forecasts.on should have been called with selectedTimePeriod", function(){
+            expect(view.context.on).toHaveBeenCalledWith("change:selectedTimePeriod");
+        });
+        
+        it("forecasts.on should have been called with selectedRanges", function(){
+            expect(view.context.on).toHaveBeenCalledWith("change:selectedRanges");
+        });
+        
+        it("forecasts.on should have been called with forecasts:committed:saved", function(){
+            expect(view.context.on).toHaveBeenCalledWith("forecasts:committed:saved");
+        });
+        
+        it("forecasts.on should have been called with forecasts:commitButtons:enabled", function(){
+            expect(view.context.on).toHaveBeenCalledWith("forecasts:commitButtons:enabled");
+        });
+        
+        it("forecasts.on should have been called with forecasts:commitButtons:disabled", function(){
+            expect(view.context.on).toHaveBeenCalledWith("forecasts:commitButtons:disabled");
+        });
 
         /*
          * Skip this test.  Expected Opportunities is not a part of nutmeg
          */
-    	xit("forecasts.on should have been called with expectedOpportunities", function(){
-    		expect(view.context.on).toHaveBeenCalledWith("change:expectedOpportunities");
-    	});  	
-    	
-        // TODO: tagged for 6.8 see SFA-253 for details
-    	xit("forecasts.config.on should have been called with show_worksheet_likely", function(){
-    		expect(view.context.config.on).toHaveBeenCalledWith("change:show_worksheet_likely");
-    	});
+        xit("forecasts.on should have been called with expectedOpportunities", function(){
+            expect(view.context.on).toHaveBeenCalledWith("change:expectedOpportunities");
+        });      
 
-        // TODO: tagged for 6.8 see SFA-253 for details
-    	xit("forecasts.config.on should have been called with show_worksheet_best", function(){
-    		expect(view.context.config.on).toHaveBeenCalledWith("change:show_worksheet_best");
-    	});
-
-        // TODO: tagged for 6.8 see SFA-253 for details
-    	xit("forecasts.config.on should have been called with show_worksheet_worst", function(){
-    		expect(view.context.config.on).toHaveBeenCalledWith("change:show_worksheet_worst");
-    	});
     });
 });

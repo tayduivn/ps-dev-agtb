@@ -173,7 +173,6 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
-        if(this.context.worksheet) this.context.worksheet.off(null, null, this);
         if(this.context.worksheetmanager) this.context.worksheetmanager.off(null, null, this);
         if(this.context) this.context.off(null, null, this);
         if(this.values) this.values.off(null, null, this);
