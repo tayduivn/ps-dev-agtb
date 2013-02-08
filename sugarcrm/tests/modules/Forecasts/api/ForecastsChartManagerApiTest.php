@@ -138,7 +138,6 @@ class ForecastsChartManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         return $this->chartApi->chart($this->_getServiceMock(self::$manager['user']), $args);
-
     }
 
     /**
