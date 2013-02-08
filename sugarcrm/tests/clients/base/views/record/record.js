@@ -169,7 +169,7 @@ describe("Record View", function() {
             view.model.trigger('error:validation', {description: {required : true}});
             //Defer expectations since decoration is deferred
             _.defer(function(stub){
-                expect(stub.toHaveBeenCalledWith({required: true})).toBe("true");
+                expect(stub.calledWithExactly({required: true})).toBe(true);
                 stub.restore();
             }, stub);
 
