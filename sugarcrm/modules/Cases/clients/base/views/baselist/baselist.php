@@ -38,12 +38,14 @@ $viewdefs['Cases']['base']['view']['baselist'] = array(
                     'name' => 'case_number',
                     'label' => 'LBL_LIST_NUMBER',
                     'width' =>  5,
+                    'default' => true
                 ),
                 array(
                     'name' => 'name',
                     'label' => 'LBL_LIST_SUBJECT',
                     'width' =>  25,
                     'link' => true,
+                    'default' => true
                 ),
                 array(
                     'name' => 'account_name',
@@ -54,37 +56,42 @@ $viewdefs['Cases']['base']['view']['baselist'] = array(
                     'ACLTag' => 'ACCOUNT',
                     'related_fields' => array('account_id'),
                     'link' => true,
-                    'default' => true,
+                    'default' => true
                 ),
                 array(
                     'name' => 'priority',
                     'label' => 'LBL_LIST_PRIORITY',
                     'width' =>  10,
+                    'default' => true
                 ),
-                array(               
+                array(
                     'name' => 'status',
                     'label' => 'LBL_STATUS',
                     'width' =>  10,
+                    'default' => true
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'team_name',
-                    'label' => 'LBL_LIST_TEAM',
-                    'width' =>  10,
-                ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
                     'label' => 'LBL_ASSIGNED_TO_NAME',
                     'width' =>  10,
                     'module' => 'Employees',
                     'id' => 'ASSIGNED_USER_ID',
+                    'default' => true
                 ),
                 array (
                     'name' => 'date_entered',
                     'label' => 'LBL_DATE_ENTERED',
                     'width' => 10,
+                    'default' => true
                 ),
+                //BEGIN SUGARCRM flav=pro ONLY
+                array(
+                    'name' => 'team_name',
+                    'label' => 'LBL_LIST_TEAM',
+                    'width' =>  10,
+                    'default' => false
+                ),
+                //END SUGARCRM flav=pro ONLY
             ),
         )
     )
