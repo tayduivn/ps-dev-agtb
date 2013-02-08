@@ -56,7 +56,8 @@
       clearMenus()
       !isActive && $parent.toggleClass('open')
 
-      return false
+      return false;
+
     }
 
   }

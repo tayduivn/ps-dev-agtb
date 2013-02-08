@@ -156,6 +156,8 @@ $mod_strings = array (
 	'LBL_USE_TEMPLATE'			=> 'Use Template:',
 	'LBL_USERS_SUBPANEL_TITLE'	=> 'Users',
 	'LBL_USERS'					=> 'Users',
+    'LBL_UPLOAD_ATTACHMENT'     => 'Upload New',
+    'LBL_ATTACH_SUGAR_DOC'      => 'Attach Sugar Doc',
 
 	'LNK_ALL_EMAIL_LIST'		=> 'All Emails',
 	'LNK_ARCHIVED_EMAIL_LIST'	=> 'Archived Emails',
