@@ -62,22 +62,4 @@ describe("Base.Field.Parent", function() {
         expect(actual_name).toEqual(expected_name);
         expect(actual_module).toEqual(expected_module);
     });
-
-    it("should render the hidden value when a user doesn't have access to the data", function() {
-        sinonSandbox.stub(SugarTest.app.acl, 'hasAccess', function() {
-            return true;
-        });
-        var expected = field.model.get(field.def.name);
-        field.render();
-        expect(field.value).toEqual(expected);
-
-        sinonSandbox.restore();
-
-        sinonSandbox.stub(SugarTest.app.acl, 'hasAccess', function() {
-            return false;
-        });
-
-        field.render();
-        expect(field.value).toEqual(field.hiddenValue);
-    });
 });
