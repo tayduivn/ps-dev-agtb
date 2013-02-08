@@ -57,6 +57,7 @@
                         </div>
                     </div>
                 </div>
+                <div id="drawers"></div>
                 <div id="footer"></div>
                 <div id="tourguide"></div>
 			</div>

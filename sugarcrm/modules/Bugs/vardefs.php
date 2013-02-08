@@ -348,20 +348,22 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
    array('lhs_module'=> 'Releases', 'lhs_table'=> 'releases', 'lhs_key' => 'id',
    'rhs_module'=> 'Bugs', 'rhs_table'=> 'bugs', 'rhs_key' => 'fixed_in_release',
    'relationship_type'=>'one-to-many')
-
 ),
 
-    'duplicate_check' => array('FilterDuplicateCheck' => array(
-        'filter_template' => array(
-            array('$and' => array(
-                array('name' => array('$starts' => '$name')),
-                array('status' => array('$not_equals' => 'Closed')),
-            ))
-        ),
-        'ranking_fields' => array(
-            array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
+    'duplicate_check' => array(
+        'enabled' => true,
+        'FilterDuplicateCheck' => array(
+            'filter_template' => array(
+                array('$and' => array(
+                    array('name' => array('$starts' => '$name')),
+                    array('status' => array('$not_equals' => 'Closed')),
+                ))
+            ),
+            'ranking_fields' => array(
+                array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
+            )
         )
-    )),
+    ),
 
     //This enables optimistic locking for Saves From EditView
 	'optimistic_locking'=>true,

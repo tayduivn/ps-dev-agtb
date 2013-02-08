@@ -36,7 +36,7 @@ $viewdefs['base']['view']['selection-actions'] = array(
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'events' => array(
                 'click' => 'function(evt) {
-                    this.context.parent.trigger("drawer:hide");
+                    app.drawer.close();
                 }'
             ),
         ),

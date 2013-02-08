@@ -42,7 +42,7 @@
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
             if (this.inlineEditMode) {
-                this.previousModelState = this.model.previousAttributes();
+                this.previousModelState = _.clone(this.model.attributes);
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
@@ -308,31 +308,27 @@
     },
 
     duplicateClicked: function() {
-        app.cache.set("duplicate"+this.module, this.model.attributes);
-        this.layout.trigger("drawer:create:fire", {
-            components: [{
-                layout : 'create',
-                context: {
-                    create: true
-                }
-            }]
-        }, this);
+        app.drawer.open({
+            layout : 'create',
+            context: {
+                create: true,
+                duplicateModel: this.model.attributes
+            }
+        });
     },
     
     findDuplicatesClicked: function() {
-        this.layout.trigger("drawer:find-duplicates:fire", {
-            components: [{
-                layout : 'find-duplicates',
-                context: {
-                    dupeCheckModel: this.model,
-                    dupelisttype: 'dupecheck-list-multiselect'
-                }
-            }]
-        }, this);
+        app.drawer.open({
+            layout : 'find-duplicates',
+            context: {
+                dupeCheckModel: this.model,
+                dupelisttype: 'dupecheck-list-multiselect'
+            }
+        });
     },
 
     editClicked: function() {
-        this.previousModelState = this.model.previousAttributes();
+        this.previousModelState = _.clone(this.model.attributes);
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },

@@ -316,6 +316,7 @@ $dictionary['Task'] = array('table' => 'tasks',
     ),
 
     'duplicate_check' => array(
+        'enabled' => false,
         'FilterDuplicateCheck' => array(
             'filter_template' => array(
                 array('$and' => array(

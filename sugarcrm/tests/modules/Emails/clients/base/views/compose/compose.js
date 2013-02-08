@@ -180,7 +180,7 @@ describe("Emails.Views.Compose", function() {
 
         beforeEach(function() {
             apiCallStub = sinon.stub(app.api, 'call', function(method, myURL, model, options) {
-                options.success();
+                options.success(model, null, options);
             });
             alertShowStub = sinon.stub(app.alert, 'show');
             alertDismissStub = sinon.stub(app.alert, 'dismiss');
