@@ -64,17 +64,6 @@ class MetadataApi extends SugarApi {
     }
 
     /**
-     * Gets a metadata manager for the given platform and visibility
-     * @param ServiceBase $api 
-     * @param array $args
-     * @param bool $public
-     * @return MetaDataManager
-     */
-    protected function getMetadataManager($api, $args, $public = false ) {
-        return MetaDataManager::getManager($this->getPlatform($api, $args), $public);
-    }
-
-    /**
      * Gets the type filter for this request
      * 
      * @param array $args
@@ -137,8 +126,11 @@ class MetadataApi extends SugarApi {
      * @return array
      */
     public function getAllMetadata(ServiceBase $api, array $args) {
+        // Get the metadata manager we need first
+        $mm = MetaDataManager::getManager($api->platform);
+        
         // These are the base metadata sections in private metadata
-        $sections = MetaDataManager::getSections();
+        $sections = $mm->getSections();
         
         // Default the type filter to everything, but filter them if requested
         $typeFilter = $this->getTypeFilter($args, $sections);
@@ -149,10 +141,8 @@ class MetadataApi extends SugarApi {
         // Is this a hash only request?
         $onlyHash = $this->isOnlyHash($args);
         
-        //$this->setPlatformList($api);
-        
         // Get our metadata now
-        $data = $this->getMetadataManager($api, $args)->getMetadata();
+        $data = $mm->getMetadata();
 
         // ETag that bad boy
         generateETagHeader($data['_hash']);
@@ -177,8 +167,11 @@ class MetadataApi extends SugarApi {
      * @return array
      */
     public function getPublicMetadata($api, $args) {
+        // Get the metadata manager we need for this request
+        $mm = MetaDataManager::getManager($api->platform, true);
+        
         // Public metadata sections, no module info at this time
-        $baseChunks = MetaDataManager::getSections(true);
+        $baseChunks = $mm->getSections();
         
         // Set the type filter from the sections
         $typeFilter = $this->getTypeFilter($args, $baseChunks);
@@ -187,7 +180,7 @@ class MetadataApi extends SugarApi {
         $onlyHash = $this->isOnlyHash($args);
         
         // Get the metadata now
-        $data = $this->getMetadataManager($api, $args, true)->getMetadata();
+        $data = $mm->getMetadata();
         generateETagHeader($data['_hash']);
 
         return $this->filterResults($args, $data, $typeFilter, $onlyHash, $baseChunks);

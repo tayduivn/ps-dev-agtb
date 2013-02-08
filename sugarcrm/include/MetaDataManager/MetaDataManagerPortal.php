@@ -22,6 +22,8 @@
  * All Rights Reserved.
  ********************************************************************************/
 require_once 'include/MetaDataManager/MetaDataManager.php';
+require_once 'modules/MySettings/TabController.php';
+require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
 
 class MetaDataManagerPortal extends MetaDataManager
 {
@@ -57,5 +59,18 @@ class MetaDataManagerPortal extends MetaDataManager
         $public['state_dom'] = $main['state_dom'];
         
         return $public;
+    }
+    
+    public function getUserModuleList() {
+        // Use SugarPortalBrowser to get the portal modules that would appear
+        // in Studio
+        $pb = new SugarPortalBrowser();
+        $pb->loadModules();
+        
+        // Now that the portal modules are loaded, cross check them with the 
+        // visible tabs array for the current user
+        $controller = new TabController();
+        $ret = array_intersect_key($controller->get_user_tabs($this->getCurrentUser()), $pb->modules);
+        return array_keys($ret);
     }
 }

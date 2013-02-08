@@ -122,11 +122,6 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
     function save ()
     {
         parent::_save ( $this->relationships, "custom/working/modules/{$this->moduleName}" ) ;
-        
-        // Parent::save() updates the relationship segment of the metadata cache
-        // This handles the module portion of it
-        MetaDataManager::refreshModulesCache(array($this->moduleName));
-        MetaDataManager::refreshSectionCache('relationships');
     }
 
     /*

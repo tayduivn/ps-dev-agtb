@@ -165,7 +165,7 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
         $mdPri = $mmPri->getMetadata();
         $mdPub = $mmPub->getMetadata();
         
-        MetaDataManager::refreshSectionCache('server_info', array('base'));
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_SERVERINFO, array('base'));
         
         // Get the newest metadata, which should be different
         $dataPri = $mmPri->getMetadata();
