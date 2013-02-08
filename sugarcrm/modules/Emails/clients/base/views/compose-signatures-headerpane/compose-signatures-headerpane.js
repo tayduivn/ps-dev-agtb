@@ -32,11 +32,29 @@
         "click [name=cancel_button]": "_cancel"
     },
 
+    /**
+     * The user clicked the Done button so trigger an event to insert the selected signature into the message body and
+     * then close the drawer.
+     *
+     * @private
+     */
     _done: function() {
-        //TODO: trigger an event to insert the selected signature into the message body
+        if (this.context.parent) {
+            var signature = this.context.get("selection_model");
+
+            if (signature.id) {
+                this.context.parent.trigger("compose:signature:insert", signature.id);
+            }
+        }
+
         this._cancel();
     },
 
+    /**
+     * Close the drawer.
+     *
+     * @private
+     */
     _cancel: function() {
         this.context.clear();
     }
