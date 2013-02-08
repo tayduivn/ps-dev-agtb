@@ -210,7 +210,7 @@ $admin_group_header[]= array('LBL_BUG_TITLE','',false,$admin_option_defs, 'LBL_B
 //Forecasting
 
 $admin_option_defs=array();
-$admin_option_defs['Forecasts']['forecast_setup']= array('ForecastReports','LBL_MANAGE_FORECASTS_TITLE','LBL_MANAGE_FORECASTS','./index.php?module=Forecasts&action=index#config');
+$admin_option_defs['Forecasts']['forecast_setup']= array('ForecastReports','LBL_MANAGE_FORECASTS_TITLE','LBL_MANAGE_FORECASTS', 'javascript:parent.SUGAR.App.router.navigate("Forecasts/layout/config", {trigger: true});');
 $admin_group_header[]= array('LBL_FORECAST_TITLE','',false,$admin_option_defs, 'LBL_FORECAST_DESC');
 
 
