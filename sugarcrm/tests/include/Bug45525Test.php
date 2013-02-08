@@ -47,8 +47,6 @@ class Bug45525 extends Sugar_PHPUnit_Framework_TestCase
 
       require_once 'include/utils.php';
 
-      $file =
-
       file_put_contents($this->testLangFile, '<?php
         $app_list_strings[\'TestList\'] = array(\'D\' => \'Option D\');
         ?>');
