@@ -27,26 +27,26 @@
 ({
     /**
      * Date widget
-     * 
+     *
      * Base implementation for widgets that will use the datepicker. Provides core functionality
      * which can be extended as follows:
      * <pre><code>
      * extendsFrom:'DateField',
-     * 
+     *
      * // Derived must also implement method: _setDateIfDefaultValue
      * _setDateIfDefaultValue: function() {}
      * </code></pre>
-     * 
+     *
      * Derived widgets should set stripIsoTZ to indicate whether ISO 8601 Timezone information should
      * be stripped from dates or left in tact.
-     * 
+     *
      * Any methods defined in date.js may called from derived classes and should work as expected. If
      * core methods like _render, initialize, etc., are overriden, you should consider calling this
      * parent at some point in overriden method. For exmaple, in a DateChild widget you may do:
      * <pre><code>
      * _render:function(value) {
      *     this.doSpecialPreParentInitialization();
-     *     app.view.fields.DateField.prototype._render.call(this);// Beware to use: app.view.fields 
+     *     app.view.fields.DateField.prototype._render.call(this);// Beware to use: app.view.fields
      *     // as it's easy to forget and do app.view.views (notice views not fields at end!)
      *     this.doSomethingElseAfterParentInitialization();
      * },
@@ -55,13 +55,16 @@
     datepickerVisible: false,
 
     // used by hbt template
-    dateValue: '', 
+    dateValue: '',
 
     // date format (for just the date part) that the server expects
     serverDateFormat: 'Y-m-d',
 
-    // If true, attempts to strip off ISO 8601 TZ related info 
+    // If true, attempts to strip off ISO 8601 TZ related info
     stripIsoTZ: true,
+
+    // If invalid date flag to leave so sidecar validation will catch downstream
+    leaveDirty: false,
 
     /**
      * Base initialization
@@ -95,16 +98,16 @@
         this.dateValue = this.$('.datepicker').val();
         this.dateValue = (this.dateValue) ? this.dateValue : '';
 
-        // Only if object has a _setTimeValue 
+        // Only if object has a _setTimeValue
         if (!_.isUndefined(this._setTimeValue) && _.isFunction(this._setTimeValue)) {
             this._setTimeValue();
         }
     },
     /**
-     * Set up the Datepicker 
+     * Set up the Datepicker
      */
     _setupDatepicker: function() {
-        this.datepickerMap = this._patchDatepickerMeta(); // converts com_cal_* to languageDictionary 
+        this.datepickerMap = this._patchDatepickerMeta(); // converts com_cal_* to languageDictionary
         this.$(".datepicker").attr('placeholder', app.date.toDatepickerFormat(this.usersDatePrefs));
 
         /* TODO: Remove all this once satisfied language injection works properly ;)
@@ -113,7 +116,7 @@
             daysShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
             daysMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"],
             months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-            monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"] 
+            monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
         };*/
         this.$(".datepicker").datepicker({
             //languageDictionary: spanishLangExample, // TODO: remove this too!
@@ -138,7 +141,7 @@
      */
     hideDatepicker: function(ev) {
         var model     = this.model,
-            fieldName = this.name, 
+            fieldName = this.name,
             timeValue = '',
             hrsMins   = {},
             dateValue = '',
@@ -148,7 +151,7 @@
         model      = this.model;
         fieldName  = this.name;
 
-        // Only if object has a _setTimepickerValue 
+        // Only if object has a _setTimepickerValue
         if (!_.isUndefined(this._setTimepickerValue) && _.isFunction(this._setTimepickerValue)) {
             $timepicker= this.$('.ui-timepicker-input');
             // Get time values. If none, set to default of midnight; also get date, set model, etc.
@@ -165,8 +168,10 @@
         // If date isn't good we set it raw and let sidecar catch upstream in validation. Also, we don't
         // want to trigger a re-render so we use silent: true (but still trigger change on the model itself once done)
         if (this._verifyDateString(dateValue)) {
+            this.leaveDirty = false;
             model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
         } else {
+            this.leaveDirty = true;//leave invalid date value alone so sidecar can catch on validation
             model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes, {silent: true});
         }
         this.model.trigger("change");
@@ -176,7 +181,7 @@
         // First try generic date parse (since we might have an ISO). This should generally work with the
         // ISO date strings we get from server.
         if(_.isNaN(Date.parse(value))) {
-            // use datepicker plugin to verify datepicker format 
+            // use datepicker plugin to verify datepicker format
             return $.prototype.DateVerifier(value, dateFormat);
         }
         return true;
@@ -188,8 +193,8 @@
     },
     /**
      * Gets the current datepicker value.
-     * 
-     * Note: If we have no date (e.g. display default was set to none), when the 
+     *
+     * Note: If we have no date (e.g. display default was set to none), when the
      * user selects time part, date part will be pre-filled with today's date.
      */
     _getDatepickerValue: function() {
@@ -201,24 +206,24 @@
     },
     /**
      * Sets the current datepicker value.
-     * @param String dateValue date value 
+     * @param String dateValue date value
      */
     _setDatepickerValue: function(dateValue) {
         var date = this.$('input.datepicker');
         dateValue = this._getTodayDateStringIfNoDate(dateValue);
-        date.prop('value', dateValue); 
+        date.prop('value', dateValue);
     },
     /**
      * Set the date string for REST Api. If stripT
      * @param {Date} The date we want formatted
-     * @param {Boolean} Forces the format to just have yyyy-mm-dd 
-     * @return {String} API ready date string 
+     * @param {Boolean} Forces the format to just have yyyy-mm-dd
+     * @return {String} API ready date string
      */
     _setServerDateString: function(jsDate, forceToDate) {
         var h, m, d;
 
         /**
-         * If we don't want the timezone info we get something like: 2012-12-31T01:30:00 
+         * If we don't want the timezone info we get something like: 2012-12-31T01:30:00
          * which the server will honor. With timezone will be like: "2012-12-31T01:30:00.814Z"
          */
 
@@ -226,7 +231,7 @@
 
         // Server wants this to be in yyyy-mm-dd format (TimeDate.php fromIsoDate wants it this way)
         if (forceToDate) {
-            return d; 
+            return d;
         }
         if (this.stripIsoTZ) {
             d = app.date.format(jsDate, this.serverDateFormat);
@@ -235,7 +240,6 @@
             return d + 'T' + h + ':' + m + ':00';
         }
         if (_.isFunction(jsDate.toISOString)) {
-            
             // With timezone info
             return jsDate.toISOString();
         }
@@ -244,14 +248,14 @@
     /**
      * Checks if dateStringToCheck is falsy..if so, returns today's date as string formatted by
      * user's prefs. Otherwise, just returns dateStringToCheck.
-     * @param {String} dateStringToCheck Date string 
+     * @param {String} dateStringToCheck Date string
      * @return {String} Date string
      */
     _getTodayDateStringIfNoDate: function(dateStringToCheck) {
         if (!dateStringToCheck) {
             var d = new Date();
             return app.date.format(d, this.usersDatePrefs);
-        } 
+        }
         return dateStringToCheck;
     },
     /**
@@ -264,7 +268,7 @@
     /**
      * Determines if this view is edit view.
      * @param {String} The view name
-     * @return Boolean true if edit view 
+     * @return Boolean true if edit view
      */
     _isEditView: function(viewName) {
         if(this.options.def.view === 'edit' || this.options.viewName === 'edit' || viewName === 'edit') {
@@ -275,16 +279,16 @@
 
     // Patches our dom_cal_* metadata for use with our datepicker plugin since they're very similar.
     _patchDatepickerMeta: function() {
-        var pickerMap = [], pickerMapKey, calMapIndex, mapLen, domCalKey, 
+        var pickerMap = [], pickerMapKey, calMapIndex, mapLen, domCalKey,
             calProp, appListStrings, calendarPropsMap, i, filterIterator;
 
         appListStrings = app.metadata.getStrings('app_list_strings');
 
-        filterIterator = function(v, k, l) { 
+        filterIterator = function(v, k, l) {
             return v !== "";
         };
 
-        // Note that ordering here is used in following for loop 
+        // Note that ordering here is used in following for loop
         calendarPropsMap = ['dom_cal_day_long', 'dom_cal_day_short', 'dom_cal_month_long', 'dom_cal_month_short'];
 
         for (calMapIndex = 0, mapLen = calendarPropsMap.length; calMapIndex < mapLen; calMapIndex++) {
@@ -300,7 +304,7 @@
                 // Reject the first 0: "" element
                 calProp = _.filter(calProp, filterIterator);
                 //e.g. pushed the Sun in front to end (as required by datepicker)
-                calProp.push(calProp[0]); 
+                calProp.push(calProp[0]);
             }
             switch (calMapIndex) {
                 case 0:
@@ -329,7 +333,7 @@
     /**
      * Helper to determine if this is an edit view
      * @param  {String}  value value
-     * @return {Boolean} true if edit view 
+     * @return {Boolean} true if edit view
      */
     _isNewEditViewWithNoValue: function(value) {
         return (this.model.isNew() && !value && this._isEditView(this._getViewName()));
@@ -362,9 +366,9 @@
         });
     },
     /**
-     * Formats value per user's preferences 
-     * @param {String} value The value to format 
-     * @return {String} Formatted value 
+     * Formats value per user's preferences
+     * @param {String} value The value to format
+     * @return {String} Formatted value
      */
     format:function(value) {
         var jsDate, parts;
@@ -377,19 +381,20 @@
             value  = app.date.format(jsDate, this.usersDatePrefs);
         } else if (!value) {
             return value;
-        } else {
+        } else if (!this.leaveDirty) {
             // Bug 56249 .. Date constructor doesn't reliably handle yyyy-mm-dd
             // e.g. new Date("2011-10-10" ) // in my version of chrome browser returns
             // Sun Oct 09 2011 17:00:00 GMT-0700 (PDT)
             parts = value.match(/(\d+)/g);
-            // Bug 59827: In IE and FF, when changing from 100/23/2013 to 1//2013, got NaN/NaN/NaN. 
+            // Bug 59827: In IE and FF, when changing from 100/23/2013 to 1//2013, got NaN/NaN/NaN.
             if (parts && parts.length > 2) {
                 jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
                 value  = app.date.format(jsDate, this.usersDatePrefs);
             } else {
                 return value;
             }
-        }
+        } // else leave dirty is true so "no op"
+
         this.dateValue = value;
         this.$(".datepicker").datepicker('update', this.dateValue);
         jsDate = app.date.parse(value);
@@ -405,7 +410,7 @@
 
         // Safari chokes on '.', '-', (supported by datepicker), so retry replacing with '/'
         if (!jsDate || jsDate.toString() === 'Invalid Date') {
-            jsDate = new Date(value.replace(/[\.\-]/g, '/')); 
+            jsDate = new Date(value.replace(/[\.\-]/g, '/'));
         }
         return app.date.format(jsDate, this.serverDateFormat);
 
@@ -417,13 +422,13 @@
      * @return {Date} The date created
      */
     _setDateIfDefaultValue: function() {
-        var value, jsDate; 
+        var value, jsDate;
 
         if (this.def.display_default) {
             jsDate = app.date.parseDisplayDefault(this.def.display_default);
             this.model.set(this.name, app.date.format(jsDate, this.serverDateFormat));
         } else {
-            return null;  
+            return null;
         }
         return jsDate;
     }
