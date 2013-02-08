@@ -44,20 +44,10 @@ class QuotesViewDetail extends ViewDetail
 		require_once($beanFiles['Shipper']);
 
 		$this->bean->load_relationship('product_bundles');
-		$product_bundle_list = $this->bean->get_linked_beans('product_bundles','ProductBundle');
-		if(is_array($product_bundle_list)){
+        $product_bundle_list = $this->bean->product_bundles->getBeans();
+        usort($product_bundle_list, array('ProductBundle', 'compareProductBundlesByIndex'));
 
-			$ordered_bundle_list = array();
-            foreach ($product_bundle_list as $id => $bean)
-            {
-                $index = $bean->get_index($this->bean->id);
-				$ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
-			} //for
-			ksort($ordered_bundle_list);
-		} //if
-
-		$this->ss->assign('ordered_bundle_list', $ordered_bundle_list);
-		
+        $this->ss->assign('ordered_bundle_list', $product_bundle_list);
 		$currency = new Currency();
 		$currency->retrieve($this->bean->currency_id);
 		$this->ss->assign('CURRENCY_SYMBOL', $currency->symbol);

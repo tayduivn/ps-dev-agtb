@@ -181,20 +181,14 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
             'charset_convert' => true, /* UTF-8 uses different bytes for Euro and Pounds */
         );
         $currency->retrieve($this->bean->currency_id);
-        //kbrill Bug#11569 - When Quotes are printed as Proposals or Invoices, multiple product groups are out of order from the original quote
-        //$product_bundle_list = $this->bean->get_product_bundles();
-        $product_bundle_list = $this->bean->get_linked_beans('product_bundles','ProductBundle');
+
+        $this->bean->load_relationship('product_bundles');
+        $product_bundle_list = $this->bean->product_bundles->getBeans();
+        usort($product_bundle_list, array('ProductBundle', 'compareProductBundlesByIndex'));
 
         if(is_array($product_bundle_list)){
-            $ordered_bundle_list = array();
-            foreach ($product_bundle_list as $id => $bean)
-            {
-                $index = $bean->get_index($this->bean->id);
-				$ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
-			} //for
-			ksort($ordered_bundle_list);
 
-            foreach ($ordered_bundle_list as $product_bundle) {
+            foreach ($product_bundle_list as $product_bundle) {
 
                 if(isset($this->bean->show_line_nums) && $this->bean->show_line_nums == 1){
                     //$options['showRowCount']=1;
