@@ -120,6 +120,7 @@ require_once 'SugarTestJobQueueUtilities.php';
 require_once 'SugarTestFilterUtilities.php';
 require_once 'SugarTestRestUtilities.php';
 require_once 'SugarTestActivityUtilities.php';
+require_once 'SugarTestCommentUtilities.php';
 
 //BEGIN SUGARCRM flav=pro ONLY
 require_once 'SugarTestForecastUtilities.php';

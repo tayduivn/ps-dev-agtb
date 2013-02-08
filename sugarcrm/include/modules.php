@@ -493,6 +493,10 @@ $beanList['Activities'] = 'Activity';
 $beanFiles['Activity'] = 'modules/ActivityStream/Activities/Activity.php';
 $modInvisList[] = 'Activities';
 
+$beanList['Comments'] = 'Comment';
+$beanFiles['Comment'] = 'modules/ActivityStream/Comments/Comment.php';
+$modInvisList[] = 'Comments';
+
 $beanList['Filters'] = 'Filters';
 $beanFiles['Filters'] = 'modules/Filters/Filters.php';
 $modInvisList[] = 'Filters';
