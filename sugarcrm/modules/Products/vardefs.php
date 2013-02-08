@@ -763,8 +763,27 @@ $dictionary['Product'] = array(
             'rhs_key' => 'related_id',
             'relationship_type' => 'one-to-many'
         ),
-    )
-    //END SUGARCRM flav=pro ONLY
+        //END SUGARCRM flav=pro ONLY
+    ),
+
+    'duplicate_check' => array(
+        'enabled' => false,
+        'FilterDuplicateCheck' => array(
+            'filter_template' => array(
+                array('$and' => array(
+                    array('opportunity_id' => array('$equals' => '$opportunity_id')),
+                    array('name' => array('$starts' => '$name')),
+                    array('sales_status' => array('$not_equals' => 'Closed Won')),
+                    array('sales_status' => array('$not_equals' => 'Closed Lost')),
+                    array('sales_status' => array('$not_equals' => 'Converted to Quote')),
+                )),
+            ),
+            'ranking_fields' => array(
+                array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
+            )
+        )
+    ),
+
 );
 
 VardefManager::createVardef(
