@@ -58,6 +58,8 @@
       {"file":"common/omnibar","target":"#view .main-content","method":"prepend"}
     ]);
 
+    $('.form-search-related .filter .actions a[data-view="activitystream"]').button('toggle');
+
     $('.comment').toggle(
       function () {
         $(this).parent().parent().parent().find('.acomment').remove();

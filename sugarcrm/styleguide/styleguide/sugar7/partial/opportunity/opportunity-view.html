@@ -20,14 +20,14 @@
 
 
 <script>
-  page = {
-        "title": "Opportunities"
-      , "module": "opportunity"
-      , "record": {
-          'title':"Plato's LED MFT"
-        , 'avatar': 'logo_weyland.png'
-      }
-  };
+  page.title = "Opportunities";
+  page.module = "opportunity";
+  page.data_table = "record-sub-panel";
+  page.activity_stream = "record-activitystream";
+  page.record = {
+        'title':"Plato's LED MFT"
+      , 'avatar': 'logo_weyland.png'
+    };
 
   loadPartials([
       {"file":"common/header-view","target":"#view .headerpane","method":"replace"}

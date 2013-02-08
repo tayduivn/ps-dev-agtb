@@ -91,7 +91,9 @@ function loadContent(source,target,mode,method) {
     }
     if ( mode !== 'preview' ) {
       $('body').removeClass('edit view list preview').addClass(mode);//toggleClass( mode, source !== '#' );
-      drawer(mode === 'edit');
+      if (mode === 'edit') {
+        drawer(mode === 'edit');
+      }
     } else {
       $('body').toggleClass('preview',(source !== '#'));
     }

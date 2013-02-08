@@ -49,14 +49,10 @@
   top: 0;
   bottom: 50%;
   display: block;
-  -webkit-transition: top .3s;
-  -moz-transition: top .3s;
-  -o-transition: top .3s;
-  transition: top .3s;
-  -webkit-transition: bottom .3s;
-  -moz-transition: bottom .3s;
-  -o-transition: bottom .3s;
-  transition: bottom .3s;
+  -webkit-transition: all none;
+  -moz-transition: all none;
+  -o-transition: all none;
+  transition: all none;
 }
 .drawer.expand {
   height: auto;
