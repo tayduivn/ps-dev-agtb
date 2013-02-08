@@ -4104,22 +4104,18 @@ input[type="hidden"] {
 }
 ::-webkit-input-placeholder {
   color: #bbb;
-  font-style: italic;
   font-weight: normal;
 }
 ::-moz-placeholder {
   color: #bbb;
-  font-style: italic;
   font-weight: normal;
 }
 :-ms-input-placeholder {
   color: #bbb;
-  font-style: italic;
   font-weight: normal;
 }
 input:-moz-placeholder {
   color: #bbb;
-  font-style: italic;
   font-weight: normal;
 }
 .error .input-append > .add-on {
@@ -8686,10 +8682,10 @@ a.preview-list-item:hover {
   top: 0;
   height: 100%;
   width: 100%;
-  -webkit-transition: all .3s;
-  -moz-transition: all .3s;
-  -o-transition: all .3s;
-  transition: all .3s;
+  -webkit-transition: top .3s;
+  -moz-transition: top .3s;
+  -o-transition: top .3s;
+  transition: top .3s;
 }
 .drawer .drawer-backdrop {
   height: 100%;
