@@ -135,6 +135,17 @@ class MetaDataManager {
     }
 
     /**
+     * This method collects all view data for a modul
+     *
+     * @param $moduleName The name of the sugar module to collect info about.
+     *
+     * @return Array A hash of all of the view data.
+     */
+    public function getModuleMenu($moduleName) {
+        return $this->getModuleClientData('menu',$moduleName);
+    }
+
+    /**
      * This method collects all view data for a module
      *
      * @param $moduleName The name of the sugar module to collect info about.
@@ -179,6 +190,7 @@ class MetaDataManager {
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
         $data['subpanels'] = $this->getSubpanelDefs($moduleName);
+        $data['menu'] = $this->getModuleMenu($moduleName);
         $data['config'] = $this->getModuleConfig($moduleName);
 
         // Indicate whether Module Has duplicate checking enabled --- Rules must exist and Enabled flag must be set

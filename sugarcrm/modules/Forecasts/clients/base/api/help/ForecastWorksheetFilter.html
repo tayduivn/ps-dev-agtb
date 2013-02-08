@@ -1,0 +1,136 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
+<div class="longHelpTitle">Returns a collection of ForecastWorksheet models</div>
+<div class="summary">
+    <h2>Summary:</h2>
+    <p>This end point is used to return the Worksheets for a user at a given timeperiod.  If no timeperiod is provide it
+    will use the default timeperiod, likewise if no user is provided, it will default to the logged in user.</p>
+    <p>Also this end points use the visibility requirements set forth by the application, that if the records being requested
+    belong to you, you will get the draft version,  If the worksheet is not yours, you will only see the committed version.</p>
+</div>
+<div class="params">
+    <h2>Query Parameters:</h2>
+    <table>
+        <tr>
+            <td><strong>Param</strong></td>
+            <td><strong>Description</strong></td>
+            <td><strong>Optional</strong></td>
+        </tr>
+        <tr>
+            <td>filter</td>
+            <td>What you want to filter on</td>
+            <td>Optional</td>
+        </tr>
+        <tr>
+            <td>type</td>
+            <td>Which type to return, currently the ones that are supported are, opportunity and product</td>
+            <td>Optional</td>
+        </tr>
+    </table>
+
+    <h2>Possible Errors</h2>
+    <table>
+        <tr>
+            <td><strong>Error</strong></td>
+            <td><strong>Description</strong></td>
+        </tr>
+        <tr>
+            <td>412 - Invalid Parameter</td>
+            <td>When the passed in timeperiod and/or user can not be found</td>
+        </tr>
+        <tr>
+            <td>403 - Not Authorized</td>
+            <td>If you are not a manager, but you are tyring to view another sales rep forecast worksheet, you will receive a 403 Not Authorized Error</td>
+        </tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Url Example:</h2>
+    <code class="codesample">
+        /rest/v10/ForecastWorksheets/:timeperiod_id/:user_id
+{
+  "filter":[
+      {"assigned_user_id" : "seed_jim_id"},
+      {"timeperiod_id":"e546185a-5889-ea75-84c8-511178d1a5ba"}
+  ],
+}
+    </code>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <code class="codesample">
+        { "next_offset": -1,
+        "records": [
+            {
+                "id": "ad3908c7-83a3-f360-c223-51117844c208",
+                "name": "Grow-Fast Inc - 1000 units",
+                "date_entered": "2013-02-05T21:22:00+00:00",
+                "date_modified": "2013-02-05T21:22:00+00:00",
+                "modified_user_id": "1",
+                "modified_by_name": "Administrator",
+                "created_by": "1",
+                "created_by_name": "Administrator",
+                "description": "",
+                "img": "",
+                "deleted": "0",
+                "assigned_user_id": "seed_jim_id",
+                "assigned_user_name": "Jim Brennan",
+                "team_name": [
+                    {
+                        "id": "East",
+                        "name": "East",
+                        "name_2": "",
+                        "primary": true
+                    }
+                ],
+                "parent_id": "50b90565-e748-ed77-d9d7-511178f5acae",
+                "parent_type": "Opportunities",
+                "account_name": "",
+                "account_id": "",
+                "likely_case": "75000",
+                "best_case": "75000",
+                "worst_case": "75000",
+                "base_rate": "1",
+                "currency_id": "-99",
+                "currency_name": "",
+                "currency_symbol": "",
+                "date_closed": "2013-02-10",
+                "date_closed_timestamp": "1360531443",
+                "sales_stage": "Perception Analysis",
+                "probability": "70",
+                "commit_stage": "include",
+                "draft": "1",
+                "my_favorite": false,
+                "_acl": {
+                    "fields": {}
+                }
+            }]
+        }
+    </code>
+</div>

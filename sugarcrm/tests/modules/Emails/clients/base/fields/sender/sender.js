@@ -74,7 +74,6 @@ describe("Emails.Field.Sender", function() {
 
         field.render();
         SugarTest.server.respond();
-
         expect(populateValues.calledOnce).toBeTruthy();
 
         //Setting values through method for Mocking of onchange event from select2

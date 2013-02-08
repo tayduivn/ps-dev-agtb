@@ -1,13 +1,29 @@
 <ul class="nav" id="module_list">
-    <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
-    {{#eachOptions module_list}}
-    <li class="{{key}}" data-tour="tour-navbar-{{key}}">
-        <a href="#{{key}}">{{value}}</a>
-    </li>
-    {{/eachOptions}}
+    <li class="Home" data-module="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
+    {{#each module_list}}
+        {{#notEq name 'Home'}}
+        <li class="dropdown" data-module="{{name}}">
+            <a  class="moreLink hide" href="#{{name}}">{{label}}</a>
+            <div class="btn-group">
+                <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}">{{label}}</a>
+                <a id="{{name}}Drop" role="button" href="#" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
+
+                <ul class="dropdown-menu" role="menu" aria-labelledby="{{name}}Drop">
+                    {{#each menu}}
+                        <li><a tabindex="-1" href="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
+                    {{/each}}
+                    <li class="recentAnchor hide"><a tabindex="-1" href="javascript: void(0)">{{str "LBL_LAST_VIEWED"}}</a></li>
+                    <div class="recentContainer "></div>
+                    <li class="favoritesAnchor hide"><a tabindex="-1" href="javascript: void(0)">{{str "LBL_FAVORITES"}}</a></li>
+                    <div class="favoritesContainer"></div>
+                </ul>
+            </div>
+        </li>
+        {{/notEq}}
+    {{/each}}
     <li class="dropdown more">
         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">{{str "LBL_LINK_MORE"}} <b class="caret"></b></a>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu more-drop-container">
         </ul>
     </li>
 </ul>

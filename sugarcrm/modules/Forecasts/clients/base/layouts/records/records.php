@@ -30,17 +30,16 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
     'type' => 'records',
     'components' => array(
         array(
+            'layout' => 'info'
+        ),
+        array(
             'view' => 'forecastsChart',
         ),
         array(
             'view' => 'forecastsProgress',
         ),
         array(
-            'view' => 'forecastsWorksheet',
-            'contextCollection' => array(
-                'module' => 'ForecastWorksheets',
-                'name' => 'Worksheet'
-            ),
+            'view' => 'forecastsWorksheet'
         ),
         array(
             'view' => 'forecastsWorksheetTotals'
@@ -63,9 +62,6 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
         ),
         array(
             'view' => 'forecastsCommitButtons',
-        ),
-        array(
-            'layout' => 'info'
         ),
         array(
             'layout' => array(

@@ -65,6 +65,7 @@ class SugarJobUpdateForecastWorksheets implements RunnableSchedulerJob {
             return false;
         }
 
+        /* @var $tp TimePeriod */
         $tp = BeanFactory::getBean('TimePeriods', $args['timeperiod_id']);
 
         if(empty($tp->id)) {
@@ -72,15 +73,18 @@ class SugarJobUpdateForecastWorksheets implements RunnableSchedulerJob {
             return false;
         }
 
-        // Get all the $current_users opportunities
-        $sql = "SELECT id FROM opportunities WHERE assigned_user_id = '" . $args['user_id'] ."' and deleted = 0
-            and (date_closed_timestamp >= " . $tp->start_date_timestamp . " and date_closed_timestamp <=  " . $tp->end_date_timestamp . ")";
+        $sq = new SugarQuery();
+        $sq->from(BeanFactory::getBean('Opportunities'))->where()
+            ->equals('assigned_user_id', $args['user_id'])
+            ->queryAnd()
+                ->gte('date_closed_timestamp', $tp->start_date_timestamp)
+                ->lte('date_closed_timestamp', $tp->end_date_timestamp);
+        $beans = $sq->execute();
 
-        $result = $db->query($sql);
-
-        while($row = $db->fetchByAssoc($result)) {
+        foreach($beans as $opp) {
             /* @var $opportunity Opportunity */
-            $opportunity = BeanFactory::getBean('Opportunities', $row['id']);
+            $opportunity = BeanFactory::getBean('Opportunities');
+            $opportunity->loadFromRow($opp);
 
             /* @var $opp_wkst ForecastWorksheet */
             $opp_wkst = BeanFactory::getBean('ForecastWorksheets');
