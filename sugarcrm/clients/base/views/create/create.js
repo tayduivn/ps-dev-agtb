@@ -7,7 +7,7 @@
         SAVE_AND_VIEW: 'saveAndView'
     },
 
-    enableDuplicateCheck: true,
+    enableDuplicateCheck: false,
     dupecheckList: null, //duplicate list layout
 
     saveButtonName: 'save_button',
@@ -57,7 +57,8 @@
         this.meta = _.extend({}, app.metadata.getView(this.module, 'record'), this.meta);
 
         //enable or disable duplicate check?
-        this.enableDuplicateCheck = _.isUndefined(this.meta.duplicateCheck) ? true : this.meta.duplicateCheck;
+        var moduleMetadata = app.metadata.getModule(this.module);
+        this.enableDuplicateCheck = (moduleMetadata && moduleMetadata.dupCheckEnabled) || false;
     },
 
     delegateButtonEvents: function() {

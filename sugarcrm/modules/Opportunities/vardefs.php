@@ -574,6 +574,7 @@ $dictionary['Opportunity'] = array(
     ),
 
     'duplicate_check' => array(
+        'enabled' => true,
         'FilterDuplicateCheck' => array(
             'filter_template' => array(
                 array('$and' => array(

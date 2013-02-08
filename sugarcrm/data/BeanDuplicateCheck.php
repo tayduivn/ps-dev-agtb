@@ -74,7 +74,14 @@ class BeanDuplicateCheck
     protected function determineStrategy($metadata, $moduleName)
     {
         $dupeCheckClass = false;
-        $metadataCount  = count($metadata);
+        $metadataCount  = 0;
+
+        foreach($metadata AS $metadataKey => $metadataRules) {
+            if ($metadataKey != "enabled") { // Skip over the enabled Flag if it exists
+                $metadataCount++;
+                $dupeCheckClass = $metadataKey;
+            }
+        }
 
         if ($metadataCount === 0) {
             $GLOBALS["log"]->info("No DuplicateCheckStrategy exists for the {$moduleName} module");
@@ -83,7 +90,6 @@ class BeanDuplicateCheck
             $GLOBALS["log"]->warn("More than one DuplicateCheckStrategy exists for the {$moduleName} module");
         } else {
             reset($metadata);
-            $dupeCheckClass = key($metadata);
         }
 
         return $dupeCheckClass;
