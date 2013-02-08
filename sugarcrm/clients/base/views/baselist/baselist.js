@@ -47,6 +47,7 @@
     },
     initialize: function(options) {
         var viewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'baselist') || {}));
+        viewMeta = this.filterFields(viewMeta);
         options.meta = JSON.parse(JSON.stringify(options.meta || {}));
         options.meta = _.extend({}, viewMeta, options.meta);
         options.meta.type = options.meta.type || 'list';
@@ -66,6 +67,22 @@
 
         //When switching to next/previous record from the preview panel, we need to update the highlighted row
         app.events.on("list:preview:decorate", this.decorateRow, this);
+    },
+    filterFields: function(viewMeta){
+        var self = this;
+        this.hiddenFields = this.hiddenFields || [];
+        // TODO: load stored field prefs
+
+        // no prefs so use viewMeta as default and assign hidden fields
+        _.each(viewMeta.panels, function(panel){
+            _.each(panel.fields, function(fieldMeta, fieldIndex) {
+                if (fieldMeta.default === false) {
+                    self.hiddenFields.push(fieldMeta);
+                    panel.fields.splice(fieldIndex, 1);
+                }
+            });
+        });
+        return viewMeta;
     },
     populatePanelMetadata: function(panel, options) {
         var meta = options.meta;
