@@ -327,14 +327,12 @@
         prefill.copy(this.model);
         this.model.trigger("duplicate:before", prefill);
         prefill.unset("id");
-        this.layout.trigger("drawer:create:fire", {
-            components: [{
-                layout : 'create',
-                context: {
-                    create : true,
-                    model : prefill
-                }
-            }]
+        app.drawer.open({
+            layout: 'create',
+            context: {
+                create: true,
+                model : prefill
+            }
         }, this);
     },
     

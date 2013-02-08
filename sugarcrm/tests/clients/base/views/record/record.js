@@ -1,5 +1,6 @@
 describe("Record View", function() {
     var moduleName = 'Cases',
+        app,
         viewName = 'record',
         sinonSandbox, view,
         createListCollection;
@@ -74,7 +75,7 @@ describe("Record View", function() {
         }, moduleName);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-
+        app = SugarTest.app;
         sinonSandbox = sinon.sandbox.create();
 
         view = SugarTest.createView("base", moduleName, "record", null, null);
@@ -787,16 +788,37 @@ describe("Record View", function() {
 
     describe('duplicateClicked', function(){
         var triggerStub;
+        var openStub;
 
         beforeEach(function(){
-            triggerStub = sinon.stub(Backbone.Model.prototype, 'trigger', $.noop());
+            triggerStub = sinon.stub(Backbone.Model.prototype, 'trigger', function(event, model){
+                if(event == "duplicate:before"){
+                    expect(model.get("name")).toEqual(view.model.get("name"));
+                    expect(model.get("description")).toEqual(view.model.get("description"));
+                    expect(model).toNotBe(view.model);
+                }
+            });
+            SugarTest.app.drawer = {
+                open: function(){},
+                close: function(){}
+            };
+            openStub = sinon.stub(SugarTest.app.drawer, "open", function(opts){
+                expect(opts.context.model).toBeDefined();
+                expect(opts.layout).toEqual("create");
+                expect(opts.context.model.get("name")).toEqual(view.model.get("name"));
+                expect(opts.context.model.get("description")).toEqual(view.model.get("description"));
+                expect(opts.context.model).toNotBe(view.model);
+            });
         });
         afterEach(function(){
             if(triggerStub){
                 triggerStub.restore();
             }
+            if(openStub){
+                openStub.restore();
+            }
         });
-        it("should trigger 'duplicate:before' on model prior to 'drawer:create:fire' on layout", function(){
+        it("should trigger 'duplicate:before' on model prior to opening create drawer", function(){
             view.render();
             view.model.set({
                 name: 'Name',
@@ -808,15 +830,12 @@ describe("Record View", function() {
 
             view.duplicateClicked();
             expect(triggerStub.called).toBe(true);
-            var calls = _.last(triggerStub.args, 2);
-            var these = _.last(triggerStub.thisValues, 2);
-            expect(calls[0][0]).toEqual('duplicate:before');
-            expect(these[0]).toEqual(view.model);
-            expect(calls[1][0]).toEqual('drawer:create:fire');
-            expect(these[1]).toEqual(view.layout);
+            expect(triggerStub.calledWith("duplicate:before")).toBe(true);
+            expect(openStub.called).toBe(true);
+            expect(triggerStub.calledBefore(openStub)).toBe(true);
         });
 
-        it("should trigger 'duplicate:before' event and pass model to mutate", function(){
+        it(" should pass model to mutate with 'duplicate:before' event", function(){
             view.render();
             view.model.set({
                 name: 'Name',
@@ -828,11 +847,8 @@ describe("Record View", function() {
 
             view.duplicateClicked();
             expect(triggerStub.called).toBe(true);
-            var calls = _.last(triggerStub.args, 2);
-            expect(calls[0][0]).toEqual('duplicate:before');
-            expect(calls[0][1].get("name")).toEqual(view.model.get("name"));
-            expect(calls[0][1].get("description")).toEqual(view.model.get("description"));
-            expect(calls[0][1]).toNotEqual(view.model);
+            expect(triggerStub.calledWith('duplicate:before')).toBe(true);
+            //Further expectations in stub
         });
 
         it("should fire 'drawer:create:fire' event with copied model set on context", function(){
@@ -845,8 +861,8 @@ describe("Record View", function() {
             triggerStub.reset();
             view.layout = new Backbone.Model();
             view.duplicateClicked();
-            expect(triggerStub.calledWith('drawer:create:fire')).toBe(true);
-            expect(triggerStub.lastCall.args[1].components[0].context.model.get("name")).toEqual(view.model.get("name"));
+            expect(openStub.called).toBe(true);
+            expect(openStub.lastCall.args[0].context.model.get("name")).toEqual(view.model.get("name"));
         });
     });
 });
