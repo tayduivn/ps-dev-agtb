@@ -35,30 +35,17 @@
     belong to you, you will get the draft version,  If the worksheet is not yours, you will only see the committed version.</p>
 </div>
 <div class="params">
-    <h2>Url Parameters:</h2>
-    <table>
-        <tr>
-            <td><strong>Param</strong></td>
-            <td><strong>Description</strong></td>
-            <td><strong>Optional</strong></td>
-        </tr>
-        <tr>
-            <td>timeperiod_id</td>
-            <td>Show for a specific time period, defaults to the current time period if one is not passed</td>
-            <td>Optional</td>
-        </tr>
-        <tr>
-            <td>user_id</td>
-            <td>Show for a specific user, defaults to current user if not defined</td>
-            <td>Optional</td>
-        </tr>
-    </table>
     <h2>Query Parameters:</h2>
     <table>
         <tr>
             <td><strong>Param</strong></td>
             <td><strong>Description</strong></td>
             <td><strong>Optional</strong></td>
+        </tr>
+        <tr>
+            <td>filter</td>
+            <td>What you want to filter on</td>
+            <td>Optional</td>
         </tr>
         <tr>
             <td>type</td>
@@ -87,6 +74,12 @@
     <h2>Url Example:</h2>
     <code class="codesample">
         /rest/v10/ForecastWorksheets/:timeperiod_id/:user_id
+{
+  "filter":[
+      {"assigned_user_id" : "seed_jim_id"},
+      {"timeperiod_id":"e546185a-5889-ea75-84c8-511178d1a5ba"}
+  ],
+}
     </code>
 </div>
 <div class="output">

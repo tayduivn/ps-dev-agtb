@@ -81,6 +81,7 @@ class ForecastsCommittedApiTest extends RestTestBase
      */
     public function testForecastsCommittedSubmit()
     {
+        $this->markTestSkipped('This is all done in the ForecastWorksheetApiTest Class');
     	$manager = SugarTestForecastUtilities::createForecastUser();
         $reportee = SugarTestForecastUtilities::createForecastUser(array("user" => array("reports_to" => $manager["user"]->id)));
         $timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
@@ -102,17 +103,6 @@ class ForecastsCommittedApiTest extends RestTestBase
         	"worst_case" => 10,
         	"opp_count" => 3,
         	"timeperiod_id" => $timeperiod->id,
-        	"worksheetData" => array(
-        		"new" => array(),
-        		"current" => array(
-        			array(
-        				"worksheet_id" => $reportee["opp_worksheets"][0]->id
-        			),
-        			array(
-        				"worksheet_id" => $reportee["opp_worksheets"][1]->id
-        			),
-        		)
-        	)
         );        
         
         /*
