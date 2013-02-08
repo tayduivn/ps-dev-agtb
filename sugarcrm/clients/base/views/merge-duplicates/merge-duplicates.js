@@ -183,6 +183,12 @@
             }
         }, this);
         this.setPrimaryEdit(this.primaryRecord);
+        this.$('[rel="tooltip"]').tooltip();
+        this.setSortable();
+    },
+    setSortable: function() {
+        this.$(".ui-sortable").sortable();
+        this.$(".ui-sortable").disableSelection();    	
     },
     /**
      * Do what we need to do when the primary record is set
