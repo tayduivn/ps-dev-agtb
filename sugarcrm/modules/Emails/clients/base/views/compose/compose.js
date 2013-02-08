@@ -14,6 +14,9 @@
             'click [name=send_button]': 'send',
             'click [name=cancel_button]': 'cancel'
         });
+
+        this.context.on("actionbar:signature_button:clicked", this._launchSignatureDrawer, this);
+        this.context.on("compose:signature", this._updateEditorWithSignature, this);
     },
 
     _render:function () {
@@ -251,6 +254,69 @@
 
             fieldsToValidate: this.getFields(this.module)
         });
-    }
+    },
 
+    /**
+     * Open the drawer with the signature selection layout. The callback should take the data passed to it and insert
+     * the signature in the correct place.
+     *
+     * @private
+     */
+    _launchSignatureDrawer: function() {
+        app.drawer.open(
+            {
+                layout: "compose-signatures-selection",
+                context: {module: this.module}
+            },
+            this._updateEditorWithSignature
+        );
+    },
+
+    /**
+     * Fetches the signature content using its ID and updates the editor with the content.
+     *
+     * @param signature
+     */
+    _updateEditorWithSignature: function(signature) {
+        if (signature.hasOwnProperty("id")) {
+            var url = app.api.buildURL("Signatures", signature.id);
+            app.api.call("read", url, null, {
+                success: _.bind(this._insertSignature, this),
+                error: function() {
+                    console.log("Retrieving Signature failed.");
+                }
+            });
+        }
+    },
+
+    /**
+     * Inserts the signature into the editor.
+     *
+     * @param signature
+     * @private
+     */
+    _insertSignature: function(signature) {
+        var editor,
+            emailBody;
+
+        if (_.isObject(signature) && signature.signature_html) {
+            editor    = this.getField("html_body");
+            emailBody = editor.getEditorContent();
+
+            emailBody += this._formatSignature(signature.signature_html);
+            editor.setEditorContent(emailBody);
+        }
+    },
+
+    /**
+     * Formatting of html signatures
+     *
+     * @param callback
+     */
+    _formatSignature : function(signature) {
+        signature = signature.replace(/&lt;/gi, "<");
+        signature = signature.replace(/&gt;/gi, ">");
+
+        return signature;
+    }
 })

@@ -33,21 +33,13 @@
     },
 
     /**
-     * The user clicked the Done button so trigger an event to insert the selected signature into the message body and
-     * then close the drawer.
+     * The user clicked the Done button so insert the selected signature into the message body and close the drawer.
      *
      * @private
      */
     _done: function() {
-        if (this.context.parent) {
-            var signature = this.context.get("selection_model");
-
-            if (signature.id) {
-                this.context.parent.trigger("compose:signature:insert", signature.id);
-            }
-        }
-
-        this._cancel();
+        var signature = this.context.get("selection_model");
+        app.drawer.close(signature);
     },
 
     /**
@@ -56,6 +48,6 @@
      * @private
      */
     _cancel: function() {
-        this.context.clear();
+        app.drawer.close();
     }
 })
