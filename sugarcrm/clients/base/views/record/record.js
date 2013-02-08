@@ -42,7 +42,7 @@
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
             if (this.inlineEditMode) {
-                this.previousModelState = this.model.previousAttributes();
+                this.previousModelState = _.clone(this.model.attributes);
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
@@ -328,7 +328,7 @@
     },
 
     editClicked: function() {
-        this.previousModelState = this.model.previousAttributes();
+        this.previousModelState = _.clone(this.model.attributes);
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },

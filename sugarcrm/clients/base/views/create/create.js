@@ -328,7 +328,7 @@
      * @return {*}
      */
     extendModel: function(newModel, origAttributes) {
-        var modelAttributes = newModel.previousAttributes();
+        var modelAttributes = _.clone(newModel.attributes);
 
         _.each(modelAttributes, function(value, key, list) {
             if ( _.isUndefined(value)|| _.isEmpty(value)) {
@@ -344,7 +344,7 @@
      * @return {*}
      */
     saveFormData: function() {
-        this._origAttributes = this.model.previousAttributes();
+        this._origAttributes = _.clone(this.model.attributes);
         return this._origAttributes;
     },
 
