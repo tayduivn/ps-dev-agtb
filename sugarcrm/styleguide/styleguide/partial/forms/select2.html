@@ -87,6 +87,40 @@
     </div>
   </div>
 
+
+
+
+  <!-- ==================== -->
+
+  <div class="row">
+    <div class="span12 padded">
+      <label>Loading results from json</label>
+     <input type="hidden" class="bigdrop" id="e6" style="width:600px"/></p>
+      <script>
+      $("#e6").select2({
+          placeholder: "Search for a movie",
+          minimumInputLength: 1,
+          ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+              url: "partial/forms/select2.json",
+              dataType: 'json',
+              data: function (term, page) {
+                return {q:term}
+              },
+              results: function (data, page) { // parse the results into the format expected by Select2.
+                  // since we are using custom formatting functions we do not need to alter remote JSON data
+
+                  return {results: data.movies};
+              }
+          },
+          formatResult: function(m) {return m.title;},
+          formatSelection: function(m) {return m.title;},
+      });
+      </script>
+    </div>
+  </div>
+  <hr>
+
+
   <!-- ==================== -->
 
   <div class="row">
@@ -650,6 +684,7 @@
       , ctor = getSelect2Constructor($this);
     //$this.select2( ctor );
   });
+
 
 
 </script>
