@@ -1,0 +1,19 @@
+{{!
+<li>
+    <div class="thumbnail widget">
+        <div class="btn-toolbar pull-right">
+            <a data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><i class="icon-cog"></i></a>
+            <ul class="dropdown-menu left carettop">
+                <div>
+                    <li><a href="javascript:void(0);" data-action="refresh">1 Column</a></li>
+                    <li><a href="javascript:void(0);" data-action="delete">2 Columns</a></li>
+                    <li><a href="javascript:void(0);" data-action="delete">3 Columns</a></li>
+                </div>
+            </ul>
+        </div>
+        <h4 data-toggle="widget">&nbsp;</h4>
+        <div class="widget-content">
+        </div>
+    </div>
+</li>
+}}

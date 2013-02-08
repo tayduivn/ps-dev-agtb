@@ -39,11 +39,13 @@
         }
     },
     loadData: function(options) {
+        this.context.loadData(options);
+        /*
         if(this.model.get("id")) {
             this.model.fetch();
         } else if(!this.context.get("create")) {
             this.collection.fetch();
-        }
+        }*/
     },
     bindDataChange: function() {
         var modelId = this.context.get("modelId");

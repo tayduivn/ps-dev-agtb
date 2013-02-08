@@ -1,0 +1,8 @@
+<div class="add-row" data-action="addRow" data-columns="1">
+    <p>Add Row</p>
+    <p class="options">
+        <a class="add-dashlet" data-value="1"><small>+ 1 column</small></a>
+        <a class="add-dashlet" data-value="2"><small>+ 2 columns</small></a>
+        <a class="add-dashlet" data-value="3"><small>+ 3 columns</small></a>
+    </p>
+</div>

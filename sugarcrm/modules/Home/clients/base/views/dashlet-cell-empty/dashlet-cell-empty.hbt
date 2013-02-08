@@ -1,0 +1,4 @@
+<div class="widget empty" data-action="addDashlet">
+    <p>Add Dashlet</p>
+    <div class="add-dashlet"><strong>+</strong></div>
+</div>
