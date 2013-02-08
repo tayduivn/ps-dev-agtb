@@ -23,7 +23,8 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once('include/api/RestService.php');
+require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
@@ -31,7 +32,7 @@ require_once('tests/rest/RestTestBase.php');
  * @group forecastapi
  * @group forecasts
  */
-class ForecastsChartApiTest extends RestTestBase
+class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     protected static $user;
@@ -45,6 +46,11 @@ class ForecastsChartApiTest extends RestTestBase
      * @var commit_stage;
      */
     protected static $commit_stage;
+
+    /**
+     * @var chartApi
+     */
+    protected $chartApi;
 
     public static function setUpBeforeClass()
     {
@@ -63,6 +69,7 @@ class ForecastsChartApiTest extends RestTestBase
     public function setUp()
     {
         $this->_user = self::$user['user'];
+        $this->chartApi = new ForecastsChartApi();
     }
 
     public static function tearDownAfterClass()
@@ -79,11 +86,21 @@ class ForecastsChartApiTest extends RestTestBase
 
     public function tearDown()
     {
+        $this->chartApi = null;
     }
 
-    private function buildBaseChartUrl($timeperiod_id, $user_id, $display_manager)
+    /**
+     * Utility Method to get the ServiceMock with a valid user in it
+     *
+     * @param User $user
+     * @return ForecastChartApiServiceMock
+     */
+    protected function _getServiceMock(User $user)
     {
-        return 'Forecasts/' . $timeperiod_id . '/' . $user_id . '/chart/' . $display_manager;
+        $serviceApi = new ForecastChartApiServiceMock();
+        $serviceApi->user = $user;
+
+        return $serviceApi;
     }
 
     /**
@@ -93,10 +110,16 @@ class ForecastsChartApiTest extends RestTestBase
      */
     public function testQuotaIsReturned()
     {
-        $url = $this->buildBaseChartUrl(self::$timeperiod->id, self::$user['user']->id, 'false') . '?group_by=sales_stage&dataset=likely';
-        $return = $this->_restCall($url);
+        $args = array(
+            'timeperiod_id' => self::$timeperiod->id,
+            'user_id' => self::$user['user']->id,
+            'display_manager' => false,
+            'group_by' => 'sales_stage',
+            'dataset' => 'likely'
+        );
 
-        $chart = $return['reply'];
+        $chart = $this->chartApi->chart($this->_getServiceMock(self::$user['user']), $args);
+
         $this->assertEquals(self::$user["quota"]->amount, $chart['values'][0]['goalmarkervalue'][0]);
     }
 
@@ -107,19 +130,26 @@ class ForecastsChartApiTest extends RestTestBase
      * @group forecastschart
      */
     public function testDataSetValueReturned($key, $dataset)
-    {    	
-        $url = $this->buildBaseChartUrl(self::$timeperiod->id, self::$user['user']->id, 'false') . '?group_by=sales_stage&dataset=' . $dataset;
-        $return = $this->_restCall($url);
-        $chart = $return['reply'];        
+    {
+        $args = array(
+            'timeperiod_id' => self::$timeperiod->id,
+            'user_id' => self::$user['user']->id,
+            'display_manager' => false,
+            'group_by' => 'sales_stage',
+            'dataset' => $dataset
+        );
+
+        $chart = $this->chartApi->chart($this->_getServiceMock(self::$user['user']), $args);
+
         $found = false;
-        
+
         foreach($chart["values"] as $value)
         {
-        	if($value["goalmarkervalue"][1] != 0.00)
-        	{
-        		$this->assertEquals(self::$user["opportunities"][0]->$key, $value["goalmarkervalue"][1]);
-        		$found = true;
-        	}
+            if($value["goalmarkervalue"][1] != 0.00)
+            {
+                $this->assertEquals(self::$user["opportunities"][0]->$key, $value["goalmarkervalue"][1]);
+                $found = true;
+            }
         }
         $this->assertEquals(true, $found, "The chart value was now found in the dataset.");
     }
@@ -142,10 +172,16 @@ class ForecastsChartApiTest extends RestTestBase
      */
     public function testGoalMarkerLabelSetCorrectly()
     {
-        $url = $this->buildBaseChartUrl(self::$timeperiod->id, self::$user['user']->id, 'false') . '?group_by=sales_stage&dataset=likely';
-        $return = $this->_restCall($url);
+        $args = array(
+            'timeperiod_id' => self::$timeperiod->id,
+            'user_id' => self::$user['user']->id,
+            'display_manager' => false,
+            'group_by' => 'sales_stage',
+            'dataset' => 'likely'
+        );
 
-        $chart = $return['reply'];
+        $chart = $this->chartApi->chart($this->_getServiceMock(self::$user['user']), $args);
+
         $this->assertEquals("Likely Case", $chart['properties'][0]['goal_marker_label'][1]);
     }
 
@@ -157,10 +193,16 @@ class ForecastsChartApiTest extends RestTestBase
      */
     public function testGroupByReturnTheProperLabelName($actual, $group_by)
     {
-        $url = $this->buildBaseChartUrl(self::$timeperiod->id, self::$user['user']->id, 'false') . '?group_by=' . $group_by . '&dataset=likely';
-        $return = $this->_restCall($url);
+        $args = array(
+            'timeperiod_id' => self::$timeperiod->id,
+            'user_id' => self::$user['user']->id,
+            'display_manager' => false,
+            'group_by' => $group_by,
+            'dataset' => 'likely'
+        );
 
-        $chart = $return['reply'];
+        $chart = $this->chartApi->chart($this->_getServiceMock(self::$user['user']), $args);
+
         $this->assertEquals($actual, $chart['properties'][0]['label_name']);
     }
 
@@ -196,10 +238,16 @@ class ForecastsChartApiTest extends RestTestBase
         $user2->user_name = "user2";
         $user2->save();
 
-        $url = $this->buildBaseChartUrl(self::$timeperiod->id, $user1->id, 'true') . '?group_by=sales_stage&dataset=likely';
-        $return = $this->_restCall($url);
+        $args = array(
+            'timeperiod_id' => self::$timeperiod->id,
+            'user_id' => $user1->id,
+            'display_manager' => true,
+            'group_by' => 'sales_stage',
+            'dataset' => 'likely'
+        );
 
-        $chart = $return['reply'];
+        $chart = $this->chartApi->chart($this->_getServiceMock($user1), $args);
+
         $this->assertEquals(2, count($chart['values']));
     }
 
@@ -211,17 +259,27 @@ class ForecastsChartApiTest extends RestTestBase
      */
     public function testNoGroupByReturnsGroupedByForecast()
     {
-        global $current_language;
+        $args = array(
+            'timeperiod_id' => self::$timeperiod->id,
+            'user_id' => self::$user['user']->id,
+            'display_manager' => false,
+            'dataset' => 'likely'
+        );
 
-        $mod_strings = return_module_language($current_language, 'Forecasts');
-
-        $url = $this->buildBaseChartUrl(self::$timeperiod->id, self::$user['user']->id, 'false') . '?dataset=likely';
-        $return = $this->_restCall($url);
-
-        $chart = $return['reply'];
+        $chart = $this->chartApi->chart($this->_getServiceMock(self::$user["user"]), $args);
 
         $this->assertEquals(ucfirst(self::$commit_stage), $chart['label'][0]);
-        //$this->assertEquals("Likely", $chart['properties'][0]['goal_marker_label'][1]);
     }
 
+}
+
+class ForecastChartApiServiceMock extends RestService
+{
+    public function execute()
+    {
+    }
+
+    protected function handleException(Exception $exception)
+    {
+    }
 }
