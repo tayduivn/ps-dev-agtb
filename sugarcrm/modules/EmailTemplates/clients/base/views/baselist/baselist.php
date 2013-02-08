@@ -31,7 +31,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['EmailTemplates']['base']['view']['baselist'] = array(
     'panels' => array(
         array(
-            'name' => 'panel_header',
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array (

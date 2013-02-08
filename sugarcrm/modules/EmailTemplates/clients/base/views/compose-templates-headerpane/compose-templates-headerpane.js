@@ -28,24 +28,15 @@
     extendsFrom: "HeaderpaneView",
     events: {
         "click [name=done_button]": "_done",
-        "click [name=cancel_button]": "_cancel"
+        "click [name=cancel_button]": "_close"
     },
 
     _done: function() {
-        if (this.context.parent) {
-            var model = this.context.get("selection_model");
-            if(model) {
-                this.context.set("selection_model", null, {silent: true});
-            }
-        }
-        this._close();
-    },
-
-    _cancel: function() {
-        this._close();
+        var model = this.context.get("selection_model");
+        this._close({model:model});
     },
 
     _close: function() {
-        this.context.clear();
+            app.drawer.close();
     }
 })

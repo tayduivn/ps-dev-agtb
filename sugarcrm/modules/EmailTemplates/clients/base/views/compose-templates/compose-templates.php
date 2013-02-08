@@ -34,6 +34,7 @@ $viewdefs['EmailTemplates']['base']['view']['compose-templates'] = array(
         'label' => 'LBL_LINK_SELECT'
     ),
     'filterDef' => array(
+        'filter' => array(
             array(
                 '$or' => array(
                     array('type' => array('$is_null' => '')),
@@ -41,10 +42,10 @@ $viewdefs['EmailTemplates']['base']['view']['compose-templates'] = array(
                     array('type' => array('$equals' => 'email'))
                 )
             ),
+        ),
     ),
     'panels' => array(
         array(
-            'name' => 'panel_header',
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array (
