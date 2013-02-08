@@ -115,7 +115,7 @@ class ForecastsChartManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected function _getServiceMock(User $user)
     {
-        $serviceApi = new ForecastChartApiServiceMock();
+        $serviceApi = new ForecastChartManagerApiServiceMock();
         $serviceApi->user = $user;
 
         return $serviceApi;
@@ -253,7 +253,7 @@ class ForecastsChartManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-class ForecastChartApiServiceMock extends RestService
+class ForecastChartManagerApiServiceMock extends RestService
 {
     public function execute()
     {
