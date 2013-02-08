@@ -86,6 +86,7 @@ var pages = {
         , {"label":"Circular", "description":"Used for comparing parts to a whole."}
         , {"label":"Custom", "description":"Used for comparing values in a process."}
         , {"label":"Implementation", "description":"Patterns for inserting and configuring charts."}
+        , {"label":"Colors", "description":"Flexible methods for assigning color maps and fill methods to D3 charts."}
       ]
     }
   , "prototypes": {
