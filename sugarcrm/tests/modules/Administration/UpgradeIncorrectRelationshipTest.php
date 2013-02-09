@@ -51,7 +51,7 @@ class UpgradeIncorrectRelationshipTest extends Sugar_PHPUnit_Framework_TestCase 
         $badExample = <<<EOF
 <?php
 // created: 2013-01-04 17:09:07
-$dictionary["Testrel"]["fields"]["t_person_testrels"] = array (
+\$dictionary["Testrel"]["fields"]["t_person_testrels"] = array (
   'name' => 't_person_testrels',
   'type' => 'link',
   'relationship' => 't_person_testrels',
@@ -59,7 +59,7 @@ $dictionary["Testrel"]["fields"]["t_person_testrels"] = array (
   'vname' => 'LBL_T_PERSON_TESTRELS_FROM_T_PERSON_TITLE',
   'id_name' => 't_person_testrelst_person_ida',
 );
-$dictionary["Testrel"]["fields"]["t_person_testrels_name"] = array (
+\$dictionary["Testrel"]["fields"]["t_person_testrels_name"] = array (
   'name' => 't_person_testrels_name',
   'type' => 'relate',
   'source' => 'non-db',
@@ -76,7 +76,7 @@ $dictionary["Testrel"]["fields"]["t_person_testrels_name"] = array (
     1 => 'last_name',
   ),
 );
-$dictionary["Testrel"]["fields"]["t_person_testrelst_person_ida"] = array (
+\$dictionary["Testrel"]["fields"]["t_person_testrelst_person_ida"] = array (
   'name' => 't_person_testrelst_person_ida',
   'type' => 'link',
   'relationship' => 't_person_testrels',
@@ -102,10 +102,10 @@ EOF;
         $testLayout = 'custom/Extension/modules/unittest_rel/Ext/Layoutdefs/t_bas_t_bas_1_t_bas.php';
         $testMetaData = 'custom/metadata/t_bas_t_bas_1MetaData.php';
 
-        $badExample = <<<'EOF'
+        $badExample = <<<EOF
 <?php
 // created: 2013-01-17 15:47:11
-$dictionary["t_bas"]["fields"]["t_bas_t_bas_1"] = array (
+\$dictionary["t_bas"]["fields"]["t_bas_t_bas_1"] = array (
   'name' => 't_bas_t_bas_1',
   'type' => 'link',
   'relationship' => 't_bas_t_bas_1',
@@ -113,7 +113,7 @@ $dictionary["t_bas"]["fields"]["t_bas_t_bas_1"] = array (
   'vname' => 'LBL_T_BAS_T_BAS_1_FROM_T_BAS_L_TITLE',
   'id_name' => 't_bas_t_bas_1t_bas_ida',
 );
-$dictionary["t_bas"]["fields"]["t_bas_t_bas_1_name"] = array (
+\$dictionary["t_bas"]["fields"]["t_bas_t_bas_1_name"] = array (
   'name' => 't_bas_t_bas_1_name',
   'type' => 'relate',
   'source' => 'non-db',
@@ -125,7 +125,7 @@ $dictionary["t_bas"]["fields"]["t_bas_t_bas_1_name"] = array (
   'module' => 't_bas',
   'rname' => 'name',
 );
-$dictionary["t_bas"]["fields"]["t_bas_t_bas_1t_bas_ida"] = array (
+\$dictionary["t_bas"]["fields"]["t_bas_t_bas_1t_bas_ida"] = array (
   'name' => 't_bas_t_bas_1t_bas_ida',
   'type' => 'link',
   'relationship' => 't_bas_t_bas_1',
@@ -137,10 +137,10 @@ $dictionary["t_bas"]["fields"]["t_bas_t_bas_1t_bas_ida"] = array (
 EOF;
         file_put_contents($testFile,$badExample);
 
-        $badLayout = <<<'EOF'
+        $badLayout = <<<EOF
 <?php
  // created: 2013-01-17 15:47:11
-$layout_defs["t_bas"]["subpanel_setup"]['t_bas_t_bas_1t_bas_ida'] = array (
+\$layout_defs["t_bas"]["subpanel_setup"]['t_bas_t_bas_1t_bas_ida'] = array (
   'order' => 100,
   'module' => 't_bas',
   'subpanel_name' => 'default',
@@ -164,10 +164,10 @@ $layout_defs["t_bas"]["subpanel_setup"]['t_bas_t_bas_1t_bas_ida'] = array (
 EOF;
         file_put_contents($testLayout,$badLayout);
 
-        $badMetaData = <<<'EOF'
+        $badMetaData = <<<EOF
 <?php
 // created: 2013-02-05 11:32:02
-$dictionary["t_bas_t_bas_1"] = array (
+\$dictionary["t_bas_t_bas_1"] = array (
   'true_relationship_type' => 'one-to-many',
   'relationships' => 
   array (
