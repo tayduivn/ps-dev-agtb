@@ -42,7 +42,7 @@
                 handleTooltip: function(event, viewComponent) {
                     var $el = viewComponent.$(event.target);
                     if( $el[0].offsetWidth < $el[0].scrollWidth ) {
-                        $el.tooltip({placement:"top", container: "body"});
+                        $el.tooltip({placement:"top", container: "#content"});
                         $el.tooltip('show');
                     } else {
                         $el.tooltip('destroy');

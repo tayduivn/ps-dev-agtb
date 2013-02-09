@@ -34,13 +34,13 @@
         'click .show-more-text': 'toggleMoreText'
     },
     format: function(value) {
-        //We mutate this.value to match whatever is appropriate given we're in a 
+        //We mutate this.value to match whatever is appropriate given we're in a
         //"more" or "less" state (original is always in model.get(this.name))
         //So, here, we try to return whatever we've set this.value to first.
         return this.value || value || '';
     },
     _render: function() {
-        //Attempt to pick up css class from defs but fallback 
+        //Attempt to pick up css class from defs but fallback
         this.def.css_class = this.def.css_class || 'textarea-text';
 
         //Check if we've blur'd out from textarea edit mode. If so, we check "last mode"
@@ -82,7 +82,7 @@
                 // in the 'show more' state, we could get truncated text in our textarea!
                 app.view.Field.prototype._render.call(this);
             }
-        } 
+        }
     },
     _notListView: function() {
         if (this.view.name !== 'list' || (this.view.meta && this.view.meta.type !== 'list')) {
