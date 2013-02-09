@@ -94,6 +94,38 @@ describe("Record View", function() {
             expect(_.size(view.fields)).toBe(0);
         });
 
+        it("Should update previous props on read and update only", function() {
+            var modelAttributes = {
+                id: '123',
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            };
+            view.model.set(modelAttributes);
+
+            view.handleSync('read', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+            view.handleSync('update', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+            view.model.set({name:'Test'});
+            view.handleSync('randomAction', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+        });
+
+        it("Should set previous model state on app data:sync:end", function() {
+            var modelAttributes = {
+                id: '123',
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            };
+            view.model.set(modelAttributes);
+            expect(view.previousModelState).toBeNull();
+            SugarTest.app.trigger('data:sync:end','read',view.model);
+            view.handleSync('read', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+        });
+
         it("Should render 8 editable fields and 6 buttons", function() {
 
             view.render();
@@ -298,6 +330,7 @@ describe("Record View", function() {
                 case_number: 123,
                 description: 'Description'
             });
+            view.handleSync('read',view.model);
             view.context.trigger('button:edit_button:click');
             view.model.set({
                 name: 'Bar'
