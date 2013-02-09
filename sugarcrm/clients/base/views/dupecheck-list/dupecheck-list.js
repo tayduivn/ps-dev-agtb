@@ -46,6 +46,11 @@
             this.model = this.context.get('dupeCheckModel');
         }
 
+        // Create an empty collection if it doesn't exist, since we need it for sync
+        if(_.isUndefined(this.collection)){
+            this.collection = app.data.createBeanCollection(this.module);
+        }
+
         //save off the collection's sync so we can run our own and then run the original
         //this is so we can switch the endpoint out
         this.collectionSync = this.collection.sync;

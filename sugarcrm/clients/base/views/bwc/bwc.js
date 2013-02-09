@@ -60,6 +60,34 @@
     },
 
     /**
+     * Gets the sidecar url based on a given bwc hyperlink.
+     * @param {String} href the bwc hyperlink.
+     * @return {String} the new sidecar hyperlink (empty string if unable to convert).
+     */
+    convertToSidecarUrl: function(href) {
+        var module = /module=([^&]*)/.exec(href),
+            id = /record=([^&]*)/.exec(href),
+            action = /action=([^&]*)/.exec(href);
+
+        module = (_.isArray(module)) ? module[1] : null;
+        if (!module) {
+            return '';
+        }
+        id = (_.isArray(id)) ? id[1] : null;
+        action = (_.isArray(action)) ? action[1] : '';
+        // fallback to sidecar detail view
+        if (action.toLowerCase() === 'detailview') {
+            action = '';
+        }
+
+        if (!id && action.toLowerCase() === 'editview') {
+            action = 'create';
+        }
+
+        return app.router.buildRoute(module, id, action);
+    },
+
+    /**
      * Rewrite old links on the frame given to the new sidecar router.
      *
      * This will match all hrefs that contain "module=" on it and if the module
@@ -84,27 +112,23 @@
             ) {
                 return;
             }
-            module = module[1];
 
-            var id = /record=([^&]*)/.exec(href);
-            var action = /action=([^&]*)/.exec(href);
-
-            id = (_.isArray(id)) ? id[1] : null;
-            action = (_.isArray(action)) ? action[1] : '';
-            // fallback to sidecar detail view
-            if (action.toLowerCase() === 'detailview') {
-                action = '';
-            }
-
-            if (!id && action.toLowerCase() === 'editview') {
-                action = 'create';
-            }
-
-            // clear empty params
-            var sidecarUrl = _.compact([module, id, action]);
-
-            $elem.attr('href', app.config.siteUrl + '/#' + sidecarUrl.join('/'));
+            var sidecarUrl = self.convertToSidecarUrl(href);
+            $elem.attr('href', app.config.siteUrl + '/#' + sidecarUrl);
             $elem.data('sidecarProcessed', true);
+
+            if ($elem.attr('target') === '_blank') {
+                return;
+            }
+
+            $elem.click(function(e) {
+                if (e.button !== 0 || e.ctrlKey || e.metaKey) {
+                    return;
+                }
+                e.stopPropagation();
+                parent.SUGAR.App.router.navigate(sidecarUrl, {trigger: true});
+                return false;
+            });
         });
     },
 
