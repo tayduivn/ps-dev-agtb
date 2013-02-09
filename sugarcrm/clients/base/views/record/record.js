@@ -48,12 +48,25 @@
         }, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
+        this.model.on("duplicate:before", this.setupDuplicateFields, this);
 
         this.delegateButtonEvents();
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
+    },
+
+    /**
+     * Called when current record is being duplicated to allow customization of fields
+     * that will be copied into new record.
+     *
+     * Override to setup the fields on this bean prior to being displayed in Create dialog
+     *
+     * @param {Object} prefill Bean that will be used for new record
+     */
+    setupDuplicateFields: function(prefill){
+
     },
 
     setLabel: function(context, value) {
@@ -260,8 +273,10 @@
     showPreviousNextBtnGroup:function() {
         var listCollection = this.context.get('listCollection') || new Backbone.Collection();
         var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
-        this.collection.previous = listCollection.models[recordIndex-1] ? listCollection.models[recordIndex-1] : undefined;
-        this.collection.next = listCollection.models[recordIndex+1] ? listCollection.models[recordIndex+1] : undefined;
+        if(this.collection){
+            this.collection.previous = listCollection.models[recordIndex-1] ? listCollection.models[recordIndex-1] : undefined;
+            this.collection.next = listCollection.models[recordIndex+1] ? listCollection.models[recordIndex+1] : undefined;
+        }
     },
 
     registerFieldAsButton: function(buttonName) {
@@ -308,13 +323,17 @@
     },
 
     duplicateClicked: function() {
+        var prefill = app.data.createBean(this.model.module);
+        prefill.copy(this.model);
+        this.model.trigger("duplicate:before", prefill);
+        prefill.unset("id");
         app.drawer.open({
-            layout : 'create',
+            layout: 'create',
             context: {
                 create: true,
-                duplicateModel: this.model.attributes
+                model : prefill
             }
-        });
+        }, this);
     },
     
     findDuplicatesClicked: function() {

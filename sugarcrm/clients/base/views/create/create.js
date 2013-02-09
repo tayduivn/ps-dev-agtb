@@ -40,13 +40,6 @@
 
         this.model.off("change", null, this);
 
-        //duplicate a record
-        var duplicate = this.context.get('duplicateModel');
-        if (duplicate) {
-            delete duplicate.id;
-            this.model.set(duplicate);
-        }
-        
         //keep track of what post-save action was chosen in case user chooses to ignore dupes
         this.context.lastSaveAction = null;
 
@@ -196,7 +189,6 @@
                 this.alerts.showServerError();
                 callback(true);
             }, this);
-
         if (this.skipDupeCheck() || !this.enableDuplicateCheck) {
             callback(false);
         } else {
