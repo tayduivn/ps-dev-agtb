@@ -74,6 +74,7 @@ describe("Base.Field.Teamset", function() {
         field.render();
         var actual = field.value;
         expect(expected).toEqual(actual);
+        expect(field.model.get('team_name')).toEqual(expected);
         getPreference.restore();
     });
 
