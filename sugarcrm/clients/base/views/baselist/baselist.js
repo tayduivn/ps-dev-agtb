@@ -46,9 +46,9 @@
         }
     },
     initialize: function(options) {
-        var viewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'baselist') || {}));
+        var baseViewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'baselist') || {}));
         options.meta = JSON.parse(JSON.stringify(options.meta || {}));
-        options.meta = _.extend({}, viewMeta, options.meta);
+        options.meta = _.extend({}, baseViewMeta, options.meta);
         options.meta.type = options.meta.type || 'list';
 
         _.each(options.meta.panels, function(panel) {
