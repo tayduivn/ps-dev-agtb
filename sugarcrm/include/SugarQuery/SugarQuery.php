@@ -32,9 +32,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * ************ WARNING**********************************************
  * THIS CLASS AND ALL RELATED CLASSES WILL BE FUNDAMENTALLY CHANGING
- * DO NOT USE THIS TO BUILD YOUR QUERIES.  
+ * DO NOT USE THIS TO BUILD YOUR QUERIES.
  * ******************************************************************
- * 
+ *
  */
 
 require_once('include/SugarQuery/Compiler.php');
@@ -134,7 +134,7 @@ class SugarQuery
         $team_security = (isset($options['team_security'])) ? $options['team_security'] : true;
 		$this->from = $bean;
 		if(!empty($alias)) {
-			$this->from = array($bean, $alias);	
+			$this->from = array($bean, $alias);
 		}
 
         if($team_security === true) {
@@ -181,7 +181,7 @@ class SugarQuery
 		if(!isset($this->where['or'])) {
 			$this->where['or'] = new SugarQuery_Builder_Orwhere($conditions);
 		}
-		
+
 		return $this->where['or'];
 	}
 
@@ -222,7 +222,7 @@ class SugarQuery
             $this->join[md5($sql)] = $join;
         }
 
-	
+
 		return $join;
 	}
 
@@ -257,7 +257,7 @@ class SugarQuery
      * @param string $type
      * @return array|dbObject|string
      */
-    public function execute($type = "array") {
+    public function execute($type = "array", $encode = true) {
 		switch($type)
 		{
 			case 'raw':
@@ -271,7 +271,7 @@ class SugarQuery
 			default:
 				$results = $this->runQuery($this);
 				$return = array();
-				while($row = $this->db->fetchByAssoc($results))
+				while($row = $this->db->fetchByAssoc($results, $encode))
 				{
 					$return[] = $row;
 				}
