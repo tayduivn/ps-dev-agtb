@@ -582,6 +582,32 @@ $dictionary['Product'] = array(
             'reportable' => false,
             'comment' => 'The opportunity id for the line item entry'
         ),
+        'opportunity_link' =>  array(
+            'name' => 'opportunity_link',
+            'type' => 'link',
+            'relationship' => 'products_opportunities',
+            'vname' => 'LBL_OPPORTUNITY',
+            'link_type' => 'one',
+            'module' => 'Opportunities',
+            'bean_name' => 'Opportunity',
+            'source' => 'non-db',
+        ),
+        'opportunity_name' => array(
+            'name' => 'opportunity_name',
+            'rname' => 'name',
+            'id_name' => 'opportunity_id',
+            'vname' => 'LBL_OPPORTUNITY_NAME',
+            'join_name' => 'opportunities',
+            'type' => 'relate',
+            'link' => 'opportunity_link',
+            'table' => 'opportunities',
+            'isnull' => 'true',
+            'module' => 'Opportunities',
+            'source' => 'non-db',
+            'unified_search' => true,
+            'full_text_search' => array('boost' => 1),
+            'comment' => 'The opportunity name associated with the opportunity_id'
+        ),
         'opportunities' =>  array(
             'name' => 'opportunities',
             'type' => 'link',
@@ -663,10 +689,7 @@ $dictionary['Product'] = array(
             'type' => 'relate',
             'link' => 'account_link',
             'table' => 'accounts',
-            'isnull' => 'true',
             'module' => 'Accounts',
-            'dbType' => 'varchar',
-            'len' => '255',
             'source' => 'non-db',
             'unified_search' => true,
             'full_text_search' => array('boost' => 1),
@@ -706,6 +729,15 @@ $dictionary['Product'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Products'
+        ),
+        'products_opportunities' =>  array(
+            'lhs_module' => 'Opportunities',
+            'lhs_table' => 'opportunities',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Products',
+            'rhs_table' => 'products',
+            'rhs_key' => 'opportunity_id',
+            'relationship_type' => 'one-to-one'
         ),
         'products_accounts' =>  array(
             'lhs_module' => 'Accounts',

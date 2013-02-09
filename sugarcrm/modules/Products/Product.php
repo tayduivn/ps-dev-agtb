@@ -544,6 +544,11 @@ class Product extends SugarBean {
 
 	function save($check_notify = false) {
 
+        //If an opportunity_id value is provided, lookup the Account information (if available)
+        if(!empty($this->opportunity_id)) {
+            $this->setAccountIdForOpportunity($this->opportunity_id);
+        }
+
 		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 		// RPS - begin - decimals cant be null in sql server
 		if ( $this->cost_price == '' ) { $this->cost_price = '0'; }
@@ -680,6 +685,24 @@ class Product extends SugarBean {
 		return $id;
 	}
 
+
+    /**
+     * Sets the account_id value for instance given an opportunityId argument of the Opportunity id
+     *
+     * @param $opportunityId String value of the Opportunity id
+     * @return bool true if account_id was set; false otherwise
+     */
+    protected function setAccountIdForOpportunity($opportunityId) {
+        $opp = BeanFactory::getBean('Opportunities', $opportunityId);
+        if($opp->load_relationship('accounts')) {
+            $accounts = $opp->accounts->query(array('where'=>'accounts.deleted=0'));
+            foreach ($accounts['rows'] as $accountId => $value) {
+                $this->account_id = $accountId;
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Code to make sure that the Sales Status field is mapped correctly with the Sales Stage field

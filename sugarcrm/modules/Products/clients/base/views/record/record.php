@@ -34,7 +34,9 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                'name',
+                    array (
+                        'name' => 'name'
+                    ),
             )
         ),
         array(
@@ -44,14 +46,19 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'quantity',
-                'status',
+                'opportunity_name',
+                array(
+                    'name'=>'account_name',
+                    'noedit'=>true
+                ),
                 'sales_stage',
-                'sales_status',
-                'quote_name',
-                'contact_name',
-                'account_name',
-                'date_purchased',
+                'probability',
+                'status',
+                'date_closed',
+                'product_template_name',
+                'quantity',
+                'discount_price',
+                'discount_amount',
             ),
         ),
         array(
@@ -69,14 +76,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'book_value',
-                    'type' => 'currency',
-                ),
-                array(
-                    'name' => 'discount_price',
-                    'type' => 'currency',
-                ),
-                array(
-                    'name' => 'discount_amount',
                     'type' => 'currency',
                 ),
                 array(
