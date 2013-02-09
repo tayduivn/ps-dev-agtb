@@ -37,7 +37,10 @@ class ActivityQueueManager
      */
     public function eventDispatcher(SugarBean $bean, $event, $args)
     {
-        if ($bean->is_AuditEnabled() && !($bean instanceof Activity)) {
+        if ($bean instanceof Activity && $bean->activity_type == 'post') {
+            // Posts.
+            $this->processPostSubscription($bean);
+        } else if ($bean->is_AuditEnabled()) {
             $activity = BeanFactory::getBean('Activities');
             if ($event == 'after_save') {
                 $this->createOrUpdate($bean, $args, $activity);
@@ -50,6 +53,10 @@ class ActivityQueueManager
             } elseif ($event == 'after_relationship_delete' && !in_array($args['link'], self::$linkBlacklist)) {
                 $this->unlink($args, $activity);
             }
+
+            // Add rows to the activities_users join table. We may potentially
+            // move this process to the job queue.
+            $this->processSubscriptions($bean, $activity, $args);
         }
     }
 
@@ -61,6 +68,14 @@ class ActivityQueueManager
      */
     protected function createOrUpdate(SugarBean $bean, array $args, Activity $act)
     {
+        // Subscribe the user that created the record, and the user to whom the
+        // record is assigned.
+        $subs = BeanFactory::getBeanName('Subscriptions');
+        if (isset($bean->assigned_user_id)) {
+            $assigned_user = BeanFactory::getBean('Users', $bean->assigned_user_id);
+            $subs::subscribeUserToRecord($assigned_user, $bean);
+        }
+
         $data = array(
             'object' => self::getBeanAttributes($bean),
         );
@@ -68,6 +83,11 @@ class ActivityQueueManager
             $act->activity_type = 'update';
             $data['changes'] = $args['dataChanges'];
         } else {
+            // Subscribe the user that created the record.
+            if (isset($bean->created_by)) {
+                $created_user = BeanFactory::getBean('Users', $bean->created_by);
+                $subs::subscribeUserToRecord($created_user, $bean);
+            }
             $act->activity_type = 'create';
         }
         $act->parent_id = $bean->id;
@@ -169,5 +189,72 @@ class ActivityQueueManager
             'module' => $bean->module_name,
             'id' => $bean->id,
         );
+    }
+
+    /**
+     * Helper for processing subscriptions on a post activity.
+     * @param  Activity $act
+     */
+    protected function processPostSubscription(Activity $act)
+    {
+        $db = DBManagerFactory::getInstance();
+        $sql = 'INSERT INTO activities_users VALUES (';
+        // TODO: Consider teamsec caching later?
+        $values = array(
+            '"' . create_guid() . '"',
+            'NULL',
+            '"' . $act->id . '"',
+            '"' . $act->parent_type . '"',
+            '"' . $act->parent_id . '"',
+            '"[]"',
+            '"' . $act->date_modified . '"',
+            '0',
+        );
+        $sql .= implode(', ', $values) . ')';
+        $db->query($sql);
+    }
+
+    /**
+     * Helper for processing subscriptions on a bean-related activity.
+     * @param  SugarBean $bean
+     * @param  Activity  $act
+     * @param  array     $args
+     */
+    protected function processSubscriptions(SugarBean $bean, Activity $act, array $args)
+    {
+        $db = DBManagerFactory::getInstance();
+        $sql = 'INSERT INTO activities_users VALUES ';
+        $subs = BeanFactory::getBeanName('Subscriptions');
+        $user_partials = $subs::getSubscribedUsers($bean);
+        $rows = array();
+        foreach ($user_partials as $user_partial) {
+            $user = BeanFactory::retrieveBean('Users', $user_partial['created_by']);
+
+            if ($user) {
+                $context = array('user' => $user);
+
+                if ($bean->ACLAccess('view', $context)) {
+                    $fields = array();
+
+                    if ($act->activity_type == 'update') {
+                        foreach ($args['dataChanges'] as $field) {
+                            if ($bean->ACLFieldAccess($field['field_name'], 'read', $context)) {
+                                $fields[] = $field['field_name'];
+                            }
+                        }
+                    }
+
+                    $fields = $db->quote(json_encode($fields));
+                    // Each row must be in the same order as DB.
+                    $values = array(create_guid(), $user->id, $act->id, $act->parent_module, $act->parent_id, $fields, $act->date_modified);
+                    $rows[] = '("' . implode('", "', $values) . '")';
+                }
+            }
+        }
+
+        if (count($rows)) {
+            $sql .= implode(', ', $rows);
+            $db->query($sql);
+        }
     }
 }
