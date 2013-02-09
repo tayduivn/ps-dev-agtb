@@ -34,6 +34,22 @@ $dictionary['Product'] = array(
             'reportable' => false,
             'comment' => 'Product (in Admin Products) from which this product is derived (in user Products)'
         ),
+        'product_template_name' =>  array(
+            'name' => 'product_template_name',
+            'rname' => 'name',
+            'id_name' => 'product_template_id',
+            'vname' => 'LBL_PRODUCT_TEMPLATE',
+            'join_name' => 'templates',
+            'type' => 'relate',
+            'link' => 'product_categories_link',
+            'table' => 'product_templates',
+            'isnull' => 'true',
+            'module' => 'ProductTemplates',
+            'dbType' => 'varchar',
+            'len' => '255',
+            'source' => 'non-db',
+            'studio' => array('editview' => false, 'detailview' => false, 'quickcreate' => false),
+        ),
         'account_id' =>  array(
             'name' => 'account_id',
             'type' => 'id',
@@ -582,6 +598,32 @@ $dictionary['Product'] = array(
             'reportable' => false,
             'comment' => 'The opportunity id for the line item entry'
         ),
+        'opportunity_link' =>  array(
+            'name' => 'opportunity_link',
+            'type' => 'link',
+            'relationship' => 'products_opportunities',
+            'vname' => 'LBL_OPPORTUNITY',
+            'link_type' => 'one',
+            'module' => 'Opportunities',
+            'bean_name' => 'Opportunity',
+            'source' => 'non-db',
+        ),
+        'opportunity_name' => array(
+            'name' => 'opportunity_name',
+            'rname' => 'name',
+            'id_name' => 'opportunity_id',
+            'vname' => 'LBL_OPPORTUNITY_NAME',
+            'join_name' => 'opportunities',
+            'type' => 'relate',
+            'link' => 'opportunity_link',
+            'table' => 'opportunities',
+            'isnull' => 'true',
+            'module' => 'Opportunities',
+            'source' => 'non-db',
+            'unified_search' => true,
+            'full_text_search' => array('boost' => 1),
+            'comment' => 'The opportunity name associated with the opportunity_id'
+        ),
         'opportunities' =>  array(
             'name' => 'opportunities',
             'type' => 'link',
@@ -631,6 +673,16 @@ $dictionary['Product'] = array(
             'bean_name' => 'ProductCategory',
             'source' => 'non-db',
         ),
+        'product_templates_link' =>  array(
+            'name' => 'product_templates_link',
+            'type' => 'link',
+            'relationship' => 'product_templates',
+            'vname' => 'LBL_PRODUCT_TEMPLATES',
+            'link_type' => 'one',
+            'module' => 'ProductTemplates',
+            'bean_name' => 'ProductTemplate',
+            'source' => 'non-db',
+        ),
         'product_types_link' =>  array(
             'name' => 'product_types_link',
             'type' => 'link',
@@ -663,10 +715,7 @@ $dictionary['Product'] = array(
             'type' => 'relate',
             'link' => 'account_link',
             'table' => 'accounts',
-            'isnull' => 'true',
             'module' => 'Accounts',
-            'dbType' => 'varchar',
-            'len' => '255',
             'source' => 'non-db',
             'unified_search' => true,
             'full_text_search' => array('boost' => 1),
@@ -707,6 +756,15 @@ $dictionary['Product'] = array(
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Products'
         ),
+        'products_opportunities' =>  array(
+            'lhs_module' => 'Opportunities',
+            'lhs_table' => 'opportunities',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Products',
+            'rhs_table' => 'products',
+            'rhs_key' => 'opportunity_id',
+            'relationship_type' => 'one-to-one'
+        ),
         'products_accounts' =>  array(
             'lhs_module' => 'Accounts',
             'lhs_table' => 'accounts',
@@ -723,6 +781,15 @@ $dictionary['Product'] = array(
             'rhs_module' => 'Products',
             'rhs_table' => 'products',
             'rhs_key' => 'category_id',
+            'relationship_type' => 'one-to-many'
+        ),
+        'product_templates' =>  array(
+            'lhs_module' => 'ProductTemplates',
+            'lhs_table' => 'product_templates',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Products',
+            'rhs_table' => 'products',
+            'rhs_key' => 'product_template_id',
             'relationship_type' => 'one-to-many'
         ),
         'product_types' =>  array(
@@ -791,6 +858,7 @@ VardefManager::createVardef(
     'Product',
     array(
         'default',
+        'assignable',
 //BEGIN SUGARCRM flav=pro ONLY
         'team_security',
 //END SUGARCRM flav=pro ONLY
