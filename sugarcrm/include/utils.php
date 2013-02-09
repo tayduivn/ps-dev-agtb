@@ -1204,6 +1204,7 @@ function return_module_language($language, $module, $refresh=false)
 	$loaded_mod_strings = array();
 	$language_used = $language;
 	$default_language = $sugar_config['default_language'];
+	$bean = BeanFactory::getBean($module);
 
 	if(empty($language)) {
 		$language = $default_language;
@@ -1219,19 +1220,40 @@ function return_module_language($language, $module, $refresh=false)
 
 	$loaded_mod_strings = LanguageManager::loadModuleLanguage($module, $language,$refresh);
 
+    if ($bean && $bean->module_dir !== $module) {
+        $loaded_mod_strings = sugarLangArrayMerge(
+            LanguageManager::loadModuleLanguage($bean->module_dir, $language, $refresh),
+            $loaded_mod_strings
+        );
+    }
+
 	// cn: bug 6048 - merge en_us with requested language
-	if($language != $sugar_config['default_language'])
+    if ($language != $sugar_config['default_language']) {
         $loaded_mod_strings = sugarLangArrayMerge(
             LanguageManager::loadModuleLanguage($module, $sugar_config['default_language'],$refresh),
                 $loaded_mod_strings
             );
+        if ($bean && $bean->module_dir !== $module) {
+            $loaded_mod_strings = sugarLangArrayMerge(
+                LanguageManager::loadModuleLanguage($bean->module_dir, $sugar_config['default_language'], $refresh),
+                $loaded_mod_strings
+            );
+        }
+    }
 
     // Load in en_us strings by default
-    if($language != 'en_us' && $sugar_config['default_language'] != 'en_us')
+    if($language != 'en_us' && $sugar_config['default_language'] != 'en_us') {
         $loaded_mod_strings = sugarLangArrayMerge(
             LanguageManager::loadModuleLanguage($module, 'en_us', $refresh),
                 $loaded_mod_strings
             );
+        if ($bean && $bean->module_dir !== $module) {
+            $loaded_mod_strings = sugarLangArrayMerge(
+                LanguageManager::loadModuleLanguage($bean->module_dir, 'en_us', $refresh),
+                $loaded_mod_strings
+            );
+        }
+    }
 
 	// If we are in debug mode for translating, turn on the prefix now!
 	if($sugar_config['translation_string_prefix']) {
