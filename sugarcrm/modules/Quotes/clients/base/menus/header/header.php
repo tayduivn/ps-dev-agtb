@@ -23,7 +23,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Quotes';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#'.$module_name.'/create',
+        //'route'=>'#'.$module_name.'/create',
+        'route' => '#bwc/index.php?module=Quotes&action=EditView&return_module=Quotes&return_action=DetailView',
         'label' =>'LNK_NEW_QUOTE',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
