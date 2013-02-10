@@ -32,6 +32,9 @@ class TemplateDateTimeTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         global $timedate;
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         //Set the now on timedate correctly for consistent testing
         $now = $timedate->getNow(true)->setDate(2012,10,8)->setTime(16, 10);
         $timedate->setNow($now);
@@ -42,6 +45,7 @@ class TemplateDateTimeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         global $timedate;
         $timedate->setNow(new SugarDateTime());
+        SugarTestHelper::tearDown();
     }
 
     public function testDefaultValues()

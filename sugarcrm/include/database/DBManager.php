@@ -432,6 +432,11 @@ abstract class DBManager
 	 */
 	protected function addDistinctClause(&$sql)
 	{
+	    preg_match("|^\w*(\w+)|i", $sql, $firstword);
+	    if(empty($firstword[1]) || strtolower($firstword[1]) != 'select') {
+	        // take first word of the query, if it's not SELECT - ignore it
+	        return;
+	    }
 		if(!empty($GLOBALS['sugar_config']['disable_count_query']) && (stripos($sql, 'count(*)') === false && stripos($sql, '(select tst.team_set_id from') !==false)){
 			if(stripos( $sql, 'UNION ALL') !== false){
 				$parts = explode('UNION ALL', $sql);

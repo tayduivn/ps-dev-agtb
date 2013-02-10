@@ -673,15 +673,17 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     	'relationship' => 'quotes_contacts_billto',
     	'source'=>'non-db',
   	),
-  'product_bundles' =>
-	array (
-  		'name' => 'product_bundles',
-    	'type' => 'link',
-	'vname'=>'LBL_PRODUCT_BUNDLES',
-
-    	'relationship' => 'product_bundle_quote',
-    	'source'=>'non-db',
-  	),
+    'product_bundles' =>
+        array(
+            'name' => 'product_bundles',
+            'type' => 'link',
+            'vname' => 'LBL_PRODUCT_BUNDLES',
+            'module' => 'ProductBundles',
+            'bean_name' => 'ProductBundle',
+            'relationship' => 'product_bundle_quote',
+            'rel_fields' => array('bundle_index' => array('type' => 'integer')),
+            'source' => 'non-db',
+        ),
   'opportunities' =>
 	array (
   		'name' => 'opportunities',
