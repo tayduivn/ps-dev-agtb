@@ -7801,7 +7801,7 @@ h4.merge-interface-header .preview {
 .merge-interface .col .box .merge-view {
   display: block;
 }
-.merge-interface .col:first-child .primary-lbl {
+.merge-interface .col.primary-edit-mode .primary-lbl {
   visibility: visible;
   width: 80%;
   margin-left: 10%;
@@ -7815,22 +7815,29 @@ h4.merge-interface-header .preview {
   font-size: 11px;
   text-shadow: -1px -1px 1px #fff;
 }
-.merge-interface .col:first-child .box {
+.merge-interface .col.primary-edit-mode .primary-lbl.static-ui-draggable {
+  width: 100px;
+}
+.merge-interface .col.primary-edit-mode .box {
   background: #F7F7F7;
   border: 1px solid #CECECE;
 }
-.merge-interface .col:first-child .box .merge-row.even,
-.merge-interface .col:first-child .box .merge-row.odd {
+.merge-interface .col.primary-edit-mode .box .merge-row.even,
+.merge-interface .col.primary-edit-mode .box .merge-row.odd {
   background: none;
 }
-.merge-interface .col:first-child .box .merge-edit {
+.merge-interface .col.primary-edit-mode .box .merge-edit {
   display: block;
 }
-.merge-interface .col:first-child .box .merge-view {
+.merge-interface .col.primary-edit-mode .box .merge-view {
   display: none;
+}
+.merge-interface .label-div .col {
+  margin-top: 30px;
 }
 .merge-interface .label-div aside {
   margin-left: 10px;
+  line-height: 32px;
 }
 .merge-interface .label-div aside a:hover i {
   text-decoration: none;
