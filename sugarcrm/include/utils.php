@@ -1888,51 +1888,42 @@ function parse_calendardate($local_format) {
 
 
 function translate($string, $mod='', $selectedValue=''){
-	//$test_start = microtime();
-	//static $mod_strings_results = array();
+    // Bug 60664
+    global $mod_strings;
+    
 	if(!empty($mod)){
 		global $current_language;
 		//Bug 31275
 		if(isset($_REQUEST['login_language'])){
 		    $current_language = ($_REQUEST['login_language'] == $current_language)? $current_language : $_REQUEST['login_language'];
 		}
-		$mod_strings = return_module_language($current_language, $mod);
+		$lang = return_module_language($current_language, $mod);
+        
+        // Bug 60664 - If module language isn't found, just use mod_strings
+        if (empty($lang)) {
+            $lang = $mod_strings;
+        }
         if ($mod == "")
         echo "Language is <pre>" . $mod_strings . "</pre>";
 
 	}else{
-		global $mod_strings;
+		$lang =  $mod_strings;
 	}
 
 	$returnValue = '';
 	global $app_strings, $app_list_strings;
 
-    if (isset($mod_strings[$string]))
+    if (isset($lang[$string])) {
+        $returnValue = $lang[$string];
+    } else if (isset($mod_strings[$string])) {
         $returnValue = $mod_strings[$string];
-    else if (isset($app_strings[$string]))
+    } else if (isset($app_strings[$string])) {
         $returnValue = $app_strings[$string];
-    else if (isset($app_list_strings[$string]))
+    } else if (isset($app_list_strings[$string])){
         $returnValue = $app_list_strings[$string];
-    else if (isset($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$string]))
+    } else if (isset($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$string])) {
         $returnValue = $app_list_strings['moduleList'][$string];
-
-
-	//$test_end = microtime();
-	//
-	//    $mod_strings_results[$mod] = microtime_diff($test_start,$test_end);
-	//
-	//    echo("translate results:");
-	//    $total_time = 0;
-	//    $total_strings = 0;
-	//    foreach($mod_strings_results as $key=>$value)
-	//    {
-	//        echo("Module $key \t\t time $value \t\t<br>");
-	//        $total_time += $value;
-	//    }
-	//
-	//    echo("Total time: $total_time<br>");
-
-
+    }
 
 	if(empty($returnValue)){
 		return $string;
