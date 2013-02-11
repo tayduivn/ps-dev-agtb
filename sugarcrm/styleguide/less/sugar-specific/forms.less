@@ -470,19 +470,22 @@ h1 input[type="text"] {
       }
     }
   }
-  .card2 .control-group:first-child .control-label {
+  .card2 .control-group:first-child .control-label,
+  .card2 .control-group .control-label.begin-fieldgroup {
     .border-radius(3px 3px 0 0);
     border-top: 1px solid lighten(@grayLight,14%);
   }
-  .card2 .control-group:last-child .control-label {
+  .card2 .control-group:last-child .control-label,
+  .card2 .control-group .control-label.end-fieldgroup {
     padding-bottom: 0;
     .border-radius(0 0 3px 3px);
     border-bottom: 1px solid lighten(@grayLight,14%);
+    height: auto;
   }
   div.control-label {
     float: left;
     /*width: 140px;*/
-    padding: 6px 0 7px;
+    padding: 5px 0 12px;
     text-align: right;
     border-left: 1px solid lighten(@grayLight,14%);
     border-right: 1px solid lighten(@grayLight,14%);
@@ -491,6 +494,7 @@ h1 input[type="text"] {
     label {
       color: lighten(@gray,20%);
       font-size: 11px;
+      margin-bottom: 0;
     }
   }
   .help-block {

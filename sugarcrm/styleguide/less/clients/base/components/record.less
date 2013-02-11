@@ -42,9 +42,48 @@ h1 {
 }
 
 //main record edit
+
 .record {
+
+  .form-horizontal {
+    .record-cell,
+    .normal {
+      min-height: 0px;
+    }
+    .record-cell {
+      padding-left: 0;
+      input[type="text"],
+      select,
+      textarea,
+      .uneditable-input {
+        margin-left: 0px !important;
+      }
+      .compose-sender-options {
+        position: absolute;
+        top: 5px;
+        right: 51px;
+        z-index: 2;
+      }
+      .help-block {
+        min-height: 8px;
+      }
+    }
+    .control-label {
+      position: absolute;
+      height: 100%;
+    }
+    .controls {
+      > span {
+        padding: 0;
+      }
+    }
+    .mceLayout {
+      width: 100% !important;
+    }
+  }
+
   clear: both;
-  margin: 10px 30px 10px 15px;
+  margin: 20px 20px 10px 20px;
 
   .record-cell {
 
@@ -282,13 +321,17 @@ h1 {
     &[data-type="favorite"] {
       display: none;
     }
+
+    &[data-type="compose-actionbar"] {
+      padding-bottom: 8px;
+    }
   }
 
   .record-edit-link-wrapper {
     .record-edit-link {
       position: absolute;
       top: 18px;
-      left: -16px;
+      left: -29px;
       z-index: 0;
       padding: 4px 7px 4px;
     }
