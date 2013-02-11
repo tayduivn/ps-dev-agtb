@@ -59,8 +59,8 @@ class RelateApi extends ListApi {
         // Figure out what is on the other side of this relationship, check permissions
         $linkModuleName = $record->$linkName->getRelatedModuleName();
         $linkSeed = BeanFactory::newBean($linkModuleName);
-        if ( ! $linkSeed->ACLAccess('view') ) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$linkModuleName);
+        if ( ! $linkSeed->ACLAccess('list') ) {
+            throw new SugarApiExceptionNotAuthorized('No access to list records for module: '.$linkModuleName);
         }
 
         $options = $this->parseArguments($api, $args, $linkSeed);

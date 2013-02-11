@@ -186,12 +186,7 @@ class ProjectTaskViewList extends ViewList
 			return;
 
 		if(empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false){
-			if (!is_admin($current_user)){
-				$lv->setup($seed, 'include/ListView/ListViewNoMassUpdate.tpl', $where, $params);
-			}
-			else {
-				$lv->setup($seed, 'include/ListView/ListViewGeneric.tpl', $where, $params);
-			}
+			$lv->setup($seed, 'include/ListView/ListViewGeneric.tpl', $where, $params);
 			$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
 			echo $lv->display();
 		}
