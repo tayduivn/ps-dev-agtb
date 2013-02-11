@@ -23,7 +23,7 @@
  ********************************************************************************/
 
 require_once 'include/api/RestService.php';
-require_once 'include/api/ConfigModuleApi.php';
+require_once 'clients/base/api/ConfigModuleApi.php';
 
 class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -62,7 +62,6 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             "module" => "Contacts",
-            "platform" => "base",
             "testSetting" => "My voice is my passport, verify me",
         );
         $apiClass = new ConfigModuleApi();
@@ -94,7 +93,6 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             "module" => "Contacts",
-            "platform" => "base",
         );
         $apiClass = new ConfigModuleApi();
         $result = $apiClass->config($api, $args);
@@ -118,7 +116,6 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             "module" => "Contacts",
-            "platform" => "base",
             "testSetting" => strrev($testSetting),
         );
         $apiClass = new ConfigModuleApi();
@@ -149,7 +146,6 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             "module" => "Contacts",
-            "platform" => "base",
             "testSetting" => "My voice is my passport, verify me",
         );
         $apiClass = new ConfigModuleApi();
