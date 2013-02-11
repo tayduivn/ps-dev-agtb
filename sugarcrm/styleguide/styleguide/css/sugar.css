@@ -7566,12 +7566,6 @@ table.duplicates.highlight tbody td {
 .layout_Leads .want_filter .form-search .filter-header {
   display: none;
 }
-.layout_Leads .duplicate_count {
-  padding: 4px;
-  text-align: center;
-  font-weight: bold;
-  display: block;
-}
 .layout_Leads .want_filter .form-search .extend {
   margin-top: -5px;
 }
@@ -7739,6 +7733,7 @@ h4.merge-interface-header .preview {
 }
 .merge-interface .col .primary-lbl {
   visibility: hidden;
+  cursor: move;
 }
 .merge-interface .col .box {
   border-radius: 3px;
@@ -8356,7 +8351,7 @@ h1 .select2-container {
 }
 h1 .select2-container .select2-choice {
   margin-top: 0;
-  height: 26px;
+  height: 30px;
   padding: 4px 0 4px 8px;
 }
 h1 .select2-container .select2-choice div {
@@ -8450,15 +8445,16 @@ h1 .select2-container .select2-choice abbr {
   min-height: 18px;
 }
 .record .record-cell[data-type="textarea"] .normal > span {
-  display: inline !important;
+  display: inline-block !important;
   margin-bottom: 9px;
-}
-.record .record-cell[data-type="textarea"] .textarea-text {
-  display: inline !important;
   padding: 7px 0;
+  width: 100%;
+}
+.record .record-cell[data-type="textarea"] textarea {
+  margin-top: -7px;
 }
 .record .record-cell[data-type="url"] .normal > span {
-  display: block !important;
+  display: inline-block !important;
   margin-bottom: 9px;
 }
 .record .record-cell[data-type="url"] .normal > span a {
@@ -8475,6 +8471,7 @@ h1 .select2-container .select2-choice abbr {
 .record .record-cell[data-type="email"] .control-group.email {
   padding-right: 132px;
   position: relative;
+  min-height: 30px;
 }
 .record .record-cell[data-type="email"] .control-group.email .input-append.widget {
   margin-bottom: 0;
@@ -8539,7 +8536,7 @@ h1 .select2-container .select2-choice abbr {
 }
 .record .record-cell[data-type="enum"] .normal > span .select2-container,
 .record .record-cell[data-type="relate"] .normal > span .select2-container {
-  margin: -5px 0 0 -9px;
+  margin: -7px 0 0 -9px;
   position: absolute;
 }
 .record .record-cell[data-type="teamset"] .normal .row-fluid {
