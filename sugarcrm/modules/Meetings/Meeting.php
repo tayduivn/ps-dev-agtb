@@ -207,8 +207,8 @@ class Meeting extends SugarBean {
             }
         }
 
-		$check_notify = (!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
-		if(empty($_REQUEST['send_invites'])) {
+        $check_notify = $this->send_invites;
+        if($this->send_invites == false) {
 			if(!empty($this->id)) {
 				$old_record = new Meeting();
 				$old_record->retrieve($this->id);
