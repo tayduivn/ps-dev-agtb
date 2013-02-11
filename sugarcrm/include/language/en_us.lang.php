@@ -2409,6 +2409,8 @@ $app_strings = array (
     'ERR_DB_QUERY' => '{0}: query failed: {1}',
 
     'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
+    'EXCEPTION_CHANGE_MODULE_CONFIG_NOT_AUTHORIZED' => 'Current User not authorized to change {moduleName} configuration settings',
+    'EXCEPTION_ACCESS_MODULE_CONFIG_NOT_AUTHORIZED' => 'Current User not authorized to change {moduleName} configuration settings',
 
     // Default SugarApiException error messages
     'EXCEPTION_UNKNOWN_EXCEPTION'       => 'Your request failed due to an unknown exception.',
