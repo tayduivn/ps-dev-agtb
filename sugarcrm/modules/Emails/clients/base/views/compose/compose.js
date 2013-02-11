@@ -36,6 +36,17 @@
         }
     },
 
+    bindDataChange: function() {
+        // If email is considered valid, enable the dropdown menu.  If not, disable
+        this.model.on('change', function() {
+            if (this.isEmailSendable()) {
+                this.getField('main_dropdown').setDisabled(false);
+            } else {
+                this.getField('main_dropdown').setDisabled(true);
+            }
+        }, this);
+    },
+
     /**
      * Check if CC or BCC fields have values - if not, hide the fields and inject a link to show it
      */
@@ -206,12 +217,30 @@
     },
 
     /**
-     * Send the email immediately
+     * Send the email immediately or warn if user did not provide subject or body
      */
     send: function() {
-        this.saveModel('ready',
-            app.lang.getAppString('LBL_EMAIL_SENDING'),
-            app.lang.getAppString('LBL_EMAIL_SEND_SUCCESS'));
+        var sendEmail = _.bind(function() {
+            this.saveModel('ready',
+                app.lang.getAppString('LBL_EMAIL_SENDING'),
+                app.lang.getAppString('LBL_EMAIL_SEND_SUCCESS'));
+        }, this);
+
+        if (!this.isFieldPopulated('subject')) {
+            app.alert.show('send_confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_SEND_ANYWAYS', this.module),
+                onConfirm: sendEmail
+            });
+        } else if (!this.isFieldPopulated('html_body')) {
+            app.alert.show('send_confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_NO_BODY_SEND_ANYWAYS', this.module),
+                onConfirm: sendEmail
+            });
+        } else {
+            sendEmail();
+        }
     },
 
     /**
@@ -251,6 +280,24 @@
 
             fieldsToValidate: this.getFields(this.module)
         });
+    },
+
+    /**
+     * Can this email be sent?
+     * @return {*}
+     */
+    isEmailSendable: function() {
+        return this.isFieldPopulated('to_addresses') &&
+            (this.isFieldPopulated('subject') || this.isFieldPopulated('html_body'));
+    },
+
+    /**
+     * Is this field populated?
+     * @param fieldName
+     * @return {Boolean}
+     */
+    isFieldPopulated: function(fieldName) {
+        return ($.trim(this.model.get(fieldName)) !== '');
     }
 
 })
