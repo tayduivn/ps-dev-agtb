@@ -168,7 +168,9 @@
             options.success = _.bind(function(resp, status, xhr) {
                 this.collection.reset(resp.records);
             }, this);
-            app.api.call(method, this.createURL(), model, options);
+            // we need to force a post, so get the url object and put it in
+            var url = this.createURL();
+            app.api.call("create", url.url, url.filters, options);
         }, this);
 
         // INIT tree with logged-in user       
@@ -189,7 +191,7 @@
 
     /**
      *
-     * @return {String}
+     * @return {Object}
      */
     createURL: function() {
         // we need to default the type to products
@@ -204,7 +206,9 @@
             args_filter.push({"assigned_user_id": this.selectedUser.id});
         }
 
-        return app.api.buildURL('ForecastWorksheets', 'filter', '', {"filter": args_filter});
+        var url = app.api.buildURL('ForecastWorksheets', 'filter');
+
+        return {"url": url, "filters": {"filter": args_filter}};
     },
 
     /**

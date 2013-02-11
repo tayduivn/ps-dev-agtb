@@ -44,6 +44,7 @@ class ForecastManagerWorksheet extends SugarBean
     public $best_case_adjusted;
     public $likely_case_adjusted;
     public $worst_case_adjusted;
+    public $show_history_log = 0;
     public $draft = 0;
     public $object_name = 'ForecastManagerWorksheet';
     public $module_name = 'ForecastManagerWorksheets';
@@ -305,6 +306,29 @@ class ForecastManagerWorksheet extends SugarBean
         $mgr_worksheet->reporteeForecastRollUp($userObj, $this->args);
 
 
+    }
+
+    public function fill_in_additional_detail_fields()
+    {
+        parent::fill_in_additional_detail_fields();
+        // see if the value should show the historyLog Button
+        $sq = new SugarQuery();
+        $sq->select('date_modified');
+        $sq->from(BeanFactory::getBean($this->module_name))->where()
+            ->equals('assigned_user_id', $this->assigned_user_id)
+            ->equals('user_id', $this->user_id)
+            ->equals('draft', 0)
+            ->equals('timeperiod_id', $this->timeperiod_id);
+        $beans = $sq->execute();
+
+        if(empty($beans)) {
+            $this->show_history_log = 0;
+        } else {
+            $bean = $beans[0];
+            $committed_date = $this->db->fromConvert($bean["date_modified"], "datetime");
+            $timedate=TimeDate::getInstance();
+            $this->show_history_log = intval(strtotime($committed_date) < strtotime($timedate->to_db($this->date_modified)));
+        }
     }
 
     /**

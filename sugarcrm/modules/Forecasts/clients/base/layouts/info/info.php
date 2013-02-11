@@ -31,9 +31,6 @@ $viewdefs['Forecasts']['base']['layout']['info'] = array(
         ),
         array(
             'view' => 'forecastsCommitted',
-            'collection' => array(
-                'name' => 'Committed'
-            ),
         ),
         array(
             'view' => 'forecastsCommitLog',

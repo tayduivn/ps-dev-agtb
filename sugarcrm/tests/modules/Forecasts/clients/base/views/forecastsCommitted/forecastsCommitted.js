@@ -20,18 +20,33 @@
  ********************************************************************************/
 
 describe("The forecasts committed view", function () {
-    var app, view, testMethodStub, context, totals,
+    var app, view, context, totals,
         formatAmountLocaleStub, createHistoryLogStub, forecastsSetStub,
         stubs = [];
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitted", "forecastsCommitted", "js", function (d) {
-            return eval(d);
-        });
 
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function (d) { return eval(d); });
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function (d) { return eval(d); });
+
+        context = app.context.getContext();
+        context.config = new (Backbone.Model.extend({
+            "defaults": fixtures.metadata.modules.Forecasts.config
+        }));
+        context.set({"selectedUser": {"id": 'test_user'}});
+        context.set({"timeperiod_id": {"id": 'timeperiod_id'}});
+        context.set({"collection": new Backbone.Collection()});
+
+
+        app.initData = {};
+        app.defaultSelections = {
+            timeperiod_id: {},
+            group_by: {},
+            selectedUser: {}
+        };
+
+        view = SugarTest.createView("base", "Forecasts", "forecastsCommitted", null, context, true);
 
         formatAmountLocaleStub = sinon.stub(app.currency, "formatAmountLocale", function(value) {
             return value;
@@ -45,32 +60,10 @@ describe("The forecasts committed view", function () {
 
         stubs.push(createHistoryLogStub);
 
-        view.render = function() {};
-        view.context = {
-            set: function(){},
-            trigger: function(){}
-        };
-
         forecastsSetStub = sinon.stub(view.context, "trigger", function(){});
         sinon.spy(view.context.trigger);
         stubs.push(forecastsSetStub);
 
-        context = app.context.getContext({
-            url:"someurl",
-            module:"Forecasts"
-        });
-
-        app.defaultSelections = {
-            timeperiod_id:{},
-            group_by:{},
-            dataset:{},
-            selectedUser:{}
-        };
-
-        view.selectedUser = {
-            isManager: false,
-            showOpps: true
-        };
     });
 
     afterEach(function () {
