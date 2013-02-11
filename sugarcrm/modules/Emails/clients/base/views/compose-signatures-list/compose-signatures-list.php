@@ -30,7 +30,8 @@ if(!defined("sugarEntry") || !sugarEntry) die("Not A Valid Entry Point");
 
 $viewdefs["Emails"]["base"]["view"]["compose-signatures-list"] = array(
     "type"        => "list",
-    "showPreview" => true,
+    "rowactions"  => array(),
+    "showPreview" => false,
     "selection"   => array(
         "type"  => "single",
         "label" => "LBL_LINK_SELECT",
