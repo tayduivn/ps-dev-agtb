@@ -67,15 +67,20 @@
      */
     toggleSenderOptions: function(container, showCCLink, showBCCLink) {
         var field = this.getField(container),
-            ccField = field.$el.closest('.row-fluid.panel_body'),
+            ccField,
+            senderOptionTemplate;
+
+        if (field) {
+            ccField = field.$el.closest('.row-fluid.panel_body');
             senderOptionTemplate = app.template.getView("compose-senderoptions", this.module);
 
-        $(senderOptionTemplate({
-            'module' : this.module,
-            'showCC': showCCLink,
-            'showBCC': showBCCLink,
-            'showSeperator': showCCLink && showBCCLink
-        })).insertAfter(ccField.find('div span.normal'));
+            $(senderOptionTemplate({
+                'module' : this.module,
+                'showCC': showCCLink,
+                'showBCC': showBCCLink,
+                'showSeperator': showCCLink && showBCCLink
+            })).insertAfter(ccField.find('div span.normal'));
+        }
     },
 
     /**
@@ -107,7 +112,9 @@
      */
     hideField: function(fieldName) {
         var field = this.getField(fieldName);
-        field.$el.closest('.row-fluid.panel_body').addClass('hide');
+        if (field) {
+            field.$el.closest('.row-fluid.panel_body').addClass('hide');
+        }
     },
 
     /**

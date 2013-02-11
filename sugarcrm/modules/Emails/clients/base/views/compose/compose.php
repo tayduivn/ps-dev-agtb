@@ -1,23 +1,23 @@
 <?php
 $viewdefs['Emails']['base']['view']['compose'] = array(
-    'type' =>'record',
+    'type'    =>'record',
     'buttons' => array(
         array(
-            'type' => 'button',
-            'name' => 'cancel_button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'type'      => 'button',
+            'name'      => 'cancel_button',
+            'label'     => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
         ),
         array(
-            'type' => 'actiondropdown',
-            'name' => 'main_dropdown',
+            'type'    => 'actiondropdown',
+            'name'    => 'main_dropdown',
             'buttons' => array(
                 array(
                     'name'      => 'send_button',
                     'type'      => 'button',
                     'label'     => 'LBL_SEND_BUTTON_LABEL',
                     'value'     => 'send',
-                    'primary' => true,
+                    'primary'   => true,
                 ),
                 array(
                     'name'      => 'draft_button',
@@ -45,24 +45,25 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     "name"                => "to_addresses",
                     "type"                => "recipients",
                     "label"               => "LBL_TO_ADDRS",
-                    'css_class_container' => 'controls-one btn-fit',
+                    'cell_css_class'      => 'controls-one btn-fit',
+                    'label_css_class'     => 'begin-fieldgroup',
                 ),
                 array(
                     "name"                => "cc_addresses",
                     "type"                => "recipients",
                     "label"               => "LBL_CC",
-                    'css_class_container' => 'controls-one btn-fit',
+                    'cell_css_class'      => 'controls-one btn-fit',
                 ),
                 array(
                     "name"                => "bcc_addresses",
                     "type"                => "recipients",
                     "label"               => "LBL_BCC",
-                    'css_class_container' => 'controls-one btn-fit',
+                    'cell_css_class'      => 'controls-one btn-fit',
                 ),
                 array(
-                    'name'      => 'subject',
-                    'label'     => 'LBL_SUBJECT',
-                    'css_class' => 'inherit-width',
+                    'name'                => 'subject',
+                    'label'               => 'LBL_SUBJECT',
+                    'label_css_class'     => 'end-fieldgroup',
                 ),
                 array(
                     'name'      => 'actionbar',
@@ -77,7 +78,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                                     'type'      => 'button',
                                     'icon'      => 'icon-paper-clip',
                                     'label'     => 'LBL_UPLOAD_ATTACHMENT',
-                                    'primary' => true,
+                                    'primary'   => true,
                                 ),
                                 array(
                                     'name'      => 'attach_sugardoc_button',
@@ -105,11 +106,11 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                             ),
                         ),
                     ),
-
                 ),
                 array(
-                    'name'      => 'html_body',
-                    'type'      => 'htmleditable_tinymce',
+                    'name'       => 'html_body',
+                    'type'       => 'htmleditable_tinymce',
+                    'full_width' => true,
                     'tinyConfig' => array(
                         // Location of TinyMCE script
                         'script_url' => 'include/javascript/tiny_mce/tiny_mce.js',
@@ -121,7 +122,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                         'entity_encoding' => "raw",
 
                         // Theme options
-                        'theme_advanced_buttons1' => "code,help,separator,bold,italic,underline,strikethrough,separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,justifyfull,separator,forecolor,backcolor,separator,spellchecker,seperator,styleselect,formatselect,fontselect,fontsizeselect",
+                        'theme_advanced_buttons1' => "code,help,separator,bold,italic,underline,strikethrough,separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,justifyfull,separator,forecolor,backcolor,separator,spellchecker,seperator,formatselect,fontselect,fontsizeselect",
                         'theme_advanced_toolbar_location' => "top",
                         'theme_advanced_toolbar_align' => "left",
                         'theme_advanced_statusbar_location' => "bottom",
@@ -137,12 +138,12 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
             ),
         ),
         array(
-            'name' => 'panel_hidden',
-            'hide' => true,
-            'columns' => 1,
-            'labelsOnTop' => false,
+            'name'         => 'panel_hidden',
+            'hide'         => true,
+            'columns'      => 1,
+            'labelsOnTop'  => false,
             'placeholders' => true,
-            'fields' => array(
+            'fields'       => array(
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     "type" => "teamset",
@@ -151,8 +152,8 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                 //END SUGARCRM flav=pro ONLY
                 array (
                     "label" => "LBL_LIST_RELATED_TO",
-                    'type' => 'parent',
-                    'name' => 'parent_name'
+                    'type'  => 'parent',
+                    'name'  => 'parent_name'
                 ),
             ),
         ),
