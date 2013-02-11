@@ -42,10 +42,10 @@
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
             if (this.inlineEditMode) {
-                this.previousModelState = _.clone(this.model.attributes);
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
+        app.events.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
         this.model.on("duplicate:before", this.setupDuplicateFields, this);
@@ -54,6 +54,11 @@
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
+        }
+    },
+    handleSync: function(method, model, options, error) {
+        if (this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
+            this.previousModelState = JSON.parse(JSON.stringify(model.attributes));
         }
     },
 
@@ -347,7 +352,6 @@
     },
 
     editClicked: function() {
-        this.previousModelState = _.clone(this.model.attributes);
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
