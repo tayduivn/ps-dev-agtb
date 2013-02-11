@@ -293,7 +293,7 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api->user = $GLOBALS['current_user'];
 
         $args = array(
-            "module" => "Forecasts"
+            "module" => "Forecasts",
         );
 
         $args = array_merge($args, $priorSettings);

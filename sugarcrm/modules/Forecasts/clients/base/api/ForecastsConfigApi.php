@@ -69,7 +69,7 @@ class ForecastsConfigApi extends ConfigModuleApi
             $failed_module_strings = return_module_language($GLOBALS['current_language'], 'forecasts');
             $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
             $args = null;
-            if(!empty($moduleName)){
+            if(!empty($moduleName)) {
                 $args = array('moduleName' => $moduleName);
             }
             throw new SugarApiExceptionNotAuthorized($GLOBALS['app_strings']['EXCEPTION_CHANGE_MODULE_CONFIG_NOT_AUTHORIZED'], $args);
