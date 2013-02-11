@@ -159,63 +159,6 @@ class Contact extends Person {
 		parent::__construct();
 	}
 
-	/**
-	 * The Contact Save function.  Overloads the bean save to check sync contact and set the contacts_user_id if needed
-	 * @param bool $check_notify 
-	 * @return string - the beans guid
-	 */
-	public function save($check_notify = FALSE) {
-		// if sync contact exists, and contacts_user_id is empty we want to populate it
-		if(isset($this->sync_contact) && empty($this->contacts_users_id)) {
-			$this->sync_contact = (bool)$this->sync_contact;
-			if($this->sync_contact == true) {
-				$this->setUserContactsUserId($GLOBALS['current_user']->id);
-			}
-			elseif($this->sync_contact == false) {
-				$this->removeUserContactsUserId($GLOBALS['current_user']->id);
-			}
-
-		}
-		return parent::save($check_notify);
-	}
-
-	/**
-	 * Sets the Sync Contact flag if Contacts Users Id is not empty
-	 * @return bool true if the sync_contact is set, false if not
-	 */
-	public function setSyncContact() {
-		if(!empty($this->contacts_users_id)) {
-			$this->sync_contact = true;
-			return true;
-		}
-		$this->sync_contact = false;
-		return false;
-	}
-
-	/**
-	 * Set the passed in user id as the Contacts User Id
-	 * @param type string guid 
-	 */
-	public function setUserContactsUserId($user_id) {
-		if($this->contacts_users_id != $user_id) {
-			$this->contacts_users_id = $user_id;
-			$this->sync_contact = true;
-		}
-	}
-
-	/**
-	 * Remove the passed in user id as the Contacts User Id
-	 * @param type SugarBean $user 
-	 */
-	public function removeUserContactsUserId($user_id) {
-		if(!isset($this->users)) {
-			$this->load_relationship('user_sync');
-		}
-		$this->contacts_users_id = null;
-		$this->user_sync->delete($this->id, $user_id);
-		$this->sync_contact = false;
-	}
-
 	function add_list_count_joins(&$query, $where)
 	{
 		// accounts.name
@@ -467,8 +410,9 @@ class Contact extends Person {
 		 * Notes, etc.
 		 */
 		$this->name = $locale->getLocaleFormattedName($this->first_name, $this->last_name);
-
-		$this->setSyncContact();
+        if(!empty($this->contacts_users_id)) {
+		   $this->sync_contact = true;
+		}
 
 		if(!empty($this->portal_active) && $this->portal_active == 1) {
 		   $this->portal_active = true;
