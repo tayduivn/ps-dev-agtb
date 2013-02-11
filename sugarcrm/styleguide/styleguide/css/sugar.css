@@ -3483,24 +3483,18 @@ article .actions,
   margin-right: 2px;
 }
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice a.select2-search-choice-close {
-  top: 2.5px;
-  right: 4.5px;
+  top: 3px;
+  right: 4px;
   left: auto;
-  color: #fff;
-  background: #4398ec;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  font-size: 9px;
   font-family: FontAwesome;
+  font-size: 14px;
+  font-weight: bold;
   text-decoration: none;
-  width: 12px;
-  height: 12px;
-  line-height: 11.5px;
-  text-align: center;
+  color: #71b1f1;
+  background: none;
 }
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice a.select2-search-choice-close::before {
-  content: "\f00d";
+  content: "\f057";
 }
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice.select2-search-choice-focus {
   border-color: rgba(82,168,236,0.8);
