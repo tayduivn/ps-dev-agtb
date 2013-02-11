@@ -3460,6 +3460,45 @@ article .actions,
   border-radius: 11px;
   background-color: rgba(82,168,236,0.4);
 }
+.select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice {
+  padding: 0;
+  margin: 4px 0 4px 4px;
+  font-size: 11px;
+  background: none;
+  border: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice div {
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  background: #E5F4FB;
+  color: #777;
+  padding: 2px 16px 2px 6px;
+  margin-right: 2px;
+}
+.select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice a.select2-search-choice-close {
+  top: 2px;
+  right: 4px;
+  left: auto;
+}
+.select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice.select2-search-choice-focus {
+  border-color: rgba(82,168,236,0.8);
+  outline: 0;
+  outline: thin dotted 9;
+  -webkit-box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
+  -moz-box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
+  box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
+  -webkit-border-radius: 11px;
+  -moz-border-radius: 11px;
+  border-radius: 11px;
+  background-color: rgba(82,168,236,0.4);
+}
 .select2-container .select2-select-legend .icon-plus {
   margin-top: 3px;
   line-height: 4px;
@@ -3474,6 +3513,8 @@ article .actions,
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffebebeb', GradientType=0);
   color: #8b8c8e;
+  line-height: 30px;
+  height: 30px;
 }
 .select2-container .select2-choice div {
   border: none;
@@ -3481,6 +3522,7 @@ article .actions,
   -webkit-border-radius: none;
   -moz-border-radius: none;
   border-radius: none;
+  top: 2px;
 }
 .select2-container .select2-choice div b {
   background-position: 0px 0px;
@@ -3489,7 +3531,7 @@ article .actions,
   margin-right: 28px;
 }
 .select2-container .select2-choice abbr {
-  top: 6px;
+  top: 8px;
   right: 18px;
 }
 .select2-drop-error {
@@ -8356,7 +8398,7 @@ h1 .select2-container {
 }
 h1 .select2-container .select2-choice {
   margin-top: 0;
-  height: 26px;
+  height: 30px;
   padding: 4px 0 4px 8px;
 }
 h1 .select2-container .select2-choice div {
@@ -8450,15 +8492,16 @@ h1 .select2-container .select2-choice abbr {
   min-height: 18px;
 }
 .record .record-cell[data-type="textarea"] .normal > span {
-  display: inline !important;
+  display: inline-block !important;
   margin-bottom: 9px;
-}
-.record .record-cell[data-type="textarea"] .textarea-text {
-  display: inline !important;
   padding: 7px 0;
+  width: 100%;
+}
+.record .record-cell[data-type="textarea"] textarea {
+  margin-top: -7px;
 }
 .record .record-cell[data-type="url"] .normal > span {
-  display: block !important;
+  display: inline-block !important;
   margin-bottom: 9px;
 }
 .record .record-cell[data-type="url"] .normal > span a {
@@ -8475,6 +8518,7 @@ h1 .select2-container .select2-choice abbr {
 .record .record-cell[data-type="email"] .control-group.email {
   padding-right: 132px;
   position: relative;
+  min-height: 30px;
 }
 .record .record-cell[data-type="email"] .control-group.email .input-append.widget {
   margin-bottom: 0;
@@ -8539,7 +8583,7 @@ h1 .select2-container .select2-choice abbr {
 }
 .record .record-cell[data-type="enum"] .normal > span .select2-container,
 .record .record-cell[data-type="relate"] .normal > span .select2-container {
-  margin: -5px 0 0 -9px;
+  margin: -7px 0 0 -9px;
   position: absolute;
 }
 .record .record-cell[data-type="teamset"] .normal .row-fluid {
