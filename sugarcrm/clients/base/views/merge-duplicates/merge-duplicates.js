@@ -89,23 +89,6 @@
                 });
             }
         });    	
-    }, 
-    /**
-     * Display a Preview for the primary record
-     */
-    previewRecord: function(togglePreview) {
-        if(_.isUndefined(togglePreview) || togglePreview) {
-            if(this.isPreviewOpen) {
-                app.events.trigger("preview:close");
-                this.isPreviewOpen = false;
-                return;
-            } 
-        }         
-        var previewModel = this.primaryRecord;
-        var previewModels = [previewModel];        
-        var previewCollection = app.data.createBeanCollection(previewModel.get('_module') || previewModel.module, previewModels);
-        app.events.trigger("preview:render", previewModel, previewCollection, false);
-        this.isPreviewOpen = true;
     },        
     /**
      * Create a two panel viewdews metadata (visible, hidden) given list of fields
@@ -236,7 +219,10 @@
         this.setSortable();
     },
     setSortable: function() {
-        this.$(".ui-sortable").sortable();
+        this.$(".ui-sortable").sortable({
+            items: ".col",
+            axis: "x"
+        });
         this.$(".ui-sortable").disableSelection();    	
     },
     /**
@@ -249,7 +235,7 @@
 
         if(primary_record) {
             this.setPrimaryRecord(primary_record);               
-            this.context.set("primary_record", primary_record);
+            this.context.set("primaryRecord", primary_record);
             this.toggleFields(this.rowFields[primary_record.id], true);
             //app.view.views.ListView.prototype.toggleRow.call(this, primary_record.id, true);
         }

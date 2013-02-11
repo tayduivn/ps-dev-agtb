@@ -5,17 +5,8 @@
     </h4>
 
     <div class="merge-interface row-fluid">
-    
-        <div class="merge-primary-controller">
-            <div class="col">&nbsp;</div>
-            <div class="col d prim">Primary</div>
-            <div class="col d">&nbsp;</div>
-            <div class="col d">&nbsp;</div>
-            <div class="col d">&nbsp;</div>
-            <div class="col d">&nbsp;</div>
-        </div>
-
         <div class="label-div">
+            <div style="visibility: hidden"> </div>
             <div class="col pull-left">
                 {{#each meta.panels}}
                     {{#if hide}}
@@ -37,6 +28,8 @@
         <div class="fluid-div ui-sortable">
             {{#each collection.models}}
             <div class="col">
+                <div class="primary-lbl"> Primary</div>
+
                 <div class="box">
                     {{#each ../meta.panels}}
                         {{#if hide}}
