@@ -138,7 +138,7 @@ $GLOBALS['db']->commit();
 
 define('CHECK_FILE_MAPS', false);
 // define our testcase subclass
-if(function_exists("shadow_get_config") && shadow_get_config() != false) {
+if(function_exists("shadow_get_config") && ($sc = shadow_get_config()) != false && !empty($sc['template'])) {
     // shadow is enabled
     define('SHADOW_ENABLED', true);
     define('SHADOW_CHECK', true); // disable for faster tests
@@ -831,7 +831,7 @@ class SugarTestHelper
     {
         foreach ( self::$oldFiles as $filename => $filecontents ) {
             if(SHADOW_ENABLED) {
-                if(substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && file_exists($filename)) {
+                if(substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && $filename != 'config_override.php' && file_exists($filename)) {
                     // Delete shadow files always
                     @SugarAutoLoader::unlink($filename, false);
                     continue;

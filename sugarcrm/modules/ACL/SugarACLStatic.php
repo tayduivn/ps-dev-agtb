@@ -90,7 +90,6 @@ class SugarACLStatic extends SugarACLStrategy
         'save' => 1,
         'edit' => 1,
         'delete' => 1,
-        'create' => 1,
     );
 
     static $action_translate = array(
@@ -134,9 +133,6 @@ class SugarACLStatic extends SugarACLStrategy
             case 'detail':
                 $access = 1;
                 break;
-            case 'create':
-                $access = 2;
-                break;
             case 'write':
             case 'edit':
                 $access = 3;
@@ -175,7 +171,6 @@ class SugarACLStatic extends SugarACLStrategy
             case 'import':
             case 'list':
                 return ACLController::checkAccessInternal($module, $action, true);
-            case 'create':
             case 'delete':
             case 'view':
             case 'export':

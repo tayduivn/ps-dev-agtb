@@ -23,22 +23,40 @@
  ********************************************************************************/
  
 require_once('modules/Meetings/Meeting.php');
+require_once('modules/Meetings/MeetingFormBase.php');
+require_once("modules/Activities/EmailReminder.php");
+
 
 class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	var $meeting = null;
-	
+	public $meeting = null;
+	public $contact = null;
+	public $lead = null;
+
 	public function setUp()
     {
         global $current_user, $currentModule ;
 		$mod_strings = return_module_language($GLOBALS['current_language'], "Meetings");
 		$current_user = SugarTestUserUtilities::createAnonymousUser();
 
-		$meeting = new Meeting();
+		$meeting = BeanFactory::newBean('Meetings');
 		$meeting->id = uniqid();
         $meeting->name = 'Test Meeting';
         $meeting->save();
 		$this->meeting = $meeting;
+
+		$contact = BeanFactory::newBean('Contacts');
+		$contact->first_name = 'MeetingTest';
+		$contact->last_name = 'Contact';
+		$contact->save();
+		$this->contact = $contact;
+
+		$lead = BeanFactory::newBean('Leads');
+		$lead->first_name = 'MeetingTest';
+		$lead->last_name = 'Lead';
+		$lead->account_name = 'MeetingTest Lead Account';
+		$lead->save();
+		$this->lead = $lead;
 	}
 	
     public function tearDown()
@@ -49,6 +67,14 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         
         $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting->id}'");
         unset($this->meeting);
+
+		$GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
+        unset($this->contact);
+
+		$GLOBALS['db']->query("DELETE FROM leads WHERE id = '{$this->lead->id}'");
+        unset($this->lead);
+
+        unset($_POST);
     }
 	
 	function testMeetingTypeSaveDefault() {
@@ -86,12 +112,35 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 		$meeting->date_start = $GLOBALS['timedate']->nowDb();
 		$meeting->save();
 		
-		require_once("modules/Activities/EmailReminder.php");
 		$er = new EmailReminder();
 		$to_remind = $er->getMeetingsForRemind();
 
 		$this->assertTrue(in_array($meeting->id,$to_remind));
 		$GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$meeting->id}'");
+	}
+
+	public function testMeetingFormBaseRelationshipsSetTest() {
+		global $db;
+		// setup $_POST
+		$_POST = array();
+		$_POST['name'] = 'MeetingTestMeeting';
+		$_POST['lead_invitees'] = $this->lead->id;
+		$_POST['contact_invitees'] = $this->contact->id;
+		$_POST['assigned_user_id'] = $GLOBALS['current_user']->id;
+		// call handleSave
+		$mfb = new MeetingFormBase();
+		$meeting = $mfb->handleSave(null,false, false);
+		// verify the relationships exist
+		$q = "SELECT mu.contact_id FROM meetings_contacts mu WHERE mu.meeting_id = '{$meeting->id}'";
+        $r = $db->query($q);
+        $a = $db->fetchByAssoc($r);
+        $this->assertEquals($this->contact->id, $a['contact_id'], "Contact wasn't set as an invitee");
+
+        $q = "SELECT mu.lead_id FROM meetings_leads mu WHERE mu.meeting_id = '{$meeting->id}'";
+        $r = $db->query($q);
+        $a = $db->fetchByAssoc($r);
+        $this->assertEquals($this->lead->id, $a['lead_id'], "Lead wasn't set as an invitee");
+
 	}
 }
 ?>

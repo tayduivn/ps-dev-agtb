@@ -47,7 +47,7 @@ class RestBug59868Test extends RestTestBase
      * @group Bug59868
      * @group rest
      */
-    public function testHtmlEntitiesAreConvertedInMetadataRequest()
+    public function testAppListStringsConvertedCorrectlyInMetadataRequest()
     {
         $this->_clearMetadataCache();
         $reply = $this->_restCall('metadata');
@@ -56,5 +56,6 @@ class RestBug59868Test extends RestTestBase
 
         $object = json_decode($json);
         $this->assertTrue(is_object($object->app_list_strings->Elastic_boost_options), "App list string wasnt cast to object");
+        $this->assertTrue(isset($object->app_list_strings->industry_dom->_empty_), "App list string wasnt left as an array");
     }
 }

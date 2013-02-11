@@ -157,7 +157,7 @@ class ForecastsCommittedApiTest extends RestTestBase
             "draft" => 1
         );
         
-        $response = $this->_restCall("ForecastWorksheets/" . $reportee["user"]->id, json_encode($postData), "PUT");
+        $response = $this->_restCall("ForecastWorksheets/" . $postData["id"], json_encode($postData), "PUT");
         
         //switch user to manager and get the worksheet for the rep. Verify committed value is returned instead of draft (live) value
         $this->_user = $manager["user"];

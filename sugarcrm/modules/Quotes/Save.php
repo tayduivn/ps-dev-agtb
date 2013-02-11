@@ -105,7 +105,6 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 		$total_keys = array();
 	}
 	$product_bundels = array();
-    $last_pb = null;
 	for($k = 0; $k < sizeof($total_keys); $k++){
 		$pb = new ProductBundle();
 
@@ -138,16 +137,13 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 
 		$product_bundels[$total_keys[$k]] = $pb->save();
 		if(substr_count($total_keys[$k], 'group_') > 0){
-            $pb->set_productbundle_quote_relationship($focus->id, $pb->id);
-		} else {
-		    $last_pb = $pb;
+            $pb->set_productbundle_quote_relationship($focus->id, $pb->id, $k);
 		}
 
 		//clear the old relationships out
 		$pb->clear_productbundle_product_relationship($product_bundels[$total_keys[$k]]);
 		$pb->clear_product_bundle_note_relationship($product_bundels[$total_keys[$k]]);
 	}
-	unset($last_pb);
 
 	$pb = new ProductBundle();
 	$deletedGroups = array();

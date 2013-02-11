@@ -293,12 +293,7 @@ class SugarController
 		}
 		$view = ViewFactory::loadView($this->view, $this->module, $this->bean, $this->view_object_map, $this->target_module);
 		$GLOBALS['current_view'] = $view;
-
-		$action = $view->type;
-		if($action == 'edit' && (empty($this->bean) || empty($this->bean->id) || $this->bean->new_with_id == true)) {
-			$action = 'create';
-		}
-		if(!empty($this->bean) && !$this->bean->ACLAccess($action) && $action != 'list'){
+		if(!empty($this->bean) && !$this->bean->ACLAccess($view->type) && $view->type != 'list'){
 			ACLController::displayNoAccess(true);
 			sugar_cleanup(true);
 		}
@@ -557,11 +552,6 @@ class SugarController
 				sugar_cleanup(true);
 			}
 			$this->bean->mark_deleted($_REQUEST['record']);
-            //BEGIN SUGARCRM flav=pro ONLY
-            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-            $searchEngine = SugarSearchEngineFactory::getInstance();
-            $searchEngine->delete($this->bean);
-            //END SUGARCRM flav=pro ONLY
 		}else{
 			sugar_die("A record number must be specified to delete");
 		}

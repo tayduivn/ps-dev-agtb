@@ -200,7 +200,7 @@ SUGAR.FiltersWidget = function() {
 			}			
 		    var selectHTML = "<select onchange=\"SUGAR.FiltersWidget.changeSelectElemetValue('" + id + "_combo" + "');\" id=\"" + id + "_combo" + "\"><option value='AND' " + selectedANDString + ">" + SUGAR.language.get('Reports','LBL_FILTER_AND') + "</option><option value='OR' " + selectedORString + ">" + SUGAR.language.get('Reports','LBL_FILTER_OR') + "</option></select>";
 		    
-		    var panelStartRow = "<div class='sugar-subpanel-header-row'><table cellspacing=\"0\"><tr>";
+		    var panelStartRow = "<div class='sugar-subpanel-header-row'><table cellspacing=\"0\" width=\"100%\"><tr>";
 		    panelStartRow = panelStartRow + "<td nowrap>&nbsp;&nbsp;<label for='"+id + "_combo'>" + SUGAR.language.get('Reports','LBL_FILTER_CONDITIONS') + "</label>&nbsp;&nbsp;</td>";
 		    panelStartRow = panelStartRow + "<td>" + selectHTML + "</td>";
 		    panelStartRow = panelStartRow + "<td style=\"width: 100%\"></td>";

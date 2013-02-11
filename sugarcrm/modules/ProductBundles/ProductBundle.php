@@ -121,12 +121,6 @@ class ProductBundle extends SugarBean {
 		$this->team_id = 1; // make the item globally accessible
 	}
 
-	function get_index($quote_id) {
-		$values = array('quote_id' => $quote_id, 'bundle_id' => $this->id);
-		return $this->retrieve_relationships($this->rel_quotes, $values, 'bundle_index');
-	}
-
-
 	/** Returns a list of the associated products
 	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
 	 * All Rights Reserved..
@@ -158,16 +152,6 @@ class ProductBundle extends SugarBean {
 		return $this->build_related_list($query, new Quote());
 	}
 
-	function get_bundle_product_indexes() {
-		$values = array('bundle_id' => $this->id);
-		return $this->retrieve_relationships($this->rel_products, $values, 'product_index');
-	}
-
-	function get_bundle_note_indexes() {
-		$values = array('bundle_id' => $this->id);
-		return $this->retrieve_relationships($this->rel_notes, $values, 'note_index');
-	}
-
 	function get_notes()
 	{
 		$query = "SELECT note_id as id FROM $this->rel_notes WHERE bundle_id='$this->id' AND deleted=0 ORDER BY note_index";
@@ -175,27 +159,17 @@ class ProductBundle extends SugarBean {
 	}
 
 	function get_product_bundle_line_items() {
-		$product_list = $this->get_products();
-		$note_list =  $this->get_notes();
-		$product_index_list = $this->get_bundle_product_indexes();
-		$note_index_list = $this->get_bundle_note_indexes();
+        $this->load_relationship('products');
+        $this->load_relationship('product_bundle_notes');
 
-		$bundle_list = array();
-		for ($i = 0; $i < count($product_index_list); $i++) {
-			$GLOBALS['log']->debug("product index: ".$product_index_list[$i]['product_index']."\n");
-			if(isset($product_list[$i]))
-				$bundle_list[$product_index_list[$i]['product_index']] = $product_list[$i];
-			//$bundle_list[] = array($product_index_list[$i]['product_index'] => $product_list[$i]);
-		}
+        $bundle_list = array_merge(
+                $this->products->getBeans(),
+                $this->product_bundle_notes->getBeans()
+        );
 
-		for ($j = 0; $j < count($note_index_list); $j++) {
-			$GLOBALS['log']->debug("note index: ".$note_index_list[$j]['note_index']."\n");
-			$bundle_list[(int)$note_index_list[$j]['note_index']] = $note_list[$j];
-			//$bundle_list[] = array($note_index_list[$j]['note_index'] => $note_list[$j]);
-		}
+        usort($bundle_list, array(__CLASS__, 'compareProductOrNoteIndexAsc'));
 
-		ksort($bundle_list);
-		return $bundle_list;
+        return $bundle_list;
 	}
 
 
@@ -319,13 +293,13 @@ class ProductBundle extends SugarBean {
 		$this->db->query($query,true,"Error clearing quote to product bundle relationship: ");
 	}
 
-    function set_productbundle_quote_relationship($quote_id, $bundle_id)
+    function set_productbundle_quote_relationship($quote_id, $bundle_id, $bundle_index = '0')
 	{
 		if(empty($bundle_id)){
 			$bundle_id = $this->id;
 		}
-        $query = "insert into $this->rel_quotes (id,quote_id,bundle_id, date_modified) values (" . $this->db->quoted(create_guid()) . ", " . $this->db->quoted($quote_id) . ", " . $this->db->quoted($bundle_id) . ", " . $this->db->convert($this->db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ")";
-		$this->db->query($query,true,"Error setting quote to product bundle relationship: "."<BR>$query");
+		$query = "insert into $this->rel_quotes (id,quote_id,bundle_id,bundle_index, date_modified) values (" . $this->db->quoted(create_guid()) . ", " . $this->db->quoted($quote_id) . ", " . $this->db->quoted($bundle_id) . ", " . $this->db->quoted($bundle_index) . ", " . $this->db->convert($this->db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ")";
+        $this->db->query($query,true,"Error setting quote to product bundle relationship: "."<BR>$query");
 		$GLOBALS['log']->debug("Setting quote to product bundle relationship for $quote_id and $bundle_id");
 	}
 
@@ -440,9 +414,37 @@ function save($check_notify = FALSE)
 			return $this->id;
 		}
 
+    /**
+     * Compare Product and(or) ProductBundleNote objects by {record}_index field
+     * 
+     * @param object $obj1
+     * @param object $obj2
+     * @return int
+     */
+    protected static function compareProductOrNoteIndexAsc($obj1, $obj2)
+    {
+        $firstValue = ($obj1 instanceof Product) ? $obj1->product_index : $obj1->note_index;
+        $secondValue = ($obj2 instanceof Product) ? $obj2->product_index : $obj2->note_index;
 
+        if ($firstValue == $secondValue) {
+            return 0;
+        } 
+        return ($firstValue < $secondValue) ? -1 : 1;
+    }
 
-
+    /**
+     * Compare Product Bundles by bundle index
+     * 
+     * @param object $pb1
+     * @param object $pb2
+     * @return int
+     */
+    public static function compareProductBundlesByIndex($pb1, $pb2)
+    {
+        if ($pb1->bundle_index == $pb2->bundle_index) {
+            return 0;
+        } 
+        return ($pb1->bundle_index < $pb2->bundle_index) ? -1 : 1;
+    }
 }
-
 ?>

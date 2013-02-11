@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro || flav=sales ONLY
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -18,8 +20,39 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$NUMERIC_CONSTANTS = array(
-	'pi' 	=> 3.141592653589793,
-	'e'		=> 2.718281828459045,
+/*********************************************************************************
+ * $Id$
+ * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
+ * All Rights Reserved.
+ * Contributor(s): ______________________________________..
+ ********************************************************************************/
+
+$viewdefs['Reports']['mobile']['view']['edit'] = array(
+    'templateMeta' => array(
+        'maxColumns' => '1',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+        ),
+    ),
+    'panels' => array(
+        array(
+            'label' => 'LBL_PANEL_DEFAULT',
+            'fields' => array(
+                'name',
+                array(
+                    'name' => 'module',
+                    'readonly' => true,
+                ),
+                array(
+                    'name' => 'report_type',
+                    'readonly' => true,
+                ),
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
+            )
+        )
+    ),
 );
 ?>

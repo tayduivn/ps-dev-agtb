@@ -718,6 +718,10 @@ array (
         'bean_name'=>'ProductBundle',
         'source'=>'non-db',
         'rel_fields'=>array('product_index'=>array('type'=>'integer')),
+        'relationship_fields' =>
+            array(
+                'product_index' => 'product_index'
+            ),
         'vname'=>'LBL_PRODUCTS',
       ),
 

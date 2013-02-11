@@ -321,15 +321,13 @@ if (version_compare($_SESSION['current_db_version'], '6.5.0', '<') && function_e
 
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
+$rac->clearVardefs();
+$rac->rebuildExtensions();
 
 require_once('modules/UpgradeWizard/uw_utils.php');
 
 //Patch for bug57431 : Module name isn't updated in portal layout editor
 updateRenamedModulesLabels();
-
-if(version_compare($_SESSION['current_db_version'], '6.7.0', '<')) {
-	setupCreateRole();
-}
 
 //BEGIN SUGARCRM flav=PRO ONLY
 //setup forecast defualt settings

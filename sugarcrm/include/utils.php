@@ -1035,54 +1035,49 @@ function return_app_list_strings_language($language)
 /**
 * The dropdown items in custom language files is $app_list_strings['$key']['$second_key'] = $value not
 * $GLOBALS['app_list_strings']['$key'] = $value, so we have to delete the original ones in app_list_strings and relace it with the custom ones.
- * @param file string the language that you want include,
- * @param app_list_strings array the golbal strings
+ * @param string $file The language file that you want include,
+ * @param array  $appListStrings Provided app_list_strings, renamed to not conflict with GLOBALS
  * @return array
  */
  //jchi 25347
-function _mergeCustomAppListStrings($file , $app_list_strings)
+function _mergeCustomAppListStrings($file , $appListStrings)
 {
-	$app_list_strings_original = $app_list_strings;
-	unset($app_list_strings);
-    // FG - bug 45525 - $exemptDropdown array is defined (once) here, not inside the foreach
-    //                  This way, language file can add items to save specific standard codelist from being overwritten
-    $exemptDropdowns = array();
-	include($file);
-    
-    // Bug 60008
+	// Bug 60008 + Bugs 60607, 60608, 60609, 60612 + 60393
     // There is a chance that some app_list_strings were in fact in $GLOBALS['app_list_strings'].
     // In case of that, the customizations end up being blown away because they 
     // are written to the global app_list_strings, not the function scope $app_list_strings.
-    // This fixes that. rgonzalez
-    if (!empty($GLOBALS['app_list_strings']) && isset($app_list_strings)) {
-        // array_diff would probably be better here, but it was failing for some reason
-        $globalALS = $GLOBALS['app_list_strings'];
-        foreach ($app_list_strings_original as $k => $v) {
-            unset($globalALS[$k]);
-        }
-        $app_list_strings = array_merge($app_list_strings, $globalALS);
-    }
+    // This fixes that. rgonzalez, jbartek
+    global $app_list_strings;
+    $app_list_strings_original = $appListStrings;
     
-	if(empty($app_list_strings) || !is_array($app_list_strings)){
-		return $app_list_strings_original;
-	}
-	//Bug 25347: We should not merge custom dropdown fields unless they relate to parent fields or the module list.
+    // FG - bug 45525 - $exemptDropdown array is defined (once) here, not inside the foreach
+    //                  This way, language file can add items to save specific standard codelist from being overwritten
+    $exemptDropdowns = array();
+    
+    // Include the language file. With $app_list_strings globalized above it should
+    // make no difference if the content of the file is $app_list_strings or
+    // $GLOBALS['app_list_strings'] or a mixture of the two, even if indexes overlap.
+    // Accordingly, the latest additions to the file will trump older additions.
+    include($file);
+    
+    if(empty($app_list_strings) || !is_array($app_list_strings)){
+        return $app_list_strings_original;
+    }
+    //Bug 25347: We should not merge custom dropdown fields unless they relate to parent fields or the module list.
     // FG - bug 45525 - Specific codelists must NOT be overwritten
-	$exemptDropdowns[] = "moduleList";
-	$exemptDropdowns[] = "moduleListSingular";
-	$exemptDropdowns[] = "parent_type_display";
+    $exemptDropdowns[] = "moduleList";
+    $exemptDropdowns[] = "moduleListSingular";
+    $exemptDropdowns[] = "parent_type_display";
     $exemptDropdowns[] = "record_type_display";
     $exemptDropdowns[] = "record_type_display_notes";
 
-	foreach($app_list_strings as $key=>$value)
-	{
-		if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original))
-		{
-	   		unset($app_list_strings_original[$key]);
-		}
-   }
-   $app_list_strings = sugarArrayMergeRecursive($app_list_strings_original , $app_list_strings);
-   return $app_list_strings;
+    foreach($app_list_strings as $key=>$value) {
+        if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original)) {
+            unset($app_list_strings_original[$key]);
+        }
+    }
+    $app_list_strings = sugarArrayMergeRecursive($app_list_strings_original , $app_list_strings);
+    return $app_list_strings;
 }
 
 /**

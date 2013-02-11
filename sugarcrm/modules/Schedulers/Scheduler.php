@@ -999,12 +999,18 @@ class Scheduler extends SugarBean {
 			global $mod_strings;
 			include_once('modules/Schedulers/_AddJobsHere.php');
 
-			// job functions
-			self::$job_strings = array('url::' => 'URL');
-			foreach($job_strings as $k=>$v){
-				self::$job_strings['function::' . $v] = $mod_strings['LBL_'.strtoupper($v)];
-			}
+            // job functions
+            self::$job_strings = array('url::' => 'URL');
+
+            foreach($job_strings as $v) {
+                if(preg_match('/^class\:\:(.+)$/', $v, $match)) {
+                    self::$job_strings[$v] = $mod_strings['LBL_' . strtoupper($match[1])];
+                } else {
+                    self::$job_strings['function::' . $v] = $mod_strings['LBL_'.strtoupper($v)];
+                }
+            }
 		}
+
 		return self::$job_strings;
 	}
 } // end class definition

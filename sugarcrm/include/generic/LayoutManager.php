@@ -82,21 +82,21 @@ class LayoutManager
 				'title'=>'LBL_NEW_BUTTON_TITLE',
 				'access_key'=>'LBL_NEW_BUTTON_KEY',
 				'form_value'=>'LBL_NEW_BUTTON_LABEL',
-				'ACL'=>'create',
+				'ACL'=>'edit',
 			),
             'SugarWidgetSubPanelTopButtonQuickCreate' => array(
                 'widget_class'=>'SugarWidgetSubPanelTopButtonQuickCreate',
                 'title'=>'LBL_NEW_BUTTON_TITLE',
                 'access_key'=>'LBL_NEW_BUTTON_KEY',
                 'form_value'=>'LBL_NEW_BUTTON_LABEL',
-                'ACL'=>'create',
+                'ACL'=>'edit',
             ),
             'SugarWidgetSubPanelTopCreateLeadNameButton' => array(
                 'widget_class'=>'SugarWidgetSubPanelTopCreateLeadNameButton',
                 'title'=>'LBL_NEW_BUTTON_TITLE',
                 'access_key'=>'LBL_NEW_BUTTON_KEY',
                 'form_value'=>'LBL_NEW_BUTTON_LABEL',
-                'ACL'=>'create',
+                'ACL'=>'edit',
             ),
 			'SugarWidgetSubPanelTopScheduleMeetingButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopScheduleMeetingButton',
@@ -104,7 +104,7 @@ class LayoutManager
 				'title'=>'LBL_NEW_BUTTON_TITLE',
 				'access_key'=>'LBL_NEW_BUTTON_KEY',
 				'form_value'=>'LNK_NEW_MEETING',
-				'ACL'=>'create',
+				'ACL'=>'edit',
 			),
 			'SugarWidgetSubPanelTopScheduleCallButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopScheduleCallButton',
@@ -112,7 +112,7 @@ class LayoutManager
 				'title'=>'LBL_NEW_BUTTON_TITLE',
 				'access_key'=>'LBL_NEW_BUTTON_KEY',
 				'form_value'=>'LNK_NEW_CALL',
-				'ACL'=>'create',
+				'ACL'=>'edit',
 			),
 			'SugarWidgetSubPanelTopCreateTaskButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopCreateTaskButton',
@@ -120,7 +120,7 @@ class LayoutManager
 				'title'=>'LBL_NEW_BUTTON_TITLE',
 				'access_key'=>'LBL_NEW_BUTTON_KEY',
 				'form_value'=>'LNK_NEW_TASK',
-				'ACL'=>'create',
+				'ACL'=>'edit',
 			),
 			'SugarWidgetSubPanelTopCreateNoteButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopCreateNoteButton',
@@ -128,7 +128,7 @@ class LayoutManager
 				'title'=>'LBL_NEW_BUTTON_TITLE',
 				'access_key'=>'LBL_NEW_BUTTON_KEY',
 				'form_value'=>'LNK_NEW_NOTE',
-				'ACL'=>'create',
+				'ACL'=>'edit',
 			),
 			'SugarWidgetSubPanelTopCreateContactAccountButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopButton',
@@ -144,7 +144,7 @@ class LayoutManager
 					'primary_address_postalcode' => 'shipping_address_postalcode',
 					'to_email_addrs' => 'email1'
 					),
-				'ACL'=>'create',
+				'ACL'=>'edit',
 			),
 			'SugarWidgetSubPanelTopCreateContact' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopButton',
@@ -156,7 +156,7 @@ class LayoutManager
         			'account_id' => 'account_id',
 					'account_name' => 'account_name',
 				),
-				'ACL'=>'create',
+				'ACL'=>'edit',
 			),
 			'SugarWidgetSubPanelTopCreateRevisionButton'=> array(
 				'widget_class'=>'SugarWidgetSubPanelTopButton',
@@ -171,7 +171,7 @@ class LayoutManager
 					'document_filename' => 'filename',
         			'document_revision_id' => 'document_revision_id',
 				),
-				'ACL'=>'create',
+				'ACL'=>'edit',
 			),
 
 			'SugarWidgetSubPanelTopCreateDirectReport' => array(
@@ -184,7 +184,7 @@ class LayoutManager
         			'reports_to_name' => 'name',
 					'reports_to_id' => 'id',
 				),
-				'ACL'=>'create',
+				'ACL'=>'edit',
 			),
 			'SugarWidgetSubPanelTopSelectFromReportButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopSelectReportsButton',
@@ -203,7 +203,7 @@ class LayoutManager
                 'title'=>'LBL_NEW_BUTTON_TITLE',
                 'access_key'=>'LBL_NEW_BUTTON_KEY',
                 'form_value'=>'LBL_NEW_BUTTON_LABEL',
-                'ACL'=>'create',
+                'ACL'=>'edit',
             ),
 			//BEGIN SUGARCRM flav!=sales ONLY
 			'SugarWidgetSubPanelAddToProspectListButton' => array(

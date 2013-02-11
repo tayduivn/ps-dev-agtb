@@ -1249,8 +1249,7 @@ class SugarBean
         {
             foreach ($fieldDefs as $name=>$properties)
             {
-                if (array_search('link',$properties) === 'type')
-                {
+                if (isset($properties['type']) && $properties['type'] == 'link' ) {
                     $linked_fields[$name]=$properties;
                 }
             }
@@ -1878,7 +1877,8 @@ class SugarBean
             $sendToEmail = $notify_user->emailAddress->getPrimaryAddress($notify_user);
             $sendEmail = TRUE;
             if(empty($sendToEmail)) {
-                $GLOBALS['log']->warn("Notifications: no e-mail address set for user {$notify_user->user_name}, cancelling send");
+                // this cannot be a user_name, the bean could be a contact or a lead, neither of which has a user_name
+                $GLOBALS['log']->warn("Notifications: no e-mail address set for {$notify_user->module_name} - {$notify_user->id}, cancelling send");
                 $sendEmail = FALSE;
             }
 
@@ -2089,7 +2089,13 @@ class SugarBean
             $this->load_relationship($rel_link);
             if ( !empty($this->$rel_link) && $this->$rel_link->getRelationshipObject() && $this->$rel_link->getRelationshipObject()->getLHSModule() == $this->$rel_link->getRelationshipObject()->getRHSModule() )
             {
-                $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
+                // It's a self-referencing relationship
+                if ( $this->$rel_link->getRelationshipObject()->getLHSLink() != $this->$rel_link->getRelationshipObject()->getRHSLink() ) {
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getRHSLink();
+                } else {
+                    // Doesn't have a right hand side, so let's just use the LHS
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
+                }
             }
             else
             {
@@ -4710,7 +4716,7 @@ class SugarBean
 
         foreach($this->field_defs as $field)
         {
-            if(0 == strcmp($field['type'],'relate') && !empty($field['module']))
+            if($field['type'] == 'relate' && !empty($field['module']))
             {
                 $name = $field['name'];
                 if(empty($this->$name))
@@ -4825,6 +4831,12 @@ class SugarBean
             // call the custom business logic
             $this->call_custom_logic("after_delete", $custom_logic_arguments);
         }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $searchEngine->delete($this);
+        //END SUGARCRM flav=pro ONLY        
     }
 
     /**
@@ -5840,12 +5852,8 @@ class SugarBean
             case 'index':
             case 'listview':
                 return ACLController::checkAccess($this->module_dir,'list', true);
-            case 'create':
             case 'edit':
             case 'save':
-                if(empty($this->id) || $this->new_with_id == true) {
-                    return ACLController::checkAccess($this->module_dir,'create', $is_owner, $this->acltype);    
-                }
                 if( !$is_owner && $not_set && !empty($this->id)){
                     $class = get_class($this);
                     $temp = new $class();

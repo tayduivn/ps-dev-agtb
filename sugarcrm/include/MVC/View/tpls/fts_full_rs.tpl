@@ -42,10 +42,13 @@
                         <a href="{$url}"> <span>{$result->getSummaryText()}</span></a>
                         <br>
                         <span class="details">
-                                {assign var="resultHits" value=$result->getHighlightedHitText()}
+                                {assign var="resultHits" value=$result->getHighlightedHitText(1)}
                                 {foreach from=$resultHits key=k item=v}
-                                {sugar_translate label=$v.label module=$v.module}: {$v.text}
-                            {/foreach}
+                                <p>
+                                    {sugar_translate label=$v.label module=$v.module}: {$v.text}
+                                    <br>
+                                </p>
+                                {/foreach}
                         </span>
                     </li>
                 </ul>
