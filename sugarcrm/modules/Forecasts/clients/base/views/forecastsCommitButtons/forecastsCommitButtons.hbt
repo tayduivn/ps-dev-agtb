@@ -44,7 +44,7 @@
 
         <ul class="dropdown-menu">
         {{#if showConfigButton}}
-            <li><a href="#config" name="forecastSettings">{{str "LBL_FORECAST_SETTINGS" "Forecasts"}}</a></li>
+            <li><a href="#config" id="forecastSettings">{{str "LBL_FORECAST_SETTINGS" "Forecasts"}}</a></li>
         {{/if}}
             <li><a id="print">{{str "LBL_PRINT" "Forecasts"}}</a></li>
         </ul>

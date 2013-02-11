@@ -207,18 +207,12 @@ class QuotesViewEdit extends ViewEdit
 		if (!empty($this->bean->id))
 		{
 			$this->bean->load_relationship('product_bundles');
-			$product_bundle_list = $this->bean->get_linked_beans('product_bundles','ProductBundle');
-			//$product_bundle_list = $this->bean->get_product_bundles();
-			if(is_array($product_bundle_list)){
+            $product_bundle_list = $this->bean->product_bundles->getBeans();
+            usort($product_bundle_list, array('ProductBundle', 'compareProductBundlesByIndex'));
 
-				$ordered_bundle_list = array();
-				for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
-					$index = $product_bundle_list[$cnt]->get_index($this->bean->id);
-					$ordered_bundle_list[(int)$index[0]['bundle_index']] = $product_bundle_list[$cnt];
-				}
-                ksort($ordered_bundle_list);
-				foreach ($ordered_bundle_list as $product_bundle) {
-					$product_list = $product_bundle->get_products();
+            if(is_array($product_bundle_list)){
+
+				foreach ($product_bundle_list as $product_bundle) {
 					$bundle_list = $product_bundle->get_product_bundle_line_items();
 					$add_row[] = "quotesManager.addTable('$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)."' );\n";
 
@@ -254,21 +248,12 @@ class QuotesViewEdit extends ViewEdit
 		} else {
 		    // this else part is to create a new product_bundle for the duplicate quote
 			$original_quote->load_relationship('product_bundles');
-			$product_bundle_list = $original_quote->get_linked_beans('product_bundles','ProductBundle');
+			$product_bundle_list = $original_quote->product_bundles->getBeans();
+            usort($product_bundle_list, array('ProductBundle', 'compareProductBundlesByIndex'));
 
-			if(is_array($product_bundle_list)){
+            if(is_array($product_bundle_list)){
 
-				$ordered_bundle_list = array();
-
-                foreach ($product_bundle_list as $id => $bean)
-                {
-                    $index = $bean->get_index($original_quote->id);
-                    $ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
-                } //for
-
-                ksort($ordered_bundle_list);
-
-				foreach ($ordered_bundle_list as $product_bundle) {
+				foreach ($product_bundle_list as $product_bundle) {
 
 					$product_list = $product_bundle->get_products();
 					if (is_array($product_list)) {
@@ -369,5 +354,5 @@ class QuotesViewEdit extends ViewEdit
  		parent::display();
  		echo '<script>sqs_must_match = false;</script>';
  	}
-
+    
 }

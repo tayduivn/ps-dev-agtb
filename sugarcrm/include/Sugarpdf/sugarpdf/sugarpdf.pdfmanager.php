@@ -101,21 +101,12 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
             $fields['taxrate_value'] = format_number_sugarpdf($this->bean->taxrate_value, $locale->getPrecision(), $locale->getPrecision(), array('percentage' => true));;
 
             $this->bean->load_relationship('product_bundles');
-            $product_bundle_list = $this->bean->get_linked_beans('product_bundles','ProductBundle');
-            if (is_array($product_bundle_list)) {
+            $product_bundle_list = $this->bean->product_bundles->getBeans();
+            usort($product_bundle_list, array('ProductBundle', 'compareProductBundlesByIndex'));
 
-              $ordered_bundle_list = array();
-              for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
-                $index = $product_bundle_list[$cnt]->get_index($this->bean->id);
-                $ordered_bundle_list[(int) $index[0]['bundle_index']] = $product_bundle_list[$cnt];
-              } //for
-              ksort($ordered_bundle_list);
-            } //if
-
-            $ordered_bundle_list_data = array();
             $bundles = array();
             $count = 0;
-            foreach ($ordered_bundle_list as $ordered_bundle) {
+            foreach ($product_bundle_list as $ordered_bundle) {
 
                 $bundleFields = PdfManagerHelper::parseBeanFields($ordered_bundle, true);
                 $product_bundle_line_items = $ordered_bundle->get_product_bundle_line_items();
