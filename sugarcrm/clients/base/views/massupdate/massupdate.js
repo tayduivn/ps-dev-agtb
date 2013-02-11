@@ -259,14 +259,16 @@
         this.hide();
         var mergeCollection = this.context.get("mass_collection");
         if (mergeCollection) {
-            this.layout.trigger("drawer:mergeduplicates:fire", {
-                components: [{
-                    layout : "merge-duplicates",
-                    context: {
-                        selectedDuplicates: mergeCollection.models,
-                    }
-                }]
-            }, this);
+            app.drawer.open({
+                layout: 'merge-duplicates',
+                context: {
+                    selectedDuplicates: mergeCollection.models,
+                }
+            }, _.bind(function(refresh) {
+                if (refresh) {
+                    this.collection.fetch();
+                }
+            }, this));            
         }
     },    
     save: function() {

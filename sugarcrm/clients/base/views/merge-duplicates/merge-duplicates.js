@@ -1,6 +1,5 @@
 ({
     extendsFrom: 'BaselistView',
-    isPreviewOpen: false,
     events: {
         'click .show_extra' : 'showMore',
         'click .preview' : 'previewRecord'
@@ -9,6 +8,7 @@
     mergeFields: [], // list of fields to generate the metadata on the fly
     rowFields: {},
     primaryRecord: {},
+    isPreviewOpen: false,
     initialize: function(options) {
         var meta = app.metadata.getView(options.module, 'record'),
             mergeCollection = options.context.get('collection'),
@@ -34,8 +34,7 @@
             _.findWhere(records,{id: options.context.get("primaryRecord").id}) :
             records[0];
         records = [primary].concat(_.without(records, primary));
-        this.primaryRecord = primary;
-        this.recordName = this.primaryRecord.get('name') || '';
+        this.setPrimaryRecord(primary);
         
         // these are the fields we'll need to pull our records
         this.mergeFields = _.chain(meta.panels)
@@ -58,6 +57,7 @@
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'list';
         this.layout.on('mergeduplicates:save:fire', this.save, this);
+        this.$('[rel="tooltip"]').tooltip();
     },
     /**
      * Save primary and delete other records
@@ -77,10 +77,7 @@
                         _.each(alternativeModels, function(model) {
                             model.destroy();
                         }); 
-                        self.context.trigger("drawer:hide");
-                        if (self.context.parent) {
-                            self.context.parent.trigger("drawer:hide");
-                        }
+                        app.drawer.close(true);
                     },
                     error: function() {
                         app.alert.show('server-error', {
@@ -251,40 +248,22 @@
         var primary_record = this.collection.get(primary.id);
 
         if(primary_record) {
-            this.setPrimaryRecord(primary_record);            
+            this.setPrimaryRecord(primary_record);               
             this.context.set("primary_record", primary_record);
             this.toggleFields(this.rowFields[primary_record.id], true);
             //app.view.views.ListView.prototype.toggleRow.call(this, primary_record.id, true);
         }
     },
-    getPrimaryRecord: function(context) {
-        var records = context.get("selectedDuplicates");
-
-        // bomb out if we don't have between 2 and MAX_RECORDS
-        if (!records.length || records.length < 2 || records.length > this.MAX_RECORDS) {
-            app.alert.show('invalid-record-count',{
-                level: 'error',
-                messages: 'Invalid number of records passed.',
-                autoClose: true
-            });
-            return;
-        }
-
-        if (!context.has("primary_record")) {
-            context.set("primary_record",records[0]);
-        }
-        this.setPrimaryRecord(context.get("primary_record"));
-        
-        this.alternativeRecords = _.reject(records, function(record) {
-            return record.id == this.primaryRecord.id;
-        }, this);
-    },
+    /**
+     * Set primary record
+     * @param {Model} primary model
+     */
     setPrimaryRecord: function(model) {
-        this.primaryRecord = model;
+        this.primaryRecord = model;  
         this.primaryRecord.on("change", function(){
             app.events.trigger('preview:close');
             this.previewRecord(false);
-        }, this);  
-        this.recordName = this.primaryRecord.get('name') || '';        
+        }, this);
+        this.recordName = this.primaryRecord.get('name') || ''; 
     }
 })
