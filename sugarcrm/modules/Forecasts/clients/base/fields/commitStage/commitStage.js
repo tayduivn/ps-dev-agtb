@@ -42,12 +42,27 @@
     currentView: "",
     
     /**
+     * The select DOM element for this field
+     */
+    select: "",
+    
+    /**
+     * Current value of the field.
+     * 
+     * This is used to check the "current" value with the changed value on the close event.  If
+     * these match, that means the user clicked the same value in the select box.  If that is the case,
+     * the change event never fires (which removes the select2 dropdown).  This is used in the close
+     * event handler to reset the field if the current selection is selected.
+     */
+    currentVal: "",
+    
+    /**
      * Initialize
      */
     initialize: function(options){
         app.view.Field.prototype.initialize.call(this, options);
         var self = this,
-            forecastRanges = self.context.forecasts.config.get("forecast_ranges");
+            forecastRanges = self.context.config.get("forecast_ranges");
           
         //Check to see if the field is editable
         self.isEditable();
@@ -80,7 +95,8 @@
      * Render Field
      */
     _render:function () {
-        var self = this;
+        var self = this,
+            select = null;
         app.view.Field.prototype._render.call(this);
                
         /* If we are on our own sheet, and need to show the dropdown, init things
@@ -91,22 +107,26 @@
                         
             //custom namespaced window click event to destroy the chosen dropdown on "blur".
             //this is removed in this.resetBuckets
-            $(window).on("click." + self.model.get("id"), function(e){
-                if(!_.isEqual(self.model.get("id"), $(e.target).attr("itemid"))){
+            $(window).on("click." + self.cid, function(e){
+                if(!_.isEqual(self.cid, $(e.target).attr("cid"))){
                     self.resetBucket();
                 }
             });
             
-           //custom click handler for the dropdown to set things up for the global click to not fire
-            self.$el.on("click", function(e){
-                $(e.target).attr("itemid", self.model.get("id"));
-            });
-                        
             self.$el.off("mouseenter");
-            self.$el.off("mouseleave");            
-            self.$el.find("option[value=" + self.value + "]").attr("selected", "selected");
-            self.$el.find("select").chosen({
-                disable_search_threshold: self.def.searchBarThreshold?self.def.searchBarThreshold:0
+            self.$el.off("mouseleave");
+            self.select = self.$el.find("select");
+            self.select.select2({minimumResultsForSearch: !_.isUndefined(self.def.searchBarThreshold)? self.def.searchBarThreshold:0});
+            self.currentVal = self.value;
+            self.select.select2("val", self.value);
+            self.select.select2("open");
+            self.select.on("close", function(){
+                if(_.isEqual(self.currentVal, self.select.select2("val"))){
+                   self.resetBucket();
+               }
+            });
+            self.$(".select2-input").keydown(function(e){
+                self.onKeyDown(e);
             });
         }
     },
@@ -124,7 +144,7 @@
             values[self.def.name] = self.value;
         }
         else if(self.currentView == "enum"){
-            self.value = self.$el.find("select")[0].value;
+            self.value = self.select.select2("val");
             values[self.def.name] = self.value;
         }
         
@@ -132,6 +152,20 @@
         
         if(self.currentView == "enum"){
             self.resetBucket();
+        }
+    },
+    
+    /**
+     * Handle event when key is pressed down (tab)
+     *
+     * @param evt
+     */
+    onKeyDown: function(evt) {
+        var self = this;
+        if(evt.which == 9) {
+            evt.preventDefault();
+            // tab key pressed, trigger event from context
+            self.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, self);
         }
     },
     
@@ -175,16 +209,14 @@
         }             
         
         //Events
-        /* if it's not a bucket, and it's not editable, we don't want to try to add the pencil
-         */
+        // if it's not a bucket, and it's not editable, we don't want to try to add the pencil
         self.showCteIcon = function() {
             if((self.currentView != "enum") && (!self.disabled)){
-                self.$el.find("span").before($(cteIcon));
+                self.$el.find("span.editable").before($(cteIcon));
             }
         };
         
-        /* if it's not a bucket, and it's not editable, we don't want to try to remove the pencil         
-         */
+        // if it's not a bucket, and it's not editable, we don't want to try to remove the pencil  
         self.hideCteIcon = function() {
             if((self.currentView != "enum") && (!self.disabled)){
                 self.$el.parent().find(".edit-icon").detach();
@@ -219,9 +251,10 @@
         var self = this,
             sales_stage = self.model.get("sales_stage");
         if(!self.disabled){
-            $(e.target).attr("itemid", self.model.get("id"));
+            $(e.target).attr("cid", self.cid);
             self.def.view = "enum";
             self.currentView = "enum";
+            e.preventDefault();
             self.render();
         }
     },
@@ -233,7 +266,7 @@
         var self = this;
         
         //remove custom click handler
-        $(window).off("click." + self.model.get("id"));
+        $(window).off("click." + self.cid);
         self.$el.off("click");
         self.def.view = "default";
         self.currentView = "default";
@@ -251,15 +284,15 @@
             hasStage = false
             isOwner = true;
         
-        if(!_.isUndefined(self.context.forecasts)){
+        if(!_.isUndefined(self.context)){
             //Check to see if the sales stage is one of the configured lost or won stages.
-            if (!_.isUndefined(self.context.forecasts.config)) {    
-                sales_stages = self.context.forecasts.config.get("sales_stage_won").concat(self.context.forecasts.config.get("sales_stage_lost"));
+            if (!_.isUndefined(self.context.config)) {    
+                sales_stages = self.context.config.get("sales_stage_won").concat(self.context.config.get("sales_stage_lost"));
                 hasStage = _.contains(sales_stages, self.model.get('sales_stage'));
             }
             
             //Check to see if you're a manager on someone else's sheet, disable changes
-            if(self.context.forecasts.get("selectedUser")["id"] != app.user.id){
+            if(self.context.get("selectedUser")["id"] != app.user.id){
                 isOwner = false;
             }
         }

@@ -27,7 +27,6 @@ describe('favorite field', function() {
         };
 
         app = SugarTest.app;
-        SugarTest.seedMetadata(true);
 
         app.data.declareModel(moduleName, metadata);
 

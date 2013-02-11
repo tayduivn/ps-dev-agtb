@@ -355,11 +355,14 @@ class SugarAuthenticate{
 	 * Called when a user requests to logout
 	 *
 	 */
-	function logout(){
+	function logout()
+	{
+	    if(session_id() != '') {
 			session_destroy();
-			ob_clean();
-			header('Location: index.php?module=Users&action=Login');
-			sugar_cleanup(true);
+	    }
+		ob_clean();
+		header('Location: index.php?module=Users&action=Login');
+		sugar_cleanup(true);
 	}
 
 

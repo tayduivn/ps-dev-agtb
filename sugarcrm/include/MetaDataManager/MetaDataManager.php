@@ -193,6 +193,9 @@ class MetaDataManager {
         $data['menu'] = $this->getModuleMenu($moduleName);
         $data['config'] = $this->getModuleConfig($moduleName);
 
+        // Indicate whether Module Has duplicate checking enabled --- Rules must exist and Enabled flag must be set
+        $data['dupCheckEnabled'] = isset($vardefs['duplicate_check']) && isset($vardefs['duplicate_check']['enabled']) && ($vardefs['duplicate_check']['enabled']===true);
+
         //BEGIN SUGARCRM flav=pro ONLY
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
         //END SUGARCRM flav=pro ONLY
@@ -332,7 +335,20 @@ class MetaDataManager {
                 $outputAcl[$action] = 'yes';
             }
         } else {
-            $moduleAcls = SugarACL::getUserAccess($module, array(), array('user' => $userObject));
+            $context = array(
+                    'user' => $userObject,
+                );
+            if($bean instanceof SugarBean) {
+                $context['bean'] = $bean;
+            }
+
+            // if the bean is not set, or a new bean.. set the owner override
+            // this will allow fields marked Owner to pass through ok.
+            if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
+                $context['owner_override'] = true;
+            }
+            
+            $moduleAcls = SugarACL::getUserAccess($module, array(), $context);
 
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
             foreach(SugarACL::$all_access AS $action => $bool) {
@@ -354,9 +370,24 @@ class MetaDataManager {
 
                 // Now time to dig through the fields
                 $fieldsAcl = array();
-                //BEGIN SUGARCRM flav=pro ONLY
-                $fieldsAcl = ACLField::getAvailableFields($module);
-                //END SUGARCRM flav=pro ONLY
+                // we cannot use ACLField::getAvailableFields because it limits the fieldset we return.  We need all fields
+                // for instance assigned_user_id is skipped in getAvailableFields, thus making the acl's look odd if Assigned User has ACL's
+                // only assigned_user_name is returned which is a derived ["fake"] field.  We really need assigned_user_id to return as well.
+                if(empty($GLOBALS['dictionary'][$module]['fields'])){
+                    if($bean === false) {
+                        $bean = BeanFactory::newBean($module);
+                    }
+                    if(empty($bean->acl_fields)) {
+                        $fieldsAcl = array();
+                    } else {
+                        $fieldsAcl = $bean->field_defs;
+                    }
+                } else{
+                    $fieldsAcl = $GLOBALS['dictionary'][$module]['fields'];
+                    if(isset($GLOBALS['dictionary'][$module]['acl_fields']) && $GLOBALS['dictionary'][$module]=== false){
+                        $fieldsAcl = array();
+                    }   
+                }  
                 // get the field names
 
                 // define context variable as to not have it throw a notice when it doesn't exist

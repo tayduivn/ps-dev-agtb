@@ -1110,7 +1110,7 @@ function validate_form(formname, startsWith){
 	}
 	if ( typeof (validate[formname]) == 'undefined')
 	{
-        disableOnUnloadEditView(document.forms[formname]);
+//        disableOnUnloadEditView(document.forms[formname]);
 		return true;
 	}
 
@@ -1533,7 +1533,7 @@ function validate_form(formname, startsWith){
 		return false;
 	}
 
-    disableOnUnloadEditView(form);
+//    disableOnUnloadEditView(form);
 	return true;
 
 }
@@ -2019,142 +2019,144 @@ function snapshotForm(theForm) {
     return snapshotTxt;
 }
 
-function initEditView(theForm) {
-    if (SUGAR.util.ajaxCallInProgress()) {
-    	window.setTimeout(function(){initEditView(theForm);}, 100);
-    	return;
-    }
+// TODO remove this and check if there is more code that can be removed
+//function initEditView(theForm) {
+//    if (SUGAR.util.ajaxCallInProgress()) {
+//    	window.setTimeout(function(){initEditView(theForm);}, 100);
+//    	return;
+//    }
+//
+//    if ( theForm == null || theForm.id == null ) {
+//        // Not much we can do here.
+//        return;
+//    }
+//
+//    // we don't need to check if the data is changed in the search popup
+//    if (theForm.id == 'popup_query_form' || theForm.id == 'MassUpdate') {
+//    	return;
+//    }
+//	if ( typeof editViewSnapshots == 'undefined' || editViewSnapshots == null ) {
+//        editViewSnapshots = new Object();
+//    }
+//    if ( typeof SUGAR.loadedForms == 'undefined' || SUGAR.loadedForms == null) {
+//    	SUGAR.loadedForms = new Object();
+//    }
+//
+//    editViewSnapshots[theForm.id] = snapshotForm(theForm);
+//    SUGAR.loadedForms[theForm.id] = true;
+//}
+// TODO remove this and check if there is more code that can be removed
+//function onUnloadEditView(theForm) {
+//
+//	var dataHasChanged = false;
+//    if ( typeof editViewSnapshots == 'undefined' ) {
+//        // No snapshots, move along
+//        return;
+//    }
+//
+//    if ( typeof theForm == 'undefined' ) {
+//        // Need to check all editViewSnapshots
+//        for ( var idx in editViewSnapshots ) {
+//
+//            theForm = document.getElementById(idx);
+//            // console.log('DEBUG: Checking all forms '+theForm.id);
+//            if ( theForm == null
+//                 || typeof editViewSnapshots[theForm.id] == 'undefined'
+//                 || editViewSnapshots[theForm.id] == null
+//                 || !SUGAR.loadedForms[theForm.id]) {
+//                continue;
+//            }
+//
+//            var snap = snapshotForm(theForm);
+//            if ( editViewSnapshots[theForm.id] != snap ) {
+//                dataHasChanged = true;
+//            }
+//        }
+//    } else {
+//        // Just need to check a single form for changes
+//		if ( editViewSnapshots == null  || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+//            return;
+//        }
+//
+//        // console.log('DEBUG: Checking one form '+theForm.id);
+//        if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
+//            // Data has changed.
+//        	dataHasChanged = true;
+//        }
+//    }
+//
+//    if ( dataHasChanged == true ) {
+//    	return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
+//    } else {
+//        return;
+//    }
+//
+//}
+// TODO remove this and check if there is more code that can be removed
+//function disableOnUnloadEditView(theForm) {
+//    // If you don't pass anything in, it disables all checking
+//    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' || theForm == null || editViewSnapshots == null) {
+//        window.onbeforeunload = null;
+//        editViewSnapshots = null;
+//
+//        // console.log('DEBUG: Disabling all edit view checks');
+//
+//    } else {
+//        // Otherwise, it just disables it for this form
+//        if ( typeof(theForm.id) != 'undefined' && typeof(editViewSnapshots[theForm.id]) != 'undefined' ) {
+//            editViewSnapshots[theForm.id] = null;
+//        }
+//
+//        // console.log('DEBUG : Disabling just checks for '+theForm.id);
+//
+//    }
+//}
 
-    if ( theForm == null || theForm.id == null ) {
-        // Not much we can do here.
-        return;
-    }
-
-    // we don't need to check if the data is changed in the search popup
-    if (theForm.id == 'popup_query_form' || theForm.id == 'MassUpdate') {
-    	return;
-    }
-	if ( typeof editViewSnapshots == 'undefined' || editViewSnapshots == null ) {
-        editViewSnapshots = new Object();
-    }
-    if ( typeof SUGAR.loadedForms == 'undefined' || SUGAR.loadedForms == null) {
-    	SUGAR.loadedForms = new Object();
-    }
-
-    editViewSnapshots[theForm.id] = snapshotForm(theForm);
-    SUGAR.loadedForms[theForm.id] = true;
-}
-
-function onUnloadEditView(theForm) {
-
-	var dataHasChanged = false;
-    if ( typeof editViewSnapshots == 'undefined' ) {
-        // No snapshots, move along
-        return;
-    }
-
-    if ( typeof theForm == 'undefined' ) {
-        // Need to check all editViewSnapshots
-        for ( var idx in editViewSnapshots ) {
-
-            theForm = document.getElementById(idx);
-            // console.log('DEBUG: Checking all forms '+theForm.id);
-            if ( theForm == null
-                 || typeof editViewSnapshots[theForm.id] == 'undefined'
-                 || editViewSnapshots[theForm.id] == null
-                 || !SUGAR.loadedForms[theForm.id]) {
-                continue;
-            }
-
-            var snap = snapshotForm(theForm);
-            if ( editViewSnapshots[theForm.id] != snap ) {
-                dataHasChanged = true;
-            }
-        }
-    } else {
-        // Just need to check a single form for changes
-		if ( editViewSnapshots == null  || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
-            return;
-        }
-
-        // console.log('DEBUG: Checking one form '+theForm.id);
-        if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
-            // Data has changed.
-        	dataHasChanged = true;
-        }
-    }
-
-    if ( dataHasChanged == true ) {
-    	return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
-    } else {
-        return;
-    }
-
-}
-
-function disableOnUnloadEditView(theForm) {
-    // If you don't pass anything in, it disables all checking
-    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' || theForm == null || editViewSnapshots == null) {
-        window.onbeforeunload = null;
-        editViewSnapshots = null;
-
-        // console.log('DEBUG: Disabling all edit view checks');
-
-    } else {
-        // Otherwise, it just disables it for this form
-        if ( typeof(theForm.id) != 'undefined' && typeof(editViewSnapshots[theForm.id]) != 'undefined' ) {
-            editViewSnapshots[theForm.id] = null;
-        }
-
-        // console.log('DEBUG : Disabling just checks for '+theForm.id);
-
-    }
-}
-
+// TODO remove this and check if there is more code that can be removed
 /*
 * save some forms using an ajax call
 * theForms - the ids of all of theh forms to save
 * savingStr - the string to display when saving the form
 * completeStr - the string to display when the form has been saved
 */
-function saveForms( savingStr, completeStr) {
-	index = 0;
-	theForms = ajaxFormArray;
-	function success(data) {
-		var theForm = document.getElementById(ajaxFormArray[0]);
-		document.getElementById('multiedit_'+theForm.id).innerHTML = data.responseText;
-		var saveAllButton = document.getElementById('ajaxsaveall');
-		ajaxFormArray.splice(index, 1);
-		if(saveAllButton && ajaxFormArray.length <= 1){
-    		saveAllButton.style.visibility = 'hidden';
-    	}
-		index++;
-		if(index == theForms.length){
-			ajaxStatus.showStatus(completeStr);
-    		window.setTimeout('ajaxStatus.hideStatus();', 2000);
-    		if(saveAllButton)
-    			saveAllButton.style.visibility = 'hidden';
-    	}
-
-
-	}
-	if(typeof savingStr == 'undefined') SUGAR.language.get('app_strings', 'LBL_LOADING');
-	ajaxStatus.showStatus(savingStr);
-
-	//loop through the forms saving each one
-	for(i = 0; i < theForms.length; i++){
-		var theForm = document.getElementById(theForms[i]);
-		if(check_form(theForm.id)){
-			theForm.action.value='AjaxFormSave';
-			YAHOO.util.Connect.setForm(theForm);
-			var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success});
-		}else{
-			ajaxStatus.hideStatus();
-		}
-		lastSubmitTime = lastSubmitTime-2000;
-	}
-	return false;
-}
+//function saveForms( savingStr, completeStr) {
+//	index = 0;
+//	theForms = ajaxFormArray;
+//	function success(data) {
+//		var theForm = document.getElementById(ajaxFormArray[0]);
+//		document.getElementById('multiedit_'+theForm.id).innerHTML = data.responseText;
+//		var saveAllButton = document.getElementById('ajaxsaveall');
+//		ajaxFormArray.splice(index, 1);
+//		if(saveAllButton && ajaxFormArray.length <= 1){
+//    		saveAllButton.style.visibility = 'hidden';
+//    	}
+//		index++;
+//		if(index == theForms.length){
+//			ajaxStatus.showStatus(completeStr);
+//    		window.setTimeout('ajaxStatus.hideStatus();', 2000);
+//    		if(saveAllButton)
+//    			saveAllButton.style.visibility = 'hidden';
+//    	}
+//
+//
+//	}
+//	if(typeof savingStr == 'undefined') SUGAR.language.get('app_strings', 'LBL_LOADING');
+//	ajaxStatus.showStatus(savingStr);
+//
+//	//loop through the forms saving each one
+//	for(i = 0; i < theForms.length; i++){
+//		var theForm = document.getElementById(theForms[i]);
+//		if(check_form(theForm.id)){
+//			theForm.action.value='AjaxFormSave';
+//			YAHOO.util.Connect.setForm(theForm);
+//			var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success});
+//		}else{
+//			ajaxStatus.hideStatus();
+//		}
+//		lastSubmitTime = lastSubmitTime-2000;
+//	}
+//	return false;
+//}
 
 // -- start sugarListView class
 // js functions used for ListView
@@ -3846,6 +3848,7 @@ SUGAR.savedViews = function() {
 				// search and redirect back
 				document.search_form.action.value = 'index';
 			}
+            // TODO check if this is working
 			SUGAR.ajaxUI.submitForm(document.search_form);
 		},
 		shortcut_select: function(selectBox, module) {

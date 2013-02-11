@@ -39,47 +39,42 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'showOn' => 'edit',
         ),
         array(
-            'type' => 'buttondropdown',
+            'type' => 'actiondropdown',
             'name' => 'main_dropdown',
+            'primary' => true,
             'buttons' => array(
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:edit_button:click',
                     'name' => 'edit_button',
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
                     'showOn' => 'view',
                 ),
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:save_button:click',
                     'name' => 'save_button',
                     'label' => 'LBL_SAVE_BUTTON_LABEL',
                     'primary' => true,
                     'showOn' => 'edit',
                 ),
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'showOn' => 'view',
                 ),
                 array(
+                    'type' => 'rowaction',
                     'name' => 'duplicate_button',
+                    'event' => 'button:duplicate_button:click',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'showOn' => 'view',
-                    'events' => array(
-                        'click' => 'function(e){
-                            var attributes = $.extend({}, this.model.attributes);
-                            attributes.status = "Not Started";
-                            app.cache.set("duplicate"+this.module, attributes);
-                            this.view.layout.trigger("drawer:create:fire", {
-                                components: [{
-                                    layout : "create",
-                                    context: {
-                                        create: true
-                                    }
-                                }]
-                            }, this);
-                            e.stopPropagation();
-                        }',
-                    ),                        
                 ),
                 array(
+                    'type' => 'rowaction',
                     'name' => 'record-close-new',
                     'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_TITLE',
                     'showOn' => 'view',
@@ -91,17 +86,7 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                         this.model.save({}, {
                             success: function() {
                                 app.alert.dismiss("close_task");
-                                var attributes = $.extend({}, self.model.attributes);
-                                attributes.status = "Not Started";
-                                app.cache.set("duplicate"+self.module, attributes);
-                                self.view.layout.trigger("drawer:create:fire", {
-                                    components: [{
-                                        layout : "create",
-                                        context: {
-                                            create: true
-                                        }
-                                    }]
-                                }, self);
+                                self.view.duplicateClicked();
                             },
                             error:function(error) {
                                 app.alert.dismiss("close_task");
@@ -112,6 +97,7 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     }'),
                 ),
                 array(
+                    'type' => 'rowaction',
                     'name' => 'record-close',
                     'label' => 'LBL_CLOSE_BUTTON_TITLE',
                     'showOn' => 'view',

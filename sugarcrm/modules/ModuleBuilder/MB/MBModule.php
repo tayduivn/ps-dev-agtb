@@ -884,7 +884,7 @@ class MBModule
         foreach ( $this->config [ 'templates' ] as $temp => $val )
             $template = $temp ;
 		//BEGIN SUGARCRM flav=pro ONLY	
-		copy ( "themes/Sugar/images/icon_{$template}_32.png", "$icondir/icon_" . ucfirst ( $this->key_name ) . "_32.png" ) ;
+		copy ( "themes/RacerX/images/icon_{$template}_32.png", "$icondir/icon_" . ucfirst ( $this->key_name ) . "_32.png" ) ;
 		//END SUGARCRM flav=pro ONLY
 		//BEGIN SUGARCRM flav=com ONLY
         copy ( "themes/default/images/icon_$template.gif", "$icondir/icon_" . ucfirst ( $this->key_name ) . ".gif" ) ;

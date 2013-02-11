@@ -30,53 +30,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Cases']['base']['view']['record'] = array(
-    'buttons' => array(
-        array(
-            'type' => 'button',
-            'name' => 'cancel_button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'edit',
-        ),
-        array(
-            'type' => 'buttondropdown',
-            'name' => 'main_dropdown',
-            'buttons' => array(
-                array(
-                    'name' => 'edit_button',
-                    'label' => 'LBL_EDIT_BUTTON_LABEL',
-                    'primary' => true,
-                    'showOn' => 'view',
-                ),
-                array(
-                    'name' => 'save_button',
-                    'label' => 'LBL_SAVE_BUTTON_LABEL',
-                    'primary' => true,
-                    'showOn' => 'edit',
-                ),
-                array(
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                ),
-                array(
-                    'name' => 'duplicate_button',
-                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'showOn' => 'view'
-                ),
-            ),
-        ),
-        array(
-            'name' => 'sidebar_toggle',
-            'type' => 'sidebartoggle',
-        ),
-    ),
     'panels' => array(
         array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                array('name'=>'case_number', 'noedit'=>true,),
-               
                 /*
                 array(
                     'name' => 'img',
@@ -97,15 +55,23 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-              
+                array (
+                    'name'=>'case_number',
+                    'noedit' => true,
+                ),
                 'priority',
-                'status',
-                'type',
                 'account_name',
-                'assigned_user_name',
-//BEGIN SUGARCRM flav=pro ONLY
-                array('name'=>'team_name', 'displayParams'=>array('required'=>true)),
-//END SUGARCRM flav=pro ONLY
+                'type',
+                array(
+                    'name' => 'resolution',
+                    'nl2br' => true,
+                    'span' => 12
+                ),
+                array(
+                    'name' => 'description',
+                    'nl2br' => true,
+                    'span' => 12
+                ),
 //BEGIN SUGARCRM flav=ent ONLY
                 // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
                 // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar 
@@ -118,12 +84,19 @@ $viewdefs['Cases']['base']['view']['record'] = array(
         array(
             'name' => 'panel_hidden',
             'hide' => true,
-            'columns' => 1,
+            'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                array('name' => 'description', 'nl2br' => true),
-                array('name' => 'resolution', 'nl2br' => true),
+                'assigned_user_name',
+//BEGIN SUGARCRM flav=pro ONLY
+                array(
+                    'name'=>'team_name',
+                    'displayParams'=>array(
+                        'required'=>true
+                    )
+                ),
+//END SUGARCRM flav=pro ONLY
             )
         )
     ),

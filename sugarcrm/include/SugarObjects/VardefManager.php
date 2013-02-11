@@ -61,9 +61,13 @@ class VardefManager{
             );
 
             //search a predefined set of locations for the vardef files
-            foreach (SugarAutoLoader::existing($vardef_paths) as $path)
+            foreach ($vardef_paths as $path)
             {
-                 require($path);
+                // file_exists here is only for custom/Extension since loadExtension already checks
+                // the file map and will return false if something's wrong
+                if(!empty($path) && file_exists($path)) {
+                    require($path);
+                }
             }
         }
     }

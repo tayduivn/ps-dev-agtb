@@ -15,8 +15,6 @@ if (file_exists('../config.js')) {
     echo '<script src="../sidecar/tests/config.js" type="text/javascript"></script>';
 }
 ?>
-    <script type="text/javascript" src="../include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
-    <script type="text/javascript" src="../include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
     <script type="text/javascript" src="../include/javascript/jquery/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="../styleguide/assets/js/bootstrap-collapse.js"></script>
 
@@ -47,9 +45,16 @@ if (file_exists('../config.js')) {
  * jasmine test generator. This file will recursively search the test directory for .js test files and include them.
  */
 
-    $exclude = array("jshelpers", "jssource", "PHPUnit", 'ci');
+    $exclude = array("jshelpers", "jssource", "PHPUnit", "/ci/");
 
-    $dirItr = new RecursiveDirectoryIterator('.');
+    $path = '.';
+    if(isset($_GET['module'])) {
+        $module = $_GET['module'];
+        if(is_dir('modules/' . $module)) {
+            $path = 'modules/' . $module;
+        }
+    }
+    $dirItr = new RecursiveDirectoryIterator($path);
     $itrItr = new RecursiveIteratorIterator($dirItr);
     foreach($itrItr as $path => $file) {
         if (substr(basename($path), -3) != ".js")

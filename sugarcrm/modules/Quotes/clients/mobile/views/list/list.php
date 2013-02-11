@@ -36,6 +36,7 @@ $viewdefs['Quotes']['mobile']['view']['list'] = array(
                     'label' => 'LBL_QUOTE_NAME',
                     'default' => true,
                     'enabled' => true,
+                    'link' => true,
                     'width' => '10%',
                 ),
                 array(

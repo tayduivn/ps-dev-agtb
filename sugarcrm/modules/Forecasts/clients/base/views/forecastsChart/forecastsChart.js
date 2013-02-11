@@ -32,21 +32,14 @@
  */
 ({
     values: new Backbone.Model(),
-    url: app.api.buildURL('Forecasts/chart'),
-
     chart: null,
-
     chartRendered: false,
-
-    chartDataSet : [],
-    chartGroupByOptions : [],
-
+    chartDataSet: [],
+    chartGroupByOptions: [],
     defaultDataset: '',
     defaultGroupBy: '',
-
     chartTitle: '',
     timeperiod_label: '',
-
     stopRender: false,
 
     /**
@@ -130,7 +123,7 @@
         //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
         this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
-        this.chartDataSet = app.forecasts.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', this.context.forecasts.config);
+        this.chartDataSet = app.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', this.context.config);
         this.chartGroupByOptions = app.metadata.getStrings('app_list_strings').forecasts_chart_options_group || [];
         this.defaultDataset = app.defaultSelections.dataset;
         this.defaultGroupBy = app.defaultSelections.group_by;
@@ -173,9 +166,8 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
-        if(this.context.forecasts.worksheet) this.context.forecasts.worksheet.off(null, null, this);
-        if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
-        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        if(this.context.worksheetmanager) this.context.worksheetmanager.off(null, null, this);
+        if(this.context) this.context.off(null, null, this);
         if(this.values) this.values.off(null, null, this);
         app.view.View.prototype.unbindData.call(this);
     },
@@ -184,58 +176,56 @@
      * Listen to changes in values in the context
      */
     bindDataChange:function () {
-        var self = this;
-        
         //This is fired when anything in the worksheets is saved.  We want to wait until this happens
         //before we go and grab new chart data.
-        this.context.forecasts.on("forecasts:committed:saved", function(){
-            self.renderChart();
-        });
+        this.context.on("forecasts:committed:saved", function(){
+            this.renderChart();
+        }, this);
 
-        this.context.forecasts.on("forecasts:worksheet:saved", function(totalSaved, worksheet, isDraft) {
+        this.context.on("forecasts:worksheet:saved", function(totalSaved, worksheet, isDraft) {
             // we only want this to run if the totalSaved was greater than zero and we are saving the draft version
             if(totalSaved > 0 && isDraft == true) {
-                self.renderChart();
+                this.renderChart();
             }
-        });
+        }, this);
 
-        this.context.forecasts.on('change:selectedUser', function (context, user) {
-            if(!_.isEmpty(self.chart)) {
-                self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
-                self.toggleRepOptionsVisibility();
+        this.context.on('change:selectedUser', function (context, user) {
+            if(!_.isEmpty(this.chart)) {
+                this.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
+                this.toggleRepOptionsVisibility();
             }
-        });
-        this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
-            if(!_.isEmpty(self.chart)) {
-                self.timeperiod_label = timePeriod.label;
-                self.handleRenderOptions({timeperiod_id: timePeriod.id});
+        }, this);
+        this.context.on('change:selectedTimePeriod', function (context, timePeriod) {
+            if(!_.isEmpty(this.chart)) {
+                this.timeperiod_label = timePeriod.label;
+                this.handleRenderOptions({timeperiod_id: timePeriod.id});
             }
-        });
-        this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
-            if(!_.isEmpty(self.chart)) {
-                self.handleRenderOptions({group_by: groupBy});
+        }, this);
+        this.context.on('change:selectedGroupBy', function (context, groupBy) {
+            if(!_.isEmpty(this.chart)) {
+                this.handleRenderOptions({group_by: groupBy});
             }
-        });
-        this.context.forecasts.on('change:selectedRanges', function(context, value) {
-            if(!_.isEmpty(self.chart)) {
-                self.handleRenderOptions({ranges: value});
+        }, this);
+        this.context.on('change:selectedRanges', function(context, value) {
+            if(!_.isEmpty(this.chart)) {
+                this.handleRenderOptions({ranges: value});
             }
-        });
-        this.context.forecasts.on('change:hiddenSidebar', function(context, value){
+        }, this);
+        this.context.on('forecasts:commitButtons:sidebarHidden', function(value){
             // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
-            self.stopRender = value;
+            this.stopRender = value;
             // if the sidebar is not hidden
             if(value == false){
                 // we need to force the render to happen again
-                self.renderChart();
+                this.renderChart();
             }
-        });
+        }, this);
         // watch for the change event to fire.  if it fires make sure something actually changed in the array
-        this.values.on('change', function(context, value) {
-            if(!_.isEmpty(value.changes)) {
-                self.renderChart();
+        this.values.on('change', function(value) {
+            if(!_.isEmpty(value.changed)) {
+                this.renderChart();
             }
-        });
+        }, this);
     },
 
     /**
@@ -300,7 +290,7 @@
                   };
                   data = $.extend(data, params);
 
-                  url = app.api.buildURL('Forecasts', 'chart', '', data);
+                  url = app.api.buildURL(self.buildChartUrl(params), '', '', data);
 
                   app.api.call('read', url, data, {success : success});
               },
@@ -311,29 +301,31 @@
                             'title': json.properties[0].title
                             , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
                             // bar group data (x-axis)
-                            , 'groupData': json.values.map( function(d,i){
-                                return {
-                                    'group': i
-                                    , 'l': json.values[i].label
-                                    , 't': json.values[i].values.reduce( function(p, c, i, a){
-                                        return parseInt(p,10) + parseInt(c,10);
-                                    })
-                                }
-                            })
+                            , 'groupData': (!json.values.filter(function(d) { return d.values.length }).length) ? [] :
+                                json.values.map( function(d,i){
+                                    return {
+                                        'group': i
+                                        , 'l': json.values[i].label
+                                        , 't': json.values[i].values.reduce( function(p, c, i, a){
+                                            return parseInt(p,10) + parseInt(c,10);
+                                        })
+                                    }
+                                })
                         }
                         // series data
-                        , 'data': json.label.map( function(d,i){
-                            return {
-                                'key': d
-                                , 'type': 'bar'
-                                , 'series': i
-                                , 'values': json.values.map( function(e,j){
-                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
-                                })
-                                , 'valuesOrig': json.values.map( function(e,j){
-                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
-                                })
-                            }
+                        , 'data': (!json.values.filter(function(d) { return d.values.length }).length) ? [] :
+                            json.label.map( function(d,i){
+                                return {
+                                    'key': d
+                                    , 'type': 'bar'
+                                    , 'series': i
+                                    , 'values': json.values.map( function(e,j){
+                                        return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                    })
+                                    , 'valuesOrig': json.values.map( function(e,j){
+                                        return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                    })
+                                }
                         }).concat(
                             json.properties[0].goal_marker_label.filter( function(d,i){
                                 return d !== 'Quota';
@@ -370,9 +362,18 @@
         params.minColumnWidth = 120;
         params.chartId = chartId;
 
-        chart = new loadSugarChart(chartId, this.url, css, chartConfig, params, _.bind(function(chart){
+        chart = new loadSugarChart(chartId, this.buildChartUrl(params), css, chartConfig, params, _.bind(function(chart){
             this.chart = chart;
         }, this));
         this.chartRendered = true;
+    },
+
+    /**
+     * Accepts params object and builds the proper endpoint url for charts
+     * @param params {Object} contains a lot of chart options and settings
+     * @return {String} has the proper structure for the chart url
+     */
+    buildChartUrl: function(params) {
+        return 'Forecasts/' + params.timeperiod_id + '/' + params.user_id +'/chart/' + params.display_manager;
     }
 })

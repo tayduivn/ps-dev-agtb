@@ -81,6 +81,7 @@ class ForecastsCommittedApiTest extends RestTestBase
      */
     public function testForecastsCommittedSubmit()
     {
+        $this->markTestSkipped('This is all done in the ForecastWorksheetApiTest Class');
     	$manager = SugarTestForecastUtilities::createForecastUser();
         $reportee = SugarTestForecastUtilities::createForecastUser(array("user" => array("reports_to" => $manager["user"]->id)));
         $timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
@@ -102,17 +103,6 @@ class ForecastsCommittedApiTest extends RestTestBase
         	"worst_case" => 10,
         	"opp_count" => 3,
         	"timeperiod_id" => $timeperiod->id,
-        	"worksheetData" => array(
-        		"new" => array(),
-        		"current" => array(
-        			array(
-        				"worksheet_id" => $reportee["opp_worksheets"][0]->id
-        			),
-        			array(
-        				"worksheet_id" => $reportee["opp_worksheets"][1]->id
-        			),
-        		)
-        	)
         );        
         
         /*
@@ -157,7 +147,7 @@ class ForecastsCommittedApiTest extends RestTestBase
             "draft" => 1
         );
         
-        $response = $this->_restCall("ForecastWorksheets/" . $reportee["user"]->id, json_encode($postData), "PUT");
+        $response = $this->_restCall("ForecastWorksheets/" . $postData["id"], json_encode($postData), "PUT");
         
         //switch user to manager and get the worksheet for the rep. Verify committed value is returned instead of draft (live) value
         $this->_user = $manager["user"];

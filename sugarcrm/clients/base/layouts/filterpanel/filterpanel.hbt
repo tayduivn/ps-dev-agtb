@@ -1,11 +1,13 @@
 <form class="form-search" action="">
-    <div class="row-fluid control-group">
-        <div class="filter controls controls-four btn-fit">
+    <div class="control-group">
+        <div class="filter controls controls-two btn-group-fit">
             <div class="filter-view search"></div>
-            <div class="actions" data-toggle="buttons-radio">
-                {{#each toggles}}
-                    <a href="" class="btn btn-invisible" data-view="{{toggle}}"><i class="{{class}}"></i></a>
-                {{/each}}
+            <div class="toggle-actions actions">
+                <div class="btn-group" data-toggle="buttons-radio">
+                    {{#each toggles}}
+                        <a href="" class="btn" data-view="{{toggle}}" data-mode="view" rel="tooltip" data-original-title="{{toggle}}"><i class="{{class}}"></i></a>
+                    {{/each}}
+                </div>
             </div>
         </div>
     </div>

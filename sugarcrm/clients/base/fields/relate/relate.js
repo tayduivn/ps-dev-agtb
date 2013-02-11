@@ -44,8 +44,11 @@
         var self = this;
         var result = app.view.Field.prototype._render.call(this);
         if(this.tplName === 'edit') {
+            var placeholderTemplate = Handlebars.compile(app.lang.getAppString("LBL_SEARCH_MODULE")),
+                moduleString = app.lang.getAppListStrings("moduleListSingular");
+
             this.$(this.fieldTag).select2({
-                    width: 'element',
+                    width: '100%',
                     initSelection: function(el, callback) {
                         var $el = $(el),
                             id = $el.data('id'),
@@ -58,7 +61,9 @@
                     formatSearching: function() {
                         return app.lang.get("LBL_LOADING", self.module);
                     },
-                    placeholder: app.lang.get(self.getSearchModule(), self.module),
+                    placeholder: placeholderTemplate({
+                        module: moduleString[self.getSearchModule()]
+                    }),
                     allowClear: self.allow_single_deselect,
                     minimumInputLength: self.minChars,
                     query: self.search
@@ -79,13 +84,11 @@
                 }).on("searchmore", function() {
                     self.beforeSearchMore();
                     self.setValue({id: '', value: ''});
-                    self.view.layout.trigger("drawer:selection:fire", {
-                        components: [{
-                            layout : 'selection-list',
-                            context: {
-                                module: self.getSearchModule()
-                            }
-                        }]
+                    app.drawer.open({
+                        layout : 'selection-list',
+                        context: {
+                            module: self.getSearchModule()
+                        }
                     }, self.setValue);
                 }).on("change", function(e) {
                     var id = e.val,
@@ -94,15 +97,17 @@
                     self.setValue({id: e.val, value: value});
                 });
         } else if(this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled").not(".chzn-done").chosen();
+            this.$(this.fieldTag).attr("disabled", "disabled").select2();
         }
         return result;
     },
     beforeSearchMore: function() {},
     setValue: function(model) {
-        var silent = model.silent || false;
-        this.model.set(this.def.id_name, model.id, {silent: silent});
-        this.model.set(this.def.name, model.value, {silent: silent});
+        if (model) {
+            var silent = model.silent || false;
+            this.model.set(this.def.id_name, model.id, {silent: silent});
+            this.model.set(this.def.name, model.value, {silent: silent});
+        }
     },
     /**
      * {@inheritdoc}

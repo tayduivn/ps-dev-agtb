@@ -46,6 +46,7 @@ $viewdefs['Products']['base']['view']['baselist'] = array(
                 'account_name',
                 'status',
                 'sales_stage',
+                'sales_status',
                 'quantity',
                 array(
                     'name' => 'discount_usdollar',

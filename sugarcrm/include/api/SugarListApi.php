@@ -68,21 +68,7 @@ abstract class SugarListApi extends SugarApi {
                 $userFields[] = $defaultField;
             }
         }
-        
-        if ( $seed != null ) {
-            foreach ( $userFields as $field ) {
-                if ( !isset($seed->field_defs[$field]) ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$field.' in module: '.$args['module']);
-                }
-                
-                //BEGIN SUGARCRM flav=pro ONLY
-                if ( $this->checkAcls && ( !$seed->ACLFieldAccess($field,'list') || !isset($seed->field_defs[$field]) ) ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$field.' in module: '.$args['module']);
-                }
-                //END SUGARCRM flav=pro ONLY
-            }
-        }
-            
+                    
         $orderBy = '';
         if ( isset($args['order_by']) ) {
             if ( strpos($args['order_by'],',') !== 0 ) {

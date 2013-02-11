@@ -36,15 +36,15 @@
  * Events Triggered
  *
  * forecasts:commitButtons:enabled
- *      on: context.forecasts
+ *      on: context
  *      by: updateTotals()
  *
  * forecasts:commitButtons:disabled
- *      on: context.forecasts
+ *      on: context
  *      by: commitForecast()
  *
  * forecasts:committed:saved
- *      on: context.forecasts
+ *      on: context
  *      by: commitForecast()
  *      when: the new forecast model has saved successfully
  */
@@ -154,7 +154,7 @@
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        this.collection = this.context.forecasts.committed;
+        this.collection = this.context.committed;
 
         this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
@@ -165,9 +165,9 @@
 
         this.collection.url = this.createUrl();
 
-        this.show_likely = options.context.forecasts.config.get('show_worksheet_likely');
-        this.show_best = options.context.forecasts.config.get('show_worksheet_best');
-        this.show_worst = options.context.forecasts.config.get('show_worksheet_worst');
+        this.show_likely = options.context.config.get('show_worksheet_likely');
+        this.show_best = options.context.config.get('show_worksheet_best');
+        this.show_worst = options.context.config.get('show_worksheet_worst');
     },
 
     createUrl : function() {
@@ -196,7 +196,7 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
-        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        if(this.context) this.context.off(null, null, this);
         app.view.View.prototype.unbindData.call(this);
     },
 
@@ -210,29 +210,33 @@
                 this.updateTotals(this.savedTotal);
             }
         }, this);
+        this.collection.on('data:sync:start', function() {
+            // when a request start up, tell the class that the fetch is running
+            this.runningFetch = true;
+        }, this);
 
-        if(this.context && this.context.forecasts) {
-            this.context.forecasts.on("change:selectedUser", function(context, user) {
+        if(this.context) {
+            this.context.on("change:selectedUser", function(context, user) {
                 self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
                 self.selectedUser = user;              
                 self.updateCommitted();
             }, this);
-            this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
+            this.context.on("change:selectedTimePeriod", function(context, timePeriod) {
                 self.timePeriodId = timePeriod.id;
                 self.updateCommitted();
             }, this);
-            this.context.forecasts.on("change:updatedTotals", function(context, totals) {
+            this.context.on("change:updatedTotals", function(context, totals) {
                 if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
                     return;
                 }
                 self.updateTotals(totals);
             }, this);
-            this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
+            this.context.on("change:updatedManagerTotals", function(context, totals) {
                 if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
                     self.updateTotals(totals);
                 }
             }, this);
-            this.context.forecasts.on("forecasts:committed:commit", function(context, flag) {
+            this.context.on("forecasts:committed:commit", function(context, flag) {
                     self.commitForecast();
             }, this);
         }
@@ -258,10 +262,9 @@
             var worst = {};
             // get the last committed value
             var previousCommit = null;
-            if(!_.isEmpty(this.collection.models))
-            {
+            if(!_.isEmpty(this.collection.models)) {
                previousCommit = _.first(this.collection.models);
-            } else {              
+            } else {
                previousCommit = new Backbone.Model({
                     best_case : 0,
                     likely_case : 0,
@@ -298,7 +301,7 @@
             
             if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls))
             {
-            	self.context.forecasts.trigger("forecasts:commitButtons:enabled");
+            	self.context.trigger("forecasts:commitButtons:enabled");
             }
 
             self.bestCaseCls = best.bestCaseCls;
@@ -326,9 +329,7 @@
      */
     getColorArrow: function(newValue, currentValue)
     {
-        var cls = '';
-
-        cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+        var cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
         cls = (newValue == currentValue) ? '' : cls;
 
         return cls
@@ -341,27 +342,8 @@
      */
     commitForecast: function() {
         var self = this;
-        var worksheetData = {};
-        worksheetData["new"] = {};
-        worksheetData["current"] = {};
         
-        var currentWorksheet = self.context.forecasts.get("currentWorksheet");
-        
-        if(currentWorksheet == "worksheet"){
-        	var worksheetDataCurrent = [];
-        	var worksheetDataNew = [];
-        	_.each(self.context.forecasts[currentWorksheet].models, function(item){
-    			if(_.isEmpty(item.get("worksheet_id"))){
-        			worksheetDataNew.push(item.attributes);
-        		}
-        		else{
-        			worksheetDataCurrent.push(item.attributes);
-        		}        		
-        	});
-        	worksheetData = {"current": worksheetDataCurrent, "new": worksheetDataNew};
-        } 
-        
-        self.context.forecasts.trigger("forecasts:commitButtons:disabled");
+        self.context.trigger("forecasts:commitButtons:disabled");
 
         //If the totals have not been set, don't save
         if(!self.totals) {
@@ -389,12 +371,11 @@
         forecastData.forecast_type = self.forecastType;
         forecastData.amount = self.totals.amount;
         forecastData.opp_count = self.totals.included_opp_count;
-        forecastData.worksheetData = worksheetData;
 
         // apply data to model then save
         forecast.set(forecastData);
         forecast.save({}, {success:function(){
-        	self.context.forecasts.trigger("forecasts:committed:saved");
+        	self.context.trigger("forecasts:committed:saved");
         }});
 
         // clear out the arrows

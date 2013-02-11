@@ -13,11 +13,8 @@
         'mouseenter .ellipsis_inline':'addTooltip'
     },
     addTooltip: function(event){
-        var $el = this.$(event.target);
-        if( $el[0].offsetWidth < $el[0].scrollWidth ) {
-            $el.tooltip('show');
-        } else {
-            $el.tooltip('destroy');
+        if (_.isFunction(app.utils.handleTooltip)) {
+            app.utils.handleTooltip(event, this);
         }
     },
     // button fields defined in view definition
@@ -34,7 +31,7 @@
 
     initialize: function(options) {
         _.bindAll(this);
-
+        options.meta = _.extend({}, app.metadata.getView(null, 'record'), options.meta);
         app.view.views.EditableView.prototype.initialize.call(this, options);
 
         this.buttons = {};
@@ -42,15 +39,60 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
+        app.events.on("data:sync:end", this.handleSync, this);
+        this.model.on("error:validation", this.handleValidationError, this);
+        this.context.on("change:record_label", this.setLabel, this);
+        this.model.on("duplicate:before", this.setupDuplicateFields, this);
+
         this.delegateButtonEvents();
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
     },
+    handleSync: function(method, model, options, error) {
+        if (this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
+            this.previousModelState = JSON.parse(JSON.stringify(model.attributes));
+        }
+    },
+
+    /**
+     * Called when current record is being duplicated to allow customization of fields
+     * that will be copied into new record.
+     *
+     * Override to setup the fields on this bean prior to being displayed in Create dialog
+     *
+     * @param {Object} prefill Bean that will be used for new record
+     */
+    setupDuplicateFields: function(prefill){
+
+    },
 
     setLabel: function(context, value) {
         this.$(".record-label[data-name=" + value.field + "]").text(value.label);
+    },
+
+    /**
+     * Handle validation errors on save of Record.
+     * Makes the fields editable and decorates the fields that have errors.
+     * Fields decorate themselves because they may have customized HTML/CSS
+     *
+     * @param errors Validation errors
+     */
+    handleValidationError: function(errors){
+        var errorFields = _.filter(this.editableFields,function(field){
+            return errors[field.name];
+        });
+        this.toggleFields(errorFields, true);  // Set field to edit mode before decorating it
+        _.defer(function(errorFields, self){ // Must defer decorating because field toggling is deferred
+            _.each(errorFields, function(field){
+                field.$el.parents('.record-cell').addClass("inline-error");
+                if(field.decorateError){
+                    field.decorateError(errors[field.name]);
+                }
+            });
+        }, errorFields, this);
+
     },
 
     delegateButtonEvents: function() {
@@ -88,17 +130,22 @@
             }
 
             _.each(panel.fields, function(field, index) {
-                var maxSpan,
-                    isLabelInline,
+                var isLabelInline,
                     fieldSpan,
+                    maxFieldSpan,
                     maxSpanForFieldWithInlineLabel = 8,
                     maxSpanForFieldWithLabelOnTop  = 12;
 
                 //The code below assumes that the field is an object but can be a string
                 if(_.isString(field)) {
                     field = {
-                        'name': field
+                        name: field
                     };
+                }
+
+                //Disable the pencil icon if the user doesn't have ACLs
+                if (!app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                    field.noedit = true;
                 }
 
                 //labels: visibility for the label
@@ -107,25 +154,49 @@
                 if (_.isUndefined(panel.labels)) {
                     panel.labels = true;
                 }
+
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
                 isLabelInline = (panel.labelsOnTop === false && panel.labels);
-                maxSpan       = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
+                maxFieldSpan  = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
 
+                // calculate the 2/3 ratio for the field span
                 if (_.isUndefined(field.span)) {
-                    field.span = Math.floor(maxSpan / columns);
+                    field.span = Math.floor(maxFieldSpan / columns);
                 }
 
-                // reset the field span if it's greater than the max span since no field can be greater than the
-                // maximum allowable span
-                // this is likely to only occur when labels are inline with the field, but that can't be guaranteed
-                // to be the only plausible scenario
-                if (field.span > maxSpan) {
-                    field.span = maxSpan;
+                // prevent a span of 0
+                if (field.span < 1) {
+                    field.span = 1;
                 }
 
-                //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
+                // 4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
                 if (_.isUndefined(field.labelSpan)) {
                     field.labelSpan = Math.floor(4 / columns);
+                }
+
+                // prevent a labelSpan of 0
+                if (field.labelSpan < 1) {
+                    field.labelSpan = 1;
+                }
+
+                if (_.isUndefined(field.dismiss_label)) {
+                    field.dismiss_label = false;
+                }
+
+                // if the label is inline and is to be dismissed, then the field should take up its space plus the
+                // space set aside for its label
+                if (isLabelInline && field.dismiss_label === true) {
+                    field.span += field.labelSpan;
+
+                    // the field should be allowed to take up the space that was originally dedicated for the label,
+                    // which is similar to saying that labels are on top
+                    maxFieldSpan = maxSpanForFieldWithLabelOnTop;
+                }
+
+                // fields can't be greater than the maximum allowable span
+                // however, there is no policing of (field.span + field.labelSpan) so overflow is still possible
+                if (field.span > maxFieldSpan) {
+                    field.span = maxFieldSpan;
                 }
 
                 totalFieldCount++;
@@ -136,7 +207,7 @@
 
                 // if the labels are to the left of the field then the field takes up the space
                 // specified by its span plus the space its label takes up
-                if (isLabelInline) {
+                if (isLabelInline && field.dismiss_label === false) {
                     fieldSpan += field.labelSpan;
                 }
 
@@ -176,7 +247,8 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            if ( field.type === "img" || field.type === "buttondropdown" || field.parent || (field.name && this.buttons[field.name])) {
+            //Exclude non editable fields
+            if (field.def.noedit || field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
@@ -194,12 +266,11 @@
     initButtons: function() {
         if(this.options.meta && this.options.meta.buttons) {
             _.each(this.options.meta.buttons, function(button) {
-                if (button.type === 'buttondropdown') {
+                this.registerFieldAsButton(button.name);
+                if (button.buttons) {
                     _.each(button.buttons, function(dropdownButton) {
                         this.registerFieldAsButton(dropdownButton.name);
                     }, this);
-                } else if (button.type === 'button') {
-                    this.registerFieldAsButton(button.name);
                 }
             }, this);
         }
@@ -207,8 +278,10 @@
     showPreviousNextBtnGroup:function() {
         var listCollection = this.context.get('listCollection') || new Backbone.Collection();
         var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
-        this.collection.previous = listCollection.models[recordIndex-1] ? listCollection.models[recordIndex-1] : undefined;
-        this.collection.next = listCollection.models[recordIndex+1] ? listCollection.models[recordIndex+1] : undefined;
+        if(this.collection){
+            this.collection.previous = listCollection.models[recordIndex-1] ? listCollection.models[recordIndex-1] : undefined;
+            this.collection.next = listCollection.models[recordIndex+1] ? listCollection.models[recordIndex+1] : undefined;
+        }
     },
 
     registerFieldAsButton: function(buttonName) {
@@ -254,48 +327,65 @@
                 this.render();
             }
         }, this);
-
-        this.context.on("change:record_label", this.setLabel, this);
     },
 
     duplicateClicked: function() {
-        app.cache.set("duplicate"+this.module, this.model.attributes);
-        this.layout.trigger("drawer:create:fire", {
-            components: [{
-                layout : 'create',
-                context: {
-                    create: true
-                }
-            }]
+        var prefill = app.data.createBean(this.model.module);
+        prefill.copy(this.model);
+        this.model.trigger("duplicate:before", prefill);
+        prefill.unset("id");
+        app.drawer.open({
+            layout: 'create',
+            context: {
+                create: true,
+                model : prefill
+            }
         }, this);
     },
     
     findDuplicatesClicked: function() {
-        this.layout.trigger("drawer:find-duplicates:fire", {
-            components: [{
-                layout : 'find-duplicates',
-                context: {
-                    dupeCheckModel: this.model,
-                    dupelisttype: 'dupecheck-list-multiselect'
-                }
-            }]
-        }, this);
+        app.drawer.open({
+            layout : 'find-duplicates',
+            context: {
+                dupeCheckModel: this.model,
+                dupelisttype: 'dupecheck-list-multiselect'
+            }
+        });
     },
 
     editClicked: function() {
-        this.previousModelState = this.model.previousAttributes();
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
 
     saveClicked: function() {
-        this.setButtonStates(this.STATE.VIEW);
-        this.handleSave();
+        this.$('.inline-error').removeClass('inline-error');
+        if(this.model.isValid(this.getFields(this.module))){
+            this.setButtonStates(this.STATE.VIEW);
+            this.handleSave();
+        }
     },
 
     cancelClicked: function() {
         this.setButtonStates(this.STATE.VIEW);
         this.handleCancel();
+        this.clearValidationErrors(this.editableFields);
+    },
+    /**
+     * Remove validation error decoration from fields
+     *
+     * @param fields Fields to remove error from
+     */
+    clearValidationErrors: function(fields){
+        _.defer(function(){
+            _.each(fields, function(field){
+                field.$el.parents('.record-cell').removeClass("inline-error");
+                if(field.clearErrorDecoration){
+                    field.clearErrorDecoration();
+                }
+            });
+        }, fields);
+
     },
 
     deleteClicked: function() {
@@ -375,6 +465,9 @@
                 }
             },
             { deleteIfFails:false});
+
+        this.$(".record-save-prompt").hide();
+        this.render();
     },
 
     handleCancel: function() {
@@ -420,7 +513,8 @@
         this.currentState = state;
 
         _.each(this.buttons, function(field) {
-            if (_.isUndefined(field.showOn()) || (field.showOn() === state)) {
+            var showOn = field.def.showOn;
+            if (_.isUndefined(showOn) || (showOn === state)) {
                 field.show();
             } else {
                 field.hide();

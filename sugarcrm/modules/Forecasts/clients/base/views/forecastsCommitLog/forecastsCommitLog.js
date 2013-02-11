@@ -144,7 +144,7 @@
 
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.collection = this.context.forecasts.committed;
+        this.collection = this.context.committed;
 
         this.fullName = app.user.get('full_name');
         this.userId = app.user.get('id');
@@ -190,7 +190,7 @@
 
     bindDataChange: function() {
         var self = this;
-        this.collection = this.context.forecasts.committed;
+        this.collection = this.context.committed;
         this.collection.on("reset change", function() {
             self.buildForecastsCommitted();
         }, this);       
@@ -258,7 +258,7 @@
         var loopPreviousModel = '';
         var models = _.clone(self.collection.models).reverse();
         _.each(models, function (model) {
-            self.historyLog.push(app.forecasts.utils.createHistoryLog(loopPreviousModel, model, self.context.forecasts.config));
+            self.historyLog.push(app.utils.createHistoryLog(loopPreviousModel, model, self.context.config));
             loopPreviousModel = model;           
         });
         

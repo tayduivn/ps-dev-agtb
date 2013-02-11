@@ -248,6 +248,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLINFO_HEADER_OUT, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
 
         if (is_array($addedOpts) && !empty($addedOpts)) {
@@ -394,5 +395,17 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         }
         
         return $headers;
+    }
+
+    /**
+     * Asserts that the response included the expected HTTP status code.
+     *
+     * @param array $response
+     * @param int   $expectedCode
+     * @return void
+     */
+    protected function assertHttpStatus($response, $expectedCode = 200) {
+        $httpStatus = $response["info"]["http_code"];
+        $this->assertEquals($expectedCode, $httpStatus, "Unexpected HTTP Status: {$httpStatus}\n");
     }
 }

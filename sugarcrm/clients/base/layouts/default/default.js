@@ -1,6 +1,6 @@
 ({
     events: {
-        "click .closeSubdetail": "hidePreview"
+        "click .closeSubdetail": "hidePreviewPanel"
     },
 
     initialize: function(opts) {
@@ -12,9 +12,10 @@
         app.view.Layout.prototype.initialize.call(this, opts);
         this.processDef();
 
-        this.context.on("preview:open", function(model) { this.showPreview(); }, this);
-        this.context.on("preview:close", function(model){ this.hidePreview();}, this);
+        app.events.on("preview:open", this.showPreviewPanel, this);
+        app.events.on("preview:close", this.hidePreviewPanel, this);
         this.context.on("toggleSidebar", this.toggleSide, this);
+        this.context.on("openSidebar", this.openSide, this);
     },
 
     toggleSide: function() {
@@ -22,7 +23,11 @@
         this.$('.main-pane').toggleClass('span8');
         this.$('.side').toggle();
     },
-
+    openSide: function() {
+        this.$('.main-pane').addClass('span8');
+        this.$('.main-pane').removeClass('span12');
+        this.$('.side').show();
+    },
     processDef: function() {
         this.$(".main-pane").addClass("span" + this.meta.components[0]["layout"].span);
         this.$(".side").addClass("span" + this.meta.components[1]["layout"].span);
@@ -46,18 +51,13 @@
         }
     },
 
-    showPreview: function() {
+    showPreviewPanel: function() {
         this.$(".side-pane").removeClass("active");
         this.$(".preview-pane").addClass("active");
     },
 
-    hidePreview: function() {
+    hidePreviewPanel: function() {
         this.$(".preview-pane").removeClass("active");
         this.$(".side-pane").addClass("active");
     },
-
-    togglePreview: function() {
-        this.$(".side-pane").toggleClass("active");
-        this.$(".preview-pane").toggleClass("active");
-    }
 })

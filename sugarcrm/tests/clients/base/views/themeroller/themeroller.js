@@ -6,7 +6,6 @@ describe("Theme Roller View", function() {
         if (!$.fn.colorpicker) {
             $.fn.colorpicker = function() {};
         }
-        SugarTest.seedMetadata(true);
         app = SugarTest.app;
         var context = app.context.getContext();
         view = SugarTest.createView("base","Cases", "themeroller", null, context);

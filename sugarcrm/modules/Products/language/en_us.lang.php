@@ -145,8 +145,10 @@ $mod_strings = array(
     'LBL_DATE_CLOSED' => 'Expected Close Date',
     'LBL_DATE_CLOSED_TIMESTAMP' => 'Expected Close Date Timestamp',
     'LBL_COMMIT_STAGE' => 'Commit Stage',
+    'LBL_COMMIT_STAGE_FORECAST' => 'Forecast',
     'LBL_PROBABILITY' => 'Probability (%)',
     'LBL_SALES_STAGE' => 'Sales Stage',
+    'LBL_SALES_STATUS' => 'Product Line Status',
 );
 
 ?>

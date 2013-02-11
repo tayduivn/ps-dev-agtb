@@ -162,13 +162,13 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
     /**
      * Save the Individual Worksheet
      *
-     * @return mixed|string
+     * @return ForecastWorksheet
      * @throws SugarApiException
      */
     public function save()
     {
-        require_once('modules/Forecasts/ForecastWorksheet.php');
         require_once('include/SugarFields/SugarFieldHandler.php');
+        /* @var $seed ForecastWorksheet */
         $seed = BeanFactory::getBean("ForecastWorksheets");
         $seed->loadFromRow($this->args);
         $sfh = new SugarFieldHandler();
@@ -205,27 +205,14 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         }
 
         $seed->setWorksheetArgs($this->args);
-        $seed->save();
+        // we need to set the parent_type and parent_id so it finds it when we try and retrieve the old records
+        $seed->parent_type = $this->getArg('parent_type');
+        $seed->parent_id = $this->getArg('parent_id');
+        $seed->saveWorksheet();
 
-        // now lets return the row we just updated
+        // we have the id, just retrieve the record again
+        $seed = BeanFactory::getBean("ForecastWorksheets", $this->getArg('record'));
 
-        // make sure that user_id is set, if it's not get the user from the assigned_user_id variable
-        $obj_arg_user = $this->getArg('user_id');
-        if(empty($obj_arg_user)) {
-            $this->setArg('user_id', $this->getArg('assigned_user_id'));
-        }
-
-        // get the values for the worksheet
-        $return = $this->process();
-
-        // find the one we just saved and return it
-        foreach($return as $worksheet) {
-            if($worksheet['id'] == $seed->id) {
-                return $worksheet;
-            }
-        }
-
-        // just return empty, although this should never happen
-        return '';
+        return $seed;
     }
 }

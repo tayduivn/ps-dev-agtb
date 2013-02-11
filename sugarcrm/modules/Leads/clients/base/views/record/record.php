@@ -39,36 +39,50 @@ $viewdefs['Leads']['base']['view']['record'] = array(
             'showOn'    => 'edit',
         ),
         array(
-            'type'    => 'buttondropdown',
+            'type'    => 'actiondropdown',
             'name'    => 'main_dropdown',
+            'primary' => true,
             'buttons' => array(
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:edit_button:click',
                     'name'    => 'edit_button',
                     'label'   => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
                     'showOn'  => 'view',
                 ),
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:save_button:click',
                     'name'    => 'save_button',
                     'label'   => 'LBL_SAVE_BUTTON_LABEL',
                     'primary' => true,
                     'showOn'  => 'edit',
                 ),
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
                     'name'  => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'showOn'  => 'view',
                 ),
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:duplicate_button:click',
                     'name'   => 'duplicate_button',
                     'label'  => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'showOn' => 'view',
                 ),
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:find_duplicates_button:click',
                     'name'   => 'find_duplicates_button',
                     'label'  => 'LBL_DUP_MERGE',
                     'showOn' => 'view',
                 ),
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:lead_convert_button:click',
                     'name'    => 'lead_convert_button',
                     'label'   => 'LBL_CONVERT_BUTTON_LABEL',
                     'showOn' => 'view'

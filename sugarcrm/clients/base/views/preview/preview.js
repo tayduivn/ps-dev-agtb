@@ -25,33 +25,66 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    /**
+     * Events related to the preview view:
+     *  - preview:open                  indicate we must show the preview panel
+     *  - preview:render                indicate we must load the preview with a model/collection
+     *  - preview:collection:change     indicate we want to update the preview with the new collection
+     *  - preview:close                 indicate we must hide the preview panel
+     *  - preview:pagination:fire       indicate we must switch to previous/next record
+     *  - preview:pagination:update     indicate the preview header needs to be refreshed
+     *  - list:preview:fire             indicate the user clicked on the preview icon
+     *  - list:preview:decorate         indicate we need to update the highlighted row in list view
+     */
     events: {
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess'
+        'click .less': 'toggleMoreLess',
+        'mouseenter .ellipsis_inline':'addTooltip'
     },
 
     // "binary semaphore" for the pagination click event, this is needed for async changes to the preview model
     switching: false,
     hiddenPanelExists: false,
-
+    addTooltip: function(event){
+        if (_.isFunction(app.utils.handleTooltip)) {
+            app.utils.handleTooltip(event, this);
+        }
+    },
     initialize: function(options) {
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
-        this.context.off("preview:render", null, this);
-        this.context.on("preview:render", this._renderPreview, this);
-        this.context.off("preview:close:fire", null, this);
-        this.context.on("preview:close:fire", this.closePreview,  this);
-        this.context.off("preview:collection:change", null, this);
-        this.context.on("preview:collection:change", this.updateCollection, this);
+        app.events.off("preview:render", null, this).on("preview:render", this._renderPreview, this);
+        app.events.off("preview:collection:change", null, this).on("preview:collection:change", this.updateCollection, this);
+        app.events.off("preview:close", null, this).on("preview:close", this.closePreview,  this);
         if(this.layout){
             this.layout.off("preview:pagination:fire", null, this);
             this.layout.on("preview:pagination:fire", this.switchPreview, this);
         }
     },
+    updateCollection: function(collection) {
+        if( this.collection ) {
+            this.collection = collection;
+            this.showPreviousNextBtnGroup();
+       }
+    },
 
-    _renderHtml: function() {
+    _renderHtml: function(){
+        this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
+    },
+
+    showPreviousNextBtnGroup:function() {
+        var collection = this.collection;
+        if(this.layout){
+            if(collection){
+                var recordIndex = collection.indexOf(collection.get(this.model.id));
+                this.layout.previous = collection.models[recordIndex-1] ? collection.models[recordIndex-1] : undefined;
+                this.layout.next = collection.models[recordIndex+1] ? collection.models[recordIndex+1] : undefined;
+            }
+            // Need to rerender the preview header
+            this.layout.trigger("preview:pagination:update");
+        }
     },
 
     /**
@@ -65,8 +98,10 @@
         var self = this;
         // Close preview if we are already displaying this model
         if(self.model && model && self.model.get("id") == model.get("id")){
-            self.layout.$(".preview-headerbar .closeSubdetail").click();
-            self.model = null;
+            // Remove the decoration of the highlighted row
+            app.events.trigger("list:preview:decorate", false);
+            // Close the preview panel
+            app.events.trigger('preview:close');
             return;
         }
         if(fetch){
@@ -87,22 +122,20 @@
      */
     renderPreview: function(model, collection) {
         if (model && collection) {
-            // Create a corresponding Bean and Context for clicked search result. It
-            // might be a Case, a Bug, etc...we don't know, so we build dynamically.
             this.model = app.data.createBean(model.get('_module') || model.module, model.toJSON());
             this.collection = app.data.createBeanCollection(model.get('_module'), collection.models);
-            this.context.set({
-                'model': this.model,
-                'module': this.model.module,
-                'collection': this.collection
-            });
 
             // Get the corresponding detail view meta for said module
             this.meta = app.metadata.getView(this.model.module, 'record') || {};
             this.meta = this._previewifyMetadata(this.meta);
             app.view.View.prototype._render.call(this);
-            this.context.trigger("preview:open",this);
-            this.context.trigger("list:preview:decorate", this.model, this);
+            // Open the preview panel
+            app.events.trigger("preview:open",this);
+            // Highlight the row
+            app.events.trigger("list:preview:decorate", this.model, this);
+            if(!this.$el.is(":visible")) {
+                this.context.trigger("openSidebar",this);
+            }
         }
     },
     /**
@@ -142,8 +175,8 @@
             currID = id || this.model.get("postId") || this.model.get("id"),
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
 
-        if( this.switching ) {
-            // We're currently switching previews, so ignore any pagination click events.
+        if( this.switching || this.collection.models.length < 2) {
+            // We're currently switching previews or we don't have enough models, so ignore any pagination click events.
             return;
         }
         this.switching = true;
@@ -193,7 +226,8 @@
                         success: function(model) {
                             model.set("_module", targetModule);
                             self.model = null;
-                            self.context.trigger("preview:render", model, self.collection, false);
+                            //Reset the preview
+                            app.events.trigger("preview:render", model, self.collection, false);
                             self.switching = false;
                         }
                     });
@@ -209,15 +243,8 @@
 
     closePreview: function() {
         this.switching = false;
-        this.model.clear();
+        delete this.model;
+        delete this.collection;
         this.$el.empty();
-    },
-
-    updateCollection: function(collection) {
-        this.context.set("collection", collection);
-        if( this.collection ) {
-            this.collection = collection;
-        }
     }
-
 })

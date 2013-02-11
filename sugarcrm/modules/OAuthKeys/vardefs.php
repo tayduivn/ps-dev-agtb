@@ -80,9 +80,10 @@ $dictionary['OAuthKey'] = array('table' => 'oauth_consumer',
             'comment' => 'What type of client does this key belong to, mobile, portal, UI or other.',
             'default' => 'user',
             'vname'=>'LBL_CLIENT_TYPE',
+            'dependency'=>'equal($oauth_type,"oauth2")',
           ),
     ),
-    'acls' => array('SugarACLAdminOnly' => true),
+    'acls' => array('SugarACLAdminOnly' => true, 'SugarACLOAuthKeys' => true),
     'indices' => array (
        array('name' =>'ckey', 'type' =>'unique', 'fields'=>array('c_key')),
     )

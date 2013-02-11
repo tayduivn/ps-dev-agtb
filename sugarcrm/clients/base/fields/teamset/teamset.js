@@ -65,6 +65,7 @@
         if(this.model.isNew()) {
             //load the default team setting that is specified in the user profile settings
             value = value || app.user.getPreference("default_teams");
+            this.model.set(this.name, value);
         }
 
         if(_.isArray(value)) {
@@ -118,6 +119,9 @@
     }, 0),
     bindDomChange: function() {
         //To avoid re-render on change the field
+    },
+    getFieldElement: function() {
+        return this.$el;
     }
     //TODO: Handle validation error
 })

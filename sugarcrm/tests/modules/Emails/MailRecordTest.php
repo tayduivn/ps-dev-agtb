@@ -88,6 +88,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group email
      * @group mailer
+     * @group mailrecordtest
      */
     public function testSaveAsDraft_Success ()
     {
@@ -144,4 +145,3 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($result['SUCCESS'],  $emailBeanResponseValue, "Unexpected Success Value");
     }
 }
-?>

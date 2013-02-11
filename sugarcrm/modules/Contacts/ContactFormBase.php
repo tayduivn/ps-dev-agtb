@@ -418,9 +418,14 @@ return $the_form;
 
 }
 
-
+/**
+ * @deprecated
+ */
 function handleSave($prefix, $redirect=true, $useRequired=false){
-	global $theme, $current_user;
+    global $log;
+    $log->deprecated('This function handleSave() is no longer supported.');
+
+    global $theme, $current_user;
 
 
 	require_once('include/formbase.php');
@@ -470,7 +475,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 		$check_notify = $GLOBALS['check_notify'];
 	}
 	else {
-		$check_notify = FALSE;
+		$check_notify = false;
 	}
 
 

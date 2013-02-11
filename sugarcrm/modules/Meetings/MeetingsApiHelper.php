@@ -35,35 +35,20 @@ class MeetingsApiHelper extends SugarBeanApiHelper
     {
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
-        if($bean->status != 'Held') {
+        $userInvitees[] = $bean->assigned_user_id;
+        if($bean->assigned_user_id != $GLOBALS['current_user']->id) {
+            $userInvitees[] = $GLOBALS['current_user']->id;
+        }            
+         // Call the Call module's save function to handle saving other fields besides
+        // the users and contacts relationships
 
-            $userInvitees[] = $bean->assigned_user_id;
-            if($bean->assigned_user_id != $GLOBALS['current_user']->id) {
-                $userInvitees[] = $GLOBALS['current_user']->id;
-            }
+        $bean->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
 
-            // Call the Call module's save function to handle saving other fields besides
-            // the users and contacts relationships
-
-            $bean->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
-
-            $bean->users_arr = $userInvitees;
-
-            $bean->save(true);
-
-            $bean->setUserInvitees($userInvitees);
-
-
-
-            vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $bean->assigned_user_id));
-            if($bean->assigned_user_id != $GLOBALS['current_user']->id) {
-                vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $GLOBALS['current_user']->id));
-            }
-        }
-
-
+        $bean->users_arr = $userInvitees;
+        
         return $data;
     }
+
 
 
 }

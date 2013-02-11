@@ -9,8 +9,10 @@
             self = this;
         if(this.tplName === 'edit') {
             this.checkAcl('access', this.model.get('parent_type'));
-            //this.$(this.typeFieldTag).not(".chzn-done").chosen().change(function(evt) {
-            this.$(this.typeFieldTag).select2().on("change", function(e) {
+            this.$(this.typeFieldTag).select2({
+                width : '100%',
+                minimumResultsForSearch: 5
+            }).on("change", function(e) {
                 var module = e.val;
                 self.checkAcl.call(self, 'edit', module);
                 self.setValue({
@@ -18,6 +20,12 @@
                     value: '',
                     module: module
                 });
+                var plugin = self.$(self.fieldTag).data("select2"),
+                    placeholderTemplate = Handlebars.compile(app.lang.getAppString("LBL_SEARCH_MODULE")),
+                    moduleString = app.lang.getAppListStrings("moduleListSingular");
+                plugin.container.find("span").text(placeholderTemplate({
+                    module: moduleString[module]
+                }));
             });
             if(app.acl.hasAccessToModel('edit', this.model, this.name) === false) {
                 this.$(this.typeFieldTag).attr("disabled", "disabled");
@@ -26,7 +34,7 @@
             }
             this.$(this.typeFieldTag).trigger("liszt:updated");
         } else if(this.tplName === 'disabled'){
-            this.$(this.typeFieldTag).attr("disabled", "disabled").not(".chzn-done").chosen();
+            this.$(this.typeFieldTag).attr("disabled", "disabled").select2();
         }
         return result;
     },
@@ -39,13 +47,15 @@
         this.$(this.fieldTag).trigger("liszt:updated");
     },
     setValue: function(model) {
-        var silent = model.silent || false;
-        if(app.acl.hasAccess(this.action, this.model.module, this.model.get('assigned_user_id'), this.name)) {
-            if(model.module) {
-                this.model.set('parent_type', model.module, {silent: silent});
+        if (model) {
+            var silent = model.silent || false;
+            if(app.acl.hasAccess(this.action, this.model.module, this.model.get('assigned_user_id'), this.name)) {
+                if(model.module) {
+                    this.model.set('parent_type', model.module, {silent: silent});
+                }
+                this.model.set('parent_id', model.id, {silent: silent});
+                this.model.set('parent_name', model.value, {silent: silent});
             }
-            this.model.set('parent_id', model.id, {silent: silent});
-            this.model.set('parent_name', model.value, {silent: silent});
         }
     },
     getSearchModule: function() {

@@ -95,6 +95,19 @@ class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse($bean->sync_contact, "Sync Contact was not set to false");
     }
 
+    public function testBug59675ContactSaveRefactorWithContactsUsersId() {
+        $bean = BeanFactory::newBean('Contacts');
+        foreach($this->fields AS $fieldName => $fieldValue) {
+            $bean->$fieldName = $fieldValue;
+        }
+        $bean->contacts_users_id = null;
+        $bean->sync_contact = false;
+        $bean->save();
+        $this->contacts[] = $bean;
+
+        $this->assertFalse($bean->sync_contact, "Sync Contact was not set to false");        
+    }
+
     public function testBug59675SyncContactIsNotSet() {
         $mapi = new ModuleApi();
         $sm = new ContactsBugFixesServiceMockup();

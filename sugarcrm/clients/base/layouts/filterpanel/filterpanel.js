@@ -1,16 +1,19 @@
 ({
     events: {
-        "click .toolbar-btns a": "toggleView"
+        "click .toggle-actions a": "toggleView"
     },
 
     availableToggles: {
         "activitystream" : "icon-th-list",
         "timeline" : "icon-time",
+        "subpanel" : "icon-table",
         "list" : "icon-table"
     },
 
     initialize: function(opts) {
         _.bindAll(this);
+
+        this.toggleComponents = [];
 
         this.processMeta();
         this.template = app.template.get("l.filterpanel");
@@ -25,7 +28,8 @@
 
     renderHtml: function() {
         // Enable toggles
-            this.toggles = [];
+        this.toggles = [];
+
         _.each(this.options.meta.components, function(component) {
             var toggle;
             if(component.view) {
@@ -33,6 +37,7 @@
             } else if(component.layout) {
                 toggle = (_.isString(component.layout)) ? component.layout : component.layout.name;
             }
+
             if (toggle && this.availableToggles[toggle]) {
                 this.toggles.push({toggle: toggle, class: this.availableToggles[toggle]});
             }
@@ -49,6 +54,14 @@
         } else if(def.view == "filter-create") {
             this.$(".form-search").append(component.el);
         } else {
+            // Check if hidden or not.
+            if (this.availableToggles[component.name]) {
+                this.toggleComponents.push(component);
+
+                if (component.name !== this.options.meta.default) {
+                    component.hide();
+                }
+            }
             this.$el.append(component.el);
         }
     },
@@ -61,7 +74,7 @@
     },
 
     showComponent: function(name) {
-        _.each(this._components, function(comp) {
+        _.each(this.toggleComponents, function(comp) {
             if (comp.name == name) {
                 comp.show();
             } else {

@@ -38,7 +38,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'name' => 'commit_stage',
                     'type' => 'commitStage',
                     'options' => 'commit_stage_dom',
-                    'searchBarThreshold' => 5,
+                    'searchBarThreshold' => 7,
                     'label' => 'LBL_FORECAST',
                     'sortable' => false,
                     'default' => true,
@@ -53,7 +53,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'enabled' => true,
                     'type' => 'relate',
                     'module' => 'Opportunities',
-                    'id_name' => 'id',
+                    'id_name' => 'parent_id',
                 ),
 
                 array(
@@ -71,6 +71,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'label' => 'LBL_SALES_STAGE',
                     'type' => 'editableEnum',
                     'options' => 'sales_stage_dom',
+                    'searchBarThreshold' => 7,
                     'sortable' => false,
                     'default' => true,
                     'enabled' => true,
@@ -123,7 +124,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'sortable' => false,
                     'default' => true,
                     'enabled' => true,
-                    'uid_field' => 'id'
+                    'uid_field' => 'parent_id'
                 ),
             ),
         ),

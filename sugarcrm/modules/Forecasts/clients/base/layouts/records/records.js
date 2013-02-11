@@ -47,37 +47,41 @@
     /**
      * this is used to defer the render until the forecasts initialization returns with the data
      */
-    deferredRender: new $.Deferred(),
+    deferredRender: '',
 
     /**
      * This is used to hold the path for the forecasts specific JS
      */
     forecastsJavascript: "",
 
-    initialize: function(options) {
+    initialize: function (options) {
         var self = this,
             url = app.api.buildURL("Forecasts/init");
+
+        // we need this to be set here so anytime this gets initialized, it will work.
+        this.deferredRender = new $.Deferred();
         app.api.call('GET', url, null, {
-            success: function(data) {
-                return self.initForecastsModule(data, options, self);
+            success: function (data) {
+
+                // Add Forecasts-specific stuff to the app.user object
+                app.user.set(data.initData.userData);
+
+                if (data.initData.forecasts_setup === 0) {
+                    window.location.hash = "#Forecasts/layout/config";
+                } else {
+                    return self.initForecastsModule(data, options, self);
+                }
             }
         });
     },
 
-    initForecastsModule: function(forecastData, options, ctx) {
+    initForecastsModule: function (forecastData, options, ctx) {
         // set the forecasts specific JS.
         $("#content").append($('<script src="' + forecastData.forecastsJavascript + '"></script>'));
 
         // get default selections for filter and range
         app.defaultSelections = forecastData.defaultSelections;
         app.initData = forecastData.initData;
-
-        // Add Forecasts-specific stuff to the app.user object
-        app.user.set(app.initData.userData);
-
-        if(forecastData.initData.forecasts_setup === 0) {
-            window.location.hash = "#Forecasts/layout/config";
-        }
 
         ctx.componentsMeta = options.meta.components;
 
@@ -86,22 +90,22 @@
         // Initialize the config model
         var ConfigModel = Backbone.Model.extend({
             url: app.api.buildURL("Forecasts", "config"),
-            sync: function(method, model, options) {
+            sync: function (method, model, options) {
                 var url = _.isFunction(model.url) ? model.url() : model.url;
                 return app.api.call(method, url, model, options);
             },
             // include metadata from config into the config model by default
             defaults: app.metadata.getModule('Forecasts').config
         });
-        options.context.forecasts.config = new ConfigModel();
+        options.context.config = new ConfigModel();
 
         var defaultSelections = app.defaultSelections;
 
         // Set initial selected data on the context
-        options.context.forecasts.set({
-            selectedTimePeriod : defaultSelections.timeperiod_id,
+        options.context.set({
+            selectedTimePeriod: defaultSelections.timeperiod_id,
             selectedCategory: defaultSelections.ranges,
-            selectedGroupBy : defaultSelections.group_by,
+            selectedGroupBy: defaultSelections.group_by,
             selectedDataSet: defaultSelections.dataset,
 
             /**
@@ -109,7 +113,7 @@
              * because selectedUser is used by other components and is changeable by most components
              * (e.g. selecting a different user via the hierarchy tree or clicking in the worksheet)
              */
-            selectedUser : app.user.attributes,
+            selectedUser: app.user.attributes,
 
             /**
              * boolean to reload the active worksheet
@@ -121,16 +125,15 @@
              */
             currentWorksheet: "",
 
-
             /**
              * used across Forecasts to contain sales rep worksheet totals
              */
-            updatedTotals : {},
+            updatedTotals: {},
 
             /**
              * used across Forecasts to contain manager worksheet totals
              */
-            updatedManagerTotals : {},
+            updatedManagerTotals: {},
 
             /**
              * todo-sfa keep track of changes to modal.js and when they have proper events being passed
@@ -139,24 +142,7 @@
              * set by forecastsConfigTabbedButtons.js when the saved button is clicked so that it's callback
              * can check this variable to know which button was clicked
              */
-            saveClicked : false,
-
-            // todo: the following three booleans need to be refactored out and made into events, not flags/booleans
-            /**
-             * boolean to use across components to enable commit button or not
-             */
-            reloadCommitButton : false,
-
-            /**
-             * forecastsCommitButtons triggers this flag to tell forecastsCommitted to call commitForecast()
-             */
-            commitForecastFlag : false,
-
-            /**
-             * hiddenSidebar: Is the sidebar hidden or not.
-             */
-            hiddenSidebar : false
-
+            saveClicked: false
         });
 
         // grab a copy of the init data for forecasts to use
@@ -179,27 +165,27 @@
      *
      * Override this method to provide custom fetch algorithm.
      */
-    loadData: function() {
+    loadData: function () {
         this.fetchAllModels();
     },
 
     /**
      * Iterates through all the loaded models & collections as defined in metadata and does a "fetch" on it
      */
-    fetchAllModels: function() {
+    fetchAllModels: function () {
         var self = this;
-        _.each(this.componentsMeta, function(component) {
+        _.each(this.componentsMeta, function (component) {
 
-            if(component.model && component.model.name){
-                self.context.forecasts[component.model.name.toLowerCase()].fetch();
+            if (component.model && component.model.name) {
+                self.context[component.model.name.toLowerCase()].fetch();
             }
 
-            if(component.contextCollection && component.contextCollection.name) {
-                self.context.forecasts[component.contextCollection.name.toLowerCase()].fetch();
+            if (component.contextCollection && component.contextCollection.name) {
+                self.context[component.contextCollection.name.toLowerCase()].fetch();
             }
 
-            if(component.collection && component.collection.name) {
-                self.context.forecasts[component.collection.name.toLowerCase()].fetch();
+            if (component.collection && component.collection.name) {
+                self.context[component.collection.name.toLowerCase()].fetch();
             }
 
         });
@@ -210,23 +196,13 @@
      * @return {Object} new instance of the main model, which contains instances of the sub-models for each view
      * as defined in metadata.
      */
-    initializeAllModels: function(existingModel) {
+    initializeAllModels: function () {
         var self = this,
             componentsMetadata = this.componentsMeta,
-            module = "forecasts",
-            models = {},
-            existingModel = existingModel || {};
+            models = {};
 
-        // creates the context.forecasts topmost model, if it's not already set on the models
-        if(_.isUndefined(existingModel[module])) {
-            models[module] = app.data.createBean(module);
-            // creates the config model as a special case
-            self.namespace(models, module);
-        } else {
-            models[module] = existingModel[module];
-        }
         // Loops through components from the metadata, and creates their models/collections, as defined
-        _.each(componentsMetadata, function(component) {
+        _.each(componentsMetadata, function (component) {
             var name,
                 modelMetadata = component.model,
                 context = component.contextCollection,
@@ -234,23 +210,18 @@
 
             if (modelMetadata) {
                 name = modelMetadata.name.toLowerCase();
-                self.namespace(models, module);
-                models[module][name] = self.createModel(modelMetadata, "Forecasts");
+                models[name] = self.createModel(modelMetadata, "Forecasts");
             }
 
-            if(context) {
-                var name = context.name.toLowerCase();
-                var moduleContext = context.module;
-                self.namespace(models, module);
-
-                models[module][name] = self.createCollection();
+            if (context) {
+                name = context.name.toLowerCase();
+                models[name] = self.createCollection();
             }
 
             if (collectionMetadata) {
                 name = collectionMetadata.name.toLowerCase();
-                self.namespace(models, module);
-                models[module][name] = self.createCollection();
-                models[module][name].url = app.config.serverUrl + '/Forecasts/' + name;
+                models[name] = self.createCollection();
+                models[name].url = app.config.serverUrl + '/Forecasts/' + name;
             }
         });
 
@@ -263,10 +234,31 @@
      * @param module
      * @return {*} instance of a backbone model.
      */
-    createModel: function(modelMetadata, module) {
+    createModel: function (modelMetadata, module) {
 
         var Model = Backbone.Model.extend({
-            sync: function(method, model, options) {
+            // Fetch the model from the server. If the server's representation of the
+            // model differs from its current attributes, they will be overriden,
+            // triggering a `"change"` event.
+            fetch: function (options) {
+                options = options ? _.clone(options) : {};
+                if (options.parse === void 0) options.parse = true;
+                var model = this;
+                var success = options.success;
+                options.success = function (resp) {
+                    if (!model.set(model.parse(resp, options), options)) return false;
+                    if (success) success(model, resp, options);
+                    model.trigger('sync', model, resp, options);
+                };
+                var error = options.error;
+                options.error = function (resp) {
+                    if (error) error(model, resp, options);
+                    model.trigger('error', model, resp, options);
+                };
+                return this.sync('read', this, options);
+            },
+            sync: function (method, model, options) {
+                this.trigger("data:sync:start", method, model, options);
                 myURL = app.api.buildURL(module, modelMetadata.name.toLowerCase());
                 return app.api.call(method, myURL, null, options);
             }
@@ -281,10 +273,31 @@
      * @param module
      * @return {*} instance of a backbone collection.
      */
-    createCollection: function() {
+    createCollection: function () {
         var Collection = Backbone.Collection.extend({
-            model : Backbone.Model.extend({
-                sync : function(method, model, options) {
+            model: Backbone.Model.extend({
+                // Fetch the model from the server. If the server's representation of the
+                // model differs from its current attributes, they will be overriden,
+                // triggering a `"change"` event.
+                fetch: function (options) {
+                    options = options ? _.clone(options) : {};
+                    if (options.parse === void 0) options.parse = true;
+                    var model = this;
+                    var success = options.success;
+                    options.success = function (resp) {
+                        if (!model.set(model.parse(resp, options), options)) return false;
+                        if (success) success(model, resp, options);
+                        model.trigger('sync', model, resp, options);
+                    };
+                    var error = options.error;
+                    options.error = function (resp) {
+                        if (error) error(model, resp, options);
+                        model.trigger('error', model, resp, options);
+                    };
+                    return this.sync('read', this, options);
+                },
+                sync: function (method, model, options) {
+                    this.trigger("data:sync:start", method, model, options);
                     var url = _.isFunction(model.url) ? model.url() : model.url;
                     return app.api.call(method, url, model, options);
                 }
@@ -297,26 +310,42 @@
              * @param options
              * @return {*}
              */
-            sync: function(method, model, options) {
+            sync: function (method, model, options) {
+                this.trigger("data:sync:start", method, model, options);
                 var url = _.isFunction(model.url) ? model.url() : model.url;
                 return app.api.call(method, url, null, options);
+            },
+            // Fetch the default set of models for this collection, resetting the
+            // collection when they arrive. If `update: true` is passed, the response
+            // data will be passed through the `update` method instead of `reset`.
+            fetch: function (options) {
+                options = options ? _.clone(options) : {};
+                if (options.parse === void 0) options.parse = true;
+                var success = options.success;
+                var collection = this;
+                options.success = function (resp) {
+                    var method = options.update ? 'update' : 'reset';
+                    collection[method](resp, options);
+                    if (success) success(collection, resp, options);
+                    collection.trigger('sync', collection, resp, options);
+                };
+                var error = options.error;
+                options.error = function (resp) {
+                    if (error) error(collection, resp, options);
+                    collection.trigger('error', collection, resp, options);
+                };
+                return this.sync('read', this, options);
             }
 
         });
         return new Collection();
     },
 
-    namespace: function(target, namespace) {
-        if (!target[namespace]) {
-            target[namespace] = {};
-        }
-    },
-
     /**
      * Add a view (or layout) to this layout.
      * @param {View.Layout/View.View} comp Component to add
      */
-    _placeComponent: function(comp) {
+    _placeComponent: function (comp) {
         var compName = comp.name || comp.meta.name,
             divName = ".view-" + compName;
 
@@ -325,7 +354,7 @@
         // then we can set placeInLayout => false and we create all the models and such
         // from the rest of metadata, but we just dont place it into the html of the layout
         // as another view will be handling that
-        if(_.has(comp, 'meta') && !_.isUndefined(comp.meta) &&
+        if (_.has(comp, 'meta') && !_.isUndefined(comp.meta) &&
             _.has(comp.meta, 'placeInLayout') && comp.meta.placeInLayout == false) {
             return;
         }
@@ -348,9 +377,9 @@
      * @return {*}
      * @private
      */
-    _render : function() {
+    _render: function () {
         var self = this;
-        $.when(self.deferredRender).done(function() {
+        $.when(self.deferredRender).done(function () {
             app.view.Layout.prototype._render.call(self);
 
             // init the alerts

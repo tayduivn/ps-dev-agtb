@@ -21,11 +21,24 @@
 
 describe("Forecasts Commit Buttons Component", function(){
 
-    var app, view;
+    var app, view, metaStub;
 
     beforeEach(function() {
         app = SugarTest.app;
+        metaStub = sinon.stub(app.user, 'getAcls', function() {
+            return {
+                'Forecasts': {
+                    admin: 'yes'
+                }
+            }
+        });
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitButtons", "forecastsCommitButtons", "js", function(d) { return eval(d); });
+    });
+
+    afterEach(function() {
+        metaStub.restore();
+        view = null;
+        app = null;
     });
 
     describe("test showCommitButton", function() {
@@ -53,12 +66,11 @@ describe("Forecasts Commit Buttons Component", function(){
     });
 
     describe("test showConfigButton", function() {
-        var testStub, metaStub;
+        var testStub;
 
         beforeEach(function() {
             testStub = sinon.stub(app.view.View.prototype, "initialize");
-            view.context = {};
-            view.context.forecasts = new Backbone.Model({
+            view.context = new Backbone.Model({
                 currentUser : {
                     admin: "yes"
                 }
@@ -66,26 +78,18 @@ describe("Forecasts Commit Buttons Component", function(){
         });
         afterEach(function() {
             testStub.restore();
-            //metaStub.restore();
             view.context = null;
         });
 
-        // todo-sfa: removed test as we're not using getACLs, restore test when ACLs are being used again
-        xit("variable should be true an admin", function() {
-            metaStub = sinon.stub(app.user, 'getAcls', function() {
-                return {
-                    'Forecasts': {
-                        admin: 'yes'
-                    }
-                }
-            });
+        it("variable should be true an admin", function() {
             var options = {};
             view.initialize(options);
             expect(view.showConfigButton).toBeTruthy();
         });
 
-        // todo-sfa: removed test as we're not using getACLs, restore test when ACLs are being used again
-        xit("variable should be false for a non-admin", function(){
+        it("variable should be false for a non-admin", function(){
+            // resetting metaStub for just this one test
+            metaStub.restore();
             metaStub = sinon.stub(app.user, 'getAcls', function() {
                 return {
                     'Forecasts': {
@@ -97,123 +101,93 @@ describe("Forecasts Commit Buttons Component", function(){
             view.initialize(options);
             expect(view.showConfigButton).toBeFalsy();
         });
-
-        // todo-sfa: removed this test when we're using getACLs
-        it("variable should be true for an admin", function() {
-            sinon.stub(app.user, 'getAcls', function(){
-                return {
-                    Forecasts: {
-                        admin: "yes"
-                    }
-                }
-            });
-            var options = {};
-            view.initialize(options);
-            expect(view.showConfigButton).toBeTruthy();
-            app.user.getAcls.restore();
-        });
-
-        // todo-sfa: removed this test when we're using getACLs
-        it("variable should be false for a non-admin", function(){
-            sinon.stub(app.user, 'getAcls', function(){
-                return {
-                    Forecasts: {
-                        admin: "no"
-                    }
-                }
-            });
-            var options = {};
-            view.initialize(options);
-            expect(view.showConfigButton).toBeFalsy();
-            app.user.getAcls.restore();
-        });
     });
-    
+
     describe("test triggerExport", function(){
-        var confirmStub;
-        var runExportStub;
-        
+        var confirmStub, runExportStub;
+
         beforeEach(function(){
             view.$el = {
-                    find: function(){
-                        return {
-                            length : 1,
+                find: function(){
+                    return {
+                        length : 1,
 
-                            hasClass:function(){
-                                return false;
-                            }
+                        hasClass:function(){
+                            return false;
                         }
                     }
+                }
             };
             view.context = {
-                    forecasts: {
-                        get: function(){return "worksheet"}
-                    }
+                get: function(){return "worksheet"}
             };
-            
+
             confirmStub = sinon.stub(window, 'confirm', function(){return true});
-            runExportStub = sinon.stub(view, 'runExport', function(){});            
+            runExportStub = sinon.stub(view, 'runExport', function(){});
         });
-        
+
         afterEach(function(){
             confirmStub.restore();
             runExportStub.restore();
             view.$el = {};
             view.context = {};
         });
-        
+
         it("should have triggered confirm box, ok, and export", function(){
             view.triggerExport();
             expect(window.confirm).toHaveBeenCalled();
             expect(view.runExport).toHaveBeenCalled();
         });
     });
-    
+
     describe("Forecasts commitButtons bindings ", function(){
-    	beforeEach(function(){
-    		view.context = {
-                forecasts:{
-                    on: function(event, fcn){}
-                }
-    		};
+        beforeEach(function(){
+            view.context = {
+                on: function(event, fcn){}
+            };
 
             // we need the view.layout to be defined since we listen for an event from there now
             view.layout = {
                 on : function(evt, fct) {}
             };
-    		    		   		
-    		sinon.spy(view.context.forecasts, "on");
-    		view.bindDataChange();
-    	});
-    	
-    	afterEach(function(){
-    		view.context.forecasts.on.restore();
-    		delete view.context;
-    		view.context = {};
-    	});
-    	    	    	
-    	it("forecasts.on should have been called with selectedUser", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedUser");
-    	});
-    	
-    	it("forecasts.on should have been called with change:selectedTimePeriod", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedTimePeriod");
-    	});
-    	
-    	it("forecasts.on should have been called with change:reloadCommitButton", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:reloadCommitButton");
-    	});
-    	
-    	it("forecasts.on should have been called with forecasts:commitButtons:triggerCommit", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:commitButtons:triggerCommit");
-    	});
-    	
-    	it("forecasts.on should have been called with forecasts:commitButtons:enabled", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:commitButtons:enabled");
-    	});
-    	
-    	it("forecasts.on should have been called with forecasts:commitButtons:disabled", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:commitButtons:disabled");
-    	});
+
+            sinon.spy(view.context, "on");
+            view.bindDataChange();
+        });
+
+        afterEach(function(){
+            view.context.on.restore();
+            delete view.context;
+            view.context = {};
+        });
+
+        it("context.on should have been called with selectedUser", function(){
+            expect(view.context.on).toHaveBeenCalledWith("change:selectedUser");
+        });
+
+        it("context.on should have been called with change:selectedTimePeriod", function(){
+            expect(view.context.on).toHaveBeenCalledWith("change:selectedTimePeriod");
+        });
+
+        it("context.on should have been called with forecasts:worksheet:reloadCommitButton", function(){
+            expect(view.context.on).toHaveBeenCalledWith("forecasts:worksheet:reloadCommitButton");
+        });
+
+        it("context.on should have been called with forecasts:worksheetManager:reloadCommitButton", function(){
+            expect(view.context.on).toHaveBeenCalledWith("forecasts:worksheetManager:reloadCommitButton");
+        });
+
+        it("context.on should have been called with forecasts:commitButtons:triggerCommit", function(){
+            expect(view.context.on).toHaveBeenCalledWith("forecasts:commitButtons:triggerCommit");
+        });
+
+        it("context.on should have been called with forecasts:commitButtons:enabled", function(){
+            expect(view.context.on).toHaveBeenCalledWith("forecasts:commitButtons:enabled");
+        });
+
+        it("context.on should have been called with forecasts:commitButtons:disabled", function(){
+            expect(view.context.on).toHaveBeenCalledWith("forecasts:commitButtons:disabled");
+        });
     });
 });
+

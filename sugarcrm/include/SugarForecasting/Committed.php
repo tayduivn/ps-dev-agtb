@@ -84,7 +84,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
 
         $args = $this->getArgs();
         $db = DBManagerFactory::getInstance();
-        
+
         $args['opp_count'] = (!isset($args['opp_count'])) ? 0 : $args['opp_count'];
 
         /* @var $forecast Forecast */
@@ -104,75 +104,30 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         }
         $forecast->save();
 
-        //If there are any new worksheet entries that need created, do that here.
-        foreach($args["worksheetData"]["new"] as $sheet)
-        {
-            //Update the Worksheet bean
-            $worksheet  = BeanFactory::getBean("Worksheet");
-            $worksheet->timeperiod_id = $args["timeperiod_id"];
-            $worksheet->user_id = $current_user->id;
-            $worksheet->best_case = $sheet["best_case"];
-            $worksheet->likely_case = $sheet["likely_case"];
-            $worksheet->worst_case = $sheet["worst_case"];
-            $worksheet->op_probability = $sheet["probability"];
-            $worksheet->commit_stage = $sheet["commit_stage"];
-            $worksheet->forecast_type = "Direct";
-            $worksheet->related_forecast_type = "Product";
-            $worksheet->related_id = $sheet["product_id"];
-            $worksheet->currency_id = $args["currency_id"];
-            $worksheet->base_rate = $args["base_rate"];
-            $worksheet->version = 1;
-            $worksheet->save();
-        }
-        
-        //Now we need to update any existing sheets using an ANSI standard update join
-        //that should work across all DBs
-        $worksheetIds = array();
-        foreach($args["worksheetData"]["current"] as $sheet)
-        {
-            $worksheetIds[] = $sheet["worksheet_id"];
-        }
-        
-        if(count($worksheetIds) > 0)
-        {
-            $sql = "update worksheet " .
-                       "set best_case =     (" .
-                                               "select p.best_case " .
-                                               "from products p " .
-                                               "where p.id = related_id" .
-                                           "), " .
-                           "likely_case = (" .
-                                               "select p.likely_case " .
-                                               "from products p " .
-                                               "where p.id = related_id" .
-                                           "), " .
-                           "worst_case = (" .
-                                               "select p.worst_case " .
-                                               "from products p " .
-                                               "where p.id = related_id" .
-                                           "), " .
-                           "op_probability = (" .
-                                                   "select p.probability " .
-                                                   "from products p " .
-                                                   "where p.id = related_id" .
-                                               "), " .
-                           "commit_stage = (" .
-                                               "select p.commit_stage " .
-                                               "from products p " .
-                                               "where p.id = related_id" .
-                                             "), " .
-                           "version = 1, " .
-                           "date_modified = '" . $GLOBALS["timedate"]->nowDb() . "', " .
-                           "modified_user_id = '" . $current_user->id . "' " .
-                   "where exists (" .
-                                   "select * " .
-                                   "from products p " .
-                                   "where p.id = related_id" .
-                                 ") " .
-                "and id in ('" . implode("', '", $worksheetIds) . "')";
-                                    
-            $db->query($sql, true);                      
-        }
+        // roll up the committed forecast to that person manager view
+        /* @var $mgr_worksheet ForecastManagerWorksheet */
+        $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $mgr_worksheet->reporteeForecastRollUp($current_user, $args);
+
+        // ForecastWorksheets Table Commit Version
+        $data = array(
+            'user_id' => $current_user->id,
+            'timeperiod_id' => $args['timeperiod_id']
+        );
+
+        $timedate = TimeDate::getInstance();
+        /* @var $job SchedulersJob */
+        $job = BeanFactory::getBean('SchedulersJobs');
+        $job->execute_time = $timedate->nowDb();
+        $job->name = "Update ForecastWorksheets";
+        $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+        $job->target = "class::SugarJobUpdateForecastWorksheets";
+        $job->data = json_encode($data);
+        $job->retry_count = 0;
+        $job->assigned_user_id = $current_user->id;
+        $job->save();
+
+        $mgr_worksheet->commitManagerForecast($current_user, $args['timeperiod_id']);
 
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         $admin = BeanFactory::getBean('Administration');

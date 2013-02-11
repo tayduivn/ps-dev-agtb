@@ -26,12 +26,14 @@
  ********************************************************************************/
 ({
     extendsFrom: 'ListeditableField',
-    events:{
+    sendEmailFromApp: false,
+    events: {
         'change .existingAddress': 'updateExistingAddress',
         'click  .btn-edit':        'updateExistingProperty',
         'click  .removeEmail':     'remove',
         'click  .addEmail':        'add',
-        'change .newEmail':        'newEmailChanged'
+        'change .newEmail':        'newEmailChanged',
+        "click  .composeEmail":    "composeEmail"
     },
     initialize: function(options) {
         options     = options || {};
@@ -42,6 +44,10 @@
         }
         
         app.view.Field.prototype.initialize.call(this, options);
+
+        // determine if the app should send email according to the has_outbound_email_config user preference
+        var hasOutboundEmailConfig = app.user.getPreference("has_outbound_email_config");
+        this.sendEmailFromApp      = (hasOutboundEmailConfig === "true");
     },
     /**
      * Event handler for change of the .newEmail input, we want to test if a new e-mail needs to be added
@@ -81,7 +87,7 @@
      * @param {string|Array} value single email address or set of email addresses
      */
     format: function(value) {
-        if (_.isArray(value)) {
+        if (_.isArray(value) && value.length > 0) {
             // got an array of email addresses
             _.each(value, function(email) {
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
@@ -112,6 +118,18 @@
                     }
                 }
             }, this);
+
+            // Adding a new email
+            if (emails.length == 0) {
+                emails.push({
+                    email_address:   value,
+                    primary_address: "1",
+                    hasAnchor:       false,
+                    _wasNotArray:    true
+                });
+                changed = true;
+            }
+
             if(changed) {
                 this.updateModel(changed);
             }
@@ -240,6 +258,33 @@
         }
     },
     /**
+     * Custom error styling for the e-mail field
+     * TODO Determine appropriate error styling for e-mail field widget
+     * @param errors
+     * @override
+     */
+    decorateError: function(errors){
+
+        var emails, emailErrorsArray;
+        emailErrorsArray = errors.email;
+        this.$el.find('.control-group.email').removeClass("inline-error");
+        emails = this.$el.find('.control-group.email');
+
+        _.each(emailErrorsArray, function(emailWithError, i) {
+
+            // For each of our "sub-email" fields
+            _.each(emails, function(e) {
+                var emailFieldValue = $(e).data('emailaddress');
+
+                // if we're on an email sub field where error occurred, add error styling
+                if(emailFieldValue === emailWithError) {
+                    $(e).addClass("inline-error");
+                }
+            });
+        });
+
+    },
+    /**
      * Binds DOM changes to set field value on model.
      * @param {Backbone.Model} model model this field is bound to.
      * @param {String} fieldName field name.
@@ -268,5 +313,16 @@
     },
     getFieldElement: function() {
         return this.$(this.fieldTag);
+    },
+    composeEmail: function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        // this is temporary until we have stacking drawers - for right now we are just loading this view up
+        app.controller.loadView({
+            module:         "Emails",
+            layout:         "compose",
+            recipientModel: this.model
+        });
     }
 })
