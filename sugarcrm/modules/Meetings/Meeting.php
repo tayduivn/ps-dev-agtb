@@ -903,8 +903,13 @@ class Meeting extends SugarBean {
      */
     public function setUserInvitees($userInvitees, $existingUsers = array())
     {
+    	// if both are empty, don't do anything.  From the App these will always be set [they are set to at least current-user].
+    	// For the api, these sometimes will not be set [linking related records]
+    	if(empty($userInvitees) && empty($existingUsers)) {
+    		return true;
+    	}
         $this->users_arr = $userInvitees;
-        
+
         $deleteUsers = array();
          $this->load_relationship('users');
          // Get all users for the meeting
