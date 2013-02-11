@@ -5,28 +5,29 @@
             {{#unless createMode}}
                 {{#each meta.panels}}
                     {{#if header}}
+                        <h1>
+                        <span class="label label-module label-{{../../../this.module}}" rel="tooltip" data-title="{{../../../this.module}} avatar" data-original-title="">Xx</span>
                         {{#each fields}}
                             <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
-                                <h1>
-                                    <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
-                                        {{field ../../../this ../../../this.model ../../../this.action}}
-                                    </span>
-                                    {{#unless noedit}}
-                                        <span class="record-edit-link-wrapper" data-name="{{name}}">
-                                            <a class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
-                                        </span>
-                                    {{/unless}}
-                                </h1>
+                            {{#unless noedit}}
+                                <span class="record-edit-link-wrapper" data-name="{{name}}">
+                                    <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="icon-pencil"></i></a>
+                                </span>
+                            {{/unless}}
+                                <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
+                                    {{field ../../../this ../../../this.model ../../../this.action}}
+                                </span>
                             </span>
                         {{/each}}
+                        </h1>
                     {{/if}}
                 {{/each}}
             {{/unless}}
                 <div class="btn-toolbar pull-right dropdown">
                     {{#unless createMode}}
                     <div class="btn-group btn-group-previous-next">
-                          <a href="{{#if collection.previous}}#{{modelRoute collection.previous def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn previous-row{{#unless collection.previous}} disabled{{/unless}}"><i class="icon-chevron-left"></i></a>
-                          <a href="{{#if collection.next}}#{{modelRoute collection.next def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn next-row{{#unless collection.next}} disabled{{/unless}}"><i class="icon-chevron-right"></i></a>
+                          <a href="{{#if collection.previous}}#{{modelRoute collection.previous def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible previous-row{{#unless collection.previous}} disabled{{/unless}}"><i class="icon-chevron-left"></i></a>
+                          <a href="{{#if collection.next}}#{{modelRoute collection.next def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible next-row{{#unless collection.next}} disabled{{/unless}}"><i class="icon-chevron-right"></i></a>
                     </div>
                     {{/unless}}
                     {{#if hasAccess}}
