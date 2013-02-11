@@ -187,6 +187,42 @@ describe("Record View", function() {
             expect(_.size(view.fields)).toBe(0);
         });
 
+        it("Should not be editable when a user doesn't have write access on this field", function() {
+            sinonSandbox.stub(SugarTest.app.acl, '_hasAccessToField', function(action, acls, field) {
+                return field !== 'name';
+            });
+            sinonSandbox.stub(SugarTest.app.user, 'getAcls', function() {
+                var acls = {};
+                acls[moduleName] = {
+                    edit: 'yes',
+                    fields: {
+                        name: {
+                            write: 'no'
+                        }
+                    }
+                };
+                return acls;
+            });
+
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+
+            view.$('.more').click();
+            var editableFields = 0;
+            _.each(view.editableFields, function(field) {
+                if (field.$el.closest('.record-cell').find('.record-edit-link-wrapper').length === 1) {
+                    editableFields++;
+                }
+            });
+
+            expect(editableFields).toBe(7);
+            expect(_.size(view.editableFields)).toBe(7);
+        });
+
         it("should call decorateError on error fields during 'error:validation' events", function(){
             view.render();
             view.model.set({

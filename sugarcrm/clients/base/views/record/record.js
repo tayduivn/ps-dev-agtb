@@ -149,6 +149,11 @@
                     };
                 }
 
+                //Disable the pencil icon if the user doesn't have ACLs
+                if (!app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                    field.noedit = true;
+                }
+
                 //labels: visibility for the label
                 //labelsOnTop: true for on the top of the field
                 //             false for on the left of the field
@@ -248,7 +253,8 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            if ( field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
+            //Exclude non editable fields
+            if (field.def.noedit || field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
