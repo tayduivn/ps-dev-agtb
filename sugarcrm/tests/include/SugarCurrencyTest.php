@@ -48,14 +48,17 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         // setup test user
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        global $current_user;
+        $current_user->setPreference('dec_sep', '.');
+        $current_user->setPreference('num_grp_sep', ',');
+        $current_user->setPreference('default_currency_significant_digits', 2);
 
         // setup test currencies
         SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171);
         SugarTestCurrencyUtilities::createCurrency('Philippines','₱','PHP',41.82982);
         SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
-
     }
 
     /**
