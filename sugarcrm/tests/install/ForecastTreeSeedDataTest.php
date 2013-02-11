@@ -64,8 +64,8 @@ class ForecastTreeSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($users_data, $tree_data, 'Forecast tree data for users does not match report to structure of users table');
 
         $forecastSeedData->populateProductCategorySeedData();
-        $product_categories_count = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM product_categories");
-        $product_templates_count = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM product_templates");
+        $product_categories_count = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM product_categories where deleted = 0");
+        $product_templates_count = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM product_templates where deleted = 0");
         $tree_product_count = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM forecast_tree WHERE hierarchy_type = 'products'");
 
         $this->assertEquals($product_categories_count + $product_templates_count, $tree_product_count, 'Forecast tree data for products does not match hierarchy structure of product_categories and product_templates table');

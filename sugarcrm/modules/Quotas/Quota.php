@@ -362,12 +362,13 @@ class Quota extends SugarBean
             $id = $current_user->id;
         }
 
-        $query = "SELECT SUM(quotas.amount_base_currency) as group_amount" .
+        $query = "SELECT {$this->db->convert('SUM(quotas.amount_base_currency)', 'ifnull', array(0))} as group_amount" .
             " FROM users, quotas " .
             " WHERE quotas.timeperiod_id = '" . $timeperiod_id . "'" .
             " AND quotas.deleted = 0" .
             " AND users.id = quotas.user_id" .
-            " AND quotas.created_by = '" . $id . "'" .
+               " AND users.deleted = 0" .
+            " AND quotas.created_by = '" .$id . "'" .
             " AND (users.reports_to_id = '" . $id . "' " .
             " OR (users.id = '" . $id . "'" .
             " AND quotas.quota_type <> 'Rollup'))"; //for top-level manager
@@ -445,125 +446,6 @@ class Quota extends SugarBean
 
 
     /**
-     * function getUserManagedSelectList. Function to populate <SELECT> tag
-     * for the manager's direct reports.
-     *
-     * @param $timeperiod_id
-     * @param $id - if the id is given, use this idea as the selected choice
-     */
-    public function getUserManagedSelectList($timeperiod_id, $id = '')
-    {
-        global $mod_strings;
-        global $current_user;
-        global $locale;
-
-        $qry = "SELECT U.id as user_id, Q.id as quota_id, Q.timeperiod_id as timeperiod_id, user_name, first_name, last_name " .
-            "FROM users U " .
-            "LEFT OUTER JOIN (SELECT quotas.id, quotas.user_id, quotas.timeperiod_id, quotas.quota_type " .
-            "FROM quotas, users " .
-            "WHERE quotas.timeperiod_id = '" . $timeperiod_id . "' " .
-            "AND quotas.user_id = users.id " .
-            "AND quotas.created_by = '" . $current_user->id . "' " .
-            "AND (users.reports_to_id = '" . $current_user->id . "' " .
-            "OR (quotas.quota_type = 'Direct' AND users.id = '" . $current_user->id . "') ) ) Q " .
-            "ON Q.user_id = U.id  " .
-            "WHERE U.reports_to_id = '" . $current_user->id . "' " .
-            " OR U.id = '" . $current_user->id . "' " .
-            "ORDER BY first_name";
-
-        $result = $this->db->query($qry, true, 'Error retrieving quotas for managed users for current user: ');
-
-        $options = '';
-
-        if ($id == NULL) {
-            $options .= '<option value="?action=index&module=Quotas" SELECTED>'
-                . $mod_strings['LBL_SELECT_USER']
-                . '</option>';
-        }
-
-        while ($row = $this->db->fetchByAssoc($result)) {
-
-            if ($row['user_id'] == $id) {
-                $options .= '<option value="?edit=true&action=index&module=Quotas&record='
-                    . $row['quota_id']
-                    . '&user_id=' . $row['user_id']
-                    . '&timeperiod_id=' . $timeperiod_id
-                    . '" SELECTED>'
-                    . $locale->getLocaleFormattedName($row['first_name'], $row['last_name'])
-                    . '</option>';
-            } else {
-                if ($row['quota_id'] == NULL) {
-                    $options .= '<option value="?edit=true&action=index&module=Quotas&record=new'
-                        . '&user_id=' . $row['user_id']
-                        . '&timeperiod_id=' . $timeperiod_id
-                        . '">'
-                        . $locale->getLocaleFormattedName($row['first_name'], $row['last_name'])
-                        . '</option>';
-                } else {
-                    $options .= '<option value="?edit=true&action=index&module=Quotas&record='
-                        . $row['quota_id']
-                        . '&user_id=' . $row['user_id']
-                        . '&timeperiod_id=' . $timeperiod_id
-                        . '">'
-                        . $locale->getLocaleFormattedName($row['first_name'], $row['last_name'])
-                        . '</option>';
-                }
-            }
-        }
-
-        return $options;
-    }
-
-
-    /**
-     * function isManager. The purpose of this function is to determine whether
-     * the given user is a manager
-     *
-     * @param $id - id of the user in question
-     */
-
-    public function isManager($id)
-    {
-        global $current_user;
-
-        $qry = "SELECT * " .
-            "FROM users " .
-            "WHERE reports_to_id = '" . $id . "'";
-
-        $result = $this->db->query($this->create_list_count_query($qry), true, 'Error retrieving row count from quotas: ');
-        $row = $this->db->fetchByAssoc($result);
-
-        if ($row['c'] > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    /**
-     * function isTopLevelManager. Function to determine whether the current
-     * logged in user is a top level manager (ie, a manager in which he/she
-     * does not report to anyone)
-     */
-    public function isTopLevelManager()
-    {
-        global $current_user;
-
-        $qry = "SELECT * FROM users WHERE reports_to_id IS NULL AND id = '" . $current_user->id . "'";
-
-        $result = $this->db->query($qry, true, 'Error retrieving top level manager information for quotas: ');
-        $row = $this->db->fetchByAssoc($result);
-
-        if (!empty($row)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    /**
      * function getTopLevelRecord. For the current user, get the record
      * id of the rollup quota that has been assigned. This is used in
      * the Save.php file when a top level manager needs his/her own
@@ -625,6 +507,138 @@ class Quota extends SugarBean
         $row = $this->db->fetchByAssoc($result);
 
         return $row['symbol'];
+    }
+
+
+    /**
+     * function getUserManagedSelectList. Function to populate <SELECT> tag
+     * for the manager's direct reports.
+     *
+     * @param $timeperiod_id
+     * @param $id - if the id is given, use this idea as the selected choice
+    */
+    public function getUserManagedSelectList($timeperiod_id, $id = '')
+    {
+    global $mod_strings;
+    global $locale;
+
+    $data = $this->getUserManagedSelectData($timeperiod_id);
+    $options = '';
+
+    if ($id == NULL) {
+     $options .= '<option value="?action=index&module=Quotas" SELECTED>'
+              . $mod_strings['LBL_SELECT_USER']
+              . '</option>' ;
+    }
+
+    foreach($data as $row) {
+     if ($row['user_id'] == $id) {
+         $options .= '<option value="?edit=true&action=index&module=Quotas&record='
+                  . $row['quota_id']
+                  . '&user_id=' . $row['user_id']
+                  . '&timeperiod_id=' . $timeperiod_id
+                  . '" SELECTED>'
+                  . $locale->getLocaleFormattedName($row['first_name'], $row['last_name'])
+                  . '</option>';
+     } else {
+         if ($row['quota_id'] == NULL){
+             $options .= '<option value="?edit=true&action=index&module=Quotas&record=new'
+                  . '&user_id=' . $row['user_id']
+                  . '&timeperiod_id=' . $timeperiod_id
+                  . '">'
+                  . $locale->getLocaleFormattedName($row['first_name'], $row['last_name'])
+                  . '</option>' ;
+         } else {
+             $options .= '<option value="?edit=true&action=index&module=Quotas&record='
+                  . $row['quota_id']
+                  . '&user_id=' . $row['user_id']
+                  . '&timeperiod_id=' . $timeperiod_id
+                  . '">'
+                  . $locale->getLocaleFormattedName($row['first_name'], $row['last_name'])
+                  . '</option>' ;
+         }
+     }
+    }
+
+    return $options;
+    }
+
+
+    /**
+    * Return data for building options in Quota::getUserManagedSelectList
+    * @param string $timeperiod_id
+    * @return array
+    */
+    protected function getUserManagedSelectData($timeperiod_id)
+    {
+        $result = array();
+        global $current_user;
+        $query = "SELECT U.id as user_id, Q.id as quota_id, Q.timeperiod_id as timeperiod_id, user_name, first_name, last_name " .
+               "FROM users U " .
+               "LEFT OUTER JOIN (SELECT quotas.id, quotas.user_id, quotas.timeperiod_id, quotas.quota_type " .
+               "FROM quotas, users " .
+               "WHERE quotas.timeperiod_id = {$this->db->quoted($timeperiod_id)}" .
+               "AND quotas.user_id = users.id " .
+               "AND quotas.created_by = {$this->db->quoted($current_user->id)}" .
+               "AND (users.reports_to_id = {$this->db->quoted($current_user->id)}" .
+               "OR (quotas.quota_type = 'Direct' AND users.id = {$this->db->quoted($current_user->id)}) ) ) Q " .
+               "ON Q.user_id = U.id  " .
+               "WHERE (U.reports_to_id = {$this->db->quoted($current_user->id)}" .
+               " OR U.id = {$this->db->quoted($current_user->id)}) AND U.deleted = 0  " .
+               "ORDER BY first_name";
+        $resource = $this->db->query($query, true, 'Error retrieving quotas for managed users for current user: ');
+        while($row = $this->db->fetchByAssoc($resource)){
+           array_push($result, $row);
+        }
+        return $result;
+    }
+
+
+    /**
+     * function isManager. The purpose of this function is to determine whether
+     * the given user is a manager
+     *
+     * @param $id - id of the user in question
+     */
+
+    public function isManager($id)
+    {
+        global $current_user;
+
+        $qry = "SELECT * " .
+            "FROM users " .
+            "WHERE reports_to_id = '" . $id . "'";
+
+        $result = $this->db->query($this->create_list_count_query($qry), true, 'Error retrieving row count from quotas: ');
+        $row = $this->db->fetchByAssoc($result);
+
+        if ($row['c'] > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * function isTopLevelManager. Function to determine whether the current
+     * logged in user is a top level manager (ie, a manager in which he/she
+     * does not report to anyone)
+     */
+    public function isTopLevelManager()
+    {
+        global $current_user;
+
+        $qry = "SELECT * FROM users WHERE reports_to_id IS NULL AND id = '" . $current_user->id . "'";
+
+        $result = $this->db->query($qry, true, 'Error retrieving top level manager information for quotas: ');
+        $row = $this->db->fetchByAssoc($result);
+
+        if (!empty($row)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

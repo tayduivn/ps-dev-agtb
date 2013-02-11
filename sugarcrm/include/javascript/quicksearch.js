@@ -153,7 +153,7 @@ function enableQS(noReload){
 	                    		to_pdf: 'true',
 	                            module: 'Home',
 	                            action: 'quicksearchQuery',
-	                            data: encodeURIComponent(YAHOO.lang.JSON.stringify(this.sqs)),
+	                            data: YAHOO.lang.JSON.stringify(this.sqs),
 	                            query: sQuery
 	                    	});
 	                    	return out;

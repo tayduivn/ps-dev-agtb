@@ -1171,13 +1171,15 @@ function getSelectOptionsWithIdUseQueues($label_list, $key_list, $selected_key, 
 
 /**
  * Call this method instead of die().
- * Then we call the die method with the error message that is passed in.
+ * We print the error message and then die with an appropriate
+ * exit code.
  */
-function sugar_die($error_message)
+function sugar_die($error_message, $exit_code=1)
 {
 	global $focus;
 	sugar_cleanup();
-	die($error_message);
+	echo $error_message;
+	die($exit_code);
 }
 
 /**

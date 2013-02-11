@@ -56,6 +56,7 @@ if(!empty($app_list_strings['moduleList'][$_REQUEST['module']])){
 //strip away any blank spaces
 $filename = str_replace(' ','',$filename);
 
+$transContent = $GLOBALS['locale']->translateCharset($content, 'UTF-8', $GLOBALS['locale']->getExportCharset());
 
 if(isset($_REQUEST['members']) && $_REQUEST['members'] == true)
 {
@@ -71,9 +72,8 @@ header("Content-transfer-encoding: binary");
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
 header("Last-Modified: " . TimeDate::httpTime() );
 header("Cache-Control: post-check=0, pre-check=0", false );
-header("Content-Length: ".mb_strlen($GLOBALS['locale']->translateCharset($content, 'UTF-8', $GLOBALS['locale']->getExportCharset())));
+header("Content-Length: ".mb_strlen($transContent, '8bit'));
 
-print $GLOBALS['locale']->translateCharset($content, 'UTF-8', $GLOBALS['locale']->getExportCharset());
+print $transContent;
 
 sugar_cleanup(true);
-?>

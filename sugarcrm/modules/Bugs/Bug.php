@@ -123,6 +123,8 @@ class Bug extends SugarBean {
 	{
 		$custom_join = $this->custom_fields->getJOIN();
 
+		$custom_join = $this->custom_fields->getJOIN();
+		
                 $query = "SELECT ";
 
 		$query .= "

@@ -29,18 +29,30 @@ require_once 'tests/SugarTestViewConvertLeadUtilities.php';
 
 class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var mixed
+     */
+    protected $license_expires_in = null;
+
     public function setUp()
     {
-        SugarTestHelper::setUp('files');
-        SugarTestHelper::setUp('current_user');
-        SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::saveFile('custom/modules/Leads/metadata/editviewdefs.php');
         @SugarAutoLoader::unlink('custom/modules/Leads/metadata/editviewdefs.php');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('mod_strings', array('Leads'));
+        SugarTestHelper::setUp('current_user');
+        if (isset($_SESSION['LICENSE_EXPIRES_IN']))
+        {
+            $this->license_expires_in = $_SESSION['LICENSE_EXPIRES_IN'];
+        }
+        $_SESSION['LICENSE_EXPIRES_IN'] = '5';
+
     }
 
     public function tearDown()
     {
-        SugarTestHelper::tearDown();
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestStudioUtilities::removeAllCreatedFields();
         if(!empty($this->relation_id)) {
@@ -74,6 +86,10 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         if(!empty($this->new_meeting_id) && !empty($this->contact_id)) {
             $GLOBALS['db']->query("delete from meetings_contacts where meeting_id='{$this->new_meeting_id}' and contact_id= '{$this->contact_id}'");
         }
+
+        $_SESSION['LICENSE_EXPIRES_IN'] = $this->license_expires_in;
+        SugarTestHelper::tearDown();
+
     }
 
     /**
