@@ -893,7 +893,7 @@ class Meeting extends SugarBean {
     		return true;
     	}
         $this->users_arr = $userInvitees;
-        $GLOBALS['log']->fatal(var_export($userInvitees, true));
+
         $deleteUsers = array();
          $this->load_relationship('users');
          // Get all users for the meeting
