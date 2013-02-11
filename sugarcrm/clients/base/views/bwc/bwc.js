@@ -213,6 +213,7 @@
             'ProductBundleNotes',
             'ProductBundles',
             'ProductCategories',
+            'ProductTemplates',
             'ProductTypes',
             'Project',
             'ProjectResources',
