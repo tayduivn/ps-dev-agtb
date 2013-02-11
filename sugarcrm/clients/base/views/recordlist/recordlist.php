@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$viewdefs['base']['view']['baselist'] = array(
+$viewdefs['base']['view']['recordlist'] = array(
     'favorite' => true,
     'selection' => array(
         'type' => 'multi',
