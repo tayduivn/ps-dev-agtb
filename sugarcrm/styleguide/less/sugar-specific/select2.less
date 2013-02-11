@@ -89,13 +89,26 @@
       .border-radius(10px);
       background: @dropdownLinkBackgroundHover;
       color: @dropdownLinkColorHover;
-      padding: 2px 16px 2px 6px;
+      padding: 2px 20px 2px 6px;
       margin-right: 2px;
     }
     a.select2-search-choice-close {
-      top: 2px;
-      right: 4px;
+      top: 2.5px;
+      right: 4.5px;
       left: auto;
+      color: @white;
+      background: lighten(@dropdownLinkColorHover,10%);
+      .border-radius(6px);
+      font-size: 9px;
+      font-family: FontAwesome;
+      text-decoration: none;
+      width: 12px;
+      height: 12px;
+      line-height: 11.5px;
+      text-align: center;
+    }
+    a.select2-search-choice-close::before {
+      content: "\f00d";
     }
     &.select2-search-choice-focus {
       border-color: rgba(82, 168, 236, 0.8);
