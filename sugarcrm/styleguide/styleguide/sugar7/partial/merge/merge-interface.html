@@ -31,6 +31,20 @@
 		items: ".col",
         axis: "x",
 	});
+
+	init_primary_drop();
+
+	function init_primary_drop (){
+	    $( ".primary-lbl" ).draggable({
+	      stop: function(e) {
+			var dropped_to = $(document.elementFromPoint(e.clientX, e.clientY+24)).closest('.col');
+			dropped_to.remove().clone().prependTo($('.fluid-div'));
+			$('.col .primary-lbl').removeAttr('style');
+			setTimeout(init_primary_drop(),1000)
+	      }
+	    });
+	}
+
   </script>
 
 

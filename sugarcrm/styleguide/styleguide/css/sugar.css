@@ -7623,12 +7623,6 @@ table.duplicates.highlight tbody td {
 .layout_Leads .want_filter .form-search .filter-header {
   display: none;
 }
-.layout_Leads .duplicate_count {
-  padding: 4px;
-  text-align: center;
-  font-weight: bold;
-  display: block;
-}
 .layout_Leads .want_filter .form-search .extend {
   margin-top: -5px;
 }
@@ -7796,6 +7790,7 @@ h4.merge-interface-header .preview {
 }
 .merge-interface .col .primary-lbl {
   visibility: hidden;
+  cursor: move;
 }
 .merge-interface .col .box {
   border-radius: 3px;
