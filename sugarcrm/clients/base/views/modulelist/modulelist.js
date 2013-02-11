@@ -29,9 +29,9 @@
         app.user.on("change:module_list", this.render, this);
 
         app.view.View.prototype.initialize.call(this, options);
-
+        var resizeFn = _.debounce(this.resize, 300);
         if (this.layout) {
-            this.layout.on("view:resize", this.resize, this);
+            this.layout.on("view:resize", resizeFn, this);
         }
     },
     /**
@@ -229,6 +229,10 @@
         while ((currentWidth < width) && ($dropdown.children().length > 0)){
             $nextModule = $moduleToInsert.next();
 
+            //show the drop down toggle and hide the more link
+            $moduleToInsert.find('.btn-group').show();
+            $moduleToInsert.find('.moreLink').hide();
+
             // add the modules in order
             $lastModuleInList = $more.prev();
             if (this.activeModule.isActive($lastModuleInList) && !this.activeModule.isNext($moduleToInsert)) {
@@ -239,10 +243,6 @@
 
             currentWidth = $modules.outerWidth(true);
             $moduleToInsert = $nextModule;
-
-            //hide the drop down toggle
-            $moduleToInsert.find('.btn-group').show();
-            $moduleToInsert.find('.moreLink').hide();
 
             // remove the last added module if the width is wider than desired
             if (currentWidth >= width) {
@@ -277,8 +277,7 @@
 
             $next = $module.prev();
             $dropdown.prepend($module);
-
-            //hide the drop down toggle
+            //hide the drop down toggle and show the more link
             $module.find('.btn-group').hide();
             $module.find('.moreLink').show();
 
