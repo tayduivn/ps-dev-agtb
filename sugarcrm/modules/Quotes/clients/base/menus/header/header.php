@@ -23,7 +23,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Quotes';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        //'route'=>'#'.$module_name.'/create',
         'route' => '#bwc/index.php?module=Quotes&action=EditView&return_module=Quotes&return_action=DetailView',
         'label' =>'LNK_NEW_QUOTE',
         'acl_action'=>'edit',
@@ -39,7 +38,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     ),
     //BEGIN SUGARCRM flav=pro ONLY
     array(
-        'route'=>'#bwc/index.php?module=Reports&action=index&view=accounts',
+        'route'=>'#bwc/index.php?module=Reports&action=index&view=quotes',
         'label' =>'LNK_QUOTE_REPORTS',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
