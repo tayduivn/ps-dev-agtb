@@ -32,21 +32,14 @@
  */
 ({
     values: new Backbone.Model(),
-    url: app.api.buildURL('Forecasts/chart'),
-
     chart: null,
-
     chartRendered: false,
-
-    chartDataSet : [],
-    chartGroupByOptions : [],
-
+    chartDataSet: [],
+    chartGroupByOptions: [],
     defaultDataset: '',
     defaultGroupBy: '',
-
     chartTitle: '',
     timeperiod_label: '',
-
     stopRender: false,
 
     /**
@@ -264,6 +257,7 @@
         }
 
         var chart,
+            self = this,
             chartId = "db620e51-8350-c596-06d1-4f866bfcfd5b",
             css = {
                 "gridLineColor":"#cccccc",
@@ -296,7 +290,7 @@
                   };
                   data = $.extend(data, params);
 
-                  url = app.api.buildURL('Forecasts', 'chart', '', data);
+                  url = app.api.buildURL(self.buildChartUrl(params), '', '', data);
 
                   app.api.call('read', url, data, {success : success});
               },
@@ -368,9 +362,18 @@
         params.minColumnWidth = 120;
         params.chartId = chartId;
 
-        chart = new loadSugarChart(chartId, this.url, css, chartConfig, params, _.bind(function(chart){
+        chart = new loadSugarChart(chartId, this.buildChartUrl(params), css, chartConfig, params, _.bind(function(chart){
             this.chart = chart;
         }, this));
         this.chartRendered = true;
+    },
+
+    /**
+     * Accepts params object and builds the proper endpoint url for charts
+     * @param params {Object} contains a lot of chart options and settings
+     * @return {String} has the proper structure for the chart url
+     */
+    buildChartUrl: function(params) {
+        return 'Forecasts/' + params.timeperiod_id + '/' + params.user_id +'/chart/' + params.display_manager;
     }
 })
