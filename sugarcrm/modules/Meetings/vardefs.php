@@ -178,6 +178,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'comment' => 'Date meeting ends',
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
+    'studio' => array('wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
   ),
   'parent_type' =>
   array (
