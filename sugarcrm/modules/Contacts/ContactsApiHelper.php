@@ -36,7 +36,7 @@ class ContactsApiHelper extends SugarBeanApiHelper
         global $current_user;
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
-        if($submittedData['sync_contact']) {
+        if(!empty($submittedData['sync_contact'])) {
             $bean->contacts_users_id = $current_user->id;
         }
         else {
