@@ -26,22 +26,19 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
-require_once ('include/api/ServiceBase.php');
-require_once ("data/SugarBeanApiHelper.php");
-
+require_once 'include/api/ServiceBase.php';
+require_once 'data/SugarBeanApiHelper.php';
 
 /**
  * @group ApiTests
  */
-class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
+class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
+{
+    public $bean;
+    public $beanApiHelper;
 
-    var $bean;
-    var $beanApiHelper;
-
-    var $oldDate;
-    var $oldTime;
+    public $oldDate;
+    public $oldTime;
 
     public $roles = array();
 
@@ -55,6 +52,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
              ->will($this->returnValue(true));
         $mock->id = 'SugarBeanApiHelperMockBean-1';
         $mock->favorite = false;
+        $mock->module_name = 'Test';
+        $mock->module_dir = 'Test';
         $mock->field_defs = array(
                 'testInt' => array(
                     'type' => 'int',
@@ -70,7 +69,7 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
     public function tearDown()
     {
         // clean up all roles created
-        foreach($this->roles AS $role) {
+        foreach ($this->roles AS $role) {
             $role->mark_deleted($role->id);
             $role->mark_relationships_deleted($role->id);
             $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
@@ -82,8 +81,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
     /**
      * @dataProvider providerFunction
      */
-    public function testFormatForApi($fieldName, $fieldValue, $expectedFormattedValue, $message) {
-
+    public function testFormatForApi($fieldName, $fieldValue, $expectedFormattedValue, $message)
+    {
         $this->bean->$fieldName = $fieldValue;
 
         $data = $this->beanApiHelper->formatForApi($this->bean);
@@ -91,7 +90,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertSame($expectedFormattedValue, $data[$fieldName], $message);
     }
 
-    public function providerFunction() {
+    public function providerFunction()
+    {
         return array(
             array('testInt', '', null, 'Bug 57507 regression: expected formatted value for a null int type to be NULL'),
             array('testDecimal', '', null, 'Bug 59692 regression: expected formatted value for a null decimal type to be NULL'),
@@ -106,7 +106,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         );
     }
 
-    public function testListWithOwnerAccess() {
+    public function testListWithOwnerAccess()
+    {
         // create role that is all fields read only
         $this->roles[] = $role = $this->createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), array('Meetings'), array('access', 'list', 'view'), array('view'));
 
@@ -132,7 +133,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertEquals($meeting->name, $data['name'], "Name Doesn't Match");
     }
 
-    public function testListCertainFieldsNoAccess() {
+    public function testListCertainFieldsNoAccess()
+    {
         // create role that is all fields read only
         $this->roles[] = $role = $this->createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), array('Accounts'), array('access', 'list', 'view'), array('view'));
 
@@ -144,7 +146,7 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
 
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        
+
         // set the name field as Read Only
         $aclField = new ACLField();
 
@@ -164,9 +166,17 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
 
         $this->assertNotEmpty($data['_acl']['fields']->website, "Website did not come back and should have.  The acls were: " . print_r($data['_acl'], true));
 
-    }    
+    }
 
-    protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
+    public function updateFieldOwnerReadOwnerWrite()
+    {
+        // set the test field as owner read owner write directly in the session
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Test']['fields']['my_field'] = 40;
+
+    }
+
+    protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array())
+    {
         $role = new ACLRole();
         $role->name = $name;
         $role->description = $name;
@@ -191,8 +201,7 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
 
             if (in_array($moduleName, $allowedModules)) {
                 foreach ($actions['module'] as $actionName => $action) {
-
-                    if(in_array($actionName, $ownerActions)) {
+                    if (in_array($actionName, $ownerActions)) {
                         $aclAllow = ACL_ALLOW_OWNER;
                     } elseif (in_array($actionName, $allowedActions)) {
                         $aclAllow = ACL_ALLOW_ALL;
@@ -204,8 +213,9 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
             }
 
         }
+
         return $role;
-    }    
+    }
 }
 
 class ServiceMockup extends ServiceBase
