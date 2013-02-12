@@ -36,21 +36,24 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
 
     private $_unified_search_modules_content;
 
+    public static function setUpBeforeClass() {
+        if(isset($_SESSION['ACL'])) {
+            unset($_SESSION['ACL']);
+        }
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('mod_strings', array('Accounts'));
+    }
+
     public function setUp()
     {
-        global $beanList, $beanFiles;
-        include('include/modules.php');
-
-        //Reload langauge strings
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Accounts');
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
 
         self::$helperObject = new APIv3Helper();
-
 
         if(file_exists(sugar_cached('modules/unified_search_modules.php')))
         {
@@ -76,9 +79,6 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);
-	    unset($GLOBALS['app_list_strings']);
-	    unset($GLOBALS['app_strings']);
-	    unset($GLOBALS['mod_strings']);
 
         if(!empty($this->unified_search_modules_content))
         {
@@ -94,6 +94,10 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['reload_vardefs']);
 	}
+
+    public static function tearDownAfterClass() {
+        SugarTestHelper::tearDown();
+    }
 
     protected function _makeRESTCall($method,$parameters)
     {
@@ -531,6 +535,10 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetVardefsMD5()
     {
+        // Since translate falls back to mod strings, and mod_strings is global
+        // for the Accounts module, we need to get rid of it for the direct soapHelper
+        // call.
+        unset($GLOBALS['mod_strings']);
         $GLOBALS['reload_vardefs'] = TRUE;
         $result = $this->_login();
         $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());

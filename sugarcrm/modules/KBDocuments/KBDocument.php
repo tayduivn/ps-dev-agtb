@@ -294,6 +294,10 @@ class KBDocument extends SugarBean {
             $ret_array['from'] .= ' ' . $custom_join['join'];
         }
         //BEGIN SUGARCRM flav=pro ONLY
+        if (!is_admin($current_user) && !$this->disable_row_level_security){
+            $this->add_team_security_where_clause($ret_array['from']);
+        }
+        //BEGIN SUGARCRM flav=pro ONLY
         if (!$this->disable_row_level_security){
             $this->addVisibilityFrom($ret_array['from']);
         }

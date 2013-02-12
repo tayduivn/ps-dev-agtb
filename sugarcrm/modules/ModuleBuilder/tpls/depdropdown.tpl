@@ -28,6 +28,7 @@
  ********************************************************************************/
 *}
 
+{assign var=id_filter_chars value="/[^A-Za-z0-9-_]/"} {* regex for keeping troublesome chars out of our id. *}
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp1_jquery.js'}"></script>
 <!-- Below Div must exist in order for IE7/8 to read the inline style declaration. Line should be removed for IE9+ -->
 <div display="none">&nbsp;</div>
@@ -161,7 +162,7 @@
         {/if}
         <td>
             <h3 class="title">{$label}</h3>
-            <ul id="ddd_{$val|replace:" ":"_"}_list" class="ddd_table ddd_parent_option" >
+            <ul id="ddd_{$val|regex_replace:$id_filter_chars:"_"}_list" class="ddd_table ddd_parent_option" >
                 {foreach from=$mapping.$val key=iv item=il name=parentElLoop}
                     <li class="ui-state-default" val="{$il}">{$iv}{$il}{$child_list_options.$il}</li>
                 {/foreach}
@@ -197,6 +198,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     var childOptions = {$childOptions};
     //Load from the field if its on the page
     var targetId = "{$smarty.request.targetId}";
+    var idFilterChars = {$id_filter_chars}g; // regex for keeping troublesome chars out of our id.
     {literal}
     if ($("#" + targetId).length > 0)
     {
@@ -210,7 +212,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     {
         var vals = mapping[i];
         if (i === "") i = "--blank--";
-        i = i.replace(/ /g, "_");
+        i = i.replace(idFilterChars, "_");
         var l = $("#ddd_" + i + "_list");
         for(var j = 0; j < vals.length; j++)
         {
@@ -292,7 +294,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     for (var i in parentOptions)
     {
         if (i == "") i = "--blank--";
-        i = i.replace(/ /g, "_");
+        i = i.replace(idFilterChars, "_");
         $( "#ddd_" + i + "_list" ).sugardddlist({
             connectWith: ".ddd_table",
             scope: "ddd_table",
@@ -357,7 +359,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
         }
         for (var i in parentOptions)
         {
-            var k = i == "" ? blank : i.replace(/ /g, "_");
+            var k = i == "" ? blank : i.replace(idFilterChars, "_");
             mapping[i] = getlistValues($( "#ddd_" + k + "_list" ));
         }
         return {

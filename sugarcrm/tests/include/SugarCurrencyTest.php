@@ -56,7 +56,6 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171);
         SugarTestCurrencyUtilities::createCurrency('Philippines','₱','PHP',41.82982);
         SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
-
     }
 
     /**

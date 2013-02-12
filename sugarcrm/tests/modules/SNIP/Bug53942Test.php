@@ -1,4 +1,5 @@
-<?php 
+<?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,36 +22,30 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-require_once('modules/Contacts/Contact.php');
 
-class ContactsTest extends Sugar_PHPUnit_Framework_TestCase
+require_once('include/TimeDate.php');
+require_once ('modules/SNIP/iCalParser.php');
+
+/**
+ * @ticket 53942
+ */
+class Bug53942Test extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    public function setUp() {
-        SugarTestHelper::setUp('current_user');
-        SugarTestHelper::setUp('app_list_strings');
-    }
-
-    public function tearDown() {
-        SugarTestHelper::tearDown();
-    }
-
-	function testSyncContacts() {
-        $c = BeanFactory::newBean('Contacts');
-        $c->first_name = 'Test';
-        $c->last_name = create_guid();
-
-        $this->assertFalse($c->setSyncContact());
-
-        $c->setUserContactsUserId($GLOBALS['current_user']->id);
-
-        $this->assertTrue($c->setSyncContact());
-
-        $c->removeUserContactsUserId($GLOBALS['current_user']->id);
-
-        $this->assertFalse($c->setSyncContact());
-
-        unset($c);
-    }
+	public function testImportTZWithQuotes()
+	{
+	    $ic = new iCalendar();
+	    $ic->parse(file_get_contents(dirname(__FILE__).'/Bug53942Test.ics'));
+	    $event = null;
+	    foreach ($ic->data['calendar'] as $calendar_key=>$calendar_val) {
+	    	foreach ($calendar_val->stack as $key=>$val) {
+	    		if($val instanceof vEvent) {
+	    		    $event = $val;
+	    		    break;
+	    		}
+	    	}
+	    }
+	    $this->assertNotEmpty($event, "Event not found!");
+        $this->assertEquals("2012-06-21 16:00:00", $event->event->date_start);
+        $this->assertEquals("2012-06-21 16:30:00", $event->event->date_end);
+	}
 }
-?>

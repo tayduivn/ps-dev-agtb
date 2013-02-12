@@ -372,6 +372,12 @@ FROM prospect_lists_prospects plp
 		return parent::save($check_notify);
 
 	}
+
+    function mark_deleted($id){
+        $query = "UPDATE prospect_lists_prospects SET deleted = 1 WHERE prospect_list_id = '{$id}' ";
+        $this->db->query($query);
+        return parent::mark_deleted($id);
+    }
 	
 	 function bean_implements($interface){
 		switch($interface){

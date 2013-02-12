@@ -32,6 +32,17 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
 	}
 
+    public function setUp()
+    {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+    }
+
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+    }
+
 	public static function tearDownAfterClass()
 	{
 	    SugarTestHelper::tearDown();
@@ -103,6 +114,79 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
+    /**
+     * Test whether a relate field is determined correctly
+     *
+     * @param array $field_defs
+     * @param string $field_name
+     * @param bool $is_relate
+     * @dataProvider isRelateFieldProvider
+     * @covers SugarBean::is_relate_field
+     */
+    public function testIsRelateField(array $field_defs, $field_name, $is_relate)
+    {
+        $bean = new BeanIsRelateFieldMock();
+        $bean->field_defs = $field_defs;
+        $actual = $bean->is_relate_field($field_name);
+
+        if ($is_relate)
+        {
+            $this->assertTrue($actual);
+        }
+        else
+        {
+            $this->assertFalse($actual);
+        }
+    }
+
+    public static function isRelateFieldProvider()
+    {
+        return array(
+            // test for on a non-existing field
+            array(
+                array(), 'dummy', false,
+            ),
+            // test for non-specified field type
+            array(
+                array(
+                    'my_field' => array(),
+                ), 'my_field', false,
+            ),
+            // test on a non-relate field type
+            array(
+                array(
+                    'my_field' => array(
+                        'type' => 'varchar',
+                    ),
+                ), 'my_field', false,
+            ),
+            // test on a relate field type but link not specified
+            array(
+                array(
+                    'my_field' => array(
+                        'type' => 'relate',
+                    ),
+                ), 'my_field', false,
+            ),
+            // test when only link is specified
+            array(
+                array(
+                    'my_field' => array(
+                        'link' => 'my_link',
+                    ),
+                ), 'my_field', false,
+            ),
+            // test on a relate field type
+            array(
+                array(
+                    'my_field' => array(
+                        'type' => 'relate',
+                        'link' => 'my_link',
+                    ),
+                ), 'my_field', true,
+            ),
+        );
+    }
 }
 
 // Using Mssql here because mysql needs real connection for quoting
@@ -136,4 +220,12 @@ class BeanMockTestObjectName extends SugarBean
     function BeanMockTestObjectName() {
 		parent::__construct();
 	}
+}
+
+class BeanIsRelateFieldMock extends SugarBean
+{
+    public function is_relate_field($field_name_name)
+    {
+        return parent::is_relate_field($field_name_name);
+    }
 }

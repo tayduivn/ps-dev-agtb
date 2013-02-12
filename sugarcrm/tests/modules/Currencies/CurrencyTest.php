@@ -25,12 +25,9 @@ require_once('modules/Currencies/Currency.php');
 
 class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
 	
-	var $previousCurrentUser;
-	
     public function setUp() 
     {
     	global $current_user;
-    	$this->previousCurrentUser = $current_user;       
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user->setPreference('number_grouping_seperator', ',', 0, 'global');
         $current_user->setPreference('decimal_seperator', '.', 0, 'global');
@@ -41,9 +38,9 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
 
     public function tearDown() 
     {
+        unset($GLOBALS['current_user']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        global $current_user;
-        $current_user = $this->previousCurrentUser;
+        get_number_seperators(true);
     }    
     
     public function testUnformatNumber()

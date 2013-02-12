@@ -2754,13 +2754,13 @@ $app_strings = array (
 
     /* The following version of LBL_SUGAR_COPYRIGHT is intended for Sugar Open Source only. */
 
-    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2012 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
+    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2013 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
 
 
     // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
 
-    'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2012 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
+    'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
 
     'LBL_SYNC' => 'Sync',
@@ -2855,7 +2855,8 @@ $app_strings = array (
     'ERROR_FULLY_EXPIRED'=> "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
     'ERROR_LICENSE_EXPIRED'=> "Your company's license for SugarCRM needs to be updated. Only admins may login",
     'ERROR_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated. Only admins may login",
-    'WARN_BROWSER_VERSION_WARNING' => '<p><b>Warning:</b>The browser or browser version you are using is not supported.</p><p>The following browser versions are recommended</p><ul><li>Internet Explorer 9</li><li>Mozilla Firefox 14, 15 </li><li>Safari 6</li><li>Google Chrome 22 (or latest version)</li></ul>',
+    'WARN_BROWSER_VERSION_WARNING' => "<b>Warning:</b> Your browser version is no longer supported or you are using an unsupported browser.<p></p>The following browser versions are recommended:<p></p><ul><li>Internet Explorer 9 (compatibility view not supported)<li>Firefox 17<li>Safari 5.1<li>Chrome 24</ul>",
+    'WARN_BROWSER_IE_COMPATIBILITY_MODE_WARNING' => "<b>Warning:</b> Your browser is in IE compatibility view which is not supported.",
     'WARN_LICENSE_SEATS'=>  "Warning: The number of active users is already the maximum number of licenses allowed.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
@@ -2946,7 +2947,7 @@ $app_strings = array (
 //END SUGARCRM flav!=sales ONLY
     'LBL_ADD_ALL_LEAD_FIELDS' => 'Add All Fields',
     'LBL_REMOVE_ALL_LEAD_FIELDS' => 'Remove All Fields',
-    'LBL_ONLY_IMAGE_ATTACHMENT' => 'Only image type attachment can be embedded',
+    'LBL_ONLY_IMAGE_ATTACHMENT' => 'Only the following supported image type attachments can be embedded: JPG, PNG.',
     'LBL_REMOVE' => 'Remove',
     'LBL_TRAINING' => 'Support',
     'ERR_DATABASE_CONN_DROPPED'=>'Error executing a query. Possibly, your database dropped the connection. Please refresh this page, you may need to restart you web server.',
@@ -3438,7 +3439,6 @@ $app_strings = array (
     'LBL_EMAILS_SUBPANEL_TITLE' => 'Emails',
     'LNK_SETTINGS' => 'Settings',
     'LBL_MOBILE_SUPPORT' => 'Support',
-    'LBL_SUPPORT_EMAIL_SUBJECT' => 'Support request',
 
     'LBL_MOBILE_SHOW_MORE' => 'Show more...',
     'LBL_MOBILE_SHOW_MORE_TOP' => 'Show more...',
@@ -3473,14 +3473,15 @@ $app_strings = array (
     'ERR_MOBILE_NOT_FOUND' => 'Resource not found.',
     'ERR_MOBILE_TIMEOUT' => 'Server is not responding.',
     'ERR_MOBILE_CONNECTION_FAILED' => 'Can\'t reach the server.',
-    'ERR_MOBILE_NOT_FOUND_LOGIN' => 'Server not found at the given URL.',
+    'ERR_MOBILE_NOT_FOUND_LOGIN' => 'A compatible SugarCRM server not found at the given URL ({{{minVersion}}} {{{supportedFlavors}}} required).',
     'ERR_MOBILE_TIMEOUT_LOGIN' => 'Server is not responding at the given URL.',
     'ERR_MOBILE_CONNECTION_FAILED_LOGIN' => 'Server unavailable at the given URL.',
     'ERR_MOBILE_INTERNET_UNAVAILABLE' => 'Internet connection unavailable.',
     'ERR_MOBILE_INTERNAL' => 'Internal error ({{{code}}}). Please try again later.',
     'ERR_MOBILE_VALIDATION' => 'Record is invalid',
-    'ERR_SERVER_FLAVOR_INCOMPATIBLE' => 'Incompatible server flavor: {{{flavor}}}',
-    'ERR_SERVER_VERSION_INCOMPATIBLE' => 'Incompatible server version: {{{version}}}',
+    'ERR_SERVER_FLAVOR_INCOMPATIBLE' => 'Incompatible server flavor: {{{flavor}}}. Supported flavors: {{{supportedFlavors}}}.',
+    'ERR_SERVER_VERSION_INCOMPATIBLE' => 'Incompatible server version: {{{version}}}. Minimum required version: {{{minVersion}}}.',
+    'ERR_MOBILE_INCOMPATIBLE_CLIENT_VERSION' => "Your app is outdated and is no longer compatible with SugarCRM instance you are connecting to. Do you want to download the new version from App Store?",
     'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
     'ERR_MOBILE_FILE_NOT_SUPPORTED' => 'This document type is unsupported.',
     'ERR_MOBILE_BROWSER_NOT_AUTHORIZED' => 'Authentication failed.',
@@ -3580,13 +3581,13 @@ $app_strings = array (
     'LBL_PORTAL_REQUEST_TIMEOUT' => 'The request timed out.',
     'LBL_PORTAL_REQUEST_TIMEOUT_TITLE' => 'Request timeout',
     'LBL_PORTAL_UNAUTHORIZED' =>'We\'re sorry, but it appears you are unauthorized to access this resource.',
-    'LBL_PORTAL_UNAUTHORIZED_TITLE' =>'HTTP Error: Unauthorized',
+    'LBL_PORTAL_UNAUTHORIZED_TITLE' =>'Unauthorized',
     'LBL_PORTAL_RESOURCE_UNAVAILABLE' => 'Resource not available.',
-    'LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE' => 'HTTP Error: Forbidden',
+    'LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE' => 'Forbidden',
     'LBL_PORTAL_METHOD_NOT_ALLOWED' => 'HTTP method not allowed for this resource. Please contact technical support.',
-    'LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE' => 'HTTP Error: Method Not Allowed',
+    'LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE' => 'Method Not Allowed',
     'LBL_PORTAL_PRECONDITION_MISSING' => 'Request failure, or, missing/invalid parameter. Please contact technical support',
-    'LBL_PORTAL_PRECONDITION_MISSING_TITLE' => 'HTTP Error: ',
+    'LBL_PORTAL_PRECONDITION_MISSING_TITLE' => 'Error: ',
     'LBL_PORTAL_MIN_MODULES' => 'At minimum, you need to have the Cases, Bugs or Knowledge Base module enabled to use this application.',
     'LBL_PORTAL_ERROR' => 'Error',
     'LBL_PORTAL_ROUTE_ERROR'=>'Issue loading module. Please try again later or contact support.',
@@ -3630,6 +3631,7 @@ $app_strings = array (
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
     'LBL_PANEL_DEFAULT' => 'Default',
+    'ERR_BAD_RESPONSE_FROM_SERVER' => 'Bad response from the server',
 
     //BEGIN SUGARCRM flav=pro ONLY
     //These are for the timeperiod name formats
@@ -4501,22 +4503,6 @@ $app_list_strings['forecasts_timeperiod_options_dom'] = array(
     'Annual' => 'Yearly (Quarterly sub-periods)',
     'Quarter' => 'Quarterly (Monthly sub-periods)',
 );
-
-$app_list_strings['forecasts_timeperiod_month_options_dom'] = array(
-   			'' => '',
-   			'1' => 'January',
-   			'2' => 'February',
-   			'3' => 'March',
-   			'4' => 'April',
-   			'5' => 'May',
-   			'6' => 'June',
-   			'7' => 'July',
-   			'8' => 'August',
-   			'9' => 'September',
-   			'10' => 'October',
-   			'11' => 'November',
-   			'12' => 'December',
-   		);
 
 $app_list_strings ['pdfmanager_yes_no_list'] = array (
     'yes' => 'Yes' ,

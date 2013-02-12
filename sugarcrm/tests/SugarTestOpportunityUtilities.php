@@ -32,8 +32,10 @@ class SugarTestOpportunityUtilities
 
     private function __construct()
     {
+
     }
 
+    /*
     private function _createAccount($time)
     {
         if (self::$_createdAccount === null)
@@ -50,8 +52,22 @@ class SugarTestOpportunityUtilities
 
         return self::$_createdAccount;
     }
+    */
 
-    private function _createOpportunity($id, $time, $account)
+    public static function createOpportunity($id = '', Account $account = null)
+    {
+        $opportunity = self::_createOpportunity($id);
+
+        if($account !== null) {
+            $opportunity->account_id   = $account->id;
+            $opportunity->account_name = $account->name;
+            $opportunity->save();
+        }
+
+        return $opportunity;
+    }
+
+    private function _createOpportunity($id)
     {
         $timedate = TimeDate::getInstance();
         $name = 'SugarOpportunity';
@@ -64,28 +80,17 @@ class SugarTestOpportunityUtilities
             $opportunity->id = $id;
         }
 
-        $opportunity->name         = $name . $time;
+        $opportunity->name         = $name . time();
         $opportunity->amount       = 10000;
-        $opportunity->account_id   = $account->id;
-        $opportunity->account_name = $account->name;
         $opportunity->date_closed  = $timedate->getNow()->asDbDate();
         $opportunity->save();
 
         $GLOBALS['db']->commit();
 
         self::$_createdOpportunities[] = $opportunity;
-
         return $opportunity;
     }
 
-    public static function createOpportunity($id = '')
-    {
-        $time        = mt_rand();
-        $account     = self::_createAccount($time);
-        $opportunity = self::_createOpportunity($id, $time, $account);
-
-        return $opportunity;
-    }
 
     public static function setCreatedOpportunity($opportunity_ids)
     {

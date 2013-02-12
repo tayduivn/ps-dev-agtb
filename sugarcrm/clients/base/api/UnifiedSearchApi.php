@@ -67,7 +67,7 @@ class UnifiedSearchApi extends SugarListApi {
         $options = parent::parseArguments($api, $args, $seed);
         
         $options['query'] = '';
-        if ( !empty($args['q']) ) {
+        if ( isset($args['q']) ) {
             $options['query'] = trim($args['q']);
         }
 

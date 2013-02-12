@@ -615,7 +615,7 @@ class Product extends SugarBean {
 					       $deal_tot_usdollar += ($product->discount_amount / 100) * $product->discount_usdollar * $product->quantity;
 					    }
 					    else{
-					       $deal_tot_usdollar += $product->discount_amount;
+					       $deal_tot_usdollar += $product->discount_amount * $product->quantity;
 					    }
 					    $new_sub_usdollar = $subtotal_usdollar - $deal_tot_usdollar;
 					    if ($product->tax_class == 'Taxable') {

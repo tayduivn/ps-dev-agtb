@@ -69,7 +69,7 @@
 					{/if}
 				{else}
 					{* this is where the ajax sorting goes, set the sort urls appropriately*}
-		                <a href="javascript:sortBrowseList('{$pageData.urls.orderBy}','{$params.orderBy|default:$colHeader|lower}')" class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}&nbsp;&nbsp;
+                        <a href='javascript:SUGAR.kb.sortBrowseList({$pageData.queries.orderBy|@json},"{$params.orderBy|default:$colHeader|lower}", true)' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}&nbsp;&nbsp;
 						{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 							{if $pageData.ordering.sortOrder == 'ASC'}
                                 {capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
@@ -110,6 +110,7 @@
 			{/if}
 			{counter start=0 name="colCounter" print=false assign="colCounter"}
 			{foreach from=$displayColumns key=col item=params}
+				{assign var='ucol' value=$col|upper}
 				<td scope='row' align='{$params.align|default:'left'}' valign='top'><span sugar="sugar{$colCounter}b">
 					{if $params.link && !$params.customCode}
 						{if $params.contextMenu}
@@ -119,7 +120,7 @@
 							<span id='adspan_{$rowData[$params.id]|default:$rowData.ID}' onmouseout="return document_clearAdditionalDetailsCall('{$rowData[$params.id]|default:$rowData.ID}', 'adspan_{$rowData[$params.id]|default:$rowData.ID}', '{$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}')"
 							onmouseover="return getDocumentDetails('KBDocuments', '{$rowData[$params.id]|default:$rowData.ID}', 'adspan_{$rowData[$params.id]|default:$rowData.ID}', '{$rowData[$params.id]|default:$rowData.KBDOCUMENT_NAME_js}', 'panel_{$rowData[$params.id]|default:$rowData.ID}','{$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}')" onclick="updateKBViewsCount('{$rowData[$params.id]|default:$rowData.ID}')">
 								<{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href='#'>
-								{$rowData.$col}
+								{$rowData.$ucol}
 								</{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN}>
 							</span>
 
@@ -134,21 +135,21 @@
 						{sugar_evalcolumn var=$params.customCode rowData=$rowData}1
 					{elseif $params.currency_format}
 						{sugar_currency_format
-							var=$rowData.$col
+							var=$rowData.$ucol
 							round=$params.currency_format.round
 							decimals=$params.currency_format.decimals
 							symbol=$params.currency_format.symbol
 						}
 					{elseif $params.type == 'bool'}
 							<input type='checkbox' disabled=disabled class='checkbox'
-							{if !empty($rowData[$col])}
+							{if !empty($rowData.$ucol)}
 								checked=checked
 							{/if}
 							/>
 					{else}
-						{$rowData.$col}
+						{$rowData.$ucol}
 					{/if}
-                    {if empty($rowData.$col)}&nbsp;{/if}
+                    {if empty($rowData.$ucol)}&nbsp;{/if}
 				</span sugar='sugar{$colCounter}b'></td>
 				{counter name="colCounter"}
 			{/foreach}
