@@ -346,7 +346,8 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
    array (
        'name' => 'currency_id',
        'vname' => 'LBL_CURRENCY',
-       'type' => 'id',
+       'type' => 'currency_id',
+       'dbType' => 'id',
        'required' => true,
    ),
    'base_rate' =>

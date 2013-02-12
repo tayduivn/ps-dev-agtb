@@ -123,7 +123,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	array (
 	  'name' => 'currency_id',
 	  'vname' => 'LBL_CURRENCY',
-	  'type' => 'id',
+	  'type' => 'currency_id',
+	  'dbType' => 'id',
 	  'required' => true,
 	  'reportable' => false,
 	  'importable' => 'required',
