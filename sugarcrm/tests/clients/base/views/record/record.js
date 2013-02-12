@@ -803,6 +803,39 @@ describe("Record View", function() {
                 expect(results[4][1].labelSpan).toBe(2);
             });
         });
+
+        describe('Header panel', function() {
+            it('Should set isAvatar to false if the header doesn\'t the picture field', function() {
+                view._renderPanels(view.meta.panels);
+                expect(view.meta.panels[0].isAvatar).toBeFalsy();
+            });
+
+            it('Should set isAvatar to true if the header contains the picture field', function() {
+                var meta = {
+                            "panels": [{
+                                "name": "panel_header",
+                                "header": true,
+                                "fields": ["picture","name"]
+                            }, {
+                                "name": "panel_body",
+                                "label": "LBL_PANEL_2",
+                                "columns": 1,
+                                "labels": true,
+                                "labelsOnTop": false,
+                                "placeholders":true,
+                                "fields": ["description","case_number","type"]
+                            }, {
+                                "name": "panel_hidden",
+                                "hide": true,
+                                "labelsOnTop": false,
+                                "placeholders": true,
+                                "fields": ["created_by","date_entered","date_modified","modified_user_id"]
+                            }]
+                        };
+                view._renderPanels(meta.panels);
+                expect(meta.panels[0].isAvatar).toBeTruthy();
+            });
+        });
     });
 
     describe('Switching to next and previous record', function() {

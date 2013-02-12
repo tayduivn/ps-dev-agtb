@@ -6,7 +6,9 @@
                 {{#each meta.panels}}
                     {{#if header}}
                         <h1>
+                        {{#unless isAvatar}}
                         <span class="label label-module label-{{../../../this.module}}" rel="tooltip" data-title="{{../../../this.module}} avatar" data-original-title="">Xx</span>
+                        {{/unless}}
                         {{#each fields}}
                             <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
                             {{#unless noedit}}

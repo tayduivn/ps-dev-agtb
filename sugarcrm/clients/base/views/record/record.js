@@ -138,7 +138,7 @@
 
                 //The code below assumes that the field is an object but can be a string
                 if(_.isString(field)) {
-                    field = {
+                    panel.fields[index] = field = {
                         name: field
                     };
                 }
@@ -227,6 +227,11 @@
 
                 colCount++; // increment the column count now that we've filled a column
             }, this);
+
+            // Display module label in header panel it doesn't contain the picture field
+            if (panel.header) {
+                panel.isAvatar = !!_.find(panel.fields, function(f) { return f.name === 'picture'; });
+            }
 
             panel.grid = rows;
         }, this);
