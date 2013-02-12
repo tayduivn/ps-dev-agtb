@@ -29,11 +29,13 @@ class SilentUpgradeSessionVarsTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp() 
     {
         $this->writeExternalTestFile();
+        SugarAutoLoader::addToMap($this->externalTestFileName, false);
     }
 
     public function tearDown() 
     {
         $this->removeExternalTestFile();
+        SugarAutoLoader::delFromMap($this->externalTestFileName, false);
     }
 
     public function testSilentUpgradeSessionVars()
@@ -80,7 +82,7 @@ class SilentUpgradeSessionVarsTest extends Sugar_PHPUnit_Framework_TestCase
         require_once('modules/UpgradeWizard/uw_utils.php');
         
         \$get = getSilentUpgradeVar('SDizzle');
-        
+
         echo \$get;
 EOQ;
         
