@@ -26,7 +26,6 @@ require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 
 class RestService extends ServiceBase {
 
-    public $sessionId;
     public $user;
     /**
      * The request headers
@@ -394,19 +393,12 @@ class RestService extends ServiceBase {
      */
     protected function authenticateUser() {
         $valid = false;
+        
+        $token = $this->grabToken();
 
-        if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
-            // Passing a session id claiming to be an oauth token
-            $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
-        } else if ( isset($_POST['oauth_token']) ) {
-            $this->sessionId = $_POST['oauth_token'];
-        } else if ( isset($_GET['oauth_token']) ) {
-            $this->sessionId = $_GET['oauth_token'];
-        }
-
-        if ( !empty($this->sessionId) ) {
+        if ( !empty($token) ) {
             $oauthServer = SugarOAuth2Server::getOAuth2Server();
-            $oauthServer->verifyAccessToken($this->sessionId);
+            $oauthServer->verifyAccessToken($token);
             if ( isset($_SESSION['authenticated_user_id']) ) {
                 $valid = true;
                 $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
@@ -455,6 +447,35 @@ class RestService extends ServiceBase {
         $this->user = $GLOBALS['current_user'];
 
         return true;
+    }
+
+    /**
+     * Looks in all the various nooks and crannies and attempts to find an authentication header
+     *
+     * @returns string The oauth token
+     */
+    protected function grabToken()
+    {
+        if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
+            // Passing a session id claiming to be an oauth token
+            $sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
+        } else if ( isset($_POST['oauth_token']) ) {
+            $sessionId = $_POST['oauth_token'];
+        } else if ( isset($_GET['oauth_token']) ) {
+            $sessionId = $_GET['oauth_token'];
+        } else if ( function_exists('apache_request_headers') ) {
+            // Some PHP implementations don't populate custom headers by default
+            // So we have to go for a hunt
+            $headers = apache_request_headers();
+            foreach ( $headers as $key => $value ) {
+                if ( strtolower($key) == 'oauth_token' ) {
+                    $sessionId = $value;
+                    break;
+                }
+            }
+        }
+
+        return $sessionId;
     }
 
     /**
