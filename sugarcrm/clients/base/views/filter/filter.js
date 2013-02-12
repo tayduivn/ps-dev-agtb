@@ -5,8 +5,6 @@
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, opts);
 
-        this.currentFilter = "default";
-
         this.getFilters();
         this.getPreviouslyUsedFilter();
 
@@ -113,8 +111,11 @@
             });
 
             this.throttledSearch = _.debounce(function(e) {
-                self.currentSearch = self.$(e.currentTarget).val();
-                self.filterDataSetAndSearch();
+                var newSearch = self.$(e.currentTarget).val();
+                if(self.currentSearch !== newSearch) {
+                    self.currentSearch = newSearch;
+                    self.filterDataSetAndSearch();
+                }
             }, 400);
 
             this.customFilterNode.on("change", this.sanitizeFilter);
@@ -124,7 +125,7 @@
 
     initSelection: function(el, callback) {
         var data, model;
-        if(el.val() != "create") {
+        if(el.val() !== "create") {
             if(el.is(this.customFilterNode)) {
                 model = this.filters.get(el.val());
                 data = {id: model.id, text: model.get("name")};
@@ -140,6 +141,7 @@
         var self = this,
             result = $('<span class="select2-choice-type">' + app.lang.get("LBL_FILTER") + '<i class="icon-caret-down"></i></span><a class="select2-choice-filter" rel="'+ item.id + '" href="javascript:void(0)">'+ item.text +'</a>');
 
+        // TODO: Only bind this event if the filter has been created by the user (do we want users to be able to edit pre-defined filters? probably not) [ABE-283].
         $(result[1]).on("click", function() {
             self.openPanel(self.filters.get(item.id));
         });
