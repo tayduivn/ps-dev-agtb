@@ -39,12 +39,6 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
-        // Set the save button to show if the model has been edited.
-        this.model.on("change", function() {
-            if (this.inlineEditMode) {
-                this.setButtonStates(this.STATE.EDIT);
-            }
-        }, this);
         app.events.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
@@ -431,6 +425,8 @@
 
         // Set Editing mode to on.
         this.inlineEditMode = true;
+
+        this.setButtonStates(this.STATE.EDIT);
 
         // TODO: Refactor this for fields to support their own focus handling in future.
         // Add your own field type handling for focus / editing here.
