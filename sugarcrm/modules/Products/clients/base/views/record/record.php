@@ -76,7 +76,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'worst_case',
                 array(
                     'name'=>'category_name',
-                    'nodedit'=>true
+                    'noedit'=>true
                 ),
                 'type',
                 'lead_source',
@@ -93,7 +93,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'list_price',
                 array(
                     'name'=>'tax_class',
-                    'nodedit'=>true
+                    'noedit'=>true
                 ),
                 'cost_price'
             )
