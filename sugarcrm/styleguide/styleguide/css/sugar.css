@@ -456,6 +456,7 @@ code {
   margin-top: 8px;
 }
 .tooltip-inner {
+  white-space: pre-wrap;
   word-wrap: break-word;
 }
 .popover {
@@ -3479,12 +3480,11 @@ article .actions,
   border-radius: 10px;
   background: #e5f1fc;
   color: #4398ec;
-  padding: 2px 20px 2px 6px;
-  margin-right: 2px;
+  padding: 2px 18px 2px 6px;
 }
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice a.select2-search-choice-close {
   top: 3px;
-  right: 4px;
+  right: 2px;
   left: auto;
   font-family: FontAwesome;
   font-size: 14px;
