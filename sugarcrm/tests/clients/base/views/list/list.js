@@ -3,8 +3,8 @@ describe("sugarviews", function() {
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
-        SugarTest.loadHandlebarsTemplate("baselist", 'view', 'base');
-        SugarTest.testMetadata.addViewDefinition("baselist", {
+        SugarTest.loadHandlebarsTemplate("list", 'view', 'base');
+        SugarTest.testMetadata.addViewDefinition("list", {
             "panels": [{
                 "name": "panel_header",
                 "header": true,
@@ -12,29 +12,30 @@ describe("sugarviews", function() {
             }]
         }, "Cases");
         SugarTest.testMetadata.set();
-        SugarTest.app.data.declareModels();
+        //SugarTest.app.data.declareModels();
+        view = SugarTest.createView("base", "Cases", "list", null, null);
         layout = SugarTest.createLayout('base', "Cases", "list", null, null);
-        view = SugarTest.createView("base", "Cases", "baselist", null, null);
         view.layout = layout;
         app = SUGAR.App;
     });
 
     afterEach(function() {
+        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
         view = null;
     });
 
-    describe("baselist",function() {
+    describe("list",function() {
         it('should open an alert message on sort', function() {
             view.render();
             var ajaxStub = sinon.stub(app.api, 'call');
             var alertStub = sinon.stub(app.alert, 'show');
-            view.$('[data-fieldname=case_number]').click();
+            view.setOrderBy({target:'[data-fieldname=case_number]'});
             expect(alertStub).toHaveBeenCalled();
             alertStub.restore();
             ajaxStub.restore();
         });
-    })
+    });
 });
