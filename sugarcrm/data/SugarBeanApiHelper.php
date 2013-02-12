@@ -236,7 +236,7 @@ class SugarBeanApiHelper
          * Therefore we need to set the owner_override before we start manipulating the bean fields
          * so that the ACL returns correctly for owner
          */
-        if ($bean->assigned_user_id == $GLOBALS['current_user']->id) {
+        if (!empty($bean->assigned_user_id) && $bean->assigned_user_id == $GLOBALS['current_user']->id) {
             $context['owner_override'] = true;
         }
 
