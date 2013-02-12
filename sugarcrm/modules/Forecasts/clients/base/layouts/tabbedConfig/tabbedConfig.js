@@ -110,7 +110,7 @@
             // If the server returns an attributes hash that differs, the model's
             // state will be `set` again.
             save: function(key, val, options) {
-                var attrs, success, method, xhr, attributes = this.attributes;
+                var attrs, method, xhr, attributes = this.attributes;
 
                 // Handle both `"key", value` and `{key: value}` -style arguments.
                 if (key == null || typeof key === 'object') {
@@ -136,15 +136,9 @@
                 // After a successful server-side save, the client is (optionally)
                 // updated with the server-side state.
                 if (options.parse === void 0) options.parse = true;
-                success = options.success;
-                options.success = function(model, resp, options) {
-                    /**
-                     * SFA ADDITION: model comes back from the endpoint as an object
-                     * this function looks for it to be a full backbone model, so this
-                     * next line just makes a new Backbone.Model with the model as attribs
-                     */
-                    model = new Backbone.Model(model);
-
+                var model = this;
+                var success = options.success;
+                options.success = function(resp) {
                     // Ensure attributes are restored during synchronous saves.
                     model.attributes = attributes;
                     var serverAttrs = model.parse(resp, options);
@@ -153,13 +147,9 @@
                         return false;
                     }
                     if (success) success(model, resp, options);
+                    model.trigger('sync', model, resp, options);
                 };
-                var error = options.error;
-                options.error = function (resp) {
-                    if (error) error(model, resp, options);
-                    model.trigger('error', model, resp, options);
-                };
-                // Finish configuring and sending the Ajax request.
+
                 method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
                 if (method === 'patch') options.attrs = attrs;
                 xhr = this.sync(method, this, options);
