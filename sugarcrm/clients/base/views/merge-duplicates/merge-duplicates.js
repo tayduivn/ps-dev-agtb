@@ -127,9 +127,11 @@
             var alternatives = collection.without(primaryRecord);
 
             if(isSimilar(field, primaryRecord, alternatives)) {
+                fieldMeta.oddEven = (hiddenFields.length + 1)%2 ? 'odd' : 'even';
                 hiddenFields.push(fieldMeta);
             }
             else {
+                fieldMeta.oddEven = (visibleFields.length + 1)%2 ? 'odd' : 'even';
                 visibleFields.push(fieldMeta);
             }
         }, this);
@@ -232,20 +234,30 @@
         this.$(".fluid-div").disableSelection();
     },
     setDraggable: function() {
-        var self = this;
+        var self = this,
+            dragMe = _.bind(this.setDraggable,this); // avoid losing our context in the recursion
 
-        $( ".primary-edit-mode .primary-lbl" ).draggable({
+        this.$( ".primary-edit-mode .primary-lbl" ).draggable({
+            scroll: true,
             helper: function( event ) {
                 return $('<div class="primary-lbl static-ui-draggable"> Primary</div>');
             },
             stop: function(e) {
-                var dropped_to = $(document.elementFromPoint(e.clientX, e.clientY+24)).closest('.col');
-                $('.col').removeClass('primary-edit-mode');
-                $('.col .primary-lbl').removeAttr('style');
+                var dropped_to = self.$(document.elementFromPoint(e.clientX, e.clientY+24)).closest('.col');
+
+                // short circuit if we didn't land on anything
+                if (!dropped_to.length) {
+                    return;
+                }
+
+                // style cleanup
+                self.$('.col').removeClass('primary-edit-mode');
+                self.$('.col .primary-lbl').removeAttr('style');
                 dropped_to.addClass('primary-edit-mode');
 
                 self.setPrimaryEdit(dropped_to.data("recordid"));
-                setTimeout(this.setDraggable, 500);
+                _.delay(dragMe, 500);
+
             }
         });
     },
@@ -255,7 +267,8 @@
      */
     setPrimaryEdit: function(id) {
         // make sure we get the model in the collection, with all fields in it.
-        var primary_record = this.collection.get(id);
+        var primary_record = this.collection.get(id),
+            old_primary_record = this.context.get("primaryRecord");
 
         if(primary_record) {
             this.setPrimaryRecord(primary_record);               
@@ -263,17 +276,28 @@
             this.toggleFields(this.rowFields[primary_record.id], true);
             //app.view.views.ListView.prototype.toggleRow.call(this, primary_record.id, true);
         }
+
+        // revert old primary record to standard record, unless we dropped on the same record.
+        if(old_primary_record && !(old_primary_record === primary_record)) {
+            this.toggleFields(this.rowFields[old_primary_record.id], false);
+        }
     },
     /**
      * Set primary record
      * @param {Model} model primary model
      */
     setPrimaryRecord: function(model) {
+        var self = this;
         this.primaryRecord = model;  
         this.primaryRecord.on("change", function(){
+            var newRecordName = model.get('name') || "";
+            if (self.recordName && newRecordName != self.recordName) {
+                self.$('span.record-name').text(newRecordName);
+            }
+            self.recordName = newRecordName;
             app.events.trigger('preview:close');
             this.previewRecord(false);
-        }, this);
-        this.recordName = this.primaryRecord.get('name') || ''; 
+        }, this);        
+        this.recordName = this.primaryRecord.get('name') || '';
     }
 })

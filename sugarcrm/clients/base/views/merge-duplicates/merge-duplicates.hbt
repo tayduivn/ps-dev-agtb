@@ -1,6 +1,6 @@
 <div class="record record-merge-interface">
     <h4 class="merge-interface-header">
-    {{recordName}}
+    <span class="record-name">{{recordName}}</span>
     <a class="pull-right btn btn-link btn-invisible preview check-if-collapsed" href="javascript:void(0)" rel="tooltip" data-placement="bottom" data-toggle="proto" data-target="#preview-edit" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
     </h4>
 
@@ -35,12 +35,12 @@
                         {{#if hide}}
                             <div class="extra hide">
                             {{#each fields}}
-                                <div class="merge-row odd">{{field ../../../../this ../../../this "list"}}</div>
+                                <div class="merge-row {{oddEven}}">{{field ../../../../this ../../../this "list"}}</div>
                             {{/each}}
                             </div>
                         {{else}}
                             {{#each fields}}
-                                <div class="merge-row odd">{{field ../../../../this ../../../this "list"}}</div>
+                                <div class="merge-row {{oddEven}}">{{field ../../../../this ../../../this "list"}}</div>
                             {{/each}}
                         {{/if}}
                     {{/each}}
