@@ -459,6 +459,9 @@ code {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+.tooltip-inner> div {
+  text-align: left;
+}
 .popover {
   background-color: #343433;
   padding: 2px;
@@ -4405,7 +4408,7 @@ h1 input[type="text"] {
 .controls[class*="span"] textarea.inherit-width,
 .controls[class*="span"] select.inherit-width {
   width: 100%;
-  min-height: 28px;
+  min-height: 32px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -4462,7 +4465,6 @@ h1 input[type="text"] {
   *width: 6.32978723364%;
 }
 .controls {
-  margin-left: 2.127659574%;
   padding: 0;
 }
 .controls.btn-fit {
@@ -4482,7 +4484,7 @@ h1 input[type="text"] {
 }
 .controls.btn-fit .btn {
   position: absolute;
-  top: 0;
+  top: 2px;
   right: 0px;
 }
 .controls.btn-fit .btn.fourth {
@@ -4515,8 +4517,14 @@ h1 input[type="text"] {
   margin: 0;
   padding: 0;
 }
+.form-horizontal .control-group {
+  margin-bottom: 4px;
+}
+.form-horizontal .control-group:last-child {
+  margin-bottom: 0;
+}
 .form-horizontal .controls {
-  margin-left: 2.127659574%;
+  margin-left: 0;
   padding: 0;
 }
 .form-horizontal .controls > span {
@@ -4541,7 +4549,7 @@ h1 input[type="text"] {
 }
 .form-horizontal .controls.btn-fit .btn {
   position: absolute;
-  top: 0;
+  top: 2px;
   right: 0px;
 }
 .form-horizontal .controls.btn-fit .btn.fourth {
@@ -4562,7 +4570,7 @@ h1 input[type="text"] {
 }
 .form-horizontal .card2 .control-group:last-child .control-label,
 .form-horizontal .card2 .control-group .control-label.end-fieldgroup {
-  padding-bottom: 0;
+  padding-bottom: 5px;
   -webkit-border-radius: 0 0 3px 3px;
   -moz-border-radius: 0 0 3px 3px;
   border-radius: 0 0 3px 3px;
@@ -4571,7 +4579,7 @@ h1 input[type="text"] {
 }
 .form-horizontal div.control-label {
   float: left;
-  padding: 5px 0 12px;
+  padding: 7px 0 12px;
   text-align: right;
   border-left: 1px solid #dfdfdf;
   border-right: 1px solid #dfdfdf;
@@ -8412,12 +8420,13 @@ h1 .select2-container .select2-choice abbr {
 .record .form-horizontal .record-cell input[type="text"],
 .record .form-horizontal .record-cell select,
 .record .form-horizontal .record-cell textarea,
-.record .form-horizontal .record-cell .uneditable-input {
+.record .form-horizontal .record-cell .uneditable-input,
+.record .form-horizontal .record-cell .select2-container {
   margin-left: 0px !important;
 }
 .record .form-horizontal .record-cell .compose-sender-options {
   position: absolute;
-  top: 5px;
+  top: 7px;
   right: 51px;
   z-index: 2;
 }
@@ -8577,10 +8586,16 @@ h1 .select2-container .select2-choice abbr {
   margin: -7px 0 0 -9px;
   position: absolute;
 }
-.record .record-cell[data-type="teamset"] .normal .row-fluid {
+.record .record-cell[data-type="teamset"] .control-group.teamset {
+  padding: 7px 0;
+}
+.record .record-cell[data-type="teamset"] .control-group.teamset label {
+  margin-bottom: 0;
+}
+.record .record-cell[data-type="teamset"] .normal .control-group {
   margin-bottom: 4px;
 }
-.record .record-cell[data-type="teamset"] .normal .row-fluid .select2-container {
+.record .record-cell[data-type="teamset"] .normal .control-group .select2-container {
   margin: 0 0 0 -9px;
 }
 .record .record-cell[data-type="datetimecombo"] .normal > span {
