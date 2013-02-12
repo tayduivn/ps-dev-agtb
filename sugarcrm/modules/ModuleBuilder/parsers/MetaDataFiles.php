@@ -111,6 +111,7 @@ class MetaDataFiles
         MB_POPUPSEARCH            => 'popupdefs',
         MB_POPUPLIST              => 'popupdefs',
         MB_LISTVIEW               => 'listviewdefs' ,
+        MB_SIDECARLISTVIEW        => 'list' ,
         MB_BASICSEARCH            => 'searchdefs' ,
         MB_ADVANCEDSEARCH         => 'searchdefs' ,
         MB_EDITVIEW               => 'editviewdefs' ,
@@ -404,7 +405,8 @@ class MetaDataFiles
         } else {
             $viewPath = 'metadata/';
         }
-		return $paths[$type] . 'modules/' . $module . '/' . $viewPath . $names[$view] . '.php';
+
+        return $paths[$type] . 'modules/' . $module . '/' . $viewPath . $names[$view] . '.php';
     }
 
     /**

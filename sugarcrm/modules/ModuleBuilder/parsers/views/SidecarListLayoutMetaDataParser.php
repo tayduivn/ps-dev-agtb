@@ -32,12 +32,23 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      * @protected
      */
     protected $invalidTypes = array(
+        'base' => array('iframe', 'encrypt', 'html', 'currency_id'),
         //BEGIN SUGARCRM flav=ent ONLY
         'portal' => array('iframe', 'encrypt', 'html','currency', 'currency_id'),
         //END SUGARCRM flav=ent ONLY
     );
-            
-    
+
+    protected $allowedViews = array(
+        MB_SIDECARLISTVIEW,
+        //BEGIN SUGARCRM flav=pro ONLY
+        MB_WIRELESSLISTVIEW,
+        //END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        MB_PORTALLISTVIEW,
+        //END SUGARCRM flav=ent ONLY
+    );
+
+
     /*
      * Constructor, builds the parent ListLayoutMetaDataParser then adds the
      * panel data to it
@@ -63,7 +74,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
                 foreach ($def['fields'] as $field) {
                     if (!empty($field['name'])) {
                         if (
-                            !empty($field['default']) && !empty($field['enabled']) &&
+                            !empty($field['default']) &&
                             (!isset($field['studio']) || ($field['studio'] !== false && $field['studio'] != 'false'))
                         ) {
                             if (isset($this->_fielddefs[$field['name']])) {

@@ -151,8 +151,15 @@ class ParserFactory
             case MB_LISTVIEW :
                 if ($subpanelName == null)
                 {
-                    require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php' ;
-                    return new ListLayoutMetaDataParser ( MB_LISTVIEW, $moduleName, $packageName ) ;
+                    if (file_exists("modules/$moduleName/clients/base/views/list/list.php"))
+                    {
+                        require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php' ;
+                        return new SidecarListLayoutMetaDataParser (MB_SIDECARLISTVIEW, $moduleName, $packageName, 'base' ) ;
+                    } else
+                    {
+                        require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php' ;
+                        return new ListLayoutMetaDataParser ( MB_LISTVIEW, $moduleName, $packageName ) ;
+                    }
                 } else
                 {
                     require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php' ;

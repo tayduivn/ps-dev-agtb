@@ -28,6 +28,7 @@ define('MB_HISTORYMETADATALOCATION','history');
 define('MB_GRIDLAYOUTMETADATA','gridLayoutMetaData');
 define('MB_LISTLAYOUTMETADATA','listLayoutMetaData');
 define('MB_LISTVIEW','listview');
+define('MB_SIDECARLISTVIEW','list');
 define('MB_SEARCHVIEW','searchview');
 define('MB_BASICSEARCH','basic_search' );
 define('MB_ADVANCEDSEARCH','advanced_search' );
