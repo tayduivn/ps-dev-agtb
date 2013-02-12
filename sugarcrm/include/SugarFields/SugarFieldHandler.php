@@ -50,11 +50,10 @@ class SugarFieldHandler
         if(!isset($sugarFieldObjects[$field])) {
         	//check custom directory
         	$file = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/{$field}/SugarField{$field}.php");
+
         	if($file) {
                 $type = $field;
-                $GLOBALS['log']->fatal("IKEA: Found field $field");
         	} else {
-                $GLOBALS['log']->fatal("IKEA: Didn't find field $field");
                 // No direct class, check the directories to see if they are defined
         		if( $returnNullIfBase &&
         		    !SugarAutoLoader::existing('include/SugarFields/Fields/'.$field)) {
