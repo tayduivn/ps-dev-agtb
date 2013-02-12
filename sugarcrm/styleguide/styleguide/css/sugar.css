@@ -3389,8 +3389,8 @@ article .actions,
   border-radius: 0 0 4px 4px;
 }
 .select2-container .select2-choices {
-  padding: 3px 70px 3px 0;
-  min-height: 20px;
+  padding: 3px 4px 3px 0;
+  min-height: 24px;
   border: 1px solid #CDCCCB;
   background-image: none;
   -webkit-border-radius: 4px;
@@ -3408,9 +3408,10 @@ article .actions,
   line-height: 19px;
   height: 20px;
 }
-.select2-container.select2-choices-pills .select2-search-choice {
+.select2-container.select2-choices-pills .select2-search-choice,
+.select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice {
   padding: 0;
-  margin: 4px 4px 4px;
+  margin: 3px 0 4px 4px;
   font-size: 11px;
   background: none;
   border: none;
@@ -3420,6 +3421,19 @@ article .actions,
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
+}
+.select2-container.select2-choices-pills .select2-search-choice.select2-search-choice-focus,
+.select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice.select2-search-choice-focus {
+  border-color: rgba(82,168,236,0.8);
+  outline: 0;
+  outline: thin dotted 9;
+  -webkit-box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
+  -moz-box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
+  box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
+  -webkit-border-radius: 11px;
+  -moz-border-radius: 11px;
+  border-radius: 11px;
+  background-color: rgba(82,168,236,0.4);
 }
 .select2-container.select2-choices-pills .select2-search-choice span {
   -webkit-border-radius: 10px 0 0 10px;
@@ -3449,31 +3463,6 @@ article .actions,
 .select2-container.select2-choices-pills .select2-search-choice a.select2-search-choice-close {
   display: none;
 }
-.select2-container.select2-choices-pills .select2-search-choice.select2-search-choice-focus {
-  border-color: rgba(82,168,236,0.8);
-  outline: 0;
-  outline: thin dotted 9;
-  -webkit-box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
-  -moz-box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
-  box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
-  -webkit-border-radius: 11px;
-  -moz-border-radius: 11px;
-  border-radius: 11px;
-  background-color: rgba(82,168,236,0.4);
-}
-.select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice {
-  padding: 0;
-  margin: 4px 0 4px 4px;
-  font-size: 11px;
-  background: none;
-  border: none;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-}
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice div {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -3498,18 +3487,6 @@ article .actions,
 }
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice a.select2-search-choice-close::before {
   content: "\f057";
-}
-.select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice.select2-search-choice-focus {
-  border-color: rgba(82,168,236,0.8);
-  outline: 0;
-  outline: thin dotted 9;
-  -webkit-box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
-  -moz-box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
-  box-shadow: 0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6);
-  -webkit-border-radius: 11px;
-  -moz-border-radius: 11px;
-  border-radius: 11px;
-  background-color: rgba(82,168,236,0.4);
 }
 .select2-container .select2-select-legend .icon-plus {
   margin-top: 3px;
