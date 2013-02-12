@@ -27,9 +27,11 @@
 ({
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.collection.on("reset", function() {
-            this.updateCount();
-        }, this);
+        if(this.collection){
+            this.collection.on("reset", function() {
+                this.updateCount();
+            }, this);
+        }
     },
 
     updateCount: function() {

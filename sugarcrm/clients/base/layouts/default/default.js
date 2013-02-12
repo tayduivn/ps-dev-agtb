@@ -15,6 +15,7 @@
         app.events.on("preview:open", this.showPreviewPanel, this);
         app.events.on("preview:close", this.hidePreviewPanel, this);
         this.context.on("toggleSidebar", this.toggleSide, this);
+        this.context.on("openSidebar", this.openSide, this);
     },
 
     toggleSide: function() {
@@ -22,7 +23,11 @@
         this.$('.main-pane').toggleClass('span8');
         this.$('.side').toggle();
     },
-
+    openSide: function() {
+        this.$('.main-pane').addClass('span8');
+        this.$('.main-pane').removeClass('span12');
+        this.$('.side').show();
+    },
     processDef: function() {
         this.$(".main-pane").addClass("span" + this.meta.components[0]["layout"].span);
         this.$(".side").addClass("span" + this.meta.components[1]["layout"].span);

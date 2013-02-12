@@ -4,9 +4,10 @@ describe("Base.View.SelectionList", function() {
         moduleName = 'Accounts';
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'view', 'baselist');
+        SugarTest.loadComponent('base', 'view', 'list');
+        SugarTest.loadComponent('base', 'view', 'recordlist');
         SugarTest.loadComponent('base', 'view', 'selection-list');
-        SugarTest.testMetadata.addViewDefinition('baselist', {
+        SugarTest.testMetadata.addViewDefinition('list', {
             "panels":[
                 {
                     "name":"panel",
@@ -41,9 +42,9 @@ describe("Base.View.SelectionList", function() {
         view = null;
     });
 
-    describe('Initialization with baselist panel fields', function() {
-        it("Should initialize the metadata from baselist view", function() {
-            var expected = (app.metadata.getView(moduleName, 'baselist')).panels[0].fields.length + 1, //+1: selection field will be added
+    describe('Initialization with list panel fields', function() {
+        it("Should initialize the metadata from list view", function() {
+            var expected = (app.metadata.getView(moduleName, 'list')).panels[0].fields.length + 1, //+1: selection field will be added
                 actual = view.meta.panels[0].fields.length;
             expect(expected).toBe(actual);
         });

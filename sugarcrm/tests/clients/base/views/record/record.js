@@ -1,5 +1,6 @@
 describe("Record View", function() {
     var moduleName = 'Cases',
+        app,
         viewName = 'record',
         sinonSandbox, view,
         createListCollection;
@@ -74,7 +75,7 @@ describe("Record View", function() {
         }, moduleName);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-
+        app = SugarTest.app;
         sinonSandbox = sinon.sandbox.create();
 
         view = SugarTest.createView("base", moduleName, "record", null, null);
@@ -92,6 +93,38 @@ describe("Record View", function() {
             view.render();
 
             expect(_.size(view.fields)).toBe(0);
+        });
+
+        it("Should update previous props on read and update only", function() {
+            var modelAttributes = {
+                id: '123',
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            };
+            view.model.set(modelAttributes);
+
+            view.handleSync('read', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+            view.handleSync('update', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+            view.model.set({name:'Test'});
+            view.handleSync('randomAction', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+        });
+
+        it("Should set previous model state on app data:sync:end", function() {
+            var modelAttributes = {
+                id: '123',
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            };
+            view.model.set(modelAttributes);
+            expect(view.previousModelState).toBeNull();
+            SugarTest.app.trigger('data:sync:end','read',view.model);
+            view.handleSync('read', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
         });
 
         it("Should render 8 editable fields and 6 buttons", function() {
@@ -154,6 +187,42 @@ describe("Record View", function() {
             expect(_.size(view.fields)).toBe(0);
         });
 
+        it("Should not be editable when a user doesn't have write access on this field", function() {
+            sinonSandbox.stub(SugarTest.app.acl, '_hasAccessToField', function(action, acls, field) {
+                return field !== 'name';
+            });
+            sinonSandbox.stub(SugarTest.app.user, 'getAcls', function() {
+                var acls = {};
+                acls[moduleName] = {
+                    edit: 'yes',
+                    fields: {
+                        name: {
+                            write: 'no'
+                        }
+                    }
+                };
+                return acls;
+            });
+
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+
+            view.$('.more').click();
+            var editableFields = 0;
+            _.each(view.editableFields, function(field) {
+                if (field.$el.closest('.record-cell').find('.record-edit-link-wrapper').length === 1) {
+                    editableFields++;
+                }
+            });
+
+            expect(editableFields).toBe(7);
+            expect(_.size(view.editableFields)).toBe(7);
+        });
+
         it("should call decorateError on error fields during 'error:validation' events", function(){
             view.render();
             view.model.set({
@@ -164,6 +233,7 @@ describe("Record View", function() {
             var descriptionField = _.find(view.fields, function(field){
                 return field.name === 'description';
             });
+            descriptionField.decorateError = function() {};//sugar7.js now injects this
             var stub = sinon.stub(descriptionField, 'decorateError', $.noop());
             //Simulate a 'required' error on description field
             view.model.trigger('error:validation', {description: {required : true}});
@@ -185,6 +255,7 @@ describe("Record View", function() {
             var descriptionField = _.find(view.fields, function(field){
                 return field.name === 'description';
             });
+            descriptionField.clearErrorDecoration = function() {};//sugar7.js now injects this
             var stub = sinon.stub(descriptionField, 'clearErrorDecoration', $.noop());
             view.model.trigger('error:validation', {description: {required : true}});
             view.cancelClicked();
@@ -298,6 +369,7 @@ describe("Record View", function() {
                 case_number: 123,
                 description: 'Description'
             });
+            view.handleSync('read',view.model);
             view.context.trigger('button:edit_button:click');
             view.model.set({
                 name: 'Bar'
@@ -782,6 +854,86 @@ describe("Record View", function() {
             expect(view.collection.previous).not.toBeDefined();
             expect(view.collection.next).toBeDefined();
             expect(view.collection.next.get('id')).toEqual(modelIds[1]);
+        });
+    });
+
+    describe('duplicateClicked', function(){
+        var triggerStub;
+        var openStub;
+
+        beforeEach(function(){
+            triggerStub = sinon.stub(Backbone.Model.prototype, 'trigger', function(event, model){
+                if(event == "duplicate:before"){
+                    expect(model.get("name")).toEqual(view.model.get("name"));
+                    expect(model.get("description")).toEqual(view.model.get("description"));
+                    expect(model).toNotBe(view.model);
+                }
+            });
+            SugarTest.app.drawer = {
+                open: function(){},
+                close: function(){}
+            };
+            openStub = sinon.stub(SugarTest.app.drawer, "open", function(opts){
+                expect(opts.context.model).toBeDefined();
+                expect(opts.layout).toEqual("create");
+                expect(opts.context.model.get("name")).toEqual(view.model.get("name"));
+                expect(opts.context.model.get("description")).toEqual(view.model.get("description"));
+                expect(opts.context.model).toNotBe(view.model);
+            });
+        });
+        afterEach(function(){
+            if(triggerStub){
+                triggerStub.restore();
+            }
+            if(openStub){
+                openStub.restore();
+            }
+        });
+        it("should trigger 'duplicate:before' on model prior to opening create drawer", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            triggerStub.reset();
+            view.layout = new Backbone.Model();
+
+            view.duplicateClicked();
+            expect(triggerStub.called).toBe(true);
+            expect(triggerStub.calledWith("duplicate:before")).toBe(true);
+            expect(openStub.called).toBe(true);
+            expect(triggerStub.calledBefore(openStub)).toBe(true);
+        });
+
+        it(" should pass model to mutate with 'duplicate:before' event", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            triggerStub.reset();
+            view.layout = new Backbone.Model();
+
+            view.duplicateClicked();
+            expect(triggerStub.called).toBe(true);
+            expect(triggerStub.calledWith('duplicate:before')).toBe(true);
+            //Further expectations in stub
+        });
+
+        it("should fire 'drawer:create:fire' event with copied model set on context", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            triggerStub.reset();
+            view.layout = new Backbone.Model();
+            view.duplicateClicked();
+            expect(openStub.called).toBe(true);
+            expect(openStub.lastCall.args[0].context.model.get("name")).toEqual(view.model.get("name"));
         });
     });
 });

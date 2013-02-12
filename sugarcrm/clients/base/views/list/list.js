@@ -25,125 +25,304 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'BaselistView',
-    rowFields: {},
-    previousModelStates: {},
-
-    populatePanelMetadata: function(panel, options) {
-        panel = app.view.views.BaselistView.prototype.populatePanelMetadata.call(this, panel, options);
-        panel = this.addFavorite(panel, options);
-        return panel;
+    extendsFrom: 'EditableView',
+    /**
+     * View that displays a list of models pulled from the context's collection.
+     * @class View.Views.ListView
+     * @alias SUGAR.App.layout.ListView
+     * @extends View.View
+     */
+    events:{
+        'click [class*="orderBy"]':'setOrderBy',
+        'mouseenter .rowaction': 'showTooltip',
+        'mouseleave .rowaction': 'hideTooltip',
+        'mouseenter tr':'showActions',
+        'mouseleave tr':'hideActions',
+        'mouseenter .ellipsis_inline':'addTooltip'
     },
-    addFavorite: function(panel, options) {
-        var meta = options.meta;
-
-        if(meta.favorite) {
-            panel.fields[0].fields.push({type: 'favorite'});
+    addTooltip: function(event){
+        if (_.isFunction(app.utils.handleTooltip)) {
+            app.utils.handleTooltip(event, this);
         }
-        return meta;
     },
-    addRowActions: function(panel, options) {
-        panel = app.view.views.BaselistView.prototype.addRowActions.call(this, panel, options);
-        panel.fields[0].fields.push({
-            type: 'editablelistbutton',
-            label: 'LBL_CANCEL_BUTTON_LABEL',
-            name: 'inline-cancel',
-            css_class: 'btn-link btn-invisible inline-cancel'
-        });
+    initialize: function(options) {
+        //Grab the list of fields to display from the main list view (assuming initialize is being called from a subclass)
+        var listViewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {}));
+        //Extend from an empty object to prevent polution of the base metadata
+        options.meta = _.extend({}, listViewMeta, JSON.parse(JSON.stringify(options.meta || {})));
+        options.meta.type = options.meta.type || 'list';
 
-        var lastCell = _.last(panel.fields);
-        lastCell.cell_css_class = 'overflow-visible';
-        lastCell.fields.push({
-            type: 'editablelistbutton',
-            label: 'LBL_SAVE_BUTTON_LABEL',
-            name: 'inline-save',
-            css_class: 'btn-primary'
-        });
+        _.each(options.meta.panels, function(panel) {
+            panel = this.populatePanelMetadata(panel, options);
+        }, this);
+
+        app.view.View.prototype.initialize.call(this, options);
+        this.template = this.template || app.template.getView('list', this.module)
+                        || app.template.getView('list') || null;
+        this.fallbackFieldTemplate = 'list-header';
+
+        //When clicking on eye icon, we need to trigger preview:render with model&collection
+        this.context.on("list:preview:fire", function(model) {
+            app.events.trigger("preview:render", model, this.collection);
+        }, this);
+
+        //When switching to next/previous record from the preview panel, we need to update the highlighted row
+        app.events.on("list:preview:decorate", this.decorateRow, this);
+    },
+    populatePanelMetadata: function(panel, options) {
+        var meta = options.meta;
+        if(meta.selection) {
+            switch (meta.selection.type) {
+                case "single":
+                    panel = this.addSingleSelectionAction(panel, options);
+                    break;
+                case "multi":
+                    panel = this.addMultiSelectionAction(panel, options);
+                    break;
+                default:
+                    break;
+            }
+        }
+        if(meta && meta.rowactions) {
+            panel = this.addRowActions(panel, options);
+        }
         return panel;
     },
     _render:function () {
-        app.view.views.BaselistView.prototype._render.call(this);
-        this.context.off("list:editall:fire", null, this);
-        this.context.on("list:editall:fire", this.toggleEdit, this);
-        this.context.off("list:editrow:fire", null, this);
-        this.context.on("list:editrow:fire", this.editClicked, this);
-        this.context.off("list:deleterow:fire", null, this);
-        this.context.on("list:deleterow:fire", this.deleteClicked, this);
-        delete this.rowFields;
-        this.rowFields = {};
-        _.each(this.fields, function(field) {
-            //TODO: Modified date should not be an editable field
-            //TODO: the code should be handled different way instead of checking its type later
-            if(field.model.id && _.isUndefined(field.parent) && field.type !== 'datetimecombo') {
-                this.rowFields[field.model.id] = this.rowFields[field.model.id] || [];
-                this.rowFields[field.model.id].push(field);
-            }
-        }, this);
-    },
-    deleteClicked: function(model) {
         var self = this;
-        app.alert.show('delete_confirmation', {
-            level: 'confirmation',
-            messages: app.lang.get('NTC_DELETE_CONFIRMATION'),
-            onConfirm: function() {
-                app.alert.show('delete_list_record', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_DELETING')});
-                model.destroy({
-                    success: function() {
-                        app.alert.dismiss('delete_list_record');
-                        self.collection.remove(model);
-                        self.render();
-                    }
-                });
-            }
-        });
-    },
-    editClicked: function(model) {
-        this.toggleRow(model.id, true);
-    },
-    toggleRow: function(modelId, isEdit) {
-        var model = this.collection.get(modelId);
-        if(isEdit) {
-            model.on("error:validation", this.handleValidationError, this.rowFields[modelId]);
-            this.previousModelStates[modelId] = model.previousAttributes();
-        } else {
-            model.off("error:validation", this.handleValidationError, this.rowFields[modelId]);
-            delete this.previousModelStates[modelId];
-        }
-        this.$("tr[name=" + this.module + "_" + modelId + "]").toggleClass("tr-inline-edit", isEdit);
-        this.toggleFields(this.rowFields[modelId], isEdit);
-    },
-    toggleEdit: function(isEdit) {
-        var self = this;
-        this.viewName = isEdit ? 'edit' : 'list';
-        _.each(this.rowFields, function(editableFields, modelId) {
-            //running the toggling jon in each thread to prevent blocking brower performance
-            _.defer(function(modelId) {
-                self.toggleRow(modelId, isEdit);
-            }, modelId);
+        app.view.View.prototype._render.call(this);
+        // off prevents multiple bindings for each render
+        this.layout.off("list:search:fire", null, this);
+        this.layout.off("list:paginate:success", null, this);
+        this.layout.on("list:search:fire", this.fireSearch, this);
+        this.layout.on("list:paginate:success", function() {
+            //When fetching more records, we need to update the preview collection
+            app.events.trigger("preview:collection:change", this.collection);
+            this.render();
         }, this);
-    },
-    handleValidationError:function (errors) {
-        var rowField = this;
-        _.each(errors, function (fieldErrors, fieldName) {
-            var field = _.find(rowField, function(field) {
-                return field.name === fieldName;
-            });
+        this.layout.off("list:filter:toggled", null, this);
+        this.layout.on("list:filter:toggled", this.filterToggled, this);
+        this.layout.off("list:alert:show", null, this);
+        this.layout.on("list:alert:show", this.showAlert, this);
+        this.layout.off("list:alert:hide", null, this);
+        this.layout.on("list:alert:hide", this.hideAlert, this);
+        this.layout.off("list:sort:fire", null, this);
+        this.layout.on("list:sort:fire", function() {
+            //When sorting the list view, we need to close the preview panel
+            app.events.trigger("preview:close");
+        }, this);
 
-            var message = '',
-                $fieldEl = field.getFieldElement();
-            if($fieldEl.length > 0) {
-                $fieldEl.addClass("local-error");
-                var tooltipEl = field.$(".error-tooltip[rel=tooltip]");
-                if(tooltipEl.length === 0) {
-                    tooltipEl = $('<span class="add-on local error-tooltip" rel="tooltip"><i class="icon-exclamation-sign"></i></span>');
-                    $fieldEl.after(tooltipEl);
-                }
-                _.each(fieldErrors, function (errorContext, errorName) {
-                    message += app.error.getErrorString(errorName, errorContext);
-                }, rowField);
-                tooltipEl.attr("data-original-title", message);
-                tooltipEl.tooltip({placement:"top", container: "body"});
+        // Dashboard layout injects shared context with limit: 5. 
+        // Otherwise, we don't set so fetches will use max query in config.
+        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
+    },
+    showAlert: function(message) {
+        this.$(".alert .container").html(message);
+        this.$(".alert").removeClass("hide");
+    },
+    hideAlert: function() {
+        this.$(".alert").addClass("hide");
+    },
+    filterToggled:function (isOpened) {
+        this.filterOpened = isOpened;
+    },
+    fireSearch:function (term) {
+        var options = {
+            limit:this.limit || null,
+            params:{},
+            fields:this.collection.fields || {}
+        };
+        if(term) {
+            options.params.q = term;
+        }
+        //TODO: This should be handled automagically by the collection by checking its own tie to the context
+        if (this.context.get('link')) {
+            options.relate = true;
+        }
+        this.collection.fetch(options);
+    },
+
+    /**
+     * Sets order by on collection and view
+     * @param {Object} event jquery event object
+     */
+    setOrderBy:function (event) {
+        var orderMap, collection, fieldName, nOrder, options, eventTarget, orderBy;
+        var self = this;
+        //set on this obj and not the prototype
+        self.orderBy = self.orderBy || {};
+
+        //mapping for css
+        orderMap = {
+            "desc":"_desc",
+            "asc":"_asc"
+        };
+
+        //TODO probably need to check if we can sort this field from metadata
+        collection = self.collection;
+        eventTarget = self.$(event.target);
+        fieldName = eventTarget.data('fieldname');
+
+        // first check if alternate orderby is set for column
+        orderBy = eventTarget.data('orderby');
+        // if no alternate orderby, use the field name
+        if (!orderBy) {
+            orderBy = eventTarget.data('fieldname');
+        }
+
+        if (!collection.orderBy) {
+            collection.orderBy = {
+                field:"",
+                direction:"",
+                columnName:""
+            };
+        }
+
+        nOrder = "desc";
+
+        // if same field just flip
+        if (orderBy === collection.orderBy.field) {
+            if (collection.orderBy.direction === "desc") {
+                nOrder = "asc";
             }
-        });
+            collection.orderBy.direction = nOrder;
+        } else {
+            collection.orderBy.field = orderBy;
+            collection.orderBy.direction = "desc";
+        }
+        collection.orderBy.columnName = fieldName;
+
+        // set it on the view
+        self.orderBy.field = orderBy;
+        self.orderBy.direction = orderMap[collection.orderBy.direction];
+        self.orderBy.columnName = fieldName;
+
+        // Treat as a "sorted search" if the filter is toggled open
+        options = self.filterOpened ? self.getSearchOptions() : {};
+
+        // If injected context with a limit (dashboard) then fetch only that 
+        // amount. Also, add true will make it append to already loaded records.
+        options.limit = self.limit || null;
+        options.success = function () {
+            // Hide loading message
+            app.alert.dismiss('loading_' + self.cid);
+
+            self.layout.trigger("list:sort:fire", collection, self);
+            self.render();
+        };
+        if (this.context.get('link')) {
+            options.relate = true;
+        }
+
+        // Display Loading message
+        app.alert.show('loading_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_LOADING')});
+
+        // refetch the collection
+        collection.fetch(options);
+    },
+    getSearchOptions:function () {
+        var collection, options, previousTerms, term = '';
+        collection = this.context.get('collection');
+
+        // If we've made a previous search for this module grab from cache
+        if (app.cache.has('previousTerms')) {
+            previousTerms = app.cache.get('previousTerms');
+            if (previousTerms) {
+                term = previousTerms[this.module];
+            }
+        }
+        // build search-specific options and return
+        options = {
+            params:{},
+            fields:collection.fields ? collection.fields : this.collection
+        };
+        if (term) {
+            options.params.q = term;
+        }
+        if (this.context.get('link')) {
+            options.relate = true;
+        }
+        return options;
+    },
+    /**
+     * Decorate a row in the list that is being shown in Preview
+     * @param model Model for row to be decorated.  Pass a falsy value to clear decoration.
+     */
+    decorateRow: function(model){
+        this.$("tr.highlighted").removeClass("highlighted current above below");
+        if(model){
+            var rowName = model.module+"_"+ model.get("id");
+            var curr = this.$("tr[name='"+rowName+"']");
+            curr.addClass("current highlighted");
+            curr.prev("tr").addClass("highlighted above");
+            curr.next("tr").addClass("highlighted below");
+        }
+    },
+    addSingleSelectionAction: function(panel, options) {
+        var meta = options.meta,
+            module = options.module,
+            singleSelect = [{
+                'type' : 'selection',
+                'name' : meta.selection.name || module + '_select',
+                'sortable' : false,
+                'label' : meta.selection.label || ''
+            }];
+
+        panel.fields = singleSelect.concat(panel.fields);
+        return panel;
+    },
+    addMultiSelectionAction: function(panel, options) {
+        var meta = options.meta,
+            multiSelect = [{
+            'type' : 'fieldset',
+            'fields' : [{
+                'type' : 'actionmenu',
+                'buttons' : []
+            }],
+            'value' : false,
+            'sortable' : false
+        }];
+        if (!_.isUndefined(meta.selection.actions)) {
+            multiSelect[0].fields[0].buttons = meta.selection.actions;
+        }
+        panel.fields = multiSelect.concat(panel.fields);
+        return panel;
+    },
+    addRowActions: function(panel, options) {
+        var meta = options.meta,
+            rowActions = {
+            'type' : 'fieldset',
+            'fields' : [{
+                'type' : 'rowactions',
+                'label' : meta.rowactions.label || '',
+                'css_class' : meta.rowactions.css_class,
+                'buttons' : []
+            }],
+            'value' : false,
+            'sortable' : false
+        };
+        if (!_.isUndefined(meta.rowactions.actions)) {
+            rowActions.fields[0].buttons = meta.rowactions.actions;
+        }
+        panel.fields = panel.fields.concat(rowActions);
+
+        return panel;
+    },
+    showTooltip: function(e) {
+        this.$(e.currentTarget).tooltip("show");
+    },
+    hideTooltip: function(e) {
+        this.$(e.currentTarget).tooltip("hide");
+    },
+    showActions:function (e) {
+        $(e.currentTarget).children("td").children("span").children(".btn-group").show();
+    },
+    hideActions:function (e) {
+        $(e.currentTarget).children("td").children("span").children(".btn-group").hide();
+    },
+    bindDataChange:function () {
+        if (this.collection) {
+            this.collection.on("reset", this.render, this);
+        }
     }
 })

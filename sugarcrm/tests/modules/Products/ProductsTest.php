@@ -54,6 +54,8 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
@@ -226,6 +228,30 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * @group products
+     *
+     * Test that the account_id in Product instance is properly set for a given Opportunity id.  I am
+     * currently creating Opportunities with new Opportunity() because the test helper for Opportunities
+     * creates accounts automatically.
+     */
+    public function testSetAccountForOpportunity() {
+        $opp = new Opportunity();
+        $opp->name = "opp1";
+        $opp->save();
+        $opp->load_relationship('accounts');
+        $account = SugarTestAccountUtilities::createAccount();
+        $opp->accounts->add($account);
+        $product = new MockProduct();
+        $this->assertTrue($product->setAccountIdForOpportunity($opp->id));
+
+        $opp2 = new Opportunity();
+        $opp2->name = "opp2";
+        $opp2->save();
+        SugarTestOpportunityUtilities::setCreatedOpportunity(array($opp->id, $opp2->id));
+        $product2 = new MockProduct();
+        $this->assertFalse($product2->setAccountIdForOpportunity($opp2->id));
+    }
 }
 
 class MockProduct extends Product
@@ -233,5 +259,9 @@ class MockProduct extends Product
     public function handleSalesStatus()
     {
         parent::handleSalesStatus();
+    }
+
+    public function setAccountIdForOpportunity($oppId) {
+        return parent::setAccountIdForOpportunity($oppId);
     }
 }

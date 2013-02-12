@@ -1,32 +1,17 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License. Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party. Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited. You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/* * *******************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution. See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License. Please refer to the License for the specific language
- * governing these rights and limitations under the License. Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  * ****************************************************************************** */
-
 
 require_once('tests/service/SOAPTestCase.php');
 
@@ -42,25 +27,21 @@ require_once('tests/SugarTestProductUtilities.php');
  */
 class Bug32064Test extends SOAPTestCase
 {
-
-    private $_prodBundle = null;
-    private $_prodBundleForQuoteCase = null;
-    private $_quote = null;
-    private $_product = null;
+    protected $prodBundle = null;
+    protected $quote = null;
+    protected $product = null;
 
     public function setUp()
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
         parent::setUp();
 
-        // create anon user for login
         $this->_setupTestUser();
-        $this->_login();
+        // _login uses a static User instance and _setupTestUser doesn't setup it.
+        SOAPTestCase::$_user = $this->_user;
 
-        $this->_prodBundle = SugarTestProductBundleUtilities::createProductBundle();
-        $this->_prodBundleForQuoteCase = SugarTestProductBundleUtilities::createProductBundle();
-        $this->_quote = SugarTestQuoteUtilities::createQuote();
-        $this->_product = SugarTestProductUtilities::createProduct();
+        $this->prodBundle = SugarTestProductBundleUtilities::createProductBundle();
+        $this->quote = SugarTestQuoteUtilities::createQuote();
+        $this->product = SugarTestProductUtilities::createProduct();
 
         // Commit setUp records for DB2.
         $GLOBALS['db']->commit();
@@ -78,89 +59,133 @@ class Bug32064Test extends SOAPTestCase
     }
 
     /**
-     * Setting a relationship between ProductBundles and Quotes or Products and ProductBundles results in a PHP fatal error
+     * Setting a relationship between ProductBundles and Quotes or
+     * Products and ProductBundles results in a PHP fatal error
      *
      * @group 32064
      */
-    public function testProductBundlesRelationsWithProductsAndQuotes()
+    public function testProductBundlesRelationsWithProductsAndQuotesSoapV4()
     {
+        $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
+        $this->_soapClient = new nusoapclient($this->_soapURL, false, false, false, false, false, 600, 600);
+        $this->_login();
 
-        $this->_soapClient->call('set_relationship', array(
-            'session' => $this->_sessionId,
-            'module_name' => 'ProductBundles',
-            'module_id' => $this->_prodBundle->id,
-            'link_field_name' => 'products',
-            'related_ids' => array($this->_product->id),
-            'name_value_list' => array(),
-            'deleted' => 0
-                )
+        $this->_soapClient->call(
+            'set_relationship',
+            array(
+                'session' => $this->_sessionId,
+                'module_name' => 'ProductBundles',
+                'module_id' => $this->prodBundle->id,
+                'link_field_name' => 'products',
+                'related_ids' => array($this->product->id),
+                'name_value_list' => array(),
+                'deleted' => 0
+            )
         );
 
-        $this->_soapClient->call('set_relationship', array(
-            'session' => $this->_sessionId,
-            'module_name' => 'Quotes',
-            'module_id' => $this->_quote->id,
-            'link_field_name' => 'product_bundles',
-            'related_ids' => array($this->_prodBundle->id),
-            'name_value_list' => array(),
-            'deleted' => 0
-                )
+        $this->_soapClient->call(
+            'set_relationship',
+            array(
+                'session' => $this->_sessionId,
+                'module_name' => 'ProductBundles',
+                'module_id' => $this->prodBundle->id,
+                'link_field_name' => 'quotes',
+                'related_ids' => array($this->quote->id),
+                'name_value_list' => array(),
+                'deleted' => 0
+            )
         );
 
-        $this->_soapClient->call('set_relationship', array(
-            'session' => $this->_sessionId,
-            'module_name' => 'Quotes',
-            'module_id' => $this->_quote->id,
-            'link_field_name' => 'product_bundles',
-            'related_ids' => array($this->_prodBundleForQuoteCase->id),
-            'name_value_list' => array(),
-            'deleted' => 0
-                )
+        $assertProductsRel = $this->_soapClient->call(
+            'get_relationships',
+            array(
+                'session' => $this->_sessionId,
+                'module_name' => 'ProductBundles',
+                'module_id' => $this->prodBundle->id,
+                'link_field_name' => 'products',
+                'related_module_query' => '',
+                'related_fields' => array('id'),
+                'related_module_link_name_to_fields_array' => array(),
+                'deleted' => 0,
+            )
         );
 
-        $assertProductsRel = $this->_soapClient->call('get_relationships', array(
-            'session' => $this->_sessionId,
-            'module_name' => 'ProductBundles',
-            'module_id' => $this->_prodBundle->id,
-            'link_field_name' => 'products',
-            'related_module_query' => '',
-            'related_fields' => array('id'),
-            'related_module_link_name_to_fields_array' => array(),
-            'deleted' => 0,
-                )
+        $assertQuoteRel = $this->_soapClient->call(
+            'get_relationships',
+            array(
+                'session' => $this->_sessionId,
+                'module_name' => 'ProductBundles',
+                'module_id' => $this->prodBundle->id,
+                'link_field_name' => 'quotes',
+                'related_module_query' => '',
+                'related_fields' => array('id'),
+                'related_module_link_name_to_fields_array' => array(),
+                'deleted' => 0,
+            )
         );
 
-        $assertProdBundleRel = $this->_soapClient->call('get_relationships', array(
-            'session' => $this->_sessionId,
-            'module_name' => 'Quotes',
-            'module_id' => $this->_quote->id,
-            'link_field_name' => 'product_bundles',
-            'related_module_query' => '',
-            'related_fields' => array('id'),
-            'related_module_link_name_to_fields_array' => array(),
-            'deleted' => 0,
-                )
-        );
-
-        $this->assertEquals($this->_product->id, $assertProductsRel['entry_list'][0]['id']);
-
-        $expectedIds = array($assertProdBundleRel['entry_list'][0]['id'], $assertProdBundleRel['entry_list'][1]['id']);
-        $this->assertContains($this->_prodBundle->id, $expectedIds);
-        $this->assertContains($this->_prodBundleForQuoteCase->id, $expectedIds);
-
-        // can't find norman interface.
-        $db = $this->_quote->db;
-        $rows = array();
-        $sql = "SELECT bundle_id, bundle_index FROM product_bundle_quote
-        WHERE bundle_id IN ({$db->quoted($this->_prodBundle->id)}, {$db->quoted($this->_prodBundleForQuoteCase->id)})
-        AND quote_id = {$db->quoted($this->_quote->id)} ORDER BY bundle_index DESC";
-        $result = $db->query($sql);
-
-        // = fetchAll
-        while ($rows[] = $db->fetchByAssoc($result));
-
-        $this->assertGreaterThan($rows[1]['bundle_index'], $rows[0]['bundle_index']);
+        $this->assertEquals($this->product->id, $assertProductsRel['entry_list'][0]['id']);
+        $this->assertEquals($this->quote->id, $assertQuoteRel['entry_list'][0]['id']);
     }
 
-}
+    /**
+     * @group 32064
+     */
+    public function testProductBundlesRelationsWithProductsAndQuotesSoapVer1()
+    {
+        $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/soap.php';
+        $this->_soapClient = new nusoapclient($this->_soapURL, false, false, false, false, false, 600, 600);
+        $this->_login();
 
+        $this->_soapClient->call(
+            'set_relationship',
+            array(
+                'session' => $this->_sessionId,
+                'set_relationship_value' => array(
+                    'module1' => 'ProductBundles',
+                    'module1_id' => $this->prodBundle->id,
+                    'module2' => 'Products',
+                    'module2_id' => $this->product->id,
+                )
+            )
+        );
+
+        $this->_soapClient->call(
+            'set_relationship',
+            array(
+                'session' => $this->_sessionId,
+                'set_relationship_value' => array(
+                    'module1' => 'ProductBundles',
+                    'module1_id' => $this->prodBundle->id,
+                    'module2' => 'Quotes',
+                    'module2_id' => $this->quote->id,
+                )
+            )
+        );
+
+        $assertProductsRel = $this->_soapClient->call(
+            'get_relationships',
+            array(
+                'session' => $this->_sessionId,
+                'module_name' => 'ProductBundles',
+                'module_id' => $this->prodBundle->id,
+                'related_module' => 'Products',
+                'deleted' => 0,
+            )
+        );
+
+        $assertQuoteRel = $this->_soapClient->call(
+            'get_relationships',
+            array(
+                'session' => $this->_sessionId,
+                'module_name' => 'ProductBundles',
+                'module_id' => $this->prodBundle->id,
+                'related_module' => 'Quotes',
+                'deleted' => 0,
+            )
+        );
+
+        $this->assertEquals($this->product->id, $assertProductsRel['ids'][0]['id']);
+        $this->assertEquals($this->quote->id, $assertQuoteRel['ids'][0]['id']);
+    }
+}

@@ -14,6 +14,7 @@ describe("Emails.Views.Compose", function() {
     });
 
     afterEach(function() {
+        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
@@ -57,6 +58,20 @@ describe("Emails.Views.Compose", function() {
         //test different sender recipient scenarios
         dataProvider = [
             {
+                'testComment': 'model new, no cc or bcc => both hidden with links',
+                'model': null,
+                'hideFieldCount': 2,
+                'hideFieldLastCallArgs': null,
+                'toggleSenderLastCallArgs': ["to_addresses", true, true]
+            },
+            {
+                'testComment': 'model not new and has cc => only bcc hidden with link',
+                'model': {'id':'123','cc_addresses':'foo@bar.com'},
+                'hideFieldCount': 1,
+                'hideFieldLastCallArgs': ['bcc_addresses'],
+                'toggleSenderLastCallArgs': ["to_addresses", false, true]
+            },
+            {
                 'testComment': 'model not new and has bcc => only cc hidden with link',
                 'model': {'id':'123','bcc_addresses':'foo@bar.com'},
                 'hideFieldCount': 1,
@@ -74,6 +89,7 @@ describe("Emails.Views.Compose", function() {
 
         _.each(dataProvider, function(data) {
             it(data.testComment, function() {
+                view.model.off('change');
                 if (data.model) {
                     view.model.set(data.model);
                 }
@@ -172,6 +188,8 @@ describe("Emails.Views.Compose", function() {
             });
             alertShowStub = sinon.stub(app.alert, 'show');
             alertDismissStub = sinon.stub(app.alert, 'dismiss');
+
+            view.model.off('change');
         });
 
         afterEach(function() {
@@ -207,6 +225,90 @@ describe("Emails.Views.Compose", function() {
             expect(alertDismissStub.firstCall.args[0]).toEqual(alertShowStub.firstCall.args[0]);
             expect(alertShowStub.secondCall.args[1].title).toEqual(success);
         })
+    });
+
+    describe('Send button', function() {
+        beforeEach(function() {
+            view.model.off('change');
+        });
+
+        it('should be disabled when to_addresses field is empty', function() {
+            view.model.unset('to_addresses');
+            view.model.set('subject', 'foo');
+            view.model.set('html_body', 'bar');
+
+            expect(view.isEmailSendable()).toBe(false);
+        });
+
+        it('should be enabled when to_addresses and subject fields are populated', function() {
+            view.model.set('to_addresses', 'foo@bar.com');
+            view.model.set('subject', 'foo');
+            view.model.unset('html_body');
+
+            expect(view.isEmailSendable()).toBe(true);
+        });
+
+        it('should be enabled when to_addresses and html_body fields are populated', function() {
+            view.model.set('to_addresses', 'foo@bar.com');
+            view.model.unset('subject');
+            view.model.set('html_body', 'bar');
+
+            expect(view.isEmailSendable()).toBe(true);
+        });
+
+        it('should be disabled when subject and html_body fields are empty', function() {
+            view.model.set('to_addresses', 'foo@bar.com');
+            view.model.unset('subject');
+            view.model.unset('html_body');
+
+            expect(view.isEmailSendable()).toBe(false);
+        });
+    });
+
+    describe('Send', function() {
+        var saveModelStub, alertShowStub;
+
+        beforeEach(function() {
+            saveModelStub = sinon.stub(view, 'saveModel');
+            alertShowStub = sinon.stub(app.alert, 'show');
+
+            view.model.off('change');
+        });
+
+        afterEach(function() {
+            saveModelStub.restore();
+            alertShowStub.restore();
+        });
+
+        it('should send email when subject and html_body fields are populated', function() {
+            view.model.set('subject', 'foo');
+            view.model.set('html_body', 'bar');
+
+            view.send();
+
+            expect(saveModelStub.calledOnce).toBe(true);
+            expect(alertShowStub.called).toBe(false);
+        });
+
+        it('should show confirmation alert message when subject field is empty', function() {
+            view.model.unset('subject');
+            view.model.set('html_body', 'bar');
+
+            view.send();
+
+            expect(saveModelStub.called).toBe(false);
+            expect(alertShowStub.calledOnce).toBe(true);
+        });
+
+        it('should show confirmation alert message when html_body field is empty', function() {
+            view.model.set('subject', 'foo');
+            view.model.unset('html_body');
+
+            view.send();
+
+            expect(saveModelStub.called).toBe(false);
+            expect(alertShowStub.calledOnce).toBe(true);
+        });
     });
 
     describe("Signatures", function() {
