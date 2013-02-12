@@ -265,9 +265,10 @@ class DashletGeneric extends Dashlet {
                 $widgetClass = $this->layoutManager->getClassFromWidgetDef($widgetDef, true);
                 $widgetDef['table'] = $this->seedBean->table_name;
                 $widgetDef['table_alias'] = $this->seedBean->table_name;
-				if(!empty($widgetDef['source']) && $widgetDef['source'] == 'custom_fields'){
-                    $widgetDef['table'] = $this->seedBean->table_name."_cstm";
-                    $widgetDef['table_alias'] = $widgetDef['table'];
+                if(!empty($widgetDef['source']) && $widgetDef['source'] == 'custom_fields'
+                    || ($widgetDef['type'] == 'relate' && (isset($widgetDef['custom_module']) || isset($widgetDef['ext2'])))) {
+                        $widgetDef['table_alias'] = $widgetDef['table'];
+                        $widgetDef['table'] = $this->seedBean->table_name."_cstm";
                 }
                 switch($widgetDef['type']) {// handle different types
                     case 'date':
@@ -289,6 +290,12 @@ class DashletGeneric extends Dashlet {
                             $widgetDef['column_key'] = $name;
                         }
                         // No break here, we want to run through the default handler
+                    case 'relate':
+                        if (isset($widgetDef['link']) && $this->seedBean->load_relationship($widgetDef['link'])) {
+                            $widgetDef['module'] = $this->seedBean->$widgetDef['link']->focus->module_name;
+                            $widgetDef['link'] = $this->seedBean->$widgetDef['link']->getRelationshipObject()->name;
+                        }
+                        // No break - run through the default handler
                     default:
                         $widgetDef['input_name0'] = $params;
                         if(is_array($params) && !empty($params)) { // handle array query
