@@ -312,98 +312,98 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe("Signatures", function() {
-        it("should retrieve a signature from the SignaturesApi when the signature ID is present", function() {
-            var apiStub   = sinon.stub(app.api, "call"),
-                id        = "abcd", // the actual ID doesn't matter
-                signature = new app.Bean({id: id}), // no other attributes are needed for this test
-                regex     = new RegExp(".*/Signatures/" + id + "$", "gi");
-
-            view._updateEditorWithSignature(signature);
-            expect(apiStub.lastCall.args[1]).toMatch(regex);
-
-            apiStub.restore();
-        });
-
-        it("should not retrieve a signature from the SignaturesApi when the signature ID is not present", function() {
-            var apiStub   = sinon.stub(app.api, "call"),
-                signature = new app.Bean();
-
-            view._updateEditorWithSignature(signature);
-            expect(apiStub.callCount).toBe(0);
-
-            apiStub.restore();
-        });
-
-        dataProvider = [
-            {
-                message:   "should format a signature with &lt; and/or &gt; to use < and > respectively",
-                signature: "This &lt;signature&gt; has HTML-style brackets",
-                expected:  "This <signature> has HTML-style brackets"
-            },
-            {
-                message:   "should leave a signature as is if &lt; and &gt; are not found",
-                signature: "This signature has no HTML-style brackets",
-                expected:  "This signature has no HTML-style brackets"
-            }
-        ];
-
-        _.each(dataProvider, function(data) {
-            it(data.message, function() {
-                var actual = view._formatSignature(data.signature);
-                expect(actual).toBe(data.expected);
-            });
-        }, this);
-
-        describe("insert a signature", function() {
-            var field,
-                fieldStub;
-
-            beforeEach(function() {
-                field = {
-                    _content: "my message body is rockin'",
-
-                    getEditorContent: function() {
-                        return this._content;
-                    },
-
-                    setEditorContent: function(content) {
-                        this._content = content;
-                    }
-                };
-
-                fieldStub = sinon.stub(view, "getField");
-                fieldStub.returns(field);
-            });
-
-            afterEach(function() {
-                fieldStub.restore();
-            });
-
-            dataProvider = [
-                {
-                    message:   "should insert a signature because signature is an object and the signature_html attribute exists",
-                    signature: {signature_html: "<b>Sincerely, John</b>"},
-                    expected:  "my message body is rockin'<b>Sincerely, John</b>"
-                },
-                {
-                    message:   "should not insert a signature because signature is not an object",
-                    signature: "<b>Sincerely, John</b>",
-                    expected:  "my message body is rockin'"
-                },
-                {
-                    message:   "should not insert a signature because the signature_html attribute does not exist",
-                    signature: {sig_html: "<b>Sincerely, John</b>"},
-                    expected:  "my message body is rockin'"
-                }
-            ];
-
-            _.each(dataProvider, function(data) {
-                it(data.message, function() {
-                    view._insertSignature(data.signature);
-                    var actual = field.getEditorContent();
-                    expect(actual).toBe(data.expected);
-                });
-            }, this);
-        });
+//        it("should retrieve a signature from the SignaturesApi when the signature ID is present", function() {
+//            var apiStub   = sinon.stub(app.api, "call"),
+//                id        = "abcd", // the actual ID doesn't matter
+//                signature = new app.Bean({id: id}), // no other attributes are needed for this test
+//                regex     = new RegExp(".*/Signatures/" + id + "$", "gi");
+//
+//            view._updateEditorWithSignature(signature);
+//            expect(apiStub.lastCall.args[1]).toMatch(regex);
+//
+//            apiStub.restore();
+//        });
+//
+//        it("should not retrieve a signature from the SignaturesApi when the signature ID is not present", function() {
+//            var apiStub   = sinon.stub(app.api, "call"),
+//                signature = new app.Bean();
+//
+//            view._updateEditorWithSignature(signature);
+//            expect(apiStub.callCount).toBe(0);
+//
+//            apiStub.restore();
+//        });
+//
+//        dataProvider = [
+//            {
+//                message:   "should format a signature with &lt; and/or &gt; to use < and > respectively",
+//                signature: "This &lt;signature&gt; has HTML-style brackets",
+//                expected:  "This <signature> has HTML-style brackets"
+//            },
+//            {
+//                message:   "should leave a signature as is if &lt; and &gt; are not found",
+//                signature: "This signature has no HTML-style brackets",
+//                expected:  "This signature has no HTML-style brackets"
+//            }
+//        ];
+//
+//        _.each(dataProvider, function(data) {
+//            it(data.message, function() {
+//                var actual = view._formatSignature(data.signature);
+//                expect(actual).toBe(data.expected);
+//            });
+//        }, this);
+//
+//        describe("insert a signature", function() {
+//            var field,
+//                fieldStub;
+//
+//            beforeEach(function() {
+//                field = {
+//                    _content: "my message body is rockin'",
+//
+//                    getEditorContent: function() {
+//                        return this._content;
+//                    },
+//
+//                    setEditorContent: function(content) {
+//                        this._content = content;
+//                    }
+//                };
+//
+//                fieldStub = sinon.stub(view, "getField");
+//                fieldStub.returns(field);
+//            });
+//
+//            afterEach(function() {
+//                fieldStub.restore();
+//            });
+//
+//            dataProvider = [
+//                {
+//                    message:   "should insert a signature because signature is an object and the signature_html attribute exists",
+//                    signature: {signature_html: "<b>Sincerely, John</b>"},
+//                    expected:  "my message body is rockin'<b>Sincerely, John</b>"
+//                },
+//                {
+//                    message:   "should not insert a signature because signature is not an object",
+//                    signature: "<b>Sincerely, John</b>",
+//                    expected:  "my message body is rockin'"
+//                },
+//                {
+//                    message:   "should not insert a signature because the signature_html attribute does not exist",
+//                    signature: {sig_html: "<b>Sincerely, John</b>"},
+//                    expected:  "my message body is rockin'"
+//                }
+//            ];
+//
+//            _.each(dataProvider, function(data) {
+//                it(data.message, function() {
+//                    view._insertSignature(data.signature);
+//                    var actual = field.getEditorContent();
+//                    expect(actual).toBe(data.expected);
+//                });
+//            }, this);
+//        });
     });
 });
