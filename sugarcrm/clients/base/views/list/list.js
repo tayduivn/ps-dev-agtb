@@ -60,6 +60,7 @@
         this.template = this.template || app.template.getView('list', this.module)
                         || app.template.getView('list') || null;
         this.fallbackFieldTemplate = 'list-header';
+        this.action = 'list';
 
         //When clicking on eye icon, we need to trigger preview:render with model&collection
         this.context.on("list:preview:fire", function(model) {
