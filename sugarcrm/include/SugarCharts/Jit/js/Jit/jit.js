@@ -2544,7 +2544,7 @@ Extras.Classes.Tips = new Class({
     }
     if(!this.dom) {
       var node = opt.getNode();
-      if(!node) {
+      if(!node || !opt.contains.value) {
         this.hide(true);
         return;
       }
@@ -11939,13 +11939,12 @@ $jit.ST.Plot.NodeTypes.implement({
               chartBarHeight = dimArray[i] - ((config.segmentStacked) ? 1 : 0);
           }
 
-          ctx.globalCompositeOperation = "destination-over";
-          ctx.fillRect(xCoord, yCoord, chartBarWidth, chartBarHeight);
-          ctx.globalCompositeOperation = "source-over";
-
-          // add labels inside bar with rounded filled background
           if (chartBarHeight > 0)
           {
+              ctx.globalCompositeOperation = "destination-over";
+              ctx.fillRect(xCoord, yCoord, chartBarWidth, chartBarHeight);
+              ctx.globalCompositeOperation = "source-over";
+              // add labels inside bar with rounded filled background
               ctx.font = label.style + ' ' + (label.size - 2) + 'px ' + label.family;
               labelText = valueArray[i].toString();
               mtxt = ctx.measureText(labelText);
