@@ -26,7 +26,7 @@
  ********************************************************************************/
 ({
     config: {
-        //Default background image to show in no image has been uploaded
+        //Default background image to show if no image has been uploaded
         profile: app.config.siteUrl + "styleguide/assets/img/profile.png"
     },
     events: {
