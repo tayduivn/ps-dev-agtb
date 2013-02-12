@@ -2,7 +2,8 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
     var app,
         moduleName = 'EmailTemplates',
         listMeta,
-        filterDef;
+        filterDef,
+        view;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -28,11 +29,12 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
                 }
             ]
         };
-        SugarTest.loadHandlebarsTemplate("baselist", "view", "base", "baselist");
-        SugarTest.loadComponent('base', 'view', 'baselist');
+        SugarTest.loadHandlebarsTemplate("list", "view", "base", "list");
         SugarTest.loadComponent('base', 'view', 'list');
+        SugarTest.loadComponent('base', 'view', 'recordlist');
         SugarTest.loadComponent("base", "view", "compose-templates", "EmailTemplates");
         SugarTest.testMetadata.set();
+        view = SugarTest.createView("base", moduleName, "compose-templates", listMeta, null, true);
     });
 
     afterEach(function() {
@@ -45,7 +47,7 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
     it("should turn off sorting on all fields", function(){
         var allNonSortable;
 
-        var view = SugarTest.createView("base", moduleName, "compose-templates", listMeta);
+
         var fields = view.meta.panels[0].fields;
 
         expect(fields.length).toBeGreaterThan(0);
@@ -59,7 +61,6 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
         var htmlBefore = '<a href="javascript:void(0)">unwrapped</a><a href="" class="rowaction">wrapped</a>',
             htmlAfter = 'unwrapped<a href="" class="rowaction">wrapped</a>';
 
-        var view = SugarTest.createView("base", moduleName, "compose-templates", listMeta);
         view.$el = $('<div>' + htmlBefore + '</div>');
         view._removeLinks();
         expect(view.$el.html()).toEqual(htmlAfter);
@@ -69,14 +70,13 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
         var view, previewField;
         listMeta['rowactions'] = {};
         listMeta['showPreview'] = true;
-
+        //Create another view with the new metadata
         view = SugarTest.createView("base", moduleName, "compose-templates", listMeta);
         previewField = _.last(view.meta.panels[0].fields);
         expect(previewField.event).toEqual('list:preview:fire');
     });
 
     it("should be setting collections filter", function() {
-        var view = SugarTest.createView("base", moduleName, "compose-templates", listMeta);
         expect(view.collection.filterDef).toMatch(filterDef);
     });
 

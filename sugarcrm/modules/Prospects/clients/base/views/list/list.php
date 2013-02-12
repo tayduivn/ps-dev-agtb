@@ -1,6 +1,9 @@
+<?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -14,7 +17,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -24,48 +27,34 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-({
-    extendsFrom: 'ListView',
 
-    initialize: function(options) {
-        app.view.views.ListView.prototype.initialize.call(this, options);
-
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(field) {
-                field.sortable = false;
-            });
-        });
-
-        this.on("render", this._removeLinks, this);
-
-        //set the filter on the collection
-        if(!_.isEmpty(this.meta.filterDef)) {
-            this.collection.filterDef = this.meta.filterDef;
-        }
-    },
-
-    _renderHtml: function() {
-        app.view.views.ListView.prototype._renderHtml.call(this);
-        this.$('table.table-striped').addClass('duplicates highlight');
-    },
-
-    _removeLinks: function() {
-        this.$('a:not(.rowaction)').contents().unwrap();
-    },
-
-    addRowActions: function(panel, options) {
-        panel = app.view.views.ListView.prototype.addRowActions.call(this, panel, options);
-
-        if (options.meta.showPreview === true) {
-            panel.fields = panel.fields.concat({
-                type: 'rowaction',
-                css_class: 'btn',
-                tooltip: 'LBL_PREVIEW',
-                event: 'list:preview:fire',
-                icon: 'icon-eye-open'
-            });
-        }
-
-        return panel;
-    }
-})
+$viewdefs['Prospects']['base']['view']['list'] = array(
+	'panels' => array(
+		array(
+			'fields' => array(
+				array(
+					'name'    => 'name',
+					'label'   => 'LBL_LIST_NAME',
+					'orderBy' => 'last_name',
+				),
+				array(
+					'name'  => 'title',
+					'label' => 'LBL_LIST_TITLE',
+				),
+				array(
+					'name'     => 'email',
+					'label'    => 'LBL_LIST_EMAIL_ADDRESS',
+					'sortable' => false,
+				),
+				array(
+					'name'  => 'phone_work',
+					'label' => 'LBL_LIST_PHONE',
+				),
+				array(
+					'name'  => 'date_entered',
+					'label' => 'LBL_DATE_ENTERED',
+				),
+			),
+		),
+	),
+);
