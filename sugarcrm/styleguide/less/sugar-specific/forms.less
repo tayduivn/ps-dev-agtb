@@ -426,8 +426,16 @@ h1 input[type="text"] {
     margin: 0;
     padding: 0;
   }
+  .control-group {
+    margin-bottom: 4px;
+  }
+  //this is not working since p.help-block after last control-group div
+  .control-group:last-child {
+    margin-bottom: 0;
+  }
   .controls {
-    margin-left: @fluidGridGutterWidth;
+    //margin-left: @fluidGridGutterWidth;
+    margin-left: 0;
     padding: 0;
     > span {
       padding: 6px 0;
