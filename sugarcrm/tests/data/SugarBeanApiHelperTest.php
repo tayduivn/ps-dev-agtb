@@ -174,9 +174,9 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['Test']['fields']['testInt'] = 40;
         $data['testInt'] = 4;
         $data['assigned_user_id'] = 'not_me';
-        $this->beanApiHelper->populateFromApi($mock, $data);
-        $this->assertEquals($mock->testInt, 4);
-        $this->assertEquals($mock->assigned_user_id, 'not_me');
+        $this->beanApiHelper->populateFromApi($this->bean, $data);
+        $this->assertEquals($this->bean->testInt, 4);
+        $this->assertEquals($this->bean->assigned_user_id, 'not_me');
     }
 
     protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array())
