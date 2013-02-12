@@ -57,7 +57,6 @@
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'list';
         this.layout.on('mergeduplicates:save:fire', this.save, this);
-        this.$('[rel="tooltip"]').tooltip();
     },
     /**
      * Save primary and delete other records
@@ -199,6 +198,12 @@
         return fields;
     },
     showMore: function(evt) {
+        var btn = this.$("a.show_extra"),
+            newHtml = (btn.text().trim() == "More") ?
+                'Less <i class="icon-caret-up"></i>' :
+                'More <i class="icon-caret-down"></i>';
+
+        btn.html(newHtml);
         this.$(".col .extra").toggleClass('hide');
     },
     _render:function () {
@@ -214,24 +219,43 @@
                 this.rowFields[field.model.id].push(field);
             }
         }, this);
-        this.setPrimaryEdit(this.primaryRecord);
+        this.setPrimaryEdit(this.primaryRecord.id);
         this.$('[rel="tooltip"]').tooltip();
         this.setSortable();
+        this.setDraggable();
     },
     setSortable: function() {
-        this.$(".ui-sortable").sortable({
+        this.$(".fluid-div").sortable({
             items: ".col",
             axis: "x"
         });
-        this.$(".ui-sortable").disableSelection();    	
+        this.$(".fluid-div").disableSelection();
+    },
+    setDraggable: function() {
+        var self = this;
+
+        $( ".primary-edit-mode .primary-lbl" ).draggable({
+            helper: function( event ) {
+                return $('<div class="primary-lbl static-ui-draggable"> Primary</div>');
+            },
+            stop: function(e) {
+                var dropped_to = $(document.elementFromPoint(e.clientX, e.clientY+24)).closest('.col');
+                $('.col').removeClass('primary-edit-mode');
+                $('.col .primary-lbl').removeAttr('style');
+                dropped_to.addClass('primary-edit-mode');
+
+                self.setPrimaryEdit(dropped_to.data("recordid"));
+                setTimeout(this.setDraggable, 500);
+            }
+        });
     },
     /**
      * Do what we need to do when the primary record is set
-     * @param {Model} primary the record representing the new primary model
+     * @param {String} id the record representing the new primary model
      */
-    setPrimaryEdit: function(primary) {
+    setPrimaryEdit: function(id) {
         // make sure we get the model in the collection, with all fields in it.
-        var primary_record = this.collection.get(primary.id);
+        var primary_record = this.collection.get(id);
 
         if(primary_record) {
             this.setPrimaryRecord(primary_record);               
@@ -242,7 +266,7 @@
     },
     /**
      * Set primary record
-     * @param {Model} primary model
+     * @param {Model} model primary model
      */
     setPrimaryRecord: function(model) {
         this.primaryRecord = model;  

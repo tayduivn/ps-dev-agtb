@@ -25,9 +25,9 @@
             </div>
         </div>
 
-        <div class="fluid-div ui-sortable">
+        <div class="fluid-div">
             {{#each collection.models}}
-            <div class="col">
+            <div class="col{{#eq id ../primaryRecord.id}} primary-edit-mode{{/eq}}" data-recordid="{{id}}" >
                 <div class="primary-lbl"> Primary</div>
 
                 <div class="box">
