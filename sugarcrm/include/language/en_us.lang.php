@@ -2661,7 +2661,7 @@ $app_strings = array (
     'LBL_PERCENTAGE_SYMBOL' => '%',
     'LBL_PHASE' => 'Range',
     //BEGIN SUGARCRM flav!=com ONLY
-    'LBL_PICTURE_FILE' => 'Picture',
+    'LBL_PICTURE_FILE' => 'Avatar',
     //END SUGARCRM flav!=com ONLY
     'LBL_POSTAL_CODE' => 'Postal Code:',
     'LBL_PRIMARY_ADDRESS_CITY' => 'Primary Address City:',
@@ -3450,6 +3450,7 @@ $app_strings = array (
     'LBL_PREFERRED_LANGUAGE' => 'Preferred Language:',
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
+    'LBL_IMAGE_DELETE_CONFIRM' => 'Are you sure you want to delete this image?',
 
     //theme roller
     'LBL_RESET' => 'Reset',
