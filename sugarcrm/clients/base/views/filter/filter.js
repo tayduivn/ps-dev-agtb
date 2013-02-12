@@ -22,7 +22,7 @@
             url = app.api.buildURL('Filters', "filter");
 
         // TODO: here we might have issues when deleting filters. See removeAll().
-        this.currentFilter = id;
+        this.currentFilter = id || "default";
         this.filters = app.data.createBeanCollection('Filters');
         this.filters.fetch({
             filterDef: {
@@ -53,7 +53,8 @@
             var self = this,
                 relatedModuleList = [],
                 customFilterList = [],
-                defaultId = this.currentFilter || this.filters.where({default_filter: "1"})[0].id;
+                defaultId = (this.currentFilter === "default")? this.filters.where({default_filter: "1"})[0].id : this.currentFilter;
+
             this.layoutType = this.layout.context.get("layout") || app.controller.context.get("layout");
 
             _.each(this.filters.models, function(model){
@@ -108,7 +109,7 @@
             this.relatedFilterNode.select2("val", "default");
 
             this.relatedFilterNode.on("change", function(e) {
-                //console.log("Akshay's stuff goes here");
+                // Relationships dropdown stuff goes here.
             });
 
             this.throttledSearch = _.debounce(function(e) {
