@@ -40,6 +40,7 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
     protected $workFlowTriggerShellId;
     protected $workFlowActionShellId;
     protected $workFlowActionId;
+    private $hasWorkflowFile = false;
 
     /**
      * @var Opportunity
@@ -58,6 +59,8 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+
+        $this->hasWorkflowFile = SugarAutoLoader::fileExists('custom/modules/Opportunities/workflow/workflow.php');
 
         $wf = new WorkFlow();
         $wf->name = 'WF1';
@@ -120,6 +123,10 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
 
         $_REQUEST = array();
         SugarTestHelper::tearDown();
+
+        if(!$this->hasWorkflowFile) {
+            SugarAutoLoader::delFromMap('custom/modules/Opportunities/workflow/workflow.php');
+        }
     }
 
     /**
