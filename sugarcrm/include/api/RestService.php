@@ -175,6 +175,17 @@ class RestService extends ServiceBase {
             // the posted document is probably the output of a generated form.
             $argArray = array_merge($postVars,$getVars,$pathVars);
 
+            // Trying to fetch correct module while API use search
+            $module = $route['className'];
+
+            if (isset($argArray['module'])) {
+                $module = $argArray['module'];
+            } elseif (isset($argArray['module_list'])) {
+                $module = $argArray['module_list'];
+            }
+
+            SugarMetric_Manager::getInstance()->setTransactionName('rest_' . $module . '_' . $route['method']);
+
             $apiClass = $this->loadApiClass($route);
             $apiMethod = $route['method'];
 
