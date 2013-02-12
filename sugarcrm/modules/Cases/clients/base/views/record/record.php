@@ -30,6 +30,95 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Cases']['base']['view']['record'] = array(
+    'buttons' => array(
+        array(
+            'type'      => 'button',
+            'name'      => 'cancel_button',
+            'label'     => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
+            'showOn'    => 'edit',
+        ),
+        array(
+            'type'    => 'actiondropdown',
+            'name'    => 'main_dropdown',
+            'primary' => true,
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:edit_button:click',
+                    'name'    => 'edit_button',
+                    'label'   => 'LBL_EDIT_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn'  => 'view',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:save_button:click',
+                    'name'    => 'save_button',
+                    'label'   => 'LBL_SAVE_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn'  => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
+                    'name'  => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'showOn'  => 'view',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:duplicate_button:click',
+                    'name'   => 'duplicate_button',
+                    'label'  => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'showOn' => 'view',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:find_duplicates_button:click',
+                    'name'   => 'find_duplicates_button',
+                    'label'  => 'LBL_DUP_MERGE',
+                    'showOn' => 'view',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:create_related_button:click',
+                    'name'    => 'create_related_button',
+                    'label'   => 'LBL_CREATE_RELATED_RECORD',
+                    'showOn' => 'view'
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:link_related_button:click',
+                    'name'    => 'link_related_button',
+                    'label'   => 'LBL_ASSOC_RELATED_RECORD',
+                    'showOn' => 'view'
+                ),
+                //BEGIN SUGARCRM flav=pro ONLY
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:create_kbdocument_button:click',
+                    'name'    => 'create_kbdocument_button',
+                    'label'   => 'LBL_CREATE_KB_DOCUMENT',
+                    'acl_module' => 'KBDocuments',
+                    'acl_action' => 'edit',
+                    'showOn' => 'view',
+                ),
+                //END SUGARCRM flav=pro ONLY
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:change_log_button:click',
+                    'name'    => 'change_log_button',
+                    'label'   => 'LNK_VIEW_CHANGE_LOG',
+                    'showOn' => 'view'
+                ),
+            ),
+        ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
+    ),
     'panels' => array(
         array(
             'name' => 'panel_header',
