@@ -95,6 +95,8 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     "name" => "team_name"
                 ),
                 'next_step',
+                'date_entered',
+                'date_modified',
                 'description',
             )
         )
