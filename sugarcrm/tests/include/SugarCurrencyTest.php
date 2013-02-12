@@ -51,6 +51,12 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
+        
+        $current_user = $GLOBALS['current_user'];
+        $current_user->setPreference('dec_sep', '.');
+        $current_user->setPreference('num_grp_sep', ',');
+        $current_user->setPreference('default_currency_significant_digits', 2);
+        
 
         // setup test currencies
         SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171);
