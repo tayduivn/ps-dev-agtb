@@ -650,8 +650,6 @@ if(function_exists('initialize_session_vars')){
 
 if(!didThisStepRunBefore('preflight')){
 	set_upgrade_progress('preflight','in_progress');
-	//Quickcreatedefs on the basis of editviewdefs
-    updateQuickCreateDefs();
 	set_upgrade_progress('preflight','done');
 }
 ////////////////COMMIT PROCESS BEGINS///////////////////////////////////////////////////////////////
