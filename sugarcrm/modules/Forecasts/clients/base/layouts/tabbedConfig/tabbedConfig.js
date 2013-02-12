@@ -22,6 +22,16 @@
  ********************************************************************************/
 
 ({
+    /**
+     * Events Triggered
+     *
+     * data:sync:start
+     *      on: this
+     *      by: initialize()
+     *      when: the config model syncs
+     *
+     *
+     */
 
     /**
      * Saved Labels to use for the Breadcrumbs

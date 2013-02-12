@@ -22,6 +22,16 @@
  ********************************************************************************/
 
 ({
+    /**
+     * Events Triggered
+     *
+     * data:sync:start
+     *      on: this
+     *      by: initialize()
+     *      when: the config model syncs
+     *
+     *
+     */
 
     /**
      * Saved Labels to use for the Breadcrumbs
@@ -31,6 +41,7 @@
     initialize: function (options) {
         var modelUrl = app.api.buildURL("Forecasts", "config"),
             modelSync = function(method, model, options) {
+                this.trigger("data:sync:start", method, model, options);
                 var url = _.isFunction(model.url) ? model.url() : model.url;
                 return app.api.call(method, url, model, options);
             },
