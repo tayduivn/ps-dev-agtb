@@ -995,4 +995,41 @@ describe("Record View", function() {
             expect(closeStub.lastCall.args[0].id).toEqual(expectedModel.id);
         });
     });
+
+    describe('Field labels', function(){
+        it("should be hidden on view for headerpane fields", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+
+            expect(view.$('.record-label[data-name=name]').css('display')).toBe('none');
+        });
+
+        it("should be shown on view for non-headerpane fields", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+
+            expect(view.$('.record-label[data-name=description]').css('display')).not.toBe('none');
+        });
+
+        it("should be shown on edit for headerpane fields", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+
+            view.getField('name').$el.closest('.record-cell').find('a.record-edit-link').click();
+
+            expect(view.$('.record-label[data-name=name]').css('display')).not.toBe('none');
+        });
+    });
 });

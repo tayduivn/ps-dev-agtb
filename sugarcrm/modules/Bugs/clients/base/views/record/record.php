@@ -38,6 +38,7 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                 array(
                     'name' => 'bug_number',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
                 'name',
                 array(

@@ -52,7 +52,7 @@ describe("enum field", function() {
         field.model.set(fieldName, original);
         field.render();
         var actual = field.$el.text().replace(/(\r\n|\n|\r)/gm,"");
-        expect(actual).toEqual(expected);
+        expect($.trim(actual)).toEqual(expected);
     });
 
     describe("multi select enum", function() {
@@ -64,7 +64,7 @@ describe("enum field", function() {
             field.model.set(fieldName, original);
             field.render();
             var actual = field.$el.text().replace(/(\r\n|\n|\r)/gm,"");
-            expect(actual).toEqual(expected);
+            expect($.trim(actual)).toEqual(expected);
         });
 
         it("should display a labeled comma list for list template", function() {
@@ -74,7 +74,7 @@ describe("enum field", function() {
             field.model.set(fieldName, original);
             field.render();
             var actual = field.$el.text().replace(/(\r\n|\n|\r)/gm,"");
-            expect(actual).toEqual(expected);
+            expect($.trim(actual)).toEqual(expected);
         });
 
     });

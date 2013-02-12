@@ -241,6 +241,20 @@
         this._renderPanels(this.meta.panels);
 
         app.view.View.prototype._render.call(this);
+
+        // Field labels in headerpane should be hidden on view but displayed in edit and create
+        _.each(this.fields, function(field) {
+            var toggleLabel = _.bind(function() {
+                this.toggleLabelByField(field);
+            }, this);
+
+            field.off('render', toggleLabel);
+            if (field.$el.closest('.headerpane').length > 0) {
+                field.on('render', toggleLabel);
+            }
+        }, this);
+
+        this.toggleHeaderLabels(this.createMode);
         this.initButtons();
         this.setButtonStates(this.STATE.VIEW);
         this.setEditableFields();
@@ -462,6 +476,30 @@
                 break;
             default:
                 this.toggleField(field);
+        }
+    },
+
+    /**
+     * Hide/show all field labels in headerpane
+     * @param isEdit
+     */
+    toggleHeaderLabels: function(isEdit) {
+        if (isEdit) {
+            this.$('.headerpane .record-label').show();
+        } else {
+            this.$('.headerpane .record-label').hide();
+        }
+    },
+
+    /**
+     * Hide/show field label given a field
+     * @param field
+     */
+    toggleLabelByField: function(field) {
+        if (field.action === 'edit') {
+            field.$el.closest('.record-cell').find('.record-label').show();
+        } else {
+            field.$el.closest('.record-cell').find('.record-label').hide();
         }
     },
 
