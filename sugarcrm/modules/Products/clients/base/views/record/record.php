@@ -34,7 +34,9 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                'name',
+                    array (
+                        'name' => 'name'
+                    ),
             )
         ),
         array(
@@ -44,46 +46,24 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'quantity',
-                'status',
+                'opportunity_name',
+                array(
+                    'name'=>'account_name',
+                    'noedit'=>true
+                ),
                 'sales_stage',
-                'sales_status',
-                'quote_name',
-                'contact_name',
-                'account_name',
-                'date_purchased',
-            ),
-        ),
-        array(
-            'name' => 'panel_pricing',
-            'columns' => '2',
-            'labelsOnTop' => true,
-            'fields' => array(
+                'probability',
+                'status',
+                'date_closed',
+                'product_template_name',
+                'quantity',
+                'discount_price',
+                'discount_amount',
                 array(
-                    'name' => 'cost_price',
-                    'type' => 'currency',
-                ),
-                array(
-                    'name' => 'list_price',
-                    'type' => 'currency',
-                ),
-                array(
-                    'name' => 'book_value',
-                    'type' => 'currency',
-                ),
-                array(
-                    'name' => 'discount_price',
-                    'type' => 'currency',
-                ),
-                array(
-                    'name' => 'discount_amount',
-                    'type' => 'currency',
-                ),
-                array(
-                    'name' => 'commit_stage',
-                    'type' => 'enum'
+                    'name'=>'likely_case',
+                    'required'=>true
                 )
-            )
+            ),
         ),
         array(
             'name' => 'panel_hidden',
@@ -92,47 +72,30 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'serial_number',
-                'date_support_starts',
-                'asset_number',
-                'date_support_expires',
+                'best_case',
+                'worst_case',
                 array(
-                    'name' => 'date_modified_by',
-                    'noedit' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_MODIFIED',
-                    'fields' => array(
-                        array(
-                            'name' => 'date_modified',
-                        ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY'
-                        ),
-                        array(
-                            'name' => 'modified_by_name',
-                        ),
-                    ),
+                    'name'=>'category_name',
+                    'noedit'=>true
                 ),
-                'teams',
+                'type',
+                'lead_source',
+                'campaign_name',
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
                 array(
-                    'name' => 'date_entered_by',
-                    'noedit' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'fields' => array(
-                        array(
-                            'name' => 'date_entered',
-                        ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY'
-                        ),
-                        array(
-                            'name' => 'created_by_name',
-                        ),
-                    ),
+                    "type" => "teamset",
+                    "name" => "team_name",
                 ),
+                //END SUGARCRM flav=pro ONLY
+                'next_step',
+                'description',
+                'list_price',
+                array(
+                    'name'=>'tax_class',
+                    'noedit'=>true
+                ),
+                'cost_price'
             )
         )
     ),

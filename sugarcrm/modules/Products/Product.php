@@ -170,74 +170,44 @@ class Product extends SugarBean {
 	 * All Rights Reserved.
 	 * Contributor(s): ______________________________________..
 	*/
-	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean = null, $singleSelect = false){
+    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean = null, $singleSelect = false){
+   		if (!empty($filter) && (isset($filter['discount_amount']) || isset($filter['deal_calc']))) {
+   			$filter['discount_select'] = 1;
+   			$filter['deal_calc_usdollar'] = 1;
+   			$filter['discount_amount_usdollar'] = 1;
+   		}
+   		$ret_array = parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
+   		$ret_array['from'] = $ret_array['from']. " LEFT JOIN contacts on contacts.id = products.contact_id";
 
-        if (!empty($filter) && (isset($filter['discount_amount']) || isset($filter['deal_calc']))) {
-			$filter['discount_select'] = 1;
-			$filter['deal_calc_usdollar'] = 1;
-			$filter['discount_amount_usdollar'] = 1;
-		}
-
-        $ret_array = parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
-
-        //If return_array is set to true, return as an Array
-        if($return_array) {
-            $ret_array['from'] = $ret_array['from']. " LEFT JOIN contacts on contacts.id = products.contact_id";
-            //Add clause to remove opportunity related products
-            $ret_array['where'] = $ret_array['where']. " AND products.opportunity_id is null";
-            return $ret_array;
-        }
-
-        return str_replace('where products.deleted=0', 'where products.deleted=0 AND products.opportunity_id is null', $ret_array);
-	}
+   		return $ret_array;
+   	}
 
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
         $custom_join = $this->custom_fields->getJOIN(true, true,$where);
-
-        if($custom_join){
+		if($custom_join) {
             $custom_join['join'] .= $relate_link_join;
         }
-
-        $query = "SELECT $this->table_name.* ";
-
-        if($custom_join){
+		$query = "SELECT $this->table_name.* ";
+		if($custom_join){
             $query .= $custom_join['select'];
  		}
-
  		$query .= " FROM $this->table_name ";
 
         if($custom_join){
             $query .= $custom_join['join'];
 		}
 
-        $where_auto = "$this->table_name.deleted=0 AND $this->table_name.opportunity_id is null";
+        $where_auto = "$this->table_name.deleted=0";
 
-/*
-                                $query = "SELECT
-                                $this->table_name.*,
-                                $this->rel_manufacturers.name as manufacturer_name,
-                                $this->rel_categories.name as category_name,
-                                $this->rel_types.name as type_name,
-                                users.user_name as assigned_user_name
-                                FROM $this->table_name
-                                LEFT JOIN $this->rel_manufacturers
-                                ON $this->table_name.manufacturer_id=$this->rel_manufacturers.id
-								";
-
-                $where_auto = "$this->table_name.deleted=0
-								AND $this->rel_manufacturers.deleted=0
-								";
-*/
-
-        if($where != ""){
+        if($where != "") {
             $query .= "where ($where) AND ".$where_auto;
         } else {
             $query .= "where ".$where_auto;
         }
 
-        if(!empty($order_by)){
+        if(!empty($order_by)) {
             $query .= " ORDER BY $order_by";
         }
 
@@ -443,7 +413,7 @@ class Product extends SugarBean {
 	function get_list_view_data(){
 		global $current_language, $app_strings, $app_list_strings, $current_user, $timedate, $locale;
 		$product_mod_strings = return_module_language($current_language, "Products");
-		include('modules/Products/config.php');
+		require_once('modules/Products/config.php');
 		//$this->format_all_fields();
 
 		if ($this->date_purchased == '0000-00-00') $the_date_purchased='';
@@ -543,6 +513,11 @@ class Product extends SugarBean {
 	}
 
 	function save($check_notify = false) {
+
+        //If an opportunity_id value is provided, lookup the Account information (if available)
+        if(!empty($this->opportunity_id)) {
+            $this->setAccountIdForOpportunity($this->opportunity_id);
+        }
 
 		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 		// RPS - begin - decimals cant be null in sql server
@@ -680,6 +655,24 @@ class Product extends SugarBean {
 		return $id;
 	}
 
+
+    /**
+     * Sets the account_id value for instance given an opportunityId argument of the Opportunity id
+     *
+     * @param $opportunityId String value of the Opportunity id
+     * @return bool true if account_id was set; false otherwise
+     */
+    protected function setAccountIdForOpportunity($opportunityId) {
+        $opp = BeanFactory::getBean('Opportunities', $opportunityId);
+        if($opp->load_relationship('accounts')) {
+            $accounts = $opp->accounts->query(array('where'=>'accounts.deleted=0'));
+            foreach ($accounts['rows'] as $accountId => $value) {
+                $this->account_id = $accountId;
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Code to make sure that the Sales Status field is mapped correctly with the Sales Stage field

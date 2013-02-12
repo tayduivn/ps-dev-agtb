@@ -11,19 +11,17 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
         array(
             'type' => 'actiondropdown',
             'name' => 'main_dropdown',
+            'primary' => true,
             'buttons' => array(
                 array(
                     'name'      => 'send_button',
-                    'type'      => 'button',
+                    'type'      => 'rowaction',
                     'label'     => 'LBL_SEND_BUTTON_LABEL',
-                    'value'     => 'send',
-                    'primary' => true,
                 ),
                 array(
                     'name'      => 'draft_button',
-                    'type'      => 'button',
+                    'type'      => 'rowaction',
                     'label'     => 'LBL_SAVE_AS_DRAFT_BUTTON_LABEL',
-                    'value'     => 'draft',
                 ),
             ),
         ),

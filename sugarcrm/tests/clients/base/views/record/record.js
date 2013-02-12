@@ -233,6 +233,7 @@ describe("Record View", function() {
             var descriptionField = _.find(view.fields, function(field){
                 return field.name === 'description';
             });
+            descriptionField.decorateError = function() {};//sugar7.js now injects this
             var stub = sinon.stub(descriptionField, 'decorateError', $.noop());
             //Simulate a 'required' error on description field
             view.model.trigger('error:validation', {description: {required : true}});
@@ -254,6 +255,7 @@ describe("Record View", function() {
             var descriptionField = _.find(view.fields, function(field){
                 return field.name === 'description';
             });
+            descriptionField.clearErrorDecoration = function() {};//sugar7.js now injects this
             var stub = sinon.stub(descriptionField, 'clearErrorDecoration', $.noop());
             view.model.trigger('error:validation', {description: {required : true}});
             view.cancelClicked();
