@@ -110,7 +110,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                 array(
                     'name'       => 'html_body',
                     'type'       => 'htmleditable_tinymce',
-                    'full_width' => true,
+                    'dismiss_label' => true,
                     'tinyConfig' => array(
                         // Location of TinyMCE script
                         'script_url' => 'include/javascript/tiny_mce/tiny_mce.js',

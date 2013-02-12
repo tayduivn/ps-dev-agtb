@@ -68,6 +68,7 @@
                     {{#each grid}}
                         <div class="row-fluid {{../../name}}{{#if ../../hide}} hide{{/if}}">
                             {{#each this}}
+
                                 <div class="span{{this.span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                                     {{#if ../../../this.labels}}
                                         <div class="record-label" data-name="{{../../this.name}}">{{#unless ../../this.dismiss_label}}{{str ../../this.label ../../../../../../../this.model.module}}{{/unless}}</div>
@@ -96,14 +97,18 @@
                     {{#each grid}}
                         <div class="row-fluid control-group {{../../name}}{{#if ../../hide}} hide{{/if}}">
                             {{#each this}}
-                                {{#if ../../../this.labels }}
-                                    {{#if ../this.label}}
-                                <div class="control-label span{{this.labelSpan}} {{label_css_class}}">
-                                    <label class="tright record-label" data-name="{{../this.name}}">{{str ../../this.label ../../../../../../../this.model.module}}:</label>
-                                </div>
+
+                                {{#unless this.dismiss_label}}
+                                    {{#if ../../../this.labels }}
+                                        {{#if ../this.label}}
+                                    <div class="control-label span{{this.labelSpan}} {{label_css_class}}">
+                                        <label class="tright record-label" data-name="{{../this.name}}">{{str ../../this.label ../../../../../../../../this.model.module}}:</label>
+                                    </div>
+                                        {{/if}}
                                     {{/if}}
-                                {{/if}}
-                                <div class="controls{{#if full_width}} span12{{else}} offset{{this.labelSpan}} absolute span{{this.span}}{{/if}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
+                                {{/unless}}
+
+                                <div class="controls{{#if this.dismiss_label}} span12{{else}} offset{{this.labelSpan}} absolute span{{this.span}}{{/if}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
                                     {{#if name}}
                                         <span class='normal {{css}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../../../this.module}}-{{name}}">
                                             {{field ../../../../../../this ../../../../../../this.model ../../../../../../this.action}}
