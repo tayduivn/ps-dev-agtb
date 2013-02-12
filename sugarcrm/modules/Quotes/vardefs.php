@@ -673,15 +673,17 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     	'relationship' => 'quotes_contacts_billto',
     	'source'=>'non-db',
   	),
-  'product_bundles' =>
-	array (
-  		'name' => 'product_bundles',
-    	'type' => 'link',
-	'vname'=>'LBL_PRODUCT_BUNDLES',
-
-    	'relationship' => 'product_bundle_quote',
-    	'source'=>'non-db',
-  	),
+    'product_bundles' =>
+        array(
+            'name' => 'product_bundles',
+            'type' => 'link',
+            'vname' => 'LBL_PRODUCT_BUNDLES',
+            'module' => 'ProductBundles',
+            'bean_name' => 'ProductBundle',
+            'relationship' => 'product_bundle_quote',
+            'rel_fields' => array('bundle_index' => array('type' => 'integer')),
+            'source' => 'non-db',
+        ),
   'opportunities' =>
 	array (
   		'name' => 'opportunities',
@@ -823,14 +825,17 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
         'rhs_module'=> 'Quotes', 'rhs_table'=> 'quotes', 'rhs_key' => 'created_by',
         'relationship_type'=>'one-to-many'),
 	),
-    'duplicate_check' => array('FilterDuplicateCheck' => array(
-        'filter_template' => array(
-            array('name' => array('$starts' => '$name')),
-        ),
-        'ranking_fields' => array(
-            array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
+    'duplicate_check' => array(
+        'enabled' => true,
+        'FilterDuplicateCheck' => array(
+            'filter_template' => array(
+                array('name' => array('$starts' => '$name')),
+            ),
+            'ranking_fields' => array(
+                array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
+            )
         )
-    )),
+    ),
 );
 VardefManager::createVardef('Quotes','Quote', array('default', 'assignable',
 //BEGIN SUGARCRM flav=pro ONLY

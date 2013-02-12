@@ -49,7 +49,8 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                 if( isset($var['source'])
                     && ($var['source'] != 'db' && $var['source'] != 'custom_fields' && $var['source'] != 'non-db')
                     && $var['name'] != 'email1' && $var['name'] != 'email2'
-                    && (!isset($var['type'])|| $var['type'] != 'relate')) {
+                    && (!isset($var['type'])|| $var['type'] != 'relate')
+                    && (!isset($var['type'])|| $var['type'] == 'id' && !isset($var['link']))) {
 
                     if( $value->module_dir == 'Emails'
                         && (($var['name'] == 'description') || ($var['name'] == 'description_html') || ($var['name'] == 'from_addr_name')

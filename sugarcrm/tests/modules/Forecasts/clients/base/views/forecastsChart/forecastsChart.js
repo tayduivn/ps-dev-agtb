@@ -210,4 +210,21 @@ describe("The forecasts chart view", function () {
             });
         })
     })
+
+    describe("tests buildChartUrl function", function(){
+        it("should return properly formatted url", function(){
+            var params = {
+                    timeperiod_id: 'a',
+                    user_id: 'b',
+                    display_manager: 'c'
+
+                },
+                result = view.buildChartUrl(params);
+
+            result = result.split('/');
+            expect(result[1]).toBe('a');
+            expect(result[2]).toBe('b');
+            expect(result[4]).toBe('c');
+        });
+    })
 });

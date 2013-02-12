@@ -1,10 +1,10 @@
 ({
-    extendsFrom: 'BaselistView',
+    extendsFrom: 'ListView',
     initialize: function(options) {
         options.meta = options.meta || {};
         options.meta.selection = { type: 'single', label: ' ' };
 
-        app.view.views.BaselistView.prototype.initialize.call(this, options);
+        app.view.views.ListView.prototype.initialize.call(this, options);
 
         this.context.off("change:selection_model", this._selectModel);
         this.context.on("change:selection_model", this._selectModel, this);

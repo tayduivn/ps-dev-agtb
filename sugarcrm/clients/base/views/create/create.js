@@ -7,7 +7,7 @@
         SAVE_AND_VIEW: 'saveAndView'
     },
 
-    enableDuplicateCheck: true,
+    enableDuplicateCheck: false,
     dupecheckList: null, //duplicate list layout
 
     saveButtonName: 'save_button',
@@ -40,13 +40,6 @@
 
         this.model.off("change", null, this);
 
-        //duplicate a record
-        var duplicate = this.context.get('duplicateModel');
-        if (duplicate) {
-            delete duplicate.id;
-            this.model.set(duplicate);
-        }
-        
         //keep track of what post-save action was chosen in case user chooses to ignore dupes
         this.context.lastSaveAction = null;
 
@@ -57,7 +50,8 @@
         this.meta = _.extend({}, app.metadata.getView(this.module, 'record'), this.meta);
 
         //enable or disable duplicate check?
-        this.enableDuplicateCheck = _.isUndefined(this.meta.duplicateCheck) ? true : this.meta.duplicateCheck;
+        var moduleMetadata = app.metadata.getModule(this.module);
+        this.enableDuplicateCheck = (moduleMetadata && moduleMetadata.dupCheckEnabled) || false;
     },
 
     delegateButtonEvents: function() {
@@ -195,7 +189,6 @@
                 this.alerts.showServerError();
                 callback(true);
             }, this);
-
         if (this.skipDupeCheck() || !this.enableDuplicateCheck) {
             callback(false);
         } else {
@@ -327,7 +320,7 @@
      * @return {*}
      */
     extendModel: function(newModel, origAttributes) {
-        var modelAttributes = newModel.previousAttributes();
+        var modelAttributes = _.clone(newModel.attributes);
 
         _.each(modelAttributes, function(value, key, list) {
             if ( _.isUndefined(value)|| _.isEmpty(value)) {
@@ -343,7 +336,7 @@
      * @return {*}
      */
     saveFormData: function() {
-        this._origAttributes = this.model.previousAttributes();
+        this._origAttributes = _.clone(this.model.attributes);
         return this._origAttributes;
     },
 

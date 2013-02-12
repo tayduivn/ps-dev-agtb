@@ -259,6 +259,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search'
     ),
 
     'duplicate_check' => array(
+        'enabled' => true,
         'FilterDuplicateCheck' => array(
             'filter_template' => array(
                 array('$and' => array(

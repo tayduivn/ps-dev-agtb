@@ -11,19 +11,17 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
         array(
             'type' => 'actiondropdown',
             'name' => 'main_dropdown',
+            'primary' => true,
             'buttons' => array(
                 array(
                     'name'      => 'send_button',
-                    'type'      => 'button',
+                    'type'      => 'rowaction',
                     'label'     => 'LBL_SEND_BUTTON_LABEL',
-                    'value'     => 'send',
-                    'primary' => true,
                 ),
                 array(
                     'name'      => 'draft_button',
-                    'type'      => 'button',
+                    'type'      => 'rowaction',
                     'label'     => 'LBL_SAVE_AS_DRAFT_BUTTON_LABEL',
-                    'value'     => 'draft',
                 ),
             ),
         ),
@@ -63,6 +61,49 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'name'      => 'subject',
                     'label'     => 'LBL_SUBJECT',
                     'css_class' => 'inherit-width',
+                ),
+                array(
+                    'name'      => 'actionbar',
+                    'type'      => 'compose-actionbar',
+                    'buttonSections' => array(
+                        array(
+                            'name' => 'attachments_dropdown',
+                            'type' => 'actiondropdown',
+                            'buttons' => array(
+                                array(
+                                    'name'      => 'upload_new_button',
+                                    'type'      => 'button',
+                                    'icon'      => 'icon-paper-clip',
+                                    'label'     => 'LBL_UPLOAD_ATTACHMENT',
+                                    'primary' => true,
+                                ),
+                                array(
+                                    'name'      => 'attach_sugardoc_button',
+                                    'type'      => 'button',
+                                    'label'     => 'LBL_ATTACH_SUGAR_DOC',
+                                ),
+                            ),
+                        ),
+                        array(
+                            'name' => 'other_actions',
+                            'css_class' => 'pull-right',
+                            'buttons' => array(
+                                array(
+                                    'name'      => 'signature_button',
+                                    'type'      => 'button',
+                                    'icon'      => 'icon-edit',
+                                    'label'     => 'LBL_EMAIL_SIGNATURES',
+                                ),
+                                array(
+                                    'name'      => 'template_button',
+                                    'type'      => 'button',
+                                    'icon'      => 'icon-file-alt',
+                                    'label'     => 'LBL_EMAIL_TEMPLATES',
+                                ),
+                            ),
+                        ),
+                    ),
+
                 ),
                 array(
                     'name'      => 'html_body',

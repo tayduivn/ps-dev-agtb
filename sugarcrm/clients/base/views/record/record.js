@@ -42,18 +42,36 @@
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
             if (this.inlineEditMode) {
-                this.previousModelState = this.model.previousAttributes();
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
+        app.events.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
+        this.model.on("duplicate:before", this.setupDuplicateFields, this);
 
         this.delegateButtonEvents();
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
+    },
+    handleSync: function(method, model, options, error) {
+        if (this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
+            this.previousModelState = JSON.parse(JSON.stringify(model.attributes));
+        }
+    },
+
+    /**
+     * Called when current record is being duplicated to allow customization of fields
+     * that will be copied into new record.
+     *
+     * Override to setup the fields on this bean prior to being displayed in Create dialog
+     *
+     * @param {Object} prefill Bean that will be used for new record
+     */
+    setupDuplicateFields: function(prefill){
+
     },
 
     setLabel: function(context, value) {
@@ -129,6 +147,11 @@
                     field = {
                         name: field
                     };
+                }
+
+                //Disable the pencil icon if the user doesn't have ACLs
+                if (!app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                    field.noedit = true;
                 }
 
                 //labels: visibility for the label
@@ -230,7 +253,8 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            if ( field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
+            //Exclude non editable fields
+            if (field.def.noedit || field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
@@ -260,8 +284,10 @@
     showPreviousNextBtnGroup:function() {
         var listCollection = this.context.get('listCollection') || new Backbone.Collection();
         var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
-        this.collection.previous = listCollection.models[recordIndex-1] ? listCollection.models[recordIndex-1] : undefined;
-        this.collection.next = listCollection.models[recordIndex+1] ? listCollection.models[recordIndex+1] : undefined;
+        if(this.collection){
+            this.collection.previous = listCollection.models[recordIndex-1] ? listCollection.models[recordIndex-1] : undefined;
+            this.collection.next = listCollection.models[recordIndex+1] ? listCollection.models[recordIndex+1] : undefined;
+        }
     },
 
     registerFieldAsButton: function(buttonName) {
@@ -308,13 +334,17 @@
     },
 
     duplicateClicked: function() {
+        var prefill = app.data.createBean(this.model.module);
+        prefill.copy(this.model);
+        this.model.trigger("duplicate:before", prefill);
+        prefill.unset("id");
         app.drawer.open({
-            layout : 'create',
+            layout: 'create',
             context: {
                 create: true,
-                duplicateModel: this.model.attributes
+                model : prefill
             }
-        });
+        }, this);
     },
     
     findDuplicatesClicked: function() {
@@ -328,7 +358,6 @@
     },
 
     editClicked: function() {
-        this.previousModelState = this.model.previousAttributes();
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },

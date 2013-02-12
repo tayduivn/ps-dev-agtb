@@ -97,6 +97,7 @@ describe("Create View", function() {
         context.prepare();
 
         view = SugarTest.createView("base", moduleName, viewName, null, context);
+        view.enableDuplicateCheck = true;
     });
 
     afterEach(function() {

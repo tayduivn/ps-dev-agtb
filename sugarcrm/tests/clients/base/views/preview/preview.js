@@ -4,11 +4,6 @@ describe("Preview View", function() {
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
-        SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
-        SugarTest.loadHandlebarsTemplate('buttondropdown', 'field', 'base', 'detail');
-        SugarTest.loadHandlebarsTemplate("record", 'view', 'base');
-        SugarTest.loadComponent('base', 'view', "record");
-        SugarTest.loadComponent('base', 'view', "preview");
         SugarTest.testMetadata.addViewDefinition("record", {
             "panels": [{
                 "name": "panel_header",
@@ -32,7 +27,6 @@ describe("Preview View", function() {
         }, "Cases");
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-        sinonSandbox = sinon.sandbox.create();
         layout = SugarTest.createLayout('base', "Cases", "preview");
         preview = SugarTest.createView("base", "Cases", "preview", null, null);
         preview.layout = layout;
