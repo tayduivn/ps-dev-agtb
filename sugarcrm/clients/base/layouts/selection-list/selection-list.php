@@ -29,8 +29,11 @@
 
 $layout = MetaDataManager::getLayout('SideBarLayout');
 $layout->push('main', array('view'=>'selection-headerpane'));
-$layout->push('main', array('view'=>'selection-actions'));
-$layout->push('main', array('view'=>'selection-list'));
-$layout->push('main', array('view'=>'list-bottom'));
+
+$listLayout = MetaDataManager::getLayout("FilterPanelLayout", array("default" => "list"));
+$listLayout->push(array('view'=>'selection-list'));
+$listLayout->push(array('view'=>'list-bottom'));
 $layout->push('side', array('layout'=>'sidebar'));
+$layout->push('main', array('layout' => $listLayout->getLayout(true)));
+$layout->push('preview', array('layout' => 'preview'));
 $viewdefs['base']['layout']['selection-list'] = $layout->getLayout();
