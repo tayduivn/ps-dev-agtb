@@ -23,7 +23,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 require_once('clients/base/api/FilterApi.php');
-class ForecastWorksheetsFilterApi extends FilterApi
+class ForecastManagerWorksheetsFilterApi extends FilterApi
 {
 
     /**
@@ -38,34 +38,34 @@ class ForecastWorksheetsFilterApi extends FilterApi
         return array(
             'forecastWorksheetGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastWorksheets'),
+                'path' => array('ForecastManagerWorksheets'),
                 'pathVars' => array('module'),
-                'method' => 'forecastWorksheetsGet',
+                'method' => 'ForecastManagerWorksheetsGet',
                 'jsonParams' => array(),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
             ),
             'forecastWorksheetTimePeriodGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastWorksheets','?'),
+                'path' => array('ForecastManagerWorksheets', '?'),
                 'pathVars' => array('module', 'timeperiod_id'),
-                'method' => 'forecastWorksheetsGet',
+                'method' => 'ForecastManagerWorksheetsGet',
                 'jsonParams' => array(),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
             ),
             'forecastWorksheetTimePeriodUserIdGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastWorksheets','?', '?'),
+                'path' => array('ForecastManagerWorksheets', '?', '?'),
                 'pathVars' => array('module', 'timeperiod_id', 'user_id'),
-                'method' => 'forecastWorksheetsGet',
+                'method' => 'ForecastManagerWorksheetsGet',
                 'jsonParams' => array(),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
             ),
             'filterModuleGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastWorksheets', 'filter'),
+                'path' => array('ForecastManagerWorksheets', 'filter'),
                 'pathVars' => array('module', ''),
                 'method' => 'filterList',
                 'jsonParams' => array('filter'),
@@ -74,9 +74,10 @@ class ForecastWorksheetsFilterApi extends FilterApi
             ),
             'filterModulePost' => array(
                 'reqType' => 'POST',
-                'path' => array('ForecastWorksheets', 'filter'),
+                'path' => array('ForecastManagerWorksheets', 'filter'),
                 'pathVars' => array('module', ''),
                 'method' => 'filterList',
+                'jsonParams' => array('filter'),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetFilter.html',
             ),
@@ -90,18 +91,18 @@ class ForecastWorksheetsFilterApi extends FilterApi
      * @param array $args
      * @return array
      */
-    public function forecastWorksheetsGet(ServiceBase $api, array $args)
+    public function ForecastManagerWorksheetsGet(ServiceBase $api, array $args)
     {
         // if no timeperiod is set, just set it to false, and the current time period will be set
-        if(!isset($args['timeperiod_id'])) {
+        if (!isset($args['timeperiod_id'])) {
             $args['timeperiod_id'] = false;
         }
         // if no user id is set, just set it to false so it will use the default user
-        if(!isset($args['user_id'])) {
+        if (!isset($args['user_id'])) {
             $args['user_id'] = false;
         }
         // make sure the type arg is set to prevent notices
-        if(!isset($args['type'])) {
+        if (!isset($args['type'])) {
             $args['type'] = '';
         }
 
@@ -144,7 +145,7 @@ class ForecastWorksheetsFilterApi extends FilterApi
                     // remove the timeperiod_id
                     unset($args['filter'][$key]);
                 }
-                // if the key is 'draft', remove it from the filter
+                // if the key is 'draft', remote it from the filter
                 if ($filter_key == 'draft') {
                     unset($args['filter'][$key]);
                 }
@@ -166,13 +167,18 @@ class ForecastWorksheetsFilterApi extends FilterApi
      * @param ServiceBase $api                  Service Api Class
      * @param mixed $user_id                    Passed in User ID, if false, it will use the current use from $api->user
      * @param mixed $timeperiod_id              TimePeriod Id, if false, the current time period will be found an used
-     * @param string $parent_type               Type of worksheet to return, defaults to 'opportunities', but can be 'products'
      * @return array                            The Filer array to be passed back into the filerList Api
      * @throws SugarApiExceptionNotAuthorized
      * @throws SugarApiExceptionInvalidParameter
      */
-    protected function createFilter(ServiceBase $api, $user_id, $timeperiod_id, $parent_type = 'opportunities')
+    protected function createFilter(ServiceBase $api, $user_id, $timeperiod_id)
     {
+        // we need to check if the $api->user is a manager
+        // if they are not a manager, throw back a 403 (Not Authorized) error
+        if (!User::isManager($api->user->id)) {
+            throw new SugarApiExceptionNotAuthorized();
+        }
+
         $filter = array();
 
         // default draft to be 1
@@ -193,11 +199,6 @@ class ForecastWorksheetsFilterApi extends FilterApi
             $draft = ($user_id == $api->user->id) ? 1 : 0;
         }
 
-        // so we have a valid user, and it's not the $api->user, we need to check if the $api->user is a manager
-        // if they are not a manager, throw back a 403 (Not Authorized) error
-        if ($draft == 0 && !User::isManager($api->user->id)) {
-            throw new SugarApiExceptionNotAuthorized();
-        }
         // todo-sfa: Make sure that the passed in user can be viewed by the $api->user, need to check reportee tree
         // set the assigned_user_id
         array_push($filter, array('assigned_user_id' => $user_id));
@@ -216,50 +217,8 @@ class ForecastWorksheetsFilterApi extends FilterApi
         if (is_null($tp)) {
             throw new SugarApiExceptionInvalidParameter('Provided TimePeriod is not valid');
         }
-        array_push(
-            $filter,
-            array(
-                '$and' => array(
-                    array('date_closed_timestamp' => array('$gte' => $tp->start_date_timestamp)),
-                    array('date_closed_timestamp' => array('$lte' => $tp->end_date_timestamp)),
-                )
-            )
-        );
-
-        // we only want to view parent_types of 'Opportunities' here
-        array_push($filter, array('parent_type' => $this->getParentType($parent_type)));
+        array_push($filter, array('timeperiod_id' => $tp->id));
 
         return $filter;
     }
-
-    /**
-     * Utility Method to find the proper ParentType for the filter
-     *
-     * @param string $param         The Type from the ajax request
-     * @return string
-     */
-    protected function getParentType($param)
-    {
-        // make sure that type is a module name
-        if (is_string($param)) {
-            switch (strtolower($param)) {
-                case 'lineitem':
-                case 'lineitems':
-                case 'product':
-                case 'products':
-                    $param = 'Products';
-                    break;
-                case 'opportunity':
-                case 'opportunities':
-                default:
-                    $param = 'Opportunities';
-
-            }
-        } else {
-            $param = 'Opportunities';
-        }
-
-        return $param;
-    }
-
 }

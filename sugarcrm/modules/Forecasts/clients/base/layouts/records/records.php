@@ -30,6 +30,12 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
     'type' => 'records',
     'components' => array(
         array(
+            'view' => 'forecastsTree',
+        ),
+        array(
+            'view' => 'forecastsTitle',
+        ),
+        array(
             'layout' => 'info'
         ),
         array(
@@ -46,19 +52,9 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
         ),
         array(
             'view' => 'forecastsWorksheetManager',
-            'contextCollection' => array(
-                'module' => 'ForecastManagerWorksheets',
-                'name' => 'WorksheetManager'
-            ),
         ),
         array(
             'view' => 'forecastsWorksheetManagerTotals'
-        ),
-        array(
-            'view' => 'forecastsTitle',
-        ),
-        array(
-            'view' => 'forecastsTree',
         ),
         array(
             'view' => 'forecastsCommitButtons',

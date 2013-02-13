@@ -23,75 +23,66 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 require_once('clients/base/api/FilterApi.php');
-class ForecastWorksheetsFilterApi extends FilterApi
+class ForecastsFilterApi extends FilterApi
 {
-
-    /**
-     * We need the limit higher for this filter call since we don't support pagination
-     *
-     * @var int
-     */
-    protected $defaultLimit = 1000;
 
     public function registerApiRest()
     {
         return array(
-            'forecastWorksheetGet' => array(
+            'forecastsCommitted' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastWorksheets'),
-                'pathVars' => array('module'),
-                'method' => 'forecastWorksheetsGet',
-                'jsonParams' => array(),
-                'shortHelp' => 'Filter records from a single module',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
-            ),
-            'forecastWorksheetTimePeriodGet' => array(
-                'reqType' => 'GET',
-                'path' => array('ForecastWorksheets','?'),
-                'pathVars' => array('module', 'timeperiod_id'),
-                'method' => 'forecastWorksheetsGet',
-                'jsonParams' => array(),
-                'shortHelp' => 'Filter records from a single module',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
-            ),
-            'forecastWorksheetTimePeriodUserIdGet' => array(
-                'reqType' => 'GET',
-                'path' => array('ForecastWorksheets','?', '?'),
+                'path' => array('Forecasts', '?', '?'),
                 'pathVars' => array('module', 'timeperiod_id', 'user_id'),
-                'method' => 'forecastWorksheetsGet',
-                'jsonParams' => array(),
-                'shortHelp' => 'Filter records from a single module',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
+                'method' => 'forecastsCommitted',
+                'shortHelp' => 'A list of forecasts entries matching filter criteria',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCommittedGet.html',
+            ),
+            'forecastsCommittedDefaultUser' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts', '?'),
+                'pathVars' => array('module', 'timeperiod_id'),
+                'method' => 'forecastsCommitted',
+                'shortHelp' => 'A list of forecasts entries matching filter criteria',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCommittedGet.html',
+            ),
+            'forecastsCommittedDefaultTimeperiodAndUser' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts'),
+                'pathVars' => array('module'),
+                'method' => 'forecastsCommitted',
+                'shortHelp' => 'A list of forecasts entries matching filter criteria',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCommittedGet.html',
             ),
             'filterModuleGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastWorksheets', 'filter'),
+                'path' => array('Forecasts', 'filter'),
                 'pathVars' => array('module', ''),
                 'method' => 'filterList',
                 'jsonParams' => array('filter'),
                 'shortHelp' => 'Filter records from a single module',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetFilter.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
             ),
             'filterModulePost' => array(
                 'reqType' => 'POST',
-                'path' => array('ForecastWorksheets', 'filter'),
+                'path' => array('Forecasts', 'filter'),
                 'pathVars' => array('module', ''),
                 'method' => 'filterList',
                 'shortHelp' => 'Filter records from a single module',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetFilter.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
             ),
         );
     }
 
     /**
-     * Forecast Worksheet API Handler
+     * forecastsCommitted
      *
-     * @param ServiceBase $api
-     * @param array $args
+     * @param $api
+     * @param $args
      * @return array
      */
-    public function forecastWorksheetsGet(ServiceBase $api, array $args)
+    public function forecastsCommitted($api, $args)
     {
+
         // if no timeperiod is set, just set it to false, and the current time period will be set
         if(!isset($args['timeperiod_id'])) {
             $args['timeperiod_id'] = false;
@@ -101,14 +92,15 @@ class ForecastWorksheetsFilterApi extends FilterApi
             $args['user_id'] = false;
         }
         // make sure the type arg is set to prevent notices
-        if(!isset($args['type'])) {
-            $args['type'] = '';
+        if(!isset($args['forecast_type'])) {
+            $args['forecast_type'] = false;
         }
 
-        $args['filter'] = $this->createFilter($api, $args['user_id'], $args['timeperiod_id'], $args['type']);
+        $args['filter'] = $this->createFilter($api, $args['user_id'], $args['timeperiod_id'], $args['forecast_type']);
 
         return parent::filterList($api, $args);
     }
+
 
     /**
      * Forecast Worksheet Filter API Handler
@@ -119,6 +111,10 @@ class ForecastWorksheetsFilterApi extends FilterApi
      */
     public function filterList(ServiceBase $api, array $args)
     {
+        if (!SugarACL::checkAccess('Forecasts', 'list')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: Forecasts');
+        }
+
         // some local variables
         $found_assigned_user = false;
         $found_timeperiod = false;
@@ -135,7 +131,7 @@ class ForecastWorksheetsFilterApi extends FilterApi
             foreach ($args['filter'] as $key => $filter) {
                 $filter_key = array_shift(array_keys($filter));
                 // if the key is assigned_user_id, take the value and save it for later
-                if ($found_assigned_user == false && $filter_key == 'assigned_user_id') {
+                if ($found_assigned_user == false && $filter_key == 'user_id') {
                     $found_assigned_user = array_pop($filter);
                 }
                 // if the key is timeperiod_id, take the value, save it for later, and remove the filter
@@ -144,11 +140,7 @@ class ForecastWorksheetsFilterApi extends FilterApi
                     // remove the timeperiod_id
                     unset($args['filter'][$key]);
                 }
-                // if the key is 'draft', remove it from the filter
-                if ($filter_key == 'draft') {
-                    unset($args['filter'][$key]);
-                }
-                if ($found_type == false && $filter_key == 'type') {
+                if ($found_type == false && $filter_key == 'forecast_type') {
                     $found_type = array_pop($filter);
                     unset($args['filter'][$key]);
                 }
@@ -171,12 +163,10 @@ class ForecastWorksheetsFilterApi extends FilterApi
      * @throws SugarApiExceptionNotAuthorized
      * @throws SugarApiExceptionInvalidParameter
      */
-    protected function createFilter(ServiceBase $api, $user_id, $timeperiod_id, $parent_type = 'opportunities')
+    protected function createFilter(ServiceBase $api, $user_id, $timeperiod_id, $forecast_type)
     {
         $filter = array();
 
-        // default draft to be 1
-        $draft = 1;
         // if we did not find a user in the filters array, set it to the current user's id
         if ($user_id == false) {
             // use the current user, since on one was passed in
@@ -189,20 +179,34 @@ class ForecastWorksheetsFilterApi extends FilterApi
             if (is_null($user)) {
                 throw new SugarApiExceptionInvalidParameter('Provided User is not valid');
             }
-            // we found a user, so check to make sure that if it's not the current user, they only see committed data
-            $draft = ($user_id == $api->user->id) ? 1 : 0;
+
+            # if they are not a manager, don't show them committed number for others
+            global $mod_strings, $current_language;
+            $mod_strings = return_module_language($current_language, 'Forecasts');
+
+            if (!User::isManager($api->user->id)) {
+                throw new SugarApiExceptionNotAuthorized(string_format(
+                    $mod_strings['LBL_ERROR_NOT_MANAGER'],
+                    array($api->user->id, $user_id)
+                ));
+            }
         }
 
-        // so we have a valid user, and it's not the $api->user, we need to check if the $api->user is a manager
-        // if they are not a manager, throw back a 403 (Not Authorized) error
-        if ($draft == 0 && !User::isManager($api->user->id)) {
-            throw new SugarApiExceptionNotAuthorized();
-        }
-        // todo-sfa: Make sure that the passed in user can be viewed by the $api->user, need to check reportee tree
         // set the assigned_user_id
-        array_push($filter, array('assigned_user_id' => $user_id));
-        // set the draft flag depending on the assigned_user_id that is set from above
-        array_push($filter, array('draft' => $draft));
+        array_push($filter, array('user_id' => $user_id));
+
+        if($forecast_type !== false) {
+            // make sure $forecast_type is valid (e.g. Direct or Rollup)
+            switch(strtolower($forecast_type)) {
+                case 'direct':
+                case 'rollup':
+                    break;
+                default:
+                    throw new SugarApiExceptionInvalidParameter('Forecast Type of ' . $forecast_type . ' is not valid. Valid options Direct or Rollup.');
+            }
+            // set the forecast type, make sure it's always capitalized
+            array_push($filter, array('forecast_type' => ucfirst($forecast_type)));
+        }
 
         // if we didn't find a time period, set the time period to be the current time period
         if ($timeperiod_id == false) {
@@ -216,50 +220,9 @@ class ForecastWorksheetsFilterApi extends FilterApi
         if (is_null($tp)) {
             throw new SugarApiExceptionInvalidParameter('Provided TimePeriod is not valid');
         }
-        array_push(
-            $filter,
-            array(
-                '$and' => array(
-                    array('date_closed_timestamp' => array('$gte' => $tp->start_date_timestamp)),
-                    array('date_closed_timestamp' => array('$lte' => $tp->end_date_timestamp)),
-                )
-            )
-        );
-
-        // we only want to view parent_types of 'Opportunities' here
-        array_push($filter, array('parent_type' => $this->getParentType($parent_type)));
+        array_push($filter,array('timeperiod_id' => $tp->id));
 
         return $filter;
-    }
-
-    /**
-     * Utility Method to find the proper ParentType for the filter
-     *
-     * @param string $param         The Type from the ajax request
-     * @return string
-     */
-    protected function getParentType($param)
-    {
-        // make sure that type is a module name
-        if (is_string($param)) {
-            switch (strtolower($param)) {
-                case 'lineitem':
-                case 'lineitems':
-                case 'product':
-                case 'products':
-                    $param = 'Products';
-                    break;
-                case 'opportunity':
-                case 'opportunities':
-                default:
-                    $param = 'Opportunities';
-
-            }
-        } else {
-            $param = 'Opportunities';
-        }
-
-        return $param;
     }
 
 }
