@@ -63,11 +63,8 @@ class SugarFieldBoolTest extends Sugar_PHPUnit_Framework_TestCase
         // make'em false
         $this->meeting->reminder_time = -1;
         $this->meeting->email_reminder_time = -1;
-        $this->meeting->save();
-        $id = $this->meeting->id;
-        $this->meeting = new Meeting();
-        $this->meeting->retrieve($id);
-
+        $this->meeting->reminder_checked = false;
+        $this->meeting->email_reminder_checked = false;
 
         $data = array();
         $this->sf->apiFormatField($data, $this->meeting, array(), 'reminder_checked',array());
@@ -75,7 +72,7 @@ class SugarFieldBoolTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse($data['reminder_checked']);
 
         $this->sf->apiFormatField($data, $this->meeting, array(), 'email_reminder_checked',array());
-        $this->assertFalse($data['reminder_checked']);
+        $this->assertFalse($data['email_reminder_checked']);
 
     }
 
