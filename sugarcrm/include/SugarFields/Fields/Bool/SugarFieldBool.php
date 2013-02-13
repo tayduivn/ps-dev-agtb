@@ -105,7 +105,7 @@ class SugarFieldBool extends SugarFieldBase {
         if (isset($bean->$fieldName)) {
             $data[$fieldName] = $this->normalizeBoolean($bean->$fieldName);
         } else {
-            $data[$fieldName] = '';
+            $data[$fieldName] = null;
         }
     }    
 
