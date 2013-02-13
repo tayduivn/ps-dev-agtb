@@ -26,22 +26,20 @@
  ********************************************************************************/
 ({
     events: {
-        "click a[name=cancel_button]": "_cancel",
-        "click a[name=save_button]":   "_save"
+        "click a[name=cancel_button]": "close",
+        "click a[name=save_button]":   "save"
     },
 
-    _cancel: function() {
-        this._close();
+    save: function() {
+        app.drawer.close(this.model);
     },
 
-    _save: function() {
-        this.context.trigger("dashlet:configuration:save");
-        this._close();
+    close: function() {
+        app.drawer.close();
     },
 
-    _close: function() {
-        if (this.context.parent) {
-            this.context.parent.trigger("drawer:hide");
-        }
+    _renderHtml: function() {
+        this.model = this.context.get("model");
+        app.view.View.prototype._renderHtml.call(this);
     }
 })

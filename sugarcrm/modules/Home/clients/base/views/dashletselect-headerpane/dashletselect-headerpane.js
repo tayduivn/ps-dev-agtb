@@ -26,21 +26,15 @@
  ********************************************************************************/
 ({
     events: {
-        "click a[name=cancel_button]": "_cancel"
+        "click a[name=cancel_button]": "close"
     },
 
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.title = app.lang.get(this.meta.title, this.module);
     },
-    
-    _cancel: function() {
-        this._close();
-    },
 
-    _close: function() {
-        if (this.context.parent) {
-            this.context.parent.trigger("drawer:hide");
-        }
+    close: function() {
+        app.drawer.close();
     }
 })

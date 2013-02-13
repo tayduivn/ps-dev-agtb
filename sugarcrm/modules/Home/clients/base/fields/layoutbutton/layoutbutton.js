@@ -50,13 +50,13 @@
                         });
                     }, this);
                 }
-                this.model.set("metadata", metadata, {silent: true});
-                this.model.trigger("change:layout");
+                this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
+                this.model.trigger("change:metadata");
             };
             if(value < this.value) {
                 app.alert.show('resize_confirmation', {
                     level: 'confirmation',
-                    messages: 'Are you sure to change the layout? The layout can be disorganized.',
+                    messages: app.lang.get('LBL_DASHBOARD_LAYOUT_CONFIRM', this.module),
                     onConfirm: _.bind(setComponent, this)
                 });
             } else {
@@ -74,11 +74,19 @@
                 });
             }, this);
 
-            this.model.set("metadata", metadata, {silent: true});
-            this.model.trigger("change:layout");
+            this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
+            this.model.trigger("change:metadata");
         }
     },
     bindDomChange: function() {
 
+    },
+    bindDataChange: function() {
+        if (this.model) {
+            this.model.on("change:metadata", this.render, this);
+            if(this.model.isNew()) {
+                this.setLayout(1);
+            }
+        }
     }
 })

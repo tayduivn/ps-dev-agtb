@@ -129,6 +129,7 @@ $mod_strings = array (
   'LBL_MAX_DASHLETS_REACHED' => 'You have reached the maximum number of Sugar Dashlets your administrator has set. Please remove a Sugar Dashlet to add a new one.',
   'LBL_ADDING_DASHLET' => 'Adding Sugar Dashlet ...',
   'LBL_ADDED_DASHLET' => 'Sugar Dashlet Added',
+  'LBL_DASHBOARD_LAYOUT_CONFIRM' => 'Are you sure to change the layout? The layout can be disorganized.',
   'LBL_REMOVE_DASHLET_CONFIRM' => 'Are you sure you want to remove the Sugar Dashlet?',
   'LBL_REMOVING_DASHLET' => 'Removing Sugar Dashlet ...',
   'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
@@ -143,7 +144,15 @@ $mod_strings = array (
   'LBL_DASHLET_REFRESH' => 'Refresh Sugar Dashlet',
   'LBL_DASHLET_EDIT' => 'Edit Sugar Dashlet',
   'LBL_DASHBOARD_TITLE' => 'Dashboard',
+  'LBL_DASHBOARD_Add' => 'Create New Dashboard',
   'LBL_DASHBOARD_EDIT' => 'Edit Dashboard',
+  'LBL_DASHBOARD_ADD_ROW' => 'Add a Row',
+  'LBL_DASHBOARD_ADD_1_COLUMN' => '+ 1 column',
+  'LBL_DASHBOARD_ADD_2_COLUMNS' => '+ 2 columns',
+  'LBL_DASHBOARD_ADD_3_COLUMNS' => '+ 3 columns',
+  'LBL_DASHBOARD_1_COLUMN_LAYOUT' => '1 column layout',
+  'LBL_DASHBOARD_2_COLUMN_LAYOUT' => '2 column layout',
+  'LBL_DASHBOARD_3_COLUMN_LAYOUT' => '3 column layout',
 
   'LBL_TRAINING_TITLE' => 'Training',
 

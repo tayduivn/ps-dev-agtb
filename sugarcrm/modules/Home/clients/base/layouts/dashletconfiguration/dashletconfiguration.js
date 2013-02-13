@@ -26,40 +26,18 @@
  ********************************************************************************/
 ({
     initialize: function(options) {
-        app.view.Layout.prototype.initialize.call(this, options);
+        var meta = app.metadata.getLayout(options.module, options.name),
+            main_panel;
 
-        var view = app.view.createView({
-            context: this.context,
-            name:    "dashletconfiguration",
-            layout:  this
-        });
-
-        var main = this._getMainPane();
-        main.addComponent(view);
-
-        this.context.on("dashlet:configuration:save", this._save, this);
-    },
-
-    _save: function() {
-        var main                 = this._getMainPane(),
-            dashletConfiguration = main.getComponent("dashletconfiguration");
-
-        var meta = {
-            dashletId: this.context.get("dashletId"),
-            name:      $(dashletConfiguration.$el.find("input[name=dashlet_name]")[0]).val(),
-            view:      $(dashletConfiguration.$el.find("input[name=view]")[0]).val(),
-            context:   {
-                module: $(dashletConfiguration.$el.find("select[name=modules]")[0]).val()
-            }
-        };
-
-        if (this.context.parent) {
-            this.context.parent.trigger("dashboard:dashlet:update", meta);
+        _.each(meta.components, function(component) {
+            main_panel = _.find(component.layout.components, function(childComponent) {
+                return childComponent.layout && childComponent.layout.name === 'main-pane';
+            }, this);
+        }, this);
+        if(main_panel){
+            main_panel.layout.components = _.union(main_panel.layout.components, options.meta.components);
         }
-    },
-
-    _getMainPane: function() {
-        var sidebar = this.getComponent("sidebar");
-        return sidebar.getComponent("main-pane");
+        options.meta = meta;
+        app.view.Layout.prototype.initialize.call(this, options);
     }
 })

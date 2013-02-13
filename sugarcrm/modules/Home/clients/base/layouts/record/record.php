@@ -1,8 +1,10 @@
 <?php
 
 $layout = MetaDataManager::getLayout("GenericLayout");
-$layout->push(array("view" => "dashboard-headerpane"));
-$layout->push(array("layout" => "dashlet-main"));
+$listLayout = MetaDataManager::getLayout("GenericLayout", array("name" => "list"));
+$listLayout->push(array("view" => "dashboard-headerpane"));
+$listLayout->push(array("layout" => "dashlet-main"));
+$layout->push($listLayout->getLayout(true));
 
 $viewdefs['Home']['base']['layout']['record'] = $layout->getLayout();
 $viewdefs['Home']['base']['layout']['record']['type'] = 'dashboard';

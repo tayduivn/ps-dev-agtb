@@ -8,7 +8,8 @@
         'click [name=save_button]' : 'saveClicked',
         'click [name=create_button]' : 'saveClicked',
         'click [name=create_cancel_button]' : 'createCancelClicked',
-        'click [name=delete_button]' : 'deleteClicked'
+        'click [name=delete_button]' : 'deleteClicked',
+        'click [name=add_button]': 'addClicked'
     },
     initialize: function(options) {
         app.view.views.HeaderpaneView.prototype.initialize.call(this, options);
@@ -30,15 +31,17 @@
         this.buttons = {};
     },
     editClicked: function(evt) {
-        this.previousModelState = JSON.parse(JSON.stringify(this.model.previousAttributes()));
+        this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
         this.inlineEditMode = true;
         this.setButtonStates('edit');
         this.toggleEdit(true);
+        this.model.trigger("setMode", "edit");
     },
     cancelClicked: function(evt) {
         this.changed = false;
         this.setButtonStates('view');
         this.handleCancel();
+        this.model.trigger("setMode", "view");
     },
     saveClicked: function(evt) {
         this.handleSave();
@@ -48,6 +51,10 @@
     },
     deleteClicked: function(evt) {
         this.handleDelete();
+    },
+    addClicked: function(evt) {
+        var route = app.router.buildRoute(this.module, null, 'create');
+        app.router.navigate(route, {trigger: true});
     },
     _render: function() {
         app.view.View.prototype._render.call(this);
@@ -75,6 +82,7 @@
                     } else {
                         self.changed = false;
                         self.setButtonStates('view');
+                        self.model.trigger("setMode", "view");
                         self.toggleEdit(false);
                         app.alert.show('dashboard_notice', {level: 'success', title: app.lang.getAppString('LBL_SAVED'), autoClose: true});
                     }

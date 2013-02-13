@@ -29,8 +29,43 @@
         context.set("model", model);
         context.set("collection", new DashboardCollection());
         app.view.Layout.prototype.initialize.call(this, options);
-
+        this.initDashletPlugin();
         this.on("render", this.toggleSidebar);
+    },
+    initDashletPlugin: function() {
+        if(app.plugins._get('Dashlet', 'view')) return;
+        app.plugins.register('Dashlet', 'view', {
+            onAttach: function() {
+                this.on("init", function() {
+                    this.model.isNotEmpty = true;
+                    var dashlet_context = this.context.get("dashlet"),
+                        viewName = dashlet_context.viewName;
+                    delete dashlet_context.viewName;
+                    this.model.set(_.extend({
+                        name: dashlet_context.name,
+                        type: dashlet_context.type
+                    }, dashlet_context));
+                    if(viewName === "config") {
+                        this.layout.context.set("model", this.context.get("model"));
+                        var templateName = this.name + '.dashlet-config';
+                        this.template = app.template.getView(templateName, this.module) ||
+                                        app.template.getView(templateName) ||
+                                        app.template.getView('record') ||
+                                        this.template;
+                    } else if(viewName === "preview") {
+                        this.layout.context.set("model", this.context.get("model"));
+                        var templateName = this.name + '.dashlet-preview';
+                        this.template = app.template.getView(templateName, this.module) ||
+                                        app.template.getView(templateName) ||
+                                        this.template;
+                    }
+
+                    if(this.initDashlet && _.isFunction(this.initDashlet)) {
+                        this.initDashlet(viewName);
+                    }
+                });
+            }
+        });
     },
     toggleSidebar: function() {
         if(!this.toggled) {
@@ -38,15 +73,15 @@
             this.toggled = true;
         }
     },
-    loadData: function(options) {
-        this.context.loadData(options);
+    //loadData: function(options) {
+    //    this.context.loadData(options);
         /*
         if(this.model.get("id")) {
             this.model.fetch();
         } else if(!this.context.get("create")) {
             this.collection.fetch();
         }*/
-    },
+    //},
     bindDataChange: function() {
         var modelId = this.context.get("modelId");
         if(!(modelId && this.context.get("create")) && this.collection) {

@@ -16,4 +16,16 @@ $viewdefs["Home"]["base"]["view"]["dashletconfiguration-headerpane"] = array(
             "css_class" => "btn-primary",
         ),
     ),
+    "panels" => array(
+        array(
+            "name" => "header",
+            "fields" => array(
+                array(
+                    "type" => "base",
+                    "name" => "name",
+                    "placeholder" => "LBL_NAME",
+                ),
+            )
+        )
+    )
 );

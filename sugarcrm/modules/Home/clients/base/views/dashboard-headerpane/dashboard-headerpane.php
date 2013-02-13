@@ -7,9 +7,9 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
             "primary" => true,
             "buttons" => array(
                 array(
-                    "name"      => "add_dashlet_button",
+                    "name"      => "add_button",
                     "type"      => "rowaction",
-                    "label"     => "LBL_DASHLET_ADD",
+                    "label"     => "LBL_DASHBOARD_Add",
                     "css_class" => "btn btn-primary",
                 ),
 
@@ -70,6 +70,11 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                 array(
                     "type" => "layoutbutton",
                     "name" => "layout",
+                    "showOn" => "edit",
+                ),
+                array(
+                    "type" => "layoutsizer",
+                    "name" => "width",
                     "showOn" => "edit",
                 ),
             )
