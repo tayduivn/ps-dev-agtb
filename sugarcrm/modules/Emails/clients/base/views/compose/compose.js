@@ -308,7 +308,8 @@
         app.drawer.open({
                 layout:'compose-templates',
                 context:{
-                    module:'EmailTemplates'
+                    module:'EmailTemplates',
+                    forceNew:true
                 }
             },
             this.templateDrawerCallback
@@ -428,7 +429,8 @@
         app.drawer.open({
                 layout: 'selection-list',
                 context: {
-                    module: 'Documents'
+                    module: 'Documents',
+                    forceNew:true
                 }
             },
             this.documentDrawerCallback);

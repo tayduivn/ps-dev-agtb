@@ -318,12 +318,16 @@
         evt.stopPropagation();
         evt.preventDefault();
 
+        var model = app.data.createBean(this.model.module);
+        model.copy(this.model);
+
         app.drawer.open({
             layout : 'compose',
             context: {
                 create: 'true',
                 module: "Emails",
-                recipientModel: this.model
+                recipientModel: model,
+                forceNew:true
             }
         });
     }
