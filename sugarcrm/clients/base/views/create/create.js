@@ -264,7 +264,8 @@
         self.model.save(null, {
             fieldsToValidate: self.getFields(self.module),
             success: success,
-            error: error
+            error: error,
+            viewed: true
         });
     },
 

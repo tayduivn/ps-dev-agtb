@@ -39,7 +39,7 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
-        app.events.on("data:sync:end", this.handleSync, this);
+        this.model.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
         this.model.on("duplicate:before", this.setupDuplicateFields, this);
@@ -50,9 +50,9 @@
             this.model.isNotEmpty = true;
         }
     },
-    handleSync: function(method, model, options, error) {
-        if (this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
-            this.previousModelState = JSON.parse(JSON.stringify(model.attributes));
+    handleSync: function(method, options, error) {
+        if(this.model && this.model.attributes && (method == 'read' || method =='update')){
+            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
         }
     },
 
@@ -324,7 +324,6 @@
     bindDataChange: function() {
         this.model.on("change", function(fieldType) {
             if (this.inlineEditMode) {
-                this.previousModelState = this.model.previousAttributes();
                 this.setButtonStates(this.STATE.EDIT);
             }
             if (this.model.isNotEmpty !== true && fieldType !== 'image') {
@@ -467,7 +466,8 @@
         app.file.checkFileFieldsAndProcessUpload(self.model, {
                 success:function () {
                     self.model.save({}, {
-                        success:finalSuccess
+                        success:finalSuccess,
+                        viewed: true
                     });
                 }
             },
@@ -479,12 +479,10 @@
 
     handleCancel: function() {
         this.inlineEditMode = false;
-
+        this.toggleEdit(false);
         if (!_.isEmpty(this.previousModelState)) {
             this.model.set(this.previousModelState);
         }
-
-        this.toggleEdit(false);
     },
 
     handleDelete: function() {

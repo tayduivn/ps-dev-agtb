@@ -64,6 +64,7 @@
 		</div>
         {literal}
         <script language="javascript" src="include/javascript/sugar7.js"></script>
+        <script language="javascript" src="include/javascript/sugar7/context.js"></script>
 		<script language="javascript">
 			var App;
 
