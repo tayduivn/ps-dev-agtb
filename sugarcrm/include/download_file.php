@@ -31,75 +31,64 @@ if (!in_array('upload', stream_get_wrappers())) {
  */
 class DownloadFile {
     /**
-     * Sends an HTTP response with the contents of the request file for download
+     * Gets a file and returns an HTTP response with the contents of the request file for download
      *
      * @param SugarBean $bean The SugarBean to get the file for
      * @param string $field The field name to get the file for
      */
     public function getFile(SugarBean $bean, $field) {
-        if (isset($bean->field_defs[$field])) {
+        if ($this->validateBeanAndField($bean, $field, 'file') || $this->validateBeanAndField($bean, $field, 'image')) {
             $def = $bean->field_defs[$field];
-            if (isset($def['type']) && !empty($bean->{$field})) {
-                $info = array();
 
-                if ($def['type'] == 'image') {
-                    $filename = $bean->{$field};
-                    $filepath = $this->getFilePathFromId($filename);
-                    $filedata = getimagesize($filepath);
+            if ($def['type'] == 'image') {
+                $info = $this->getImageInfo($bean, $field);
+            } elseif ($def['type'] == 'file') {
+                $info = $this->getFileInfo($bean, $field);
+            }
 
-                    $info = array(
-                        'content-type' => $filedata['mime'],
-                        'content-length' => filesize($filepath),
-                        'name' => $filename,
-                        'path' => $filepath,
-                    );
-                } elseif ($def['type'] == 'file') {
-                    $info = $this->getFileInfo($bean, $field);
-                }
-
-                if ($info) {
-                    $filename = $info['name'];
-                    $filepath = $info['path'];
-
-                    header("Pragma: public");
-                    header("Cache-Control: maxage=1, post-check=0, pre-check=0");
-
-                    if ($def['type'] == 'image') {
-                        header("Content-Type: {$info['content-type']}");
-                    } else {
-                        header("Content-Type: application/force-download");
-                        header("Content-type: application/octet-stream");
-                        header("Content-Disposition: attachment; filename=\"".$filename."\";");
-                    }
-                    header("X-Content-Type-Options: nosniff");
-                    header("Content-Length: " . filesize($filepath));
-                    header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 2592000));
-                    set_time_limit(0);
-                    ob_start();
-
-                    //BEGIN SUGARCRM flav=int ONLY
-                    // awu: stripping out zend_send_file function call, the function changes the filename to be whatever is on the file system
-                    if(function_exists('zend_send_file')){
-                        zend_send_file($filepath);
-                    }else{
-                    //END SUGARCRM flav=int ONLY
-                        readfile($filepath);
-                    //BEGIN SUGARCRM flav=int ONLY
-                    }
-                    //END SUGARCRM flav=int ONLY
-                    @ob_end_flush();
-                } else {
-                    // @TODO Localize this exception message
-                    throw new Exception('File information could not be retrieved for this record');
-                }
+            if ($info) {
+                $this->outputFile($def['type'], $info);
             } else {
                 // @TODO Localize this exception message
-                throw new Exception('Missing file information in the SugarBean');
+                throw new Exception('File information could not be retrieved for this record');
             }
-        } else {
-            // @TODO Localize this exception message
-            throw new Exception('Missing field definitions for ' . $field);
         }
+    }
+
+    /**
+     * Sends an HTTP response with the contents of the request file for download
+     *
+     * @param string $type Field type (image/file)
+     * @param array $info Array containing the file details.
+     */
+    public function outputFile($type, $info) {
+        header("Pragma: public");
+        header("Cache-Control: maxage=1, post-check=0, pre-check=0");
+
+        if ($type == 'image') {
+            header("Content-Type: {$info['content-type']}");
+        } else {
+            header("Content-Type: application/force-download");
+            header("Content-type: application/octet-stream");
+            header("Content-Disposition: attachment; filename=\"".$info['name']."\";");
+        }
+        header("X-Content-Type-Options: nosniff");
+        header("Content-Length: " . filesize($info['path']));
+        header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 2592000));
+        set_time_limit(0);
+        ob_start();
+
+        //BEGIN SUGARCRM flav=int ONLY
+        // awu: stripping out zend_send_file function call, the function changes the filename to be whatever is on the file system
+        if(function_exists('zend_send_file')){
+            zend_send_file($info['path']);
+        }else{
+        //END SUGARCRM flav=int ONLY
+            readfile($info['path']);
+        //BEGIN SUGARCRM flav=int ONLY
+        }
+        //END SUGARCRM flav=int ONLY
+        @ob_end_flush();
     }
 
     /**
@@ -113,41 +102,70 @@ class DownloadFile {
     }
 
     /**
-     * Gets file info for a bean and field
+     * Gets file info for a bean and field type image
+     *
+     * @param SugarBean $bean The bean to get the info for
+     * @param string $field The field name to get the file information for
+     * @return array|bool
+     */
+    public function getImageInfo($bean, $field) {
+        if ($this->validateBeanAndField($bean, $field, 'image')) {
+            $filename = $bean->{$field};
+            $filepath = $this->getFilePathFromId($filename);
+
+            // Quick existence check to make sure we are actually working
+            // on a real file
+            if (!file_exists($filepath)) {
+                return false;
+            }
+
+            $filedata = getimagesize($filepath);
+
+            $info = array(
+                'content-type' => $filedata['mime'],
+                'content-length' => filesize($filepath),
+                'name' => $filename,
+                'path' => $filepath,
+            );
+            return $info;
+        }
+    }
+
+    /**
+     * This function makes sure the bean exists, the field exists in the bean and is the expected type
+     *
+     * @param SugarBean $bean The SugarBean to get the file for
+     * @param string $field The field name to get the file for
+     * @param string $type the type of the field
+     * @return bool
+     * @throws Exception
+     */
+    private function validateBeanAndField($bean, $field, $type) {
+        if (!$bean instanceof SugarBean || empty($bean->id) || empty($bean->{$field})) {
+            // @TODO Localize this exception message
+            throw new Exception('Invalid SugarBean');
+            return false;
+        }
+        if (!isset($bean->field_defs[$field])) {
+            // @TODO Localize this exception message
+            throw new Exception('Missing field definitions for ' . $field);
+            return false;
+        }
+        if (!isset($bean->field_defs[$field]['type']) || $bean->field_defs[$field]['type'] != $type) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Gets file info for a bean and field type file
      *
      * @param SugarBean $bean The bean to get the info for
      * @param string $field The field name to get the file information for
      * @return array|bool
      */
     public function getFileInfo($bean, $field) {
-        if (!$bean instanceof SugarBean || empty($bean->id)) {
-            return false;
-        }
-
-        if (!empty($bean->{$field})) {
-            if (isset($bean->field_defs[$field]['type']) && in_array($bean->field_defs[$field]['type'], array('file', 'image'))) {
-                if ($bean->field_defs[$field]['type'] == 'image') {
-                    $filename = $bean->{$field};
-                    $filepath = 'upload://' . $filename;
-                    
-                    // Quick existence check to make sure we are actually working 
-                    // on a real file
-                    if (!file_exists($filepath)) {
-                        return false;
-                    }
-                    
-                    $filedata = getimagesize($filepath);
-
-                    // Add in image height and width
-                    return array(
-                        'content-type' => $filedata['mime'],
-                        'content-length' => filesize($filepath),
-                        'name' => $filename,
-                        'path' => $filepath,
-                        'width' => empty($filedata[0]) ? 0 : $filedata[0],
-                        'height' => empty($filedata[1]) ? 0 : $filedata[1],
-                    );
-                } else {
+        if ($this->validateBeanAndField($bean, $field, 'file')) {
                     // Default the file id and url
                     $fileid  = $bean->id;
                     $fileurl = '';
@@ -227,11 +245,7 @@ class DownloadFile {
 
                     // Get our filename if we don't have it already
                     if (empty($name)) {
-                        $method = 'getFileNameFrom' . $bean->object_name;
-                        if (!method_exists($this, $method)) {
-                            $method = 'getFileNameFromSugarBean';
-                        }
-                        $name = $this->{$method}($bean);
+                        $name = $bean->getFileName();
                     }
 
                     return array(
@@ -241,82 +255,7 @@ class DownloadFile {
                         'uri' => $fileurl,
                         'path' => $filepath,
                     );
-                }
             }
-        }
-    }
-
-    /**
-     * KBDocument specific file name getter
-     *
-     * @param KBDocument $bean The bean to get the file name for
-     * @return string
-     */
-    public function getFileNameFromKBDocument(KBDocument $bean) {
-        if (empty($bean->id)) {
-            return '';
-        }
-
-        // Similar process to documents
-        $revision = BeanFactory::getBean('KBDocumentRevisions', $bean->id);
-
-        // Start with checking if this is a KBDocRev id
-        if (!empty($revision)) {
-            $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
-            if ($revision) {
-                return $revision->filename;
-            }
-        } else {
-            // Try the kbdoc revision
-            $revision = BeanFactory::getBean('KBDocumentRevisions', $bean->kbdocument_revision_id);
-            if (!empty($revision)) {
-                $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
-                if ($revision) {
-                    return $revision->filename;
-                }
-            }
-        }
-
-        return '';
-    }
-
-    /**
-     * Document specific file name getter
-     *
-     * @param Document $bean The bean to get the file name for
-     * @return string
-     */
-    public function getFileNameFromDocument(Document $bean) {
-        if (empty($bean->id)) {
-            return '';
-        }
-
-        // Documents store their file information in DocumentRevisions
-        $revision = BeanFactory::getBean('DocumentRevisions', $bean->id);
-
-        // Check if the id was for a revision
-        if (!empty($revision)) {
-            return $revision->filename;
-        } else {
-            // The id is not a revision id, try the actual document revision id
-            $revision = BeanFactory::getBean('DocumentRevisions', $bean->document_revision_id);
-
-            if ($revision) {
-                return $revision->filename;
-            }
-        }
-
-        return '';
-    }
-
-    /**
-     * Fallback file name getter, simply gets the filename for the given bean
-     *
-     * @param SugarBean $bean The bean to get the file name for
-     * @return string
-     */
-    public function getFileNameFromSugarBean(SugarBean $bean) {
-        return empty($bean->filename) ? '' : $bean->filename;
     }
 
     /**
@@ -330,7 +269,7 @@ class DownloadFile {
     }
 
     /**
-     * Gets the conents of a file
+     * Gets the contents of a file
      *
      * @param string $filename Path to the file
      * @return string

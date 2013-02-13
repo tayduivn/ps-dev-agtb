@@ -50,6 +50,7 @@
                     autoClose: true
                 });
             }
-        });
+        },
+        { deleteIfFails: true});
     }
 })

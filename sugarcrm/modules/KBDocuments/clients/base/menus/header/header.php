@@ -7,6 +7,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *not use this file except in compliance with the License. Under the terms of the license, You
  *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
  *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
  *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
  *of a third party.  Use of the Software may be subject to applicable fees and any use of the
  *Software without first paying applicable fees is strictly prohibited.  You do not have the
@@ -19,50 +20,27 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-
-// create and populate default filters.
-
-$filter = BeanFactory::getBean('Filters');
-$filter->module_name = 'Accounts';
-$filter->default_filter = true;
-$filter->name = 'All Records';
-$filter->filter_definition = '{
-    "filter": []
-}';
-$filter->save();
-
-$filter = BeanFactory::getBean('Filters');
-$filter->module_name = 'Accounts';
-$filter->default_filter = false;
-$filter->name = 'Assigned to Me';
-$filter->filter_definition = '{
-	"filter": [
-		{ "$owner": "" }
-	]
-}';
-$filter->save();
-
-$filter = BeanFactory::getBean('Filters');
-$filter->module_name = 'Accounts';
-$filter->default_filter = false;
-$filter->name = 'Recently Viewed';
-$filter->filter_definition = '{
-	"filter": [
-		{ "date_modified": {"$tracker" : "-7 DAY"} }
-	]
-}';
-$filter->save();
-
-$filter = BeanFactory::getBean('Filters');
-$filter->module_name = 'Accounts';
-$filter->default_filter = false;
-$filter->name = 'New';
-$filter->filter_definition = '{
-	"filter": [
-		{ "date_entered": {"$fromDays" : "-7"} }
-	]
-}';
-$filter->save();
-
-?>
+$module_name = 'KBDocuments';
+$viewdefs[$module_name]['base']['menu']['header'] = array(
+    array(
+        'route'=>'#bwc/index.php?module=KBDocuments&action=EditView&return_module=KBDocuments&return_action=DetailView',
+        'label' =>'LNK_NEW_ARTICLE',
+        'acl_action'=>'edit',
+        'acl_module'=>$module_name,
+        'icon' => 'icon-plus',
+    ),
+    array(
+        'route'=>'#'.$module_name,
+        'label' =>'LBL_LIST_ARTICLES',
+        'acl_action'=>'list',
+        'acl_module'=>$module_name,
+        'icon' => 'icon-reorder',
+        ),
+    array(
+        'route'=>'#bwc/index.php?module=KBDocuments&action=KBAdminView',
+        'label' =>'LBL_KNOWLEDGE_BASE_ADMIN_MENU',
+        'acl_action'=>'admin',
+        'acl_module'=>$module_name,
+        'icon' => '',
+    ),
+);

@@ -40,8 +40,28 @@ class RestFileTest extends RestFileTestBase
         $this->assertNotEmpty($restReply['reply'], 'Second reply was empty');
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Missing response data for Notes');
     }
+        //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * @group rest
+     */
+    public function testPostUploadImageTempToContact()
+    {
+        // Upload a temporary file
+        $post = array('picture' => '@include/images/badge_256.png');
+        $reply = $this->_restCall('Contacts/temp/file/picture', $post);
+        $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
+        $this->assertNotEmpty($reply['reply']['picture']['guid'], 'File guid not returned');
 
-    //BEGIN SUGARCRM flav=pro ONLY
+        // Grab the temporary file and make sure it is present
+        $fetch = $this->_restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
+        $this->assertNotEmpty($fetch['replyRaw'], 'Temporary file is missing');
+
+        // Grab the temporary file and make sure it's been deleted
+        $fetch = $this->_restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
+        $this->assertArrayHasKey('error', $fetch['reply'], 'Temporary file is still here');
+        $this->assertEquals('invalid_parameter', $fetch['reply']['error'], 'Expected error string not returned');
+    }
+
     /**
      * @group rest
      */
@@ -96,7 +116,18 @@ class RestFileTest extends RestFileTestBase
     /**
      * @group rest
      */
-    public function testPutUploadImageToContact()
+    public function testPostUploadNonImageToContact()
+    {
+        $post = array('picture' => '@include/fonts/Courier.afm');
+        $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', $post);
+        $this->assertArrayHasKey('error', $reply['reply'], 'Bug58324 - No error message returned');
+        $this->assertEquals('fatal_error', $reply['reply']['error'], 'Bug58324 - Expected error string not returned');
+    }
+
+    /**
+     * @group rest
+     */
+    public function testPutUploadImageToContact() 
     {
         $filename = 'include/images/badge_256.png';
         $opts = array(CURLOPT_INFILESIZE => filesize($filename), CURLOPT_INFILE => fopen($filename, 'r'));

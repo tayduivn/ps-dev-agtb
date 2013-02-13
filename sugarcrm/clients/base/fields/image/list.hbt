@@ -26,8 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#if def.text}}
-    <label><input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}> {{str def.text this.module}}</label>
-{{else}}
-    <input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}>
+<div class="image_field image_rounded image_detail hide">
+<div class="image_preview">
+{{#if value}}
+    <img src="{{value}}">
+    {{else}}
+    {{#eq name "picture"}}<img src="{{config.profile}}">{{/eq}}
 {{/if}}
+</div>
+</div>
