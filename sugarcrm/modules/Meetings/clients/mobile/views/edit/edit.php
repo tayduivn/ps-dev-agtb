@@ -96,6 +96,7 @@ $viewdefs['Meetings']['mobile']['view']['edit'] = array(
                     ),
                 ),
                 'description',
+                'parent_name',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',

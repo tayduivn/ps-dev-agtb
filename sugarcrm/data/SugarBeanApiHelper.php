@@ -20,8 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/SugarFields/SugarFieldHandler.php');
-require_once('include/MetaDataManager/MetaDataManager.php');
+require_once 'include/SugarFields/SugarFieldHandler.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 /**
  * This class is here to provide functions to easily call in to the individual module api helpers
@@ -33,7 +33,7 @@ class SugarBeanApiHelper
      */
     protected $api;
 
-    function __construct(ServiceBase $api)
+    public function __construct(ServiceBase $api)
     {
         $this->api = $api;
     }
@@ -52,32 +52,31 @@ class SugarBeanApiHelper
         $sfh = new SugarFieldHandler();
 
         $data = array();
-        if(!SugarACL::moduleSupportsACL($bean->module_name) || ($bean->ACLAccess('view') || $bean->ACLAccess('list'))) {
-            foreach ( $bean->field_defs as $fieldName => $properties ) {
+        if (!SugarACL::moduleSupportsACL($bean->module_name) || ($bean->ACLAccess('view') || $bean->ACLAccess('list'))) {
+            foreach ($bean->field_defs as $fieldName => $properties) {
                 // Prune fields before ACL check because it can be expensive (Bug58133)
                 if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
                     // They want to skip this field
                     continue;
                 }
 
-                
                 $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-                if ( $type == 'link' ) {
+                if ($type == 'link') {
                     // There is a different API to fetch linked records, don't try to encode all of the related data.
                     continue;
                 }
                 $field = $sfh->getSugarField($type);
-                
+
                 if ( $field != null && isset($bean->$fieldName) ) {
                      $field->apiFormatField($data, $bean, $options, $fieldName, $properties);
                 }
 
                 //BEGIN SUGARCRM flav=pro ONLY
-                if ( !$bean->ACLFieldAccess($fieldName,'read') ) { 
+                if ( !$bean->ACLFieldAccess($fieldName,'read') ) {
                     // No read access to the field, eh?  Unset the field from the array of data returned
                     unset($data[$fieldName]);
                 }
-                //END SUGARCRM flav=pro ONLY                
+                //END SUGARCRM flav=pro ONLY
             }
 
             if (isset($bean->field_defs['email']) &&
@@ -90,7 +89,7 @@ class SugarBeanApiHelper
                     'invalid_email',
                     'primary_address'
                 );
-                foreach($emailsRaw as $rawEmail) {
+                foreach ($emailsRaw as $rawEmail) {
                     $formattedEmail = array();
                     foreach ($emailProps as $property) {
                         if (isset($rawEmail[$property])) {
@@ -107,9 +106,9 @@ class SugarBeanApiHelper
 
             // get favorites
             // mark if its a favorite
-            
+
             if ( empty($fieldList) || !in_array('my_favorite',$fieldList) ) {
-                if(!isset($bean->my_favorite)) {
+                if (!isset($bean->my_favorite)) {
                     $bean->my_favorite = SugarFavorites::isUserFavorite($bean->module_dir, $bean->id, $GLOBALS['current_user']->id);
                 }
                 $data['my_favorite'] = $bean->my_favorite;
@@ -121,29 +120,29 @@ class SugarBeanApiHelper
             // if not an admin and the hashes differ, send back bean specific acl's
             $data['_acl'] = self::getBeanAcl($bean, $fieldList);
         } else {
-            if(isset($bean->id)) {
+            if (isset($bean->id)) {
                 $data['id'] = $bean->id;
             }
         }
 
-
         return $data;
-    } 
+    }
 
     /**
      * Get the beans ACL's to pass back any that differ
-     * @param SugarBean $bean 
-     * @param array $fieldList
+     * @param  SugarBean $bean
+     * @param  array     $fieldList
      * @return array
      */
-    public function getBeanAcl(SugarBean $bean, array $fieldList) {
+    public function getBeanAcl(SugarBean $bean, array $fieldList)
+    {
         $acl = array('fields' => (object) array());
         if(SugarACL::moduleSupportsACL($bean->module_dir)) {
-            $mm = MetaDataManager::getManager();
+            $mm = new MetaDataManager($GLOBALS['current_user']);
             $moduleAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user']);
 
             $beanAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user'], $bean);
-            if($beanAcl['_hash'] != $moduleAcl['_hash'] || !empty($fieldList)) {
+            if ($beanAcl['_hash'] != $moduleAcl['_hash'] || !empty($fieldList)) {
 
                 // diff the fields separately, they are usually empty anyway so we won't diff these often.
                 $moduleAclFields = $moduleAcl['fields'];
@@ -168,56 +167,55 @@ class SugarBeanApiHelper
                  * beanAclFields is !empty and moduleAclFields is !empty -> return all access = "Yes" from moduleAcl and unset any in beanAcl that is in ModuleAcl [don't dupe data]
                  */
 
-                if(!empty($beanAclFields) && empty($moduleAclFields)) {
+                if (!empty($beanAclFields) && empty($moduleAclFields)) {
                     $fieldAcls = $beanAclFields;
-                }
-                elseif(!empty($beanAclFields) && !empty($moduleAclFields)) {
+                } elseif (!empty($beanAclFields) && !empty($moduleAclFields)) {
                     // we need the ones that are moduleAclFields but not in beanAclFields
-                    foreach($moduleAclFields AS $field => $aclActions) {
-                        foreach($aclActions AS $action => $access) {
-                            if(!isset($beanAclFields[$field][$action])) {
+                    foreach ($moduleAclFields AS $field => $aclActions) {
+                        foreach ($aclActions AS $action => $access) {
+                            if (!isset($beanAclFields[$field][$action])) {
                                 $beanAclFields[$field][$action] = "yes";
                             }
                             // if the bean action is set and it matches the access from module, we do not need to send it down
-                            if(isset($beanAclFields[$field][$action]) && $beanAclFields[$field][$action] == $access) {
+                            if (isset($beanAclFields[$field][$action]) && $beanAclFields[$field][$action] == $access) {
                                 unset($beanAclFields[$field][$action]);
                             }
                         }
                     }
 
                     // cleanup BeanAclFields, we don't want to pass a field that doens't have actions
-                    foreach($beanAclFields AS $field => $actions) {
-                        if(empty($actions)) {
+                    foreach ($beanAclFields AS $field => $actions) {
+                        if (empty($actions)) {
                             unset($beanAclFields[$field]);
                         }
                     }
 
-                    $fieldAcls = $beanAclFields;   
-                }
-                elseif(empty($beanAclFields) && !empty($moduleAclFields)) {
+                    $fieldAcls = $beanAclFields;
+                } elseif (empty($beanAclFields) && !empty($moduleAclFields)) {
                     // it is different because we now have access...
-                    foreach($moduleAclFields AS $field => $aclActions) {
-                        foreach($aclActions AS $action => $access) {
+                    foreach ($moduleAclFields AS $field => $aclActions) {
+                        foreach ($aclActions AS $action => $access) {
                             $fieldAcls[$field][$action] = "yes";
                         }
                     }
                 }
 
-                foreach($fieldList AS $fieldName) {
-                    if(empty($fieldAcls[$fieldName]) && isset($moduleAclFields[$fieldName])) {
+                foreach ($fieldList AS $fieldName) {
+                    if (empty($fieldAcls[$fieldName]) && isset($moduleAclFields[$fieldName])) {
                         $fieldAcls[$fieldName] = $moduleAclFields[$fieldName];
-                    }    
+                    }
                 }
-                
-                $acl['fields'] = (object)$fieldAcls;
+
+                $acl['fields'] = (object) $fieldAcls;
             }
 
         }
-        return $acl;        
+
+        return $acl;
     }
 
     /**
-     * This function 
+     * This function
      *
      * @param $bean SugarBean The bean you want populated from the $submittedData array, this function will modify this
      *                        record
@@ -230,23 +228,35 @@ class SugarBeanApiHelper
     {
         $sfh = new SugarFieldHandler();
 
-        foreach ( $bean->field_defs as $fieldName => $properties ) {
+        $context = array();
+        /**
+         * We need to override because of order of fields.
+         * For example, if we are changing ownership and a field that is owner read/owner write
+         * The assigned_user_id could be set on the bean before we check the ACL of the field
+         * Therefore we need to set the owner_override before we start manipulating the bean fields
+         * so that the ACL returns correctly for owner
+         */
+        if (!empty($bean->assigned_user_id) && $bean->assigned_user_id == $GLOBALS['current_user']->id) {
+            $context['owner_override'] = true;
+        }
+
+        foreach ($bean->field_defs as $fieldName => $properties) {
             if ( !isset($submittedData[$fieldName]) ) {
                 // They aren't trying to modify this field
                 continue;
             }
 
             //BEGIN SUGARCRM flav=pro ONLY
-            if ( !$bean->ACLFieldAccess($fieldName,'save') ) { 
+            if ( !$bean->ACLFieldAccess($fieldName,'save', $context) ) {
                 // No write access to this field, but they tried to edit it
                 throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$submittedData['module']);
             }
             //END SUGARCRM flav=pro ONLY
-            
+
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
             $field = $sfh->getSugarField($type);
-            
-            if ( $field != null ) {
+
+            if ($field != null) {
                 $field->apiSave($bean, $submittedData, $fieldName, $properties);
             }
         }
