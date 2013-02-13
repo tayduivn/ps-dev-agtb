@@ -48,6 +48,7 @@
     initialize: function(options) {
         //Grab the list of fields to display from the main list view (assuming initialize is being called from a subclass)
         var listViewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {}));
+        listViewMeta = this.filterFields(listViewMeta);
         //Extend from an empty object to prevent polution of the base metadata
         options.meta = _.extend({}, listViewMeta, JSON.parse(JSON.stringify(options.meta || {})));
         options.meta.type = options.meta.type || 'list';
@@ -71,7 +72,25 @@
         app.events.on("list:preview:decorate", this.decorateRow, this);
         app.events.on("list:filter:fire", this.filterList, this);
     },
+    filterFields: function(viewMeta){
+        var self = this, fieldsRemoved = 0;
+        this.hiddenFields = this.hiddenFields || [];
+        // TODO: load stored field prefs
+        // no prefs so use viewMeta as default and assign hidden fields
+        _.each(viewMeta.panels, function(panel){
+             for (var count = 0; count < panel.fields.length; count ++) {
+                 fieldMeta = panel.fields[count];
+                if (fieldMeta.default === false) {
+                    self.hiddenFields.push(fieldMeta);
+                    panel.fields.splice(count, 1);
+                    // we need to recheck the last one because of the splice
+                    count--;
+                }
+            };
+        });
+        return viewMeta;
 
+    },
     filterList: function(filterDef, scope) {
         var self = this;
 
@@ -83,7 +102,6 @@
             }
         });
     },
-
     populatePanelMetadata: function(panel, options) {
         var meta = options.meta;
         if(meta.selection) {
