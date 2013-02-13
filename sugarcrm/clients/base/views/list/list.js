@@ -61,6 +61,7 @@
         this.template = this.template || app.template.getView('list', this.module)
                         || app.template.getView('list') || null;
         this.fallbackFieldTemplate = 'list-header';
+        this.action = 'list';
 
         //When clicking on eye icon, we need to trigger preview:render with model&collection
         this.context.on("list:preview:fire", function(model) {
@@ -69,6 +70,7 @@
 
         //When switching to next/previous record from the preview panel, we need to update the highlighted row
         app.events.on("list:preview:decorate", this.decorateRow, this);
+        app.events.on("list:filter:fire", this.filterList, this);
     },
     filterFields: function(viewMeta){
         var self = this;
@@ -84,7 +86,20 @@
                 }
             });
         });
+
         return viewMeta;
+
+    },
+    filterList: function(filterDef, scope) {
+        var self = this;
+
+        this.collection.fetch({
+            filter: filterDef,
+            success: function() {
+                var url = app.api.buildURL('Filters/' + self.options.module + '/used', "update");
+                app.api.call("update", url, {filters: [scope.currentFilter]}, {});
+            }
+        });
     },
     populatePanelMetadata: function(panel, options) {
         var meta = options.meta;

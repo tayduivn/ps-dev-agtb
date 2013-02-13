@@ -13,9 +13,6 @@
             <input type="text" value="Module" disabled="disabled" class="disabled inherit-width">
         </div>
         <div class="controls span3">
-            <input type="text" value="matches" disabled="disabled" class="disabled inherit-width">
-        </div>
-        <div class="controls span5">
             <input type="text" value="{{title}}" disabled="disabled" class="disabled inherit-width">
         </div>
         <div class="filter-value controls span1">
