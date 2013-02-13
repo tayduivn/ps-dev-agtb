@@ -456,10 +456,10 @@ $vardefs =array(
 			'dbtype' => 'varchar',
 		    'massupdate' => false,
 		    'reportable' => false,
-			'comment' => 'Picture file',
+			'comment' => 'Avatar',
             'len' => '255',
-            'width' => '120',
-            'height' => '',
+            'width' => '42',
+            'height' => '42',
             'border' => '',					
 		),
 	//END SUGARCRM flav!=com ONLY		        

@@ -1,11 +1,15 @@
 <form class="form-search {{#unless visible}}hide{{/unless}}">
 <div class="mu extend">
     <article class="filter-header">
-        <strong>{{str "LBL_MASS_UPDATE"}}</strong>
-        <div class="pull-right">
-            {{#each meta.buttons}}
-            {{field ../this}}
-            {{/each}}
+        <div class="row-fluid">
+            <div class="controls span6">
+                <strong>{{str "LBL_MASS_UPDATE"}}</strong>
+            </div>
+            <div class="pull-right">
+                {{#each meta.buttons}}
+                {{field ../this}}
+                {{/each}}
+            </div>
         </div>
     </article>
     {{#each fieldValues}}

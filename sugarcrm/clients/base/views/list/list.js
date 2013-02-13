@@ -48,6 +48,7 @@
     initialize: function(options) {
         //Grab the list of fields to display from the main list view (assuming initialize is being called from a subclass)
         var listViewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {}));
+        listViewMeta = this.filterFields(listViewMeta);
         //Extend from an empty object to prevent polution of the base metadata
         options.meta = _.extend({}, listViewMeta, JSON.parse(JSON.stringify(options.meta || {})));
         options.meta.type = options.meta.type || 'list';
@@ -60,6 +61,7 @@
         this.template = this.template || app.template.getView('list', this.module)
                         || app.template.getView('list') || null;
         this.fallbackFieldTemplate = 'list-header';
+        this.action = 'list';
 
         //When clicking on eye icon, we need to trigger preview:render with model&collection
         this.context.on("list:preview:fire", function(model) {
@@ -68,6 +70,37 @@
 
         //When switching to next/previous record from the preview panel, we need to update the highlighted row
         app.events.on("list:preview:decorate", this.decorateRow, this);
+        app.events.on("list:filter:fire", this.filterList, this);
+    },
+    filterFields: function(viewMeta){
+        var self = this, fieldsRemoved = 0;
+        this.hiddenFields = this.hiddenFields || [];
+        // TODO: load stored field prefs
+        // no prefs so use viewMeta as default and assign hidden fields
+        _.each(viewMeta.panels, function(panel){
+             for (var count = 0; count < panel.fields.length; count ++) {
+                 fieldMeta = panel.fields[count];
+                if (fieldMeta.default === false) {
+                    self.hiddenFields.push(fieldMeta);
+                    panel.fields.splice(count, 1);
+                    // we need to recheck the last one because of the splice
+                    count--;
+                }
+            };
+        });
+        return viewMeta;
+
+    },
+    filterList: function(filterDef, scope) {
+        var self = this;
+
+        this.collection.fetch({
+            filter: filterDef,
+            success: function() {
+                var url = app.api.buildURL('Filters/' + self.options.module + '/used', "update");
+                app.api.call("update", url, {filters: [scope.currentFilter]}, {});
+            }
+        });
     },
     populatePanelMetadata: function(panel, options) {
         var meta = options.meta;

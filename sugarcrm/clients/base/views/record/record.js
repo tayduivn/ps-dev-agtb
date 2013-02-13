@@ -39,12 +39,6 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
-        // Set the save button to show if the model has been edited.
-        this.model.on("change", function() {
-            if (this.inlineEditMode) {
-                this.setButtonStates(this.STATE.EDIT);
-            }
-        }, this);
         app.events.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
@@ -144,7 +138,7 @@
 
                 //The code below assumes that the field is an object but can be a string
                 if(_.isString(field)) {
-                    field = {
+                    panel.fields[index] = field = {
                         name: field
                     };
                 }
@@ -233,6 +227,11 @@
 
                 colCount++; // increment the column count now that we've filled a column
             }, this);
+
+            // Display module label in header panel it doesn't contain the picture field
+            if (panel.header) {
+                panel.isAvatar = !!_.find(panel.fields, function(f) { return f.name === 'picture'; });
+            }
 
             panel.grid = rows;
         }, this);
@@ -323,14 +322,16 @@
     },
 
     bindDataChange: function() {
-        if (this.model) {
-            this.model.on("change", function() {
-                if (this.model.isNotEmpty !== true) {
-                    this.model.isNotEmpty = true;
-                    this.render();
-                }
-            }, this);
-        }
+        this.model.on("change", function(fieldType) {
+            if (this.inlineEditMode) {
+                this.previousModelState = this.model.previousAttributes();
+                this.setButtonStates(this.STATE.EDIT);
+            }
+            if (this.model.isNotEmpty !== true && fieldType !== 'image') {
+                this.model.isNotEmpty = true;
+                this.render();
+            }
+        }, this);
     },
 
     duplicateClicked: function() {
@@ -435,7 +436,15 @@
         // TODO: Refactor this for fields to support their own focus handling in future.
         // Add your own field type handling for focus / editing here.
         switch (field.type) {
-            case "img":
+            case "image":
+                var self = this;
+                app.file.checkFileFieldsAndProcessUpload(self.model, {
+                        success:function () {
+                            self.toggleField(field);
+                        }
+                    },
+                    { deleteIfFails:false}
+                );
                 break;
             default:
                 this.toggleField(field);
@@ -444,16 +453,24 @@
 
     handleSave: function() {
         var self = this;
-        this.inlineEditMode = false;
-        this.model.save({}, {
-            success: function() {
-                if (self.createMode) {
-                    app.navigate(self.context, self.model);
-                } else {
-                    self.render();
-                }
+        self.inlineEditMode = false;
+
+        var finalSuccess = function () {
+            if (self.createMode) {
+                app.navigate(self.context, self.model);
+            } else {
+                self.render();
             }
-        });
+        };
+        app.file.checkFileFieldsAndProcessUpload(self.model, {
+                success:function () {
+                    self.model.save({}, {
+                        success:finalSuccess
+                    });
+                }
+            },
+            { deleteIfFails:false});
+
         this.$(".record-save-prompt").hide();
         this.render();
     },
@@ -482,8 +499,6 @@
 
     handleKeyDown: function(e, field) {
         app.view.views.EditableView.prototype.handleKeyDown.call(this, e, field);
-        var nextCell,
-            index = field.$el.parent().data("index");
 
         if (e.which == 9) { // If tab
             e.preventDefault();

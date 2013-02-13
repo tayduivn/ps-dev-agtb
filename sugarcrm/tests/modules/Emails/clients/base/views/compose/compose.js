@@ -8,9 +8,18 @@ describe("Emails.Views.Compose", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', 'record');
+        SugarTest.loadComponent('base', 'view', 'create');
         SugarTest.loadComponent('base', 'view', 'compose', 'Emails');
         SugarTest.testMetadata.set();
-        view = SugarTest.createView('base', 'Emails', 'compose', null, null, true);
+
+        var context = app.context.getContext();
+        context.set({
+            module: 'Emails',
+            create: true
+        });
+        context.prepare();
+
+        view = SugarTest.createView('base', 'Emails', 'compose', null, context, true);
     });
 
     afterEach(function() {
@@ -308,6 +317,127 @@ describe("Emails.Views.Compose", function() {
 
             expect(saveModelStub.called).toBe(false);
             expect(alertShowStub.calledOnce).toBe(true);
+        });
+    });
+
+    describe('insertTemplates - replacing signatures', function() {
+        var apiCallStub, insertTemplateStub, signatureStub;
+
+        beforeEach(function() {
+            insertTemplateStub = sinon.stub(view, 'insertTemplateAttachments'),
+                signatureStub = sinon.stub(view, 'updateEditorWithSignature'),
+                apiCallStub = sinon.stub(app.api, 'call', function(method, myURL, model, options) {
+                    options.success(model, null, options);
+                });
+            view.model.off('change');
+        });
+
+        afterEach(function() {
+            apiCallStub.restore();
+            insertTemplateStub.restore();
+            signatureStub.restore();
+        });
+
+        it('should not populate editor if template parameter is not an object', function() {
+            view.insertTemplate(null);
+            expect(apiCallStub.callCount).toEqual(0);
+            expect(insertTemplateStub.callCount).toEqual(0);
+            expect(signatureStub.callCount).toEqual(0);
+        });
+
+        it('should call to set signature in editor with default signature id when not signature not selected', function() {
+            var defaultId = '123445';
+            view.defaultSignatureId = defaultId;
+            view.insertTemplate(null);
+
+            expect(apiCallStub.callCount).toEqual(0);
+            expect(insertTemplateStub.callCount).toEqual(0);
+            expect(signatureStub).toHaveBeenCalledWith(defaultId);
+        });
+
+        it('should call to set signature in editor with selected signature instead of default signature id', function() {
+            var defaultId = '123445';
+            var selectedSignatureId = '9999999';
+
+            view.defaultSignatureId = defaultId;
+            view.model.set('signature_id', selectedSignatureId);
+            view.insertTemplate(null);
+
+            expect(apiCallStub.callCount).toEqual(0);
+            expect(insertTemplateStub.callCount).toEqual(0);
+            expect(signatureStub).toHaveBeenCalledWith(selectedSignatureId);
+        });
+    });
+
+    describe('insertTemplates - replacing templates', function() {
+        var apiCallStub, insertTemplateStub, beanCollectionStub, signatureStub, field, fieldStub, getFieldStub;
+
+        beforeEach(function() {
+            insertTemplateStub = sinon.stub(view, 'insertTemplateAttachments'),
+                signatureStub = sinon.stub(view, 'updateEditorWithSignature'),
+                apiCallStub = sinon.stub(app.api, 'call', function (method, myURL, model, options) {
+                    options.success(model, null, options);
+                });
+
+            beanCollectionStub = sinon.stub(app.data, 'createBeanCollection', function() {
+                return {fetch:function(){}}
+            });
+
+            field = SugarTest.createField("base", "html_email", "htmleditable_tinymce", "edit");
+            fieldStub = sinon.stub(field, "setEditorContent", function(){});
+            getFieldStub = sinon.stub(view, 'getField').returns(field);
+
+            view.model.off('change');
+        });
+
+        afterEach(function() {
+            apiCallStub.restore();
+            insertTemplateStub.restore();
+            signatureStub.restore();
+            fieldStub.restore();
+            getFieldStub.restore();
+            beanCollectionStub.restore();
+        });
+
+        it('should set content of editor with html version of template', function () {
+            var Bean = SUGAR.App.Bean,
+                bodyHtml = '<h1>Test/h1>',
+                subject = 'This is my subject',
+                templateModel = new Bean({
+                    id:'1234',
+                    subject:subject,
+                    body_html:bodyHtml
+                });
+
+            fieldStub.withArgs(bodyHtml);
+            view.insertTemplate(templateModel);
+
+            expect(fieldStub.callCount).toEqual(1);
+            expect(getFieldStub.callCount).toEqual(1);
+            expect(beanCollectionStub.callCount).toEqual(1);
+            expect(view.model.get('subject')).toEqual(subject);
+        });
+
+        it('should set content of editor with text only version of template', function () {
+            var Bean = SUGAR.App.Bean,
+                html = '<h1>Test/h1>',
+                text = 'Test',
+                subject = 'This is my subject',
+                templateModel = new Bean({
+                    id:'1234',
+                    subject:subject,
+                    body_html:html,
+                    body:text,
+                    text_only:1
+                });
+
+            fieldStub.withArgs(text);
+            view.insertTemplate(templateModel);
+
+            expect(fieldStub.callCount).toEqual(1);
+            expect(getFieldStub.callCount).toEqual(1);
+            expect(beanCollectionStub.callCount).toEqual(1);
+            expect(view.model.get('subject')).toEqual(subject);
         });
     });
 

@@ -37,5 +37,43 @@ describe("sugarviews", function() {
             alertStub.restore();
             ajaxStub.restore();
         });
+        it('should be able to remove hidden default=false fields from meta', function() {
+            var viewMeta = {
+                panels: [
+                    {
+                        fields: [
+                            {
+                                name: 'test1',
+                                default: false
+                            },
+                            {
+                                name: 'test2',
+                                default: false
+                            }
+                        ]
+                    },
+                    {
+                        fields: [
+                            {
+                                name: 'test3',
+                                default: true
+                            },
+                            {
+                                name: 'test4',
+                                default: false
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            var resultMeta = view.filterFields(viewMeta);
+
+            _.each(resultMeta, function(panel){
+                _.each(panel.fields, function(field){
+                    expect(field.default).toEqual(true);
+                })
+            });
+        });
     });
 });
