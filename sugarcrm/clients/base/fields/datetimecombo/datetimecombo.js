@@ -91,8 +91,8 @@
                 } catch(e) {}
             }
             return {
-                date: this.timeValue,
-                time: this.dateValue
+                date: this.dateValue,
+                time: this.timeValue
             };
         } else {
             // If the date value in our datebox is invalid, leave it alone and return. It will
