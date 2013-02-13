@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('data/BeanFactory.php');
 require_once('include/SugarFields/SugarFieldHandler.php');
 require_once('include/MetaDataManager/MetaDataManager.php');
-
+require_once 'include/api/SugarApi.php';
 class CurrentUserApi extends SugarApi {
     public function registerApiRest() {
         return array(
@@ -243,11 +243,6 @@ class CurrentUserApi extends SugarApi {
         return $user_data;
     }
 
-    protected function getMetadataManager( $platform = 'base', $public = false) {
-        $current_user = $this->getUserBean();
-        return new MetaDataManager($current_user, $platform, $public);
-    }
-
     /**
      * Gets acls given full module list passed in.
      * @param string The platform e.g. portal, mobile, base, etc.
@@ -256,7 +251,7 @@ class CurrentUserApi extends SugarApi {
     public function getAcls($platform) {
         // in this case we should always have current_user be the user
         global $current_user;        
-        $mm = $this->getMetadataManager($platform);
+        $mm = MetaDataManager::getManager($platform);
         $fullModuleList = array_keys($GLOBALS['app_list_strings']['moduleList']);
         $acls = array();
         foreach ($fullModuleList as $modName) {
@@ -524,48 +519,11 @@ class CurrentUserApi extends SugarApi {
     }
 
     /**
-     * Gets display module list per user defined tabs
+     * Gets the module list for the current user and platform
+     * 
      * @return array
      */
     public function getModuleList() {
-        $current_user = $this->getUserBean();
-        // Loading a standard module list
-        require_once("modules/MySettings/TabController.php");
-        $controller = new TabController();
-        $moduleList = $this->list2Array($controller->get_user_tabs($current_user));
-        // always add back in employees see Bug58563
-        if (!in_array('Employees',$moduleList)) {
-            $moduleList[] = 'Employees';
-        }
-        return $moduleList;
-    }
-    /**
-     * Filters a list of modules against the display modules
-     * @param $moduleList
-     * @return array
-     */
-    protected function filterDisplayModules($moduleList)
-    {
-        $current_user = $this->getUserBean();
-        // Loading a standard module list
-        require_once("modules/MySettings/TabController.php");
-        $controller = new TabController();
-        $ret = array_intersect_key($controller->get_user_tabs($current_user), $moduleList);
-        return $this->list2Array($ret);
-
-    }
-
-    /**
-     * converts hash into flat array preserving order
-     * @param $ret
-     * @return array
-     */
-    public function list2Array($ret) {
-        $output = array();
-        foreach($ret as $mod => $lbl)
-        {
-            $output[] = $mod;
-        }
-        return $output;
+        return MetaDataManager::getManager()->getUserModuleList();
     }
 }

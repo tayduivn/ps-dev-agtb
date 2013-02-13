@@ -46,16 +46,22 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function setUpBeforeClass()
     {
+        // setup test user
+        SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        // setup test user
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('app_list_strings');
+        
+        $current_user = $GLOBALS['current_user'];
+        $current_user->setPreference('dec_sep', '.');
+        $current_user->setPreference('num_grp_sep', ',');
+        $current_user->setPreference('default_currency_significant_digits', 2);
+        
 
         // setup test currencies
         SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171);
         SugarTestCurrencyUtilities::createCurrency('Philippines','₱','PHP',41.82982);
         SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
-
     }
 
     /**
@@ -83,12 +89,10 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function tearDownAfterClass()
     {
-        // remove test user
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-
         // remove test currencies
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+        
+        // Clean up the other helper setups
         SugarTestHelper::tearDown();
     }
 

@@ -300,12 +300,6 @@ class ProductTemplate extends SugarBean {
                 return $query;
 	}
 
-
-
-	function save_relationship_changes($is_update)
-    {
-    }
-
 	function clear_note_product_template_relationship($product_template_id)
 	{
 		$query = "UPDATE notes set parent_id='', parent_type='' where (parent_id='$product_template_id') and deleted=0";

@@ -19,13 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Header$
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 require_once('include/phpmailer/class.phpmailer.php');
 require_once('include/OutboundEmail/OutboundEmail.php');
 
@@ -329,20 +322,20 @@ eoq;
 	function handleAttachments($notes) {
 		global $sugar_config;
 
-        //replace references to cache/images with cid tag
-        $this->Body = str_replace(sugar_cached('images/'),'cid:',$this->Body);
-
-		if (empty($notes)) {
-				return;
-		}
 		// cn: bug 4864 - reusing same SugarPHPMailer class, need to clear attachments
 		$this->ClearAttachments();
+
+		//replace references to cache/images with cid tag
+        $this->Body = preg_replace(';=\s*"'.preg_quote(sugar_cached('images/'), ';').';','="cid:',$this->Body);
 
 		$this->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
 
 		//Replace any embeded images using the secure entryPoint for src url.
 		$this->replaceImageByRegex("(?:{$sugar_config['site_url']})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
 
+		if (empty($notes)) {
+				return;
+		}
 		//Handle regular attachments.
 		foreach($notes as $note) {
 				$mime_type = 'text/plain';

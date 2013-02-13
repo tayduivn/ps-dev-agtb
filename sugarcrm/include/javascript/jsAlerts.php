@@ -28,10 +28,8 @@ class jsAlerts{
 	function jsAlerts(){
 		global $app_strings;
 		$this->script .= <<<EOQ
-		if(window.addEventListener){
-			window.addEventListener("load", checkAlerts, false);
-		}else{
-			window.attachEvent("onload", checkAlerts);
+		if (!alertsTimeoutId) {
+		    checkAlerts();
 		}
 
 EOQ;
@@ -45,9 +43,11 @@ EOQ;
 		$this->script .= 'addAlert("' . addslashes($type) .'", "' . addslashes($name). '","' . addslashes($subtitle). '", "'. addslashes(str_replace(array("\r", "\n"), array('','<br>'),$description)) . '",' . $countdown . ',"'.addslashes($redirect).'")' . "\n";
 	}
 
-	function getScript(){
-		return "<script>" . $this->script . "</script>";
-	}
+    function getScript()
+    {
+
+        return "<script>secondsSinceLoad = 0; alertList = [];" . $this->script . "</script>";
+    }
 
 	function addActivities(){
 		global $app_list_strings, $timedate, $current_user, $app_strings;

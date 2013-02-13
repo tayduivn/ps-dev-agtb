@@ -34,6 +34,8 @@ class SOAPAPI2Test extends SOAPTestCase
 
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         parent::setUpBeforeClass();
         $contact = SugarTestContactUtilities::createContact();
         self::$_contactId = $contact->id;
@@ -58,6 +60,7 @@ class SOAPAPI2Test extends SOAPTestCase
             $GLOBALS['db']->query('DELETE FROM opportunities WHERE id IN (\'' . implode("', '", self::$_opportunities) . '\')');
         }
         parent::tearDownAfterClass();
+        SugarTestHelper::tearDown();
     }
 
     /**

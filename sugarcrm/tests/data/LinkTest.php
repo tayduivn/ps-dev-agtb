@@ -24,7 +24,6 @@ require_once("data/BeanFactory.php");
 class LinkTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $createdBeans = array();
-    protected $createdFiles = array();
 
     public static function setUpBeforeClass()
 	{
@@ -48,11 +47,6 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         {
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
-        }
-        foreach($this->createdFiles as $file)
-        {
-            if (is_file($file))
-                unlink($file);
         }
 	}
 	

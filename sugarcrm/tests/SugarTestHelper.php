@@ -99,6 +99,7 @@ require_once 'SugarTestObjectUtilities.php';
 require_once 'SugarTestProjectUtilities.php';
 require_once 'SugarTestProjectTaskUtilities.php';
 require_once 'SugarTestUserUtilities.php';
+require_once 'SugarTestEmailAddressUtilities.php';
 require_once 'SugarTestLangPackCreator.php';
 require_once 'SugarTestThemeUtilities.php';
 require_once 'SugarTestContactUtilities.php';
@@ -133,6 +134,7 @@ require_once 'SugarTestProspectListsUtilities.php';
 require_once 'SugarTestNotificationUtilities.php';
 //END SUGARCRM flav=pro ONLY
 require_once 'SugarTestRelationshipUtilities.php';
+require_once 'SugarTestSugarEmailAddressUtilities.php';
 
 $GLOBALS['db']->commit();
 
@@ -552,6 +554,15 @@ class SugarTestHelper
     public static function tearDown()
     {
         self::init();
+        
+        // Handle current_user placing on the end since there are some things
+        // that need current user for the clean up
+        if (isset(self::$registeredVars['current_user'])) {
+            $cu = self::$registeredVars['current_user'];
+            unset(self::$registeredVars['current_user']);
+            self::$registeredVars['current_user'] = $cu;
+        }
+                
         foreach(self::$registeredVars as $varName => $isCalled)
         {
             if ($isCalled)

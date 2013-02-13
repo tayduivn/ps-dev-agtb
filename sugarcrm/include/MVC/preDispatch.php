@@ -32,11 +32,18 @@ if( isset($_GET["entryPoint"]) )
         require_once('include/SugarTheme/SugarTheme.php');
         require_once('include/utils/autoloader.php');
         SugarAutoLoader::init();
+
+        SugarAutoLoader::requireWithCustom('include/SugarMetric/Helper.php');
+        SugarMetric_Helper::run('image');
+
 		include("include/SugarTheme/getImage.php");
 		die();
 	}
 	else if($_GET["entryPoint"] == "getYUIComboFile")
     {
+        require_once 'include/SugarMetric/Helper.php';
+        SugarMetric_Helper::run('YUIComboFile');
+
 		include("include/javascript/getYUIComboFile.php");
 		die();
 	}

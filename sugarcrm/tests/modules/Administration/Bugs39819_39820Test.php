@@ -33,6 +33,12 @@ class Bugs39819_39820Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         SugarAutoLoader::ensureDir("custom/modules/Accounts/language"); // Creating nested directories at a glance
+        SugarTestHelper::setUp('mod_strings', array('Administration'));
+    }
+
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
     }
 
     public function testLoadEnHelp()

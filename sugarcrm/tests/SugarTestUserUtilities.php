@@ -59,6 +59,7 @@ class SugarTestUserUtilities
         }
         //BEGIN SUGARCRM flav=pro ONLY
         $user->default_team = '1'; //Set Default Team to Global
+        $user->team_id = '1';
         //END SUGARCRM flav=pro ONLY
         if ( $save ) {
             $user->save();
@@ -86,10 +87,11 @@ class SugarTestUserUtilities
     public static function getCreatedUserIds() 
     {
         $user_ids = array();
-        foreach (self::$_createdUsers as $user)
-            if ( is_object($user) && $user instanceOf User )
+        foreach (self::$_createdUsers as $user) {
+            if ($user instanceOf User && $user->id != false) {
                 $user_ids[] = $user->id;
-        
+            }
+        }
         return $user_ids;
     }
 }

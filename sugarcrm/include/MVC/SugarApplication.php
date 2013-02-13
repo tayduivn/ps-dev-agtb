@@ -34,6 +34,12 @@ class SugarApplication
 			$this->default_module = $sugar_config['default_module'];
 		$module = $this->default_module;
 		if(!empty($_REQUEST['module']))$module = $_REQUEST['module'];
+
+        // Setup transaction name for current request
+        if (!empty($_REQUEST['module']) && !empty($_REQUEST['action'])) {
+            SugarMetric_Manager::getInstance()->setTransactionName('index_' . $_REQUEST['module'] . '_' . $_REQUEST['action']);
+        }
+
 		insert_charset_header();
 		$this->setupPrint();
 		$this->controller = ControllerFactory::getController($module);

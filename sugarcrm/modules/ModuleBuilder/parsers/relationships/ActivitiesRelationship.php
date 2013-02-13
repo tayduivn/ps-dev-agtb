@@ -81,29 +81,16 @@ class ActivitiesRelationship extends OneToManyRelationship
         if (!$this->relationship_only )
         {
             if (!isset(ActivitiesRelationship::$labelsAdded[$this->lhs_module])) {
-	        	$labelDefinitions [] = array (
-	            	'module' => 'application' ,
-	            	'system_label' => 'parent_type_display',
-	            	'display_label' => array(
-                        $this->lhs_module => $this->lhs_label ? $this->lhs_label : ucfirst($this->lhs_module)
-                    )
-	            ) ;
-
-	            $labelDefinitions [] = array (
-	            	'module' => 'application' ,
-	            	'system_label' => 'record_type_display',
-	            	'display_label' => array(
-                        $this->lhs_module => $this->lhs_label ? $this->lhs_label : ucfirst($this->lhs_module)
-                    )
-	            ) ;
-
-	            $labelDefinitions [] = array (
-	            	'module' => 'application' ,
-	            	'system_label' => 'record_type_display_notes',
-	            	'display_label' => array(
-                        $this->lhs_module => $this->lhs_label ? $this->lhs_label : ucfirst($this->lhs_module)
-                    )
-	            ) ;
+                foreach(getTypeDisplayList() as $typeDisplay)
+                {
+                    $labelDefinitions [] = array (
+                        'module' => 'application',
+                        'system_label' => $typeDisplay,
+                        'display_label' => array(
+                            $this->lhs_module => $this->lhs_label ? $this->lhs_label : ucfirst($this->lhs_module)
+                        ),
+                    );
+                }
             }
             
             $labelDefinitions [] = array ( 

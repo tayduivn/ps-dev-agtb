@@ -440,6 +440,7 @@ class MetaDataFiles
                 return self::$paths[MB_WORKINGMETADATALOCATION] . 'modulebuilder/packages/' . $packageName . '/modules/' . $module . '/' . $viewPath . $names[$view] . '.php';
             default:
                 // get the module again, all so we can call this method statically without relying on the module stored in the class variables
+                require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
                 $mb = new ModuleBuilder();
                 return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/' . $viewPath . $names[$view] . '.php';
         }
@@ -629,8 +630,21 @@ class MetaDataFiles
         return isset($map[$client][$view]) ? $map[$client][$view] : $view;
     }
 
-    public static function clearModuleClientCache( $modules = array(), $type = '' )
+    /**
+     * Removes module cache files. This can clear a single cache file by type or
+     * all cache files for a module. Can also clear a single platform type cache
+     * for a module.
+     * 
+     * @param array $modules The modules to clear the cache for. An empty array 
+     *                       clears caches for all modules
+     * @param string $type   The cache file to clear. An empty string clears all
+     *                       cache files for a module
+     * @param array $platforms A list of platforms to clear the caches for. An
+     *                         empty platform list assumes all platforms.
+     */
+    public static function clearModuleClientCache($modules = array(), $type = '', $platforms = array())
     {
+        // Clean up the module list
         if ( is_string($modules) ) {
             // They just want one module
             $modules = array($modules);
@@ -638,17 +652,49 @@ class MetaDataFiles
             // They want all of the modules, so get them if they are already set
             $modules = empty($GLOBALS['app_list_strings']['moduleList']) ? array() : array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
+        
+        // Clean up the type
+        if ( empty($type) ) {
+            $type = '*';
+        }
+        
+        // Clean up the platforms
+        if (empty($platforms)) {
+            $platforms = array('*');
+        }
+        
+        // Handle it
         foreach ( $modules as $module ) {
-            if ( empty($type) ) {
-                $type = '*';
-            }
-            // Delete client cache files of all types
-            foreach ( glob(sugar_cached('modules/'.$module.'/clients/*/'.$type.'.php')) as $cacheFile ) {
-                unlink($cacheFile);
+            // Start at the client dir level
+            $clientDirs = glob(sugar_cached('modules/'.$module.'/clients/'));
+            foreach ($clientDirs as $clientDir) {
+                foreach ($platforms as $platform) {
+                    // Build up to the platform dir level
+                    $platformDirs = glob($clientDir . $platform . '/');
+                    foreach ($platformDirs as $platformDir) {
+                        // Get all of the files in question
+                        $cacheFiles = glob($platformDir . $type . '.php');
+                        
+                        // Handle nuking the files
+                        foreach ($cacheFiles as $cacheFile) {
+                            unlink($cacheFile);
+                        }
+                    }
+                }
             }
         }
     }
 
+    /**
+     * Gets all module cache files for a module. Uses the first platform in the
+     * platform list to get the cache files.
+     * 
+     * @param array $platforms The list of platforms to get a module cache for.
+     *                         Uses the first member of this list as the platform.
+     * @param string $type     The type of cache file to get.
+     * @param string $module   The module to get the cache for.
+     * @return array 
+     */
     public static function getModuleClientCache( $platforms, $type, $module )
     {
         $clientCache = array();
@@ -662,6 +708,14 @@ class MetaDataFiles
         return $clientCache[$module][$platforms[0]][$type];
     }
 
+    /**
+     * Builds up module client cache files
+     * 
+     * @param array $platforms A list of platforms to build for. Uses the first 
+     *                         platform in the list as the platform.
+     * @param string $type     The type of file to create the cache for.
+     * @param array $modules   The module to create the cache for.
+     */
     public static function buildModuleClientCache( $platforms, $type, $modules = array() )
     {
         if ( is_string($modules) ) {

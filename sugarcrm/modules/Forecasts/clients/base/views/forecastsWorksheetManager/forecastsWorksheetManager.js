@@ -68,7 +68,7 @@
 
 
     /**
-     * Template to use wen updating the likelyCase on the committed bar
+     * Template to use when updating the likelyCase on the committed bar
      */
     commitLogTemplate : _.template('<article><%= text %><br><date><%= text2 %></date></article>'),
 
@@ -611,8 +611,11 @@
             likely_case = 0,
             likely_adjusted = 0,
             worst_adjusted = 0,
-            worst_case = 0;
-
+            worst_case = 0,
+            included_opp_count = 0,
+            pipeline_opp_count = 0,
+            pipeline_amount = 0;
+      
         if(!this.showMe()){
             // if we don't show this worksheet set it all to zero
             this.context.forecasts.set({
@@ -624,7 +627,8 @@
                     'likely_case' : likely_case,
                     'likely_adjusted' : likely_adjusted,
                     'worst_adjusted' : worst_adjusted,
-                    'worst_case' : worst_case
+                    'worst_case' : worst_case,
+                    'included_opp_count' : included_opp_count
                 }
             }, {silent:true});
             return false;
@@ -632,7 +636,11 @@
 
 
         self._collection.forEach(function (model) {
-            var base_rate = parseFloat(model.get('base_rate'));
+            var base_rate = parseFloat(model.get('base_rate')),
+                mPipeline_opp_count = model.get("pipeline_opp_count"),
+                mPipeline_amount = model.get("pipeline_amount");
+                mOpp_count = model.get("opp_count");
+                
             amount 			+= app.currency.convertWithRate(model.get('amount'), base_rate);
             quota 			+= app.currency.convertWithRate(model.get('quota'), base_rate);
             best_case 		+= app.currency.convertWithRate(model.get('best_case'), base_rate);
@@ -641,6 +649,9 @@
             likely_adjusted 	+= app.currency.convertWithRate(model.get('likely_adjusted'), base_rate);
             worst_case       += app.currency.convertWithRate(model.get('worst_case'), base_rate);
             worst_adjusted 	+= app.currency.convertWithRate(model.get('worst_adjusted'), base_rate);
+            included_opp_count += (_.isUndefined(mOpp_count))? 0 : parseInt(mOpp_count);
+            pipeline_opp_count += (_.isUndefined(mPipeline_opp_count))? 0 : parseInt(mPipeline_opp_count);
+            pipeline_amount = (_.isUndefined(mPipeline_amount))? 0 : app.math.add(pipeline_amount, model.get("pipeline_amount"));
         });
 
         self.totalModel.set({
@@ -651,7 +662,10 @@
             likely_case : likely_case,
             likely_adjusted : likely_adjusted,
             worst_case : worst_case,
-            worst_adjusted : worst_adjusted
+            worst_adjusted : worst_adjusted,
+            included_opp_count : included_opp_count,
+            pipeline_opp_count : pipeline_opp_count,
+            pipeline_amount : pipeline_amount
         });
 
         //in case this is needed later..
@@ -663,9 +677,12 @@
             'likely_case' : likely_case,
             'likely_adjusted' : likely_adjusted,
             'worst_case' : worst_case,
-            'worst_adjusted' : worst_adjusted
+            'worst_adjusted' : worst_adjusted,
+            'included_opp_count' : included_opp_count,
+            'pipeline_opp_count' : pipeline_opp_count,
+            'pipeline_amount' : pipeline_amount
         };
-
+        
         // we need to remove it, just in case it's the same to force it to re-render
         this.context.forecasts.unset("updatedManagerTotals", {silent: true});
         this.context.forecasts.set("updatedManagerTotals", totals);

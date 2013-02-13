@@ -668,6 +668,10 @@ public function convert($string, $type, array $additional_parameters = array())
 			break;
 		case 'add_time':
 			return "$string + {$additional_parameters[0]}/24 + {$additional_parameters[1]}/1440";
+        case 'add_tz_offset' :
+            $getUserUTCOffset = $GLOBALS['timedate']->getUserUTCOffset();
+            $operation = $getUserUTCOffset < 0 ? '-' : '+';
+            return $string . ' ' . $operation . ' ' . abs($getUserUTCOffset) . ' minutes';
 	}
 
 	return $string;

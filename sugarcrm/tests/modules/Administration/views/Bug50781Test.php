@@ -37,6 +37,7 @@ class Bug50781Test extends Sugar_PHPUnit_Framework_OutputTestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setup('mod_strings', array('Administration'));
+        SugarTestHelper::setUp('app_list_strings');
     }
 
     public function tearDown()
@@ -60,4 +61,3 @@ class Bug50781Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     }
 }
-?>
