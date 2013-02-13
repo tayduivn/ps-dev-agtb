@@ -61,6 +61,12 @@ class RestService extends ServiceBase {
     protected $max_version = 10;
 
     /**
+     * The acl action attempting to be run
+     * @var string
+     */
+    public $action = 'view';
+
+    /**
      * This function executes the current request and outputs the response directly.
      */
     public function execute() {

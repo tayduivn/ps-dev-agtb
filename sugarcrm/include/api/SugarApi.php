@@ -59,7 +59,10 @@ abstract class SugarApi {
             $fieldList = array();
         }
 
-        $data = ApiHelper::getHelper($api,$bean)->formatForApi($bean,$fieldList);
+        $options = array();
+        $options['action'] = $api->action;
+
+        $data = ApiHelper::getHelper($api,$bean)->formatForApi($bean,$fieldList, $options);
 
         // if data is an array or object we need to decode each element, if not just decode data and pass it back
         if(is_array($data) || is_object($data)) {
