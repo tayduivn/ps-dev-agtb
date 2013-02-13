@@ -27,7 +27,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('modules/Reports/config.php');
-
+require_once('include/api/SugarApiException.php');
 
 class Report
 {
@@ -109,6 +109,9 @@ class Report
     var $chart_total_header_row = array();
     var $jtcount = 0;
 
+    // this is a var not in metadata that is set to bypass the sugar_die calls used throughout this class
+    public $fromApi = false;
+
     /**
      *
      * Default visibility options
@@ -158,7 +161,7 @@ class Report
         $this->name = $mod_strings['LBL_UNTITLED'];
         $this->db = DBManagerFactory::getInstance('reports');
         if (Report::is_old_content($report_def_str)) {
-            sugar_die('this report was created with an older version of reports. please upgrade');
+            $this->handleException('this report was created with an older version of reports. please upgrade');
         }
 
         $json = getJSONobj();
@@ -581,7 +584,7 @@ class Report
 
         global $report_modules;
         if (empty($report_modules[$this->module])) {
-            sugar_die("you are not allowed to report on this module:" . $this->module);
+            $this->handleException("you are not allowed to report on this module:" . $this->module);
         }
     }
 
@@ -985,7 +988,7 @@ class Report
         if (!$this->is_layout_def_valid($layout_def)) {
             global $current_language;
             $mod_strings = return_module_language($current_language, $this->module_dir);
-            sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>' . $layout_def['name'] . '</b>. ' . $mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
+            $this->handleException($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>' . $layout_def['name'] . '</b>. ' . $mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
         }
 
         $layout_def['table_alias'] = $this->getTableFromField($layout_def);
@@ -1357,7 +1360,7 @@ return str_replace(' > ','_',
 
                 // this hack is so that the id field for every table is always selected
                 if (empty($display_column['table_key'])) {
-                    sugar_die('table_key doesnt exist for ' . $display_column['name']);
+                    $this->handleException('table_key doesnt exist for ' . $display_column['name']);
                 }
 
                 if (empty($got_join[$display_column['table_key']])) {
@@ -1652,7 +1655,7 @@ return str_replace(' > ','_',
 
                     if (isset($this->full_bean_list[$table_def['parent']]->$link_name)) {
                         if (!$this->full_bean_list[$table_def['parent']]->$link_name->loadedSuccesfully())
-                            sugar_die("Unable to load link: $link_name for bean {$table_def['parent']}");
+                            $this->handleException("Unable to load link: $link_name for bean {$table_def['parent']}");
                         // Start ACL check
                         global $current_user, $mod_strings;
                         $linkModName = $this->full_bean_list[$table_def['parent']]->$link_name->getRelatedModuleName();
@@ -1663,7 +1666,7 @@ return str_replace(' > ','_',
                             if ((isset($_REQUEST['DynamicAction']) && $_REQUEST['DynamicAction'] == 'retrievePage') || (isset($_REQUEST['module']) && $_REQUEST['module'] == 'Home')) {
                                 throw new Exception($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
                             } else {
-                                sugar_die($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
+                                $this->handleException($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
                             }
                         }
 
@@ -1679,10 +1682,10 @@ return str_replace(' > ','_',
                         $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view', $type = 'module');
 
                         if (!$this->full_bean_list[$table_def['parent']]->$rel_name->loadedSuccesfully()) {
-                            sugar_die("Unable to load link: $rel_name");
+                            $this->handleException("Unable to load link: $rel_name");
                         }
                         if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
-                            sugar_die($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
+                            $this->handleException($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
                         $this->from .= $this->addSecurity($this->full_bean_list[$table_def['parent']]->$rel_name->getJoin($params),
                             $focus, $params['join_table_alias']);
                         // End ACL check
@@ -1795,7 +1798,7 @@ return str_replace(' > ','_',
         $view_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'view', $type = 'module');
 
         if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
-            sugar_die($mod_strings['LBL_NO_ACCESS']);
+            $this->handleException($mod_strings['LBL_NO_ACCESS']);
         if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
             $where_auto .= " AND " . $this->focus->table_name . ".assigned_user_id='" . $current_user->id . "' \n";
 
@@ -2508,6 +2511,14 @@ return str_replace(' > ','_',
         $select_piece .= $add_alias ? " {$secondaryTableAlias}_name" : ' ';
 
         return $select_piece;
+    }
+
+    protected function handleException($msg, $exit_code=1) {
+        if($this->fromApi === false) {
+            sugar_die($msg, $exit_code);
+        } else {
+            throw new SugarApiExceptionNotAuthorized($msg);
+        }
     }
 
 }
