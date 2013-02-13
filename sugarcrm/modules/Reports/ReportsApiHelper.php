@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -20,15 +20,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'clients/base/api/CurrentUserApi.php';
+require_once('data/SugarBeanApiHelper.php');
 
-class CurrentUserMobileApi extends CurrentUserApi {
+class ReportsApiHelper extends SugarBeanApiHelper
+{
     /**
-     * Gets the module list for the current user and platform
-     * 
+     * This function sets the fromApi var on Reports to true so Exceptions are handled properly
+     * @param SugarBean $bean
+     * @param array $submittedData
+     * @param array $options
      * @return array
      */
-    public function getModuleList() {
-        return MetaDataManager::getManager(array('mobile'))->getUserModuleList();
+    public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
+    {
+        $bean->fromApi = true;
+        return parent::populateFromApi($bean, $submittedData, $options);
     }
 }

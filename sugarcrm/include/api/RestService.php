@@ -462,7 +462,10 @@ class RestService extends ServiceBase {
      */
     protected function grabToken()
     {
-        $sessionId = NULL;
+        // Bug 61887 - initial portal load dies with undefined variable error
+        // Initialize the return var in case all conditionals fail
+        $sessionId = '';
+        
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];

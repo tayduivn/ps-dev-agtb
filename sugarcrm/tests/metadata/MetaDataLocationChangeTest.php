@@ -85,7 +85,7 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMetaDataManagerReturnsCorrectPlatformResults($platform)
     {
-        $mm = new MetaDataManager($GLOBALS['current_user'], array($platform));
+        $mm = MetaDataManager::getManager(array($platform));
         $data = $mm->getModuleViews('Bugs');
         $this->assertTrue(isset($data['list']['meta']['panels']), "Panels meta array for detail not set for $platform platform of Bugs module");
         $this->assertTrue(isset($data['detail']['meta']['panels']), "Panels meta array for detail not set for $platform platform of Bugs module");

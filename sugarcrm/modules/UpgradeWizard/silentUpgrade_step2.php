@@ -261,8 +261,9 @@ if(empty($errors)) {
 					include($file);
 					post_install();
 				// cn: only run conversion if admin selects "Sugar runs SQL"
-				if(!empty($_SESSION['allTables']) && $_SESSION['schema_change'] == 'sugar')
+				if(!empty($_SESSION['allTables']) && $_SESSION['schema_change'] == 'sugar') {
 					executeConvertTablesSql($_SESSION['allTables']);
+                }
 				//set process to done
 				$progArray['post_install']='done';
 				post_install_progress($progArray,'set');
@@ -435,11 +436,6 @@ if(empty($errors)) {
 @deleteCache();
 
 ///////////////////////////////////////////////////////////////////////////////
-////	HANDLE REMINDERS
-if(empty($errors)) {
-	commitHandleReminders($skippedFiles, $path);
-}
-
 //BEGIN SUGARCRM flav=pro ONLY
 if($ce_to_pro_ent){
 	if(function_exists('upgradeDashletsForSalesAndMarketing')){

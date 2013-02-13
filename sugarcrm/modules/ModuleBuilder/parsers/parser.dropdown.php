@@ -109,7 +109,7 @@ class ParserDropDown extends ModuleBuilderParser {
 		clearAllJsAndJsLangFilesWithoutOutput();
         
         // Clear out the api metadata cache
-        MetaDataManager::clearAPICache();
+        MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_LABELS));
     }
 
     /**

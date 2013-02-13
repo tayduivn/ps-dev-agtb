@@ -21,51 +21,45 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+require_once 'include/MetaDataManager/MetaDataManager.php';
+require_once 'clients/mobile/api/CurrentUserMobileApi.php';
 
-require_once('tests/rest/RestTestBase.php');
-require_once('include/MetaDataManager/MetaDataManager.php');
-require_once('modules/Administration/controller.php');
+class MetaDataManagerMobile extends MetaDataManager
+{
+    protected function getModules() {
+        // Get the current user module list
+        $modules = $this->getUserModuleList();
+        
+        // add in Users [Bug59548] since it is forcefully removed for the 
+        // CurrentUserApi
+        if(!array_search('Users', $modules)) {
+            $modules[] = 'Users';
+        }
+        
+        return $modules;
+    }
 
-class RestMetadataServerInfoChangeTest extends RestTestBase {
     /**
-     * @group rest
-     */    
-    public function testServerInfoChangeTest() {
-        $GLOBALS['current_user']->is_admin = 1;
-        $GLOBALS['current_user']->save();
+     * Gets the list of mobile modules. Used by getModules and the CurrentUserApi
+     * to get the module list for a user.
+     * 
+     * @return array
+     */
+    public function getUserModuleList() {
+        // replicate the essential part of the behavior of the private loadMapping() method in SugarController
+        foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file){
+            require $file;
+        }
 
-        $mm = MetaDataManager::getManager('mobile', false);
-        $original_server_info = $mm->getServerInfo();
+        // Forcibly remove the Users module
+        // So if they have added it, remove it here
+        if ( isset($wireless_module_registry['Users']) ) {
+            unset($wireless_module_registry['Users']);
+        }
 
-        $restReply = $this->_restCall('metadata?platform=mobile');
-        $server_info = $restReply['reply']['server_info'];
-
-        $this->assertEquals($original_server_info['fts'], $server_info['fts'], "Server Info not equal");
-
-        $new_server_info = $original_server_info;
-        $new_server_info['fts']= array('enabled' => true, 'type' => 'Elastic');
-
-        $ac = new AdministrationController();
-        $_REQUEST['type'] = 'Elastic';
-        $_REQUEST['host'] = 'localhost';
-        $_REQUEST['port'] = '9200';
-
-        ob_start();
-        $ac->action_saveglobalsearchsettings();
-        ob_end_clean();
-
-        $restReply = $this->_restCall('metadata?platform=mobile');
-        $server_info = $restReply['reply']['server_info'];
-
-        $this->assertEquals($new_server_info['fts'], $server_info['fts'], "New Server Info not equal");
-
-        $_REQUEST['type'] = '';
-        $_REQUEST['host'] = '';
-        $_REQUEST['port'] = '';
-
-        ob_start();
-        $ac->action_saveglobalsearchsettings();
-        ob_end_clean();
-
+        // $wireless_module_registry is defined in the file loaded above
+        return isset($wireless_module_registry) && is_array($wireless_module_registry) ?
+            array_keys($wireless_module_registry) :
+            array();
     }
 }

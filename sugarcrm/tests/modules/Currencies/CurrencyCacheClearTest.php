@@ -51,6 +51,8 @@ class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testResetMetadataCache()
     {
+        // Marking as skipped for now until we can decide what to do with this
+        $this->markTestSkipped("Currencies no longer invalidate the API cache, they simply refresh it.");
         MetaDataManager::clearAPICache(true);
 
         mkdir_recursive(dirname($this->testCacheFile));
