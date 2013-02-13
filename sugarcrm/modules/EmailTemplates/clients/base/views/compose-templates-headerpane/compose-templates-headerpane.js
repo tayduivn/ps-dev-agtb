@@ -33,10 +33,10 @@
 
     _done: function() {
         var model = this.context.get("selection_model");
-        this._close({model:model});
+        app.drawer.close(model);
     },
 
     _close: function() {
-            app.drawer.close();
+        app.drawer.close();
     }
 })

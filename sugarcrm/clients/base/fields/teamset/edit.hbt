@@ -29,7 +29,7 @@
 {{#each value}}
     <div class="row-fluid">
         <div class="span8">
-            <input type="hidden" name="{{../name}}" data-placeholder="{{str "LBL_SELECT_TEAM"}}" class="select2 inherit-width" value="{{name}}" data-id="{{id}}" data-index="{{@index}}">
+            <input type="hidden" name="{{../name}}" class="select2 inherit-width" value="{{name}}" data-id="{{id}}" data-index="{{@index}}">
         </div>
         <div class="span4">
         <a href="javascript:void(0);" class="btn {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}"><i class="icon-star"></i></a>

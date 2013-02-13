@@ -73,17 +73,31 @@ class SugarFieldImage extends SugarFieldBase {
 			{
 				if ($upload_file->confirm_upload())
 				{
-                    // Capture the old value in case of error
-                    $oldvalue = $bean->$field;
+                    // for saveTempImage API
+                    if (isset($params['temp']) && $params['temp'] === true) {
 
-                    // Create the new field value
-					$bean->$field = create_guid();
+                        // Create the new field value
+                        $bean->$field = create_guid();
 
-                    // Add checking for actual file move for reporting to consumers
-					if (!$upload_file->final_move($bean->$field)) {
-                        // If this was a fail, reset the bean field to original
-                        $bean->$field = $oldvalue;
-                        $this->error = $upload_file->getErrorMessage();
+                        // Move to temporary folder
+                        if (!$upload_file->final_move($bean->$field, true)) {
+                            // If this was a fail, reset the bean field to original
+                            $this->error = $upload_file->getErrorMessage();
+                        }
+                    } else {
+
+                        // Capture the old value in case of error
+                        $oldvalue = $bean->$field;
+
+                        // Create the new field value
+                        $bean->$field = create_guid();
+
+                        // Add checking for actual file move for reporting to consumers
+                        if (!$upload_file->final_move($bean->$field)) {
+                            // If this was a fail, reset the bean field to original
+                            $bean->$field = $oldvalue;
+                            $this->error = $upload_file->getErrorMessage();
+                        }
                     }
 				}
                 else
@@ -92,6 +106,10 @@ class SugarFieldImage extends SugarFieldBase {
                     $this->error = $upload_file->getErrorMessage();
                 }
 			}
+            else {
+                // Invalid format
+                $this->error = $GLOBALS['app_strings']["LBL_UPLOAD_IMAGE_FILE_INVALID"];
+            }
 		}
 
 		//Check if we have the duplicate value set and use it if $bean->$field is empty
@@ -99,7 +117,6 @@ class SugarFieldImage extends SugarFieldBase {
            $bean->$field = $_REQUEST[$field . '_duplicate'];
 		}
 	}
-
 
 }
 ?>

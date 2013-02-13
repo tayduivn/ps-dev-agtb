@@ -154,10 +154,14 @@ class FileApi extends SugarApi {
      *
      * @param ServiceBase $api The service base
      * @param array $args Arguments array built by the service base
+     * @param bool $temporary true if we are saving a temporary image
      * @return array
      * @throws SugarApiExceptionError
      */
-    public function saveFilePost($api, $args) {
+    public function saveFilePost($api, $args, $temporary = false) {
+        //Needed by SugarFieldImage.php to know if we are saving a temporary image
+        $args['temp'] = $temporary;
+
         // Get the field
         $field = $args['field'];
 
@@ -258,17 +262,25 @@ class FileApi extends SugarApi {
                     throw new SugarApiExceptionError($sf->error);
                 }
 
-                // Save the bean
-                $bean->save();
-
                 // Prep our return
-                $fileinfo = $this->getFileInfo($bean, $field, $api);
+                $fileinfo = array();
+                
+                //In case we are returning a temporary file
+                if ($temporary) {
+                    $fileinfo['guid'] = $bean->$field;
+                }
+                else {
+                    // Save the bean
+                    $bean->save();
 
-                // Clean up the uri
-                $fileinfo['uri'] = rtrim($api->getResourceURI(''), '/');
+                    $fileinfo = $this->getFileInfo($bean, $field, $api);
 
-                // This isn't needed in this return
-                unset($fileinfo['path']);
+                    // Clean up the uri
+                    $fileinfo['uri'] = rtrim($api->getResourceURI(''), '/');
+
+                    // This isn't needed in this return
+                    unset($fileinfo['path']);
+                }
 
                 // This is a good return
                 return array($field => $fileinfo);
@@ -276,7 +288,7 @@ class FileApi extends SugarApi {
         }
 
         // @TODO Localize this exception message
-        throw new SugarApiExceptionError("Unexpected field type: $def[type]");
+        throw new SugarApiExceptionError("Unexpected field type: ".$def['type']);
     }
 
     /**
@@ -402,7 +414,7 @@ class FileApi extends SugarApi {
                 }
             } else {
                 // @TODO Localize this exception message
-                throw new SugarApiExceptionError("Unexpected field type: $def[type]");
+                throw new SugarApiExceptionError("Unexpected field type: ".$def['type']);
             }
         }
 
