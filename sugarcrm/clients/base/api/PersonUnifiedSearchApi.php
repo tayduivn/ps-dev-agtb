@@ -51,6 +51,7 @@ class PersonUnifiedSearchApi extends UnifiedSearchApi {
      * @return array result set
      */
     public function globalSearch(ServiceBase $api, array $args) {
+        $api->action = 'list';
         // This is required to keep the loadFromRow() function in the bean from making our day harder than it already is.
         $GLOBALS['disable_date_format'] = true;
         $options = $this->parseSearchOptions($api,$args);

@@ -61,6 +61,12 @@ class RestService extends ServiceBase {
     protected $max_version = 10;
 
     /**
+     * The acl action attempting to be run
+     * @var string
+     */
+    public $action = 'view';
+
+    /**
      * This function executes the current request and outputs the response directly.
      */
     public function execute() {
@@ -456,6 +462,7 @@ class RestService extends ServiceBase {
      */
     protected function grabToken()
     {
+        $sessionId = NULL;
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];

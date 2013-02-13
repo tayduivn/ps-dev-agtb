@@ -47,12 +47,16 @@ class SugarBeanApiHelper
      * @param $options array Currently no options are supported
      * @return array The bean in array format, ready for passing out the API to clients.
      */
-    public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array() )
+    public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array())
     {
         $sfh = new SugarFieldHandler();
 
+        // if you are listing something the action is list
+        // if any other format is called its a view
+        $action = (!empty($options['action']) && $options['action'] == 'list') ? 'list' : 'view';
+
         $data = array();
-        if (!SugarACL::moduleSupportsACL($bean->module_name) || ($bean->ACLAccess('view') || $bean->ACLAccess('list'))) {
+        if (!SugarACL::moduleSupportsACL($bean->module_name) || $bean->ACLAccess($action)) {
             foreach ($bean->field_defs as $fieldName => $properties) {
                 // Prune fields before ACL check because it can be expensive (Bug58133)
                 if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {

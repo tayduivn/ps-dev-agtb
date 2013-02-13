@@ -206,6 +206,7 @@ class UnifiedSearchApi extends SugarListApi {
      * @return array result set
      */
     public function globalSearch(ServiceBase $api, array $args) {
+        $api->action = 'list';
         //BEGIN SUGARCRM flav=pro ONLY
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
