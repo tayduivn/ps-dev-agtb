@@ -333,35 +333,6 @@ describe("Record View", function() {
             });
         });
 
-        it("Should show save and cancel buttons and hide edit button when data changes", function() {
-
-            view.model.set({
-                name: 'Name',
-                case_number: 123,
-                description: 'Description'
-            });
-            view.render();
-            view.editMode = true;
-            view.model.set({
-                name: 'Foo',
-                case_number: 123,
-                description: 'Description'
-            });
-
-            expect(view.getField('save_button').getFieldElement().css('display')).toBe('none');
-            expect(view.getField('cancel_button').getFieldElement().css('display')).toBe('none');
-            expect(view.getField('edit_button').getFieldElement().css('display')).not.toBe('none');
-
-            view.context.trigger('button:edit_button:click');
-            view.model.set({
-                name: 'Bar'
-            });
-
-            expect(view.getField('save_button').getFieldElement().css('display')).not.toBe('none');
-            expect(view.getField('cancel_button').getFieldElement().css('display')).not.toBe('none');
-            expect(view.getField('edit_button').getFieldElement().css('display')).toBe('none');
-        });
-
         it("Should revert data back to the old value when the cancel button is clicked after data has been changed", function() {
             view.render();
             view.model.set({
