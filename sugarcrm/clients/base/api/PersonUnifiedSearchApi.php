@@ -76,6 +76,6 @@ class PersonUnifiedSearchApi extends UnifiedSearchApi {
             return "users.employee_status = 'Active'";
         } 
         
-        return "users.status = 'Active'";
+        return "users.status = 'Active' AND users.portal_only = 0";
     }
 }

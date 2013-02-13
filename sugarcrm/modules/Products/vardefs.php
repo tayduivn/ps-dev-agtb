@@ -272,9 +272,9 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
   'currency_id' =>
   array (
     'name' => 'currency_id',
+    'type' => 'currency_id',
     'dbType' => 'id',
     'vname'=>'LBL_CURRENCY_ID',
-    'type' => 'varchar',
 	'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
     'required'=>false,
     'reportable'=>false,

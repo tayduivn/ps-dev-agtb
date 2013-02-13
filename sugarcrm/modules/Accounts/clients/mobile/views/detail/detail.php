@@ -46,7 +46,6 @@ $viewdefs['Accounts']['mobile']['view']['detail'] = array(
                     ),
                 ),
                 'phone_office',
-                'phone_alternate',
                 array(
                     'name'=>'website',
                     'displayParams'=>array(

@@ -447,55 +447,6 @@ function post_install() {
 
 
 /**
- * Patch for bug57431
- * Compares current moduleList to base moduleList to detect if some modules have been renamed
- * Run changeModuleModStrings to create new labels based on customizations.
- */
-function updateRenamedModulesLabels()
-{
-    require_once('modules/Studio/wizards/RenameModules.php');
-    require_once('include/utils.php');
-
-    $klass = new RenameModules();
-    $languages = get_languages();
-
-    foreach ($languages as $langKey => $langName) {
-        //get list strings for this language
-        $strings = return_app_list_strings_language($langKey);
-
-        //get base list strings for this language
-        if (file_exists("include/language/$langKey.lang.php")) {
-            include("include/language/$langKey.lang.php");
-
-            //Keep only renamed modules
-            $renamedModules = array_diff($strings['moduleList'], $app_list_strings['moduleList']);
-
-            foreach ($renamedModules as $moduleId => $moduleName) {
-
-                $klass->selectedLanguage = $langKey;
-
-                $replacementLabels = array(
-                    'singular' => $strings['moduleListSingular'][$moduleId],
-                    'plural' => $strings['moduleList'][$moduleId],
-                    'prev_singular' => $app_list_strings['moduleListSingular'][$moduleId],
-                    'prev_plural' => $app_list_strings['moduleList'][$moduleId],
-                    'key_plural' => $moduleId,
-                    'key_singular' => $klass->getModuleSingularKey($moduleId)
-                );
-                $klass->changeModuleModStrings($moduleId, $replacementLabels);
-            }
-        }
-    }
-    //bug 57426 was introduced in 655, and it's effects need to be repaired during upgrade.
-    //Run the repair script if the original version is greater than 654, but less than 661
-    //(bug fix was introduced into 658 and 661 branches)
-    if (version_compare($sugar_version, '6.5.4', '>') && version_compare($sugar_version, '6.6.1', '<')) {
-        process_email_address_relationships();
-    }
-}
-
-
-/**
  * Group Inbound Email accounts should have the allow outbound selection enabled by default.
  *
  */

@@ -40,13 +40,13 @@ $viewdefs['Reports']['mobile']['view']['list'] = array(
                     'width' => '10%',
                 ),
                 array(
-                    'name' => 'team_name',
+                    'name' => 'module',
                     'enabled' => true,
                     'width' => '10%',
                     'default' => true,
                 ),
                 array(
-                    'name' => 'module',
+                    'name' => 'team_name',
                     'enabled' => true,
                     'width' => '10%',
                     'default' => true,
