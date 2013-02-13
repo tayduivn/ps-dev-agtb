@@ -34,5 +34,6 @@ class ReportsApiHelper extends SugarBeanApiHelper
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
         $bean->fromApi = true;
+        return parent::populateFromApi($bean, $submittedData, $options);
     }
 }
