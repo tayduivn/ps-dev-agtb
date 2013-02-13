@@ -26,4 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<label><input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}>{{str def.text this.module}}</label>
+{{#if def.text}}
+    <label><input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}> {{str def.text this.module}}</label>
+{{else}}
+    <input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}>
+{{/if}}
