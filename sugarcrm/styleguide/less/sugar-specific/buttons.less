@@ -117,6 +117,9 @@
     *border: 0; // Remove the border to prevent IE7's black border on input:focus
     border-top-color: darken(@btnBorder, 5%);
   }
+  [class^="icon-"] {
+    color: @grayLight !important;
+  }
   &.disabled,
   &.disabled:hover {
     background-color: transparent;
@@ -124,11 +127,11 @@
     .box-shadow(none);
     border: 1px solid transparent;
     text-decoration: none;
-    color: @gray;
+    color: @grayLight !important;
     .opacity(65);
-    &[class^="icon-"] {
+    [class^="icon-"] {
       .opacity(65);
-      color: @gray !important;
+      color: @grayLight !important;
     }
   }
   &.btn-link:hover {
@@ -141,7 +144,20 @@
     color: @linkColorHover !important;
   }
 }
-
+/*a.btn-invisible.disabled,
+a.btn-invisible.disabled:hover {
+  background-color: transparent;
+  background-image: none;
+  .box-shadow(none);
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: @gray;
+  .opacity(65);
+  [class^="icon-"] {
+    .opacity(65);
+    color: @gray !important;
+  }
+}*/
 /*a [class^="icon-"] {
   color: @grayLight !important;
 }

@@ -49,8 +49,12 @@
   }
   span[data-type="favorite"] {
     margin-left: 12px;
-    [class^="icon-"] {
+    [class="icon-favorite"] {
       font-size: 18px !important;
+      color: @grayLight;
+    }
+    &:hover [class="icon-favorite"] {
+      color: @gray;
     }
   }
 

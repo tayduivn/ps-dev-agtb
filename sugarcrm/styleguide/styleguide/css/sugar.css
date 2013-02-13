@@ -1417,6 +1417,9 @@ article:hover {
   *border: 0;
   border-top-color: #aeaeae;
 }
+.btn-invisible [class^="icon-"] {
+  color: #bbb !important;
+}
 .btn-invisible.disabled,
 .btn-invisible.disabled:hover {
   background-color: transparent;
@@ -1426,15 +1429,15 @@ article:hover {
   box-shadow: none;
   border: 1px solid transparent;
   text-decoration: none;
-  color: #58595B;
+  color: #bbb !important;
   opacity: 0.65;
   filter: alpha(opacity=65);
 }
-.btn-invisible.disabled[class^="icon-"],
-.btn-invisible.disabled:hover[class^="icon-"] {
+.btn-invisible.disabled [class^="icon-"],
+.btn-invisible.disabled:hover [class^="icon-"] {
   opacity: 0.65;
   filter: alpha(opacity=65);
-  color: #58595B !important;
+  color: #bbb !important;
 }
 .btn-invisible.btn-link:hover {
   text-decoration: underline;
@@ -3654,6 +3657,12 @@ article .actions,
   background-color: #f5f5f5;
   margin-bottom: 0px;
 }
+.form-search .filter-body .controls {
+  line-height: 28px;
+}
+.form-search .filter-body input[type=checkbox] {
+  margin-bottom: inherit;
+}
 .form-search .select2-container {
   width: 100%;
 }
@@ -3762,6 +3771,7 @@ article .actions,
 }
 .form-search .extend article.filter-header {
   padding: 9px 8px 7px 20px;
+  line-height: 28px;
   -webkit-box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
   box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
@@ -4959,6 +4969,18 @@ input[type="color"].local-error,
 .inline-error input:focus {
   z-index: 3;
 }
+.inline-error .control-group.email input {
+  border-color: #58595B;
+  color: #58595B;
+}
+.inline-error .control-group.email.inline-error input {
+  border-color: #b60000;
+  color: #b60000;
+}
+.inline-error .add-on [class^="icon-"],
+.inline-error .add-on [class*=" icon-"] {
+  color: #b60000;
+}
 .upload-field-custom {
   overflow: hidden;
   display: inline-block;
@@ -5980,114 +6002,6 @@ footer .btn-toolbar.pull-right {
 footer .btn-toolbar.pull-left {
   margin: 8px 0 0 8px;
   height: 20px;
-}
-#SpotResults {
-  font-weight: bold;
-}
-#SpotResults div {
-  font-size: 14px;
-  font-weight: bold;
-}
-#SpotResults div small {
-  color: #0B578F;
-}
-#SpotResults a:hover {
-  color: gray;
-}
-#SpotResults small:hover {
-  cursor: pointer;
-  color: gray;
-}
-#SpotResults ul {
-  padding: 0px 10px 0px 0px;
-  margin-left: 0px;
-}
-#SpotResults ul li {
-  margin-left: 0px;
-  list-style-type: none;
-}
-#SpotResults li p.error {
-  padding-top: 10px;
-  color: #ff0000;
-}
-#SpotResults li p.error a {
-  left: 0;
-  top: 0;
-}
-#globalLinksModule {
-  float: right;
-  height: 43px;
-}
-#globalLinksModule:hover {
-  background-color: #333333;
-}
-#globalLinksCtrl img {
-  border: 0px;
-}
-#quickCreate {
-  float: right;
-}
-#quickCreate ul.clickMenu {
-  background: none;
-  border: 0px none;
-  padding-right: 0px;
-  font-family: Arial;
-}
-#quickCreate ul.clickMenu > li {
-  width: 50px;
-  height: 43px;
-}
-#quickCreate ul.clickMenu li > span {
-  background: url('../../assets/img/quickcreate.png') no-repeat center center;
-  height: 43px;
-  width: 50px;
-}
-#globalLinksModule ul.clickMenu li:hover span,
-#quickCreate ul.clickMenu > li:hover {
-  background-color: #333333;
-  color: #ffffff;
-  text-shadow: 0 -1px 0 #000000;
-}
-ul#globalLinksSubnav li {
-  min-width: 120px;
-}
-ul#globalLinksSubnav,
-ul#quickCreateULSubnav,
-#quickCreate ul.clickMenu li ul.subnav,
-#globalLinksModule ul.clickMenu li ul.subnav {
-  top: 43px;
-  right: 0;
-  left: auto;
-  padding: 10px 0px;
-  border: 1px solid #999;
-  width: auto;
-}
-#quickCreate ul.clickMenu li ul.subnav {
-  width: auto;
-}
-#globalLinksSubnav li a,
-#quickCreateULSubnav li a,
-#quickCreate ul.clickMenu li ul.subnav li a,
-#globalLinksModule ul.clickMenu li ul.subnav li a {
-  padding: 4px 10px !important;
-  color: #666666;
-  line-height: 1.45;
-}
-#quickCreateULSubnav li.moduleMenuOverFlowLess a,
-#quickCreateULSubnav li.moduleMenuOverFlowMore a,
-#quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a,
-#quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a {
-  color: #999 !important;
-}
-#quickCreate ul.clickMenu li ul.subnav li a:hover,
-#globalLinksModule ul.clickMenu li ul.subnav li a:hover,
-#quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a:hover,
-#quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a:hover {
-  color: #fff !important;
-}
-#quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a img,
-#quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a img {
-  opacity: .6;
 }
 .modal {
   border: 1px solid #bbb;
@@ -8308,11 +8222,23 @@ h3.popover-title {
 .headerpane span[data-type="favorite"] {
   margin-left: 12px;
 }
-.headerpane span[data-type="favorite"] [class^="icon-"] {
+.headerpane span[data-type="favorite"] [class="icon-favorite"] {
   font-size: 18px !important;
+  color: #bbb;
+}
+.headerpane span[data-type="favorite"]:hover [class="icon-favorite"] {
+  color: #58595B;
 }
 .headerpane .record-edit-link-wrapper {
   position: absolute;
+}
+.headerpane .record-edit-link-wrapper .record-edit-link.btn-invisible:hover {
+  border: 1px solid transparent;
+  background: none;
+}
+.headerpane .record-edit-link-wrapper .icon-pencil {
+  text-decoration: none;
+  cursor: pointer;
 }
 .headerpane input[type="text"] {
   font-size: 20px;
@@ -8472,7 +8398,6 @@ h3.popover-title {
 }
 .record .record-cell[data-type="textarea"] .normal > span {
   display: inline-block !important;
-  margin-bottom: 9px;
   padding: 7px 0;
   width: 100%;
 }
@@ -8481,7 +8406,6 @@ h3.popover-title {
 }
 .record .record-cell[data-type="url"] .normal > span {
   display: inline-block !important;
-  margin-bottom: 9px;
 }
 .record .record-cell[data-type="url"] .normal > span a {
   display: block !important;
@@ -8659,12 +8583,12 @@ h3.popover-title {
 .record .record-edit-link-wrapper .record-edit-link {
   position: absolute;
   top: 18px;
-  left: -29px;
+  left: -18px;
   z-index: 0;
   padding: 4px 7px 4px;
 }
 .record .record-edit-link-wrapper .record-edit-link.btn-invisible:hover {
-  border: none;
+  border: 1px solid transparent;
   background: none;
 }
 .record .record-edit-link-wrapper .icon-pencil {
