@@ -390,7 +390,11 @@
         forecastData.amount = self.totals.amount;
         forecastData.opp_count = self.totals.included_opp_count;
         forecastData.worksheetData = worksheetData;
-
+        forecastData.includedClosedAmount = self.totals.includedClosedAmount;
+        forecastData.includedClosedCount = self.totals.includedClosedCount;
+        forecastData.pipeline_amount = self.totals.pipeline_amount;
+        forecastData.pipeline_opp_count = self.totals.pipeline_opp_count;
+        
         // apply data to model then save
         forecast.set(forecastData);
         forecast.save({}, {success:function(){
