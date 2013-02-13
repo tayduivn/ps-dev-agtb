@@ -202,7 +202,6 @@ class MetaDataManager {
         $key = implode(':', $platform) . ':' . intval($public);
         
         if ($fresh || empty(self::$managers[$key])) {
-            // TODO: employ logic here to make platform specific managers
             $manager = new $class($platform, $public);
             
             // Cache it and move on
@@ -772,7 +771,7 @@ class MetaDataManager {
      */
     protected function rebuildModulesSection($data) 
     {
-        $data = $this->_populateModules($data);
+        $data = $this->populateModules($data);
         foreach($data['modules'] as $moduleName => $moduleDef) {
             if (!array_key_exists($moduleName, $data['full_module_list'])) {
                 unset($data['modules'][$moduleName]);
@@ -1104,7 +1103,7 @@ class MetaDataManager {
      */
     protected function loadMetadata() {
         // Start collecting data with the modules
-        $data = $this->_populateModules(array());
+        $data = $this->populateModules(array());
 
         foreach($data['modules'] as $moduleName => $moduleDef) {
             if (!array_key_exists($moduleName, $data['full_module_list']) && array_key_exists($moduleName, $data['modules'])) {
@@ -1184,13 +1183,13 @@ class MetaDataManager {
     }
 
     /**
-     * Gets full module list and data for each module.
+     * Gets full module list and data for each module and uses that data to 
+     * populate the modules/full_module_list section of the metadata
      *
-     * @param array $data load metadata array
-     * @param array $fullModuleList 
+     * @param array $data Existing metadata
      * @return array
      */
-    public function _populateModules($data) {
+    public function populateModules($data) {
         $data['full_module_list'] = $this->getModuleList();
         $data['modules'] = array();
         foreach($data['full_module_list'] as $module) {
