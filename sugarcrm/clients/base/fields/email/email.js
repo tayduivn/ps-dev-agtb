@@ -318,11 +318,17 @@
         evt.stopPropagation();
         evt.preventDefault();
 
-        // this is temporary until we have stacking drawers - for right now we are just loading this view up
-        app.controller.loadView({
-            module:         "Emails",
-            layout:         "compose",
-            recipientModel: this.model
+        var model = app.data.createBean(this.model.module);
+        model.copy(this.model);
+
+        app.drawer.open({
+            layout : 'compose',
+            context: {
+                create: 'true',
+                module: "Emails",
+                recipientModel: model,
+                forceNew:true
+            }
         });
     }
 })
