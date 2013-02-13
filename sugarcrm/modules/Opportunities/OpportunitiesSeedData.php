@@ -136,12 +136,12 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         // save a draft worksheet for the new forecasts stuff
         /* @var $worksheet ForecastWorksheet */
         $worksheet = BeanFactory::getBean('ForecastWorksheets');
-        $worksheet->saveRelatedOpportunity($opp, true);
+        $worksheet->saveRelatedOpportunity($opp);
 
         // save a draft worksheet for the new forecasts stuff
         /* @var $product_worksheet ForecastWorksheet */
         $product_worksheet = BeanFactory::getBean('ForecastWorksheets');
-        $product_worksheet->saveRelatedProduct($product, true);
+        $product_worksheet->saveRelatedProduct($product);
 
         //END SUGARCRM flav=pro ONLY
 

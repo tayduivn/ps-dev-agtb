@@ -32,21 +32,14 @@
  */
 ({
     values: new Backbone.Model(),
-    url: app.api.buildURL('Forecasts/chart'),
-
     chart: null,
-
     chartRendered: false,
-
-    chartDataSet : [],
-    chartGroupByOptions : [],
-
+    chartDataSet: [],
+    chartGroupByOptions: [],
     defaultDataset: '',
     defaultGroupBy: '',
-
     chartTitle: '',
     timeperiod_label: '',
-
     stopRender: false,
 
     /**
@@ -173,7 +166,6 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
-        if(this.context.worksheet) this.context.worksheet.off(null, null, this);
         if(this.context.worksheetmanager) this.context.worksheetmanager.off(null, null, this);
         if(this.context) this.context.off(null, null, this);
         if(this.values) this.values.off(null, null, this);
@@ -184,58 +176,56 @@
      * Listen to changes in values in the context
      */
     bindDataChange:function () {
-        var self = this;
-        
         //This is fired when anything in the worksheets is saved.  We want to wait until this happens
         //before we go and grab new chart data.
         this.context.on("forecasts:committed:saved", function(){
-            self.renderChart();
-        });
+            this.renderChart();
+        }, this);
 
         this.context.on("forecasts:worksheet:saved", function(totalSaved, worksheet, isDraft) {
             // we only want this to run if the totalSaved was greater than zero and we are saving the draft version
             if(totalSaved > 0 && isDraft == true) {
-                self.renderChart();
+                this.renderChart();
             }
-        });
+        }, this);
 
         this.context.on('change:selectedUser', function (context, user) {
-            if(!_.isEmpty(self.chart)) {
-                self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
-                self.toggleRepOptionsVisibility();
+            if(!_.isEmpty(this.chart)) {
+                this.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
+                this.toggleRepOptionsVisibility();
             }
-        });
+        }, this);
         this.context.on('change:selectedTimePeriod', function (context, timePeriod) {
-            if(!_.isEmpty(self.chart)) {
-                self.timeperiod_label = timePeriod.label;
-                self.handleRenderOptions({timeperiod_id: timePeriod.id});
+            if(!_.isEmpty(this.chart)) {
+                this.timeperiod_label = timePeriod.label;
+                this.handleRenderOptions({timeperiod_id: timePeriod.id});
             }
-        });
+        }, this);
         this.context.on('change:selectedGroupBy', function (context, groupBy) {
-            if(!_.isEmpty(self.chart)) {
-                self.handleRenderOptions({group_by: groupBy});
+            if(!_.isEmpty(this.chart)) {
+                this.handleRenderOptions({group_by: groupBy});
             }
-        });
+        }, this);
         this.context.on('change:selectedRanges', function(context, value) {
-            if(!_.isEmpty(self.chart)) {
-                self.handleRenderOptions({ranges: value});
+            if(!_.isEmpty(this.chart)) {
+                this.handleRenderOptions({ranges: value});
             }
-        });
+        }, this);
         this.context.on('forecasts:commitButtons:sidebarHidden', function(value){
             // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
-            self.stopRender = value;
+            this.stopRender = value;
             // if the sidebar is not hidden
             if(value == false){
                 // we need to force the render to happen again
-                self.renderChart();
+                this.renderChart();
             }
-        });
+        }, this);
         // watch for the change event to fire.  if it fires make sure something actually changed in the array
-        this.values.on('change', function(context, value) {
-            if(!_.isEmpty(value.changes)) {
-                self.renderChart();
+        this.values.on('change', function(value) {
+            if(!_.isEmpty(value.changed)) {
+                this.renderChart();
             }
-        });
+        }, this);
     },
 
     /**
@@ -300,7 +290,7 @@
                   };
                   data = $.extend(data, params);
 
-                  url = app.api.buildURL('Forecasts', 'chart', '', data);
+                  url = app.api.buildURL(self.buildChartUrl(params), '', '', data);
 
                   app.api.call('read', url, data, {success : success});
               },
@@ -372,9 +362,18 @@
         params.minColumnWidth = 120;
         params.chartId = chartId;
 
-        chart = new loadSugarChart(chartId, this.url, css, chartConfig, params, _.bind(function(chart){
+        chart = new loadSugarChart(chartId, this.buildChartUrl(params), css, chartConfig, params, _.bind(function(chart){
             this.chart = chart;
         }, this));
         this.chartRendered = true;
+    },
+
+    /**
+     * Accepts params object and builds the proper endpoint url for charts
+     * @param params {Object} contains a lot of chart options and settings
+     * @return {String} has the proper structure for the chart url
+     */
+    buildChartUrl: function(params) {
+        return 'Forecasts/' + params.timeperiod_id + '/' + params.user_id +'/chart/' + params.display_manager;
     }
 })

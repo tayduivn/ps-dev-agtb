@@ -353,14 +353,22 @@ class UploadFile
 	/**
 	 * moves uploaded temp file to permanent save location
 	 * @param string $bean_id ID of parent bean
+     * @param boolean $temporary set true to move the file to temp folder
 	 * @return bool True on success
 	 */
-	function final_move($bean_id)
+	function final_move($bean_id, $temporary = false)
 	{
 	    $destination = $bean_id;
 	    if(substr($destination, 0, 9) != "upload://") {
             $destination = "upload://$bean_id";
 	    }
+        if ($temporary === true) {
+            $tempFolder = "upload://tmp/";
+            if (!is_dir($tempFolder)) {
+                sugar_mkdir($tempFolder, 0755, true);
+            }
+            $destination = $tempFolder . $bean_id;
+        }
         if($this->use_soap) {
         	if(!file_put_contents($destination, $this->file)){
         	    $this->setError('fatal', "ERROR: can't save file to $destination");

@@ -688,10 +688,10 @@ class Meeting extends SugarBean {
 
 		while($row = $this->db->fetchByAssoc($result)) {
 			$record = BeanFactory::retrieveBean('Users', $row['user_id']);
-			if(empty($record)) {
+			if(!empty($record)) {
     			$record->required = $row['required'];
 	    		$record->accept_status = $row['accept_status'];
-				$list[] = $template;
+				$list[] = $record;
 			}
 		}
 		return $list;

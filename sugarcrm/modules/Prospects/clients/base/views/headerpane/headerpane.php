@@ -44,15 +44,13 @@ $viewdefs['Prospects']['base']['view']['headerpane'] = array(
             'css_class' => 'btn-primary',
             'events' => array(
                 'click' => 'function(e){
-                        this.view.layout.trigger("drawer:vcard:import:fire", {
-                                components: [{
-                                    layout : "vcard-import",
-                                    context: {
-                                        create: true
-                                    }
-                                }]
-                            }, this);
-                        }'
+                    app.drawer.open({
+                            layout : "vcard-import",
+                            context: {
+                                create: true
+                            }
+                        });
+                    }'
             ),
         ),
 

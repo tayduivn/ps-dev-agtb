@@ -305,17 +305,33 @@ $dictionary['Task'] = array('table' => 'tasks',
    array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
    'rhs_module'=> 'Tasks', 'rhs_table'=> 'tasks', 'rhs_key' => 'created_by',
    'relationship_type'=>'one-to-many')
-)
-                                                      , 'indices' => array (
-       array('name' =>'idx_tsk_name', 'type'=>'index', 'fields'=>array('name')),
-       array('name' =>'idx_task_con_del', 'type'=>'index', 'fields'=>array('contact_id','deleted')),
-       array('name' =>'idx_task_par_del', 'type'=>'index', 'fields'=>array('parent_id','parent_type','deleted')),
-       array('name' =>'idx_task_assigned', 'type'=>'index', 'fields'=>array('assigned_user_id')),
+),
+
+    'indices' => array (
+        array('name' =>'idx_tsk_name', 'type'=>'index', 'fields'=>array('name')),
+        array('name' =>'idx_task_con_del', 'type'=>'index', 'fields'=>array('contact_id','deleted')),
+        array('name' =>'idx_task_par_del', 'type'=>'index', 'fields'=>array('parent_id','parent_type','deleted')),
+        array('name' =>'idx_task_assigned', 'type'=>'index', 'fields'=>array('assigned_user_id')),
         array('name' =>'idx_task_status', 'type'=>'index', 'fields'=>array('status')),
-             )
+    ),
+
+    'duplicate_check' => array(
+        'enabled' => false,
+        'FilterDuplicateCheck' => array(
+            'filter_template' => array(
+                array('$and' => array(
+                    array('name' => array('$starts' => '$name')),
+                    array('status' => array('$not_equals' => 'Completed')),
+                )),
+            ),
+            'ranking_fields' => array(
+                array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
+            )
+        )
+    ),
 
         //This enables optimistic locking for Saves From EditView
-	,'optimistic_locking'=>true,
+	'optimistic_locking'=>true,
                             );
 VardefManager::createVardef('Tasks','Task', array('default', 'assignable',
 //BEGIN SUGARCRM flav=pro ONLY

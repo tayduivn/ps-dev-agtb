@@ -214,7 +214,7 @@ class MailRecord {
                 if ($i>0) {
                     $documents .= "::";
                 }
-                $documents .= $document["id"];
+                $documents .= $document;
             }
         }
 

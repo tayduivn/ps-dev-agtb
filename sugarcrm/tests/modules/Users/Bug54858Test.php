@@ -58,7 +58,8 @@ class Bug54858Test extends Sugar_PHPUnit_Framework_TestCase
        $ch = curl_init($this->vcal_url."&key=" . urlencode($key));
        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
 	   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-       $return = curl_exec($ch);
+       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	   $return = curl_exec($ch);
 	   $info = curl_getinfo($ch);
 	   $info['return'] = $return;
 	   return $info;

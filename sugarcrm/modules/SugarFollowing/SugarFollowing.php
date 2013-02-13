@@ -68,7 +68,7 @@ class SugarFollowing extends Basic {
 	public function __construct(){
 		parent::__construct();
 	}
-	
+
 	static function generateIcon($on, $module, $record){
 		if($on){
 			return '<div class="follow"><div class="on" onclick="DCMenu.removeFromFollowing(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';

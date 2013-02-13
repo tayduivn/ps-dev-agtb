@@ -17,7 +17,7 @@ describe("Base.Field.ActionMenu", function() {
         Account = null;
     });
 
-    it('should create mass model at initial time', function() {
+    it('should create mass model during init', function() {
         var def = {};
         field = SugarTest.createField("base","actionmenu", "actionmenu", "list", def);
         expect(field.context.get("mass_collection")).toBeDefined();
@@ -28,8 +28,8 @@ describe("Base.Field.ActionMenu", function() {
         var def = {};
         field = SugarTest.createField("base","actionmenu", "actionmenu", "list", def);
         SugarTest.loadComponent("base", "view", "editable");
-        SugarTest.loadComponent("base", "view", "baselist");
-        field.view = SugarTest.createView("base", "Account", "list", {});
+        SugarTest.loadComponent("base", "view", "list");
+        field.view = SugarTest.createView("base", "Account", "recordlist", {});
         field.view.collection = { next_offset : -1 };
 
         var massCollection = field.context.get("mass_collection");

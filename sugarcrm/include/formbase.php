@@ -189,6 +189,7 @@ function handleRedirect($return_id='', $return_module='', $additionalFlags = fal
 }
 
 //eggsurplus: abstract to simplify unit testing
+// FIXME will need to refactor this to redirect to parent iframe sidecar urls
 function buildRedirectURL($return_id='', $return_module='')
 {
     if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] != "")
@@ -265,37 +266,11 @@ function buildRedirectURL($return_id='', $return_module='')
         if(isset($_REQUEST['offset']) && empty($_REQUEST['duplicateSave'])) {
             $url .= "&offset=".$_REQUEST['offset'];
         }
-        if(!empty($_REQUEST['ajax_load']))
-        {
-            $ajax_ret = array(
-                'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
-                'menu' => array(
-                    'module' => $return_module,
-                    'label' => translate($return_module),
-                ),
-            );
-            $json = getJSONobj();
-            echo $json->encode($ajax_ret);
-        } else {
-            return "Location: $url";
-        }
+        return "Location: $url";
     } else {
     	$standard = "action=$return_action&module=$return_module&record=$return_id&isDuplicate=true&return_module=$return_module&return_action=$return_action&status=$status";
         $url="index.php?{$standard}{$add}";
-        if(!empty($_REQUEST['ajax_load']))
-        {
-            $ajax_ret = array(
-                 'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
-                 'menu' => array(
-                     'module' => $return_module,
-                     'label' => translate($return_module),
-                 ),
-            );
-            $json = getJSONobj();
-            echo $json->encode($ajax_ret);
-        } else {
-            return "Location: $url";
-        }
+        return "Location: $url";
     }
 }
 

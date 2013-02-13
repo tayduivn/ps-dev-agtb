@@ -1,7 +1,8 @@
 describe("Create View", function() {
     var moduleName = 'Contacts',
         viewName = 'create',
-        sinonSandbox, view, context;
+        sinonSandbox, view, context,
+        drawer;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -83,6 +84,11 @@ describe("Create View", function() {
 
         sinonSandbox = sinon.sandbox.create();
 
+        drawer = SugarTest.app.drawer;
+        SugarTest.app.drawer = {
+            close: function(){}
+        };
+
         context = SugarTest.app.context.getContext();
         context.set({
             module: moduleName,
@@ -91,12 +97,14 @@ describe("Create View", function() {
         context.prepare();
 
         view = SugarTest.createView("base", moduleName, viewName, null, context);
+        view.enableDuplicateCheck = true;
     });
 
     afterEach(function() {
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
         sinonSandbox.restore();
+        SugarTest.app.drawer = drawer;
     });
 
     describe('Render', function() {
@@ -278,7 +286,7 @@ describe("Create View", function() {
                 saveModelStub = sinon.stub(view, 'saveModel', function(success) {
                     success();
                 }),
-                cancelStub = sinon.stub(view, 'cancel', function() {
+                drawerCloseStub = sinon.stub(SugarTest.app.drawer, 'close', function() {
                     flag = true;
                     return;
                 });
@@ -291,15 +299,15 @@ describe("Create View", function() {
 
             waitsFor(function() {
                 return flag;
-            }, 'cancel should have been called but timeout expired', 1000);
+            }, 'close should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(cancelStub.calledOnce).toBe(true);
+                expect(drawerCloseStub.calledOnce).toBe(true);
 
                 saveModelStub.restore();
                 isValidStub.restore();
                 checkForDuplicateStub.restore();
-                cancelStub.restore();
+                drawerCloseStub.restore();
             });
         });
 
@@ -409,7 +417,7 @@ describe("Create View", function() {
                 saveModelStub = sinon.stub(view, 'saveModel', function(success) {
                     success();
                 }),
-                cancelStub = sinon.stub(view, 'cancel', function() {
+                drawerCloseStub = sinon.stub(SugarTest.app.drawer, 'close', function() {
                     flag = true;
                     return;
                 });
@@ -439,12 +447,12 @@ describe("Create View", function() {
                 expect(isValidStub.calledTwice).toBe(true);
                 expect(checkForDuplicateStub.calledOnce).toBe(true);
                 expect(saveModelStub.calledOnce).toBe(true);
-                expect(cancelStub.calledOnce).toBe(true);
+                expect(drawerCloseStub.calledOnce).toBe(true);
 
                 saveModelStub.restore();
                 isValidStub.restore();
                 checkForDuplicateStub.restore();
-                cancelStub.restore();
+                drawerCloseStub.restore();
             });
         });
     });
@@ -461,7 +469,7 @@ describe("Create View", function() {
                 saveModelStub = sinon.stub(view, 'saveModel', function(success) {
                     success();
                 }),
-                cancelStub = sinon.stub(view, 'cancel', function() {
+                drawerCloseStub = sinon.stub(SugarTest.app.drawer, 'close', function() {
                     return;
                 }),
                 clearStub = sinon.stub(view.model, 'clear', function() {
@@ -484,13 +492,13 @@ describe("Create View", function() {
 
             runs(function() {
                 expect(saveModelStub.calledOnce).toBe(true);
-                expect(cancelStub.called).toBe(false);
+                expect(drawerCloseStub.called).toBe(false);
                 expect(clearStub.calledOnce).toBe(true);
 
                 saveModelStub.restore();
                 isValidStub.restore();
                 checkForDuplicateStub.restore();
-                cancelStub.restore();
+                drawerCloseStub.restore();
                 clearStub.restore();
             });
         });

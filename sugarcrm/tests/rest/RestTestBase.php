@@ -248,6 +248,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLINFO_HEADER_OUT, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
 
         if (is_array($addedOpts) && !empty($addedOpts)) {

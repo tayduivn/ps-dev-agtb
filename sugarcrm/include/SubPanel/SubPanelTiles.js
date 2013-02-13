@@ -578,7 +578,7 @@ SUGAR.subpanelUtils = function() {
                     }
                     return false;
                 } else {
-                    disableOnUnloadEditView(theForm);
+//                    disableOnUnloadEditView(theForm);
                 }
             }
 
@@ -623,6 +623,7 @@ SUGAR.subpanelUtils = function() {
 
             if (currentPanelEl != null) {
                 currentPanelEl.parentNode.removeChild(currentPanelEl);
+                // TODO review these SUGAR.ajaxUI.* methods
                 SUGAR.ajaxUI.cleanGlobals();
                 currentPanelDiv = null;
             }

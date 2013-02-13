@@ -66,29 +66,26 @@ class ForecastsProgressApi extends ModuleApi
      * @return array
      */
     public function registerApiRest()
-	{
-		$parentApi = parent::registerApiRest();
-
-		$parentApi = array(
-			'progressRep' => array(
-				'reqType'   => 'GET',
-				'path'      => array('Forecasts', 'progressRep'),
-				'pathVars'  => array('', ''),
-				'method'    => 'progressRep',
-				'shortHelp' => 'Projected Rep data',
+    {
+        return array(
+            'progressRep' => array(
+                'reqType'   => 'GET',
+                'path'      => array('Forecasts', '?', 'progressRep', '?'),
+                'pathVars'  => array('', 'timeperiod_id', '', 'user_id'),
+                'method'    => 'progressRep',
+                'shortHelp' => 'Projected Rep data',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastProgressRepApi.html',
-			),
+            ),
             'progressManager' => array(
                 'reqType'   => 'GET',
-                'path'      => array('Forecasts', 'progressManager'),
-                'pathVars'  => array('', ''),
+                'path'      => array('Forecasts', '?', 'progressManager', '?'),
+                'pathVars'  => array('', 'timeperiod_id', '', 'user_id'),
                 'method'    => 'progressManager',
                 'shortHelp' => 'Progress Manager data',
-                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastProgressManagerApi.html',
-         	)
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastProgressManagerApi.html',
+            )
         );
-		return $parentApi;
-	}
+    }
 
     /**
      * loads data and passes back an array to communicate data that may be missing.  The array is the same
@@ -99,8 +96,8 @@ class ForecastsProgressApi extends ModuleApi
      */
 	public function progressRep( $api, $args )
 	{
-        $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
-        $args['timeperiod_id'] = isset( $args["timeperiod_id"]) ? $args["timeperiod_id"] : TimePeriod::getCurrentId();
+        $args['user_id'] = clean_string($args["user_id"]);
+        $args['timeperiod_id'] = clean_string($args["timeperiod_id"]);
 
         // base file and class name
         $file = 'include/SugarForecasting/Progress/Individual.php';
@@ -125,8 +122,9 @@ class ForecastsProgressApi extends ModuleApi
      */
 	public function progressManager( $api, $args )
 	{
-        $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
-        $args['timeperiod_id'] = isset( $args["timeperiod_id"]) ? $args["timeperiod_id"] : TimePeriod::getCurrentId();
+        $args['user_id'] = clean_string($args["user_id"]);
+        $args['timeperiod_id'] = clean_string($args["timeperiod_id"]);
+
         // base file and class name
         $file = 'include/SugarForecasting/Progress/Manager.php';
         $klass = 'SugarForecasting_Progress_Manager';

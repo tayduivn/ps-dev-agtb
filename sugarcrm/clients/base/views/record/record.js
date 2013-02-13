@@ -39,14 +39,10 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
-        // Set the save button to show if the model has been edited.
-        this.model.on("change", function() {
-            if (this.inlineEditMode) {
-                this.previousModelState = this.model.previousAttributes();
-                this.setButtonStates(this.STATE.EDIT);
-            }
-        }, this);
+        app.events.on("data:sync:end", this.handleSync, this);
+        this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
+        this.model.on("duplicate:before", this.setupDuplicateFields, this);
 
         this.delegateButtonEvents();
 
@@ -54,9 +50,49 @@
             this.model.isNotEmpty = true;
         }
     },
+    handleSync: function(method, model, options, error) {
+        if (this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
+            this.previousModelState = JSON.parse(JSON.stringify(model.attributes));
+        }
+    },
+
+    /**
+     * Called when current record is being duplicated to allow customization of fields
+     * that will be copied into new record.
+     *
+     * Override to setup the fields on this bean prior to being displayed in Create dialog
+     *
+     * @param {Object} prefill Bean that will be used for new record
+     */
+    setupDuplicateFields: function(prefill){
+
+    },
 
     setLabel: function(context, value) {
         this.$(".record-label[data-name=" + value.field + "]").text(value.label);
+    },
+
+    /**
+     * Handle validation errors on save of Record.
+     * Makes the fields editable and decorates the fields that have errors.
+     * Fields decorate themselves because they may have customized HTML/CSS
+     *
+     * @param errors Validation errors
+     */
+    handleValidationError: function(errors){
+        var errorFields = _.filter(this.editableFields,function(field){
+            return errors[field.name];
+        });
+        this.toggleFields(errorFields, true);  // Set field to edit mode before decorating it
+        _.defer(function(errorFields, self){ // Must defer decorating because field toggling is deferred
+            _.each(errorFields, function(field){
+                field.$el.parents('.record-cell').addClass("inline-error");
+                if(field.decorateError){
+                    field.decorateError(errors[field.name]);
+                }
+            });
+        }, errorFields, this);
+
     },
 
     delegateButtonEvents: function() {
@@ -94,17 +130,22 @@
             }
 
             _.each(panel.fields, function(field, index) {
-                var maxSpan,
-                    isLabelInline,
+                var isLabelInline,
                     fieldSpan,
+                    maxFieldSpan,
                     maxSpanForFieldWithInlineLabel = 8,
                     maxSpanForFieldWithLabelOnTop  = 12;
 
                 //The code below assumes that the field is an object but can be a string
                 if(_.isString(field)) {
-                    field = {
-                        'name': field
+                    panel.fields[index] = field = {
+                        name: field
                     };
+                }
+
+                //Disable the pencil icon if the user doesn't have ACLs
+                if (!app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                    field.noedit = true;
                 }
 
                 //labels: visibility for the label
@@ -113,35 +154,49 @@
                 if (_.isUndefined(panel.labels)) {
                     panel.labels = true;
                 }
+
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
                 isLabelInline = (panel.labelsOnTop === false && panel.labels);
-                maxSpan       = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
+                maxFieldSpan  = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
 
+                // calculate the 2/3 ratio for the field span
                 if (_.isUndefined(field.span)) {
-                    field.span = Math.floor(maxSpan / columns);
+                    field.span = Math.floor(maxFieldSpan / columns);
                 }
 
-                // reset the field span if it's greater than the max span since no field can be greater than the
-                // maximum allowable span
-                // this is likely to only occur when labels are inline with the field, but that can't be guaranteed
-                // to be the only plausible scenario
-                if (field.span > maxSpan) {
-                    field.span = maxSpan;
-                }
-
-                //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
-                if (_.isUndefined(field.labelSpan)) {
-                    field.labelSpan = Math.floor(4 / columns);
-                }
-
-                // this is new to prevent a span of 0
+                // prevent a span of 0
                 if (field.span < 1) {
                     field.span = 1;
                 }
 
-                // this is new to prevent a labelSpan of 0
+                // 4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
+                if (_.isUndefined(field.labelSpan)) {
+                    field.labelSpan = Math.floor(4 / columns);
+                }
+
+                // prevent a labelSpan of 0
                 if (field.labelSpan < 1) {
                     field.labelSpan = 1;
+                }
+
+                if (_.isUndefined(field.dismiss_label)) {
+                    field.dismiss_label = false;
+                }
+
+                // if the label is inline and is to be dismissed, then the field should take up its space plus the
+                // space set aside for its label
+                if (isLabelInline && field.dismiss_label === true) {
+                    field.span += field.labelSpan;
+
+                    // the field should be allowed to take up the space that was originally dedicated for the label,
+                    // which is similar to saying that labels are on top
+                    maxFieldSpan = maxSpanForFieldWithLabelOnTop;
+                }
+
+                // fields can't be greater than the maximum allowable span
+                // however, there is no policing of (field.span + field.labelSpan) so overflow is still possible
+                if (field.span > maxFieldSpan) {
+                    field.span = maxFieldSpan;
                 }
 
                 totalFieldCount++;
@@ -152,7 +207,7 @@
 
                 // if the labels are to the left of the field then the field takes up the space
                 // specified by its span plus the space its label takes up
-                if (isLabelInline) {
+                if (isLabelInline && field.dismiss_label === false) {
                     fieldSpan += field.labelSpan;
                 }
 
@@ -173,6 +228,11 @@
                 colCount++; // increment the column count now that we've filled a column
             }, this);
 
+            // Display module label in header panel it doesn't contain the picture field
+            if (panel.header) {
+                panel.isAvatar = !!_.find(panel.fields, function(f) { return f.name === 'picture'; });
+            }
+
             panel.grid = rows;
         }, this);
     },
@@ -192,7 +252,8 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            if ( field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
+            //Exclude non editable fields
+            if (field.def.noedit || field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
@@ -222,8 +283,10 @@
     showPreviousNextBtnGroup:function() {
         var listCollection = this.context.get('listCollection') || new Backbone.Collection();
         var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
-        this.collection.previous = listCollection.models[recordIndex-1] ? listCollection.models[recordIndex-1] : undefined;
-        this.collection.next = listCollection.models[recordIndex+1] ? listCollection.models[recordIndex+1] : undefined;
+        if(this.collection){
+            this.collection.previous = listCollection.models[recordIndex-1] ? listCollection.models[recordIndex-1] : undefined;
+            this.collection.next = listCollection.models[recordIndex+1] ? listCollection.models[recordIndex+1] : undefined;
+        }
     },
 
     registerFieldAsButton: function(buttonName) {
@@ -259,54 +322,75 @@
     },
 
     bindDataChange: function() {
-        if (this.model) {
-            this.model.on("change", function() {
-                if (this.model.isNotEmpty !== true) {
-                    this.model.isNotEmpty = true;
-                    this.render();
-                }
-            }, this);
-        }
+        this.model.on("change", function(fieldType) {
+            if (this.inlineEditMode) {
+                this.previousModelState = this.model.previousAttributes();
+                this.setButtonStates(this.STATE.EDIT);
+            }
+            if (this.model.isNotEmpty !== true && fieldType !== 'image') {
+                this.model.isNotEmpty = true;
+                this.render();
+            }
+        }, this);
     },
 
     duplicateClicked: function() {
-        app.cache.set("duplicate"+this.module, this.model.attributes);
-        this.layout.trigger("drawer:create:fire", {
-            components: [{
-                layout : 'create',
-                context: {
-                    create: true
-                }
-            }]
+        var prefill = app.data.createBean(this.model.module);
+        prefill.copy(this.model);
+        this.model.trigger("duplicate:before", prefill);
+        prefill.unset("id");
+        app.drawer.open({
+            layout: 'create',
+            context: {
+                create: true,
+                model : prefill
+            }
         }, this);
     },
     
     findDuplicatesClicked: function() {
-        this.layout.trigger("drawer:find-duplicates:fire", {
-            components: [{
-                layout : 'find-duplicates',
-                context: {
-                    dupeCheckModel: this.model,
-                    dupelisttype: 'dupecheck-list-multiselect'
-                }
-            }]
-        }, this);
+        app.drawer.open({
+            layout : 'find-duplicates',
+            context: {
+                dupeCheckModel: this.model,
+                dupelisttype: 'dupecheck-list-multiselect'
+            }
+        });
     },
 
     editClicked: function() {
-        this.previousModelState = this.model.previousAttributes();
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
 
     saveClicked: function() {
-        this.setButtonStates(this.STATE.VIEW);
-        this.handleSave();
+        this.$('.inline-error').removeClass('inline-error');
+        if(this.model.isValid(this.getFields(this.module))){
+            this.setButtonStates(this.STATE.VIEW);
+            this.handleSave();
+        }
     },
 
     cancelClicked: function() {
         this.setButtonStates(this.STATE.VIEW);
         this.handleCancel();
+        this.clearValidationErrors(this.editableFields);
+    },
+    /**
+     * Remove validation error decoration from fields
+     *
+     * @param fields Fields to remove error from
+     */
+    clearValidationErrors: function(fields){
+        _.defer(function(){
+            _.each(fields, function(field){
+                field.$el.parents('.record-cell').removeClass("inline-error");
+                if(field.clearErrorDecoration){
+                    field.clearErrorDecoration();
+                }
+            });
+        }, fields);
+
     },
 
     deleteClicked: function() {
@@ -352,7 +436,15 @@
         // TODO: Refactor this for fields to support their own focus handling in future.
         // Add your own field type handling for focus / editing here.
         switch (field.type) {
-            case "img":
+            case "image":
+                var self = this;
+                app.file.checkFileFieldsAndProcessUpload(self.model, {
+                        success:function () {
+                            self.toggleField(field);
+                        }
+                    },
+                    { deleteIfFails:false}
+                );
                 break;
             default:
                 this.toggleField(field);
@@ -361,17 +453,23 @@
 
     handleSave: function() {
         var self = this;
-        this.inlineEditMode = false;
+        self.inlineEditMode = false;
 
-        this.model.save({}, {
-            success: function() {
-                if (self.createMode) {
-                    app.navigate(self.context, self.model);
-                } else {
-                    self.render();
-                }
+        var finalSuccess = function () {
+            if (self.createMode) {
+                app.navigate(self.context, self.model);
+            } else {
+                self.render();
             }
-        });
+        };
+        app.file.checkFileFieldsAndProcessUpload(self.model, {
+                success:function () {
+                    self.model.save({}, {
+                        success:finalSuccess
+                    });
+                }
+            },
+            { deleteIfFails:false});
 
         this.$(".record-save-prompt").hide();
         this.render();
@@ -401,8 +499,6 @@
 
     handleKeyDown: function(e, field) {
         app.view.views.EditableView.prototype.handleKeyDown.call(this, e, field);
-        var nextCell,
-            index = field.$el.parent().data("index");
 
         if (e.which == 9) { // If tab
             e.preventDefault();

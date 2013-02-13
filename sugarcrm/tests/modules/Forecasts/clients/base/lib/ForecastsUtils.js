@@ -31,7 +31,6 @@ describe("Forecasts Utils", function(){
         config = new (Backbone.Model.extend({
             "defaults": fixtures.metadata.modules.Forecasts.config
         }));
-        SugarTest.seedMetadata(true);
 
     });
 

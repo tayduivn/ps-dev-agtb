@@ -2,6 +2,7 @@
 /*********************************************************************************
  * The contents of this file are subject to
  * *******************************************************************************/
+// FIXME remove this view
 require_once('include/MVC/View/SugarView.php');
 
 class ViewAjaxUI extends SugarView

@@ -161,7 +161,7 @@
             this.draftUser = this.selectedUser;
         }
         this.selectedUser = selectedUser;
-        if(!this.showMe()){
+        if(!this.isVisible()){
         	return false;
         }
         this.context.worksheetmanager.url = this.createURL();
@@ -214,14 +214,14 @@
             	this.calculateTotals();
             }, this);
             this.context.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
-            	if(this.showMe()){
+            	if(this.isVisible()){
             		this.context.worksheetmanager.url = this.createURL();
             		this.safeFetch();
             	}
             }, this);
 
             this.context.on('forecasts:committed:saved', function() {
-                if(this.showMe()) {
+                if(this.isVisible()) {
                     // display a success message
                     app.alert.show('success', {
                         level:'success',
@@ -280,7 +280,7 @@
      * @param field
      */
     editableFieldNavigate : function(isShift, field) {
-        if(!this.showMe()) {
+        if(!this.isVisible()) {
             return -1;
         }
         // tab key was pressed, we cycle to the next/prev field
@@ -329,7 +329,7 @@
                        timeperiod:self.dirtyTimeperiod, 
                        userId:self.dirtyUser.id};
         
-        if(this.showMe()) {
+        if(this.isVisible()) {
             /**
              * If the sheet is dirty, save the dirty rows. Else, if the save is for a commit, and we have 
              * draft models (things saved as draft), we need to resave those as committed (version 1). If neither
@@ -523,7 +523,7 @@
     _render:function () {
         var self = this;
       
-        if(!this.showMe()){
+        if(!this.isVisible()){
         	return false;
         }
         $("#view-sales-rep").addClass('hide').removeClass('show');
@@ -680,7 +680,7 @@
             worst_adjusted = 0,
             worst_case = 0;
 
-        if(!this.showMe()){
+        if(!this.isVisible()){
             // if we don't show this worksheet set it all to zero
             this.context.set({
                 updatedManagerTotals : {
@@ -741,7 +741,7 @@
     /**
      * Determines if this Worksheet should be rendered
      */
-    showMe: function(){
+    isVisible: function(){
     	var selectedUser = (this.isDirty() && this.dirtyUser) ? this.dirtyUser : this.selectedUser;
 
         return (!selectedUser.showOpps && selectedUser.isManager)
@@ -760,7 +760,7 @@
         }
 
         var model = this.context.worksheetmanager;
-        if(!this.showMe()){
+        if(!this.isVisible()){
             return false;
         }
         model.url = this.createURL();
@@ -780,7 +780,7 @@
         }
     	this.timePeriod = params.id;
         var model = this.context.worksheetmanager;
-        if(!this.showMe()){
+        if(!this.isVisible()){
         	return false;
         }
         model.url = this.createURL();

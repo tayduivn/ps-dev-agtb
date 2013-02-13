@@ -33,7 +33,8 @@
         {{foreach from=$form.buttons key=val item=button}}
            {{sugar_button module="$module" id="$button" view="$view"}}
         {{/foreach}}
-        <input title="{$APP.LBL_FULL_FORM_BUTTON_TITLE}" accessKey="{$APP.LBL_FULL_FORM_BUTTON_KEY}" class="button" accept=""  onclick="disableOnUnloadEditView(this.form); this.form.return_action.value='ProjectTemplatesDetailView'; this.form.action.value='ProjectTemplatesEditView'; this.form.return_module.value='Project';this.form.return_id.value=this.form.record.value;if(typeof(this.form.to_pdf)!='undefined') this.form.to_pdf.value='0';SUGAR.ajaxUI.submitForm(this.form,null,true);DCMenu.closeOverlay();"  type="button" name="Project_subpanel_full_form_button"  id="Project_subpanel_full_form_button"  value="{$APP.LBL_FULL_FORM_BUTTON_LABEL}">
+            {* // FIXME check these SUGAR.ajaxUI.* methods *}
+        <input title="{$APP.LBL_FULL_FORM_BUTTON_TITLE}" accessKey="{$APP.LBL_FULL_FORM_BUTTON_KEY}" class="button" accept=""  onclick="this.form.return_action.value='ProjectTemplatesDetailView'; this.form.action.value='ProjectTemplatesEditView'; this.form.return_module.value='Project';this.form.return_id.value=this.form.record.value;if(typeof(this.form.to_pdf)!='undefined') this.form.to_pdf.value='0';SUGAR.ajaxUI.submitForm(this.form,null,true);DCMenu.closeOverlay();"  type="button" name="Project_subpanel_full_form_button"  id="Project_subpanel_full_form_button"  value="{$APP.LBL_FULL_FORM_BUTTON_LABEL}">
         <input type="hidden" name="full_form" value="full_form">
         </td>
         <td align="right" nowrap>
@@ -43,10 +44,11 @@
 </table>
 <script>
     {literal}
+// TODO no more DCMenu
     //lets overwrite dcmenu value that is prepoulated and passed into ajaxui to navigate.  This makes sure we go to
     //projectstemplate list view after the save has been processed.
-    if(DCMenu){
-        DCMenu.qe_refresh = 'SUGAR.ajaxUI.loadContent("index.php?module=Project&action=ProjectTemplatesListView&ignore='+new Date().getTime()+'");';
-    }
+//    if(DCMenu){
+//        DCMenu.qe_refresh = 'SUGAR.ajaxUI.loadContent("index.php?module=Project&action=ProjectTemplatesListView&ignore='+new Date().getTime()+'");';
+//    }
     {/literal}
 </script>

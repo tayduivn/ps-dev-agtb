@@ -25,14 +25,14 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'BaselistView',
+    extendsFrom: 'ListView',
 
     collectionSync: null,
 
     initialize: function(options) {
         _.bindAll(this);
         //turn off sorting & links for dupe check lists
-        app.view.views.BaselistView.prototype.initialize.call(this, options);
+        app.view.views.ListView.prototype.initialize.call(this, options);
         _.each(this.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
                 field.sortable = false;
@@ -46,6 +46,11 @@
             this.model = this.context.get('dupeCheckModel');
         }
 
+        // Create an empty collection if it doesn't exist, since we need it for sync
+        if(_.isUndefined(this.collection)){
+            this.collection = app.data.createBeanCollection(this.module);
+        }
+
         //save off the collection's sync so we can run our own and then run the original
         //this is so we can switch the endpoint out
         this.collectionSync = this.collection.sync;
@@ -53,7 +58,7 @@
     },
 
     _renderHtml: function() {
-        app.view.views.BaselistView.prototype._renderHtml.call(this);
+        app.view.views.ListView.prototype._renderHtml.call(this);
         this.$('table.table-striped').addClass('duplicates highlight');
     },
 
@@ -78,7 +83,7 @@
     },
 
     addRowActions: function(panel, options) {
-        panel = app.view.views.BaselistView.prototype.addRowActions.call(this, panel, options);
+        panel = app.view.views.ListView.prototype.addRowActions.call(this, panel, options);
 
         if (options.meta.showPreview === true) {
             panel.fields = panel.fields.concat({

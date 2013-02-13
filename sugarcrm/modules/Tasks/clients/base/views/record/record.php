@@ -41,7 +41,7 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
         array(
             'type' => 'actiondropdown',
             'name' => 'main_dropdown',
-            'css_class' => 'btn-primary',
+            'primary' => true,
             'buttons' => array(
                 array(
                     'type' => 'rowaction',
@@ -69,24 +69,9 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                 array(
                     'type' => 'rowaction',
                     'name' => 'duplicate_button',
+                    'event' => 'button:duplicate_button:click',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'showOn' => 'view',
-                    'events' => array(
-                        'click' => 'function(e){
-                            var attributes = $.extend({}, this.model.attributes);
-                            attributes.status = "Not Started";
-                            app.cache.set("duplicate"+this.module, attributes);
-                            this.view.layout.trigger("drawer:create:fire", {
-                                components: [{
-                                    layout : "create",
-                                    context: {
-                                        create: true
-                                    }
-                                }]
-                            }, this);
-                            e.stopPropagation();
-                        }',
-                    ),                        
                 ),
                 array(
                     'type' => 'rowaction',
@@ -101,17 +86,7 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                         this.model.save({}, {
                             success: function() {
                                 app.alert.dismiss("close_task");
-                                var attributes = $.extend({}, self.model.attributes);
-                                attributes.status = "Not Started";
-                                app.cache.set("duplicate"+self.module, attributes);
-                                self.view.layout.trigger("drawer:create:fire", {
-                                    components: [{
-                                        layout : "create",
-                                        context: {
-                                            create: true
-                                        }
-                                    }]
-                                }, self);
+                                self.view.duplicateClicked();
                             },
                             error:function(error) {
                                 app.alert.dismiss("close_task");

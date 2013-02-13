@@ -67,7 +67,7 @@ describe("The forecasts config layout controller", function(){
             };
         }));
         stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
-
+        stubs.push(sinon.stub(app.api, "call"));
         indexLayout = SugarTest.createComponent('Layout', {
             name: "records",
             module: "Forecasts",

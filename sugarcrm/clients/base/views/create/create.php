@@ -70,5 +70,4 @@ $viewdefs['base']['view']['create'] = array(
             'type' => 'sidebartoggle',
         ),
     ),
-    'duplicateCheck' => true,
 );

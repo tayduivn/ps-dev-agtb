@@ -20,23 +20,14 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('clients/base/api/ModuleApi.php');
+require_once('include/api/SugarApi.php');
 
-class ForecastsWorksheetApi extends ModuleApi
+class ForecastsWorksheetApi extends SugarAPi
 {
 
     public function registerApiRest()
     {
-        //Extend with test method
-        $parentApi = array(
-            'forecastWorksheet' => array(
-                'reqType' => 'GET',
-                'path' => array('ForecastWorksheets'),
-                'pathVars' => array('', ''),
-                'method' => 'forecastWorksheet',
-                'shortHelp' => 'Returns a collection of ForecastWorksheet models',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
-            ),
+        return array(
             'forecastWorksheetSave' => array(
                 'reqType' => 'PUT',
                 'path' => array('ForecastWorksheets', '?'),
@@ -46,35 +37,6 @@ class ForecastsWorksheetApi extends ModuleApi
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetPut.html',
             )
         );
-        return $parentApi;
-    }
-
-
-    /**
-     * This method handles the /ForecastsWorksheet REST endpoint and returns an Array of worksheet data Array entries
-     *
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
-     * @return Array of worksheet data entries
-     * @throws SugarApiExceptionNotAuthorized
-     */
-    public function forecastWorksheet($api, $args)
-    {
-        // Load up a seed bean
-        require_once('modules/Forecasts/ForecastWorksheet.php');
-        $seed = BeanFactory::getBean('ForecastWorksheets');
-
-        if (!$seed->ACLAccess('list')) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
-        }
-
-        global $current_user;
-
-        $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
-        $args['user_id'] = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
-
-        $obj = $this->getClass($args);
-        return $obj->process();
     }
 
     /**
@@ -88,7 +50,9 @@ class ForecastsWorksheetApi extends ModuleApi
     public function forecastWorksheetSave($api, $args)
     {
         $obj = $this->getClass($args);
-        return $obj->save();
+        $bean = $obj->save();
+
+        return $this->formatBean($api, $args, $bean);
     }
 
 

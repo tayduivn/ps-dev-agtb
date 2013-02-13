@@ -300,8 +300,9 @@ else if(!isset($_GET['execute'])){
 			//echo "$module not found as key in \$beanListFlip. Skipping $module.<BR>";
 			continue;
 		}
-		$object = BeanFactory::getBean($module);
-		if(empty($object->table_name)){
+        $p_module = $beanListFlip[$module];
+        $object = BeanFactory::getBean($p_module);
+        if(empty($object->table_name)){
 //			echo "<h5>Could not find the database table for $p_module.</h5>";
 			continue;
 		}

@@ -7,6 +7,7 @@
 class FilterPanelLayout
 {
     protected $defaultToggles = array("activitystream", "subpanel");
+    protected $initialToggle = "activitystream";
     protected $layout;
     protected $baseLayout;
     protected $count = 0;
@@ -23,9 +24,14 @@ class FilterPanelLayout
 
         // Add header view and subpanel layout
         $this->layout->push(array("view" => "filter"));
-        $this->subpanels = MetaDataManager::getLayout("GenericLayout", array("name" => "subpanel", "type" => "subpanel"));
+        $this->layout->push(array("view" => "filter-create"));
 
         $this->layout->set("toggles", $this->defaultToggles);
+
+        $this->layout->push(array("layout" => "activitystream"));
+
+        // Set default toggle
+        $this->layout->set("default", (isset($opts["default"]) ? $opts["default"] : $this->initialToggle));
     }
 
     /**
@@ -34,7 +40,7 @@ class FilterPanelLayout
      */
     public function push($panel)
     {
-        $this->subpanels->push($panel);
+        $this->layout->push($panel);
     }
 
 
@@ -45,7 +51,6 @@ class FilterPanelLayout
      */
     public function getLayout()
     {
-        $this->layout->push($this->subpanels->getLayout(true));
         $this->baseLayout->push($this->layout->getLayout(true));
         return $this->baseLayout->getLayout();
     }

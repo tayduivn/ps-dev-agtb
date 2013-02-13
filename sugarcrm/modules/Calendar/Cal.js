@@ -1306,7 +1306,7 @@
 									$("#create-invitees-title").css("display", "none");
 								}
 								enableQS(false);
-								disableOnUnloadEditView();
+//								disableOnUnloadEditView();
 							},500);	
 						}else
 							alert(CAL.lbl_error_loading);
@@ -1528,7 +1528,7 @@
 							setTimeout(function(){
 								SugarWidgetScheduler.update_time();
 								enableQS(false);
-								disableOnUnloadEditView();
+//								disableOnUnloadEditView();
 							},500);
 							
 							ajaxStatus.hideStatus();

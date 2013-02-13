@@ -315,6 +315,8 @@ if (version_compare($_SESSION['current_db_version'], '6.5.0', '<') && function_e
 
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
+$rac->clearVardefs();
+$rac->rebuildExtensions();
 
 require_once('modules/UpgradeWizard/uw_utils.php');
 

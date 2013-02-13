@@ -124,7 +124,10 @@
                 if(_.isEqual(self.currentVal, self.select.select2("val"))){
                    self.resetBucket();
                }
-           });
+            });
+            self.$(".select2-input").keydown(function(e){
+                self.onKeyDown(e);
+            });
         }
     },
     
@@ -149,6 +152,20 @@
         
         if(self.currentView == "enum"){
             self.resetBucket();
+        }
+    },
+    
+    /**
+     * Handle event when key is pressed down (tab)
+     *
+     * @param evt
+     */
+    onKeyDown: function(evt) {
+        var self = this;
+        if(evt.which == 9) {
+            evt.preventDefault();
+            // tab key pressed, trigger event from context
+            self.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, self);
         }
     },
     
@@ -195,7 +212,7 @@
         // if it's not a bucket, and it's not editable, we don't want to try to add the pencil
         self.showCteIcon = function() {
             if((self.currentView != "enum") && (!self.disabled)){
-                self.$el.find("span").before($(cteIcon));
+                self.$el.find("span.editable").before($(cteIcon));
             }
         };
         
