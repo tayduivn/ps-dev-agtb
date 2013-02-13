@@ -1,60 +1,79 @@
 
 //headerpane record name edit
 .headerpane {
-  &.btn-group > .btn {
-    float: none;
+
+  h1 {
+    float: left;
+    margin-top: 9px;
+    margin-left: 20px;
   }
-  .dropdown-menu {
-    .caret-top(auto,auto,8px,7px);
-    left: auto;
-    right: 0;
-    z-index:1001;
-  }
-  .btn-group-previous-next {
-    .btn {
-      background: none;
-      [class^="icon-"] {
-        font-size: 16px;
-        line-height: 20px;
-      }
-    }
-  }
+
+  //module type element label
   .label-module {
     width: 32px !important;
     height: 32px !important;
     vertical-align: top;
     margin-left: 15px !important;
   }
-  [data-type="favorite"] {
-    margin-left: 12px;
-    [class^="icon-"] {
-      font-size: 18px !important;
-    }
-  }
-}
-h1 {
-  input[type="text"] {
-    font-size: 20px;
-    height: 26px;
-    margin: -1px 0 0 5px;
-  }
-  span {
+
+  //40+1+1=42px=standard height of headerpane elements
+  .record-cell {
     margin-left: 0;
     display: inline-block;
     vertical-align: top;
+    position: relative;
+    line-height: 40px;
   }
   .ellipsis_inline {
     margin-left: 10px;
     padding: 1px 2px;
   }
-  .record-edit-link-wrapper {
-    position: absolute;
-    left: -8px;
-  }
+
   .label {
     vertical-align: top;
-    margin-top: 11px;
+    margin-top: 13px;
   }
+
+  span[data-type="image"] {
+    .record-edit-link-wrapper {
+      left: -30px;
+    }
+  }
+  span[data-type="fieldset"] {
+    .record-edit-link-wrapper {
+      left: -20px;
+    }
+    span {
+      display: inline-block;
+    }
+  }
+  span[data-type="favorite"] {
+    margin-left: 12px;
+    [class^="icon-"] {
+      font-size: 18px !important;
+    }
+  }
+
+  .record-edit-link-wrapper {
+    position: absolute;
+    .record-edit-link {
+      &.btn-invisible:hover {
+        border: 1px solid transparent;
+        background: none;
+      }
+    }
+    .icon-pencil {
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
+
+  input[type="text"] {
+    font-size: 20px;
+    height: 26px;
+    margin: -1px 0 0 5px;
+  }
+
   .select2-container {
     margin-left: 8px;
     width: 88px;
@@ -70,11 +89,55 @@ h1 {
       }
     }
   }
+
+  //action buttons
+
+  .btn-toolbar {
+    margin: 16px 8px 0;
+    .btn-group {
+      vertical-align: middle;
+      i {
+        //was making icons gray
+        //color: @gray !important;
+      }
+    }
+  }
+  .btn-group-previous-next {
+    margin: 0 8px;
+    .btn {
+      [class^="icon-"] {
+        font-size: 16px;
+        line-height: 20px;
+      }
+    }
+  }
+  &.btn-group > .btn {
+    float: none;
+  }
+  .dropdown-menu {
+    .caret-top(auto,auto,8px,7px);
+    left: auto;
+    right: 0;
+    z-index:1001;
+  }
+  .drawerTrig {
+    [class*="icon-"]{
+        font-size: 25px;
+        font-weight: 700;
+    }
+    .icon-double-angle-left {
+        margin: 0 2px 0 -2px;
+    }
+  }
+
 }
 
 //main record edit
 
 .record {
+
+  clear: both;
+  margin: 20px 20px 10px 5px;
 
   .form-horizontal {
     .record-cell,
@@ -113,9 +176,6 @@ h1 {
       width: 100% !important;
     }
   }
-
-  clear: both;
-  margin: 20px 20px 10px 20px;
 
   .record-cell {
 
@@ -178,7 +238,7 @@ h1 {
     &[data-type="textarea"] {
       .normal > span {
         display: inline-block !important;
-        margin-bottom: 9px;
+        //margin-bottom: 9px;
         padding: 7px 0;
         width: 100%;
       }
@@ -193,7 +253,7 @@ h1 {
     &[data-type="url"] {
       .normal > span {
         display: inline-block !important;
-        margin-bottom: 9px;
+        //margin-bottom: 9px;
         a {
           display: block !important;
           white-space: nowrap;
@@ -374,9 +434,13 @@ h1 {
     .record-edit-link {
       position: absolute;
       top: 18px;
-      left: -29px;
+      left: -18px;
       z-index: 0;
       padding: 4px 7px 4px;
+      &.btn-invisible:hover {
+        border: 1px solid transparent;
+        background: none;
+      }
     }
     .icon-pencil {
       display: none;

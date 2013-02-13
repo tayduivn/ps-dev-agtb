@@ -104,17 +104,32 @@
 
 // invisible appears as no button
 .btn-invisible {
-  background: none;
+  background: transparent;
   border: 1px solid transparent;
   box-shadow: none !important;
   .box-shadow(none);
   &.active {
+    color: @grayLight;
     color: rgba(255,255,255,.75);
   }
   &:hover {
     border: 1px solid lighten(@btnBorder, 1%);
     *border: 0; // Remove the border to prevent IE7's black border on input:focus
     border-top-color: darken(@btnBorder, 5%);
+  }
+  &.disabled,
+  &.disabled:hover {
+    background-color: transparent;
+    background-image: none;
+    .box-shadow(none);
+    border: 1px solid transparent;
+    text-decoration: none;
+    color: @gray;
+    .opacity(65);
+    &[class^="icon-"] {
+      .opacity(65);
+      color: @gray !important;
+    }
   }
   &.btn-link:hover {
     text-decoration: underline;
@@ -123,9 +138,23 @@
     //from nutmeg
     .box-shadow(none);
     text-shadow:none;
-    color: @linkColor !important;
+    color: @linkColorHover !important;
   }
 }
+
+/*a [class^="icon-"] {
+  color: @grayLight !important;
+}
+a:hover [class^="icon-"] {
+  color: @gray !important;
+}
+a:active [class^="icon-"] {
+  color: @black !important;
+}
+a.active [class^="icon-"] {
+  color: @grayDark !important;
+}*/
+
 // from nutmeg
 /*.btn-invisible:hover {
   border: 1px solid #d0cfce;
