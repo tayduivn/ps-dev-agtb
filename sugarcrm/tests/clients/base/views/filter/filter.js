@@ -3,12 +3,13 @@ describe("Filter View", function() {
     var layout, view, app;
 
     beforeEach(function() {
-        layout = {trigger: function() {}, off: function() {}, on: function() {}};
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.addViewDefinition("records", {}, "Filters");
+        SugarTest.testMetadata.set();
+        SugarTest.app.data.declareModels();
 
+        layout = {trigger: function() {}, off: function() {}, on: function() {}};
         view = SugarTest.createView("base","Cases", "filter", null, null, false, layout);
-        view.model = new Backbone.Model();
-        view.collection = new Backbone.Collection(view.model);
-        view.collection.fields = _.keys(fixtures.metadata.modules.Cases.fields);
 
         app = SUGAR.App;
     });
