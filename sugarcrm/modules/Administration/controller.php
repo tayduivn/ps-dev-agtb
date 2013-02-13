@@ -115,8 +115,8 @@ class AdministrationController extends SugarController
             sugar_cache_clear("CONTROLLER_wireless_module_registry_Users");
             sugar_cache_reset();
             
-            // Bug 59121 - Clear the metadata cache
-            MetaDataManager::clearAPICache();
+            // Bug 59121 - Clear the metadata cache for the mobile platform
+            MetaDataManager::refreshCache(array('mobile'));
         }
 
         echo "true";
@@ -222,7 +222,7 @@ class AdministrationController extends SugarController
                  $this->cfg->handleOverride();
              }
 
-             MetaDataManager::clearAPICache();
+             MetaDataManager::refreshCache();
              
              if(!$ftsConnectionValid)
                  echo $GLOBALS['mod_strings']['LBL_FTS_CONNECTION_INVALID'];

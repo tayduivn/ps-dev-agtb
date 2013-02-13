@@ -33,23 +33,24 @@ class DropdownUpgradeTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         // Back up existing custom app list strings if they exist
-        foreach($this->_custFile AS $custFile) {
+        foreach ($this->_custFile as $custFile) {
             if (file_exists($custFile)) {
                 rename($custFile, $custFile . '-backup');
                 $this->_backedUp = true;
             }
         }
-
-        foreach($this->_custDir AS $custDir) {    
-            if(!is_dir($custDir)) {
-                mkdir($custDir, 0777, true);
+        
+        // For cases in which this test runs before the custom include directory
+        // is created
+        foreach ($this->_custDir as $custDir) {
+            if (!is_dir($custDir)) {
+                mkdir_recursive($custDir);
             }
         }
-
-
-
-        foreach($this->_custFile AS $key => $custFile) {
-            copy($this->_testCustFile[$key], $custFile);
+        
+        foreach ($this->_testCustFile as $type => $testCustFile) {
+            // Copy our test files into place
+            copy($this->_testCustFile[$type], $this->_custFile[$type]);
         }
         
         // File map cache this bad boy

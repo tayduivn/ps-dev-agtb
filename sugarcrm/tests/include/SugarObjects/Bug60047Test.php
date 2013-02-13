@@ -31,10 +31,33 @@ require_once 'include/SugarObjects/VardefManager.php';
  */
 class Bug60047Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected static $reloadVardefs;
+    protected static $inDeveloperMode;
+    
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        
+        self::$reloadVardefs = isset($GLOBALS['reload_vardefs']) ? $GLOBALS['reload_vardefs'] : null;
+        self::$inDeveloperMode = isset($_SESSION['developerMode']) ? $_SESSION['developerMode'] : false;
+        
+        // Force a vardef refresh forcefully because some tests in the suite 
+        // actively destroy some globals. This will have an effect on getBean
+        // for the duration of this test
+        $GLOBALS['reload_vardefs'] = true;
+        $_SESSION['developerMode'] = true;
+    }
+    
+    public static function tearDownAfterClass()
+    {
+        if (self::$reloadVardefs) {
+            $GLOBALS['reload_vardefs'] = self::$reloadVardefs;
+        }
+        
+        if (self::$inDeveloperMode) {
+            $_SESSION['developerMode'] = self::$inDeveloperMode;
+        }
     }
 
     public function testForecastBean()
@@ -63,6 +86,7 @@ class Bug60047Test extends Sugar_PHPUnit_Framework_TestCase
         foreach(glob("cache/modules/Forecasts/*vardefs.php") as $file) {
             @unlink($file);
         }
+        
         $bean = BeanFactory::getBean($module);
         $this->assertNotEmpty($bean);
         $this->assertArrayNotHasKey("acls", $GLOBALS['dictionary'][$bean->object_name]);
