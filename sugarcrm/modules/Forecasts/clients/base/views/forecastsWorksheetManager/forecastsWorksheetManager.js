@@ -474,7 +474,7 @@
      * @return {*} returns null if not found in the keymap, returns true/false if it did find it
      */
     checkConfigForColumnVisibility: function(colKey) {
-        return app.utils.getColumnVisFromKeyMap(colKey, this.name, this.context.config);
+        return app.utils.getColumnVisFromKeyMap(colKey, this.name);
     },
 
     /**
@@ -656,7 +656,7 @@
                     }
 
                     // create the history log
-                    outputLog = app.utils.createHistoryLog(oldestModel, newestModel, this.context.config);
+                    outputLog = app.utils.createHistoryLog(oldestModel,newestModel);
                     // update the div that was created earlier and set the html to what was the commit log
                     $(nTr).next().children("td").children("div").html(this.commitLogTemplate(outputLog));
                 }
@@ -715,7 +715,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedRanges: function(params) {
-        if(this.context.config.get('forecast_ranges') != 'show_binary') {
+        if(app.util.getConfigValue('forecast_ranges') != 'show_binary') {
             // TODO: this.
         } else {
             this.ranges = _.first(params);

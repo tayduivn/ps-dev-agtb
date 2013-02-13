@@ -279,7 +279,7 @@
         var loopPreviousModel = '';
         var models = _.clone(this.collection.models).reverse();
         _.each(models, function (model) {
-            this.historyLog.push(app.utils.createHistoryLog(loopPreviousModel, model, this.context.config));
+            self.historyLog.push(app.utils.createHistoryLog(loopPreviousModel, model));
             loopPreviousModel = model;           
         }, this);
         

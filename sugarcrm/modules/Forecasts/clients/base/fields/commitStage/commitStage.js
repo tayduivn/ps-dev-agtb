@@ -62,7 +62,7 @@
     initialize: function(options){
         app.view.Field.prototype.initialize.call(this, options);
         var self = this,
-            forecastRanges = self.context.config.get("forecast_ranges");
+            forecastRanges = app.utils.getConfigValue("forecast_ranges");
           
         //Check to see if the field is editable
         self.isEditable();
@@ -279,17 +279,14 @@
      * Utility Method to check if the field is editable
      */
     isEditable: function() {
-        var self = this,
-            sales_stages,
-            hasStage = false
+        var sales_stages,
+            hasStage = false,
             isOwner = true;
         
         if(!_.isUndefined(self.context)){
             //Check to see if the sales stage is one of the configured lost or won stages.
-            if (!_.isUndefined(self.context.config)) {    
-                sales_stages = self.context.config.get("sales_stage_won").concat(self.context.config.get("sales_stage_lost"));
-                hasStage = _.contains(sales_stages, self.model.get('sales_stage'));
-            }
+            sales_stages = app.utils.getConfigValue("sales_stage_won").concat(app.utils.getConfigValue("sales_stage_lost"));
+            hasStage = _.contains(sales_stages, self.model.get('sales_stage'));
             
             //Check to see if you're a manager on someone else's sheet, disable changes
             if(self.context.get("selectedUser")["id"] != app.user.id){
@@ -298,5 +295,5 @@
         }
         
         self.disabled = hasStage || !isOwner; 
-    },
+    }
 })

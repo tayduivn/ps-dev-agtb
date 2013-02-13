@@ -294,9 +294,6 @@
         if(this.context) {
             this.context.off(null, null, this)
         }
-        if(this.context.config) {
-            this.context.config.off(null, null, this)
-        }
         //if we don't unbind this, then recycle of this view if a change in rendering occurs will result in multiple bound events to possibly out of date functions
         $(window).unbind("beforeunload");
         app.view.View.prototype.unbindData.call(this);
@@ -386,11 +383,10 @@
      * @param {Object} params
      */
     bindDataChange: function(params) {
-        var self = this;
         if(this.collection) {
             this.collection.on("reset", function() {
-                self.cleanUpDirtyModels();
-                self.render();
+                this.cleanUpDirtyModels();
+                this.render();
             }, this);
 
             this.collection.on("change", function(model) {
@@ -463,30 +459,27 @@
                 this.editableFieldNavigate(isShift, field);
             }, this);
 
-            this.context.config.on('change:buckets_dom change:forecast_ranges', this.render, this);
-
-            $(window).bind("beforeunload", function() {
+            $(window).bind("beforeunload", _.bind(function() {
                 //if the record is dirty, warn the user.
-                if(self.isDirty()) {
+                if(this.isDirty()) {
                     return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
-                }
-                //special manager cases for messages
-                else if(!_.isUndefined(self.context) && (self.context.get("currentWorksheet") == "worksheet") && self.selectedUser.isManager && self.context.config.get("show_forecasts_commit_warnings")) {
+                } else if(!_.isUndefined(this.context) && (this.context.get("currentWorksheet") == "worksheet") && this.selectedUser.isManager && app.util.getConfigValue("show_forecasts_commit_warnings")) {
+                    //special manager cases for messages
                     /*
                      * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that
                      * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
                      * is enabled and they are on the rep worksheet.
                      */
-                    if(self.commitButtonEnabled) {
+                    if(this.commitButtonEnabled) {
                         var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
                         //show dialog
                         return msg[0];
                     }
-                    else if(self.mgrNeedsCommitted) {
+                    else if(this.mgrNeedsCommitted) {
                         return app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts");
                     }
                 }
-            });
+            }, this));
         }
     },
 
@@ -551,7 +544,7 @@
      * @return {*} returns null if not found in the keymap, returns true/false if it did find it
      */
     checkConfigForColumnVisibility: function(colKey) {
-        return app.utils.getColumnVisFromKeyMap(colKey, this.name, this.context.config);
+        return app.utils.getColumnVisFromKeyMap(colKey, this.name);
     },
 
     /**
@@ -570,68 +563,62 @@
         if(_.isUndefined(fetch)) {
             fetch = true;
         }
-        var collection = this.collection;
-        var self = this;
 
         /*
          * First we need to see if the collection is dirty. This is marked if any of the models
          * is marked as dirty. This will show the "unsaved changes" dialog
          */
-        if(self.isDirty()) {
+        if(this.isDirty()) {
             //unsaved changes, ask if you want to save.
             if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))) {
-                self.context.set({reloadCommitButton: true});
+                this.context.set({reloadCommitButton: true});
 
-                var svWkFn = function() {
-                    self.context.off('forecasts:worksheet:saved', svWkFn);
-                    collection.fetch();
-                };
-
-                self.context.on('forecasts:worksheet:saved', svWkFn);
+                this.context.once('forecasts:worksheet:saved', function() {
+                    this.collection.fetch();
+                }, this);
                 this.saveWorksheet()
             } else {
                 //user clicked cancel, ignore and fetch if fetch is enabled
-                collection.isDirty = false;
-                self.context.set({reloadCommitButton: true});
+                this.context.set({reloadCommitButton: true});
                 if(fetch) {
-                    collection.fetch();
+                    this.collection.fetch();
                 }
             }
         }
         /*
          * Next, we need to check to see if the user is a manager.  They have their own requirements and dialogs (those described below)
          */
-        else if(self.selectedUser.isManager && (self.context.get("currentWorksheet") == "worksheet") && self.context.config.get("show_forecasts_commit_warnings")) {
+        else if(this.selectedUser.isManager && (this.context.get("currentWorksheet") == "worksheet") && this.context.config.get("show_forecasts_commit_warnings")) {
             /*
              * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that
              * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
              * is enabled and they are on the rep worksheet.
              */
-            if(self.commitButtonEnabled) {
+            if(this.commitButtonEnabled) {
                 var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
                 //show dialog
                 if(confirm(msg[0] + "\n\n" + msg[1])) {
-                    self.context.trigger("forecasts:commitButtons:triggerCommit");
-                    self.commitFromSafeFetch = true;
+                    this.context.trigger("forecasts:commitButtons:triggerCommit");
+                    this.commitFromSafeFetch = true;
                 } else if(fetch) {
                     //canceled, continue fetching
-                    collection.fetch();
+                    this.collection.fetch();
                 }
 
-            } else if(self.mgrNeedsCommitted) {
+            } else if(this.mgrNeedsCommitted) {
                 alert(app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts"));
-                self.mgrNeedsCommitted = false;
+                this.mgrNeedsCommitted = false;
                 if(fetch) {
-                    collection.fetch();
+                    this.collection.fetch();
                 }
 
             } else if(fetch) {
                 //No popups needed, fetch like normal
-                collection.fetch();
+                this.collection.fetch();
             }
         } else if(fetch) {
             //default case, fetch like normal
-            collection.fetch();
+            this.collection.fetch();
         }
         //mark that the fetch is over
         this.fetchInProgress = false;
@@ -644,10 +631,9 @@
      * @private
      */
     _render: function() {
-        var self = this;
 
         if(!this.isVisible()) {
-            return false;
+            return this;
         }
         $("#view-sales-rep").addClass('show').removeClass('hide');
         $("#view-manager").addClass('hide').removeClass('show');
@@ -665,8 +651,8 @@
         if(_.isEmpty(this.columnDefs)) {
             _.each(this.options.meta.panels[0].fields, function(field) {
                 // creates column def and adds it to this.columnDefs
-                self._createFieldColumnDef(field);
-            });
+                this._createFieldColumnDef(field);
+            }, this);
         }
 
         // set the columnDefs back into the tableDefs
@@ -675,22 +661,22 @@
         // render the table
         this.gTable = this.$('.worksheetTable').dataTable(this.gTableDefs);
 
-        self.adjustCurrencyColumnWidths();
-        self.calculateTotals();
+        this.adjustCurrencyColumnWidths();
+        this.calculateTotals();
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
 
         // Trigger event letting other components know worksheet finished rendering
-        self.context.trigger("forecasts:worksheet:rendered");
+        this.context.trigger("forecasts:worksheet:rendered");
 
         //Check to see if any worksheet entries are older than the source data.  If so, that means that the
         //last commit is older, and that we need to enable the commit buttons
-        var enableCommit = self.collection.find(function(model) {
+        var enableCommit = this.collection.find(function(model) {
             return !_.isEmpty(model.get("w_date_modified")) && (new Date(model.get("w_date_modified")) < new Date(model.get("date_modified")))
         }, this);
         if(_.isObject(enableCommit)) {
-            self.context.trigger("forecasts:commitButtons:enabled");
+            this.context.trigger("forecasts:commitButtons:enabled");
         }
 
         return this;
@@ -806,8 +792,8 @@
         }
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
-        var sales_stage_won_setting = this.context.config.get('sales_stage_won') || [];
-        var sales_stage_lost_setting = this.context.config.get('sales_stage_lost') || [];
+        var sales_stage_won_setting = app.util.getConfigValue('sales_stage_won') || [];
+        var sales_stage_lost_setting = app.util.getConfigValue('sales_stage_lost') || [];
 
         _.each(self.collection.models, function(model) {
             var won = _.include(sales_stage_won_setting, model.get('sales_stage')),
@@ -890,21 +876,20 @@
      */
     updateWorksheetBySelectedRanges: function(params) {
         // Set the filters for the datatable then re-render
-        var self = this,
-            forecast_ranges_setting = this.context.config.get('forecast_ranges') || 'show_binary';
+        var forecast_ranges_setting = app.util.getConfigValue('forecast_ranges') || 'show_binary';
 
         // start with no filters, i. e. show everything.
         if(!_.isUndefined($.fn.dataTableExt)) {
             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
             if(!_.isEmpty(params)) {
                 $.fn.dataTableExt.afnFiltering.push(
-                    function(oSettings, aData, iDataIndex) {
+                    _.bind(function(oSettings, aData, iDataIndex) {
                         // This is required to prevent manager view from filtering incorrectly, since datatables does filtering globally
                         if(oSettings.nTable == _.first($('.worksheetManagerTable'))) {
                             return true;
                         }
 
-                        var editable = self.isMyWorksheet(),
+                        var editable = this.isMyWorksheet(),
                             selectVal,
                             rowCategory = $(_.first(aData)),
                             checkState;
@@ -914,7 +899,7 @@
                             checkState = rowCategory.find('input').attr('checked');
                             selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
                         } else {
-                            //we need to check to see if the select exists, because this gets fired before the commitStage field re-renders itself back
+                            //we need to check to see if the select exists, because this gets fired before the commitStage field re-renders this back
                             //to a text field.
                             if(rowCategory.find("select").length == 0) {
                                 selectVal = rowCategory.text().trim().toLowerCase();
@@ -923,16 +908,16 @@
                             }
                         }
 
-                        self.context.trigger('forecasts:worksheet:filtered');
+                        this.context.trigger('forecasts:worksheet:filtered');
                         return (_.contains(params, selectVal));
-                    }
+                    }, this)
                 );
             }
         }
 
         if(!_.isUndefined(this.gTable.fnDestroy)) {
             this.gTable.fnDestroy();
-            this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
+            this.gTable = this.$('.worksheetTable').dataTable(this.gTableDefs);
             // fix the style on the rows that contain a checkbox
             this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
             this.context.trigger('forecasts:worksheet:filtered');
@@ -955,56 +940,4 @@
         }
         this.safeFetch(true);
     },
-
-    /**
-     * Returns an array of column headings
-     *
-     * @param {Object} dTable datatable param so we can grab all the column headings from it
-     * @param {Boolean} onlyVisible -OPTIONAL, defaults true- if we want to return only visible column headings or not
-     * @return {Array} column heading title strings in an array ["heading","heading2"...]
-     */
-    getColumnHeadings: function(dTable, onlyVisible) {
-        // onlyVisible needs to default to true if it is not false
-        if(onlyVisible !== false) {
-            onlyVisible = typeof onlyVisible !== 'undefined' ? onlyVisible : true;
-        }
-
-        var cols = dTable.fnSettings().aoColumns;
-        var retColumns = [];
-
-        for(var i in cols) {
-
-            var title = this.app.lang.get(cols[i].sTitle);
-
-            if(onlyVisible) {
-                if(cols[i].bVisible) {
-                    retColumns.push(title);
-                }
-            } else {
-                retColumns.push(title);
-            }
-        }
-
-        return retColumns;
-    },
-
-    /***
-     * Checks current gTable to see if a particular column name exists
-     *
-     * @param {String} columnName the column sName you're checking for.  NOT the Column sTitle/heading
-     * @return {Boolean} true if it exists, false if not
-     */
-    hasColumn: function(columnName) {
-        var containsColumnName = false;
-        var cols = this.gTable.fnSettings().aoColumns;
-
-        for(var i in cols) {
-            if(cols[i].sName == columnName) {
-                containsColumnName = true;
-                break;
-            }
-        }
-
-        return containsColumnName;
-    }
 })
