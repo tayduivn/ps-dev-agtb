@@ -116,4 +116,19 @@
       z-index:3;
     }
   }
+
+  .control-group.email input {
+    border-color: @gray;
+    color: @gray;
+  }
+  .control-group.email.inline-error input {
+    border-color: @errorText;
+    color: @errorText;
+  }
+  .add-on {
+    [class^="icon-"],
+    [class*=" icon-"] {
+      color: @errorText;
+    }
+  }
 }
