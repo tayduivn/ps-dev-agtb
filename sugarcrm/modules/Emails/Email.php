@@ -953,8 +953,11 @@ class Email extends SugarBean {
             // Got a bean
             if (!empty($bean))
             {
-                $emailAddress = '';
+                // For CE, just get primary e-mail address
+                $emailAddress = $bean->email1;
 
+                //BEGIN SUGARCRM flav=pro ONLY
+                $emailAddress = '';
                 // If has access to primary mail, use it
                 if (ACLField::hasAccess('email1', $module, $GLOBALS['current_user']->id, $bean->isOwner($GLOBALS['current_user']->id)))
                 {
@@ -965,6 +968,7 @@ class Email extends SugarBean {
                 {
                     $emailAddress = $bean->email2;
                 }
+                //END SUGARCRM flav=pro ONLY
 
                 // If we have an e-mail address loaded
                 if (!empty($emailAddress))
