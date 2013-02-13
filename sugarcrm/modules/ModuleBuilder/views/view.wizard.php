@@ -214,31 +214,12 @@ class ModuleBuilderViewWizard extends SugarView
 
 		switch ( $this->view )
 		{
-			case 'search':
-				//MB Select Search Layout page.
-				$this->generateMBSearchButtons () ;
-				$this->title = $this->editModule . " " . translate( 'LBL_SEARCH' ) ;
-				$this->question = translate( 'LBL_QUESTION_SEARCH' ) ;
-				$ajax->addCrumb ( translate( 'LBL_LAYOUTS' ), 'ModuleBuilder.getContent("module=ModuleBuilder&MB=true&action=wizard&view_module=' . $this->editModule . '&view_package=' . $this->package . '")' ) ;
-				$ajax->addCrumb ( translate( 'LBL_SEARCH_FORMS' ), '' ) ;
-				$this->help = "searchHelp" ;
-				break;
-
 			case 'subpanel':
 				//ModuleBuilder Select Subpanel
 				$ajax->addCrumb ( $this->editModule, 'ModuleBuilder.getContent("module=ModuleBuilder&action=module&view_module=' . $this->editModule . '&view_package=' . $this->package . '")' ) ;
 				$ajax->addCrumb ( translate( 'LBL_SUBPANELS' ), '' ) ;
 				$this->question = translate( 'LBL_QUESTION_SUBPANEL' ) ;
 				$this->help = 'subpanelHelp' ;
-				break;
-
-			case 'dashlet':
-				$this->generateMBDashletButtons ();
-				$this->title = $this->editModule ." " .translate('LBL_DASHLET');
-				$this->question = translate( 'LBL_QUESTION_DASHLET' ) ;
-				$this->ajax->addCrumb ( translate( 'LBL_LAYOUTS' ), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view=layouts&MB=1&view_package='.$this->package.'&view_module=' . $this->editModule . '")' ) ;
-				$this->ajax->addCrumb ( translate( 'LBL_DASHLET' ), '' ) ;
-				$this->help = 'dashletHelp' ;
 				break;
 
 			//BEGIN SUGARCRM flav=pro ONLY
@@ -396,24 +377,6 @@ class ModuleBuilderViewWizard extends SugarView
 		      'imageTitle' => 'ListView', 
 		      'help'=>'viewBtnListView' 
 		  ) ;
-		  $this->buttons [ $GLOBALS [ 'mod_strings' ] [ 'LBL_QUICKCREATE' ] ] = 
-		  array ( 
-		      'action' => "module=ModuleBuilder&MB=true&action=editLayout&view=".MB_QUICKCREATE."&view_module={$this->editModule}&view_package={$this->package}" , 
-		      'imageTitle' => 'QuickCreate', 
-		      'help'=>'viewBtnQuickCreate' 
-		  ) ;
-		$this->buttons [ $GLOBALS [ 'mod_strings' ] [ 'LBL_SEARCH' ] ] = 
-		  array (
-		      'action' => "module=ModuleBuilder&MB=true&action=wizard&view=search&view_module={$this->editModule}&view_package={$this->package}" , 
-		      'imageTitle' => 'SearchForm' , 
-		      'help'=> 'searchBtn' 
-		  ) ;
-		$this->buttons [ $GLOBALS [ 'mod_strings' ] [ 'LBL_DASHLET' ] ] = 
-		  array ( 
-		      'action' => "module=ModuleBuilder&MB=true&action=wizard&view=dashlet&view_module={$this->editModule}&view_package={$this->package}" , 
-		      'imageTitle' => 'Dashlet', 
-		      'help'=>'viewBtnDashlet' 
-		  ) ;
 		$this->buttons [ $GLOBALS [ 'mod_strings' ] ['LBL_POPUP'] ] = 
 		array ( 
 			'imageTitle' => 'Popup',  
@@ -434,21 +397,9 @@ class ModuleBuilderViewWizard extends SugarView
 		$this->buttons [ $GLOBALS [ 'mod_strings' ][ 'LBL_POPUPSEARCH' ] ] = array('action'=> "module=ModuleBuilder&action=editLayout&view=popupsearch&view_module={$this->editModule}&view_package={$this->package}", 'imageTitle'=> $GLOBALS ['mod_strings']['LBL_POPUPSEARCH'], 'imageName'=>'BasicSearch','help'=> 'PopupSearchViewBtn');
 	}
 	
-	function generateStudioDashletButtons() 
-	{
-		$this->buttons [ $GLOBALS [ 'mod_strings' ][ 'LBL_DASHLETLISTVIEW' ] ] = array('action'=> "module=ModuleBuilder&action=editLayout&view=dashlet&view_module={$this->editModule}", 'imageTitle'=> $GLOBALS ['mod_strings']['LBL_DASHLETLISTVIEW'], 'imageName'=>'ListView', 'help'=>'DashletListViewBtn');
-		$this->buttons [ $GLOBALS [ 'mod_strings' ][ 'LBL_DASHLETSEARCHVIEW' ] ] = array('action'=> "module=ModuleBuilder&action=editLayout&view=dashletsearch&view_module={$this->editModule}", 'imageTitle'=> $GLOBALS ['mod_strings']['LBL_DASHLETSEARCHVIEW'], 'imageName'=>'BasicSearch','help'=> 'DashletSearchViewBtn');
-	}
-	
 	function generateStudioPopupButtons()
 	{
 		$this->buttons [ $GLOBALS [ 'mod_strings' ][ 'LBL_POPUPLISTVIEW' ] ] = array('action'=> "module=ModuleBuilder&action=editLayout&view=popuplist&view_module={$this->editModule}", 'imageTitle'=> $GLOBALS ['mod_strings']['LBL_POPUPLISTVIEW'], 'imageName'=>'ListView', 'help'=>'PopupListViewBtn');
 		$this->buttons [ $GLOBALS [ 'mod_strings' ][ 'LBL_POPUPSEARCH' ] ] = array('action'=> "module=ModuleBuilder&action=editLayout&view=popupsearch&view_module={$this->editModule}", 'imageTitle'=> $GLOBALS ['mod_strings']['LBL_POPUPSEARCH'], 'imageName'=>'BasicSearch','help'=> 'PopupSearchViewBtn');
-	}
-	
-	function generateMBSearchButtons()
-	{
-		$this->buttons [ $GLOBALS [ 'mod_strings' ] [ 'LBL_BASIC' ] ] = array ( 'action' => "module=ModuleBuilder&MB=true&action=editLayout&view_module={$this->editModule}&view_package={$this->package}&view=SearchView&searchlayout=basic_search" , 'imageTitle' => $GLOBALS [ 'mod_strings' ] [ 'LBL_BASIC_SEARCH' ] , 'imageName' => 'BasicSearch','help' => "BasicSearchBtn" ) ;
-		$this->buttons [ $GLOBALS [ 'mod_strings' ] [ 'LBL_ADVANCED' ] ] = array ( 'action' => "module=ModuleBuilder&MB=true&action=editLayout&view_module={$this->editModule}&view_package={$this->package}&view=SearchView&searchlayout=advanced_search" , 'imageTitle' => $GLOBALS [ 'mod_strings' ] [ 'LBL_ADVANCED_SEARCH' ] , 'imageName' => 'AdvancedSearch','help' => "AdvancedSearchBtn" ) ;
 	}
 }

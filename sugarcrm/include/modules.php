@@ -525,6 +525,128 @@ $modInvisList[] = 'PdfManager';
 $adminOnlyList['PdfManager'] = array('all' => 1);
 //END SUGARCRM flav=pro ONLY
 
+
+$bwcModules = array(
+    'ACLFields',
+    'ACLRoles',
+    'ACLActions',
+    'Administration',
+    'Audit',
+    'Calendar',
+    'CampaignLog',
+    'Campaigns',
+    'CampaignTrackers',
+    'Charts',
+    'Configurator',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'Contracts',
+    'ContractTypes',
+    //END SUGARCRM flav=pro ONLY
+    'Connectors',
+    'Currencies',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'CustomQueries',
+    'DataSets',
+    //END SUGARCRM flav=ent ONLY
+    'DocumentRevisions',
+    'Documents',
+    'EmailAddresses',
+    'EmailMarketing',
+    'EmailMan',
+    'Emails',
+    'EmailTemplates',
+    'Employees',
+    'Exports',
+    'Expressions',
+    'Groups',
+    'History',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'Holidays',
+    //END SUGARCRM flav=pro ONLY
+    'iCals',
+    'Import',
+    'InboundEmail',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'KBContents',
+    'KBDocuments',
+    'KBDocumentRevisions',
+    'KBTags',
+    'KBDocumentKBTags',
+    'KBContents',
+    //END SUGARCRM flav=pro ONLY
+    'Manufacturers',
+    'Meetings',
+    'MergeRecords',
+    'ModuleBuilder',
+    'MySettings',
+    'Notifications',
+    'OAuthKeys',
+    'OptimisticLock',
+    'OutboundEmailConfiguration',
+    'PdfManager',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'ProductBundleNotes',
+    'ProductBundles',
+    'ProductCategories',
+    'ProductTemplates',
+    'ProductTypes',
+    //END SUGARCRM flav=pro ONLY
+    'Project',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'ProjectResources',
+    //END SUGARCRM flav=pro ONLY
+    'ProjectTask',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'Quotes',
+    'QueryBuilder',
+    //END SUGARCRM flav=pro ONLY
+    'Relationships',
+    'Releases',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'ReportMaker',
+    //END SUGARCRM flav=ent ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
+    'Reports',
+    //END SUGARCRM flav=pro ONLY
+    'Roles',
+    'SavedSearch',
+    'Schedulers',
+    'SchedulersJobs',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'Shippers',
+    //END SUGARCRM flav=pro ONLY
+    'SugarFavorites',
+    'SugarFeed',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'TaxRates',
+    'Teams',
+    'TeamMemberships',
+    'TeamSets',
+    'TeamSetModules',
+    'TeamNotices',
+    'TimePeriods',
+    //END SUGARCRM flav=pro ONLY
+    'Trackers',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'TrackerSessions',
+    'TrackerPerfs',
+    'TrackerQueries',
+    //END SUGARCRM flav=pro ONLY
+    'UserPreferences',
+    'Users',
+    'vCals',
+    'vCards',
+    'Versions',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'WorkFlow',
+    'WorkFlowActions',
+    'WorkFlowActionShells',
+    'WorkFlowAlerts',
+    'WorkFlowAlertShells',
+    'WorkFlowTriggerShells'
+    //END SUGARCRM flav=pro ONLY
+);
+
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $file) {
     include $file;
 }
