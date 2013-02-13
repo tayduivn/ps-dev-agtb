@@ -28,18 +28,7 @@
     extendsFrom: "HeaderpaneView",
 
     events: {
-        "click [name=done_button]": "_done",
         "click [name=cancel_button]": "_cancel"
-    },
-
-    /**
-     * The user clicked the Done button so insert the selected signature into the message body and close the drawer.
-     *
-     * @private
-     */
-    _done: function() {
-        var signature = this.context.get("selection_model");
-        app.drawer.close(signature);
     },
 
     /**

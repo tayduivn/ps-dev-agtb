@@ -25,11 +25,11 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: "ListView",
+    extendsFrom: "SelectionListView",
 
     initialize: function(options) {
         _.bindAll(this);
-        app.view.views.ListView.prototype.initialize.call(this, options);
+        app.view.views.SelectionListView.prototype.initialize.call(this, options);
 
         // turn off sorting
         _.each(this.meta.panels, function(panel) {
@@ -46,16 +46,6 @@
     },
 
     /**
-     * Add additional CSS classes to the table in the list view to provide more styles.
-     *
-     * @private
-     */
-    _renderHtml: function() {
-        app.view.views.ListView.prototype._renderHtml.call(this);
-        this.$("table.table-striped").addClass("duplicates highlight");
-    },
-
-    /**
      * Remove any surrounding anchor tags from content displayed within the list view; leaving just the text. It is
      * undesirable to allow users to click links that navigate them away from the page when in the context of a modal
      * operation, like a drawer.
@@ -64,22 +54,6 @@
      */
     _removeLinks: function() {
         this.$("a:not(.rowaction)").contents().unwrap();
-    },
-
-    addRowActions: function(panel, options) {
-        panel = app.view.views.ListView.prototype.addRowActions.call(this, panel, options);
-
-        if (options.meta.showPreview === true) {
-            panel.fields = panel.fields.concat({
-                type:      "rowaction",
-                css_class: "btn",
-                tooltip:   "LBL_PREVIEW",
-                event:     "list:preview:fire",
-                icon:      "icon-eye-open"
-            });
-        }
-
-        return panel;
     },
 
     /**

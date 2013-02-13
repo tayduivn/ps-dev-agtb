@@ -39,12 +39,5 @@ $viewdefs["Emails"]["base"]["view"]["compose-signatures-headerpane"] = array(
             "value"     => "cancel",
             "css_class" => "btn-invisible btn-link",
         ),
-        array(
-            "name"      => "done_button",
-            "type"      => "button",
-            "label"     => "LBL_DONE_BUTTON_LABEL",
-            "value"     => "done",
-            "css_class" => "btn-primary",
-        ),
     ),
 );
