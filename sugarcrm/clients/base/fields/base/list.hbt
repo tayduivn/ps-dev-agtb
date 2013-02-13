@@ -26,6 +26,6 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="ellipsis_inline" data-placement="bottom" data-title="{{#unless value}}{{#if def.placeholder}}{{str def.placeholder this.model.module}}{{/if}}{{/unless}}{{value}}" >
+<div class="ellipsis_inline" data-placement="bottom" data-original-title="{{#unless value}}{{#if def.placeholder}}{{str def.placeholder this.model.module}}{{/if}}{{/unless}}{{value}}" >
     {{#if def.link}}<a href="{{#if def.events}}javascript:void(0);{{else}}#{{buildRoute context model def.route.action def.route.options}}{{/if}}">{{value}}</a>{{else}}{{value}}{{/if}}
     </div>
