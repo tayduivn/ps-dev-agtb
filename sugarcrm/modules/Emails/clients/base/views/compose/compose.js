@@ -5,7 +5,7 @@
     extendsFrom: 'RecordView',
 
     initialize: function(options) {
-        options.context.set('create', true);
+        _.bindAll(this);
         app.view.views.RecordView.prototype.initialize.call(this, options);
         this.events = _.extend({}, this.events, {
             'click .cc-option': 'showSenderOptionField',
@@ -14,6 +14,12 @@
             'click [name=send_button]': 'send',
             'click [name=cancel_button]': 'cancel'
         });
+        //events for templates
+        this.context.on('actionbar:template_button:clicked', this.launchTemplateDrawer);
+        this.context.on("compose:template", this.updateComposeWithTemplate);
+        //events for sugar documents
+        this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer);
+        this.context.on("compose:sugardocument:attach", this.updateAttachments);
     },
 
     _render:function () {
@@ -167,9 +173,7 @@
      * Cancel and close the drawer
      */
     cancel: function() {
-        this.context.trigger("drawer:hide");
-        if (this.context.parent)
-            this.context.parent.trigger("drawer:hide");
+        app.drawer.close();
     },
 
     /**
@@ -298,6 +302,154 @@
      */
     isFieldPopulated: function(fieldName) {
         return ($.trim(this.model.get(fieldName)) !== '');
-    }
+    },
 
+    launchTemplateDrawer:function () {
+        app.drawer.open({
+                layout:'compose-templates',
+                context:{
+                    module:'EmailTemplates'
+                }
+            },
+            this.templateDrawerCallback
+        );
+    },
+    /**
+     * Updates the editor with the contents of the template selected
+     * @param model
+     */
+    templateDrawerCallback: function(model) {
+        if (model) {
+            var emailTemplate = app.data.createBean('EmailTemplates', { id: model.id });
+            emailTemplate.fetch({
+                success: _.bind(this.confirmTemplate, this),
+                error: function(){
+                    app.logger.error.log("error");
+                }
+            });
+        }
+    },
+    /**
+     * Inserting signature data into editor
+     * @param template
+     * @param callback
+     */
+    confirmTemplate: function(template) {
+        app.alert.show('delete_confirmation', {
+            level:'confirmation',
+            messages:app.lang.get('LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG', this.module),
+            onConfirm:_.bind(function () {
+                this.insertTemplate(template);
+            }, this)
+        });
+    },
+    /**
+     * Inserting signature data into editor
+     * @param template
+     */
+    insertTemplate: function(template) {
+        var editor, signatureId;
+
+        if (_.isObject(template)) {
+            var subject = template.get('subject');
+            if(subject) {
+                this.model.set('subject', subject);
+            }
+
+            editor = this.getField('html_body');
+
+            //TODO: May need to move over replaces special characters.
+            if(!_.isEmpty(template.get('text_only')) &&  template.get('text_only') === 1) {
+                editor.setEditorContent(template.get('body'));
+            }
+            else {
+                editor.setEditorContent(template.get('body_html'));
+            }
+
+            var notes = app.data.createBeanCollection("Notes");
+            notes.fetch({
+                'filter':{
+                    "filter":[
+                        {"parent_id":{"$equals":template.id}}
+                    ]
+                },
+                success:_.bind(function (data) {
+                    if (!_.isEmpty(data.models)) {
+                        this.insertTemplateAttachments(data.models);
+                    }
+                }, this),
+                error:function () {
+                    app.logger.error("Unable to fetch the bean collection.");
+                }
+
+            });
+        }
+
+        signatureId = !_.isEmpty(this.defaultSignatureId) ? this.defaultSignatureId : null;
+        signatureId =  !_.isEmpty(this.model.get('signature_id')) ? this.model.get('signature_id') : signatureId;
+
+        if (signatureId) {
+            this.updateEditorWithSignature(signatureId);
+        }
+    },
+    /**
+     * Updates the editor with the signature
+     * @param signatureId
+     */
+    updateEditorWithSignature: function(signatureId) {
+        var url =  app.api.buildURL('MailSignature', signatureId);
+
+        app.api.call('GET', url, null,{
+                success: _.bind(this.insertSignature, this),
+                error: function() {
+                    console.log("Retrieving Signature failed.");
+                }
+            }
+        );
+    },
+    /**
+     * Inserts templates
+     * @param attachments
+     */
+    insertTemplateAttachments: function(attachments) {
+        this.context.trigger("attachments:remove-by-tag", 'template');
+        _.each(attachments, function(attachment) {
+            this.context.trigger("attachment:add", {
+                id: attachment.id,
+                name: attachment.filename,
+                nameForDisplay: attachment.filename,
+                tag: 'template',
+                type: 'documents'
+            });
+        }, this);
+    },
+
+    launchDocumentDrawer : function() {
+        app.drawer.open({
+                layout: 'selection-list',
+                context: {
+                    module: 'Documents'
+                }
+            },
+            this.documentDrawerCallback);
+    },
+
+    documentDrawerCallback: function(model) {
+        if (model) {
+            var sugarDocument = app.data.createBean('Documents', { id: model.id });
+            sugarDocument.fetch({
+                success:_.bind(function (model) {
+                    this.context.trigger("attachment:add", {
+                        id:model.id,
+                        name:model.filename,
+                        nameForDisplay:model.filename,
+                        type: 'documents'
+                    });
+                }, this),
+                error: function(){
+                    app.logger.error("Unable to fetch the bean collection:");
+                }
+            });
+        }
+    }
 })
