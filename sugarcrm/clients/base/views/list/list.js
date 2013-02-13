@@ -73,20 +73,21 @@
         app.events.on("list:filter:fire", this.filterList, this);
     },
     filterFields: function(viewMeta){
-        var self = this;
+        var self = this, fieldsRemoved = 0;
         this.hiddenFields = this.hiddenFields || [];
         // TODO: load stored field prefs
-
         // no prefs so use viewMeta as default and assign hidden fields
         _.each(viewMeta.panels, function(panel){
-            _.each(panel.fields, function(fieldMeta, fieldIndex) {
+             for (var count = 0; count < panel.fields.length; count ++) {
+                 fieldMeta = panel.fields[count];
                 if (fieldMeta.default === false) {
                     self.hiddenFields.push(fieldMeta);
-                    panel.fields.splice(fieldIndex, 1);
+                    panel.fields.splice(count, 1);
+                    // we need to recheck the last one because of the splice
+                    count--;
                 }
-            });
+            };
         });
-
         return viewMeta;
 
     },
