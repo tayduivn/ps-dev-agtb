@@ -51,7 +51,6 @@
 
         // Set our internal time and date values so hbt picks up
         self._presetDateValues();
-
         app.view.fields.DateField.prototype._render.call(self);
         viewName = self._getViewName();
         $(function() {
@@ -68,7 +67,8 @@
      * @return {String} formatted value
      */
     format:function(value) {
-        var jsDate, output, myUser = app.user, d, parts, before24Hours;
+        var jsDate, output, myUser = app.user, d, parts, before24Hours, datetimeParts;
+
         if (this.stripIsoTZ) {
             value = app.date.stripIsoTimeDelimterAndTZ(value);
         }
@@ -80,6 +80,20 @@
             }
         } else if (!value) {
             return value;
+        } else if (this.leaveDirty) {
+            if (!this.dateValue && !this.timeValue) {
+                try {
+                    datetimeParts = this.$el.text().trim().split(" ");
+                    if (datetimeParts && datetimeParts.length) {
+                        this.dateValue = datetimeParts[0];
+                        this.timeValue = datetimeParts.length > 1 ? datetimeParts[1] : '';
+                    }
+                } catch(e) {}
+            }
+            return {
+                date: this.timeValue,
+                time: this.dateValue
+            };
         } else {
             // If the date value in our datebox is invalid, leave it alone and return. It will
             // get handled upstream by sidecar (which uniformly handles field validation errors).
