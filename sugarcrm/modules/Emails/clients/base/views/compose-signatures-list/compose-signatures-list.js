@@ -27,6 +27,8 @@
 ({
     extendsFrom: "SelectionListView",
 
+    _beanCollectionSync: null,
+
     initialize: function(options) {
         _.bindAll(this);
         app.view.views.SelectionListView.prototype.initialize.call(this, options);
@@ -41,8 +43,12 @@
         // remove links
         this.on("render", this._removeLinks, this);
 
-        // hook into DataManager.sync to add a custom endpoint
-        app.events.on("data:sync:start", this._sync, this);
+        // treat the DataManager.sync override like a before_sync callback in order to add additional options to the
+        // call
+        // copying the original DataManager.sync into an instance variable allows us to call it again from within our
+        // override, in order to continue with normal procedures after injecting our options
+        this._beanCollectionSync = this.collection.sync;
+        this.collection.sync     = this._sync;
     },
 
     /**
@@ -57,11 +63,12 @@
     },
 
     /**
-     * Event callback for DataManager.sync in order to add a custom endpoint to the options.
+     * Override of DataManager.sync in order to add a custom endpoint to the options.
      *
      * @param method
      * @param model
      * @param options
+     * @return {*}
      * @private
      */
     _sync: function(method, model, options) {
@@ -70,5 +77,7 @@
             var url = app.api.buildURL("Signatures", method, null, options.params);
             return app.api.call(method, url, null, callbacks);
         };
+
+        return this._beanCollectionSync(method, model, options);
     }
 })
