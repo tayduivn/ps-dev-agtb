@@ -3438,8 +3438,8 @@ article .actions,
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice {
   padding: 0;
   margin: 3px 0 4px 4px;
-  font-size: 11px;
-  background: none;
+  font-size: 12px;
+  background: none !important;
   border: none;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -3447,6 +3447,13 @@ article .actions,
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
+  line-height: 12px;
+}
+.select2-container.select2-choices-pills .select2-search-choice .select2-search-choice-close,
+.select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice .select2-search-choice-close {
+  width: 12px;
+  height: 12px;
+  background: none !important;
 }
 .select2-container.select2-choices-pills .select2-search-choice.select2-search-choice-focus,
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice.select2-search-choice-focus {
@@ -3460,6 +3467,9 @@ article .actions,
   -moz-border-radius: 11px;
   border-radius: 11px;
   background-color: rgba(82,168,236,0.4);
+}
+.select2-container.select2-choices-pills .select2-search-choice div {
+  padding: 2px 0;
 }
 .select2-container.select2-choices-pills .select2-search-choice span {
   -webkit-border-radius: 10px 0 0 10px;
@@ -3498,8 +3508,8 @@ article .actions,
   padding: 2px 18px 2px 6px;
 }
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice a.select2-search-choice-close {
-  top: 3px;
-  right: 2px;
+  top: 2px;
+  right: 3px;
   left: auto;
   font-family: FontAwesome;
   font-size: 14px;
@@ -5323,7 +5333,7 @@ body.preview .side-pane.active {
   border-radius: 4px;
 }
 .cube {
-  background: url('../../assets/img/badge_256g.png') 10px 8px no-repeat;
+  background: url('../../assets/img/badge_256g.png') 12px 8px no-repeat;
   float: left;
   height: 19px;
   width: 36px;
@@ -5496,7 +5506,7 @@ body.preview .side-pane.active {
 }
 .navbar .container-fluid {
   margin-top: 0;
-  padding-left: 10px;
+  padding-left: 5px;
 }
 .navbar .nav > li > a {
   color: #cccccc;
