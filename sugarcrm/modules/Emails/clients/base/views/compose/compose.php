@@ -45,6 +45,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'label'     => 'LBL_FROM',
                     'type'      => 'sender',
                     'css_class' => 'inherit-width',
+                    'label_css_class' => 'begin-fieldgroup',
                     'endpoint'  => array(
                         'module' => 'OutboundEmailConfiguration',
                         'action' => 'list',
@@ -55,7 +56,6 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     "type"                => "recipients",
                     "label"               => "LBL_TO_ADDRS",
                     'cell_css_class'      => 'controls-one btn-fit',
-                    'label_css_class'     => 'begin-fieldgroup',
                 ),
                 array(
                     "name"                => "cc_addresses",
