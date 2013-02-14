@@ -42,6 +42,7 @@
         this.model.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
+        this.context.set("viewed", true);
         this.model.on("duplicate:before", this.setupDuplicateFields, this);
 
         this.delegateButtonEvents();
