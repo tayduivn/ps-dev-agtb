@@ -31,7 +31,7 @@ class SugarTestRestUtilities
      * Get the RestServiceMock
      * @return object SugarTestRestService
      */
-    public static function getMock(User $user = null)
+    public static function getRestServiceMock(User $user = null)
     {
         $mock = new SugarTestRestServiceMock();
         $mock->user = ($user == null) ? $GLOBALS['current_user'] : $user;
