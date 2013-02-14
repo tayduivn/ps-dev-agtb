@@ -22,9 +22,8 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once 'include/api/RestService.php';
 
-require_once ('include/api/RestService.php');
- 
 class SugarTestRestUtilities
 {
     private function __construct() {}
@@ -32,12 +31,16 @@ class SugarTestRestUtilities
      * Get the RestServiceMock
      * @return object SugarTestRestService
      */
-    public static function getMock() {
-        return new SugarTestRestServiceMock();
+    public static function getMock(User $user = null)
+    {
+        $mock = new SugarTestRestServiceMock();
+        $mock->user = ($user == null) ? $GLOBALS['current_user'] : $user;
+        return $mock;
     }
 }
 
-class SugarTestRestServiceMock extends RestService {
+class SugarTestRestServiceMock extends RestService
+{
     public function execute() {}
     protected function handleException(Exception $exception) {}
 }

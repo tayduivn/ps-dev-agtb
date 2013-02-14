@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 class SugarTestACLUtilities
 {
     public static $_createdRoles = array();
@@ -31,13 +31,14 @@ class SugarTestACLUtilities
 
     /**
      * Create a Role for use in a Unit Test
-     * @param string $name - name of the role
-     * @param array $allowedModules - modules you want to give access to
-     * @param array $allowedActions - actions user is allowed to have
-     * @param array $ownerActions - any owner actions [Edit Owner, etc] the user needs 
+     * @param  string    $name           - name of the role
+     * @param  array     $allowedModules - modules you want to give access to
+     * @param  array     $allowedActions - actions user is allowed to have
+     * @param  array     $ownerActions   - any owner actions [Edit Owner, etc] the user needs
      * @return SugarBean role
      */
-    public static function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
+    public static function createRole($name, $allowedModules, $allowedActions, $ownerActions = array())
+    {
         self::$_modules = array_merge($allowedModules, self::$_modules);
 
         $role = new ACLRole();
@@ -63,10 +64,9 @@ class SugarTestACLUtilities
 
             if (in_array($moduleName, $allowedModules)) {
                 foreach ($actions['module'] as $actionName => $action) {
-                    if(in_array($actionName, $allowedActions) && in_array($actionName, $ownerActions)) {
+                    if (in_array($actionName, $allowedActions) && in_array($actionName, $ownerActions)) {
                         $aclAllow = ACL_ALLOW_OWNER;
-                    }
-                    elseif (in_array($actionName, $allowedActions)) {
+                    } elseif (in_array($actionName, $allowedActions)) {
                         $aclAllow = ACL_ALLOW_ALL;
                     } else {
                         $aclAllow = ACL_ALLOW_NONE;
@@ -78,18 +78,20 @@ class SugarTestACLUtilities
 
         }
         self::$_createdRoles[] = $role;
+
         return $role;
     }
 
     /**
      * Create a field
-     * @param string $role_id - the role to add this to
-     * @param string $module - the module that has the field
-     * @param string $field_name - the field name to apply the access to 
-     * @param int $access_level - the access level from ACLField/actiondefs.php
+     * @param  string    $role_id      - the role to add this to
+     * @param  string    $module       - the module that has the field
+     * @param  string    $field_name   - the field name to apply the access to
+     * @param  int       $access_level - the access level from ACLField/actiondefs.php
      * @return SugarBean field
      */
-    public static function createField($role_id, $module, $field_name, $access_level) {
+    public static function createField($role_id, $module, $field_name, $access_level)
+    {
         self::$_modules[] = $module;
         // set the name field as Read Only
         $aclField = new ACLField();
@@ -100,11 +102,11 @@ class SugarTestACLUtilities
 
     /**
      * Give the Global current user a role
-     * @param SugarBean $role 
+     * @param  SugarBean $role
      * @return null
      */
-    public static function setupUser($role) {
-
+    public static function setupUser($role)
+    {
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
             $GLOBALS['current_user']->aclroles->add($role);
@@ -115,22 +117,23 @@ class SugarTestACLUtilities
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         unset($_SESSION['ACL']);
 
-        foreach(self::$_modules AS $module) {
-            ACLField::loadUserFields($module, $module, $GLOBALS['current_user']->id, true );            
+        foreach (self::$_modules AS $module) {
+            ACLField::loadUserFields($module, $module, $GLOBALS['current_user']->id, true );
         }
-        
+
     }
 
     /**
      * TearDown method to remove any roles and fields setup
      * @return null
      */
-    public static function tearDown() {
-        foreach(self::$_createdRoles AS $role) {
+    public static function tearDown()
+    {
+        foreach (self::$_createdRoles AS $role) {
             $role->mark_deleted($role->id);
             $role->mark_relationships_deleted($role->id);
             $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
         }
-        unset($_SESSION['ACL']);    
+        unset($_SESSION['ACL']);
     }
 }

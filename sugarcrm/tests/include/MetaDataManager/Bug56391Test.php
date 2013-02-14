@@ -29,18 +29,20 @@ require_once 'tests/SugarTestACLUtilities.php';
  */
 class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp() {
+    public function setUp()
+    {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         $this->accounts = array();
         SugarACL::$acls = array();
     }
 
-    public function tearDown() {
-        foreach($this->accounts AS $account_id) {
+    public function tearDown()
+    {
+        foreach ($this->accounts AS $account_id) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account_id}'");
         }
-        SugarTestACLUtilities::tearDown();    
+        SugarTestACLUtilities::tearDown();
         SugarTestHelper::tearDown();
     }
 
@@ -49,7 +51,8 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
      *
      * @group Bug56391
      */
-    public function testUsersModule() {
+    public function testUsersModule()
+    {
         $mm = new MetaDataManager($GLOBALS['current_user']);
         // because the user is not an admin the user should only have view and list access
         $expected_result = array(
@@ -110,7 +113,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected_result, $acls);
 
-    }    
+    }
 
     /**
      * Test Users Module as Admin
@@ -216,7 +219,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
-        foreach($modules AS $module) {
+        foreach ($modules AS $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
@@ -266,7 +269,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestACLUtilities::setupUser($role);
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
-        foreach($modules AS $module) {
+        foreach ($modules AS $module) {
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
             $this->assertEquals($expected_result, $acls);
@@ -409,7 +412,8 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected_bean_result['access'], $acls, 'Access Failed');
     }
 
-    public function testModuleOwnerNoAccess() {
+    public function testModuleOwnerNoAccess()
+    {
         $modules = array('Accounts', );
 
         $expected_bean_result['no_access'] = array(
@@ -432,7 +436,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $this->accounts['no_access'] = $account->id;
 
         unset($account);
-        
+
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'export', 'create'), array('edit','create'));
 
         SugarTestACLUtilities::setupUser($role);
@@ -449,7 +453,8 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    public function testModuleFieldOwnerAccess() {
+    public function testModuleFieldOwnerAccess()
+    {
         $modules = array('Accounts', );
 
         $expected_bean_result['field_access'] = array(
@@ -482,7 +487,8 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    public function testModuleFieldOwnerNoAccess() {
+    public function testModuleFieldOwnerNoAccess()
+    {
         $modules = array('Accounts', );
 
         $expected_bean_result['field_no_access'] = array(

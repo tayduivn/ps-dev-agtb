@@ -26,27 +26,26 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
-require_once ("clients/base/api/UnifiedSearchApi.php");
-require_once ("clients/base/api/ModuleApi.php");
-require_once ("tests/SugarTestRestUtilities.php");
-require_once ("tests/SugarTestACLUtilities.php");
+require_once 'clients/base/api/UnifiedSearchApi.php';
+require_once 'clients/base/api/ModuleApi.php';
+require_once 'tests/SugarTestRestUtilities.php';
+require_once 'tests/SugarTestACLUtilities.php';
 /**
  * @group ApiTests
  */
-class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
-
+class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase
+{
     public $accounts;
     public $roles;
     public $unifiedSearchApi;
     public $moduleApi;
     public $serviceMock;
 
-    public function setUp() {
-        SugarTestHelper::setUp("current_user");        
+    public function setUp()
+    {
+        SugarTestHelper::setUp("current_user");
         // create a bunch of accounts
-        for($x=0; $x<10; $x++) {
+        for ($x=0; $x<10; $x++) {
             $acc = BeanFactory::newBean('Accounts');
             $acc->name = 'UnifiedSearchApiTest Account ' . create_guid();
             $acc->assigned_user_id = $GLOBALS['current_user']->id;
@@ -59,10 +58,11 @@ class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->serviceMock = SugarTestRestUtilities::getMock();
     }
 
-    public function tearDown() {
-        $GLOBALS['current_user']->is_admin = 1;        
+    public function tearDown()
+    {
+        $GLOBALS['current_user']->is_admin = 1;
         // delete the bunch of accounts crated
-        foreach($this->accounts AS $account) {
+        foreach ($this->accounts AS $account) {
             $account->mark_deleted($account->id);
         }
         // unset unifiedSearchApi
@@ -71,17 +71,18 @@ class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
         // clean up all roles created
         SugarTestACLUtilities::tearDown();
         SugarTestHelper::tearDown();
-        parent::tearDown();        
+        parent::tearDown();
     }
 
     // test that when read only is set for every field you can still retrieve
     // @Bug 60225
-    public function testReadOnlyFields() {
+    public function testReadOnlyFields()
+    {
         // create role that is all fields read only
         $role = SugarTestACLUtilities::createRole('UNIFIEDSEARCHAPI - UNIT TEST ' . create_guid(), array('Accounts'), array('access', 'view', 'list', 'export'));
 
         // get all the accounts fields and set them readonly
-        foreach($this->accounts[0]->field_defs AS $fieldName => $params) {
+        foreach ($this->accounts[0]->field_defs AS $fieldName => $params) {
             SugarTestACLUtilities::createField($role->id, "Accounts", $fieldName, 50);
         }
 
@@ -90,11 +91,12 @@ class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
         // test I can retreive accounts
         $args = array('module_list' => 'Accounts',);
         $list = $this->unifiedSearchApi->globalSearch($this->serviceMock, $args);
-        $this->assertNotEmpty($list['records'], "Should have some accounts: " . print_r($list, true));        
+        $this->assertNotEmpty($list['records'], "Should have some accounts: " . print_r($list, true));
     }
 
     // if you have view only you shouldn't be able to create, but you should be able to retrieve records
-    public function testViewOnly() {
+    public function testViewOnly()
+    {
         // create a role that is view only
         $role = SugarTestACLUtilities::createRole('UNIFIEDSEARCHAPI - UNIT TEST ' . create_guid(), array('Accounts', ), array('access', 'view', 'list', ));
 
@@ -107,7 +109,7 @@ class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
         // test I can't create
         $this->setExpectedException(
           'SugarApiExceptionNotAuthorized', 'You are not authorized to create Accounts. Contact your administrator if you need access.'
-        );        
+        );
         $result = $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts', 'name' => 'UnifiedSearchApi Create Denied - ' . create_guid()));
     }
 }
