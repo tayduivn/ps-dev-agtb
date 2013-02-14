@@ -374,6 +374,7 @@
      * @return {String} has the proper structure for the chart url
      */
     buildChartUrl: function(params) {
-        return 'Forecasts/' + params.timeperiod_id + '/' + params.user_id +'/chart/' + params.display_manager;
+        return 'ForecastWorksheets/chart/' + params.timeperiod_id + '/' + params.user_id;
+        //return 'ForecastWorksheets/chart/' + params.timeperiod_id + '/' + params.user_id +'/chart/' + params.display_manager;
     }
 })

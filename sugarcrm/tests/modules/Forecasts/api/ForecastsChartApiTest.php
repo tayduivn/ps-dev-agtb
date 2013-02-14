@@ -24,7 +24,8 @@
  ********************************************************************************/
 
 require_once('include/api/RestService.php');
-require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
+require_once('modules/Forecasts/clients/base/api/ForecastsWorksheetApi.php');
+require_once('modules/Forecasts/clients/base/api/ForecastWorksheetsFilterApi.php');
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
@@ -69,7 +70,7 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->_user = self::$user['user'];
-        $this->chartApi = new ForecastsChartApi();
+        $this->chartApi = new ForecastWorksheetsFilterApi();
     }
 
     public static function tearDownAfterClass()
@@ -115,10 +116,11 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
             'user_id' => self::$user['user']->id,
             'display_manager' => false,
             'group_by' => 'sales_stage',
-            'dataset' => 'likely'
+            'dataset' => 'likely',
+            'module' => 'ForecastWorksheets'
         );
 
-        $chart = $this->chartApi->chart($this->_getServiceMock(self::$user['user']), $args);
+        $chart = $this->chartApi->forecastWorksheetsChartGet($this->_getServiceMock(self::$user['user']), $args);
 
         $this->assertEquals(self::$user["quota"]->amount, $chart['values'][0]['goalmarkervalue'][0]);
     }
@@ -136,10 +138,11 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
             'user_id' => self::$user['user']->id,
             'display_manager' => false,
             'group_by' => 'sales_stage',
-            'dataset' => $dataset
+            'dataset' => $dataset,
+            'module' => 'ForecastWorksheets'
         );
 
-        $chart = $this->chartApi->chart($this->_getServiceMock(self::$user['user']), $args);
+        $chart = $this->chartApi->forecastWorksheetsChartGet($this->_getServiceMock(self::$user['user']), $args);
 
         $found = false;
 
@@ -177,10 +180,11 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
             'user_id' => self::$user['user']->id,
             'display_manager' => false,
             'group_by' => 'sales_stage',
-            'dataset' => 'likely'
+            'dataset' => 'likely',
+            'module' => 'ForecastWorksheets'
         );
 
-        $chart = $this->chartApi->chart($this->_getServiceMock(self::$user['user']), $args);
+        $chart = $this->chartApi->forecastWorksheetsChartGet($this->_getServiceMock(self::$user['user']), $args);
 
         $this->assertEquals("Likely Case", $chart['properties'][0]['goal_marker_label'][1]);
     }
@@ -198,10 +202,11 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
             'user_id' => self::$user['user']->id,
             'display_manager' => false,
             'group_by' => $group_by,
-            'dataset' => 'likely'
+            'dataset' => 'likely',
+            'module' => 'ForecastWorksheets'
         );
 
-        $chart = $this->chartApi->chart($this->_getServiceMock(self::$user['user']), $args);
+        $chart = $this->chartApi->forecastWorksheetsChartGet($this->_getServiceMock(self::$user['user']), $args);
 
         $this->assertEquals($actual, $chart['properties'][0]['label_name']);
     }
@@ -243,10 +248,11 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
             'user_id' => $user1->id,
             'display_manager' => true,
             'group_by' => 'sales_stage',
-            'dataset' => 'likely'
+            'dataset' => 'likely',
+            'module' => 'ForecastWorksheets'
         );
 
-        $chart = $this->chartApi->chart($this->_getServiceMock($user1), $args);
+        $chart = $this->chartApi->forecastWorksheetsChartGet($this->_getServiceMock($user1), $args);
 
         $this->assertEquals(2, count($chart['values']));
     }
@@ -263,10 +269,11 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
             'timeperiod_id' => self::$timeperiod->id,
             'user_id' => self::$user['user']->id,
             'display_manager' => false,
-            'dataset' => 'likely'
+            'dataset' => 'likely',
+            'module' => 'ForecastWorksheets'
         );
 
-        $chart = $this->chartApi->chart($this->_getServiceMock(self::$user["user"]), $args);
+        $chart = $this->chartApi->forecastWorksheetsChartGet($this->_getServiceMock(self::$user["user"]), $args);
 
         $this->assertEquals(ucfirst(self::$commit_stage), $chart['label'][0]);
     }

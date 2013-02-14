@@ -20,6 +20,9 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/SugarForecasting/Chart/Individual.php');
+require_once("modules/Forecasts/clients/base/api/ForecastWorksheetsFilterApi.php");
+require_once('include/api/RestService.php');
+require_once('tests/modules/Forecasts/api/ForecastsWorksheetsApiTest.php');
 class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
@@ -46,6 +49,16 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
      * @var String
      */
     protected static $configTimeperiodLeafType;
+
+    /**
+     * @var array
+     */
+    protected static $dataArray;
+
+    /**
+     * @var ForecastWorksheetsFilterApi
+     */
+    protected static $filterApi;
 
     /**
      * @var Currency
@@ -90,6 +103,13 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
             'currency_id' => self::$currency->id
         ));
         self::$args['user_id'] = self::$user['user']->id;
+        self::$filterApi = new ForecastWorksheetsFilterApi();
+        // get the current data set for use in the processing
+        $dataArray = self::$filterApi->forecastWorksheetsGet(
+            self::_getServiceMock(self::$user['user']),
+            array('user_id' => self::$args['user_id'], 'timeperiod_id' => self::$args['timeperiod_id'], 'module' => 'ForecastWorksheets')
+        );
+        self::$args['data_array'] = $dataArray['records'];
     }
 
     public function setUp()
@@ -104,11 +124,27 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'timeperiod_interval', self::$configTimeperiodType, 'base');
         $admin->saveSetting('Forecasts', 'timeperiod_leaf_interval', self::$configTimeperiodLeafType, 'base');
+        self::$filterApi = null;
+        $GLOBALS["current_user"] = null;
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestHelper::tearDown();
         parent::tearDown();
+    }
+
+    /**
+     * Utility Method to get the ServiceMock with a valid user in it
+     *
+     * @param User $user
+     * @return ForecastWorksheetApiServiceMock
+     */
+    protected static function _getServiceMock(User $user)
+    {
+        $serviceApi = new ForecastWorksheetApiServiceMock();
+        $serviceApi->user = $user;
+
+        return $serviceApi;
     }
 
     /**

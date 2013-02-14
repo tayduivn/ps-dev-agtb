@@ -88,6 +88,11 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         {
             $this->group_by = strtolower($args['group_by']);
         }
+
+        if (isset($args['data_array']) && $args['data_array'])
+        {
+            $this->dataArray = $args['data_array'];
+        }
         parent::__construct($args);
 
         // the individual chart doesn't use the dataset as an arary yet
@@ -102,20 +107,10 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      */
     public function process()
     {
-        $this->getIndividualData();
         $this->parseCategory();
         $this->parseGroupBy();
         $this->convertTimeperiodToChartValues();
         return $this->formatDataForChart();
-    }
-
-    /**
-     * Run the Individual Code and set the data in this object
-     */
-    protected function getIndividualData()
-    {
-        $rep_obj = new SugarForecasting_Individual($this->getArgs());
-        $this->dataArray = $rep_obj->process();
     }
 
     /**
@@ -228,11 +223,8 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
                     break;
             }
 
-            // if the data set is likely we need to use the amount field from the data
+            // set the dataset key
             $dataset_key = $this->dataset . '_case';
-            if($this->dataset == "likely") {
-                $dataset_key = "amount";
-            }
 
             // Bug 56330: if the dataset_key doesn't exist default to 0
             $dataset_value = (isset($data[$dataset_key])) ? SugarCurrency::convertAmountToBase($data[$dataset_key], $data['currency_id']) : 0;
