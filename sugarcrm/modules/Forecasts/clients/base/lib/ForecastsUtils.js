@@ -376,6 +376,12 @@
             return config[key];
         },
 
+        /**
+         * If the passed in User is a Manager, then get his direct reportee's, and then set the user
+         * on the context, if they are not a Manager, just set user to the context
+         * @param selectedUser
+         * @param context
+         */
         getSelectedUsersReportees: function(selectedUser, context) {
 
             if(selectedUser.isManager) {
