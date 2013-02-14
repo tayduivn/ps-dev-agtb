@@ -26,8 +26,7 @@ describe("Base.Layout.DupeCheck", function() {
                 }
             ]
         }, moduleName);
-        SugarTest.loadHandlebarsTemplate("baselist", "view", "base", "baselist");
-        SugarTest.loadComponent('base', 'view', 'baselist');
+        SugarTest.loadHandlebarsTemplate("list", "view", "base", "list");
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent("base", "view", "dupecheck-list");
         SugarTest.testMetadata.set();
