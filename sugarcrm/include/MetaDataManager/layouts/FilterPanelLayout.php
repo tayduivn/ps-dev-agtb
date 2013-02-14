@@ -9,7 +9,6 @@ class FilterPanelLayout
     protected $defaultToggles = array("activitystream", "subpanel");
     protected $initialToggle = "activitystream";
     protected $layout;
-    protected $baseLayout;
     protected $count = 0;
 
     /**
@@ -20,7 +19,6 @@ class FilterPanelLayout
     public function __construct($opts = array())
     {
         $this->layout = MetaDataManager::getLayout("GenericLayout", array("type" => "filterpanel"));
-        $this->baseLayout = MetaDataManager::getLayout("GenericLayout", array("name" => "base"));
 
         // Add header view and subpanel layout
         $this->layout->push(array("view" => "filter"));
@@ -51,7 +49,6 @@ class FilterPanelLayout
      */
     public function getLayout()
     {
-        $this->baseLayout->push($this->layout->getLayout(true));
-        return $this->baseLayout->getLayout();
+        return $this->layout->getLayout();
     }
 }
