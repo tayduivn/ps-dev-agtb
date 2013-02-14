@@ -166,6 +166,8 @@
   margin: 20px 20px 10px 5px;
 
   .form-horizontal {
+    margin-left: 15px;
+
     .record-cell,
     .normal {
       min-height: 0px;
@@ -185,6 +187,10 @@
         right: 51px;
         z-index: 2;
       }
+      //for email compose
+      input[name="to_addresses"] {
+        padding-right: 115px;
+      }
       .help-block {
         min-height: 8px;
       }
@@ -192,6 +198,7 @@
     .control-label {
       position: absolute;
       height: 100%;
+      padding-right: 4px;
     }
     .controls {
       > span {
@@ -200,6 +207,7 @@
     }
     .mceLayout {
       width: 100% !important;
+      .border-radius(4px);
     }
   }
 
@@ -453,6 +461,16 @@
 
     &[data-type="compose-actionbar"] {
       padding-bottom: 8px;
+      .btn {
+        [class^="icon-"] {
+          margin-right: 6px;
+        }
+      }
+      .btn.dropdown-toggle {
+        [class^="icon-"] {
+          margin-right: 0;
+        }
+      }
     }
   }
 
