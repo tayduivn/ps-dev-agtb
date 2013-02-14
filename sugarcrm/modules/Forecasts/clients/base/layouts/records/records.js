@@ -85,17 +85,7 @@
 
         ctx.componentsMeta = options.meta.components;
 
-        // Initialize the config model
-        var ConfigModel = Backbone.Model.extend({
-            url: app.api.buildURL("Forecasts", "config"),
-            sync: function(method, model, options) {
-                var url = _.isFunction(model.url) ? model.url() : model.url;
-                return app.api.call(method, url, model, options);
-            },
-            // include metadata from config into the config model by default
-            defaults: app.metadata.getModule('Forecasts').config
-        });
-        options.context.config = new ConfigModel();
+        options.context = _.extend(options.context, ctx.initializeAllModels());
 
         var defaultSelections = app.defaultSelections;
 

@@ -156,10 +156,10 @@
         this.bestCase = 0;
         this.likelyCase = 0;
 
-        this.show_likely = options.context.config.get('show_worksheet_likely');
-        this.show_best = options.context.config.get('show_worksheet_best');
-        this.show_worst = options.context.config.get('show_worksheet_worst');
-
+        this.show_likely = app.utils.getConfigValue('show_worksheet_likely');
+        this.show_best = app.utils.getConfigValue('show_worksheet_best');
+        this.show_worst = app.utils.getConfigValue('show_worksheet_worst');
+        
         // we have to override sync right now as there is no way to run the filter by default
         this.collection.sync = _.bind(function(method, model, options) {
             options.success = _.bind(function(resp, status, xhr) {
