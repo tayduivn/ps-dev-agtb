@@ -270,33 +270,27 @@ hr.soften {
 
 
 
-
-/*
-
-
-*/
-
-
-
-
 .dashboard {
   background-image: url('@{textureSecondary}');
+  padding-bottom: 44px;
   .cols {
-    margin: 0 18px;
-    padding-top: 18px;
+    margin: 0;
     list-style: none;
+    &> li:first-child {
+      clear: both;
+    }
     .rows{
       margin: 0;
-/*
-      padding-top: 18px;
-      border-top: 1px solid @white;
-*/
       list-style: none;
       .row-fluid {
         .widget-container {
           .widget {
             /*min-height: 60px;*/
             padding: 0;
+            &.thumbnail {
+              margin-bottom: 0 !important;
+              min-height: 126px;
+            }
             div.widget-content {
               overflow: auto;
               width: 100%;
