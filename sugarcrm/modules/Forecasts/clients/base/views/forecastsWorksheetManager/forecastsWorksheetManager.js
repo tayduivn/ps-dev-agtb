@@ -103,15 +103,15 @@
      */
     draftUser: '',
 
-    defaultValues : {
-                    quota: 0,
-                    best_case: 0,
-                    best_case_adjusted: 0,
-                    likely_case: 0,
-                    likely_case_adjusted: 0,
-                    worst_case: 0,
-                    worst_case_adjusted: 0
-                },
+    defaultValues: {
+        quota: 0,
+        best_case: 0,
+        best_case_adjusted: 0,
+        likely_case: 0,
+        likely_case_adjusted: 0,
+        worst_case: 0,
+        worst_case_adjusted: 0
+    },
 
     /**
      * Handle Any Events
@@ -160,7 +160,7 @@
      * @param status
      * @param xhr
      */
-    collectionSuccess: function (resp, status, xhr) {
+    collectionSuccess: function(resp, status, xhr) {
         var records = [];
         var users = this.selectedUser.reportees;
 
@@ -168,7 +168,9 @@
         users.unshift({id: this.selectedUser.id, name: this.selectedUser.full_name});
 
         _.each(users, function(user) {
-            var row = _.find(resp.records, function(rec) { return (rec.user_id == this.id) }, user);
+            var row = _.find(resp.records, function(rec) {
+                return (rec.user_id == this.id)
+            }, user);
             if(!_.isUndefined(row)) {
                 // update the name on the row as this will have the correct formatting for the locale
                 row.name = user.name;
@@ -210,7 +212,7 @@
 
         var url = app.api.buildURL('ForecastManagerWorksheets', 'filter');
 
-        return {"url" : url, "filters" : {"filter": args_filter}};
+        return {"url": url, "filters": {"filter": args_filter}};
     },
 
     /**
@@ -225,7 +227,7 @@
             this.draftUser = this.selectedUser;
         }
         var userChanged = (this.selectedUser.id != selectedUser.id)
-        var showOppsChanged = (this.selectedUser.showOpps !=  selectedUser.showOpps);
+        var showOppsChanged = (this.selectedUser.showOpps != selectedUser.showOpps);
         this.selectedUser = selectedUser;
         if(!this.isVisible()) {
             return false;
@@ -656,7 +658,7 @@
                     }
 
                     // create the history log
-                    outputLog = app.utils.createHistoryLog(oldestModel,newestModel);
+                    outputLog = app.utils.createHistoryLog(oldestModel, newestModel);
                     // update the div that was created earlier and set the html to what was the commit log
                     $(nTr).next().children("td").children("div").html(this.commitLogTemplate(outputLog));
                 }
