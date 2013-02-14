@@ -42,12 +42,14 @@ class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     private $call;
 
+    protected $has_disable_count_query_enabled;
     /**
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
     public function setUp()
     {
+        global $sugar_config;
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -56,6 +58,7 @@ class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->lead->load_relationship('oldcalls');
         $this->lead->oldcalls->add($this->call);
+        $this->has_disable_count_query_enabled = !empty($sugar_config['disable_count_query']);
     }
 
     /**
@@ -64,6 +67,12 @@ class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
+        global $sugar_config;
+        if($this->has_disable_count_query_enabled) {
+            $sugar_config['disable_count_query'] = true;
+        } else {
+           unset($sugar_config['disable_count_query']);
+        }
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestCallUtilities::removeAllCreatedCalls();
 
@@ -72,6 +81,9 @@ class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testQueryIsNotBroken()
     {
+        global $sugar_config;
+        unset($sugar_config['disable_count_query']);
+
         $lead = new Lead();
         $lead->retrieve($this->lead->id);
         $lead->load_relationship('oldcalls');
@@ -79,6 +91,19 @@ class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
             array(
                 'enforce_teams' => true,
             )
+        );
+
+        $this->assertInternalType('array', $calls);
+        $this->assertEquals(1, count($calls));
+
+        $call = array_shift($calls);
+        $this->assertEquals($this->call->id, $call->id);
+        // now without count query
+        $sugar_config['disable_count_query'] = true;
+        $calls = $lead->oldcalls->getBeans(
+                array(
+                        'enforce_teams' => true,
+                )
         );
 
         $this->assertInternalType('array', $calls);
