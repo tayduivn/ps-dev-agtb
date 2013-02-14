@@ -344,9 +344,7 @@ class MailApiTest extends RestTestBase {
         $this->input["status"] = "draft";
 
         $this->input["documents"] = array(
-            array("name" => $this->document_file_name,
-                  "id"   => $this->document_file_id
-            )
+            $this->document_file_id
         );
 
         $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
@@ -470,9 +468,7 @@ class MailApiTest extends RestTestBase {
         }
 
         $this->input["documents"] = array(
-            array("name" => $this->document_file_name,
-                  "id"   => $this->document_file_id
-            ),
+             $this->document_file_id
         );
 
         $this->input["status"] = "ready";

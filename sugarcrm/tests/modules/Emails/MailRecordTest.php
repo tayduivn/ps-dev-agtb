@@ -57,7 +57,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
                 array("name" => "rodgers.tiff",  "id" => "5beb1fad-9aa4-c3ed-b7f8-50363d5e3a2b"),
             ),
             "documents"		=>	array(
-                array("name" => "schedule.pdf",  "id" => "123456789012345678901234567890123456"),
+                "123456789012345678901234567890123456",
             ),
 
             "subject"  		=>	"This is a Test Email",
@@ -138,9 +138,6 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mailRecord->emailBean = $mockEmailBean;
         $result = $mailRecord->saveAsDraft();
-
-        //unset($result['EMAIL']);
-        //print_r($result);
 
         $this->assertEquals($result['SUCCESS'],  $emailBeanResponseValue, "Unexpected Success Value");
     }
