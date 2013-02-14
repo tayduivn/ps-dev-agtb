@@ -45,7 +45,8 @@ class SugarTestACLUtilities
         $role->name = $name;
         $role->description = $name;
         $role->save();
-        $GLOBALS['db']->commit();
+        $db = DBManagerFactory::getInstance();
+        $db->commit();
 
         $roleActions = $role->getRoleActions($role->id);
         foreach ($roleActions as $moduleName => $actions) {

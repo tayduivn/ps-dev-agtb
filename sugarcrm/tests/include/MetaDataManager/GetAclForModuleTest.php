@@ -40,9 +40,11 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        $db = DBManagerFactory::getInstance();
         foreach($this->accounts AS $account_id) {
-            $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account_id}'");
+            $db->query("DELETE FROM accounts WHERE id = '{$account_id}'");
         }
+        $db->commit();
         SugarTestACLUtilities::tearDown();
         SugarTestHelper::tearDown();
     }
