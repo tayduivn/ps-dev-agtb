@@ -18,7 +18,6 @@
         app.view.Field.prototype.initialize.call(this, options);
 
         this.context.on('attachment:add', this.addAttachment);
-        this.context.on('attachment:add-placeholder', this.addAttachmentToContainer);
         this.context.on(launchUploadEvent, this.launchFilePicker);
         this.context.on('attachment:upload:remove', this.removeUploadedAttachment);
         this.context.on('attachments:remove-by-tag', this.removeAttachmentsByTag);
@@ -58,7 +57,7 @@
     },
 
     /**
-     * Just add the attachment to the container (but no the model) - useful for upload progress items
+     * Just add the attachment to the container - useful for upload progress items
      * @param attachment
      */
     addAttachmentToContainer: function(attachment) {
@@ -101,7 +100,7 @@
      * @param attachment
      * @return {String}
      */
-    formatSelection: function(attachment, $container) {
+    formatSelection: function(attachment) {
         var item = '<span data-id="'+attachment.id+'">'+attachment.nameForDisplay+'</span>';
         if (attachment.showProgress) {
             item += ' <i class="icon-refresh icon-spin"></i>';
@@ -173,7 +172,7 @@
      * Remove attachments in list based on a given truth test iterator
      * Removes from select2 and then updates the model
      *
-     * @param tag
+     * @param iterator
      */
     removeAttachmentsByIterator: function(iterator) {
         attachments = this.getDisplayedAttachments();
@@ -185,7 +184,7 @@
     /**
      * Remove attachments in list based on a given guid
      *
-     * @param tag
+     * @param id
      */
     removeAttachmentsById: function(id) {
         this.removeAttachmentsByIterator(_.bind(function(attachment) {
@@ -253,7 +252,7 @@
         //Notify user of progress uploading by adding a placeholder pill
         this.fileCounter++;
         fileId = 'upload'+this.fileCounter;
-        this.context.trigger('attachment:add-placeholder', {
+        this.addAttachmentToContainer({
             id: fileId,
             nameForDisplay: this.getFileInputVal().split('\\').pop(),
             showProgress: true

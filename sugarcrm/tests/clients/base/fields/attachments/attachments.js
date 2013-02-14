@@ -49,9 +49,9 @@ describe("Base.Field.Attachments", function() {
             expect(field.model.get('attachments')).toEqual([expectedAttachment]);
         });
 
-        it("attachment:add-placeholder should add attachment to select2 only", function() {
+        it("addAttachmentToContainer should add attachment to select2 only", function() {
             var expectedAttachment = {id:'789',nameForDisplay:'baz'};
-            field.context.trigger('attachment:add-placeholder', expectedAttachment);
+            field.addAttachmentToContainer(expectedAttachment);
             expect(field.$node.select2('data')).toEqual([expectedAttachment]);
             expect(field.model.has('attachments')).toBe(false);
         });
@@ -59,7 +59,7 @@ describe("Base.Field.Attachments", function() {
         it("should replace existing attachment if replaceId is specified", function() {
             var placeholder = {id:'ph',nameForDisplay:'placeholder'};
             var replacement = {id:'123',nameForDisplay:'foo.txt',replaceId:'ph'};
-            field.context.trigger('attachment:add-placeholder', placeholder);
+            field.addAttachmentToContainer(placeholder);
             field.context.trigger('attachment:add', replacement);
             expect(field.$node.select2('data')).toEqual([replacement]);
             expect(field.model.get('attachments')).toEqual([replacement]);
