@@ -123,6 +123,33 @@ class MetaDataManager {
     );
 
     /**
+     * Flag that tells the manager whether the cache refresher is queued. This
+     * is off by default and can be toggled using enable/disableCacheRefresherQueue().
+     * 
+     * @var bool
+     */
+    protected static $isQueued = false;
+
+    /**
+     * The actual cache refresher queue. When the cache refresher queue runner is
+     * called, this array will drive what is done. First by section then by module
+     * unless 'full' is set to true.
+     * 
+     * @var array
+     */
+    protected static $queue  = array();
+
+    /**
+     * Set by the cache refresh queue runner, if true, the refresh*Cache functions
+     * will not run. This prevents MetaDataManager from calling a support method
+     * that clears a cache elsewhere that in turn triggers another section or 
+     * module cache clear in the metadata manager.
+     * 
+     * @var bool
+     */
+    protected static $inProcess  = false;
+
+    /**
      * The constructor for the class. Sets the visibility flag, the visibility 
      * string indicator and loads the appropriate metadata section list.
      *
@@ -924,6 +951,16 @@ class MetaDataManager {
      */
     public static function refreshCache($platforms = array())
     {
+        // If we are in queue state (like in RepairAndRebuild), hold on to this
+        // request until we are told to run it
+        if (self::$isQueued) {
+            self::$queue['full'] = $platforms;
+            return;
+        }
+        
+        // Set our inProcess flag;
+        self::$inProcess = true;
+        
         // The basics are, for each platform, rewrite the cache for public and private
         if (empty($platforms)) {
             $platforms = self::getPlatformList();
@@ -935,6 +972,9 @@ class MetaDataManager {
                 $mm->rebuildCache();
             }
         }
+        
+        // Reset the in process flag
+        self::$inProcess = false;
     }
 
     /**
@@ -945,6 +985,23 @@ class MetaDataManager {
      */
     public static function refreshSectionCache($section = '', $platforms = array())
     {
+        // No need to do anything if there is no section
+        if (empty($section)) {
+            return;
+        }
+        
+        // If we are in the middle of a refresh do nothing
+        if (self::$inProcess) {
+            return;
+        }
+        
+        // If we are in queue state (like in RepairAndRebuild), hold on to this
+        // request until we are told to run it
+        if (self::$isQueued) {
+            self::buildCacheRefreshQueueSection('sections', $section, $platforms);
+            return;
+        }
+        
         if (empty($platforms)) {
             $platforms = self::getPlatformList();
         }
@@ -965,6 +1022,23 @@ class MetaDataManager {
      */
     public static function refreshModulesCache($modules = array(), $platforms = array())
     {
+        // No modules, no worries
+        if (empty($modules)) {
+            return;
+        }
+        
+        // If we are in the middle of a refresh do nothing
+        if (self::$inProcess) {
+            return;
+        }
+        
+        // If we are in queue state (like in RepairAndRebuild), hold on to this
+        // request until we are told to run it
+        if (self::$isQueued) {
+            self::buildCacheRefreshQueueSection('modules', $modules, $platforms);
+            return;
+        }
+        
         if (empty($platforms)) {
             $platforms = self::getPlatformList();
         }
@@ -975,6 +1049,115 @@ class MetaDataManager {
             $mm = self::getManager($platform, false, true);
             $mm->rebuildModulesCache($modules);
         }
+    }
+
+    /**
+     * Builds up a section of the refreshCacheQueue based on name.
+     * 
+     * @param string $name Name of the queue section
+     * @param array  $data The list of modules or sections
+     * @param array  $platforms The list of platforms
+     */
+    protected static function buildCacheRefreshQueueSection($name, $data, $platforms)
+    {
+        if (is_array($data)) {
+            foreach ($data as $item) {
+                self::$queue[$name][$item] = $item;
+            }
+        } else {
+            self::$queue[$name][$data] = $data;
+        }
+        
+        // Keep track of platforms... use the fullest list presented
+        if (!isset(self::$queue[$name]['platforms'])) {
+            self::$queue[$name]['platforms'] = array();
+        }
+        
+        self::$queue[$name]['platforms'] = array_merge(self::$queue[$name]['platforms'], (array) $platforms);
+    }
+
+    /**
+     * Runs all of the cache refreshers in the queue. If $disable is false, will
+     * leave the queue state as is. By default, will turn the queue off when it
+     * completes.
+     * 
+     * @param bool $disable
+     */
+    public static function runCacheRefreshQueue($disable = true)
+    {
+        // Hold on to the queue state until later when we need it
+        $queueState = self::$isQueued;
+        
+        // Temporarily turn off queueing to allow this to happen
+        self::$isQueued = false;
+        
+        // If full is set, run all cache clears and be done
+        if (isset(self::$queue['full'])) {
+            // Handle the refreshing of the cache and emptying of the queue
+            self::refreshCache(self::$queue['full']);
+            self::$queue = array();
+        }
+        
+        // Run modules first
+        if (isset(self::$queue['modules'])) {
+            if (isset(self::$queue['modules']['platforms'])) {
+                $platforms = self::$queue['modules']['platforms'];
+                unset(self::$queue['modules']['platforms']);
+            } else {
+                $platforms = array();
+            }
+            
+            self::refreshModulesCache(self::$queue['modules'], $platforms);
+            unset(self::$queue['modules']);
+        }
+        
+        // Run sections last
+        if (isset(self::$queue['sections'])) {
+            if (isset(self::$queue['sections']['platforms'])) {
+                $platforms = self::$queue['sections']['platforms'];
+                unset(self::$queue['sections']['platforms']);
+            } else {
+                $platforms = array();
+            }
+            
+            // Refresh the cache for all requested sections
+            self::refreshSectionCache(self::$queue['sections'], $platforms);
+            unset(self::$queue['sections']);
+        }
+        
+        // Handle queue state
+        if ($disable) {
+            self::$isQueued = false;
+        } else {
+            self::$isQueued = $queueState;
+        }
+    }
+
+    /**
+     * Turns on the cache refresh queue
+     */
+    public static function enableCacheRefreshQueue()
+    {
+        self::$isQueued = true;
+    }
+
+    /**
+     * Turns off the cache refresh queue and runs any of the rebuild processes
+     * currently in the queue
+     */
+    public static function disableCacheRefreshQueue() 
+    {
+        self::$isQueued = false;
+        self::runCacheRefreshQueue();
+    }
+
+    /**
+     * Simply runs the queue and resets the queue to empty leaving queue state in
+     * tact
+     */
+    public static function flushCacheRefreshQueue()
+    {
+        self::runCacheRefreshQueue(false);
     }
     
     /**
