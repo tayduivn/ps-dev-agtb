@@ -6,7 +6,8 @@ describe("Emails.Views.ComposeSignaturesList", function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent("base", "view", "list");
+        SugarTest.loadComponent("base", "view", "list"); //TODO is this needed?
+        SugarTest.loadComponent("base", "view", "selection-list");
         SugarTest.loadComponent("base", "view", "compose-signatures-list", "Emails");
         SugarTest.testMetadata.set();
 
