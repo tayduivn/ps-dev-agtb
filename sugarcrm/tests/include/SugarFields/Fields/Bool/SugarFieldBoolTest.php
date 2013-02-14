@@ -34,10 +34,6 @@ class SugarFieldBoolTest extends Sugar_PHPUnit_Framework_TestCase
         $this->meeting->name = "Awesome Test Meeting " . create_guid();
         $this->meeting->reminder_time = 500;
         $this->meeting->email_reminder_time = 1;
-        $id = $this->meeting->save();
-        // need to reload the bean
-        $this->meeting = new Meeting();
-        $this->meeting->retrieve($id);
 
         $this->sf = SugarFieldHandler::getSugarField('bool');
 
@@ -46,12 +42,13 @@ class SugarFieldBoolTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestHelper::tearDown();
-        $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting->id}'");
         unset($this->meeting);
     }
     
 	public function testTrueBoolFieldFormatting() {
         $data = array();
+        $this->meeting->reminder_checked = true;
+        $this->meeting->email_reminder_checked = true;        
         $this->sf->apiFormatField($data, $this->meeting, array(), 'reminder_checked',array());
         
         $this->assertTrue($data['reminder_checked']);
