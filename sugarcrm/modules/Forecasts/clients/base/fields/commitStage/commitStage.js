@@ -280,20 +280,17 @@
      */
     isEditable: function() {
         var sales_stages,
-            hasStage = false,
             isOwner = true;
-        
-        if(!_.isUndefined(self.context)){
-            //Check to see if the sales stage is one of the configured lost or won stages.
-            sales_stages = app.utils.getConfigValue("sales_stage_won").concat(app.utils.getConfigValue("sales_stage_lost"));
-            hasStage = _.contains(sales_stages, self.model.get('sales_stage'));
-            
-            //Check to see if you're a manager on someone else's sheet, disable changes
-            if(self.context.get("selectedUser")["id"] != app.user.id){
-                isOwner = false;
-            }
+
+        //Check to see if the sales stage is one of the configured lost or won stages.
+        sales_stages = app.utils.getConfigValue("sales_stage_won").concat(app.utils.getConfigValue("sales_stage_lost"));
+        var hasStage = _.contains(sales_stages, this.model.get('sales_stage'));
+
+        //Check to see if you're a manager on someone else's sheet, disable changes
+        if(this.context.get("selectedUser")["id"] != app.user.id){
+            isOwner = false;
         }
         
-        self.disabled = hasStage || !isOwner; 
+        this.disabled = hasStage || !isOwner;
     }
 })

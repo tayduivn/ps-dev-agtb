@@ -20,7 +20,7 @@
  ********************************************************************************/
 
 describe("forecast commitStage field", function() {
-    var field, fieldDef, context, model;
+    var field, fieldDef, context, model, configStub;
     
     beforeEach(function() {
         fieldDef = {
@@ -28,8 +28,14 @@ describe("forecast commitStage field", function() {
                 "type": "commitStage",
                 "options": "commit_stage_dom"
             };
-        
+
         app = SugarTest.app;
+
+        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
+        configStub = sinon.stub(app.utils, 'getConfigValue', function(key){
+            return fixtures.metadata.modules.Forecasts.config[key]
+        });
+
         app.user.id = "tester";
         sinon.stub(app.lang, "getAppListStrings", function(){
             return {test:"test"};
@@ -38,6 +44,7 @@ describe("forecast commitStage field", function() {
     });
     
     afterEach(function(){
+        configStub.restore();
         app.lang.getAppListStrings.restore();
         app.user.id = null;
         delete app;
@@ -90,7 +97,7 @@ describe("forecast commitStage field", function() {
                 };
                 
                 model = new Backbone.Model({sales_stage: "Closed Lost"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context); 
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
             });
             
             it("should have def.view set to bool", function(){
@@ -164,19 +171,15 @@ describe("forecast commitStage field", function() {
         });
     });
     
-    describe("when buckets are set to show_buckets", function(){        
+    describe("when buckets are set to show_buckets", function(){
+        var orgValue;
         beforeEach(function(){
-            context = {
-                config: new Backbone.Model({
-                    sales_stage_won: ["Closed Lost"], 
-                    sales_stage_lost: ["Closed Won"], 
-                    forecast_ranges: "show_buckets"
-                })
-            };
+            orgValue = fixtures.metadata.modules.Forecasts.config.forecast_ranges;
+            fixtures.metadata.modules.Forecasts.config.forecast_ranges = "show_buckets";
         });
         
         afterEach(function(){
-            delete field.context;
+            fixtures.metadata.modules.Forecasts.config.forecast_ranges = orgValue;
         });
         
         describe("when it is your sheet and sales_stage is Open", function(){
@@ -186,7 +189,7 @@ describe("forecast commitStage field", function() {
                 };
                 
                 model = new Backbone.Model({sales_stage: "Open"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);                
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
             });
             
             afterEach(function(){

@@ -20,7 +20,7 @@
  ********************************************************************************/
 
 describe("The forecasts worksheet totals calculation test", function(){
-    var app, view, context, formatWithRateStub;
+    var app, view, context, formatWithRateStub, configStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -37,9 +37,14 @@ describe("The forecasts worksheet totals calculation test", function(){
         formatWithRateStub = sinon.stub(app.currency, "convertWithRate", function(amount, rate) {
             return Math.round(parseFloat(amount / rate) * Math.pow(10, 2)) / Math.pow(10, 2);
         });
+        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
+        configStub = sinon.stub(app.utils, 'getConfigValue', function(key){
+            return fixtures.metadata.modules.Forecasts.config[key]
+        });
     });
 
     afterEach(function() {
+        configStub.restore();
         formatWithRateStub.restore();
     });
 
@@ -141,14 +146,21 @@ describe("The forecasts worksheet totals calculation test", function(){
                 },
                 unset : function(test) {}
             });
-            view.context.config = new (Backbone.Model.extend({
-                "defaults": fixtures.metadata.modules.Forecasts.config
-            }));
             view.calculateTotals();
         });
     })
 
     describe("calculate custom won and lost stages correctly", function() {
+        var orgConfig;
+        beforeEach(function() {
+            orgConfig = fixtures.metadata.modules.Forecasts.config;
+            fixtures.metadata.modules.Forecasts.config.sales_stage_won = ['Won Custom'];
+            fixtures.metadata.modules.Forecasts.config.sales_stage_lost = ['Lost Custom'];
+        });
+
+        afterEach(function() {
+            fixtures.metadata.modules.Forecasts.config = orgConfig;
+        });
         it("should calculate the correct values for custom sales stages", function() {
             context = app.context.getContext({module:'Forecasts'});
             view.context = _.extend(context, {
@@ -165,16 +177,21 @@ describe("The forecasts worksheet totals calculation test", function(){
                 },
                 unset : function(test) {}
             });
-            view.context.config = new (Backbone.Model.extend({
-                "defaults": fixtures.metadata.modules.Forecasts.config
-            }));
-            view.context.config.set('sales_stage_won', ['Won Custom']);
-            view.context.config.set('sales_stage_lost', ['Lost Custom']);
             view.calculateTotals();
         });
     })
 
     describe("calculate multiple custom won and lost stages correctly", function() {
+        var orgConfig;
+        beforeEach(function() {
+            orgConfig = fixtures.metadata.modules.Forecasts.config;
+            fixtures.metadata.modules.Forecasts.config.sales_stage_won = ['Won Custom', 'Closed Won'];
+            fixtures.metadata.modules.Forecasts.config.sales_stage_lost = ['Lost Custom', 'Closed Lost'];
+        });
+
+        afterEach(function() {
+            fixtures.metadata.modules.Forecasts.config = orgConfig;
+        });
         it("should calculate the correct values for multiple custom sales stages", function() {
             context = app.context.getContext({module:'Forecasts'});
             view.context = _.extend(context, {
@@ -191,11 +208,6 @@ describe("The forecasts worksheet totals calculation test", function(){
                 },
                 unset : function(test) {}
             });
-            view.context.config = new (Backbone.Model.extend({
-                "defaults": fixtures.metadata.modules.Forecasts.config
-            }));
-            view.context.config.set('sales_stage_won', ['Won Custom', 'Closed Won']);
-            view.context.config.set('sales_stage_lost', ['Lost Custom', 'Closed Lost']);
             view.calculateTotals();
         });
     })

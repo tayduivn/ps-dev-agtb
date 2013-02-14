@@ -715,7 +715,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedRanges: function(params) {
-        if(app.util.getConfigValue('forecast_ranges') != 'show_binary') {
+        if(app.utils.getConfigValue('forecast_ranges') != 'show_binary') {
             // TODO: this.
         } else {
             this.ranges = _.first(params);

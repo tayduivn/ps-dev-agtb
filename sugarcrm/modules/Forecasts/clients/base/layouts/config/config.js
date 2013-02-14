@@ -98,7 +98,7 @@
     _showModal:function () {
         var self = this,
             isAdmin = app.user.getAcls()['Forecasts'].admin == "yes",
-            isSetup = app.metadata.getModule('Forecasts').config.is_setup;
+            isSetup = app.utils.getConfigValue('is_setup');
 
         if (isAdmin) {
             // begin building params to pass to modal

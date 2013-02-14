@@ -45,9 +45,9 @@
             likely_adjusted : 0,
             worst_case : 0,
             worst_adjusted : 0,
-            show_worksheet_likely: app.util.getConfigValue('show_worksheet_likely'),
-            show_worksheet_best: app.util.getConfigValue('show_worksheet_best'),
-            show_worksheet_worst: app.util.getConfigValue('show_worksheet_worst')
+            show_worksheet_likely: app.utils.getConfigValue('show_worksheet_likely'),
+            show_worksheet_best: app.utils.getConfigValue('show_worksheet_best'),
+            show_worksheet_worst: app.utils.getConfigValue('show_worksheet_worst')
         });
     },
 
