@@ -14,18 +14,13 @@
             'click [name=send_button]': 'send',
             'click [name=cancel_button]': 'cancel'
         });
-        //events for templates
+
         this.context.on('actionbar:template_button:clicked', this.launchTemplateDrawer);
-        this.context.on("compose:template", this.updateComposeWithTemplate);
-        //events for sugar documents
         this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer);
-        this.context.on("compose:sugardocument:attach", this.updateAttachments);
-        //events for signatures
         this.context.on("actionbar:signature_button:clicked", this._launchSignatureDrawer);
-        this.context.on("compose:signature", this._updateEditorWithSignature);
     },
 
-    _render:function () {
+    _render: function () {
         app.view.views.RecordView.prototype._render.call(this);
 
         if (this.createMode) {
@@ -180,7 +175,7 @@
     },
 
     /**
-     * Format the recipient addresses in the  format the Mail API requires
+     * Format the recipient addresses in the format the Mail API requires
      *
      * @param sendModel
      */
@@ -307,7 +302,11 @@
         return ($.trim(this.model.get(fieldName)) !== '');
     },
 
-    launchTemplateDrawer:function () {
+    /**
+     * Open the drawer with the EmailTemplates selection list layout. The callback should take the data passed to it
+     * and replace the existing editor contents with the selected template.
+     */
+    launchTemplateDrawer: function() {
         app.drawer.open({
                 layout:'compose-templates',
                 context:{
@@ -318,8 +317,11 @@
             this.templateDrawerCallback
         );
     },
+
     /**
-     * Updates the editor with the contents of the template selected
+     * Receives the selected template to insert and begins the process of confirming the operation and inserting the
+     * template into the editor.
+     *
      * @param model
      */
     templateDrawerCallback: function(model) {
@@ -327,92 +329,79 @@
             var emailTemplate = app.data.createBean('EmailTemplates', { id: model.id });
             emailTemplate.fetch({
                 success: _.bind(this.confirmTemplate, this),
-                error: function(){
+                error: function() {
                     app.logger.error.log("error");
                 }
             });
         }
     },
+
     /**
-     * Inserting signature data into editor
+     * Presents the user with a confirmation prompt indicating that inserting the template will replace all content
+     * in the editor. If the user confirms "yes" then the template will inserted.
+     *
      * @param template
-     * @param callback
      */
     confirmTemplate: function(template) {
         app.alert.show('delete_confirmation', {
             level:'confirmation',
             messages:app.lang.get('LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG', this.module),
-            onConfirm:_.bind(function () {
+            onConfirm:_.bind(function() {
                 this.insertTemplate(template);
             }, this)
         });
     },
+
     /**
-     * Inserting signature data into editor
+     * Inserts the template into the editor.
+     *
      * @param template
      */
     insertTemplate: function(template) {
-        var editor, signatureId;
+        var editor,
+            subject,
+            notes;
 
         if (_.isObject(template)) {
-            var subject = template.get('subject');
-            if(subject) {
+            subject = template.get('subject');
+
+            if (subject) {
                 this.model.set('subject', subject);
             }
 
             editor = this.getField('html_body');
 
             //TODO: May need to move over replaces special characters.
-            if(!_.isEmpty(template.get('text_only')) &&  template.get('text_only') === 1) {
+            if (!_.isEmpty(template.get('text_only')) &&  template.get('text_only') === 1) {
                 editor.setEditorContent(template.get('body'));
-            }
-            else {
+            } else {
                 editor.setEditorContent(template.get('body_html'));
             }
 
-            var notes = app.data.createBeanCollection("Notes");
+            notes = app.data.createBeanCollection("Notes");
+
             notes.fetch({
                 'filter':{
                     "filter":[
                         {"parent_id":{"$equals":template.id}}
                     ]
                 },
-                success:_.bind(function (data) {
+                success:_.bind(function(data) {
                     if (!_.isEmpty(data.models)) {
                         this.insertTemplateAttachments(data.models);
                     }
                 }, this),
-                error:function () {
+                error:function() {
                     app.logger.error("Unable to fetch the bean collection.");
                 }
-
             });
         }
-
-        signatureId = !_.isEmpty(this.defaultSignatureId) ? this.defaultSignatureId : null;
-        signatureId =  !_.isEmpty(this.model.get('signature_id')) ? this.model.get('signature_id') : signatureId;
-
-        if (signatureId) {
-            this.updateEditorWithSignature(signatureId);
-        }
     },
-    /**
-     * Updates the editor with the signature
-     * @param signatureId
-     */
-    updateEditorWithSignature: function(signatureId) {
-        var url =  app.api.buildURL('MailSignature', signatureId);
 
-        app.api.call('GET', url, null,{
-                success: _.bind(this.insertSignature, this),
-                error: function() {
-                    console.log("Retrieving Signature failed.");
-                }
-            }
-        );
-    },
     /**
-     * Inserts templates
+     * Inserts attachments associated with the template by triggering an "add" event for each attachment to add to the
+     * attachments field.
+     *
      * @param attachments
      */
     insertTemplateAttachments: function(attachments) {
@@ -428,7 +417,11 @@
         }, this);
     },
 
-    launchDocumentDrawer : function() {
+    /**
+     * Open the drawer with the SugarDocuments attachment selection list layout. The callback should take the data
+     * passed to it and add the document as an attachment.
+     */
+    launchDocumentDrawer: function() {
         app.drawer.open({
                 layout: 'selection-list',
                 context: {
@@ -439,6 +432,12 @@
             this.documentDrawerCallback);
     },
 
+    /**
+     * Fetches the selected SugarDocument using its ID and triggers an "add" event to add the attachment to the
+     * attachments field.
+     *
+     * @param model
+     */
     documentDrawerCallback: function(model) {
         if (model) {
             var sugarDocument = app.data.createBean('Documents', { id: model.id });
@@ -451,7 +450,7 @@
                         type: 'documents'
                     });
                 }, this),
-                error: function(){
+                error: function() {
                     app.logger.error("Unable to fetch the bean collection:");
                 }
             });
@@ -511,11 +510,11 @@
     },
 
     /**
-     * Formatting of html signatures
+     * Formats HTML signatures to replace select HTML-entities with their true characters.
      *
-     * @param callback
+     * @param signature
      */
-    _formatSignature : function(signature) {
+    _formatSignature: function(signature) {
         signature = signature.replace(/&lt;/gi, "<");
         signature = signature.replace(/&gt;/gi, ">");
 
