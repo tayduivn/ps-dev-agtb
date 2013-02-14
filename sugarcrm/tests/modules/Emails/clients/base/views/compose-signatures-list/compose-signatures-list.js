@@ -6,7 +6,7 @@ describe("Emails.Views.ComposeSignaturesList", function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent("base", "view", "list"); //TODO is this needed?
+        SugarTest.loadComponent("base", "view", "list");
         SugarTest.loadComponent("base", "view", "selection-list");
         SugarTest.loadComponent("base", "view", "compose-signatures-list", "Emails");
         SugarTest.testMetadata.set();
@@ -31,6 +31,7 @@ describe("Emails.Views.ComposeSignaturesList", function() {
     it("should call _sync to add a custom endpoint during a sync and the custom endpoint should be used", function() {
         var apiStub = sinon.stub(app.api, "call");
 
+        debugger;
         view.collection.fetch();
         expect(apiStub.lastCall.args[1]).toMatch(/.*\/Signatures\?.*/);
 
