@@ -1,4 +1,4 @@
-<form class="form-search" action="">
+<form class="form-search-related" action="">
     <div class="control-group">
         <div class="filter controls controls-two btn-group-fit">
             <div class="filter-view search"></div>
@@ -10,42 +10,5 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="mu extend hide">
-        <article class="filter-header">
-            <strong>
-                Mass Update
-            </strong>
-            <div class="pull-right">
-                <a href="#" class="btn btn-primary">Update</a>
-                <a href="#" class="btn btn-invisible"><i class="icon-remove"></i></a>
-            </div>
-        </article>
-        <article class="filter-body">
-            <div class="row-fluid">
-                <div class="controls span3">
-                    <select class="chzn-select chzn-inherit-width buildit">
-                        <option>
-                            Name
-                        </option>
-                        <option>
-                            Sales Stage
-                        </option>
-                    </select>
-                </div>
-                <div class="controls span3">
-                    <select class="chzn-select chzn-inherit-width">
-                        <option>
-                            matches
-                        </option>
-                    </select>
-                </div>
-                <div class="filter-value controls span6">
-                    <input type="text" class="inherit-width" placeholder="Enter a name...">
-                    <a href="" class="btn btn-invisible addme"><i class="icon-plus"></i></a>
-                </div>
-            </div>
-        </article>
     </div>
 </form>

@@ -96,6 +96,21 @@ $dictionary['ProductBundleNote'] = array('table' => 'product_bundle_notes',
     'type' => 'text',
     'comment' => 'Note content'
   ),
+    'product_bundles' =>
+        array(
+            'name' => 'product_bundles',
+            'type' => 'link',
+            'relationship' => 'product_bundle_product',
+            'module' => 'ProductBundles',
+            'bean_name' => 'ProductBundle',
+            'source' => 'non-db',
+            'rel_fields' => array('note_index' => array('type' => 'integer')),
+            'relationship_fields' =>
+            array(
+                'note_index' => 'note_index'
+            ),
+            'vname' => 'LBL_NOTES',
+        ),
 
 )
                                                       , 'indices' => array (

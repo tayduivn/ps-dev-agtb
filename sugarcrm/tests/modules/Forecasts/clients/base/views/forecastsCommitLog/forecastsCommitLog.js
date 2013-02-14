@@ -23,15 +23,28 @@ describe("The forecastCommitLog view", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitLog", "forecastsCommitLog", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../sidecar/src/utils", "date", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-        view.context = {};
-        view.context.config = new (Backbone.Model.extend({
+
+
+        context = app.context.getContext();
+        context.config = new (Backbone.Model.extend({
             "defaults": fixtures.metadata.modules.Forecasts.config
         }));
-        view.render = function() {};
+        context.set({"selectedUser": {"id": 'test_user'}});
+        context.set({"timeperiod_id": {"id": 'timeperiod_id'}});
+        context.set({"collection": new Backbone.Collection()});
+
+
+        app.initData = {};
+        app.defaultSelections = {
+            timeperiod_id: {},
+            group_by: {},
+            selectedUser: {}
+        };
+
+        view = SugarTest.createView("base", "Forecasts", "forecastsCommitLog", null, context, true);
     });
 
     describe("test buildForecastsCommitted function", function() {
@@ -113,25 +126,12 @@ describe("The forecastCommitLog view", function(){
     
     describe("Forecasts Commit Log Bindings ", function(){
         beforeEach(function(){
-            view.context = {
-                on: function(event, fcn){},
-                committed:{
-                    on:  function(event, fcn){}
-                }
-            };
-                      
-            sinon.spy(view.context.committed, "on");
-            sinon.spy(view.context, "on");
+            sinon.stub(view.collection, "on");
             view.bindDataChange();
         });
         
         afterEach(function(){
-            view.context.committed.on.restore();
-            view.context.on.restore();
-            delete view.context;
-            delete view.collection;
-            view.context = {};
-            view.collection = {};
+            view.collection.on.restore();
         });
         
         //bindDataChange redefines this.collection to be context.committed

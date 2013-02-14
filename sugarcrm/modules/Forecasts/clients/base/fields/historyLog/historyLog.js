@@ -42,92 +42,12 @@
      */
     showOpps: '',
 
-    /**
-     * Commit Date
-     */
-    commitDate: '',
+    initialize : function(options) {
+        app.view.Field.prototype.initialize.call(this, options);
 
-    /**
-     * Deferred object for manager worksheet render
-     */
-    mDeferred: $.Deferred(),
-
-    /**
-     * Deferred object for worksheet model being ready
-     */
-    wDeferred:$.Deferred(),
-
-    bindDataChange: function() {
-        var self = this;
-
-        if(self.context && self.context) {
-            //Bind to the worksheetmanager render event so we know that the view has been rendered
-            self.context.on("forecasts:worksheetmanager:rendered", function() {
-                self.mDeferred.resolve();
-            });
-            //Bind to the committed model being reset so we know that the model has been updated
-            self.context.committed.on("reset", function() {
-                self.wDeferred.resolve();
-            });
-        }
-
-        self.handleDeferredRender();
-    },
-
-    /**
-     * Handles setting up the listeners for the two deferred objects.  When both conditions are satisfied
-     * it calls _render and sets itself up again.
-     *
-     */
-    handleDeferredRender: function() {
-        var self = this;
-        $.when(self.wDeferred, self.mDeferred).done(function() {
-            self._render();
-            //Reset the deferred objects
-            self.wDeferred = self.mDeferred = $.Deferred();
-            self.handleDeferredRender();
-        });
-    },
-
-    /**
-     * Overwrite the render method.  This function also does some checks to determine whether or not to show an
-     * alert indicating a commit entry.  The alert is shown for a reportee if
-     *
-     * 1) The reportee's forecast was commit at a time after the most recent manager's forecast commit
-     * or
-     * 2) If the manager had no history of a forecast commit
-     *
-     * @return {*}
-     * @private
-     */
-    _render:function () {
-        if(this.context) {
-            this.showFieldAlert = false;
-            this.uid = this.model.get('user_id');
-            this.showOpps = this.model.get('show_opps');
-
-            var fieldDate;
-
-            if(this.model.get('date_modified')) {
-               fieldDate = new Date(this.model.get('date_modified'));
-            }
-            
-            if(!_.isEmpty(this.context.committed.models)) {
-                var lastCommittedDate = new Date(_.first(this.context.committed.models).get('date_modified'));
-
-                // if fieldDate is newer than the forecast commitDate value, then we want to show the field
-                if (_.isDate(fieldDate) && _.isDate(lastCommittedDate)) {
-                    this.showFieldAlert = (fieldDate.getTime() > lastCommittedDate.getTime());
-                }
-            } else if(_.isDate(fieldDate)) {
-                this.showFieldAlert = true;
-            }
-
-            this.commitDate = fieldDate;
-            this.options.viewName = 'historyLog';
-            app.view.Field.prototype._render.call(this);
-        }
-        return this;
+        this.showFieldAlert = (this.model.get('show_history_log') == "1");
+        this.uid = this.model.get('user_id');
+        this.showOpps = (this.context.get('selectedUser').id == this.uid);
     }
 
 })

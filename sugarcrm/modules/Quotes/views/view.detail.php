@@ -44,8 +44,8 @@ class QuotesViewDetail extends ViewDetail
 		require_once($beanFiles['Shipper']);
 
 		$this->bean->load_relationship('product_bundles');
-		$product_bundle_list = $this->bean->get_linked_beans('product_bundles','ProductBundle');
-		if(is_array($product_bundle_list)){
+        $product_bundle_list = $this->bean->product_bundles->getBeans();
+        usort($product_bundle_list, array('ProductBundle', 'compareProductBundlesByIndex'));
 
 			$ordered_bundle_list = array();
             foreach ($product_bundle_list as $id => $bean)

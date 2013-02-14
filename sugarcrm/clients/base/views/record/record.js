@@ -39,13 +39,7 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
-        // Set the save button to show if the model has been edited.
-        this.model.on("change", function() {
-            if (this.inlineEditMode) {
-                this.previousModelState = _.clone(this.model.attributes);
-                this.setButtonStates(this.STATE.EDIT);
-            }
-        }, this);
+        app.events.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
         this.model.on("duplicate:before", this.setupDuplicateFields, this);
@@ -54,6 +48,11 @@
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
+        }
+    },
+    handleSync: function(method, model, options, error) {
+        if (this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
+            this.previousModelState = JSON.parse(JSON.stringify(model.attributes));
         }
     },
 
@@ -139,9 +138,14 @@
 
                 //The code below assumes that the field is an object but can be a string
                 if(_.isString(field)) {
-                    field = {
+                    panel.fields[index] = field = {
                         name: field
                     };
+                }
+
+                //Disable the pencil icon if the user doesn't have ACLs
+                if (!app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                    field.noedit = true;
                 }
 
                 //labels: visibility for the label
@@ -224,6 +228,11 @@
                 colCount++; // increment the column count now that we've filled a column
             }, this);
 
+            // Display module label in header panel it doesn't contain the picture field
+            if (panel.header) {
+                panel.isAvatar = !!_.find(panel.fields, function(f) { return f.name === 'picture'; });
+            }
+
             panel.grid = rows;
         }, this);
     },
@@ -243,7 +252,8 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            if ( field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
+            //Exclude non editable fields
+            if (field.def.noedit || field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
@@ -312,14 +322,16 @@
     },
 
     bindDataChange: function() {
-        if (this.model) {
-            this.model.on("change", function() {
-                if (this.model.isNotEmpty !== true) {
-                    this.model.isNotEmpty = true;
-                    this.render();
-                }
-            }, this);
-        }
+        this.model.on("change", function(fieldType) {
+            if (this.inlineEditMode) {
+                this.previousModelState = this.model.previousAttributes();
+                this.setButtonStates(this.STATE.EDIT);
+            }
+            if (this.model.isNotEmpty !== true && fieldType !== 'image') {
+                this.model.isNotEmpty = true;
+                this.render();
+            }
+        }, this);
     },
 
     duplicateClicked: function() {
@@ -347,7 +359,6 @@
     },
 
     editClicked: function() {
-        this.previousModelState = _.clone(this.model.attributes);
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
@@ -422,10 +433,20 @@
         // Set Editing mode to on.
         this.inlineEditMode = true;
 
+        this.setButtonStates(this.STATE.EDIT);
+
         // TODO: Refactor this for fields to support their own focus handling in future.
         // Add your own field type handling for focus / editing here.
         switch (field.type) {
-            case "img":
+            case "image":
+                var self = this;
+                app.file.checkFileFieldsAndProcessUpload(self.model, {
+                        success:function () {
+                            self.toggleField(field);
+                        }
+                    },
+                    { deleteIfFails:false}
+                );
                 break;
             default:
                 this.toggleField(field);
@@ -434,16 +455,24 @@
 
     handleSave: function() {
         var self = this;
-        this.inlineEditMode = false;
-        this.model.save({}, {
-            success: function() {
-                if (self.createMode) {
-                    app.navigate(self.context, self.model);
-                } else {
-                    self.render();
-                }
+        self.inlineEditMode = false;
+
+        var finalSuccess = function () {
+            if (self.createMode) {
+                app.navigate(self.context, self.model);
+            } else {
+                self.render();
             }
-        });
+        };
+        app.file.checkFileFieldsAndProcessUpload(self.model, {
+                success:function () {
+                    self.model.save({}, {
+                        success:finalSuccess
+                    });
+                }
+            },
+            { deleteIfFails:false});
+
         this.$(".record-save-prompt").hide();
         this.render();
     },
@@ -472,8 +501,6 @@
 
     handleKeyDown: function(e, field) {
         app.view.views.EditableView.prototype.handleKeyDown.call(this, e, field);
-        var nextCell,
-            index = field.$el.parent().data("index");
 
         if (e.which == 9) { // If tab
             e.preventDefault();

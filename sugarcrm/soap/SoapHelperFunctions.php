@@ -36,7 +36,10 @@ function get_field_list($value, $translate=true){
 	if(!empty($value->field_defs)){
 
 		foreach($value->field_defs as $var){
-			if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
+			if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate')
+               &&!(isset($var['type'])&&$var['type']=='id'&&isset($var['link']))) {
+                continue;
+            }
 			$required = 0;
 			$options_dom = array();
 			$options_ret = array();
@@ -352,7 +355,7 @@ function get_name_value_list($value, $returnDomValue = false){
 			$list['created_by_name'] = get_name_value('created_by_name', $value->created_by_name);
 		}
 		foreach($value->field_defs as $var){
-			if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate')){
+			if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate')&&!(isset($var['type'])&&$var['type']=='id'&&isset($var['link']))){
 
 					if($value->module_dir == 'Emails' && (($var['name'] == 'description') || ($var['name'] == 'description_html') || ($var['name'] == 'from_addr_name') || ($var['name'] == 'reply_to_addr') || ($var['name'] == 'to_addrs_names') || ($var['name'] == 'cc_addrs_names') || ($var['name'] == 'bcc_addrs_names') || ($var['name'] == 'raw_source'))) {
 
@@ -390,8 +393,7 @@ function filter_fields($value, $fields) {
 		} // if
 		if (isset($value->field_defs[$field])) {
 			$var = $value->field_defs[$field];
-			if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate')) {
-
+			if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && !(isset($var['type'])&&$var['type'] != 'relate')&&isset($var['link'])) {
 				continue;
 			}
 		} // if

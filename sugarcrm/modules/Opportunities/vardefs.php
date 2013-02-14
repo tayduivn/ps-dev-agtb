@@ -579,7 +579,8 @@ $dictionary['Opportunity'] = array(
             'filter_template' => array(
                 array('$and' => array(
                     array('name' => array('$starts' => '$name')),
-                    array('sales_status' => array('$not_equals' => 'Closed')),
+                    array('sales_status' => array('$not_equals' => 'Closed Lost')),
+                    array('sales_status' => array('$not_equals' => 'Closed Won')),
                     array('accounts.id' => array('$equals' => '$account_id')),
                 )),
             ),

@@ -23,13 +23,14 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once('include/api/RestService.php');
+require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
  */
-class ForecastsChartManagerApiTest extends RestTestBase
+class ForecastsChartManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     /**
@@ -51,6 +52,11 @@ class ForecastsChartManagerApiTest extends RestTestBase
      * @var TimePeriod;
      */
     protected static $timeperiod;
+
+    /**
+     * @var chartApi
+     */
+    protected $chartApi;
 
     /**
      * Set-up the variables needed for this to run.
@@ -90,6 +96,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
     public function setUp()
     {
         $this->_user = self::$manager['user'];
+        $this->chartApi = new ForecastsChartApi();
     }
 
     /**
@@ -97,6 +104,21 @@ class ForecastsChartManagerApiTest extends RestTestBase
      */
     public function tearDown()
     {
+        $this->chartApi = null;
+    }
+
+    /**
+     * Utility Method to get the ServiceMock with a valid user in it
+     *
+     * @param User $user
+     * @return ForecastChartApiServiceMock
+     */
+    protected function _getServiceMock(User $user)
+    {
+        $serviceApi = new ForecastChartManagerApiServiceMock();
+        $serviceApi->user = $user;
+
+        return $serviceApi;
     }
 
     /**
@@ -107,10 +129,15 @@ class ForecastsChartManagerApiTest extends RestTestBase
      */
     protected function runRestCommand($dataset = 'likely')
     {
-        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$manager['user']->id . '&group_by=sales_stage&dataset=' . $dataset . '&display_manager=true';
-        $restReply = $this->_restCall($url);
+        $args = array(
+            'timeperiod_id' => self::$timeperiod->id,
+            'user_id' => self::$manager['user']->id,
+            'display_manager' => true,
+            'group_by' => 'sales_stage',
+            'dataset' => $dataset
+        );
 
-        return $restReply['reply'];
+        return $this->chartApi->chart($this->_getServiceMock(self::$manager['user']), $args);
     }
 
     /**
@@ -120,8 +147,8 @@ class ForecastsChartManagerApiTest extends RestTestBase
      */
     public function testChartDataShouldContainTwoUsers()
     {
-        $data = $this->runRestCommand();
-        $this->assertEquals(2, count($data['values']));
+        $chart = $this->runRestCommand();
+        $this->assertEquals(2, count($chart['values']));
     }
 
     public function dataProviderWorksheetValues()
@@ -223,5 +250,16 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
         $data = $this->runRestCommand();
         $this->assertEquals(0, $data['values'][2]['values'][0]);
+    }
+}
+
+class ForecastChartManagerApiServiceMock extends RestService
+{
+    public function execute()
+    {
+    }
+
+    protected function handleException(Exception $exception)
+    {
     }
 }

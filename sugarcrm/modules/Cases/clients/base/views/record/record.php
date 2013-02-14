@@ -35,8 +35,6 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                array('name'=>'case_number', 'noedit'=>true,),
-               
                 /*
                 array(
                     'name' => 'img',
@@ -57,15 +55,23 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-              
+                array (
+                    'name'=>'case_number',
+                    'noedit' => true,
+                ),
                 'priority',
-                'status',
-                'type',
                 'account_name',
-                'assigned_user_name',
-//BEGIN SUGARCRM flav=pro ONLY
-                array('name'=>'team_name', 'displayParams'=>array('required'=>true)),
-//END SUGARCRM flav=pro ONLY
+                'status',
+                array(
+                    'name' => 'resolution',
+                    'nl2br' => true,
+                    'span' => 12
+                ),
+                array(
+                    'name' => 'description',
+                    'nl2br' => true,
+                    'span' => 12
+                ),
 //BEGIN SUGARCRM flav=ent ONLY
                 // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
                 // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar 
@@ -78,12 +84,21 @@ $viewdefs['Cases']['base']['view']['record'] = array(
         array(
             'name' => 'panel_hidden',
             'hide' => true,
-            'columns' => 1,
+            'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                array('name' => 'description', 'nl2br' => true),
-                array('name' => 'resolution', 'nl2br' => true),
+                'type',
+                array(),
+                'assigned_user_name',
+//BEGIN SUGARCRM flav=pro ONLY
+                array(
+                    'name'=>'team_name',
+                    'displayParams'=>array(
+                        'required'=>true
+                    )
+                ),
+//END SUGARCRM flav=pro ONLY
             )
         )
     ),

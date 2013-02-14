@@ -95,6 +95,38 @@ describe("Record View", function() {
             expect(_.size(view.fields)).toBe(0);
         });
 
+        it("Should update previous props on read and update only", function() {
+            var modelAttributes = {
+                id: '123',
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            };
+            view.model.set(modelAttributes);
+
+            view.handleSync('read', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+            view.handleSync('update', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+            view.model.set({name:'Test'});
+            view.handleSync('randomAction', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+        });
+
+        it("Should set previous model state on app data:sync:end", function() {
+            var modelAttributes = {
+                id: '123',
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            };
+            view.model.set(modelAttributes);
+            expect(view.previousModelState).toBeNull();
+            SugarTest.app.trigger('data:sync:end','read',view.model);
+            view.handleSync('read', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+        });
+
         it("Should render 8 editable fields and 6 buttons", function() {
 
             view.render();
@@ -155,6 +187,42 @@ describe("Record View", function() {
             expect(_.size(view.fields)).toBe(0);
         });
 
+        it("Should not be editable when a user doesn't have write access on this field", function() {
+            sinonSandbox.stub(SugarTest.app.acl, '_hasAccessToField', function(action, acls, field) {
+                return field !== 'name';
+            });
+            sinonSandbox.stub(SugarTest.app.user, 'getAcls', function() {
+                var acls = {};
+                acls[moduleName] = {
+                    edit: 'yes',
+                    fields: {
+                        name: {
+                            write: 'no'
+                        }
+                    }
+                };
+                return acls;
+            });
+
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+
+            view.$('.more').click();
+            var editableFields = 0;
+            _.each(view.editableFields, function(field) {
+                if (field.$el.closest('.record-cell').find('.record-edit-link-wrapper').length === 1) {
+                    editableFields++;
+                }
+            });
+
+            expect(editableFields).toBe(7);
+            expect(_.size(view.editableFields)).toBe(7);
+        });
+
         it("should call decorateError on error fields during 'error:validation' events", function(){
             view.render();
             view.model.set({
@@ -165,6 +233,7 @@ describe("Record View", function() {
             var descriptionField = _.find(view.fields, function(field){
                 return field.name === 'description';
             });
+            descriptionField.decorateError = function() {};//sugar7.js now injects this
             var stub = sinon.stub(descriptionField, 'decorateError', $.noop());
             //Simulate a 'required' error on description field
             view.model.trigger('error:validation', {description: {required : true}});
@@ -186,6 +255,7 @@ describe("Record View", function() {
             var descriptionField = _.find(view.fields, function(field){
                 return field.name === 'description';
             });
+            descriptionField.clearErrorDecoration = function() {};//sugar7.js now injects this
             var stub = sinon.stub(descriptionField, 'clearErrorDecoration', $.noop());
             view.model.trigger('error:validation', {description: {required : true}});
             view.cancelClicked();
@@ -263,35 +333,6 @@ describe("Record View", function() {
             });
         });
 
-        it("Should show save and cancel buttons and hide edit button when data changes", function() {
-
-            view.model.set({
-                name: 'Name',
-                case_number: 123,
-                description: 'Description'
-            });
-            view.render();
-            view.editMode = true;
-            view.model.set({
-                name: 'Foo',
-                case_number: 123,
-                description: 'Description'
-            });
-
-            expect(view.getField('save_button').getFieldElement().css('display')).toBe('none');
-            expect(view.getField('cancel_button').getFieldElement().css('display')).toBe('none');
-            expect(view.getField('edit_button').getFieldElement().css('display')).not.toBe('none');
-
-            view.context.trigger('button:edit_button:click');
-            view.model.set({
-                name: 'Bar'
-            });
-
-            expect(view.getField('save_button').getFieldElement().css('display')).not.toBe('none');
-            expect(view.getField('cancel_button').getFieldElement().css('display')).not.toBe('none');
-            expect(view.getField('edit_button').getFieldElement().css('display')).toBe('none');
-        });
-
         it("Should revert data back to the old value when the cancel button is clicked after data has been changed", function() {
             view.render();
             view.model.set({
@@ -299,6 +340,7 @@ describe("Record View", function() {
                 case_number: 123,
                 description: 'Description'
             });
+            view.handleSync('read',view.model);
             view.context.trigger('button:edit_button:click');
             view.model.set({
                 name: 'Bar'
@@ -732,6 +774,39 @@ describe("Record View", function() {
                 // case: field.span and field.labelSpan are undefined, and field.dismiss_label is true
                 expect(results[4][1].span).toBe(6);
                 expect(results[4][1].labelSpan).toBe(2);
+            });
+        });
+
+        describe('Header panel', function() {
+            it('Should set isAvatar to false if the header doesn\'t the picture field', function() {
+                view._renderPanels(view.meta.panels);
+                expect(view.meta.panels[0].isAvatar).toBeFalsy();
+            });
+
+            it('Should set isAvatar to true if the header contains the picture field', function() {
+                var meta = {
+                            "panels": [{
+                                "name": "panel_header",
+                                "header": true,
+                                "fields": ["picture","name"]
+                            }, {
+                                "name": "panel_body",
+                                "label": "LBL_PANEL_2",
+                                "columns": 1,
+                                "labels": true,
+                                "labelsOnTop": false,
+                                "placeholders":true,
+                                "fields": ["description","case_number","type"]
+                            }, {
+                                "name": "panel_hidden",
+                                "hide": true,
+                                "labelsOnTop": false,
+                                "placeholders": true,
+                                "fields": ["created_by","date_entered","date_modified","modified_user_id"]
+                            }]
+                        };
+                view._renderPanels(meta.panels);
+                expect(meta.panels[0].isAvatar).toBeTruthy();
             });
         });
     });

@@ -11,19 +11,17 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
         array(
             'type'    => 'actiondropdown',
             'name'    => 'main_dropdown',
+            'primary' => true,
             'buttons' => array(
                 array(
                     'name'      => 'send_button',
-                    'type'      => 'button',
+                    'type'      => 'rowaction',
                     'label'     => 'LBL_SEND_BUTTON_LABEL',
-                    'value'     => 'send',
-                    'primary'   => true,
                 ),
                 array(
                     'name'      => 'draft_button',
-                    'type'      => 'button',
+                    'type'      => 'rowaction',
                     'label'     => 'LBL_SAVE_AS_DRAFT_BUTTON_LABEL',
-                    'value'     => 'draft',
                 ),
             ),
         ),
@@ -41,6 +39,17 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
             'labelsOnTop'  => false,
             'placeholders' => true,
             'fields'       => array(
+                array(
+                    'name'      => 'email_config',
+                    'id_name'   => 'email_config_id',
+                    'label'     => 'LBL_FROM',
+                    'type'      => 'sender',
+                    'css_class' => 'inherit-width',
+                    'endpoint'  => array(
+                        'module' => 'OutboundEmailConfiguration',
+                        'action' => 'list',
+                    )
+                ),
                 array(
                     "name"                => "to_addresses",
                     "type"                => "recipients",
@@ -108,10 +117,11 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     ),
                 ),
                 array(
-                    'name'       => 'html_body',
-                    'type'       => 'htmleditable_tinymce',
+                    'name'          => 'html_body',
+                    'type'          => 'htmleditable_tinymce',
                     'dismiss_label' => true,
-                    'tinyConfig' => array(
+                    'span'          => 12,
+                    'tinyConfig'    => array(
                         // Location of TinyMCE script
                         'script_url' => 'include/javascript/tiny_mce/tiny_mce.js',
 
@@ -151,9 +161,10 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array (
-                    "label" => "LBL_LIST_RELATED_TO",
-                    'type'  => 'parent',
-                    'name'  => 'parent_name'
+                    "label"   => "LBL_LIST_RELATED_TO",
+                    'type'    => 'parent',
+                    'name'    => 'parent_name',
+                    'options' => "parent_type_display"
                 ),
             ),
         ),

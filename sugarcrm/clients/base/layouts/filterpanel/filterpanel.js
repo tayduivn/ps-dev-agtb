@@ -52,7 +52,7 @@
             this.$(".filter-view").append(component.el);
             return;
         } else if(def.view == "filter-create") {
-            this.$(".form-search").append(component.el);
+            this.$(".form-search-related").append(component.el);
         } else {
             // Check if hidden or not.
             if (this.availableToggles[component.name]) {

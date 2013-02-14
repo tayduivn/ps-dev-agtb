@@ -26,4 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#if value}}<img{{#if def.width}} style="width: {{def.width}}px"{{/if}} src="{{value}}">{{/if}}
+<div class="image_field{{#eq name "picture"}} image_rounded{{/eq}} image_detail hide">
+<div class="image_preview">
+{{#if value}}
+    <img src="{{value}}">
+    {{else}}
+    {{#eq name "picture"}}<img src="{{config.profile}}">{{/eq}}
+{{/if}}
+</div>
+</div>

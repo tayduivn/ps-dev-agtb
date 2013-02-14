@@ -144,7 +144,7 @@ class ForecastWorksheetsFilterApi extends FilterApi
                     // remove the timeperiod_id
                     unset($args['filter'][$key]);
                 }
-                // if the key is 'draft', remote it from the filter
+                // if the key is 'draft', remove it from the filter
                 if ($filter_key == 'draft') {
                     unset($args['filter'][$key]);
                 }

@@ -3,7 +3,7 @@
     extendsFrom: 'RelateField',
     fieldTag: 'input.select2[name=parent_name]',
     typeFieldTag: 'select.select2[name=parent_type]',
-    hiddenValue: '***',
+
     _render: function() {
         var result = app.view.fields.RelateField.prototype._render.call(this),
             self = this;
@@ -20,12 +20,6 @@
                     value: '',
                     module: module
                 });
-                var plugin = self.$(self.fieldTag).data("select2"),
-                    placeholderTemplate = Handlebars.compile(app.lang.getAppString("LBL_SEARCH_MODULE")),
-                    moduleString = app.lang.getAppListStrings("moduleListSingular");
-                plugin.container.find("span").text(placeholderTemplate({
-                    module: moduleString[module]
-                }));
             });
             if(app.acl.hasAccessToModel('edit', this.model, this.name) === false) {
                 this.$(this.typeFieldTag).attr("disabled", "disabled");
@@ -61,8 +55,10 @@
     getSearchModule: function() {
         return this.model.get('parent_type') || this.$(this.typeFieldTag).val();
     },
+    getPlaceHolder: function() {
+        return  app.lang.get('LBL_SEARCH_SELECT', this.module);
+    },
     format: function(value) {
-        //TODO: The label should be the parent module name
         this.def.module = this.model.get('parent_type');
 
         this.context.set("record_label", {
@@ -70,11 +66,6 @@
             label: (this.tplName === 'detail') ? this.def.module : app.lang.get(this.def.label, this.module)
         });
 
-        //check the user has the access to the current parent related module
-        //TODO: Check hasAccessToModel for the parent related record
-        if(app.acl.hasAccess('access', this.def.module, app.user.id) === false) {
-            return this.hiddenValue;
-        }
         return value;
     }
 })

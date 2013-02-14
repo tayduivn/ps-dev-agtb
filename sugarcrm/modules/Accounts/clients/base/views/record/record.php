@@ -72,6 +72,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                         'billing_address_city',
                         'billing_address_state',
                         'billing_address_postalcode',
+                        'billing_address_country',
                     ),
                 ),
                 array(
@@ -83,6 +84,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                         'shipping_address_city',
                         'shipping_address_state',
                         'shipping_address_postalcode',
+                        'shipping_address_country',
                         array(
                             'name' => 'copy',
                             'type' => 'copy',
@@ -91,6 +93,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                                 'billing_address_city' => 'shipping_address_city',
                                 'billing_address_state' => 'shipping_address_state',
                                 'billing_address_postalcode' => 'shipping_address_postalcode',
+                                'billing_address_country' => 'shipping_address_country',
                             ),
                         ),
                     ),

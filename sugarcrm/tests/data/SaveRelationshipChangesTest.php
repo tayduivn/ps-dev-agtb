@@ -183,7 +183,9 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
             $this->fail('Relationship Not Created');
         }
 
-        $rel_name = $rel->getName();
+        // Getting the name on a self-referencing relationship is hard, we want the right hand side
+        // so we have to manually tweak it.
+        $rel_name = $rel->getName().'_right';
         $id = $rel->getIDName('Accounts');
 
         $acc1 = SugarTestAccountUtilities::createAccount();

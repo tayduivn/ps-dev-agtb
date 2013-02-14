@@ -87,7 +87,7 @@
      * @param {string|Array} value single email address or set of email addresses
      */
     format: function(value) {
-        if (_.isArray(value)) {
+        if (_.isArray(value) && value.length > 0) {
             // got an array of email addresses
             _.each(value, function(email) {
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
@@ -118,6 +118,18 @@
                     }
                 }
             }, this);
+
+            // Adding a new email
+            if (emails.length == 0) {
+                emails.push({
+                    email_address:   value,
+                    primary_address: "1",
+                    hasAnchor:       false,
+                    _wasNotArray:    true
+                });
+                changed = true;
+            }
+
             if(changed) {
                 this.updateModel(changed);
             }
@@ -306,11 +318,17 @@
         evt.stopPropagation();
         evt.preventDefault();
 
-        // this is temporary until we have stacking drawers - for right now we are just loading this view up
-        app.controller.loadView({
-            module:         "Emails",
-            layout:         "compose",
-            recipientModel: this.model
+        var model = app.data.createBean(this.model.module);
+        model.copy(this.model);
+
+        app.drawer.open({
+            layout : 'compose',
+            context: {
+                create: 'true',
+                module: "Emails",
+                recipientModel: model,
+                forceNew:true
+            }
         });
     }
 })

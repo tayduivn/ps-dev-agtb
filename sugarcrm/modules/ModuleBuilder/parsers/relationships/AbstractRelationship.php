@@ -341,8 +341,11 @@ class AbstractRelationship
         	$vardef [ 'side' ] = 'right' ;
         if (!empty($vname))
             $vardef [ 'vname' ] = $vname;
-        if (!empty($id_name))
+        if (!empty($id_name)) {
             $vardef['id_name'] = $id_name;
+        } else {
+            $vardef['id_name'] = $this->getIDName($sourceModule);
+        }
 
         return $vardef ;
     }
@@ -357,19 +360,22 @@ class AbstractRelationship
      */
     protected function getLink2FieldDefinition ($sourceModule , $relationshipName, $right_side = false,  $vname = "")
     {
-        $vardef = array ( ) ;
+        $vardef = $this->getRelateFieldDefinition($sourceModule, $relationshipName, $vname);
 
         $vardef [ 'name' ] = $this->getIDName( $sourceModule ) ; // must match the id_name field value in the relate field definition
-        $vardef [ 'type' ] = 'link' ;
-        $vardef [ 'relationship' ] = $relationshipName ;
-        $vardef [ 'source' ] = 'non-db' ;
 		$vardef ['reportable'] = false;
         if ($right_side)
         	$vardef [ 'side' ] = 'right' ;
         else
         	$vardef [ 'side' ] = 'left' ;
-        if (!empty($vname))
-            $vardef [ 'vname' ] = $vname;
+
+        $vardef['rname'] = 'id';
+        $vardef['type'] = 'id';
+        $vardef['reportable'] = false;
+        unset($vardef['save']);
+        $vardef['massupdate'] = false;
+        $vardef['duplicate_merge'] = 'disabled';
+        $vardef['hideacl'] = true;
 
         return $vardef ;
     }

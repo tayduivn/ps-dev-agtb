@@ -29,10 +29,11 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $createdBeans = array();
 
-    public function setUp(){
-        global $beanFiles, $beanList;
-        require('include/modules.php');
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    public function setUp()
+    {
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user');
     }
 
     public function tearDown()
@@ -42,6 +43,7 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
         }
+        SugarTestHelper::tearDown();
     }
 
     public function testCreateRelatedNote() {
