@@ -64,6 +64,9 @@
     _placeComponent: function(component) {
         if(component.name === "activitystream") {
             this.$el.find(".activitystream-list").append(component.el);
+        } else if(component.name === "activitystream-bottom") {
+            this.$el.append(component.el);
+            component.render();
         } else {
             this.$el.prepend(component.el);
         }
