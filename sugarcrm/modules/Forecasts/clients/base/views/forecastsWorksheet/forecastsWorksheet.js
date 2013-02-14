@@ -463,7 +463,7 @@
                 //if the record is dirty, warn the user.
                 if(this.isDirty()) {
                     return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
-                } else if(!_.isUndefined(this.context) && (this.context.get("currentWorksheet") == "worksheet") && this.selectedUser.isManager && app.utils.getConfigValue("show_forecasts_commit_warnings")) {
+                } else if(!_.isUndefined(this.context) && (this.context.get("currentWorksheet") == "worksheet") && this.selectedUser.isManager && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings) {
                     //special manager cases for messages
                     /*
                      * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that
@@ -771,8 +771,8 @@
         }
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
-        var sales_stage_won_setting = app.utils.getConfigValue('sales_stage_won') || [];
-        var sales_stage_lost_setting = app.utils.getConfigValue('sales_stage_lost') || [];
+        var sales_stage_won_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_won || [];
+        var sales_stage_lost_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_lost || [];
 
         _.each(self.collection.models, function(model) {
             var won = _.include(sales_stage_won_setting, model.get('sales_stage')),
@@ -855,7 +855,7 @@
      */
     updateWorksheetBySelectedRanges: function(params) {
         // Set the filters for the datatable then re-render
-        var forecast_ranges_setting = app.utils.getConfigValue('forecast_ranges') || 'show_binary';
+        var forecast_ranges_setting = app.metadata.getModule('Forecasts', 'config').forecast_ranges || 'show_binary';
 
         // start with no filters, i. e. show everything.
         if(!_.isUndefined($.fn.dataTableExt)) {

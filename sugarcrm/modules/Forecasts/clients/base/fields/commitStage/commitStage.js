@@ -62,7 +62,7 @@
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
         var self = this,
-            forecastRanges = app.utils.getConfigValue("forecast_ranges");
+            forecastRanges = app.metadata.getModule('Forecasts', 'config').forecast_ranges;
 
         //Check to see if the field is editable
         self.isEditable();
@@ -283,7 +283,7 @@
             isOwner = true;
 
         //Check to see if the sales stage is one of the configured lost or won stages.
-        sales_stages = app.utils.getConfigValue("sales_stage_won").concat(app.utils.getConfigValue("sales_stage_lost"));
+        sales_stages = app.metadata.getModule('Forecasts', 'config').sales_stage_won.concat(app.metadata.getModule('Forecasts', 'config').sales_stage_lost);
         var hasStage = _.contains(sales_stages, this.model.get('sales_stage'));
 
         //Check to see if you're a manager on someone else's sheet, disable changes
