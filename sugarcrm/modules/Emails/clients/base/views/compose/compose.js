@@ -468,10 +468,9 @@
     toggleAttachmentVisibility: function(attachments) {
         var $row = this.$('.attachments').closest('.row-fluid');
         if (attachments.length > 0) {
-            $row.slideDown();
+            $row.removeClass('hidden');
         } else {
-            $row.slideUp();
+            $row.addClass('hidden');
         }
-
     }
 })
