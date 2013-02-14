@@ -162,7 +162,7 @@
      */
     collectionSuccess: function(resp, status, xhr) {
         var records = [];
-        var users = this.selectedUser.reportees;
+        var users = $.map(this.selectedUser.reportees, function(obj){return $.extend(true, {}, obj);});
 
         // put the selected user on top
         users.unshift({id: this.selectedUser.id, name: this.selectedUser.full_name});
