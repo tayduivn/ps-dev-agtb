@@ -293,11 +293,11 @@
          */
         _tableColumnsConfigKeyMapManager: {
             'likely_case': 'show_worksheet_likely',
-            'likely_adjusted': 'show_worksheet_likely',
+            'likely_case_adjusted': 'show_worksheet_likely',
             'best_case': 'show_worksheet_best',
-            'best_adjusted': 'show_worksheet_best',
+            'best_case_adjusted': 'show_worksheet_best',
             'worst_case': 'show_worksheet_worst',
-            'worst_adjusted': 'show_worksheet_worst'
+            'worst_case_adjusted': 'show_worksheet_worst'
         },
 
         /**
@@ -328,7 +328,7 @@
                 'forecastsWorksheetTotals' : 'rep',
                 'forecastsWorksheetManager' : 'mgr',
                 'forecastsWorksheetManagerTotals' : 'mgr'
-            }
+            };
 
             // which key map to use from the moduleMap
             var whichKeyMap = moduleMap[viewName];
@@ -367,6 +367,29 @@
                 }
             }, self);
             return returnDs;
+        },
+
+        getSelectedUsersReportees: function(selectedUser, context) {
+
+            if(selectedUser.isManager) {
+                var url = app.api.buildURL('Users', 'filter'),
+                    post_args = {
+                        "filter" : [{"reports_to_id" : selectedUser.id}],
+                        "fields": "full_name"
+                    },
+                    options = {};
+                options.success = _.bind(function(resp, status, xhr) {
+                    _.each(resp.records, function(user) {
+                        selectedUser.reportees.push({id: user.id, name: user.full_name});
+                    });
+                    this.set("selectedUser", selectedUser)
+                }, context);
+                app.api.call("create", url, post_args, options);
+            } else {
+                // update context with selected user which will trigger checkRender
+                context.set("selectedUser", selectedUser);
+            }
+
         }
     };
 

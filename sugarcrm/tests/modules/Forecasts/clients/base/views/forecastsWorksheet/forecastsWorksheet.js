@@ -21,7 +21,7 @@
 
 describe("The forecasts worksheet", function(){
 
-    var app, view, testMethodStub;
+    var app, view, testMethodStub, collection, apiCallStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -41,12 +41,11 @@ describe("The forecasts worksheet", function(){
                 ranges: {}
             };
 
-        var collection = new Backbone.Collection();
-        sinon.stub(collection, 'fetch');
+        apiCallStub = sinon.stub(app.api, 'call');
 
         var context = app.context.getContext();
         context.set({'selectedTimePeriod' : new Backbone.Model({'id' : 'fake_id'})});
-        context.set({'collection' : collection});
+        context.set({'collection' : new Backbone.Collection()});
         context.config = new (Backbone.Model.extend({
             "defaults": fixtures.metadata.modules.Forecasts.config
         }));
@@ -62,8 +61,8 @@ describe("The forecasts worksheet", function(){
     });
 
     afterEach(function() {
+        apiCallStub.restore();
         app.user.unset('id');
-        view.collection.fetch.restore();
         view.unbindData();
     });
 

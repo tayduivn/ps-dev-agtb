@@ -35,56 +35,37 @@
      * @constructor
      * @param {Object} options
      */
-    initialize:function (options) {
+    initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.model.set({
-            amount : 0,
-            quota : 0,
-            best_case : 0,
-            best_adjusted : 0,
-            likely_case : 0,
-            likely_adjusted : 0,
-            worst_case : 0,
-            worst_adjusted : 0,
+            quota: 0,
+            best_case: 0,
+            best_adjusted: 0,
+            likely_case: 0,
+            likely_adjusted: 0,
+            worst_case: 0,
+            worst_adjusted: 0,
             show_worksheet_likely: options.context.config.get('show_worksheet_likely'),
             show_worksheet_best: options.context.config.get('show_worksheet_best'),
-            show_worksheet_worst: options.context.config.get('show_worksheet_worst'),
-
+            show_worksheet_worst: options.context.config.get('show_worksheet_worst')
         });
     },
 
-    /**
-     * Clean up any left over bound data to our context
-     */
-    unbindData : function() {
-        if(this.context) this.context.off(null, null, this);
-        app.view.View.prototype.unbindData.call(this);
-    },
 
     bindDataChange: function() {
-        var self = this;
-        this.context.on('change:updatedManagerTotals', function(context, totals){
-            self.model.set( totals );
-            self._render();
-        });
+        // only trigger the render when this actually change from the totals changing
+        this.model.on('change', function() {
+            this._render();
+        }, this);
+
+        this.context.on('forecasts:worksheetManager:updateTotals', function(totals) {
+            this.model.set(totals);
+        }, this);
 
         // re-render when the worksheet is rendered as well,
         this.context.on('forecasts:worksheetmanager:rendered', function() {
-            self._render();
-        });
-
-        /*
-         * // TODO: tagged for 6.8 see SFA-253 for details
-        //Listen for config changes
-        this.context.config.on('change:show_worksheet_likely change:show_worksheet_best change:show_worksheet_worst', function(context, value) {
-            self.model.set({
-                show_worksheet_likely: context.get('show_worksheet_likely') == 1,
-                show_worksheet_best: context.get('show_worksheet_best') == 1,
-                show_worksheet_worst: context.get('show_worksheet_worst') == 1
-            });
-            self._render();
-        });
-        */
+            this._render();
+        }, this);
     },
 
     /**
