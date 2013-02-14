@@ -47,7 +47,7 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $account->name = "ModulaApiTest setUp Account";
         $account->save();
         $this->accounts[] = $account;
-        $this->serviceMock = SugarTestRestUtilities::getMock();
+        $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
     public function tearDown() {

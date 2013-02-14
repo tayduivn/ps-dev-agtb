@@ -55,7 +55,7 @@ class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase
         // load up the unifiedSearchApi for good times ahead
         $this->unifiedSearchApi = new UnifiedSearchApi();
         $this->moduleApi = new ModuleApi();
-        $this->serviceMock = SugarTestRestUtilities::getMock();
+        $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
     public function tearDown()

@@ -62,7 +62,7 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             );
         $this->bean = $mock;
-        $serviceMock = SugarTestRestUtilities::getMock();
+        $serviceMock = SugarTestRestUtilities::getRestServiceMock();
         $this->beanApiHelper = new SugarBeanApiHelper($serviceMock);
     }
 
