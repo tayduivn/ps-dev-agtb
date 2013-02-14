@@ -183,5 +183,14 @@ describe('copy field', function() {
                 expect(field.model.get(target)).toEqual(prev.get(source));
             });
         });
+
+        it('should use format as internal sync mode', function() {
+            expect(field.format(true)).toEqual(true);
+            expect(field.format(null)).toEqual(field._inSync);
+        });
+
+        it('should return null on unformat', function() {
+            expect(field.unformat()).toEqual(null);
+        });
     });
 });

@@ -32,6 +32,17 @@ $viewdefs['base']['view']['selection-headerpane'] = array(
     'type' => 'headerpane',
     'buttons' => array(
         array(
+            'name' => 'close',
+            'type' => 'button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'events' => array(
+                'click' => 'function(evt) {
+                    app.drawer.close();
+                }'
+            ),
+            'css_class' => 'btn-invisible btn-link',
+        ),
+        array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',
         ),

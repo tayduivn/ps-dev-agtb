@@ -32,13 +32,13 @@
     <tr>
         {{#each fields}}
         {{#if enabled}}
-        <th class="header-{{name}}">{{str label ../../../viewModule}}</th>
+        <th>{{str label ../../../module}}</th>
         {{/if}}
         {{/each}}
     </tr>
     </thead>
     <tbody>
-    {{#each ../_collection.models}}
+    {{#each ../collection.models}}
     <tr>
         {{#each ../fields}}
         {{#if enabled}}

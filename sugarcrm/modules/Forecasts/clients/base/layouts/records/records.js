@@ -54,19 +54,19 @@
      */
     forecastsJavascript: "",
 
-    initialize: function (options) {
+    initialize: function(options) {
         var self = this,
             url = app.api.buildURL("Forecasts/init");
 
         // we need this to be set here so anytime this gets initialized, it will work.
         this.deferredRender = new $.Deferred();
         app.api.call('GET', url, null, {
-            success: function (data) {
+            success: function(data) {
 
                 // Add Forecasts-specific stuff to the app.user object
                 app.user.set(data.initData.userData);
 
-                if (data.initData.forecasts_setup === 0) {
+                if(data.initData.forecasts_setup === 0) {
                     window.location.hash = "#Forecasts/layout/config";
                 } else {
                     return self.initForecastsModule(data, options, self);
@@ -75,7 +75,7 @@
         });
     },
 
-    initForecastsModule: function (forecastData, options, ctx) {
+    initForecastsModule: function(forecastData, options, ctx) {
         // set the forecasts specific JS.
         $("#content").append($('<script src="' + forecastData.forecastsJavascript + '"></script>'));
 
@@ -85,12 +85,10 @@
 
         ctx.componentsMeta = options.meta.components;
 
-        options.context = _.extend(options.context, ctx.initializeAllModels());
-
         // Initialize the config model
         var ConfigModel = Backbone.Model.extend({
             url: app.api.buildURL("Forecasts", "config"),
-            sync: function (method, model, options) {
+            sync: function(method, model, options) {
                 var url = _.isFunction(model.url) ? model.url() : model.url;
                 return app.api.call(method, url, model, options);
             },
@@ -131,11 +129,6 @@
             updatedTotals: {},
 
             /**
-             * used across Forecasts to contain manager worksheet totals
-             */
-            updatedManagerTotals: {},
-
-            /**
              * todo-sfa keep track of changes to modal.js and when they have proper events being passed
              * we can do away with this
              *
@@ -165,26 +158,26 @@
      *
      * Override this method to provide custom fetch algorithm.
      */
-    loadData: function () {
+    loadData: function() {
         this.fetchAllModels();
     },
 
     /**
      * Iterates through all the loaded models & collections as defined in metadata and does a "fetch" on it
      */
-    fetchAllModels: function () {
+    fetchAllModels: function() {
         var self = this;
-        _.each(this.componentsMeta, function (component) {
+        _.each(this.componentsMeta, function(component) {
 
-            if (component.model && component.model.name) {
+            if(component.model && component.model.name) {
                 self.context[component.model.name.toLowerCase()].fetch();
             }
 
-            if (component.contextCollection && component.contextCollection.name) {
+            if(component.contextCollection && component.contextCollection.name) {
                 self.context[component.contextCollection.name.toLowerCase()].fetch();
             }
 
-            if (component.collection && component.collection.name) {
+            if(component.collection && component.collection.name) {
                 self.context[component.collection.name.toLowerCase()].fetch();
             }
 
@@ -196,29 +189,29 @@
      * @return {Object} new instance of the main model, which contains instances of the sub-models for each view
      * as defined in metadata.
      */
-    initializeAllModels: function () {
+    initializeAllModels: function() {
         var self = this,
             componentsMetadata = this.componentsMeta,
             models = {};
 
         // Loops through components from the metadata, and creates their models/collections, as defined
-        _.each(componentsMetadata, function (component) {
+        _.each(componentsMetadata, function(component) {
             var name,
                 modelMetadata = component.model,
                 context = component.contextCollection,
                 collectionMetadata = component.collection;
 
-            if (modelMetadata) {
+            if(modelMetadata) {
                 name = modelMetadata.name.toLowerCase();
                 models[name] = self.createModel(modelMetadata, "Forecasts");
             }
 
-            if (context) {
+            if(context) {
                 name = context.name.toLowerCase();
                 models[name] = self.createCollection();
             }
 
-            if (collectionMetadata) {
+            if(collectionMetadata) {
                 name = collectionMetadata.name.toLowerCase();
                 models[name] = self.createCollection();
                 models[name].url = app.config.serverUrl + '/Forecasts/' + name;
@@ -234,30 +227,30 @@
      * @param module
      * @return {*} instance of a backbone model.
      */
-    createModel: function (modelMetadata, module) {
+    createModel: function(modelMetadata, module) {
 
         var Model = Backbone.Model.extend({
             // Fetch the model from the server. If the server's representation of the
             // model differs from its current attributes, they will be overriden,
             // triggering a `"change"` event.
-            fetch: function (options) {
+            fetch: function(options) {
                 options = options ? _.clone(options) : {};
-                if (options.parse === void 0) options.parse = true;
+                if(options.parse === void 0) options.parse = true;
                 var model = this;
                 var success = options.success;
-                options.success = function (resp) {
-                    if (!model.set(model.parse(resp, options), options)) return false;
-                    if (success) success(model, resp, options);
+                options.success = function(resp) {
+                    if(!model.set(model.parse(resp, options), options)) return false;
+                    if(success) success(model, resp, options);
                     model.trigger('sync', model, resp, options);
                 };
                 var error = options.error;
-                options.error = function (resp) {
-                    if (error) error(model, resp, options);
+                options.error = function(resp) {
+                    if(error) error(model, resp, options);
                     model.trigger('error', model, resp, options);
                 };
                 return this.sync('read', this, options);
             },
-            sync: function (method, model, options) {
+            sync: function(method, model, options) {
                 this.trigger("data:sync:start", method, model, options);
                 myURL = app.api.buildURL(module, modelMetadata.name.toLowerCase());
                 return app.api.call(method, myURL, null, options);
@@ -273,30 +266,30 @@
      * @param module
      * @return {*} instance of a backbone collection.
      */
-    createCollection: function () {
+    createCollection: function() {
         var Collection = Backbone.Collection.extend({
             model: Backbone.Model.extend({
                 // Fetch the model from the server. If the server's representation of the
                 // model differs from its current attributes, they will be overriden,
                 // triggering a `"change"` event.
-                fetch: function (options) {
+                fetch: function(options) {
                     options = options ? _.clone(options) : {};
-                    if (options.parse === void 0) options.parse = true;
+                    if(options.parse === void 0) options.parse = true;
                     var model = this;
                     var success = options.success;
-                    options.success = function (resp) {
-                        if (!model.set(model.parse(resp, options), options)) return false;
-                        if (success) success(model, resp, options);
+                    options.success = function(resp) {
+                        if(!model.set(model.parse(resp, options), options)) return false;
+                        if(success) success(model, resp, options);
                         model.trigger('sync', model, resp, options);
                     };
                     var error = options.error;
-                    options.error = function (resp) {
-                        if (error) error(model, resp, options);
+                    options.error = function(resp) {
+                        if(error) error(model, resp, options);
                         model.trigger('error', model, resp, options);
                     };
                     return this.sync('read', this, options);
                 },
-                sync: function (method, model, options) {
+                sync: function(method, model, options) {
                     this.trigger("data:sync:start", method, model, options);
                     var url = _.isFunction(model.url) ? model.url() : model.url;
                     return app.api.call(method, url, model, options);
@@ -310,7 +303,7 @@
              * @param options
              * @return {*}
              */
-            sync: function (method, model, options) {
+            sync: function(method, model, options) {
                 this.trigger("data:sync:start", method, model, options);
                 var url = _.isFunction(model.url) ? model.url() : model.url;
                 return app.api.call(method, url, null, options);
@@ -318,20 +311,20 @@
             // Fetch the default set of models for this collection, resetting the
             // collection when they arrive. If `update: true` is passed, the response
             // data will be passed through the `update` method instead of `reset`.
-            fetch: function (options) {
+            fetch: function(options) {
                 options = options ? _.clone(options) : {};
-                if (options.parse === void 0) options.parse = true;
+                if(options.parse === void 0) options.parse = true;
                 var success = options.success;
                 var collection = this;
-                options.success = function (resp) {
+                options.success = function(resp) {
                     var method = options.update ? 'update' : 'reset';
                     collection[method](resp, options);
-                    if (success) success(collection, resp, options);
+                    if(success) success(collection, resp, options);
                     collection.trigger('sync', collection, resp, options);
                 };
                 var error = options.error;
-                options.error = function (resp) {
-                    if (error) error(collection, resp, options);
+                options.error = function(resp) {
+                    if(error) error(collection, resp, options);
                     collection.trigger('error', collection, resp, options);
                 };
                 return this.sync('read', this, options);
@@ -345,7 +338,7 @@
      * Add a view (or layout) to this layout.
      * @param {View.Layout/View.View} comp Component to add
      */
-    _placeComponent: function (comp) {
+    _placeComponent: function(comp) {
         var compName = comp.name || comp.meta.name,
             divName = ".view-" + compName;
 
@@ -354,17 +347,17 @@
         // then we can set placeInLayout => false and we create all the models and such
         // from the rest of metadata, but we just dont place it into the html of the layout
         // as another view will be handling that
-        if (_.has(comp, 'meta') && !_.isUndefined(comp.meta) &&
+        if(_.has(comp, 'meta') && !_.isUndefined(comp.meta) &&
             _.has(comp.meta, 'placeInLayout') && comp.meta.placeInLayout == false) {
             return;
         }
 
-        if (!this.$el.children()[0]) {
+        if(!this.$el.children()[0]) {
             this.$el.addClass("complex-layout");
         }
 
         //add the components to the div
-        if (compName && this.$el.find(divName)[0]) {
+        if(compName && this.$el.find(divName)[0]) {
             this.$el.find(divName).append(comp.$el);
         } else {
             this.$el.append(comp.$el);
@@ -377,9 +370,9 @@
      * @return {*}
      * @private
      */
-    _render: function () {
+    _render: function() {
         var self = this;
-        $.when(self.deferredRender).done(function () {
+        $.when(self.deferredRender).done(function() {
             app.view.Layout.prototype._render.call(self);
 
             // init the alerts

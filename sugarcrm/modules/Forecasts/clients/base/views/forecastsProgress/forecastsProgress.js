@@ -163,7 +163,7 @@
             }, this);
 
             //Manager totals model has changed
-            this.context.on("change:updatedManagerTotals", function(context, totals) {
+            this.context.on("forecasts:worksheetManager:updateTotals", function(totals) {
                 if(self.shouldRollup) {
                     self.recalculateManagerTotals(totals);
                 }

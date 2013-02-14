@@ -61,7 +61,7 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 ),
                 'priority',
                 'account_name',
-                'type',
+                'status',
                 array(
                     'name' => 'resolution',
                     'nl2br' => true,
@@ -88,6 +88,8 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'type',
+                array(),
                 'assigned_user_name',
 //BEGIN SUGARCRM flav=pro ONLY
                 array(

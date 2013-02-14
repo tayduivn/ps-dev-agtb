@@ -75,7 +75,7 @@ $mod_strings = array(
 'LNK_IMPORT_VCARD' => 'Create From vCard',
 'LBL_ANY_EMAIL' => 'Any Email',
 //BEGIN SUGARCRM flav!=com ONLY
-'LBL_PICTURE_FILE' => 'Picture',
+'LBL_PICTURE_FILE' => 'Avatar',
 //END SUGARCRM flav!=com ONLY
 
 'LBL_EDIT_BUTTON' => 'Edit',

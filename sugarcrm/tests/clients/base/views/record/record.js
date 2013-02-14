@@ -333,35 +333,6 @@ describe("Record View", function() {
             });
         });
 
-        it("Should show save and cancel buttons and hide edit button when data changes", function() {
-
-            view.model.set({
-                name: 'Name',
-                case_number: 123,
-                description: 'Description'
-            });
-            view.render();
-            view.editMode = true;
-            view.model.set({
-                name: 'Foo',
-                case_number: 123,
-                description: 'Description'
-            });
-
-            expect(view.getField('save_button').getFieldElement().css('display')).toBe('none');
-            expect(view.getField('cancel_button').getFieldElement().css('display')).toBe('none');
-            expect(view.getField('edit_button').getFieldElement().css('display')).not.toBe('none');
-
-            view.context.trigger('button:edit_button:click');
-            view.model.set({
-                name: 'Bar'
-            });
-
-            expect(view.getField('save_button').getFieldElement().css('display')).not.toBe('none');
-            expect(view.getField('cancel_button').getFieldElement().css('display')).not.toBe('none');
-            expect(view.getField('edit_button').getFieldElement().css('display')).toBe('none');
-        });
-
         it("Should revert data back to the old value when the cancel button is clicked after data has been changed", function() {
             view.render();
             view.model.set({
@@ -803,6 +774,39 @@ describe("Record View", function() {
                 // case: field.span and field.labelSpan are undefined, and field.dismiss_label is true
                 expect(results[4][1].span).toBe(6);
                 expect(results[4][1].labelSpan).toBe(2);
+            });
+        });
+
+        describe('Header panel', function() {
+            it('Should set isAvatar to false if the header doesn\'t the picture field', function() {
+                view._renderPanels(view.meta.panels);
+                expect(view.meta.panels[0].isAvatar).toBeFalsy();
+            });
+
+            it('Should set isAvatar to true if the header contains the picture field', function() {
+                var meta = {
+                            "panels": [{
+                                "name": "panel_header",
+                                "header": true,
+                                "fields": ["picture","name"]
+                            }, {
+                                "name": "panel_body",
+                                "label": "LBL_PANEL_2",
+                                "columns": 1,
+                                "labels": true,
+                                "labelsOnTop": false,
+                                "placeholders":true,
+                                "fields": ["description","case_number","type"]
+                            }, {
+                                "name": "panel_hidden",
+                                "hide": true,
+                                "labelsOnTop": false,
+                                "placeholders": true,
+                                "fields": ["created_by","date_entered","date_modified","modified_user_id"]
+                            }]
+                        };
+                view._renderPanels(meta.panels);
+                expect(meta.panels[0].isAvatar).toBeTruthy();
             });
         });
     });
