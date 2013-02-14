@@ -20,7 +20,7 @@
  ********************************************************************************/
 
 describe("forecast editableInt field", function () {
-    var field, fieldDef, context, model;
+    var field, fieldDef, context, model, configStub;
 
     beforeEach(function () {
         var app = SugarTest.app;
@@ -31,6 +31,11 @@ describe("forecast editableInt field", function () {
 
         SugarTest.loadFile("../sidecar/src/utils", "utils", "js", function (d) {
             return eval(d);
+        });
+
+        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
+        configStub = sinon.stub(app.utils, 'getConfigValue', function(key){
+            return fixtures.metadata.modules.Forecasts.config[key]
         });
 
         context.set({"selectedUser" : {'id' : app.user.get('id')}});
@@ -50,6 +55,7 @@ describe("forecast editableInt field", function () {
     });
 
     afterEach(function() {
+        configStub.restore();
         delete field;
         delete context;
         delete model;
@@ -75,9 +81,13 @@ describe("forecast editableInt field", function () {
 
     describe("isEditable", function() {
         it("should be false with same user and configured excluded sales stage", function() {
-            field.context.config.set('sales_stage_won', ["test_sales_stage"]);
+            var orgValue = fixtures.metadata.modules.Forecasts.config.sales_stage_won;
+            fixtures.metadata.modules.Forecasts.config.sales_stage_won = ["test_sales_stage"];
+
             field.checkIfCanEdit();
             expect(field.isEditable()).toBeFalsy();
+
+            fixtures.metadata.modules.Forecasts.config.sales_stage_won = orgValue
         });
         it("should be true with same user and no configured excluded sales stage", function() {
             expect(field.isEditable()).toBeTruthy();

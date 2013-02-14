@@ -21,21 +21,20 @@
 
 describe("Forecasts Utils", function(){
 
-    var app, hbt_helper, config;
+    var app, hbt_helper, configStub;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../modules/Forecasts/clients/base/helper","hbt-helpers", "js", function(d) { return eval(d); });
-        config = new (Backbone.Model.extend({
-            "defaults": fixtures.metadata.modules.Forecasts.config
-        }));
-
+        configStub = sinon.stub(app.utils, 'getConfigValue', function(key){
+            return fixtures.metadata.modules.Forecasts.config[key]
+        });
     });
 
     afterEach(function() {
-        config = null;
+        configStub.restore();
     });
 
     describe("test getCommittedHistoryLabel function", function() {
@@ -193,12 +192,12 @@ describe("Forecasts Utils", function(){
     });
 
     describe("test createHistoryLog function", function() {
+        var orgConfig;
         beforeEach(function() {
-            config.set({
-                show_worksheet_likely : false,
-                show_worksheet_best : false,
-                show_worksheet_worst : false
-            });
+            orgConfig = fixtures.metadata.modules.Forecasts.config;
+            fixtures.metadata.modules.Forecasts.config.show_worksheet_likely = false;
+            fixtures.metadata.modules.Forecasts.config.show_worksheet_best  = false;
+            fixtures.metadata.modules.Forecasts.config.show_worksheet_worst = false;
             newestModel = new Backbone.Model();
             oldestModel = new Backbone.Model();
             // set the exact same default models so change is not a factor in these tests
@@ -217,6 +216,7 @@ describe("Forecasts Utils", function(){
         });
 
         afterEach(function(){
+            fixtures.metadata.modules.Forecasts.config = orgConfig;
             newestModel = null;
             oldestModel = null;
         });
@@ -224,27 +224,21 @@ describe("Forecasts Utils", function(){
         // These tests are only testing createHistoryLog and the returned lang string which
         // shows how many columns should be shown based on config params
         it("The one column lang string should be used", function() {
-            config.set({
-                show_worksheet_likely : true
-            });
-            result = app.utils.createHistoryLog(oldestModel,newestModel,config);
+            fixtures.metadata.modules.Forecasts.config.show_worksheet_likely = true;
+            result = app.utils.createHistoryLog(oldestModel,newestModel);
             expect(result.text == 'LBL_COMMITTED_HISTORY_1_SHOWN').toBeTruthy();
         });
         it("The two column lang string should be used", function() {
-            config.set({
-                show_worksheet_likely : true,
-                show_worksheet_best : true
-            });
-            result = app.utils.createHistoryLog(oldestModel,newestModel,config);
+            fixtures.metadata.modules.Forecasts.config.show_worksheet_likely = true;
+            fixtures.metadata.modules.Forecasts.config.show_worksheet_best = true;
+            result = app.utils.createHistoryLog(oldestModel,newestModel);
             expect(result.text == 'LBL_COMMITTED_HISTORY_2_SHOWN').toBeTruthy();
         });
         it("The three column lang string should be used", function() {
-            config.set({
-                show_worksheet_likely : true,
-                show_worksheet_best : true,
-                show_worksheet_worst : true
-            });
-            result = app.utils.createHistoryLog(oldestModel,newestModel,config);
+            fixtures.metadata.modules.Forecasts.config.show_worksheet_likely = true;
+            fixtures.metadata.modules.Forecasts.config.show_worksheet_best = true;
+            fixtures.metadata.modules.Forecasts.config.show_worksheet_worst = true;
+            result = app.utils.createHistoryLog(oldestModel,newestModel);
             expect(result.text == 'LBL_COMMITTED_HISTORY_3_SHOWN').toBeTruthy();
         });
     });
