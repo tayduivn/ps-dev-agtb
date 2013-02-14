@@ -1074,7 +1074,7 @@ footer {
   color: #58595B !important;
 }
 h1 {
-  font-size: 20px !important;
+  font-size: 20px;
   font-weight: normal;
 }
 h4 i {
@@ -1307,7 +1307,7 @@ article:hover {
   width: 12px;
   height: 12px;
   display: inline-block;
-  line-height: 12px;
+  line-height: 18px;
   font-size: 13px;
 }
 .btn.active,
@@ -5333,7 +5333,7 @@ body.preview .side-pane.active {
   border-radius: 4px;
 }
 .cube {
-  background: url('../../assets/img/badge_256g.png') 12px 8px no-repeat;
+  background: url('../../assets/img/badge_256f.png') 14px 11px no-repeat;
   float: left;
   height: 19px;
   width: 36px;
@@ -5770,7 +5770,6 @@ header .subnav {
 }
 .subnav h1 {
   text-shadow: 0 -1px 1px rbga(255,255,255,.1);
-  font-size: 20px !important;
   font-weight: 500;
   margin-top: -5px;
 }
@@ -7256,8 +7255,10 @@ body.full-screen .nv-chart {
   widthh: 54%;
 }
 #guages .row-fluid.purpose {
+  height: auto;
   overflow: hidden;
-  height: 50px;
+  padding-bottom: 10px;
+  border-top: 2px solid #e8e8e8;
   border-bottom: none;
 }
 .preview table.table.dataTable th.preview.above,
@@ -8194,17 +8195,24 @@ h3.popover-title {
     -webkit-print-color-adjust: exact;
   }
 }
+#contentflex #headerbar h1,
 .headerpane h1 {
   float: left;
   margin-top: 9px;
   margin-left: 20px;
 }
+#contentflex #headerbar .view-forecastsTitle h1,
+.headerpane .view-forecastsTitle h1 {
+  margin-top: 12px;
+}
+#contentflex #headerbar .label-module,
 .headerpane .label-module {
   width: 32px !important;
   height: 32px !important;
   vertical-align: top;
   margin-left: 15px !important;
 }
+#contentflex #headerbar .record-cell,
 .headerpane .record-cell {
   margin-left: 0;
   display: inline-block;
@@ -8212,85 +8220,125 @@ h3.popover-title {
   position: relative;
   line-height: 40px;
 }
+#contentflex #headerbar .ellipsis_inline,
 .headerpane .ellipsis_inline {
   margin-left: 10px;
   padding: 1px 2px;
 }
+#contentflex #headerbar .label,
 .headerpane .label {
   vertical-align: top;
   margin-top: 13px;
 }
+#contentflex #headerbar span[data-type="image"] .record-edit-link-wrapper,
 .headerpane span[data-type="image"] .record-edit-link-wrapper {
   left: -30px;
 }
+#contentflex #headerbar span[data-type="text"] .record-edit-link-wrapper,
+#contentflex #headerbar span[data-type="fieldset"] .record-edit-link-wrapper,
+.headerpane span[data-type="text"] .record-edit-link-wrapper,
 .headerpane span[data-type="fieldset"] .record-edit-link-wrapper {
   left: -20px;
 }
+#contentflex #headerbar span[data-type="text"] span,
+#contentflex #headerbar span[data-type="fieldset"] span,
+.headerpane span[data-type="text"] span,
 .headerpane span[data-type="fieldset"] span {
   display: inline-block;
 }
+#contentflex #headerbar span[data-type="favorite"],
 .headerpane span[data-type="favorite"] {
   margin-left: 12px;
 }
+#contentflex #headerbar span[data-type="favorite"] [class="icon-favorite"],
 .headerpane span[data-type="favorite"] [class="icon-favorite"] {
   font-size: 18px !important;
   color: #bbb;
 }
+#contentflex #headerbar span[data-type="favorite"]:hover [class="icon-favorite"],
 .headerpane span[data-type="favorite"]:hover [class="icon-favorite"] {
   color: #58595B;
 }
+#contentflex #headerbar .record-edit-link-wrapper,
 .headerpane .record-edit-link-wrapper {
   position: absolute;
 }
+#contentflex #headerbar .record-edit-link-wrapper .record-edit-link.btn-invisible:hover,
 .headerpane .record-edit-link-wrapper .record-edit-link.btn-invisible:hover {
   border: 1px solid transparent;
   background: none;
 }
+#contentflex #headerbar .record-edit-link-wrapper .icon-pencil,
 .headerpane .record-edit-link-wrapper .icon-pencil {
   text-decoration: none;
   cursor: pointer;
 }
+#contentflex #headerbar .record-label,
+.headerpane .record-label {
+  font-size: 11px;
+  font-color: #8b8c8e;
+  line-height: 14px;
+  margin: -6px 0 0 10px;
+}
+#contentflex #headerbar input[type="text"],
 .headerpane input[type="text"] {
   font-size: 20px;
   height: 26px;
   margin: -1px 0 0 5px;
 }
+#contentflex #headerbar .create input[type="text"],
+.headerpane .create input[type="text"] {
+  font-size: 18px;
+  height: 24px;
+  margin: 0 0 0 3px;
+}
+#contentflex #headerbar .select2-container,
 .headerpane .select2-container {
   margin-left: 8px;
   width: 88px;
 }
+#contentflex #headerbar .select2-container .select2-choice,
 .headerpane .select2-container .select2-choice {
   margin-top: 0;
   height: 30px;
   padding: 4px 0 4px 8px;
 }
+#contentflex #headerbar .select2-container .select2-choice div,
 .headerpane .select2-container .select2-choice div {
   padding: 4px 2px;
 }
+#contentflex #headerbar .select2-container .select2-choice abbr,
 .headerpane .select2-container .select2-choice abbr {
   top: 10px;
 }
+#contentflex #headerbar .btn-toolbar,
 .headerpane .btn-toolbar {
   margin: 16px 8px 0;
 }
+#contentflex #headerbar .btn-toolbar .btn-group,
 .headerpane .btn-toolbar .btn-group {
   vertical-align: middle;
 }
+#contentflex #headerbar .btn-group-previous-next,
 .headerpane .btn-group-previous-next {
   margin: 0 8px;
 }
+#contentflex #headerbar .btn-group-previous-next .btn [class^="icon-"],
 .headerpane .btn-group-previous-next .btn [class^="icon-"] {
   font-size: 16px;
   line-height: 20px;
 }
+#contentflex #headerbar.btn-group > .btn,
 .headerpane.btn-group > .btn {
   float: none;
 }
+#contentflex #headerbar .dropdown-menu,
 .headerpane .dropdown-menu {
   left: auto;
   right: 0;
   z-index: 1001;
 }
+#contentflex #headerbar .dropdown-menu:after,
 .headerpane .dropdown-menu:after {
   content: '';
   display: inline-block;
@@ -8302,6 +8350,7 @@ h3.popover-title {
   left: auto;
   right: 8px;
 }
+#contentflex #headerbar .dropdown-menu:before,
 .headerpane .dropdown-menu:before {
   content: '';
   display: inline-block;
@@ -8314,10 +8363,13 @@ h3.popover-title {
   left: auto;
   right: 7px;
 }
+#contentflex #headerbar .drawerTrig [class*="icon-"],
 .headerpane .drawerTrig [class*="icon-"] {
   font-size: 25px;
   font-weight: 700;
+  vertical-align: top;
 }
+#contentflex #headerbar .drawerTrig .icon-double-angle-left,
 .headerpane .drawerTrig .icon-double-angle-left {
   margin: 0 2px 0 -2px;
 }
@@ -8634,7 +8686,7 @@ h3.popover-title {
   margin-bottom: 16px;
 }
 .show-hide-toggle {
-  margin: 0 20px 10px 30px;
+  margin: 0 20px 10px 20px;
 }
 .highlightit img {
   filter: progid:DXImageTransform.Microsoft.Alpha(opacity=50);
