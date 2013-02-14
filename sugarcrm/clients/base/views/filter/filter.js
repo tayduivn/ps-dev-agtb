@@ -103,7 +103,9 @@
                 this.relatedFilterNode.select2("disable", true);
             }
 
-            this.customFilterNode.select2("val", defaultId);
+            this.customFilterNode.on("change", this.sanitizeFilter);
+
+            this.customFilterNode.select2("val", defaultId).trigger("change", defaultId);
             this.relatedFilterNode.select2("val", "default");
 
             this.relatedFilterNode.on("change", function(e) {
@@ -118,7 +120,6 @@
                 }
             }, 400);
 
-            this.customFilterNode.on("change", this.sanitizeFilter);
             this.$('.search-name').on("keyup", this.throttledSearch);
         }
     },
@@ -158,12 +159,16 @@
         // TODO: Determine whether active filters should be highlighted in bold in this menu.
         return '<div><span class="select2-match"></span>'+ option.text +'</div>';
     },
+
     /**
-     * Contains business logic to control the behavior of new filters being added.
+     * This function is a handler for when the custom filter dropdown value changes.
+     * (Either via a click or manually calling jQuery's .trigger("change") event).
+     * @param  {obj} e      jQuery Change Event Object.
+     * @param  {string} newVal (optional) ID passed in when manually changing the filter dropdown value.
      */
-    sanitizeFilter: function(e){
+    sanitizeFilter: function(e, newVal) {
         var self = this,
-            val = e.val;
+            val = e.val || newVal;
 
         if(val === "create") {
             // Create a new filter.

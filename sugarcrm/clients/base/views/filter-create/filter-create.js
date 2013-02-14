@@ -264,8 +264,9 @@
     },
 
     save: function() {
-        var self = this;
-        var val = this.$(".filter-header input").val();
+        var self = this,
+            val = this.$(".filter-header input").val();
+
         if(val) {
             this.$(".save_button").addClass("disabled");
             this.$(".delete_button").removeClass("hide");
