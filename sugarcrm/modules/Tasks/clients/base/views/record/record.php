@@ -134,7 +134,6 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                 'name',
                 array(
                     'type' => 'favorite',
-                    'noedit' => true,
                 ),
             )
         ),

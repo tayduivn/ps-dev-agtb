@@ -48,7 +48,6 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'favorite',
-                    'noedit' => true,
                 ),
             )
         ),

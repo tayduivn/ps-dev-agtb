@@ -121,7 +121,6 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'favorite',
-                    'noedit' => true,
                 ),
             )
         ),

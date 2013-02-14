@@ -121,12 +121,11 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'badge',
-                    'noedit'=> true,
+                    'readonly'=> true,
                     'related_fields' => array('converted', 'account_id', 'contact_id', 'contact_name', 'opportunity_id', 'opportunity_name'),
                 ),
                 array(
                     'type'   => 'favorite',
-                    'noedit' => true,
                 ),
             ),
         ),

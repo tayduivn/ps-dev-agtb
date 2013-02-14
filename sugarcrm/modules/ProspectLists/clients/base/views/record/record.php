@@ -38,7 +38,6 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                 'name',
                 array(
                     'type' => 'favorite',
-                    'noedit' => true,
                 ),
             )
         ),
@@ -60,7 +59,7 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                 'assigned_user_name',
                 array(
                     'name' => 'date_modified_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_MODIFIED',
                     'fields' => array(
@@ -84,7 +83,7 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                 //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'date_entered_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_ENTERED',
                     'fields' => array(
