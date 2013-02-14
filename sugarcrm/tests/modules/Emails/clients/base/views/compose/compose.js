@@ -438,4 +438,31 @@ describe("Emails.Views.Compose", function() {
             expect(view.model.get('subject')).toEqual(subject);
         });
     });
+    
+    describe('InitializeSendEmailModel', function() {
+        beforeEach(function() {
+            view.model.off('change');
+        });
+
+        it('should populate the send model attachments/documents correctly with both attachments and sugar documents', function() {
+            var sendModel,
+                attachment1 = {id:'123',type:'upload'},
+                attachment2 = {id:'123',type:'document'},
+                attachment3 = {id:'123',type:'foo'};
+
+            view.model.set('attachments', [attachment1,attachment2,attachment3]);
+            sendModel = view.initializeSendEmailModel();
+            expect(sendModel.get('attachments')).toEqual([attachment1]);
+            expect(sendModel.get('documents')).toEqual([attachment2]);
+        });
+
+        it('should populate the send model attachments/documents as empty when attachments not set', function() {
+            var sendModel;
+            view.model.unset('attachments');
+            sendModel = view.initializeSendEmailModel();
+            expect(sendModel.get('attachments')).toEqual([]);
+            expect(sendModel.get('documents')).toEqual([]);
+        });
+    });
+
 });
