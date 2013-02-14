@@ -33,19 +33,19 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
             'fields' => array(
                 array(
                   'name'=>  'bug_number',
-                   'default'=>true
+                   'default'=>true,
                 ),
                 array(
                     'name'=>  'name',
-                    'default'=>true
+                    'default'=>true,
                 ),
                 array(
                     'name'=>  'status',
-                    'default'=>true
+                    'default'=>true,
                 ),
                 array(
                     'name'=>  'priority',
-                    'default'=>true
+                    'default'=>true,
                 ),
                 array(
                     'name'=>  'fixed_in_release_name',
@@ -58,11 +58,11 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
                 ),
                 array(
                     'name'=>  'release_name',
-                    'default'=>false
+                    'default'=>false,
                 ),
                 array(
                     'name'=>  'resolution',
-                    'default'=>false
+                    'default'=>false,
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
