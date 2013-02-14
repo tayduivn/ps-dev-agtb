@@ -20,7 +20,7 @@
  ********************************************************************************/
 
 describe("forecast commitStage field", function() {
-    var field, fieldDef, context, model, configStub;
+    var field, fieldDef, context, model;
     
     beforeEach(function() {
         fieldDef = {
@@ -31,11 +31,6 @@ describe("forecast commitStage field", function() {
 
         app = SugarTest.app;
 
-        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-        configStub = sinon.stub(app.utils, 'getConfigValue', function(key){
-            return fixtures.metadata.modules.Forecasts.config[key]
-        });
-
         app.user.id = "tester";
         sinon.stub(app.lang, "getAppListStrings", function(){
             return {test:"test"};
@@ -44,7 +39,6 @@ describe("forecast commitStage field", function() {
     });
     
     afterEach(function(){
-        configStub.restore();
         app.lang.getAppListStrings.restore();
         app.user.id = null;
         delete app;

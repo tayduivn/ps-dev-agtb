@@ -20,7 +20,7 @@
  ********************************************************************************/
 
 describe("The forecasts worksheet totals calculation test", function(){
-    var app, view, context, formatWithRateStub, configStub;
+    var app, view, context, formatWithRateStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -37,14 +37,9 @@ describe("The forecasts worksheet totals calculation test", function(){
         formatWithRateStub = sinon.stub(app.currency, "convertWithRate", function(amount, rate) {
             return Math.round(parseFloat(amount / rate) * Math.pow(10, 2)) / Math.pow(10, 2);
         });
-        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-        configStub = sinon.stub(app.utils, 'getConfigValue', function(key){
-            return fixtures.metadata.modules.Forecasts.config[key]
-        });
     });
 
     afterEach(function() {
-        configStub.restore();
         formatWithRateStub.restore();
     });
 
