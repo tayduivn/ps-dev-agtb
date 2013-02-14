@@ -193,7 +193,7 @@
 
         //TODO probably need to check if we can sort this field from metadata
         collection = self.collection;
-        eventTarget = self.$(event.target);
+        eventTarget = self.$(event.currentTarget);
         fieldName = eventTarget.data('fieldname');
 
         // first check if alternate orderby is set for column
