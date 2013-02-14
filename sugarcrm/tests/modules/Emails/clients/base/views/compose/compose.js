@@ -368,8 +368,7 @@ describe("Emails.Views.Compose", function() {
         });
 
         describe("replacing templates", function() {
-            var apiCallStub,
-                insertTemplateAttachmentsStub,
+            var insertTemplateAttachmentsStub,
                 createBeanCollectionStub,
                 field,
                 setEditorContentStub,
@@ -380,12 +379,7 @@ describe("Emails.Views.Compose", function() {
                 field                         = SugarTest.createField("base", "html_email", "htmleditable_tinymce", "edit");
                 setEditorContentStub          = sinon.stub(field, "setEditorContent", function() {});
                 getFieldStub                  = sinon.stub(view, 'getField').returns(field);
-
-                apiCallStub = sinon.stub(app.api, 'call', function (method, myURL, model, options) {
-                    options.success(model, null, options);
-                });
-
-                createBeanCollectionStub = sinon.stub(app.data, 'createBeanCollection', function() {
+                createBeanCollectionStub      = sinon.stub(app.data, 'createBeanCollection', function() {
                     return {fetch:function(){}}
                 });
 
@@ -393,7 +387,6 @@ describe("Emails.Views.Compose", function() {
             });
 
             afterEach(function() {
-                apiCallStub.restore();
                 insertTemplateAttachmentsStub.restore();
                 setEditorContentStub.restore();
                 getFieldStub.restore();
@@ -404,7 +397,6 @@ describe("Emails.Views.Compose", function() {
                 view.insertTemplate(null);
                 expect(getFieldStub.callCount).toBe(0);
                 expect(setEditorContentStub.callCount).toBe(0);
-                expect(apiCallStub.callCount).toBe(0);
                 expect(insertTemplateAttachmentsStub.callCount).toBe(0);
             });
 
@@ -420,8 +412,7 @@ describe("Emails.Views.Compose", function() {
                 expect(getFieldStub.callCount).toBe(1);
                 expect(setEditorContentStub.callCount).toBe(1);
                 expect(createBeanCollectionStub.callCount).toBe(1);
-                expect(apiCallStub.callCount).toBe(1);
-                expect(view.model.get('subject')).toBe("");
+                expect(view.model.get('subject')).toBeUndefined();
             });
 
             it('should set content of editor with html version of template', function() {
@@ -434,12 +425,10 @@ describe("Emails.Views.Compose", function() {
                         body_html: bodyHtml
                     });
 
-                setEditorContentStub.withArgs(bodyHtml);
                 view.insertTemplate(templateModel);
                 expect(getFieldStub.callCount).toBe(1);
-                expect(setEditorContentStub.callCount).toBe(1);
+                expect(setEditorContentStub.withArgs(bodyHtml).callCount).toBe(1);
                 expect(createBeanCollectionStub.callCount).toBe(1);
-                expect(apiCallStub.callCount).toBe(1);
                 expect(view.model.get('subject')).toBe(subject);
             });
 
@@ -456,12 +445,10 @@ describe("Emails.Views.Compose", function() {
                         text_only:  1
                     });
 
-                setEditorContentStub.withArgs(text);
                 view.insertTemplate(templateModel);
                 expect(getFieldStub.callCount).toBe(1);
-                expect(setEditorContentStub.callCount).toBe(1);
+                expect(setEditorContentStub.withArgs(bodyText).callCount).toBe(1);
                 expect(createBeanCollectionStub.callCount).toBe(1);
-                expect(apiCallStub.callCount).toBe(1);
                 expect(view.model.get('subject')).toEqual(subject);
             });
         });

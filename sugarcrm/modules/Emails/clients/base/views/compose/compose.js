@@ -372,7 +372,7 @@
             editor = this.getField('html_body');
 
             //TODO: May need to move over replaces special characters.
-            if (!_.isEmpty(template.get('text_only')) &&  template.get('text_only') === 1) {
+            if (template.get('text_only') === 1) {
                 editor.setEditorContent(template.get('body'));
             } else {
                 editor.setEditorContent(template.get('body_html'));
