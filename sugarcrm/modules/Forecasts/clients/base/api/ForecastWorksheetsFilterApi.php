@@ -63,6 +63,24 @@ class ForecastWorksheetsFilterApi extends FilterApi
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
             ),
+            'forecastWorksheetChartGet' => array(
+                'reqType' => 'GET',
+                'path' => array('ForecastWorksheets', 'chart'),
+                'pathVars' => array('module', ''),
+                'method' => 'forecastWorksheetsChartGet',
+                'jsonParams' => array(),
+                'shortHelp' => 'Filter records and reformat data for chart presentation',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsWorksheetChartGet.html'
+            ),
+            'forecastWorksheetChartTimePeriodGet' => array(
+                'reqType' => 'GET',
+                'path' => array('ForecastWorksheets', 'chart', '?'),
+                'pathVars' => array('module', '', 'timeperiod_id'),
+                'method' => 'forecastWorksheetsChartGet',
+                'jsonParams' => array(),
+                'shortHelp' => 'Filter records and reformat data for chart presentation',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsWorksheetChartGet.html'
+            ),
             'forecastWorksheetChartTimePeriodUserIdGet' => array(
                 'reqType' => 'GET',
                 'path' => array('ForecastWorksheets', 'chart', '?', '?'),
