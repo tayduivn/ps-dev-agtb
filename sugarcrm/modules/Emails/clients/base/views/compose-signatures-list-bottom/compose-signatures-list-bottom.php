@@ -6,7 +6,7 @@ $viewdefs["Emails"]["base"]["view"]["compose-signatures-list-bottom"] = array(
             "name"      => "show_more_button",
             "type"      => "button",
             "label"     => "LBL_SHOW_MORE",
-            "css class" => "more padded",
+            "css_class" => "more padded",
         ),
     ),
 );
