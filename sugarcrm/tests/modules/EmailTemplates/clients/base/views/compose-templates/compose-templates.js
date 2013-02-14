@@ -71,7 +71,7 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
         listMeta['rowactions'] = {};
         listMeta['showPreview'] = true;
         //Create another view with the new metadata
-        view = SugarTest.createView("base", moduleName, "compose-templates", listMeta);
+        view = SugarTest.createView("base", moduleName, "compose-templates", listMeta, null, true);
         previewField = _.last(view.meta.panels[0].fields);
         expect(previewField.event).toEqual('list:preview:fire');
     });
