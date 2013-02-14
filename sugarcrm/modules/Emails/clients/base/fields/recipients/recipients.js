@@ -48,7 +48,7 @@
                 // update this collection (aka array) anytime the field's value is changed
                 this.model.set(this.name + "_collection", this._splitRecipients(this.model.get(this.name)));
                 this.render();
-            });
+            }, this);
         }
 
         this.context.on("recipients:" + this.name + ":add", this._addRecipients);
@@ -100,7 +100,7 @@
 
                 existingRecipients += recipient;
             }
-        });
+        }, this);
 
         this.model.set(this.name, existingRecipients);
     },
@@ -131,7 +131,7 @@
 
         _.each(models, function(recipient) {
             existingRecipients = this._findAndRemoveRecipient(this._formatRecipient(recipient), existingRecipients);
-        });
+        }, this);
 
         this.model.set(this.name, existingRecipients);
     },
@@ -264,7 +264,7 @@
             var attributes = this._unformatRecipient(recipient); // get an object with the recipient's attributes
 
             recipients[index] = new Backbone.Model(attributes);
-        });
+        }, this);
 
         return recipients;
     },
