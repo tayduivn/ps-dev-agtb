@@ -13,21 +13,21 @@ describe("Base.View.DupeCheckList", function() {
                     "name":"panel_header",
                     "fields":[
                         {
-                            "name":"first_name",
+                            "name":"first_name"
                         },
                         {
-                            "name":"name",
+                            "name":"name"
                         },
                         {
-                            "name":"status",
+                            "name":"status"
                         }
                     ]
                 }
             ]
         };
-        SugarTest.loadHandlebarsTemplate("baselist", "view", "base", "baselist");
-        SugarTest.loadComponent('base', 'view', 'baselist');
+        SugarTest.loadHandlebarsTemplate("list", "view", "base", "list");
         SugarTest.loadComponent('base', 'view', 'list');
+        SugarTest.loadComponent('base', 'view', 'recordlist');
         SugarTest.loadComponent("base", "view", "dupecheck-list");
         SugarTest.testMetadata.set();
     });

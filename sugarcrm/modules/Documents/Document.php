@@ -394,6 +394,34 @@ class Document extends SugarBean {
 		}
 		return null;
 	}
+
+    /**
+     * Document specific file name getter
+     *
+     * @return string
+     */
+    public function getFileName() {
+        if (empty($this->id)) {
+            return '';
+        }
+
+        // Documents store their file information in DocumentRevisions
+        $revision = BeanFactory::getBean('DocumentRevisions', $this->id);
+
+        // Check if the id was for a revision
+        if (!empty($revision)) {
+            return $revision->filename;
+        } else {
+            // The id is not a revision id, try the actual document revision id
+            $revision = BeanFactory::getBean('DocumentRevisions', $this->document_revision_id);
+
+            if ($revision) {
+                return $revision->filename;
+            }
+        }
+
+        return '';
+    }
 }
 
 require_once('modules/Documents/DocumentExternalApiDropDown.php');

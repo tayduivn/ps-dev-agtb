@@ -355,7 +355,7 @@ class FunctionSugarButtonTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             //set #12: Contains smarty syntax "ldelim, rdelim"
             array(
-                '{if $bean->aclAccess("delete") && !empty($smarty.request.record)}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value=\'Users\'; this.form.return_action.value=\'EditView\'; this.form.action.value=\'Delete\'; this.form.return_id.value=\'{$return_id}\'; if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')){ldelim}disableOnUnloadEditView(); return true;{rdelim}else{ldelim}return false;{rdelim};" type="submit" name="Delete" value="{$APP.LBL_DELETE_BUTTON_LABEL}">{/if} ',
+                '{if $bean->aclAccess("delete") && !empty($smarty.request.record)}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value=\'Users\'; this.form.return_action.value=\'EditView\'; this.form.action.value=\'Delete\'; this.form.return_id.value=\'{$return_id}\'; return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');" type="submit" name="Delete" value="{$APP.LBL_DELETE_BUTTON_LABEL}">{/if} ',
                 array(
                     'smarty' => array(
                         array(
@@ -366,7 +366,7 @@ class FunctionSugarButtonTest extends Sugar_PHPUnit_Framework_TestCase
                                 'title' => '{$APP.LBL_DELETE_BUTTON_TITLE}',
                                 'accessKey' => '{$APP.LBL_DELETE_BUTTON_KEY}',
                                 'class' => 'button',
-                                'onclick' => 'this.form.return_module.value=\'Users\'; this.form.return_action.value=\'EditView\'; this.form.action.value=\'Delete\'; this.form.return_id.value=\'{$return_id}\'; if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')){ldelim}disableOnUnloadEditView(); return true;{rdelim}else{ldelim}return false;{rdelim};',
+                                'onclick' => 'this.form.return_module.value=\'Users\'; this.form.return_action.value=\'EditView\'; this.form.action.value=\'Delete\'; this.form.return_id.value=\'{$return_id}\'; return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');',
                                 'type' => 'submit',
                                 'name' => 'Delete',
                                 'value' => '{$APP.LBL_DELETE_BUTTON_LABEL}',
@@ -374,12 +374,12 @@ class FunctionSugarButtonTest extends Sugar_PHPUnit_Framework_TestCase
                         )
                     )
                 ),
-                '{if $bean->aclAccess("delete") && !empty($smarty.request.record)}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="var _form = document.getElementById(\'DetailView\'); var _onclick=(function(){ldelim}_form.return_module.value=\'Users\'; _form.return_action.value=\'EditView\'; _form.action.value=\'Delete\'; _form.return_id.value=\'{$return_id}\'; if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')){ldelim}disableOnUnloadEditView(); return true;{rdelim}else{ldelim}return false;{rdelim};{rdelim}()); if(_onclick!==false) _form.submit();" type="button" name="Delete" value="{$APP.LBL_DELETE_BUTTON_LABEL}"/>{/if}'
+                '{if $bean->aclAccess("delete") && !empty($smarty.request.record)}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="var _form = document.getElementById(\'DetailView\'); var _onclick=(function(){ldelim}_form.return_module.value=\'Users\'; _form.return_action.value=\'EditView\'; _form.action.value=\'Delete\'; _form.return_id.value=\'{$return_id}\'; return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');{rdelim}()); if(_onclick!==false) _form.submit();" type="button" name="Delete" value="{$APP.LBL_DELETE_BUTTON_LABEL}"/>{/if}'
             ),
 
             //set #13: Contains smarty syntax "literal"
             array(
-                '{if $bean->aclAccess("delete") && !empty($smarty.request.record)}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value=\'Users\'; this.form.return_action.value=\'EditView\'; this.form.action.value=\'Delete\'; this.form.return_id.value=\'{$return_id}\'; {literal}if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')){disableOnUnloadEditView(); return true;}else{return false;};{/literal}" type="submit" name="Delete" value="{$APP.LBL_DELETE_BUTTON_LABEL}">{/if} ',
+                '{if $bean->aclAccess("delete") && !empty($smarty.request.record)}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value=\'Users\'; this.form.return_action.value=\'EditView\'; this.form.action.value=\'Delete\'; this.form.return_id.value=\'{$return_id}\'; {literal}return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');{/literal}" type="submit" name="Delete" value="{$APP.LBL_DELETE_BUTTON_LABEL}">{/if} ',
                 array(
                     'smarty' => array(
                         array(
@@ -390,7 +390,7 @@ class FunctionSugarButtonTest extends Sugar_PHPUnit_Framework_TestCase
                                 'title' => '{$APP.LBL_DELETE_BUTTON_TITLE}',
                                 'accessKey' => '{$APP.LBL_DELETE_BUTTON_KEY}',
                                 'class' => 'button',
-                                'onclick' => 'this.form.return_module.value=\'Users\'; this.form.return_action.value=\'EditView\'; this.form.action.value=\'Delete\'; this.form.return_id.value=\'{$return_id}\'; {literal}if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')){disableOnUnloadEditView(); return true;}else{return false;};{/literal}',
+                                'onclick' => 'this.form.return_module.value=\'Users\'; this.form.return_action.value=\'EditView\'; this.form.action.value=\'Delete\'; this.form.return_id.value=\'{$return_id}\'; {literal}return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');{/literal}',
                                 'type' => 'submit',
                                 'name' => 'Delete',
                                 'value' => '{$APP.LBL_DELETE_BUTTON_LABEL}',
@@ -398,7 +398,7 @@ class FunctionSugarButtonTest extends Sugar_PHPUnit_Framework_TestCase
                         )
                     )
                 ),
-                '{if $bean->aclAccess("delete") && !empty($smarty.request.record)}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="var _form = document.getElementById(\'DetailView\'); var _onclick=(function(){ldelim}_form.return_module.value=\'Users\'; _form.return_action.value=\'EditView\'; _form.action.value=\'Delete\'; _form.return_id.value=\'{$return_id}\'; {literal}if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')){disableOnUnloadEditView(); return true;}else{return false;};{/literal};{rdelim}()); if(_onclick!==false) _form.submit();" type="button" name="Delete" value="{$APP.LBL_DELETE_BUTTON_LABEL}"/>{/if}'
+                '{if $bean->aclAccess("delete") && !empty($smarty.request.record)}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="var _form = document.getElementById(\'DetailView\'); var _onclick=(function(){ldelim}_form.return_module.value=\'Users\'; _form.return_action.value=\'EditView\'; _form.action.value=\'Delete\'; _form.return_id.value=\'{$return_id}\'; {literal}return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');{/literal};{rdelim}()); if(_onclick!==false) _form.submit();" type="button" name="Delete" value="{$APP.LBL_DELETE_BUTTON_LABEL}"/>{/if}'
             ),
 
             //set #14: Multiple conditional statement

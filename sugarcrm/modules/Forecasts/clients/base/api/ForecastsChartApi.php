@@ -34,8 +34,8 @@ class ForecastsChartApi extends SugarApi
         $parentApi = array(
             'forecasts_chart' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts', 'chart'),
-                'pathVars' => array('', ''),
+                'path' => array('Forecasts', '?', '?', 'chart', '?'),
+                'pathVars' => array('', 'timeperiod_id', 'user_id', '', 'display_manager'),
                 'method' => 'chart',
                 'shortHelp' => 'Retrieve the Chart data for the given data in the Forecast Module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastChartApi.html',
@@ -53,19 +53,16 @@ class ForecastsChartApi extends SugarApi
      */
     public function chart($api, $args)
     {
-        global $current_user;
-
-        $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
-        $args['user_id'] = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
+        $args['timeperiod_id'] = clean_string($args['timeperiod_id']);
+        $args['user_id'] = clean_string($args['user_id']);
         $args['group_by'] = !isset($args['group_by']) ? "forecast" : $args['group_by'];
-
 
         // default to the Individual Code
         $file = 'include/SugarForecasting/Chart/Individual.php';
         $klass = 'SugarForecasting_Chart_Individual';
 
         // test to see if we need to display the manager
-        if((isset($args['display_manager']) && $args['display_manager'] == 'true')) {
+        if((bool)$args['display_manager'] && User::isManager($api->user->id)) {
             // we have a manager view, pull in the manager classes
             $file = 'include/SugarForecasting/Chart/Manager.php';
             $klass = 'SugarForecasting_Chart_Manager';

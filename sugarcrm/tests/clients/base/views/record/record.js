@@ -1,5 +1,6 @@
 describe("Record View", function() {
     var moduleName = 'Cases',
+        app,
         viewName = 'record',
         sinonSandbox, view,
         createListCollection;
@@ -9,6 +10,7 @@ describe("Record View", function() {
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
+        SugarTest.loadComponent('base', 'field', 'base');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'fieldset');
@@ -73,7 +75,7 @@ describe("Record View", function() {
         }, moduleName);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-
+        app = SugarTest.app;
         sinonSandbox = sinon.sandbox.create();
 
         view = SugarTest.createView("base", moduleName, "record", null, null);
@@ -91,6 +93,38 @@ describe("Record View", function() {
             view.render();
 
             expect(_.size(view.fields)).toBe(0);
+        });
+
+        it("Should update previous props on read and update only", function() {
+            var modelAttributes = {
+                id: '123',
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            };
+            view.model.set(modelAttributes);
+
+            view.handleSync('read', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+            view.handleSync('update', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+            view.model.set({name:'Test'});
+            view.handleSync('randomAction', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
+        });
+
+        it("Should set previous model state on app data:sync:end", function() {
+            var modelAttributes = {
+                id: '123',
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            };
+            view.model.set(modelAttributes);
+            expect(view.previousModelState).toBeNull();
+            SugarTest.app.trigger('data:sync:end','read',view.model);
+            view.handleSync('read', view.model);
+            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
         });
 
         it("Should render 8 editable fields and 6 buttons", function() {
@@ -151,6 +185,85 @@ describe("Record View", function() {
             });
 
             expect(_.size(view.fields)).toBe(0);
+        });
+
+        it("Should not be editable when a user doesn't have write access on this field", function() {
+            sinonSandbox.stub(SugarTest.app.acl, '_hasAccessToField', function(action, acls, field) {
+                return field !== 'name';
+            });
+            sinonSandbox.stub(SugarTest.app.user, 'getAcls', function() {
+                var acls = {};
+                acls[moduleName] = {
+                    edit: 'yes',
+                    fields: {
+                        name: {
+                            write: 'no'
+                        }
+                    }
+                };
+                return acls;
+            });
+
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+
+            view.$('.more').click();
+            var editableFields = 0;
+            _.each(view.editableFields, function(field) {
+                if (field.$el.closest('.record-cell').find('.record-edit-link-wrapper').length === 1) {
+                    editableFields++;
+                }
+            });
+
+            expect(editableFields).toBe(7);
+            expect(_.size(view.editableFields)).toBe(7);
+        });
+
+        it("should call decorateError on error fields during 'error:validation' events", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            var descriptionField = _.find(view.fields, function(field){
+                return field.name === 'description';
+            });
+            descriptionField.decorateError = function() {};//sugar7.js now injects this
+            var stub = sinon.stub(descriptionField, 'decorateError', $.noop());
+            //Simulate a 'required' error on description field
+            view.model.trigger('error:validation', {description: {required : true}});
+            //Defer expectations since decoration is deferred
+            _.defer(function(stub){
+                expect(stub.calledWithExactly({required: true})).toBe(true);
+                stub.restore();
+            }, stub);
+
+        });
+
+        it("should call clearErrorDecoration on fields when Cancel is clicked", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            var descriptionField = _.find(view.fields, function(field){
+                return field.name === 'description';
+            });
+            descriptionField.clearErrorDecoration = function() {};//sugar7.js now injects this
+            var stub = sinon.stub(descriptionField, 'clearErrorDecoration', $.noop());
+            view.model.trigger('error:validation', {description: {required : true}});
+            view.cancelClicked();
+            //Defer expectations since decoration is deferred
+            _.defer(function(stub){
+                expect(stub.calledOnce).toBe(true);
+                stub.restore();
+            }, stub);
         });
 
         it("Should display all 8 editable fields when more link is clicked", function() {
@@ -220,35 +333,6 @@ describe("Record View", function() {
             });
         });
 
-        it("Should show save and cancel buttons and hide edit button when data changes", function() {
-
-            view.model.set({
-                name: 'Name',
-                case_number: 123,
-                description: 'Description'
-            });
-            view.render();
-            view.editMode = true;
-            view.model.set({
-                name: 'Foo',
-                case_number: 123,
-                description: 'Description'
-            });
-
-            expect(view.getField('save_button').getFieldElement().css('display')).toBe('none');
-            expect(view.getField('cancel_button').getFieldElement().css('display')).toBe('none');
-            expect(view.getField('edit_button').getFieldElement().css('display')).not.toBe('none');
-
-            view.context.trigger('button:edit_button:click');
-            view.model.set({
-                name: 'Bar'
-            });
-
-            expect(view.getField('save_button').getFieldElement().css('display')).not.toBe('none');
-            expect(view.getField('cancel_button').getFieldElement().css('display')).not.toBe('none');
-            expect(view.getField('edit_button').getFieldElement().css('display')).toBe('none');
-        });
-
         it("Should revert data back to the old value when the cancel button is clicked after data has been changed", function() {
             view.render();
             view.model.set({
@@ -256,6 +340,7 @@ describe("Record View", function() {
                 case_number: 123,
                 description: 'Description'
             });
+            view.handleSync('read',view.model);
             view.context.trigger('button:edit_button:click');
             view.model.set({
                 name: 'Bar'
@@ -267,245 +352,462 @@ describe("Record View", function() {
         });
     });
 
-    describe('_renderPanels with 1 column', function () {
-        it("Should create panel grid with all fields on separate rows", function () {
-            var results,
-                panelDefs = [{
-                    "name":         "panel_body",
-                    "label":        "LBL_PANEL_2",
-                    "columns":      1,
-                    "labels":       true,
-                    "labelsOnTop":  true,
-                    "placeholders": true,
-                    "fields":       ["description", "case_number", "type"]
-                }];
+    describe("render panels", function() {
+        describe("labels are on top", function() {
+            it("Should create a one-column panel grid", function() {
+                var results,
+                    fields    = [
+                        // case: field is a string, thus field.span is undefined
+                        // result: should be converted to an object and field.span should be 12
+                        "foo1",
 
-            view._renderPanels(panelDefs);
-            results = panelDefs[0].grid;
-
-            expect(results.length).toBe(3);
-            expect(results[0].length).toBe(1);
-            expect(results[1].length).toBe(1);
-            expect(results[2].length).toBe(1);
-        });
-    });
-
-    describe('_renderPanels with 2 columns', function () {
-        it("Should create panel grid with last row containing one empty column", function () {
-            var results,
-                panelDefs = [{
-                    "name":         "panel_body",
-                    "label":        "LBL_PANEL_2",
-                    "columns":      2,
-                    "labels":       true,
-                    "labelsOnTop":  true,
-                    "placeholders": true,
-                    "fields":       ["description", "case_number", "type"]
-                }];
-
-            view._renderPanels(panelDefs);
-            results = panelDefs[0].grid;
-
-            expect(results.length).toBe(2);
-            expect(results[0].length).toBe(2);
-            expect(results[1].length).toBe(1);
-        });
-
-        it("Should create panel grid with second field on its own row where second field's span causes overflow", function () {
-            var results,
-                panelDefs = [{
-                    "name":         "panel_body",
-                    "label":        "LBL_PANEL_2",
-                    "columns":      2,
-                    "labels":       true,
-                    "labelsOnTop":  true,
-                    "placeholders": true,
-                    "fields":       [
-                        "case_number",
+                        // case: field.span >= 12
+                        // result: field.span should be 12
                         {
-                            'name': 'description',
-                            'span': 12
+                            name: "foo2",
+                            span: 20
                         },
-                        "type"
-                    ]
-                }];
 
-            view._renderPanels(panelDefs);
-            results = panelDefs[0].grid;
-
-            expect(results.length).toBe(3);
-            expect(results[0].length).toBe(1);
-            expect(results[1].length).toBe(1);
-            expect(results[2].length).toBe(1);
-        });
-
-        it("Should create panel grid with first field on its own row where the first field's span fills the row", function () {
-            var results,
-                panelDefs = [{
-                    "name":         "panel_body",
-                    "label":        "LBL_PANEL_2",
-                    "columns":      2,
-                    "labels":       true,
-                    "labelsOnTop":  true,
-                    "placeholders": true,
-                    "fields":       [
+                        // case: field.span is 0
+                        // result: field.span should be 1
                         {
-                            'name': 'description',
-                            'span': 12
+                            name: "foo3",
+                            span: 0
                         },
-                        "case_number",
-                        "type"
-                    ]
-                }];
 
-            view._renderPanels(panelDefs);
-            results = panelDefs[0].grid;
-
-            expect(results.length).toBe(2);
-            expect(results[0].length).toBe(1);
-            expect(results[1].length).toBe(2);
-        });
-
-        it("Should create panel grid with all fields fitting within the maximum allowable span when the panel def specifies a field whose span is out of range", function () {
-            var results,
-                panelDefs = [{
-                                 "name":         "panel_body",
-                                 "label":        "LBL_PANEL_2",
-                                 "columns":      2,
-                                 "labels":       true,
-                                 "labelsOnTop":  false,
-                                 "placeholders": true,
-                                 "fields":       [
-                                     {
-                                         'name': 'description',
-                                         'span': 12 // out of range for a panel with inline labels
-                                     },
-                                     "case_number",
-                                     "type"
-                                 ]
-                             }];
-
-            view._renderPanels(panelDefs);
-            results = panelDefs[0].grid;
-
-            expect(results.length).toBe(2);
-            expect(results[0].length).toBe(1);
-            expect(results[1].length).toBe(2);
-            expect(results[0][0].span).toBe(8); // the description field's span should have been reset to 8 since 12 won't fit
-            expect(results[1][0].span).toBe(4); // verifying that the field span is calculated correctly when labels are inline
-            expect(results[1][1].span).toBe(4); // verifying that the field span is calculated correctly when labels are inline
-        });
-    });
-
-    describe('_renderPanels with 3 columns', function () {
-        it("Should create panel grid with last field on its own row where the last field's span causes overflow", function () {
-            var results,
-                panelDefs = [{
-                    "name":         "panel_body",
-                    "label":        "LBL_PANEL_2",
-                    "columns":      3,
-                    "labels":       true,
-                    "labelsOnTop":  true,
-                    "placeholders": true,
-                    "fields":       [
-                        "case_number",
+                        // case: 0 < field.span < 12
+                        // result: field.span should remain 6
                         {
-                            'name': 'description',
-                            'span': 6
-                        },
-                        "type"
-                    ]
-                }];
+                            name: "foo4",
+                            span: 6
+                        }
+                    ],
+                    panelDefs = [{
+                        columns:     1,
+                        labels:      true,
+                        labelsOnTop: true,
+                        fields:      fields
+                    }];
 
-            view._renderPanels(panelDefs);
-            results = panelDefs[0].grid;
+                view._renderPanels(panelDefs);
+                results = panelDefs[0].grid;
 
-            expect(results.length).toBe(2);
-            expect(results[0].length).toBe(2);
-            expect(results[1].length).toBe(1);
-        });
+                // each field should be on its own row
+                expect(results.length).toBe(fields.length);
 
-        it("Should create panel grid with first field on its own row where the first field's span fills the row", function () {
-            var results,
-                panelDefs = [{
-                    "name":         "panel_body",
-                    "label":        "LBL_PANEL_2",
-                    "columns":      3,
-                    "labels":       true,
-                    "labelsOnTop":  true,
-                    "placeholders": true,
-                    "fields":       [
+                // case: field is a string, thus field.span is undefined
+                expect(results[0][0].name).toBe("foo1");
+                expect(results[0][0].span).toBe(12);
+
+                // case: field.span >= 12
+                expect(results[1][0].span).toBe(12);
+
+                // case: field.span is 0
+                expect(results[2][0].span).toBe(1);
+
+                // case: 0 < field.span < 12
+                expect(results[3][0].span).toBe(6);
+            });
+
+            it("Should create a two-column panel grid", function() {
+                var results,
+                    fields    = [
+                        // case: the third field should be on its own row with an empty column
+                        // result: the first two fields are one the first row and the third field is on its own row
+                        "foo1",
+                        "foo2",
+                        "foo3",
+
+                        // case: field.span is 8 and previous field's span is 6
+                        // result: field overflows the row and ends up on the next row
                         {
-                            'name': 'description',
-                            'span': 12
+                            name: "foo4",
+                            span: 8
                         },
-                        "case_number",
-                        "type"
-                    ]
-                }];
 
-            view._renderPanels(panelDefs);
-            results = panelDefs[0].grid;
-
-            expect(results.length).toBe(2);
-            expect(results[0].length).toBe(1);
-            expect(results[1].length).toBe(2);
-        });
-
-        it("Should create panel grid with all fields on their own row when the span of the second of three fields causes fills a row", function () {
-            var results,
-                panelDefs = [{
-                    "name":         "panel_body",
-                    "label":        "LBL_PANEL_2",
-                    "columns":      3,
-                    "labels":       true,
-                    "labelsOnTop":  true,
-                    "placeholders": true,
-                    "fields":       [
-                        "case_number",
+                        // case: field.span >= 12
+                        // result: field.span should be 12; field overflows the row and its span dictates that the
+                        // field be on its own row
                         {
-                            'name': 'description',
-                            'span': 10 // this field won't fit on the row with case_number
+                            name: "foo5",
+                            span: 20
+                        }
+                    ],
+                    panelDefs = [{
+                        columns:     2,
+                        labels:      true,
+                        labelsOnTop: true,
+                        fields:      fields
+                    }];
+
+                view._renderPanels(panelDefs);
+                results = panelDefs[0].grid;
+
+                // the number of rows found in this two-column grid
+                expect(results.length).toBe(4);
+
+                // case: the third field should be on its own row with an empty column
+                expect(results[0].length).toBe(2);
+                expect(results[1].length).toBe(1);
+                expect(results[1][0].span).toBe(6);
+
+                // case: field.span is 8 and previous field's span is 6
+                expect(results[2].length).toBe(1);
+                expect(results[2][0].span).toBe(8);
+
+                // result: field.span should be 12; field overflows the row and its span dictates that the
+                // field be on its own row
+                expect(results[3].length).toBe(1);
+                expect(results[3][0].span).toBe(12);
+            });
+
+            it("Should create a three-column panel grid", function() {
+                var results,
+                    fields    = [
+                        // case: field.span is calculated for three fields such that they fit on one row
+                        // result: three fields are on the same row
+                        "foo1",
+                        "foo2",
+                        "foo3",
+
+                        // case: field.span is 5 of the first field; field.span is 8 for the second field; field.span
+                        // is calculated for the third field
+                        // result: the first field is on its own row; the second field overflows the first row and is
+                        // on the second row with the third field
+                        {
+                            name: "foo4",
+                            span: 5
                         },
-                        "type" // this field won't fit on the row with description because description's span was too large
-                    ]
-                }];
+                        {
+                            name: "foo5",
+                            span: 8
+                        },
+                        "foo6",
 
-            view._renderPanels(panelDefs);
-            results = panelDefs[0].grid;
+                        // case: field.span >= 12
+                        // result: field.span should be 12; field overflows the row and its span dictates that the
+                        // field be on its own row
+                        {
+                            name: "foo7",
+                            span: 12
+                        },
 
-            expect(results.length).toBe(3);
-            expect(results[0].length).toBe(1);
-            expect(results[1].length).toBe(1);
-            expect(results[2].length).toBe(1);
+                        // case: field.span for the second field is too large to fit on the first row and too large for
+                        // the third field to fit on the second row
+                        // result: three fields are on their own rows
+                        "foo8",
+                        {
+                            name: "foo8",
+                            span: 10
+                        },
+                        "foo9"
+                    ],
+                    panelDefs = [{
+                        columns:     3,
+                        labels:      true,
+                        labelsOnTop: true,
+                        fields:      fields
+                    }];
+
+                view._renderPanels(panelDefs);
+                results = panelDefs[0].grid;
+
+                // the number of rows found in this three-column grid
+                expect(results.length).toBe(7);
+
+                // result: three fields are on the same row
+                expect(results[0].length).toBe(3);
+
+                // case: field.span is 5 of the first field; field.span is 8 for the second field; field.span
+                // is calculated for the third field
+                expect(results[1].length).toBe(1);
+                expect(results[1][0].span).toBe(5);
+                expect(results[1][0].labelSpan).toBe(1);
+                expect(results[2].length).toBe(2);
+                expect(results[2][0].span).toBe(8);
+                expect(results[2][0].labelSpan).toBe(1);
+                expect(results[2][1].span).toBe(4);
+                expect(results[2][1].labelSpan).toBe(1);
+
+                // case: field.span >= 12
+                expect(results[3].length).toBe(1);
+                expect(results[3][0].span).toBe(12);
+
+                // case: field.span for the second field is too large to fit on the first row and too large for
+                // the third field to fit on the second row
+                expect(results[4].length).toBe(1);
+                expect(results[5].length).toBe(1);
+                expect(results[6].length).toBe(1);
+            });
         });
-    });
 
-    describe("_renderPanels corner cases", function() {
-        it("Should create panel grid with no span0's when the column count is greater than 4 and labels are inline", function () {
-            var results,
-                panelDefs = [{
-                    "name":         "panel_body",
-                    "label":        "LBL_PANEL_2",
-                    "columns":      5,
-                    "labels":       true,
-                    "labelsOnTop":  false,
-                    "placeholders": true,
-                    "fields":       [
-                        "case_number",
-                        "description",
-                        "type",
-                        "account_name",
-                        "name"
-                    ]
-                }];
+        describe("labels are inline", function() {
+            it("Should create a one-column panel grid", function() {
+                var results,
+                    fields    = [
+                        // case: field.span and field.labelSpan are undefined
+                        // result: field.span should be 8 and field.labelSpan should be 4
+                        "foo1",
 
-            view._renderPanels(panelDefs);
-            results = panelDefs[0].grid;
+                        // case: field.span is 0 and field.labelSpan is 0
+                        // result: field.span should be 1 and field.labelSpan should be 1
+                        {
+                            name: "foo2",
+                            span: 0,
+                            labelSpan: 0
+                        },
 
-            expect(results.length).toBe(1);
-            expect(results[0][0].span).toBe(1);
-            expect(results[0][0].labelSpan).toBe(1);
+                        // case: field.span <= 8 and field.labelSpan is defined
+                        // result: field.span and field.labelSpan should not change, even if
+                        // field.span + field.labelSpan > 12
+                        {
+                            name: "foo3",
+                            span: 7,
+                            labelSpan: 7
+                        },
+
+                        // case: field.span > 8 and field.labelSpan is defined
+                        // result: field.span should be 8 and field.labelSpan should not change
+                        {
+                            name: "foo4",
+                            span: 10,
+                            labelSpan: 2
+                        },
+
+                        // case: field.span >= 12
+                        // result: field.span should be 8 and field.labelSpan should be 4
+                        {
+                            name: "foo5",
+                            span: 20
+                        },
+
+                        // case: field.span is 12, field.labelSpan is undefined, and field.dismiss_label is true
+                        // result: field.span should be 12 and field.labelSpan should be 4
+                        {
+                            name: "foo6",
+                            span: 12,
+                            dismiss_label: true
+                        },
+
+                        // case: field.span is 4, field.labelSpan is undefined, and field.dismiss_label is true
+                        // result: field.span should be 8 and field.labelSpan should be 4
+                        {
+                            name: "foo7",
+                            span: 4,
+                            dismiss_label: true
+                        },
+
+                        // case: field.span is 8, field.labelSpan is undefined, and field.dismiss_label is true
+                        // result: field.span should be 12 and field.labelSpan should be 4
+                        {
+                            name: "foo8",
+                            span: 10,
+                            dismiss_label: true
+                        },
+
+                        // case: field.span is 7, field.labelSpan is 7, and field.dismiss_label is true
+                        // result: field.span should be 12 and field.labelSpan should not change
+                        {
+                            name: "foo9",
+                            span: 7,
+                            labelSpan: 7,
+                            dismiss_label: true
+                        }
+                    ],
+                    panelDefs = [{
+                        columns:     1,
+                        labels:      true,
+                        labelsOnTop: false,
+                        fields:      fields
+                    }];
+
+                view._renderPanels(panelDefs);
+                results = panelDefs[0].grid;
+
+                // each field should be on its own row
+                expect(results.length).toBe(fields.length);
+
+                // case: field.span and field.labelSpan are undefined
+                expect(results[0][0].span).toBe(8);
+                expect(results[0][0].labelSpan).toBe(4);
+
+                // case: field.span is 0 and field.labelSpan is 0
+                expect(results[1][0].span).toBe(1);
+                expect(results[1][0].labelSpan).toBe(1);
+
+                // case: field.span <= 8 and field.labelSpan is defined
+                expect(results[2][0].span).toBe(7);
+                expect(results[2][0].labelSpan).toBe(7);
+
+                // case: field.span > 8 and field.labelSpan is defined
+                expect(results[3][0].span).toBe(8);
+                expect(results[3][0].labelSpan).toBe(2);
+
+                // case: field.span >= 12
+                expect(results[4][0].span).toBe(8);
+                expect(results[4][0].labelSpan).toBe(4);
+
+                // case: field.span is 12, field.labelSpan is undefined, and field.dismiss_label is true
+                expect(results[5][0].span).toBe(12);
+                expect(results[5][0].labelSpan).toBe(4);
+
+                // case: field.span is 4, field.labelSpan is undefined, and field.dismiss_label is true
+                expect(results[6][0].span).toBe(8);
+                expect(results[6][0].labelSpan).toBe(4);
+
+                // case: field.span is 8, field.labelSpan is undefined, and field.dismiss_label is true
+                expect(results[7][0].span).toBe(12);
+                expect(results[7][0].labelSpan).toBe(4);
+
+                // case: field.span is 7, field.labelSpan is 7, and field.dismiss_label is true
+                expect(results[8][0].span).toBe(12);
+                expect(results[8][0].labelSpan).toBe(7);
+            });
+
+            it("Should create a two-column panel grid", function() {
+                var results,
+                    fields    = [
+                        // case: If the field span is defined to be 12 and the label span is defined to be 0, 1 or 2
+                        // (or it is undefined and gets calculated to be 1 or 2), then there is no guarantee that the
+                        // field will be on its own row. If the field that follows has a field span defined to be 1 and
+                        // a label span defined to be 1, then both fields will fit within the maximum row span of 12.
+                        // result: The first field should have a field span of 8 and a label span of 2. The second
+                        // field should have a field span of 1 and a label span of 1. The sum of these spans is 12, so
+                        // both fields will be on the same row.
+                        {
+                            name: "foo1",
+                            span: 12,
+                            labelSpan: 2
+                        },
+                        {
+                            name: "foo2",
+                            span: 1,
+                            labelSpan: 1
+                        },
+
+                        // case: field.span >= 12 and field.labelSpan is 4
+                        // result: field.span should be 8 and field.labelSpan should be 4; field overflows the row and
+                        // its span dictates that the field be on its own row
+                        {
+                            name: "foo3",
+                            span: 20,
+                            labelSpan: 4
+                        },
+
+                        // case: field.span and field.labelSpan are undefined for both fields
+                        // result: field.span should be 4 and field.labelSpan should be 2 for both fields; both fields
+                        // should fit on one row
+                        "foo4",
+                        "foo5",
+
+                        // case: the sum of the spans for the first two fields and their labels < 12, and a third
+                        // field is too large to fit on the row
+                        // result: The first field should have a field span of 3 and a label span of 2. The second
+                        // field should have a field span of 3 and a label span of 1. The sum of these spans is 12, so
+                        // both fields will be on the same row. The third field naturally overflows the row and is
+                        // added to the next row.
+                        {
+                            name: "foo6",
+                            span: 3,
+                            labelSpan: 2
+                        },
+                        {
+                            name: "foo7",
+                            span: 3,
+                            labelSpan: 1
+                        },
+                        "foo8",
+
+                        // case: field.span and field.labelSpan are undefined, and field.dismiss_label is true
+                        // result: field.span should be 6 and field.labelSpan should be 2
+                        {
+                            name: "foo9",
+                            dismiss_label: true
+                        }
+                    ],
+                    panelDefs = [{
+                        columns:     2,
+                        labels:      true,
+                        labelsOnTop: false,
+                        fields:      fields
+                    }];
+
+                view._renderPanels(panelDefs);
+                results = panelDefs[0].grid;
+
+                // the number of rows found in this two-column grid
+                expect(results.length).toBe(5);
+
+                // case: If the field span is defined to be 12 and the label span is defined to be 0, 1 or 2
+                // (or it is undefined and gets calculated to be 1 or 2), then there is no guarantee that the
+                // field will be on its own row. If the field that follows has a field span defined to be 1 and
+                // a label span defined to be 1, then both fields will fit within the maximum row span of 12.
+                expect(results[0].length).toBe(2);
+                expect(results[0][0].span).toBe(8);
+                expect(results[0][0].labelSpan).toBe(2);
+                expect(results[0][1].span).toBe(1);
+                expect(results[0][1].labelSpan).toBe(1);
+
+                // case: field.span >= 12 and field.labelSpan is 4
+                expect(results[1].length).toBe(1);
+                expect(results[1][0].span).toBe(8);
+                expect(results[1][0].labelSpan).toBe(4);
+
+                // case: field.span and field.labelSpan are undefined for both fields
+                expect(results[2].length).toBe(2);
+                expect(results[2][0].span).toBe(4);
+                expect(results[2][0].labelSpan).toBe(2);
+                expect(results[2][1].span).toBe(4);
+                expect(results[2][1].labelSpan).toBe(2);
+
+                // case: the sum of the spans for the first two fields and their labels < 12, and a third
+                // field is too large to fit on the row
+                expect(results[3].length).toBe(2);
+                expect(results[3][0].span).toBe(3);
+                expect(results[3][0].labelSpan).toBe(2);
+                expect(results[3][1].span).toBe(3);
+                expect(results[3][1].labelSpan).toBe(1);
+                expect(results[4].length).toBe(2); // 2 because the next test case adds a field to the fifth row
+                expect(results[4][0].span).toBe(4);
+                expect(results[4][0].labelSpan).toBe(2);
+
+                // case: field.span and field.labelSpan are undefined, and field.dismiss_label is true
+                expect(results[4][1].span).toBe(6);
+                expect(results[4][1].labelSpan).toBe(2);
+            });
+        });
+
+        describe('Header panel', function() {
+            it('Should set isAvatar to false if the header doesn\'t the picture field', function() {
+                view._renderPanels(view.meta.panels);
+                expect(view.meta.panels[0].isAvatar).toBeFalsy();
+            });
+
+            it('Should set isAvatar to true if the header contains the picture field', function() {
+                var meta = {
+                            "panels": [{
+                                "name": "panel_header",
+                                "header": true,
+                                "fields": ["picture","name"]
+                            }, {
+                                "name": "panel_body",
+                                "label": "LBL_PANEL_2",
+                                "columns": 1,
+                                "labels": true,
+                                "labelsOnTop": false,
+                                "placeholders":true,
+                                "fields": ["description","case_number","type"]
+                            }, {
+                                "name": "panel_hidden",
+                                "hide": true,
+                                "labelsOnTop": false,
+                                "placeholders": true,
+                                "fields": ["created_by","date_entered","date_modified","modified_user_id"]
+                            }]
+                        };
+                view._renderPanels(meta.panels);
+                expect(meta.panels[0].isAvatar).toBeTruthy();
+            });
         });
     });
 
@@ -556,6 +858,86 @@ describe("Record View", function() {
             expect(view.collection.previous).not.toBeDefined();
             expect(view.collection.next).toBeDefined();
             expect(view.collection.next.get('id')).toEqual(modelIds[1]);
+        });
+    });
+
+    describe('duplicateClicked', function(){
+        var triggerStub;
+        var openStub;
+
+        beforeEach(function(){
+            triggerStub = sinon.stub(Backbone.Model.prototype, 'trigger', function(event, model){
+                if(event == "duplicate:before"){
+                    expect(model.get("name")).toEqual(view.model.get("name"));
+                    expect(model.get("description")).toEqual(view.model.get("description"));
+                    expect(model).toNotBe(view.model);
+                }
+            });
+            SugarTest.app.drawer = {
+                open: function(){},
+                close: function(){}
+            };
+            openStub = sinon.stub(SugarTest.app.drawer, "open", function(opts){
+                expect(opts.context.model).toBeDefined();
+                expect(opts.layout).toEqual("create");
+                expect(opts.context.model.get("name")).toEqual(view.model.get("name"));
+                expect(opts.context.model.get("description")).toEqual(view.model.get("description"));
+                expect(opts.context.model).toNotBe(view.model);
+            });
+        });
+        afterEach(function(){
+            if(triggerStub){
+                triggerStub.restore();
+            }
+            if(openStub){
+                openStub.restore();
+            }
+        });
+        it("should trigger 'duplicate:before' on model prior to opening create drawer", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            triggerStub.reset();
+            view.layout = new Backbone.Model();
+
+            view.duplicateClicked();
+            expect(triggerStub.called).toBe(true);
+            expect(triggerStub.calledWith("duplicate:before")).toBe(true);
+            expect(openStub.called).toBe(true);
+            expect(triggerStub.calledBefore(openStub)).toBe(true);
+        });
+
+        it(" should pass model to mutate with 'duplicate:before' event", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            triggerStub.reset();
+            view.layout = new Backbone.Model();
+
+            view.duplicateClicked();
+            expect(triggerStub.called).toBe(true);
+            expect(triggerStub.calledWith('duplicate:before')).toBe(true);
+            //Further expectations in stub
+        });
+
+        it("should fire 'drawer:create:fire' event with copied model set on context", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            triggerStub.reset();
+            view.layout = new Backbone.Model();
+            view.duplicateClicked();
+            expect(openStub.called).toBe(true);
+            expect(openStub.lastCall.args[0].context.model.get("name")).toEqual(view.model.get("name"));
         });
     });
 });

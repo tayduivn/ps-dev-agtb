@@ -66,4 +66,9 @@ class SidecarView extends SugarView
         // this is left empty since we are generating the CSS via the API
     }
 
+    protected function _initSmarty()
+    {
+        $this->ss = new Sugar_Smarty();
+        // no app_strings and mod_strings needed for sidecar
+    }
 }

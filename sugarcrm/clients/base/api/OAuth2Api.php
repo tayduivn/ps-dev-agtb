@@ -43,6 +43,14 @@ class OAuth2Api extends SugarApi {
                 'shortHelp' => 'OAuth2 logout.',
                 'longHelp' => 'include/api/help/oauth2_logout.html',
             ),
+            'oauth_bwc_login' => array(
+                'reqType' => 'POST',
+                'path' => array('oauth2','bwc', 'login'),
+                'pathVars' => array('','',''),
+                'method' => 'bwcLogin',
+                'shortHelp' => 'Bwc login for bwc modules. Internal usage only',
+                'longHelp' => 'include/api/help/oauth2_bwc_login.html',
+            ),
         );
     }
 
@@ -72,6 +80,20 @@ class OAuth2Api extends SugarApi {
         session_regenerate_id(true);
 
         return array('success'=>true);
+    }
+
+    /**
+     * By default OAuth is not using cookies. For bwc we need cookies.
+     *
+     * Use the information supplied by oauth2 on $_SESSION.
+     *
+     * @param $api
+     * @param $args
+     */
+    public function bwcLogin($api, $args)
+    {
+        // we need to set the domain to '/' in order to work in bwc
+        setcookie(session_name(), session_id(), ini_get('session.cookie_lifetime'), ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), ini_get('session.cookie_httponly'));
     }
 
 }

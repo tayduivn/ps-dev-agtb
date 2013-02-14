@@ -38,6 +38,8 @@
         }
     },
     _render: function() {
-        app.view.fields.ButtonField.prototype._render.call(this);
+        if (app.acl.hasAccessToModel(this.def.value, this.model)) {
+            app.view.fields.ButtonField.prototype._render.call(this);
+        }
     }
 })

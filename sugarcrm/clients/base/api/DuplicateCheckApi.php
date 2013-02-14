@@ -57,6 +57,8 @@ class DuplicateCheckApi extends SugarApi
 
         $this->handleEmptyBean($bean);
 
+        $args=$this->trimArgs($args);
+
         if (!$bean->ACLAccess('read')) {
             throw new SugarApiExceptionNotAuthorized('No access to read records for module: '.$args['module']);
         }
@@ -68,10 +70,16 @@ class DuplicateCheckApi extends SugarApi
             throw new SugarApiExceptionInvalidParameter("Unable to run duplicate check. There were validation errors on the submitted data: $displayErrors");
         }
 
-        $this->handleEmptyBean($bean);
-
         //retrieve possible duplicates
+        ob_start();
         $results = $bean->findDuplicates();
+        $res = ob_get_contents();
+        ob_clean();
+
+        if (strlen($res) > 0) {
+            $GLOBALS['log']->debug("PHP Compiler Errors Issued: ". $res);
+            throw new SugarApiExceptionRequestMethodFailure("PHP Compiler Errors Issued: ". $res);
+        }
 
         if ($results) {
             return $results;
@@ -86,6 +94,15 @@ class DuplicateCheckApi extends SugarApi
         if (empty($bean)) {
             throw new SugarApiExceptionInvalidParameter('Unable to run duplicate check. Bean was empty after attempting to populate from API');
         }
+    }
+
+    protected function trimArgs($args)
+    {
+        $args2 = array();
+        foreach($args as $key => $value) {
+            $args2[trim($key)] = (is_string($value)) ? trim($value) : $value;
+        }
+        return $args2;
     }
 
     protected function populateFromApi($api, $bean, $args)

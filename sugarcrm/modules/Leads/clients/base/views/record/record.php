@@ -100,6 +100,12 @@ $viewdefs['Leads']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
+                    'name' => 'picture',
+                    'type' => 'image',
+                    'width' => 42,
+                    'height' => 42,
+                ),
+                array(
                     'name'   => 'fieldset_name',
                     'type'   => 'fieldset',
                     'fields' => array(

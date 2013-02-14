@@ -30,6 +30,7 @@ $viewdefs['Campaigns']['DetailView'] = array(
                                         'hidden'=>array('<input type="hidden" name="mode" value="">'),
                                         'buttons' =>
                                             array('EDIT', 'DUPLICATE', 'DELETE',
+                                                // FIXME review these SUGAR.ajaxUI.* methods
                                             array('customCode'=>'<input title="{$MOD.LBL_TEST_BUTTON_TITLE}"  class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'Schedule\';this.form.mode.value=\'test\';SUGAR.ajaxUI.submitForm(this.form);" type="{$ADD_BUTTON_STATE}" name="button" id="send_test_button" value="{$MOD.LBL_TEST_BUTTON_LABEL}">',
                                                 //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
                                                 'sugar_html' => array(

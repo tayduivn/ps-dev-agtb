@@ -7,7 +7,7 @@
         SAVE_AND_VIEW: 'saveAndView'
     },
 
-    enableDuplicateCheck: true,
+    enableDuplicateCheck: false,
     dupecheckList: null, //duplicate list layout
 
     saveButtonName: 'save_button',
@@ -40,14 +40,6 @@
 
         this.model.off("change", null, this);
 
-        //duplicate a record
-        if(app.cache.has("duplicate"+this.module)) {
-            _.each(app.cache.get("duplicate"+this.module), function(value, key) {
-                if(key != 'id') this.model.set(key, value);
-            }, this);  
-            app.cache.cut("duplicate"+this.module);
-        }  
-        
         //keep track of what post-save action was chosen in case user chooses to ignore dupes
         this.context.lastSaveAction = null;
 
@@ -58,7 +50,8 @@
         this.meta = _.extend({}, app.metadata.getView(this.module, 'record'), this.meta);
 
         //enable or disable duplicate check?
-        this.enableDuplicateCheck = _.isUndefined(this.meta.duplicateCheck) ? true : this.meta.duplicateCheck;
+        var moduleMetadata = app.metadata.getModule(this.module);
+        this.enableDuplicateCheck = (moduleMetadata && moduleMetadata.dupCheckEnabled) || false;
     },
 
     delegateButtonEvents: function() {
@@ -98,8 +91,8 @@
      */
     saveAndClose: function() {
         this.initiateSave(_.bind(function() {
-            this.cancel();
             this.alerts.showSuccess();
+            app.drawer.close(true);
         }, this));
     },
 
@@ -107,9 +100,7 @@
      * Handle click on the cancel link
      */
     cancel: function() {
-        this.context.trigger("drawer:hide");
-        if (this.context.parent)
-            this.context.parent.trigger("drawer:hide");
+        app.drawer.close();
     },
 
     /**
@@ -154,6 +145,7 @@
      * @param callback
      */
     initiateSave: function(callback) {
+        this.$('.inline-error').removeClass('inline-error');
         async.waterfall([
             _.bind(this.validateModelWaterfall, this),
             _.bind(this.dupeCheckWaterfall, this),
@@ -197,7 +189,6 @@
                 this.alerts.showServerError();
                 callback(true);
             }, this);
-
         if (this.skipDupeCheck() || !this.enableDuplicateCheck) {
             callback(false);
         } else {
@@ -261,8 +252,17 @@
      * @param error
      */
     saveModel: function(success, error) {
-        this.model.save(null, {
-            fieldsToValidate: this.getFields(this.module),
+        var self = this;
+        success = _.wrap(success, function (func) {
+            app.file.checkFileFieldsAndProcessUpload(self.model, {
+                    success:function () {
+                        func();
+                    }
+                },
+                { deleteIfFails:true});
+        });
+        self.model.save(null, {
+            fieldsToValidate: self.getFields(self.module),
             success: success,
             error: error
         });
@@ -329,7 +329,7 @@
      * @return {*}
      */
     extendModel: function(newModel, origAttributes) {
-        var modelAttributes = newModel.previousAttributes();
+        var modelAttributes = _.clone(newModel.attributes);
 
         _.each(modelAttributes, function(value, key, list) {
             if ( _.isUndefined(value)|| _.isEmpty(value)) {
@@ -345,7 +345,7 @@
      * @return {*}
      */
     saveFormData: function() {
-        this._origAttributes = this.model.previousAttributes();
+        this._origAttributes = _.clone(this.model.attributes);
         return this._origAttributes;
     },
 

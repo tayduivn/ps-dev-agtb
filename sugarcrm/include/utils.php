@@ -1030,58 +1030,49 @@ function return_app_list_strings_language($language)
 /**
 * The dropdown items in custom language files is $app_list_strings['$key']['$second_key'] = $value not
 * $GLOBALS['app_list_strings']['$key'] = $value, so we have to delete the original ones in app_list_strings and relace it with the custom ones.
- * @param file string the language that you want include,
- * @param app_list_strings array the golbal strings
+ * @param string $file The language file that you want include,
+ * @param array  $appListStrings Provided app_list_strings, renamed to not conflict with GLOBALS
  * @return array
  */
  //jchi 25347
-function _mergeCustomAppListStrings($file , $app_list_strings)
+function _mergeCustomAppListStrings($file , $appListStrings)
 {
-	$app_list_strings_original = $app_list_strings;
-	unset($app_list_strings);
-    // FG - bug 45525 - $exemptDropdown array is defined (once) here, not inside the foreach
-    //                  This way, language file can add items to save specific standard codelist from being overwritten
-    $exemptDropdowns = array();
-	include($file);
-    
-	// Bug 60008 + Bugs 60607, 60608, 60609, 60612
+	// Bug 60008 + Bugs 60607, 60608, 60609, 60612 + 60393
     // There is a chance that some app_list_strings were in fact in $GLOBALS['app_list_strings'].
     // In case of that, the customizations end up being blown away because they 
     // are written to the global app_list_strings, not the function scope $app_list_strings.
     // This fixes that. rgonzalez, jbartek
-    if (!empty($GLOBALS['app_list_strings'])) {
-        
-        // If app_list_strings isn't set that means we have a situation where only
-        // a GLOBALS array was used to save the custom drop down. So set app_list_strings
-        // for manipulation here.
-        if (!isset($app_list_strings)) {
-            $app_list_strings = array();
-        }
-        
-        // This will combine values if we need that
-        $app_list_strings = array_merge($GLOBALS['app_list_strings'], $app_list_strings);
-    }
+    global $app_list_strings;
+    $app_list_strings_original = $appListStrings;
     
-	if(empty($app_list_strings) || !is_array($app_list_strings)){
-		return $app_list_strings_original;
-	}
-	//Bug 25347: We should not merge custom dropdown fields unless they relate to parent fields or the module list.
+    // FG - bug 45525 - $exemptDropdown array is defined (once) here, not inside the foreach
+    //                  This way, language file can add items to save specific standard codelist from being overwritten
+    $exemptDropdowns = array();
+    
+    // Include the language file. With $app_list_strings globalized above it should
+    // make no difference if the content of the file is $app_list_strings or
+    // $GLOBALS['app_list_strings'] or a mixture of the two, even if indexes overlap.
+    // Accordingly, the latest additions to the file will trump older additions.
+    include($file);
+    
+    if(empty($app_list_strings) || !is_array($app_list_strings)){
+        return $app_list_strings_original;
+    }
+    //Bug 25347: We should not merge custom dropdown fields unless they relate to parent fields or the module list.
     // FG - bug 45525 - Specific codelists must NOT be overwritten
-	$exemptDropdowns[] = "moduleList";
-	$exemptDropdowns[] = "moduleListSingular";
-	$exemptDropdowns[] = "parent_type_display";
+    $exemptDropdowns[] = "moduleList";
+    $exemptDropdowns[] = "moduleListSingular";
+    $exemptDropdowns[] = "parent_type_display";
     $exemptDropdowns[] = "record_type_display";
     $exemptDropdowns[] = "record_type_display_notes";
 
-	foreach($app_list_strings as $key=>$value)
-	{
-		if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original))
-		{
-	   		unset($app_list_strings_original[$key]);
-		}
-   }
-   $app_list_strings = sugarArrayMergeRecursive($app_list_strings_original , $app_list_strings);
-   return $app_list_strings;
+    foreach($app_list_strings as $key=>$value) {
+        if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original)) {
+            unset($app_list_strings_original[$key]);
+        }
+    }
+    $app_list_strings = sugarArrayMergeRecursive($app_list_strings_original , $app_list_strings);
+    return $app_list_strings;
 }
 
 /**
@@ -3143,28 +3134,28 @@ function check_iis_version($sys_iis_version = '') {
 
     return $retval;
 }
-
-function pre_login_check(){
-	global $action, $login_error;
-	if(!empty($action)&& $action == 'Login'){
-
-		if(!empty($login_error)){
-			$login_error = htmlentities($login_error);
-			$login_error = str_replace(array("&lt;pre&gt;","&lt;/pre&gt;","\r\n", "\n"), "<br>", $login_error);
-			$_SESSION['login_error'] = $login_error;
-			echo '<script>
-						function set_focus() {}
-						if(document.getElementById("post_error")) {
-							document.getElementById("post_error").innerHTML="'. $login_error. '";
-							document.getElementById("cant_login").value=1;
-							document.getElementById("login_button").disabled = true;
-							document.getElementById("user_name").disabled = true;
-							//document.getElementById("user_password").disabled = true;
-						}
-						</script>';
-		}
-	}
-}
+// no longer needed
+//function pre_login_check(){
+//	global $action, $login_error;
+//	if(!empty($action)&& $action == 'Login'){
+//
+//		if(!empty($login_error)){
+//			$login_error = htmlentities($login_error);
+//			$login_error = str_replace(array("&lt;pre&gt;","&lt;/pre&gt;","\r\n", "\n"), "<br>", $login_error);
+//			$_SESSION['login_error'] = $login_error;
+//			echo '<script>
+//						function set_focus() {}
+//						if(document.getElementById("post_error")) {
+//							document.getElementById("post_error").innerHTML="'. $login_error. '";
+//							document.getElementById("cant_login").value=1;
+//							document.getElementById("login_button").disabled = true;
+//							document.getElementById("user_name").disabled = true;
+//							//document.getElementById("user_password").disabled = true;
+//						}
+//						</script>';
+//		}
+//	}
+//}
 
 /**
  * Get Sugar root directory
@@ -3230,7 +3221,7 @@ function sugar_cleanup($exit = false) {
 
 	}
 
-	pre_login_check();
+//	pre_login_check();
 	if(class_exists('DBManagerFactory')) {
 		$db = DBManagerFactory::getInstance();
 		$db->disconnect();

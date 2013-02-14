@@ -10,6 +10,10 @@
             {{#if extAccts}}
             <li class="profileactions-eapm"><a href="#">{{extAccts}}</a></li>
             {{/if}}
+            {{#if showAdmin}}
+            <li class="divider"></li>
+            <li class="administration"><a href="#Administration">{{str "LBL_ADMIN"}}</a></li>
+            {{/if}}
             <li class="divider"></li>
             <li class="profileactions-logout"><a href="#logout/?clear=1">{{str "LBL_LOGOUT"}}</a></li>
         </ul>

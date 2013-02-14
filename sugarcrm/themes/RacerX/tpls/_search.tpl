@@ -26,6 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+{* TODO REMOVE THIS FILE
 //BEGIN SUGARCRM flav=sales ONLY
 {if !$ISADMIN}
 //END SUGARCRM flav=sales ONLY
@@ -86,8 +87,8 @@ $("#sugar_spot_search").ready(function() {
 });
 {/literal}
 </script>
-
-{if $FTS_AUTOCOMPLETE_ENABLE}
+*}
+{* if $FTS_AUTOCOMPLETE_ENABLE}
 {literal}
 <script>
     $("#glblSearchBtn").click(function(){
@@ -139,4 +140,4 @@ $("#sugar_spot_search").ready(function() {
 
 </script>
 {/literal}
-{/if}
+{/if *}

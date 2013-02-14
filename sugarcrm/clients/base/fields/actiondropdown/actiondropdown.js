@@ -98,5 +98,15 @@
                 $(el).remove();
             }
         });
+    },
+    setDisabled: function(disable) {
+        app.view.fields.FieldsetField.prototype.setDisabled.call(this, disable);
+        disable = _.isUndefined(disable) ? true : disable;
+        if (disable) {
+            this.$('.dropdown-toggle').addClass('disabled');
+        } else {
+            this.$('.dropdown-toggle').removeClass('disabled');
+        }
+        this.setPlaceholder();
     }
 })

@@ -37,15 +37,12 @@
         <script src='{$sugarSidecarPath}'></script>
         <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
         <script src='{$configFile}'></script>
-        <script src="include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
-        <script src="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
         <script src="include/javascript/jquery/jquery.dataTables.min.js"></script>
 
         <!-- CSS -->
         <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
         <link rel="stylesheet" href="{$css_url}"/>
         <link rel="stylesheet" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
-        <link rel="stylesheet" href="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.css"/>
     </head>
     <body>
     	<div id="sugarcrm">
@@ -60,6 +57,7 @@
                         </div>
                     </div>
                 </div>
+                <div id="drawers"></div>
                 <div id="footer"></div>
                 <div id="tourguide"></div>
 			</div>

@@ -1361,8 +1361,7 @@ class SugarBean
         {
             foreach ($fieldDefs as $name=>$properties)
             {
-                if (array_search('link',$properties) === 'type')
-                {
+                if (isset($properties['type']) && $properties['type'] == 'link' ) {
                     $linked_fields[$name]=$properties;
                 }
             }
@@ -2014,10 +2013,12 @@ class SugarBean
         if (($this->object_name == 'Meeting' || $this->object_name == 'Call') || $notify_user->receive_notifications) {
             $this->current_notify_user = $notify_user;
 
-            $templateName = $this->getTemplateNameForNotificationEmail();
-            $xtpl         = $this->createNotificationEmailTemplate($templateName);
-            $subject      = $xtpl->text($templateName . "_Subject");
-            $body         = trim($xtpl->text($templateName));
+            $sendToEmail = $notify_user->emailAddress->getPrimaryAddress($notify_user);
+            $sendEmail = TRUE;
+            if(empty($sendToEmail)) {
+                $GLOBALS['log']->warn("Notifications: no e-mail address set for user {$notify_user->user_name}, cancelling send");
+                $sendEmail = FALSE;
+            }
 
             //BEGIN SUGARCRM flav=notifications ONLY
             //Save the notification
@@ -2198,7 +2199,13 @@ class SugarBean
             $this->load_relationship($rel_link);
             if ( !empty($this->$rel_link) && $this->$rel_link->getRelationshipObject() && $this->$rel_link->getRelationshipObject()->getLHSModule() == $this->$rel_link->getRelationshipObject()->getRHSModule() )
             {
-                $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
+                // It's a self-referencing relationship
+                if ( $this->$rel_link->getRelationshipObject()->getLHSLink() != $this->$rel_link->getRelationshipObject()->getRHSLink() ) {
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getRHSLink();
+                } else {
+                    // Doesn't have a right hand side, so let's just use the LHS
+                    $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
+                }
             }
             else
             {
@@ -4799,7 +4806,7 @@ class SugarBean
 
         foreach($this->field_defs as $field)
         {
-            if(0 == strcmp($field['type'],'relate') && !empty($field['module']))
+            if($field['type'] == 'relate' && !empty($field['module']))
             {
                 $name = $field['name'];
                 if(empty($this->$name))
@@ -4907,6 +4914,12 @@ class SugarBean
             // call the custom business logic
             $this->call_custom_logic("after_delete", $custom_logic_arguments);
         }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $searchEngine->delete($this);
+        //END SUGARCRM flav=pro ONLY        
     }
 
     /**
@@ -6443,5 +6456,14 @@ class SugarBean
             $this->duplicate_check_manager = new BeanDuplicateCheck($this, $data);
         }
         return $this->duplicate_check_manager;
+    }
+
+    /**
+     * Fallback file name getter, simply gets the filename for the given bean
+     *
+     * @return string
+     */
+    public function getFileName() {
+        return empty($this->filename) ? '' : $this->filename;
     }
 }

@@ -26,27 +26,25 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
-require_once ("tests/SugarTestRestUtilities.php");
-require_once ("tests/SugarTestACLUtilities.php");
-require_once ("data/SugarBeanApiHelper.php");
-
+require_once 'tests/SugarTestRestUtilities.php';
+require_once 'tests/SugarTestACLUtilities.php';
+require_once 'data/SugarBeanApiHelper.php';
 
 /**
  * @group ApiTests
  */
-class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
+class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
+{
+    public $bean;
+    public $beanApiHelper;
 
-    var $bean;
-    var $beanApiHelper;
-
-    var $oldDate;
-    var $oldTime;
+    public $oldDate;
+    public $oldTime;
 
     public $roles = array();
 
-    public function setUp() {
+    public function setUp()
+    {
         SugarTestHelper::setUp('current_user');
         // Mocking out SugarBean to avoid having to deal with any dependencies other than those that we need for this test
         $mock = $this->getMock('SugarBean');
@@ -68,7 +66,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->beanApiHelper = new SugarBeanApiHelper($serviceMock);
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         SugarTestACLUtilities::tearDown();
         SugarTestHelper::tearDown();
     }
@@ -76,8 +75,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
     /**
      * @dataProvider providerFunction
      */
-    public function testFormatForApi($fieldName, $fieldValue, $expectedFormattedValue, $message) {
-
+    public function testFormatForApi($fieldName, $fieldValue, $expectedFormattedValue, $message)
+    {
         $this->bean->$fieldName = $fieldValue;
 
         $data = $this->beanApiHelper->formatForApi($this->bean);
@@ -85,7 +84,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertSame($expectedFormattedValue, $data[$fieldName], $message);
     }
 
-    public function providerFunction() {
+    public function providerFunction()
+    {
         return array(
             array('testInt', '', null, 'Bug 57507 regression: expected formatted value for a null int type to be NULL'),
             array('testDecimal', '', null, 'Bug 59692 regression: expected formatted value for a null decimal type to be NULL'),
@@ -100,7 +100,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         );
     }
 
-    public function testJsonFieldSave() {
+    public function testJsonFieldSave()
+    {
         $userPrefs = BeanFactory::newBean('UserPreferences');
 
         $submittedData = array(
@@ -112,8 +113,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertEquals($userPrefs->contents, json_encode($submittedData['contents']));
     }
 
-
-    public function testListWithOwnerAccess() {
+    public function testListWithOwnerAccess()
+    {
         // create role that is all fields read only
         $role = SugarTestACLUtilities::createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), array('Meetings'), array('access', 'list', 'view'), array('view'));
 
@@ -129,5 +130,40 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $data = $this->beanApiHelper->formatForApi($meeting);
         $this->assertEquals($meeting->id, $data['id'], "ID Doesn't Match");
         $this->assertEquals($meeting->name, $data['name'], "Name Doesn't Match");
+    }
+
+    public function testListCertainFieldsNoAccess()
+    {
+        // create role that is all fields read only
+        $this->roles[] = $role = $this->createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), array('Accounts'), array('access', 'list', 'view'), array('view'));
+
+        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
+            $GLOBALS['current_user']->load_relationship('aclroles');
+            $GLOBALS['current_user']->aclroles->add($role);
+            $GLOBALS['current_user']->save();
+        }
+
+        $id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+
+        // set the name field as Read Only
+        $aclField = new ACLField();
+
+        $aclField->setAccessControl('Accounts', $role->id, 'website', -99);
+
+        unset($_SESSION['ACL']);
+
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
+
+        // create a meeting not owned by current user
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = 'SugarBeanApiHelperTest Meeting';
+        $account->assigned_user_id = 1;
+        $account->id = create_guid();
+
+        $data = $this->beanApiHelper->formatForApi($account, array('id', 'name', 'website'));
+
+        $this->assertNotEmpty($data['_acl']['fields']->website, "Website did not come back and should have.  The acls were: " . print_r($data['_acl'], true));
+
     }
 }

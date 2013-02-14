@@ -28,7 +28,7 @@ $dictionary['product_bundle_quote'] = array (
       , array('name' =>'deleted', 'type' =>'bool', 'len'=>'1', 'default'=>'0', 'required' => false,)
       , array('name' =>'bundle_id', 'type' =>'varchar', 'len'=>'36')
       , array('name' =>'quote_id', 'type' =>'varchar', 'len'=>'36')
-      , array('name' =>'bundle_index', 'type' =>'int', 'len'=>'11', 'auto_increment' => true, 'required' => true,)
+      , array('name' =>'bundle_index', 'type' =>'int', 'len'=>'11', 'default' => 0, 'required' => false,)
 	),
 	'indices' => array (
        array('name' =>'prod_bundl_quotepk', 'type' =>'primary', 'fields'=>array('id'))

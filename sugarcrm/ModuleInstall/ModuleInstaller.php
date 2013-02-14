@@ -2409,6 +2409,10 @@ private function dir_file_count($path){
                     'target' => '#footer',
                     'layout' => 'footer'
                 ),
+                'drawer' => array(
+                    'target' => '#drawers',
+                    'layout' => 'drawer'
+                ),
                 'tourguide' => array(
                     'target' => '#tourguide'
                 )

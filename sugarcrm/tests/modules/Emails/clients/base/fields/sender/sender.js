@@ -59,7 +59,6 @@ describe("Emails.Field.Sender", function() {
     });
 
     it("should set value correctly", function() {
-        debugger;
         var populateValues = sinon.spy(field, 'populateValues'),
             expectedId = "c0e9fb1f-52e8-bca1-20e1-51094f123246",
             expectedValue = "System-generated password email",
@@ -75,7 +74,6 @@ describe("Emails.Field.Sender", function() {
 
         field.render();
         SugarTest.server.respond();
-
         expect(populateValues.calledOnce).toBeTruthy();
 
         //Setting values through method for Mocking of onchange event from select2

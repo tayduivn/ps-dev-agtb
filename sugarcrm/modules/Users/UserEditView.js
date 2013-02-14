@@ -356,7 +356,7 @@ function set_chooser()
     document.EditView.hide_tabs_def.value = hide_tabs_def;
     document.EditView.remove_tabs_def.value = remove_tabs_def;
     //sets a cookie to reload menu on ajax load so new menu shows up
-    	Set_Cookie('sugar_theme_menu_load','true',30,'/','','');
+//    	Set_Cookie('sugar_theme_menu_load','true',30,'/','','');
 
 }
 

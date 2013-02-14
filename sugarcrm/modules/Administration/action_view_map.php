@@ -22,7 +22,7 @@
 $action_view_map['themesettings'] = 'themesettings';
 $action_view_map['repair'] = 'repair';
 $action_view_map['configuretabs'] = 'configuretabs';
-$action_view_map['configureajaxui'] = 'configureajaxui';
+//$action_view_map['configureajaxui'] = 'configureajaxui';
 $action_view_map['configurefts'] = 'configurefts';
 //BEGIN SUGARCRM flav=pro ONLY
 $action_view_map['enablewirelessmodules'] = 'enablewirelessmodules';

@@ -27,6 +27,7 @@
  ********************************************************************************/
 *}
 {if $AUTHENTICATED}
+<!--
 {$DCSCRIPT}
 <div id='dcmenutop'></div>
 <div id='dcmenu' class='dcmenu dcmenuFloat navbar navbar-fixed-top'>
@@ -42,4 +43,5 @@
 	{/if}
     </div>
 </div>
+-->
 {/if}

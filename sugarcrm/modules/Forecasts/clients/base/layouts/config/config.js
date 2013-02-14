@@ -98,7 +98,7 @@
     _showModal:function () {
         var self = this,
             isAdmin = app.user.getAcls()['Forecasts'].admin == "yes",
-            isSetup = this.context.config.get('is_setup');
+            isSetup = app.utils.getConfigValue('is_setup');
 
         if (isAdmin) {
             // begin building params to pass to modal
@@ -111,7 +111,7 @@
                     }
                 },
                 components: [
-                    { layout: (this.context.config.get('is_setup') == 1) ? "tabbedConfig" : "wizardConfig" }
+                    { layout: (isSetup == 1) ? "tabbedConfig" : "wizardConfig" }
                 ]
             };
             // callback has to be a function returning the checkSettingsAndRedirect function

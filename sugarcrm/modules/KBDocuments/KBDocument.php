@@ -759,7 +759,38 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
         return $modified_order_by_query;
     }
 
+    /**
+     * KBDocument specific file name getter
+     *
+     * @return string
+     */
+    public function getFileName() {
+        if (empty($this->id)) {
+            return '';
+        }
 
+        // Similar process to documents
+        $revision = BeanFactory::getBean('KBDocumentRevisions', $this->id);
+
+        // Start with checking if this is a KBDocRev id
+        if (!empty($revision)) {
+            $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
+            if ($revision) {
+                return $revision->filename;
+            }
+        } else {
+            // Try the kbdoc revision
+            $revision = BeanFactory::getBean('KBDocumentRevisions', $this->kbdocument_revision_id);
+            if (!empty($revision)) {
+                $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
+                if ($revision) {
+                    return $revision->filename;
+                }
+            }
+        }
+
+        return '';
+    }
 }
 
 

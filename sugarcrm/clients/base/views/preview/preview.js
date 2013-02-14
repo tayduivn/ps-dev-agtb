@@ -76,10 +76,12 @@
 
     showPreviousNextBtnGroup:function() {
         var collection = this.collection;
-        var recordIndex = collection.indexOf(collection.get(this.model.id));
-        if (this.layout) {
-            this.layout.previous = collection.models[recordIndex-1] ? collection.models[recordIndex-1] : undefined;
-            this.layout.next = collection.models[recordIndex+1] ? collection.models[recordIndex+1] : undefined;
+        if(this.layout){
+            if(collection){
+                var recordIndex = collection.indexOf(collection.get(this.model.id));
+                this.layout.previous = collection.models[recordIndex-1] ? collection.models[recordIndex-1] : undefined;
+                this.layout.next = collection.models[recordIndex+1] ? collection.models[recordIndex+1] : undefined;
+            }
             // Need to rerender the preview header
             this.layout.trigger("preview:pagination:update");
         }
@@ -131,6 +133,9 @@
             app.events.trigger("preview:open",this);
             // Highlight the row
             app.events.trigger("list:preview:decorate", this.model, this);
+            if(!this.$el.is(":visible")) {
+                this.context.trigger("openSidebar",this);
+            }
         }
     },
     /**
@@ -170,8 +175,8 @@
             currID = id || this.model.get("postId") || this.model.get("id"),
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
 
-        if( this.switching ) {
-            // We're currently switching previews, so ignore any pagination click events.
+        if( this.switching || this.collection.models.length < 2) {
+            // We're currently switching previews or we don't have enough models, so ignore any pagination click events.
             return;
         }
         this.switching = true;

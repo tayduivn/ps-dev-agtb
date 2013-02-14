@@ -222,7 +222,6 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'reportable'=>false,
     'comment' => 'Currency used'
   ),
-
     'products' =>
       array (
         'name' => 'products',
@@ -234,17 +233,28 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
         'rel_fields'=>array('product_index'=>array('type'=>'integer')),
         'vname'=>'LBL_PRODUCTS',
       ),
-
-    'product_bundles' =>
+    'quotes' =>
         array(
-            'name' => 'product_bundles',
+            'name' => 'quotes',
             'type' => 'link',
             'relationship' => 'product_bundle_quote',
             'module' => 'Quotes',
             'bean_name' => 'Quote',
             'source' => 'non-db',
             'rel_fields' => array('bundle_index' => array('type' => 'integer')),
+            'relationship_fields' => array('bundle_index' => 'bundle_index'),
             'vname' => 'LBL_QUOTES',
+        ),
+    'product_bundle_notes' =>
+        array(
+            'name' => 'product_bundle_notes',
+            'type' => 'link',
+            'relationship' => 'product_bundle_note',
+            'module' => 'ProductBundleNotes',
+            'bean_name' => 'ProductBundleNote',
+            'source' => 'non-db',
+            'rel_fields' => array('note_index' => array('type' => 'integer')),
+            'vname' => 'LBL_NOTES',
         ),
 )
                                                       , 'indices' => array (

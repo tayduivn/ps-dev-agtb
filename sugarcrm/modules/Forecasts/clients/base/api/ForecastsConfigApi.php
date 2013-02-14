@@ -20,7 +20,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/ConfigModuleApi.php');
+require_once('clients/base/api/ConfigModuleApi.php');
 
 class ForecastsConfigApi extends ConfigModuleApi
 {
@@ -64,15 +64,20 @@ class ForecastsConfigApi extends ConfigModuleApi
     public function forecastsConfigSave($api, $args)
     {
         //acl check, only allow if they are module admin
-        if (!parent::hasAccess("Forecasts")) {
-            throw new SugarApiExceptionNotAuthorized("Current User not authorized to change Forecasts configuration settings");
+        if(!$api->user->isAdminForModule("Forecasts")) {
+            // No create access so we construct an error message and throw the exception
+            $failed_module_strings = return_module_language($GLOBALS['current_language'], 'forecasts');
+            $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
+            $args = null;
+            if(!empty($moduleName)) {
+                $args = array('moduleName' => $moduleName);
+            }
+            throw new SugarApiExceptionNotAuthorized($GLOBALS['app_strings']['EXCEPTION_CHANGE_MODULE_CONFIG_NOT_AUTHORIZED'], $args);
         }
-
-        $platform = (isset($args['platform']) && !empty($args['platform'])) ? $args['platform'] : 'base';
 
         $admin = BeanFactory::getBean('Administration');
         //track what settings have changed to determine if timeperiods need rebuilt
-        $prior_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
+        $prior_forecasts_settings = $admin->getConfigForModule('Forecasts', $api->platform);
 
         //If this is a first time setup, default prior settings for timeperiods to 0 so we may correctly recalculate
         //how many timeperiods to build forward and backward.  If we don't do this we would need the defaults to be 0

@@ -28,105 +28,10 @@
  */
 
 // $Id: ajaxUI.js 57264 2010-07-02 18:45:27Z kjing $
-
+// TODO this file is here only temporarily
 SUGAR.ajaxUI = {
     loadingWindow : false,
-    callback : function(o)
-    {
-        var cont;
-        if (typeof window.onbeforeunload == "function")
-            window.onbeforeunload = null;
-        if (typeof scroll == "function")
-            scroll(0,0);
-        //BEGIN SUGARCRM flav=pro ONLY
-        SUGAR.forms.AssignmentHandler.reset();
-        //END SUGARCRM flav=pro ONLY
-        try{
-            var r = YAHOO.lang.JSON.parse(o.responseText);
-            cont = r.content;
 
-            if (r.title)
-            {
-                document.title = html_entity_decode(r.title);
-            }
-            if (r.action)
-            {
-                action_sugar_grp1 = r.action;
-            }
-            if (r.favicon)
-            {
-                SUGAR.ajaxUI.setFavicon(r.favicon);
-            }
-
-            var c = document.getElementById("content");
-            // Bug #49205 : Subpanels fail to load when selecting subpanel tab
-            // hide content of placeholder before apply new one
-            // @see SUGAR.util.evalScript
-            c.style.visibility = 'hidden';
-            c.innerHTML = cont;
-            SUGAR.util.evalScript(cont);
-            // all javascripts have been processed - show content of placeholder
-            c.style.visibility = 'visible';
-
-            if ( r.moduleList)
-            {
-                SUGAR.themes.setModuleTabs(r.moduleList);
-            }
-
-            //BEGIN SUGARCRM flav=pro ONLY
-            if (r.menu)
-            {
-				if(Get_Cookie("sugar_theme_menu_load") == 'true') {
-					SUGAR.themes.setModuleTabs(r.moduleList);
-					Set_Cookie('sugar_theme_menu_load','false',30,'/','','');
-				} else {
-	               SUGAR.themes.setCurrentTab(r.menu);
-				}
-            }
-            if (r.record)
-            {
-                DCMenu.record = r.record;
-            }
-            if(r.menu && r.menu.module)
-            {
-                DCMenu.module = r.menu.module;
-
-                // Fix the help link
-                // Bug50676 - This can only be run when we have the module around
-                var hl = $("#help");
-                if (hl.length > 0) {
-                    hl.find('a').each(function()
-                        {
-                            this.href = this.href.replace(new RegExp("help_action=([^\&]*)"), 'help_action=' + action_sugar_grp1)
-                                .replace(new RegExp("help_module=([^\&]*)"), 'help_module=' + r.menu.module);
-                        }
-                    );
-                    var label = (r.menu.label) ? r.menu.label: r.menu.module;
-                    hl.find('span.title').text(label + ' ' + SUGAR.language.get('app_strings','LNK_HELP'));
-                }
-            }
-            //END SUGARCRM flav=pro ONLY
-
-            // set response time from ajax response
-            if(typeof(r.responseTime) != 'undefined'){
-                var rt = $("#responseTime");
-                if(rt.length > 0){
-                    rt.html(rt.html().replace(/[\d]+\.[\d]+/, r.responseTime));
-                }
-                else if(typeof(logoStats) != "undefined"){
-                	$("#logo").attr("title", logoStats.replace(/[\d]+\.[\d]+/, r.responseTime)).tipTip({maxWidth: "auto", edgeOffset: 10});
-                }
-            }
-            // Bug #49205 : Subpanels fail to load when selecting subpanel tab
-            // hide ajax loading message after all scripts are processed
-            SUGAR.ajaxUI.hideLoadingPanel();
-        } catch (e){
-            // Bug #49205 : Subpanels fail to load when selecting subpanel tab
-            // hide ajax loading message after all scripts are processed
-            SUGAR.ajaxUI.hideLoadingPanel();
-            SUGAR.ajaxUI.showErrorMessage(o.responseText);
-        }
-    },
     showErrorMessage : function(errorMessage)
     {
         if (!SUGAR.ajaxUI.errorPanel) {
@@ -333,26 +238,7 @@ SUGAR.ajaxUI = {
         }
 
     },
-    firstLoad : function()
-    {
-        //Setup Browser History
-        var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
-        var aRegex = /action=([^&#]*)/.exec(window.location);
-        var action = aRegex ? aRegex[1] : false;
-        var mRegex = /module=([^&#]*)/.exec(window.location);
-        var module = mRegex ? mRegex[1] : false;
-        if (module != "ModuleBuilder")
-        {
-            var go = url != null || action == "ajaxui";
-            url = url ? url : 'index.php?module=Home&action=index';
-            YAHOO.util.History.register('ajaxUILoc', url, SUGAR.ajaxUI.go);
-            YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
-            SUGAR.ajaxUI.hist_loaded = true;
-            if (go)
-                SUGAR.ajaxUI.go(url);
-        }
-        SUGAR_callsInProgress--;
-    },
+
     print: function()
     {
         var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');

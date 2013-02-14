@@ -51,7 +51,7 @@ describe("The forecastsWizardConfig layout controller", function(){
             };
         }));
         stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
-
+        stubs.push(sinon.stub(app.api, "call"));
         layout = SugarTest.createComponent('Layout', {
             name: "wizardConfig",
             module: "Forecasts",
