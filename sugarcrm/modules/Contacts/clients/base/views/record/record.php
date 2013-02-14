@@ -72,6 +72,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                         'primary_address_city',
                         'primary_address_state',
                         'primary_address_postalcode',
+                        'primary_address_country',
                     ),
                 ),
                 array(
@@ -83,6 +84,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                         'alt_address_city',
                         'alt_address_state',
                         'alt_address_postalcode',
+                        'alt_address_country',
                         array(
                             'name' => 'copy',
                             'type' => 'copy',
@@ -91,6 +93,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                                 'primary_address_city' => 'alt_address_city',
                                 'primary_address_state' => 'alt_address_state',
                                 'primary_address_postalcode' => 'alt_address_postalcode',
+                                'primary_address_country' => 'alt_address_country',
                             ),
                         ),
                     ),
