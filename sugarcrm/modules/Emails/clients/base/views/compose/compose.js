@@ -482,7 +482,7 @@
         if (_.isObject(signature) && signature.id) {
             var url = app.api.buildURL("Signatures", signature.id);
             app.api.call("read", url, null, {
-                success: _.bind(this._insertSignature, this),
+                success: this._insertSignature,
                 error: function() {
                     console.log("Retrieving Signature failed.");
                 }

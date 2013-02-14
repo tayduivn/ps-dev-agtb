@@ -41,7 +41,7 @@
         });
 
         // remove links
-        this.on("render", this._removeLinks, this);
+        this.on("render", this._removeLinks);
 
         // treat the DataManager.sync override like a before_sync callback in order to add additional options to the
         // call

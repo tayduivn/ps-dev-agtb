@@ -31,7 +31,6 @@ describe("Emails.Views.ComposeSignaturesList", function() {
     it("should call _sync to add a custom endpoint during a sync and the custom endpoint should be used", function() {
         var apiStub = sinon.stub(app.api, "call");
 
-        debugger;
         view.collection.fetch();
         expect(apiStub.lastCall.args[1]).toMatch(/.*\/Signatures\?.*/);
 
