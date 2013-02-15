@@ -102,6 +102,9 @@
                     if(scope.currentFilter === "all_records") {
                         method = "delete";
                     }
+                    // We're dealing with a new collection that may not have the current preview record in the collection.
+                    // Closing the preview will keep it from getting out of sync
+                    app.events.trigger("preview:close");
                     var url = app.api.buildURL('Filters/' + self.options.module + '/used');
                     app.api.call(method, url, {filters: [scope.currentFilter]}, {});
                 }

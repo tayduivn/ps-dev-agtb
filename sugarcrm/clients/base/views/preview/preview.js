@@ -31,8 +31,8 @@
      *  - preview:render                indicate we must load the preview with a model/collection
      *  - preview:collection:change     indicate we want to update the preview with the new collection
      *  - preview:close                 indicate we must hide the preview panel
-     *  - preview:pagination:fire       indicate we must switch to previous/next record
-     *  - preview:pagination:update     indicate the preview header needs to be refreshed
+     *  - preview:pagination:fire       (on layout) indicate we must switch to previous/next record
+     *  - preview:pagination:update     (on layout) indicate the preview header needs to be refreshed
      *  - list:preview:fire             indicate the user clicked on the preview icon
      *  - list:preview:decorate         indicate we need to update the highlighted row in list view
      */
@@ -81,6 +81,9 @@
                 var recordIndex = collection.indexOf(collection.get(this.model.id));
                 this.layout.previous = collection.models[recordIndex-1] ? collection.models[recordIndex-1] : undefined;
                 this.layout.next = collection.models[recordIndex+1] ? collection.models[recordIndex+1] : undefined;
+                this.layout.hideNextPrevious = _.isUndefined(this.layout.previous) && _.isUndefined(this.layout.next);
+            } else {
+                this.layout.hideNextPrevious = true;
             }
             // Need to rerender the preview header
             this.layout.trigger("preview:pagination:update");
