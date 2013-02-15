@@ -78,11 +78,6 @@
 
 
     /**
-     * Used to query for the user_id value in Forecasts
-     */
-    userId: '',
-
-    /**
      * Used to query for the timeperiod_id value in Forecasts
      */
     timePeriod: '',
@@ -92,10 +87,6 @@
      */
     forecastType: 'Direct',
 
-    /**
-     * Stores the historical log of the Forecast entries
-     */
-    historyLog: [],
 
     /**
      * Stores the Forecast totals to use when creating a new entry
@@ -146,29 +137,39 @@
      */
     show_worst: false,
 
+    /**
+     * Does the layout have the forecastCommitLog View?
+     */
+    layoutHasForecastCommitLog: true,
+
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
-        this.timePeriod = app.defaultSelections.timeperiod_id.id;
-        this.selectedUser = {id: app.user.get('id'), "isManager": app.user.get('isManager'), "showOpps": false};
-
         this.bestCase = 0;
         this.likelyCase = 0;
+        this.worstCase = 0;
 
-        this.show_likely = app.utils.getConfigValue('show_worksheet_likely');
-        this.show_best = app.utils.getConfigValue('show_worksheet_best');
-        this.show_worst = app.utils.getConfigValue('show_worksheet_worst');
-        
-        // we have to override sync right now as there is no way to run the filter by default
-        this.collection.sync = _.bind(function(method, model, options) {
-            options.success = _.bind(function(resp, status, xhr) {
-                this.collection.reset(resp.records);
+        this.show_likely = app.metadata.getModule('Forecasts', 'config').show_worksheet_likely;
+        this.show_best = app.metadata.getModule('Forecasts', 'config').show_worksheet_best;
+        this.show_worst = app.metadata.getModule('Forecasts', 'config').show_worksheet_worst;
+
+        this.selectedUser = {id: app.user.get('id'), "isManager": app.user.get('isManager'), "showOpps": false};
+
+        if(_.isUndefined(this.layout.getComponent('forecastsCommitLog'))) {
+            this.layoutHasForecastCommitLog = false;
+            this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
+            this.timePeriod = app.defaultSelections.timeperiod_id.id;
+
+            // we have to override sync right now as there is no way to run the filter by default
+            this.collection.sync = _.bind(function(method, model, options) {
+                options.success = _.bind(function(resp, status, xhr) {
+                    this.collection.reset(resp.records);
+                }, this);
+                // we need to force a post, so get the url object and put it in
+                var url = this.createURL();
+                app.api.call("create", url.url, url.filters, options);
             }, this);
-            // we need to force a post, so get the url object and put it in
-            var url = this.createURL();
-            app.api.call("create", url.url, url.filters, options);
-        }, this);
+        }
     },
     /**
      *
@@ -202,8 +203,10 @@
         this.worstCaseCls = '';
         this.totals = null;
 
-        this.context.resetLoadFlag();
-        this.loadData();
+        if(!this.layoutHasForecastCommitLog) {
+            this.context.resetLoadFlag();
+            this.loadData();
+        }
     },
 
     /**
@@ -394,7 +397,6 @@
         this.worstCaseCls = '';
 
         this.previous = this.totals;
-        this.collection.url = this.url;
         this.collection.unshift(forecast);
     }
 })
