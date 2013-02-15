@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if(!defined("sugarEntry") || !sugarEntry) die("Not A Valid Entry Point");
 
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
@@ -28,19 +28,23 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$viewdefs['Products']['base']['view']['headerpane'] = array(
-    'title' => 'LBL_MODULE_NAME',
-    'buttons' => array(
+$viewdefs["Emails"]["base"]["view"]["compose-signatures-list"] = array(
+    "type"   => "list",
+    "panels" => array(
         array(
-            'name'    => 'create_button',
-            'type'    => 'button',
-            'label'   => 'LBL_CREATE_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
-            'value' => 'create'
-        ),
-        array(
-            'name' => 'sidebar_toggle',
-            'type' => 'sidebartoggle',
+            "fields" => array(
+                array(
+                    "name"    => "name",
+                    "label"   => "LBL_NAME",
+                    "link"    => false,
+                    "default" => true,
+                ),
+                array(
+                    "name"    => "default",
+                    "type"    => "bool",
+                    "label"   => "LBL_DEFAULT_SIGNATURE_TITLE",
+                ),
+            ),
         ),
     ),
 );
