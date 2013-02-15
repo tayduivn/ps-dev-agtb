@@ -110,7 +110,7 @@
         var selectedUser = this.context.get('selectedUser');
         this._canEdit = _.isEqual(app.user.get('id'), selectedUser.id) && !_.contains(
             // join the two variable together from the config
-            app.utils.getConfigValue("sales_stage_won").concat(app.utils.getConfigValue("sales_stage_lost")), this.model.get('sales_stage'));
+            app.metadata.getModule('Forecasts', 'config').sales_stage_won.concat(app.metadata.getModule('Forecasts', 'config').sales_stage_lost), this.model.get('sales_stage'));
     },
 
     /**

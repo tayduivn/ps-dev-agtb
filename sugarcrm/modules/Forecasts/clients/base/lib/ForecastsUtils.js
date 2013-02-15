@@ -65,15 +65,15 @@
                 setup_or_updated_lang_key = (is_first_commit) ? '_SETUP' : '_UPDATED',
                 likely_args = {
                     changed: likely_difference != 0,
-                    show: this.getConfigValue("show_worksheet_likely")
+                    show: app.metadata.getModule('Forecasts', 'config').show_worksheet_likely
                 },
                 best_args = {
                     changed: best_difference != 0,
-                    show: this.getConfigValue("show_worksheet_best")
+                    show: app.metadata.getModule('Forecasts', 'config').show_worksheet_best
                 },
                 worst_args = {
                     changed: worst_difference != 0,
-                    show: this.getConfigValue("show_worksheet_worst")
+                    show: app.metadata.getModule('Forecasts', 'config').show_worksheet_worst
                 };
 
             // increment num_shown for each variable that is true
@@ -333,7 +333,7 @@
             // get the proper keymap
             var keyMap = (whichKeyMap === 'rep') ? this._tableColumnsConfigKeyMapRep : this._tableColumnsConfigKeyMapManager;
 
-            var returnValue = this.getConfigValue(keyMap[key]);
+            var returnValue = app.metadata.getModule('Forecasts', 'config')[keyMap[key]];
             // If we've been passed a value that doesn't exist in the keymaps
             if(!_.isUndefined(returnValue)) {
                 // convert it to boolean
@@ -357,23 +357,11 @@
 
             var returnDs = {};
             _.each(ds, function(value, key) {
-                if(this.getConfigValue(cfg_key_prefix + key) == 1) {
+                if(app.metadata.getModule('Forecasts', 'config')[cfg_key_prefix + key] == 1) {
                     returnDs[key] = value
                 }
             }, this);
             return returnDs;
-        },
-
-        /**
-         * Utility method to get a value from the Forecast Config in the Metadata
-         *
-         * @param key
-         * @returns {*}
-         */
-        getConfigValue: function(key) {
-            var config = app.metadata.getModule('Forecasts').config;
-
-            return config[key];
         },
 
         /**
