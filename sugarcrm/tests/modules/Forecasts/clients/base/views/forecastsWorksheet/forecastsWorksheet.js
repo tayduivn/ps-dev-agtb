@@ -27,10 +27,8 @@ describe("The forecasts worksheet", function() {
         app = SugarTest.app;
         sinon.stub(app.metadata, "getModule", function(module, type) {
             return {
-                show_forecasts_commit_warnings: 1,
                 sales_stage_won: ["Closed Won"],
                 sales_stage_lost: ["Closed Lost"],
-                forecast_ranges: 'show_binary'
             };
         });
 

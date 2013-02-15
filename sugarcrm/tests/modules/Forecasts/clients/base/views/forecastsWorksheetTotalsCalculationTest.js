@@ -155,7 +155,6 @@ describe("The forecasts worksheet totals calculation test", function() {
             getModuleStub.restore();
             getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
                 return {
-                    show_forecasts_commit_warnings: 1,
                     sales_stage_won: ['Won Custom'],
                     sales_stage_lost: ["Lost Custom"]
                 };
@@ -186,7 +185,6 @@ describe("The forecasts worksheet totals calculation test", function() {
             getModuleStub.restore();
             getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
                 return {
-                    show_forecasts_commit_warnings: 1,
                     sales_stage_won: ['Won Custom', 'Closed Won'],
                     sales_stage_lost: ['Lost Custom', 'Closed Lost']
                 };
