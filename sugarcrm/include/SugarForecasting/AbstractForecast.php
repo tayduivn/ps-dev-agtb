@@ -106,6 +106,7 @@ abstract class SugarForecasting_AbstractForecast extends SugarForecasting_Abstra
         //END SUGARCRM flav=int ONLY
 
         $sql = sprintf("SELECT id, user_name, first_name, last_name, reports_to_id FROM users WHERE (reports_to_id = '%s' OR id = '%s') AND " . User::getLicensedUsersWhere(), $user_id, $user_id);
+
         $result = $db->query($sql);
         $reportees = array();
 
@@ -135,7 +136,7 @@ abstract class SugarForecasting_AbstractForecast extends SugarForecasting_Abstra
         $return = array();
         $query = "SELECT distinct users.user_name FROM users, forecasts
                 WHERE forecasts.timeperiod_id = '" . $timeperiod_id . "' AND forecasts.deleted = 0
-                AND users.id = forecasts.user_id AND (users.reports_to_id = '" . $user_id . "')";
+                AND users.id = forecasts.user_id AND users.deleted = 0 AND (users.reports_to_id = '" . $user_id . "')";
 
         $result = $db->query($query, true, " Error fetching user's reporting hierarchy: ");
         while (($row = $db->fetchByAssoc($result)) != null) {

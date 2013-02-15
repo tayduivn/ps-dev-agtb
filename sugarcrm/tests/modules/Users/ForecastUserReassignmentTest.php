@@ -199,7 +199,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
     private function _doReassign($fromUser, $toUser)
     {
         $_SESSION['reassignRecords'] = array();
-        $_SESSION['reassignRecords']['assignedModuleListCache'] = array('ForecastWorksheets' => 'ForecastWorksheet');
+        $_SESSION['reassignRecords']['assignedModuleListCache'] = array('ForecastWorksheets' => 'ForecastWorksheets');
         $_SESSION['reassignRecords']['assignedModuleListCacheDisp'] = array ('ForecastWorksheets' => 'ForecastWorksheet');
 
         $_POST = $_GET = array();
@@ -207,7 +207,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
         $_POST['action'] = 'reassignUserRecords';
         $_POST['fromuser'] = $this->_users[$fromUser]->id;
         $_POST['touser'] = $this->_users[$toUser]->id;
-        $_POST['modules'] = array('ForecastWorksheet');
+        $_POST['modules'] = array('ForecastWorksheets');
         $_POST['steponesubmit'] = 'Next';
 
         unset($_GET['execute']);
@@ -273,6 +273,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
     /**
      * test reassignment rep to rep
+     * @group user_reassignment
      * @group forecast
      * @outputBuffering enabled
      */
@@ -323,6 +324,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
     /**
      * test reassignment manager to manager
+     * @group user_reassignment
      * @group forecasts
      * @outputBuffering enabled
      */
@@ -369,6 +371,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
     /**
      * test reassignment manager to rep
+     * @group user_reassignment
      * @group forecast
      * @outputBuffering enabled
      */
@@ -460,6 +463,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
     /**
      * test user's reportees if some user became inactive
+     * @group user_reassignment
      * @group forecast
      */
     public function testInactiveChildren()
@@ -485,6 +489,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
     /**
      * test a user's reportees if some user is set to be deleted
+     * @group user_reassignment
      * @group forecast
      */
     public function testDeletedChildren()
@@ -510,7 +515,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
     /**
      * test worksheets after reassignment rep to rep
-     *
+     * @group user_reassignment
      * @group forecasts
      */
     public function testWorksheetRepToRep()
@@ -546,7 +551,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
     /**
      * test worksheets after reassignment manager to manager
-     * @outputBuffering enabled
+     * @group user_reassignment
      * @group forecasts
      */
     public function testWorksheetManagerToManager()
@@ -577,7 +582,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
     /**
      * This is a test to move a manager's data (sarah) to a reportees (sally)
-     * @outputBuffering enabled
+     * @group user_reassignment
      * @group forecasts
      */
     public function testReportsToSarahToSally()
@@ -614,7 +619,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
      * This is a test to check the reporting structure changes when jim (top level manager) has his data reassigned to
      * sally (a reportee)
      *
-     * @outputBuffering enabled
+     * @group user_reassignment
      * @group forecasts
      */
     public function testReportsToJimToSally()
@@ -649,7 +654,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
     /**
      * This is a test to check the reporting structure when sally (a reportee) has her data reassigned to chris (another reportee)
-     * @outputBuffering enabled
+     * @group user_reassignment
      * @group forecasts
      */
     public function testReportsToSallyToChris()
@@ -679,7 +684,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
     /**
      * This is a test to move two manager's data (sarah and jim) to a reportee (sally)
-     * @outputBuffering enabled
+     * @group user_reassignment
      * @group forecasts
      */
     public function testReportsToSarahToSallyAndThenJimToSally()
@@ -707,7 +712,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
     /**
      * This is a test to move data between managers (sarah and will)
-     * @outputBuffering enabled
+     * @group user_reassignment
      * @group forecasts
      */
     public function testReportsToSarahToWill()

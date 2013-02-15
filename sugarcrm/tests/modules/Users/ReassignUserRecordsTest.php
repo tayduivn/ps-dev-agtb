@@ -70,6 +70,7 @@ class ReassignUserRecordsTest extends Sugar_PHPUnit_Framework_OutputTestCase {
     /**
      * This method tests the reassignment notification code.  This particular test checks to ensure that the notification bean
      * does not cause problems when reassigning since we need code to filter out team specific fields.
+     * @group user_reassignment
      */
     public function testReassignRecordForNotifications()
     {
