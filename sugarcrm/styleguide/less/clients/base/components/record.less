@@ -166,14 +166,13 @@
   margin: 20px 20px 10px 5px;
 
   .form-horizontal {
-    margin-left: 15px;
 
     .record-cell,
     .normal {
-      min-height: 0px;
+      min-height: 50px;
+      padding-left: 0;
     }
     .record-cell {
-      padding-left: 0;
       input[type="text"],
       select,
       textarea,
@@ -195,15 +194,9 @@
         min-height: 8px;
       }
     }
-    .control-label {
-      position: absolute;
-      height: 100%;
-      padding-right: 4px;
-    }
-    .controls {
-      > span {
-        padding: 0;
-      }
+    .record-edit-link-wrapper {
+      top: 2px;
+      left: -32px;
     }
     .mceLayout {
       width: 100% !important;
@@ -307,12 +300,15 @@
         padding-right: 132px;
         position: relative;
         min-height: 30px;
+        margin-bottom: 0;
         .input-append.widget {
           margin-bottom: 0;
           input[type="text"],
           select,
           textarea,
           .uneditable-input {
+            box-sizing: border-box;
+            height: 32px;
             margin-top: 0;
             width: 100%;
             .border-radius(0);
@@ -460,6 +456,10 @@
     }
 
     &[data-type="compose-actionbar"] {
+      min-height: 0;
+      .normal {
+        min-height: 0;
+      }
       padding-bottom: 8px;
       .btn {
         [class^="icon-"] {
@@ -475,29 +475,25 @@
   }
 
   .record-edit-link-wrapper {
+    display: none;
+    position: absolute;
+    top: 18px;
+    left: -18px;
+    z-index: 0;
     .record-edit-link {
-      position: absolute;
-      top: 18px;
-      left: -18px;
-      z-index: 0;
       padding: 4px 7px 4px;
+      text-decoration: none;
+      cursor: pointer;
       &.btn-invisible:hover {
         border: 1px solid transparent;
         background: none;
       }
     }
-    .icon-pencil {
-      display: none;
-      text-decoration: none;
-      cursor: pointer;
-    }
   }
 
   .record-cell:hover {
     .record-edit-link-wrapper {
-      .icon-pencil {
-        display: inline-block;
-      }
+      display: inline-block;
     }
   }
 
