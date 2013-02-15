@@ -74,7 +74,7 @@ class PersonUnifiedSearchApi extends UnifiedSearchApi {
     protected function getCustomWhereForModule($module) {
 
         if ($module == 'Employees') {
-            return "users.employee_status = 'Active'";
+            return "users.employee_status = 'Active' AND users.show_on_employees = 1";
         } 
         
         return "users.status = 'Active' AND users.portal_only = 0";
