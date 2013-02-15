@@ -63,6 +63,33 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
             ),
+            'forecastWorksheetChartGet' => array(
+                'reqType' => 'GET',
+                'path' => array('ForecastManagerWorksheets', 'chart'),
+                'pathVars' => array('module', ''),
+                'method' => 'forecastManagerWorksheetsChartGet',
+                'jsonParams' => array(),
+                'shortHelp' => 'Filter records and reformat data for chart presentation',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/forecastManagerWorksheetsChartGet.html'
+            ),
+            'forecastWorksheetChartTimePeriodGet' => array(
+                'reqType' => 'GET',
+                'path' => array('ForecastManagerWorksheets', 'chart', '?'),
+                'pathVars' => array('module', '', 'timeperiod_id'),
+                'method' => 'forecastManagerWorksheetsChartGet',
+                'jsonParams' => array(),
+                'shortHelp' => 'Filter records and reformat data for chart presentation',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/forecastManagerWorksheetsChartGet.html'
+            ),
+            'forecastWorksheetChartTimePeriodUserIdGet' => array(
+                'reqType' => 'GET',
+                'path' => array('ForecastManagerWorksheets', 'chart', '?', '?'),
+                'pathVars' => array('module', '', 'timeperiod_id', 'user_id'),
+                'method' => 'forecastManagerWorksheetsChartGet',
+                'jsonParams' => array(),
+                'shortHelp' => 'Filter records and reformat data for chart presentation',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/forecastManagerWorksheetsChartGet.html'
+            ),
             'filterModuleGet' => array(
                 'reqType' => 'GET',
                 'path' => array('ForecastManagerWorksheets', 'filter'),
@@ -109,6 +136,37 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
         $args['filter'] = $this->createFilter($api, $args['user_id'], $args['timeperiod_id'], $args['type']);
 
         return parent::filterList($api, $args);
+    }
+
+    /**
+     * Forecast Manager Worksheet API handler to return data formatted for the chart
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array|string
+     */
+    public function forecastManagerWorksheetsChartGet(ServiceBase $api, array $args)
+    {
+
+        //get data via forecastWorksheetsGet, no need to bother with filter setup, get will do that
+        $worksheetData = $this->ForecastManagerWorksheetsGet($api, $args);
+
+        // default to the Individual Code
+        $file = 'include/SugarForecasting/Chart/Manager.php';
+        $klass = 'SugarForecasting_Chart_Manager';
+
+        // check for a custom file exists
+        SugarAutoLoader::requireWithCustom($file);
+        $klass = SugarAutoLoader::customClass($klass);
+        // create the class
+
+        /* @var $obj SugarForecasting_Chart_AbstractChart */
+        $args['data_array'] = $worksheetData['records'];
+        $obj = new $klass($args);
+
+        $chartData = $obj->process();
+
+        return $chartData;
     }
 
     /**

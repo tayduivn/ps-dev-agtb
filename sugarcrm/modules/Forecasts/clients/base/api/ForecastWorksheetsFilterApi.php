@@ -137,6 +137,13 @@ class ForecastWorksheetsFilterApi extends FilterApi
         return parent::filterList($api, $args);
     }
 
+    /**
+     * Forecast Worksheet API Handler to return data formatted for the chart
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array|string
+     */
     public function forecastWorksheetsChartGet(ServiceBase $api, array $args)
     {
 
@@ -155,7 +162,6 @@ class ForecastWorksheetsFilterApi extends FilterApi
         /* @var $obj SugarForecasting_Chart_AbstractChart */
         $args['data_array'] = $worksheetData['records'];
         $obj = new $klass($args);
-        //$obj->setDataArray($worksheetData['records']);
 
         $chartData = $obj->process();
 
