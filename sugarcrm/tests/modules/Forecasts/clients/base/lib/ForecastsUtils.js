@@ -21,20 +21,16 @@
 
 describe("Forecasts Utils", function(){
 
-    var app, hbt_helper, configStub;
+    var app, hbt_helper;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../modules/Forecasts/clients/base/helper","hbt-helpers", "js", function(d) { return eval(d); });
-        configStub = sinon.stub(app.utils, 'getConfigValue', function(key){
-            return fixtures.metadata.modules.Forecasts.config[key]
-        });
     });
 
     afterEach(function() {
-        configStub.restore();
     });
 
     describe("test getCommittedHistoryLabel function", function() {

@@ -20,7 +20,7 @@
  ********************************************************************************/
 
 describe("forecast editableInt field", function () {
-    var field, fieldDef, context, model, configStub;
+    var field, fieldDef, context, model;
 
     beforeEach(function () {
         var app = SugarTest.app;
@@ -31,11 +31,6 @@ describe("forecast editableInt field", function () {
 
         SugarTest.loadFile("../sidecar/src/utils", "utils", "js", function (d) {
             return eval(d);
-        });
-
-        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-        configStub = sinon.stub(app.utils, 'getConfigValue', function(key){
-            return fixtures.metadata.modules.Forecasts.config[key]
         });
 
         context.set({"selectedUser" : {'id' : app.user.get('id')}});
@@ -55,7 +50,6 @@ describe("forecast editableInt field", function () {
     });
 
     afterEach(function() {
-        configStub.restore();
         delete field;
         delete context;
         delete model;

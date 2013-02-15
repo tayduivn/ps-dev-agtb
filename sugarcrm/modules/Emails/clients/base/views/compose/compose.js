@@ -14,10 +14,10 @@
             'click [name=send_button]': 'send',
             'click [name=cancel_button]': 'cancel'
         });
-
         this.context.on('actionbar:template_button:clicked', this.launchTemplateDrawer);
         this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer);
         this.context.on("actionbar:signature_button:clicked", this._launchSignatureDrawer);
+        this.context.on('attachments:updated', this.toggleAttachmentVisibility);
     },
 
     _render: function () {
@@ -175,47 +175,55 @@
     },
 
     /**
-     * Format the recipient addresses in the format the Mail API requires
+     * Grab an array of attachments with the given type
      *
-     * @param sendModel
+     * @param type
+     * @returns array of attachments or empty array if none found
      */
-    hydrateSendEmailModel: function(sendModel) {
-        var model = this.model;
-        sendModel.set(_.extend({}, model.attributes, {
-            to_addresses: [ {
-                email: model.get('to_addresses')
-            }],
-            cc_addresses: [ {
-                email: model.get('cc_addresses')
-            }],
-            bcc_addresses: [ {
-                email: model.get('bcc_addresses')
-            }]
-        }));
+    getAttachmentsByType: function(type) {
+        var attachments = this.model.get('attachments') || [];
+
+        if (!_.isArray(attachments)) {
+            attachments = [attachments];
+        }
+
+        attachments = _.filter(attachments, function(attachment) {
+            return (attachment.type && attachment.type == type);
+        });
+
+        return attachments;
     },
 
     /**
      * Build a backbone model that will be sent to the Mail API
      */
     initializeSendEmailModel: function() {
-        var view = this;
-        var SaveModel = Backbone.Model.extend({
-            sync: function (method, model, options) {
-                view.hydrateSendEmailModel(this);
-                var myURL = app.api.buildURL('Mail');
-                return app.api.call(method, myURL, model, options);
-            }
-        });
-        return new SaveModel;
+        var sendModel = new Backbone.Model(_.extend({}, this.model.attributes, {
+            to_addresses: [ {
+                                email: this.model.get('to_addresses')
+                            }],
+            cc_addresses: [ {
+                                email: this.model.get('cc_addresses')
+                            }],
+            bcc_addresses: [ {
+                                 email: this.model.get('bcc_addresses')
+                             }],
+            attachments: this.getAttachmentsByType('upload'),
+            documents: this.getAttachmentsByType('document')
+        }));
+        return sendModel;
     },
 
     /**
      * Save the email as a draft for later sending
      */
     saveAsDraft: function() {
-        this.saveModel('draft',
-            app.lang.getAppString('LBL_EMAIL_SAVING'),
-            app.lang.getAppString('LBL_EMAIL_SAVE_DRAFT_SUCCESS'));
+        this.saveModel(
+            'draft',
+            app.lang.get('LBL_DRAFT_SAVING', this.module),
+            app.lang.get('LBL_DRAFT_SAVED', this.module),
+            app.lang.get('LBL_ERROR_SAVING_DRAFT', this.module)
+        );
     },
 
     /**
@@ -223,9 +231,12 @@
      */
     send: function() {
         var sendEmail = _.bind(function() {
-            this.saveModel('ready',
-                app.lang.getAppString('LBL_EMAIL_SENDING'),
-                app.lang.getAppString('LBL_EMAIL_SEND_SUCCESS'));
+            this.saveModel(
+                'ready',
+                app.lang.get('LBL_EMAIL_SENDING', this.module),
+                app.lang.get('LBL_EMAIL_SENT', this.module),
+                app.lang.get('LBL_ERROR_SENDING_EMAIL', this.module)
+            );
         }, this);
 
         if (!this.isFieldPopulated('subject')) {
@@ -253,34 +264,27 @@
      * @param pendingMessage message to display while Mail API is being called
      * @param successMessage message to display when a successful Mail API response has been received
      */
-    saveModel: function(status, pendingMessage, successMessage) {
-        app.alert.show('save_edit_view', {level: 'process', title: pendingMessage});
+    saveModel: function(status, pendingMessage, successMessage, errorMessage) {
+        var myURL,
+            sendModel = this.initializeSendEmailModel();
 
-        this.sendModel = this.initializeSendEmailModel();
+        app.alert.show('mail_call_status', {level: 'process', title: pendingMessage});
 
-        this.sendModel.set('status', status);
-        this.sendModel.save(null, {
-            success: function(data, textStatus, jqXHR) {
-                app.alert.dismiss('save_edit_view');
-                app.alert.show('save_edit_view', {autoclose: true, level: 'success', title: successMessage});
+        sendModel.set('status', status);
+        myURL = app.api.buildURL('Mail');
+        response = app.api.call('create', myURL, sendModel, {
+            success: function() {
+                app.alert.dismiss('mail_call_status');
+                app.alert.show('mail_call_status', {autoClose: true, level: 'success', title: successMessage});
             },
-            error: function(jqXHR, textStatus, errorThrown) {
-                app.alert.dismiss('save_edit_view');
-                var msg = {autoclose: false, level: 'error', title: app.lang.getAppString('LBL_EMAIL_SEND_FAILURE')};
-
-                if(_.isString(textStatus.description)) {
-                    msg.messages = [textStatus.description];
+            error: function(error) {
+                var msg = {autoClose: false, level: 'error', title: errorMessage};
+                if(error && _.isString(error.message)) {
+                    msg.messages = [error.message];
                 }
-
-                app.alert.show('save_edit_view', msg);
-            },
-            complete: function() {
-                setTimeout(function() {
-                    app.alert.dismiss('save_edit_view');
-                }, 2000);
-            },
-
-            fieldsToValidate: this.getFields(this.module)
+                app.alert.dismiss('mail_call_status');
+                app.alert.show('mail_call_status', msg);
+            }
         });
     },
 
@@ -397,7 +401,7 @@
             });
         }
     },
-
+    
     /**
      * Inserts attachments associated with the template by triggering an "add" event for each attachment to add to the
      * attachments field.
@@ -454,6 +458,20 @@
                     app.logger.error("Unable to fetch the bean collection:");
                 }
             });
+        }
+    },
+
+    /**
+     * Hide attachment field row if no attachments, show when added
+     *
+     * @param attachments
+     */
+    toggleAttachmentVisibility: function(attachments) {
+        var $row = this.$('.attachments').closest('.row-fluid');
+        if (attachments.length > 0) {
+            $row.removeClass('hidden');
+        } else {
+            $row.addClass('hidden');
         }
     },
 

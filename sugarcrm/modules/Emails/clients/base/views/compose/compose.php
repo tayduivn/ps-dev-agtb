@@ -74,6 +74,11 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'css_class' => 'inherit-width',
                 ),
                 array(
+                    'name'      => 'attachments',
+                    'type'      => 'attachments',
+                    'uploadEvent' => 'actionbar:upload_new_button:clicked'
+                ),
+                array(
                     'name'      => 'actionbar',
                     'type'      => 'compose-actionbar',
                     'buttonSections' => array(
