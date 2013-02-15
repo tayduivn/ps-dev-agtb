@@ -101,16 +101,18 @@
                             {{#each this}}
 
                                 {{#unless this.dismiss_label}}
-                                    {{#if ../../../this.labels }}
-                                        {{#if ../this.label}}
+                                    {{#if ../../../this.labels}}
                                     <div class="control-label span{{this.labelSpan}} {{label_css_class}}">
+                                        {{#if ../this.label}}
+                                        <div class="control-label-background span{{this.labelSpan}}">
                                         <label class="tright record-label" data-name="{{../this.name}}">{{str ../../this.label ../../../../../../../../this.model.module}}:</label>
-                                    </div>
+                                        </div>
                                         {{/if}}
+                                    </div>
                                     {{/if}}
                                 {{/unless}}
 
-                                <div class="controls{{#if this.dismiss_label}} span12{{else}} offset{{this.labelSpan}} absolute span{{this.span}}{{/if}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
+                                <div class="controls{{#if this.dismiss_label}} span12{{else}} span{{this.span}}{{/if}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
                                     {{#if name}}
                                         <span class='normal {{css}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../../../this.module}}-{{name}}">
                                             {{field ../../../../../../this ../../../../../../this.model ../../../../../../this.action}}

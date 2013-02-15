@@ -347,7 +347,7 @@
             }
         }, this);
     },
-    
+
     findDuplicatesClicked: function() {
         app.drawer.open({
             layout : 'find-duplicates',
@@ -402,11 +402,11 @@
      * @param isEdit
      */
     toggleEdit: function(isEdit) {
-        if (isEdit) {
-            this.$('.record-edit-link-wrapper').hide();
-        } else {
-            this.$('.record-edit-link-wrapper').show();
-        }
+        // if (isEdit) {
+        //     this.$('.record-edit-link-wrapper').hide();
+        // } else {
+        //     this.$('.record-edit-link-wrapper').show();
+        // }
 
         this.toggleFields(this.editableFields, isEdit);
     },
