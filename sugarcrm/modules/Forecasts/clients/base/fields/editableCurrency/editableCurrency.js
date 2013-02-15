@@ -46,7 +46,7 @@
 
     _canEdit: true,
 
-    initialize: function (options) {
+    initialize: function(options) {
 
         app.view.fields.CurrencyField.prototype.initialize.call(this, options);
 
@@ -63,21 +63,21 @@
      *
      * todo-sfa: check that if these are moved when SFA-462 is done that it can work with the base field
      */
-    _render: function () {
+    _render: function() {
 
         // bypass the currencyField render and just go all the way up
         app.view.Field.prototype._render.call(this);
         return this;
     },
 
-    format: function (value) {
+    format: function(value) {
 
-        if (this.tplName === 'edit') {
+        if(this.tplName === 'edit') {
             return app.utils.formatNumberLocale(value);
         }
 
         // TODO review this forecasts requirement and make it work with css defined on metadata
-        if (this.def.convertToBase &&
+        if(this.def.convertToBase &&
             this.def.showTransactionalAmount &&
             this.model.get(this.def.currency_field || 'currency_id') !== app.currency.getBaseCurrencyId()
             ) {
@@ -91,7 +91,7 @@
         var baseRate = this.model.get(this.def.base_rate_field || 'base_rate');
         var currencyId = this.model.get(this.def.currency_field || 'currency_id');
 
-        if (this.def.convertToBase) {
+        if(this.def.convertToBase) {
             value = app.currency.convertWithRate(value, baseRate);
             currencyId = app.currency.getBaseCurrencyId();
         }
@@ -106,7 +106,7 @@
     /**
      * Utility Method to check if we can edit again.
      */
-    checkIfCanEdit: function () {
+    checkIfCanEdit: function() {
         var selectedUser = this.context.get('selectedUser');
         this._canEdit = _.isEqual(app.user.get('id'), selectedUser.id) && !_.contains(
             // join the two variable together from the config
@@ -120,7 +120,7 @@
      * the parent.
      *
      */
-    bindDomChange: function () {
+    bindDomChange: function() {
         // override parent, do nothing
     },
 
@@ -131,16 +131,16 @@
      * and any other open fields will immediately close. This keeps
      * other fields from opening while an errored field is active.
      */
-    bindDataChange: function () {
-        this.context.on('field:editable:open', function () {
+    bindDataChange: function() {
+        this.context.on('field:editable:open', function() {
             // another CTE field has been opened
-            if (this.isErrorState) {
+            if(this.isErrorState) {
                 // I am open with an error, send the message
                 this.context.trigger('field:editable:error', this.cid);
             }
         }, this);
-        this.context.on('field:editable:error', function (cid) {
-            if (!_.isEqual(cid, this.cid) && this.options.viewName == 'edit') {
+        this.context.on('field:editable:error', function(cid) {
+            if(!_.isEqual(cid, this.cid) && this.options.viewName == 'edit') {
                 // some other field is open with an error, close mythis
                 this.renderDetail();
             }
@@ -153,8 +153,8 @@
      * @param {Object} evt
      * @return {Boolean}
      */
-    handleEvent: function (evt) {
-        if (!_.isObject(evt)
+    handleEvent: function(evt) {
+        if(!_.isObject(evt)
             || this.options.viewName != 'edit'
             || !this.isEditable()
             || !(this.model instanceof Backbone.Model)) {
@@ -162,9 +162,9 @@
         }
         var el = this.$el.find(this.fieldTag);
         // test if value changed
-        if (!this.compareValuesLocale(this.$el.find(this.inputSelector).val(), this.model.get(this.name))) {
+        if(!this.compareValuesLocale(this.$el.find(this.inputSelector).val(), this.model.get(this.name))) {
             var value = this.parsePercentage(this.$el.find(this.inputSelector).val());
-            if (this.isValid(value)) {
+            if(this.isValid(value)) {
                 this.model.set(this.name, this.unformat(value));
                 this.renderDetail();
             } else {
@@ -179,8 +179,8 @@
                 this.$el.find(this.inputSelector).focus().select();
                 // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
                 // This prevents change events from being fired appropriately on IE9
-                if ($.browser.msie && el.is("input")) {
-                    el.on("input", function () {
+                if($.browser.msie && el.is("input")) {
+                    el.on("input", function() {
                         // Set focus on input element receiving user input
                         el.focus();
                     });
@@ -195,7 +195,7 @@
     /**
      * renders the detail view
      */
-    renderDetail: function () {
+    renderDetail: function() {
         this.isErrorState = false;
         this.options.viewName = 'detail';
         this.render();
@@ -206,10 +206,10 @@
      *
      * @param evt
      */
-    togglePencil: function (evt) {
+    togglePencil: function(evt) {
         evt.preventDefault();
-        if (!this.isEditable()) return;
-        if (evt.type == 'mouseenter') {
+        if(!this.isEditable()) return;
+        if(evt.type == 'mouseenter') {
             this.$el.find('.edit-icon').removeClass('hide');
             this.$el.find('.edit-icon').addClass('show');
         } else {
@@ -222,9 +222,9 @@
      * Switch the view to the Edit view if the field is editable and it's clicked on
      * @param evt
      */
-    onClick: function (evt) {
+    onClick: function(evt) {
         evt.stopPropagation();
-        if (!this.isEditable()) return;
+        if(!this.isEditable()) return;
 
         this.options.viewName = 'edit';
         this.render();
@@ -249,12 +249,12 @@
      *
      * @param evt
      */
-    onKeyUp: function (evt) {
+    onKeyUp: function(evt) {
         evt.preventDefault();
-        if (evt.which == 27) {
+        if(evt.which == 27) {
             // esc key, cancel edits
             this.cancelEdits(evt);
-        } else if (evt.which == 13) {
+        } else if(evt.which == 13) {
             // enter or tab, handle event
             this.handleEvent(evt);
         }
@@ -265,8 +265,8 @@
      *
      * @param evt
      */
-    onKeyDown: function (evt) {
-        if (evt.which == 9) {
+    onKeyDown: function(evt) {
+        if(evt.which == 9) {
             evt.preventDefault();
             // tab key pressed, trigger event from context
             this.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, this);
@@ -278,7 +278,7 @@
      *
      * evt {Object}
      */
-    cancelEdits: function (evt) {
+    cancelEdits: function(evt) {
         this.$el.find(this.inputSelector).val(this.value);
         this.renderDetail();
     },
@@ -288,7 +288,7 @@
      *
      * @param evt
      */
-    onBlur: function (evt) {
+    onBlur: function(evt) {
         evt.preventDefault();
         this.handleEvent(evt);
     },
@@ -300,7 +300,7 @@
      * @param val2
      * @return {Boolean} true if equal
      */
-    compareValuesLocale: function (val1, val2) {
+    compareValuesLocale: function(val1, val2) {
         var ogVal = app.utils.formatNumber(
                 app.utils.unformatNumberStringLocale(val1),
                 app.user.getPreference('decimal_precision'),
@@ -324,7 +324,7 @@
      * @param value
      * @return {Boolean}
      */
-    isValid: function (value) {
+    isValid: function(value) {
 
         // trim off any whitespace
         value = value.toString().trim();
@@ -335,7 +335,7 @@
             reg = new RegExp("^\\+?(\\d+|\\d{1,3}(" + gs + "\\d{3})*)?(" + ds + "\\d+)?\\%?$");
 
         // always make sure that we have a string here, since match only works on strings
-        if (value.length == 0 || _.isNull(value.match(reg))) {
+        if(value.length == 0 || _.isNull(value.match(reg))) {
             return false;
         }
 
@@ -348,7 +348,7 @@
      *
      * @return {boolean}
      */
-    isEditable: function () {
+    isEditable: function() {
         return this._canEdit;
     },
 
@@ -358,15 +358,15 @@
      * @param value
      * @return {*}
      */
-    parsePercentage: function (value) {
+    parsePercentage: function(value) {
         var orig = this.model.get(this.name);
         var parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
-        if (parts) {
+        if(parts) {
             // use original number to apply calculations
             value = app.math.mul(app.math.div(parts[2], 100), orig);
-            if (parts[1] == '+') {
+            if(parts[1] == '+') {
                 value = app.math.add(orig, value);
-            } else if (parts[1] == '-') {
+            } else if(parts[1] == '-') {
                 value = app.math.sub(orig, value);
             }
             value = app.math.round(value);
@@ -377,13 +377,13 @@
     /**
      * Method to show the error message
      */
-    showErrors: function () {
+    showErrors: function() {
         // attach error styles
         this.$el.find('.error-message').html(this.errorMessage);
         this.$el.find('.control-group').addClass('error');
         this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
         // make error message button cancel edits
-        this.$el.find('.btn.btn-danger').on("click", function (evt) {
+        this.$el.find('.btn.btn-danger').on("click", function(evt) {
             this.cancelEdits.call(this, evt);
         });
     }
