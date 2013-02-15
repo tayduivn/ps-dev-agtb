@@ -147,6 +147,7 @@ describe("Preview View", function() {
             expect(preview.layout.next).toBeDefined();
             expect(preview.layout.previous.get('id')).toEqual(modelIds[2]);
             expect(preview.layout.next.get('id')).toEqual(modelIds[4]);
+            expect(preview.layout.hideNextPrevious).toBe(false);
         });
 
         it("Should find previous model from list collection", function() {
@@ -155,6 +156,7 @@ describe("Preview View", function() {
             expect(preview.layout.previous).toBeDefined();
             expect(preview.layout.next).not.toBeDefined();
             expect(preview.layout.previous.get('id')).toEqual(modelIds[4]);
+            expect(preview.layout.hideNextPrevious).toBe(false);
         });
 
         it("Should find next model from list collection", function() {
@@ -163,6 +165,21 @@ describe("Preview View", function() {
             expect(preview.layout.previous).not.toBeDefined();
             expect(preview.layout.next).toBeDefined();
             expect(preview.layout.next.get('id')).toEqual(modelIds[1]);
+            expect(preview.layout.hideNextPrevious).toBe(false);
+        });
+
+        it("Should hide next/previous buttons when collection has one or is empty", function() {
+            createListCollection(0, 0);
+            preview.showPreviousNextBtnGroup();
+            expect(preview.layout.previous).not.toBeDefined();
+            expect(preview.layout.next).not.toBeDefined();
+            expect(preview.layout.hideNextPrevious).toBe(true);
+
+            preview.collection = null;
+            preview.showPreviousNextBtnGroup();
+            expect(preview.layout.previous).not.toBeDefined();
+            expect(preview.layout.next).not.toBeDefined();
+            expect(preview.layout.hideNextPrevious).toBe(true);
         });
     });
 });
