@@ -108,13 +108,9 @@
      */
     checkIfCanEdit: function() {
         var selectedUser = this.context.get('selectedUser');
-        if (!_.isUndefined(this.context) && !_.isUndefined(this.context.config)) {
-            this._canEdit = _.isEqual(app.user.get('id'), selectedUser.id) && !_.contains(
-                // join the two variable together from the config
-                this.context.config.get("sales_stage_won").concat(
-                    this.context.config.get("sales_stage_lost")
-                ), this.model.get('sales_stage'));
-        }
+        this._canEdit = _.isEqual(app.user.get('id'), selectedUser.id) && !_.contains(
+            // join the two variable together from the config
+            app.utils.getConfigValue("sales_stage_won").concat(app.utils.getConfigValue("sales_stage_lost")), this.model.get('sales_stage'));
     },
 
     /**

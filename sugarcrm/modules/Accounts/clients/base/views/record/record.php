@@ -72,6 +72,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                         'billing_address_city',
                         'billing_address_state',
                         'billing_address_postalcode',
+                        'billing_address_country',
                     ),
                 ),
                 array(
@@ -83,6 +84,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                         'shipping_address_city',
                         'shipping_address_state',
                         'shipping_address_postalcode',
+                        'shipping_address_country',
                         array(
                             'name' => 'copy',
                             'type' => 'copy',
@@ -91,6 +93,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                                 'billing_address_city' => 'shipping_address_city',
                                 'billing_address_state' => 'shipping_address_state',
                                 'billing_address_postalcode' => 'shipping_address_postalcode',
+                                'billing_address_country' => 'shipping_address_country',
                             ),
                         ),
                     ),
@@ -118,9 +121,43 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 'ownership',
                 'campaign_name',
                 'rating',
-                'date_modified',
+                array(
+                    'name' => 'date_modified_by',
+                    'noedit' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_MODIFIED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'modified_by_name',
+                        ),
+                    ),
+                ),
                 'team_name',
-                'date_entered'
+                array(
+                    'name' => 'date_entered_by',
+                    'noedit' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_entered',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'created_by_name',
+                        ),
+                    ),
+                )
             )
         )
     ),

@@ -35,17 +35,21 @@
      */
     uid: '',
 
-    _render:function() {
-        var self = this;
-        if(this.name == 'name') {
-            this.uid = this.model.get('user_id');
-            this.popoverTitleName = this.model.get('name');
+    initialize: function(options) {
+        this.uid = this.model.get('user_id');
 
-            // setting the viewName allows us to explicitly set the template to use
-            this.options.viewName = 'userLink';
-        }
-        app.view.Field.prototype._render.call(this);
+        app.view.Field.prototype.initialize.call(this, options);
         return this;
+    },
+
+    format : function(value) {
+        var su = this.context.get('selectedUser');
+        if(value == su.full_name) {
+            var hb = Handlebars.compile("{{str_format key module args}}");
+            value = hb({'key': 'LBL_MY_OPPORTUNITIES', 'module': 'Forecasts', 'args': su.full_name});
+        }
+
+        return value;
     },
 
     /**
@@ -54,7 +58,6 @@
      */
     linkClicked: function(event) {
         var uid = $(event.target).data('uid');
-        var self = this;
         var selectedUser = {
             id: '',
             user_name:'',
@@ -62,13 +65,13 @@
             first_name: '',
             last_name: '',
             isManager: false,
-            showOpps: this.model.get("show_opps")
+            showOpps: false,
+            reportees:[]
         };
 
         var options = {
             dataType: 'json',
-            context: selectedUser,
-            success: function(data) {
+            success: _.bind(function(data) {
                 selectedUser.id = data.id;
                 selectedUser.user_name = data.user_name;
                 selectedUser.full_name = data.full_name;
@@ -76,8 +79,11 @@
                 selectedUser.last_name = data.last_name;
                 selectedUser.isManager = data.isManager;
 
-                self.context.set({selectedUser : selectedUser})
-            }
+                // get the current selected user, if the id's match up set the showOpps to be true
+                selectedUser.showOpps = (this.context.get('selectedUser').id == data.id);
+
+                app.utils.getSelectedUsersReportees(selectedUser, this.context);
+            }, this)
         };
 
         myURL = app.api.buildURL('Forecasts', 'user/' + uid);

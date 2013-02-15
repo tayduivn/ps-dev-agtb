@@ -433,6 +433,8 @@
         // Set Editing mode to on.
         this.inlineEditMode = true;
 
+        this.setButtonStates(this.STATE.EDIT);
+
         // TODO: Refactor this for fields to support their own focus handling in future.
         // Add your own field type handling for focus / editing here.
         switch (field.type) {

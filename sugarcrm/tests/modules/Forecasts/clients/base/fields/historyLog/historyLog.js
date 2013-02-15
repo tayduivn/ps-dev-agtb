@@ -25,7 +25,12 @@ describe("forecast historyLog field", function() {
     beforeEach(function() {
         app = SugarTest.app;
         context = app.context.getContext();
-        context.committed = new Backbone.Model();
+        context.set({"selectedUser": {"id": 'test_user'}});
+
+        model = new Backbone.Model({
+            user_id: 'test_user',
+            show_history_log: "0"
+        });
 
         fieldDef = {
             "name": "forecastHistoryLog",
@@ -33,133 +38,38 @@ describe("forecast historyLog field", function() {
             "view": "detail"
         };
 
-        field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef, null, null, context);
+        field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef, null, model, context);
     });
-    afterEach(function(){
-        delete app;
+    afterEach(function() {
+        context.unset("selectedUser");
         delete field;
         delete fieldDef;
     });
 
-    describe("test handleDeferredRender", function() {
-        var renderSpy;
-        beforeEach(function() {
-            renderSpy = sinon.stub(field, "_render", function() { });
-        });
-        afterEach(function() {
-            renderSpy.restore();
-        });
-        it("should trigger _render when both deferred objects are resolved", function() {
-            field.handleDeferredRender();
-            field.mDeferred.resolve();
-            field.wDeferred.resolve();
-            expect(renderSpy).toHaveBeenCalled();
-        });
+    it("field.uid should be the user_id from the model", function() {
+        expect(field.uid).toEqual(model.get('user_id'));
+    });
 
-        it("should not trigger _render when only one deferred object is resolved", function() {
-            field.handleDeferredRender();
-            field.mDeferred.resolve();
-            expect(renderSpy).not.toHaveBeenCalled();
+    describe("showFieldAlert", function() {
+        it("should be false", function() {
+            expect(field.showFieldAlert).toBeFalsy();
+        });
+        it("should be true", function() {
+            model.set({"show_history_log": "1"});
+            var field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef, null, model, context);
+            expect(field.showFieldAlert).toBeTruthy();
         });
     });
 
-    describe("test showFieldAlert is properly set", function() {
-        var committedView;
-        beforeEach(function() {
-            committedView = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitted", "forecastsCommitted", "js", function (d) {
-                return eval(d);
-            });
-            sinon.stub(app.view.Field.prototype, "_render");
+    describe("showOpps", function() {
+        it("should be false", function() {
+            context.set({"selectedUser": {"id": 'test_user_1'}});
+            var field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef, null, model, context);
+            expect(field.showOpps).toBeFalsy();
         });
-
-        afterEach(function() {
-            delete committedView;
-            app.view.Field.prototype._render.restore();
-        });
-
-        it("should set showFieldAlert to true if the reportee's forecasts is more recent than the manager's", function() {
-            var reporteeModifiedDate = new Date();
-
-            field.model = new Backbone.Model({
-                user_id : 'seed_sarah_id',
-                date_modified : reporteeModifiedDate.toISOString()
-            });
-
-            var managerModifiedDate = new Date();
-            managerModifiedDate.setFullYear(reporteeModifiedDate.getFullYear() - 1);
-
-            committedView.models = [new Backbone.Model({
-                date_modified : managerModifiedDate.toISOString()
-            })];
-
-            field.context = {
-                committed : committedView
-            };
-
-            field._render();
-
-            expect(field.showFieldAlert).toBeTruthy();
-        });
-
-        it("should not set showFieldAlert to true if the reportee's forecasts is not more recent than the manager's", function() {
-            var reporteeModifiedDate = new Date();
-
-            field.model = new Backbone.Model({
-                user_id : 'seed_sarah_id',
-                date_modified : reporteeModifiedDate.toISOString()
-            });
-
-            var managerModifiedDate = new Date();
-            managerModifiedDate.setFullYear(reporteeModifiedDate.getFullYear() + 1);
-
-            committedView.models = [new Backbone.Model({
-                date_modified : managerModifiedDate.toISOString()
-            })];
-
-            field.context = {
-                committed : committedView
-            };
-
-            field._render();
-
-            expect(field.showFieldAlert).not.toBeTruthy();
-        });
-
-        it("should set showFieldAlert to true if there is a reportee's forecast, but no manager forecast", function() {
-            var reporteeModifiedDate = new Date();
-
-            field.model = new Backbone.Model({
-                user_id : 'seed_sarah_id',
-                date_modified : reporteeModifiedDate.toISOString()
-            });
-
-            committedView.models = [];
-
-            field.context = {
-                committed : committedView
-            };
-
-            field._render();
-
-            expect(field.showFieldAlert).toBeTruthy();
-        });
-
-        it("should set showFieldAlert to false if there is a reportee's forecast but no date_modified entry in the model if when there is no manager forecast", function() {
-            var reporteeModifiedDate = new Date();
-
-            field.model = new Backbone.Model({
-                user_id : 'seed_sarah_id'
-            });
-
-            committedView.models = [];
-
-            field.context = {
-                committed : committedView
-            };
-
-            field._render();
-
-            expect(field.showFieldAlert).not.toBeTruthy();
+        it("should be true", function() {
+            expect(field.showOpps).toBeTruthy();
         });
     })
+
 });

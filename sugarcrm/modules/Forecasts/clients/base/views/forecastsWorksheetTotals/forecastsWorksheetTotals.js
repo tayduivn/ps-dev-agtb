@@ -44,18 +44,10 @@
             overall_amount: 0,
             overall_best: 0,
             overall_worst: 0,
-            show_worksheet_likely: options.context.config.get('show_worksheet_likely'),
-            show_worksheet_best: options.context.config.get('show_worksheet_best'),
-            show_worksheet_worst: options.context.config.get('show_worksheet_worst')
+            show_worksheet_likely: app.utils.getConfigValue('show_worksheet_likely'),
+            show_worksheet_best: app.utils.getConfigValue('show_worksheet_best'),
+            show_worksheet_worst: app.utils.getConfigValue('show_worksheet_worst')
         });
-    },
-
-    /**
-     * Clean up any left over bound data to our context
-     */
-    unbindData : function() {
-        if(this.context) this.context.off(null, null, this);
-        app.view.View.prototype.unbindData.call(this);
     },
 
     bindDataChange: function() {
@@ -64,19 +56,6 @@
             self.model.set( totals );
             self._render();
         });
-
-        //Listen for config changes
-        /*
-         * // TODO: tagged for 6.8 see SFA-253 for details
-        this.context.config.on('change:show_worksheet_likely change:show_worksheet_best change:show_worksheet_worst', function(context, value) {
-            self.model.set({
-                show_worksheet_likely: context.get('show_worksheet_likely') == 1,
-                show_worksheet_best: context.get('show_worksheet_best') == 1,
-                show_worksheet_worst: context.get('show_worksheet_worst') == 1
-            });
-            self._render();
-        });
-        */
 
         this.context.on('forecasts:worksheet:rendered forecasts:worksheet:filtered', function() {
             self._render();
