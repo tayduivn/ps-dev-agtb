@@ -3016,7 +3016,9 @@ hr.soften {
 }
 .dashboard {
   background-image: url('../../assets/img/texture/furley_bg.png');
-  padding-bottom: 44px;
+  position: absolute;
+  width: 100%;
+  height: auto;
 }
 .dashboard .cols {
   margin: 0;
@@ -3029,12 +3031,35 @@ hr.soften {
   margin: 0;
   list-style: none;
 }
+.dashboard .cols .rows.well {
+  position: relative;
+}
+.dashboard .cols .rows.well>.btn {
+  position: absolute;
+  top: -4px;
+  right: 0;
+}
+.dashboard .cols .rows.well>.btn:not(:nth-child(1)) {
+  right: 20px;
+}
+.dashboard .cols .rows.well>.btn:hover,
+.dashboard .cols .rows.well>.btn:active {
+  text-decoration: none;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+}
+.dashboard .cols .rows.well>.btn.move {
+  cursor: move;
+}
+.dashboard .cols .rows .row-fluid {
+  margin: 0;
+}
 .dashboard .cols .rows .row-fluid .widget-container .widget {
   padding: 0;
 }
 .dashboard .cols .rows .row-fluid .widget-container .widget.thumbnail {
   margin-bottom: 0 !important;
-  min-height: 126px;
 }
 .dashboard .cols .rows .row-fluid .widget-container .widget div.widget-content {
   overflow: auto;
@@ -3045,7 +3070,6 @@ hr.soften {
 }
 .dashboard .cols .rows .row-fluid .widget-container .empty {
   padding: 30px 0;
-  margin-bottom: 20px;
   border: 3px dashed #cfcfcf;
   background-color: #fff;
   cursor: pointer;
@@ -3069,6 +3093,9 @@ hr.soften {
 .dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet strong {
   font-size: 60px;
   font-weight: 900;
+}
+.dashboard .cols .rows .row-fluid .widget-container:not(.collapsed) .thumbnail {
+  min-height: 126px;
 }
 .dashboard .cols .rows .row-fluid>ul {
   margin: 0;
@@ -7828,6 +7855,16 @@ h4.merge-interface-header .preview {
 }
 .inline-drawer table tbody tr:last-child td {
   border-bottom: 0 !important;
+}
+.well-invisible {
+  background-color: transparent;
+  border-color: transparent;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: None;
+  -moz-box-shadow: None;
+  box-shadow: None;
 }
 .ui-timepicker-list {
   overflow: visible;
