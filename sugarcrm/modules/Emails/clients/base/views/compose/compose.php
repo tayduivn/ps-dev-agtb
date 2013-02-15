@@ -75,6 +75,11 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'label_css_class'     => 'end-fieldgroup',
                 ),
                 array(
+                    'name'      => 'attachments',
+                    'type'      => 'attachments',
+                    'uploadEvent' => 'actionbar:upload_new_button:clicked'
+                ),
+                array(
                     'name'      => 'actionbar',
                     'type'      => 'compose-actionbar',
                     'buttonSections' => array(

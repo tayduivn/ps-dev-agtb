@@ -1,9 +1,37 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+
 ({
     events: {
         "click .btn": "_showAddressBook"
     },
 
     initialize: function(options) {
+        _.bindAll(this);
         app.view.Field.prototype.initialize.call(this, options);
 
         this.context.off("recipients:" + this.name + ":add", null, this);
@@ -23,9 +51,9 @@
             }, this);
         }
 
-        this.context.on("recipients:" + this.name + ":add", this._addRecipients, this);
-        this.context.on("recipients:" + this.name + ":remove", this._removeRecipients, this);
-        this.context.on("recipients:" + this.name + ":replace", this._replaceRecipients, this);
+        this.context.on("recipients:" + this.name + ":add", this._addRecipients);
+        this.context.on("recipients:" + this.name + ":remove", this._removeRecipients);
+        this.context.on("recipients:" + this.name + ":replace", this._replaceRecipients);
     },
 
     /**
@@ -128,29 +156,24 @@
      * configured to include this button, clicking the button will trigger an event to open the address book, which
      * calls this method to do the dirty work.
      *
-     * @param evt
      * @private
      */
-    _showAddressBook: function(evt) {
-        // the first step is to inject the target field name into the drawer's context that originates in metadata
-        // clone the metadata because you don't want to permanently change the actual context as it exists in the
-        // metadata
-        // additionally, cloning and extending must happen at a shallow level because deep cloning is not currently
-        // possible with underscorejs
+    _showAddressBook: function() {
+        app.drawer.open(
+            {
+                layout:  "compose-addressbook",
+                context: {
+                    module:   "Emails",
+                    mixed:    true,
+                    forceNew: true
+                }
+            },
+            this._addressbookDrawerCallback
+        );
+    },
 
-        // get the drawer component so the metaComponents' context can be cloned
-        var composeAddressBookDrawer = this.view.layout.getComponent("compose-addressbook-drawer");
-
-        // merge the name of the target field into the context to be passed to the show event
-        var context = _.clone(composeAddressBookDrawer.metaComponents[0].context);
-            context = _.extend(context, { target: this.name });
-
-        // build a new metaComponents to be passed into the show event
-        var metaComponents = _.clone(composeAddressBookDrawer.metaComponents[0]);
-            metaComponents = [_.extend(metaComponents, { context: context })];
-
-        // open the drawer layout
-        this.view.layout.trigger("compose:addressbook:open", { components: metaComponents }, this);
+    _addressbookDrawerCallback: function(recipients) {
+        this._addRecipients(recipients);
     },
 
     /**
@@ -233,15 +256,19 @@
         var regex   = /(@.*?)\s*?,\s*?/g,
             replace = "::;::";
 
-        // replace comma delimiters with the delimiter defined by "replace" and then split the string on the new
-        // delimiter
-        recipients = recipients.replace(regex, "$1" + replace).split(replace);
+        if (_.isString(recipients)) {
+            // replace comma delimiters with the delimiter defined by "replace" and then split the string on the new
+            // delimiter
+            recipients = recipients.replace(regex, "$1" + replace).split(replace);
 
-        _.each(recipients, function(recipient, index) {
-            var attributes = this._unformatRecipient(recipient); // get an object with the recipient's attributes
+            _.each(recipients, function(recipient, index) {
+                var attributes = this._unformatRecipient(recipient); // get an object with the recipient's attributes
 
-            recipients[index] = new Backbone.Model(attributes);
-        }, this);
+                recipients[index] = new Backbone.Model(attributes);
+            }, this);
+        } else {
+            recipients = [];
+        }
 
         return recipients;
     },
