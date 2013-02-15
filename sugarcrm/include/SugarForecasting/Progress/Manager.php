@@ -199,7 +199,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         //build up two subquery strings so we can unify the sales stage loops
         //all manager opps 
         $queryMgrOpps = "SELECT " .
-                            "sum(o.amount*o.base_rate) AS amount, count(*) as recordcount " .
+                            "sum(o.amount/o.base_rate) AS amount, count(*) as recordcount " .
                         "FROM opportunities o " .
                         "INNER JOIN users u  " .
                             "ON o.assigned_user_id = u.id " .
