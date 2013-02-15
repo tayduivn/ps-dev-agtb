@@ -44,6 +44,8 @@ $viewdefs['Reports']['mobile']['view']['list'] = array(
                     'enabled' => true,
                     'width' => '10%',
                     'default' => true,
+                    'type' => 'enum',
+                    'options' => 'moduleList',
                 ),
                 array(
                     'name' => 'team_name',
@@ -56,6 +58,8 @@ $viewdefs['Reports']['mobile']['view']['list'] = array(
                     'enabled' => true,
                     'width' => '10%',
                     'default' => true,
+                    'type' => 'enum',
+                    'options' => 'dom_report_types',
                 ),
             ),
         ),
