@@ -108,7 +108,7 @@ SUGAR.util.extend(SUGAR.forms.SetRequiredAction, SUGAR.forms.AbstractAction, {
                 }
             } else {
                 if ( p != null  && reqSpan != false) {
-                    p.removeChild(reqSpan);
+                    reqSpan.parentNode.removeChild(reqSpan);
                 }
                 var i = this.findInValidate(context.formName, fName)
                 if (i > -1)
