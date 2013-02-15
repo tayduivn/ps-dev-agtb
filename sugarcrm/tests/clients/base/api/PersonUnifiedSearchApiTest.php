@@ -64,6 +64,35 @@ class PersonUnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
 
     }
 
+    public function testNoShowOnEmployees() {
+        $GLOBALS['current_user']->show_on_employees = 0;
+        $GLOBALS['current_user']->employee_status = 'Active';
+        $GLOBALS['current_user']->save();
+        $args = array('module_list' => 'Employees',);
+        $list = $this->personUnifiedSearchApi->globalSearch(new PersonUnifiedSearchApiServiceMockUp(), $args);
+        $list = $list['records'];
+        foreach($list AS $record) {
+            $expected[] = $record['id'];
+        }
+
+        $this->assertTrue(!in_array($GLOBALS['current_user']->id, $expected));
+    }
+
+    public function testShowOnEmployees() {
+        $GLOBALS['current_user']->show_on_employees = 1;
+        $GLOBALS['current_user']->employee_status = 'Active';
+        $GLOBALS['current_user']->save();
+        $args = array('module_list' => 'Employees',);
+        $list = $this->personUnifiedSearchApi->globalSearch(new PersonUnifiedSearchApiServiceMockUp(), $args);
+        $list = $list['records'];
+        foreach($list AS $record) {
+            $expected[] = $record['id'];
+        }
+
+        $this->assertTrue(in_array($GLOBALS['current_user']->id, $expected));
+    }
+
+
 }
 
 class PersonUnifiedSearchApiServiceMockUp extends RestService
