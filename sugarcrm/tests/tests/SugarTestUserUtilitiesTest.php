@@ -24,6 +24,9 @@
  
 require_once 'SugarTestUserUtilities.php';
 
+/**
+ * @group utilities
+ */
 class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_before_snapshot = array();
@@ -36,6 +39,7 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown() 
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestUserUtilities::removeAllCreatedUserSignatures();
     }
 
     public function _takeUserDBSnapshot() 
@@ -48,7 +52,7 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
         }
         return $snapshot;
     }
-    
+
     //BEGIN SUGARCRM flav=pro ONLY
     public function _takeTeamDBSnapshot() 
     {
@@ -61,6 +65,19 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
         return $snapshot;
     }
     //END SUGARCRM flav=pro ONLY
+
+    public function _takeSignatureDBSnapshot()
+    {
+        $snapshot = array();
+        $query    = "SELECT * FROM users_signatures";
+        $result   = $GLOBALS["db"]->query($query);
+
+        while ($row = $GLOBALS["db"]->fetchByAssoc($result)) {
+            $snapshot[] = $row;
+        }
+
+        return $snapshot;
+    }
 
     public function testCanCreateAnAnonymousUser() 
     {
@@ -111,5 +128,42 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
             'SugarTest_UserUtilities::removeAllCreatedAnonymousUsers() should have removed the teams it added');
         //END SUGARCRM flav=pro ONLY
     }
-}
 
+    public function testCanCreateAUserSignature()
+    {
+        $beforeSnapshot = $this->_takeSignatureDBSnapshot();
+        $signature      = SugarTestUserUtilities::createUserSignature();
+
+        $this->assertInstanceOf("UserSignature", $signature);
+
+        $afterSnapshot = $this->_takeSignatureDBSnapshot();
+        $this->assertNotEquals($beforeSnapshot, $afterSnapshot, "The user signature was not added");
+    }
+
+    public function testGetCreatedUserSignatureIds()
+    {
+        $signature1 = SugarTestUserUtilities::createUserSignature();
+        $signature2 = SugarTestUserUtilities::createUserSignature();
+
+        $expected = array(
+            $signature1->id,
+            $signature2->id,
+        );
+        $actual    = SugarTestUserUtilities::getCreatedUserSignatureIds();
+        $this->assertEquals($expected, $actual, "The wrong user signature IDs were returned");
+    }
+
+    public function testCanTearDownAllCreatedUserSignatures()
+    {
+        $expected = $this->_takeSignatureDBSnapshot();
+
+        for ($i = 0; $i < 5; $i++) {
+            SugarTestUserUtilities::createUserSignature();
+        }
+
+        SugarTestUserUtilities::removeAllCreatedUserSignatures();
+
+        $actual = $this->_takeSignatureDBSnapshot();
+        $this->assertEquals($expected, $actual, "The user signatures were not removed");
+    }
+}

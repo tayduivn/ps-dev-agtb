@@ -26,13 +26,15 @@ require_once 'modules/Users/User.php';
 
 class SugarTestUserUtilities
 {
-    private static $_createdUsers = array();
+    private static $_createdUsers          = array();
+    private static $_createdUserSignatures = array();
 
     private function __construct() {}
     
     public function __destruct()
     {
         self::removeAllCreatedAnonymousUsers();
+        self::removeAllCreatedUserSignatures();
     }
 
     public static function createAnonymousUser($save = true, $is_admin=0)
@@ -91,5 +93,51 @@ class SugarTestUserUtilities
                 $user_ids[] = $user->id;
         
         return $user_ids;
+    }
+
+    public static function createUserSignature($id = "")
+    {
+        $time = mt_rand();
+        $name = "SugarUserSignature";
+
+        $userSignature                 = new UserSignature();
+        $userSignature->name           = "{$name}{$time}";
+        $userSignature->signature_html = "<b>{$name}{$time} -- html signature</b>";
+        $userSignature->signature      = "<b>{$name}{$time} -- text signature</b>";
+
+        if (!empty($id)) {
+            $userSignature->new_with_id = true;
+            $userSignature->id = $id;
+        }
+
+        $userSignature->save();
+        $GLOBALS['db']->commit();
+        self::$_createdUserSignatures[] = $userSignature;
+
+        return $userSignature;
+    }
+
+    public static function getCreatedUserSignatureIds()
+    {
+        $signatureIds = array();
+
+        foreach (self::$_createdUserSignatures as $signature) {
+            if (is_object($signature) && $signature instanceOf UserSignature) {
+                $signatureIds[] = $signature->id;
+            }
+        }
+
+        return $signatureIds;
+    }
+
+    public static function removeAllCreatedUserSignatures()
+    {
+        $ids = self::getCreatedUserSignatureIds();
+
+        if (count($ids) > 0) {
+            $GLOBALS["db"]->query("DELETE FROM users_signatures WHERE id IN ('" . implode("','", $ids) . "')");
+        }
+
+        self::$_createdUserSignatures = array();
     }
 }

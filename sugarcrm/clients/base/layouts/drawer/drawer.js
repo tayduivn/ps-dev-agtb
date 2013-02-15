@@ -40,6 +40,14 @@
             this.onCloseCallback.push(onClose);
         }
 
+        if (_.isUndefined(layoutDef.context)) {
+            layoutDef.context = {};
+        }
+
+        if (_.isUndefined(layoutDef.context.forceNew)) {
+            layoutDef.context.forceNew = true;
+        }
+
         //initialize layout definition components
         this._addComponentsFromDef([layoutDef]);
 
