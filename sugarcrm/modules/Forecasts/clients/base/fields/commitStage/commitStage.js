@@ -59,7 +59,7 @@
     /**
      * Initialize
      */
-    initialize: function(options) {
+    initialize: function (options) {
         app.view.Field.prototype.initialize.call(this, options);
         var forecastRanges = app.metadata.getModule('Forecasts', 'config').forecast_ranges;
 
@@ -67,24 +67,24 @@
         this.isEditable();
 
         //show_binary, show_buckets, show_n_buckets logic
-        if(forecastRanges == "show_binary") {
+        if (forecastRanges == "show_binary") {
             //If we're in binary mode
             this.def.view = "bool";
             this.currentView = "bool";
-            this.format = function(value) {
+            this.format = function (value) {
                 return value == "include";
             };
-            this.unformat = function(value) {
+            this.unformat = function (value) {
                 return self.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
             };
         }
-        else if(forecastRanges == "show_buckets") {
+        else if (forecastRanges == "show_buckets") {
             this.def.view = "default";
             this.currentView = "default";
             this.getLanguageValue();
             this.createCTEIconHTML();
             //create buckets, but only if we are on our sheet.
-            if(!this.disabled) {
+            if (!this.disabled) {
                 this.createBuckets();
             }
         }
@@ -93,20 +93,20 @@
     /**
      * Render Field
      */
-    _render: function() {
+    _render: function () {
         var select = null;
         app.view.Field.prototype._render.call(this);
 
         /* If we are on our own sheet, and need to show the dropdown, init things
          * and disable events
          */
-        if(!this.disabled && this.currentView == "enum") {
+        if (!this.disabled && this.currentView == "enum") {
             this.$el.off("click");
 
             //custom namespaced window click event to destroy the chosen dropdown on "blur".
             //this is removed in this.resetBuckets
-            $(window).on("click." + self.cid, function(e) {
-                if(!_.isEqual(self.cid, $(e.target).attr("cid"))) {
+            $(window).on("click." + self.cid, function (e) {
+                if (!_.isEqual(self.cid, $(e.target).attr("cid"))) {
                     this.resetBucket();
                 }
             }, this);
@@ -118,12 +118,12 @@
             this.currentVal = this.value;
             this.select.select2("val", this.value);
             this.select.select2("open");
-            this.select.on("close", function() {
-                if(_.isEqual(this.currentVal, this.select.select2("val"))) {
+            this.select.on("close", function () {
+                if (_.isEqual(this.currentVal, this.select.select2("val"))) {
                     this.resetBucket();
                 }
             });
-            this.$(".select2-input").keydown(function(e) {
+            this.$(".select2-input").keydown(function (e) {
                 this.onKeyDown(e);
             });
         }
@@ -132,22 +132,22 @@
     /**
      * Change handler for the buckets field
      */
-    bucketsChanged: function() {
+    bucketsChanged: function () {
         var values = {},
             moduleName = this.moduleName;
 
-        if(this.currentView == "bool") {
+        if (this.currentView == "bool") {
             this.value = this.unformat();
             values[this.def.name] = this.value;
         }
-        else if(this.currentView == "enum") {
+        else if (this.currentView == "enum") {
             this.value = this.select.select2("val");
             values[this.def.name] = this.value;
         }
 
         this.model.set(values);
 
-        if(this.currentView == "enum") {
+        if (this.currentView == "enum") {
             this.resetBucket();
         }
     },
@@ -157,8 +157,8 @@
      *
      * @param evt
      */
-    onKeyDown: function(evt) {
-        if(evt.which == 9) {
+    onKeyDown: function (evt) {
+        if (evt.which == 9) {
             evt.preventDefault();
             // tab key pressed, trigger event from context
             this.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, this);
@@ -172,14 +172,14 @@
      * to iterate over the option list once, so we do that here and store it as a jQuery data element on the Body tag.
      * Also, we check to make sure this hasn't already been done (so we don't do it again, of course).
      */
-    createBuckets: function() {
+    createBuckets: function () {
         this.buckets = $.data(document.body, "commitStageBuckets");
 
-        if(_.isUndefined(this.buckets)) {
+        if (_.isUndefined(this.buckets)) {
             var options = app.lang.getAppListStrings(this.def.options) || 'commit_stage_dom';
             this.buckets = "<select data-placeholder=' ' name='" + this.name + "' style='width: 100px;'>";
             this.buckets += "<option value='' selected></option>";
-            _.each(options, function(item, key) {
+            _.each(options, function (item, key) {
                 this.buckets += "<option value='" + key + "'>" + item + "</options>"
             });
             this.buckets += "</select>";
@@ -192,27 +192,27 @@
      *
      * If the HTML hasn't been set up yet, create it and store it on the DOM.  If it has, simply use it
      */
-    createCTEIconHTML: function() {
+    createCTEIconHTML: function () {
         var cteIcon = $.data(document.body, "cteIcon"),
             events = this.events || {},
             sales_stage = this.model.get("sales_stage");
 
-        if(_.isUndefined(cteIcon)) {
+        if (_.isUndefined(cteIcon)) {
             cteIcon = '<span class="edit-icon"><i class="icon-pencil icon-sm"></i></span>';
             $.data(document.body, "cteIcon", cteIcon);
         }
 
         //Events
         // if it's not a bucket, and it's not editable, we don't want to try to add the pencil
-        this.showCteIcon = _.bind(function() {
-            if((this.currentView != "enum") && (!this.disabled)) {
+        this.showCteIcon = _.bind(function () {
+            if ((this.currentView != "enum") && (!this.disabled)) {
                 this.$el.find("span.editable").before($(cteIcon));
             }
         }, this);
 
         // if it's not a bucket, and it's not editable, we don't want to try to remove the pencil  
-        this.hideCteIcon = _.bind(function() {
-            if((this.currentView != "enum") && (!this.disabled)) {
+        this.hideCteIcon = _.bind(function () {
+            if ((this.currentView != "enum") && (!this.disabled)) {
                 this.$el.parent().find(".edit-icon").detach();
             }
         }, this);
@@ -231,7 +231,7 @@
      * field as determined by the language file.  This function sets the proper key in the field for the hbt to pick it up and
      * display it.
      */
-    getLanguageValue: function() {
+    getLanguageValue: function () {
         var options = app.lang.getAppListStrings(this.def.options) || 'commit_stage_dom';
         this.langValue = options[this.model.get(this.def.name)];
     },
@@ -241,9 +241,9 @@
      *
      * Handles the click to make the field editable.
      */
-    clickToEdit: function(e) {
+    clickToEdit: function (e) {
         var sales_stage = this.model.get("sales_stage");
-        if(!this.disabled) {
+        if (!this.disabled) {
             $(e.target).attr("cid", this.cid);
             this.def.view = "enum";
             this.currentView = "enum";
@@ -255,7 +255,7 @@
     /**
      * Removes chosen dropdown from unfocused field
      */
-    resetBucket: function() {
+    resetBucket: function () {
         //remove custom click handler
         $(window).off("click." + this.cid);
         this.$el.off("click");
@@ -269,7 +269,7 @@
     /**
      * Utility Method to check if the field is editable
      */
-    isEditable: function() {
+    isEditable: function () {
         var sales_stages,
             isOwner = true;
 
@@ -278,7 +278,7 @@
         var hasStage = _.contains(sales_stages, this.model.get('sales_stage'));
 
         //Check to see if you're a manager on someone else's sheet, disable changes
-        if(this.context.get("selectedUser")["id"] != app.user.id) {
+        if (this.context.get("selectedUser")["id"] != app.user.id) {
             isOwner = false;
         }
 
