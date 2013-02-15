@@ -567,7 +567,7 @@
         /*
          * Next, we need to check to see if the user is a manager.  They have their own requirements and dialogs (those described below)
          */
-        else if(this.selectedUser.isManager && (this.context.get("currentWorksheet") == "worksheet") && this.context.config.get("show_forecasts_commit_warnings")) {
+        else if(this.selectedUser.isManager && (this.context.get("currentWorksheet") == "worksheet") && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings) {
             /*
              * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that
              * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
@@ -914,9 +914,7 @@
             this.dirtyTimeperiod = this.timePeriod;
         }
         this.timePeriod = params.id;
-        if(!this.isVisible()) {
-            return false;
-        }
-        this.safeFetch(true);
+
+        this.loadData();
     }
 })
