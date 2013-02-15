@@ -19,24 +19,29 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecast editableInt field", function () {
-    var field, fieldDef, context, model;
+describe("forecast editableInt field", function() {
+    var field, fieldDef, context, model, getModuleStub, app;
 
-    beforeEach(function () {
-        var app = SugarTest.app;
+    beforeEach(function() {
+        app = SugarTest.app;
         context = app.context.getContext();
 
         app.user = SugarTest.app.user;
         app.user.setPreference('decimal_precision', 2);
 
-        SugarTest.loadFile("../sidecar/src/utils", "utils", "js", function (d) {
+        SugarTest.loadFile("../sidecar/src/utils", "utils", "js", function(d) {
             return eval(d);
         });
 
-        context.set({"selectedUser" : {'id' : app.user.get('id')}});
-        context.config = new Backbone.Model({"sales_stage_won" : [], "sales_stage_lost" : []});
+        context.set({"selectedUser": {'id': app.user.get('id')}});
+        getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+            return {
+                sales_stage_won: ["Closed Won"],
+                sales_stage_lost: ["Closed Lost"]
+            };
+        });
 
-        model = new Backbone.Model({"sales_stage" : 'test_sales_stage'});
+        model = new Backbone.Model({"sales_stage": 'test_sales_stage'});
 
         fieldDef = {
             "name": "editableInt",
@@ -50,6 +55,7 @@ describe("forecast editableInt field", function () {
     });
 
     afterEach(function() {
+        getModuleStub.restore();
         delete field;
         delete context;
         delete model;
@@ -58,8 +64,8 @@ describe("forecast editableInt field", function () {
     describe("event should fire", function() {
         var stubs = [];
 
-        afterEach(function(){
-            _.each(stubs, function(stub){
+        afterEach(function() {
+            _.each(stubs, function(stub) {
                 stub.restore();
             });
 
@@ -67,7 +73,8 @@ describe("forecast editableInt field", function () {
         });
 
         xit("onClick when clicked", function() {
-            stubs.push(sinon.stub(field, "onClick", function(){}));
+            stubs.push(sinon.stub(field, "onClick", function() {
+            }));
 
             field.$el.html('<span class="editable"></span>');
         });
@@ -75,20 +82,24 @@ describe("forecast editableInt field", function () {
 
     describe("isEditable", function() {
         it("should be false with same user and configured excluded sales stage", function() {
-            var orgValue = fixtures.metadata.modules.Forecasts.config.sales_stage_won;
-            fixtures.metadata.modules.Forecasts.config.sales_stage_won = ["test_sales_stage"];
+            // restore for this one test
+            getModuleStub.restore();
+            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+                return {
+                    sales_stage_won: ["test_sales_stage"],
+                    sales_stage_lost: ["Closed Lost"]
+                };
+            });
 
             field.checkIfCanEdit();
             expect(field.isEditable()).toBeFalsy();
-
-            fixtures.metadata.modules.Forecasts.config.sales_stage_won = orgValue
         });
         it("should be true with same user and no configured excluded sales stage", function() {
             expect(field.isEditable()).toBeTruthy();
         });
 
         it("should be false with different user and no configured excluded sales stage", function() {
-            field.context.set({"selectedUser" : {"id" : "doh"}});
+            field.context.set({"selectedUser": {"id": "doh"}});
             field.checkIfCanEdit();
             expect(field.isEditable()).toBeFalsy();
         });
@@ -145,11 +156,11 @@ describe("forecast editableInt field", function () {
     });
 
     describe("test trigger events", function() {
-        beforeEach(function(){
+        beforeEach(function() {
             sinon.spy(field.context, "trigger");
             field.bindDataChange();
         });
-        afterEach(function(){
+        afterEach(function() {
             field.context.trigger.restore();
         });
         it("should not fire error event if is not error state", function() {
