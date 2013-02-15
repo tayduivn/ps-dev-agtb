@@ -21,40 +21,46 @@
 
 describe("forecast commitStage field", function() {
     var field, fieldDef, context, model;
-    
+
     beforeEach(function() {
         fieldDef = {
-                "name": "commit_stage",
-                "type": "commitStage",
-                "options": "commit_stage_dom"
-            };
-
+            "name": "commit_stage",
+            "type": "commitStage",
+            "options": "commit_stage_dom"
+        };
         app = SugarTest.app;
-
         app.user.id = "tester";
         sinon.stub(app.lang, "getAppListStrings", function(){
             return {test:"test"};
         });
         context = app.context.getContext();
     });
-    
+
     afterEach(function(){
         app.lang.getAppListStrings.restore();
         app.user.id = null;
         delete app;
     });
     
-    describe("when buckets are set to show_binary", function(){        
+    describe("when buckets are set to show_binary", function(){
         beforeEach(function(){
             context = {
                 config: new Backbone.Model({
-                    sales_stage_won: ["Closed Lost"], 
-                    sales_stage_lost: ["Closed Won"], 
+                    sales_stage_won: ["Closed Won"],
+                    sales_stage_lost: ["Closed Lost"],
                     forecast_ranges: "show_binary"})
-                };            
+            };
+            sinon.stub(app.metadata, "getModule", function(module, type){
+                return {
+                    sales_stage_won: ["Closed Won"],
+                    sales_stage_lost: ["Closed Lost"],
+                    forecast_ranges: "show_binary"
+                };
+            });
         });
-        
-        afterEach(function(){            
+
+        afterEach(function(){
+            app.metadata.getModule.restore();
             delete field.context;
         });
         
@@ -168,12 +174,20 @@ describe("forecast commitStage field", function() {
     describe("when buckets are set to show_buckets", function(){
         var orgValue;
         beforeEach(function(){
-            orgValue = fixtures.metadata.modules.Forecasts.config.forecast_ranges;
-            fixtures.metadata.modules.Forecasts.config.forecast_ranges = "show_buckets";
+            //orgValue = fixtures.metadata.modules.Forecasts.config.forecast_ranges;
+            //fixtures.metadata.modules.Forecasts.config.forecast_ranges = "show_buckets";
+            sinon.stub(app.metadata, "getModule", function(module, type){
+                return {
+                    sales_stage_won: ["Closed Won"],
+                    sales_stage_lost: ["Closed Lost"],
+                    forecast_ranges: "show_buckets"
+                };
+            });
         });
         
         afterEach(function(){
-            fixtures.metadata.modules.Forecasts.config.forecast_ranges = orgValue;
+            //fixtures.metadata.modules.Forecasts.config.forecast_ranges = orgValue;
+            app.metadata.getModule.restore();
         });
         
         describe("when it is your sheet and sales_stage is Open", function(){
