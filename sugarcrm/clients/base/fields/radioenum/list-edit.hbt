@@ -26,5 +26,9 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{this.dateValue}} {{this.timeValue}}
-
+<select data-placeholder=" " name="{{name}}">
+    {{#eachOptions def.options}}
+        <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
+    {{/eachOptions}}
+</select>
+<p class="help-block"></p>

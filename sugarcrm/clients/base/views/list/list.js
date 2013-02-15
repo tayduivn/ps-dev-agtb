@@ -65,7 +65,7 @@
 
         //When clicking on eye icon, we need to trigger preview:render with model&collection
         this.context.on("list:preview:fire", function(model) {
-            app.events.trigger("preview:render", model, this.collection);
+            app.events.trigger("preview:render", model, this.collection, true);
         }, this);
 
         //When switching to next/previous record from the preview panel, we need to update the highlighted row
@@ -193,7 +193,7 @@
 
         //TODO probably need to check if we can sort this field from metadata
         collection = self.collection;
-        eventTarget = self.$(event.target);
+        eventTarget = self.$(event.currentTarget);
         fieldName = eventTarget.data('fieldname');
 
         // first check if alternate orderby is set for column
