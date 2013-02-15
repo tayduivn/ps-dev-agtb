@@ -156,6 +156,29 @@ describe("The forecasts manager worksheet", function() {
         });
     });
 
+    describe("collectionSuccess", function() {
+        var collectionFetchStub;
+        beforeEach(function(){
+            sinon.spy(view, 'collectionSuccess');
+            collectionFetchStub = sinon.stub(view.collection, 'fetch', function(){
+                view.collectionSuccess([]);
+            });
+        });
+
+        afterEach(function(){
+            view.collectionSuccess.restore();
+            collectionFetchStub.restore();
+        });
+
+        it("should not update reportees array on selectedUser", function() {
+            view.loadData();
+
+            expect(view.collectionSuccess).toHaveBeenCalled();
+            expect(view.collection.length).toEqual(3);
+            expect(view.selectedUser.reportees.length).toEqual(2);
+        });
+    });
+
     describe('Forecasts Worksheet Dirty Models', function() {
         var m;
         beforeEach(function() {

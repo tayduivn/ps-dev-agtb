@@ -144,12 +144,11 @@
      * @param {Object} options
      */
     initialize: function(options) {
-        var self = this;
 
-        self.gTableDefs = {
+        this.gTableDefs = {
             "bAutoWidth": false,
-            "aoColumnDefs": self.columnDefs,
-            "aaSorting": self.aaSorting,
+            "aoColumnDefs": this.columnDefs,
+            "aaSorting": this.aaSorting,
             "bInfo": false,
             "bPaginate": false
         };
@@ -316,18 +315,17 @@
         // only run the save when the worksheet is visible and it has dirty records
         var totalToSave = 0;
         if(this.isVisible()) {
-            var self = this,
-                saveCount = 0;
+            var saveCount = 0;
 
-            totalToSave = self.dirtyModels.length;
+            totalToSave = this.dirtyModels.length;
 
             if(this.isDirty()) {
-                self.dirtyModels.each(function(model) {
+                this.dirtyModels.each(function(model) {
                     //set properties on model to aid in save
                     model.set({
                         "draft": (isDraft && isDraft == true) ? 1 : 0,
-                        "timeperiod_id": self.dirtyTimeperiod || self.timePeriod,
-                        "current_user": self.dirtyUser.id || self.selectedUser.id
+                        "timeperiod_id": this.dirtyTimeperiod || this.timePeriod,
+                        "current_user": this.dirtyUser.id || this.selectedUser.id
                     }, {silent: true});
 
                     // set the correct module on the model since sidecar doesn't support sub-beans yet
@@ -345,12 +343,12 @@
                                     messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
                                 });
                             }
-                            self.context.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
+                            this.context.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
                         }
                     }, silent: true});
-                });
+                }, this);
 
-                self.cleanUpDirtyModels();
+                this.cleanUpDirtyModels();
             } else {
                 // we only want to show this when the draft is being saved
                 if(isDraft) {
@@ -392,7 +390,7 @@
             this.collection.on("change", function(model) {
                 if(_.include(_.keys(model.changed), 'commit_stage')) {
                     this.gTable.fnDestroy();
-                    this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
+                    this.gTable = this.$('.worksheetTable').dataTable(this.gTableDefs);
                 }
                 // The Model has changed via CTE. save it in the isDirty
                 this.dirtyModels.add(model);
@@ -415,7 +413,7 @@
             this.context.on("change:selectedRanges",
                 function(context, ranges) {
                     this.updateWorksheetBySelectedRanges(ranges);
-                    this.context.trigger('forecasts:change:worksheetRows', self.$el.find('tr.odd, tr.even'));
+                    this.context.trigger('forecasts:change:worksheetRows', this.$el.find('tr.odd, tr.even'));
                 }, this);
             this.context.on("forecasts:committed:saved", function() {
                 if(this.isVisible()) {
@@ -463,7 +461,7 @@
                 //if the record is dirty, warn the user.
                 if(this.isDirty()) {
                     return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
-                } else if(!_.isUndefined(this.context) && (this.context.get("currentWorksheet") == "worksheet") && this.selectedUser.isManager && app.utils.getConfigValue("show_forecasts_commit_warnings")) {
+                } else if(!_.isUndefined(this.context) && (this.context.get("currentWorksheet") == "worksheet") && this.selectedUser.isManager && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings) {
                     //special manager cases for messages
                     /*
                      * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that
@@ -567,7 +565,7 @@
         /*
          * Next, we need to check to see if the user is a manager.  They have their own requirements and dialogs (those described below)
          */
-        else if(this.selectedUser.isManager && (this.context.get("currentWorksheet") == "worksheet") && this.context.config.get("show_forecasts_commit_warnings")) {
+        else if(this.selectedUser.isManager && (this.context.get("currentWorksheet") == "worksheet") && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings) {
             /*
              * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that
              * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
@@ -734,8 +732,7 @@
      * Calculate the totals for the worksheet
      */
     calculateTotals: function() {
-        var self = this,
-            includedAmount = 0,
+        var includedAmount = 0,
             includedBest = 0,
             includedWorst = 0,
             overallAmount = 0,
@@ -758,7 +755,7 @@
                     'overall_amount': overallAmount,
                     'overall_best': overallBest,
                     'overall_worst': overallWorst,
-                    'timeperiod_id': self.timePeriod,
+                    'timeperiod_id': this.timePeriod,
                     'lost_count': lostCount,
                     'lost_amount': lostAmount,
                     'won_count': wonCount,
@@ -771,10 +768,10 @@
         }
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
-        var sales_stage_won_setting = app.utils.getConfigValue('sales_stage_won') || [];
-        var sales_stage_lost_setting = app.utils.getConfigValue('sales_stage_lost') || [];
+        var sales_stage_won_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_won || [];
+        var sales_stage_lost_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_lost || [];
 
-        _.each(self.collection.models, function(model) {
+        _.each(this.collection.models, function(model) {
             var won = _.include(sales_stage_won_setting, model.get('sales_stage')),
                 lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
                 amount = parseFloat(model.get('likely_case')),
@@ -804,7 +801,7 @@
             overallAmount += amount_base;
             overallBest += best_base;
             overallWorst += worst_base;
-        });
+        }, this);
 
         var totals = {
             'amount': includedAmount,
@@ -813,13 +810,13 @@
             'overall_amount': overallAmount,
             'overall_best': overallBest,
             'overall_worst': overallWorst,
-            'timeperiod_id': self.timePeriod,
+            'timeperiod_id': this.timePeriod,
             'lost_count': lostCount,
             'lost_amount': lostAmount,
             'won_count': wonCount,
             'won_amount': wonAmount,
             'included_opp_count': includedCount,
-            'total_opp_count': self.collection.models.length
+            'total_opp_count': this.collection.models.length
         };
 
         this.context.unset("updatedTotals", {silent: true});
@@ -855,7 +852,7 @@
      */
     updateWorksheetBySelectedRanges: function(params) {
         // Set the filters for the datatable then re-render
-        var forecast_ranges_setting = app.utils.getConfigValue('forecast_ranges') || 'show_binary';
+        var forecast_ranges_setting = app.metadata.getModule('Forecasts', 'config').forecast_ranges || 'show_binary';
 
         // start with no filters, i. e. show everything.
         if(!_.isUndefined($.fn.dataTableExt)) {
@@ -914,9 +911,7 @@
             this.dirtyTimeperiod = this.timePeriod;
         }
         this.timePeriod = params.id;
-        if(!this.isVisible()) {
-            return false;
-        }
-        this.safeFetch(true);
+
+        this.loadData();
     }
 })

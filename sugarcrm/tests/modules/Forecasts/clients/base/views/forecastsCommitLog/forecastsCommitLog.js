@@ -29,9 +29,6 @@ describe("The forecastCommitLog view", function(){
 
 
         context = app.context.getContext();
-        context.config = new (Backbone.Model.extend({
-            "defaults": fixtures.metadata.modules.Forecasts.config
-        }));
         context.set({"selectedUser": {"id": 'test_user'}});
         context.set({"timeperiod_id": {"id": 'timeperiod_id'}});
         context.set({"collection": new Backbone.Collection()});
@@ -44,7 +41,13 @@ describe("The forecastCommitLog view", function(){
             selectedUser: {}
         };
 
-        view = SugarTest.createView("base", "Forecasts", "forecastsCommitLog", null, context, true);
+        var layout = {
+            getComponent : function(){
+                return {}
+            }
+        };
+
+        view = SugarTest.createView("base", "Forecasts", "forecastsCommitLog", null, context, true, layout);
     });
 
     describe("test buildForecastsCommitted function", function() {

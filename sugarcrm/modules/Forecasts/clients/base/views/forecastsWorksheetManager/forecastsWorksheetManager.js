@@ -162,7 +162,7 @@
      */
     collectionSuccess: function(resp, status, xhr) {
         var records = [];
-        var users = this.selectedUser.reportees;
+        var users = $.map(this.selectedUser.reportees, function(obj){return $.extend(true, {}, obj);});
 
         // put the selected user on top
         users.unshift({id: this.selectedUser.id, name: this.selectedUser.full_name});
@@ -717,7 +717,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedRanges: function(params) {
-        if(app.utils.getConfigValue('forecast_ranges') != 'show_binary') {
+        if(app.metadata.getModule('Forecasts', 'config').forecast_ranges != 'show_binary') {
             // TODO: this.
         } else {
             this.ranges = _.first(params);

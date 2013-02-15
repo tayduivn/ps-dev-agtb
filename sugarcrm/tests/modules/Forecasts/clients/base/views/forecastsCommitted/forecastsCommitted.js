@@ -31,9 +31,6 @@ describe("The forecasts committed view", function () {
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function (d) { return eval(d); });
 
         context = app.context.getContext();
-        context.config = new (Backbone.Model.extend({
-            "defaults": fixtures.metadata.modules.Forecasts.config
-        }));
         context.set({"selectedUser": {"id": 'test_user'}});
         context.set({"timeperiod_id": {"id": 'timeperiod_id'}});
         context.set({"collection": new Backbone.Collection()});
@@ -46,7 +43,13 @@ describe("The forecasts committed view", function () {
             selectedUser: {}
         };
 
-        view = SugarTest.createView("base", "Forecasts", "forecastsCommitted", null, context, true);
+        var layout = {
+            getComponent : function(){
+                return {}
+            }
+        };
+
+        view = SugarTest.createView("base", "Forecasts", "forecastsCommitted", null, context, true, layout);
 
         formatAmountLocaleStub = sinon.stub(app.currency, "formatAmountLocale", function(value) {
             return value;

@@ -1,3 +1,4 @@
+{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -24,37 +25,6 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-({
-    extendsFrom: "HeaderpaneView",
-
-    events: {
-        "click [name=done_button]":   "_done",
-        "click [name=cancel_button]": "_cancel"
-    },
-
-     /**
-      * The user clicked the Done button so trigger an event to add selected recipients from the address book to the
-      * target field and then close the drawer.
-      *
-      * @private
-      */
-     _done: function() {
-         var recipients = this.model.get("compose_addressbook_selected_recipients");
-
-         if (recipients) {
-             app.drawer.close(recipients);
-         } else {
-             this._cancel();
-         }
-     },
-
-    /**
-     * Close the drawer.
-     *
-     * @private
-     */
-    _cancel: function() {
-        app.drawer.close();
-    }
-})
+}}
+<input type="hidden" class="attachments select2 select2-choices-pills-close" value="">
+<input type="file" name="email_attachment" class="fileinput hidden">
