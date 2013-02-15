@@ -19,39 +19,54 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts worksheet", function(){
+describe("The forecasts worksheet", function() {
 
     var app, view, testMethodStub, collection, apiCallStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.min", "js", function(d) { return eval(d); });
-        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.customSort", "js", function(d) { return eval(d); });
+        sinon.stub(app.metadata, "getModule", function(module, type) {
+            return {
+                show_forecasts_commit_warnings: 1,
+                sales_stage_won: ["Closed Won"],
+                sales_stage_lost: ["Closed Lost"],
+                forecast_ranges: 'show_binary'
+            };
+        });
 
-        app.user.set({'id' : 'test_userid'});
+
+        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) {
+            return eval(d);
+        });
+        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.min", "js", function(d) {
+            return eval(d);
+        });
+        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.customSort", "js", function(d) {
+            return eval(d);
+        });
+
+        app.user.set({'id': 'test_userid'});
 
         app.defaultSelections = {
-                timeperiod_id: {
-                    'id' : 'test_timeperiod'
-                },
-                group_by: {},
-                dataset: {},
-                selectedUser: {},
-                ranges: {}
-            };
+            timeperiod_id: {
+                'id': 'test_timeperiod'
+            },
+            group_by: {},
+            dataset: {},
+            selectedUser: {},
+            ranges: {}
+        };
 
         apiCallStub = sinon.stub(app.api, 'call');
 
         var context = app.context.getContext();
-        context.set({'selectedTimePeriod' : new Backbone.Model({'id' : 'fake_id'})});
-        context.set({'collection' : new Backbone.Collection()});
-        context.config = new (Backbone.Model.extend({
-            "defaults": fixtures.metadata.modules.Forecasts.config
-        }));
+        context.set({'selectedTimePeriod': new Backbone.Model({'id': 'fake_id'})});
+        context.set({'collection': new Backbone.Collection()});
 
         var meta = {
-            panels : [{'fields' : []}]
+            panels: [
+                {'fields': []}
+            ]
         };
 
         view = SugarTest.createView('base', 'Forecasts', 'forecastsWorksheet', meta, context, true);
@@ -61,6 +76,7 @@ describe("The forecasts worksheet", function(){
     });
 
     afterEach(function() {
+        app.metadata.getModule.restore();
         apiCallStub.restore();
         app.user.unset('id');
         view.unbindData();
@@ -74,7 +90,7 @@ describe("The forecasts worksheet", function(){
             });
         });
 
-        afterEach(function(){
+        afterEach(function() {
             testMethodStub.restore();
             view.selectedUser = '';
         });
@@ -117,23 +133,24 @@ describe("The forecasts worksheet", function(){
             expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
         });
     });
-   
-    describe("Forecast Worksheet collection.fetch", function(){
-        beforeEach(function(){
-            view.collection.fetch = function(){};
+
+    describe("Forecast Worksheet collection.fetch", function() {
+        beforeEach(function() {
+            view.collection.fetch = function() {
+            };
         });
-         
-        afterEach(function(){
-        
+
+        afterEach(function() {
+
         });
-        
-        it("should not have been called with safeFetch(false) ", function(){
+
+        it("should not have been called with safeFetch(false) ", function() {
             sinon.spy(view.collection, "fetch");
             view.safeFetch(false);
             expect(view.collection.fetch).not.toHaveBeenCalled();
         });
-        
-        it("should have been called with safeFetch(true) ", function(){
+
+        it("should have been called with safeFetch(true) ", function() {
             sinon.spy(view.collection, "fetch");
             view.safeFetch();
             expect(view.collection.fetch).toHaveBeenCalled();
@@ -142,12 +159,12 @@ describe("The forecasts worksheet", function(){
 
     describe('Forecasts Worksheet Dirty Models', function() {
         var m;
-        beforeEach(function(){
-            m = new Backbone.Model({'hello' : 'world'});
+        beforeEach(function() {
+            m = new Backbone.Model({'hello': 'world'});
             view.collection.add(m);
         });
 
-        afterEach(function(){
+        afterEach(function() {
             view.collection.reset();
             m = undefined;
         });
@@ -157,12 +174,12 @@ describe("The forecasts worksheet", function(){
         });
 
         it('isDirty should return true', function() {
-            m.set({'hello' : 'jon1'});
+            m.set({'hello': 'jon1'});
             expect(view.isDirty()).toBeTruthy();
         });
 
         it('should not be dirty after main collection reset', function() {
-            m.set({'hello' : 'jon1'});
+            m.set({'hello': 'jon1'});
             expect(view.isDirty()).toBeTruthy();
             view.collection.reset();
             expect(view.isDirty()).toBeFalsy();
@@ -171,13 +188,14 @@ describe("The forecasts worksheet", function(){
 
     describe('Forecast Worksheet Save Dirty Models', function() {
         var m, saveStub;
-        beforeEach(function(){
-            m = new Backbone.Model({'hello' : 'world'});
-            saveStub = sinon.stub(m, 'save', function(){});
+        beforeEach(function() {
+            m = new Backbone.Model({'hello': 'world'});
+            saveStub = sinon.stub(m, 'save', function() {
+            });
             view.collection.add(m);
         });
 
-        afterEach(function(){
+        afterEach(function() {
             view.collection.reset();
             saveStub.restore();
             m = undefined;
@@ -188,7 +206,7 @@ describe("The forecasts worksheet", function(){
         });
 
         it('should return 1 when one model is dirty', function() {
-            m.set({'hello':'jon1'});
+            m.set({'hello': 'jon1'});
             expect(view.saveWorksheet()).toEqual(1);
             expect(saveStub).toHaveBeenCalled();
         });
@@ -196,14 +214,16 @@ describe("The forecasts worksheet", function(){
 
     describe("Forecasts worksheet save dirty models with correct timeperiod after timeperiod changes", function() {
         var m, saveStub, safeFetchStub;
-        beforeEach(function(){
-            m = new Backbone.Model({'hello' : 'world'});
-            saveStub = sinon.stub(m, 'save', function(){});
-            safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
+        beforeEach(function() {
+            m = new Backbone.Model({'hello': 'world'});
+            saveStub = sinon.stub(m, 'save', function() {
+            });
+            safeFetchStub = sinon.stub(view, 'safeFetch', function() {
+            });
             view.collection.add(m);
         });
 
-        afterEach(function(){
+        afterEach(function() {
             view.collection.reset();
             saveStub.restore();
             safeFetchStub.restore();
@@ -211,8 +231,8 @@ describe("The forecasts worksheet", function(){
         });
 
         it('model should contain the old timeperiod id', function() {
-            m.set({'hello':'jon1'});
-            view.updateWorksheetBySelectedTimePeriod({'id' : 'my_new_timeperiod'});
+            m.set({'hello': 'jon1'});
+            view.updateWorksheetBySelectedTimePeriod({'id': 'my_new_timeperiod'});
             expect(view.saveWorksheet()).toEqual(1);
             expect(saveStub).toHaveBeenCalled();
             expect(safeFetchStub).toHaveBeenCalled();
@@ -225,22 +245,24 @@ describe("The forecasts worksheet", function(){
 
     describe("Forecasts worksheet save dirty models with correct user_id after selected_user changes", function() {
         var m, saveStub, safeFetchStub, viewStub;
-        beforeEach(function(){
-            m = new Backbone.Model({'hello' : 'world'});
-            saveStub = sinon.stub(m, 'save', function(){});
-            safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
+        beforeEach(function() {
+            m = new Backbone.Model({'hello': 'world'});
+            saveStub = sinon.stub(m, 'save', function() {
+            });
+            safeFetchStub = sinon.stub(view, 'safeFetch', function() {
+            });
             view.collection.add(m);
         });
 
-        afterEach(function(){
+        afterEach(function() {
             saveStub.restore();
             safeFetchStub.restore();
             m = undefined;
         });
 
         it('model should contain the old userid', function() {
-            m.set({'hello':'jon1'});
-            view.updateWorksheetBySelectedUser({'id' : 'my_new_user_id'});
+            m.set({'hello': 'jon1'});
+            view.updateWorksheetBySelectedUser({'id': 'my_new_user_id'});
             expect(view.saveWorksheet()).toEqual(1);
             expect(saveStub).toHaveBeenCalled();
             expect(safeFetchStub).toHaveBeenCalled();
@@ -251,59 +273,57 @@ describe("The forecasts worksheet", function(){
         });
     });
 
-    
-    describe("Forecasts worksheet bindings ", function(){
-        beforeEach(function(){
+
+    describe("Forecasts worksheet bindings ", function() {
+        beforeEach(function() {
             sinon.spy(view.collection, "on");
             sinon.spy(view.context, "on");
-            sinon.spy(view.context.config, "on");
             view.bindDataChange();
         });
-        
-        afterEach(function(){
+
+        afterEach(function() {
             view.context.on.restore();
             view.collection.on.restore();
-            view.context.config.on.restore();
         });
-        
-        it("collection.on should have been called with reset", function(){
+
+        it("collection.on should have been called with reset", function() {
             expect(view.collection.on).toHaveBeenCalledWith("reset");
         });
 
-        it("forecasts.worksheet.on should have been called with change", function(){
+        it("forecasts.worksheet.on should have been called with change", function() {
             expect(view.collection.on).toHaveBeenCalledWith("change");
         });
-        
-        it("forecasts.on should have been called with selectedUser", function(){
+
+        it("forecasts.on should have been called with selectedUser", function() {
             expect(view.context.on).toHaveBeenCalledWith("change:selectedUser");
         });
-        
-        it("forecasts.on should have been called with selectedTimePeriod", function(){
+
+        it("forecasts.on should have been called with selectedTimePeriod", function() {
             expect(view.context.on).toHaveBeenCalledWith("change:selectedTimePeriod");
         });
-        
-        it("forecasts.on should have been called with selectedRanges", function(){
+
+        it("forecasts.on should have been called with selectedRanges", function() {
             expect(view.context.on).toHaveBeenCalledWith("change:selectedRanges");
         });
-        
-        it("forecasts.on should have been called with forecasts:committed:saved", function(){
+
+        it("forecasts.on should have been called with forecasts:committed:saved", function() {
             expect(view.context.on).toHaveBeenCalledWith("forecasts:committed:saved");
         });
-        
-        it("forecasts.on should have been called with forecasts:commitButtons:enabled", function(){
+
+        it("forecasts.on should have been called with forecasts:commitButtons:enabled", function() {
             expect(view.context.on).toHaveBeenCalledWith("forecasts:commitButtons:enabled");
         });
-        
-        it("forecasts.on should have been called with forecasts:commitButtons:disabled", function(){
+
+        it("forecasts.on should have been called with forecasts:commitButtons:disabled", function() {
             expect(view.context.on).toHaveBeenCalledWith("forecasts:commitButtons:disabled");
         });
 
         /*
          * Skip this test.  Expected Opportunities is not a part of nutmeg
          */
-        xit("forecasts.on should have been called with expectedOpportunities", function(){
+        xit("forecasts.on should have been called with expectedOpportunities", function() {
             expect(view.context.on).toHaveBeenCalledWith("change:expectedOpportunities");
-        });      
+        });
 
     });
 });
