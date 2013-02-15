@@ -145,7 +145,7 @@
      */
     _rewriteNewWindowLinks: function(frame) {
 
-        frame.$('a[target="_blank"]').each(function(i, elem) {
+        frame.$('a[target="_blank"]').not('[href^="http"]').each(function(i, elem) {
             var $elem = $(elem);
             if ($elem.data('sidecarProcessed')) {
                 return;
