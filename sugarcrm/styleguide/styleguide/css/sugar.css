@@ -1393,13 +1393,6 @@ article:hover {
   -moz-box-shadow: none;
   box-shadow: none;
 }
-.btn-link {
-  color: #4398ec;
-  font-weight: normal;
-}
-.btn-dark [class^="icon-"] {
-  color: #717275 !important;
-}
 .btn-invisible {
   background: transparent;
   border: 1px solid transparent;
@@ -1448,6 +1441,13 @@ article:hover {
   box-shadow: none;
   text-shadow: none;
   color: #177ee5 !important;
+}
+.btn-link {
+  color: #4398ec;
+  font-weight: normal;
+}
+.btn-dark [class^="icon-"] {
+  color: #717275 !important;
 }
 .btn-small .caret {
   margin-top: 3px;

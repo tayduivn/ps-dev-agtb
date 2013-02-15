@@ -93,15 +93,6 @@
   .box-shadow(none);
 }
 
-.btn-link {
-  color: @linkColor;
-  font-weight: normal;
-}
-
-.btn-dark [class^="icon-"] {
-  color: lighten(@gray,10%) !important;
-}
-
 // invisible appears as no button
 .btn-invisible {
   background: transparent;
@@ -144,39 +135,15 @@
     color: @linkColorHover !important;
   }
 }
-/*a.btn-invisible.disabled,
-a.btn-invisible.disabled:hover {
-  background-color: transparent;
-  background-image: none;
-  .box-shadow(none);
-  border: 1px solid transparent;
-  text-decoration: none;
-  color: @gray;
-  .opacity(65);
-  [class^="icon-"] {
-    .opacity(65);
-    color: @gray !important;
-  }
-}*/
-/*a [class^="icon-"] {
-  color: @grayLight !important;
-}
-a:hover [class^="icon-"] {
-  color: @gray !important;
-}
-a:active [class^="icon-"] {
-  color: @black !important;
-}
-a.active [class^="icon-"] {
-  color: @grayDark !important;
-}*/
 
-// from nutmeg
-/*.btn-invisible:hover {
-  border: 1px solid #d0cfce;
-  *border: 0;
-  border-top-color: #c1bfbe;
-}*/
+.btn-link {
+  color: @linkColor;
+  font-weight: normal;
+}
+
+.btn-dark [class^="icon-"] {
+  color: lighten(@gray,10%) !important;
+}
 
 // Small button dropdowns
 .btn-small .caret {
