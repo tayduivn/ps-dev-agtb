@@ -164,12 +164,9 @@
      *   The model that was changed.
      * @param {*} value
      *   The value of the field that was changed.
-     * @param {Object} args
-     *   An object with the list of the fields that changed.
      */
-    copyChanged: function(model, value, args) {
-
-        _.each(args.changes, function(hasChanged, field) {
+    copyChanged: function(model, value) {
+        _.each(model.changedAttributes(), function(newValue, field) {
             model.set(this.def.mapping[field], model.get(field));
         }, this);
     },

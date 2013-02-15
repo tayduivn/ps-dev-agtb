@@ -448,7 +448,7 @@ class Email extends SugarBean {
 		/* satisfy basic HTML email requirements */
 		$this->name = $request['sendSubject'];
 
-        if($_REQUEST['setEditor'] == 1) {
+        if(isset($_REQUEST['setEditor']) && $_REQUEST['setEditor'] == 1) {
             $_REQUEST['description_html'] = $_REQUEST['sendDescription'];
             $this->description_html = $_REQUEST['description_html'];
         } else {
@@ -668,6 +668,10 @@ class Email extends SugarBean {
                         $doc = new Document();
                         $doc->retrieve($docId);
 
+                        if (empty($doc->id) || $doc->id != $docId) {
+                            throw new Exception("Document Not Found: Id='". $request['documents'] . "'");
+                        }
+
                         $documentRevision                             = new DocumentRevision();
                         $documentRevision->retrieve($doc->document_revision_id);
                         //$documentRevision->x_file_name   = $documentRevision->filename;
@@ -679,7 +683,7 @@ class Email extends SugarBean {
                         $fileLocation = "upload://{$documentRevision->id}";
 
                         if (empty($documentRevision->id) || !file_exists($fileLocation)) {
-                            throw new Exception("Revision Id Not Found");
+                            throw new Exception("Document Revision Id Not Found");
                         }
 
                         // only save attachments if we're archiving or drafting
@@ -793,7 +797,9 @@ class Email extends SugarBean {
             $me = new MailerException("Email2Send Failed: " . $e->getMessage(), MailerException::FailedToSend);
             $GLOBALS["log"]->error($me->getLogMessage());
             $GLOBALS["log"]->info($me->getTraceMessage());
-            $GLOBALS["log"]->info(print_r($this->config->toArray(),true));
+            if (!empty($mailConfig)) {
+                $GLOBALS["log"]->info($mailConfig->toArray(),true);
+            }
             throw($me);
         }
 

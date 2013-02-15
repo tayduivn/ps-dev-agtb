@@ -991,6 +991,12 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'vname' => 'LBL_FS_USER_ID',
             'type' => 'id',
         ),
+        'show_history_log' =>
+        array(
+            'name' => 'show_history_log',
+            'type' => 'int',
+            'source' => 'non-db'
+        ),
     ),
     'relationships' => array(
         // relationships that might be needed: User_id -> users, quota_id -> Quota,

@@ -48,12 +48,14 @@
                 $el.focus().val($el.val());
             }
 
-            field.$el.on("keydown.record", function(evt) {
-                self.handleKeyDown.call(self, evt, field);
-            });
-            $(document).on("mousedown.record" + field.name, _.debounce(function(evt) {
-                self.fieldClose.call(self, evt, field);
-            }, 0));
+            if (field.type !== 'image') {
+                field.$el.on("keydown.record", function(evt) {
+                    self.handleKeyDown.call(self, evt, field);
+                });
+                $(document).on("mousedown.record" + field.name, _.debounce(function(evt) {
+                    self.fieldClose.call(self, evt, field);
+                }, 0));
+            }
         } else {
             field.$el.off("keydown.record");
             $(document).off("mousedown.record" + field.name);

@@ -157,9 +157,43 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'fields' => array(
                 array('name' => 'description', 'span' => 12),
                 'contact_name',
-                array('label' => 'Created By', 'type' => 'fieldset', 'name' => 'created_by_date', 'fields' => array('created_by_name', 'date_entered')),
+                array(
+                    'name' => 'date_entered_by',
+                    'noedit' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_entered',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'created_by_name',
+                        ),
+                    ),
+                ),
                 'team_sets',
-                'date_modified',
+                array(
+                    'name' => 'date_modified_by',
+                    'noedit' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_MODIFIED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'modified_by_name',
+                        ),
+                    ),
+                ),
             )
         )
     ),

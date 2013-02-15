@@ -25,13 +25,44 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    fieldTag: 'input',
+    // On list-edit template,
+    // we want the radio buttons to be replaced by a select so each method must call the EnumField method instead.
+    extendsFrom: 'ListeditableField',
     bindDomChange: function() {
-        if (!(this.model instanceof Backbone.Model)) return;
-        var self = this;
-        var el = this.$el.find(this.fieldTag);
-        el.on("change", function() {
-            self.model.set(self.name, self.unformat(self.$(self.fieldTag+":radio:checked").val()));
-        });
+        if (this.tplName === 'list-edit') {
+            app.view.fields.EnumField.prototype.bindDomChange.call(this);
+        } else {
+            if (!(this.model instanceof Backbone.Model)) return;
+            var self = this;
+            var el = this.$el.find(this.fieldTag);
+            el.on("change", function() {
+                self.model.set(self.name, self.unformat(self.$(self.fieldTag+":radio:checked").val()));
+            });
+        }
+    },
+    format: function(value) {
+        if (this.tplName === 'list-edit') {
+            return app.view.fields.EnumField.prototype.format.call(this, value);
+        } else {
+            return app.view.Field.prototype.format.call(this, value);
+        }
+    },
+    unformat: function(value) {
+        if (this.tplName === 'list-edit') {
+            return app.view.fields.EnumField.prototype.unformat.call(this, value);
+        } else {
+            return app.view.Field.prototype.unformat.call(this, value);
+        }
+    },
+    _loadTemplate: function() {
+        app.view.fields.ListeditableField.prototype._loadTemplate.call(this);
+
+        //Important to change the fieldTag to bind the dom "change" event
+        if(this.tplName === 'list-edit') {
+            this.fieldTag = 'select';
+        } else {
+            this.fieldTag = 'input';
+        }
     }
+
 })

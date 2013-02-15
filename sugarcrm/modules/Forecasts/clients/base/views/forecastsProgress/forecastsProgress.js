@@ -163,7 +163,7 @@
             }, this);
 
             //Manager totals model has changed
-            this.context.on("change:updatedManagerTotals", function(context, totals) {
+            this.context.on("forecasts:worksheetManager:updateTotals", function(totals) {
                 if(self.shouldRollup) {
                     self.recalculateManagerTotals(totals);
                 }
@@ -304,7 +304,7 @@
 
     _renderHtml: function (ctx, options) {
         _.extend(this, this.model.toJSON());
-        this.progressDataSet = app.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', this.context.config);
+        this.progressDataSet = app.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_');
         this.handleRenderOptions();
 
         app.view.View.prototype._renderHtml.call(this, ctx, options);

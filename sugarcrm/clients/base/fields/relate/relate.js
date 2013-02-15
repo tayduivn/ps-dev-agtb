@@ -44,8 +44,6 @@
         var self = this;
         var result = app.view.Field.prototype._render.call(this);
         if(this.tplName === 'edit') {
-            var placeholderTemplate = Handlebars.compile(app.lang.getAppString("LBL_SEARCH_MODULE")),
-                moduleString = app.lang.getAppListStrings("moduleListSingular");
 
             this.$(this.fieldTag).select2({
                     width: '100%',
@@ -61,9 +59,7 @@
                     formatSearching: function() {
                         return app.lang.get("LBL_LOADING", self.module);
                     },
-                    placeholder: placeholderTemplate({
-                        module: moduleString[self.getSearchModule()]
-                    }),
+                    placeholder: this.getPlaceHolder(),
                     allowClear: self.allow_single_deselect,
                     minimumInputLength: self.minChars,
                     query: self.search
@@ -73,7 +69,7 @@
                         plugin.searchmore = $('<ul class="select2-results">')
                             .append(
                             $('<li class="select2-result">')
-                                .append($(document.createElement("div")).addClass('select2-result-label').html(app.lang.get("LBL_SEARCH_FOR_MORE")))
+                                .append($('<div/>').addClass('select2-result-label').html(app.lang.get('LBL_SEARCH_FOR_MORE')))
                                 .mousedown(function() {
                                     plugin.opts.element.trigger($.Event("searchmore"));
                                     plugin.close();
@@ -82,7 +78,6 @@
                         plugin.dropdown.append(plugin.searchmore);
                     }
                 }).on("searchmore", function() {
-                    self.beforeSearchMore();
                     self.setValue({id: '', value: ''});
                     app.drawer.open({
                         layout : 'selection-list',
@@ -101,7 +96,6 @@
         }
         return result;
     },
-    beforeSearchMore: function() {},
     setValue: function(model) {
         if (model) {
             var silent = model.silent || false;
@@ -118,6 +112,22 @@
     },
     getSearchModule: function() {
         return this.def.module;
+    },
+    getPlaceHolder: function() {
+        var module,
+            moduleString = app.lang.getAppListStrings('moduleListSingular');
+
+        if (!moduleString[this.getSearchModule()]) {
+            app.logger.error("Module '" + this.getSearchModule() + "' doesn't have singular translation.");
+            // graceful fallback
+            module = this.getSearchModule().toLocaleLowerCase();
+        }
+        else {
+            module = moduleString[this.getSearchModule()].toLocaleLowerCase();
+        }
+        return app.lang.get('LBL_SEARCH_SELECT_MODULE', this.module, {
+            module: module
+        });
     },
     /**
      * Searches for related field

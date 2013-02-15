@@ -14,9 +14,7 @@
         _.bindAll(this);
 
         this.toggleComponents = [];
-
         this.processMeta();
-        this.template = app.template.get("l.filterpanel");
         this.renderHtml();
 
         app.view.Layout.prototype.initialize.call(this, opts);
@@ -42,8 +40,6 @@
                 this.toggles.push({toggle: toggle, class: this.availableToggles[toggle]});
             }
         }, this);
-
-        this.$el.html(this.template(this));
     },
 
     _placeComponent: function(component, def) {
@@ -52,7 +48,7 @@
             this.$(".filter-view").append(component.el);
             return;
         } else if(def.view == "filter-create") {
-            this.$(".form-search").append(component.el);
+            this.$(".form-search-related").append(component.el);
         } else {
             // Check if hidden or not.
             if (this.availableToggles[component.name]) {
@@ -68,7 +64,6 @@
 
     toggleView: function(e) {
         var data = this.$(e.currentTarget).data();
-
         this.showComponent(data.view);
         e.preventDefault();
     },

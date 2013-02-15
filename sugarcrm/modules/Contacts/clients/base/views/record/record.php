@@ -36,8 +36,10 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
-                    'name' => 'img',
-                    'noedit' => true,
+                    'name' => 'picture',
+                    'type' => 'image',
+                    'width' => 42,
+                    'height' => 42,
                 ),
                 array(
                     'name' => 'fieldset_full_name',
@@ -56,7 +58,6 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'title',
                 'phone_mobile',
                 'department',
                 'phone_work',
@@ -71,6 +72,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                         'primary_address_city',
                         'primary_address_state',
                         'primary_address_postalcode',
+                        'primary_address_country',
                     ),
                 ),
                 array(
@@ -82,6 +84,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                         'alt_address_city',
                         'alt_address_state',
                         'alt_address_postalcode',
+                        'alt_address_country',
                         array(
                             'name' => 'copy',
                             'type' => 'copy',
@@ -90,6 +93,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                                 'primary_address_city' => 'alt_address_city',
                                 'primary_address_state' => 'alt_address_state',
                                 'primary_address_postalcode' => 'alt_address_postalcode',
+                                'primary_address_country' => 'alt_address_country',
                             ),
                         ),
                     ),
@@ -118,8 +122,42 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 'preferred_language',
                 'assigned_user_id',
                 'team_name',
-                'date_modified',
-                'date_entered',
+                array(
+                    'name' => 'date_modified_by',
+                    'noedit' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_MODIFIED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'modified_by_name',
+                        ),
+                    ),
+                ),
+                array(
+                    'name' => 'date_entered_by',
+                    'noedit' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_entered',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'created_by_name',
+                        ),
+                    ),
+                ),
             )
         )
     ),

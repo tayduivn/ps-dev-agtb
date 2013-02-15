@@ -1,18 +1,10 @@
 ({
-    /**
-     * Template fragment for select options
-     */
-    optionTemplate: Handlebars.compile("<option value='{{val}}' {{#if selected}}defaultSelected{{/if}}>{{val}}</option>"),
-
     events: {},
 
     initialize: function(opts) {
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, opts);
 
-        this.currentQuery = ""; this.activeFilterId = "";
-
-        this.searchFilterId = _.uniqueId("search_filter");
         this.getFilters();
         this.getPreviouslyUsedFilter();
 
@@ -20,153 +12,173 @@
         this.layout.on("filter:refresh", this.getFilters);
     },
 
+    /**
+     * Retrieve filters from the server.
+     */
+    getFilters: function(id) {
+        var self = this,
+            url = app.api.buildURL('Filters', "filter");
+
+        // TODO: here we might have issues when deleting filters. See removeAll().
+        this.currentFilter = id || "default";
+        this.filters = app.data.createBeanCollection('Filters');
+        this.filters.fetch({
+            filterDef: {
+                filter: [
+                    {"created_by": app.user.id},
+                    {"module_name": this.module}
+                ]
+            },
+            success: function() {
+                self.render();
+            }
+        });
+    },
+
     getPreviouslyUsedFilter: function() {
         var url = app.api.buildURL('Filters', this.module + "/used"),
             self = this;
         app.api.call("read", url, null, {
             success: function(data) {
-                self.activeFilterId = _.isEmpty(data)? "" : _.last(data).id;
-                self.render();
+                self.currentFilter = _.isEmpty(data)? "default" : _.last(data).id;
+                self.filterDataSetAndSearch();
             }
         });
     },
 
     render: function() {
+        if(this.filters.length) {
+            var self = this,
+                relatedModuleList = [],
+                customFilterList = [],
+                defaultId = (this.currentFilter === "default")? this.filters.where({default_filter: "1"})[0].id : this.currentFilter;
+
+            this.layoutType = this.layout.context.get("layout") || app.controller.context.get("layout");
+
+            _.each(this.filters.models, function(model){
+                customFilterList.push({id:model.id, text:model.get("name")});
+            }, this);
+
+            customFilterList.push({id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")});
+
+            if(this.layoutType === "record") {
+                relatedModuleList.push({id: "default", text: app.lang.get("LBL_TABGROUP_ALL")});
+
+                // TODO: Fix this when we have a more concrete way of retrieving a list of related modules.
+                var subpanels = app.metadata.getModule(this.module).subpanels.subpanel_setup;
+                _.each(subpanels, function(value, key){
+                    relatedModuleList.push({id:key, text:app.lang.get(value.title_key, self.module)});
+                }, this);
+            }
+
+            app.view.View.prototype.render.call(this);
+
+            this.relatedFilterNode = this.$(".related-filter");
+            this.customFilterNode = this.$(".search-filter");
+
+            this.relatedFilterNode.select2({
+                data: relatedModuleList,
+                multiple: false,
+                minimumResultsForSearch: 7,
+                formatSelection: this.formatRelatedSelection,
+                formatResult: this.formatResult,
+                dropdownCss: {width:'auto'},
+                dropdownCssClass: 'search-related-dropdown',
+                initSelection: this.initSelection
+            });
+
+            this.customFilterNode.select2({
+                data: customFilterList,
+                multiple: false,
+                minimumResultsForSearch: 7,
+                formatSelection: this.formatCustomSelection,
+                formatResult: this.formatResult,
+                dropdownCss: {width:'auto'},
+                dropdownCssClass: 'search-filter-dropdown',
+                initSelection: this.initSelection
+            });
+
+            // Disable the related module filter dropdown
+            if(this.layoutType !== "record") {
+                this.relatedFilterNode.select2("disable", true);
+            }
+
+            this.customFilterNode.select2("val", defaultId);
+            this.relatedFilterNode.select2("val", "default");
+
+            this.relatedFilterNode.on("change", function(e) {
+                // Relationships dropdown stuff goes here.
+            });
+
+            this.throttledSearch = _.debounce(function(e) {
+                var newSearch = self.$(e.currentTarget).val();
+                if(self.currentSearch !== newSearch) {
+                    self.currentSearch = newSearch;
+                    self.filterDataSetAndSearch();
+                }
+            }, 400);
+
+            this.customFilterNode.on("change", this.sanitizeFilter);
+            this.$('.search-name').on("keyup", this.throttledSearch);
+        }
+    },
+
+    initSelection: function(el, callback) {
+        var data, model;
+        if(el.val() !== "create") {
+            if(el.is(this.customFilterNode)) {
+                model = this.filters.get(el.val());
+                data = {id: model.id, text: model.get("name")};
+            } else {
+                data = {id: "default", text: (this.layoutType === "record")? app.lang.get("LBL_TABGROUP_ALL") : this.module};
+            }
+
+            callback(data);
+        }
+    },
+
+    formatCustomSelection: function(item) {
         var self = this,
-            data = [],
-            defaultId = this.activeFilterId || "";
+            result = $('<span class="select2-choice-type">' + app.lang.get("LBL_FILTER") + '<i class="icon-caret-down"></i></span><a class="select2-choice-filter" rel="'+ item.id + '" href="javascript:void(0)">'+ item.text +'</a>');
 
-        _.each(this.filters.models, function(model){
-            data.push({id:model.id, text:model.get("name")});
-        }, this);
-
-		data.push({id:-1, text:"Create New"});
-
-        app.view.View.prototype.render.call(this);
-
-        this.node = this.$("#" + this.searchFilterId);
-        this.node.select2({
-            tags:data,
-            multiple:true,
-            maximumSelectionSize:2,
-            formatSelection: this.formatSelection,
-            placeholder: app.lang.get("LBL_MODULE_FILTER"),
-            dropdownCss: {width:'auto'},
-            dropdownCssClass: 'search-filter-dropdown'
+        // TODO: Only bind this event if the filter has been created by the user (do we want users to be able to edit pre-defined filters? probably not) [ABE-283].
+        $(result[1]).on("click", function() {
+            self.openPanel(self.filters.get(item.id));
         });
-
-        if(defaultId){
-            this.node.select2("val", defaultId);
-            this.sanitizeFilter({added:{id:defaultId}});
-        }
-        this.node.on("change", function(e){
-            self.sanitizeFilter(e);
-        });
+        return result;
     },
-
-    formatSelection: function(item) {
-        if (item.id === item.text) {
-            return '<span>Name starts with</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
-        } else {
-            return '<span>Filter</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
+    formatRelatedSelection: function(item) {
+        var selectionLabel = app.lang.get("LBL_RELATED") + '<i class="icon-caret-down"></i>';
+        if(this.layoutType !== "record") {
+            selectionLabel = app.lang.get("LBL_MODULE");
         }
+        return '<span class="select2-choice-type">' + selectionLabel + '</span><a class="select2-choice-related" href="javascript:void(0)">'+ item.text +'</a>';
     },
-
+    formatResult: function (option) {
+        // TODO: Determine whether active filters should be highlighted in bold in this menu.
+        return '<div><span class="select2-match"></span>'+ option.text +'</div>';
+    },
     /**
      * Contains business logic to control the behavior of new filters being added.
      */
     sanitizeFilter: function(e){
-        var id, val = this.node.select2("val"), newVal = [], i, self = this;
-        if(!_.isUndefined(e.added) && !_.isUndefined(e.added.id)) {
-            id = e.added.id;
-
-            if( id === -1 && !this.isInFilters(id) )  {
-                // Create a new filter.
-                val = _.without(val, id.toString());
-                this.activeFilterId = "";
-                for(i = 0; i < val.length; i++) {
-                    if(!this.isInFilters(val[i])) {
-                        newVal.push(val[i]);
-                    }
-                }
-                this.openPanel();
-            } else if( this.isInFilters(id) ) {
-                // Is a valid filter.
-                this.activeFilterId = id;
-                for(i = 0; i < val.length; i++) {
-                    if(!this.isInFilters(val[i])) {
-                        newVal.push(val[i]);
-                    }
-                }
-                newVal.push(id);
-                if(!this.layout.$(".filter-options").hasClass('hide')) {
-                    self.openPanel(self.filters.get(id));
-                }
-                _.defer(function(self) {
-                    self.$("a[rel=" + id + "]").on("click", function(){
-                        self.openPanel(self.filters.get(id));
-                    });
-                }, this);
-            } else {
-                // It's a quick-search word.
-                this.currentQuery = $.trim(id);
-                for(i = 0; i < val.length; i++) {
-                    if(this.isInFilters(val[i])) {
-                        newVal.push(val[i]);
-                    }
-                }
-                newVal.push(id);
-            }
-        } else if(!_.isUndefined(e.removed) && !_.isUndefined(e.removed.id)) {
-            id = e.removed.id;
-            newVal = _.without(val, id.toString());
-
-            if( this.isInFilters(id) ) {
-                // Removing a filter.
-                this.activeFilterId = "";
-            } else {
-                // Removing a quick-search word.
-                this.currentQuery = "";
-            }
-        }
-
-        this.node.select2("val", newVal);
-        this.filterDataSetAndSearch(this.currentQuery, this.activeFilterId);
-    },
-
-    /**
-     * Utility function to determine if the typed in filter is in the standard filter array
-     *
-     * @return boolean True if part of the set, false if not.
-     */
-    isInFilters: function(filter){
-        if(!_.isUndefined(this.filters.get(filter))){
-            return true;
-        }
-        return false;
-    },
-
-    /**
-     * Retrieve filters from the server.
-     */
-    getFilters: function(defaultId) {
         var self = this,
-            url = app.api.buildURL('Filters', "filter");
+            val = e.val;
 
-        this.activeFilterId = defaultId;
-        this.filters = app.data.createBeanCollection('Filters');
-
-        app.api.call("create", url, {"filter": [{"created_by": app.user.id}, {"module_name": this.module}]}, {
-            success: function(data) {
-                self.filters.reset(data.records);
-                if(self.isInFilters(self.currentQuery)) {
-                    self.currentQuery = "";
-                }
-                self.filterDataSetAndSearch(self.currentQuery, self.activeFilterId);
-                self.render();
+        if(val === "create") {
+            // Create a new filter.
+            this.currentFilter = "default";
+            this.openPanel();
+        } else if(this.filters.get(val)) {
+            // Is a valid filter.
+            this.currentFilter = val;
+            if(!this.layout.$(".filter-options").hasClass('hide')) {
+                self.openPanel(self.filters.get(val));
             }
+        }
 
-        });
+        this.customFilterNode.select2("val", val);
+        this.filterDataSetAndSearch();
     },
 
     /**
@@ -178,50 +190,22 @@
 
     /**
      * Filters the data set by making a create call to the filter API.
-     * @param  {string} query          Query for quick-searching, null for regular filters.
-     * @param  {string} activeFilterId GUID of the filter.
      */
-    filterDataSetAndSearch: function(query, activeFilterId) {
-        var filterDef;
-        this.currentQuery = query;
-        this.activeFilterId = activeFilterId;
-        if (this.filters.get(activeFilterId)) {
-            filterDef = JSON.parse(JSON.stringify((this.filters.get(activeFilterId).get('filter_definition'))));
-        } else {
-            filterDef = {
-                "filter":[
-                    {
-                        "$and":[]
-                    }
-                ]
-            };
-        }
-        var ctx = app.controller.context,
-        clause, self = this;
-        // TODO: Make this extensible for OR operator.
-        if(!_.isEmpty(query)) {
-            clause = {"name": {"$starts": query}};
-            filterDef.filter[0]["$and"].push(clause);
+    filterDataSetAndSearch: function() {
+        var filterDef = {
+            filter: []
+        };
+
+        if(this.filters.get(this.currentFilter)) {
+            filterDef = JSON.parse(JSON.stringify(this.filters.get(this.currentFilter).get('filter_definition')));
+            this.customFilterNode.select2("val", this.currentFilter);
         }
 
-        filterDef = filterDef.filter[0]["$and"].length? filterDef : {};
-
-        var url, method;
-        if( _.isEmpty(filterDef) ) {
-            url = app.api.buildURL(this.module);
-            method = "read";
-        } else {
-            url = app.api.buildURL(this.module, "filter");
-            method = "create";
+        if(this.currentSearch) {
+            filterDef.filter.push({"name": {"$starts": this.currentSearch}});
         }
 
-        app.api.call(method, url, filterDef, {
-            success: function(data) {
-                ctx.get('collection').reset(data.records);
-                app.events.trigger("list:preview:decorate", null, self);
-                var url = app.api.buildURL('Filters/' + self.module + '/used', "update");
-                app.api.call("update", url, {filters: [self.activeFilterId]}, {});
-            }
-        });
+        app.events.trigger("list:preview:decorate", null, this);
+        app.events.trigger("list:filter:fire", filterDef, this);
     }
 })

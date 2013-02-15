@@ -40,6 +40,17 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
             'placeholders' => true,
             'fields'       => array(
                 array(
+                    'name'      => 'email_config',
+                    'id_name'   => 'email_config_id',
+                    'label'     => 'LBL_FROM',
+                    'type'      => 'sender',
+                    'css_class' => 'inherit-width',
+                    'endpoint'  => array(
+                        'module' => 'OutboundEmailConfiguration',
+                        'action' => 'list',
+                    )
+                ),
+                array(
                     "name"                => "to_addresses",
                     "type"                => "recipients",
                     "label"               => "LBL_TO_ADDRS",
@@ -108,6 +119,8 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                 array(
                     'name'      => 'html_body',
                     'type'      => 'htmleditable_tinymce',
+                    'dismiss_label' => true,
+                    'span'          => 12,
                     'tinyConfig' => array(
                         // Location of TinyMCE script
                         'script_url' => 'include/javascript/tiny_mce/tiny_mce.js',
@@ -150,7 +163,8 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                 array (
                     "label" => "LBL_LIST_RELATED_TO",
                     'type' => 'parent',
-                    'name' => 'parent_name'
+                    'name' => 'parent_name',
+                    'options' => "parent_type_display"
                 ),
             ),
         ),

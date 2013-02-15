@@ -80,7 +80,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                 ),
 
                 array(
-                    'name' => 'likely_adjusted',
+                    'name' => 'likely_case_adjusted',
                     'type' => 'editableCurrency',
                     'label' => 'LBL_LIKELY_CASE_VALUE',
                     'sortable' => true,
@@ -100,7 +100,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                 ),
 
                 array(
-                    'name' => 'best_adjusted',
+                    'name' => 'best_case_adjusted',
                     'type' => 'editableCurrency',
                     'label' => 'LBL_BEST_CASE_VALUE',
                     'sortable' => true,
@@ -120,7 +120,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                 ),
 
                 array(
-                    'name' => 'worst_adjusted',
+                    'name' => 'worst_case_adjusted',
                     'type' => 'editableCurrency',
                     'label' => 'LBL_WORST_CASE_VALUE',
                     'sortable' => true,

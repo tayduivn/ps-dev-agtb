@@ -108,7 +108,8 @@
             model.fetch({
                 success: function(model) {
                     self.renderPreview(model, collection);
-                }
+                },
+                fields : this.getFieldNames()
             });
         } else {
             self.renderPreview(model, collection);

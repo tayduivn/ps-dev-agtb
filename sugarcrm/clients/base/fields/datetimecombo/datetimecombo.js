@@ -51,7 +51,6 @@
 
         // Set our internal time and date values so hbt picks up
         self._presetDateValues();
-
         app.view.fields.DateField.prototype._render.call(self);
         viewName = self._getViewName();
         $(function() {
@@ -68,7 +67,8 @@
      * @return {String} formatted value
      */
     format:function(value) {
-        var jsDate, output, myUser = app.user, d, parts, before24Hours;
+        var jsDate, output, myUser = app.user, d, parts, before24Hours, datetimeParts;
+
         if (this.stripIsoTZ) {
             value = app.date.stripIsoTimeDelimterAndTZ(value);
         }
@@ -80,6 +80,20 @@
             }
         } else if (!value) {
             return value;
+        } else if (this.leaveDirty) {
+            if (!this.dateValue && !this.timeValue) {
+                try {
+                    datetimeParts = this.$el.text().trim().split(" ");
+                    if (datetimeParts && datetimeParts.length) {
+                        this.dateValue = datetimeParts[0];
+                        this.timeValue = datetimeParts.length > 1 ? datetimeParts[1] : '';
+                    }
+                } catch(e) {}
+            }
+            return {
+                date: this.dateValue,
+                time: this.timeValue
+            };
         } else {
             // If the date value in our datebox is invalid, leave it alone and return. It will
             // get handled upstream by sidecar (which uniformly handles field validation errors).
@@ -107,7 +121,7 @@
         };
         this.timeValue = value['time'];
         this.dateValue = value['date'];
-        this._setDatepickerValue(this.dateValue);
+        this.$(".datepicker").datepicker('update', this.dateValue);
 
         return value;
     },
@@ -145,7 +159,8 @@
         // Bind Timepicker to proxy functions
         this.$('.ui-timepicker-input').on({
             changeTime: _.bind(this.changeTime, this),
-            blur: _.bind(this._handleTimepickerBlur, this)
+            blur: _.bind(this._handleTimepickerBlur, this),
+            focus: function(){$('.datepicker.dropdown-menu').hide()}
         });
 
     },
@@ -199,6 +214,7 @@
      */
     _handleTimepickerBlur: function(ev) {
         this.model.set(this.name, this._val(ev), {silent: true});
+        this.model.trigger("change");
     },
     _setTimeValue: function() {
         this.timeValue = this.$('.ui-timepicker-input').val();
@@ -334,11 +350,9 @@
 
         return o;
     },
-
     val: function() {
         return this._val({currentTarget: this.$('.ui-timepicker-input')});
     },
-
     _val: function(ev) {
         var dateValue, hrsMins, timeAsDate, hours, minutes,
             timepicker = ev.currentTarget;

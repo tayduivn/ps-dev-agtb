@@ -34,11 +34,6 @@
  */
 ({
     /**
-     * The url for the REST endpoint
-     */
-    url : 'rest/v10/Forecasts/committed',
-
-    /**
      * The class selector representing the element which contains the view output
      */
     viewSelector : '.forecastsCommitted',
@@ -76,7 +71,7 @@
     /**
      * Used to query for the timeperiod_id value in Forecasts
      */
-    timePeriodId : '',
+    timePeriod : '',
 
     /**
      * Used to query for the forecast_type value in Forecasts
@@ -143,19 +138,52 @@
     },
 
     initialize : function(options) {
+
         app.view.View.prototype.initialize.call(this, options);
-        this.collection = this.context.committed;
 
         this.fullName = app.user.get('full_name');
         this.userId = app.user.get('id');
         this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
-        this.timePeriodId = app.defaultSelections.timeperiod_id.id;
+        this.timePeriod = app.defaultSelections.timeperiod_id.id;
         this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
 
         this.bestCase = "";
         this.likelyCase = "";
         this.worstCase = "";
         this.showHistoryLog = false;
+
+        // we have to override sync right now as there is no way to run the filter by default
+        this.collection.sync = _.bind(function(method, model, options) {
+            options.success = _.bind(function(resp, status, xhr) {
+                this.collection.reset(resp.records);
+            }, this);
+            // we need to force a post, so get the url object and put it in
+            var url = this.createURL();
+            app.api.call("create", url.url, url.filters, options);
+        }, this);
+
+    },
+
+    /**
+     *
+     * @return {object}
+     */
+    createURL: function() {
+        // we need to default the type to products
+        var args_filter = [];
+        if(this.timePeriod) {
+            args_filter.push({"timeperiod_id": this.timePeriod});
+        }
+
+        if(this.selectedUser) {
+            args_filter.push({"user_id": this.selectedUser.id});
+        }
+
+        args_filter.push({"forecast_type" : this.forecastType});
+
+        var url = app.api.buildURL('Forecasts', 'filter');
+
+        return {"url" : url, "filters" : {"filter": args_filter}};
     },
 
     /**
@@ -174,7 +202,6 @@
         app.view.View.prototype._renderHtml.call(this, ctx, options);
         
         if(this.showHistoryLog) {
-
             if(this.showMoreLog) {
                 this.$el.find('div[id=more_log_results]').removeClass('hide');
                 this.$el.find('div[id=more]').html('<p><span class=" icon-minus-sign">&nbsp;' + App.lang.get('LBL_LESS', 'Forecasts') + '</span></p><br />');
@@ -189,11 +216,11 @@
 
 
     bindDataChange: function() {
-        var self = this;
-        this.collection = this.context.committed;
-        this.collection.on("reset change", function() {
-            self.buildForecastsCommitted();
-        }, this);       
+        if(this.collection) {
+            this.collection.on('reset change', function() {
+                this.buildForecastsCommitted();
+            }, this);
+        }
     },
 
     /**
@@ -205,12 +232,8 @@
      */
     getColorArrow: function(newValue, currentValue)
     {
-        var cls = '';
-
-        cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
-        cls = (newValue == currentValue) ? '' : cls;
-
-        return cls
+        var cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+        return (newValue == currentValue) ? '' : cls;
     },
 
     /**
@@ -229,22 +252,20 @@
     },
 
     buildForecastsCommitted:function () {
-        var self = this;
-        var count = 0;
         var previousModel;
         
         //Reset the history log
-        self.historyLog = [];
+        this.historyLog = [];
 
         // if we have no models, exit out of the method
-        if (_.isEmpty(self.collection.models)) {
-            self.resetCommittedLog();
-            self.render();
+        if (_.isEmpty(this.collection.models)) {
+            this.resetCommittedLog();
+            this.render();
             return;
         }
        
         // get the first model so we can get the previous date entered
-        previousModel = _.first(self.collection.models);
+        previousModel = _.first(this.collection.models);
 
         // parse out the previous date entered
         var dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
@@ -252,24 +273,24 @@
             dateEntered = previousModel.get('date_entered');
         }
         // set the previous date entered in the users format
-        self.previousDateEntered = app.date.format(dateEntered, app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'));
+        this.previousDateEntered = app.date.format(dateEntered, app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'));
         
         //loop through from oldest to newest to build the log correctly
         var loopPreviousModel = '';
-        var models = _.clone(self.collection.models).reverse();
+        var models = _.clone(this.collection.models).reverse();
         _.each(models, function (model) {
-            self.historyLog.push(app.utils.createHistoryLog(loopPreviousModel, model, self.context.config));
+            this.historyLog.push(app.utils.createHistoryLog(loopPreviousModel, model));
             loopPreviousModel = model;           
-        });
+        }, this);
         
         //reset the order of the history log for display
-        self.historyLog.reverse();
+        this.historyLog.reverse();
 
         // save the values from the last model to display in the dataset line on the interface
         this.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
         this.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
         this.previousWorstCase = app.currency.formatAmountLocale(previousModel.get('worst_case'));
 
-        self.render();
+        this.render();
     }
 })

@@ -29,6 +29,13 @@
     rowFields: {},
     previousModelStates: {},
 
+    initialize: function(options) {
+        //Grab the record list of fields to display from the base metadata
+        var recordListMeta = JSON.parse(JSON.stringify(app.metadata.getView(null, 'recordlist') || {}));
+
+        options.meta = _.extend({}, recordListMeta, JSON.parse(JSON.stringify(options.meta || {})));
+        app.view.views.ListView.prototype.initialize.call(this, options);
+    },
     populatePanelMetadata: function(panel, options) {
         panel = app.view.views.ListView.prototype.populatePanelMetadata.call(this, panel, options);
         panel = this.addFavorite(panel, options);

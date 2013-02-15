@@ -27,16 +27,15 @@
  ********************************************************************************/
 }}
 {{#each value}}
-    <div class="row-fluid">
-        <div class="span8">
-            <input type="hidden" name="{{../name}}" data-placeholder="{{str "LBL_SELECT_TEAM"}}" class="select2 inherit-width" value="{{name}}" data-id="{{id}}" data-index="{{@index}}">
-        </div>
-        <div class="span4">
-        <a href="javascript:void(0);" class="btn {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}"><i class="icon-star"></i></a>
-        <a href="javascript:void(0);" class="btn" name="remove" data-index="{{@index}}"><i class="icon-minus"></i></a>
+    <div class="control-group">
+        <div class="controls controls-three btn-fit">
+            <input type="hidden" name="{{../name}}" class="select2 inherit-width" value="{{name}}" data-id="{{id}}" data-index="{{@index}}">
+            <a href="javascript:void(0);" class="btn third {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}" rel="tooltip" data-original-title="{{str "LBL_TEAM_PRIMARY"}}"><i class="icon-star"></i></a>
+            <a href="javascript:void(0);" class="btn second" name="remove" data-index="{{@index}}" rel="tooltip" data-original-title="{{str "LBL_REMOVE"}}"><i class="icon-minus"></i></a>
         {{#if add_button}}
-            <a href="javascript:void(0);" class="btn" name="add"><i class="icon-plus"></i></a>
+            <a href="javascript:void(0);" class="btn first" name="add" rel="tooltip" data-original-title="{{str "LBL_TEAM_ADD"}}"><i class="icon-plus"></i></a>
         {{/if}}
         </div>
     </div>
 {{/each}}
+<p class="help-block"></p>
