@@ -1,8 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -53,11 +49,12 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
                 ),
                 array(
                     'name'=>  'fixed_in_release_name',
-                    'default'=>true
+                    'default'=>true,
                 ),
                 array(
                     'name'=>  'assigned_user_name',
-                    'default'=>true
+                    'default'=>true,
+                    'sortable' => false,
                 ),
                 array(
                     'name'=>  'release_name',
@@ -67,10 +64,13 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
                     'name'=>  'resolution',
                     'default'=>false
                 ),
+                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name'=>  'team_name',
-                    'default'=>false
+                    'default'=>false,
+                    'sortable' => false,
                 ),
+                //END SUGARCRM flav=pro ONLY
             ),
 
         ),

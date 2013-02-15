@@ -62,7 +62,6 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'fields' => array(
                 'account_name',
                 'date_closed',
-                'sales_stage',
                 'sales_status',
                 array(
                     'name' => 'amount',

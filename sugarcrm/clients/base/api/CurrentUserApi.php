@@ -381,8 +381,8 @@ class CurrentUserApi extends SugarApi
         $user_data['preferences']['language'] = $language;
 
         // email preferences
-        $user_data['preferences']['email_signature_default'] = $current_user->getPreference('signature_default');
-        $user_data['preferences']['email_signature_prepend'] = $current_user->getPreference('signature_prepend') ? 'true' : 'false';
+        $user_data['preferences']['signature_default'] = $current_user->getDefaultSignature();
+        $user_data['preferences']['signature_prepend'] = $current_user->getPreference('signature_prepend') ? 'true' : 'false';
 
         // outbound email configuration preferences
         $hasValidOutboundEmailConfiguration = OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($current_user);

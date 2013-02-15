@@ -56,7 +56,8 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'ACLTag' => 'ACCOUNT',
                     'related_fields' => array('account_id'),
                     'link' => true,
-                    'default' => true
+                    'default' => true,
+                    'sortable' => false,
                 ),
                 array(
                     'name' => 'priority',
@@ -76,7 +77,8 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'width' =>  10,
                     'module' => 'Employees',
                     'id' => 'ASSIGNED_USER_ID',
-                    'default' => true
+                    'default' => true,
+                    'sortable' => false,
                 ),
                 array (
                     'name' => 'date_entered',
@@ -89,7 +91,8 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'name' => 'team_name',
                     'label' => 'LBL_LIST_TEAM',
                     'width' =>  10,
-                    'default' => false
+                    'default' => false,
+                    'sortable' => false,
                 ),
                 //END SUGARCRM flav=pro ONLY
             ),

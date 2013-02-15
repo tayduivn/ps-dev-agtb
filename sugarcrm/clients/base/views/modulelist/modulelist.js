@@ -9,9 +9,7 @@
         'click #module_list li a.route': 'onModuleTabClicked',
         'click .dtoggle': 'toggleDropdown',
         'click .more': 'showMore',
-        'mouseover .more': 'showMore',
         'mouseleave .more-drop-container' : 'hideMore',
-        'mouseleave .more' : 'hideMore',
         'mouseleave .dropdown-menu': 'hideMenu'
     },
     hideMenu: function(event) {
