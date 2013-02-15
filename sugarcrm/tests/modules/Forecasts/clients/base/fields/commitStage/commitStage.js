@@ -44,12 +44,6 @@ describe("forecast commitStage field", function() {
     
     describe("when buckets are set to show_binary", function(){
         beforeEach(function(){
-            context = {
-                config: new Backbone.Model({
-                    sales_stage_won: ["Closed Won"],
-                    sales_stage_lost: ["Closed Lost"],
-                    forecast_ranges: "show_binary"})
-            };
             sinon.stub(app.metadata, "getModule", function(module, type){
                 return {
                     sales_stage_won: ["Closed Won"],
