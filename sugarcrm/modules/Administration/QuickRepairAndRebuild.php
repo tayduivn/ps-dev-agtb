@@ -60,6 +60,14 @@ class RepairAndClear
         $this->clearVardefs();
         //first  clear the language cache.
         $this->clearLanguageCache();
+        
+        // Enable the metadata manager cache refresh to queue. This allows the
+        // cache refresh processes in metadata manager to be carried out one time
+        // at the end of the rebuild instead of continual processing during the
+        // request. This is set outside of the loop to allow any other cache reset
+        // process to carry itself out as needed without firing off continual
+        // calls to the metadata manager.
+        MetaDataManager::enableCacheRefreshQueue();
         foreach ($this->actions as $current_action)
         switch($current_action)
         {
@@ -133,6 +141,10 @@ class RepairAndClear
                 $this->repairMetadataAPICache();
                 break;
         }
+        
+        // Run the metadata cache refresh queue. This will turn queueing off 
+        // after it is run
+        MetaDataManager::runCacheRefreshQueue();
     }
 
 	/////////////OLD

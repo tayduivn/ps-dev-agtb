@@ -61,6 +61,9 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 'testDecimal' => array(
                     'type' => 'decimal'
                 ),
+                'testBool' => array(
+                    'type' => 'bool'
+                ),                
             );
         $this->bean = $mock;
         $this->beanApiHelper = new SugarBeanApiHelper(new ServiceMockup());
@@ -103,6 +106,12 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
             array('testDecimal', '0', 0.0, "Decimal type conversion of '0' failed"),
             array('testInt', 0.0, 0, "Int type conversion of 0.0 failed"),
             array('testDecimal', 0, 0.0, "Decimal type conversion of 0 failed"),
+            array('testBool', 1, true, "1 should be true"),
+            array('testBool', 0, false, "0 should be false"),
+            array('testBool', true, true, "true should be true"),
+            array('testBool', false, false, "false should be false"),
+            array('testBool', 'true',true , "true string should be true"),
+            array('testBool', 'false', false, "false string should be false"),
         );
     }
 
