@@ -234,6 +234,8 @@ class ActivityQueueManager
                 $context = array('user' => $user);
 
                 if ($bean->ACLAccess('view', $context)) {
+                    // If we have access to the bean, we allow the user to see
+                    // the activity on the home page and the records list page.
                     $fields = array();
 
                     if ($act->activity_type == 'update') {
@@ -248,6 +250,10 @@ class ActivityQueueManager
                     // Each row must be in the same order as DB.
                     $values = array(create_guid(), $user->id, $act->id, $act->parent_module, $act->parent_id, $fields, $act->date_modified);
                     $rows[] = '("' . implode('", "', $values) . '")';
+                } else {
+                    // If we don't have access to the bean, we remove the user's
+                    // subscription to the bean.
+                    $subs::unsubscribeUserFromRecord($user, $bean);
                 }
             }
         }

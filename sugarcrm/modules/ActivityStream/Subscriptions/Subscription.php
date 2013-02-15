@@ -102,6 +102,12 @@ class Subscription extends Basic
         return false;
     }
 
+    /**
+     * Removes a user subscription to a record.
+     * @param  User      $user
+     * @param  SugarBean $record
+     * @return bool
+     */
     public static function unsubscribeUserFromRecord(User $user, SugarBean $record)
     {
         $sub = self::getSubscription($user, $record);
@@ -121,6 +127,7 @@ class Subscription extends Basic
         $seed = BeanFactory::getBean('Subscriptions');
         $query = new SugarQuery();
         $query->from($seed);
+        $query->where()->equals('deleted', '0');
         return $query;
     }
 }
