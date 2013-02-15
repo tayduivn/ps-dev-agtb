@@ -30,6 +30,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $mod_strings = array(
+    'LBL_CAMPAIGN_PRODUCT' => 'Campaign Product',
     'LBL_MODULE_NAME' => 'Product Line Items',
     'LBL_MODULE_NAME_SINGULAR' => 'Product Line Item',
     'LBL_MODULE_TITLE' => 'Products: Home',
@@ -38,6 +39,7 @@ $mod_strings = array(
     'LBL_NEW_FORM_TITLE' => 'Create Product',
     'LBL_PRODUCT' => 'Product:',
     'LBL_RELATED_PRODUCTS' => 'Related Products',
+    'LBL_LEAD_SOURCE' => 'Lead Source',
     'LBL_LIST_NAME' => 'Product Line Item',
     'LBL_LIST_MANUFACTURER' => 'Manufacturer',
     'LBL_LIST_LBL_MFT_PART_NUM' => 'Mft Num',
@@ -70,6 +72,7 @@ $mod_strings = array(
     'LBL_LIST_PRICE' => 'List Price:',
     'LBL_VENDOR_PART_NUM' => 'Vendor Part Number:',
     'LBL_MFT_PART_NUM' => 'Mft Part Number:',
+    'LBL_NEXT_STEP' => 'Next Step:',
     'LBL_DISCOUNT_PRICE_DATE' => 'Discount Price Date:',
     'LBL_WEIGHT' => 'Weight:',
     'LBL_DESCRIPTION' => 'Description:',
@@ -126,10 +129,11 @@ $mod_strings = array(
     'LBL_OPPORTUNITY' => 'Opportunity',
 //BEGIN SUGARCRM flav=ent ONLY
     'LBL_BEST_CASE' => 'Best case',
-    'LBL_LIKELY_CASE' => 'Likely case',
+    'LBL_LIKELY_CASE' => 'Product Line Item Amount',
     'LBL_WORST_CASE' => 'Worst case',
     'LBL_EXPERT_ID' => 'Product Expert',
     'LBL_FORECAST' => 'Include in Forecast',
+    'LBL_CALCULATED_LINE_ITEM_AMOUNT' => 'Calculated Product Line Item Amount',
 //END SUGARCRM flav=ent ONLY
     'LBL_CONTACT' => 'Contact',
     'LBL_DISCOUNT_TOTAL' => 'Discount Total',
