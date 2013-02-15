@@ -75,12 +75,14 @@
   .actions {
     //color: @white;
     //navbar.less
-    position: absolute;
+    //position: absolute;
     top: 3px;
-    right: 2px;
+    //right: 2px;
     //actions.less
-    right: 2px !important;
-    top: 2px !important;
+    //right: 2px !important;
+    //top: 2px !important;
+    //modified for attachment dashlet
+    position: relative;
   }
 
   .actions a:hover {
@@ -112,9 +114,12 @@
       position: relative;
       border-bottom: 1px solid @grayLighter;
       margin: 0;
-      padding: 8px;
+      padding: 14px 3px 14px 14px;
       &:last-child {
         border-bottom: none;
+      }
+      img {
+        margin: 0 12px 12px 0;
       }
     }
   }

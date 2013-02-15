@@ -120,11 +120,8 @@ img {
   display: inline-block;
 }
 .thumbnail .actions {
-  position: absolute;
   top: 3px;
-  right: 2px;
-  right: 2px !important;
-  top: 2px !important;
+  position: relative;
 }
 .thumbnail .actions a:hover {
   color: #fff;
@@ -152,10 +149,13 @@ img {
   position: relative;
   border-bottom: 1px solid #f5f5f5;
   margin: 0;
-  padding: 8px;
+  padding: 14px 3px 14px 14px;
 }
 .thumbnail .listed li:last-child {
   border-bottom: none;
+}
+.thumbnail .listed li img {
+  margin: 0 12px 12px 0;
 }
 .thumbnail .table {
   margin-bottom: 0px;
@@ -1923,6 +1923,12 @@ td div {
 .dropdown-menu label.radio.checked i {
   color: #58595B;
 }
+.dropdown-menu li.divider {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #d5d5d5;
+  height: 0;
+}
 .dropdown-toggle .mystuff {
   margin-left: -10px;
 }
@@ -2010,6 +2016,11 @@ table tfoot td {
 .layout_Forecasts table.dataTable tfoot th.number {
   text-align: right;
   white-space: nowrap;
+}
+.layout_Forecasts table.dataTable td.number span.edit div.controls,
+.layout_Forecasts table.dataTable tfoot th.number span.edit div.controls {
+  position: relative;
+  right: 5px;
 }
 .layout_Forecasts table.dataTable th.header-quota {
   min-width: 70px;
@@ -5333,7 +5344,7 @@ body.preview .side-pane.active {
   border-radius: 4px;
 }
 .cube {
-  background: url('../../assets/img/badge_256f.png') 14px 11px no-repeat;
+  background: url('../../assets/img/badge_256f.png') 16px 11px no-repeat;
   float: left;
   height: 19px;
   width: 36px;
@@ -6135,7 +6146,7 @@ body.modal-open {
 }
 .modal-navigation {
   position: absolute;
-  top: 46px;
+  top: 48px;
   width: 100%;
   background-color: #f5f5f5;
   border-bottom: 1px solid #bbb;
@@ -6175,11 +6186,11 @@ body.modal-open {
 }
 .layout_Forecasts .modal-content {
   overflow-y: auto;
+  margin-top: 37px;
   max-height: 264px;
 }
 .layout_Forecasts .modal-navigation {
   top: 0;
-  padding: 0;
 }
 .layout_Forecasts .modal-navigation .breadcrumb.two {
   padding-bottom: 3px;
@@ -8377,6 +8388,9 @@ h3.popover-title {
   clear: both;
   margin: 20px 20px 10px 5px;
 }
+.record .form-horizontal {
+  margin-left: 15px;
+}
 .record .form-horizontal .record-cell,
 .record .form-horizontal .normal {
   min-height: 0px;
@@ -8397,18 +8411,25 @@ h3.popover-title {
   right: 51px;
   z-index: 2;
 }
+.record .form-horizontal .record-cell input[name="to_addresses"] {
+  padding-right: 115px;
+}
 .record .form-horizontal .record-cell .help-block {
   min-height: 8px;
 }
 .record .form-horizontal .control-label {
   position: absolute;
   height: 100%;
+  padding-right: 4px;
 }
 .record .form-horizontal .controls > span {
   padding: 0;
 }
 .record .form-horizontal .mceLayout {
   width: 100% !important;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
 }
 .record .record-cell {
   display: inline-block;
@@ -8641,6 +8662,12 @@ h3.popover-title {
 }
 .record .record-cell[data-type="compose-actionbar"] {
   padding-bottom: 8px;
+}
+.record .record-cell[data-type="compose-actionbar"] .btn [class^="icon-"] {
+  margin-right: 6px;
+}
+.record .record-cell[data-type="compose-actionbar"] .btn.dropdown-toggle [class^="icon-"] {
+  margin-right: 0;
 }
 .record .record-edit-link-wrapper .record-edit-link {
   position: absolute;
