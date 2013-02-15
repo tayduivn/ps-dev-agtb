@@ -41,7 +41,7 @@
 <footer id="footer">
     <div class="row-fluid">
         <div class="span5">
-            <span class="logo">SugarCRM</span>
+            <span class="logo" id="logo" title="&#169; 2004-{$copyYear} SugarCRM Inc. All Rights Reserved. {$STATISTICS}">SugarCRM</span>
         </div>
         <div class="span2">
             <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&copy; {$copyYear} SugarCRM Inc.</a>
