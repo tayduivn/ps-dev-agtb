@@ -83,6 +83,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'comment' => 'Date is which call is scheduled to (or did) end',
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
+    'studio' => array('wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
   ),
 
  'parent_type'=>
