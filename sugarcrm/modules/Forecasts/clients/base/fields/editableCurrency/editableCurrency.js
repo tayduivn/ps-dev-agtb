@@ -385,6 +385,7 @@
         this.$el.find('.error-tooltip').attr('data-original-title',this.errorMessage);
         this.$el.find('.error-tooltip').attr('style','display: inline-block;');
         this.$el.find('input').addClass('local-error');
+        this.$el.find("[rel=tooltip]").tooltip({container: 'body', placement: 'top'});
         /*
         // make error message button cancel edits
         this.$el.find('.btn.btn-danger').on("click", function(evt) {
