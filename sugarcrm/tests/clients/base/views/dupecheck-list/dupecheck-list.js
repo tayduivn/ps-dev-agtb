@@ -1,7 +1,8 @@
 describe("Base.View.DupeCheckList", function() {
     var app,
         moduleName = 'Contacts',
-        listMeta;
+        listMeta,
+        layout;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -30,6 +31,7 @@ describe("Base.View.DupeCheckList", function() {
         SugarTest.loadComponent('base', 'view', 'recordlist');
         SugarTest.loadComponent("base", "view", "dupecheck-list");
         SugarTest.testMetadata.set();
+        layout = SugarTest.createLayout('base', "Cases", "list", null, null);
     });
 
     afterEach(function() {
@@ -43,6 +45,7 @@ describe("Base.View.DupeCheckList", function() {
         var allNonSortable;
 
         var view = SugarTest.createView("base", moduleName, "dupecheck-list", listMeta);
+        view.layout = layout;
         var fields = view.meta.panels[0].fields;
 
         expect(fields.length).toBeGreaterThan(0);
@@ -83,13 +86,16 @@ describe("Base.View.DupeCheckList", function() {
         listMeta['showPreview'] = true;
 
         view = SugarTest.createView("base", moduleName, "dupecheck-list", listMeta);
-        previewField = _.last(view.meta.panels[0].fields);
+        view.layout = layout;
+        view.render();
+        previewField = view._rowActions[1];
         expect(previewField.event).toEqual('list:preview:fire');
     });
 
     it("should be calling the duplicate check api", function() {
         var ajaxStub;
         var view = SugarTest.createView("base", moduleName, "dupecheck-list", listMeta);
+        view.layout = layout;
 
         //mock out collectionSync which gets called by overridden sync
         view.collectionSync = function(method, model, options) {

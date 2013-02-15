@@ -1,4 +1,4 @@
-describe("sugarviews", function() {
+describe("Base.View.List", function() {
     var view, layout, app;
 
     beforeEach(function() {
@@ -30,14 +30,15 @@ describe("sugarviews", function() {
     describe("list",function() {
         it('should open an alert message on sort', function() {
             view.render();
-            var ajaxStub = sinon.stub(app.api, 'call');
+            var ajaxStub = sinon.stub(view.collection, 'fetch');
             var alertStub = sinon.stub(app.alert, 'show');
             view.setOrderBy({target:'[data-fieldname=case_number]'});
             expect(alertStub).toHaveBeenCalled();
             alertStub.restore();
             ajaxStub.restore();
         });
-        it('should be able to remove hidden default=false fields from meta', function() {
+
+        it('should parse fields and separate default fields from available fields', function() {
             var viewMeta = {
                 panels: [
                     {
@@ -67,11 +68,112 @@ describe("sugarviews", function() {
                 ]
             };
 
-            var resultMeta = view.filterFields(viewMeta);
+            view.parseFields(viewMeta);
 
-            _.each(resultMeta, function(panel){
-                _.each(panel.fields, function(field){
-                    expect(field.default).toEqual(true);
+            expect(view._fields["default"]).toEqual(["test3"]);
+            expect(view._fields["available"]["all"]).toEqual(["test1","test2","test4"]);
+        });
+
+        describe('adding actions to list view', function() {
+
+            it('should add single selection', function () {
+                var viewMeta = {
+                    meta:{
+                        selection:{
+                            type:'single',
+                            label:'LBL_LINK_SELECT'
+                        }
+                    },
+                    module:'Cases'
+                };
+
+                view.addActions(viewMeta);
+
+                expect(view._leftActions[0]).toEqual({
+                    type:'selection',
+                    name: 'Cases_select',
+                    sortable:false,
+                    label: viewMeta.meta.selection.label
+                })
+            });
+
+
+            it('should add multi selection', function() {
+                var viewMeta =  {meta: {
+                    selection:{
+                        type:'multi',
+                        actions:[
+                            {
+                                name:'edit_button',
+                                type:'button'
+                            },
+                            {
+                                name:'delete_button',
+                                type:'button'
+                            }
+                        ]
+                    },
+                    rowactions:{
+                        'css_class':'pull-right',
+                        'actions':[
+                            {
+                                type:'rowaction',
+                                'event':'list:preview:fire'
+                            },
+                            {
+                                type:'rowaction',
+                                'event':'list:editrow:fire'
+                            },
+                            {
+                                type:'rowaction',
+                                'event':'list:deleterow:fire'
+                            }
+                        ]
+                    }
+                }};
+
+                view.addActions(viewMeta);
+
+                expect(view._leftActions[0]).toEqual({
+                    type:'fieldset',
+                    fields:[
+                        {
+                            type:'actionmenu',
+                            buttons:viewMeta.meta.selection.actions
+                        }
+                    ],
+                    value:false,
+                    sortable:false
+                })
+
+            });
+
+            it('should add row actions', function () {
+                var viewMeta = {meta:{
+                    rowactions:{
+                        'css_class':'pull-right',
+                        'actions':[
+                            { type:'rowaction', 'event':'list:preview:fire'},
+                            { type:'rowaction', 'event':'list:editrow:fire' },
+                            { type:'rowaction', 'event':'list:deleterow:fire' }
+                        ]
+                    }
+                }};
+
+                view.addActions(viewMeta);
+
+                expect(view._rowActions[0]).toEqual({
+                    type:'fieldset',
+                    fields:[
+                        {
+                            type:'rowactions',
+                            label:'',
+                            css_class:'pull-right',
+                            buttons:viewMeta.meta.rowactions.actions
+                        }
+                    ],
+                    value:false,
+                    sortable:false
                 })
             });
         });

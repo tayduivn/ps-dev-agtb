@@ -53,11 +53,11 @@
         this.$('a:not(.rowaction)').contents().unwrap();
     },
 
-    addRowActions: function(panel, options) {
-        panel = app.view.views.ListView.prototype.addRowActions.call(this, panel, options);
+    addActions: function(options) {
+        app.view.views.ListView.prototype.addActions.call(this, options);
 
         if (options.meta.showPreview === true) {
-            panel.fields = panel.fields.concat({
+            this._rowActions[0].fields[0].buttons.push({
                 type: 'rowaction',
                 css_class: 'btn',
                 tooltip: 'LBL_PREVIEW',
@@ -65,7 +65,5 @@
                 icon: 'icon-eye-open'
             });
         }
-
-        return panel;
     }
 })

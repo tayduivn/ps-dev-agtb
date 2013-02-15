@@ -42,39 +42,38 @@
         app.view.views.ListView.prototype.initialize.call(this, options);
     },
 
-    populatePanelMetadata: function(panel, options) {
-        panel = app.view.views.ListView.prototype.populatePanelMetadata.call(this, panel, options);
-        panel = this.addFavorite(panel, options);
-        return panel;
-    },
+    addActions:function (options) {
+        app.view.views.ListView.prototype.addActions.call(this, options);
 
-    addFavorite: function(panel, options) {
-        var meta = options.meta;
+        //Add Favorite to left
+        this.addFavorite(options);
 
-        if(meta.favorite) {
-            panel.fields[0].fields.push({type: 'favorite'});
+        //Add Save & Cancel
+        if (this._leftActions[0] && _.isArray(this._leftActions[0].fields)) {
+            //Add Cancel button to left
+            this._leftActions[0].fields.push({
+                type:'editablelistbutton',
+                label:'LBL_CANCEL_BUTTON_LABEL',
+                name:'inline-cancel',
+                css_class:'btn-link btn-invisible inline-cancel'
+            });
         }
-        return meta;
+        if (this._rowActions[0] && _.isArray(this._leftActions[0].fields)) {
+            //Add Save button to right
+            this._rowActions[0].cell_css_class = 'overflow-visible';
+            this._rowActions[0].fields.push({
+                type:'editablelistbutton',
+                label:'LBL_SAVE_BUTTON_LABEL',
+                name:'inline-save',
+                css_class:'btn-primary'
+            });
+        }
     },
 
-    addRowActions: function(panel, options) {
-        panel = app.view.views.ListView.prototype.addRowActions.call(this, panel, options);
-        panel.fields[0].fields.push({
-            type: 'editablelistbutton',
-            label: 'LBL_CANCEL_BUTTON_LABEL',
-            name: 'inline-cancel',
-            css_class: 'btn-link btn-invisible inline-cancel'
-        });
-
-        var lastCell = _.last(panel.fields);
-        lastCell.cell_css_class = 'overflow-visible';
-        lastCell.fields.push({
-            type: 'editablelistbutton',
-            label: 'LBL_SAVE_BUTTON_LABEL',
-            name: 'inline-save',
-            css_class: 'btn-primary'
-        });
-        return panel;
+    addFavorite: function(options) {
+        if (options.meta.favorite && this._leftActions[0] && _.isArray(this._leftActions[0].fields)) {
+            this._leftActions[0].fields.push({type:'favorite'});
+        }
     },
 
     _render:function () {

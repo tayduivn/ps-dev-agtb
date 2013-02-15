@@ -1,5 +1,5 @@
 describe("Base.View.SelectionList", function() {
-    var view, app, moduleName, viewDef;
+    var view, layout, app, moduleName, viewDef;
     beforeEach(function() {
         moduleName = 'Accounts';
         app = SugarTest.app;
@@ -32,6 +32,8 @@ describe("Base.View.SelectionList", function() {
         }, moduleName);
         SugarTest.testMetadata.set();
         view = SugarTest.createView('base', moduleName, 'selection-list');
+        layout = SugarTest.createLayout('base', "Cases", "list", null, null);
+        view.layout = layout;
     });
 
     afterEach(function() {
@@ -44,13 +46,14 @@ describe("Base.View.SelectionList", function() {
 
     describe('Initialization with list panel fields', function() {
         it("Should initialize the metadata from list view", function() {
-            var expected = (app.metadata.getView(moduleName, 'list')).panels[0].fields.length + 1, //+1: selection field will be added
-                actual = view.meta.panels[0].fields.length;
-            expect(expected).toBe(actual);
+            expect(view._leftActions.length).toBe(0);
+            view.render();
+            expect(view._leftActions.length).toBe(1);
         });
         it("Should add the selection field at the first field", function(){
+            view.render();
             var expected = 'selection',
-                actual = view.meta.panels[0].fields[0].type;
+                actual = view._leftActions[0].type;
             expect(expected).toBe(actual);
         });
     });
@@ -80,16 +83,19 @@ describe("Base.View.SelectionList", function() {
             SugarTest.testMetadata.addViewDefinition('selection-list', viewDef, moduleName);
             SugarTest.testMetadata.set();
             view = SugarTest.createView('base', moduleName, 'selection-list');
+            layout = SugarTest.createLayout('base', "Cases", "list", null, null);
+            view.layout = layout;
         });
 
         it("Should initialize the metadata from viewdef", function() {
-            var expected = viewDef.panels[0].fields.length + 1, //+1: selection field will be added
-                actual = view.meta.panels[0].fields.length;
-            expect(expected).toBe(actual);
+            expect(view._leftActions.length).toBe(0);
+            view.render();
+            expect(view._leftActions.length).toBe(1);
         });
         it("Should add the selection field at the first field", function(){
+            view.render();
             var expected = 'selection',
-                actual = view.meta.panels[0].fields[0].type;
+                actual = view._leftActions[0].type;
             expect(expected).toBe(actual);
         });
     });

@@ -30,11 +30,47 @@
 <table class="table table-striped dataTable">
     <thead>
     <tr role="row">
-        {{#each fields}}
+        {{#each ../_leftActions}}
         <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.columnName name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
             role="columnheader" data-fieldname="{{name}}" data-orderby="{{orderBy}}">
             {{field ../../this null "list-header"}}
         </th>
+        {{/each}}
+        {{#each fields}}
+        {{#has name ../../_fields.default}}
+        <th class="{{#isSortable ../../../module this}}sorting{{#eq ../../../../collection.orderBy.columnName name}}{{{../../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
+            role="columnheader" data-fieldname="{{name}}" data-orderby="{{orderBy}}">
+            {{field ../../../this null "list-header"}}
+        </th>
+        {{/has}}
+        {{#has name ../../_fields.available.visible}}
+        <th class="{{#isSortable ../../../module this}}sorting{{#eq ../../../../collection.orderBy.columnName name}}{{{../../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
+            role="columnheader" data-fieldname="{{name}}" data-orderby="{{orderBy}}">
+            {{field ../../../this null "list-header"}}
+        </th>
+        {{/has}}
+        {{/each}}
+        {{#each ../_rowActions}}
+        {{#if isColumnDropdown}}
+        <th class="nosort morecol sorting_asc" style="width:7%" role="columnheader">
+                {{#if ../../../_fields.available.all.length}}
+                <a href="javascript:void(0)" data-toggle="dropdown" class="rowaction dropdown-toggle">. . .</a>
+                <ul class="dropdown-menu left carettop">
+                {{#each ../../../fields}}
+                {{#has name ../../../../../_fields.available.all}}
+                  <li data-fieldname="{{name}}"><a class="rowaction" href="javascript:void(0)">{{field ../../../../../../this null "list-header"}}
+                {{#has name ../../../../../../_fields.available.visible}} <i class="icon icon-ok"></i>{{/has}}</a></li>
+                {{/has}}
+                {{/each}}
+                </ul>
+                {{/if}}
+        </th>
+        {{else}}
+        <th class="{{#isSortable ../../../module this}}sorting{{#eq ../../../../collection.orderBy.columnName name}}{{{../../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
+            role="columnheader" data-fieldname="{{name}}" data-orderby="{{orderBy}}">
+            {{field ../../../this null "list-header"}}
+        </th>
+        {{/if}}
         {{/each}}
     <tr class="alert alert-warning hide">
         <td colspan="{{fields.length}}" class="container"></td>
@@ -44,9 +80,28 @@
     <tbody role="alert" aria-live="polite" aria-relevant="all">
     {{#each ../collection.models}}
     <tr name="{{module}}_{{attributes.id}}" class="single">
-        {{#each ../fields}}
+        {{#each ../../_leftActions}}
         <td>
-            <div class="controls span12{{#if cell_css_class}} {{cell_css_class}}{{/if}}">{{field ../../../this ../this ../../../this.viewName}}</div>
+             <div class="controls span12{{#if cell_css_class}} {{cell_css_class}}{{/if}}">{{field ../../../this ../this ../../../this.viewName}}</div>
+        </td>
+        {{/each}}
+        {{#each ../fields}}
+        {{#has name ../../../_fields.default}}
+        <td>
+          <div class="controls span12{{#if cell_css_class}} {{cell_css_class}}{{/if}}">{{field ../../../../this ../../this ../../../../this.viewName}}</div>
+        </td>
+        {{/has}}
+        {{/each}}
+        {{#each ../fields}}
+        {{#has name ../../../_fields.available.visible}}
+        <td>
+            <div class="controls span12{{#if cell_css_class}} {{cell_css_class}}{{/if}}">{{field ../../../../this ../../this ../../../../this.viewName}}</div>
+        </td>
+        {{/has}}
+        {{/each}}
+        {{#each ../../_rowActions}}
+        <td>
+             <div class="controls span12{{#if cell_css_class}} {{cell_css_class}}{{/if}}">{{field ../../../this ../this ../../../this.viewName}}</div>
         </td>
         {{/each}}
     </tr>
@@ -54,4 +109,3 @@
     </tbody>
 </table>
 {{/each}}
-

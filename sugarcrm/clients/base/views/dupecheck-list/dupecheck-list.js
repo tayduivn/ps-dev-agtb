@@ -82,19 +82,17 @@
         this.collection.fetch(options);
     },
 
-    addRowActions: function(panel, options) {
-        panel = app.view.views.ListView.prototype.addRowActions.call(this, panel, options);
+    addActions: function(options) {
+        app.view.views.ListView.prototype.addActions.call(this, options);
 
         if (options.meta.showPreview === true) {
-            panel.fields = panel.fields.concat({
+            this._rowActions[1] = {
                 type: 'rowaction',
                 css_class: 'btn',
                 tooltip: 'LBL_PREVIEW',
                 event: 'list:preview:fire',
                 icon: 'icon-eye-open'
-            });
+            };
         }
-
-        return panel;
     }
 })

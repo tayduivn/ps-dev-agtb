@@ -3,7 +3,8 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
         moduleName = 'EmailTemplates',
         listMeta,
         filterDef,
-        view;
+        view,
+        layout;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -35,6 +36,8 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
         SugarTest.loadComponent("base", "view", "compose-templates", "EmailTemplates");
         SugarTest.testMetadata.set();
         view = SugarTest.createView("base", moduleName, "compose-templates", listMeta, null, true);
+        layout = SugarTest.createLayout('base', "Cases", "list", null, null);
+        view.layout = layout;
     });
 
     afterEach(function() {
@@ -72,7 +75,9 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
         listMeta['showPreview'] = true;
         //Create another view with the new metadata
         view = SugarTest.createView("base", moduleName, "compose-templates", listMeta, null, true);
-        previewField = _.last(view.meta.panels[0].fields);
+        view.layout = layout;
+        view.render();
+        previewField = view._rowActions[0].fields[0].buttons[0];
         expect(previewField.event).toEqual('list:preview:fire');
     });
 

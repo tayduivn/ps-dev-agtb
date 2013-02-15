@@ -25,6 +25,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    _rowActions: [],
+    _leftActions: [],
     extendsFrom: 'EditableView',
 
     /**
@@ -39,7 +41,10 @@
         'mouseleave .rowaction': 'hideTooltip',
         'mouseenter tr':'showActions',
         'mouseleave tr':'hideActions',
-        'mouseenter .ellipsis_inline':'addTooltip'
+        'mouseenter .ellipsis_inline':'addTooltip',
+        'click .morecol li a' : 'toggleColumn'
+    },
+    _fields: {
     },
 
     defaultLayoutEvents: {
@@ -62,17 +67,29 @@
         }
     },
 
+    toggleColumn: function(evt) {
+        if (!evt) return;
+
+        var $li = this.$(evt.currentTarget).closest('li'),
+            column = $li.data('fieldname');
+
+        if (_.indexOf(this._fields.available.visible, column) !== -1) {
+            this._fields.available.visible = _.without(this._fields.available.visible, column);
+        }
+        else {
+            this._fields.available.visible.push(column);
+        }
+        this.render();
+    },
+
     initialize: function(options) {
         //Grab the list of fields to display from the main list view (assuming initialize is being called from a subclass)
-        var listViewMeta = this.filterFields(JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {})));
-
+        var listViewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {}));
         //Extend from an empty object to prevent polution of the base metadata
         options.meta = _.extend({}, listViewMeta, JSON.parse(JSON.stringify(options.meta || {})));
         options.meta.type = options.meta.type || 'list';
 
-        _.each(options.meta.panels, function(panel) {
-            this.populatePanelMetadata(panel, options);
-        }, this);
+        this.parseFields(options.meta);
 
         app.view.View.prototype.initialize.call(this, options);
 
@@ -131,25 +148,29 @@
         app.events.trigger("preview:close");
     },
 
-    filterFields: function(viewMeta){
-        var self = this, fieldsRemoved = 0;
-        this.hiddenFields = this.hiddenFields || [];
-        // TODO: load stored field prefs
+    parseFields: function(viewMeta){
+        this._fields = {
+            "default": [], //Fields visible by default
+            "available": {
+                "visible": [], //Fields user wants to see
+                "all": [] //Fields hidden by default
+            }
+        }
+        // TODO: load field prefs and store names in this._fields.available.visible
         // no prefs so use viewMeta as default and assign hidden fields
         _.each(viewMeta.panels, function(panel){
-             for (var count = 0; count < panel.fields.length; count ++) {
-                 fieldMeta = panel.fields[count];
-                if (fieldMeta.default === false) {
-                    self.hiddenFields.push(fieldMeta);
-                    panel.fields.splice(count, 1);
-                    // we need to recheck the last one because of the splice
-                    count--;
+            _.each(panel.fields, function(fieldMeta, i) {
+                if (fieldMeta["default"] === false) {
+                    this._fields["available"].all.push(fieldMeta.name);
+                } else {
+                    this._fields["default"].push(fieldMeta.name);
                 }
-            };
-        });
+            }, this);
+        }, this);
         return viewMeta;
 
     },
+
     filterList: function(filterDef, isNewFilter, scope) {
         var self = this;
 
@@ -171,25 +192,35 @@
             }
         });
     },
-    populatePanelMetadata: function(panel, options) {
+    addActions: function(options) {
+        this._rowActions = [];
+        this._leftActions = [];
         var meta = options.meta;
         if(meta.selection) {
             switch (meta.selection.type) {
                 case "single":
-                    panel = this.addSingleSelectionAction(panel, options);
+                    this.addSingleSelectionAction(options);
                     break;
                 case "multi":
-                    panel = this.addMultiSelectionAction(panel, options);
+                    this.addMultiSelectionAction(options);
                     break;
                 default:
                     break;
             }
         }
         if(meta && meta.rowactions) {
-            panel = this.addRowActions(panel, options);
+            this.addRowActions(options);
         }
-        return panel;
     },
+
+    _render:function () {
+        this.addActions(this);
+        var lastActionColumn =_.last(this._rowActions);
+        if (lastActionColumn) lastActionColumn.isColumnDropdown = true;
+
+        app.view.View.prototype._render.call(this);
+    },
+
     showAlert: function(message) {
         this.$(".alert .container").html(message);
         this.$(".alert").removeClass("hide");
@@ -274,7 +305,7 @@
         // Treat as a "sorted search" if the filter is toggled open
         options = self.filterOpened ? self.getSearchOptions() : {};
 
-        // If injected context with a limit (dashboard) then fetch only that 
+        // If injected context with a limit (dashboard) then fetch only that
         // amount. Also, add true will make it append to already loaded records.
         options.limit = self.limit || null;
         options.success = function () {
@@ -336,55 +367,53 @@
             }
         }
     },
-    addSingleSelectionAction: function(panel, options) {
-        var meta = options.meta,
-            module = options.module,
-            singleSelect = [{
-                'type' : 'selection',
-                'name' : meta.selection.name || module + '_select',
-                'sortable' : false,
-                'label' : meta.selection.label || ''
-            }];
-
-        panel.fields = singleSelect.concat(panel.fields);
-        return panel;
-    },
-    addMultiSelectionAction: function(panel, options) {
-        var meta = options.meta,
-            multiSelect = [{
-            'type' : 'fieldset',
-            'fields' : [{
-                'type' : 'actionmenu',
-                'buttons' : []
-            }],
-            'value' : false,
-            'sortable' : false
-        }];
-        if (!_.isUndefined(meta.selection.actions)) {
-            multiSelect[0].fields[0].buttons = meta.selection.actions;
+    addSingleSelectionAction: function(options) {
+        var _generateMeta = function (name, label) {
+            return {
+                    'type':'selection',
+                    'name': name,
+                    'sortable':false,
+                    'label': label || ''
+                };
         }
-        panel.fields = multiSelect.concat(panel.fields);
-        return panel;
+        var def = options.meta.selection;
+        this._leftActions[0] = _generateMeta(def.name || options.module + '_select', def.label);
     },
-    addRowActions: function(panel, options) {
-        var meta = options.meta,
-            rowActions = {
-            'type' : 'fieldset',
-            'fields' : [{
-                'type' : 'rowactions',
-                'label' : meta.rowactions.label || '',
-                'css_class' : meta.rowactions.css_class,
-                'buttons' : []
-            }],
-            'value' : false,
-            'sortable' : false
-        };
-        if (!_.isUndefined(meta.rowactions.actions)) {
-            rowActions.fields[0].buttons = meta.rowactions.actions;
+    addMultiSelectionAction: function(options) {
+        var _generateMeta = function (buttons) {
+            return {
+                    'type':'fieldset',
+                    'fields':[
+                        {
+                            'type':'actionmenu',
+                            'buttons': buttons || []
+                        }
+                    ],
+                    'value':false,
+                    'sortable':false
+                };
         }
-        panel.fields = panel.fields.concat(rowActions);
-
-        return panel;
+        var buttons = options.meta.selection.actions;
+        this._leftActions[0] = _generateMeta(buttons);
+    },
+    addRowActions: function(options) {
+        var _generateMeta = function (label, css_class, buttons) {
+            return {
+                    'type':'fieldset',
+                    'fields':[
+                        {
+                            'type':'rowactions',
+                            'label':label || '',
+                            'css_class':css_class,
+                            'buttons': buttons || []
+                        }
+                    ],
+                    'value':false,
+                    'sortable':false
+                };
+        }
+        var def = options.meta.rowactions;
+        this._rowActions[0] =  _generateMeta(def.label, def.css_class, def.actions);
     },
     showTooltip: function(e) {
         this.$(e.currentTarget).tooltip("show");
