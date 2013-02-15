@@ -174,8 +174,6 @@ describe("forecast commitStage field", function() {
     describe("when buckets are set to show_buckets", function(){
         var orgValue;
         beforeEach(function(){
-            //orgValue = fixtures.metadata.modules.Forecasts.config.forecast_ranges;
-            //fixtures.metadata.modules.Forecasts.config.forecast_ranges = "show_buckets";
             sinon.stub(app.metadata, "getModule", function(module, type){
                 return {
                     sales_stage_won: ["Closed Won"],
@@ -186,7 +184,6 @@ describe("forecast commitStage field", function() {
         });
         
         afterEach(function(){
-            //fixtures.metadata.modules.Forecasts.config.forecast_ranges = orgValue;
             app.metadata.getModule.restore();
         });
         
