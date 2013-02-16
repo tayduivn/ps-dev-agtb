@@ -1775,21 +1775,7 @@ class SugarBean
                     continue;
                 }
 
-                //If this module has a parent field that changed, resave the old parent
-                //Check that the fields are set in the request and that they don't match the current values.
-                if (!empty($this->field_defs['parent_type']) && $this->field_defs['parent_type']['type'] == 'parent_type'
-                    && !empty($this->field_defs['parent_id']) && $this->field_defs['parent_id']['type'] == 'id'
-                    && !empty($this->fetched_row['parent_type']) && !empty($this->fetched_row['parent_id'])
-                    && (!isset($this->parent_id) || $this->parent_id != $this->fetched_row['parent_id']))
-                {
-                    if (!empty($this->field_defs[$lname]['module'])
-                        && $this->field_defs[$lname]['module'] == $this->fetched_row['parent_type'])
-                    {
-                        SugarRelationship::addToResaveList(
-                            BeanFactory::getBean($this->fetched_row['parent_type'], $this->fetched_row['parent_id'])
-                        );
-                    }
-                }
+                $this->addParentRecordsToResave($lname);
 
                 $influencing_fields = $this->get_fields_influencing_linked_bean_calc_fields($lname);
                 $data_changes = $this->db->getDataChanges($this);
@@ -1823,6 +1809,34 @@ class SugarBean
 
         $updating_relationships = false;
     }
+
+    protected function addParentRecordsToResave($lname) {
+        //If this module has a parent field that changed, resave the old parent
+        //Check that the fields are set in the request and that they don't match the current values.
+        if (!empty($this->field_defs['parent_type']) && $this->field_defs['parent_type']['type'] == 'parent_type'
+            && !empty($this->field_defs['parent_id']) && $this->field_defs['parent_id']['type'] == 'id'
+            && !empty($this->fetched_row['parent_type']) && !empty($this->fetched_row['parent_id'])
+            && (!isset($this->parent_id) || $this->parent_id != $this->fetched_row['parent_id']))
+        {
+            if ($this->$lname->getRelatedModuleName() == $this->fetched_row['parent_type'])
+            {
+                SugarRelationship::addToResaveList(
+                    BeanFactory::getBean($this->fetched_row['parent_type'], $this->fetched_row['parent_id'])
+                );
+            }
+        }
+        //If we have a new parent record that uses this link, make sure to resave that one as well
+        if (!empty($this->field_defs['parent_type']) && $this->field_defs['parent_type']['type'] == 'parent_type'
+            && !empty($this->field_defs['parent_id']) && $this->field_defs['parent_id']['type'] == 'id'
+            && isset($this->parent_id) && $this->parent_id != $this->fetched_row['parent_id']
+            && isset($this->parent_type) && $this->$lname->getRelatedModuleName() == $this->parent_type
+        ) {
+            SugarRelationship::addToResaveList(
+                BeanFactory::getBean($this->parent_type, $this->parent_id)
+            );
+        }
+    }
+
 
     /**
      * Tests if the current module has a calculated field with a link.

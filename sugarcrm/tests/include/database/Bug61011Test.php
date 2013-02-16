@@ -28,37 +28,17 @@
  ********************************************************************************/
 
 /**
- * @ticket 59144
+ * @ticket 61011
  */
-class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug61011Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Lead
-     */
-    private $lead;
-
-    /**
-     * @var Call
-     */
-    private $call;
-
     protected $has_disable_count_query_enabled;
-    /**
-     * Sets up the fixture, for example, open a network connection.
-     * This method is called before a test is executed.
-     */
+
     public function setUp()
     {
         global $sugar_config;
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user');
-        $this->lead = SugarTestLeadUtilities::createLead();
-        $this->call = SugarTestCallUtilities::createCall();
-
-        $this->lead->load_relationship('oldcalls');
-        $this->lead->oldcalls->add($this->call);
         $this->has_disable_count_query_enabled = !empty($sugar_config['disable_count_query']);
+        $sugar_config['disable_count_query'] = true;
     }
 
     /**
@@ -73,43 +53,35 @@ class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
         } else {
            unset($sugar_config['disable_count_query']);
         }
-        SugarTestLeadUtilities::removeAllCreatedLeads();
-        SugarTestCallUtilities::removeAllCreatedCalls();
-
         SugarTestHelper::tearDown();
     }
 
-    public function testQueryIsNotBroken()
+    public function testAddDistinctIgnoresAggregates()
     {
-        global $sugar_config;
-        unset($sugar_config['disable_count_query']);
+        $query = <<<END
+SELECT sum(IFNULL(t6_test61011.sum1,0)/IFNULL(t6_test61011_currencies.conversion_rate,1))*1 t6_test61011_sum_sum1,sum(IFNULL(t6_test61011.sum2,0)/IFNULL(t6_test61011_currencies.conversion_rate,1))*1 t6_test61011_sum_sum2,sum(IFNULL(t6_test61011.sum3,0)/IFNULL(t6_test61011_currencies.conversion_rate,1))*1 t6_test61011_sum_sum3,sum(IFNULL(t6_test61011.sum4,0)/IFNULL(t6_test61011_currencies.conversion_rate,1))*1 t6_test61011_sum_sum4
+FROM t6_test61011
+ INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
+                                        AND team_memberships.user_id = 'seed_max_id'
+                                        AND team_memberships.deleted=0 group by tst.team_set_id) t6_test61011_tf on t6_test61011_tf.team_set_id  = t6_test61011.team_set_id LEFT JOIN currencies t6_test61011_currencies ON t6_test61011.currency_id=t6_test61011_currencies.id AND t6_test61011_currencies.deleted=0
+ WHERE ((((t6_test61011.name IS NOT NULL AND t6_test61011.name <> ''))))
+AND  t6_test61011.deleted=0
+END;
+        $db = new Bug61011Test_Db($GLOBALS['db']);
+        $db->addDistinctClause($query);
+        $this->assertContains("SELECT sum(", $query);
+        $this->assertContains("group by tst.team_set_id", $query);
+    }
+}
 
-        $lead = new Lead();
-        $lead->retrieve($this->lead->id);
-        $lead->load_relationship('oldcalls');
-        $calls = $lead->oldcalls->getBeans(
-            array(
-                'enforce_teams' => true,
-            )
-        );
+class Bug61011Test_Db extends MysqlManager
+{
+    public function __construct($db) {
+        $this->db = $db;
+    }
 
-        $this->assertInternalType('array', $calls);
-        $this->assertEquals(1, count($calls));
-
-        $call = array_shift($calls);
-        $this->assertEquals($this->call->id, $call->id);
-        // now without count query
-        $sugar_config['disable_count_query'] = true;
-        $calls = $lead->oldcalls->getBeans(
-                array(
-                        'enforce_teams' => true,
-                )
-        );
-
-        $this->assertInternalType('array', $calls);
-        $this->assertEquals(1, count($calls));
-
-        $call = array_shift($calls);
-        $this->assertEquals($this->call->id, $call->id);
+    public function addDistinctClause(&$sql)
+    {
+        return $this->db->addDistinctClause($sql);
     }
 }

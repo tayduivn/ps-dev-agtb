@@ -348,7 +348,7 @@ class M2MRelationship extends SugarRelationship
             $knownKey = $this->def['join_key_rhs'];
             $targetKey = $this->def['join_key_lhs'];
             $relatedSeed = BeanFactory::getBean($this->getLHSModule());
-            $relatedSeedKey = $this->def['rhs_key'];
+            $relatedSeedKey = $this->def['lhs_key'];
             $whereTable = "";
             if (empty($params['left_join_table_alias'])){
                 if ($relatedSeed !== false){

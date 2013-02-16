@@ -445,22 +445,24 @@ abstract class DBManager
 			}
 			$newSql = '';
 			foreach($parts as $p=>$part){
-			    $part = preg_replace_callback('/INNER JOIN \((select tst\.team_set_id[^\)]*)\)\s*(\w*)_tf on \w*_tf\.team_set_id  = \w*\.team_set_id/i',
+			    $newpart = preg_replace_callback('/INNER JOIN \((select tst\.team_set_id[^\)]*)\)\s*(\w*)_tf on \w*_tf\.team_set_id  = \w*\.team_set_id/i',
 			        array($this, "replaceTeamClause"), $part);
-			    $start = 0;
-			    while(true) {
-    			    $selectPos = stripos($part , 'select', $start);
-	    		    if($selectPos !== false){
-	    		        if($part[$selectPos+6] == ' ' || $part[$selectPos+6] == "\n" || $part[$selectPos+6] == "\t") {
-    	    		        $distinctPos = stripos($part , 'distinct', $selectPos);
-	    		        	if($distinctPos === false || $distinctPos > 20){
-		    	            	$part = substr($part, 0, $selectPos + 6) .' DISTINCT ' . substr( $part, $selectPos + 7);
-			        	    }
-	    		        }
-	    		    } else {
-	    		        break;
-	    		    }
-			    	$start = $selectPos+1;
+			    $selects = array();
+			    preg_match_all("/SELECT\s+(.*?)\s+FROM\s+/is", $newpart, $selects, PREG_OFFSET_CAPTURE);
+			    if(!empty($selects[1])) {
+			        $offset = 0;
+			        do {
+    			        foreach($selects[1] as $match) {
+                            if(stripos($match[0], 'distinct') !== false) continue; /* already have distinct */
+                            if(preg_match("/(avg|sum|min|max|count)\(.*\)/i", $match[0])) {
+                                /* bug #61011 - don't rewrite queries with aggregates */
+                                break 2;
+                            }
+                            $newpart = substr($newpart, 0, $match[1]+$offset)."DISTINCT ".substr($newpart, $match[1]+$offset);
+                            $offset += strlen("DISTINCT "); // adjust following offsets since we've added stuff
+    			        }
+			            $part = $newpart;
+			        } while(false);
 			    }
 
 				if( $p < count($parts) - 1 )$part .= 'UNION ALL';
