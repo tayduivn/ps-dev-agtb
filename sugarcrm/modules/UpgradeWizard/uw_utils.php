@@ -4544,7 +4544,7 @@ function unlinkUpgradeFiles($version)
 
                 //Check to make sure we should load and run this UpgradeRemoval instance
                 $upgradeInstance = new $upgradeClass();
-                if ($upgradeInstance instanceof UpgradeRemoval && version_compare($upgradeInstance->version, $version, '<='))
+                if ($upgradeInstance instanceof UpgradeRemoval && version_compare($upgradeInstance->version, $version, '>='))
                 {
                     logThis('Running UpgradeRemoval instance ' . $upgradeClass);
                     logThis('Files will be backed up to custom/backup');
