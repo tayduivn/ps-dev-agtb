@@ -25,6 +25,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    className: 'error-page',
+
     initialize: function(options) {
         // Adds the metadata for the Error module
         app.metadata.set(this._metadata);
