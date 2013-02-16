@@ -1,37 +1,49 @@
 ({
-    events: {},
+    events: {
+        "keyup .search-name": "throttledSearch",
+        "paste .search-name": "throttledSearch"
+    },
 
     initialize: function(opts) {
+        // Select2 callbacks require us to _.bindAll(this)
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, opts);
+        this.layoutType = this.context.get("layout") || app.controller.context.get("layout");
 
-        this.getFilters();
+        // TODO: temporary fix. We need this condition or else record view is
+        // prevented from loading (this is due to subpanels not having their own context).
+        if(this.layoutType === "records") {
+            this.context.set("skipFetch", true);
+        }
+
+        this.filters = app.data.createBeanCollection('Filters');
         this.getPreviouslyUsedFilter();
 
-        this.layout.off("filter:refresh");
-        this.layout.on("filter:refresh", this.getFilters);
+        this.layout.off("filter:add");
+        this.layout.off("filter:set");
+        this.layout.on("filter:add", this.addFilter, this);
+        this.layout.on("filter:set", this.setFilter, this);
+    },
+
+    addFilter: function(model) {
+        this.filters.add(model);
+        this.setFilter(model.id);
+    },
+
+    setFilter: function(id) {
+        this.currentFilter = id;
+        this.render();
     },
 
     /**
      * Retrieve filters from the server.
      */
     getFilters: function(id) {
-        var self = this,
-            url = app.api.buildURL('Filters', "filter");
-
-        // TODO: here we might have issues when deleting filters. See removeAll().
-        this.currentFilter = id || "default";
-        this.filters = app.data.createBeanCollection('Filters');
         this.filters.fetch({
-            filterDef: {
-                filter: [
-                    {"created_by": app.user.id},
-                    {"module_name": this.module}
-                ]
-            },
-            success: function() {
-                self.render();
-            }
+            filter: [
+                {"created_by": app.user.id},
+                {"module_name": this.module}
+            ]
         });
     },
 
@@ -40,98 +52,106 @@
             self = this;
         app.api.call("read", url, null, {
             success: function(data) {
-                self.currentFilter = _.isEmpty(data)? "default" : _.last(data).id;
-                self.filterDataSetAndSearch();
+                if (_.isEmpty(data)) {
+                    self.currentFilter = self.previousFilter = "all_records";
+                } else {
+                    self.filters.add(data);
+                    self.currentFilter = self.previousFilter = self.filters.first().id;
+                }
+                self.getFilters();
             }
         });
     },
 
     render: function() {
-        if(this.filters.length) {
-            var self = this,
-                relatedModuleList = [],
-                customFilterList = [],
-                defaultId = (this.currentFilter === "default")? this.filters.where({default_filter: "1"})[0].id : this.currentFilter;
-
-            this.layoutType = this.layout.context.get("layout") || app.controller.context.get("layout");
-
-            _.each(this.filters.models, function(model){
-                customFilterList.push({id:model.id, text:model.get("name")});
-            }, this);
-
-            customFilterList.push({id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")});
-
-            if(this.layoutType === "record") {
-                relatedModuleList.push({id: "default", text: app.lang.get("LBL_TABGROUP_ALL")});
-
-                // TODO: Fix this when we have a more concrete way of retrieving a list of related modules.
-                var subpanels = app.metadata.getModule(this.module).subpanels.subpanel_setup;
-                _.each(subpanels, function(value, key){
-                    relatedModuleList.push({id:key, text:app.lang.get(value.title_key, self.module)});
-                }, this);
-            }
-
-            app.view.View.prototype.render.call(this);
-
-            this.relatedFilterNode = this.$(".related-filter");
-            this.customFilterNode = this.$(".search-filter");
-
-            this.relatedFilterNode.select2({
-                data: relatedModuleList,
-                multiple: false,
-                minimumResultsForSearch: 7,
-                formatSelection: this.formatRelatedSelection,
-                formatResult: this.formatResult,
-                dropdownCss: {width:'auto'},
-                dropdownCssClass: 'search-related-dropdown',
-                initSelection: this.initSelection
-            });
-
-            this.customFilterNode.select2({
-                data: customFilterList,
-                multiple: false,
-                minimumResultsForSearch: 7,
-                formatSelection: this.formatCustomSelection,
-                formatResult: this.formatResult,
-                dropdownCss: {width:'auto'},
-                dropdownCssClass: 'search-filter-dropdown',
-                initSelection: this.initSelection
-            });
-
-            // Disable the related module filter dropdown
-            if(this.layoutType !== "record") {
-                this.relatedFilterNode.select2("disable", true);
-            }
-
-            this.customFilterNode.on("change", this.sanitizeFilter);
-
-            this.customFilterNode.select2("val", defaultId).trigger("change", defaultId);
-            this.relatedFilterNode.select2("val", "default");
-
-            this.relatedFilterNode.on("change", function(e) {
-                // Relationships dropdown stuff goes here.
-            });
-
-            this.throttledSearch = _.debounce(function(e) {
-                var newSearch = self.$(e.currentTarget).val();
-                if(self.currentSearch !== newSearch) {
-                    self.currentSearch = newSearch;
-                    self.filterDataSetAndSearch();
-                }
-            }, 400);
-
-            this.$('.search-name').on("keyup", this.throttledSearch);
+        if(!this.currentFilter || !app.acl.hasAccess("list", this.module)) { return;
         }
+
+        var self = this,
+            moduleFilterList = [],
+            customFilterList = [],
+            defaultId = this.currentFilter;
+
+        customFilterList.push({id: "all_records", text: app.lang.get("LBL_FILTER_ALL_RECORDS")});
+
+        _.each(this.filters.models, function(model){
+            customFilterList.push({id:model.id, text:model.get("name")});
+        }, this);
+
+        customFilterList.push({id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")});
+
+        if(this.layoutType === "record") {
+            moduleFilterList.push({id: "all_modules", text: app.lang.get("LBL_TABGROUP_ALL")});
+
+            // TODO: Fix this when we have a more concrete way of retrieving a list of related modules.
+            var subpanels = app.metadata.getModule(this.module).subpanels.subpanel_setup;
+            _.each(subpanels, function(value, key){
+                moduleFilterList.push({id:key, text:app.lang.get(value.title_key, self.module)});
+            }, this);
+        }
+
+        app.view.View.prototype.render.call(this);
+
+        this.moduleFilterNode = this.$(".related-filter");
+        this.customFilterNode = this.$(".search-filter");
+
+        this.moduleFilterNode.select2({
+            data: moduleFilterList,
+            multiple: false,
+            minimumResultsForSearch: 7,
+            formatSelection: this.formatModuleSelection,
+            formatResult: this.formatResult,
+            dropdownCss: {width:'auto'},
+            dropdownCssClass: 'search-related-dropdown',
+            initSelection: this.initSelection
+        });
+
+        this.customFilterNode.select2({
+            data: customFilterList,
+            multiple: false,
+            minimumResultsForSearch: 7,
+            formatSelection: this.formatCustomSelection,
+            formatResult: this.formatResult,
+            dropdownCss: {width:'auto'},
+            dropdownCssClass: 'search-filter-dropdown',
+            initSelection: this.initSelection
+        });
+
+        // Disable the module filter dropdown
+        if(this.layoutType !== "record") {
+            this.moduleFilterNode.select2("disable", true);
+        }
+
+        this.customFilterNode.on("change", this.sanitizeFilter);
+
+        this.customFilterNode.select2("val", defaultId).trigger("change", defaultId);
+        this.moduleFilterNode.select2("val", "all_modules");
+
+        this.moduleFilterNode.on("change", function(e) {
+            // Relationships dropdown stuff goes here.
+        });
     },
+
+    throttledSearch: _.debounce(function(e) {
+        var newSearch = this.$(e.currentTarget).val();
+        if(this.currentSearch !== newSearch) {
+            this.currentSearch = newSearch;
+            this.filterDataSetAndSearch();
+        }
+    }, 400),
 
     initSelection: function(el, callback) {
         var data, model;
         if(el.val() !== "create") {
             if(el.is(this.customFilterNode)) {
-                model = this.filters.get(el.val());
-                data = {id: model.id, text: model.get("name")};
+                if (el.val() !== "all_records") {
+                    model = this.filters.get(el.val());
+                    data = {id: model.id, text: model.get("name")};
+                } else {
+                    data = {id: "all_records", text: app.lang.get("LBL_FILTER_ALL_RECORDS")};
+                }
             } else {
-                data = {id: "default", text: (this.layoutType === "record")? app.lang.get("LBL_TABGROUP_ALL") : this.module};
+                data = {id: "all_modules", text: (this.layoutType === "record")? app.lang.get("LBL_TABGROUP_ALL") : this.module};
             }
 
             callback(data);
@@ -143,12 +163,15 @@
             result = $('<span class="select2-choice-type">' + app.lang.get("LBL_FILTER") + '<i class="icon-caret-down"></i></span><a class="select2-choice-filter" rel="'+ item.id + '" href="javascript:void(0)">'+ item.text +'</a>');
 
         // TODO: Only bind this event if the filter has been created by the user (do we want users to be able to edit pre-defined filters? probably not) [ABE-283].
-        $(result[1]).on("click", function() {
-            self.openPanel(self.filters.get(item.id));
-        });
+        if (item.id !== "all_records" /* && if not editable */) {
+            $(result[1]).on("click", function() {
+                self.openPanel(self.filters.get(item.id));
+            });
+        }
+
         return result;
     },
-    formatRelatedSelection: function(item) {
+    formatModuleSelection: function(item) {
         var selectionLabel = app.lang.get("LBL_RELATED") + '<i class="icon-caret-down"></i>';
         if(this.layoutType !== "record") {
             selectionLabel = app.lang.get("LBL_MODULE");
@@ -172,8 +195,13 @@
 
         if(val === "create") {
             // Create a new filter.
-            this.currentFilter = "default";
+            this.currentFilter = "all_records";
             this.openPanel();
+        } else if(val === "all_records") {
+            // All records.
+            this.currentFilter = "all_records";
+            // Close the panel.
+            this.layout.trigger("filter:create:close");
         } else if(this.filters.get(val)) {
             // Is a valid filter.
             this.currentFilter = val;
@@ -197,9 +225,11 @@
      * Filters the data set by making a create call to the filter API.
      */
     filterDataSetAndSearch: function() {
+        if(!this.currentFilter) return;
         var filterDef = {
             filter: []
-        };
+        },
+        isNewFilter = (this.currentFilter !== this.previousFilter);
 
         if(this.filters.get(this.currentFilter)) {
             filterDef = JSON.parse(JSON.stringify(this.filters.get(this.currentFilter).get('filter_definition')));
@@ -211,6 +241,15 @@
         }
 
         app.events.trigger("list:preview:decorate", null, this);
-        app.events.trigger("list:filter:fire", filterDef, this);
+        app.events.trigger("list:filter:fire", filterDef, isNewFilter, this);
+        this.previousFilter = this.currentFilter;
+    },
+
+    bindDataChange: function() {
+        if(this.filters) {
+            this.filters.on("reset", function() {
+                this.render();
+            }, this);
+        }
     }
 })
