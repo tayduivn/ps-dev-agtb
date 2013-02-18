@@ -24,10 +24,33 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
+/**
+ * Events Triggered
+ *
+ * field:editable:error
+ *      on: context
+ *      by: bindDataChange()
+ *      when: if this field is open with an error, and it receives a field:editable:open event
+ *            it will trigger this event to let other fields know not to open
+ *
+ * field:editable:open
+ *      on: context
+ *      by: onClick()
+ *      when: user clicks on the field to open it
+ *
+ * forecasts:tabKeyPressed
+ *      on: context
+ *      by: onKeyDown()
+ *      when: the tab key is pressed inside the field
+ */
 ({
     extendsFrom: 'CurrencyField',
-
     symbol: '',
+    inputSelector: 'span.edit input',
+    errorMessage: '',
+    isErrorState: false,
+    _canEdit: true,
 
     events: {
         'mouseenter span.editable': 'togglePencil',
@@ -38,23 +61,11 @@
         'keydown span.edit input': 'onKeyDown'
     },
 
-    inputSelector: 'span.edit input',
-
-    errorMessage: '',
-
-    isErrorState: false,
-
-    _canEdit: true,
-
     initialize: function(options) {
-
         app.view.fields.CurrencyField.prototype.initialize.call(this, options);
-
         this.checkIfCanEdit();
-
         this.symbol = app.currency.getCurrencySymbol(this.model.get('currency_id'));
     },
-
 
     /**
      * Begin Override
@@ -64,14 +75,12 @@
      * todo-sfa: check that if these are moved when SFA-462 is done that it can work with the base field
      */
     _render: function() {
-
         // bypass the currencyField render and just go all the way up
         app.view.Field.prototype._render.call(this);
         return this;
     },
 
     format: function(value) {
-
         if(this.tplName === 'edit') {
             return app.utils.formatNumberLocale(value);
         }
@@ -100,8 +109,6 @@
     /**
      * End Override
      */
-
-
 
     /**
      * Utility Method to check if we can edit again.
@@ -208,7 +215,9 @@
      */
     togglePencil: function(evt) {
         evt.preventDefault();
-        if(!this.isEditable()) return;
+        if(!this.isEditable()) {
+            return;
+        }
         if(evt.type == 'mouseenter') {
             this.$el.find('.edit-icon').removeClass('hide');
             this.$el.find('.edit-icon').addClass('show');
@@ -224,8 +233,9 @@
      */
     onClick: function(evt) {
         evt.stopPropagation();
-        if(!this.isEditable()) return;
-
+        if(!this.isEditable()) {
+            return;
+        }
         this.options.viewName = 'edit';
         this.render();
 
@@ -325,7 +335,6 @@
      * @return {Boolean}
      */
     isValid: function(value) {
-
         // trim off any whitespace
         value = value.toString().trim();
 
@@ -359,8 +368,8 @@
      * @return {*}
      */
     parsePercentage: function(value) {
-        var orig = this.model.get(this.name);
-        var parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
+        var orig = this.model.get(this.name),
+            parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
         if(parts) {
             // use original number to apply calculations
             value = app.math.mul(app.math.div(parts[2], 100), orig);
@@ -387,5 +396,4 @@
             this.cancelEdits.call(this, evt);
         });
     }
-
 })
