@@ -123,7 +123,7 @@
         var isDirtyOrComplete,
             self = this;
 
-        isDirtyOrComplete =  _.all(moduleMeta.dependentModules, function(moduleName) {
+        isDirtyOrComplete =  _.all(moduleMeta.dependentModules, function(module, moduleName, list) {
             var convertPanel,
                 meta = self._getModuleMeta(moduleName);
 

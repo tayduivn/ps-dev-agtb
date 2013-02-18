@@ -16,6 +16,110 @@ describe("ConvertLeadLayout", function() {
         SugarTest.addComponent('base', 'layout', 'dupecheck', createMockDupeView());
         SugarTest.addComponent('base', 'view', 'create', createMockRecordView());
         SugarTest.testMetadata.set();
+
+
+        SugarTest.testMetadata.addViewDefinition('create', {
+            "panels":[
+                {
+                    "name":"panel_header",
+                    "placeholders":true,
+                    "header":true,
+                    "labels":false,
+                    "fields":[
+                        {
+                            "name":"first_name",
+                            "label":"",
+                            "placeholder":"LBL_NAME"
+                        },
+                        {
+                            "name":"last_name",
+                            "label":"",
+                            "placeholder":"LBL_NAME"
+                        }
+                    ]
+                }, {
+                    "name":"panel_body",
+                    "columns":2,
+                    "labels":false,
+                    "labelsOnTop":true,
+                    "placeholders":true,
+                    "fields":[
+                        "phone_work",
+                        "email1",
+                        "full_name"
+                    ]
+                }
+            ]
+        }, 'Contacts');
+
+        SugarTest.testMetadata.addViewDefinition('create', {
+            "panels":[
+                {
+                    "name":"panel_header",
+                    "placeholders":true,
+                    "header":true,
+                    "labels":false,
+                    "fields":[
+                            "name",
+                            "email"
+                    ]
+                }, {
+                    "name":"panel_body",
+                    "columns":2,
+                    "labels":false,
+                    "labelsOnTop":true,
+                    "placeholders":true,
+                    "fields":[
+                        'account_type',
+                        'industry',
+                        'annual_revenue'
+                    ]
+                }
+            ]
+        }, 'Accounts');
+
+        SugarTest.testMetadata.addViewDefinition('create', {
+            "panels":[
+                {
+                    "name":"panel_header",
+                    "placeholders":true,
+                    "header":true,
+                    "labels":false,
+                    "fields":[
+                        {
+                            "name":"first_name",
+                            "label":"",
+                            "placeholder":"LBL_NAME"
+                        },
+                        {
+                            "name":"last_name",
+                            "label":"",
+                            "placeholder":"LBL_NAME"
+                        }
+                    ]
+                }, {
+                    "name":"panel_body",
+                    "columns":2,
+                    "labels":false,
+                    "labelsOnTop":true,
+                    "placeholders":true,
+                    "fields":[
+                        "phone_work",
+                        "email1",
+                        "full_name"
+                    ]
+                }
+            ]
+        }, 'Opportunities');
+
+        //Injecting the dupecheck property into the modules
+        var modules = app.metadata.getModules();
+         _.each(modules, function(module){
+            module.dupCheckEnabled = true;
+        });
+
+        app.metadata.set(modules);
+
     });
 
     afterEach(function() {
@@ -38,20 +142,27 @@ describe("ConvertLeadLayout", function() {
                 },
                 {
                     'module': 'Accounts',
-                    'duplicateCheck': true,
+                    'duplicateCheckOnStart': true,
                     'required': true,
                     'fieldMapping': {
                         'name': 'account_name'
                     }
                 },
                 {
-                    'module': 'Opportunities',
-                    'duplicateCheck': false,
-                    'required': false,
-                    'fieldMapping': {
-                        'name': 'opportunity_name'
+                    'module':'Opportunities',
+                    'duplicateCheckOnStart':false,
+                    'required':false,
+                    'fieldMapping':{
+                        'name':'opportunity_name'
                     },
-                    'dependentModules': ['Contacts', 'Accounts']
+                    "dependentModules":{
+                        "Accounts":{
+                            "fieldMapping":{
+                                "id":"account_id"
+                            }
+                        },
+                        "Contacts":{}
+                    }
                 }
             ]
         };

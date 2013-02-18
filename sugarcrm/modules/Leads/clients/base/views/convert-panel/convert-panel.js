@@ -6,6 +6,8 @@
     STATUS_DIRTY: 'dirty',
     STATUS_COMPLETE: 'complete',
 
+    enableDuplicateCheck: false,
+
     events:{
         'click .toggle-subview':'handleToggleClick'
     },
@@ -18,12 +20,21 @@
         this.context.on("lead:convert:"+this.meta.module+":hide", this.handleHide);
         this.context.on("lead:convert:"+this.meta.module+":validate", this.runValidation);
         this.context.on("lead:convert:"+this.meta.module+":enable", this.handleEnablePanel);
-        this.currentState = {
+
+        this.initiateModuleTriggers();
+
+        this.defaultState = {
             activeView: this.DUPLICATE_VIEW,
             duplicateCount: 0,
             selectedId: null,
             selectedName: ''
         };
+
+        //enable or disable duplicate check
+        var moduleMetadata = app.metadata.getModule(this.module);
+        this.enableDuplicateCheck = (moduleMetadata && moduleMetadata.dupCheckEnabled) || false;
+
+        this.currentState =  _.extend({},this.defaultState);
     },
 
     _render:function () {
@@ -34,6 +45,24 @@
     },
 
     /**
+     * Resets the panels state to the default settings
+     */
+    resetPanelState : function() {
+        this.currentState =  _.extend({},this.defaultState);
+        this.duplicateView.validationStatus = this.STATUS_INIT;
+        this.recordView.validationStatus = this.STATUS_DIRTY;
+    },
+
+    /**
+     * Sets the listeners for changes to the dependent modules models
+     */
+    initiateModuleTriggers: function () {
+        _.each(this.meta.dependentModules, function(modules, moduleName, list) {
+            this.context.on("dupecheck:" + moduleName + ":model:change", this.handleDependentModuleChanges);
+        }, this);
+    },
+
+    /**
      * Add sub-views defined by the convert metadata to the view
      */
     initiateSubComponents:function (moduleMeta) {
@@ -41,15 +70,8 @@
         this.insertRecordViewInPanel(moduleMeta);
 
         //if dupe check is turned on for module, check if dupes found
-        if (moduleMeta.duplicateCheck) {
-            this.duplicateView.collection.on("reset", function(){
-                this.currentState.duplicateCount = this.duplicateView.collection.length;
-                this.updatePanelHeader();
-                if (this.duplicateView.collection.length === 0) {
-                    //no dupes, switch over to record view
-                    this.toggleSubViews(this.RECORD_VIEW);
-                }
-            }, this);
+        if (moduleMeta.duplicateCheckOnStart && this.enableDuplicateCheck) {
+            this.toggleSubViews(this.DUPLICATE_VIEW);
         } else {
             this.toggleSubViews(this.RECORD_VIEW);
         }
@@ -73,9 +95,26 @@
         });
 
         this.$('.' + this.DUPLICATE_VIEW + 'View').append(this.duplicateView.el);
-        this.duplicateView.render();
         this.duplicateView.context.on('change:selection_model', this.selectDuplicate);
+        this.duplicateView.collection.on("reset", this.duplicateViewCallback, this);
+
+        this.duplicateView.render();
         this.duplicateView.validationStatus = this.STATUS_INIT;
+    },
+
+    /**
+     * Callback for when the collection of the duplicate
+     */
+    duplicateViewCallback: function() {
+        this.currentState.duplicateCount = this.duplicateView.collection.length;
+        this.updatePanelHeader();
+        if (this.duplicateView.collection.length === 0) {
+            //no dupes, switch over to record view
+            this.toggleSubViews(this.RECORD_VIEW);
+        }
+        else if (this.currentState.activeView != this.DUPLICATE_VIEW) {
+            this.toggleSubViews(this.DUPLICATE_VIEW);
+        }
     },
 
     /**
@@ -96,11 +135,34 @@
             layout: this
         });
 
+        this.recordView.meta = this.removeFieldsFromMeta(this.recordView.meta, moduleMeta);
         this.$('.' +  this.RECORD_VIEW + 'View').append(this.recordView.el);
         this.recordView.enableHeaderPane = false;
         this.recordView.render();
 
         this.recordView.validationStatus = this.STATUS_DIRTY;
+    },
+
+    /**
+     * Removes fields from the meta based on the modules config option - hiddenFields
+     * @param meta
+     * @param moduleMeta
+     * @return {*}
+     */
+    removeFieldsFromMeta: function(meta, moduleMeta){
+
+        var newMeta = JSON.parse(JSON.stringify(meta));
+        _.each(newMeta.panels, function(panel){
+              _.each(panel.fields, function(field, index, list){
+                  if (_.isString(field)) {
+                       field = {name: field};
+                  }
+                  if (_.contains(moduleMeta.hiddenFields, field.name || field)) {
+                        list[index] = {type:'html'};
+                  }
+                });
+        }, this);
+        return newMeta;
     },
 
     /**
@@ -151,6 +213,29 @@
     },
 
     /**
+     * Updates the attributes on the module based on the dependent modules fieldMappings
+     * @param moduleName
+     * @param model
+     */
+    handleDependentModuleChanges: function(moduleName, model) {
+        var doDupe = false;
+        if (this.meta.dependentModules && this.meta.dependentModules[moduleName] && this.meta.dependentModules[moduleName].fieldMapping) {
+             _.each(this.meta.dependentModules[moduleName].fieldMapping, function (value, key) {
+                if (model.has(key)) {
+                    this.duplicateView.model.set(value, model.get(key), {silent:true});
+                    doDupe = true;
+                }
+            }, this);
+            if (doDupe) {
+                if (this.currentState.activeView === this.DUPLICATE_VIEW) {
+                    this.resetPanelState();
+                }
+                this.duplicateView.context.trigger("dupecheck:fetch:fire",  this.duplicateView.model);
+            }
+        }
+    },
+
+    /**
      * When a duplicate is selected, grab the id & name and set status to dirty
      *
      * @param event
@@ -161,6 +246,8 @@
         this.currentState.selectedId = selectedModel.get('id');
         this.currentState.selectedName = selectedModel.get('name');
         this.setStatus(this.STATUS_DIRTY);
+
+        this.context.trigger("dupecheck:" + this.meta.module+":model:change", this.meta.module, selectedModel);
     },
 
     /**
@@ -282,7 +369,10 @@
      */
     handlePopulateRecords: function(leadModel) {
         this.populateRecordsFromLeads(leadModel);
-        this.duplicateView.context.trigger("dupecheck:fetch:fire", this.recordView.model);
+
+        if(this.meta.duplicateCheckOnStart) {
+            this.duplicateView.context.trigger("dupecheck:fetch:fire", this.recordView.model);
+        }
     },
 
     /**
@@ -360,7 +450,6 @@
             var view = this.recordView,
                 model = view.model;
 
-            //todo: remove once create view has UI validation
             if (model.isValid(view.getFields(view.module))) {
                 this.setStatus(this.STATUS_COMPLETE);
                 callback();

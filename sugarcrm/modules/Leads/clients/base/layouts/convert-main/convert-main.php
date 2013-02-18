@@ -16,7 +16,7 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
         array(
             'module' => 'Contacts',
             'required' => true,
-            'duplicateCheck' => true,
+            'duplicateCheckOnStart' => true,
             'fieldMapping' => array(
                 //contact field => lead field
                 'salutation' => 'salutation',
@@ -36,12 +36,15 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
                 'primary_address_state' => 'primary_address_state',
                 'primary_address_postalcode' => 'primary_address_postalcode',
                 'primary_address_country' => 'primary_address_country',
+            ),
+            'hiddenFields' => array (
+                'account_name'
             )
         ),
         array(
             'module' => 'Accounts',
             'required' => true,
-            'duplicateCheck' => true,
+            'duplicateCheckOnStart' => true,
             'contactRelateField' => 'account_name',
             'fieldMapping' => array(
                 //account field => lead field
@@ -61,22 +64,27 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
             )
         ),
         array(
-            'module' => 'Opportunities',
-            'required' => false,
-            'duplicateCheck' => true, //duplicate check should be turned off when the dependent modules is turned on
-            'fieldMapping' => array(
+            'module'                => 'Opportunities',
+            'required'              => false,
+            'duplicateCheckOnStart' => false,
+            'fieldMapping'          => array(
                 //opportunity field => lead field
-                'name' => 'opportunity_name',
-                'phone_work' => 'phone_office',
-                'team_id' => 'team_id',
+                'name'        => 'opportunity_name',
+                'phone_work'  => 'phone_office',
+                'team_id'     => 'team_id',
                 'campaign_id' => 'campaign_id',
                 'lead_source' => 'lead_source',
             ),
-            /*'dependentModules' => array(
-                'Contacts',
-                'Accounts'
-            )*/
-            //dependent modules should be turned on when the filter api is able to filter based on related fields
+            'dependentModules'      => array(
+                'Accounts' => array(
+                    'fieldMapping' => array(
+                        'id' => 'account_id',
+                    )
+                )
+            ),
+            'hiddenFields'          => array(
+                'account_name'
+            )
         ),
     )
 );
