@@ -24,8 +24,31 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+/**
+ * Events Triggered
+ *
+ * field:editable:error
+ *      on: context
+ *      by: bindDataChange()
+ *      when: if this field is open with an error, and it receives a field:editable:open event
+ *            it will trigger this event to let other fields know not to open
+ *
+ * field:editable:open
+ *      on: context
+ *      by: onClick()
+ *      when: user clicks on the field to open it
+ *
+ * forecasts:tabKeyPressed
+ *      on: context
+ *      by: onKeyDown()
+ *      when: the tab key is pressed inside the field
+ */
 ({
     extendsFrom: 'IntField',
+    inputSelector: 'span.edit input',
+    errorMessage: '',
+    isErrorState: false,
+    _canEdit: true,
 
     events: {
         'mouseenter span.editable': 'togglePencil',
@@ -35,14 +58,6 @@
         'keyup span.edit input': 'onKeyUp',
         'keydown span.edit input': 'onKeyDown'
     },
-
-    inputSelector: 'span.edit input',
-
-    errorMessage: '',
-
-    isErrorState: false,
-
-    _canEdit: true,
 
     initialize: function(options) {
         app.view.fields.IntField.prototype.initialize.call(this, options);
@@ -151,7 +166,9 @@
      */
     togglePencil: function(evt) {
         evt.preventDefault();
-        if(!this.isEditable()) return;
+        if(!this.isEditable()) {
+            return;
+        }
         if(evt.type == 'mouseenter') {
             this.$el.find('.edit-icon').removeClass('hide');
             this.$el.find('.edit-icon').addClass('show');
@@ -167,7 +184,9 @@
      */
     onClick: function(evt) {
         evt.preventDefault();
-        if(!this.isEditable()) return;
+        if(!this.isEditable()) {
+            return;
+        }
 
         this.options.viewName = 'edit';
         this.render();
@@ -272,8 +291,8 @@
      * @return {*}
      */
     parsePercentage: function(value) {
-        var orig = this.value;
-        var parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
+        var orig = this.value,
+            parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
         if(parts) {
             // use original number to apply calculations
             value = app.math.mul(app.math.div(parts[2], 100), orig);
@@ -301,5 +320,4 @@
             this.cancelEdits.call(this, evt);
         });
     }
-
 })
