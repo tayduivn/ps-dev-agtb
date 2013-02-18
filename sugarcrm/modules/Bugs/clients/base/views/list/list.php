@@ -44,6 +44,10 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
                     'default'=>true
                 ),
                 array(
+                    'name'=>  'type',
+                    'default'=>true
+                ),
+                array(
                     'name'=>  'priority',
                     'default'=>true
                 ),
