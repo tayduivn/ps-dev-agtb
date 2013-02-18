@@ -39,7 +39,6 @@
         // If is_setup == 1 and users come back to config, the context will already be here
         // so only make this new config mode there is no forecasts object on the context
         if(_.isUndefined(options.context)) {
-            options.context = _.extend(options.context, this.initializeAllModels(options.context));
             options.context = new Backbone.Model({'saveClicked' : false});
 
             // Initialize the config model
