@@ -99,8 +99,9 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->currency_id = $args['currency_id'];
         $forecast->base_rate = $args['base_rate'];
 
-        if ($args['amount'] != 0 && $args['opp_count'] != 0) {
-            $forecast->opp_weigh_value = $args['amount'] / $args['opp_count'];
+        // TODO-SFA - Switch likely_case to be the configurable amount when that story is done.
+        if ($args['likely_case'] != 0 && $args['opp_count'] != 0) {
+            $forecast->opp_weigh_value = $args['likely_case'] / $args['opp_count'];
         }
         $forecast->save();
 
