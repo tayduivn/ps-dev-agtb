@@ -33,11 +33,6 @@
      */
 
     /**
-     * Holds the metadata for each of the components used in forecasts
-     */
-    componentsMeta: {},
-
-    /**
      * Stores the initial data models
      * todo: use this to populate models that we already have data for; currently only holds filters, chartoptions, & user
      *
@@ -55,13 +50,12 @@
     forecastsJavascript: "",
 
     initialize: function(options) {
-        var self = this,
-            url = app.api.buildURL("Forecasts/init");
+        var url = app.api.buildURL("Forecasts/init");
 
         // we need this to be set here so anytime this gets initialized, it will work.
         this.deferredRender = new $.Deferred();
         app.api.call('GET', url, null, {
-            success: function(data) {
+            success: _.bind(function(data) {
 
                 // Add Forecasts-specific stuff to the app.user object
                 app.user.set(data.initData.userData);
@@ -69,23 +63,24 @@
                 if(data.initData.forecasts_setup === 0) {
                     window.location.hash = "#Forecasts/layout/config";
                 } else {
-                    return self.initForecastsModule(data, options, self);
+                    this.initForecastsModule(data, options);
                 }
-            }
+            }, this)
         });
     },
 
-    initForecastsModule: function(forecastData, options, ctx) {
+    // overload the loadData method as we don't need anything to load here.
+    loadData : function() {
+        // do nothing here
+    },
+
+    initForecastsModule: function(forecastData, options) {
         // set the forecasts specific JS.
         $("#content").append($('<script src="' + forecastData.forecastsJavascript + '"></script>'));
 
         // get default selections for filter and range
         app.defaultSelections = forecastData.defaultSelections;
         app.initData = forecastData.initData;
-
-        ctx.componentsMeta = options.meta.components;
-
-        options.context = _.extend(options.context, ctx.initializeAllModels());
 
         var defaultSelections = app.defaultSelections;
 
@@ -129,199 +124,14 @@
         });
 
         // grab a copy of the init data for forecasts to use
-        ctx.initDataModel = app.initData;
+        this.initDataModel = app.initData;
 
         // then get rid of the data from app
         app.initData = null;
 
-        app.view.Layout.prototype.initialize.call(ctx, options);
+        app.view.Layout.prototype.initialize.call(this, options);
 
-        ctx.deferredRender.resolve();
-    },
-
-    /**
-     * Fetches data for layout's model or collection.
-     *
-     * The default implementation first calls the {@link Core.Context#loadData} method for the layout's context
-     * and then iterates through the components and calls their {@link View.Component#loadData} method.
-     * This method sets context's `fields` property beforehand.
-     *
-     * Override this method to provide custom fetch algorithm.
-     */
-    loadData: function() {
-        this.fetchAllModels();
-    },
-
-    /**
-     * Iterates through all the loaded models & collections as defined in metadata and does a "fetch" on it
-     */
-    fetchAllModels: function() {
-        var self = this;
-        _.each(this.componentsMeta, function(component) {
-
-            if(component.model && component.model.name) {
-                self.context[component.model.name.toLowerCase()].fetch();
-            }
-
-            if(component.contextCollection && component.contextCollection.name) {
-                self.context[component.contextCollection.name.toLowerCase()].fetch();
-            }
-
-            if(component.collection && component.collection.name) {
-                self.context[component.collection.name.toLowerCase()].fetch();
-            }
-
-        });
-    },
-
-    /**
-     * Iterates through metadata to define and initialize each model and collection as defined therein.
-     * @return {Object} new instance of the main model, which contains instances of the sub-models for each view
-     * as defined in metadata.
-     */
-    initializeAllModels: function() {
-        var self = this,
-            componentsMetadata = this.componentsMeta,
-            models = {};
-
-        // Loops through components from the metadata, and creates their models/collections, as defined
-        _.each(componentsMetadata, function(component) {
-            var name,
-                modelMetadata = component.model,
-                context = component.contextCollection,
-                collectionMetadata = component.collection;
-
-            if(modelMetadata) {
-                name = modelMetadata.name.toLowerCase();
-                models[name] = self.createModel(modelMetadata, "Forecasts");
-            }
-
-            if(context) {
-                name = context.name.toLowerCase();
-                models[name] = self.createCollection();
-            }
-
-            if(collectionMetadata) {
-                name = collectionMetadata.name.toLowerCase();
-                models[name] = self.createCollection();
-                models[name].url = app.config.serverUrl + '/Forecasts/' + name;
-            }
-        });
-
-        return models;
-    },
-
-    /**
-     * creates a Backbone model for a given metadata definition
-     * @param modelMetadata metadata definiton of the model.
-     * @param module
-     * @return {*} instance of a backbone model.
-     */
-    createModel: function(modelMetadata, module) {
-
-        var Model = Backbone.Model.extend({
-            // Fetch the model from the server. If the server's representation of the
-            // model differs from its current attributes, they will be overriden,
-            // triggering a `"change"` event.
-            fetch: function(options) {
-                options = options ? _.clone(options) : {};
-                if(options.parse === void 0) options.parse = true;
-                var model = this;
-                var success = options.success;
-                options.success = function(resp) {
-                    if(!model.set(model.parse(resp, options), options)) return false;
-                    if(success) success(model, resp, options);
-                    model.trigger('sync', model, resp, options);
-                };
-                var error = options.error;
-                options.error = function(resp) {
-                    if(error) error(model, resp, options);
-                    model.trigger('error', model, resp, options);
-                };
-                return this.sync('read', this, options);
-            },
-            sync: function(method, model, options) {
-                this.trigger("data:sync:start", method, model, options);
-                myURL = app.api.buildURL(module, modelMetadata.name.toLowerCase());
-                return app.api.call(method, myURL, null, options);
-            }
-        });
-
-        return new Model();
-    },
-
-    /**
-     * creates a Backbone collection for a given metadata definition
-     * @param collectionMetadata metadata definition of the collection.
-     * @param module
-     * @return {*} instance of a backbone collection.
-     */
-    createCollection: function() {
-        var Collection = Backbone.Collection.extend({
-            model: Backbone.Model.extend({
-                // Fetch the model from the server. If the server's representation of the
-                // model differs from its current attributes, they will be overriden,
-                // triggering a `"change"` event.
-                fetch: function(options) {
-                    options = options ? _.clone(options) : {};
-                    if(options.parse === void 0) options.parse = true;
-                    var model = this;
-                    var success = options.success;
-                    options.success = function(resp) {
-                        if(!model.set(model.parse(resp, options), options)) return false;
-                        if(success) success(model, resp, options);
-                        model.trigger('sync', model, resp, options);
-                    };
-                    var error = options.error;
-                    options.error = function(resp) {
-                        if(error) error(model, resp, options);
-                        model.trigger('error', model, resp, options);
-                    };
-                    return this.sync('read', this, options);
-                },
-                sync: function(method, model, options) {
-                    this.trigger("data:sync:start", method, model, options);
-                    var url = _.isFunction(model.url) ? model.url() : model.url;
-                    return app.api.call(method, url, model, options);
-                }
-            }),
-            /**
-             * Custom sync to use the app api to call the url (o-auth headers are inserted here)
-             *
-             * @param method
-             * @param model
-             * @param options
-             * @return {*}
-             */
-            sync: function(method, model, options) {
-                this.trigger("data:sync:start", method, model, options);
-                var url = _.isFunction(model.url) ? model.url() : model.url;
-                return app.api.call(method, url, null, options);
-            },
-            // Fetch the default set of models for this collection, resetting the
-            // collection when they arrive. If `update: true` is passed, the response
-            // data will be passed through the `update` method instead of `reset`.
-            fetch: function(options) {
-                options = options ? _.clone(options) : {};
-                if(options.parse === void 0) options.parse = true;
-                var success = options.success;
-                var collection = this;
-                options.success = function(resp) {
-                    var method = options.update ? 'update' : 'reset';
-                    collection[method](resp, options);
-                    if(success) success(collection, resp, options);
-                    collection.trigger('sync', collection, resp, options);
-                };
-                var error = options.error;
-                options.error = function(resp) {
-                    if(error) error(collection, resp, options);
-                    collection.trigger('error', collection, resp, options);
-                };
-                return this.sync('read', this, options);
-            }
-
-        });
-        return new Collection();
+        this.deferredRender.resolve();
     },
 
     /**
@@ -361,15 +171,10 @@
      * @private
      */
     _render: function() {
-        var self = this;
-        $.when(self.deferredRender).done(function() {
-            app.view.Layout.prototype._render.call(self);
-
-            // init the alerts
-            app.alert.init();
-
-            return self;
-        });
+        $.when(this.deferredRender).done(_.bind(function() {
+            app.view.Layout.prototype._render.call(this);
+            return this;
+        }, this));
     }
 
 })
