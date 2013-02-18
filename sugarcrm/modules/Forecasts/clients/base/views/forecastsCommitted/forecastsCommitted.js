@@ -76,7 +76,6 @@
      */
     worstCase: 0,
 
-
     /**
      * Used to query for the timeperiod_id value in Forecasts
      */
@@ -86,7 +85,6 @@
      * Used to query for the forecast_type value in Forecasts
      */
     forecastType: 'Direct',
-
 
     /**
      * Stores the Forecast totals to use when creating a new entry
