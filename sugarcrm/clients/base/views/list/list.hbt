@@ -54,7 +54,8 @@
         {{#if isColumnDropdown}}
         <th class="nosort morecol sorting_asc" style="width:7%" role="columnheader">
                 {{#if ../../../_fields.available.all.length}}
-                <a href="javascript:void(0)" data-toggle="dropdown" class="rowaction dropdown-toggle">. . .</a>
+                <div class="dropdown">
+                <a href="javascript:void(0)" class="rowaction">. . .</a>
                 <ul class="dropdown-menu left carettop">
                 {{#each ../../../fields}}
                 {{#has name ../../../../../_fields.available.all}}
@@ -63,6 +64,7 @@
                 {{/has}}
                 {{/each}}
                 </ul>
+                </div>
                 {{/if}}
         </th>
         {{else}}

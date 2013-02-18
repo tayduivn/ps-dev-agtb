@@ -42,7 +42,8 @@
         'mouseenter tr':'showActions',
         'mouseleave tr':'hideActions',
         'mouseenter .ellipsis_inline':'addTooltip',
-        'click .morecol li a' : 'toggleColumn'
+        'click th.morecol': 'toggleDropdown',
+        'click th.morecol li a' : 'toggleColumn'
     },
     _fields: {
     },
@@ -67,8 +68,21 @@
         }
     },
 
+    toggleDropdown: function(e) {
+        var self = this;
+        var $dropdown = self.$('.morecol > div');
+        if ($dropdown && _.isFunction($dropdown.dropdown)) {
+            $dropdown.toggleClass('open');
+            if (e) e.stopPropagation();
+            $('html').one('click', function () {
+                $dropdown.removeClass('open');
+            });
+        }
+    },
+
     toggleColumn: function(evt) {
         if (!evt) return;
+        evt.stopPropagation();
 
         var $li = this.$(evt.currentTarget).closest('li'),
             column = $li.data('fieldname');
@@ -80,6 +94,7 @@
             this._fields.available.visible.push(column);
         }
         this.render();
+        this.toggleDropdown();
     },
 
     initialize: function(options) {
