@@ -19,17 +19,25 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts worksheet totals calculation test", function(){
-    var app, view, context, formatWithRateStub;
+describe("The forecasts worksheet totals calculation test", function() {
+    var app, view, context, formatWithRateStub, getModuleStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) { return eval(d); });
-        var model1 = new Backbone.Model({amount: 100, sales_stage: 'Closed Won', probability: 70, commit_stage: 'include',  best_case : 100, likely_case : 100, base_rate : 1 });
-        var model2 = new Backbone.Model({amount: 100, sales_stage: 'Closed Lost', probability: 70, commit_stage: 'exclude', best_case : 100, likely_case : 100, base_rate : 1 });
-        var model3 = new Backbone.Model({amount: 100, sales_stage: 'Negotiating', probability: 70, commit_stage: 'exclude',  best_case : 100, likely_case : 100, base_rate : 1 });
-        var model4 = new Backbone.Model({amount: 100, sales_stage: 'Lost Custom', probability: 70, commit_stage: 'exclude',  best_case : 100, likely_case : 100, base_rate : 1 });
-        var model5 = new Backbone.Model({amount: 100, sales_stage: 'Won Custom', probability: 70, commit_stage: 'exclude',  best_case : 100, likely_case : 100, base_rate : 1 });
+        getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+            return {
+                sales_stage_won: ["Closed Won"],
+                sales_stage_lost: ["Closed Lost"],
+            };
+        });
+        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) {
+            return eval(d);
+        });
+        var model1 = new Backbone.Model({amount: 100, sales_stage: 'Closed Won', probability: 70, commit_stage: 'include', best_case: 100, likely_case: 100, base_rate: 1 });
+        var model2 = new Backbone.Model({amount: 100, sales_stage: 'Closed Lost', probability: 70, commit_stage: 'exclude', best_case: 100, likely_case: 100, base_rate: 1 });
+        var model3 = new Backbone.Model({amount: 100, sales_stage: 'Negotiating', probability: 70, commit_stage: 'exclude', best_case: 100, likely_case: 100, base_rate: 1 });
+        var model4 = new Backbone.Model({amount: 100, sales_stage: 'Lost Custom', probability: 70, commit_stage: 'exclude', best_case: 100, likely_case: 100, base_rate: 1 });
+        var model5 = new Backbone.Model({amount: 100, sales_stage: 'Won Custom', probability: 70, commit_stage: 'exclude', best_case: 100, likely_case: 100, base_rate: 1 });
         view.collection = new Backbone.Collection([model1, model2, model3, model4, model5]);
         view.includedModel = new Backbone.Model();
         view.overallModel = new Backbone.Model();
@@ -40,6 +48,7 @@ describe("The forecasts worksheet totals calculation test", function(){
     });
 
     afterEach(function() {
+        getModuleStub.restore();
         formatWithRateStub.restore();
     });
 
@@ -50,23 +59,21 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         xit("should calculate the included values based on forecast value along with expected opportunities", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({expected_commit_stage : 'include', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
+            var expectedModel = new Backbone.Model({expected_commit_stage: 'include', status: 'Active', expected_amount: 20, expected_best_case: 20, base_rate: 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
-            context = app.context.getContext({module:'Forecasts'});
+            context = app.context.getContext({module: 'Forecasts'});
             view.context = {
-                forecastschedule : expectedCollection,
+                forecastschedule: expectedCollection,
 
-                set : function(model, updatedTotals) {
+                set: function(model, updatedTotals) {
                     expect(model).toEqual('updatedTotals');
                     expect(updatedTotals.best_case).toEqual(120);
                     expect(updatedTotals.amount).toEqual(120);
                     expect(updatedTotals.included_opp_count).toEqual(1);
                 }
             };
-            view.context.config = new (Backbone.Model.extend({
-                "defaults": fixtures.metadata.modules.Forecasts.config
-            }));
+
             view.calculateTotals();
         });
     });
@@ -77,22 +84,20 @@ describe("The forecasts worksheet totals calculation test", function(){
     describe("updateTotals worksheet calculation test without expected opportunities", function() {
         xit("should calculate the included values based on forecast value without expected opportunities", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({expected_commit_stage : 'exclude', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
+            var expectedModel = new Backbone.Model({expected_commit_stage: 'exclude', status: 'Active', expected_amount: 20, expected_best_case: 20, base_rate: 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
-            context = app.context.getContext({module:'Forecasts'});
+            context = app.context.getContext({module: 'Forecasts'});
             view.context = _.extend(context, {
-                forecastschedule : expectedCollection,
-                set : function(model, updatedTotals) {
+                forecastschedule: expectedCollection,
+                set: function(model, updatedTotals) {
                     expect(model).toEqual('updatedTotals');
                     expect(updatedTotals.best_case).toEqual(100);
                     expect(updatedTotals.amount).toEqual(100);
                     expect(updatedTotals.included_opp_count).toEqual(1);
                 }
             });
-            view.context.config = new (Backbone.Model.extend({
-                "defaults": fixtures.metadata.modules.Forecasts.config
-            }));
+
             view.calculateTotals();
         });
     });
@@ -103,32 +108,30 @@ describe("The forecasts worksheet totals calculation test", function(){
     describe("updateTotals worksheet calculation test with null values in expected opportunities", function() {
         xit("should default the included values to 0 when the amounts are null", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({commit_stage : 'include', status : 'Active', expected_amount : null, expected_best_case : null, base_rate : 1});
+            var expectedModel = new Backbone.Model({commit_stage: 'include', status: 'Active', expected_amount: null, expected_best_case: null, base_rate: 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
-            context = app.context.getContext({module:'Forecasts'});
+            context = app.context.getContext({module: 'Forecasts'});
             view.context = _.extend(context, {
-                forecastschedule : expectedCollection,
+                forecastschedule: expectedCollection,
 
-                set : function(model, updatedTotals) {
+                set: function(model, updatedTotals) {
                     expect(model).toEqual('updatedTotals');
                     expect(updatedTotals.best_case).toEqual(100);
                     expect(updatedTotals.amount).toEqual(100);
                     expect(updatedTotals.included_opp_count).toEqual(1);
                 }
             });
-            view.context.config = new (Backbone.Model.extend({
-                "defaults": fixtures.metadata.modules.Forecasts.config
-            }));
+
             view.calculateTotals();
         });
     });
 
     describe("calculate excluded sales stages correctly", function() {
         it("should calculate the closed_opp_count and closed_amount values", function() {
-            context = app.context.getContext({module:'Forecasts'});
+            context = app.context.getContext({module: 'Forecasts'});
             view.context = _.extend(context, {
-                set : function(model, updatedTotals) {
+                set: function(model, updatedTotals) {
                     expect(model).toEqual('updatedTotals');
                     expect(updatedTotals.best_case).toEqual(100);
                     expect(updatedTotals.amount).toEqual(100);
@@ -139,27 +142,26 @@ describe("The forecasts worksheet totals calculation test", function(){
                     expect(updatedTotals.lost_amount).toEqual(100);
                     expect(updatedTotals.total_opp_count).toEqual(5);
                 },
-                unset : function(test) {}
+                unset: function(test) {
+                }
             });
             view.calculateTotals();
         });
     })
 
     describe("calculate custom won and lost stages correctly", function() {
-        var orgConfig;
-        beforeEach(function() {
-            orgConfig = fixtures.metadata.modules.Forecasts.config;
-            fixtures.metadata.modules.Forecasts.config.sales_stage_won = ['Won Custom'];
-            fixtures.metadata.modules.Forecasts.config.sales_stage_lost = ['Lost Custom'];
-        });
-
-        afterEach(function() {
-            fixtures.metadata.modules.Forecasts.config = orgConfig;
-        });
         it("should calculate the correct values for custom sales stages", function() {
-            context = app.context.getContext({module:'Forecasts'});
+            // restore stub for custom test
+            getModuleStub.restore();
+            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+                return {
+                    sales_stage_won: ['Won Custom'],
+                    sales_stage_lost: ["Lost Custom"]
+                };
+            });
+            context = app.context.getContext({module: 'Forecasts'});
             view.context = _.extend(context, {
-                set : function(model, updatedTotals) {
+                set: function(model, updatedTotals) {
                     expect(model).toEqual('updatedTotals');
                     expect(updatedTotals.best_case).toEqual(100);
                     expect(updatedTotals.amount).toEqual(100);
@@ -170,27 +172,27 @@ describe("The forecasts worksheet totals calculation test", function(){
                     expect(updatedTotals.included_opp_count).toEqual(1);
                     expect(updatedTotals.total_opp_count).toEqual(5);
                 },
-                unset : function(test) {}
+                unset: function(test) {
+                }
             });
             view.calculateTotals();
         });
     })
 
     describe("calculate multiple custom won and lost stages correctly", function() {
-        var orgConfig;
-        beforeEach(function() {
-            orgConfig = fixtures.metadata.modules.Forecasts.config;
-            fixtures.metadata.modules.Forecasts.config.sales_stage_won = ['Won Custom', 'Closed Won'];
-            fixtures.metadata.modules.Forecasts.config.sales_stage_lost = ['Lost Custom', 'Closed Lost'];
-        });
-
-        afterEach(function() {
-            fixtures.metadata.modules.Forecasts.config = orgConfig;
-        });
         it("should calculate the correct values for multiple custom sales stages", function() {
-            context = app.context.getContext({module:'Forecasts'});
+            // restore stub for custom test
+            getModuleStub.restore();
+            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+                return {
+                    sales_stage_won: ['Won Custom', 'Closed Won'],
+                    sales_stage_lost: ['Lost Custom', 'Closed Lost']
+                };
+            });
+
+            context = app.context.getContext({module: 'Forecasts'});
             view.context = _.extend(context, {
-                set : function(model, updatedTotals) {
+                set: function(model, updatedTotals) {
                     expect(model).toEqual('updatedTotals');
                     expect(updatedTotals.best_case).toEqual(100);
                     expect(updatedTotals.amount).toEqual(100);
@@ -201,7 +203,8 @@ describe("The forecasts worksheet totals calculation test", function(){
                     expect(updatedTotals.included_opp_count).toEqual(1);
                     expect(updatedTotals.total_opp_count).toEqual(5);
                 },
-                unset : function(test) {}
+                unset: function(test) {
+                }
             });
             view.calculateTotals();
         });
