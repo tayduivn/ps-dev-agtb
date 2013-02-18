@@ -250,6 +250,21 @@ describe("Emails.fields.recipients", function() {
             message:    "should get back an array of 2 Backbone models even when there is white space around the delimiter",
             recipients: '"Will Westin" <will@example.com> ,     "Sarah Smith" <sarah@example.com>',
             expected:   2
+        },
+        {
+            message:    "should get back an empty array when the parameter is undefined",
+            recipients: undefined,
+            expected:   0
+        },
+        {
+            message:    "should get back an empty array when the parameter is an integer",
+            recipients: 1,
+            expected:   0
+        },
+        {
+            message:    "should get back an empty array when the parameter is an object",
+            recipients: {param: '"Will Westin" <will@example.com>,"Sarah Smith" <sarah@example.com>'},
+            expected:   0
         }
     ];
 
