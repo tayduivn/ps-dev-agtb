@@ -60,7 +60,7 @@ $app_list_strings = array (
 
   //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     'Reports' => 'Reports',
-    'Reports_1'=>'Reports',
+    'Reports_1'=>'Saved Reports',
   //END SUGARCRM flav=pro || flav=sales ONLY
   //BEGIN SUGARCRM flav=pro ONLY
     'Forecasts' => 'Forecasts',

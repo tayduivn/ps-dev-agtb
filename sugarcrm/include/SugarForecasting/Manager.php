@@ -179,7 +179,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                        "FROM quotas q " .
                        "INNER JOIN users u " .
                        "ON q.user_id = u.id " .
-                       "WHERE q.timeperiod_id = '{$this->getArg('timeperiod_id')}' " .
+                       "WHERE u.deleted = 0 AND q.timeperiod_id = '{$this->getArg('timeperiod_id')}' " .
                        "AND ((u.id = '{$this->getArg('user_id')}' and q.quota_type = 'Direct') " .
                             "OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup')) and q.deleted = 0";
 
@@ -221,7 +221,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                                    "and w.timeperiod_id = '" . $args['timeperiod_id'] . "'" .
                                    "and ((w.related_id = u.id and u2.id = u.id) " .
                                         "or (w.related_id = u2.id)) " .
-                           "where u.id = '" . $args['user_id'] . "' " .
+                           "where u.deleted = 0 AND u2.deleted = 0 AND u.id = '" . $args['user_id'] . "' " .
                                    "and w.deleted = 0 ";
 
 
@@ -394,7 +394,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                    "ON o.assigned_user_id = u.id " .
                        "and (u.reports_to_id = '{$user_id}' " .
                        "OR u.id = '{$user_id}') " .
-               "where t.id = '{$this->getArg('timeperiod_id')}' " .
+               "where u.deleted=0 AND t.id = '{$this->getArg('timeperiod_id')}' " .
                "GROUP BY u.user_name";
 
         $db = DBManagerFactory::getInstance();
