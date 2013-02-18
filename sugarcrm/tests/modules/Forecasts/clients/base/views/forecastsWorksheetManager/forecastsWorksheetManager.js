@@ -24,6 +24,13 @@ describe("The forecasts manager worksheet", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        sinon.stub(app.metadata, "getModule", function(module, type) {
+            return {
+                show_worksheet_likely: 1,
+                show_worksheet_best: 1,
+                show_worksheet_worst: 0
+            };
+        });
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) {
             return eval(d);
         });
@@ -54,9 +61,6 @@ describe("The forecasts manager worksheet", function() {
         var context = app.context.getContext();
         context.set({'selectedTimePeriod': new Backbone.Model({'id': 'fake_id'})});
         context.set({'collection': collection});
-        context.config = new (Backbone.Model.extend({
-            "defaults": fixtures.metadata.modules.Forecasts.config
-        }));
 
         var meta = {
             panels: [
@@ -69,10 +73,10 @@ describe("The forecasts manager worksheet", function() {
         // set the selectedUser
         view.selectedUser = {
             id: app.user.get('id'),
-            full_name : 'Test User',
+            full_name: 'Test User',
             isManager: app.user.get('isManager'),
             showOpps: false,
-            reportees : [
+            reportees: [
                 {id: 'test1', name: 'test 1'},
                 {id: 'test2', name: 'test 2'}
             ]
@@ -84,6 +88,7 @@ describe("The forecasts manager worksheet", function() {
 
     afterEach(function() {
         apiClassStub.restore();
+        app.metadata.getModule.restore();
         app.user.unset('id');
         app.user.set('isManager', false);
     });
@@ -103,10 +108,6 @@ describe("The forecasts manager worksheet", function() {
         });
         it("should test checkConfigForColumnVisibility passing in found key", function() {
             var testVal = 'best_case';
-            view.context = {};
-            view.context.config = new (Backbone.Model.extend({
-                "defaults": fixtures.metadata.modules.Forecasts.config
-            }));
             expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
         });
         it("should test checkConfigForColumnVisibility passing in random key not found", function() {
@@ -116,11 +117,11 @@ describe("The forecasts manager worksheet", function() {
     });
 
     describe("Forecast Manager Worksheet collection.fetch", function() {
-        beforeEach(function(){
+        beforeEach(function() {
             sinon.spy(view.collection, 'fetch')
         });
 
-        afterEach(function(){
+        afterEach(function() {
             view.collection.fetch.restore()
         });
         it("should not have been called with safeFetch(false) ", function() {
@@ -136,14 +137,14 @@ describe("The forecasts manager worksheet", function() {
 
     describe("collection", function() {
         var collectionFetchStub;
-        beforeEach(function(){
+        beforeEach(function() {
             sinon.spy(view, 'collectionSuccess');
-            collectionFetchStub = sinon.stub(view.collection, 'fetch', function(){
+            collectionFetchStub = sinon.stub(view.collection, 'fetch', function() {
                 view.collectionSuccess([]);
             });
         });
 
-        afterEach(function(){
+        afterEach(function() {
             view.collectionSuccess.restore();
             collectionFetchStub.restore();
         });
@@ -158,14 +159,14 @@ describe("The forecasts manager worksheet", function() {
 
     describe("collectionSuccess", function() {
         var collectionFetchStub;
-        beforeEach(function(){
+        beforeEach(function() {
             sinon.spy(view, 'collectionSuccess');
-            collectionFetchStub = sinon.stub(view.collection, 'fetch', function(){
+            collectionFetchStub = sinon.stub(view.collection, 'fetch', function() {
                 view.collectionSuccess([]);
             });
         });
 
-        afterEach(function(){
+        afterEach(function() {
             view.collectionSuccess.restore();
             collectionFetchStub.restore();
         });
@@ -337,10 +338,6 @@ describe("The forecasts manager worksheet", function() {
         beforeEach(function() {
             view.context = {
                 on: function(event, fcn) {
-                },
-                config: {
-                    on: function(event, fcn) {
-                    }
                 }
             };
             view.collection.on = function() {
@@ -348,14 +345,12 @@ describe("The forecasts manager worksheet", function() {
 
             sinon.spy(view.collection, "on");
             sinon.spy(view.context, "on");
-            sinon.spy(view.context.config, "on");
             view.bindDataChange();
         });
 
         afterEach(function() {
             view.collection.on.restore();
             view.context.on.restore();
-            view.context.config.on.restore();
             delete view.context;
             view.context = {};
         });
