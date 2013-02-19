@@ -253,7 +253,7 @@
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
             //Exclude non editable fields
-            if (field.def.noedit || field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
+            if (field.def.noedit || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
