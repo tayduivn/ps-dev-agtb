@@ -21,285 +21,290 @@
 
 describe("forecast commitStage field", function() {
     var field, fieldDef, context, model;
-    
+
     beforeEach(function() {
         fieldDef = {
-                "name": "commit_stage",
-                "type": "commitStage",
-                "options": "commit_stage_dom"
-            };
-
+            "name": "commit_stage",
+            "type": "commitStage",
+            "options": "commit_stage_dom"
+        };
         app = SugarTest.app;
-
         app.user.id = "tester";
-        sinon.stub(app.lang, "getAppListStrings", function(){
-            return {test:"test"};
+        sinon.stub(app.lang, "getAppListStrings", function() {
+            return {test: "test"};
         });
         context = app.context.getContext();
     });
-    
-    afterEach(function(){
+
+    afterEach(function() {
         app.lang.getAppListStrings.restore();
         app.user.id = null;
         delete app;
     });
-    
-    describe("when buckets are set to show_binary", function(){        
-        beforeEach(function(){
-            context = {
-                config: new Backbone.Model({
-                    sales_stage_won: ["Closed Lost"], 
-                    sales_stage_lost: ["Closed Won"], 
-                    forecast_ranges: "show_binary"})
-                };            
+
+    describe("when buckets are set to show_binary", function() {
+        beforeEach(function() {
+            sinon.stub(app.metadata, "getModule", function(module, type) {
+                return {
+                    sales_stage_won: ["Closed Won"],
+                    sales_stage_lost: ["Closed Lost"],
+                    forecast_ranges: "show_binary"
+                };
+            });
         });
-        
-        afterEach(function(){            
+
+        afterEach(function() {
+            app.metadata.getModule.restore();
             delete field.context;
         });
-        
-        describe("when it is your sheet and the sales_stage is open", function(){
-            beforeEach(function(){
-                context.get = function(key){
-                    return {id:"tester"};                    
+
+        describe("when it is your sheet and the sales_stage is open", function() {
+            beforeEach(function() {
+                context.get = function(key) {
+                    return {id: "tester"};
                 };
                 model = new Backbone.Model({sales_stage: "Open"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);                
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
             });
-            
-            it("should have def.view set to bool", function(){
+
+            it("should have def.view set to bool", function() {
                 expect(field.def.view).toBe("bool");
             });
-            
-            it("should have a format function defined", function(){
+
+            it("should have a format function defined", function() {
                 expect(field.format).toBeDefined();
             });
-            
-            it("should have an unformat function defined", function(){
+
+            it("should have an unformat function defined", function() {
                 expect(field.unformat).toBeDefined();
             });
-            
-            it("should have disabled = false", function(){
+
+            it("should have disabled = false", function() {
                 expect(field.disabled).toBeFalsy();
             });
         });
-        
-        describe("when it is your sheet and the sales_stage is closed", function(){
-            beforeEach(function(){
-                context.get = function(key){
-                    return {id:"tester"};                    
+
+        describe("when it is your sheet and the sales_stage is closed", function() {
+            beforeEach(function() {
+                context.get = function(key) {
+                    return {id: "tester"};
                 };
-                
+
                 model = new Backbone.Model({sales_stage: "Closed Lost"});
                 field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
             });
-            
-            it("should have def.view set to bool", function(){
+
+            it("should have def.view set to bool", function() {
                 expect(field.def.view).toBe("bool");
             });
-            
-            it("should have a format function defined", function(){
+
+            it("should have a format function defined", function() {
                 expect(field.format).toBeDefined();
             });
-            
-            it("should have an unformat function defined", function(){
+
+            it("should have an unformat function defined", function() {
                 expect(field.unformat).toBeDefined();
             });
-            
-            it("should have disabled = true", function(){
+
+            it("should have disabled = true", function() {
                 expect(field.disabled).toBeTruthy();
             });
         });
-        
-        
-        describe("when it is not your sheet and sales_stage is open", function(){
-            beforeEach(function(){
-                context.get = function(key){
-                    return {id:"tester2"};                    
+
+
+        describe("when it is not your sheet and sales_stage is open", function() {
+            beforeEach(function() {
+                context.get = function(key) {
+                    return {id: "tester2"};
                 };
-                
+
                 model = new Backbone.Model({sales_stage: "Open"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context); 
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
             });
-            it("should have def.view set to bool", function(){
+            it("should have def.view set to bool", function() {
                 expect(field.def.view).toBe("bool");
             });
-            
-            it("should have a format function defined", function(){
+
+            it("should have a format function defined", function() {
                 expect(field.format).toBeDefined();
             });
-            
-            it("should have an unformat function defined", function(){
+
+            it("should have an unformat function defined", function() {
                 expect(field.unformat).toBeDefined();
             });
-            
-            it("should have disabled = true", function(){
+
+            it("should have disabled = true", function() {
                 expect(field.disabled).toBeTruthy();
             });
         });
-        
-        describe("when it is not your sheet and sales stage is closed", function(){
-            beforeEach(function(){
-                context.get = function(key){
-                    return {id:"tester2"};                    
+
+        describe("when it is not your sheet and sales stage is closed", function() {
+            beforeEach(function() {
+                context.get = function(key) {
+                    return {id: "tester2"};
                 };
-                
+
                 model = new Backbone.Model({sales_stage: "Closed Lost"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context); 
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
             });
-            it("should have def.view set to bool", function(){
+            it("should have def.view set to bool", function() {
                 expect(field.def.view).toBe("bool");
             });
-            
-            it("should have a format function defined", function(){
+
+            it("should have a format function defined", function() {
                 expect(field.format).toBeDefined();
             });
-            
-            it("should have an unformat function defined", function(){
+
+            it("should have an unformat function defined", function() {
                 expect(field.unformat).toBeDefined();
             });
-            
-            it("should have disabled = true", function(){
+
+            it("should have disabled = true", function() {
                 expect(field.disabled).toBeTruthy();
             });
         });
     });
-    
-    describe("when buckets are set to show_buckets", function(){
+
+    describe("when buckets are set to show_buckets", function() {
         var orgValue;
-        beforeEach(function(){
-            orgValue = fixtures.metadata.modules.Forecasts.config.forecast_ranges;
-            fixtures.metadata.modules.Forecasts.config.forecast_ranges = "show_buckets";
-        });
-        
-        afterEach(function(){
-            fixtures.metadata.modules.Forecasts.config.forecast_ranges = orgValue;
-        });
-        
-        describe("when it is your sheet and sales_stage is Open", function(){
-            beforeEach(function(){
-                context.get = function(key){
-                    return {id:"tester"};                    
+        beforeEach(function() {
+            sinon.stub(app.metadata, "getModule", function(module, type) {
+                return {
+                    sales_stage_won: ["Closed Won"],
+                    sales_stage_lost: ["Closed Lost"],
+                    forecast_ranges: "show_buckets"
                 };
-                
+            });
+        });
+
+        afterEach(function() {
+            app.metadata.getModule.restore();
+        });
+
+        describe("when it is your sheet and sales_stage is Open", function() {
+            beforeEach(function() {
+                context.get = function(key) {
+                    return {id: "tester"};
+                };
+
                 model = new Backbone.Model({sales_stage: "Open"});
                 field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
             });
-            
-            afterEach(function(){
-               
+
+            afterEach(function() {
+
             });
-            
-            it("should have def.view set to default", function(){
-                expect(field.def.view).toBe("default");                
+
+            it("should have def.view set to default", function() {
+                expect(field.def.view).toBe("default");
             });
-            
-            it("should have called createBuckets", function(){
+
+            it("should have called createBuckets", function() {
                 expect($.data(document.body, "commitStageBuckets")).toBeTruthy();
             });
-            
+
             //this should be called, but since things aren't stubbed out, it returns
             //undefined to replace the "" that was set up at the beginning of the test.
-            it("should have called getLanguageValue", function(){
+            it("should have called getLanguageValue", function() {
                 expect(field.langValue).toBeUndefined();
             });
-            
-            it("should have field.showCteIcon defined", function(){
+
+            it("should have field.showCteIcon defined", function() {
                 expect(field.showCteIcon).toBeDefined();
             });
-            
-            it("should have field.hideCteIcon defined", function(){
+
+            it("should have field.hideCteIcon defined", function() {
                 expect(field.hideCteIcon).toBeDefined();
             });
-            
-            it("should have disabled = false", function(){
+
+            it("should have disabled = false", function() {
                 expect(field.disabled).toBeFalsy();
             });
         });
-        
-        describe("when it is your sheet and sales_stage is closed", function(){
-            beforeEach(function(){
-                context.get = function(key){
-                    return {id:"tester"};                    
+
+        describe("when it is your sheet and sales_stage is closed", function() {
+            beforeEach(function() {
+                context.get = function(key) {
+                    return {id: "tester"};
                 };
-                
+
                 model = new Backbone.Model({sales_stage: "Closed Lost"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);                
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
             });
-            
-            afterEach(function(){
-               
+
+            afterEach(function() {
+
             });
-            
-            it("should have def.view set to default", function(){
-                expect(field.def.view).toBe("default");                
+
+            it("should have def.view set to default", function() {
+                expect(field.def.view).toBe("default");
             });
-            
+
             //this should be called, but since things aren't stubbed out, it returns
             //undefined to replace the "" that was set up at the beginning of the test.
-            it("should have called getLanguageValue", function(){
+            it("should have called getLanguageValue", function() {
                 expect(field.langValue).toBeUndefined();
             });
-            
-            it("should have disabled = true", function(){
+
+            it("should have disabled = true", function() {
                 expect(field.disabled).toBeTruthy();
             });
         });
-        
-        describe("when it is not your sheet and sales_stage is open", function(){
-            beforeEach(function(){
-                context.get = function(key){
-                    return {id:"tester2"};                    
+
+        describe("when it is not your sheet and sales_stage is open", function() {
+            beforeEach(function() {
+                context.get = function(key) {
+                    return {id: "tester2"};
                 };
-                
+
                 model = new Backbone.Model({sales_stage: "Open"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context); 
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
             });
-            
-            afterEach(function(){
-                
+
+            afterEach(function() {
+
             });
-            
-            it("should have def.view set to default", function(){
-                expect(field.def.view).toBe("default");                
+
+            it("should have def.view set to default", function() {
+                expect(field.def.view).toBe("default");
             });
-            
+
             //this should be called, but since things aren't stubbed out, it returns
             //undefined to replace the "" that was set up at the beginning of the test.
-            it("should have called getLanguageValue", function(){
+            it("should have called getLanguageValue", function() {
                 expect(field.langValue).toBeUndefined();
             });
-            
-            it("should have disabled = true", function(){
+
+            it("should have disabled = true", function() {
                 expect(field.disabled).toBeTruthy();
             });
         });
-        
-        describe("when it is not your sheet and sales_stage is closed", function(){
-            beforeEach(function(){
-                context.get = function(key){
-                    return {id:"tester2"};                    
+
+        describe("when it is not your sheet and sales_stage is closed", function() {
+            beforeEach(function() {
+                context.get = function(key) {
+                    return {id: "tester2"};
                 };
-                
+
                 model = new Backbone.Model({sales_stage: "Closed Lost"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context); 
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
             });
-            
-            afterEach(function(){
-                
+
+            afterEach(function() {
+
             });
-            
-            it("should have def.view set to default", function(){
-                expect(field.def.view).toBe("default");                
+
+            it("should have def.view set to default", function() {
+                expect(field.def.view).toBe("default");
             });
-            
+
             //this should be called, but since things aren't stubbed out, it returns
             //undefined to replace the "" that was set up at the beginning of the test.
-            it("should have called getLanguageValue", function(){
+            it("should have called getLanguageValue", function() {
                 expect(field.langValue).toBeUndefined();
             });
-            
-            it("should have disabled = true", function(){
+
+            it("should have disabled = true", function() {
                 expect(field.disabled).toBeTruthy();
             });
         });

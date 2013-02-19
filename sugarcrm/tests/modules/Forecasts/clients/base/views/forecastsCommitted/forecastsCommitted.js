@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts committed view", function () {
+describe("The forecasts committed view", function() {
     var app, view, context, totals,
         formatAmountLocaleStub, createHistoryLogStub, forecastsSetStub,
         stubs = [];
@@ -27,14 +27,25 @@ describe("The forecasts committed view", function () {
     beforeEach(function() {
         app = SugarTest.app;
 
-        SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function (d) { return eval(d); });
-        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function (d) { return eval(d); });
+        stubs.push(sinon.stub(app.metadata, "getModule", function(module, type) {
+            return {
+                show_worksheet_likely: 1,
+                show_worksheet_best: 1,
+                show_worksheet_worst: 0
+            };
+        }));
+
+        SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) {
+            return eval(d);
+        });
+        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) {
+            return eval(d);
+        });
 
         context = app.context.getContext();
         context.set({"selectedUser": {"id": 'test_user'}});
         context.set({"timeperiod_id": {"id": 'timeperiod_id'}});
         context.set({"collection": new Backbone.Collection()});
-
 
         app.initData = {};
         app.defaultSelections = {
@@ -44,7 +55,7 @@ describe("The forecasts committed view", function () {
         };
 
         var layout = {
-            getComponent : function(){
+            getComponent: function() {
                 return {}
             }
         };
@@ -63,14 +74,14 @@ describe("The forecasts committed view", function () {
 
         stubs.push(createHistoryLogStub);
 
-        forecastsSetStub = sinon.stub(view.context, "trigger", function(){});
+        forecastsSetStub = sinon.stub(view.context, "trigger", function() {
+        });
         sinon.spy(view.context.trigger);
         stubs.push(forecastsSetStub);
-
     });
 
-    afterEach(function () {
-        _.each(stubs, function (stub) {
+    afterEach(function() {
+        _.each(stubs, function(stub) {
             stub.restore();
         });
 
@@ -81,23 +92,23 @@ describe("The forecasts committed view", function () {
         delete view.collection.models;
     });
 
-    describe("test arrow directions for sales rep", function () {
+    describe("test arrow directions for sales rep", function() {
         beforeEach(function() {
-            var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, worst_case : 80, base_rate : 1 }),
-                model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, worst_case : 90, base_rate : 1 }),
-                model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, worst_case : 100, base_rate : 1 });
-                view.collection = new Backbone.Collection([model1, model2, model3]);
+            var model1 = new Backbone.Model({date_entered: "2012-12-05T11:14:25-04:00", best_case: 100, likely_case: 90, worst_case: 80, base_rate: 1 }),
+                model2 = new Backbone.Model({date_entered: "2012-10-05T11:14:25-04:00", best_case: 110, likely_case: 100, worst_case: 90, base_rate: 1 }),
+                model3 = new Backbone.Model({date_entered: "2012-11-05T11:14:25-04:00", best_case: 120, likely_case: 110, worst_case: 100, base_rate: 1 });
+            view.collection = new Backbone.Collection([model1, model2, model3]);
         });
 
-        it("should show up for best, worst and likely", function () {
+        it("should show up for best, worst and likely", function() {
             totals = {
                 'amount': 500,
-                'best_case':500,
-                'best_adjusted':550,
-                'likely_case':450,
-                'likely_adjusted':475,
-                'worst_case':400,
-                'worst_adjusted':425
+                'best_case': 500,
+                'best_adjusted': 550,
+                'likely_case': 450,
+                'likely_adjusted': 475,
+                'worst_case': 400,
+                'worst_adjusted': 425
             };
 
             view.updateTotals(totals);
@@ -108,14 +119,14 @@ describe("The forecasts committed view", function () {
             expect(view.context.trigger).toHaveBeenCalled();
         });
 
-        it("should show down for  best, worst and likely", function () {
+        it("should show down for  best, worst and likely", function() {
             totals = {
-                'best_case':1,
-                'best_adjusted':1,
-                'likely_case':1,
-                'likely_adjusted':1,
-                'worst_case':1,
-                'worst_adjusted':1
+                'best_case': 1,
+                'best_adjusted': 1,
+                'likely_case': 1,
+                'likely_adjusted': 1,
+                'worst_case': 1,
+                'worst_adjusted': 1
             };
 
             view.updateTotals(totals);
@@ -127,23 +138,23 @@ describe("The forecasts committed view", function () {
         });
     });
 
-    describe("test arrow directions for manager", function () {
+    describe("test arrow directions for manager", function() {
         beforeEach(function() {
-            var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, worst_case : 80, base_rate : 1 });
-            var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, worst_case : 90, base_rate : 1 });
-            var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, worst_case : 100, base_rate : 1 });
+            var model1 = new Backbone.Model({date_entered: "2012-12-05T11:14:25-04:00", best_case: 100, likely_case: 90, worst_case: 80, base_rate: 1 });
+            var model2 = new Backbone.Model({date_entered: "2012-10-05T11:14:25-04:00", best_case: 110, likely_case: 100, worst_case: 90, base_rate: 1 });
+            var model3 = new Backbone.Model({date_entered: "2012-11-05T11:14:25-04:00", best_case: 120, likely_case: 110, worst_case: 100, base_rate: 1 });
             view.collection = new Backbone.Collection([model1, model2, model3]);
         });
 
-        it("should show up for  best, worst and likely", function () {
+        it("should show up for  best, worst and likely", function() {
             totals = {
                 'amount': 500,
-                'best_case':500,
-                'best_adjusted':550,
-                'likely_case':450,
-                'likely_adjusted':475,
-                'worst_case':400,
-                'worst_adjusted':425
+                'best_case': 500,
+                'best_adjusted': 550,
+                'likely_case': 450,
+                'likely_adjusted': 475,
+                'worst_case': 400,
+                'worst_adjusted': 425
             };
 
             view.updateTotals(totals);
@@ -154,14 +165,14 @@ describe("The forecasts committed view", function () {
             expect(view.context.trigger).toHaveBeenCalled();
         });
 
-        it("should show down for  best, worst and likely", function () {
+        it("should show down for  best, worst and likely", function() {
             totals = {
-                'best_case':1,
-                'best_adjusted':1,
-                'likely_case':1,
-                'likely_adjusted':1,
-                'worst_case':1,
-                'worst_adjusted':1
+                'best_case': 1,
+                'best_adjusted': 1,
+                'likely_case': 1,
+                'likely_adjusted': 1,
+                'worst_case': 1,
+                'worst_adjusted': 1
             };
 
             view.updateTotals(totals);
@@ -249,7 +260,7 @@ describe("The forecasts committed view", function () {
 
             //Simulate the view having one model in the collection
             view.collection.models = [new Backbone.Model({
-                likely_case : 900,
+                likely_case: 900,
                 best_case: 1000,
                 worst_case: 800
             })];
@@ -308,7 +319,7 @@ describe("The forecasts committed view", function () {
 
             //Simulate the view having one model in the collection
             view.collection.models = [new Backbone.Model({
-                likely_case : 900,
+                likely_case: 900,
                 best_case: 1000,
                 worst_case: 800
             })];

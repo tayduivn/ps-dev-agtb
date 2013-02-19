@@ -256,15 +256,19 @@
         var regex   = /(@.*?)\s*?,\s*?/g,
             replace = "::;::";
 
-        // replace comma delimiters with the delimiter defined by "replace" and then split the string on the new
-        // delimiter
-        recipients = recipients.replace(regex, "$1" + replace).split(replace);
+        if (_.isString(recipients)) {
+            // replace comma delimiters with the delimiter defined by "replace" and then split the string on the new
+            // delimiter
+            recipients = recipients.replace(regex, "$1" + replace).split(replace);
 
-        _.each(recipients, function(recipient, index) {
-            var attributes = this._unformatRecipient(recipient); // get an object with the recipient's attributes
+            _.each(recipients, function(recipient, index) {
+                var attributes = this._unformatRecipient(recipient); // get an object with the recipient's attributes
 
-            recipients[index] = new Backbone.Model(attributes);
-        }, this);
+                recipients[index] = new Backbone.Model(attributes);
+            }, this);
+        } else {
+            recipients = [];
+        }
 
         return recipients;
     },

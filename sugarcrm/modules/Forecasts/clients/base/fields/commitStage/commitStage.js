@@ -61,32 +61,31 @@
      */
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
-        var self = this,
-            forecastRanges = app.metadata.getModule('Forecasts', 'config').forecast_ranges;
+        var forecastRanges = app.metadata.getModule('Forecasts', 'config').forecast_ranges;
 
         //Check to see if the field is editable
-        self.isEditable();
+        this.isEditable();
 
         //show_binary, show_buckets, show_n_buckets logic
         if(forecastRanges == "show_binary") {
             //If we're in binary mode
-            self.def.view = "bool";
-            self.currentView = "bool";
-            self.format = function(value) {
+            this.def.view = "bool";
+            this.currentView = "bool";
+            this.format = function(value) {
                 return value == "include";
             };
-            self.unformat = function(value) {
+            this.unformat = function(value) {
                 return self.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
             };
         }
         else if(forecastRanges == "show_buckets") {
-            self.def.view = "default";
-            self.currentView = "default";
-            self.getLanguageValue();
-            self.createCTEIconHTML();
+            this.def.view = "default";
+            this.currentView = "default";
+            this.getLanguageValue();
+            this.createCTEIconHTML();
             //create buckets, but only if we are on our sheet.
-            if(!self.disabled) {
-                self.createBuckets();
+            if(!this.disabled) {
+                this.createBuckets();
             }
         }
     },
@@ -95,38 +94,37 @@
      * Render Field
      */
     _render: function() {
-        var self = this,
-            select = null;
+        var select = null;
         app.view.Field.prototype._render.call(this);
 
         /* If we are on our own sheet, and need to show the dropdown, init things
          * and disable events
          */
-        if(!self.disabled && self.currentView == "enum") {
-            self.$el.off("click");
+        if(!this.disabled && this.currentView == "enum") {
+            this.$el.off("click");
 
             //custom namespaced window click event to destroy the chosen dropdown on "blur".
             //this is removed in this.resetBuckets
             $(window).on("click." + self.cid, function(e) {
                 if(!_.isEqual(self.cid, $(e.target).attr("cid"))) {
-                    self.resetBucket();
+                    this.resetBucket();
                 }
-            });
+            }, this);
 
-            self.$el.off("mouseenter");
-            self.$el.off("mouseleave");
-            self.select = self.$el.find("select");
-            self.select.select2({minimumResultsForSearch: !_.isUndefined(self.def.searchBarThreshold) ? self.def.searchBarThreshold : 0});
-            self.currentVal = self.value;
-            self.select.select2("val", self.value);
-            self.select.select2("open");
-            self.select.on("close", function() {
-                if(_.isEqual(self.currentVal, self.select.select2("val"))) {
-                    self.resetBucket();
+            this.$el.off("mouseenter");
+            this.$el.off("mouseleave");
+            this.select = this.$el.find("select");
+            this.select.select2({minimumResultsForSearch: !_.isUndefined(this.def.searchBarThreshold) ? this.def.searchBarThreshold : 0});
+            this.currentVal = this.value;
+            this.select.select2("val", this.value);
+            this.select.select2("open");
+            this.select.on("close", function() {
+                if(_.isEqual(this.currentVal, this.select.select2("val"))) {
+                    this.resetBucket();
                 }
             });
-            self.$(".select2-input").keydown(function(e) {
-                self.onKeyDown(e);
+            this.$(".select2-input").keydown(function(e) {
+                this.onKeyDown(e);
             });
         }
     },
@@ -135,23 +133,22 @@
      * Change handler for the buckets field
      */
     bucketsChanged: function() {
-        var self = this,
-            values = {},
-            moduleName = self.moduleName;
+        var values = {},
+            moduleName = this.moduleName;
 
-        if(self.currentView == "bool") {
-            self.value = self.unformat();
-            values[self.def.name] = self.value;
+        if(this.currentView == "bool") {
+            this.value = this.unformat();
+            values[this.def.name] = this.value;
         }
-        else if(self.currentView == "enum") {
-            self.value = self.select.select2("val");
-            values[self.def.name] = self.value;
+        else if(this.currentView == "enum") {
+            this.value = this.select.select2("val");
+            values[this.def.name] = this.value;
         }
 
-        self.model.set(values);
+        this.model.set(values);
 
-        if(self.currentView == "enum") {
-            self.resetBucket();
+        if(this.currentView == "enum") {
+            this.resetBucket();
         }
     },
 
@@ -161,11 +158,10 @@
      * @param evt
      */
     onKeyDown: function(evt) {
-        var self = this;
         if(evt.which == 9) {
             evt.preventDefault();
             // tab key pressed, trigger event from context
-            self.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, self);
+            this.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, this);
         }
     },
 
@@ -177,18 +173,17 @@
      * Also, we check to make sure this hasn't already been done (so we don't do it again, of course).
      */
     createBuckets: function() {
-        var self = this;
-        self.buckets = $.data(document.body, "commitStageBuckets");
+        this.buckets = $.data(document.body, "commitStageBuckets");
 
-        if(_.isUndefined(self.buckets)) {
+        if(_.isUndefined(this.buckets)) {
             var options = app.lang.getAppListStrings(this.def.options) || 'commit_stage_dom';
-            self.buckets = "<select data-placeholder=' ' name='" + self.name + "' style='width: 100px;'>";
-            self.buckets += "<option value='' selected></option>";
+            this.buckets = "<select data-placeholder=' ' name='" + this.name + "' style='width: 100px;'>";
+            this.buckets += "<option value='' selected></option>";
             _.each(options, function(item, key) {
-                self.buckets += "<option value='" + key + "'>" + item + "</options>"
+                this.buckets += "<option value='" + key + "'>" + item + "</options>"
             });
-            self.buckets += "</select>";
-            $.data(document.body, "commitStageBuckets", self.buckets);
+            this.buckets += "</select>";
+            $.data(document.body, "commitStageBuckets", this.buckets);
         }
     },
 
@@ -198,10 +193,9 @@
      * If the HTML hasn't been set up yet, create it and store it on the DOM.  If it has, simply use it
      */
     createCTEIconHTML: function() {
-        var self = this,
-            cteIcon = $.data(document.body, "cteIcon"),
-            events = self.events || {},
-            sales_stage = self.model.get("sales_stage");
+        var cteIcon = $.data(document.body, "cteIcon"),
+            events = this.events || {},
+            sales_stage = this.model.get("sales_stage");
 
         if(_.isUndefined(cteIcon)) {
             cteIcon = '<span class="edit-icon"><i class="icon-pencil icon-sm"></i></span>';
@@ -210,20 +204,20 @@
 
         //Events
         // if it's not a bucket, and it's not editable, we don't want to try to add the pencil
-        self.showCteIcon = function() {
-            if((self.currentView != "enum") && (!self.disabled)) {
-                self.$el.find("span.editable").before($(cteIcon));
+        this.showCteIcon = _.bind(function() {
+            if((this.currentView != "enum") && (!this.disabled)) {
+                this.$el.find("span.editable").before($(cteIcon));
             }
-        };
+        }, this);
 
         // if it's not a bucket, and it's not editable, we don't want to try to remove the pencil  
-        self.hideCteIcon = function() {
-            if((self.currentView != "enum") && (!self.disabled)) {
-                self.$el.parent().find(".edit-icon").detach();
+        this.hideCteIcon = _.bind(function() {
+            if((this.currentView != "enum") && (!this.disabled)) {
+                this.$el.parent().find(".edit-icon").detach();
             }
-        };
+        }, this);
 
-        self.events = _.extend(events, {
+        this.events = _.extend(events, {
             'mouseenter': 'showCteIcon',
             'mouseleave': 'hideCteIcon',
             'click': 'clickToEdit'
@@ -248,14 +242,13 @@
      * Handles the click to make the field editable.
      */
     clickToEdit: function(e) {
-        var self = this,
-            sales_stage = self.model.get("sales_stage");
-        if(!self.disabled) {
-            $(e.target).attr("cid", self.cid);
-            self.def.view = "enum";
-            self.currentView = "enum";
+        var sales_stage = this.model.get("sales_stage");
+        if(!this.disabled) {
+            $(e.target).attr("cid", this.cid);
+            this.def.view = "enum";
+            this.currentView = "enum";
             e.preventDefault();
-            self.render();
+            this.render();
         }
     },
 
@@ -263,16 +256,14 @@
      * Removes chosen dropdown from unfocused field
      */
     resetBucket: function() {
-        var self = this;
-
         //remove custom click handler
-        $(window).off("click." + self.cid);
-        self.$el.off("click");
-        self.def.view = "default";
-        self.currentView = "default";
-        self.getLanguageValue();
-        self.delegateEvents();
-        self.render();
+        $(window).off("click." + this.cid);
+        this.$el.off("click");
+        this.def.view = "default";
+        this.currentView = "default";
+        this.getLanguageValue();
+        this.delegateEvents();
+        this.render();
     },
 
     /**
