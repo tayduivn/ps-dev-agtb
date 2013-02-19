@@ -92,7 +92,7 @@
     saveAndClose: function() {
         this.initiateSave(_.bind(function() {
             this.alerts.showSuccess();
-            app.drawer.close(true);
+            app.drawer.close(this.model);
         }, this));
     },
 
