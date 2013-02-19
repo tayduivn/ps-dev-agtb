@@ -86,5 +86,37 @@ describe("Module List", function() {
 
             getModuleStub.restore();
         });
+
+        it("Should be able to filter menu items by acl", function() {
+            sinon.stub(SugarTest.app.acl, 'hasAccess', function(action,module) {
+                if (module == 'noAccess' || action =='edit') {
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+            var meta = [
+                {
+                    label: 'blah',
+                    acl_action: 'edit',
+                    module:'test'
+                },
+                {
+                    label: 'blah',
+                    acl_action: 'edit',
+                    module:'noAccess'
+                },
+                {
+                    label: 'blah',
+                    acl_action: 'read',
+                    module:'testModule'
+                }
+            ];
+            var result = view.filterAvailableMenuActions(meta);
+            meta.shift();
+            meta.shift();
+            expect(result).toEqual(meta);
+            SugarTest.app.acl.hasAccess.restore();
+        });
     });
 });

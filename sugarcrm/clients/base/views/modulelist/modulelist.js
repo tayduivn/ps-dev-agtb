@@ -25,7 +25,6 @@
         app.events.on("app:sync:complete", this.render, this);
         app.events.on("app:view:change", this.render, this);
         app.user.on("change:module_list", this.render, this);
-
         app.view.View.prototype.initialize.call(this, options);
         var resizeFn = _.debounce(this.resize, 300);
         if (this.layout) {
@@ -134,7 +133,7 @@
     },
 
     completeMenuMeta: function(module_list) {
-        var actions, meta, returnList = [];
+        var actions, meta, returnList = [], self = this;
         _.each(module_list, function(value, key) {
             actions = {
                 label: value,
@@ -142,7 +141,7 @@
             };
             meta = app.metadata.getModule(key);
             if (meta && meta.menu && meta.menu.header) {
-                actions.menu = meta.menu.header.meta;
+                actions.menu = self.filterAvailableMenuActions(meta.menu.header.meta);
             } else {
                 actions.menu = [];
             }
@@ -150,6 +149,21 @@
 
         });
         return returnList;
+    },
+
+    /**
+     * Filters menu metadata by acls
+     * @param Array menuMeta
+     * @return {Array}
+     */
+    filterAvailableMenuActions: function(menuMeta){
+        var result = [];
+        _.each(menuMeta, function(menuItem){
+            if(app.acl.hasAccess(menuItem.acl_action, menuItem.acl_module)) {
+                result.push(menuItem);
+            }
+        });
+        return result;
     },
 
     /**
