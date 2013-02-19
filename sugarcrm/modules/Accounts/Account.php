@@ -269,9 +269,8 @@ class Account extends Company {
 
         function create_export_query(&$order_by, &$where, $relate_link_join='')
         {
-        	$custom_join = $this->custom_fields->getJOIN(true, true,$where);
-			if($custom_join)
-				$custom_join['join'] .= $relate_link_join;
+            $custom_join = $this->getCustomJoin(true, true, $where);
+            $custom_join['join'] .= $relate_link_join;
                          $query = "SELECT
                                 accounts.*,email_addresses.email_address email_address,
                                 accounts.name as account_name,
@@ -279,9 +278,7 @@ class Account extends Company {
 //BEGIN SUGARCRM flav=pro ONLY
 						 $query .= ", teams.name AS team_name ";
 //END SUGARCRM flav=pro ONLY
-						if($custom_join){
-   							$query .= $custom_join['select'];
- 						}
+            $query .= $custom_join['select'];
 						 $query .= " FROM accounts ";
 //BEGIN SUGARCRM flav=pro ONLY
 								// We need to confirm that the user is a member of the team of the item.
@@ -297,9 +294,7 @@ class Account extends Company {
 						$query .=  ' LEFT JOIN  email_addr_bean_rel on accounts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module=\'Accounts\' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 ';
 						$query .=  ' LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ' ;
 
-						if($custom_join){
-  							$query .= $custom_join['join'];
-						}
+            $query .= $custom_join['join'];
 
 		        $where_auto = "( accounts.deleted IS NULL OR accounts.deleted=0 )";
 
