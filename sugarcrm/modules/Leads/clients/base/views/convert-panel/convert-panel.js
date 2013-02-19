@@ -46,13 +46,23 @@
 
     /**
      * Resets the panels state to the default settings
+     * @param activeView
      */
-    resetPanelState : function() {
+    resetPanelState : function(activeView) {
         this.currentState =  _.extend({},this.defaultState);
+        activeView = activeView || this.defaultState.activeView;
+        this.currentState.activeView = activeView;
         this.duplicateView.validationStatus = this.STATUS_INIT;
         this.recordView.validationStatus = this.STATUS_DIRTY;
     },
 
+
+    resetViews : function() {
+        this.duplicateView.validationStatus = this.STATUS_INIT;
+        this.recordView.validationStatus = this.STATUS_DIRTY;
+        this.currentState.selectedName = '';
+        this.currentState.selectedId = null;
+    },
     /**
      * Sets the listeners for changes to the dependent modules models
      */
@@ -91,8 +101,11 @@
         this.duplicateView = app.view.createLayout({
             context: context,
             name: 'dupecheck',
+            layout: this.layout,
             module: context.module
         });
+
+        this.addToLayoutComponents(this.duplicateView);
 
         this.$('.' + this.DUPLICATE_VIEW + 'View').append(this.duplicateView.el);
         this.duplicateView.context.on('change:selection_model', this.selectDuplicate);
@@ -132,8 +145,10 @@
             context: context,
             name: 'create',
             module: context.module,
-            layout: this
+            layout: this.layout
         });
+
+        this.addToLayoutComponents(this.recordView);
 
         this.recordView.meta = this.removeFieldsFromMeta(this.recordView.meta, moduleMeta);
         this.$('.' +  this.RECORD_VIEW + 'View').append(this.recordView.el);
@@ -204,7 +219,8 @@
      * @param event
      */
     handleToggleClick: function(event) {
-         if (this.$(event.target).hasClass('show-duplicate')) {
+        this.resetViews();
+        if (this.$(event.target).hasClass('show-duplicate')) {
             this.toggleSubViews(this.DUPLICATE_VIEW);
         } else if (this.$(event.target).hasClass('show-record')) {
             this.toggleSubViews(this.RECORD_VIEW);
@@ -228,7 +244,7 @@
             }, this);
             if (doDupe) {
                 if (this.currentState.activeView === this.DUPLICATE_VIEW) {
-                    this.resetPanelState();
+                    this.resetPanelState(this.DUPLICATE_VIEW);
                 }
                 this.duplicateView.context.trigger("dupecheck:fetch:fire",  this.duplicateView.model);
             }
@@ -531,5 +547,14 @@
         } else {
             return this.recordView.model;
         }
+    },
+
+    /**
+     * Add component to layout's component list so it gets cleaned up properly on dispose
+     *
+     * @param component
+     */
+    addToLayoutComponents: function(component) {
+        this.layout._components.push(component);
     }
 })
