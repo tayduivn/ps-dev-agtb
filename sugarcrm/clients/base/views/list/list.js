@@ -91,14 +91,20 @@
         return viewMeta;
 
     },
-    filterList: function(filterDef, scope) {
+    filterList: function(filterDef, isNewFilter, scope) {
         var self = this;
 
         this.collection.fetch({
             filter: filterDef,
             success: function() {
-                var url = app.api.buildURL('Filters/' + self.options.module + '/used', "update");
-                app.api.call("update", url, {filters: [scope.currentFilter]}, {});
+                if(isNewFilter) {
+                    var method = "update";
+                    if(scope.currentFilter === "all_records") {
+                        method = "delete";
+                    }
+                    var url = app.api.buildURL('Filters/' + self.options.module + '/used');
+                    app.api.call(method, url, {filters: [scope.currentFilter]}, {});
+                }
             }
         });
     },

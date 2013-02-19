@@ -13,7 +13,7 @@ describe("Filter View", function() {
         layout = {trigger: function() {}, off: function() {}, on: function() {}};
         previousFilterStub = sinon.stub(app.view.views.FilterView.prototype, "getPreviouslyUsedFilter",
             function(){
-                this.currentFilter = "default";
+                this.currentFilter = "all_records";
                 //this.filterDataSetAndSearch();
             });
         collectionFetchStub = sinon.stub(Backbone.Collection.prototype, "fetch",
