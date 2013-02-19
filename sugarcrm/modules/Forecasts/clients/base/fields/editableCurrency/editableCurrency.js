@@ -24,10 +24,33 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
+/**
+ * Events Triggered
+ *
+ * field:editable:error
+ *      on: context
+ *      by: bindDataChange()
+ *      when: if this field is open with an error, and it receives a field:editable:open event
+ *            it will trigger this event to let other fields know not to open
+ *
+ * field:editable:open
+ *      on: context
+ *      by: onClick()
+ *      when: user clicks on the field to open it
+ *
+ * forecasts:tabKeyPressed
+ *      on: context
+ *      by: onKeyDown()
+ *      when: the tab key is pressed inside the field
+ */
 ({
     extendsFrom: 'CurrencyField',
-
     symbol: '',
+    inputSelector: 'span.edit input',
+    errorMessage: '',
+    isErrorState: false,
+    _canEdit: true,
 
     events: {
         'mouseenter span.editable': 'togglePencil',
@@ -38,23 +61,11 @@
         'keydown span.edit input': 'onKeyDown'
     },
 
-    inputSelector: 'span.edit input',
-
-    errorMessage: '',
-
-    isErrorState: false,
-
-    _canEdit: true,
-
-    initialize: function (options) {
-
+    initialize: function(options) {
         app.view.fields.CurrencyField.prototype.initialize.call(this, options);
-
         this.checkIfCanEdit();
-
         this.symbol = app.currency.getCurrencySymbol(this.model.get('currency_id'));
     },
-
 
     /**
      * Begin Override
@@ -64,23 +75,21 @@
      * todo-sfa: check that if these are moved when SFA-462 is done that it can work with the base field
      */
     _render: function() {
-
         // bypass the currencyField render and just go all the way up
         app.view.Field.prototype._render.call(this);
         return this;
     },
 
     format: function(value) {
-
-        if (this.tplName === 'edit') {
+        if(this.tplName === 'edit') {
             return app.utils.formatNumberLocale(value);
         }
 
         // TODO review this forecasts requirement and make it work with css defined on metadata
-        if (this.def.convertToBase &&
+        if(this.def.convertToBase &&
             this.def.showTransactionalAmount &&
             this.model.get(this.def.currency_field || 'currency_id') !== app.currency.getBaseCurrencyId()
-        ) {
+            ) {
 
             this.transactionValue = app.currency.formatAmountLocale(
                 this.model.get(this.name),
@@ -91,7 +100,7 @@
         var baseRate = this.model.get(this.def.base_rate_field || 'base_rate');
         var currencyId = this.model.get(this.def.currency_field || 'currency_id');
 
-        if (this.def.convertToBase) {
+        if(this.def.convertToBase) {
             value = app.currency.convertWithRate(value, baseRate);
             currencyId = app.currency.getBaseCurrencyId();
         }
@@ -100,8 +109,6 @@
     /**
      * End Override
      */
-
-
 
     /**
      * Utility Method to check if we can edit again.
@@ -120,7 +127,7 @@
      * the parent.
      *
      */
-    bindDomChange: function () {
+    bindDomChange: function() {
         // override parent, do nothing
     },
 
@@ -131,21 +138,20 @@
      * and any other open fields will immediately close. This keeps
      * other fields from opening while an errored field is active.
      */
-    bindDataChange: function () {
-        var self = this;
-        self.context.on('field:editable:open', function() {
+    bindDataChange: function() {
+        this.context.on('field:editable:open', function() {
             // another CTE field has been opened
-            if(self.isErrorState) {
+            if(this.isErrorState) {
                 // I am open with an error, send the message
-                self.context.trigger('field:editable:error', self.cid);
+                this.context.trigger('field:editable:error', this.cid);
             }
-        }, self);
-        self.context.on('field:editable:error', function(cid) {
-            if (!_.isEqual(cid, self.cid) && this.options.viewName == 'edit') {
-                // some other field is open with an error, close myself
-                self.renderDetail();
+        }, this);
+        this.context.on('field:editable:error', function(cid) {
+            if(!_.isEqual(cid, this.cid) && this.options.viewName == 'edit') {
+                // some other field is open with an error, close mythis
+                this.renderDetail();
             }
-        }, self);
+        }, this);
     },
 
     /**
@@ -154,42 +160,41 @@
      * @param {Object} evt
      * @return {Boolean}
      */
-    handleEvent: function (evt) {
+    handleEvent: function(evt) {
         if(!_.isObject(evt)
             || this.options.viewName != 'edit'
             || !this.isEditable()
             || !(this.model instanceof Backbone.Model)) {
             return false;
         }
-        var self = this;
         var el = this.$el.find(this.fieldTag);
         // test if value changed
-        if(!this.compareValuesLocale(self.$el.find(self.inputSelector).val(), this.model.get(this.name))) {
-            var value = self.parsePercentage(self.$el.find(self.inputSelector).val());
-            if (self.isValid(value)) {
-                self.model.set(self.name, self.unformat(value));
-                self.renderDetail();
+        if(!this.compareValuesLocale(this.$el.find(this.inputSelector).val(), this.model.get(this.name))) {
+            var value = this.parsePercentage(this.$el.find(this.inputSelector).val());
+            if(this.isValid(value)) {
+                this.model.set(this.name, this.unformat(value));
+                this.renderDetail();
             } else {
                 // render error
-                self.isErrorState = true;
+                this.isErrorState = true;
                 var hb = Handlebars.compile("{{str_format key module args}}"),
-                    args = [app.lang.get(self.def.label,'Forecasts')];
+                    args = [app.lang.get(this.def.label, 'Forecasts')];
 
-                self.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID', 'module' : 'Forecasts', 'args' : args});
+                this.errorMessage = hb({'key': 'LBL_EDITABLE_INVALID', 'module': 'Forecasts', 'args': args});
 
-                self.showErrors();
-                self.$el.find(self.inputSelector).focus().select();
+                this.showErrors();
+                this.$el.find(this.inputSelector).focus().select();
                 // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
                 // This prevents change events from being fired appropriately on IE9
-                if ($.browser.msie && el.is("input")) {
-                    el.on("input", function () {
+                if($.browser.msie && el.is("input")) {
+                    el.on("input", function() {
                         // Set focus on input element receiving user input
                         el.focus();
                     });
                 }
             }
         } else {
-            self.renderDetail();
+            this.renderDetail();
         }
         return true;
     },
@@ -197,7 +202,7 @@
     /**
      * renders the detail view
      */
-    renderDetail: function () {
+    renderDetail: function() {
         this.isErrorState = false;
         this.options.viewName = 'detail';
         this.render();
@@ -208,9 +213,11 @@
      *
      * @param evt
      */
-    togglePencil: function (evt) {
+    togglePencil: function(evt) {
         evt.preventDefault();
-        if (!this.isEditable()) return;
+        if(!this.isEditable()) {
+            return;
+        }
         if(evt.type == 'mouseenter') {
             this.$el.find('.edit-icon').removeClass('hide');
             this.$el.find('.edit-icon').addClass('show');
@@ -224,10 +231,11 @@
      * Switch the view to the Edit view if the field is editable and it's clicked on
      * @param evt
      */
-    onClick : function(evt) {
+    onClick: function(evt) {
         evt.stopPropagation();
-        if (!this.isEditable()) return;
-
+        if(!this.isEditable()) {
+            return;
+        }
         this.options.viewName = 'edit';
         this.render();
 
@@ -251,12 +259,12 @@
      *
      * @param evt
      */
-    onKeyUp: function (evt) {
+    onKeyUp: function(evt) {
         evt.preventDefault();
-        if (evt.which == 27) {
+        if(evt.which == 27) {
             // esc key, cancel edits
             this.cancelEdits(evt);
-        } else if (evt.which == 13) {
+        } else if(evt.which == 13) {
             // enter or tab, handle event
             this.handleEvent(evt);
         }
@@ -290,7 +298,7 @@
      *
      * @param evt
      */
-    onBlur: function (evt) {
+    onBlur: function(evt) {
         evt.preventDefault();
         this.handleEvent(evt);
     },
@@ -326,18 +334,17 @@
      * @param value
      * @return {Boolean}
      */
-    isValid: function (value) {
-
+    isValid: function(value) {
         // trim off any whitespace
         value = value.toString().trim();
 
         var ds = app.utils.regexEscape(app.user.getPreference('decimal_separator')) || '.',
             gs = app.utils.regexEscape(app.user.getPreference('number_grouping_separator')) || ',',
-            // matches a valid positive decimal number
-            reg = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
+        // matches a valid positive decimal number
+            reg = new RegExp("^\\+?(\\d+|\\d{1,3}(" + gs + "\\d{3})*)?(" + ds + "\\d+)?\\%?$");
 
         // always make sure that we have a string here, since match only works on strings
-        if (value.length == 0 || _.isNull(value.match(reg))) {
+        if(value.length == 0 || _.isNull(value.match(reg))) {
             return false;
         }
 
@@ -350,7 +357,7 @@
      *
      * @return {boolean}
      */
-    isEditable: function () {
+    isEditable: function() {
         return this._canEdit;
     },
 
@@ -360,16 +367,16 @@
      * @param value
      * @return {*}
      */
-    parsePercentage : function(value) {
-        var orig = this.model.get(this.name);
-        var parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
+    parsePercentage: function(value) {
+        var orig = this.model.get(this.name),
+            parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
         if(parts) {
             // use original number to apply calculations
-            value = app.math.mul(app.math.div(parts[2],100),orig);
+            value = app.math.mul(app.math.div(parts[2], 100), orig);
             if(parts[1] == '+') {
-                value = app.math.add(orig,value);
+                value = app.math.add(orig, value);
             } else if(parts[1] == '-') {
-                value = app.math.sub(orig,value);
+                value = app.math.sub(orig, value);
             }
             value = app.math.round(value);
         }
@@ -379,16 +386,14 @@
     /**
      * Method to show the error message
      */
-    showErrors : function() {
+    showErrors: function() {
         // attach error styles
-        var self = this;
         this.$el.find('.error-message').html(this.errorMessage);
         this.$el.find('.control-group').addClass('error');
         this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
         // make error message button cancel edits
         this.$el.find('.btn.btn-danger').on("click", function(evt) {
-            self.cancelEdits.call(self, evt);
+            this.cancelEdits.call(this, evt);
         });
     }
-
 })

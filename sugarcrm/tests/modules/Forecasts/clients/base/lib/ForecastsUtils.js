@@ -19,15 +19,22 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("Forecasts Utils", function(){
+describe("Forecasts Utils", function() {
 
-    var app, hbt_helper;
+    var app, getModuleStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-        SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) { return eval(d); });
-        SugarTest.loadFile("../modules/Forecasts/clients/base/helper","hbt-helpers", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) {
+            return eval(d);
+        });
+        SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) {
+            return eval(d);
+        });
+        SugarTest.loadFile("../modules/Forecasts/clients/base/helper", "hbt-helpers", "js", function(d) {
+            return eval(d);
+        });
+
     });
 
     afterEach(function() {
@@ -43,17 +50,28 @@ describe("Forecasts Utils", function(){
             // reset all args to false
             isFirstCommit = false;
             likelyArgs = {
-                changed : false,
-                show : false
+                changed: false,
+                show: false
             };
             bestArgs = {
-                changed : false,
-                show : false
+                changed: false,
+                show: false
             };
             worstArgs = {
-                changed : false,
-                show : false
+                changed: false,
+                show: false
             };
+            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+                return {
+                    show_worksheet_likely: 1,
+                    show_worksheet_best: 1,
+                    show_worksheet_worst: 0
+                };
+            });
+        });
+
+        afterEach(function() {
+            getModuleStub.restore();
         });
 
         // Testing just the number of args returned
@@ -96,7 +114,7 @@ describe("Forecasts Utils", function(){
                 args = app.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
                 expect(args[0] == 'LBL_COMMITTED_HISTORY_UPDATED_FORECAST').toBeTruthy();
             });
-        })
+        });
 
         // now that args count returned has been tested, and the first returned arg SETUP vs UPDATED has passed
         // only testing likely/best/worst strings
@@ -188,31 +206,26 @@ describe("Forecasts Utils", function(){
     });
 
     describe("test createHistoryLog function", function() {
-        var orgConfig;
         beforeEach(function() {
-            orgConfig = fixtures.metadata.modules.Forecasts.config;
-            fixtures.metadata.modules.Forecasts.config.show_worksheet_likely = false;
-            fixtures.metadata.modules.Forecasts.config.show_worksheet_best  = false;
-            fixtures.metadata.modules.Forecasts.config.show_worksheet_worst = false;
             newestModel = new Backbone.Model();
             oldestModel = new Backbone.Model();
             // set the exact same default models so change is not a factor in these tests
             newestModel.set({
-                best_case : 1000,
-                likely_case : 900,
-                worst_case : 700,
-                date_entered : '2012-07-12 18:37:36'
+                best_case: 1000,
+                likely_case: 900,
+                worst_case: 700,
+                date_entered: '2012-07-12 18:37:36'
             });
             oldestModel.set({
-                best_case : 1000,
-                likely_case : 900,
-                worst_case : 700,
-                date_entered : '2012-07-12 18:37:36'
+                best_case: 1000,
+                likely_case: 900,
+                worst_case: 700,
+                date_entered: '2012-07-12 18:37:36'
             });
         });
 
-        afterEach(function(){
-            fixtures.metadata.modules.Forecasts.config = orgConfig;
+        afterEach(function() {
+            getModuleStub.restore();
             newestModel = null;
             oldestModel = null;
         });
@@ -220,21 +233,36 @@ describe("Forecasts Utils", function(){
         // These tests are only testing createHistoryLog and the returned lang string which
         // shows how many columns should be shown based on config params
         it("The one column lang string should be used", function() {
-            fixtures.metadata.modules.Forecasts.config.show_worksheet_likely = true;
-            result = app.utils.createHistoryLog(oldestModel,newestModel);
+            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+                return {
+                    show_worksheet_likely: 1,
+                    show_worksheet_best: 0,
+                    show_worksheet_worst: 0
+                };
+            });
+            result = app.utils.createHistoryLog(oldestModel, newestModel);
             expect(result.text == 'LBL_COMMITTED_HISTORY_1_SHOWN').toBeTruthy();
         });
         it("The two column lang string should be used", function() {
-            fixtures.metadata.modules.Forecasts.config.show_worksheet_likely = true;
-            fixtures.metadata.modules.Forecasts.config.show_worksheet_best = true;
-            result = app.utils.createHistoryLog(oldestModel,newestModel);
+            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+                return {
+                    show_worksheet_likely: 1,
+                    show_worksheet_best: 1,
+                    show_worksheet_worst: 0
+                };
+            });
+            result = app.utils.createHistoryLog(oldestModel, newestModel);
             expect(result.text == 'LBL_COMMITTED_HISTORY_2_SHOWN').toBeTruthy();
         });
         it("The three column lang string should be used", function() {
-            fixtures.metadata.modules.Forecasts.config.show_worksheet_likely = true;
-            fixtures.metadata.modules.Forecasts.config.show_worksheet_best = true;
-            fixtures.metadata.modules.Forecasts.config.show_worksheet_worst = true;
-            result = app.utils.createHistoryLog(oldestModel,newestModel);
+            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+                return {
+                    show_worksheet_likely: 1,
+                    show_worksheet_best: 1,
+                    show_worksheet_worst: 1
+                };
+            });
+            result = app.utils.createHistoryLog(oldestModel, newestModel);
             expect(result.text == 'LBL_COMMITTED_HISTORY_3_SHOWN').toBeTruthy();
         });
     });
@@ -265,20 +293,20 @@ describe("Forecasts Utils", function(){
             oldestModel = new Backbone.Model();
             // set the exact same default models
             newestModel.set({
-                best_case : 1000
+                best_case: 1000
             });
             oldestModel.set({
-                best_case : 1000
+                best_case: 1000
             });
         });
 
         it("newestModel being higher should give a positive difference", function() {
-            newestModel.set({best_case : 2000});
+            newestModel.set({best_case: 2000});
             result = app.utils.getDifference(oldestModel, newestModel, 'best_case');
             expect(result).toBe(1000);
         });
         it("newestModel being lower should give a negative difference", function() {
-            oldestModel.set({best_case : 2000});
+            oldestModel.set({best_case: 2000});
             result = app.utils.getDifference(oldestModel, newestModel, 'best_case');
             expect(result).toBe(-1000);
         });
@@ -322,10 +350,10 @@ describe("Forecasts Utils", function(){
             arrow = '&nbsp;<span class="icon-arrow-up font-green"></span>';
             diff = 1000;
             model = new (Backbone.Model.extend({
-                defaults : {
-                    likely_case : 250,
-                    best_case : 500,
-                    worst_case : 100
+                defaults: {
+                    likely_case: 250,
+                    best_case: 500,
+                    worst_case: 100
                 }
             }));
             attrStr = 'likely_case';

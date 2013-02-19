@@ -52,7 +52,7 @@
     },
     handleSync: function(method, model, options, error) {
         if (this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
-            this.previousModelState = JSON.parse(JSON.stringify(model.attributes));
+            this.previousModelState = JSON.parse(JSON.stringify(model.attributes || {}));
         }
     },
 
