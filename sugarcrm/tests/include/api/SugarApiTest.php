@@ -38,12 +38,6 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        foreach($this->createdBeans as $bean)
-        {
-            $bean->retrieve($bean->id);
-            $bean->mark_deleted($bean->id);
-        }
-        unset($_SESSION['ACL']);
         SugarTestHelper::tearDown();
     }
     /**
