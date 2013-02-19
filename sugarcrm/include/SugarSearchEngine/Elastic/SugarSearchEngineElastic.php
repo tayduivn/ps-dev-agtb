@@ -886,8 +886,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         catch(Exception $e)
         {
-            $this->reportException("Unable to create index", $e);
-            $this->checkException($e);
+            // ignore the IndexAlreadyExistsException exception
+            if (strpos($e->getMessage(), 'IndexAlreadyExistsException') === false) {
+                $this->reportException("Unable to create index", $e);
+                $this->checkException($e);
+            }
         }
 
     }
