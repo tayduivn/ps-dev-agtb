@@ -151,6 +151,39 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
         //get data via forecastWorksheetsGet, no need to bother with filter setup, get will do that
         $worksheetData = $this->ForecastManagerWorksheetsGet($api, $args);
 
+        //get all users in direct hierarchy
+        $usersList = $this->getDirectHierarchyUsers($api, $args);
+        $assignedUser = BeanFactory::getBean("Users", $args['user_id']);
+
+        //compare users and worksheet data to fill in gaps
+        foreach($usersList['records'] as $user) {
+            $userExists = false;
+            foreach($worksheetData['records'] as $worksheet) {
+                if($worksheet['user_id'] == $user['id']) {
+                    $userExists = true;
+                    break;
+                }
+            }
+            if(!$userExists) {
+                $blankWorksheet = BeanFactory::newBean('ForecastManagerWorksheets');
+                $blankWorksheet->assigned_user_id = $args['user_id'];
+                $blankWorksheet->user_id = $user['id'];
+                $blankWorksheet->timeperiod_id = $args['timeperiod_id'];
+                $blankWorksheet->assigned_user_name = $assignedUser->user_name;
+                $blankWorksheet->quota = 0;
+                $blankWorksheet->likely_case = 0;
+                $blankWorksheet->likely_case_adjusted = 0;
+                $blankWorksheet->best_case = 0;
+                $blankWorksheet->best_case_adjusted = 0;
+                $blankWorksheet->worst_case = 0;
+                $blankWorksheet->worst_case_adjusted = 0;
+                $blankWorksheet->currency_id = '-99';
+                $blankWorksheet->id = '';
+                $blankWorksheet->name = '';
+                array_push($worksheetData['records'], $this->formatBean($api, $args, $blankWorksheet));
+            }
+        }
+
         // default to the Individual Code
         $file = 'include/SugarForecasting/Chart/Manager.php';
         $klass = 'SugarForecasting_Chart_Manager';
@@ -167,6 +200,35 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
         $chartData = $obj->process();
 
         return $chartData;
+    }
+
+    protected function getDirectHierarchyUsers(ServiceBase $api, array $args) {
+        // we need to check if the $api->user is a manager
+        // if they are not a manager, throw back a 403 (Not Authorized) error
+        if (!User::isManager($api->user->id)) {
+            throw new SugarApiExceptionNotAuthorized();
+        }
+
+        $args['filter'] = array();
+
+        // if we did not find a user in the args array, set it to the current user's id
+        if (!isset($args['user_id'])) {
+           $args['user_id'] = $api->user->id;
+        } else {
+            // make sure that the passed in user is a valid user
+            /* @var $user User */
+            // we use retrieveBean so it will return NULL and not an empty bean if the $args['user_id'] is invalid
+            $user = BeanFactory::retrieveBean('Users', $args['user_id']);
+            if (is_null($user)) {
+                throw new SugarApiExceptionInvalidParameter('Provided User is not valid');
+            }
+        }
+
+        // set the reports to id
+        array_push($args['filter'], array('$or' => array(array('reports_to_id' => $args['user_id']),array('id' => $args['user_id']))));
+
+        $args['module'] = 'Users';
+        return parent::filterList($api, $args);
     }
 
     /**
