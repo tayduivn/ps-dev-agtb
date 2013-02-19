@@ -114,9 +114,6 @@ class RepairAndClear
             case 'clearPDFFontCache':
                 $this->clearPDFFontCache();
                 break;
-            case 'resetForecasting':
-                $this->resetForecasting();
-                break;
             //END SUGARCRM flav=pro ONLY
             case 'clearAll':
                 $this->clearTpls();
@@ -559,17 +556,4 @@ class RepairAndClear
 			next($beanList);
 		}
 	}
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    /**
-     * This is a private function to allow forecasts config settings to be reset
-     *
-     */
-    private function resetForecasting() {
-        $db = DBManagerFactory::getInstance();
-        $db->query("UPDATE config SET value = 0 WHERE name = 'is_setup'");
-        $db->query("UPDATE config SET value = 0 WHERE name = 'has_commits'");
-    }
-    //END SUGARCRM flav=pro ONLY
-
 }
