@@ -30,6 +30,9 @@
 class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @var Product
+     */
     private $product;
     public static function setUpBeforeClass()
     {

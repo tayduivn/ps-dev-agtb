@@ -54,82 +54,66 @@
     /**
      * The url for the REST endpoint
      */
-    url : 'rest/v10/Forecasts/committed',
+    url: 'rest/v10/Forecasts/committed',
 
     /**
      * The class selector representing the element which contains the view output
      */
-    viewSelector : '.forecastsCommitted',
-
-    /**
-     * Stores the Backbone collection of Forecast models
-     */
-    collection : {},
+    viewSelector: '.forecastsCommitted',
 
     /**
      * Stores the best case to display in the view
      */
-    bestCase : 0,
+    bestCase: 0,
 
     /**
      * Stores the likely case to display in the view
      */
-    likelyCase : 0,
+    likelyCase: 0,
 
     /**
      * Stores the likely case to display in the view
      */
-    worstCase : 0,
-
-
-    /**
-     * Used to query for the user_id value in Forecasts
-     */
-    userId : '',
+    worstCase: 0,
 
     /**
      * Used to query for the timeperiod_id value in Forecasts
      */
-    timePeriodId : '',
+    timePeriod: '',
 
     /**
      * Used to query for the forecast_type value in Forecasts
      */
-    forecastType : 'Direct',
-
-    /**
-     * Stores the historical log of the Forecast entries
-     */
-    historyLog : [],
+    forecastType: 'Direct',
 
     /**
      * Stores the Forecast totals to use when creating a new entry
      */
-    totals : null,
+    totals: null,
 
     /**
      * Stores the previous totals to display in the view
      */
-    previousTotals : null,
+    previousTotals: null,
 
     /**
      * Template to use when updating the bestCase on the committed bar
      */
-    bestTemplate : _.template('<%= bestCase %>&nbsp;<span class="icon-sm committed_arrow<%= bestCaseCls %>"></span>'),
+    bestTemplate: _.template('<%= bestCase %>&nbsp;<span class="icon-sm committed_arrow<%= bestCaseCls %>"></span>'),
 
     /**
      * Template to use when updating the likelyCase on the committed bar
      */
-    likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
+    likelyTemplate: _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
 
     /**
      * Template to use when updating the worstCase on the committed bar
      */
-    worstTemplate : _.template('<%= worstCase %>&nbsp;<span class="icon-sm committed_arrow<%= worstCaseCls %>"></span>'),
+    worstTemplate: _.template('<%= worstCase %>&nbsp;<span class="icon-sm committed_arrow<%= worstCaseCls %>"></span>'),
 
-    savedTotal : null,
+    savedTotal: null,
 
-    runningFetch : false,
+    runningFetch: false,
 
     /**
      * the timeperiod field metadata that gets used at render time
@@ -151,32 +135,60 @@
      */
     show_worst: false,
 
-    initialize : function(options) {
+    /**
+     * Does the layout have the forecastCommitLog View?
+     */
+    layoutHasForecastCommitLog: true,
+
+    initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-
-        this.collection = this.context.committed;
-
-        this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
-        this.timePeriodId = app.defaultSelections.timeperiod_id.id;
-        this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
 
         this.bestCase = 0;
         this.likelyCase = 0;
+        this.worstCase = 0;
 
-        this.collection.url = this.createUrl();
+        this.show_likely = app.metadata.getModule('Forecasts', 'config').show_worksheet_likely;
+        this.show_best = app.metadata.getModule('Forecasts', 'config').show_worksheet_best;
+        this.show_worst = app.metadata.getModule('Forecasts', 'config').show_worksheet_worst;
 
-        this.show_likely = options.context.config.get('show_worksheet_likely');
-        this.show_best = options.context.config.get('show_worksheet_best');
-        this.show_worst = options.context.config.get('show_worksheet_worst');
+        this.selectedUser = {id: app.user.get('id'), "isManager": app.user.get('isManager'), "showOpps": false};
+
+        if(_.isUndefined(this.layout.getComponent('forecastsCommitLog'))) {
+            this.layoutHasForecastCommitLog = false;
+            this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
+            this.timePeriod = app.defaultSelections.timeperiod_id.id;
+
+            // we have to override sync right now as there is no way to run the filter by default
+            this.collection.sync = _.bind(function(method, model, options) {
+                options.success = _.bind(function(resp, status, xhr) {
+                    this.collection.reset(resp.records);
+                }, this);
+                // we need to force a post, so get the url object and put it in
+                var url = this.createURL();
+                app.api.call("create", url.url, url.filters, options);
+            }, this);
+        }
     },
+    /**
+     *
+     * @return {object}
+     */
+    createURL: function() {
+        // we need to default the type to products
+        var args_filter = [];
+        if(this.timePeriod) {
+            args_filter.push({"timeperiod_id": this.timePeriod});
+        }
 
-    createUrl : function() {
-        var urlParams = {
-            user_id: this.selectedUser.id,
-            timeperiod_id : this.timePeriodId,
-            forecast_type : this.forecastType
-        };
-        return app.api.buildURL('Forecasts', 'committed', '', urlParams);
+        if(this.selectedUser) {
+            args_filter.push({"user_id": this.selectedUser.id});
+        }
+
+        args_filter.push({"forecast_type": this.forecastType});
+
+        var url = app.api.buildURL('Forecasts', 'filter');
+
+        return {"url": url, "filters": {"filter": args_filter}};
     },
 
     updateCommitted: function() {
@@ -188,21 +200,22 @@
         this.bestCaseCls = '';
         this.worstCaseCls = '';
         this.totals = null;
-        this.collection.url = this.createUrl();
-        this.collection.fetch();
+
+        if(!this.layoutHasForecastCommitLog) {
+            this.context.resetLoadFlag();
+            this.loadData();
+        }
     },
 
     /**
      * Clean up any left over bound data to our context
      */
-    unbindData : function() {
+    unbindData: function() {
         if(this.context) this.context.off(null, null, this);
         app.view.View.prototype.unbindData.call(this);
     },
 
     bindDataChange: function() {
-
-        var self = this;
 
         this.collection.on("reset", function() {
             this.runningFetch = false;
@@ -217,27 +230,27 @@
 
         if(this.context) {
             this.context.on("change:selectedUser", function(context, user) {
-                self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
-                self.selectedUser = user;              
-                self.updateCommitted();
+                this.forecastType = user.showOpps ? 'Direct' : 'Rollup';
+                this.selectedUser = user;
+                this.updateCommitted();
             }, this);
             this.context.on("change:selectedTimePeriod", function(context, timePeriod) {
-                self.timePeriodId = timePeriod.id;
-                self.updateCommitted();
+                this.timePeriod = timePeriod.id;
+                this.updateCommitted();
             }, this);
             this.context.on("change:updatedTotals", function(context, totals) {
-                if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
+                if(this.selectedUser.isManager == true && this.selectedUser.showOpps == false) {
                     return;
                 }
-                self.updateTotals(totals);
+                this.updateTotals(totals);
             }, this);
-            this.context.on("change:updatedManagerTotals", function(context, totals) {
-                if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
-                    self.updateTotals(totals);
+            this.context.on("forecasts:worksheetManager:updateTotals", function(totals) {
+                if(this.selectedUser.isManager == true && this.selectedUser.showOpps == false) {
+                    this.updateTotals(totals);
                 }
             }, this);
             this.context.on("forecasts:committed:commit", function(context, flag) {
-                    self.commitForecast();
+                this.commitForecast();
             }, this);
         }
     },
@@ -247,69 +260,70 @@
      *
      * @param totals
      */
-    updateTotals : function (totals) {
-        var self = this;  
-         
+    updateTotals: function(totals) {
+        // we need to clone this to not affect other views
+        var _totals = _.clone(totals);
+
+
         // these fields don't matter when it comes to tracking these values so just 0 them out.
         // we don't care about this field
-        if(!_.isUndefined(totals.quota)) {
-            totals.quota = 0;
+        if(!_.isUndefined(_totals.quota)) {
+            _totals.quota = 0;
         }
 
-        if(!_.isEqual(self.totals, totals)) {
+        if(!_.isEqual(this.totals, _totals)) {
             var best = {};
             var likely = {};
             var worst = {};
             // get the last committed value
             var previousCommit = null;
             if(!_.isEmpty(this.collection.models)) {
-               previousCommit = _.first(this.collection.models);
+                previousCommit = _.first(this.collection.models);
             } else {
-               previousCommit = new Backbone.Model({
-                    best_case : 0,
-                    likely_case : 0,
-                    worst_case : 0
-               });
+                previousCommit = new Backbone.Model({
+                    best_case: 0,
+                    likely_case: 0,
+                    worst_case: 0
+                });
             }
 
             if(this.runningFetch == true) {
-               self.savedTotal = totals;
-               return;
-            } else if (!_.isEmpty(self.savedTotal)) {
+                this.savedTotal = _totals;
+                return;
+            } else if(!_.isEmpty(this.savedTotal)) {
                 //This line is needed since we need to clean up savedTotals if it has something and you are processing a set of totals.
                 //The reason for this is that the method gets called again once the reset is done on the collection if one is ran.
-                self.savedTotal = null;
+                this.savedTotal = null;
             }
 
-            if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
+            if(this.selectedUser.isManager == true && this.selectedUser.showOpps === false) {
                 // management view
-                best.bestCaseCls = this.getColorArrow(totals.best_adjusted, previousCommit.get('best_case'));
-                best.bestCase = app.currency.formatAmountLocale(totals.best_adjusted);
-                likely.likelyCaseCls = this.getColorArrow(totals.likely_adjusted, previousCommit.get('likely_case'));
-                likely.likelyCase = app.currency.formatAmountLocale(totals.likely_adjusted);
-                worst.worstCaseCls = this.getColorArrow(totals.worst_adjusted, previousCommit.get('worst_case'));
-                worst.worstCase = app.currency.formatAmountLocale(totals.worst_adjusted);
+                best.bestCaseCls = this.getColorArrow(_totals.best_adjusted, previousCommit.get('best_case'));
+                best.bestCase = app.currency.formatAmountLocale(_totals.best_adjusted);
+                likely.likelyCaseCls = this.getColorArrow(_totals.likely_adjusted, previousCommit.get('likely_case'));
+                likely.likelyCase = app.currency.formatAmountLocale(_totals.likely_adjusted);
+                worst.worstCaseCls = this.getColorArrow(_totals.worst_adjusted, previousCommit.get('worst_case'));
+                worst.worstCase = app.currency.formatAmountLocale(_totals.worst_adjusted);
             } else {
                 // sales rep view
-                best.bestCaseCls = this.getColorArrow(totals.best_case, previousCommit.get('best_case'));
-                best.bestCase = app.currency.formatAmountLocale(totals.best_case);
-                likely.likelyCaseCls = this.getColorArrow(totals.amount, previousCommit.get('likely_case'));
-                likely.likelyCase = app.currency.formatAmountLocale(totals.amount);
-                worst.worstCaseCls = this.getColorArrow(totals.worst_case, previousCommit.get('worst_case'));
-                worst.worstCase = app.currency.formatAmountLocale(totals.worst_case);
-            }
-            
-            if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls))
-            {
-            	self.context.trigger("forecasts:commitButtons:enabled");
+                best.bestCaseCls = this.getColorArrow(_totals.best_case, previousCommit.get('best_case'));
+                best.bestCase = app.currency.formatAmountLocale(_totals.best_case);
+                likely.likelyCaseCls = this.getColorArrow(_totals.amount, previousCommit.get('likely_case'));
+                likely.likelyCase = app.currency.formatAmountLocale(_totals.amount);
+                worst.worstCaseCls = this.getColorArrow(_totals.worst_case, previousCommit.get('worst_case'));
+                worst.worstCase = app.currency.formatAmountLocale(_totals.worst_case);
             }
 
-            self.bestCaseCls = best.bestCaseCls;
-            self.bestCase = best.bestCase;
-            self.likelyCaseCls = likely.likelyCaseCls;
-            self.likelyCase = likely.likelyCase;
-            self.worstCaseCls = worst.worstCaseCls;
-            self.worstCase = worst.worstCase;
+            if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls) || !_.isEmpty(worst.worstCaseCls)) {
+                this.context.trigger("forecasts:commitButtons:enabled");
+            }
+
+            this.bestCaseCls = best.bestCaseCls;
+            this.bestCase = best.bestCase;
+            this.likelyCaseCls = likely.likelyCaseCls;
+            this.likelyCase = likely.likelyCase;
+            this.worstCaseCls = worst.worstCaseCls;
+            this.worstCase = worst.worstCase;
 
             $('h2#best').html(this.bestTemplate(best));
             $('h2#likely').html(this.likelyTemplate(likely));
@@ -317,7 +331,7 @@
 
         }
 
-        self.totals = totals;
+        this.totals = _totals;
     },
 
     /**
@@ -327,12 +341,9 @@
      * @param currentValue
      * @return {String}
      */
-    getColorArrow: function(newValue, currentValue)
-    {
+    getColorArrow: function(newValue, currentValue) {
         var cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
-        cls = (newValue == currentValue) ? '' : cls;
-
-        return cls
+        return (newValue == currentValue) ? '' : cls;
     },
 
     /**
@@ -341,50 +352,49 @@
      *
      */
     commitForecast: function() {
-        var self = this;
-        
-        self.context.trigger("forecasts:commitButtons:disabled");
+
+        this.context.trigger("forecasts:commitButtons:disabled");
 
         //If the totals have not been set, don't save
-        if(!self.totals) {
+        if(!this.totals) {
             return;
         }
 
+
         var forecast = new this.collection.model();
-        forecast.url = self.url;
-        
+        forecast.url = this.url;
+
         var forecastData = {};
-       
-        if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
-            forecastData.best_case = self.totals.best_adjusted;
-            forecastData.likely_case = self.totals.likely_adjusted;
-            forecastData.worst_case = self.totals.worst_adjusted;
+
+        if(this.selectedUser.isManager == true && this.selectedUser.showOpps == false) {
+            forecastData.best_case = this.totals.best_adjusted;
+            forecastData.likely_case = this.totals.likely_adjusted;
+            forecastData.worst_case = this.totals.worst_adjusted;
         } else {
-            forecastData.best_case = self.totals.best_case;
-            forecastData.likely_case = self.totals.amount;
-            forecastData.worst_case = self.totals.worst_case;
+            forecastData.best_case = this.totals.best_case;
+            forecastData.likely_case = this.totals.amount;
+            forecastData.worst_case = this.totals.worst_case;
         }
 
         forecastData.currency_id = -99; //Always default to the base currency
         forecastData.base_rate = 1; //Base rate is always 1
-        forecastData.timeperiod_id = self.timePeriodId;
-        forecastData.forecast_type = self.forecastType;
-        forecastData.amount = self.totals.amount;
-        forecastData.opp_count = self.totals.included_opp_count;
+        forecastData.timeperiod_id = this.timePeriod;
+        forecastData.forecast_type = this.forecastType;
+        forecastData.amount = this.totals.amount;
+        forecastData.opp_count = this.totals.included_opp_count;
 
         // apply data to model then save
         forecast.set(forecastData);
-        forecast.save({}, {success:function(){
-        	self.context.trigger("forecasts:committed:saved");
-        }});
+        forecast.save({}, { success: _.bind(function() {
+            this.context.trigger("forecasts:committed:saved");
+        }, this), silent: true});
 
         // clear out the arrows
-        self.likelyCaseCls = '';
-        self.bestCaseCls = '';
-        self.worstCaseCls = '';
+        this.likelyCaseCls = '';
+        this.bestCaseCls = '';
+        this.worstCaseCls = '';
 
-        self.previous = self.totals;
-        self.collection.url = self.url;
-        self.collection.unshift(forecast);
+        this.previous = this.totals;
+        this.collection.unshift(forecast);
     }
 })

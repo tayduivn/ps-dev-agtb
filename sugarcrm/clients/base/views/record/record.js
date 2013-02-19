@@ -52,7 +52,7 @@
     },
     handleSync: function(method, model, options, error) {
         if (this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
-            this.previousModelState = JSON.parse(JSON.stringify(model.attributes));
+            this.previousModelState = JSON.parse(JSON.stringify(model.attributes || {}));
         }
     },
 
@@ -432,6 +432,8 @@
 
         // Set Editing mode to on.
         this.inlineEditMode = true;
+
+        this.setButtonStates(this.STATE.EDIT);
 
         // TODO: Refactor this for fields to support their own focus handling in future.
         // Add your own field type handling for focus / editing here.

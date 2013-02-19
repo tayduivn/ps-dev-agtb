@@ -76,11 +76,13 @@
         this.label = _.first(this.meta.panels).label;
 
         // sets this.<array_item>_field to the corresponding field metadata, which gets used by the template to render these fields later.
-        _.each(['forecast_ranges', 'buckets_dom', 'category_ranges'], function(item){
+        _.each(['forecast_ranges', 'buckets_dom', 'category_ranges'], function(item) {
             var fields = _.first(this.meta.panels).fields;
 
             this[item + '_field'] = function(fieldName, fieldMeta) {
-                return _.find(fieldMeta, function(field) { return field.name == this; }, fieldName);
+                return _.find(fieldMeta, function(field) {
+                    return field.name == this;
+                }, fieldName);
             }(item, fields);
 
         }, this);
@@ -97,8 +99,8 @@
     _render: function() {
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         // This will be set to true if the forecasts ranges setup should be disabled
-        this.disableRanges = this.context.config.get('has_commits');
-        this.selection = this.context.config.get('forecast_ranges');
+        this.disableRanges = app.metadata.getModule('Forecasts', 'config').has_commits;
+        this.selection = app.metadata.getModule('Forecasts', 'config').forecast_ranges;
 
         app.view.View.prototype._render.call(this);
 
@@ -112,14 +114,14 @@
      * correct dropdown list based on that selection, as well as opens up the element to show the range setting sliders
      * @private
      */
-    _addForecastRangesSelectionHandler: function (){
+    _addForecastRangesSelectionHandler: function() {
         // finds all radiobuttons with this name
         var elements = this.$el.find(':radio[name="' + this.forecast_ranges_field.name + '"]');
 
         // apply the change handler to each of the ranges radio button elements.
         _.each(elements, function(el) {
             $(el).change({
-                view:this
+                view: this
             }, this.selectionHandler);
             // of the elements find the one that is checked
             if($(el).prop('checked')) {
@@ -148,7 +150,7 @@
         hideElement = view.$el.find('#' + oldValue + '_ranges');
         showElement = view.$el.find('#' + this.value + '_ranges');
 
-        if (showElement.children().length == 0) {
+        if(showElement.children().length == 0) {
 
             this.value == 'show_custom_buckets' ? view._customSelectionHandler(this, showElement) : view._selectionHandler(this, showElement);
 
@@ -156,10 +158,10 @@
             view.connectSliders.call(view, this.value, view.fieldRanges);
         }
 
-        if (hideElement) {
+        if(hideElement) {
             hideElement.toggleClass('hide', true);
         }
-        if (showElement){
+        if(showElement) {
             showElement.toggleClass('hide', false);
         }
 
@@ -175,7 +177,7 @@
      * @param showElement
      * @private
      */
-    _selectionHandler : function(element, showElement) {
+    _selectionHandler: function(element, showElement) {
         var bucket_dom = this.buckets_dom_field.options[element.value];
 
         // add the things here...
@@ -183,7 +185,7 @@
         showElement.append('<p>' + app.lang.get('LBL_FORECASTS_CONFIG_' + element.value.toUpperCase() + '_RANGES_DESCRIPTION', 'Forecasts') + '</p>');
 
         _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
-            if (key != 'exclude') {
+            if(key != 'exclude') {
 
                 var rangeField,
                     model = new Backbone.Model(),
@@ -207,7 +209,7 @@
                         },
                         {key: key}
                     ),
-                    viewName:'edit',
+                    viewName: 'edit',
                     context: this.view.context,
                     module: this.view.module,
                     model: model,
@@ -215,7 +217,7 @@
                 };
 
                 rangeField = app.view.createField(fieldSettings);
-                this.showElement.append('<b>'+ label +':</b>').append(rangeField.el);
+                this.showElement.append('<b>' + label + ':</b>').append(rangeField.el);
                 rangeField.render();
 
                 // now give the view a way to get at this field's model, so it can be used to set the value on the
@@ -225,13 +227,13 @@
                 // this gives the field a way to save to the view's real model. It's wrapped in a closure to allow us to
                 // ensure we have everything when switching contexts from this handler back to the view.
                 rangeField.sliderDoneDelegate = function(category, key, view) {
-                    return function (value) {
+                    return function(value) {
                         this.view.updateRangeSettings(category, key, value);
                     };
                 }(this.category, key, this.view);
             }
-        }, {view: this, showElement:showElement, category: element.value});
-        showElement.append($('<p>' + app.lang.get("LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO", "Forecasts")+ '</p>'));
+        }, {view: this, showElement: showElement, category: element.value});
+        showElement.append($('<p>' + app.lang.get("LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO", "Forecasts") + '</p>'));
     },
 
     /**
@@ -240,7 +242,7 @@
      * @param showElement
      * @private
      */
-    _customSelectionHandler : function(element, showElement) {
+    _customSelectionHandler: function(element, showElement) {
         var bucket_dom = this.buckets_dom_field.options[element.value],
             bucket_dom_options = [], rangeField;
 
@@ -249,11 +251,11 @@
         showElement.append('<p>' + app.lang.get('LBL_FORECASTS_CONFIG_' + element.value.toUpperCase() + '_RANGES_DESCRIPTION', 'Forecasts') + '</p>');
 
         // if custom bucket isn't defined seve default values
-        if ( !this.model.has(element.value + '_ranges') ) {
+        if(!this.model.has(element.value + '_ranges')) {
             this.model.set(element.value + '_ranges', {});
         }
         _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
-            if (_.isUndefined(this.view.model.get(this.category + '_ranges')[key]) ) {
+            if(_.isUndefined(this.view.model.get(this.category + '_ranges')[key])) {
                 var _ranges = this.view.model.get(this.category + '_ranges');
                 _ranges[key] = {min: 0, max: 100};
                 this.view.model.set(this.category + '_ranges', _ranges);
@@ -279,13 +281,13 @@
             // now give the view a way to get at this field's model, so it can be used to set the value on the
             // real model.
             this.view.fieldRanges[element.value][key] = rangeField;
-        }, { view: this, showElement:showElement, category: element.value });
+        }, { view: this, showElement: showElement, category: element.value });
 
         // bind handler of add custom range buttons
         this.$el.find('#btnAddCustomRange a').on('click', { view: this, category: element.value, customType: 'custom' }, this.addCustomRange);
         this.$el.find('#btnAddCustomRangeWithoutProbability a').on('click', { view: this, category: element.value, customType: 'custom_without_probability' }, this.addCustomRange);
         // if there are custom ranges not based on probability hide add button on the top of block
-        if ( this._getLastCustomRangeIndex(element.value, 'custom_without_probability') ) {
+        if(this._getLastCustomRangeIndex(element.value, 'custom_without_probability')) {
             this.$el.find('#btnAddCustomRangeWithoutProbability').hide();
         }
     },
@@ -295,8 +297,7 @@
      * @param showElement
      * @private
      */
-    _renderCustomRangesLayout : function(showElement)
-    {
+    _renderCustomRangesLayout: function(showElement) {
         var plhCustomProbabilityRanges,
             plhCustomWithoutProbability,
             plhExclude;
@@ -335,10 +336,10 @@
      * @private
      * @return View.field new created field
      */
-    _renderCustomRange : function(key, label, showElement, category) {
+    _renderCustomRange: function(key, label, showElement, category) {
         var customType = key,
             customIndex = 0,
-            // placeholder to insert custom range
+        // placeholder to insert custom range
             currentPlh = showElement,
             rangeField,
             model = new Backbone.Model(),
@@ -349,15 +350,15 @@
         // custom_default: include, upside or exclude
         // custom - based on probability
         // custom_without_probability - not based on probability
-        if ( key.substring(0,26) == 'custom_without_probability' ) {
+        if(key.substring(0, 26) == 'custom_without_probability') {
             customType = 'custom_without_probability';
             customIndex = key.substring(27);
             currentPlh = this.$el.find('#plhCustomWithoutProbability');
-        } else if ( key.substring(0,6) == 'custom' ) {
+        } else if(key.substring(0, 6) == 'custom') {
             customType = 'custom';
             customIndex = key.substring(7);
             currentPlh = this.$el.find('#plhCustom');
-        } else if ( key.substring(0,7) == 'exclude' ) {
+        } else if(key.substring(0, 7) == 'exclude') {
             customType = 'custom_default';
             currentPlh = this.$el.find('#plhExclude');
         } else {
@@ -383,7 +384,7 @@
                 },
                 {key: customType}
             )),
-            viewName:'forecastsCustomRange',
+            viewName: 'forecastsCustomRange',
             context: this.context,
             module: this.module,
             model: model,
@@ -413,7 +414,7 @@
 
         // hide add button for previous custom range not based on probability
         lastCustomRange = this._getLastCustomRange(category, rangeField.customType);
-        if ( !_.isUndefined(lastCustomRange) ) {
+        if(!_.isUndefined(lastCustomRange)) {
             lastCustomRange.$el.find('.addCustomRange').parent().hide();
         }
 
@@ -422,7 +423,7 @@
         // this gives the field a way to save to the view's real model. It's wrapped in a closure to allow us to
         // ensure we have everything when switching contexts from this handler back to the view.
         rangeField.sliderDoneDelegate = function(category, key, view) {
-            return function (value) {
+            return function(value) {
                 this.view.updateRangeSettings(category, key, value);
             };
         }(category, key, this);
@@ -437,15 +438,19 @@
      * @return {Number}
      * @private
      */
-    _getLastCustomRangeIndex : function( category, customType ) {
+    _getLastCustomRangeIndex: function(category, customType) {
         // find all custom ranges with type that should be created
         var lastCustomRange = _.last(_.sortBy(_.filter(
             this.fieldRanges[category],
-            function(item) { return item.customType == this.key }, {key: customType}
-        ), function(item) { return parseInt(item.customIndex, 10); }
+            function(item) {
+                return item.customType == this.key
+            }, {key: customType}
+        ), function(item) {
+                return parseInt(item.customIndex, 10);
+            }
         ));
 
-        if ( _.isUndefined(lastCustomRange) ) return 0;
+        if(_.isUndefined(lastCustomRange)) return 0;
 
         return parseInt(lastCustomRange.customIndex, 10);
     },
@@ -458,17 +463,21 @@
      * @return {*}
      * @private
      */
-    _getLastCustomRange : function( category, customType ) {
+    _getLastCustomRange: function(category, customType) {
         // find all custom ranges with type that should be created
         var lastCustomRange = _.last(_.sortBy(_.filter(
             this.fieldRanges[category],
-            function(item) { return item.customType == this.key }, {key: customType}
-        ), function(item) { return parseInt(item.customIndex, 10); }
+            function(item) {
+                return item.customType == this.key
+            }, {key: customType}
+        ), function(item) {
+                return parseInt(item.customIndex, 10);
+            }
         ));
 
-        if ( _.isUndefined(lastCustomRange) ) {
+        if(_.isUndefined(lastCustomRange)) {
             // there is not custom range - use default ranges
-            if ( customType == 'custom' ) {
+            if(customType == 'custom') {
                 // use upside or include
                 lastCustomRange = !_.isUndefined(this.fieldRanges[category].upside) ? this.fieldRanges[category].upside : this.fieldRanges[category].include;
             } else {
@@ -484,7 +493,7 @@
      * add new custom cange field and render it in specific placeholder
      * @param event
      */
-    addCustomRange : function(event) {
+    addCustomRange: function(event) {
         var view = event.data.view,
             customType = event.data.customType,
             category = event.data.category,
@@ -508,21 +517,21 @@
         key = customType + '_' + lastCustomRangeIndex;
 
         // set up min/max values for new custom range
-        if ( customType != 'custom' ) {
+        if(customType != 'custom') {
             // if range is without probability setup min and max values to 0
             ranges[key] = {min: 0, max: 0};
-        } else if ( ranges.exclude.max - ranges.exclude.min > 3 ) {
+        } else if(ranges.exclude.max - ranges.exclude.min > 3) {
             // decrement exclude range to insert new range
             ranges[key] = {min: parseInt(ranges.exclude.max, 10) - 1, max: parseInt(ranges.exclude.max, 10)};
             ranges.exclude.max = parseInt(ranges.exclude.max, 10) - 2;
-            if ( !_.isUndefined(view.fieldRanges[category].exclude.$el) ) {
+            if(!_.isUndefined(view.fieldRanges[category].exclude.$el)) {
                 view.fieldRanges[category].exclude.$el.find(view.fieldRanges[category].exclude.fieldTag).noUiSlider('move', {handle: 'upper', to: ranges.exclude.max});
             }
-        } else if ( ranges[lastCustomRange.name].max - ranges[lastCustomRange.name].min > 3 ) {
+        } else if(ranges[lastCustomRange.name].max - ranges[lastCustomRange.name].min > 3) {
             // decrement previous range to insert new range
             ranges[key] = {min: parseInt(ranges[lastCustomRange.name].min, 10), max: parseInt(ranges[lastCustomRange.name].min, 10) + 1};
             ranges[lastCustomRange.name].min = parseInt(ranges[lastCustomRange.name].min, 10) + 2;
-            if ( !_.isUndefined(lastCustomRange.$el) ) {
+            if(!_.isUndefined(lastCustomRange.$el)) {
                 lastCustomRange.$el.find(lastCustomRange.fieldTag).noUiSlider('move', {handle: 'lower', to: ranges[lastCustomRange.name].min});
             }
         } else {
@@ -534,17 +543,21 @@
         view.model.set(category + '_ranges', ranges);
 
         rangeField = view._renderCustomRange(key, label, showElement, category);
-        if ( !_.isUndefined(rangeField) && !_.isNull(rangeField) ) {
+        if(!_.isUndefined(rangeField) && !_.isNull(rangeField)) {
             view.fieldRanges[category][key] = rangeField;
         }
 
         // add range to options
-        _.each(bucket_dom_options, function(item, key){ if (item[0] == this.value) { lastOptionIndex = key; } }, {value: lastCustomRange.name});
-        bucket_dom_options.splice(lastOptionIndex+1, 0, [key, label]);
+        _.each(bucket_dom_options, function(item, key) {
+            if(item[0] == this.value) {
+                lastOptionIndex = key;
+            }
+        }, {value: lastCustomRange.name});
+        bucket_dom_options.splice(lastOptionIndex + 1, 0, [key, label]);
         view.model.unset(category + '_options', {silent: true});
         view.model.set(category + '_options', bucket_dom_options);
 
-        if ( customType == 'custom' ) {
+        if(customType == 'custom') {
             // use call to set context back to the view for connecting the sliders
             view.connectSliders.call(view, category, view.fieldRanges);
         } else {
@@ -552,9 +565,11 @@
             view.$el.find('#btnAddCustomRangeWithoutProbability').hide();
             _.each(_.filter(
                 view.fieldRanges[category],
-                function(item) { return item.customType == this.key && item.customIndex < this.index; }, {key: customType, index: lastCustomRangeIndex}
+                function(item) {
+                    return item.customType == this.key && item.customIndex < this.index;
+                }, {key: customType, index: lastCustomRangeIndex}
             ), function(item) {
-                if ( !_.isUndefined(item.$el) ) {
+                if(!_.isUndefined(item.$el)) {
                     item.$el.find('.addCustomRange').parent().hide();
                 }
             });
@@ -566,7 +581,7 @@
      * @param event
      * @return void
      */
-    removeCustomRange : function(event) {
+    removeCustomRange: function(event) {
         var view = event.data.view,
             range = event.data.range,
             category = event.data.category,
@@ -577,22 +592,26 @@
             lastCustomRange,
             optionIndex;
 
-        if ( _.indexOf(['include', 'upside', 'exclude'], range.name) != -1 ) {
+        if(_.indexOf(['include', 'upside', 'exclude'], range.name) != -1) {
             return false;
         }
 
-        if ( range.customType == 'custom' ) {
+        if(range.customType == 'custom') {
             // find previous renge and reassign range values form removed to it
             previosCustomRange = _.last(_.sortBy(_.filter(
                 view.fieldRanges[category],
-                function(item) { return item.customType == 'custom' && parseInt(item.customIndex, 10) < parseInt(this.index, 10); }, {index: range.customIndex}
-            ), function(item) { return parseInt(item.customIndex, 10); }
+                function(item) {
+                    return item.customType == 'custom' && parseInt(item.customIndex, 10) < parseInt(this.index, 10);
+                }, {index: range.customIndex}
+            ), function(item) {
+                    return parseInt(item.customIndex, 10);
+                }
             ));
-            if ( _.isUndefined(previosCustomRange) ) {
+            if(_.isUndefined(previosCustomRange)) {
                 previosCustomRange = !_.isUndefined(view.fieldRanges[category].upside) ? view.fieldRanges[category].upside : view.fieldRanges[category].include;
             }
             ranges[previosCustomRange.name].min = parseInt(ranges[range.name].min);
-            if ( !_.isUndefined(previosCustomRange.$el) ) {
+            if(!_.isUndefined(previosCustomRange.$el)) {
                 previosCustomRange.$el.find(previosCustomRange.fieldTag).noUiSlider('move', {handle: 'lower', to: ranges[previosCustomRange.name].min});
             }
         }
@@ -604,7 +623,11 @@
         delete view.fieldRanges[category][range.name];
 
         // remove from bucket_dom_options
-        _.each(bucket_dom_options, function(item, key){ if (item[0] == this.value) { optionIndex = key; } }, {value: range.name});
+        _.each(bucket_dom_options, function(item, key) {
+            if(item[0] == this.value) {
+                optionIndex = key;
+            }
+        }, {value: range.name});
         bucket_dom_options.splice(optionIndex, 1);
         view.model.unset(category + '_options', {silent: true});
         view.model.set(category + '_options', bucket_dom_options);
@@ -612,17 +635,17 @@
         view.model.unset(category + '_ranges', {silent: true});
         view.model.set(category + '_ranges', ranges);
 
-        if ( range.customType == 'custom' ) {
+        if(range.customType == 'custom') {
             // use call to set context back to the view for connecting the sliders
             view.connectSliders.call(view, category, view.fieldRanges);
         } else {
             // show add button for custom range not based on probability
             lastCustomRangeIndex = view._getLastCustomRangeIndex(category, range.customType);
-            if ( lastCustomRangeIndex == 0 ) {
+            if(lastCustomRangeIndex == 0) {
                 view.$el.find('#btnAddCustomRangeWithoutProbability').show();
             } else {
                 lastCustomRange = view._getLastCustomRange(category, range.customType);
-                if ( !_.isUndefined(lastCustomRange.$el) ) {
+                if(!_.isUndefined(lastCustomRange.$el)) {
                     lastCustomRange.$el.find('.addCustomRange').parent().show();
                 }
             }
@@ -633,7 +656,7 @@
      * change label for custom range in model
      * @param event
      */
-    updateCustomRangeLabel : function(event) {
+    updateCustomRangeLabel: function(event) {
         var view = event.data.view,
             range = event.data.range,
             category = event.data.category,
@@ -641,7 +664,11 @@
             bucket_dom_options = view.model.get(category + '_options'),
             optionIndex;
 
-        _.each(bucket_dom_options, function(item, key){ if (item[0] == this.value) { optionIndex = key; } }, {value: range.name});
+        _.each(bucket_dom_options, function(item, key) {
+            if(item[0] == this.value) {
+                optionIndex = key;
+            }
+        }, {value: range.name});
         bucket_dom_options[optionIndex][1] = this.value;
         view.model.unset(category + '_options', {silent: true});
         view.model.set(category + '_options', bucket_dom_options);
@@ -651,9 +678,9 @@
      * validate labels for custom ranges, if it is invalid add error style for input
      * @param category
      */
-    validateCustomRangeLabels : function(category) {
-        _.each(this.model.get(category + '_options'), function(item, key){
-            if ( _.isEmpty(item[1]) ) {
+    validateCustomRangeLabels: function(category) {
+        _.each(this.model.get(category + '_options'), function(item, key) {
+            if(_.isEmpty(item[1])) {
                 this.view.fieldRanges[category][item[0]].$el.find('.control-group').addClass('error');
                 this.view.layout.$el.find('[name=save_button]').addClass('disabled');
             } else {
@@ -687,69 +714,73 @@
         var rangeSliders = sliders[ranges];
 
         if(ranges == 'show_binary') {
-            rangeSliders.include.sliderChangeDelegate = function (value) {
+            rangeSliders.include.sliderChangeDelegate = function(value) {
                 // lock the upper handle to 100, as per UI/UX requirements to show a dual slider
                 rangeSliders.include.$el.find(rangeSliders.include.fieldTag).noUiSlider('move', {handle: 'upper', to: rangeSliders.include.def.maxRange});
                 // set the excluded range based on the lower value of the include range
                 this.view.setExcludeValueForLastSlider(value, ranges, rangeSliders.include);
             };
-        } else if (ranges == 'show_buckets') {
-            rangeSliders.include.sliderChangeDelegate = function (value) {
+        } else if(ranges == 'show_buckets') {
+            rangeSliders.include.sliderChangeDelegate = function(value) {
                 // lock the upper handle to 100, as per UI/UX requirements to show a dual slider
                 rangeSliders.include.$el.find(rangeSliders.include.fieldTag).noUiSlider('move', {handle: 'upper', to: rangeSliders.include.def.maxRange});
 
-                rangeSliders.upside.$el.find(rangeSliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
+                rangeSliders.upside.$el.find(rangeSliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min - 1});
                 if(value.min <= rangeSliders.upside.$el.find(rangeSliders.upside.fieldTag).noUiSlider('value')[0] + 1) {
-                    rangeSliders.upside.$el.find(rangeSliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.min-2});
+                    rangeSliders.upside.$el.find(rangeSliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.min - 2});
                 }
             };
-            rangeSliders.upside.sliderChangeDelegate = function (value) {
-                rangeSliders.include.$el.find(rangeSliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
+            rangeSliders.upside.sliderChangeDelegate = function(value) {
+                rangeSliders.include.$el.find(rangeSliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max + 1});
                 // set the excluded range based on the lower value of the upside range
                 this.view.setExcludeValueForLastSlider(value, ranges, rangeSliders.upside);
             };
-        } else if (ranges == 'show_custom_buckets') {
+        } else if(ranges == 'show_custom_buckets') {
             var i, max,
                 customSliders = _.sortBy(_.filter(
                     rangeSliders,
-                    function(item) { return item.customType == 'custom' }
-                ), function(item) { return parseInt(item.customIndex, 10); }
+                    function(item) {
+                        return item.customType == 'custom'
+                    }
+                ), function(item) {
+                        return parseInt(item.customIndex, 10);
+                    }
                 ),
                 probabilitySliders = _.union(rangeSliders.include, rangeSliders.upside, customSliders, rangeSliders.exclude);
 
-            if ( probabilitySliders.length ) {
-                for ( i = 0, max = probabilitySliders.length; i < max; i++ ) {
-                    probabilitySliders[i].connectedSlider = ( !_.isUndefined(probabilitySliders[i+1]) ) ? probabilitySliders[i+1] : null;
-                    probabilitySliders[i].connectedToSlider = ( !_.isUndefined(probabilitySliders[i-1]) ) ? probabilitySliders[i-1] : null;
-                    probabilitySliders[i].sliderChangeDelegate = function (value, populateEvent) {
+            if(probabilitySliders.length) {
+                for(i = 0, max = probabilitySliders.length; i < max; i++) {
+                    probabilitySliders[i].connectedSlider = ( !_.isUndefined(probabilitySliders[i + 1]) ) ? probabilitySliders[i + 1] : null;
+                    probabilitySliders[i].connectedToSlider = ( !_.isUndefined(probabilitySliders[i - 1]) ) ? probabilitySliders[i - 1] : null;
+                    probabilitySliders[i].sliderChangeDelegate = function(value, populateEvent) {
                         // lock the upper handle to 100, as per UI/UX requirements to show a dual slider
-                        if ( this.name == 'include' ) {
+                        if(this.name == 'include') {
                             this.$el.find(this.fieldTag).noUiSlider('move', {handle: 'upper', to: this.def.maxRange});
-                        } else if ( this.name == 'exclude' ) {
+                        } else if(this.name == 'exclude') {
                             this.$el.find(this.fieldTag).noUiSlider('move', {handle: 'lower', to: this.def.minRange});
                         }
 
-                        if (!_.isUndefined(this.connectedSlider) && !_.isNull(this.connectedSlider) ) {
-                            this.connectedSlider.$el.find(this.connectedSlider.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
+                        if(!_.isUndefined(this.connectedSlider) && !_.isNull(this.connectedSlider)) {
+                            this.connectedSlider.$el.find(this.connectedSlider.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min - 1});
                             if(value.min <= this.connectedSlider.$el.find(this.connectedSlider.fieldTag).noUiSlider('value')[0] + 1) {
-                                this.connectedSlider.$el.find(this.connectedSlider.fieldTag).noUiSlider('move', {handle: 'lower', to: value.min-2});
+                                this.connectedSlider.$el.find(this.connectedSlider.fieldTag).noUiSlider('move', {handle: 'lower', to: value.min - 2});
                             }
-                            if ( _.isUndefined(populateEvent) || populateEvent == 'down' ) {
+                            if(_.isUndefined(populateEvent) || populateEvent == 'down') {
                                 this.connectedSlider.sliderChangeDelegate.call(this.connectedSlider, {
-                                    min:this.connectedSlider.$el.find(this.connectedSlider.fieldTag).noUiSlider('value')[0],
-                                    max:this.connectedSlider.$el.find(this.connectedSlider.fieldTag).noUiSlider('value')[1]
+                                    min: this.connectedSlider.$el.find(this.connectedSlider.fieldTag).noUiSlider('value')[0],
+                                    max: this.connectedSlider.$el.find(this.connectedSlider.fieldTag).noUiSlider('value')[1]
                                 }, 'down');
                             }
                         }
-                        if (!_.isUndefined(this.connectedToSlider) && !_.isNull(this.connectedToSlider) ) {
-                            this.connectedToSlider.$el.find(this.connectedToSlider.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
+                        if(!_.isUndefined(this.connectedToSlider) && !_.isNull(this.connectedToSlider)) {
+                            this.connectedToSlider.$el.find(this.connectedToSlider.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max + 1});
                             if(value.max >= this.connectedToSlider.$el.find(this.connectedToSlider.fieldTag).noUiSlider('value')[1] - 1) {
-                                this.connectedToSlider.$el.find(this.connectedToSlider.fieldTag).noUiSlider('move', {handle: 'upper', to: value.max+2});
+                                this.connectedToSlider.$el.find(this.connectedToSlider.fieldTag).noUiSlider('move', {handle: 'upper', to: value.max + 2});
                             }
-                            if ( _.isUndefined(populateEvent) || populateEvent == 'up' ) {
+                            if(_.isUndefined(populateEvent) || populateEvent == 'up') {
                                 this.connectedToSlider.sliderChangeDelegate.call(this.connectedToSlider, {
-                                    min:this.connectedToSlider.$el.find(this.connectedToSlider.fieldTag).noUiSlider('value')[0],
-                                    max:this.connectedToSlider.$el.find(this.connectedToSlider.fieldTag).noUiSlider('value')[1]
+                                    min: this.connectedToSlider.$el.find(this.connectedToSlider.fieldTag).noUiSlider('value')[0],
+                                    max: this.connectedToSlider.$el.find(this.connectedToSlider.fieldTag).noUiSlider('value')[1]
                                 }, 'up');
                             }
                         }
@@ -767,11 +798,11 @@
      */
     setExcludeValueForLastSlider: function(value, ranges, slider) {
         var excludeRange = {
-            min: 0,
-            max: 100
-        },
-        settingName = ranges + '_ranges',
-        setting = this.model.get(settingName);
+                min: 0,
+                max: 100
+            },
+            settingName = ranges + '_ranges',
+            setting = this.model.get(settingName);
 
         excludeRange.max = value.min - 1;
         excludeRange.min = slider.def.minRange;

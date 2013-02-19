@@ -34,96 +34,40 @@
  */
 ({
     /**
-     * The url for the REST endpoint
-     */
-    url : 'rest/v10/Forecasts/committed',
-
-    /**
      * The class selector representing the element which contains the view output
      */
-    viewSelector : '.forecastsCommitted',
-
-    /**
-     * Stores the Backbone collection of Forecast models
-     */
-    collection : {},
-
-    /*
-     * Stores the name to display in the view
-     */
-    fullName : '',
+    viewSelector: '.forecastsCommitted',
 
     /**
      * Stores the best case to display in the view
      */
-    bestCase : 0,
+    bestCase: 0,
 
     /**
      * Stores the likely case to display in the view
      */
-    likelyCase : 0,
+    likelyCase: 0,
 
     /**
      * Stores the worst case to display in the view
      */
-    worstCase : 0,
+    worstCase: 0,
 
-    /**
-     * Used to query for the user_id value in Forecasts
-     */
-    userId : '',
 
     /**
      * Used to query for the timeperiod_id value in Forecasts
      */
-    timePeriodId : '',
+    timePeriod: '',
 
     /**
      * Used to query for the forecast_type value in Forecasts
      */
-    forecastType : 'Direct',
+    forecastType: 'Direct',
 
     /**
      * Stores the historical log of the Forecast entries
      */
     historyLog: [],
-
-    /**
-     * Stores the Forecast totals to use when creating a new entry
-     */
-    totals : null,
-
-    /**
-     * Template to use when updating the bestCase on the committed bar
-     */
-    bestTemplate : _.template('<%= bestCase %>&nbsp;<span class="icon-sm committed_arrow<%= bestCaseCls %>"></span>'),
-
-    /**
-     * Template to use wen updating the likelyCase on the committed bar
-     */
-    likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
-
-    /**
-     * Template to use wen updating the WorstCase on the committed bar
-     */
-    worstTemplate : _.template('<%= worstCase %>&nbsp;<span class="icon-sm committed_arrow<%= worstCaseCls %>"></span>'),
-
-    runningFetch : false,
-
-    /**
-     * Used to determine whether or not to visibly show the Commit log
-     */
-    showHistoryLog : false,
-
-    /**
-     * Used to determine whether or not to visibly show the extended Commit log
-     */
-    showMoreLog : false,
-
-    /**
-     * the timeperiod field metadata that gets used at render time
-     */
-    timeperiod: {},
 
     /**
      * Store the Best Case Number from the very last commit in the log
@@ -138,24 +82,61 @@
      */
     previousWorstCase: '',
 
+    /**
+     * Does the layout have the forecastCommitted View?
+     */
+    layoutHasForecastCommitted: true,
+
     events : {
         'click i[id=show_hide_history_log]' : 'showHideHistoryLog'
     },
 
-    initialize : function(options) {
+    initialize: function(options) {
+
         app.view.View.prototype.initialize.call(this, options);
-        this.collection = this.context.committed;
 
-        this.fullName = app.user.get('full_name');
-        this.userId = app.user.get('id');
-        this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
-        this.timePeriodId = app.defaultSelections.timeperiod_id.id;
-        this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
+        if(_.isUndefined(this.layout.getComponent('forecastsCommitted'))) {
+            this.layoutHasForecastCommitted = false;
+            this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
+            this.timePeriod = app.defaultSelections.timeperiod_id.id;
+            this.selectedUser = {id: app.user.get('id'), "isManager": app.user.get('isManager'), "showOpps": false};
 
-        this.bestCase = "";
-        this.likelyCase = "";
-        this.worstCase = "";
-        this.showHistoryLog = false;
+            this.bestCase = "";
+            this.likelyCase = "";
+            this.worstCase = "";
+
+            // we have to override sync right now as there is no way to run the filter by default
+            this.collection.sync = _.bind(function(method, model, options) {
+                options.success = _.bind(function(resp, status, xhr) {
+                    this.collection.reset(resp.records);
+                }, this);
+                // we need to force a post, so get the url object and put it in
+                var url = this.createURL();
+                app.api.call("create", url.url, url.filters, options);
+            }, this);
+        }
+    },
+
+    /**
+     *
+     * @return {object}
+     */
+    createURL: function() {
+        // we need to default the type to products
+        var args_filter = [];
+        if(this.timePeriod) {
+            args_filter.push({"timeperiod_id": this.timePeriod});
+        }
+
+        if(this.selectedUser) {
+            args_filter.push({"user_id": this.selectedUser.id});
+        }
+
+        args_filter.push({"forecast_type": this.forecastType});
+
+        var url = app.api.buildURL('Forecasts', 'filter');
+
+        return {"url": url, "filters": {"filter": args_filter}};
     },
 
     /**
@@ -170,30 +151,36 @@
     /**
      * Renders the component
      */
-    _renderHtml : function(ctx, options) {
+    _renderHtml: function(ctx, options) {
         app.view.View.prototype._renderHtml.call(this, ctx, options);
-        
-        if(this.showHistoryLog) {
 
-            if(this.showMoreLog) {
-                this.$el.find('div[id=more_log_results]').removeClass('hide');
-                this.$el.find('div[id=more]').html('<p><span class=" icon-minus-sign">&nbsp;' + App.lang.get('LBL_LESS', 'Forecasts') + '</span></p><br />');
-            }
-        }
-        
         this.$el.parents('div.topline').find("span.lastBestCommit").html(this.previousBestCase);
         this.$el.parents('div.topline').find("span.lastLikelyCommit").html(this.previousLikelyCase);
         this.$el.parents('div.topline').find("span.lastWorstCommit").html(this.previousWorstCase);
     },
 
 
-
     bindDataChange: function() {
-        var self = this;
-        this.collection = this.context.committed;
-        this.collection.on("reset change", function() {
-            self.buildForecastsCommitted();
-        }, this);       
+        if(this.collection) {
+            this.collection.on('reset change', function() {
+                this.buildForecastsCommitted();
+            }, this);
+        }
+
+        // only add these handlers if the layout doesn't contain the forecastsCommittedLayout
+        if(this.context && !this.layoutHasForecastCommitted) {
+            this.context.on("change:selectedUser", function(context, user) {
+                this.forecastType = user.showOpps ? 'Direct' : 'Rollup';
+                this.selectedUser = user;
+                this.context.resetLoadFlag();
+                this.loadData();
+            }, this);
+            this.context.on("change:selectedTimePeriod", function(context, timePeriod) {
+                this.timePeriod = timePeriod.id;
+                this.context.resetLoadFlag();
+                this.loadData();
+            }, this);
+        }
     },
 
     /**
@@ -203,73 +190,65 @@
      * @param currentValue
      * @return {String}
      */
-    getColorArrow: function(newValue, currentValue)
-    {
-        var cls = '';
-
-        cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
-        cls = (newValue == currentValue) ? '' : cls;
-
-        return cls
+    getColorArrow: function(newValue, currentValue) {
+        var cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+        return (newValue == currentValue) ? '' : cls;
     },
 
     /**
-     * Utility method to reset the committed log in the event that no models are returned for the 
+     * Utility method to reset the committed log in the event that no models are returned for the
      * selected user/timeperiod
      */
-    resetCommittedLog:function(){
+    resetCommittedLog: function() {
         this.bestCase = "";
         this.likelyCase = "";
         this.worstCase = "";
         this.previousBestCase = "";
         this.previousLikelyCase = "";
         this.previousWorstCase = "";
-        this.showHistoryLog = false;
         this.previousDateEntered = "";
     },
 
-    buildForecastsCommitted:function () {
-        var self = this;
-        var count = 0;
+    buildForecastsCommitted: function() {
         var previousModel;
-        
+
         //Reset the history log
-        self.historyLog = [];
+        this.historyLog = [];
 
         // if we have no models, exit out of the method
-        if (_.isEmpty(self.collection.models)) {
-            self.resetCommittedLog();
-            self.render();
+        if(_.isEmpty(this.collection.models)) {
+            this.resetCommittedLog();
+            this.render();
             return;
         }
-       
+
         // get the first model so we can get the previous date entered
-        previousModel = _.first(self.collection.models);
+        previousModel = _.first(this.collection.models);
 
         // parse out the previous date entered
         var dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
-        if (dateEntered == 'Invalid Date') {
+        if(dateEntered == 'Invalid Date') {
             dateEntered = previousModel.get('date_entered');
         }
         // set the previous date entered in the users format
-        self.previousDateEntered = app.date.format(dateEntered, app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'));
-        
+        this.previousDateEntered = app.date.format(dateEntered, app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'));
+
         //loop through from oldest to newest to build the log correctly
         var loopPreviousModel = '';
-        var models = _.clone(self.collection.models).reverse();
-        _.each(models, function (model) {
-            self.historyLog.push(app.utils.createHistoryLog(loopPreviousModel, model, self.context.config));
-            loopPreviousModel = model;           
-        });
-        
+        var models = _.clone(this.collection.models).reverse();
+        _.each(models, function(model) {
+            this.historyLog.push(app.utils.createHistoryLog(loopPreviousModel, model));
+            loopPreviousModel = model;
+        }, this);
+
         //reset the order of the history log for display
-        self.historyLog.reverse();
+        this.historyLog.reverse();
 
         // save the values from the last model to display in the dataset line on the interface
         this.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
         this.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
         this.previousWorstCase = app.currency.formatAmountLocale(previousModel.get('worst_case'));
 
-        self.render();
+        this.render();
     }
 })

@@ -1,16 +1,29 @@
 describe("Filter View", function() {
 
-    var layout, view, app;
+    var layout, view, app, previousFilterStub, collectionFetchStub;
 
     beforeEach(function() {
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.addViewDefinition("records", {}, "Filters");
+        SugarTest.testMetadata.set();
+        SugarTest.app.data.declareModels();
+        SugarTest.loadComponent('base', 'view', 'filter');
+        app = SugarTest.app;
+
         layout = {trigger: function() {}, off: function() {}, on: function() {}};
+        previousFilterStub = sinon.stub(app.view.views.FilterView.prototype, "getPreviouslyUsedFilter",
+            function(){
+                this.currentFilter = "default";
+                //this.filterDataSetAndSearch();
+            });
+        collectionFetchStub = sinon.stub(Backbone.Collection.prototype, "fetch",
+            function(a, callback){
+                if (callback && _.isFunction(callback.success))
+                    callback.success();
+            });
+        view = SugarTest.createView("base","Cases", "filter", null, null, false, layout, false);
 
-        view = SugarTest.createView("base","Cases", "filter", null, null, false, layout);
-        view.model = new Backbone.Model();
-        view.collection = new Backbone.Collection(view.model);
-        view.collection.fields = _.keys(fixtures.metadata.modules.Cases.fields);
 
-        app = SUGAR.App;
     });
 
 
@@ -19,6 +32,8 @@ describe("Filter View", function() {
         app.view.reset();
         view = null;
         layout = null;
+        previousFilterStub.restore();
+        collectionFetchStub.restore();
     });
 
 

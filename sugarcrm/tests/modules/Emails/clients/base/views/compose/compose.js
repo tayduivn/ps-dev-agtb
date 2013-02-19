@@ -1,5 +1,7 @@
 describe("Emails.Views.Compose", function() {
-    var app, view;
+    var app,
+        view,
+        dataProvider;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -14,7 +16,7 @@ describe("Emails.Views.Compose", function() {
         context.set({
             module: 'Emails',
             create: true
-    });
+        });
         context.prepare();
 
         view = SugarTest.createView('base', 'Emails', 'compose', null, context, true);
@@ -63,7 +65,7 @@ describe("Emails.Views.Compose", function() {
         });
 
         //test different sender recipient scenarios
-        var dataProvider = [
+        dataProvider = [
             {
                 'testComment': 'model new, no cc or bcc => both hidden with links',
                 'model': null,
@@ -318,124 +320,260 @@ describe("Emails.Views.Compose", function() {
         });
     });
 
-    describe('insertTemplates - replacing signatures', function() {
-        var apiCallStub, insertTemplateStub, signatureStub;
+    describe("insert templates", function() {
+        xdescribe("replacing signatures", function() {
+            var apiCallStub,
+                insertTemplateAttachmentsStub,
+                signatureStub;
 
-        beforeEach(function() {
-            insertTemplateStub = sinon.stub(view, 'insertTemplateAttachments'),
-                signatureStub = sinon.stub(view, 'updateEditorWithSignature'),
+            beforeEach(function() {
+                insertTemplateAttachmentsStub = sinon.stub(view, 'insertTemplateAttachments');
+                signatureStub                 = sinon.stub(view, '_updateEditorWithSignature');
+
                 apiCallStub = sinon.stub(app.api, 'call', function(method, myURL, model, options) {
                     options.success(model, null, options);
                 });
-            view.model.off('change');
-        });
 
-        afterEach(function() {
-            apiCallStub.restore();
-            insertTemplateStub.restore();
-            signatureStub.restore();
-        });
-
-        it('should not populate editor if template parameter is not an object', function() {
-            view.insertTemplate(null);
-            expect(apiCallStub.callCount).toEqual(0);
-            expect(insertTemplateStub.callCount).toEqual(0);
-            expect(signatureStub.callCount).toEqual(0);
-        });
-
-        it('should call to set signature in editor with default signature id when not signature not selected', function() {
-            var defaultId = '123445';
-            view.defaultSignatureId = defaultId;
-            view.insertTemplate(null);
-
-            expect(apiCallStub.callCount).toEqual(0);
-            expect(insertTemplateStub.callCount).toEqual(0);
-            expect(signatureStub).toHaveBeenCalledWith(defaultId);
-        });
-
-        it('should call to set signature in editor with selected signature instead of default signature id', function() {
-            var defaultId = '123445';
-            var selectedSignatureId = '9999999';
-
-            view.defaultSignatureId = defaultId;
-            view.model.set('signature_id', selectedSignatureId);
-            view.insertTemplate(null);
-
-            expect(apiCallStub.callCount).toEqual(0);
-            expect(insertTemplateStub.callCount).toEqual(0);
-            expect(signatureStub).toHaveBeenCalledWith(selectedSignatureId);
-        });
-    });
-
-    describe('insertTemplates - replacing templates', function() {
-        var apiCallStub, insertTemplateStub, beanCollectionStub, signatureStub, field, fieldStub, getFieldStub;
-
-        beforeEach(function() {
-            insertTemplateStub = sinon.stub(view, 'insertTemplateAttachments'),
-                signatureStub = sinon.stub(view, 'updateEditorWithSignature'),
-                apiCallStub = sinon.stub(app.api, 'call', function (method, myURL, model, options) {
-                    options.success(model, null, options);
-                });
-
-            beanCollectionStub = sinon.stub(app.data, 'createBeanCollection', function() {
-                return {fetch:function(){}}
+                view.model.off('change');
             });
 
-            field = SugarTest.createField("base", "html_email", "htmleditable_tinymce", "edit");
-            fieldStub = sinon.stub(field, "setEditorContent", function(){});
-            getFieldStub = sinon.stub(view, 'getField').returns(field);
+            afterEach(function() {
+                apiCallStub.restore();
+                insertTemplateAttachmentsStub.restore();
+                signatureStub.restore();
+            });
 
+            it('should call to set signature in editor with default signature id when not signature not selected', function() {
+                var defaultId = '123445';
+                view.defaultSignatureId = defaultId;
+                view.insertTemplate(null);
+
+                expect(apiCallStub.callCount).toEqual(0);
+                expect(insertTemplateAttachmentsStub.callCount).toEqual(0);
+                expect(signatureStub).toHaveBeenCalledWith(defaultId);
+            });
+
+            it('should call to set signature in editor with selected signature instead of default signature id', function() {
+                var defaultId = '123445';
+                var selectedSignatureId = '9999999';
+
+                view.defaultSignatureId = defaultId;
+                view.model.set('signature_id', selectedSignatureId);
+                view.insertTemplate(null);
+
+                expect(apiCallStub.callCount).toEqual(0);
+                expect(insertTemplateAttachmentsStub.callCount).toEqual(0);
+                expect(signatureStub).toHaveBeenCalledWith(selectedSignatureId);
+            });
+        });
+
+        describe("replacing templates", function() {
+            var insertTemplateAttachmentsStub,
+                createBeanCollectionStub,
+                field,
+                setEditorContentStub,
+                getFieldStub;
+
+            beforeEach(function() {
+                insertTemplateAttachmentsStub = sinon.stub(view, 'insertTemplateAttachments');
+                field                         = SugarTest.createField("base", "html_email", "htmleditable_tinymce", "edit");
+                setEditorContentStub          = sinon.stub(field, "setEditorContent", function() {});
+                getFieldStub                  = sinon.stub(view, 'getField').returns(field);
+                createBeanCollectionStub      = sinon.stub(app.data, 'createBeanCollection', function() {
+                    return {fetch:function(){}}
+                });
+
+                view.model.off('change');
+            });
+
+            afterEach(function() {
+                insertTemplateAttachmentsStub.restore();
+                setEditorContentStub.restore();
+                getFieldStub.restore();
+                createBeanCollectionStub.restore();
+            });
+
+            it('should not populate editor if template parameter is not an object', function() {
+                view.insertTemplate(null);
+                expect(getFieldStub.callCount).toBe(0);
+                expect(setEditorContentStub.callCount).toBe(0);
+                expect(insertTemplateAttachmentsStub.callCount).toBe(0);
+            });
+
+            it("should not set content of subject when the template doesn't include a subject", function() {
+                var Bean          = SUGAR.App.Bean,
+                    bodyHtml      = '<h1>Test</h1>',
+                    templateModel = new Bean({
+                        id:        '1234',
+                        body_html: bodyHtml
+                    });
+
+                view.insertTemplate(templateModel);
+                expect(getFieldStub.callCount).toBe(1);
+                expect(setEditorContentStub.callCount).toBe(1);
+                expect(createBeanCollectionStub.callCount).toBe(1);
+                expect(view.model.get('subject')).toBeUndefined();
+            });
+
+            it('should set content of editor with html version of template', function() {
+                var Bean          = SUGAR.App.Bean,
+                    bodyHtml      = '<h1>Test</h1>',
+                    subject       = 'This is my subject',
+                    templateModel = new Bean({
+                        id:        '1234',
+                        subject:   subject,
+                        body_html: bodyHtml
+                    });
+
+                view.insertTemplate(templateModel);
+                expect(getFieldStub.callCount).toBe(1);
+                expect(setEditorContentStub.withArgs(bodyHtml).callCount).toBe(1);
+                expect(createBeanCollectionStub.callCount).toBe(1);
+                expect(view.model.get('subject')).toBe(subject);
+            });
+
+            it('should set content of editor with text only version of template', function () {
+                var Bean          = SUGAR.App.Bean,
+                    bodyHtml      = '<h1>Test</h1>',
+                    bodyText      = 'Test',
+                    subject       = 'This is my subject',
+                    templateModel = new Bean({
+                        id:         '1234',
+                        subject:    subject,
+                        body_html:  bodyHtml,
+                        body:       bodyText,
+                        text_only:  1
+                    });
+
+                view.insertTemplate(templateModel);
+                expect(getFieldStub.callCount).toBe(1);
+                expect(setEditorContentStub.withArgs(bodyText).callCount).toBe(1);
+                expect(createBeanCollectionStub.callCount).toBe(1);
+                expect(view.model.get('subject')).toEqual(subject);
+            });
+        });
+    });
+
+    describe("Signatures", function() {
+        it("should retrieve a signature from the SignaturesApi when the signature ID is present", function() {
+            var apiStub   = sinon.stub(app.api, "call"),
+                id        = "abcd", // the actual ID doesn't matter
+                signature = new app.Bean({id: id}), // no other attributes are needed for this test
+                regex     = new RegExp(".*/Signatures/" + id + "$", "gi");
+
+            view._updateEditorWithSignature(signature);
+            expect(apiStub.lastCall.args[1]).toMatch(regex);
+
+            apiStub.restore();
+        });
+
+        it("should not retrieve a signature from the SignaturesApi when the signature ID is not present", function() {
+            var apiStub   = sinon.stub(app.api, "call"),
+                signature = new app.Bean();
+
+            view._updateEditorWithSignature(signature);
+            expect(apiStub.callCount).toBe(0);
+
+            apiStub.restore();
+        });
+
+        dataProvider = [
+            {
+                message:   "should format a signature with &lt; and/or &gt; to use < and > respectively",
+                signature: "This &lt;signature&gt; has HTML-style brackets",
+                expected:  "This <signature> has HTML-style brackets"
+            },
+            {
+                message:   "should leave a signature as is if &lt; and &gt; are not found",
+                signature: "This signature has no HTML-style brackets",
+                expected:  "This signature has no HTML-style brackets"
+            }
+        ];
+
+        _.each(dataProvider, function(data) {
+            it(data.message, function() {
+                var actual = view._formatSignature(data.signature);
+                expect(actual).toBe(data.expected);
+            });
+        }, this);
+
+        describe("insert a signature", function() {
+            var field,
+                fieldStub;
+
+            beforeEach(function() {
+                field = {
+                    _content: "my message body is rockin'",
+
+                    getEditorContent: function() {
+                        return this._content;
+                    },
+
+                    setEditorContent: function(content) {
+                        this._content = content;
+                    }
+                };
+
+                fieldStub = sinon.stub(view, "getField");
+                fieldStub.returns(field);
+            });
+
+            afterEach(function() {
+                fieldStub.restore();
+            });
+
+            dataProvider = [
+                {
+                    message:   "should insert a signature because signature is an object and the signature_html attribute exists",
+                    signature: {signature_html: "<b>Sincerely, John</b>"},
+                    expected:  "my message body is rockin'<b>Sincerely, John</b>"
+                },
+                {
+                    message:   "should not insert a signature because signature is not an object",
+                    signature: "<b>Sincerely, John</b>",
+                    expected:  "my message body is rockin'"
+                },
+                {
+                    message:   "should not insert a signature because the signature_html attribute does not exist",
+                    signature: {sig_html: "<b>Sincerely, John</b>"},
+                    expected:  "my message body is rockin'"
+                }
+            ];
+
+            _.each(dataProvider, function(data) {
+                it(data.message, function() {
+                    view._insertSignature(data.signature);
+                    var actual = field.getEditorContent();
+                    expect(actual).toBe(data.expected);
+                });
+            }, this);
+        });
+    });
+    
+    describe('InitializeSendEmailModel', function() {
+        beforeEach(function() {
             view.model.off('change');
         });
 
-        afterEach(function() {
-            apiCallStub.restore();
-            insertTemplateStub.restore();
-            signatureStub.restore();
-            fieldStub.restore();
-            getFieldStub.restore();
-            beanCollectionStub.restore();
+        it('should populate the send model attachments/documents correctly with both attachments and sugar documents', function() {
+            var sendModel,
+                attachment1 = {id:'123',type:'upload'},
+                attachment2 = {id:'123',type:'document'},
+                attachment3 = {id:'123',type:'foo'};
+
+            view.model.set('attachments', [attachment1,attachment2,attachment3]);
+            sendModel = view.initializeSendEmailModel();
+            expect(sendModel.get('attachments')).toEqual([attachment1]);
+            expect(sendModel.get('documents')).toEqual([attachment2]);
         });
 
-        it('should set content of editor with html version of template', function () {
-            var Bean = SUGAR.App.Bean,
-                bodyHtml = '<h1>Test/h1>',
-                subject = 'This is my subject',
-                templateModel = new Bean({
-                    id:'1234',
-                    subject:subject,
-                    body_html:bodyHtml
-                });
-
-            fieldStub.withArgs(bodyHtml);
-            view.insertTemplate(templateModel);
-
-            expect(fieldStub.callCount).toEqual(1);
-            expect(getFieldStub.callCount).toEqual(1);
-            expect(beanCollectionStub.callCount).toEqual(1);
-            expect(view.model.get('subject')).toEqual(subject);
-        });
-
-        it('should set content of editor with text only version of template', function () {
-            var Bean = SUGAR.App.Bean,
-                html = '<h1>Test/h1>',
-                text = 'Test',
-                subject = 'This is my subject',
-                templateModel = new Bean({
-                    id:'1234',
-                    subject:subject,
-                    body_html:html,
-                    body:text,
-                    text_only:1
-                });
-
-            fieldStub.withArgs(text);
-            view.insertTemplate(templateModel);
-
-            expect(fieldStub.callCount).toEqual(1);
-            expect(getFieldStub.callCount).toEqual(1);
-            expect(beanCollectionStub.callCount).toEqual(1);
-            expect(view.model.get('subject')).toEqual(subject);
+        it('should populate the send model attachments/documents as empty when attachments not set', function() {
+            var sendModel;
+            view.model.unset('attachments');
+            sendModel = view.initializeSendEmailModel();
+            expect(sendModel.get('attachments')).toEqual([]);
+            expect(sendModel.get('documents')).toEqual([]);
         });
     });
+
 });

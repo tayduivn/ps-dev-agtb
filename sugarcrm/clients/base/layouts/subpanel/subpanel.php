@@ -1,4 +1,4 @@
 <?php
 
-$layout = MetaDataManager::getLayout("FilterPanelLayout");
+$layout = MetaDataManager::getLayout("SubPanelLayout");
 $viewdefs['base']['layout']['subpanel'] = $layout->getLayout();

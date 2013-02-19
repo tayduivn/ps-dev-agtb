@@ -1991,6 +1991,7 @@ $app_strings = array (
     'LBL_EMAIL_ATTACHMENTS_FILE'            => 'File',
     'LBL_EMAIL_ATTACHMENTS_DOCUMENT'        => 'Document',
     'LBL_EMAIL_ATTACHMENTS_EMBEDED'         => 'Embeded',
+    'LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED'    => 'Attachment failed to upload',
     'LBL_EMAIL_BCC'                         => 'BCC',
     'LBL_EMAIL_CANCEL'                      => 'Cancel',
     'LBL_EMAIL_CC'                          => 'CC',

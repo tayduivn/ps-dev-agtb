@@ -39,7 +39,6 @@
         // If is_setup == 1 and users come back to config, the context will already be here
         // so only make this new config mode there is no forecasts object on the context
         if(_.isUndefined(options.context)) {
-            options.context = _.extend(options.context, this.initializeAllModels(options.context));
             options.context = new Backbone.Model({'saveClicked' : false});
 
             // Initialize the config model
@@ -98,7 +97,7 @@
     _showModal:function () {
         var self = this,
             isAdmin = app.user.getAcls()['Forecasts'].admin == "yes",
-            isSetup = this.context.config.get('is_setup');
+            isSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
 
         if (isAdmin) {
             // begin building params to pass to modal
@@ -111,7 +110,7 @@
                     }
                 },
                 components: [
-                    { layout: (this.context.config.get('is_setup') == 1) ? "tabbedConfig" : "wizardConfig" }
+                    { layout: (isSetup == 1) ? "tabbedConfig" : "wizardConfig" }
                 ]
             };
             // callback has to be a function returning the checkSettingsAndRedirect function
