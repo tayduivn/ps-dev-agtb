@@ -78,7 +78,7 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
             'dependentModules'      => array(
                 'Accounts' => array(
                     'fieldMapping' => array(
-                        'id' => 'account_id',
+                        'account_id' => 'id',
                     )
                 )
             ),

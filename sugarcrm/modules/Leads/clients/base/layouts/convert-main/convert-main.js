@@ -102,13 +102,15 @@
      * Dependencies are defined in the convert-main.php
      */
     checkDependentModules: function() {
-        var modulesMeta = this.meta.modules;
+        var modulesMeta = this.meta.modules,
+            isEnabled = false;
 
         _.each(modulesMeta, function (moduleMeta) {
             if(!_.isUndefined(moduleMeta.dependentModules)) {
                 if (this.isDependentModulesComplete(moduleMeta)) {
-                    this.context.trigger("lead:convert:" + moduleMeta.module + ":enable");
+                    isEnabled = true;
                 }
+                this.context.trigger("lead:convert:" + moduleMeta.module + ":enable", isEnabled);
             }
         }, this);
     },

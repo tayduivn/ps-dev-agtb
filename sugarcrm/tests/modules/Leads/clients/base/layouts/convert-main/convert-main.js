@@ -212,7 +212,10 @@ describe("ConvertLeadLayout", function() {
 
         it("components on the layout each have a duplicate view and create/record view", function() {
             layout.render();
-            _.each(layout._components, function(component) {
+
+            expect(layout._components.length).toEqual(9);
+            var panels = _.first(layout._components, 3);
+            _.each(panels, function(component) {
                 expect(component.duplicateView).toBeDefined();
                 expect(component.recordView).toBeDefined();
             });

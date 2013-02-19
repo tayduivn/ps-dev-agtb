@@ -20,8 +20,7 @@
         this.context.on("lead:convert:"+this.meta.module+":hide", this.handleHide);
         this.context.on("lead:convert:"+this.meta.module+":validate", this.runValidation);
         this.context.on("lead:convert:"+this.meta.module+":enable", this.handleEnablePanel);
-
-        this.initiateModuleTriggers();
+        this.initiateDependentModuleDuplicateViewTriggers();
 
         this.defaultState = {
             activeView: this.DUPLICATE_VIEW,
@@ -31,7 +30,7 @@
         };
 
         //enable or disable duplicate check
-        var moduleMetadata = app.metadata.getModule(this.module);
+        var moduleMetadata = app.metadata.getModule(this.meta.module);
         this.enableDuplicateCheck = (moduleMetadata && moduleMetadata.dupCheckEnabled) || false;
 
         this.currentState =  _.extend({},this.defaultState);
@@ -48,27 +47,39 @@
      * Resets the panels state to the default settings
      * @param activeView
      */
-    resetPanelState : function(activeView) {
-        this.currentState =  _.extend({},this.defaultState);
+    resetPanelToDefaultState : function(activeView) {
+        this.currentState =  _.extend({}, this.defaultState);
         activeView = activeView || this.defaultState.activeView;
         this.currentState.activeView = activeView;
-        this.duplicateView.validationStatus = this.STATUS_INIT;
-        this.recordView.validationStatus = this.STATUS_DIRTY;
+
+        this.resetViewsState();
     },
 
-
-    resetViews : function() {
-        this.duplicateView.validationStatus = this.STATUS_INIT;
-        this.recordView.validationStatus = this.STATUS_DIRTY;
+    /**
+     * Resets the status of the duplicate and record views.
+     * @param activeView
+     */
+    resetViewsState : function() {
+        var selection_model = this.duplicateView.context.get('selection_model');
+        if (selection_model) {
+            var id = selection_model.module + '_select_' + selection_model.id;
+            this.$el.find('#'+ id).prop('checked', false);
+            this.duplicateView.context.unset('selection_model', {silent:true});
+        }
         this.currentState.selectedName = '';
         this.currentState.selectedId = null;
+
+        this.duplicateView.validationStatus = this.STATUS_INIT;
+        this.recordView.validationStatus = this.STATUS_DIRTY;
     },
+
     /**
-     * Sets the listeners for changes to the dependent modules models
+     * Sets the listeners for changes to the dependent modules duplicate views panel.
      */
-    initiateModuleTriggers: function () {
+    initiateDependentModuleDuplicateViewTriggers: function () {
         _.each(this.meta.dependentModules, function(modules, moduleName, list) {
-            this.context.on("dupecheck:" + moduleName + ":model:change", this.handleDependentModuleChanges);
+            this.context.on("dupecheck:" + moduleName + ":model:change", this.updateFromDependentModuleChanges);
+            this.context.on("module:" + moduleName + ":reset", this.resetFromDependentModuleChanges);
         }, this);
     },
 
@@ -116,7 +127,7 @@
     },
 
     /**
-     * Callback for when the collection of the duplicate
+     * Callback for when the duplicate list view collection has been updated.
      */
     duplicateViewCallback: function() {
         this.currentState.duplicateCount = this.duplicateView.collection.length;
@@ -159,7 +170,8 @@
     },
 
     /**
-     * Removes fields from the meta based on the modules config option - hiddenFields
+     * Removes fields from the meta and replaces with empty html container based on the modules config option - hiddenFields.
+     * For example.  Account name dropdown should not be available on contact and opportunity module.
      * @param meta
      * @param moduleMeta
      * @return {*}
@@ -209,8 +221,9 @@
     /**
      * Enable the panel
      */
-    handleEnablePanel: function() {
-        this.$('.header').removeClass('disabled').addClass('enabled');
+    handleEnablePanel: function(isEnabled) {
+        this.$('.header').removeClass(isEnabled ? 'disabled' : 'enabled');
+        this.$('.header').addClass(isEnabled ? 'enabled' : 'disabled');
     },
 
     /**
@@ -219,7 +232,8 @@
      * @param event
      */
     handleToggleClick: function(event) {
-        this.resetViews();
+        this.resetViewsState();
+        this.context.trigger("module:" + this.meta.module + ":reset");
         if (this.$(event.target).hasClass('show-duplicate')) {
             this.toggleSubViews(this.DUPLICATE_VIEW);
         } else if (this.$(event.target).hasClass('show-record')) {
@@ -229,26 +243,38 @@
     },
 
     /**
-     * Updates the attributes on the module based on the dependent modules fieldMappings
+     * Updates the attributes on the model based on the changes from dependent modules duplicate view.  Uses dependeModules property - fieldMappings
      * @param moduleName
      * @param model
      */
-    handleDependentModuleChanges: function(moduleName, model) {
+    updateFromDependentModuleChanges: function(moduleName, model) {
         var doDupe = false;
         if (this.meta.dependentModules && this.meta.dependentModules[moduleName] && this.meta.dependentModules[moduleName].fieldMapping) {
-             _.each(this.meta.dependentModules[moduleName].fieldMapping, function (value, key) {
-                if (model.has(key)) {
-                    this.duplicateView.model.set(value, model.get(key), {silent:true});
-                    doDupe = true;
-                }
-            }, this);
+            this.populateRecords(model, this.meta.dependentModules[moduleName].fieldMapping);
             if (doDupe) {
                 if (this.currentState.activeView === this.DUPLICATE_VIEW) {
-                    this.resetPanelState(this.DUPLICATE_VIEW);
+                    this.resetPanelToDefaultState(this.DUPLICATE_VIEW);
                 }
-                this.duplicateView.context.trigger("dupecheck:fetch:fire",  this.duplicateView.model);
+                this.triggerDuplicateCheck();
             }
         }
+    },
+
+    /**
+     * Wrapper to check whether to fire the duplicate check event;
+     */
+    triggerDuplicateCheck : function(){
+        if(this.enableDuplicateCheck) {
+            this.duplicateView.context.trigger("dupecheck:fetch:fire",  this.recordView.model);
+        }
+    },
+
+    /**
+     * Resets the state of the panels based on a dependent module being reset
+     */
+    resetFromDependentModuleChanges: function() {
+        this.resetPanelToDefaultState(this.DUPLICATE_VIEW);
+        this.duplicateView.collection.reset();
     },
 
     /**
@@ -378,28 +404,26 @@
     },
 
     /**
-     * When lead data has been retrieved, populate the subpanel record view
-     * and then kick off the dupe check
+     * Populates the record view from the passed in model and then kick off the dupe check
      *
-     * @param leadModel
+     * @param model
      */
-    handlePopulateRecords: function(leadModel) {
-        this.populateRecordsFromLeads(leadModel);
-
+    handlePopulateRecords: function(model) {
+        this.populateRecords(model, this.meta.fieldMapping);
         if(this.meta.duplicateCheckOnStart) {
-            this.duplicateView.context.trigger("dupecheck:fetch:fire", this.recordView.model);
+            this.triggerDuplicateCheck();
         }
     },
 
     /**
      * Use the convert metadata to determine how to map the lead fields to module fields
      *
-     * @param leadModel
+     * @param model
      */
-    populateRecordsFromLeads:function (leadModel) {
-        _.each(this.meta.fieldMapping, function (sourceField, targetField) {
-            if (leadModel.has(sourceField)) {
-                this.recordView.model.set(targetField, leadModel.get(sourceField));
+    populateRecords:function (model, fieldMapping) {
+        _.each(fieldMapping, function (sourceField, targetField) {
+            if (model.has(sourceField)) {
+                this.recordView.model.set(targetField, model.get(sourceField));
             }
         }, this);
     },
