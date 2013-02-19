@@ -56,12 +56,21 @@ class Dashboard extends Basic
     /**
      * This function fetches an array of dashboards for the current user
      */
-    public function getDashboardsForUser( User $user )
+    public function getDashboardsForUser( User $user, $options = array() )
     {
-        $results = $this->get_list('',"assigned_user_id = '".$this->db->quote($user->id)."'",0,-99,-99);
-        return $results['list'];
+        $order = !empty($options['order_by']) ? $options['order_by'] : 'date_entered desc';
+        $from = "assigned_user_id = '".$this->db->quote($user->id)."'";
+        $offset = !empty($options['offset']) ? (int)$options['offset'] : 0;
+        $limit = !empty($options['limit']) ? (int)$options['limit'] : -1;
+        $result = $this->get_list($order,$from,$offset,$limit,-99,0);
+        $nextOffset = (count($result['list']) > 0 && count($result['list']) ==  $limit) ? ($offset + $limit) : -1;
+        return array('records'=>$result['list'], 'next_offset'=>$nextOffset);
     }
 
+    /**
+     * This overrides the default save function setting assigned_user_id
+     * @see SugarBean::save()
+     */
     function save($check_notify = FALSE)
     {
         $this->assigned_user_id = $GLOBALS['current_user']->id;
