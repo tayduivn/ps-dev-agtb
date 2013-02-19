@@ -25,8 +25,6 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    _rowActions: [],
-    _leftActions: [],
     extendsFrom: 'EditableView',
 
     /**
@@ -45,8 +43,6 @@
         'click th.morecol': 'toggleDropdown',
         'click th.morecol li a' : 'toggleColumn'
     },
-    _fields: {
-    },
 
     defaultLayoutEvents: {
         "list:search:fire": "fireSearch",
@@ -58,43 +54,20 @@
     },
 
     defaultContextEvents: {},
-    
+
     // Model being previewed (if any)
     _previewed: null,
-    
+    //Store left column fields
+    _leftActions: [],
+    //Store right column fields
+    _rowActions: [],
+    //Store default and available(+visible) field names
+    _fields: {},
+
     addTooltip: function(event){
         if (_.isFunction(app.utils.handleTooltip)) {
             app.utils.handleTooltip(event, this);
         }
-    },
-
-    toggleDropdown: function(e) {
-        var self = this;
-        var $dropdown = self.$('.morecol > div');
-        if ($dropdown && _.isFunction($dropdown.dropdown)) {
-            $dropdown.toggleClass('open');
-            if (e) e.stopPropagation();
-            $('html').one('click', function () {
-                $dropdown.removeClass('open');
-            });
-        }
-    },
-
-    toggleColumn: function(evt) {
-        if (!evt) return;
-        evt.stopPropagation();
-
-        var $li = this.$(evt.currentTarget).closest('li'),
-            column = $li.data('fieldname');
-
-        if (_.indexOf(this._fields.available.visible, column) !== -1) {
-            this._fields.available.visible = _.without(this._fields.available.visible, column);
-        }
-        else {
-            this._fields.available.visible.push(column);
-        }
-        this.render();
-        this.toggleDropdown();
     },
 
     initialize: function(options) {
@@ -163,6 +136,11 @@
         app.events.trigger("preview:close");
     },
 
+    /**
+     * Parse fields to identificate default and available(+visible) fields
+     * @param {Object} view metadata
+     * @return {Object} view metadata
+     */
     parseFields: function(viewMeta){
         this._fields = {
             "default": [], //Fields visible by default
@@ -170,7 +148,7 @@
                 "visible": [], //Fields user wants to see
                 "all": [] //Fields hidden by default
             }
-        }
+        };
         // TODO: load field prefs and store names in this._fields.available.visible
         // no prefs so use viewMeta as default and assign hidden fields
         _.each(viewMeta.panels, function(panel){
@@ -207,6 +185,10 @@
             }
         });
     },
+    /**
+     * Add actions to left and right columns
+     * @param {Object} Backbone options object
+     */
     addActions: function(options) {
         this._rowActions = [];
         this._leftActions = [];
@@ -382,6 +364,10 @@
             }
         }
     },
+    /**
+     * Add single selection field to left column
+     * @param {Object} Backbone options object
+     */
     addSingleSelectionAction: function(options) {
         var _generateMeta = function (name, label) {
             return {
@@ -394,6 +380,10 @@
         var def = options.meta.selection;
         this._leftActions[0] = _generateMeta(def.name || options.module + '_select', def.label);
     },
+    /**
+     * Add multi selection field to left column
+     * @param {Object} Backbone options object
+     */
     addMultiSelectionAction: function(options) {
         var _generateMeta = function (buttons) {
             return {
@@ -411,6 +401,10 @@
         var buttons = options.meta.selection.actions;
         this._leftActions[0] = _generateMeta(buttons);
     },
+    /**
+     * Add fieldset of rowactions to the right column
+     * @param {Object} Backbone options object
+     */
     addRowActions: function(options) {
         var _generateMeta = function (label, css_class, buttons) {
             return {
@@ -429,6 +423,41 @@
         }
         var def = options.meta.rowactions;
         this._rowActions[0] =  _generateMeta(def.label, def.css_class, def.actions);
+    },
+    /**
+     * Manually toggle the dropdown on cell click
+     * @param {Object}(optional) event jquery event object
+     */
+    toggleDropdown: function(event) {
+        var self = this;
+        var $dropdown = self.$('.morecol > div');
+        if ($dropdown.length > 0 && _.isFunction($dropdown.dropdown)) {
+            $dropdown.toggleClass('open');
+            if (event) event.stopPropagation();
+            $('html').one('click', function () {
+                $dropdown.removeClass('open');
+            });
+        }
+    },
+    /**
+     * Toggle the 'visible' state of an available field
+     * @param {Object} event jquery event object
+     */
+    toggleColumn: function(event) {
+        if (!event) return;
+        event.stopPropagation();
+
+        var $li = this.$(event.currentTarget).closest('li'),
+            column = $li.data('fieldname');
+
+        if (_.indexOf(this._fields.available.visible, column) !== -1) {
+            this._fields.available.visible = _.without(this._fields.available.visible, column);
+        }
+        else {
+            this._fields.available.visible.push(column);
+        }
+        this.render();
+        this.toggleDropdown();
     },
     showTooltip: function(e) {
         this.$(e.currentTarget).tooltip("show");
