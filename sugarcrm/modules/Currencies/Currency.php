@@ -309,7 +309,7 @@ class Currency extends SugarBean
         sugar_cache_clear('currency_list');
 
         // The per-module cache doesn't need to be cleared here
-        MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_CURRENCIES));
+        MetaDataManager::clearAPICache(false);
 
         return parent::save($check_notify);
     }

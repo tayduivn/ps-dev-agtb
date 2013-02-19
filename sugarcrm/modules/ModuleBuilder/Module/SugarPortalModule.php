@@ -80,7 +80,7 @@ class SugarPortalModule{
         // If mod strings are empty, rebuild them - some rest calls are failing 
         // here
         global $mod_strings;
-        if (empty($mod_strings['LBL_EDITVIEW'])) {
+        if (empty($mod_strings)) {
             $mstrings = return_module_language($GLOBALS['current_language'], 'ModuleBuilder');
         } else {
             $mstrings = $mod_strings;

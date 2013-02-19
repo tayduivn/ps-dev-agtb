@@ -62,7 +62,6 @@ class Bug58774Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('moduleList');
-        SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
         
         $this->_originalRequest = array('r' => $_REQUEST, 'p' => $_POST);

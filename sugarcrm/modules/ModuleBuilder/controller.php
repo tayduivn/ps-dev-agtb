@@ -498,9 +498,12 @@ class ModuleBuilderController extends SugarController
                 $repair->module_list = array();
                 $repair->clearJsFiles();
                 
-                // Clear the metadata cache for labels and the requested module
-                $repair->module_list = array($module);
-                $repair->repairMetadataAPICache('labels');
+                // Clear the metadata cache so this change can be reflected 
+                // immediately. This could have taken place already in action_SaveLabel
+                // so don't do it again if we don't need to.
+                if (!$this->metadataApiCacheCleared) {
+                    $repair->clearMetadataAPICache();
+                }
             }
         } else {
             $mb = new ModuleBuilder ();
@@ -581,7 +584,7 @@ class ModuleBuilderController extends SugarController
         // immediately. This could have taken place already in action_SaveLabel
         // so don't do it again if we don't need to.
         if (!$this->metadataApiCacheCleared) {
-            $repair->repairMetadataAPICache();
+            $repair->clearMetadataAPICache();
         }
 
         $GLOBALS ['mod_strings'] = $MBmodStrings;
@@ -703,11 +706,6 @@ class ModuleBuilderController extends SugarController
                 include_once ('modules/Administration/QuickRepairAndRebuild.php');
                 $repair = new RepairAndClear();
                 $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
-                
-                // This removes the labels associated with the field and rebuilds
-                // the api cache for the module
-                $repair->module_list = array($moduleName);
-                $repair->repairMetadataAPICache('labels');
                 $module = StudioModuleFactory::getStudioModule($moduleName);
             }
         }

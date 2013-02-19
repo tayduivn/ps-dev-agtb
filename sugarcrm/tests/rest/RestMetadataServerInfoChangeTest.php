@@ -34,7 +34,7 @@ class RestMetadataServerInfoChangeTest extends RestTestBase {
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
 
-        $mm = MetaDataManager::getManager('mobile', false);
+        $mm = new MetaDataManager($GLOBALS['current_user'], 'mobile', false);
         $original_server_info = $mm->getServerInfo();
 
         $restReply = $this->_restCall('metadata?platform=mobile');

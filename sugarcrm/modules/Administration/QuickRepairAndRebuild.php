@@ -107,8 +107,8 @@ class RepairAndClear
             case 'clearAdditionalCaches':
                 $this->clearAdditionalCaches();
                 break;
-            case 'repairMetadataAPICache':
-                $this->repairMetadataAPICache();
+            case 'clearMetadataAPICache':
+                $this->clearMetadataAPICache();
                 break;
             //BEGIN SUGARCRM flav=pro ONLY
             case 'clearPDFFontCache':
@@ -138,7 +138,6 @@ class RepairAndClear
                 $this->rebuildExtensions();
                 $this->rebuildAuditTables();
                 $this->repairDatabase();
-                $this->repairMetadataAPICache();
                 break;
         }
         
@@ -442,7 +441,7 @@ class RepairAndClear
         
         // Moving this out so it is accessible without the need to wipe out the 
         // API service dictionary cache 
-        $this->repairMetadataAPICache();
+        $this->clearMetadataAPICache();
     }
 
     /**
@@ -453,27 +452,6 @@ class RepairAndClear
     public function clearMetadataAPICache() {
         // Bug 55141: Metadata Cache is a Smart cache so we can delete everything from the cache dir
         MetaDataManager::clearAPICache();
-    }
-
-    /**
-     * Cleans out current metadata cache and rebuilds it for
-     * each platform and visibility
-     */
-    public function repairMetadataAPICache($section = '') {
-        // Refresh metadata for selected modules only if there selected modules
-        if (is_array($this->module_list) && !in_array(translate('LBL_ALL_MODULES'), $this->module_list)) {
-            MetaDataManager::refreshModulesCache($this->module_list);
-        } 
-        
-        // If there is a section named (like 'fields') refresh that section
-        if (!empty($section)) {
-            MetaDataManager::refreshSectionCache($section);
-        } else {
-            // Otherwise refresh the entire thing if the section is not a false
-            if ($section !== false) {
-                MetaDataManager::refreshCache();
-            }
-        }
     }
 
 	//////////////////////////////////////////////////////////////

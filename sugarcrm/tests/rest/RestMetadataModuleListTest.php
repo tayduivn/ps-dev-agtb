@@ -273,7 +273,7 @@ class RestMetadataModuleListTest extends RestTestBase {
      */
     protected function _getModuleListsLikeTheAPIDoes() {
         // Get the metadata manager
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($this->_user);
 
         // Get the api
         require_once 'clients/base/api/MetadataApi.php';

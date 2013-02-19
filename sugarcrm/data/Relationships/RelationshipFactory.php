@@ -60,8 +60,7 @@ class SugarRelationshipFactory {
 
     public static function rebuildCache()
     {
-        $rf = self::getInstance();
-        $rf->buildRelationshipCache();
+        self::getInstance()->buildRelationshipCache();
     }
 
     public static function deleteCache()
@@ -71,6 +70,9 @@ class SugarRelationshipFactory {
         {
             unlink($file);
         }
+        
+        //clear out the api metadata cache
+        MetaDataManager::clearAPICache();
     }
 
     /**
@@ -197,19 +199,15 @@ class SugarRelationshipFactory {
         sugar_mkdir(dirname($this->getCacheFile()), null, true);
         $out = "<?php \n \$relationships = " . var_export($relationships, true) . ";";
         sugar_file_put_contents_atomic($this->getCacheFile(), $out);
-        
-        // We do not want to refresh the API metadata relationships section cache
-        // when building the relationship cache for the first time
-        $rebuildApiCache = !empty($this->relationships);
+
         $this->relationships = $relationships;
         $buildingRelCache = false;
-        
-        if ($rebuildApiCache) {
-            MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_RELATIONSHIPS));
-        }
     }
 
 	protected function getCacheFile() {
 		return sugar_cached("Relationships/relationships.cache.php");
 	}
+
+
+
 }
