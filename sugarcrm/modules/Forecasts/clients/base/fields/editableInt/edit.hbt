@@ -30,16 +30,14 @@
     {{#if def.auto_increment}}
         {{#eq value "NaN"}}--{{else}}{{value}}{{/eq}}
     {{else}}
-        <div class="controls">
-            <div class="control-group">
-                <input type="text" value="{{value}}" class="input-mini focused tright" maxlength="26">
-            </div>
-            <span class="help-inline editable-error hide" style="white-space: nowrap;">
-                <span class="btn btn-danger">
-                    <i class="icon-white icon-exclamation-sign"></i>
+        <span class="edit">
+            <div class="controls">
+                <input type="text" value="{{value}}" class="input-mini tright" style="width: 22px" maxlength="3">
+                <span class="error-tooltip  add-on local" rel="tooltip" data-original-title="Error: This field is required" style="display: none;">
+                    <i class="icon-exclamation-sign"></i>
                 </span>
-                <span class="error-message">Error Message</span>
-            </span>
-        </div>
+            </div>
+        </span>
+
     {{/if}}
 </span>

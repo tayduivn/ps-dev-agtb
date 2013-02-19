@@ -168,6 +168,7 @@
             var value = self.parsePercentage(self.$el.find(self.inputSelector).val());
             if (self.isValid(value)) {
                 self.model.set(self.name, self.unformat(value));
+                self.$el.find("[rel=tooltip]").tooltip('destroy');
                 self.renderDetail();
             } else {
                 // render error
@@ -239,8 +240,7 @@
             '',
             app.user.getPreference('decimal_separator')
         );
-        this.$el.find(this.inputSelector).val(formattedValue).select();
-
+        this.$el.find(this.inputSelector).removeClass('local-error').val(formattedValue).select();
         // inform other fields that I am opening
         this.context.trigger('field:editable:open');
 
@@ -282,6 +282,7 @@
      */
     cancelEdits: function(evt) {
         this.$el.find(this.inputSelector).val(this.value);
+        this.$el.find("[rel=tooltip]").tooltip('destroy');
         this.renderDetail();
     },
 
@@ -380,18 +381,11 @@
      * Method to show the error message
      */
     showErrors : function() {
-        // attach error styles
-        //var self = this;
         this.$el.find('.error-tooltip').attr('data-original-title',this.errorMessage);
         this.$el.find('.error-tooltip').attr('style','display: inline-block;');
         this.$el.find('input').addClass('local-error');
-        this.$el.find("[rel=tooltip]").tooltip({container: 'body', placement: 'top'});
-        /*
-        // make error message button cancel edits
-        this.$el.find('.btn.btn-danger').on("click", function(evt) {
-            self.cancelEdits.call(self, evt);
-        });
-        */
+        // we want to show the tooltip message, but hide the add-on (exclamation)
+        this.$el.find("[rel=tooltip]").tooltip({container: 'body', placement: 'top'}).tooltip('show').hide();
     }
 
 })
