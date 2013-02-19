@@ -93,5 +93,10 @@ var pages = {
         "title":"Sugar7 Prototypes"
       , "url":"sugar7/index.html"
       , "description":"Clickable prototypes for the next generation of SugarCRM."
+      , "sections":[
+            {"label":"Dashboard Empty", "url":"sugar7/dashboard_empty.html", "description":"dashboard_empty"}
+          , {"label":"Dashboard Dashlets View", "url":"sugar7/dashboard_view.html", "description":"dashboard_view"}
+          , {"label":"Dashboard Dashlets Edit", "url":"sugar7/dashboard_edit.html", "description":"dashboard_edit"}
+      ]
     }
 };
