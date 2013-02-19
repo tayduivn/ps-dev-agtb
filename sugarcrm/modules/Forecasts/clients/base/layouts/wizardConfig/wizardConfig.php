@@ -24,6 +24,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $viewdefs['Forecasts']['base']['layout']['wizardConfig'] = array(
     'type' => 'wizardConfig',
+    'css_class' => 'modal-body',
     'components' => array(
         array(
             'view' => 'forecastsConfigWizardStart',
