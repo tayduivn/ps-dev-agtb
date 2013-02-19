@@ -221,16 +221,15 @@ class Account extends Company {
 			}
         }
 
-//BEGIN SUGARCRM flav!=sales ONLY
-        // Set campaign name if there is a campaign id
-		if( !empty($this->campaign_id)){
 
-			$camp = new Campaign();
-		    $where = "campaigns.id='{$this->campaign_id}'";
-		    $campaign_list = $camp->get_full_list("campaigns.name", $where, true);
-		    $this->campaign_name = $campaign_list[0]->name;
+        // Set campaign name if there is a campaign id
+		if(!empty($this->campaign_id)) {
+            $camp = BeanFactory::getBean("Campaigns", $this->campaign_id);
+            if(!empty($camp)) {
+                $this->campaign_name = $camp->name;
+            }
 		}
-//END SUGARCRM flav!=sales ONLY
+
 	}
 
 	function get_list_view_data(){
