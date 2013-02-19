@@ -29,14 +29,87 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Products']['base']['view']['record'] = array(
+    'buttons' => array(
+        array(
+            'type' => 'button',
+            'name' => 'cancel_button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
+            'showOn' => 'edit',
+        ),
+        array(
+            'type' => 'rowaction',
+            'event' => 'button:save_button:click',
+            'name' => 'save_button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class' => 'btn btn-primary',
+            'showOn' => 'edit',
+            'value' => 'edit',
+        ),
+        array(
+            'type' => 'actiondropdown',
+            'name' => 'main_dropdown',
+            'primary' => true,
+            'showOn' => 'view',
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:edit_button:click',
+                    'name' => 'edit_button',
+                    'label' => 'LBL_EDIT_BUTTON_LABEL',
+                    'primary' => true,
+                    'value' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'value' => 'delete',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:duplicate_button:click',
+                    'name' => 'duplicate_button',
+                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'value' => 'create',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:create_related_button:click',
+                    'name' => 'create_related_button',
+                    'label' => 'LBL_CREATE_RELATED_RECORD',
+                    'value' => 'create',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:link_related_button:click',
+                    'name' => 'link_related_button',
+                    'label' => 'LBL_ASSOC_RELATED_RECORD',
+                    'value' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:change_log_button:click',
+                    'name' => 'change_log_button',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                    'value' => 'view'
+                ),
+            ),
+        ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
+    ),
     'panels' => array(
         array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                    array (
-                        'name' => 'name'
-                    ),
+                array(
+                    'name' => 'name'
+                ),
             )
         ),
         array(
@@ -48,8 +121,8 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'fields' => array(
                 'opportunity_name',
                 array(
-                    'name'=>'account_name',
-                    'noedit'=>true
+                    'name' => 'account_name',
+                    'noedit' => true
                 ),
                 'sales_stage',
                 'probability',
@@ -60,8 +133,8 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'discount_price',
                 'discount_amount',
                 array(
-                    'name'=>'likely_case',
-                    'required'=>true
+                    'name' => 'likely_case',
+                    'required' => true
                 )
             ),
         ),
@@ -75,8 +148,8 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'best_case',
                 'worst_case',
                 array(
-                    'name'=>'category_name',
-                    'noedit'=>true
+                    'name' => 'category_name',
+                    'noedit' => true
                 ),
                 'type',
                 'lead_source',
@@ -92,8 +165,8 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'description',
                 'list_price',
                 array(
-                    'name'=>'tax_class',
-                    'noedit'=>true
+                    'name' => 'tax_class',
+                    'noedit' => true
                 ),
                 'cost_price'
             )
