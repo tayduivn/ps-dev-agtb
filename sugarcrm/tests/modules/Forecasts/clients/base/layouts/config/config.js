@@ -121,12 +121,10 @@ describe("The forecasts config layout controller", function(){
                     fetch: function(){}
                 }
             });
-            sinon.stub(testLayout, 'initializeAllModels');
 
             delete options.context;
             testLayout.initialize(options);
             expect(getModelStub).toHaveBeenCalled();
-            testLayout.initializeAllModels.restore();
             getModelStub.restore();
         });
 

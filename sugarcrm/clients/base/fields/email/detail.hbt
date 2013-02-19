@@ -28,7 +28,7 @@
 }}
         {{#each value}}
         <div class="control-group email">
-            <div class="ellipsis_inline" data-title="{{email_address}}">
+            <div class="ellipsis_inline" data-original-title="{{email_address}}">
                 {{#if hasAnchor}}<a {{#if ../../sendEmailFromApp}}class="composeEmail" {{/if}}href="{{#if ../../sendEmailFromApp}}javascript:void(0);{{else}}mailto:{{email_address}}{{/if}}">{{email_address}}</a>{{else}}{{email_address}}{{/if}}
             </div>
             <div class="btn-toolbar">

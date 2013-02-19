@@ -65,7 +65,7 @@
 
         //When clicking on eye icon, we need to trigger preview:render with model&collection
         this.context.on("list:preview:fire", function(model) {
-            app.events.trigger("preview:render", model, this.collection);
+            app.events.trigger("preview:render", model, this.collection, true);
         }, this);
 
         //When switching to next/previous record from the preview panel, we need to update the highlighted row
@@ -91,14 +91,20 @@
         return viewMeta;
 
     },
-    filterList: function(filterDef, scope) {
+    filterList: function(filterDef, isNewFilter, scope) {
         var self = this;
 
         this.collection.fetch({
             filter: filterDef,
             success: function() {
-                var url = app.api.buildURL('Filters/' + self.options.module + '/used', "update");
-                app.api.call("update", url, {filters: [scope.currentFilter]}, {});
+                if(isNewFilter) {
+                    var method = "update";
+                    if(scope.currentFilter === "all_records") {
+                        method = "delete";
+                    }
+                    var url = app.api.buildURL('Filters/' + self.options.module + '/used');
+                    app.api.call(method, url, {filters: [scope.currentFilter]}, {});
+                }
             }
         });
     },
@@ -193,7 +199,7 @@
 
         //TODO probably need to check if we can sort this field from metadata
         collection = self.collection;
-        eventTarget = self.$(event.target);
+        eventTarget = self.$(event.currentTarget);
         fieldName = eventTarget.data('fieldname');
 
         // first check if alternate orderby is set for column

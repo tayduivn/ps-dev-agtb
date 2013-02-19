@@ -143,7 +143,7 @@
      * @return {Array} array of the selected ranges
      */
     _getRangeFilters: function() {
-        var options = this.context.config.get('buckets_dom') || 'commit_stage_binary_dom';
+        var options = app.metadata.getModule('Forecasts', 'config').buckets_dom || 'commit_stage_binary_dom';
 
         return _.map(app.lang.getAppListStrings(options), function(value, key)  {
             return {id: key, text: value};

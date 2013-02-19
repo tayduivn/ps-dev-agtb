@@ -51,9 +51,10 @@
             this.model.isNotEmpty = true;
         }
     },
-    handleSync: function(method, options, error) {
-        if(this.model && this.model.attributes && (method == 'read' || method =='update')){
-            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
+
+    handleSync: function(method, model, options, error) {
+        if (this.model && this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
+            this.previousModelState = JSON.parse(JSON.stringify(model.attributes || {}));
         }
     },
 
@@ -254,7 +255,7 @@
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
             //Exclude non editable fields
-            if (field.def.noedit || field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
+            if (field.def.noedit || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
@@ -335,9 +336,11 @@
     },
 
     duplicateClicked: function() {
-        var prefill = app.data.createBean(this.model.module);
+        var self = this, 
+            prefill = app.data.createBean(this.model.module);
+
         prefill.copy(this.model);
-        this.model.trigger("duplicate:before", prefill);
+        self.model.trigger("duplicate:before", prefill);
         prefill.unset("id");
         app.drawer.open({
             layout: 'create',
@@ -345,9 +348,13 @@
                 create: true,
                 model : prefill
             }
-        }, this);
+        }, function(newModel) {
+            if(newModel && newModel.id) {
+                app.router.navigate("#" + self.model.module + "/" + newModel.id, {trigger: true});
+            }
+        });
     },
-    
+
     findDuplicatesClicked: function() {
         app.drawer.open({
             layout : 'find-duplicates',

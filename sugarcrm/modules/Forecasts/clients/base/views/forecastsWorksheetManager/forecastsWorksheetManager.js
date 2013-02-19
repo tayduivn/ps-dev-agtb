@@ -62,9 +62,11 @@
     selectedUser: {},
     timePeriod: '',
     gTable: '',
-    // boolean to denote that a fetch is currently in progress
-    fetchInProgress: false,
 
+    /**
+     * boolean to denote that a fetch is currently in progress
+     */
+    fetchInProgress: false,
 
     /**
      * Template to use wen updating the likelyCase on the committed bar
@@ -103,15 +105,15 @@
      */
     draftUser: '',
 
-    defaultValues : {
-                    quota: 0,
-                    best_case: 0,
-                    best_case_adjusted: 0,
-                    likely_case: 0,
-                    likely_case_adjusted: 0,
-                    worst_case: 0,
-                    worst_case_adjusted: 0
-                },
+    defaultValues: {
+        quota: 0,
+        best_case: 0,
+        best_case_adjusted: 0,
+        likely_case: 0,
+        likely_case_adjusted: 0,
+        worst_case: 0,
+        worst_case_adjusted: 0
+    },
 
     /**
      * Handle Any Events
@@ -127,7 +129,6 @@
      * @param {Object} options
      */
     initialize: function(options) {
-
         // we need a custom model and collection in this view, so just create them on the options
         // before we call the parent method
         options.model = app.data.createBean('Forecasts');
@@ -160,15 +161,19 @@
      * @param status
      * @param xhr
      */
-    collectionSuccess: function (resp, status, xhr) {
-        var records = [];
-        var users = this.selectedUser.reportees;
+    collectionSuccess: function(resp, status, xhr) {
+        var records = [],
+            users = $.map(this.selectedUser.reportees, function(obj) {
+                return $.extend(true, {}, obj);
+            });
 
         // put the selected user on top
         users.unshift({id: this.selectedUser.id, name: this.selectedUser.full_name});
 
         _.each(users, function(user) {
-            var row = _.find(resp.records, function(rec) { return (rec.user_id == this.id) }, user);
+            var row = _.find(resp.records, function(rec) {
+                return (rec.user_id == this.id)
+            }, user);
             if(!_.isUndefined(row)) {
                 // update the name on the row as this will have the correct formatting for the locale
                 row.name = user.name;
@@ -210,7 +215,7 @@
 
         var url = app.api.buildURL('ForecastManagerWorksheets', 'filter');
 
-        return {"url" : url, "filters" : {"filter": args_filter}};
+        return {"url": url, "filters": {"filter": args_filter}};
     },
 
     /**
@@ -224,8 +229,8 @@
             this.dirtyUser = this.selectedUser;
             this.draftUser = this.selectedUser;
         }
-        var userChanged = (this.selectedUser.id != selectedUser.id)
-        var showOppsChanged = (this.selectedUser.showOpps !=  selectedUser.showOpps);
+        var userChanged = (this.selectedUser.id != selectedUser.id),
+            showOppsChanged = (this.selectedUser.showOpps != selectedUser.showOpps);
         this.selectedUser = selectedUser;
         if(!this.isVisible()) {
             return false;
@@ -243,7 +248,9 @@
     unbindData: function() {
         //if we don't unbind this, then recycle of this view if a change in rendering occurs will result in multiple bound events to possibly out of date functions
         $(window).unbind("beforeunload");
-        if(this.context) this.context.off(null, null, this);
+        if(this.context) {
+            this.context.off(null, null, this);
+        }
         app.view.View.prototype.unbindData.call(this);
     },
 
@@ -304,7 +311,6 @@
             this.context.on('forecasts:tabKeyPressed', function(isShift, field) {
                 this.editableFieldNavigate(isShift, field);
             }, this);
-
         }
 
         $(window).bind("beforeunload", _.bind(function() {
@@ -356,7 +362,7 @@
     },
 
     /**
-     *
+     * Handles saving the Worksheet
      * @triggers forecasts:worksheet:saved
      * @return {Number}
      */
@@ -474,7 +480,7 @@
      * @return {*} returns null if not found in the keymap, returns true/false if it did find it
      */
     checkConfigForColumnVisibility: function(colKey) {
-        return app.utils.getColumnVisFromKeyMap(colKey, this.name, this.context.config);
+        return app.utils.getColumnVisFromKeyMap(colKey, this.name);
     },
 
     /**
@@ -520,8 +526,6 @@
      * Renders view
      */
     _render: function() {
-        var self = this;
-
         if(!this.isVisible()) {
             return false;
         }
@@ -577,20 +581,20 @@
         );
 
         //see if anything in the model is a draft version
-        var enableCommit = self.collection.find(function(model) {
+        var enableCommit = this.collection.find(function(model) {
             if(model.get("version") == 0) {
-                self.draftModels.add(model, {merge: true});
+                this.draftModels.add(model, {merge: true});
                 return true;
             }
 
             return false;
         }, this);
         if(_.isObject(enableCommit)) {
-            self.context.trigger("forecasts:commitButtons:enabled");
+            this.context.trigger("forecasts:commitButtons:enabled");
         }
 
         this.calculateTotals();
-        self.context.trigger('forecasts:worksheetmanager:rendered');
+        this.context.trigger('forecasts:worksheetmanager:rendered');
 
         return this;
 
@@ -656,7 +660,7 @@
                     }
 
                     // create the history log
-                    outputLog = app.utils.createHistoryLog(oldestModel, newestModel, this.context.config);
+                    outputLog = app.utils.createHistoryLog(oldestModel, newestModel);
                     // update the div that was created earlier and set the html to what was the commit log
                     $(nTr).next().children("td").children("div").html(this.commitLogTemplate(outputLog));
                 }
@@ -715,7 +719,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedRanges: function(params) {
-        if(this.context.config.get('forecast_ranges') != 'show_binary') {
+        if(app.metadata.getModule('Forecasts', 'config').forecast_ranges != 'show_binary') {
             // TODO: this.
         } else {
             this.ranges = _.first(params);

@@ -38,16 +38,16 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.model.set({
-            quota: 0,
-            best_case: 0,
-            best_adjusted: 0,
-            likely_case: 0,
-            likely_adjusted: 0,
-            worst_case: 0,
-            worst_adjusted: 0,
-            show_worksheet_likely: options.context.config.get('show_worksheet_likely'),
-            show_worksheet_best: options.context.config.get('show_worksheet_best'),
-            show_worksheet_worst: options.context.config.get('show_worksheet_worst')
+            quota : 0,
+            best_case : 0,
+            best_adjusted : 0,
+            likely_case : 0,
+            likely_adjusted : 0,
+            worst_case : 0,
+            worst_adjusted : 0,
+            show_worksheet_likely: app.metadata.getModule('Forecasts', 'config').show_worksheet_likely,
+            show_worksheet_best: app.metadata.getModule('Forecasts', 'config').show_worksheet_best,
+            show_worksheet_worst: app.metadata.getModule('Forecasts', 'config').show_worksheet_worst
         });
     },
 

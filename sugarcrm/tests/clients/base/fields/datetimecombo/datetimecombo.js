@@ -14,7 +14,7 @@ describe("datetimecombo field", function() {
         baseDateField = SugarTest.createField("base", "date", "date", "edit");
         field = SugarTest.createField("base", "datetimecombo", "datetimecombo", "edit");
 
-        // Convenience for any specs that want to avoid calling initialize. (note if 
+        // Convenience for any specs that want to avoid calling initialize. (note if
         // initialize called myUser's datepre/timepref will take precedence)
         field.usersDatePrefs = 'm/d/Y';
         field.userTimePrefs = 'H:i';
@@ -32,19 +32,19 @@ describe("datetimecombo field", function() {
 
     describe("datetimecombo core", function() {
         var datepickerStub, jqFn, expectedValValue;
-        
+
         // Essentially, the following stubs out this.$('doesnt_matter').<val & datepicker>
         beforeEach(function(){
             datepickerStub = sinon.stub();
             jqFn = sinon.stub(field, '$', function() {
                 return {
-                    'val': function() { 
+                    'val': function() {
                         return 'arbitrary_value';
                     },
                     'datepicker': datepickerStub
                 };
             });
-            expectedValValue = field.$("foo").val(); // 1970-09-12 from above ;-)
+            expectedValValue = field.$("foo").val(); // 'arbitrary_value' from above ;-)
         });
 
         afterEach(function(){
@@ -57,7 +57,18 @@ describe("datetimecombo field", function() {
             expect(field.dateValue).toEqual(expectedValValue);
             expect(field.timeValue).toEqual(expectedValValue);
         });
-
+        it("should parse datetime from field if leaveDirty and this.dateValue not set", function() {
+            var stub, returnedValue;
+            field.leaveDirty = true;
+            field.dateValue = '';
+            field.timeValue = '';
+            field.$el.text('12/01/2012 12:00am');
+            returnedValue = field.format('xyz');
+            expect(returnedValue['date']).toEqual('12/01/2012');
+            expect(returnedValue['time']).toEqual('12:00am');
+            expect(field.dateValue).toEqual('12/01/2012');
+            expect(field.timeValue).toEqual('12:00am');
+        });
         it("should unformat to iso 8601 compatible date string", function() {
             var yr='1999', m='01', d='23', actual;
             actual = field.unformat(yr+'-'+m+'-'+d);
@@ -120,7 +131,7 @@ describe("datetimecombo field", function() {
             expect(field.format(unformatedValue).time).toEqual(hours + ':00');
         });
         it("should format value for display_default", function() {
-            var today = new Date(), 
+            var today = new Date(),
                 actual, stub, parts,
                 originalType = field.view.name;
 
@@ -161,7 +172,7 @@ describe("datetimecombo field", function() {
             jsDate.setHours(0,0,0,0);
             hours = forceTwoDigits(jsDate.getHours() + '');
             // Note TZ won't matter since it will be whatever user's local ... so we can
-            // trust this will always resolve to correct hour. It's only if we were to 
+            // trust this will always resolve to correct hour. It's only if we were to
             // start to apply time zone preferences would we run into issues.
             unformatedValue = jsDate.toISOString();
             expect(field.format(unformatedValue).time).not.toEqual('00:00');
@@ -192,7 +203,7 @@ describe("datetimecombo field", function() {
             stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
 
             unformatedValue = jsDate.toISOString();
-            // don't round minutes up (so don't round up 50 here to 00) if non-edit view 
+            // don't round minutes up (so don't round up 50 here to 00) if non-edit view
             hours   = forceTwoDigits(jsDate.getHours() + '');
             minutes = forceTwoDigits(jsDate.getMinutes() + '');
             expect(field.format(unformatedValue).time).toEqual(hours + ':' + minutes);
