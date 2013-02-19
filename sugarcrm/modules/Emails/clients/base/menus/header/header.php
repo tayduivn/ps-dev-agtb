@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Emails';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#'.$module_name."/",
+        'route'=>'#'.$module_name,
         'label' =>'LNK_VIEW_MY_INBOX',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
@@ -38,7 +38,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     ),
     array(
         'route'=>'#EmailTemplates/',
-        'label' =>'LNK_NEW_EMAIL_TEMPLATE',
+        'label' =>'LNK_EMAIL_TEMPLATE_LIST',
         'acl_action'=>'list',
         'acl_module'=>'EmailTemplates',
         'icon' => 'icon-reorder',

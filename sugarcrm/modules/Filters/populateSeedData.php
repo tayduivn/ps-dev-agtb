@@ -25,15 +25,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $filter = BeanFactory::getBean('Filters');
 $filter->module_name = 'Accounts';
-$filter->default_filter = true;
-$filter->name = 'All Records';
-$filter->filter_definition = '{
-    "filter": []
-}';
-$filter->save();
-
-$filter = BeanFactory::getBean('Filters');
-$filter->module_name = 'Accounts';
 $filter->default_filter = false;
 $filter->name = 'Assigned to Me';
 $filter->filter_definition = '{

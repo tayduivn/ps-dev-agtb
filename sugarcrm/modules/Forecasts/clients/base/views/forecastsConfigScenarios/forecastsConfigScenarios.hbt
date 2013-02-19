@@ -27,7 +27,6 @@
  ********************************************************************************/
 }}
 <div class="modal-content hide">
-    <p></p>
     <p>{{str "LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS" "Forecasts"}}</p>
     <p><em>{{str "LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO" "Forecasts"}}</em></p>
 {{#each meta.panels}}

@@ -375,7 +375,9 @@
             if(selectedUser.isManager) {
                 var url = app.api.buildURL('Users', 'filter'),
                     post_args = {
-                        "filter" : [{"reports_to_id" : selectedUser.id}],
+                        "filter": [
+                            {"reports_to_id": selectedUser.id}
+                        ],
                         "fields": "full_name"
                     },
                     options = {};

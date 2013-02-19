@@ -24,8 +24,31 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+/**
+ * Events Triggered
+ *
+ * field:editable:error
+ *      on: context
+ *      by: bindDataChange()
+ *      when: if this field is open with an error, and it receives a field:editable:open event
+ *            it will trigger this event to let other fields know not to open
+ *
+ * field:editable:open
+ *      on: context
+ *      by: onClick()
+ *      when: user clicks on the field to open it
+ *
+ * forecasts:tabKeyPressed
+ *      on: context
+ *      by: onKeyDown()
+ *      when: the tab key is pressed inside the field
+ */
 ({
     extendsFrom: 'IntField',
+    inputSelector: 'span.edit input',
+    errorMessage: '',
+    isErrorState: false,
+    _canEdit: true,
 
     events: {
         'mouseenter span.editable': 'togglePencil',
@@ -36,15 +59,7 @@
         'keydown span.edit input': 'onKeyDown'
     },
 
-    inputSelector: 'span.edit input',
-
-    errorMessage: '',
-
-    isErrorState: false,
-
-    _canEdit: true,
-
-    initialize: function (options) {
+    initialize: function(options) {
         app.view.fields.IntField.prototype.initialize.call(this, options);
         this.checkIfCanEdit();
     },
@@ -66,7 +81,7 @@
      * the parent.
      *
      */
-    bindDomChange: function () {
+    bindDomChange: function() {
         // override parent, do nothing
     },
 
@@ -77,21 +92,20 @@
      * and any other open fields will immediately close. This keeps
      * other fields from opening while an errored field is active.
      */
-    bindDataChange: function () {
-        var self = this;
-        self.context.on('field:editable:open', function() {
+    bindDataChange: function() {
+        this.context.on('field:editable:open', function() {
             // another CTE field has been opened
-            if(self.isErrorState) {
+            if(this.isErrorState) {
                 // I am open with an error, send the message
-                self.context.trigger('field:editable:error', self.cid);
+                this.context.trigger('field:editable:error', this.cid);
             }
-        }, self);
-        self.context.on('field:editable:error', function(cid) {
-            if (!_.isEqual(cid, self.cid) && this.options.viewName == 'edit') {
-                // some other field is open with an error, close myself
-                self.renderDetail();
+        }, this);
+        this.context.on('field:editable:error', function(cid) {
+            if(!_.isEqual(cid, this.cid) && this.options.viewName == 'edit') {
+                // some other field is open with an error, close mythis
+                this.renderDetail();
             }
-        }, self);
+        }, this);
     },
 
     /**
@@ -100,40 +114,39 @@
      * @param {Object} evt
      * @return {Boolean}
      */
-    handleEvent: function (evt) {
+    handleEvent: function(evt) {
         if(!_.isObject(evt)
             || this.options.viewName != 'edit'
             || !this.isEditable()
             || !(this.model instanceof Backbone.Model)) {
             return false;
         }
-        var self = this;
-        var el = this.$el.find(self.fieldTag);
-        if(!_.isEqual(self.$el.find(self.inputSelector).val(), self.model.get(this.name))) {
-            var value = self.parsePercentage(self.$el.find(self.inputSelector).val()),
-                errorObj = self.isValid(value);
-            if (!_.isObject(errorObj)) {
-                self.model.set(self.name, self.unformat(value));
-                self.$el.find("[rel=tooltip]").tooltip('destroy');
-                self.renderDetail();
+        var el = this.$el.find(this.fieldTag);
+        if(!_.isEqual(this.$el.find(this.inputSelector).val(), this.model.get(this.name))) {
+            var value = this.parsePercentage(this.$el.find(this.inputSelector).val()),
+                errorObj = this.isValid(value);
+            if(!_.isObject(errorObj)) {
+                this.model.set(this.name, this.unformat(value));
+                this.$el.find("[rel=tooltip]").tooltip('destroy');
+                this.renderDetail();
             } else {
                 // render error
-                self.isErrorState = true;
+                this.isErrorState = true;
                 var hb = Handlebars.compile("{{str_format key module args}}");
-                self.errorMessage = hb({'key' : errorObj.labelId, 'module' : 'Forecasts', 'args' : errorObj.args});
-                self.showErrors();
-                self.$el.find(self.inputSelector).focus().select();
+                this.errorMessage = hb({'key': errorObj.labelId, 'module': 'Forecasts', 'args': errorObj.args});
+                this.showErrors();
+                this.$el.find(this.inputSelector).focus().select();
             }
             // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
             // This prevents change events from being fired appropriately on IE9
-            if ($.browser.msie && el.is("input")) {
-                el.on("input", function () {
+            if($.browser.msie && el.is("input")) {
+                el.on("input", function() {
                     // Set focus on input element receiving user input
                     el.focus();
                 });
             }
         } else {
-            self.renderDetail();
+            this.renderDetail();
         }
         return true;
     },
@@ -141,7 +154,7 @@
     /**
      * renders the detail view
      */
-    renderDetail: function () {
+    renderDetail: function() {
         this.isErrorState = false;
         this.options.viewName = 'detail';
         this.render();
@@ -152,9 +165,11 @@
      *
      * @param evt
      */
-    togglePencil: function (evt) {
+    togglePencil: function(evt) {
         evt.preventDefault();
-        if (!this.isEditable()) return;
+        if(!this.isEditable()) {
+            return;
+        }
         if(evt.type == 'mouseenter') {
             this.$el.find('.edit-icon').removeClass('hide');
             this.$el.find('.edit-icon').addClass('show');
@@ -168,9 +183,11 @@
      * Switch the view to the Edit view if the field is editable and it's clicked on
      * @param evt
      */
-    onClick : function(evt) {
+    onClick: function(evt) {
         evt.preventDefault();
-        if (!this.isEditable()) return;
+        if(!this.isEditable()) {
+            return;
+        }
 
         this.options.viewName = 'edit';
         this.render();
@@ -187,12 +204,12 @@
      *
      * @param evt
      */
-    onKeyUp: function (evt) {
+    onKeyUp: function(evt) {
         evt.preventDefault();
-        if (evt.which == 27) {
+        if(evt.which == 27) {
             // esc key, cancel edits
             this.cancelEdits(evt);
-        } else if (evt.which == 13) {
+        } else if(evt.which == 13) {
             // enter or tab, handle event
             this.handleEvent(evt);
         }
@@ -229,7 +246,7 @@
      *
      * @param evt
      */
-    onBlur : function(evt) {
+    onBlur: function(evt) {
         evt.preventDefault();
         this.handleEvent(evt);
     },
@@ -240,16 +257,16 @@
      * @param value
      * @return {Boolean|String} true, or error id on error
      */
-    isValid: function (value) {
+    isValid: function(value) {
         var regex = new RegExp("^[+-]?\\d+$");
 
         // always make sure that we have a string here, since match only works on strings
-        if (_.isNull(value.toString().match(regex))) {
-            return {'labelId': 'LBL_EDITABLE_INVALID', 'args': [app.lang.get(this.def.label,'Forecasts')]};
+        if(_.isNull(value.toString().match(regex))) {
+            return {'labelId': 'LBL_EDITABLE_INVALID', 'args': [app.lang.get(this.def.label, 'Forecasts')]};
         }
 
         // we have digits, lets make sure it's int a valid range is one is specified
-        if (!_.isUndefined(this.def.minValue) && !_.isUndefined(this.def.maxValue)) {
+        if(!_.isUndefined(this.def.minValue) && !_.isUndefined(this.def.maxValue)) {
             // we have a min and max value
             if(value < this.def.minValue || value > this.def.maxValue) {
                 return {'labelId': 'LBL_EDITABLE_INVALID_RANGE', 'args': [this.def.minValue, this.def.maxValue]};
@@ -265,7 +282,7 @@
      *
      * @return {boolean}
      */
-    isEditable: function () {
+    isEditable: function() {
         return this._canEdit;
     },
 
@@ -275,16 +292,16 @@
      * @param value
      * @return {*}
      */
-    parsePercentage : function(value) {
-        var orig = this.value;
-        var parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
+    parsePercentage: function(value) {
+        var orig = this.value,
+            parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
         if(parts) {
             // use original number to apply calculations
-            value = app.math.mul(app.math.div(parts[2],100),orig);
+            value = app.math.mul(app.math.div(parts[2], 100), orig);
             if(parts[1] == '+') {
-                value = app.math.add(orig,value);
+                value = app.math.add(orig, value);
             } else if(parts[1] == '-') {
-                value = app.math.sub(orig,value);
+                value = app.math.sub(orig, value);
             }
             // we round to nearest integer for this field type
             value = app.math.round(value, 0);
@@ -302,5 +319,4 @@
         // we want to show the tooltip message, but hide the add-on (exclamation)
         this.$el.find("[rel=tooltip]").tooltip({container: 'body', placement: 'top'}).tooltip('show').hide();
     }
-
 })
