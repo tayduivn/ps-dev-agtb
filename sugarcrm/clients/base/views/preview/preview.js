@@ -99,6 +99,10 @@
      */
     _renderPreview: function(model, collection, fetch){
         var self = this;
+        // If there are drawers there could be multiple previews, make sure we are only rendering preview for active drawer
+        if(app.drawer && !app.drawer.isActive(self.$el)){
+            return;  //This preview isn't on the active layout
+        }
         // Close preview if we are already displaying this model
         if(self.model && model && self.model.get("id") == model.get("id")){
             // Remove the decoration of the highlighted row
@@ -246,9 +250,11 @@
     },
 
     closePreview: function() {
-        this.switching = false;
-        delete this.model;
-        delete this.collection;
-        this.$el.empty();
+        if(_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)){
+            this.switching = false;
+            delete this.model;
+            delete this.collection;
+            this.$el.empty();
+        }
     }
 })

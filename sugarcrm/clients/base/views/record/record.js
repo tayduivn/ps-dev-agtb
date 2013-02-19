@@ -551,5 +551,12 @@
         } else {
             this.$('.headerpane').prepend('<h1 class="title">' + title + '</h1>');
         }
+    },
+    _dispose: function(){
+        app.view.Component.prototype._dispose.call(this);
+        if(this.context){
+            this.context.off(null, null, this);
+            this.context = null;
+        }
     }
 })

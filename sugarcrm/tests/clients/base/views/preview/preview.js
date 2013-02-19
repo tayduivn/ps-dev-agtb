@@ -30,7 +30,7 @@ describe("Preview View", function() {
         layout = SugarTest.createLayout('base', "Cases", "preview");
         preview = SugarTest.createView("base", "Cases", "preview", null, null);
         preview.layout = layout;
-        app = SUGAR.App;
+        app = SugarTest.app;
         meta = app.metadata.getView('Cases', 'record');
     });
 
@@ -109,6 +109,11 @@ describe("Preview View", function() {
                expect(model).toEqual(dummyModel);
                expect(collection).toEqual(dummyCollection);
             });
+            app.drawer = {  // Not defined, drawer is a Sugar7 plug-in but only not really relevant to this test.
+                isActive: function(){
+                    return true;
+                }
+            };
             app.events.trigger("preview:render", dummyModel, dummyCollection, false);
             expect(renderPreviewStub).toHaveBeenCalled();
             renderPreviewStub.restore();

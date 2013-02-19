@@ -152,5 +152,17 @@
                 tooltipEl.tooltip({placement:"top", container:"#content"});
             }
         });
+    },
+    /**
+     *
+     * @private
+     */
+    _dispose: function(){
+        app.view.Component.prototype._dispose.call(this);
+        delete this.rowFields;
+        if(this.context){
+            this.context.off(null, null, this);
+            this.context = null;
+        }
     }
 })

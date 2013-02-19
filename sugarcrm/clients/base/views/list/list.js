@@ -291,13 +291,16 @@
      * @param model Model for row to be decorated.  Pass a falsy value to clear decoration.
      */
     decorateRow: function(model){
-        this.$("tr.highlighted").removeClass("highlighted current above below");
-        if(model){
-            var rowName = model.module+"_"+ model.get("id");
-            var curr = this.$("tr[name='"+rowName+"']");
-            curr.addClass("current highlighted");
-            curr.prev("tr").addClass("highlighted above");
-            curr.next("tr").addClass("highlighted below");
+        // If there are drawers, make sure we're updating only list views on active drawer.
+        if(_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)){
+            this.$("tr.highlighted").removeClass("highlighted current above below");
+            if(model){
+                var rowName = model.module+"_"+ model.get("id");
+                var curr = this.$("tr[name='"+rowName+"']");
+                curr.addClass("current highlighted");
+                curr.prev("tr").addClass("highlighted above");
+                curr.next("tr").addClass("highlighted below");
+            }
         }
     },
     addSingleSelectionAction: function(panel, options) {
