@@ -112,7 +112,7 @@
                                     {{/if}}
                                 {{/unless}}
 
-                                <div class="controls{{#if this.dismiss_label}} span12{{else}} span{{this.span}}{{/if}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
+                                <div class="controls span{{this.span}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
                                     {{#if name}}
                                         <span class='normal {{css}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../../../this.module}}-{{name}}">
                                             {{field ../../../../../../this ../../../../../../this.model ../../../../../../this.action}}
