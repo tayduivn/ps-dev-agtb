@@ -128,7 +128,7 @@ class ForecastsController extends SugarController
      * dialog will appear once again.
      *
      */
-    public function action_resetAdminSettings() {
+    public function action_resetSettings() {
         global $current_user;
         if($current_user->isAdminForModule('Forecasts')) {
             $db = DBManagerFactory::getInstance();
