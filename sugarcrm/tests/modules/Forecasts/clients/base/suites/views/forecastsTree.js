@@ -21,11 +21,31 @@
 
 describe("The forecasts tree view", function(){
 
-    var app, view, data, replaceHTMLChars;
+    var app, view, data, replaceHTMLChars, testMethodStub, testMethodStub2;
 
     beforeEach(function() {
         app = SugarTest.app;
+
+        testMethodStub = sinon.stub(app.user, "get", function (property) {
+            var user = {
+                id:"jstree_node_jim"
+            };
+            return user[property];
+        });
+
+        testMethodStub2 = sinon.stub(app.lang, "get", function(property) {
+            var lang = {
+                LBL_MY_OPPORTUNITIES : "Opportunity ({0})"
+            };
+            return lang[property];
+        });
+
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsTree", "forecastsTree", "js", function(d) { return eval(d); });
+    });
+
+    afterEach(function() {
+        testMethodStub.restore();
+        testMethodStub2.restore();
     });
 
     describe("_recursiveReplaceHTMLChars", function() {
@@ -54,10 +74,21 @@ describe("The forecasts tree view", function(){
                 children : {
                     0 : {
                         attr: {
+                           id: "jstree_node_jim",
+                           rel: "reportee"
+                        },
+                        metadata: {id : "jstree_node_jim"},
+                        children: [],
+
+                        data: "Jim O&#039;Gara"
+                    },
+
+                    1 : {
+                        attr: {
                            id: "jstree_node_sarah",
                            rel: "reportee"
                         },
-
+                        metadata: {id : "jstree_node_sarah"},
                         children: [],
 
                         data: "Sarah O&#039;Reilly" //Sarah O'Reilly
@@ -78,9 +109,15 @@ describe("The forecasts tree view", function(){
         {
            var result = view._recursiveReplaceHTMLChars(data, view);
            expect(result[0].data === "Jim O'Gara").toBeTruthy("Correctly encoded Jim's name");
-           var children = result[0].children[0];
+           var children = result[0].children[1];
            expect(children[0].data === "Sarah O'Reilly").toBeTruthy("Correctly encoded Sarah's name");
         });
+
+        it("correctly translates the LBL_MY_OPPORTUNITIES string where children.metadata.id == app.user.get('id')", function() {
+            var result = view._recursiveReplaceHTMLChars(data, view);
+            var children = result[0].children[0]
+            expect(children[0].data === "Opportunity (Jim O'Gara)").toBeTruthy("Correctly translated LBL_MY_OPPORTUNITIES");
+        })
 
     });
 });
