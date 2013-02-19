@@ -264,6 +264,13 @@ class Call extends SugarBean {
 			vCal::cache_sugar_vcal($current_user);
 		}
 
+        // CCL - Comment out call to set $current_user as invitee
+        // set organizer to auto-accept
+        // if there isn't a fetched row its new
+        if ($this->assigned_user_id == $GLOBALS['current_user']->id && empty($this->fetched_row)) {
+            $this->set_accept_status($GLOBALS['current_user'], 'accept');
+        }
+
         return $return_id;
 	}
 
