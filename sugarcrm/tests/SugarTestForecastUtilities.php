@@ -224,6 +224,7 @@ class SugarTestForecastUtilities
                         $worksheet->op_probability = $opp->probability;
                         $worksheet->commit_stage = $opp->commit_stage;
                         $worksheet->currency_id = $opp->currency_id;
+                        $worksheet->quota = $config['quota']['amount'];
                         $worksheet->save();
     
                         $return['opp_worksheets'][] = $worksheet;
@@ -236,6 +237,35 @@ class SugarTestForecastUtilities
                 $opportunities[] = $opp;
 
                 $return['opportunities'][] = $opp;
+            }
+
+            if ($config['createQuota'] === true) {
+                //create rollup quota too
+                if(!empty($user->reports_to_id))
+                {
+                    $quota = SugarTestQuotaUtilities::createQuota($config['quota']['amount']);
+                    $quota->user_id = $user->id;
+                    $quota->created_by = 1;
+                    $quota->modified_user_id = 1;
+                    $quota->quota_type = 'Rollup';
+                    $quota->timeperiod_id = $config['timeperiod_id'];
+                    $quota->team_set_id = 1;
+                    $quota->currency_id = $config['currency_id'];
+                    $quota->committed = 1;
+                    $quota->save();
+                }
+                $quota = SugarTestQuotaUtilities::createQuota($config['quota']['amount']);
+                $quota->user_id = $user->id;
+                $quota->created_by = 1;
+                $quota->modified_user_id = 1;
+                $quota->quota_type = 'Direct';
+                $quota->timeperiod_id = $config['timeperiod_id'];
+                $quota->team_set_id = 1;
+                $quota->currency_id = $config['currency_id'];
+                $quota->committed = 1;
+                $quota->save();
+
+                $return['quota'] = $quota;
             }
 
             if ($config['createForecast'] === true) {
@@ -255,21 +285,6 @@ class SugarTestForecastUtilities
                 $mgr_worksheet->reporteeForecastRollUp($user, $forecast->toArray());
 
                 $return['forecast'] = $forecast;
-            }
-
-            if ($config['createQuota'] === true) {
-                $quota = SugarTestQuotaUtilities::createQuota($config['quota']['amount']);
-                $quota->user_id = $user->id;
-                $quota->created_by = 1;
-                $quota->modified_user_id = 1;
-                $quota->quota_type = (empty($user->reports_to_id)) ? 'Direct' : 'Rollup';
-                $quota->timeperiod_id = $config['timeperiod_id'];
-                $quota->team_set_id = 1;
-                $quota->currency_id = $config['currency_id'];
-                $quota->committed = 1;
-                $quota->save();
-
-                $return['quota'] = $quota;
             }
 
             if ($config['createWorksheet'] === true) {
@@ -351,6 +366,7 @@ class SugarTestForecastUtilities
         SugarTestQuotaUtilities::setCreatedUserIds(SugarTestUserUtilities::getCreatedUserIds());
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
+        SugarTestManagerWorksheetUtilities::removeAllCreatedWorksheets();
     }
 
 

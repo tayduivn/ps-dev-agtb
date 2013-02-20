@@ -20,6 +20,9 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/SugarForecasting/Chart/Manager.php');
+require_once("modules/Forecasts/clients/base/api/ForecastManagerWorksheetsFilterApi.php");
+require_once('include/api/RestService.php');
+require_once('tests/modules/Forecasts/api/ForecastsWorksheetManagerApiTest.php');
 class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
@@ -29,6 +32,16 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
     protected static $args = array();
 
     protected static $users = array();
+
+    /**
+     * @var array
+     */
+    protected static $dataArray;
+
+    /**
+     * @var ForecastWorksheetsFilterApi
+     */
+    protected static $filterApi;
 
     /**
      * @var Currency
@@ -70,10 +83,19 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
             array('manager', 'reports_to' => self::$users['manager']['user']->id)
         );
         self::$users['reportee'] = SugarTestForecastUtilities::createForecastUser($config);
+        self::$filterApi = new ForecastManagerWorksheetsFilterApi();
+        // get the current data set for use in the processing
+        $dataArray = self::$filterApi->forecastManagerWorksheetsGet(
+            self::_getServiceMock(self::$users['manager']['user']),
+            array('user_id' => self::$users['manager']['user']->id, 'timeperiod_id' => $timeperiod->id, 'module' => 'ForecastManagerWorksheets')
+        );
+        self::$args['data_array'] = $dataArray['records'];
     }
 
     public static function tearDownAfterClass()
     {
+        self::$filterApi = null;
+        $GLOBALS["current_user"] = null;
         SugarTestHelper::tearDown();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
@@ -81,6 +103,20 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         parent::tearDown();
+    }
+
+    /**
+     * Utility Method to get the ServiceMock with a valid user in it
+     *
+     * @param User $user
+     * @return ForecastWorksheetApiServiceMock
+     */
+    protected static function _getServiceMock(User $user)
+    {
+        $serviceApi = new ForecastManagerWorksheetApiServiceMock();
+        $serviceApi->user = $user;
+
+        return $serviceApi;
     }
 
     /**
