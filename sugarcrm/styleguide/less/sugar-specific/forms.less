@@ -126,12 +126,6 @@ textarea[readonly] {
   color: @placeholderText;
 }
 
-#content .control-group label {
-  padding: 0 1em 0 0;
-  .rtlPadding(@direction,0 0 0 1em);
-  display:inline-block;
-}
-
 input[type=radio] {
   display:inline-block;
 }
@@ -270,6 +264,8 @@ input[type=radio] {
     text-align:left;
   }
   label {
+    padding: 0 1em 0 0;
+    .rtlPadding(@direction,0 0 0 1em);
     display:inline-block;
     float:none;
     &.hide {
@@ -415,6 +411,8 @@ input[type=radio] {
 }
 
 .form-horizontal {
+  margin-left: 10px;
+
   .row-fluid.control-group {
     margin: 0;
     padding: 0;
@@ -422,17 +420,20 @@ input[type=radio] {
   .control-group {
     margin-bottom: 4px;
   }
+
   //this is not working since p.help-block after last control-group div
   .control-group:last-child {
     margin-bottom: 0;
   }
+
   .controls {
-    //margin-left: @fluidGridGutterWidth;
-    margin-left: 0;
+    margin-left: @fluidGridGutterWidth;
+    //margin-left: 0;
     padding: 0;
     > span {
-      padding: 6px 0;
-      display: inline-block;
+      padding: 0;
+      //padding: 6px 0;
+      //display: inline-block;
     }
     &.btn-fit {
       &.controls-four {
@@ -471,33 +472,39 @@ input[type=radio] {
       }
     }
   }
-  .card2 .control-group:first-child .control-label,
-  .card2 .control-group .control-label.begin-fieldgroup {
+
+  .card2 .control-group:first-child .control-label-background ,
+  .card2 .control-group .control-label.begin-fieldgroup .control-label-background {
     .border-radius(3px 3px 0 0);
     border-top: 1px solid lighten(@grayLight,14%);
   }
-  .card2 .control-group:last-child .control-label,
-  .card2 .control-group .control-label.end-fieldgroup {
+  .card2 .control-group:last-child .control-label-background,
+  .card2 .control-group .control-label.end-fieldgroup .control-label-background {
     padding-bottom: 5px;
     .border-radius(0 0 3px 3px);
     border-bottom: 1px solid lighten(@grayLight,14%);
     height: auto;
   }
+
   div.control-label {
-    float: left;
-    /*width: 140px;*/
-    padding: 7px 0 12px;
-    text-align: right;
-    border-left: 1px solid lighten(@grayLight,14%);
-    border-right: 1px solid lighten(@grayLight,14%);
-    /*background-color: @tableBackgroundAccent;*/
-    background-color:#f7f7f7;
+    padding-top: 0;
+    .control-label-background {
+      height: 100%;
+      position: absolute;
+      padding: 7px 0 12px;
+      text-align: right;
+      border-left: 1px solid lighten(@grayLight,14%);
+      border-right: 1px solid lighten(@grayLight,14%);
+      /*background-color: @tableBackgroundAccent;*/
+      background-color:#f7f7f7;
+    }
     label {
       color: lighten(@gray,20%);
       font-size: 11px;
       margin-bottom: 0;
     }
   }
+
   .help-block {
     margin-top:0;
   }
