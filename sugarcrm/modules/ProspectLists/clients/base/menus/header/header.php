@@ -20,27 +20,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$module_name = 'Contracts';
+$module_name = 'ProspectLists';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route' => '#bwc/index.php?module=Contracts&action=EditView&return_module=Contracts&return_action=DetailView',
-        'label' =>'LNK_NEW_CONTRACT',
+        'event' => 'megamenu:create:click',
+        'label' =>'LNK_NEW_PROSPECT_LIST',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#'.$module_name,
-        'label' =>'LNK_CONTACT_LIST',
+        'label' =>'LNK_PROSPECT_LIST_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
         'icon' => 'icon-reorder',
-    ),
-    array(
-        'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=Contracts&return_module=Contracts&return_action=index',
-        'label' =>'LNK_IMPORT_CONTRACTS',
-        'acl_action'=>'import',
-        'acl_module'=>$module_name,
-        'icon' => 'icon-upload-alternative',
     ),
 );

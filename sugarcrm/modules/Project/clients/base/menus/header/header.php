@@ -20,27 +20,55 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$module_name = 'Contracts';
+$module_name = 'Project';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route' => '#bwc/index.php?module=Contracts&action=EditView&return_module=Contracts&return_action=DetailView',
-        'label' =>'LNK_NEW_CONTRACT',
+        'route'=>'#bwc/index.php?module=Project&action=EditView&return_module=Project&return_action=DetailView',
+        'label' =>'LNK_NEW_PROJECT',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),
+    //BEGIN SUGARCRM flav=pro ONLY
     array(
-        'route'=>'#'.$module_name,
-        'label' =>'LNK_CONTACT_LIST',
+        'route'=>'#bwc/index.php?module=Project&action=ProjectTemplatesEditView&return_module=Project&return_action=ProjectTemplatesDetailView',
+        'label' =>'LNK_NEW_PROJECT_TEMPLATES',
+        'acl_action'=>'edit',
+        'acl_module'=>$module_name,
+        'icon' => 'icon-plus',
+    ),
+    //END SUGARCRM flav=pro ONLY
+    array(
+        'route'=>'#bwc/index.php?module=Project&action=index',
+        'label' =>'LNK_NEW_PROJECT_TEMPLATES',
+        'acl_action'=>'view',
+        'acl_module'=>$module_name,
+        'icon' => 'icon-reorder',
+    ),
+    //BEGIN SUGARCRM flav=pro ONLY
+    // Project Templates
+    array(
+        'route'=>'#bwc/index.php?module=Project&action=ProjectTemplatesListView',
+        'label' =>'LNK_PROJECT_TEMPLATES_LIST',
+        'acl_action'=>'view',
+        'acl_module'=>$module_name,
+        'icon' => 'icon-reorder',
+    ),
+    //END SUGARCRM flav=pro ONLY
+    array(
+        'route'=>'#bwc/index.php?module=ProjectTask&action=index',
+        'label' =>'LNK_PROJECT_TASK_LIST',
+        'acl_action'=>'view',
+        'acl_module'=>'ProjectTask',
+        'icon' => 'icon-reorder',
+    ),
+    //BEGIN SUGARCRM flav=pro ONLY
+    array(
+        'route'=>'#bwc/index.php?module=Project&action=Dashboard&return_module=Project&return_action=DetailView',
+        'label' =>'LNK_PROJECT_DASHBOARD',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
         'icon' => 'icon-reorder',
     ),
-    array(
-        'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=Contracts&return_module=Contracts&return_action=index',
-        'label' =>'LNK_IMPORT_CONTRACTS',
-        'acl_action'=>'import',
-        'acl_module'=>$module_name,
-        'icon' => 'icon-upload-alternative',
-    ),
+    //END SUGARCRM flav=pro ONLY
 );
