@@ -3319,7 +3319,7 @@ span.icon-white {
   margin: 0;
   padding: 10px 10px 10px 38px;
   border-top: 1px solid #fff !important;
-  border-bottom: 1px solid #bbb !important;
+  border-bottom: 1px solid #dcdcdc !important;
 }
 .block.tabs-left .nav-tabs li li p {
   margin: 0 0 0 36px;
@@ -3415,6 +3415,12 @@ article .actions,
 .span12 .block-footer .btn {
   margin: 0 auto;
   width: 100%;
+}
+.select2-search {
+  padding: 4px;
+}
+.select2-search input {
+  border: 1px solid #ccc;
 }
 .select2-container .select2-single-with-drop div b {
   background-position: 0px 0px;
@@ -3573,6 +3579,9 @@ article .actions,
 .select2-container .select2-choice abbr {
   top: 8px;
   right: 18px;
+}
+.select2-drop {
+  color: #58595B;
 }
 .select2-drop-error {
   border-color: #b60000;
@@ -3931,6 +3940,7 @@ article .actions,
   box-shadow: none;
 }
 .form-search-related .filter-view {
+  border: 1px solid #ccc;
   position: relative;
   margin-left: 0px;
   background-color: #fff;
@@ -3952,7 +3962,7 @@ article .actions,
 }
 .form-search-related .filter-view .select2-container .select2-choice {
   padding: 0;
-  margin: 2px 0 2px 4px;
+  margin: 0 0 2px 4px;
   font-size: 11px;
   background: none;
   border: none;
@@ -4066,7 +4076,7 @@ article .actions,
 .form-search-related .extend article:nth-child(odd) {
   background-color: transparent;
   border-top: 1px solid #f5f5f5;
-  border-bottom: 1px solid #bbb;
+  border-bottom: 1px solid #cfcfcf;
   padding: 7px 8px 7px 10px;
 }
 .form-search-related .extend article.filter-header,
@@ -7760,7 +7770,7 @@ h4.merge-interface-header .preview {
 .inline-drawer article:nth-child(odd) {
   background-color: transparent;
   border-top: 1px solid #f5f5f5;
-  border-bottom: 1px solid #bbb;
+  border-bottom: 1px solid #cfcfcf;
   padding: 4px 0;
   line-height: 28px;
 }
