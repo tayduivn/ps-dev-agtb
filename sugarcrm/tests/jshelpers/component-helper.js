@@ -16,7 +16,6 @@
 
     test.addComponent = function(client, type, name, data, module) {
         app.view.declareComponent(type, name, module, data, true);
-        test.testMetadata.addController(name, type, data, module);
     };
 
     test.loadHandlebarsTemplate = function(name, type, client, template, module) {
@@ -50,11 +49,14 @@
         });
     };
 
-    test.createView = function(client, module, viewName, meta, context, loadFromModule, layout) {
-        if (loadFromModule) {
-            test.loadComponent(client, "view", viewName, module);
-        } else {
-            test.loadComponent(client, "view", viewName);
+    test.createView = function(client, module, viewName, meta, context, loadFromModule, layout, loadComponent) {
+        if (_.isUndefined(loadComponent) || loadComponent)
+        {
+            if (loadFromModule) {
+                test.loadComponent(client, "view", viewName, module);
+            } else {
+                test.loadComponent(client, "view", viewName);
+            }
         }
         if (!context) {
             context = app.context.getContext();
@@ -104,19 +106,6 @@
             this._data.layouts = this._data.layouts || {};
             this._data.views = this._data.views || {};
             this._data.fields = this._data.fields || {};
-        },
-
-        addController: function(name, type, controller, module) {
-            type = type + 's';
-            if (this.isInitialized()) {
-                if (module) {
-                    this._initModuleStructure(module, type, name);
-                    this._data.modules[module][type][name].controller = controller;
-                } else {
-                    this._data[type][name] = this._data[type][name] || {};
-                    this._data[type][name].controller = controller;
-                }
-            }
         },
 
         addTemplate: function(name, type, template, templateName, module) {

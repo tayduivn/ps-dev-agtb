@@ -1511,12 +1511,6 @@ EOHTML;
                 if($this->bean->isFavoritesEnabled())
                     $beanName .= '&nbsp;' . SugarFavorites::generateStar(SugarFavorites::isUserFavorite($this->module, $this->bean->id), $this->module, $this->bean->id);
                 //END SUGARCRM flav=pro ONLY
-                //BEGIN SUGARCRM flav=following ONLY
-                if($this->bean->canFollow()){
-                    //get the following icon
-                    $beanName .= '&nbsp;' . SugarFollowing::generateIcon(SugarFollowing::isUserFollowing($this->module, $this->bean->id), $this->module, $this->bean->id);
-                }
-                //END SUGARCRM flav=following ONLY
                 $params[] = $beanName;
                 break;
             }

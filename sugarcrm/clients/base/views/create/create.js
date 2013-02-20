@@ -92,7 +92,7 @@
     saveAndClose: function() {
         this.initiateSave(_.bind(function() {
             this.alerts.showSuccess();
-            app.drawer.close(true);
+            app.drawer.close(this.model);
         }, this));
     },
 
@@ -264,7 +264,8 @@
         self.model.save(null, {
             fieldsToValidate: self.getFields(self.module),
             success: success,
-            error: error
+            error: error,
+            viewed: true
         });
     },
 
@@ -361,11 +362,21 @@
                 name: 'dupecheck',
                 module: this.module
             });
+           this.addToLayoutComponents(this.dupecheckList);
         }
 
         this.$('.headerpane').after(this.dupecheckList.$el);
         this.dupecheckList.hide();
         this.dupecheckList.render();
+    },
+
+    /**
+     * Add component to layout's component list so it gets cleaned up properly on dispose
+     *
+     * @param component
+     */
+    addToLayoutComponents: function(component) {
+        this.layout._components.push(component);
     },
 
     /**

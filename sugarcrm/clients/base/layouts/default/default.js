@@ -1,4 +1,5 @@
 ({
+    className: "row-fluid",
     events: {
         "click .closeSubdetail": "hidePreviewPanel"
     },

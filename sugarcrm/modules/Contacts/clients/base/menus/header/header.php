@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Contacts';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#'.$module_name.'/create',
+        'event' => 'megamenu:create:click',
         'label' =>'LNK_NEW_CONTACT',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
@@ -34,7 +34,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_IMPORT_VCARD',
         'acl_action'=>'import',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#'.$module_name,

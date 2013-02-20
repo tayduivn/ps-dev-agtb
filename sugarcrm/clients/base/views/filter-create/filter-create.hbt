@@ -1,22 +1,20 @@
-<div class="filter-options extend hide">
-    <article class="filter-header">
-        <input type="text" placeholder="Enter new filter name&hellip;" class="span6">
-        <div class="pull-right">
-            <a class="btn btn-link btn-invisible hide delete_button">{{str "LBL_DELETE"}}</a>
-            <a class="btn btn-primary disabled save_button">{{str "LBL_SAVE_BUTTON_LABEL"}}</a>
-            <a class="btn btn-invisible filter-close"><i class="icon-remove"></i></a>
-        </div>
-    </article>
-    <article class="filter-body">
-      <div class="row-fluid">
-        <div class="controls span3">
-            <input type="text" value="Module" disabled="disabled" class="disabled inherit-width">
-        </div>
-        <div class="controls span3">
-            <input type="text" value="{{title}}" disabled="disabled" class="disabled inherit-width">
-        </div>
-        <div class="filter-value controls span1">
-        </div>
-      </div>
-    </article>
-</div>
+<article class="filter-header">
+    <input type="text" placeholder="Enter new filter name&hellip;" class="span6">
+    <div class="pull-right">
+        <a class="btn btn-link btn-invisible hide delete_button">{{str "LBL_DELETE"}}</a>
+        <a class="btn btn-primary disabled save_button">{{str "LBL_SAVE_BUTTON_LABEL"}}</a>
+        <a class="btn btn-invisible filter-close"><i class="icon-remove"></i></a>
+    </div>
+</article>
+<article class="inset-form-body">
+  <div class="row-fluid">
+    <div class="controls span3">
+        <input type="text" value="Module" disabled="disabled" class="disabled inherit-width">
+    </div>
+    <div class="controls span3">
+        <input type="text" value="{{title}}" disabled="disabled" class="disabled inherit-width">
+    </div>
+    <div class="filter-value controls span1">
+    </div>
+  </div>
+</article>

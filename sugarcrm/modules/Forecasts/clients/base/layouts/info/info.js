@@ -25,15 +25,7 @@
 
         extendsFrom: "ForecastsRecordsLayout",
 
-        /**
-         * Holds the metadata for each of the components used in forecasts
-         */
-        componentsMeta: {},
-
         initialize:function (options) {
-            this.componentsMeta = options.meta.components;
-
-            options.context = _.extend(options.context, this.initializeAllModels(options.context));
             app.view.Layout.prototype.initialize.call(this, options);
         },
 
@@ -44,8 +36,6 @@
          * @private
          */
         _render: function () {
-
-            this.loadData();
 
             app.view.Layout.prototype._render.call(this);
 

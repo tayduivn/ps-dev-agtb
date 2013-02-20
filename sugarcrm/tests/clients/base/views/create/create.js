@@ -1,7 +1,7 @@
 describe("Create View", function() {
     var moduleName = 'Contacts',
         viewName = 'create',
-        sinonSandbox, view, context,
+        sinonSandbox, view, context, addComponentStub,
         drawer;
 
     beforeEach(function() {
@@ -98,12 +98,14 @@ describe("Create View", function() {
 
         view = SugarTest.createView("base", moduleName, viewName, null, context);
         view.enableDuplicateCheck = true;
+        addComponentStub = sinon.stub(view, 'addToLayoutComponents');
     });
 
     afterEach(function() {
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
         sinonSandbox.restore();
+        addComponentStub.restore();
         SugarTest.app.drawer = drawer;
     });
 
