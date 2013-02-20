@@ -33,6 +33,7 @@ describe("The forecastsConfigRanges view", function() {
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsConfigRanges", "forecastsConfigRanges", "js", function(d) {
             return eval(d);
         });
+        view.model = new Backbone.Model();
     });
 
     afterEach(function() {
@@ -43,7 +44,7 @@ describe("The forecastsConfigRanges view", function() {
 
     it("should have a label parameter to hold the label from metadata for the template", function() {
         expect(view.label).toBeDefined();
-    })
+    });
 
     it("should have a forecasts_ranges_field parameter to hold the metadata for the field", function() {
         expect(view.forecast_ranges_field).toBeDefined();
@@ -99,17 +100,11 @@ describe("The forecastsConfigRanges view", function() {
                     }
                 ]
             };
-            view.model = {
-                get: function(key) {
-                    return ''
-                }
-            };
         });
 
         afterEach(function() {
             testStub.restore();
         });
-
 
         it("for label should get initialized to the label string in metadata", function() {
             var options = {
@@ -135,20 +130,22 @@ describe("The forecastsConfigRanges view", function() {
         describe("initial value for", function() {
 
             beforeEach(function() {
-                view.model = {
-                    get: function(item) {
-                        if(item == 'forecast_ranges') {
-                            return 'test_ranges';
-                        }
-                        if(item == 'buckets_dom') {
-                            return 'test_ranges_dom';
-                        }
-                    }
-                };
+                view.model.set({
+                    forecast_ranges: 'test_ranges',
+                    buckets_dom: 'test_ranges_dom'
+                });
+                // Restore stub to set it custom for these tests
+                app.metadata.getModule.restore();
+                sinon.stub(app.metadata, "getModule", function(module, type) {
+                    return {
+                        has_commits: 1,
+                        forecast_ranges: 'test_ranges',
+                        buckets_dom: 'test_ranges_dom'
+                    };
+                });
             });
 
             afterEach(function() {
-                delete view.model;
             });
 
             describe("forecast_ranges_field", function() {
@@ -178,9 +175,7 @@ describe("The forecastsConfigRanges view", function() {
                     expect(view.buckets_dom_field.value).toEqual('test_ranges_dom');
                 });
             });
-
         });
-
     });
 
     describe("the forecast_ranges radios", function() {
@@ -244,14 +239,7 @@ describe("The forecastsConfigRanges view", function() {
                     }
                 ]
             };
-            // stub view.model
-            view.model = {
-                get: function(key) {
-                    return ''
-                },
-                set: function(key, value) {
-                }
-            };
+
             // stub view.$el
             view.$el = {
                 find: function(key) {
@@ -323,16 +311,15 @@ describe("The forecastsConfigRanges view", function() {
         });
 
         it("test _getLastCustomRangeIndex method - case 1", function() {
-
             view.fieldRanges['show_custom_buckets']['custom_1'] = {
                 customType: 'custom', customIndex: 1
-            }
+            };
             view.fieldRanges['show_custom_buckets']['custom_without_probability_1'] = {
                 customType: 'custom_without_probability', customIndex: 1
-            }
+            };
             view.fieldRanges['show_custom_buckets']['custom_without_probability_2'] = {
                 customType: 'custom_without_probability', customIndex: 2
-            }
+            };
             lastIndex = view._getLastCustomRangeIndex('show_custom_buckets', 'custom');
             expect(lastIndex).toBe(1);
             lastIndex = view._getLastCustomRangeIndex('show_custom_buckets', 'custom_without_probability');
@@ -340,16 +327,15 @@ describe("The forecastsConfigRanges view", function() {
         });
 
         it("test _getLastCustomRangeIndex method - case 2", function() {
-
             view.fieldRanges['show_custom_buckets']['custom_10'] = {
                 customType: 'custom', customIndex: 10
-            }
+            };
             view.fieldRanges['show_custom_buckets']['custom_without_probability_21'] = {
                 customType: 'custom_without_probability', customIndex: 21
-            }
+            };
             view.fieldRanges['show_custom_buckets']['custom_without_probability_11'] = {
                 customType: 'custom_without_probability', customIndex: 11
-            }
+            };
             lastIndex = view._getLastCustomRangeIndex('show_custom_buckets', 'custom');
             expect(lastIndex).toBe(10);
             lastIndex = view._getLastCustomRangeIndex('show_custom_buckets', 'custom_without_probability');
@@ -388,16 +374,15 @@ describe("The forecastsConfigRanges view", function() {
         });
 
         it("test _getLastCustomRange method - case 1", function() {
-
             view.fieldRanges['show_custom_buckets']['custom_1'] = {
                 label: 'custom_1', customType: 'custom', customIndex: 1
-            }
+            };
             view.fieldRanges['show_custom_buckets']['custom_without_probability_1'] = {
                 label: 'custom_without_probability_1', customType: 'custom_without_probability', customIndex: 1
-            }
+            };
             view.fieldRanges['show_custom_buckets']['custom_without_probability_2'] = {
                 label: 'custom_without_probability_2', customType: 'custom_without_probability', customIndex: 2
-            }
+            };
             lastRange = view._getLastCustomRange('show_custom_buckets', 'custom');
             expect(lastRange).not.toBeUndefined();
             expect(lastRange).not.toBeNull();
@@ -414,16 +399,15 @@ describe("The forecastsConfigRanges view", function() {
         });
 
         it("test _getLastCustomRange method - case 2", function() {
-
             view.fieldRanges['show_custom_buckets']['custom_10'] = {
                 label: 'custom_10', customType: 'custom', customIndex: 10
-            }
+            };
             view.fieldRanges['show_custom_buckets']['custom_without_probability_21'] = {
                 label: 'custom_without_probability_21', customType: 'custom_without_probability', customIndex: 21
-            }
+            };
             view.fieldRanges['show_custom_buckets']['custom_without_probability_11'] = {
                 label: 'custom_without_probability_11', customType: 'custom_without_probability', customIndex: 11
-            }
+            };
             lastRange = view._getLastCustomRange('show_custom_buckets', 'custom');
             expect(lastRange).not.toBeUndefined();
             expect(lastRange).not.toBeNull();
@@ -441,7 +425,7 @@ describe("The forecastsConfigRanges view", function() {
     });
 
     describe("test addCustomRange method", function() {
-        var lastRange, options, ranges;
+        var options, ranges, _renderCustomRangeStub;
 
         beforeEach(function() {
             ranges = {
@@ -459,7 +443,7 @@ describe("The forecastsConfigRanges view", function() {
                 include: { name: 'include', label: 'include', customType: 'custom_default', customIndex: 0 },
                 upside: { name: 'upside', label: 'upside', customType: 'custom_default', customIndex: 0 },
                 exclude: { name: 'exclude', label: 'exclude', customType: 'custom_default', customIndex: 0 }
-            }
+            };
             // stub method _renderCustomRange, the method _renderCustomRange should return new created field
             // return stub object to add to view.fieldRanges
             _renderCustomRangeStub = sinon.stub(view, "_renderCustomRange", function(key, label, showElement, category) {
@@ -488,30 +472,10 @@ describe("The forecastsConfigRanges view", function() {
                     }
                 }
             };
-            // stub view.model
-            view.model = {
-                get: function(key) {
-                    if(key == 'show_custom_buckets_ranges') {
-                        return ranges;
-                    } else if(key == 'show_custom_buckets_options') {
-                        return options;
-                    }
-                },
-                set: function(key, value) {
-                    if(key == 'show_custom_buckets_ranges') {
-                        ranges = value;
-                    } else if(key == 'show_custom_buckets_options') {
-                        options = value;
-                    }
-                },
-                unset: function(key) {
-                    if(key == 'show_custom_buckets_ranges') {
-                        ranges = null;
-                    } else if(key == 'show_custom_buckets_options') {
-                        options = null;
-                    }
-                }
-            };
+            view.model.set({
+                show_custom_buckets_ranges: ranges,
+                show_custom_buckets_options: options
+            });
         });
 
         afterEach(function() {
@@ -564,7 +528,7 @@ describe("The forecastsConfigRanges view", function() {
     });
 
     describe("test removeCustomRange method", function() {
-        var lastRange, options, ranges;
+        var options, ranges;
 
         beforeEach(function() {
             ranges = {
@@ -574,7 +538,7 @@ describe("The forecastsConfigRanges view", function() {
                 custom_2: {min: 66, max: 67},
                 exclude: {min: 0, max: 65},
                 custom_without_probability_1: {min: 0, max: 0},
-                custom_without_probability_2: {min: 0, max: 0},
+                custom_without_probability_2: {min: 0, max: 0}
             };
 
             options = [];
@@ -601,8 +565,8 @@ describe("The forecastsConfigRanges view", function() {
                 custom_without_probability_1: { name: 'custom_without_probability_1', customType: 'custom_without_probability', customIndex: 1, remove: function() {
                 } },
                 custom_without_probability_2: { name: 'custom_without_probability_2', customType: 'custom_without_probability', customIndex: 2, remove: function() {
-                } },
-            }
+                } }
+            };
             connectSlidersStub = sinon.stub(view, "connectSliders");
             // stub view.$el
             view.$el = {
@@ -615,30 +579,10 @@ describe("The forecastsConfigRanges view", function() {
                     }
                 }
             };
-            // stub view.model
-            view.model = {
-                get: function(key) {
-                    if(key == 'show_custom_buckets_ranges') {
-                        return ranges;
-                    } else if(key == 'show_custom_buckets_options') {
-                        return options;
-                    }
-                },
-                set: function(key, value) {
-                    if(key == 'show_custom_buckets_ranges') {
-                        ranges = value;
-                    } else if(key == 'show_custom_buckets_options') {
-                        options = value;
-                    }
-                },
-                unset: function(key) {
-                    if(key == 'show_custom_buckets_ranges') {
-                        ranges = null;
-                    } else if(key == 'show_custom_buckets_options') {
-                        options = null;
-                    }
-                }
-            };
+            view.model.set({
+                show_custom_buckets_ranges: ranges,
+                show_custom_buckets_options: options
+            });
         });
 
         afterEach(function() {
@@ -647,7 +591,7 @@ describe("The forecastsConfigRanges view", function() {
 
         it("test removeCustomRange method - remove default custom field", function() {
             var result;
-            _.each(['include', 'upside', 'exclude'], function(name) {
+            _.each(['include', 'upside', 'exclude'], function() {
                 result = view.removeCustomRange({ data: {
                     view: view, range: view.fieldRanges['show_custom_buckets']['include'], category: 'show_custom_buckets'
                 }});
@@ -716,7 +660,7 @@ describe("The forecastsConfigRanges view", function() {
     });
 
     describe("test updateCustomRangeLabel method", function() {
-        var lastRange, options, ranges;
+        var options, ranges;
 
         beforeEach(function() {
             options = [];
@@ -735,32 +679,13 @@ describe("The forecastsConfigRanges view", function() {
                 custom_2: { name: 'custom_2', customType: 'custom', customIndex: 2 },
                 exclude: { name: 'exclude', customType: 'custom_default', customIndex: 0 },
                 custom_without_probability_1: { name: 'custom_without_probability_1', customType: 'custom_without_probability', customIndex: 1 },
-                custom_without_probability_2: { name: 'custom_without_probability_2', customType: 'custom_without_probability', customIndex: 2 },
-            }
-            // stub view.model
-            view.model = {
-                get: function(key) {
-                    if(key == 'show_custom_buckets_ranges') {
-                        return ranges;
-                    } else if(key == 'show_custom_buckets_options') {
-                        return options;
-                    }
-                },
-                set: function(key, value) {
-                    if(key == 'show_custom_buckets_ranges') {
-                        ranges = value;
-                    } else if(key == 'show_custom_buckets_options') {
-                        options = value;
-                    }
-                },
-                unset: function(key) {
-                    if(key == 'show_custom_buckets_ranges') {
-                        ranges = null;
-                    } else if(key == 'show_custom_buckets_options') {
-                        options = null;
-                    }
-                }
+                custom_without_probability_2: { name: 'custom_without_probability_2', customType: 'custom_without_probability', customIndex: 2 }
             };
+
+            view.model.set({
+                show_custom_buckets_ranges: ranges,
+                show_custom_buckets_options: options
+            });
         });
 
         afterEach(function() {
