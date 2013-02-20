@@ -98,7 +98,7 @@ class SugarTestACLUtilities
         $aclField = new ACLField();
         $aclField->setAccessControl($module, $role_id, $field_name, $access_level);
 
-        return $field;
+        return $aclField;
     }
 
     /**
