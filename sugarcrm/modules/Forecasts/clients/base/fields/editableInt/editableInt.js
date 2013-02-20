@@ -61,6 +61,7 @@
 
     initialize: function(options) {
         app.view.fields.IntField.prototype.initialize.call(this, options);
+        this.$el.find('.error-tooltip').data('original-title',this.errorMessage);
         this.checkIfCanEdit();
     },
 
@@ -313,7 +314,7 @@
      * Method to show the error message
      */
     showErrors : function() {
-        this.$el.find('.error-tooltip').data('original-title',this.errorMessage);
+        this.$el.find('.error-tooltip').attr('data-original-title',this.errorMessage);
         this.$el.find('.error-tooltip').css('display', 'inline-block');
         this.$el.find('input').addClass('local-error');
         // we want to show the tooltip message, but hide the add-on (exclamation)

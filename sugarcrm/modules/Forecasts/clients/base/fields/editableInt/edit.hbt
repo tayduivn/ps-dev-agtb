@@ -32,8 +32,8 @@
     {{else}}
         <span class="edit">
             <div class="controls">
-                <input type="text" value="{{value}}" class="input-mini tright" style="width: 22px" maxlength="3">
-                <span class="error-tooltip  add-on local" rel="tooltip" data-original-title="Error: This field is required" style="display: none;">
+                <input type="text" value="{{value}}" class="input-mini tright" data-original-title="" style="width: 22px" maxlength="3">
+                <span class="error-tooltip  add-on local" rel="tooltip" style="display: none;">
                     <i class="icon-exclamation-sign"></i>
                 </span>
             </div>
