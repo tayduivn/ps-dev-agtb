@@ -163,6 +163,51 @@ img {
 .side .block .listed {
   margin: -10px 0 0;
 }
+span[class^="filetype-"] {
+  position: relative;
+}
+span[class^="filetype-"] svg {
+  height: 33px;
+  width: 28px;
+}
+span[class^="filetype-"]::before {
+  position: absolute;
+  top: 14px;
+  left: -2px;
+  color: #FFF;
+  width: 26px;
+  height: 15px;
+  font-size: 11px;
+  text-align: center;
+}
+.filetype-txt::before {
+  background-color: #23a956;
+  content: 'TXT';
+}
+.filetype-png::before {
+  background-color: #6176e2;
+  content: 'PNG';
+}
+.filetype-pdf::before {
+  background-color: #b35755;
+  content: 'PDF';
+}
+.filetype-gif::before {
+  background-color: #dd98e9;
+  content: 'GIF';
+}
+.filetype-doc::before {
+  background-color: #e28f6f;
+  content: 'DOC';
+}
+.filetype-xls::before {
+  background-color: #69e6c9;
+  content: 'XLS';
+}
+.filetype-ppt::before {
+  background-color: #c2ea88;
+  content: 'PPT';
+}
 .label,
 .badge {
   font-weight: normal;
@@ -973,6 +1018,7 @@ footer {
   left: 0;
   margin: 0;
   padding: 0;
+  overflow-y: auto;
 }
 #contentflex > .row-fluid > .span8,
 .row-fluid .main-pane,
@@ -3149,6 +3195,15 @@ hr.soften {
 }
 .subpanel .more {
   height: 32px;
+}
+.bwc-frame {
+  height: 100%;
+  width: 100%;
+  border: 0;
+  display: block;
+}
+.bwc.layout {
+  height: 100%;
 }
 [class^="icon-"],
 [class*=" icon-"] {
@@ -8285,9 +8340,13 @@ h3.popover-title {
 .headerpane span[data-type="favorite"]:hover [class="icon-favorite"] {
   color: #58595B;
 }
-#contentflex #headerbar .record-edit-link-wrapper,
-.headerpane .record-edit-link-wrapper {
+#contentflex #headerbar .record-edit-link-wrapper .record-edit-link,
+.headerpane .record-edit-link-wrapper .record-edit-link {
   position: absolute;
+  top: 5px;
+  left: -18px;
+  z-index: 0;
+  padding: 4px 7px 4px;
 }
 #contentflex #headerbar .record-edit-link-wrapper .record-edit-link.btn-invisible:hover,
 .headerpane .record-edit-link-wrapper .record-edit-link.btn-invisible:hover {
@@ -8296,8 +8355,13 @@ h3.popover-title {
 }
 #contentflex #headerbar .record-edit-link-wrapper .icon-pencil,
 .headerpane .record-edit-link-wrapper .icon-pencil {
+  display: none;
   text-decoration: none;
   cursor: pointer;
+}
+#contentflex #headerbar .record-cell:hover .record-edit-link-wrapper .icon-pencil,
+.headerpane .record-cell:hover .record-edit-link-wrapper .icon-pencil {
+  display: inline-block;
 }
 #contentflex #headerbar .record-label,
 .headerpane .record-label {
