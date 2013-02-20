@@ -30,14 +30,11 @@
     {{#if def.auto_increment}}
         {{#eq value "NaN"}}--{{else}}{{value}}{{/eq}}
     {{else}}
-        <span class="edit">
-            <div class="controls">
-                <input type="text" value="{{value}}" class="input-mini tright" data-original-title="" style="width: 22px" maxlength="3">
-                <span class="error-tooltip  add-on local" rel="tooltip" style="display: none;">
-                    <i class="icon-exclamation-sign"></i>
-                </span>
-            </div>
-        </span>
-
+        <div class="controls">
+            <input type="text" value="{{value}}" class="input-mini tright" style="width: 22px" maxlength="3">
+            <span class="error-tooltip hide" rel="tooltip">
+                <i class="icon-exclamation-sign"></i>
+            </span>
+        </div>
     {{/if}}
 </span>

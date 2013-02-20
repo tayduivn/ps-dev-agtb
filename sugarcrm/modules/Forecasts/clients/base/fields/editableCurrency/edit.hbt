@@ -29,7 +29,7 @@
 <span class="edit">
     <div class="controls">
         <input type="text" value="{{value}}" class="input-small tright" maxlength="26">
-        <span class="error-tooltip  add-on local" rel="tooltip" data-original-title="" style="display: none;">
+        <span class="error-tooltip hide" rel="tooltip">
             <i class="icon-exclamation-sign"></i>
         </span>
     </div>

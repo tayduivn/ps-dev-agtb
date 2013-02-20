@@ -265,7 +265,7 @@
             // esc key, cancel edits
             this.cancelEdits(evt);
         } else if(evt.which == 13) {
-            // enter or tab, handle event
+            // enter key, handle event
             this.handleEvent(evt);
         }
     },
@@ -388,10 +388,10 @@
      * Method to show the error message
      */
     showErrors : function() {
-        this.$el.find('.error-tooltip').attr('data-original-title',this.errorMessage);
-        this.$el.find('.error-tooltip').css('display', 'inline-block');
+        this.$el.find('.error-tooltip').addClass('add-on local').removeClass('hide').css('display','inline-block');
         this.$el.find('input').addClass('local-error');
         // we want to show the tooltip message, but hide the add-on (exclamation)
-        this.$el.find("[rel=tooltip]").tooltip({container: 'body', placement: 'top'}).tooltip('show').hide();
+        this.$el.find("[rel=tooltip]").tooltip('destroy'); // so the title is not cached
+        this.$el.find("[rel=tooltip]").tooltip({container: 'body', placement: 'top', title: this.errorMessage}).tooltip('show').hide();
     }
 })
