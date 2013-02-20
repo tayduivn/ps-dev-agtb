@@ -393,4 +393,7 @@ $mod_strings = array (
     // custom ranges
     'LBL_FORECASTS_CUSTOM_RANGES_DEFAULT_NAME' => 'Custom Range',
     'LBL_UNAUTH_FORECASTS' => 'Unauthorized access to forecast settings.',
+    'LBL_FORECASTS_RANGES_BASED_TITLE' => 'Ranges based on probabilities',
+    'LBL_FORECASTS_CUSTOM_BASED_TITLE' => 'Custom Ranges based on probabilities',
+    'LBL_FORECASTS_CUSTOM_NO_BASED_TITLE' =>'Ranges not based on probabilities',
 );

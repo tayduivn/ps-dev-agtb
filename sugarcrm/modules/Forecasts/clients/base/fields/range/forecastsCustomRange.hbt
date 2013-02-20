@@ -1,50 +1,65 @@
 {{#eq customType 'custom_default'}}
-<div id="{{name}}" class="clearfix">
-    <div style="float: left; width: 150px; margin-top: 35px;" class="control-group">
-        <input type="text" placeholder="Enter range name..." class="span2" value="{{label}}">
+    <div id="{{name}}" class="clearfix">
+        {{#if isExclude}}
+            <div style="float: left; width: 150px; margin-top: 35px; margin-left: 20px;" class="control-group">
+                <input type="text" placeholder="Enter range name..." class="span2" value="{{label}}" data-key="{{def.name}}" data-category="{{category}}">
+            </div>
+            <div class="noUiSliderEnds" style="float: right; width: 240px;">
+                <div class="rangeSlider noUiSlider" style="width: 240px;"></div>
+            </div>
+        {{else}}
+            <label style="float: left; width: 144px; margin-top: 35px;" class="checkbox">
+                <input type="checkbox" value="1" {{#if in_included_total}}checked="true"{{/if}} name="in_included_total_{{def.name}}" data-key="{{def.name}}" data-category="{{category}}">
+                <div style="margin-top: -22px;" class="control-group">
+                    <input type="text" placeholder="Enter range name..." class="span2" value="{{label}}" data-key="{{def.name}}" data-category="{{category}}">
+                </div>
+            </label>
+            <div class="noUiSliderEnds" style="float: right; width: 240px;">
+                <div class="rangeSlider noUiSlider" style="width: 240px;"></div>
+            </div>
+        {{/if}}
     </div>
-    <div class="noUiSliderEnds" style="float: right; width: 255px;">
-        <div class="rangeSlider noUiSlider" style="width: 255px;"></div>
-    </div>
-</div>
 {{/eq}}
 
 {{#eq customType 'custom'}}
-<div id="{{name}}" class="clearfix">
-    <div style="float: left; width: 150px; margin-top: 35px;" class="control-group">
-        <input type="text" placeholder="Enter range name..." class="span2" value="{{label}}">
-    </div>
-    <div style="float: left; width: 35px; margin-top: 35px;">
-        <div class="btn-group">
-            <a class="btn removeCustomRange" href="javascript:void(0)">
-                <i class="icon-minus"></i>
-            </a>
+    <div id="{{name}}" class="clearfix">
+        <label style="float: left; width: 144px; margin-top: 35px;" class="checkbox">
+            <input type="checkbox" value="1" {{#if in_included_total}}checked="true"{{/if}} name="in_included_total_{{def.name}}" data-key="{{def.name}}" data-category="{{category}}">
+            <div style="margin-top: -22px;" class="control-group">
+                <input type="text" placeholder="Enter range name..." class="span2" value="{{label}}" data-key="{{def.name}}" data-category="{{category}}">
+            </div>
+        </label>
+        <div style="float: left; width: 35px; margin-top: 31px;">
+            <div class="btn-group">
+                <a class="btn removeCustomRange" href="javascript:void(0)" data-key="{{def.name}}" data-category="{{category}}">
+                    <i class="icon-minus"></i>
+                </a>
+            </div>
+        </div>
+        <div class="noUiSliderEnds" style="float: right; width: 240px;">
+            <div class="rangeSlider noUiSlider" style="width: 240px;"></div>
         </div>
     </div>
-    <div class="noUiSliderEnds" style="float: right; width: 255px;">
-        <div class="rangeSlider noUiSlider" style="width: 255px;"></div>
-    </div>
-</div>
 {{/eq}}
 
 {{#eq customType 'custom_without_probability'}}
-<div id="{{name}}" class="clearfix">
-    <div style="float: left; width: 150px; margin-top: 35px;" class="control-group">
-        <input type="text" placeholder="Enter range name..." class="span2" value="{{label}}">
-    </div>
-    <div style="float: left; width: 35px; margin-top: 35px;">
-        <div class="btn-group">
-            <a class="btn removeCustomRange" href="javascript:void(0)">
-                <i class="icon-minus"></i>
-            </a>
+    <div id="{{name}}" class="clearfix">
+        <div style="float: left; width: 150px; margin-top: 35px;" class="control-group">
+            <input type="text" placeholder="Enter range name..." class="span2" value="{{label}}" data-key="{{def.name}}" data-category="{{category}}">
+        </div>
+        <div style="float: left; width: 35px; margin-top: 35px;">
+            <div class="btn-group">
+                <a class="btn removeCustomRange" href="javascript:void(0)" data-key="{{def.name}}" data-category="{{category}}">
+                    <i class="icon-minus"></i>
+                </a>
+            </div>
+        </div>
+        <div style="float: left; width: 35px; margin-top: 35px;">
+            <div class="btn-group">
+                <a class="btn addCustomRange" href="javascript:void(0)" data-type="{{customType}}" data-category="{{category}}">
+                    <i class="icon-plus"></i>
+                </a>
+            </div>
         </div>
     </div>
-    <div style="float: left; width: 35px; margin-top: 35px;">
-        <div class="btn-group">
-            <a class="btn addCustomRange" href="javascript:void(0)">
-                <i class="icon-plus"></i>
-            </a>
-        </div>
-    </div>
-</div>
 {{/eq}}
