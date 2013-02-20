@@ -296,8 +296,6 @@ class KBDocument extends SugarBean {
         //BEGIN SUGARCRM flav=pro ONLY
         if (!is_admin($current_user) && !$this->disable_row_level_security){
             $this->addVisibilityFrom($ret_array['from']);
-        }
-        if(!is_admin($current_user) && !$this->disable_row_level_security) {
             $this->addVisibilityWhere($where);
         }
         $favorites = (!empty($params['favorites']))?$params['favorites']: 0;
