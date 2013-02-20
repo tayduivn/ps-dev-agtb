@@ -36,10 +36,5 @@
         if ($(evt.currentTarget).data('event')) {
             this.view.context.trigger($(evt.currentTarget).data('event'), this.model);
         }
-    },
-    _render: function() {
-        if (app.acl.hasAccessToModel(this.def.value, this.model)) {
-            app.view.fields.ButtonField.prototype._render.call(this);
-        }
     }
 })

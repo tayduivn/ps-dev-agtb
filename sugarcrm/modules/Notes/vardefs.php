@@ -23,10 +23,6 @@ $dictionary['Note'] = array(
     //BEGIN SUGARCRM flav=pro ONLY
     'favorites'=>true,
     //END SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=following ONLY
-    'followable' => true,
-    //END SUGARCRM flav=following ONLY
-
     'table' => 'notes',
     // TODO: Figure out a way to selectively disable the activity stream for
     // posts -- useful when adding attachments to the activity stream.

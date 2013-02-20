@@ -39,9 +39,10 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
-        app.events.on("data:sync:end", this.handleSync, this);
+        this.model.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
+        this.context.set("viewed", true);
         this.model.on("duplicate:before", this.setupDuplicateFields, this);
 
         this.delegateButtonEvents();
@@ -50,8 +51,9 @@
             this.model.isNotEmpty = true;
         }
     },
+
     handleSync: function(method, model, options, error) {
-        if (this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
+        if (this.model && this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
             this.previousModelState = JSON.parse(JSON.stringify(model.attributes || {}));
         }
     },
@@ -253,7 +255,7 @@
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
             //Exclude non editable fields
-            if (field.def.noedit || field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
+            if (field.def.noedit || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
@@ -324,7 +326,6 @@
     bindDataChange: function() {
         this.model.on("change", function(fieldType) {
             if (this.inlineEditMode) {
-                this.previousModelState = this.model.previousAttributes();
                 this.setButtonStates(this.STATE.EDIT);
             }
             if (this.model.isNotEmpty !== true && fieldType !== 'image') {
@@ -335,9 +336,11 @@
     },
 
     duplicateClicked: function() {
-        var prefill = app.data.createBean(this.model.module);
+        var self = this, 
+            prefill = app.data.createBean(this.model.module);
+
         prefill.copy(this.model);
-        this.model.trigger("duplicate:before", prefill);
+        self.model.trigger("duplicate:before", prefill);
         prefill.unset("id");
         app.drawer.open({
             layout: 'create',
@@ -345,9 +348,13 @@
                 create: true,
                 model : prefill
             }
-        }, this);
+        }, function(newModel) {
+            if(newModel && newModel.id) {
+                app.router.navigate("#" + self.model.module + "/" + newModel.id, {trigger: true});
+            }
+        });
     },
-    
+
     findDuplicatesClicked: function() {
         app.drawer.open({
             layout : 'find-duplicates',
@@ -467,7 +474,8 @@
         app.file.checkFileFieldsAndProcessUpload(self.model, {
                 success:function () {
                     self.model.save({}, {
-                        success:finalSuccess
+                        success:finalSuccess,
+                        viewed: true
                     });
                 }
             },
@@ -479,12 +487,10 @@
 
     handleCancel: function() {
         this.inlineEditMode = false;
-
+        this.toggleEdit(false);
         if (!_.isEmpty(this.previousModelState)) {
             this.model.set(this.previousModelState);
         }
-
-        this.toggleEdit(false);
     },
 
     handleDelete: function() {
