@@ -3014,141 +3014,6 @@ hr.soften {
   color: #58595B;
   cursor: text;
 }
-.dashboard {
-  background-image: url('../../assets/img/texture/furley_bg.png');
-  position: absolute;
-  width: 100%;
-  height: auto;
-}
-.dashboard ul {
-  list-style: none;
-  margin: 0;
-}
-.dashboard .cols {
-  margin: 0;
-  list-style: none;
-}
-.dashboard .cols> li:first-child {
-  clear: both;
-}
-.dashboard .cols .rows {
-  margin: 0;
-  list-style: none;
-}
-.dashboard .cols .rows.well {
-  position: relative;
-}
-.dashboard .cols .rows.well>.btn {
-  position: absolute;
-  top: -4px;
-  right: 0;
-}
-.dashboard .cols .rows.well>.btn:not(:nth-child(1)) {
-  right: 20px;
-}
-.dashboard .cols .rows.well>.btn:hover,
-.dashboard .cols .rows.well>.btn:active {
-  text-decoration: none;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  box-shadow: none !important;
-}
-.dashboard .cols .rows.well>.btn.move {
-  cursor: move;
-}
-.dashboard .cols .rows .row-fluid {
-  margin: 0;
-}
-.dashboard .cols .rows .row-fluid .widget-container .widget {
-  padding: 0;
-}
-.dashboard .cols .rows .row-fluid .widget-container .widget.thumbnail {
-  margin-bottom: 0 !important;
-}
-.dashboard .cols .rows .row-fluid .widget-container .widget div.widget-content {
-  overflow: auto;
-  width: 100%;
-}
-.dashboard .cols .rows .row-fluid .widget-container .widget h4 {
-  cursor: move;
-}
-.dashboard .cols .rows .row-fluid .widget-container .empty {
-  padding: 16px 0;
-  border: 3px dashed #cfcfcf;
-  background-color: #fff;
-  cursor: pointer;
-}
-.dashboard .cols .rows .row-fluid .widget-container .empty p {
-  font-size: 13px;
-  font-weight: 500px;
-  text-align: center;
-  color: #cfcfcf;
-}
-.dashboard .cols .rows .row-fluid .widget-container .empty p.header {
-  line-height: 40px;
-}
-.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet {
-  color: #cfcfcf;
-  text-align: center;
-}
-.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet small {
-  font-size: 12px;
-}
-.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet strong {
-  font-size: 60px;
-  font-weight: 900;
-}
-.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet strong i {
-  color: #cfcfcf;
-}
-.dashboard .cols .rows .row-fluid .widget-container:not(.collapsed) .thumbnail {
-  min-height: 126px;
-}
-.dashboard .cols .rows .row-fluid .widget-container.active .widget {
-  background: #cfcfcf;
-  border-color: #fff;
-}
-.dashboard .cols .rows .row-fluid .widget-container.active .widget p,
-.dashboard .cols .rows .row-fluid .widget-container.active .widget strong i {
-  color: #fff;
-}
-.dashboard .cols .rows .row-fluid>ul {
-  margin: 0;
-}
-.dashboard .cols .add-row {
-  position: relative;
-  margin: 0;
-  padding-top: 18px;
-  border: 3px dashed #cfcfcf;
-  background-color: #fff;
-  cursor: pointer;
-}
-.dashboard .cols .add-row p {
-  font-size: 13px;
-  font-weight: 500px;
-  text-align: center;
-  color: #cfcfcf;
-}
-.dashboard .cols .add-row p.header {
-  line-height: 40px;
-}
-.dashboard .cols .add-row .add-dashlet {
-  color: #cfcfcf;
-  text-align: center;
-}
-.dashboard .cols .add-row .add-dashlet small {
-  font-size: 12px;
-}
-.dashboard .cols .add-row .add-dashlet strong {
-  font-size: 60px;
-  font-weight: 900;
-}
-.dashboard .cols .add-row .options a {
-  padding: 0 12px;
-}
-.dashboard .cols .add-row .options a:hover {
-  text-decoration: none;
-}
 [class^="icon-"],
 [class*=" icon-"] {
   -webkit-font-smoothing: antialiased;
@@ -7870,6 +7735,144 @@ h4.merge-interface-header .preview {
 }
 .inline-drawer table tbody tr:last-child td {
   border-bottom: 0 !important;
+}
+.dashboard {
+  background-image: url('../../assets/img/texture/furley_bg.png');
+  position: absolute;
+  width: 100%;
+  height: auto;
+}
+.dashboard ul {
+  list-style: none;
+  margin: 0;
+}
+.dashboard .cols {
+  margin: 0;
+  list-style: none;
+}
+.dashboard .cols> li:first-child {
+  clear: both;
+}
+.dashboard .cols .rows {
+  margin: 0;
+  list-style: none;
+}
+.dashboard .cols .rows.well {
+  position: relative;
+}
+.dashboard .cols .rows.well>.btn {
+  position: absolute;
+  top: -4px;
+  right: 0;
+}
+.dashboard .cols .rows.well>.btn:not(:nth-child(1)) {
+  right: 20px;
+}
+.dashboard .cols .rows.well>.btn:hover,
+.dashboard .cols .rows.well>.btn:active {
+  text-decoration: none;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+}
+.dashboard .cols .rows.well>.btn.move {
+  cursor: move;
+}
+.dashboard .cols .rows .row-fluid {
+  margin: 0;
+}
+.dashboard .cols .rows .row-fluid .widget-container .widget {
+  padding: 0;
+}
+.dashboard .cols .rows .row-fluid .widget-container .widget.thumbnail {
+  margin-bottom: 0 !important;
+}
+.dashboard .cols .rows .row-fluid .widget-container .widget div.widget-content {
+  overflow: auto;
+  width: 100%;
+}
+.dashboard .cols .rows .row-fluid .widget-container .widget h4 {
+  cursor: move;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty {
+  padding: 16px 0;
+  border: 3px dashed #cfcfcf;
+  background-color: #fff;
+  cursor: pointer;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty p {
+  font-size: 13px;
+  font-weight: 500px;
+  text-align: center;
+  color: #cfcfcf;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty p.header {
+  line-height: 40px;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet {
+  color: #cfcfcf;
+  text-align: center;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet small {
+  font-size: 12px;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet strong {
+  font-size: 60px;
+  font-weight: 900;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet strong i {
+  color: #cfcfcf;
+}
+.dashboard .cols .rows .row-fluid .widget-container:not(.collapsed) .thumbnail {
+  min-height: 126px;
+}
+.dashboard .cols .rows .row-fluid .widget-container.active .widget {
+  background: #cfcfcf;
+  border-color: #fff;
+}
+.dashboard .cols .rows .row-fluid .widget-container.active .widget p,
+.dashboard .cols .rows .row-fluid .widget-container.active .widget strong i {
+  color: #fff;
+}
+.dashboard .cols .rows .row-fluid>ul {
+  margin: 0;
+}
+.dashboard .cols .add-row {
+  position: relative;
+  margin: 0;
+  padding-top: 18px;
+  border: 3px dashed #cfcfcf;
+  background-color: #fff;
+  cursor: pointer;
+}
+.dashboard .cols .add-row p {
+  font-size: 13px;
+  font-weight: 500px;
+  text-align: center;
+  color: #cfcfcf;
+}
+.dashboard .cols .add-row p.header {
+  line-height: 40px;
+}
+.dashboard .cols .add-row .add-dashlet {
+  color: #cfcfcf;
+  text-align: center;
+}
+.dashboard .cols .add-row .add-dashlet small {
+  font-size: 12px;
+}
+.dashboard .cols .add-row .add-dashlet strong {
+  font-size: 60px;
+  font-weight: 900;
+}
+.dashboard .cols .add-row .options a {
+  padding: 0 12px;
+}
+.dashboard .cols .add-row .options a:hover {
+  text-decoration: none;
+}
+.dashboard #dashlets {
+  clear: both;
 }
 .well-invisible {
   background-color: transparent;
