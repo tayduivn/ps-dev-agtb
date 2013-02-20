@@ -957,10 +957,6 @@ footer {
 .tright {
   text-align: right;
 }
-.reset-width {
-  width: auto !important;
-  min-width: auto !important;
-}
 .container-fluid {
   margin-top: 20px;
 }
@@ -5457,10 +5453,9 @@ body.preview .side-pane.active {
   right: 29px;
   top: 35px;
   left: auto;
-  padding: 4px 8px;
 }
 .navbar .advanced .dropdown-menu li {
-  padding: 4px 8px;
+  padding: 8px;
 }
 .navbar .advanced .dropdown-menu li.divider {
   padding: 0;
@@ -6151,7 +6146,7 @@ body.modal-open {
 }
 .modal-navigation {
   position: absolute;
-  top: 46px;
+  top: 48px;
   width: 100%;
   background-color: #f5f5f5;
   border-bottom: 1px solid #bbb;
@@ -6191,11 +6186,11 @@ body.modal-open {
 }
 .layout_Forecasts .modal-content {
   overflow-y: auto;
+  margin-top: 37px;
   max-height: 264px;
 }
 .layout_Forecasts .modal-navigation {
   top: 0;
-  padding: 0;
 }
 .layout_Forecasts .modal-navigation .breadcrumb.two {
   padding-bottom: 3px;
@@ -8348,18 +8343,14 @@ h3.popover-title {
 .headerpane.btn-group > .btn {
   float: none;
 }
-#contentflex #headerbar .view-forecastsCommitButtons .dropdown-menu,
-#contentflex #headerbar .actions .dropdown-menu,
-.headerpane .view-forecastsCommitButtons .dropdown-menu,
-.headerpane .actions .dropdown-menu {
+#contentflex #headerbar .dropdown-menu,
+.headerpane .dropdown-menu {
   left: auto;
   right: 0;
   z-index: 1001;
 }
-#contentflex #headerbar .view-forecastsCommitButtons .dropdown-menu:after,
-#contentflex #headerbar .actions .dropdown-menu:after,
-.headerpane .view-forecastsCommitButtons .dropdown-menu:after,
-.headerpane .actions .dropdown-menu:after {
+#contentflex #headerbar .dropdown-menu:after,
+.headerpane .dropdown-menu:after {
   content: '';
   display: inline-block;
   border-left: 6px solid transparent;
@@ -8370,10 +8361,8 @@ h3.popover-title {
   left: auto;
   right: 8px;
 }
-#contentflex #headerbar .view-forecastsCommitButtons .dropdown-menu:before,
-#contentflex #headerbar .actions .dropdown-menu:before,
-.headerpane .view-forecastsCommitButtons .dropdown-menu:before,
-.headerpane .actions .dropdown-menu:before {
+#contentflex #headerbar .dropdown-menu:before,
+.headerpane .dropdown-menu:before {
   content: '';
   display: inline-block;
   border-left: 7px solid transparent;
