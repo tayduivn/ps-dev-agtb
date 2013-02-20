@@ -56,37 +56,21 @@
             if(_.isUndefined(options)) {
                 return this;
             }
-            var template = this.getAlertTemplate(options.level, options.messages, options.title, options.showCancel);
+            var template = this.getAlertTemplate(options.level, options.messages, options.title);
             this.$el.html(template);
-
-            // set confirmation dialog as a modal
-            if (options.level === this.LEVEL.CONFIRMATION) {
-                this.$('.modal').modal({
-                    'backdrop': 'static',
-                    'show': false
-                });
-            }
-
             this.show(options.level);
         },
 
         show: function(level) {
-            if (level === this.LEVEL.CONFIRMATION) {
-                this.$('.modal').modal('show');
-            } else {
-                this.$el.show();
-            }
+            this.$el.show();
         },
 
         close: function() {
-            if (this.alertLevel === this.LEVEL.CONFIRMATION) {
-                this.$('.modal').modal('hide');
-            }
             this.$el.fadeOut().remove();
         },
 
         cancel: function() {
-            this.$('.close').click(); //need to click close to call app.alert.dismiss()
+            app.alert.dismiss(this.key);
         },
 
         confirm: function() {
@@ -101,14 +85,13 @@
          * @param level
          * @param messages
          * @param title (optional)
-         * @param showCancel (optional) boolean flag
          * @return {String}
          */
-        getAlertTemplate: function(level, messages, title, showCancel) {
+        getAlertTemplate: function(level, messages, title) {
             var template,
-                alertClasses = this.getAlertClasses(level),
-                title = title ? title : this.getDefaultTitle(level),
-                showCancel = showCancel ? showCancel : true;
+                alertClasses = this.getAlertClasses(level);
+
+            title = title ? title : this.getDefaultTitle(level);
 
             switch (level) {
                 case this.LEVEL.PROCESS:
@@ -130,12 +113,12 @@
                         '</div>';
                     break;
                 case this.LEVEL.CONFIRMATION:
-                    template = '<div class="alert {{alertClass}} alert-block modal">' +
-                        '<a class="close">×</a>' +
+                    template = '<div class="alert {{alertClass}} alert-block">' +
                         '{{#if title}}<strong>{{title}}</strong>{{/if}}' +
                         ' {{#each messages}}{{{this}}}{{/each}}' +
-                        '{{#if showCancel}}<a class="btn cancel">' + app.lang.get('LBL_CANCEL_BUTTON_LABEL') + '</a>{{/if}}' +
-                        '<a class="btn btn-primary pull-right confirm">' + app.lang.get('LBL_CONFIRM_BUTTON_LABEL') + '</a>' +
+                        ' <a class="btn-link confirm">' + app.lang.get('LBL_CONFIRM_BUTTON_LABEL') + '</a> ' +
+                        app.lang.get('LBL_OR').toLocaleLowerCase() +
+                        ' <a class="btn-link cancel">' + app.lang.get('LBL_CANCEL_BUTTON_LABEL') + '</a>' +
                         '</div>';
                     break;
                 default:
@@ -167,7 +150,7 @@
                 case this.LEVEL.ERROR:
                     return 'alert-danger';
                 case this.LEVEL.CONFIRMATION:
-                    return 'alert-warning span4';
+                    return 'alert-warning';
                 default:
                     return '';
             }
