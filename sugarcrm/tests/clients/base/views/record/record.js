@@ -104,16 +104,16 @@ describe("Record View", function() {
             };
             view.model.set(modelAttributes);
 
-            view.handleSync('read', view.model);
+            view.handleSync('read');
             expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
-            view.handleSync('update', view.model);
+            view.handleSync('update');
             expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
             view.model.set({name:'Test'});
-            view.handleSync('randomAction', view.model);
+            view.handleSync('randomAction');
             expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
         });
 
-        it("Should set previous model state on app data:sync:end", function() {
+        it("Should set previous model state on 'data:sync:end' event", function() {
             var modelAttributes = {
                 id: '123',
                 name: 'Name',
@@ -122,8 +122,7 @@ describe("Record View", function() {
             };
             view.model.set(modelAttributes);
             expect(view.previousModelState).toBeNull();
-            SugarTest.app.trigger('data:sync:end','read',view.model);
-            view.handleSync('read', view.model);
+            view.model.trigger('data:sync:end', 'read');
             expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.previousModelState));
         });
 
@@ -335,12 +334,13 @@ describe("Record View", function() {
 
         it("Should revert data back to the old value when the cancel button is clicked after data has been changed", function() {
             view.render();
-            view.model.set({
+            var data = {
                 name: 'Foo',
                 case_number: 123,
                 description: 'Description'
-            });
-            view.handleSync('read',view.model);
+            };
+            view.model.set(data);
+            view.handleSync('read');
             view.context.trigger('button:edit_button:click');
             view.model.set({
                 name: 'Bar'
