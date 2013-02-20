@@ -52,9 +52,9 @@
         }
     },
 
-    handleSync: function(method, model, options, error) {
-        if (this.model && this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
-            this.previousModelState = JSON.parse(JSON.stringify(model.attributes || {}));
+    handleSync: function(method, options, error) {
+        if (this.model && this.model.attributes && (method == 'read' || method =='update')) {
+            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes || {}));
         }
     },
 
