@@ -61,7 +61,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUsersModule()
     {
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($GLOBALS['current_user']);
         // because the user is not an admin the user should only have view and list access
         unset($_SESSION['ACL']);
         $expected_result = array(
@@ -136,7 +136,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
         unset($_SESSION['ACL']);
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($GLOBALS['current_user']);
         // because the user is not an admin the user should only have view and list access
 
         $expected_result = array(
@@ -174,7 +174,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
         unset($_SESSION['ACL']);
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($GLOBALS['current_user']);
         // because the user is not an admin the user should only have view and list access
 
         $expected_result = array(
@@ -238,7 +238,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
 
 
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($GLOBALS['current_user']);
         foreach($modules AS $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
@@ -298,7 +298,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
 
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($GLOBALS['current_user']);
         foreach($modules AS $module) {
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
@@ -352,7 +352,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         unset($account);
 
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($GLOBALS['current_user']);
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['access']));
         unset($acls['_hash']);
@@ -400,7 +400,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         unset($_SESSION['ACL']);
 
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($GLOBALS['current_user']);
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::newBean('Accounts'));
         unset($acls['_hash']);
@@ -453,7 +453,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $account->id = create_guid();
         $account->name = "Tis Awesome";
 
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($GLOBALS['current_user']);
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], $account);
         unset($acls['_hash']);
@@ -497,7 +497,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         unset($_SESSION['ACL']);
 
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($GLOBALS['current_user']);
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['no_access']));
 
@@ -541,7 +541,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         unset($_SESSION['ACL']);
 
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($GLOBALS['current_user']);
 
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['access']));
@@ -587,7 +587,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
 
-        $mm = MetaDataManager::getManager();
+        $mm = new MetaDataManager($GLOBALS['current_user']);
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['no_access']));
         unset($acls['_hash']);

@@ -451,7 +451,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         $settings = $admin->getConfigForModule('Forecasts');
         if (!isset($settings['has_commits']) || !$settings['has_commits']) {
             $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
-            MetaDataManager::refreshCache();
+            MetaDataManager::clearAPICache();
         }
 
         $seed->setWorksheetArgs($this->getArgs());

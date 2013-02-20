@@ -172,12 +172,13 @@ class CurrentUserPortalApi extends CurrentUserApi {
         return $acls;
     }
 
-    /**
-     * Gets the module list for the current user and platform
-     * 
-     * @return array
-     */
     public function getModuleList() {
-        return MetaDataManager::getManager(array('portal'))->getUserModuleList();
+        // Use SugarPortalBrowser to get the portal modules that would appear
+        // in Studio
+        require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
+        $pb = new SugarPortalBrowser();
+        $pb->loadModules();
+        $moduleList = $this->filterDisplayModules($pb->modules);
+        return $moduleList;
     }
 }

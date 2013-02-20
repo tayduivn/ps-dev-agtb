@@ -77,8 +77,8 @@ class RestBug55141Test extends RestTestBase {
         $rc->clearAdditionalCaches();
         $GLOBALS['current_user'] = $old_user;
         
-        // verify it still exists does
-        $this->assertFileExists('cache/api/metadata/metadata_base_private.php', "Didn't really clear the cache");
+        // verify it no longer does
+        $this->assertFalse(file_exists('cache/api/metadata/metadata_base_private.php'), "Didn't really clear the cache");
 
     }
 }
