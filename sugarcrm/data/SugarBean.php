@@ -4980,7 +4980,7 @@ class SugarBean
             if(!empty($record))
             {
                 // this copies the object into the array
-                $list[] = $template;
+                $list[] = $record;
             }
         }
         return $list;

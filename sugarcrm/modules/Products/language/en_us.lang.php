@@ -151,6 +151,8 @@ $mod_strings = array(
     'LBL_SALES_STAGE' => 'Sales Stage',
     'LBL_SALES_STATUS' => 'Product Line Status',
     'LBL_CONVERT_TO_QUOTE' => 'Convert To Quote',
+    'LBL_CONVERT_TO_QUOTE_INFO' => 'Please Wait',
+    'LBL_CONVERT_TO_QUOTE_INFO_MESSAGE' => 'Converting Product To Quote',
 );
 
 ?>
