@@ -96,7 +96,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         $db = DBManagerFactory::getInstance();
-        $db->query("DELETE FROM forecast_manager_worksheets WHERE user_id = '".self::$user->id."'");
+        $db->query("DELETE FROM forecast_manager_worksheets WHERE user_id = '" . self::$user->id . "'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
@@ -137,6 +137,32 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      * @dataProvider caseFieldsDataProvider
      * @group forecasts
      */
+    public function testSaveManagerDraftDoesNotCreateCommittedVersion()
+    {
+        /* @var $worksheet ForecastManagerWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $ret = $worksheet->reporteeForecastRollUp(self::$user, self::$forecast->toArray());
+
+        // make sure that true was returned
+        $this->assertTrue($ret);
+
+        $ret = $worksheet->retrieve_by_string_fields(
+            array(
+                'assigned_user_id' => $GLOBALS['current_user']->id,
+                'user_id' => self::$user->id,
+                'draft' => 0,
+                'deleted' => 0
+            )
+        );
+
+        $this->assertNull($ret);
+    }
+
+    /**
+     * @depends testSaveManagerDraft
+     * @dataProvider caseFieldsDataProvider
+     * @group forecasts
+     */
     public function testAdjustedCaseValuesEqualStandardCaseValues($field, $adjusted_field)
     {
         /* @var $worksheet ForecastManagerWorksheet */
@@ -150,7 +176,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $this->assertEquals($worksheet->$field, $worksheet->$adjusted_field, 0 , 2);
+        $this->assertEquals($worksheet->$field, $worksheet->$adjusted_field, 0, 2);
     }
 
     public static function caseFieldsDataProvider()
@@ -212,19 +238,18 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      * @depends testCommitManagerHasCommittedUserRow
      * @group forecasts
      */
-    public function testUserCommitsUpdatesMangerDraftAndNotCommittedVersion()
+    public function testUserCommitsUpdatesMangerDraftAndUpdatesCommittedVersion()
     {
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $forecast = self::$forecast->toArray();
-        $forecast_base_case_org_value = $forecast['best_case'];
         $forecast['best_case'] += 100;
         $ret = $worksheet->reporteeForecastRollUp(self::$user, $forecast);
 
         // make sure that true was returned
         $this->assertTrue($ret);
 
-        $ret = $worksheet->retrieve_by_string_fields(
+        $worksheet->retrieve_by_string_fields(
             array(
                 'assigned_user_id' => $GLOBALS['current_user']->id,
                 'user_id' => self::$user->id,
@@ -234,7 +259,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         // just make sure that the best case on the committed version still equals the original value
-        $this->assertEquals($forecast_base_case_org_value, $worksheet->best_case);
+        $this->assertEquals($forecast['best_case'], $worksheet->best_case);
     }
 
     /**
