@@ -23,28 +23,28 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Calendar';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#Calls/create',
-        'label' =>'LNK_NEW_CALL',
-        'acl_action'=>'edit',
-        'acl_module'=>'Calls',
-        'icon' => 'icon-plus',
-    ),
-    array(
-        'route'=>'#Meetings/create',
+        'route'=>'#bwc/index.php?module=Meetings&action=EditView&return_module=Meetings&return_action=DetailView',
         'label' =>'LNK_NEW_MEETING',
         'acl_action'=>'edit',
         'acl_module'=>'Meetings',
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#Tasks/create',
+        'route'=>'#bwc/index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView',
+        'label' =>'LNK_NEW_CALL',
+        'acl_action'=>'edit',
+        'acl_module'=>'Calls',
+        'icon' => 'icon-plus',
+    ),
+    array(
+        'route'=>'#bwc/index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView',
         'label' =>'LNK_NEW_TASK',
         'acl_action'=>'edit',
         'acl_module'=>'Tasks',
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#'.$module_name,
+        'route'=>'#bwc/index.php?module=Calendar&action=index&view=day',
         'label' =>'LNK_VIEW_CALENDAR',
         'acl_action'=>'list',
         'acl_module'=>$module_name,

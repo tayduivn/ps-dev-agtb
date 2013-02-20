@@ -11,6 +11,8 @@
         'change .operator': 'chooseOperator'
     },
 
+    className: 'filter-options extend hide',
+
     rowTemplate: Handlebars.compile('<article class="filter-body newRow">' +
 '     <div class="row-fluid">' +
 '       <div class="filter-field controls span3">' +
@@ -31,9 +33,9 @@
 
     filterOperatorMap: {
         'enum': ['$equals', '$not_equals'],
-        'varchar': ['$equals', '$not_equals', '$contains', '$starts', '$ends'],
-        'name': ['$equals', '$not_equals', '$contains', '$starts', '$ends'],
-        'text': ['$equals', '$not_equals', '$contains', '$starts', '$ends'],
+        'varchar': ['$starts', '$ends', '$equals', '$not_equals', '$contains'],
+        'name': ['$starts', '$ends', '$equals', '$not_equals', '$contains'],
+        'text': ['$starts', '$ends', '$equals', '$not_equals', '$contains'],
         'currency': ['$equals', '$gt', '$gte', '$lt', '$lte'],
         'int': ['$equals', '$gt', '$gte', '$lt', '$lte'],
         'double': ['$equals', '$gt', '$gte', '$lt', '$lte'],
@@ -64,25 +66,16 @@
         this.layout.on("filter:create:new", function(filter) {
             if(_.isUndefined(filter)) {
                 this.render();
+                this.addRow();
             } else {
                 this.populateFilter(filter);
             }
-            this.$('.filter-options').removeClass('hide');
+            this.$el.removeClass('hide');
 
         }, this);
         this.layout.on("filter:create:close", function() {
-            this.$('.filter-options').addClass('hide');
+            this.$el.addClass('hide');
         }, this);
-    },
-
-    render: function(model) {
-        app.view.View.prototype.render.call(this);
-        this.addRow();
-    },
-
-    purgeAllRows: function() {
-        this.$(".filter-header input").val("");
-        this.$(".filter-body").filter(":not(:first-child)").remove();
     },
 
     addRow: function() {
@@ -90,7 +83,7 @@
             self = this;
 
         this.$('.newRow').removeClass('newRow').find('.addme').addClass('hide');
-        this.$(".filter-options").append(tpl);
+        this.$el.append(tpl);
 
         // minimumResultsForSearch set to 9999 to hide the search field,
         // See: https://github.com/ivaynberg/select2/issues/414
@@ -108,23 +101,24 @@
         });
     },
 
-    populateFilter: function(f) {
+    populateFilter: function(filterModel) {
         var self = this;
-        this.purgeAllRows();
-        this.$(".filter-header").data("model", f);
-        this.$(".filter-header input").val(f.get("name"));
-        _.each(this._applyJSON(f.get("filter_definition")), function(row) {
+        this.render();
+
+        this.$(".filter-header").data("model", filterModel);
+        this.$(".filter-header input").val(filterModel.get("name"));
+        _.each(this._applyJSON(filterModel.get("filter_definition")), function(row) {
             self.populateRow(row);
         });
         this.addRow();
     },
 
-    populateRow: function(r) {
+    populateRow: function(rowObj) {
         this.addRow();
         var $row = this.$('.newRow');
-        $row.data('value', r.value);
-        $row.find("input.field_name").val(r.field).trigger("change");
-        $row.find("input.operator").val(r.op).trigger("change");
+        $row.data('value', rowObj.value);
+        $row.find("input.field_name").val(rowObj.field).trigger("change");
+        $row.find("input.operator").val(rowObj.op).trigger("change");
     },
 
     editName: function(e) {
@@ -191,7 +185,8 @@
             fieldType = app.metadata.getModule(this.module).fields[fieldName].type;
 
         // Patching metadata
-        var fields = app.metadata._patchFields(this.module, app.metadata.getModule(this.module), JSON.parse(JSON.stringify(app.metadata.getModule(this.module).fields)));
+        var fields = app.metadata._patchFields(this.module, app.metadata.getModule(this.module),
+                        JSON.parse(JSON.stringify(app.metadata.getModule(this.module).fields)));
 
         this._disposeField($parent);
 
@@ -264,8 +259,9 @@
     },
 
     save: function() {
-        var self = this;
-        var val = this.$(".filter-header input").val();
+        var self = this,
+            val = this.$(".filter-header input").val();
+
         if(val) {
             this.$(".save_button").addClass("disabled");
             this.$(".delete_button").removeClass("hide");
@@ -283,22 +279,12 @@
             }
 
             filter.save(obj, {success: function(model) {
-                self.setLastUsed(model);
+                self.layout.trigger("filter:add", model);
                 self.$(".filter-header").data("model", model);
             }});
 
             this.triggerClose();
         }
-    },
-
-    setLastUsed: function(model) {
-        var self = this;
-        var url = app.api.buildURL('Filters/' + this.module + '/used', "update");
-        app.api.call("update", url, {filters: [model.id]}, {
-            success: function() {
-                self.layout.trigger("filter:refresh", model.id);
-            }
-        });
     },
 
     removeAll: function() {
@@ -307,7 +293,7 @@
             this.$(".filter-header").data("model").destroy({
                 success: function() {
                     self.$(".filter-header").data("model", null);
-                    self.layout.trigger("filter:refresh", "");
+                    self.layout.trigger("filter:set", "all_records");
                 }
             });
         }
@@ -333,9 +319,8 @@
      */
     _getJSON: function() {
         var obj = {
-            filter: [{}]
-        }, default_op = "and";
-        obj.filter[0]["$"+default_op] = [];
+            filter: []
+        };
         var fields = {};
         _.each(this.$el.find('.filter-body'), function(el) {
             var $el = $(el);
@@ -343,20 +328,18 @@
 
             if(field_name) {
                 if(_.isUndefined(fields[field_name])) {
-                    fields[field_name] = [];
+                    fields[field_name] = {};
                 }
                 var field = $el.data('value_field'),
                     op = $el.find("input.operator").val(),
                     fieldTag = field.fieldTag,
-                    str, o = {};
+                    str;
                 if(_.has(field, 'val')) {
                     str = field.val();
                 } else {
                     str = $el.find(".filter-value " + fieldTag).first().val();
                 }
-
-                o[op] = str;
-                fields[field_name].push(o);
+                fields[field_name][op] = str;
             }
         });
         _.each(fields, function(value, key) {
@@ -365,7 +348,7 @@
             }
             var fieldParams = {};
             fieldParams[key] = value;
-            obj.filter[0]["$"+default_op].push(fieldParams);
+            obj.filter.push(fieldParams);
         });
 
         return obj;
@@ -378,8 +361,7 @@
      * @return {array}     An array of filter-create row elements to be inserted in the DOM.
      */
     _applyJSON: function(obj) {
-        // TODO: Make this usable for OR filters too.
-        var existingFilters = obj.filter[0]["$and"], ret = [];
+        var existingFilters = obj.filter, ret = [];
         _.each(existingFilters, function(el) {
             _.each(el, function(val, field_name) {
                 if(!_.isArray(val)) {
