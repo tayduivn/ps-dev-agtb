@@ -163,10 +163,10 @@ img {
 .side .block .listed {
   margin: -10px 0 0;
 }
-span[class^="filetype-"] {
+span.filetype-thumbnail {
   position: relative;
 }
-span[class^="filetype-"] svg {
+span.filetype-thumbnail svg {
   height: 33px;
   width: 28px;
 }
@@ -183,28 +183,28 @@ span.filetype-thumbnail::before {
   content: attr(data-filetype);
 }
 span.filetype-thumbnail[data-filetype="TXT"]::before {
-  background-color: #23a956;
+  background-color: #25B2F1;
 }
 span.filetype-thumbnail[data-filetype="PNG"]::before {
-  background-color: #6176e2;
+  background-color: #3FB300;
 }
 span.filetype-thumbnail[data-filetype="PDF"]::before {
-  background-color: #b35755;
+  background-color: #E61718;
 }
 span.filetype-thumbnail[data-filetype="GIF"]::before {
-  background-color: #dd98e9;
+  background-color: #EAE82F;
 }
 span.filetype-thumbnail[data-filetype="DOC"]::before {
-  background-color: #e28f6f;
+  background-color: #E57417;
 }
 span.filetype-thumbnail[data-filetype="XLS"]::before {
-  background-color: #69e6c9;
+  background-color: #7D12B2;
 }
 span.filetype-thumbnail[data-filetype="PPT"]::before {
-  background-color: #c2ea88;
+  background-color: #CC147C;
 }
 span.filetype-thumbnail[data-filetype="JPG"]::before {
-  background-color: #27cfcc;
+  background-color: #0fa9ed;
 }
 .label,
 .badge {
@@ -2879,7 +2879,7 @@ li li .avatar,
   height: 46px;
 }
 .card2 {
-  margin: 0 0 20px;
+  margin: 0 0 10px;
 }
 .card2>span[sfuuid] {
   display: block;
@@ -4347,10 +4347,6 @@ textarea[readonly] {
   border: 1px solid #ccc;
   color: #bbb;
 }
-#content .control-group label {
-  padding: 0 1em 0 0;
-  display: inline-block;
-}
 input[type=radio] {
   display: inline-block;
 }
@@ -4472,6 +4468,7 @@ input[type=radio] {
   text-align: left;
 }
 .control-group label {
+  padding: 0 1em 0 0;
   display: inline-block;
   float: none;
 }
@@ -4626,6 +4623,9 @@ input[type=radio] {
   top: 0;
   right: 0px;
 }
+.form-horizontal {
+  margin-left: 10px;
+}
 .form-horizontal .row-fluid.control-group {
   margin: 0;
   padding: 0;
@@ -4637,12 +4637,11 @@ input[type=radio] {
   margin-bottom: 0;
 }
 .form-horizontal .controls {
-  margin-left: 0;
+  margin-left: 2.127659574%;
   padding: 0;
 }
 .form-horizontal .controls > span {
-  padding: 6px 0;
-  display: inline-block;
+  padding: 0;
 }
 .form-horizontal .controls.btn-fit.controls-four {
   padding-right: 144px;
@@ -4674,15 +4673,15 @@ input[type=radio] {
 .form-horizontal .controls.btn-fit .btn.second {
   right: 36px;
 }
-.form-horizontal .card2 .control-group:first-child .control-label,
-.form-horizontal .card2 .control-group .control-label.begin-fieldgroup {
+.form-horizontal .card2 .control-group:first-child .control-label-background,
+.form-horizontal .card2 .control-group .control-label.begin-fieldgroup .control-label-background {
   -webkit-border-radius: 3px 3px 0 0;
   -moz-border-radius: 3px 3px 0 0;
   border-radius: 3px 3px 0 0;
   border-top: 1px solid #dfdfdf;
 }
-.form-horizontal .card2 .control-group:last-child .control-label,
-.form-horizontal .card2 .control-group .control-label.end-fieldgroup {
+.form-horizontal .card2 .control-group:last-child .control-label-background,
+.form-horizontal .card2 .control-group .control-label.end-fieldgroup .control-label-background {
   padding-bottom: 5px;
   -webkit-border-radius: 0 0 3px 3px;
   -moz-border-radius: 0 0 3px 3px;
@@ -4691,7 +4690,11 @@ input[type=radio] {
   height: auto;
 }
 .form-horizontal div.control-label {
-  float: left;
+  padding-top: 0;
+}
+.form-horizontal div.control-label .control-label-background {
+  height: 100%;
+  position: absolute;
   padding: 7px 0 12px;
   text-align: right;
   border-left: 1px solid #dfdfdf;
@@ -4954,14 +4957,6 @@ input[type="color"].local-error,
   position: absolute;
   right: 0;
   top: 6px;
-}
-.card2 .icon-pencil {
-  position: absolute;
-  left: -16px;
-  top: 0px;
-  padding: 0 2px !important;
-  opacity: 0.6;
-  filter: alpha(opacity=60);
 }
 .editable {
   margin: 0;
@@ -8471,14 +8466,9 @@ h3.popover-title {
   clear: both;
   margin: 20px 20px 10px 5px;
 }
-.record .form-horizontal {
-  margin-left: 15px;
-}
 .record .form-horizontal .record-cell,
 .record .form-horizontal .normal {
-  min-height: 0px;
-}
-.record .form-horizontal .record-cell {
+  min-height: 50px;
   padding-left: 0;
 }
 .record .form-horizontal .record-cell input[type="text"],
@@ -8500,13 +8490,9 @@ h3.popover-title {
 .record .form-horizontal .record-cell .help-block {
   min-height: 8px;
 }
-.record .form-horizontal .control-label {
-  position: absolute;
-  height: 100%;
-  padding-right: 4px;
-}
-.record .form-horizontal .controls > span {
-  padding: 0;
+.record .form-horizontal .record-edit-link-wrapper {
+  top: 2px;
+  left: -32px;
 }
 .record .form-horizontal .mceLayout {
   width: 100% !important;
@@ -8588,6 +8574,7 @@ h3.popover-title {
   padding-right: 132px;
   position: relative;
   min-height: 30px;
+  margin-bottom: 0;
 }
 .record .record-cell[data-type="email"] .control-group.email .input-append.widget {
   margin-bottom: 0;
@@ -8596,6 +8583,8 @@ h3.popover-title {
 .record .record-cell[data-type="email"] .control-group.email .input-append.widget select,
 .record .record-cell[data-type="email"] .control-group.email .input-append.widget textarea,
 .record .record-cell[data-type="email"] .control-group.email .input-append.widget .uneditable-input {
+  box-sizing: border-box;
+  height: 32px;
   margin-top: 0;
   width: 100%;
   -webkit-border-radius: 0;
@@ -8744,7 +8733,11 @@ h3.popover-title {
   display: none;
 }
 .record .record-cell[data-type="compose-actionbar"] {
+  min-height: 0;
   padding-bottom: 8px;
+}
+.record .record-cell[data-type="compose-actionbar"] .normal {
+  min-height: 0;
 }
 .record .record-cell[data-type="compose-actionbar"] .btn [class^="icon-"] {
   margin-right: 6px;
@@ -8752,23 +8745,23 @@ h3.popover-title {
 .record .record-cell[data-type="compose-actionbar"] .btn.dropdown-toggle [class^="icon-"] {
   margin-right: 0;
 }
-.record .record-edit-link-wrapper .record-edit-link {
+.record .record-edit-link-wrapper {
   position: absolute;
   top: 18px;
   left: -18px;
   z-index: 0;
+}
+.record .record-edit-link-wrapper .record-edit-link {
+  display: none;
   padding: 4px 7px 4px;
+  text-decoration: none;
+  cursor: pointer;
 }
 .record .record-edit-link-wrapper .record-edit-link.btn-invisible:hover {
   border: 1px solid transparent;
   background: none;
 }
-.record .record-edit-link-wrapper .icon-pencil {
-  display: none;
-  text-decoration: none;
-  cursor: pointer;
-}
-.record .record-cell:hover .record-edit-link-wrapper .icon-pencil {
+.record .record-cell:hover .record-edit-link {
   display: inline-block;
 }
 .record .wide {

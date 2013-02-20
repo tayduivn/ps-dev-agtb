@@ -136,7 +136,7 @@
 }
 
 //filetype icons
-span[class^="filetype-"] {
+span.filetype-thumbnail {
   position: relative;
   svg {
     height: 33px;
@@ -156,26 +156,26 @@ span.filetype-thumbnail::before {
   content: attr(data-filetype);
 }
 span.filetype-thumbnail[data-filetype="TXT"]::before {
-  background-color: #23a956;
+  background-color: @blue;
 }
 span.filetype-thumbnail[data-filetype="PNG"]::before {
-  background-color: #6176e2;
+  background-color: @green;
 }
 span.filetype-thumbnail[data-filetype="PDF"]::before {
-  background-color: #b35755;
+  background-color: @red;
 }
 span.filetype-thumbnail[data-filetype="GIF"]::before {
-  background-color: #dd98e9;
+  background-color: @yellow;
 }
 span.filetype-thumbnail[data-filetype="DOC"]::before {
-  background-color: #e28f6f;
+  background-color: @orange;
 }
 span.filetype-thumbnail[data-filetype="XLS"]::before {
-  background-color: #69e6c9;
+  background-color: @purple;
 }
 span.filetype-thumbnail[data-filetype="PPT"]::before {
-  background-color: #c2ea88;
+  background-color: @pink;
 }
 span.filetype-thumbnail[data-filetype="JPG"]::before {
-  background-color: #27cfcc;
+  background-color: @blueDark;
 }
