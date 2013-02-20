@@ -172,10 +172,8 @@ class Contact extends Person {
 	            ON accounts_contacts.account_id=accounts.id
 			";
 		}
-		$custom_join = $this->custom_fields->getJOIN();
-		if($custom_join){
-  				$query .= $custom_join['join'];
-		}
+        $custom_join = $this->getCustomJoin();
+        $query .= $custom_join['join'];
 
 
 	}
@@ -222,7 +220,7 @@ class Contact extends Person {
 			return parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
 		}
 
-		$custom_join = $this->custom_fields->getJOIN();
+        $custom_join = $this->getCustomJoin();
 		// MFH - BUG #14208 creates alias name for select
 		$select_query = "SELECT ";
 		$select_query .= db_concat($this->table_name,array('first_name','last_name')) . " name, ";
@@ -235,9 +233,7 @@ class Contact extends Person {
 //BEGIN SUGARCRM flav=pro ONLY
 		$select_query .= ",teams.name AS team_name ";
 //END SUGARCRM flav=pro ONLY
-		if($custom_join){
-   				$select_query .= $custom_join['select'];
- 		}
+        $select_query .= $custom_join['select'];
  		$ret_array['select'] = $select_query;
 
  		$from_query = "
@@ -258,9 +254,7 @@ class Contact extends Person {
 //END SUGARCRM flav=pro ONLY
 		$from_query .= "LEFT JOIN email_addr_bean_rel eabl  ON eabl.bean_id = contacts.id AND eabl.bean_module = 'Contacts' and eabl.primary_address = 1 and eabl.deleted=0 ";
         $from_query .= "LEFT JOIN email_addresses ea ON (ea.id = eabl.email_address_id) ";
-		if($custom_join){
-  				$from_query .= $custom_join['join'];
-		}
+        $from_query .= $custom_join['join'];
 		$ret_array['from'] = $from_query;
 		$ret_array['from_min'] = 'from contacts';
 
@@ -299,11 +293,10 @@ class Contact extends Person {
 
 
 
-	        function create_export_query(&$order_by, &$where, $relate_link_join='')
+        function create_export_query(&$order_by, &$where, $relate_link_join='')
         {
-        	$custom_join = $this->custom_fields->getJOIN(true, true,$where);
-			if($custom_join)
-				$custom_join['join'] .= $relate_link_join;
+            $custom_join = $this->getCustomJoin(true, true, $where);
+            $custom_join['join'] .= $relate_link_join;
                          $query = "SELECT
                                 contacts.*,email_addresses.email_address email_address,
                                 accounts.name as account_name,
@@ -311,9 +304,7 @@ class Contact extends Person {
 //BEGIN SUGARCRM flav=pro ONLY
 						 $query .= ", teams.name AS team_name ";
 //END SUGARCRM flav=pro ONLY
-						if($custom_join){
-   							$query .= $custom_join['select'];
- 						}
+            $query .= $custom_join['select'];
 						 $query .= " FROM contacts ";
 //BEGIN SUGARCRM flav=pro ONLY
 								// We need to confirm that the user is a member of the team of the item.
@@ -333,9 +324,7 @@ class Contact extends Person {
 						$query .=  ' LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module=\'Contacts\' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 ';
 						$query .=  ' LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ' ;
 
-						if($custom_join){
-  							$query .= $custom_join['join'];
-						}
+            $query .= $custom_join['join'];
 
 		$where_auto = "( accounts.deleted IS NULL OR accounts.deleted=0 )
                       AND contacts.deleted=0 ";
