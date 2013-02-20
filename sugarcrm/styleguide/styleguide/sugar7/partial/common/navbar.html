@@ -65,16 +65,22 @@
             <div class="advanced">
               <div class="btn-toolbar pull-right">
                 <div class="btn-group">
-                  <a class="advanced btn-invisible dropdown-toggle" data-toggle="dropdown" href="#">
+                  <a class="advanced btn-link btn-invisible dropdown-toggle" data-toggle="dropdown" href="#">
                     <span class="caret"></span>
                   </a>
-                  <ul class="dropdown-menu">
+                  <ul class="dropdown-menu reset-width">
+                    <!--
                     <li class="title">Advanced Search:</li>
                     <li class="divider"></li>
-                    <li><input type="checkbox"> Accounts</li>
-                    <li><input type="checkbox"> Cases</li>
-                    <li><input type="checkbox"> Opportunities</li>
-                    <li><input type="checkbox"> Reports</li>
+                  -->
+                    <li><input class="search_all" type="checkbox"> Search All</li>
+                    <li><input class="search_accounts" type="checkbox"> Accounts</li>
+                    <li><input class="search_cases" type="checkbox"> Cases</li>
+                    <li><input class="search_contacts" type="checkbox"> Contacts</li>
+                    <li><input class="search_leads" type="checkbox"> Leads</li>
+                    <li><input class="search_notes" type="checkbox"> Notes</li>
+                    <li><input class="search_opportunities" type="checkbox"> Opportunities</li>
+                    <li><input class="search_reports" type="checkbox"> Reports</li>
                   </ul>
                   <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
                 </div>
@@ -89,6 +95,21 @@
 
 <script>
 $(document).ready(function() {
+
+    $('body').on('click', 'ul.dropdown-menu > li [type=checkbox]', function(el){
+      if($(this).hasClass('search_all')===true) {
+        if($(this).attr('checked')) {
+          $(this).closest('ul').find('li').each(function(){
+            $(this).find('input[type=checkbox]').attr('checked','checked');
+          });
+        } else {
+          $(this).closest('ul').find('li').each(function(){
+            $(this).find('input[type=checkbox]').removeAttr('checked');
+          });
+        }
+      }
+      el.stopPropagation();
+    });
 
     //http://jsfiddle.net/vNqTF/
     $(window).resize(  (function(){

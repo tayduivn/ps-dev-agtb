@@ -957,6 +957,10 @@ footer {
 .tright {
   text-align: right;
 }
+.reset-width {
+  width: auto !important;
+  min-width: auto !important;
+}
 .container-fluid {
   margin-top: 20px;
 }
@@ -3315,7 +3319,7 @@ span.icon-white {
   margin: 0;
   padding: 10px 10px 10px 38px;
   border-top: 1px solid #fff !important;
-  border-bottom: 1px solid #bbb !important;
+  border-bottom: 1px solid #dcdcdc !important;
 }
 .block.tabs-left .nav-tabs li li p {
   margin: 0 0 0 36px;
@@ -3411,6 +3415,12 @@ article .actions,
 .span12 .block-footer .btn {
   margin: 0 auto;
   width: 100%;
+}
+.select2-search {
+  padding: 4px;
+}
+.select2-search input {
+  border: 1px solid #ccc;
 }
 .select2-container .select2-single-with-drop div b {
   background-position: 0px 0px;
@@ -3569,6 +3579,9 @@ article .actions,
 .select2-container .select2-choice abbr {
   top: 8px;
   right: 18px;
+}
+.select2-drop {
+  color: #58595B;
 }
 .select2-drop-error {
   border-color: #b60000;
@@ -3927,6 +3940,7 @@ article .actions,
   box-shadow: none;
 }
 .form-search-related .filter-view {
+  border: 1px solid #ccc;
   position: relative;
   margin-left: 0px;
   background-color: #fff;
@@ -3948,7 +3962,7 @@ article .actions,
 }
 .form-search-related .filter-view .select2-container .select2-choice {
   padding: 0;
-  margin: 2px 0 2px 4px;
+  margin: 0 0 2px 4px;
   font-size: 11px;
   background: none;
   border: none;
@@ -4062,7 +4076,7 @@ article .actions,
 .form-search-related .extend article:nth-child(odd) {
   background-color: transparent;
   border-top: 1px solid #f5f5f5;
-  border-bottom: 1px solid #bbb;
+  border-bottom: 1px solid #cfcfcf;
   padding: 7px 8px 7px 10px;
 }
 .form-search-related .extend article.filter-header,
@@ -5453,9 +5467,10 @@ body.preview .side-pane.active {
   right: 29px;
   top: 35px;
   left: auto;
+  padding: 4px 8px;
 }
 .navbar .advanced .dropdown-menu li {
-  padding: 8px;
+  padding: 4px 8px;
 }
 .navbar .advanced .dropdown-menu li.divider {
   padding: 0;
@@ -6146,7 +6161,7 @@ body.modal-open {
 }
 .modal-navigation {
   position: absolute;
-  top: 48px;
+  top: 46px;
   width: 100%;
   background-color: #f5f5f5;
   border-bottom: 1px solid #bbb;
@@ -6186,11 +6201,11 @@ body.modal-open {
 }
 .layout_Forecasts .modal-content {
   overflow-y: auto;
-  margin-top: 37px;
   max-height: 264px;
 }
 .layout_Forecasts .modal-navigation {
   top: 0;
+  padding: 0;
 }
 .layout_Forecasts .modal-navigation .breadcrumb.two {
   padding-bottom: 3px;
@@ -7755,7 +7770,7 @@ h4.merge-interface-header .preview {
 .inline-drawer article:nth-child(odd) {
   background-color: transparent;
   border-top: 1px solid #f5f5f5;
-  border-bottom: 1px solid #bbb;
+  border-bottom: 1px solid #cfcfcf;
   padding: 4px 0;
   line-height: 28px;
 }
@@ -8343,14 +8358,18 @@ h3.popover-title {
 .headerpane.btn-group > .btn {
   float: none;
 }
-#contentflex #headerbar .dropdown-menu,
-.headerpane .dropdown-menu {
+#contentflex #headerbar .view-forecastsCommitButtons .dropdown-menu,
+#contentflex #headerbar .actions .dropdown-menu,
+.headerpane .view-forecastsCommitButtons .dropdown-menu,
+.headerpane .actions .dropdown-menu {
   left: auto;
   right: 0;
   z-index: 1001;
 }
-#contentflex #headerbar .dropdown-menu:after,
-.headerpane .dropdown-menu:after {
+#contentflex #headerbar .view-forecastsCommitButtons .dropdown-menu:after,
+#contentflex #headerbar .actions .dropdown-menu:after,
+.headerpane .view-forecastsCommitButtons .dropdown-menu:after,
+.headerpane .actions .dropdown-menu:after {
   content: '';
   display: inline-block;
   border-left: 6px solid transparent;
@@ -8361,8 +8380,10 @@ h3.popover-title {
   left: auto;
   right: 8px;
 }
-#contentflex #headerbar .dropdown-menu:before,
-.headerpane .dropdown-menu:before {
+#contentflex #headerbar .view-forecastsCommitButtons .dropdown-menu:before,
+#contentflex #headerbar .actions .dropdown-menu:before,
+.headerpane .view-forecastsCommitButtons .dropdown-menu:before,
+.headerpane .actions .dropdown-menu:before {
   content: '';
   display: inline-block;
   border-left: 7px solid transparent;

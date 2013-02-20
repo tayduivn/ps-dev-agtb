@@ -130,8 +130,54 @@
 
 }
 
-
 //navbar.less
 .side .block .listed {
   margin: -10px 0 0;
+}
+
+//filetype icons
+span[class^="filetype-"] {
+  position: relative;
+  svg {
+    height: 33px;
+    width: 28px;
+  }
+}
+span[class^="filetype-"]::before {
+  position: absolute;
+  top: 14px;
+  left: -2px;
+  color: #FFF;
+  width: 26px;
+  height: 15px;
+  font-size: 11px;
+  text-align: center;
+}
+.filetype-txt::before {
+  background-color: #23a956;
+  content: 'TXT';
+}
+.filetype-png::before {
+  background-color: #6176e2;
+  content: 'PNG';
+}
+.filetype-pdf::before {
+  background-color: #b35755;
+  content: 'PDF';
+}
+.filetype-gif::before {
+  background-color: #dd98e9;
+  content: 'GIF';
+}
+.filetype-doc::before {
+  background-color: #e28f6f;
+  content: 'DOC';
+}
+.filetype-xls::before {
+  background-color: #69e6c9;
+  content: 'XLS';
+}
+.filetype-ppt::before {
+  background-color: #c2ea88;
+  content: 'PPT';
 }
