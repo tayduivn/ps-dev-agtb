@@ -87,6 +87,9 @@
 
         }, this);
 
+        // Set this model equal to the latest config metadata
+        this.model.set(app.metadata.getModule('Forecasts', 'config'));
+
         // set the values for forecast_ranges_field and buckets_dom_field from the model, so it can be set to selected properly when rendered
         this.forecast_ranges_field.value = this.model.get('forecast_ranges');
         this.buckets_dom_field.value = this.model.get('buckets_dom');
