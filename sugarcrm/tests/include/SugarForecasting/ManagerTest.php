@@ -228,6 +228,7 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadWorksheetAdjustedValuesForUser($user, $dataKey, $worksheetKey)
     {
+        $this->markTestSkipped('Test is out of date as class does not need to fetch own data with new worksheets modules');
         $db = DBManagerFactory::getInstance();
         if ( !$db->supports('recursive_query') )
         {
@@ -289,6 +290,7 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMakeSureAdjustedNumberAreNotEmpty($user, $dataKey, $worksheetKey)
     {
+        $this->markTestSkipped('Test is out of date as class does not need to fetch own data with new worksheets modules');
         $db = DBManagerFactory::getInstance();
         if ( !$db->supports('recursive_query') )
         {
