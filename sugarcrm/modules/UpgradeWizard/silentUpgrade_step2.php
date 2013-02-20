@@ -576,7 +576,7 @@ logThis('Checking for mobile/portal metadata upgrade...');
 // handled for upgrades FROM pre-6.6 to a version POST 6.6 and MUST be
 // handled AFTER inclusion of the upgrade package files
 if (!didThisStepRunBefore('commit','upgradePortalMobileMetadata')) {
-    if ($origVersion < '660') {
+    if (version_compare($sugar_version, '6.6.0', '<')) {
         if (file_exists('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php')) {
             set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','in_progress');
             logThis('Sidecar Upgrade: Preparing to upgrade metadata to 6.6.0 compatibility through the silent upgrader ...');
