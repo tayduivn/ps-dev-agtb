@@ -520,9 +520,9 @@
       $('body').on('click', '.dashlet_toggle', function(){
         $(this).closest('.widget-container').find('.widget-content').toggle();
         if($(this).find('i').hasClass('icon-chevron-up')===true) {
-          $(this).find('i').removeClass('icon-chevron-up').addClass('icon-chevron-down').closest('.widget-container').addClass('collapsed');
+          $(this).find('i').removeClass('icon-chevron-up').addClass('icon-chevron-down').closest('.thumbnail').addClass('collapsed');
         } else {
-          $(this).find('i').removeClass('icon-chevron-down').addClass('icon-chevron-up').closest('.widget-container').removeClass('collapsed');
+          $(this).find('i').removeClass('icon-chevron-down').addClass('icon-chevron-up').closest('.thumbnail').removeClass('collapsed');
         }
         return false;
       })

@@ -7787,6 +7787,9 @@ h4.merge-interface-header .preview {
 .dashboard .cols .rows .row-fluid .widget-container .widget.thumbnail {
   margin-bottom: 0 !important;
 }
+.dashboard .cols .rows .row-fluid .widget-container .widget.thumbnail:not(.collapsed) {
+  min-height: 126px;
+}
 .dashboard .cols .rows .row-fluid .widget-container .widget div.widget-content {
   overflow: auto;
   width: 100%;
@@ -7822,9 +7825,6 @@ h4.merge-interface-header .preview {
 }
 .dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet strong i {
   color: #cfcfcf;
-}
-.dashboard .cols .rows .row-fluid .widget-container:not(.collapsed) .thumbnail {
-  min-height: 126px;
 }
 .dashboard .cols .rows .row-fluid .widget-container.active .widget {
   background: #cfcfcf;
@@ -7873,6 +7873,9 @@ h4.merge-interface-header .preview {
 }
 .dashboard #dashlets {
   clear: both;
+}
+.dashboard .ui-sortable .ui-sortable-placeholder {
+  height: auto !important;
 }
 .well-invisible {
   background-color: transparent;

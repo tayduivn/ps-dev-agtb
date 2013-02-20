@@ -43,6 +43,9 @@
             padding: 0;
             &.thumbnail {
               margin-bottom: 0 !important;
+              &:not(.collapsed) {
+                min-height: 126px;
+              }
             }
             div.widget-content {
               overflow: auto;
@@ -79,11 +82,6 @@
                   color: lighten(@grayLight,8%);
                 }
               }
-            }
-          }
-          &:not(.collapsed) {
-            .thumbnail {
-              min-height: 126px;
             }
           }
           &.active {
