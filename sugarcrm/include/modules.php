@@ -488,12 +488,6 @@ $beanFiles['SugarFavorites'] = 'modules/SugarFavorites/SugarFavorites.php';
 $modules_exempt_from_availability_check['SugarFavorites'] = 'SugarFavorites';
 $modInvisList[] = 'SugarFavorites';
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=following ONLY
-$beanList['SugarFollowing'] = 'SugarFollowing';
-$beanFiles['SugarFollowing'] = 'modules/SugarFollowing/SugarFollowing.php';
-$modules_exempt_from_availability_check['SugarFollowing'] = 'SugarFollowing';
-$modInvisList[] = 'SugarFollowing';
-//END SUGARCRM flav=following ONLY
 
 $beanList['ActivityStream'] = 'ActivityStream';
 $beanFiles['ActivityStream'] = 'modules/ActivityStream/ActivityStream.php';

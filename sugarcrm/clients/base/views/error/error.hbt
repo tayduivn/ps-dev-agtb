@@ -26,11 +26,9 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="error-page">
   <div class="dark_cube tcenter">
       <h1>{{str model.attributes.type}}</h1>
       <hr class="invisible">
       <p>{{str model.attributes.title}}</p>
       <p>{{str model.attributes.message}}</p>
   </div>
-</div>

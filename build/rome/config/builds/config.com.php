@@ -120,10 +120,6 @@ $config['blackList']['com'] = array(
 'sugarcrm/themes/default/images/icon_notifications.png'=>1,
 'sugarcrm/themes/default/images/Notifications.gif'=>1,
 
-'sugarcrm/modules/SugarFollowing'=>1,
-'sugarcrm/themes/default/images/user_follow.png'=>1,    
-'sugarcrm/themes/default/images/user_unfollow.png'=>1,
-
 'sugarcrm/include/EditView/InlineEdit.css'=>1,
 'sugarcrm/include/EditView/InlineEdit.js'=>1,
 'sugarcrm/include/EditView/InlineEdit.php'=>1,

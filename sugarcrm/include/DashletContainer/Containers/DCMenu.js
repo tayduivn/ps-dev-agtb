@@ -281,23 +281,6 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		quickRequest('favorites', 'index.php?to_pdf=1&module=SugarFavorites&action=tag&fav_id=' + record + '&fav_module=' + module + '&tag=' + tag);
 	}
 	//END SUGARCRM flav=pro ONLY
-	//BEGIN SUGARCRM flav=following ONLY
-	DCMenu.addToFollowing = function(item, module, record){
-		Y.one(item).replaceClass('off', 'on');
-		item.onclick = function(){
-			DCMenu.removeFromFollowing(this, module, record);
-		}
-		quickRequest('following', 'index.php?module=SugarFollowing&action=save&following_id=' + record + '&following_module=' + module);
-	}
-
-	DCMenu.removeFromFollowing = function(item, module, record){
-		Y.one(item).replaceClass('on', 'off');
-		item.onclick = function(){
-			DCMenu.addToFollowing(this, module, record);
-		}
-		quickRequest('following', 'index.php?module=SugarFollowing&action=delete&following_id=' + record + '&following_module=' + module);
-	}
-	//END SUGARCRM flav=following ONLY
 
     function quickRequest(type, url, success)
     {
