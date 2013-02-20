@@ -215,7 +215,7 @@
         }, this);
 
 
-        if(index <= 1) {
+        if(index < 1) {
             this.$(".dropdown-toggle").hide();
         } else {
             this.$(".dropdown-toggle").show();
