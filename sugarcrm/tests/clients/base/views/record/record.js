@@ -369,7 +369,7 @@ describe("Record View", function() {
                         },
 
                         // case: field.span is 0
-                        // result: field.span should be 1
+                        // result: field.span should remain 0
                         {
                             name: "foo3",
                             span: 0
@@ -403,7 +403,7 @@ describe("Record View", function() {
                 expect(results[1][0].span).toBe(12);
 
                 // case: field.span is 0
-                expect(results[2][0].span).toBe(1);
+                expect(results[2][0].span).toBe(0);
 
                 // case: 0 < field.span < 12
                 expect(results[3][0].span).toBe(6);
@@ -550,7 +550,7 @@ describe("Record View", function() {
                         "foo1",
 
                         // case: field.span is 0 and field.labelSpan is 0
-                        // result: field.span should be 1 and field.labelSpan should be 1
+                        // result: field.span should remain 0 and field.labelSpan should remain 0
                         {
                             name: "foo2",
                             span: 0,
@@ -582,7 +582,7 @@ describe("Record View", function() {
                         },
 
                         // case: field.span is 12, field.labelSpan is undefined, and field.dismiss_label is true
-                        // result: field.span should be 12 and field.labelSpan should be 4
+                        // result: field.span should be 12 and field.labelSpan should be 0
                         {
                             name: "foo6",
                             span: 12,
@@ -590,7 +590,7 @@ describe("Record View", function() {
                         },
 
                         // case: field.span is 4, field.labelSpan is undefined, and field.dismiss_label is true
-                        // result: field.span should be 8 and field.labelSpan should be 4
+                        // result: field.span should be 8 and field.labelSpan should be 0
                         {
                             name: "foo7",
                             span: 4,
@@ -598,7 +598,7 @@ describe("Record View", function() {
                         },
 
                         // case: field.span is 8, field.labelSpan is undefined, and field.dismiss_label is true
-                        // result: field.span should be 12 and field.labelSpan should be 4
+                        // result: field.span should be 12 and field.labelSpan should be 0
                         {
                             name: "foo8",
                             span: 10,
@@ -606,7 +606,7 @@ describe("Record View", function() {
                         },
 
                         // case: field.span is 7, field.labelSpan is 7, and field.dismiss_label is true
-                        // result: field.span should be 12 and field.labelSpan should not change
+                        // result: field.span should be 12 and field.labelSpan should be 0
                         {
                             name: "foo9",
                             span: 7,
@@ -632,8 +632,8 @@ describe("Record View", function() {
                 expect(results[0][0].labelSpan).toBe(4);
 
                 // case: field.span is 0 and field.labelSpan is 0
-                expect(results[1][0].span).toBe(1);
-                expect(results[1][0].labelSpan).toBe(1);
+                expect(results[1][0].span).toBe(0);
+                expect(results[1][0].labelSpan).toBe(0);
 
                 // case: field.span <= 8 and field.labelSpan is defined
                 expect(results[2][0].span).toBe(7);
@@ -649,19 +649,19 @@ describe("Record View", function() {
 
                 // case: field.span is 12, field.labelSpan is undefined, and field.dismiss_label is true
                 expect(results[5][0].span).toBe(12);
-                expect(results[5][0].labelSpan).toBe(4);
+                expect(results[5][0].labelSpan).toBe(0);
 
                 // case: field.span is 4, field.labelSpan is undefined, and field.dismiss_label is true
                 expect(results[6][0].span).toBe(8);
-                expect(results[6][0].labelSpan).toBe(4);
+                expect(results[6][0].labelSpan).toBe(0);
 
                 // case: field.span is 8, field.labelSpan is undefined, and field.dismiss_label is true
                 expect(results[7][0].span).toBe(12);
-                expect(results[7][0].labelSpan).toBe(4);
+                expect(results[7][0].labelSpan).toBe(0);
 
                 // case: field.span is 7, field.labelSpan is 7, and field.dismiss_label is true
                 expect(results[8][0].span).toBe(12);
-                expect(results[8][0].labelSpan).toBe(7);
+                expect(results[8][0].labelSpan).toBe(0);
             });
 
             it("Should create a two-column panel grid", function() {
@@ -719,7 +719,7 @@ describe("Record View", function() {
                         "foo8",
 
                         // case: field.span and field.labelSpan are undefined, and field.dismiss_label is true
-                        // result: field.span should be 6 and field.labelSpan should be 2
+                        // result: field.span should be 6 and field.labelSpan should be 0
                         {
                             name: "foo9",
                             dismiss_label: true
@@ -773,7 +773,45 @@ describe("Record View", function() {
 
                 // case: field.span and field.labelSpan are undefined, and field.dismiss_label is true
                 expect(results[4][1].span).toBe(6);
-                expect(results[4][1].labelSpan).toBe(2);
+                expect(results[4][1].labelSpan).toBe(0);
+            });
+
+            it("Should create a five-column panel grid with no field.span's or label.span's less than 1", function() {
+                var results,
+                    fields    = [
+                        // case:
+                        // result: field.span should be 8 and field.labelSpan should be 4; field overflows the row and
+                        // its span dictates that the field be on its own row
+                        "foo1",
+                        "foo2",
+                        "foo3",
+                        "foo4",
+                        "foo5"
+                    ],
+                    panelDefs = [{
+                        columns:     5,
+                        labels:      true,
+                        labelsOnTop: false,
+                        fields:      fields
+                    }];
+
+                view._renderPanels(panelDefs);
+                results = panelDefs[0].grid;
+
+                // the number of rows found in this five-column grid
+                expect(results.length).toBe(1);
+
+                // When displaying a five-column grid in which on fields have defined field.span or field.labelSpan,
+                // the spans are calculated using Math.Floor, which leads to values that are 0. Unless a span was
+                // intentionally defined to be 0, it should be assumed that 0 is an invalid span -- a span of 0 doesn't
+                // make sense and isn't supported by Twitter Boostrap. Therefore, the spans should be set to a minimum
+                // value of 1 if they are calculated to be less than 1.
+                expect(results[0].length).toBe(5);
+
+                _.each(results[0], function(field) {
+                    expect(field.span).toBe(1);
+                    expect(field.labelSpan).toBe(1);
+                }, this);
             });
         });
 
