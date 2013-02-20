@@ -230,17 +230,28 @@
 
     app.Controller = app.Controller.extend({
         loadView: function(params) {
-            var self = this;
-            // TODO: Will it ever happen: app.config == undefined?
-            // app.config should always be present because the logger depends on it
-            if ((_.isUndefined(app.config) || (app.config && app.config.appStatus == 'offline')) && params.layout != 'login') {
-                var callback = function(data) {
-                    var params = {
+            var self = this, 
+                callbackAppNotAvailable, options;
+
+            // If login page request we always need to present the login page, but we 
+            // also must deal with status 'offline' which means portal not enabled.
+            if (params.layout === 'login') {
+                app.Controller.__super__.loadView.call(this, params);
+            }
+
+            if (app.config && app.config.appStatus == 'offline') {
+
+                // We only want to redirect back to login if not already on login!
+                if (params.layout !== 'login') {
+                    options = {
                         module: "Login",
                         layout: "login",
                         create: true
                     };
-                    app.Controller.__super__.loadView.call(self, params);
+                    app.Controller.__super__.loadView.call(self, options);
+                }
+
+                callbackAppNotAvailable = function(data) {
                     app.alert.show('appOffline', {
                         level: "error",
                         title: app.lang.getAppString('LBL_PORTAL_ERROR'),
@@ -249,15 +260,20 @@
                     });
                 };
                 if(app.api.isAuthenticated()) {
-                    app.logout({success: callback, error: callback}, {clear:true});
+                    app.logout({success: callbackAppNotAvailable, error: callbackAppNotAvailable}, {clear:true});
                 } else {
-                    callback();
+                    callbackAppNotAvailable();
                 }
                 return;
+            } 
+
+            // If it wasn't login and wasn't offline we just load'er up
+            if (params.layout !== 'login') {
+                app.Controller.__super__.loadView.call(this, params);
             }
-            app.Controller.__super__.loadView.call(this, params);
         }
     });
+
 
     /**
      * Extends the `save` action to add `portal` specific params to the payload.
@@ -306,13 +322,13 @@
      * Checks if there are `file` type fields in the view. If yes, process upload of the files
      *
      * @param {Object} model Model
-     * @param {callbacks} callbacks(optional) success and error callbacks
+     * @param {callbackAppNotAvailable} callbackAppNotAvailable(optional) success and error callbackAppNotAvailable
      */
     // TODO: This piece of code may move in the core files
-    app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
+    app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbackAppNotAvailable) {
         var file, $file, $files, filesToUpload, fileField, successFn, errorFn;
 
-        callbacks = callbacks || {};
+        callbackAppNotAvailable = callbackAppNotAvailable || {};
 
         // Check if there are attachments
         $files = _.filter($(":file"), function(file) {
@@ -326,7 +342,7 @@
             filesToUpload--; 
             if (filesToUpload===0) {
                 app.alert.dismiss('upload'); 
-                if (callbacks.success) callbacks.success();
+                if (callbackAppNotAvailable.success) callbackAppNotAvailable.success();
             }
         };
 
@@ -363,7 +379,7 @@
                 });
             }
         } else {
-            if (callbacks.success) callbacks.success();
+            if (callbackAppNotAvailable.success) callbackAppNotAvailable.success();
         }
     };
 
