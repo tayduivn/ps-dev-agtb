@@ -26,22 +26,16 @@
  ********************************************************************************/
 ({
     extendsFrom: 'EditableView',
+    plugins: ['ellipsis_inline'],
 
     /**
      * View that displays a list of models pulled from the context's collection.
      * @class View.Views.ListView
      * @alias SUGAR.App.layout.ListView
-     * @extends View.View
+     * @extends View.Views.EditableView
      */
     events: {
-        'click [class*="orderBy"]':'setOrderBy',
-        'mouseenter .rowaction': 'showTooltip',
-        'mouseleave .rowaction': 'hideTooltip',
-        'mouseenter tr':'showActions',
-        'mouseleave tr':'hideActions',
-        'mouseenter .ellipsis_inline':'addTooltip',
-        'click th.morecol': 'toggleDropdown',
-        'click th.morecol li a' : 'toggleColumn'
+        'click [class*="orderBy"]':'setOrderBy'
     },
 
     defaultLayoutEvents: {
@@ -64,20 +58,12 @@
     //Store default and available(+visible) field names
     _fields: {},
 
-    addTooltip: function(event){
-        if (_.isFunction(app.utils.handleTooltip)) {
-            app.utils.handleTooltip(event, this);
-        }
-    },
-
     initialize: function(options) {
         //Grab the list of fields to display from the main list view (assuming initialize is being called from a subclass)
         var listViewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {}));
         //Extend from an empty object to prevent polution of the base metadata
         options.meta = _.extend({}, listViewMeta, JSON.parse(JSON.stringify(options.meta || {})));
         options.meta.type = options.meta.type || 'list';
-
-        this.parseFields(options.meta);
 
         app.view.View.prototype.initialize.call(this, options);
 
@@ -86,13 +72,6 @@
 
         this.attachEvents();
         
-        //When clicking on eye icon, we need to trigger preview:render with model&collection
-        this.context.on("list:preview:fire", function(model) {
-            app.events.trigger("preview:render", model, this.collection, true);
-        }, this);
-        
-        //When switching to next/previous record from the preview panel, we need to update the highlighted row
-        app.events.on("list:preview:decorate", this.decorateRow, this);
         app.events.on("list:filter:fire", this.filterList, this);
 
         // Dashboard layout injects shared context with limit: 5. 
@@ -184,38 +163,6 @@
                 }
             }
         });
-    },
-    /**
-     * Add actions to left and right columns
-     * @param {Object} Backbone options object
-     */
-    addActions: function(options) {
-        this._rowActions = [];
-        this._leftActions = [];
-        var meta = options.meta;
-        if(meta.selection) {
-            switch (meta.selection.type) {
-                case "single":
-                    this.addSingleSelectionAction(options);
-                    break;
-                case "multi":
-                    this.addMultiSelectionAction(options);
-                    break;
-                default:
-                    break;
-            }
-        }
-        if(meta && meta.rowactions) {
-            this.addRowActions(options);
-        }
-    },
-
-    _render:function () {
-        this.addActions(this);
-        var lastActionColumn =_.last(this._rowActions);
-        if (lastActionColumn) lastActionColumn.isColumnDropdown = true;
-
-        app.view.View.prototype._render.call(this);
     },
 
     showAlert: function(message) {
@@ -345,131 +292,6 @@
             options.relate = true;
         }
         return options;
-    },
-    /**
-     * Decorate a row in the list that is being shown in Preview
-     * @param model Model for row to be decorated.  Pass a falsy value to clear decoration.
-     */
-    decorateRow: function(model){
-        // If there are drawers, make sure we're updating only list views on active drawer.
-        if(_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)){
-            this._previewed = model;
-            this.$("tr.highlighted").removeClass("highlighted current above below");
-            if(model){
-                var rowName = model.module+"_"+ model.get("id");
-                var curr = this.$("tr[name='"+rowName+"']");
-                curr.addClass("current highlighted");
-                curr.prev("tr").addClass("highlighted above");
-                curr.next("tr").addClass("highlighted below");
-            }
-        }
-    },
-    /**
-     * Add single selection field to left column
-     * @param {Object} Backbone options object
-     */
-    addSingleSelectionAction: function(options) {
-        var _generateMeta = function (name, label) {
-            return {
-                    'type':'selection',
-                    'name': name,
-                    'sortable':false,
-                    'label': label || ''
-                };
-        }
-        var def = options.meta.selection;
-        this._leftActions[0] = _generateMeta(def.name || options.module + '_select', def.label);
-    },
-    /**
-     * Add multi selection field to left column
-     * @param {Object} Backbone options object
-     */
-    addMultiSelectionAction: function(options) {
-        var _generateMeta = function (buttons) {
-            return {
-                    'type':'fieldset',
-                    'fields':[
-                        {
-                            'type':'actionmenu',
-                            'buttons': buttons || []
-                        }
-                    ],
-                    'value':false,
-                    'sortable':false
-                };
-        }
-        var buttons = options.meta.selection.actions;
-        this._leftActions[0] = _generateMeta(buttons);
-    },
-    /**
-     * Add fieldset of rowactions to the right column
-     * @param {Object} Backbone options object
-     */
-    addRowActions: function(options) {
-        var _generateMeta = function (label, css_class, buttons) {
-            return {
-                    'type':'fieldset',
-                    'fields':[
-                        {
-                            'type':'rowactions',
-                            'label':label || '',
-                            'css_class':css_class,
-                            'buttons': buttons || []
-                        }
-                    ],
-                    'value':false,
-                    'sortable':false
-                };
-        }
-        var def = options.meta.rowactions;
-        this._rowActions[0] =  _generateMeta(def.label, def.css_class, def.actions);
-    },
-    /**
-     * Manually toggle the dropdown on cell click
-     * @param {Object}(optional) event jquery event object
-     */
-    toggleDropdown: function(event) {
-        var self = this;
-        var $dropdown = self.$('.morecol > div');
-        if ($dropdown.length > 0 && _.isFunction($dropdown.dropdown)) {
-            $dropdown.toggleClass('open');
-            if (event) event.stopPropagation();
-            $('html').one('click', function () {
-                $dropdown.removeClass('open');
-            });
-        }
-    },
-    /**
-     * Toggle the 'visible' state of an available field
-     * @param {Object} event jquery event object
-     */
-    toggleColumn: function(event) {
-        if (!event) return;
-        event.stopPropagation();
-
-        var $li = this.$(event.currentTarget).closest('li'),
-            column = $li.data('fieldname');
-
-        if (_.indexOf(this._fields.available.visible, column) !== -1) {
-            this._fields.available.visible = _.without(this._fields.available.visible, column);
-        }
-        else {
-            this._fields.available.visible.push(column);
-        }
-        this.render();
-        this.toggleDropdown();
-    },
-    showTooltip: function(e) {
-        this.$(e.currentTarget).tooltip("show");
-    },
-    hideTooltip: function(e) {
-        this.$(e.currentTarget).tooltip("hide");
-    },
-    showActions:function (e) {
-        $(e.currentTarget).children("td").children("span").children(".btn-group").show();
-    },
-    hideActions:function (e) {
-        $(e.currentTarget).children("td").children("span").children(".btn-group").hide();
     },
     bindDataChange:function () {
         if (this.collection) {

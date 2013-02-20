@@ -3,19 +3,14 @@
     createMode: false,
     previousModelState: null,
     extendsFrom: 'EditableView',
+    plugins: ['ellipsis_inline'],
 
     enableHeaderPane: true,
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess',
-        'mouseenter .ellipsis_inline':'addTooltip'
-    },
-    addTooltip: function(event){
-        if (_.isFunction(app.utils.handleTooltip)) {
-            app.utils.handleTooltip(event, this);
-        }
+        'click .less': 'toggleMoreLess'
     },
     // button fields defined in view definition
     buttons: null,

@@ -1,4 +1,4 @@
-describe("Base.View.DupeCheckList", function() {
+describe('Base.View.DupeCheckList', function() {
     var app,
         moduleName = 'Contacts',
         listMeta,
@@ -6,32 +6,32 @@ describe("Base.View.DupeCheckList", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.loadComponent('base', 'view', 'list');
+        SugarTest.loadComponent('base', 'view', 'flex-list');
+        SugarTest.loadComponent('base', 'view', 'recordlist');
+        SugarTest.loadComponent('base', 'view', 'dupecheck-list');
         SugarTest.testMetadata.init();
         listMeta = {
-            "type": "list",
-            "panels":[
+            'type': 'list',
+            'panels':[
                 {
-                    "name":"panel_header",
-                    "fields":[
+                    'name':'panel_header',
+                    'fields':[
                         {
-                            "name":"first_name"
+                            'name':'first_name'
                         },
                         {
-                            "name":"name"
+                            'name':'name'
                         },
                         {
-                            "name":"status"
+                            'name':'status'
                         }
                     ]
                 }
             ]
         };
-        SugarTest.loadHandlebarsTemplate("list", "view", "base", "list");
-        SugarTest.loadComponent('base', 'view', 'list');
-        SugarTest.loadComponent('base', 'view', 'recordlist');
-        SugarTest.loadComponent("base", "view", "dupecheck-list");
         SugarTest.testMetadata.set();
-        layout = SugarTest.createLayout('base', "Cases", "list", null, null);
+        layout = SugarTest.createLayout('base', 'Cases', 'list', null, null);
     });
 
     afterEach(function() {
@@ -41,10 +41,10 @@ describe("Base.View.DupeCheckList", function() {
         SugarTest.testMetadata.dispose();
     });
 
-    it("should turn off sorting on all fields", function(){
+    it('should turn off sorting on all fields', function(){
         var allNonSortable;
 
-        var view = SugarTest.createView("base", moduleName, "dupecheck-list", listMeta);
+        var view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
         view.layout = layout;
         var fields = view.meta.panels[0].fields;
 
@@ -55,17 +55,18 @@ describe("Base.View.DupeCheckList", function() {
         expect(allNonSortable).toBeTruthy();
     });
 
-    it("should removing all links except rowactions", function(){
+    it('should removing all links except rowactions', function(){
         var htmlBefore = '<a href="javascript:void(0)">unwrapped</a><a href="" class="rowaction">wrapped</a>',
             htmlAfter = 'unwrapped<a href="" class="rowaction">wrapped</a>';
 
-        var view = SugarTest.createView("base", moduleName, "dupecheck-list", listMeta);
+        var view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
+        view.layout = layout;
         view.$el = $('<div>' + htmlBefore + '</div>');
         view._removeLinks();
         expect(view.$el.html()).toEqual(htmlAfter);
     });
 
-    it("should be able to set the model via context", function(){
+    it('should be able to set the model via context', function(){
         var model, context, view;
 
         model = new Backbone.Model();
@@ -76,25 +77,26 @@ describe("Base.View.DupeCheckList", function() {
         });
         context.prepare();
 
-        view = SugarTest.createView("base", moduleName, "dupecheck-list", listMeta, context);
+        view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta, context);
+        view.layout = layout;
         expect(view.model.get('foo')).toEqual('bar');
     });
 
-    it("should be able to add preview rowaction with meta flag", function(){
+    it('should be able to add preview rowaction with meta flag', function(){
         var view, previewField;
         listMeta['rowactions'] = {};
         listMeta['showPreview'] = true;
 
-        view = SugarTest.createView("base", moduleName, "dupecheck-list", listMeta);
+        view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
         view.layout = layout;
         view.render();
-        previewField = view._rowActions[1];
+        previewField = _.last(view.rightColumns);
         expect(previewField.event).toEqual('list:preview:fire');
     });
 
-    it("should be calling the duplicate check api", function() {
+    it('should be calling the duplicate check api', function() {
         var ajaxStub;
-        var view = SugarTest.createView("base", moduleName, "dupecheck-list", listMeta);
+        var view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
         view.layout = layout;
 
         //mock out collectionSync which gets called by overridden sync

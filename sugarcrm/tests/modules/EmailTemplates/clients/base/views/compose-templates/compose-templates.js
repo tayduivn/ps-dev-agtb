@@ -8,6 +8,10 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.loadComponent('base', 'view', 'list');
+        SugarTest.loadComponent('base', 'view', 'flex-list');
+        SugarTest.loadComponent('base', 'view', 'recordlist');
+        SugarTest.loadComponent("base", "view", "compose-templates", "EmailTemplates");
         SugarTest.testMetadata.init();
         filterDef = [{"$or":[{"type":{"$is_null":""}},{"type":{"$equals":""}},{"type":{"$equals":"email"}}]}];
         listMeta = {
@@ -30,10 +34,6 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
                 }
             ]
         };
-        SugarTest.loadHandlebarsTemplate("list", "view", "base", "list");
-        SugarTest.loadComponent('base', 'view', 'list');
-        SugarTest.loadComponent('base', 'view', 'recordlist');
-        SugarTest.loadComponent("base", "view", "compose-templates", "EmailTemplates");
         SugarTest.testMetadata.set();
         view = SugarTest.createView("base", moduleName, "compose-templates", listMeta, null, true);
         layout = SugarTest.createLayout('base', "Cases", "list", null, null);
@@ -77,7 +77,7 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
         view = SugarTest.createView("base", moduleName, "compose-templates", listMeta, null, true);
         view.layout = layout;
         view.render();
-        previewField = view._rowActions[0].fields[0].buttons[0];
+        previewField = _.last(view.rightColumns);
         expect(previewField.event).toEqual('list:preview:fire');
     });
 

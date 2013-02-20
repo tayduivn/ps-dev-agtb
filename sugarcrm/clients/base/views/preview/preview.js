@@ -25,6 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    plugins: ['ellipsis_inline'],
     /**
      * Events related to the preview view:
      *  - preview:open                  indicate we must show the preview panel
@@ -38,18 +39,12 @@
      */
     events: {
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess',
-        'mouseenter .ellipsis_inline':'addTooltip'
+        'click .less': 'toggleMoreLess'
     },
 
     // "binary semaphore" for the pagination click event, this is needed for async changes to the preview model
     switching: false,
     hiddenPanelExists: false,
-    addTooltip: function(event){
-        if (_.isFunction(app.utils.handleTooltip)) {
-            app.utils.handleTooltip(event, this);
-        }
-    },
     initialize: function(options) {
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
