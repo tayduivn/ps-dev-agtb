@@ -403,11 +403,16 @@ class RestService extends ServiceBase {
         $token = $this->grabToken();
 
         if ( !empty($token) ) {
-            $oauthServer = SugarOAuth2Server::getOAuth2Server();
-            $oauthServer->verifyAccessToken($token);
-            if ( isset($_SESSION['authenticated_user_id']) ) {
-                $valid = true;
-                $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
+            try {
+                $oauthServer = SugarOAuth2Server::getOAuth2Server();
+                $oauthServer->verifyAccessToken($token);
+                if ( isset($_SESSION['authenticated_user_id']) ) {
+                    $valid = true;
+                    $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
+                }
+            } catch ( OAuth2AuthenticateException $e ) {
+                // This was failing if users were passing an oauth token up to a public url.
+                $valid = false;
             }
         }
 
