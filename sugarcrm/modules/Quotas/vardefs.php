@@ -128,13 +128,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	  'required' => true,
 	  'reportable' => false,
 	  'importable' => 'required',
+      'default'=>'-99',
 	),
     'base_rate' =>
     array (
          'name' => 'base_rate',
-         'vname' => 'LBL_CURRENCY_RATE',
+         'vname' => 'LBL_BASE_RATE',
          'type' => 'double',
-         'required' => true,
     ),
     'currency_symbol' =>
   	array (

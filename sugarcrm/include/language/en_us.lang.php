@@ -2424,6 +2424,7 @@ $app_strings = array (
     'LBL_ASSIGNED_TO_USER'=>'Assigned to User',
     'LBL_ASSIGNED_TO' => 'Assigned to:',
     'LBL_BACK' => 'Back',
+    'LBL_BASE_RATE'=>'Base Rate',
     'LBL_BILL_TO_ACCOUNT'=>'Bill to Account',
     'LBL_BILL_TO_CONTACT'=>'Bill to Contact',
     'LBL_BILLING_ADDRESS'=>'Billing Address',
