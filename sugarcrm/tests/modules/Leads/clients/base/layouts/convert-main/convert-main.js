@@ -363,7 +363,8 @@ describe("ConvertLeadLayout", function() {
             last_name = 'mylastname',
             account_name = 'myaccname',
             opportunity_name = 'myoppname',
-            actualConvertModel;
+            actualConvertModel,
+            apiCallStub;
 
         beforeEach(function() {
             actualConvertModel = {};
@@ -373,46 +374,48 @@ describe("ConvertLeadLayout", function() {
             leadModel.set('opportunity_name', opportunity_name);
             layout.render();
             showAlertStub = sinon.stub(SugarTest.app.alert, 'show', $.noop());
+
+            apiCallStub = sinon.stub(app.api, 'call');
         });
 
         afterEach(function() {
+            apiCallStub.restore();
             showAlertStub.restore();
             delete layout;
         });
 
-        var getMockCreateConvertModel = function() {
-            return function () {
-                var convertModel = Backbone.Model.extend({
-                    sync:function (method, model) {
-                        actualConvertModel = model;
-                    }
-                });
-
-                return new convertModel();
-            }
-        };
 
         it("clicking on finish after completing all panels bundles up models from each panel and calls the API", function() {
             var expectedConvertModel = '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"},"Opportunities":{"name":"'+opportunity_name+'"}}}';
-            var stub = sinon.stub(layout, 'createConvertModel', getMockCreateConvertModel());
 
             layout._components[1].$('.header').click(); //click Account to complete Contact
             layout._components[1].$('.header').find('.show-record').click();
             layout._components[2].$('.header').click(); //click Opportunity to complete Account
             layout.initiateFinish(); //click finish to complete Opportunity
+
+
+            expect(apiCallStub.lastCall.args[0]).toEqual('create');
+            expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Leads\/convert/);
+
+            actualConvertModel = apiCallStub.lastCall.args[2];
+
             expect(JSON.stringify(actualConvertModel)).toEqual(expectedConvertModel);
-            stub.restore();
+
         });
 
         it("clicking on finish when optional panels have not been completed should not pass the optional model to API", function() {
             var expectedConvertModel = '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"}}}';
-            var stub = sinon.stub(layout, 'createConvertModel', getMockCreateConvertModel());
 
             layout._components[1].$('.header').click(); //click Account to complete Contact
             layout._components[1].$('.header').find('.show-record').click();
             layout.initiateFinish(); //click finish to complete Account
+
+            expect(apiCallStub.lastCall.args[0]).toEqual('create');
+            expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Leads\/convert/);
+
+            actualConvertModel = apiCallStub.lastCall.args[2];
             expect(JSON.stringify(actualConvertModel)).toEqual(expectedConvertModel);
-            stub.restore();
+
         });
     });
 
