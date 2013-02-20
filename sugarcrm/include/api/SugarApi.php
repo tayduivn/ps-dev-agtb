@@ -61,6 +61,17 @@ abstract class SugarApi {
 
         $data = ApiHelper::getHelper($api,$bean)->formatForApi($bean,$fieldList);
 
+        // Should we log this as a recently viewed item?
+        if ( !empty($data) && isset($args['viewed']) && $args['viewed'] == true ) {
+            if ( !isset($this->action) ) {
+                $this->action = 'view';
+            }
+            if ( !isset($this->api) ) {
+                $this->api = $api;
+            }
+            $this->trackAction($bean);
+        }
+
         // if data is an array or object we need to decode each element, if not just decode data and pass it back
         if(is_array($data) || is_object($data)) {
             $this->htmlDecodeReturn($data);
@@ -244,5 +255,38 @@ abstract class SugarApi {
             throw new SugarApiExceptionNotAuthorized('Not allowed to ' . $action . ' ' . $field . ' field in ' . $bean->object_name . ' module.');
         }
         //END SUGARCRM flav=pro ONLY
+    }
+
+    /**
+     * Adds an entry in the tracker table noting that this record was touched
+     *
+     * @param SugarBean $bean The bean to record in the tracker table
+     */
+    public function trackAction(SugarBean $bean)
+    {
+        $manager = TrackerManager::getInstance();
+        $monitor = $manager->getMonitor('tracker');
+
+        if ( ! $monitor ) {
+            // This tracker is disabled.
+            return;
+        }
+        if ( empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id) ) {
+            // It's a new bean, don't record it.
+            return;
+        }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        $monitor->setValue('team_id', $this->api->user->getPrivateTeamID());
+        //END SUGARCRM flav=pro ONLY
+        $monitor->setValue('action', $this->action);
+        $monitor->setValue('user_id', $this->api->user->id);
+        $monitor->setValue('module_name', $bean->module_dir);
+        $monitor->setValue('date_modified', TimeDate::getInstance()->nowDb());
+        $monitor->setValue('visible', 1);
+        $monitor->setValue('item_id', $bean->id);
+        $monitor->setValue('item_summary', $bean->get_summary_text());
+        
+        $manager->saveMonitor($monitor, true, true);
     }
 }
