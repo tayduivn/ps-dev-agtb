@@ -695,7 +695,6 @@
 .filetype-thumbnails span[class^="filetype-"] {
   margin: 0 12px 12px 0;
   float: left;
-
 }
 </style>
 
@@ -707,17 +706,19 @@
   <div class="row">
     <div class="span3">
       <p>
-        File type thumbnails are created by inserting a <code>span</code> tag with a classname of <code>.filetype-xxx</code> where xxx is one of "pdf,png,txt,gif,ppt,doc,xls". Then insert the thumbmail svg like below.
+        File type thumbnails are created by inserting a <code>span</code> tag with a classname of <code>.filetype-thumbnail</code> and adding a data-filetype property that is set to the file extension. If the file extension is one of "PDF,PNG,TXT,JPG,GIF,PPT,DOC,XLS" then it will have a colored background, else it will be grey. The last step is to insert the thumbmail SVG into the span.
       </p>
     </div>
     <div class="span4 filetype-thumbnails">
-      <span class="filetype-pdf"></span>
-      <span class="filetype-png"></span>
-      <span class="filetype-txt"></span>
-      <span class="filetype-gif"></span>
-      <span class="filetype-doc"></span>
-      <span class="filetype-ppt"></span>
-      <span class="filetype-xls"></span>
+      <span class="filetype-thumbnail" data-filetype="PDF"></span>
+      <span class="filetype-thumbnail" data-filetype="PNG"></span>
+      <span class="filetype-thumbnail" data-filetype="TXT"></span>
+      <span class="filetype-thumbnail" data-filetype="JPG"></span>
+      <span class="filetype-thumbnail" data-filetype="GIF"></span>
+      <span class="filetype-thumbnail" data-filetype="DOC"></span>
+      <span class="filetype-thumbnail" data-filetype="PPT"></span>
+      <span class="filetype-thumbnail" data-filetype="XLS"></span>
+      <span class="filetype-thumbnail" data-filetype="XYZ"></span>
     </div>
     <div class="span5">
 <pre class="prettyprint linenums">
