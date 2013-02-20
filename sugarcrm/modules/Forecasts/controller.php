@@ -133,7 +133,10 @@ class ForecastsController extends SugarController
         if($current_user->isAdminForModule('Forecasts')) {
             $db = DBManagerFactory::getInstance();
             $db->query("UPDATE config SET value = 0 WHERE category = 'Forecasts' and name in ('is_setup', 'has_commits')");
-            MetaDataManager::refreshModulesCache(array('Forecasts'));
+            require_once('modules/Administration/QuickRepairAndRebuild.php');
+            $repair = new RepairAndClear();
+            $repair->clearMetadataAPICache();
+            //MetaDataManager::refreshModulesCache(array('Forecasts'));
             header("Location: index.php?module=Forecasts#config");
             exit();
         }
