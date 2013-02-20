@@ -121,6 +121,7 @@ $dictionary['Task'] = array('table' => 'tasks',
 	'group'=>'parent_name',
 	'source'=>'non-db',
 	'options'=> 'parent_type_display',
+  'studio' => true,
   ),
 
   'parent_id' =>

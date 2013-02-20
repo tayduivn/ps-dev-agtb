@@ -230,6 +230,7 @@ $dictionary['Note'] = array(
 		'type'=>'parent',
 		'source'=>'non-db',
 		'options'=> 'record_type_display_notes',
+    'studio' => true,
 		),
 
  'contact_name'=>
