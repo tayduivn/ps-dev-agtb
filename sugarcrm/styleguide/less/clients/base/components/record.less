@@ -66,16 +66,29 @@
   }
 
   .record-edit-link-wrapper {
-    position: absolute;
     .record-edit-link {
+      position: absolute;
+      top: 5px;
+      left: -18px;
+      z-index: 0;
+      padding: 4px 7px 4px;
       &.btn-invisible:hover {
         border: 1px solid transparent;
         background: none;
       }
     }
     .icon-pencil {
+      display: none;
       text-decoration: none;
       cursor: pointer;
+    }
+  }
+
+  .record-cell:hover {
+    .record-edit-link-wrapper {
+      .icon-pencil {
+        display: inline-block;
+      }
     }
   }
 
