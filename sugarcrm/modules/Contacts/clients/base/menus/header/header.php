@@ -34,7 +34,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_IMPORT_VCARD',
         'acl_action'=>'import',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#'.$module_name,
