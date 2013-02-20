@@ -30,10 +30,10 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#Meetings/create',
+        'route'=>'#bwc/index.php?module='.$module_name.'&action=EditView&return_module='.$module_name.'&return_action=DetailView',
         'label' =>'LNK_NEW_MEETING',
         'acl_action'=>'edit',
-        'acl_module'=>'Meetings',
+        'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),
     array(
