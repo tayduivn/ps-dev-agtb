@@ -1,4 +1,4 @@
 <div class="widget empty" data-action="addDashlet">
     <p>{{str "LBL_DASHLET_ADD" module}}</p>
-    <div class="add-dashlet"><strong>+</strong></div>
+    <div class="add-dashlet"><strong><i class="icon-plus"></i></strong></div>
 </div>

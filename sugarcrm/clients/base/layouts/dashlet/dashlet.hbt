@@ -1,7 +1,9 @@
 <div class="thumbnail widget">
     {{#unless meta.preview}}
     <div class="btn-toolbar pull-right">
-        <a class="btn btn-invisible minify"><i class="icon-double-angle-up"></i></a>
+        <a href="javascript:void(0)" data-toggle="widget" class="dashlet_toggle btn btn-invisible minify" rel="tooltip" data-original-title="Collapse" data-placement="top">
+            <i class="icon-chevron-up"></i>
+        </a>
         <a data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><i class="icon-cog"></i></a>
         <ul class="dropdown-menu left carettop">
             <div>

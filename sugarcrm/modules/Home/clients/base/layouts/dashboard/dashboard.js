@@ -1,5 +1,6 @@
 ({
     toggled: false,
+    className: 'row-fluid',
     initialize:function (options) {
 
         var context = options.context,
@@ -73,15 +74,23 @@
             this.toggled = true;
         }
     },
-    //loadData: function(options) {
-    //    this.context.loadData(options);
-        /*
-        if(this.model.get("id")) {
-            this.model.fetch();
-        } else if(!this.context.get("create")) {
-            this.collection.fetch();
-        }*/
-    //},
+    _placeComponent: function(component) {
+        var dashboardEl = this.$("#dashboard");
+        if(dashboardEl.length == 0) {
+            dashboardEl = $("<div></div>").attr({
+                class: 'cols row-fluid'
+            });
+            this.$el.append(
+                $("<div></div>").attr({
+                    id : 'dashboard',
+                    class: 'dashboard main-pane'
+                }).append(
+                    dashboardEl
+                )
+            );
+        }
+        dashboardEl.append(component.el);
+    },
     bindDataChange: function() {
         var modelId = this.context.get("modelId");
         if(!(modelId && this.context.get("create")) && this.collection) {

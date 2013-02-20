@@ -1,14 +1,18 @@
 ({
     extendsFrom: 'HomeDashletRowLayout',
     tagName: 'ul',
-    className: 'rows row-fluid',
+    className: 'dashlet-cell rows row-fluid',
     initialize: function(options) {
         app.view.layouts.HomeDashletRowLayout.prototype.initialize.call(this, options);
 
     },
     _placeComponent: function(comp, def) {
-        var span = 'widget-container span' + (def.width || 12);
-        this.$el.append($("<li>", {class: span}).append(comp.el));
+        var span = 'widget-container span' + (def.width || 12),
+            self = this;
+        this.$el.append($("<li>", {class: span}).data("index", function() {
+            var index = def.layout.index.split('').pop();
+            return self.index + '' + index;
+        }).append(comp.el));
     },
     setMetadata: function(meta) {
         meta.components = meta.components || [];

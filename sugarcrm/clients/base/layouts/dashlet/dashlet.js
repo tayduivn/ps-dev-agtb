@@ -19,7 +19,7 @@
             this.$el.html(app.template.empty(this));
         else
             this.$el.html(this.template(this));
-        this.$el.data("index", this.index);
+
         app.view.Layout.prototype._addComponentsFromDef.call(this, components);
     },
     _placeComponent: function(comp, def) {
@@ -157,7 +157,9 @@
             });
         });
     },
-    toggleMinify: function() {
+    toggleMinify: function(evt) {
+        $(evt.currentTarget).children("i").toggleClass("icon-chevron-down icon-chevron-up");
+        this.$(".thumbnail").toggleClass("collapsed");
         this.$(".widget-content").toggleClass("hide");
     },
     loadData: function(options) {

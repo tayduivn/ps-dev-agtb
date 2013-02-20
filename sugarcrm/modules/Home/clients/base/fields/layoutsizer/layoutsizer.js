@@ -14,10 +14,9 @@
     },
     _render: function() {
         app.view.Field.prototype._render.call(this);
-        if(this.action === 'edit') {
+        if(this.action === 'edit' && this.value > 0) {
             var self = this,
                 metadata = this.model.get("metadata");
-
             this.$('#layoutwidth').empty().noUiSlider('init', {
                     knobs: this.value,
                     scale: [0,this.spanTotal],
@@ -50,7 +49,7 @@
         var divider = 0;
         _.each(_.pluck(metadata.components, 'width'), function(span, index) {
             if(index >= this.value) return;
-            divider = divider + span;
+            divider = divider + parseInt(span, 10);
             this.$('#layoutwidth').noUiSlider('move', {
                 handle: index,
                 to: divider

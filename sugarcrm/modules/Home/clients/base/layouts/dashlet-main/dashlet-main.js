@@ -1,4 +1,5 @@
 ({
+    tagName: "ul",
     bindDataChange: function() {
         if(this.model) {
             this.model.on("change:metadata", this.setMetadata, this);
@@ -36,7 +37,7 @@
     },
     setWidth: function() {
         var metadata = this.model.get("metadata"),
-            $el = this.$("#dashlets").children();
+            $el = this.$el.children();
 
         _.each(metadata.components, function(component, index){
             $el.get(index).className = $el.get(index).className.replace(/span\d+\s*/, '');
@@ -44,26 +45,17 @@
         }, this);
     },
     _placeComponent: function(comp, def) {
-        if(this.$("#dashlets").length == 0) {
-            this.$el.attr(
-                {
-                    id : 'dashboard',
-                    class: 'dashboard'
-                }).append(
-                    $("<ul></ul>", {
-                        id : 'dashlets',
-                        class: 'cols row-fluid'
-                    })
-                );
-        }
-        this.$("#dashlets").append(comp.el);
+        this.$el.attr({
+            id : 'dashlets',
+            class: 'row-fluid'
+        }).append(comp.el);
     },
     applyDragAndDrop: function() {
         var self = this;
         this.$('.widget:not(.empty)').draggable({
             revert: 'invalid',
-            stack: '.widget:not(.helper)',
             handle: 'h4',
+            appendTo: this.$el,
             cursorAt: {
                 left: 150,
                 top: 16
@@ -89,15 +81,14 @@
 
         this.$('.widget-container').droppable({
             activeClass: 'ui-droppable-active',
-            hoverClass: 'ui-droppable-hover',
+            hoverClass: 'active',
             tolerance: 'pointer',
             accept: function() {
-                return self.$(this).find('.widget.empty').length === 1;
+                return self.$(this).find('.widget[data-action=droppable]').length === 1;
             },
             drop: function(event, ui) {
-
-                var sourceIndex = ui.draggable.parent().data('index'),
-                    targetIndex = self.$(this).children(":first").data('index');
+                var sourceIndex = ui.draggable.parents(".widget-container:first").data('index')(),
+                    targetIndex = self.$(this).data('index')();
                 self.switchComponent(targetIndex, sourceIndex);
             }
         });
