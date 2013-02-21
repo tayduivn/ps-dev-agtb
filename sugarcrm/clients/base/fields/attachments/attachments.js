@@ -27,6 +27,20 @@
     },
 
     /**
+     * Allow Backspace and Delete Keys for attachments (Select2) and disable all other keys
+     * @param e
+     * @return {Boolean}
+     * @private
+     */
+    _keyHandler: function(e) {
+        // if key is backspace or delete ...
+        if ((event.keyCode == 8 || event.keyCode == 46)) {
+            return true; // Allow
+        }
+        return false; // Ignore Any other Keyboard Input
+    },
+
+    /**
      * {@inheritdoc}
      */
     _render: function() {
@@ -39,6 +53,13 @@
             formatSelection: this.formatSelection,
             width: '100%'
         });
+
+        var inp = this.$el.find('.attachments.select2-container .select2-choices .select2-search-field .select2-input');
+        if (inp && inp[0]) {
+            $(inp[0]).keypress(this._keyHandler);
+            $(inp[0]).keyup(this._keyHandler);
+            $(inp[0]).keydown(this._keyHandler);
+        }
 
         //handle case where attachments are pre-populated on the model
         this.refreshFromModel();
