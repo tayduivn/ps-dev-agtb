@@ -42,7 +42,7 @@ class FilterApi extends SugarApi
                 'pathVars' => array('module',''),
                 'method' => 'filterList',
                 'shortHelp' => 'Filter records from a single module',
-                'longHelp' => 'include/api/help/filterModulePost.html',
+                'longHelp' => 'include/api/help/filterModule.html',
             ),
             'filterModuleById' => array(
                 'reqType' => 'GET',
@@ -50,7 +50,15 @@ class FilterApi extends SugarApi
                 'pathVars' => array('module','', 'record'),
                 'method' => 'filterById',
                 'shortHelp' => 'Filter records from a single module by a predefined filter',
-                'longHelp' => 'include/api/help/filterModulePost.html',
+                'longHelp' => 'include/api/help/filterModule.html',
+            ),
+            'filterRelatedRecords' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>', '?', 'link', '?', 'filter'),
+                'pathVars' => array('module', 'record', '', 'link_name', ''),
+                'method' => 'filterRelated',
+                'shortHelp' => 'Filter related records to this module',
+                'longHelp' => 'include/api/help/filterModule.html',
             ),
         );
     }
@@ -113,6 +121,10 @@ class FilterApi extends SugarApi
             $options['order_by'] = $orderByArray;
         }
 
+        // Set $options['module'] so that runQuery can create beans of the right
+        // type.
+        $options['module'] = $seed->module_name;
+
         return $options;
     }
 
@@ -126,19 +138,61 @@ class FilterApi extends SugarApi
 
         $options = $this->parseOptions($api, $args, $seed);
 
-        $q = new SugarQuery();
-        // Just need ID, we need to fetch beans so we can format them later.
-        $q->select(array('id'));
-        $q->from($seed);
-        $q->distinct(true);
+        $q = $this->getQueryObject($seed, $options);
 
         // return $args['filter'];
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
         $this->addFilters($args['filter'], $q->where(), $q);
-        $q->where()->equals("deleted", 0);
 
+        return $this->runQuery($api, $args, $q, $options);
+    }
+
+    public function filterRelated(ServiceBase $api, array $args)
+    {
+        // Load the parent bean.
+        $record = BeanFactory::getBean($args['module'], $args['record']);
+
+        if (empty($record)) {
+            throw new SugarApiExceptionNotFound('Could not find parent record '.$args['record'].' in module '.$args['module']);
+        }
+        if (!$record->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+        }
+
+        // Load the relationship.
+        $linkName = $args['link_name'];
+        if (!$record->load_relationship($linkName)) {
+            // The relationship did not load.
+            throw new SugarApiExceptionNotFound('Could not find a relationship named: '.$args['link_name']);
+        }
+        $linkModuleName = $record->$linkName->getRelatedModuleName();
+        $linkSeed = BeanFactory::getBean($linkModuleName);
+        if (!$linkSeed->ACLAccess('list')) {
+            throw new SugarApiExceptionNotAuthorized('No access to list records for module: '.$linkModuleName);
+        }
+
+        $options = $this->parseOptions($api, $args, $linkSeed);
+        $q = $this->getQueryObject($linkSeed, $options);
+
+        // return $args['filter'];
+        if (!isset($args['filter']) || !is_array($args['filter'])) {
+            $args['filter'] = array();
+        }
+        $args['filter'][][$record->table_name . '.id'] = array('$equals' => $record->id);
+        $this->addFilters($args['filter'], $q->where(), $q);
+        return $this->runQuery($api, $args, $q, $options);
+    }
+
+    protected function getQueryObject(SugarBean $seed, array $options)
+    {
+        $q = new SugarQuery();
+        // Just need ID, we need to fetch beans so we can format them later.
+        $q->select(array('id'));
+        $q->from($seed);
+        $q->distinct(true);
+        $q->where()->equals("deleted", 0);
 
         foreach ($options['order_by'] as $orderBy) {
             $q->orderBy($orderBy[0], $orderBy[1]);
@@ -147,6 +201,11 @@ class FilterApi extends SugarApi
         $q->limit($options['limit']+1);
         $q->offset($options['offset']);
 
+        return $q;
+    }
+
+    protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options)
+    {
         $GLOBALS['log']->info("Filter SQL: ".$q->compileSql());
         $idRows = $q->execute();
         // return $idRows;
@@ -160,7 +219,7 @@ class FilterApi extends SugarApi
                 $data['next_offset'] = (int)($options['limit']+$options['offset']);
                 continue;
             }
-            $bean = BeanFactory::getBean($args['module'], $row['id']);
+            $bean = BeanFactory::getBean($options['module'], $row['id']);
             if ($bean) {
                 // Sometimes team security changes mid-query
                 $beans[] = $bean;
