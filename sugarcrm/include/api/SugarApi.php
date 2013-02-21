@@ -30,7 +30,7 @@ abstract class SugarApi {
      * @param array $requiredFields
      * @throws SugarApiExceptionMissingParameter
      */
-    function requireArgs(&$args,$requiredFields = array()) {
+    public function requireArgs(&$args,$requiredFields = array()) {
         foreach ( $requiredFields as $fieldName ) {
             if ( !isset($args[$fieldName]) ) {
                 throw new SugarApiExceptionMissingParameter('Missing parameter: '.$fieldName);
@@ -264,7 +264,7 @@ abstract class SugarApi {
      */
     public function trackAction(SugarBean $bean)
     {
-        $manager = TrackerManager::getInstance();
+        $manager = $this->getTrackerManager();
         $monitor = $manager->getMonitor('tracker');
 
         if ( ! $monitor ) {
@@ -273,6 +273,7 @@ abstract class SugarApi {
         }
         if ( empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id) ) {
             // It's a new bean, don't record it.
+            // Tracking bean saves/creates happens in the SugarBean so it is always recorded
             return;
         }
 
@@ -288,5 +289,14 @@ abstract class SugarApi {
         $monitor->setValue('item_summary', $bean->get_summary_text());
         
         $manager->saveMonitor($monitor, true, true);
+    }
+
+    /**
+     * Helper until we have dependency injection to grab a tracker manager
+     * @return TrackerManager An instance of the tracker manager
+     */
+    public function getTrackerManager()
+    {
+        return TrackerManager::getInstance();
     }
 }

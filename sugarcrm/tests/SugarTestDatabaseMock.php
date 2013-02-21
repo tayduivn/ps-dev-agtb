@@ -44,7 +44,7 @@ class SugarTestDatabaseMock extends DBManager
     }
 
 
-	public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
+    public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
         $sql = preg_replace('/\s\s+/',' ',$sql);
         $matches = array();
@@ -62,7 +62,7 @@ class SugarTestDatabaseMock extends DBManager
         } else {
             if ( isset($this->queries[$responseKey]['runCount']) ) {
                 $this->queries[$responseKey]['runCount']++;
-            } 
+            }
             else {
                 $this->queries[$responseKey]['runCount'] = 1;
             }
@@ -72,13 +72,13 @@ class SugarTestDatabaseMock extends DBManager
         
     }
 
-    function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
+    public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
     {
         return $this->query($sql." LIMIT ${start},${count}");
     }
 
-	public function fetchRow($result)
-    { 
+    public function fetchRow($result)
+    {
         if ( count($this->rows) < 1 ) {
             return;
         } else {
@@ -89,37 +89,36 @@ class SugarTestDatabaseMock extends DBManager
     /*
      * Everything from here on out is just so we are a DBManager, just stubs
      */
- 
-	protected function freeDbResult($dbResult) {}
+
+    protected function freeDbResult($dbResult) {}
     public function quote($string) {return addslashes($string);}
     public function convert($string, $type, array $additional_parameters = array()) {return $string;}
     public function fromConvert($string, $type) {return $string;}
-    function renameColumnSQL($tablename, $column, $newname) {}
-    public function get_indices($tablename) {return array();} 
+    public function renameColumnSQL($tablename, $column, $newname) {}
+    public function get_indices($tablename) {return array();}
     public function get_columns($tablename) {return array();}
-	public function add_drop_constraint($table, $definition, $drop = false) {}
-	public function getFieldsArray($result, $make_lower_case = false) {}
-	public function getTablesArray() {}
-	public function version() {}
-	public function tableExists($tableName) {}
-	public function connect(array $configOptions = null, $dieOnError = false) {}
-	public function createTableSQLParams($tablename, $fieldDefs, $indices) {}
-	protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false) {}
-	public function disconnect() {}
-	public function lastDbError() {}
-	public function validateQuery($query) { return true; }
-	public function valid() { return true; }
-	public function dbExists($dbname) { return true; }
-	public function tablesLike($like) {}
-	public function createDatabase($dbname) {}
-	public function dropDatabase($dbname) {}
-	public function getDbInfo() {}
-	public function userExists($username) { return true; }
-	public function createDbUser($database_name, $host_name, $user, $password) {}
-	public function full_text_indexing_installed() { return true; }
-	public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array()) {}
-	public function installConfig() {}
+    public function add_drop_constraint($table, $definition, $drop = false) {}
+    public function getFieldsArray($result, $make_lower_case = false) {}
+    public function getTablesArray() {}
+    public function version() {}
+    public function tableExists($tableName) {}
+    public function connect(array $configOptions = null, $dieOnError = false) {}
+    public function createTableSQLParams($tablename, $fieldDefs, $indices) {}
+    protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false) {}
+    public function disconnect() {}
+    public function lastDbError() {}
+    public function validateQuery($query) { return true; }
+    public function valid() { return true; }
+    public function dbExists($dbname) { return true; }
+    public function tablesLike($like) {}
+    public function createDatabase($dbname) {}
+    public function dropDatabase($dbname) {}
+    public function getDbInfo() {}
+    public function userExists($username) { return true; }
+    public function createDbUser($database_name, $host_name, $user, $password) {}
+    public function full_text_indexing_installed() { return true; }
+    public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array()) {}
+    public function installConfig() {}
     public function getFromDummyTable() {}
-	public function getGuidSQL() {}
+    public function getGuidSQL() {}
 }
-    

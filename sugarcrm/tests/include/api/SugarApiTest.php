@@ -29,14 +29,14 @@ require_once 'modules/Users/User.php';
 class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     static public $db;
-    
+
     static public $monitorList;
 
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        
+
         self::$monitorList = TrackerManager::getInstance()->getDisabledMonitors();
 
         self::$db = new SugarTestDatabaseMock();
@@ -56,7 +56,7 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         // We can override the module helpers with mocks.
         ApiHelper::$moduleHelpers = array();
     }
-    
+
     public function testFormatBeanCallsTrackView()
     {
         if ( !SugarTestReflection::isSupported() ) {
@@ -70,7 +70,7 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $apiMock->expects($this->once())
                 ->method('trackAction');
-        
+
         $fakeBean = $this->getMock('SugarBean');
         $fakeBean->id = 'abcd';
         $fakeBean->module_dir = 'fakeBean';
@@ -87,7 +87,7 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
                                    'run around',
                                    'desert you'))));
         ApiHelper::$moduleHelpers['fakeBean'] = $helperMock;
-        
+
         // Call it once when it should track the view
         SugarTestReflection::callProtectedMethod($apiMock,'formatBean',array($apiMock->api,array('viewed'=>true), $fakeBean));
 
@@ -102,7 +102,26 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testTrackAction()
     {
-        $sugarApi = $this->getMockForAbstractClass('SugarApi');
+        $monitorMock = $this->getMockBuilder('Monitor')
+            ->disableOriginalConstructor()
+            ->getMock(array('setValue'));
+        $monitorMock
+            ->expects($this->any())
+            ->method('setValue');
+
+        $managerMock = $this->getMockBuilder('TrackerManager')
+            ->disableOriginalConstructor()
+            ->getMock(array('getMonitor','saveMonitor'));
+        $managerMock
+            ->expects($this->once())
+            ->method('saveMonitor');
+        
+        $sugarApi = $this->getMock('SugarApi',array('getTrackerManager'));
+        $sugarApi
+            ->expects($this->any())
+            ->method('getTrackerManager')
+            ->will($this->returnValue($managerMock));
+        
         $sugarApi->api = $this->getMock('RestService');
         $sugarApi->api->user = $this->getMock('User',array('getPrivateTeamID'));
         $sugarApi->api->user
@@ -113,38 +132,32 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         $fakeBean->id = 'abcd';
         $fakeBean->module_dir = 'fakeBean';
         $fakeBean->expects($this->any())
-                 ->method('get_summary_text')
-                 ->will($this->returnValue('Rickroll'));
+            ->method('get_summary_text')
+            ->will($this->returnValue('Rickroll'));
         
         
         $sugarApi->action = 'unittest';
         
-        // First test that it returns without running any queries if the monitor is disabled
-        $manager = TrackerManager::getInstance();
-        $manager->setDisabledMonitors(array('tracker'=>true));
-
-        self::$db->queries = array(
-            'saveTracker' => array(
-                'match'=>"/.*INSERT INTO tracker.*Rickroll.*/i",
-                'rows'=>array(),
-                'runCount'=>0,
-            ),
-            'other' => array(
-                'match'=>"/.*/",
-                'rows'=>array(),
-                'runCount'=>0,
-            ),
-        );
-            
-        $sugarApi->trackAction($fakeBean);
-        $manager->unsetMonitors();
-
-        $this->assertEquals(0,self::$db->queries['saveTracker']['runCount'],'Tried to insert a tracker record when we shouldn\'t have');
+        // Emulate the tracker being disabled, then enabled
+        $managerMock
+            ->expects($this->any())
+            ->method('getMonitor')
+            ->will($this->onConsecutiveCalls(null,$monitorMock,$monitorMock,$monitorMock,$monitorMock));
         
-        $manager->setDisabledMonitors(array());
         $sugarApi->trackAction($fakeBean);
 
-        $this->assertEquals(1,self::$db->queries['saveTracker']['runCount'],'Didn\'t insert a tracker record when we should have');
-        
+        // This one should actually save
+        $sugarApi->trackAction($fakeBean);
+
+        // Try it again, but this time with a new bean with id
+        $fakeBean->new_with_id = true;
+        $sugarApi->trackAction($fakeBean);
+
+        // And one last time but this time with an empty bean id
+        unset($fakeBean->new_with_id);
+        unset($fakeBean->id);
+        $sugarApi->trackAction($fakeBean);
+
+        // No asserts, handled through the saveMonitor ->once() expectation above
     }
 }
