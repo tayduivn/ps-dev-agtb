@@ -242,7 +242,7 @@
         $(this).closest('.span10').find('label.file-upload span strong').trigger('click');
     });
 
-    if ($('table.datatable').length !== 0) {
+    if ($('table#example').length !== 0) {
       $('table.datatable').dataTable({
         "bPaginate": false,
         "bFilter": true,
