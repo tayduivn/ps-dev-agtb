@@ -302,7 +302,7 @@
 
         sendModel.set('status', status);
         myURL = app.api.buildURL('Mail');
-        response = app.api.call('create', myURL, sendModel, {
+        app.api.call('create', myURL, sendModel, {
             success: function() {
                 app.alert.dismiss('mail_call_status');
                 app.alert.show('mail_call_status', {autoClose: true, level: 'success', title: successMessage});
