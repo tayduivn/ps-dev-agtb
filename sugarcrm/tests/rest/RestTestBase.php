@@ -216,7 +216,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             // For Mothership, uploads need special hack because of stream support
             if(is_array($postBody)) {
                 foreach($postBody as $k => $v) {
-                    if($v[0] == '@') {
+                    if(isset($v[0]) && $v[0] == '@') {
                         $name = substr($v, 1);
                         $postBody[$k] = "@".UploadFile::realpath($name);
                     }
