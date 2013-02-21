@@ -156,12 +156,13 @@ table.dataTable {
           overflow: visible;
         }
       }
+      &:not(:hover) td .btn-group {
+        visibility: hidden;
+      }
     }
     td {
       max-width: 100px;
       &> *:not(.overflow-visible) {
-        display: inline-block;
-        width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
