@@ -38,14 +38,14 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'name' => 'case_number',
                     'label' => 'LBL_LIST_NUMBER',
                     'width' =>  5,
-                    'default' => true
+                    'default' => true,
                 ),
                 array(
                     'name' => 'name',
                     'label' => 'LBL_LIST_SUBJECT',
                     'width' =>  25,
                     'link' => true,
-                    'default' => true
+                    'default' => true,
                 ),
                 array(
                     'name' => 'account_name',
@@ -63,13 +63,13 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'name' => 'priority',
                     'label' => 'LBL_LIST_PRIORITY',
                     'width' =>  10,
-                    'default' => true
+                    'default' => true,
                 ),
                 array(
                     'name' => 'status',
                     'label' => 'LBL_STATUS',
                     'width' =>  10,
-                    'default' => true
+                    'default' => true,
                 ),
                 array(
                     'name' => 'assigned_user_name',
@@ -84,7 +84,7 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'name' => 'date_entered',
                     'label' => 'LBL_DATE_ENTERED',
                     'width' => 10,
-                    'default' => true
+                    'default' => true,
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(

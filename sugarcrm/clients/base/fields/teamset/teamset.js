@@ -31,97 +31,135 @@
     events: {
         'click .btn[name=add]' : 'addItem',
         'click .btn[name=remove]' : 'removeItem',
-        'click .btn[name=primary]' : 'setPrimaryItem'
+        'click .btn[name=primary]' : 'setPrimaryItem',
+        'change input.select2': 'inputChanged'
+    },
+    initialize: function(options){
+        app.view.fields.RelateField.prototype.initialize.call(this, options);
+        //Moving primary teams to top on init
+        this.model.set(
+            this.name,
+            _.sortBy(this.model.get(this.name), function(team) {
+                return team.primary ? -1 : 0;
+            })
+        );
     },
     _render: function() {
-        var result = app.view.fields.RelateField.prototype._render.call(this),
-            self = this;
+        var self = this;
+        app.view.fields.RelateField.prototype._render.call(this);
         if(this.tplName === 'edit') {
             this.$(this.fieldTag).each(function(index, el){
                 var plugin = $(el).data("select2");
                 if(!plugin.setTeamIndex) {
                     plugin.setTeamIndex = function() {
                         self.currentIndex = $(this).data("index");
-                    }
+                    };
                     plugin.opts.element.on("open", plugin.setTeamIndex);
                 }
             });
         }
     },
+    /**
+     * Called to update value when a selection is made from options view dialog
+     * @param model New value for teamset
+     */
     setValue: function(model) {
         var index = _.isUndefined(this.currentIndex) ? this.$(".chzn-container-active").prev().data('index') : this.currentIndex,
-            team = this.value,
-            silent = model.silent || false;
+            team = this.value;
         team[index || 0].id = model.id;
         team[index || 0].name = model.value;
-        this.model.set(this.def.name, team, {silent: true});
-        //Since team is an array form, onchange backbone triggers only the team_name array is added or removed.
-        //Replacing among the list item should call onchange function.
-        if(!silent) {
-            this.model.trigger("change:" + this.def.name);
-        }
+        this._updateAndTriggerChange(team);
     },
     format: function(value) {
         if(this.model.isNew()) {
             //load the default team setting that is specified in the user profile settings
-            value = value || app.user.getPreference("default_teams");
+            if(_.isEmpty(value)){
+                value = app.user.getPreference("default_teams");
+            }
             this.model.set(this.name, value);
         }
-
-        if(_.isArray(value)) {
-            value = _.sortBy(value, function(team) {
-                delete team.add_button;
-                return team.primary ? -1 : 0;
-            });
-        } else {
+        if(this.tplName === 'list') {
+            return _.isArray(value) ? value[0].name : value;
+        }
+        if(!_.isArray(value)) {
             value = [
                 {name: value}
             ];
         }
-        value[value.length - 1].add_button = true;
-        if(this.tplName === 'list' && _.isArray(value)) {
-            value = value[0].name;
+        // Place the add button as needed
+        if(_.isArray(value) && value.length > 0){
+            _.each(value, function(team){
+                delete team.remove_button;
+                delete team.add_button;
+            });
+            value[value.length - 1].add_button = true;
+            if(value.length > 1){
+                _.each(value, function(team){
+                    team.remove_button = true;
+                });
+            }
         }
         return value;
     },
     addTeam: function() {
         this.value.push({});
-        this.model.set(this.def.name, this.value, {silent: true});
-        this.model.trigger("change:" + this.def.name);
+        this._updateAndTriggerChange(this.value);
     },
     removeTeam: function(index) {
+        // Do not remove last team.
         if(index === 0 && this.value.length === 1) {
-            this.value[index] = {};
+            return;
         } else {
-            this.value.splice(index, 1);
+            //Pick first team to be Primary if we're removing Primary team
+            var removed = this.value.splice(index, 1);
+            if(removed && removed.length > 0 && removed[0].primary){
+                this.setPrimary(0);
+            }
         }
-        this.model.set(this.def.name, this.value, {silent: true});
-        this.model.trigger("change:" + this.def.name);
+        this._updateAndTriggerChange(this.value);
     },
     setPrimary: function(index) {
         _.each(this.value, function(team, i) {
-            team.primary = (i == index) ? true : false;
+            team.primary = false;
         });
-        this.model.set(this.def.name, this.value, {silent: true});
+        //If this team is set, then allow it to turn primary
+        if(this.value[index].name){
+            this.value[index].primary = true;
+        }
+        this._updateAndTriggerChange(this.value);
+        return (this.value[index]) ? this.value[index].primary : false;
+    },
+    //Forcing change event since backbone isn't picking up on changes within an object within the array.
+    inputChanged: function(evt){
+        this._updateAndTriggerChange(this.value);
+    },
+    /**
+     * Forcing change event on value update since backbone isn't picking up on changes within an object within the array.
+     * @param value New value for teamset field
+     * @private
+     */
+    _updateAndTriggerChange: function(value){
+        this.model.set(this.name, value, {silent: true});
+        this.model.trigger("change:"+this.name);
+        this.model.trigger("change");
     },
     addItem: _.debounce(function(evt) {
         this.addTeam();
     }, 0),
     removeItem: _.debounce(function(evt) {
         var index = $(evt.currentTarget).data('index');
-        this.removeTeam(index);
+        if(_.isNumber(index)){
+            this.removeTeam(index);
+        }
     }, 0),
     setPrimaryItem: _.debounce(function(evt) {
         var index = $(evt.currentTarget).data('index');
-        this.setPrimary(index);
         this.$(".btn[name=primary]").removeClass("active");
-        this.$(".btn[name=primary][data-index=" + index + "]").addClass("active");
+        if(this.setPrimary(index)){
+            this.$(".btn[name=primary][data-index=" + index + "]").addClass("active");
+        }
     }, 0),
-    bindDomChange: function() {
-        //To avoid re-render on change the field
-    },
     getFieldElement: function() {
         return this.$el;
     }
-    //TODO: Handle validation error
 })

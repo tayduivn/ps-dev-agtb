@@ -38,17 +38,33 @@
                 this.populateToRecipients(recipientModel);
             }
         }
+
+        this.initMainButtonStatus();
     },
 
-    bindDataChange: function() {
-        // If email is considered valid, enable the dropdown menu.  If not, disable
-        this.model.on('change', function() {
-            if (this.isEmailSendable()) {
-                this.getField('main_dropdown').setDisabled(false);
-            } else {
-                this.getField('main_dropdown').setDisabled(true);
-            }
+    /**
+     * Set enabled/disabled status on the page action dropdown menu based on whether email is sendable
+     * And listen for changes to the relevant field to enable the action dropdown when it becomes sendable
+     */
+    initMainButtonStatus: function() {
+        //If email is considered valid, enable the dropdown menu.  If not, disable
+        var toggleMainButtons = _.bind(function() {
+            this.setMainButtonsDisabled(!(this.isEmailSendable()));
         }, this);
+
+        //Call toggle immediately to initialize the buttons appropriately
+        toggleMainButtons();
+
+        //Then set up listeners
+        this.getField('to_addresses').getFieldElement().keyup(toggleMainButtons);
+    },
+
+    /**
+     * Enable/disable the page action dropdown menu based on whether email is sendable
+     * @param enabled
+     */
+    setMainButtonsDisabled: function(disabled) {
+        this.getField('main_dropdown').setDisabled(disabled);
     },
 
     /**
@@ -246,7 +262,13 @@
             );
         }, this);
 
-        if (!this.isFieldPopulated('subject')) {
+        if (!this.isFieldPopulated('subject') && !this.isFieldPopulated('html_body')) {
+            app.alert.show('send_confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_NO_SUBJECT_NO_BODY_SEND_ANYWAYS', this.module),
+                onConfirm: sendEmail
+            });
+        } else if (!this.isFieldPopulated('subject')) {
             app.alert.show('send_confirmation', {
                 level: 'confirmation',
                 messages: app.lang.get('LBL_SEND_ANYWAYS', this.module),
@@ -275,6 +297,7 @@
         var myURL,
             sendModel = this.initializeSendEmailModel();
 
+        this.setMainButtonsDisabled(true);
         app.alert.show('mail_call_status', {level: 'process', title: pendingMessage});
 
         sendModel.set('status', status);
@@ -291,7 +314,10 @@
                 }
                 app.alert.dismiss('mail_call_status');
                 app.alert.show('mail_call_status', msg);
-            }
+            },
+            complete:_.bind(function() {
+                this.setMainButtonsDisabled(false);
+            }, this)
         });
     },
 
@@ -300,8 +326,7 @@
      * @return {*}
      */
     isEmailSendable: function() {
-        return this.isFieldPopulated('to_addresses') &&
-            (this.isFieldPopulated('subject') || this.isFieldPopulated('html_body'));
+        return this.isFieldPopulated('to_addresses');
     },
 
     /**

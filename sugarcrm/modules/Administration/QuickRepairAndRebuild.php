@@ -461,7 +461,7 @@ class RepairAndClear
 			}
 		} else if(in_array(translate('LBL_ALL_MODULES'), $this->module_list)) {
 			foreach ($beanFiles as $bean => $file){
-			    $bean_instance = BeanFactory::newBeanByName($bean_name);
+			    $bean_instance = BeanFactory::newBeanByName($bean);
 				if(!empty($bean_instance)) {
 				    $this->_rebuildAuditTablesHelper($bean_instance);
 				}

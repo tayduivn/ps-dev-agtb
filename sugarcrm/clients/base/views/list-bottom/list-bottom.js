@@ -36,6 +36,13 @@
     events: {
         'click [name=show_more_button]': 'showMoreRecords'
     },
+
+    initialize: function(opts) {
+        app.view.View.prototype.initialize.call(this, opts);
+
+        this.layout.bind("hide", this.toggleVisibility, this);
+    },
+
     _renderHtml: function() {
 
         // Dashboard layout injects shared context with limit: 5. 
@@ -59,10 +66,10 @@
         _.each(this.collection.models, function(model) {
             model.old = true;
         });
-        
+
         // Display loading message
         app.alert.show('show_more_records_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
-        
+
         // save current screen position
         var screenPosition = $('html').offset().top;
 
@@ -71,7 +78,7 @@
 
         // Indicates records will be added to those already loaded in to view
         options.add = true;
-            
+
         options.success = function() {
             // Hide loading message
             app.alert.dismiss('show_more_records_' + self.cid);
@@ -99,21 +106,30 @@
             previousTerms = app.cache.get('previousTerms');
             if(previousTerms) {
                 term = previousTerms[this.module];
-            } 
+            }
         }
         // build search-specific options and return
         options = {
-            params: { 
+            params: {
                 q: term
             },
             fields: collection.fields ? collection.fields : this.collection
         };
         return options;
     },
+
     bindDataChange: function() {
         if(this.collection) {
             this.collection.on("reset", this.render, this);
         }
-    }
+    },
 
+    // For certain layouts that want to trigger
+    toggleVisibility: function(e) {
+        if (e) {
+            this.$el.show();
+        } else {
+            this.$el.hide();
+        }
+    }
 })

@@ -95,6 +95,13 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'label' => 'LNK_VIEW_CHANGE_LOG',
                     'value' => 'view'
                 ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:convert_to_quote:click',
+                    'name' => 'convert_to_quote_button',
+                    'label' => 'LBL_CONVERT_TO_QUOTE',
+                    'value' => 'view'
+                ),
             ),
         ),
         array(

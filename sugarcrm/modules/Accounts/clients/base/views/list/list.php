@@ -68,6 +68,7 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'width' => '10%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
+                    'sortable' => false,
                     'default' => true,
                 ),
                 array(

@@ -31,7 +31,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['Tasks']['base']['view']['list'] = array(
     'panels' =>
     array(
-        0 =>
         array(
             'label' => 'LBL_PANEL_1',
             'fields' =>
@@ -43,13 +42,14 @@ $viewdefs['Tasks']['base']['view']['list'] = array(
                     'link' => true,
                     'sortable' => false,
                     'default' => true,
-                    'related_fields' => array('status')),
+                    'related_fields' => array('status'),
+                ),
                 array(
                     'name' => 'name',
                     'width' =>  40,
                     'link' => true,
                     'label' => 'LBL_LIST_SUBJECT',
-                    'default' => true
+                    'default' => true,
                 ),
                 array(
                     'name' => 'contact_name',
@@ -60,63 +60,74 @@ $viewdefs['Tasks']['base']['view']['list'] = array(
                     'module' => 'Contacts',
                     'default' => true,
                     'ACLTag' => 'CONTACT',
-                    'related_fields' => array('contact_id')), 
+                    'related_fields' => array('contact_id'),
+                    'sortable' => false,
+                ),
                 array(
                     'name' => 'parent_name',
-                    'width'   => '20', 
+                    'width'   => '20',
                     'label'   => 'LBL_LIST_RELATED_TO',
                     'dynamic_module' => 'PARENT_TYPE',
                     'id' => 'PARENT_ID',
                     'link' => true, 
                     'default' => true,
-                    'sortable' => false,        
+                    'sortable' => false,
                     'ACLTag' => 'PARENT',
-                    'related_fields' => array('parent_id', 'parent_type')), 
+                    'related_fields' => array('parent_id', 'parent_type'),
+                ),
                 array(
                     'name' => 'date_due',
                     'width' => '15', 
                     'label' => 'LBL_LIST_DUE_DATE', 
                     'link' => false,
-                    'default' => true),
+                    'default' => true,
+                ),
                 array(
                     'name' => 'time_due',
                     'width' => '15', 
                     'label' => 'LBL_LIST_DUE_TIME', 
                     'sortable' => false, 
                     'link' => false,
-                    'default' => true),   
+                    'default' => true,
+                ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'width' => '2', 
                     'label' => 'LBL_LIST_TEAM',
-                    'default' => false),        
+                    'default' => false,
+                    'sortable' => false,
+                ),
                 //END SUGARCRM flav=pro ONLY
-                
                 array(
                     'name' => 'assigned_user_name',
                     'width' => '2', 
                     'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
                     'module' => 'Employees',
                     'id' => 'ASSIGNED_USER_ID',
-                    'default' => true),
+                    'default' => true,
+                    'sortable' => false,
+                ),
                 array(
                     'name' => 'date_start',
                     'width' => '5', 
                     'label' => 'LBL_LIST_START_DATE', 
                     'link' => false,
-                    'default' => false),  
+                    'default' => false,
+                ),
                 array(
                     'name' => 'status',
                     'width' => '10', 
                     'label' => 'LBL_LIST_STATUS', 
                     'link' => false,
-                    'default' => false),
+                    'default' => false,
+                ),
                 array (
                     'name' => 'date_entered',
                     'width' => '10',
                     'label' => 'LBL_DATE_ENTERED',
-                    'default' => true),            
+                    'default' => true,
+                ),
             ),
         ),
     ),
