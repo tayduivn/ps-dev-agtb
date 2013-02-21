@@ -42,13 +42,10 @@
       }
     }
   }
-  li:first-child a {
-    border-top: none;
-    .border-radius(4px 4px 0 0);
-  }
-  li:last-child a {
-    border-bottom: none;
-    .border-radius(0 0 4px 4px);
+
+  li {
+    line-height: 32px;
+    padding: 0 10px;
   }
   //boostrap override
   li > a {
@@ -56,14 +53,13 @@
   }
   //replicate bootstrap styles from li > a
   a {
-    display: block;
+    display: inline !important;
     padding: 8px 10px;
     clear: both;
     font-weight: normal;
     line-height: 18px;
-    color: @gray;
+    color: @linkColor;
     white-space: nowrap;
-
     margin: 0;
     border-top: 1px solid @grayLighter;
     //background: #E1F0FA;
@@ -87,11 +83,12 @@
       color: @grayLight !important;
     }
   }
+
   // Hover state
   // -----------
-  li > a:hover,
+  li:hover,
   li > span > a:hover,
-  .active > a,
+  .active,
   .active > span > a,
   .active > a:hover,
   .active > span > a:hover {
@@ -102,6 +99,13 @@
     background: @dropdownLinkBackgroundHover;
     //background-color: transparent;
   }
+
+  li.active > a {
+    background-color: transparent;
+    background-image: none;
+    color: @linkColor;
+  }
+
   label.radio {
     color: lighten(@gray, 20%);
     padding-left: 0px;
@@ -133,19 +137,6 @@
   }
 }
 
-//nutmeg
-/*.dropdown-toggle {
-  @shadow: inset 1px 0 0 rgba(255,255,255,.125), inset 0 1px 0 rgba(255,255,255,.2), 0 1px 3px rgba(0,0,0,.1);
-  .box-shadow(@shadow);
-  *padding-top: 5px;
-  *padding-bottom: 5px;
-    .rtlBorderRadiusTopLeft(@direction,3px);
-    .rtlBorderRadiusBottomLeft(@direction,3px);
-    .rtlBorderRadiusBottomRight(@direction,0);
-    .rtlBorderRadiusTopRight(@direction,0);
-}
-
-*/
 .caret {
   .opacity(30);
 }
