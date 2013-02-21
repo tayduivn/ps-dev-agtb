@@ -111,8 +111,10 @@ class RestTestPortalBase extends RestTestBase {
     {
         global $db;
         // Re-enable the old portal users
-        $portalIds = "('".implode("','",$this->oldPortal)."')";
-        $db->query("UPDATE users SET deleted = '0' WHERE id IN {$portalIds}");
+        if ( isset($this->oldPortal) ) {
+            $portalIds = "('".implode("','",$this->oldPortal)."')";
+            $db->query("UPDATE users SET deleted = '0' WHERE id IN {$portalIds}");
+        }
 
 
         // Delete test support_portal user
