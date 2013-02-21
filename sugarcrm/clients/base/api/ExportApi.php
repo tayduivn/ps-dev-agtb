@@ -119,7 +119,7 @@ class ExportApi extends SugarApi {
         }
         ///////////////////////////////////////////////////////////////////////////////
         ////	BUILD THE EXPORT FILE
-        ob_clean();
+        ob_end_clean();
         header("Pragma: cache");
         header("Content-type: application/octet-stream; charset=".$GLOBALS['locale']->getExportCharset());
         header("Content-Disposition: attachment; filename={$filename}.csv");
