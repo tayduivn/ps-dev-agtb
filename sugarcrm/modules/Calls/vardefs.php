@@ -96,6 +96,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   	'group'=>'parent_name',
     'options'=> 'parent_type_display',
   	'len'=>255,
+    'studio' => array('wirelesslistview'=>false),
       'comment' => 'The Sugar object to which the call is related'
   	),
 
