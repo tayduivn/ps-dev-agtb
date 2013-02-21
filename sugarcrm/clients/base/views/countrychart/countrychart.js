@@ -5,11 +5,11 @@
         app.view.View.prototype.initialize.call(this, options);
     },
 
-    _render: function() {
+    _renderHtml: function() {
         var self = this,
             node, max, color, xy, svg, path, width, height;
 
-        app.view.View.prototype._render.call(this);
+        app.view.View.prototype._renderHtml.call(this);
 
         if (!_.isEmpty(this.results)) {
             node = $('div svg');
@@ -67,8 +67,7 @@
                     country = self._checkCountry(country);
                     self.results[country] = parseInt(amount, 10);
                 });
-
-                self.render();
+                if (!self.disposed) self.render();
             }
         });
     },
