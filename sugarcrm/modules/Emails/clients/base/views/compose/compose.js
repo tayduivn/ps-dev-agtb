@@ -522,16 +522,73 @@
      * @private
      */
     _insertSignature: function(signature) {
-        var editor,
-            emailBody;
-
         if (_.isObject(signature) && signature.signature_html) {
-            editor    = this.getField("html_body");
-            emailBody = editor.getEditorContent();
+            var signatureContent          = this._formatSignature(signature.signature_html),
+                emailBody                 = this.model.get("html_body") || "",
+                signatureOpenTag          = '<br class="signature-begin" />',
+                signatureCloseTag         = '<br class="signature-end" />',
+                signatureOpenTagForRegex  = '(<br\ class=[\'"]signature\-begin[\'"].*?\/?>)',
+                signatureCloseTagForRegex = '(<br\ class=[\'"]signature\-end[\'"].*?\/?>)',
+                signatureOpenTagMatches   = emailBody.match(new RegExp(signatureOpenTagForRegex, "gi")),
+                signatureCloseTagMatches  = emailBody.match(new RegExp(signatureCloseTagForRegex, "gi")),
+                regex                     = new RegExp(signatureOpenTagForRegex + ".*?" + signatureCloseTagForRegex, "gi");
 
-            emailBody += this._formatSignature(signature.signature_html);
-            editor.setEditorContent(emailBody);
+            if (signatureOpenTagMatches && !signatureCloseTagMatches) {
+                // there is a signature, but no close tag; so the signature runs from open tag until EOF
+                emailBody = this._insertSignatureTag(emailBody, signatureCloseTag, false); // append the close tag
+            } else if (!signatureOpenTagMatches && signatureCloseTagMatches) {
+                // there is a signature, but no open tag; so the signature runs from BOF until close tag
+                emailBody = this._insertSignatureTag(emailBody, signatureOpenTag, true); // prepend the open tag
+            } else if (!signatureOpenTagMatches && !signatureCloseTagMatches) {
+                // there is no signature, so add the tag to the correct location
+                emailBody = this._insertSignatureTag(
+                    emailBody,
+                    signatureOpenTag + signatureCloseTag, // insert both tags as one
+                    (app.user.getPreference("signature_prepend") == "true"));
+            }
+
+            this.model.set("html_body", emailBody.replace(regex, "$1" + signatureContent + "$2"));
         }
+    },
+
+    /**
+     * Inserts a tag into the editor to surround the signature so the signature can be identified again.
+     *
+     * @param body
+     * @param tag
+     * @param prepend
+     * @return {String}
+     * @private
+     */
+    _insertSignatureTag: function(body, tag, prepend) {
+        var preSignature  = "",
+            postSignature = "";
+
+        prepend = prepend || false;
+
+        if (prepend) {
+            var bodyOpenTag    = "<body>",
+                bodyOpenTagLoc = body.indexOf(bodyOpenTag);
+
+            if (bodyOpenTagLoc > -1) {
+                preSignature  = body.substr(0, bodyOpenTagLoc + bodyOpenTag.length);
+                postSignature = body.substr(bodyOpenTagLoc + bodyOpenTag.length, body.length);
+            } else {
+                postSignature = body;
+            }
+        } else {
+            var bodyCloseTag    = "</body>",
+                bodyCloseTagLoc = body.indexOf(bodyCloseTag);
+
+            if (bodyCloseTagLoc > -1) {
+                preSignature  = body.substr(0, bodyCloseTagLoc.length);
+                postSignature = body.substr(bodyCloseTagLoc, body.length);
+            } else {
+                preSignature = body;
+            }
+        }
+
+        return preSignature + tag + postSignature;
     },
 
     /**
