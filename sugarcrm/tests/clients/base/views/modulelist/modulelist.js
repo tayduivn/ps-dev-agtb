@@ -118,5 +118,45 @@ describe("Module List", function() {
             expect(result).toEqual(meta);
             SugarTest.app.acl.hasAccess.restore();
         });
+        it("should trigger data event on click of action links", function() {
+            var cbspy = sinon.spy();
+
+            SugarTest.app.events.register("sugar:app:testEvent", view);
+            SugarTest.app.events.on("sugar:app:testEvent", cbspy, view);
+            var testEl = $('<li class="dropdown" data-module="testModule"><div><div><div><div data-event="sugar:app:testEvent"></div></div></div></div></li>');
+                view.$el.append(testEl);
+            var event = {
+                currentTarget:testEl.find('[data-event=\'sugar:app:testEvent\']')
+            };
+            view.handleMenuEvent(event);
+            expect(cbspy).toHaveBeenCalled();
+            expect(cbspy).toHaveBeenCalledWith("testModule", event);
+            SugarTest.app.events.unregister(view,"sugar:app:testEvent");
+        });
+        it("should route and open create drawer on app view open", function() {
+            // sinon stub .restore will return a error here if router or drawer is undefined like it is below
+            // so workaround by storing old values
+            var oRouter = SugarTest.app.router;
+            var oDrawer = SugarTest.app.drawer;
+            SugarTest.app.router = sinon.stub({
+                navigate: function(){
+
+                },
+                buildRoute: function(){
+
+                }
+            });
+            SugarTest.app.drawer = sinon.stub({
+                open: function(){
+
+                }
+            });
+            view.handleCreateLink('testModule',{});
+            expect(SugarTest.app.router.navigate).toHaveBeenCalled();
+            expect(SugarTest.app.router.buildRoute).toHaveBeenCalled();
+
+            SugarTest.app.router = oRouter;
+            SugarTest.app.router = oDrawer;
+        });
     });
 });

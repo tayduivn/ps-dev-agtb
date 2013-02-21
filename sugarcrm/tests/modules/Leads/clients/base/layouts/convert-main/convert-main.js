@@ -16,6 +16,110 @@ describe("ConvertLeadLayout", function() {
         SugarTest.addComponent('base', 'layout', 'dupecheck', createMockDupeView());
         SugarTest.addComponent('base', 'view', 'create', createMockRecordView());
         SugarTest.testMetadata.set();
+
+
+        SugarTest.testMetadata.addViewDefinition('create', {
+            "panels":[
+                {
+                    "name":"panel_header",
+                    "placeholders":true,
+                    "header":true,
+                    "labels":false,
+                    "fields":[
+                        {
+                            "name":"first_name",
+                            "label":"",
+                            "placeholder":"LBL_NAME"
+                        },
+                        {
+                            "name":"last_name",
+                            "label":"",
+                            "placeholder":"LBL_NAME"
+                        }
+                    ]
+                }, {
+                    "name":"panel_body",
+                    "columns":2,
+                    "labels":false,
+                    "labelsOnTop":true,
+                    "placeholders":true,
+                    "fields":[
+                        "phone_work",
+                        "email1",
+                        "full_name"
+                    ]
+                }
+            ]
+        }, 'Contacts');
+
+        SugarTest.testMetadata.addViewDefinition('create', {
+            "panels":[
+                {
+                    "name":"panel_header",
+                    "placeholders":true,
+                    "header":true,
+                    "labels":false,
+                    "fields":[
+                            "name",
+                            "email"
+                    ]
+                }, {
+                    "name":"panel_body",
+                    "columns":2,
+                    "labels":false,
+                    "labelsOnTop":true,
+                    "placeholders":true,
+                    "fields":[
+                        'account_type',
+                        'industry',
+                        'annual_revenue'
+                    ]
+                }
+            ]
+        }, 'Accounts');
+
+        SugarTest.testMetadata.addViewDefinition('create', {
+            "panels":[
+                {
+                    "name":"panel_header",
+                    "placeholders":true,
+                    "header":true,
+                    "labels":false,
+                    "fields":[
+                        {
+                            "name":"first_name",
+                            "label":"",
+                            "placeholder":"LBL_NAME"
+                        },
+                        {
+                            "name":"last_name",
+                            "label":"",
+                            "placeholder":"LBL_NAME"
+                        }
+                    ]
+                }, {
+                    "name":"panel_body",
+                    "columns":2,
+                    "labels":false,
+                    "labelsOnTop":true,
+                    "placeholders":true,
+                    "fields":[
+                        "phone_work",
+                        "email1",
+                        "full_name"
+                    ]
+                }
+            ]
+        }, 'Opportunities');
+
+        //Injecting the dupecheck property into the modules
+        var modules = app.metadata.getModules();
+         _.each(modules, function(module){
+            module.dupCheckEnabled = true;
+        });
+
+        app.metadata.set(modules);
+
     });
 
     afterEach(function() {
@@ -38,20 +142,27 @@ describe("ConvertLeadLayout", function() {
                 },
                 {
                     'module': 'Accounts',
-                    'duplicateCheck': true,
+                    'duplicateCheckOnStart': true,
                     'required': true,
                     'fieldMapping': {
                         'name': 'account_name'
                     }
                 },
                 {
-                    'module': 'Opportunities',
-                    'duplicateCheck': false,
-                    'required': false,
-                    'fieldMapping': {
-                        'name': 'opportunity_name'
+                    'module':'Opportunities',
+                    'duplicateCheckOnStart':false,
+                    'required':false,
+                    'fieldMapping':{
+                        'name':'opportunity_name'
                     },
-                    'dependentModules': ['Contacts', 'Accounts']
+                    "dependentModules":{
+                        "Accounts":{
+                            "fieldMapping":{
+                                "id":"account_id"
+                            }
+                        },
+                        "Contacts":{}
+                    }
                 }
             ]
         };
@@ -101,7 +212,10 @@ describe("ConvertLeadLayout", function() {
 
         it("components on the layout each have a duplicate view and create/record view", function() {
             layout.render();
-            _.each(layout._components, function(component) {
+
+            expect(layout._components.length).toEqual(9);
+            var panels = _.first(layout._components, 3);
+            _.each(panels, function(component) {
                 expect(component.duplicateView).toBeDefined();
                 expect(component.recordView).toBeDefined();
             });
@@ -249,7 +363,8 @@ describe("ConvertLeadLayout", function() {
             last_name = 'mylastname',
             account_name = 'myaccname',
             opportunity_name = 'myoppname',
-            actualConvertModel;
+            actualConvertModel,
+            apiCallStub;
 
         beforeEach(function() {
             actualConvertModel = {};
@@ -259,46 +374,48 @@ describe("ConvertLeadLayout", function() {
             leadModel.set('opportunity_name', opportunity_name);
             layout.render();
             showAlertStub = sinon.stub(SugarTest.app.alert, 'show', $.noop());
+
+            apiCallStub = sinon.stub(app.api, 'call');
         });
 
         afterEach(function() {
+            apiCallStub.restore();
             showAlertStub.restore();
             delete layout;
         });
 
-        var getMockCreateConvertModel = function() {
-            return function () {
-                var convertModel = Backbone.Model.extend({
-                    sync:function (method, model) {
-                        actualConvertModel = model;
-                    }
-                });
-
-                return new convertModel();
-            }
-        };
 
         it("clicking on finish after completing all panels bundles up models from each panel and calls the API", function() {
             var expectedConvertModel = '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"},"Opportunities":{"name":"'+opportunity_name+'"}}}';
-            var stub = sinon.stub(layout, 'createConvertModel', getMockCreateConvertModel());
 
             layout._components[1].$('.header').click(); //click Account to complete Contact
             layout._components[1].$('.header').find('.show-record').click();
             layout._components[2].$('.header').click(); //click Opportunity to complete Account
             layout.initiateFinish(); //click finish to complete Opportunity
+
+
+            expect(apiCallStub.lastCall.args[0]).toEqual('create');
+            expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Leads\/convert/);
+
+            actualConvertModel = apiCallStub.lastCall.args[2];
+
             expect(JSON.stringify(actualConvertModel)).toEqual(expectedConvertModel);
-            stub.restore();
+
         });
 
         it("clicking on finish when optional panels have not been completed should not pass the optional model to API", function() {
             var expectedConvertModel = '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"}}}';
-            var stub = sinon.stub(layout, 'createConvertModel', getMockCreateConvertModel());
 
             layout._components[1].$('.header').click(); //click Account to complete Contact
             layout._components[1].$('.header').find('.show-record').click();
             layout.initiateFinish(); //click finish to complete Account
+
+            expect(apiCallStub.lastCall.args[0]).toEqual('create');
+            expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Leads\/convert/);
+
+            actualConvertModel = apiCallStub.lastCall.args[2];
             expect(JSON.stringify(actualConvertModel)).toEqual(expectedConvertModel);
-            stub.restore();
+
         });
     });
 

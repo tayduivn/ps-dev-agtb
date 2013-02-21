@@ -8,7 +8,8 @@ describe("Base.Field.Teamset", function() {
             "name": "team_name",
             "rname": "name",
             "vname": "LBL_TEAM_NAME",
-            "type": "teamset",
+            "type": "relate",
+            "custom_type" : "teamset",
             "link": "accounts",
             "table": "accounts",
             "join_name": "accounts",
@@ -94,13 +95,42 @@ describe("Base.Field.Teamset", function() {
     it("should set a team as primary", function() {
         field.model.set('team_name', [{id:'111-222', name: 'blahblah', primary:false}, {id:'abc-eee', name: 'poo boo', primary:true}]);
         field.render();
-
-        expect(field.value[1].primary).toBe(false);
-        expect(field.value[0].primary).toBe(true);
-
-        field.setPrimary(1);
-        expect(field.value[1].primary).toBe(true);
         expect(field.value[0].primary).toBe(false);
+        expect(field.value[1].primary).toBe(true);
+
+        field.setPrimary(0);
+        expect(field.value[0].primary).toBe(true);
+        expect(field.value[1].primary).toBe(false);
+
+    });
+
+    it("should not let you remove last team when there is only one team left", function(){
+        field.model.set('team_name', [{id:'111-222', name: 'blahblah', primary:true}]);
+        field.render();
+        field.removeTeam(0);
+        expect(field.value[0].id).toEqual('111-222');
+    });
+
+    it("should have an add button but not a remove button when there is only one team left", function(){
+        field.model.set('team_name', [{id:'111-222', name: 'blahblah', primary:true}]);
+        field.render();
+        expect(field.value).toEqual([{id:'111-222', name: 'blahblah', primary:true, add_button: true}]);
+    });
+
+    it("with multiple teams should have remove buttons and an add button on last team", function(){
+        field.model.set('team_name', [{id:'111-222', name: 'blahblah', primary:true}, {id:'222-333', name: 'blahblah2', primary:false}]);
+        field.render();
+        expect(field.value[0]).toEqual({id:'111-222', name: 'blahblah', primary:true, remove_button: true});
+        expect(field.value[1]).toEqual({id:'222-333', name: 'blahblah2', primary:false, remove_button: true, add_button: true});
+    });
+
+    it("cannot make a blank team the primary team", function(){
+        field.model.set('team_name', [{id:'abc-eee', name: 'poo boo', primary:true}, {primary:false}]);
+        field.render();
+        expect(field.value[0].primary).toBe(true);
+        expect(field.value[1].primary).toBe(false);
+        field.setPrimary(1);
+        expect(field.value[1].primary).toBe(false);
 
     });
 });

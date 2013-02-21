@@ -53,6 +53,7 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'width' => '15%',
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'default' => true,
+                    'sortable' => false,
                 ),
                 array (
                     'name'  => 'phone_work',
@@ -72,6 +73,7 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'width' => '5%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'default' => true,
+                    'sortable' => false,
                 ),
                 array (
                     'name'  => 'date_entered',

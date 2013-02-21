@@ -64,28 +64,23 @@
             {{#each meta.panels}}
 
                 {{#unless header}}
+
+                    {{#if ../labelsOnTop}}
+
                     {{#each grid}}
-                        <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
+                        <div class="row-fluid {{../../name}}{{#if ../../hide}} hide{{/if}}">
                             {{#each this}}
-                                {{#unless ../../this.labelsOnTop}}
-                                    {{#unless ../this.dismiss_label}}
-                                        {{#if ../../../../../this.labels}}
-                                            <label class="span{{../../this.labelSpan}} tright record-label" data-name="{{../../../this.name}}">{{str ../../this.label ../../../../../../../this.model.module}}</label>
-                                        {{/if}}
-                                    {{/unless}}
-                                {{/unless}}
-                                <div class="span{{this.span}} record-cell{{#if cell_css}} {{cell_css}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
-                                    {{#if ../../this.labelsOnTop}}
-                                        {{#if ../../../this.labels}}
-                                            <div class="record-label" data-name="{{../../this.name}}">{{#unless ../../this.dismiss_label}}{{str ../../this.label ../../../../../../../this.model.module}}{{/unless}}</div>
-                                        {{/if}}
+
+                                <div class="span{{this.span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
+                                    {{#if ../../../this.labels}}
+                                        <div class="record-label" data-name="{{../../this.name}}">{{#unless ../../this.dismiss_label}}{{str ../../this.label ../../../../../../../this.model.module}}{{/unless}}</div>
                                     {{/if}}
                                     {{#if name}}
-                                        <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../this.module}}-{{name}}">
-                                            {{field ../../../../../this ../../../../../../this.model ../../../../../../this.action}}
+                                        <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../../../this.module}}-{{name}}">
+                                            {{field ../../../../../../this ../../../../../../../this.model ../../../../../../../this.action}}
                                         </span>
                                     {{/if}}
-                                    {{#unless ../../../../../createMode}}
+                                    {{#unless ../../../../../../createMode}}
                                         {{#unless noedit}}
                                             <span class="record-edit-link-wrapper" data-name="{{../name}}">
                                                 <a class="record-edit-link btn btn-invisible" data-type="{{../type}}" data-name="{{../name}}"><i class="icon-pencil"></i></a>
@@ -96,6 +91,49 @@
                             {{/each}}
                         </div>
                     {{/each}}
+
+                    {{else}}
+
+                <div class="form-horizontal">
+                    <fieldset class="card2">
+                    {{#each grid}}
+                        <div class="row-fluid control-group {{../../name}}{{#if ../../hide}} hide{{/if}}">
+                            {{#each this}}
+
+                                {{#unless this.dismiss_label}}
+                                    {{#if ../../../this.labels}}
+                                    <div class="control-label span{{this.labelSpan}} {{label_css_class}}">
+                                        {{#if ../this.label}}
+                                        <div class="control-label-background span{{this.labelSpan}}">
+                                        <label class="tright record-label" data-name="{{../this.name}}">{{str ../../this.label ../../../../../../../../this.model.module}}:</label>
+                                        </div>
+                                        {{/if}}
+                                    </div>
+                                    {{/if}}
+                                {{/unless}}
+
+                                <div class="controls span{{this.span}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
+                                    {{#if name}}
+                                        <span class='normal {{css}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../../../this.module}}-{{name}}">
+                                            {{field ../../../../../../this ../../../../../../this.model ../../../../../../this.action}}
+                                        </span>
+                                    {{/if}}
+                                    {{#unless ../../../../../../createMode}}
+                                        {{#unless noedit}}
+                                            <span class="record-edit-link-wrapper" data-name="{{../../name}}">
+                                                <a class="record-edit-link btn btn-invisible" data-type="{{../../type}}" data-name="{{../../name}}"><i class="icon-pencil"></i></a>
+                                            </span>
+                                        {{/unless}}
+                                    {{/unless}}
+                                </div>
+                            {{/each}}
+                        </div>
+                    {{/each}}
+                    </fieldset>
+                </div>
+
+                    {{/if}}
+
                 {{/unless}}
             {{/each}}
         </div>

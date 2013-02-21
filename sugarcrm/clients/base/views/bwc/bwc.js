@@ -25,9 +25,13 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    initialize: function(options) {
+    tagName: 'iframe',
+    className: 'bwc-frame',
+    // TODO check if we need to support multiple bwc views
+    id: 'bwc-frame',
 
-        this.url = options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index';
+    initialize: function(options) {
+        this.$el.attr('src', options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index');
         app.view.View.prototype.initialize.call(this, options);
     },
 
@@ -46,7 +50,7 @@
 
         app.view.View.prototype._renderHtml.call(this);
 
-        this.$el.find('iframe').load(function() {
+        this.$el.load(function() {
             window.parent.location.hash = '#bwc/index.php' + this.contentWindow.location.search;
 
             if (this.contentWindow.$ === undefined) {
@@ -213,7 +217,6 @@
             'ProductBundleNotes',
             'ProductBundles',
             'ProductCategories',
-            'ProductTemplates',
             'ProductTypes',
             'Project',
             'ProjectResources',

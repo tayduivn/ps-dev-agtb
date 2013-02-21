@@ -10,7 +10,38 @@
         'click .dtoggle': 'toggleDropdown',
         'click .more': 'showMore',
         'mouseleave .more-drop-container' : 'hideMore',
-        'mouseleave .dropdown-menu': 'hideMenu'
+        'mouseleave .dropdown-menu': 'hideMenu',
+        'click .actionLink' : 'handleMenuEvent'
+    },
+    handleMenuEvent:function (evt) {
+        var $currentTarget = this.$(evt.currentTarget);
+        if ($currentTarget.data('event')) {
+            var module = $currentTarget.closest('li.dropdown').data('module');
+            app.events.trigger($currentTarget.data('event'), module, evt);
+        }
+    },
+    handleCreateLink:function (module, eventObj) {
+        app.router.navigate(
+            app.router.buildRoute(module, false, false),
+            {
+                trigger:true
+            }
+        );
+
+        app.drawer.open({
+            layout:'create',
+            context:{
+                create:true
+            }
+        }, _.bind(function (refresh) {
+            if (refresh) {
+                var collection = app.controller.context.get('collection');
+                if (collection) {
+                    collection.fetch();
+                }
+            }
+        }, this));
+
     },
     hideMenu: function(event) {
         this.$(event.target).dropdown('toggle').closest('li.dropdown.open').removeClass('open');
@@ -27,6 +58,8 @@
         app.user.on("change:module_list", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
         var resizeFn = _.debounce(this.resize, 300);
+        app.events.register("megamenu:create:click", this);
+        app.events.on("megamenu:create:click", this.handleCreateLink, this);
         if (this.layout) {
             this.layout.on("view:resize", resizeFn, this);
         }

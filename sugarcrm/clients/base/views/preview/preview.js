@@ -123,8 +123,8 @@
      */
     renderPreview: function(model, collection) {
         if (model && collection) {
-            this.model = app.data.createBean(model.get('_module') || model.module, model.toJSON());
-            this.collection = app.data.createBeanCollection(model.get('_module'), collection.models);
+            this.model = app.data.createBean(model.module, model.toJSON());
+            this.collection = app.data.createBeanCollection(model.module, collection.models);
 
             // Get the corresponding detail view meta for said module
             this.meta = app.metadata.getView(this.model.module, 'record') || {};
@@ -172,7 +172,7 @@
      */
     switchPreview: function(data, index, id, module) {
         var self = this,
-            currModule = module || this.model.get("_module"),
+            currModule = module || this.model.module,
             currID = id || this.model.get("postId") || this.model.get("id"),
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
 

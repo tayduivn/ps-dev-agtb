@@ -16,17 +16,17 @@
     rowTemplate: Handlebars.compile('<article class="filter-body newRow">' +
 '     <div class="row-fluid">' +
 '       <div class="filter-field controls span3">' +
-'         <input type="hidden" name="field" class="field_name" />' +
+'         <input type="hidden" name="field" class="field_name inherit-width" />' +
 '       </div>' +
 '       <div class="filter-operator hide controls span3"> ' +
-'         <input name="operator" type="hidden" class="operator" />' +
+'         <input name="operator" type="hidden" class="operator inherit-width" />' +
 '       </div>' +
-'       <div class="filter-value hide controls span5">' +
+'       <div class="filter-value hide controls span4">' +
 '       </div>' +
-'       <div class="filter-actions span1">' +
+'       <div class="filter-actions span2">' +
 '         <a class="removeme btn btn-invisible btn-dark"><i class="icon-minus"></i></a>' +
-'         <a class="updateme btn btn-invisible hide btn-dark"><i class="icon-refresh"></i></a>' +
-'         <a class="addme btn btn-invisible hide btn-dark"><i class="icon-plus"></i></a>' +
+'         <a class="updateme btn btn-invisible btn-dark hide"><i class="icon-refresh"></i></a>' +
+'         <a class="addme btn btn-invisible btn-dark hide"><i class="icon-plus"></i></a>' +
 '       </div>' +
 '     </div>' +
 '   </article>'),
@@ -89,7 +89,7 @@
         // See: https://github.com/ivaynberg/select2/issues/414
         this.$(".newRow .field_name").select2({
             data: this.filterFields,
-            width: "element",
+            width: "100%",
             minimumResultsForSearch: 9999,
             placeholder: app.lang.getAppString("LBL_FILTER_SELECT_FIELD"),
             initSelection: function(el, callback) {
@@ -163,7 +163,7 @@
         // See: https://github.com/ivaynberg/select2/issues/414
         $parent.find(".operator").select2({
             data: payload,
-            width: "element",
+            width: "100%",
             minimumResultsForSearch: 9999,
             placeholder: app.lang.getAppString("LBL_FILTER_SELECT_OPERATOR"),
             initSelection: function(el, callback) {

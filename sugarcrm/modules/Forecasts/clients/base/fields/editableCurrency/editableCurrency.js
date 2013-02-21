@@ -173,6 +173,7 @@
             var value = this.parsePercentage(this.$el.find(this.inputSelector).val());
             if(this.isValid(value)) {
                 this.model.set(this.name, this.unformat(value));
+                this.$el.find("[rel=tooltip]").tooltip('destroy');
                 this.renderDetail();
             } else {
                 // render error
@@ -247,8 +248,7 @@
             '',
             app.user.getPreference('decimal_separator')
         );
-        this.$el.find(this.inputSelector).val(formattedValue).select();
-
+        this.$el.find(this.inputSelector).removeClass('local-error').val(formattedValue).select();
         // inform other fields that I am opening
         this.context.trigger('field:editable:open');
 
@@ -265,7 +265,7 @@
             // esc key, cancel edits
             this.cancelEdits(evt);
         } else if(evt.which == 13) {
-            // enter or tab, handle event
+            // enter key, handle event
             this.handleEvent(evt);
         }
     },
@@ -290,6 +290,7 @@
      */
     cancelEdits: function(evt) {
         this.$el.find(this.inputSelector).val(this.value);
+        this.$el.find("[rel=tooltip]").tooltip('destroy');
         this.renderDetail();
     },
 
@@ -386,14 +387,11 @@
     /**
      * Method to show the error message
      */
-    showErrors: function() {
-        // attach error styles
-        this.$el.find('.error-message').html(this.errorMessage);
-        this.$el.find('.control-group').addClass('error');
-        this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
-        // make error message button cancel edits
-        this.$el.find('.btn.btn-danger').on("click", function(evt) {
-            this.cancelEdits.call(this, evt);
-        });
+    showErrors : function() {
+        this.$el.find('.error-tooltip').addClass('add-on local').removeClass('hide').css('display','inline-block');
+        this.$el.find('input').addClass('local-error');
+        // we want to show the tooltip message, but hide the add-on (exclamation)
+        this.$el.find("[rel=tooltip]").tooltip('destroy'); // so the title is not cached
+        this.$el.find("[rel=tooltip]").tooltip({container: 'body', placement: 'top', title: this.errorMessage}).tooltip('show').hide();
     }
 })

@@ -25,32 +25,31 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-
-
-require_once ('include/api/RestService.php');
-require_once ("clients/base/api/CurrentUserApi.php");
-
+require_once 'include/api/SugarApi.php';
+require_once 'clients/base/api/CurrentUserApi.php';
 
 /**
  * @group ApiTests
  */
-class CurrentUserApiTest extends Sugar_PHPUnit_Framework_TestCase {
-
+class CurrentUserApiTest extends Sugar_PHPUnit_Framework_TestCase
+{
     public $currentUserApiMock;
 
-    public function setUp() {
-        SugarTestHelper::setUp("current_user");        
+    public function setUp()
+    {
+        SugarTestHelper::setUp("current_user");
         // load up the unifiedSearchApi for good times ahead
         $this->currentUserApiMock = new CurrentUserApiMock();
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         SugarTestHelper::tearDown();
-        parent::tearDown();        
+        parent::tearDown();
     }
 
-    public function testCurrentUserLanguage() {
+    public function testCurrentUserLanguage()
+    {
         // test from session
         $_SESSION['authenticated_user_language'] = 'en_UK';
         $result = $this->currentUserApiMock->getBasicInfo();
@@ -68,14 +67,10 @@ class CurrentUserApiTest extends Sugar_PHPUnit_Framework_TestCase {
     }
 }
 
-class CurrentUserApiMock extends CurrentUserApi {
-    public function getBasicInfo() {
+class CurrentUserApiMock extends CurrentUserApi
+{
+    public function getBasicInfo()
+    {
         return parent::getBasicUserInfo();
     }
-}
-
-class CurrentUserApiServiceMockUp extends RestService
-{
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
 }

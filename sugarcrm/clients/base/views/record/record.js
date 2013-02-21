@@ -39,9 +39,10 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
-        app.events.on("data:sync:end", this.handleSync, this);
+        this.model.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
+        this.context.set("viewed", true);
         this.model.on("duplicate:before", this.setupDuplicateFields, this);
 
         this.delegateButtonEvents();
@@ -50,9 +51,10 @@
             this.model.isNotEmpty = true;
         }
     },
-    handleSync: function(method, model, options, error) {
-        if (this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
-            this.previousModelState = JSON.parse(JSON.stringify(model.attributes || {}));
+
+    handleSync: function(method, options, error) {
+        if (this.model && this.model.attributes && (method == 'read' || method =='update')) {
+            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes || {}));
         }
     },
 
@@ -162,21 +164,21 @@
                 // calculate the 2/3 ratio for the field span
                 if (_.isUndefined(field.span)) {
                     field.span = Math.floor(maxFieldSpan / columns);
-                }
 
-                // prevent a span of 0
-                if (field.span < 1) {
-                    field.span = 1;
+                    // if the field span was undefined, then prevent a span of 0
+                    if (field.span < 1) {
+                        field.span = 1;
+                    }
                 }
 
                 // 4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
                 if (_.isUndefined(field.labelSpan)) {
                     field.labelSpan = Math.floor(4 / columns);
-                }
 
-                // prevent a labelSpan of 0
-                if (field.labelSpan < 1) {
-                    field.labelSpan = 1;
+                    // if the field span was undefined, then prevent a labelSpan of 0
+                    if (field.labelSpan < 1) {
+                        field.labelSpan = 1;
+                    }
                 }
 
                 if (_.isUndefined(field.dismiss_label)) {
@@ -186,7 +188,12 @@
                 // if the label is inline and is to be dismissed, then the field should take up its space plus the
                 // space set aside for its label
                 if (isLabelInline && field.dismiss_label === true) {
+                    // add the label span to the field span
                     field.span += field.labelSpan;
+
+                    // ignore the label span from here on out, since it has now served its purpose
+                    // set it to 0 so it doesn't impact future calculations that may occur
+                    field.labelSpan = 0;
 
                     // the field should be allowed to take up the space that was originally dedicated for the label,
                     // which is similar to saying that labels are on top
@@ -324,7 +331,6 @@
     bindDataChange: function() {
         this.model.on("change", function(fieldType) {
             if (this.inlineEditMode) {
-                this.previousModelState = this.model.previousAttributes();
                 this.setButtonStates(this.STATE.EDIT);
             }
             if (this.model.isNotEmpty !== true && fieldType !== 'image') {
@@ -473,7 +479,8 @@
         app.file.checkFileFieldsAndProcessUpload(self.model, {
                 success:function () {
                     self.model.save({}, {
-                        success:finalSuccess
+                        success:finalSuccess,
+                        viewed: true
                     });
                 }
             },
@@ -485,12 +492,10 @@
 
     handleCancel: function() {
         this.inlineEditMode = false;
-
+        this.toggleEdit(false);
         if (!_.isEmpty(this.previousModelState)) {
             this.model.set(this.previousModelState);
         }
-
-        this.toggleEdit(false);
     },
 
     handleDelete: function() {
