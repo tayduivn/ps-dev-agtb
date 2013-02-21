@@ -348,7 +348,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
   'pipeline_amount' =>
   array (
     'name' => 'pipeline_amount',
-    'vname' => 'LBL_FORECAST_OPP_COMMIT',
+    'vname' => 'LBL_PIPELINE_REVENUE',
     'type' => 'currency',
     'studio' => false,
     'default' => "0",
