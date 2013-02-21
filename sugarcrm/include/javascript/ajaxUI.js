@@ -214,7 +214,7 @@ SUGAR.ajaxUI = {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;
             if (ui.lastURL == url)
                 return;
-            var inAjaxUI = /action=ajaxui/.exec(window.location);
+            var inAjaxUI = /action=ajaxui/.exec(window.location.href);
             if (typeof (window.onbeforeunload) == "function" && window.onbeforeunload())
             {
                 //If there is an unload function, we need to check it ourselves
@@ -287,7 +287,7 @@ SUGAR.ajaxUI = {
             //Do not try to submit a form that contains a file input via ajax.
             && typeof(YAHOO.util.Selector.query("input[type=file]", form)[0]) == "undefined"
             //Do not try to ajax submit a form if the ajaxUI is not initialized
-            && /action=ajaxui/.exec(window.location))
+            && /action=ajaxui/.exec(window.location.href))
         {
             var string = con.setForm(form);
             var baseUrl = "index.php?action=ajaxui#ajaxUILoc=";
@@ -338,9 +338,9 @@ SUGAR.ajaxUI = {
     {
         //Setup Browser History
         var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
-        var aRegex = /action=([^&#]*)/.exec(window.location);
+        var aRegex = /action=([^&#]*)/.exec(window.location.href);
         var action = aRegex ? aRegex[1] : false;
-        var mRegex = /module=([^&#]*)/.exec(window.location);
+        var mRegex = /module=([^&#]*)/.exec(window.location.href);
         var module = mRegex ? mRegex[1] : false;
         if (module != "ModuleBuilder")
         {
