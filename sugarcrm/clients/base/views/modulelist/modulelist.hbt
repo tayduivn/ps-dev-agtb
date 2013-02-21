@@ -12,8 +12,8 @@
                     {{#each menu}}
                         <li><a class="actionLink" tabindex="-1" {{#if event}}data-event='{{event}}' href='javascript: void(0)'{{else}}href="{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                     {{/each}}
-                    <div class="recentContainer "></div>
-                    <div class="favoritesContainer"></div>
+                    <div class="recentContainer hide"></div>
+                    <div class="favoritesContainer hide"></div>
                 </ul>
                 {{/if}}
             </div>
