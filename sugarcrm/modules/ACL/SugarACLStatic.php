@@ -122,9 +122,16 @@ class SugarACLStatic extends SugarACLStrategy
             }
         }
 
-        if(!$this->getUserID($context)) return true;
+        if(!empty($context["user"])) {
+            $user = $context["user"];
+        } else {
+            $user = $this->getUserID($context);
+        }
+        if(!$user) {
+            return true;
+        }
 
-        $field_access = ACLField::hasAccess($context['field'], $module, $this->getUserID($context),  $is_owner);
+        $field_access = ACLField::hasAccess($context['field'], $module, $user,  $is_owner);
 
         switch($action) {
             case 'access':
