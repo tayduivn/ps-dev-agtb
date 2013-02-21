@@ -53,8 +53,7 @@ class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
     public function run($data)
     {
         $this->job->runnable_ran = true;
-        $this->job->runnable_data = $data; 
-        $this->job->succeedJob();
+        $this->job->runnable_data = $data;
 
         $db = DBManagerFactory::getInstance();
         $sql = "SELECT id FROM opportunities WHERE deleted = 0";
@@ -66,6 +65,8 @@ class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
             $opp->retrieve($row['id']);
             $opp->save();
         }
+
+        $this->job->succeedJob();
         return true;
     }
 }

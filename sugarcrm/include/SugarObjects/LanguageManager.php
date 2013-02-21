@@ -107,11 +107,6 @@ class LanguageManager
 		$key = self::getLanguageCacheKey($module,$lang);
 		sugar_cache_put($key,$loaded_mod_strings);
         
-        // Handle refreshing of the module portion of the cache if there is an 
-        // existing module list. For cases like installation, this won't be called
-        if (!empty($GLOBALS['app_list_strings']['moduleList'])) {
-        	MetaDataManager::refreshModulesCache(array($module));
-       	}
 	}
 
 	/**
@@ -144,6 +139,9 @@ class LanguageManager
 				closedir($dir);
 			}
 		}
+        
+        // Handle metadata cache clearing
+        MetaDataManager::clearAPICache();        
 	}
 
 	/**

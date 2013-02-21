@@ -173,7 +173,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 elseif(isset($fieldDef['type']) && $fieldDef['type'] == 'datetimecombo') {
                     // dates have to be in ISO-8601 without the : in the TZ
                     global $timedate;
-                    $date = $timedate->fromDb($bean->$fieldName);
+                    
+                    $date = $timedate->fromUser($bean->$fieldName);
+                    if(empty($date)) {
+                        $date = $timedate->fromDb($bean->$fieldName);
+                    }
+
                     if($date instanceof SugarDateTime) {
                         $keyValues[$fieldName] = $timedate->asIso($date, null, array('stripTZColon' => true));
                     }
@@ -849,8 +854,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         catch(Exception $e)
         {
-            $this->reportException("Unable to create index", $e);
-            $this->checkException($e);
+            // ignore the IndexAlreadyExistsException exception
+            if (strpos($e->getMessage(), 'IndexAlreadyExistsException') === false) {
+                $this->reportException("Unable to create index", $e);
+                $this->checkException($e);
+            }
         }
 
     }

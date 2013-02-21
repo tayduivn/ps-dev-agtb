@@ -123,6 +123,7 @@ $dictionary['Campaign'] = array ('audited'=>true,
     		'required'=>false,
     		'do_report'=>false,
     		'reportable'=>false,
+            'default'=>'-99',
     		'comment' => 'Currency in use for the campaign'
   		),
 		'budget' => array (

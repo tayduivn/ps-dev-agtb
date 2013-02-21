@@ -23,12 +23,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'clients/base/api/CurrentUserApi.php';
 
 class CurrentUserMobileApi extends CurrentUserApi {
-    /**
-     * Gets the module list for the current user and platform
-     * 
-     * @return array
-     */
     public function getModuleList() {
-        return MetaDataManager::getManager(array('mobile'))->getUserModuleList();
+        // replicate the essential part of the behavior of the private loadMapping() method in SugarController
+        foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file){
+            require $file;
+        }
+
+        // Forcibly remove the Users module
+        // So if they have added it, remove it here
+        if ( isset($wireless_module_registry['Users']) ) {
+            unset($wireless_module_registry['Users']);
+        }
+
+        // $wireless_module_registry is defined in the file loaded above
+        return isset($wireless_module_registry) && is_array($wireless_module_registry) ?
+            $this->list2Array($wireless_module_registry) :
+            array();
     }
 }

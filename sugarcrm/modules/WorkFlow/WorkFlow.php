@@ -156,15 +156,11 @@ class WorkFlow extends SugarBean
 	 */
         function create_export_query(&$order_by, &$where)
         {
-        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
+        $custom_join = $this->getCustomJoin(true, true, $where);
 		$query = "SELECT $this->table_name.* ";
-		if($custom_join){
-   								$query .= $custom_join['select'];
- 		}
+        $query .= $custom_join['select'];
  		$query .= " FROM $this->table_name ";
- 		if($custom_join){
-  				$query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 		$where_auto = "$this->table_name.deleted=0";
 
                 if($where != "")
@@ -228,16 +224,12 @@ class WorkFlow extends SugarBean
     function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
     {
     	$ret = array();
-    	$custom_join = $this->custom_fields->getJOIN();
+    	$custom_join = $this->getCustomJoin();
         $ret['select'] = "SELECT workflow.id, workflow.name, workflow.base_module, workflow.type, workflow.status, workflow.list_order_y ";
-    	if($custom_join){
-            $ret['select'] .= $custom_join['select'];
-        }
+        $ret['select'] .= $custom_join['select'];
 
         $ret['from'] = " FROM ".$this->table_name." ";
-        if($custom_join){
-            $ret['from'] .= $custom_join['join'];
-        }
+        $ret['from'] .= $custom_join['join'];
 
         $where_auto = "deleted=0 AND ( parent_id IS NULL OR parent_id = '' )";
 
@@ -459,7 +451,6 @@ function filter_base_modules(){
 	global $dictionary;
 		if(!empty($dictionary[$seed_object->object_name]['fields'][$field]['custom_type'])){
 		//field is present in the module's custom table.  Retrieve this table and use as query
-			$custom_join = $this->custom_fields->getJOIN();
 			$field_select = $seed_object->table_name."_cstm.".$field;
 
 		} else {

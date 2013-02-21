@@ -22,7 +22,6 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  * $Id: DynamicField.php 56935 2010-06-13 16:58:03Z jmertic $
  *********************************************************************************/
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class DynamicField {
 
@@ -236,6 +235,7 @@ class DynamicField {
                 VardefManager::loadVardef('Employees', 'Employee');
                 return;
             }
+
         }
     }
 
@@ -249,7 +249,10 @@ class DynamicField {
     */
   function getJOIN( $expandedList = false , $includeRelates = false, &$where = false){
         if(!$this->bean->hasCustomFields()){
-            return false;
+            return array(
+                'select' => '',
+                'join' => ''
+            );
         }
 
         if (empty($expandedList) )
@@ -477,8 +480,6 @@ class DynamicField {
         $this->removeVardefExtension($widget);
         VardefManager::clearVardef();
         VardefManager::refreshVardefs($this->module, $object_name);
-        MetaDataManager::refreshModulesCache(array($this->module));
-        MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_LABELS));
 
     }
 
@@ -586,8 +587,6 @@ class DynamicField {
             $fmd->save();
             $this->buildCache($this->module);
             $this->saveExtendedAttributes($field, array_keys($fmd->field_defs));
-            MetaDataManager::refreshModulesCache(array($this->module));
-            MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_LABELS));            
         }
 
         return true;

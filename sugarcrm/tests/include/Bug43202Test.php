@@ -26,59 +26,42 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-require_once('tests/rest/RestTestBase.php');
-
-class RestBug55141Test extends RestTestBase {
+/**
+ * Bug #43202
+ * @description
+ *  When filtering search with a 'related' field, it's not possible to export "all" records
+ * @author aryamrchik@sugarcrm.com
+ * @ticket 43202
+ */
+class Bug43202Test extends Sugar_PHPUnit_Framework_TestCase
+{
     public function setUp()
     {
+        SugarTestHelper::setUp('current_user', array(true));
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         parent::setUp();
-        // delete all files from cache/api/metadata if it exists
-        $metadata_cache_dir = sugar_cached("cache/api/metadata");
-        if(is_dir($metadata_cache_dir))
-        {
-            if ($handle = opendir($metadata_cache_dir)) {
-                while (false !== ($cache_file = readdir($handle))) {
-                    if ($cache_file != "." && $cache_file != "..") {
-                        $unlink_file = sugar_cached("api/metadata/{$cache_file}");
-                        unlink($unlink_file);
-                    }
-                }
-                closedir($handle);
-            }            
-        }
-    }
-    
-    public function tearDown()
-    {
-        parent::tearDown();
     }
 
     /**
-     * @group rest
+     * @group 43202
      */
-    public function testCache() {
-        // create metadata cache
-        $metadata = $this->_restCall('metadata');
+    public function testExportQuery()
+    {
+        $db = DBManagerFactory::getInstance();
+        $focus = new Account();
+        $focus->disable_row_level_security = true;
+        $order_by = '';
+        $where = 'join_campaign_name.name IS NOT NULL';
+        $addon_join = ' LEFT JOIN campaigns join_campaign_name ON accounts.campaign_id=join_campaign_name.id AND join_campaign_name.deleted=0 ';
 
-        // get hash
-        $hash = $metadata['reply']['_hash'];
+        $query = $focus->create_export_query($order_by, $where, $addon_join);
+        $this->assertTrue($db->validateQuery($query));
+    }
 
-        // verify hash file exists
-        $this->assertTrue(file_exists('cache/api/metadata/metadata_base_private.php'), "Didn't create the cache file");
-
-        // run repair and rebuild and verify the cache file is gone
-        $old_user = $GLOBALS['current_user'];
-        $user = new User();
-        $GLOBALS['current_user'] = $user->getSystemUser();
-
-        $_REQUEST['repair_silent']=1;
-        $rc = new RepairAndClear();
-        $rc->clearAdditionalCaches();
-        $GLOBALS['current_user'] = $old_user;
-        
-        // verify it no longer does
-        $this->assertFalse(file_exists('cache/api/metadata/metadata_base_private.php'), "Didn't really clear the cache");
-
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
     }
 }

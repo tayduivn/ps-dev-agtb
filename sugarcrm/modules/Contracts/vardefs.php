@@ -166,6 +166,7 @@ $dictionary['Contract'] = array(
 			'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
 	    	'required'=>false,
 	    	'reportable'=>false,
+            'default'=>'-99',
 	    	'comment' => 'The currency in use for the contract'
 	  	),
 

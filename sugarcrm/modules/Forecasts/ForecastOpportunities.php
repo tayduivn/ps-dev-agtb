@@ -157,21 +157,13 @@ class ForecastOpportunities extends SugarBean {
 
     function create_export_query($order_by, $where)
     {
-        $custom_join = $this->custom_fields->getJOIN();
-        //$custom_join='';
+        $custom_join = $this->getCustomJoin();
 
         $query = "SELECT ";
         $query .= " opportunities.id, opportunities.name , opportunities.amount_usdollar as revenue,  ((opportunities.amount_usdollar * opportunities.probability)/100) as weighted_value, probability";
-
-        if ($custom_join) {
-            $query .= $custom_join['select'];
-        }
-
+        $query .= $custom_join['select'];
         $query .= " FROM opportunities, timeperiods ";
-
-        if ($custom_join) {
-            $query .= $custom_join['join'];
-        }
+        $query .= $custom_join['join'];
 
         if ($where != "")
             $query .= "where $where ";

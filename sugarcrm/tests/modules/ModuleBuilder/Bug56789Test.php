@@ -54,12 +54,6 @@ class Bug56789Test extends Sugar_PHPUnit_Framework_TestCase
         foreach ($this->_filesToDelete as $file) {
             if (file_exists($file)) {
                 unlink($file);
-                
-                // Remove from the file map cache as well
-                // This is necessary since deployed implementations create files
-                // and must add those created files to the file map. Set the save
-                // flag to false so we can manipulate the file stack and save once.
-                SugarAutoLoader::delFromMap($file, false);
             }
             
             // Handle history files related to this test
@@ -67,10 +61,7 @@ class Bug56789Test extends Sugar_PHPUnit_Framework_TestCase
             $files = glob($file . '*');
             foreach ($files as $f) {
                 unlink($f);
-                SugarAutoLoader::delFromMap($f, false);
             }
-            
-            SugarAutoLoader::saveMap();
         }
         
         SugarTestHelper::tearDown();
