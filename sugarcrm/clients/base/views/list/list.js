@@ -40,6 +40,8 @@
         'mouseleave tr':'hideActions',
         'mouseenter .ellipsis_inline':'addTooltip'
     },
+    // Model being previewed (if any)
+    _previewed: null,
     addTooltip: function(event){
         if (_.isFunction(app.utils.handleTooltip)) {
             app.utils.handleTooltip(event, this);
@@ -141,6 +143,10 @@
             //When fetching more records, we need to update the preview collection
             app.events.trigger("preview:collection:change", this.collection);
             this.render();
+            // If we have a model in preview, redecorate the row as previewed
+            if(this._previewed){
+                this.decorateRow(this._previewed);
+            }
         }, this);
         this.layout.off("list:filter:toggled", null, this);
         this.layout.on("list:filter:toggled", this.filterToggled, this);
@@ -293,6 +299,7 @@
     decorateRow: function(model){
         // If there are drawers, make sure we're updating only list views on active drawer.
         if(_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)){
+            this._previewed = model;
             this.$("tr.highlighted").removeClass("highlighted current above below");
             if(model){
                 var rowName = model.module+"_"+ model.get("id");
