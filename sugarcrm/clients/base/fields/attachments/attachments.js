@@ -26,7 +26,12 @@
         this.clearUserAttachmentCache();
     },
 
-
+    /**
+     * Allow Backspace and Delete Keys for attachments (Select2) and disable all other keys
+     * @param e
+     * @return {Boolean}
+     * @private
+     */
     _keyHandler: function(e) {
         // if key is backspace or delete ...
         if ((event.keyCode == 8 || event.keyCode == 46)) {
