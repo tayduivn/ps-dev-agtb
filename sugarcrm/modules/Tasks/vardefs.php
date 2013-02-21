@@ -107,6 +107,7 @@ $dictionary['Task'] = array('table' => 'tasks',
   	'required'=>false,
 	'len'=>'255',
     'comment' => 'The Sugar object to which the call is related',
+    'studio' => array('wirelesslistview'=>false),
     'options' => 'parent_type_display',
 ),
 

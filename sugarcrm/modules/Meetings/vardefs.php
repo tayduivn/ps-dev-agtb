@@ -190,7 +190,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'options'=> 'parent_type_display',
     'len' => 100,
     'comment' => 'Module meeting is associated with',
-    'studio' => array('searchview'=>false),
+    'studio' => array('searchview'=>false, 'wirelesslistview'=>false),
   ),
   'status' =>
   array (
