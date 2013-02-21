@@ -22,8 +22,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/api/SugarApi.php');
 require_once('include/SugarQuery/SugarQuery.php');
 
-class FilterApi extends SugarApi {
-    public function registerApiRest() {
+class FilterApi extends SugarApi
+{
+    public function registerApiRest()
+    {
         return array(
             'filterModuleGet' => array(
                 'reqType' => 'GET',
@@ -50,7 +52,6 @@ class FilterApi extends SugarApi {
                 'shortHelp' => 'Filter records from a single module by a predefined filter',
                 'longHelp' => 'include/api/help/filterModulePost.html',
             ),
-
         );
     }
 
@@ -58,12 +59,14 @@ class FilterApi extends SugarApi {
 
     protected $current_user;
 
-    public function __construct() {
+    public function __construct()
+    {
         global $current_user;
         $this->current_user = $current_user;
     }
 
-    public function filterById(ServiceBase $api, array $args) {
+    public function filterById(ServiceBase $api, array $args)
+    {
         $filter = BeanFactory::getBean('Filters', $args['record']);
         $filter_definition = json_decode($filter->filter_definition, true);
         $args = array_merge($args, $filter_definition);
@@ -71,7 +74,7 @@ class FilterApi extends SugarApi {
         return $this->filterList($api, $args);
     }
 
-    function parseOptions(ServiceBase $api, array $args, SugarBean $seed)
+    protected function parseOptions(ServiceBase $api, array $args, SugarBean $seed)
     {
         $options = array();
 
@@ -79,28 +82,28 @@ class FilterApi extends SugarApi {
         $options['limit'] = $this->defaultLimit;
         $options['offset'] = 0;
         $options['order_by'] = array(array('date_modified','DESC'));
-        
-        if ( !empty($args['max_num']) ) {
+
+        if (!empty($args['max_num'])) {
             $options['limit'] = (int)$args['max_num'];
         }
-        if ( !empty($args['offset']) ) {
-            if ( $args['offset'] == 'end' ) {
+        if (!empty($args['offset'])) {
+            if ($args['offset'] == 'end') {
                 $options['offset'] = 'end';
             } else {
                 $options['offset'] = (int)$args['offset'];
             }
         }
-        if ( !empty($args['order_by']) ) {
-            $orderBys = explode(',',$args['order_by']);
+        if (!empty($args['order_by'])) {
+            $orderBys = explode(',', $args['order_by']);
             $orderByArray = array();
-            foreach ( $orderBys as $order ) {
-                $orderSplit = explode(':',$order);
-                
-                if ( !$seed->ACLFieldAccess($orderSplit[0],'list') || !isset($seed->field_defs[$orderSplit[0]]) ) {
+            foreach ($orderBys as $order) {
+                $orderSplit = explode(':', $order);
+
+                if (!$seed->ACLFieldAccess($orderSplit[0], 'list') || !isset($seed->field_defs[$orderSplit[0]])) {
                     throw new SugarApiExceptionNotAuthorized('No access to view field: '.$orderSplit[0].' in module: '.$args['module']);
                 }
 
-                if ( !isset($orderSplit[1]) || strtolower($orderSplit[1]) == 'desc' ) {
+                if (!isset($orderSplit[1]) || strtolower($orderSplit[1]) == 'desc') {
                     $orderSplit[1] = 'DESC';
                 } else {
                     $orderSplit[1] = 'ASC';
@@ -113,15 +116,15 @@ class FilterApi extends SugarApi {
         return $options;
     }
 
-    function filterList(ServiceBase $api, array $args)
+    public function filterList(ServiceBase $api, array $args)
     {
         $seed = BeanFactory::newBean($args['module']);
-        
-        if ( ! $seed->ACLAccess('list') ) {
+
+        if (! $seed->ACLAccess('list')) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }
 
-        $options = $this->parseOptions($api,$args,$seed);
+        $options = $this->parseOptions($api, $args, $seed);
 
         $q = new SugarQuery();
         // Just need ID, we need to fetch beans so we can format them later.
@@ -130,15 +133,15 @@ class FilterApi extends SugarApi {
         $q->distinct(true);
 
         // return $args['filter'];
-        if ( !isset($args['filter']) || !is_array($args['filter']) ) {
+        if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
         $this->addFilters($args['filter'], $q->where(), $q);
-        $q->where()->equals("deleted",0);
+        $q->where()->equals("deleted", 0);
 
 
-        foreach ( $options['order_by'] as $orderBy ) {
-            $q->orderBy($orderBy[0],$orderBy[1]);
+        foreach ($options['order_by'] as $orderBy) {
+            $q->orderBy($orderBy[0], $orderBy[1]);
         }
         // Add an extra record to the limit so we can detect if there are more records to be found
         $q->limit($options['limit']+1);
@@ -152,73 +155,73 @@ class FilterApi extends SugarApi {
         $data['next_offset'] = -1;
 
         $beans = array();
-        foreach ( $idRows as $i => $row ) {
-            if ( $i == $options['limit'] ) {
+        foreach ($idRows as $i => $row) {
+            if ($i == $options['limit']) {
                 $data['next_offset'] = (int)($options['limit']+$options['offset']);
                 continue;
             }
-            $bean = BeanFactory::getBean($args['module'],$row['id']);
-            if ( $bean ) {
+            $bean = BeanFactory::getBean($args['module'], $row['id']);
+            if ($bean) {
                 // Sometimes team security changes mid-query
                 $beans[] = $bean;
             }
         }
-        
-        $data['records'] = $this->formatBeans($api,$args,$beans);
+
+        $data['records'] = $this->formatBeans($api, $args, $beans);
 
         return $data;
     }
-    
-    function addFilters(array $filterDefs, SugarQuery_Builder_Where $where, SugarQuery $q)
+
+    protected function addFilters(array $filterDefs, SugarQuery_Builder_Where $where, SugarQuery $q)
     {
-        foreach ( $filterDefs as $filterDef ) {
-            foreach ( $filterDef as $field => $filter ) {
-                if ( $field == '$or' ) {
-                    $this->addFilters($filter,$where->queryOr(),$q);
-                } else if ( $field == '$and' ) {
-                    $this->addFilters($filter,$where->queryAnd(),$q);
-                } else if ( $field == '$favorite' ) {
-                    $this->addFavoriteFilter($q,$where,$filter);
-                } else if ( $field == '$owner' ) {
-                    $this->addOwnerFilter($q,$where,$filter);
+        foreach ($filterDefs as $filterDef) {
+            foreach ($filterDef as $field => $filter) {
+                if ($field == '$or') {
+                    $this->addFilters($filter, $where->queryOr(), $q);
+                } else if ($field == '$and') {
+                    $this->addFilters($filter, $where->queryAnd(), $q);
+                } else if ($field == '$favorite') {
+                    $this->addFavoriteFilter($q, $where, $filter);
+                } else if ($field == '$owner') {
+                    $this->addOwnerFilter($q, $where, $filter);
                 } else {
                     // Looks like just a normal field, parse it's options
-                    if (  strpos($field,'.') ) {
+                    if ( strpos($field, '.')) {
                         // It looks like it's a related field that it's searching by
-                        list($relatedTable,$relatedField) = explode('.',$field);
+                        list($relatedTable, $relatedField) = explode('.', $field);
                         $q->join($relatedTable, array('joinType'=>'LEFT'));
                     }
 
-                    if ( !is_array($filter) ) {
+                    if (!is_array($filter)) {
                         // This is just simple match
-                        $where->equals($field,$filter);
+                        $where->equals($field, $filter);
                         continue;
                     }
-                    foreach ( $filter as $op => $value ) {
-                        switch ( $op ) {
+                    foreach ($filter as $op => $value) {
+                        switch ($op) {
                             case '$equals':
-                                $where->equals($field,$value);
+                                $where->equals($field, $value);
                                 break;
                             case '$not_equals':
                                 $where->notEquals($field, $value);
                                 break;
                             case '$starts':
-                                $where->starts($field,$value);
+                                $where->starts($field, $value);
                                 break;
                             case '$ends':
-                                $where->ends($field,$value);
+                                $where->ends($field, $value);
                                 break;
                             case '$contains':
-                                $where->contains($field,$value);
+                                $where->contains($field, $value);
                                 break;
                             case '$in':
-                                $where->in($field,$value);
+                                $where->in($field, $value);
                                 break;
                             case '$not_in':
-                                $where->notIn($field,$value);
+                                $where->notIn($field, $value);
                                 break;
                             case '$between':
-                                $where->between($field,$value);
+                                $where->between($field, $value);
                                 break;
                             case '$is_null':
                                 $where->isNull($field);
@@ -227,16 +230,16 @@ class FilterApi extends SugarApi {
                                 $where->notNull($field);
                                 break;
                             case '$lt':
-                                $where->lt($field,$value);
+                                $where->lt($field, $value);
                                 break;
                             case '$lte':
-                                $where->lte($field,$value);
+                                $where->lte($field, $value);
                                 break;
                             case '$gt':
-                                $where->gt($field,$value);
+                                $where->gt($field, $value);
                                 break;
                             case '$gte':
-                                $where->gte($field,$value);
+                                $where->gte($field, $value);
                                 break;
                             case '$fromDays':
                                 // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
@@ -244,19 +247,20 @@ class FilterApi extends SugarApi {
                                 break;
                             case '$tracker':
                                 // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
-                                $where->addRaw("{$q->from->getTableName()}.id in
-                                (select item_id from tracker
-                                    where module_name='{$q->from->module_name}'
-                                    and user_id='{$GLOBALS['current_user']->id}'
-                                    and DATE_ADD({$field}, INTERVAL {$value})
-                                )");
+                                $where->addRaw(
+                                    "{$q->from->getTableName()}.id in (select item_id from tracker
+                                        where module_name='{$q->from->module_name}'
+                                        and user_id='{$GLOBALS['current_user']->id}'
+                                        and DATE_ADD({$field}, INTERVAL {$value})
+                                    )"
+                                );
                                 break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: ".$op);
                         }
                     }
                 }
-                
+
             }
         }
     }
@@ -269,14 +273,14 @@ class FilterApi extends SugarApi {
      */
     protected function addOwnerFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $link)
     {
-        if ( $link == '' || $link == '_this' ) {
+        if ($link == '' || $link == '_this') {
             $linkPart = '';
         } else {
             $q->join($link, array('joinType'=>'LEFT'));
             $linkPart = $link.'.';
         }
 
-        $where->equals($linkPart.'assigned_user_id',$this->current_user->id);
+        $where->equals($linkPart.'assigned_user_id', $this->current_user->id);
     }
 
     /**
@@ -288,15 +292,15 @@ class FilterApi extends SugarApi {
     protected function addFavoriteFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $link)
     {
         $sfOptions = array('joinType'=>'LEFT');
-        if ( $link == '' || $link == '_this' ) {
+        if ($link == '' || $link == '_this') {
         } else {
-            $q->join($link,array('joinType'=>'LEFT'));
+            $q->join($link, array('joinType'=>'LEFT'));
             $sfOptions['joinTo'] = $link;
         }
 
         $sf = new SugarFavorites();
-        $sfAlias = $sf->addToSugarQuery($q,$sfOptions);
-        
+        $sfAlias = $sf->addToSugarQuery($q, $sfOptions);
+
         $where->notNull($sfAlias . '.id');
     }
 }
