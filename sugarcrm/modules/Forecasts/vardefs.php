@@ -915,15 +915,14 @@ $dictionary['ForecastWorksheet'] = array(
         )
     ),
     'indices' => array(
-        array('name' =>'forecastworksheetspk', 'type' =>'primary', 'fields'=>array('id')),
-        array('name' => 'idx_forecast_worksheets_parent', 'type' => 'index', 'fields' => array('parent_id', 'parent_type')),
+        array('name' => 'idx_worksheets_parent', 'type' => 'index', 'fields' => array('parent_id', 'parent_type')),
         array(
-            'name' => 'idx_forecast_worksheets_assigned_del',
+            'name' => 'idx_worksheets_assigned_del',
             'type' => 'index',
             'fields' => array('deleted', 'assigned_user_id')
         ),
         array(
-            'name' => 'idx_forecast_worksheets_assigned_del_time_draft',
+            'name' => 'idx_worksheets_assigned_del_time_draft',
             'type' => 'index',
             'fields' => array('assigned_user_id', 'date_closed_timestamp', 'draft', 'deleted')
         ),
@@ -1020,7 +1019,6 @@ $dictionary['ForecastManagerWorksheet'] = array(
         // relationships that might be needed: User_id -> users, quota_id -> Quota,
     ),
     'indices' => array(
-        array('name' =>'forecastmanagerworksheetspk', 'type' =>'primary', 'fields'=>array('id')),
         array(
             'name' => 'idx_manager_worksheets_user_timestamp_assigned_user',
             'type' => 'index',

@@ -1746,7 +1746,7 @@ class SugarBean
     function updateRelatedCalcFields($linkName = "")
     {
 
-        if (empty($this->id)) {
+        if (empty($this->id) || $this->new_with_id) {
             return;
         }
 

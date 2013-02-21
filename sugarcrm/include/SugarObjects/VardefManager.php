@@ -274,7 +274,7 @@ class VardefManager{
             if(!empty($dictionary[$object])) {
                 //BEGIN SUGARCRM flav=pro ONLY
                 // to avoid extra refresh - we'll fill it in later
-                if(empty($params['ignore_rel_calc_fields']) && !isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
+                if(!isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
                     $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
                 }
                 //END SUGARCRM flav=pro ONLY
