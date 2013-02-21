@@ -36,21 +36,4 @@ class ReportsApiHelper extends SugarBeanApiHelper
         $bean->fromApi = true;
         return parent::populateFromApi($bean, $submittedData, $options);
     }
-
-    /**
-     * Formats the bean so it is ready to be handed back to the API's client. Certian fields will get extra processing
-     * to make them easier to work with from the client end.
-     *
-     * @param $bean SugarBean The bean you want formatted
-     * @param $fieldList array Which fields do you want formatted and returned (leave blank for all fields)
-     * @param $options array Currently no options are supported
-     * @return array The bean in array format, ready for passing out the API to clients.
-     */
-    public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array())
-    {
-        if(isset($bean->fetched_row) && !empty($bean->fetched_row['report_type']) && $bean->report_type == 'summary' && $bean->fetched_row['report_type'] == 'Matrix') {
-            $bean->report_type = $bean->fetched_row['report_type'];
-        }
-        return parent::formatForApi($bean, $fieldList, $options);
-    }    
 }
