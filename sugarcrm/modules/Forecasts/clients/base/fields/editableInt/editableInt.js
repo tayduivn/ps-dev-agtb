@@ -61,7 +61,6 @@
 
     initialize: function(options) {
         app.view.fields.IntField.prototype.initialize.call(this, options);
-        this.$el.find('.error-tooltip').data('original-title',this.errorMessage);
         this.checkIfCanEdit();
     },
 
