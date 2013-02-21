@@ -1,19 +1,17 @@
 describe("Country Chart", function() {
-    var app, view;
+    var app, view, moduleName = 'Cases', viewName = 'countrychart';
+
     beforeEach(function() {
         SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
+        SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.set();
-        SugarTest.app.data.declareModels();
-        // SugarTest.loadComponent('base', 'view', 'countrychart');
         app = SugarTest.app;
-        view = SugarTest.createView("base","Cases", "countrychart");
+        view = SugarTest.createView("base", moduleName, viewName, null, null);
     });
 
     afterEach(function() {
-        app.cache.cutAll();
-        app.view.reset();
-        delete Handlebars.templates;
-        view = null;
+        SugarTest.testMetadata.dispose();
     });
 
     describe("dispose safe", function() {
@@ -32,6 +30,8 @@ describe("Country Chart", function() {
             view.disposed = true;
             view.loadData();
             expect(renderStub).not.toHaveBeenCalled();
+            apiCallStub.restore();
+            renderStub();
         });
     });
 });
