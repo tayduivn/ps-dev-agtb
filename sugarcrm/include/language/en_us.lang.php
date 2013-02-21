@@ -186,6 +186,10 @@ $app_list_strings = array (
   'SugarFavorites'=>'SugarFavorites',
    'Employees' => 'Employee',
    'Filters' => 'Filter',
+   'Currencies' => 'Currency',
+   'ProductTemplates' => 'Product Template',
+   'ProductCategories' => 'Product Category',
+   'ProductTypes' => 'Product Type',
 
         ),
 
