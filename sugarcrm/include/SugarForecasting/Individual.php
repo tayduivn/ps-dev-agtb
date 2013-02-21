@@ -86,7 +86,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
                    "on p.id = w.parent_id ";
 
         if ($this->getArg('user_id') != $current_user->id) {
-               $sql .= "and w.version = 1 ";
+               $sql .= "and w.draft = 1 ";
         }
 
         $sql .= "where p.deleted = 0 " .
