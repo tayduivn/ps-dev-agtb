@@ -116,14 +116,14 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
         'vname' => 'LBL_CURRENCY',
         'type' => 'currency_id',
         'dbType' => 'id',
+        'default'=>'-99',
         'required' => true,
     ),
     'base_rate' =>
     array (
         'name' => 'base_rate',
-        'vname' => 'LBL_CURRENCY_RATE',
+        'vname' => 'LBL_BASE_RATE',
         'type' => 'double',
-        'required' => true,
     ),
 
     /*

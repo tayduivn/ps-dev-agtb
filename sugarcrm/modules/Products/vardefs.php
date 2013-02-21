@@ -278,14 +278,14 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
 	'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
     'required'=>false,
     'reportable'=>false,
+    'default'=>'-99',
     'comment' => 'Currency of the product'
   ),
   'base_rate' =>
   array (
     'name' => 'base_rate',
-    'vname' => 'LBL_CURRENCY_RATE',
+    'vname' => 'LBL_BASE_RATE',
     'type' => 'double',
-    'required' => true,
     'studio' => false
   ),
   'status' =>

@@ -367,6 +367,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
        'vname' => 'LBL_CURRENCY',
        'type' => 'currency_id',
        'dbType' => 'id',
+       'default'=>'-99',
        'required' => true,
    ),
    'base_rate' =>
@@ -374,7 +375,6 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
        'name' => 'base_rate',
        'vname' => 'LBL_BASE_RATE',
        'type' => 'double',
-       'required' => true,
    ),
    'best_case' =>
   array (
@@ -785,7 +785,7 @@ $dictionary['ForecastWorksheet'] = array(
         'base_rate' =>
         array(
             'name' => 'base_rate',
-            'vname' => 'LBL_CURRENCY_RATE',
+            'vname' => 'LBL_BASE_RATE',
             'type' => 'double',
             'required' => true,
             'studio' => false
