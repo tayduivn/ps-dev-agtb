@@ -26,7 +26,7 @@
         var lastComment = this.model.get("last_comment");
         this.commentsCollection = app.data.createRelatedCollection(this.model, "comments");
 
-        if(lastComment) {
+        if(lastComment && !_.isUndefined(lastComment.id)) {
             this.commentsCollection.reset([lastComment]);
         }
 
@@ -126,20 +126,23 @@
         // TODO: Change to using a content-editable box instead of input tag.
         var self = this,
             parentId = this.model.id,
+            $input = this.$('input.reply'),
             attachments = this.$('.activitystream-pending-attachment'),
             payload = {
                 parent_id: parentId,
                 data: {
-                    //value: this.layout._processTags(this.$('input.reply').val())
-                    value: this.$('input.reply').val()
+                    value: $input.val()
                 }
         };
 
         var bean = app.data.createBean('Comments');
         bean.save(payload, {
             success: function(model) {
-                // Do something to refresh the view/add the last comment.
-                // We also need to add any attachments we may have over here.
+                $input.val('');
+                self.layout.prependPost(self.model);
+                self.commentsCollection.add(model).trigger('reset');
+                self.toggleReplyBar();
+                // We need to add any attachments we may have over here.
             }
         });
     },
@@ -236,8 +239,11 @@
      * Data change event.
      */
     bindDataChange: function() {
-        if (this.streamCollection) {
-            this.streamCollection.on("reset", this.render, this);
+        if (this.commentsCollection) {
+            this.commentsCollection.on("reset", this.render, this);
+            this.commentsCollection.on("add", function() {
+                this.model.set('comment_count', this.model.get('comment_count') + 1);
+            }, this);
         }
     }
 })

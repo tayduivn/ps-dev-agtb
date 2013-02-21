@@ -38,9 +38,9 @@
         var bean = app.data.createBean('Activities');
         bean.save(payload, {
             success: function(model) {
-                // Do something like this.layout.addPost(model) to refresh the layout.
-                // We also need to add any attachments we may have over here.
-                //this.layout._addPostComment(myPostUrl, myPostContents, attachments);
+                self.$('div.sayit').html('');
+                self.layout.prependPost(model);
+                // We need to add any attachments we may have over here.
             }
         });
     }

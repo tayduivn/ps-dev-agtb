@@ -20,12 +20,23 @@
         // The layout needs to keep track of the collection of activities so it can feed each
         // model for rendering via the activitystream view.
         this.collection = opts.context.get('collection');
-        this.renderedActivites = [];
+        this.renderedActivities = {};
 
         app.view.Layout.prototype.initialize.call(this, opts);
 
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
+    },
+
+    bindDataChange: function() {
+        if (this.collection) {
+            this.collection.on('add', this.renderPost, this);
+        }
+    },
+
+    prependPost: function(model) {
+        var view = this.renderPost(model);
+        view.$el.parent().prepend(view.$el);
     },
 
     loadData: function(options) {
@@ -40,25 +51,33 @@
             return app.api.call("read", url, null, callbacks);
         };
 
-        options = _.extend({endpoint: endpoint}, options);
-        options = _.extend({success: function(collection) {
-            _.each(collection.models, function(model) {
-                if(!_.contains(self.renderedActivites, model.id)) {
-                    var view = app.view.createView({
-                        context: self.context,
-                        name: "activitystream",
-                        module: self.module,
-                        layout: self,
-                        model: model
-                    });
-                    self.addComponent(view);
-                    self.renderedActivites.push(model.id);
-                    view.render();
-                }
-            });
-        }}, options);
+        options = _.extend({
+            endpoint: endpoint,
+            success: function(collection) {
+                collection.each(_.bind(self.renderPost, self));
+            }
+        }, options);
         this.context.set("collectionOptions", options);
         this.collection.fetch(options);
+    },
+
+    renderPost: function(model) {
+        var view;
+        if(_.has(this.renderedActivities, model.id)) {
+            view = this.renderedActivities[model.id];
+        } else {
+            view = app.view.createView({
+                context: this.context,
+                name: "activitystream",
+                module: this.module,
+                layout: this,
+                model: model
+            });
+            this.addComponent(view);
+            this.renderedActivities[model.id] = view;
+            view.render();
+        }
+        return view;
     },
 
     _placeComponent: function(component) {
