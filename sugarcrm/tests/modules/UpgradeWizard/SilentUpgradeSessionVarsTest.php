@@ -24,7 +24,6 @@
  
 class SilentUpgradeSessionVarsTest extends Sugar_PHPUnit_Framework_TestCase 
 {
-    private $externalTestFileName = 'test_silent_upgrade_vars.php';
     private $varsCacheFileName;
     
     public function setUp() 
@@ -33,14 +32,6 @@ class SilentUpgradeSessionVarsTest extends Sugar_PHPUnit_Framework_TestCase
         if(file_exists($this->varsCacheFileName)) {
             unlink($this->varsCacheFileName);
         }
-        $this->writeExternalTestFile();
-        SugarAutoLoader::addToMap($this->externalTestFileName, false);
-    }
-
-    public function tearDown() 
-    {
-        $this->removeExternalTestFile();
-        SugarAutoLoader::delFromMap($this->externalTestFileName, false);
     }
 
     public function testSilentUpgradeSessionVars()
@@ -61,41 +52,16 @@ class SilentUpgradeSessionVarsTest extends Sugar_PHPUnit_Framework_TestCase
     	$write = writeSilentUpgradeVars();
     	$this->assertTrue($write, "Could not write the silent upgrade vars to the cache file. Function returned false");
     	$this->assertFileExists($this->varsCacheFileName, "Cache file doesn't exist after call to writeSilentUpgradeVars()");
-        $output = shell_exec("php {$this->externalTestFileName}");
+        $output = getSilentUpgradeVar('SDizzle');
     	
     	$this->assertEquals('BSnizzle', $output, "Running custom script didn't successfully retrieve the value");
     	
-    	$remove = removeSilentUpgradeVarsCache();
+    	removeSilentUpgradeVarsCache();
     	$this->assertEmpty($silent_upgrade_vars_loaded, "Silent upgrade vars variable should have been unset in removeSilentUpgradeVarsCache() call");
     	$this->assertFileNotExists($this->varsCacheFileName, "Cache file exists after call to removeSilentUpgradeVarsCache()");
     	
     	$get = getSilentUpgradeVar('SDizzle');
     	$this->assertNotEquals('BSnizzle', $get, "Unexpected value when getting silent upgrade var after resetting");
     }
-    
-    private function writeExternalTestFile()
-    {
-        $externalTestFileContents = <<<EOQ
-<?php
-        
-        define('sugarEntry', true);
-        require_once('include/entryPoint.php');
-        require_once('modules/UpgradeWizard/uw_utils.php');
-        
-        \$get = getSilentUpgradeVar('SDizzle');
 
-        echo \$get;
-EOQ;
-        
-        file_put_contents($this->externalTestFileName, $externalTestFileContents);
-    }
-    
-    private function removeExternalTestFile()
-    {
-        if(file_exists($this->externalTestFileName))
-        {
-            unlink($this->externalTestFileName);
-        }
-    }
 }
-?>
