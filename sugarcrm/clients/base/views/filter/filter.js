@@ -38,7 +38,7 @@
     /**
      * Retrieve filters from the server.
      */
-    getFilters: function(id) {
+    getFilters: function() {
         this.filters.fetch({
             filter: [
                 {"created_by": app.user.id},

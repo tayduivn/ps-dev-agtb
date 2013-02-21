@@ -36,10 +36,16 @@
         'varchar': ['$starts', '$ends', '$equals', '$not_equals', '$contains'],
         'name': ['$starts', '$ends', '$equals', '$not_equals', '$contains'],
         'text': ['$starts', '$ends', '$equals', '$not_equals', '$contains'],
+        'textarea': ['$starts', '$ends', '$equals', '$not_equals', '$contains'],
         'currency': ['$equals', '$gt', '$gte', '$lt', '$lte'],
         'int': ['$equals', '$gt', '$gte', '$lt', '$lte'],
         'double': ['$equals', '$gt', '$gte', '$lt', '$lte'],
-        'datetime': ['$equals', '$lt', '$lte', '$gt', '$gte'],
+        'float': ['$equals', '$gt', '$gte', '$lt', '$lte'],
+        'decimal': ['$equals', '$gt', '$gte', '$lt', '$lte'],
+        'date': ['$equals', '$lt', '$gt'],
+        'datetime': ['$equals', '$lt', '$gt'],
+        'bool': ['$equals'],
+        'phone': ['$starts', '$equals'],
         'base': []
     },
 
@@ -49,6 +55,7 @@
 
         app.view.View.prototype.initialize.call(this, opts);
         this.filterFields = [];
+
         _.each(app.metadata.getModule(this.module).fields, function(value, key) {
             this.filterFields.push({
                 id: key,
@@ -149,8 +156,11 @@
             types = this.filterOperatorMap[fieldType] || this.filterOperatorMap['base'],
             filterStrings = app.lang.getAppListStrings('filter_operators_dom');
 
-        $parent.find('.filter-operator').removeClass('hide').find('option').remove();
+        $parent.find('.filter-operator').removeClass('hide');
         $parent.find('.filter-value').addClass('hide').empty();
+
+        // If the user is editing a filter, clear the operator.
+        $parent.find('input.operator').select2('val', '');
 
         _.each(types, function(operand) {
             payload.push({
@@ -187,6 +197,11 @@
         // Patching metadata
         var fields = app.metadata._patchFields(this.module, app.metadata.getModule(this.module),
                         JSON.parse(JSON.stringify(app.metadata.getModule(this.module).fields)));
+
+        if(fieldType === 'bool') {
+            fields[fieldName].type = 'enum';
+            fields[fieldName].options = 'filter_checkbox_dom';
+        }
 
         this._disposeField($parent);
 
