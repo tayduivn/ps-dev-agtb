@@ -173,7 +173,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 elseif(isset($fieldDef['type']) && $fieldDef['type'] == 'datetimecombo') {
                     // dates have to be in ISO-8601 without the : in the TZ
                     global $timedate;
-                    $date = $timedate->fromDb($bean->$fieldName);
+                    
+                    $date = $timedate->fromUser($bean->$fieldName);
+                    if(empty($date)) {
+                        $date = $timedate->fromDb($bean->$fieldName);
+                    }
+
                     if($date instanceof SugarDateTime) {
                         $keyValues[$fieldName] = $timedate->asIso($date, null, array('stripTZColon' => true));
                     }
