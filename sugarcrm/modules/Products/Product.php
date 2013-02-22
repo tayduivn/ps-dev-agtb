@@ -215,7 +215,6 @@ class Product extends SugarBean
 
         //If return_array is set to true, return as an Array
         if ($return_array) {
-            $ret_array['from'] = $ret_array['from'] . " LEFT JOIN contacts on contacts.id = products.contact_id";
             //Add clause to remove opportunity related products
             $ret_array['where'] = $ret_array['where'] . " AND products.opportunity_id is null";
             return $ret_array;
