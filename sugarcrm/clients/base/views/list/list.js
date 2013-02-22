@@ -26,13 +26,14 @@
  ********************************************************************************/
 ({
     extendsFrom: 'EditableView',
+
     /**
      * View that displays a list of models pulled from the context's collection.
      * @class View.Views.ListView
      * @alias SUGAR.App.layout.ListView
      * @extends View.View
      */
-    events:{
+    events: {
         'click [class*="orderBy"]':'setOrderBy',
         'mouseenter .rowaction': 'showTooltip',
         'mouseleave .rowaction': 'hideTooltip',
@@ -40,40 +41,96 @@
         'mouseleave tr':'hideActions',
         'mouseenter .ellipsis_inline':'addTooltip'
     },
+
+    defaultLayoutEvents: {
+        "list:search:fire": "fireSearch",
+        "list:paginate:success": "paginateSuccess",
+        "list:filter:toggled": "filterToggled",
+        "list:alert:show": "showAlert",
+        "list:alert:hide": "hideAlert",
+        "list:sort:fire": "sort"
+    },
+
+    defaultContextEvents: {},
+    
     // Model being previewed (if any)
     _previewed: null,
+    
     addTooltip: function(event){
         if (_.isFunction(app.utils.handleTooltip)) {
             app.utils.handleTooltip(event, this);
         }
     },
+
     initialize: function(options) {
         //Grab the list of fields to display from the main list view (assuming initialize is being called from a subclass)
-        var listViewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {}));
-        listViewMeta = this.filterFields(listViewMeta);
+        var listViewMeta = this.filterFields(JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {})));
+
         //Extend from an empty object to prevent polution of the base metadata
         options.meta = _.extend({}, listViewMeta, JSON.parse(JSON.stringify(options.meta || {})));
         options.meta.type = options.meta.type || 'list';
 
         _.each(options.meta.panels, function(panel) {
-            panel = this.populatePanelMetadata(panel, options);
+            this.populatePanelMetadata(panel, options);
         }, this);
 
         app.view.View.prototype.initialize.call(this, options);
-        this.template = this.template || app.template.getView('list', this.module)
-                        || app.template.getView('list') || null;
+
         this.fallbackFieldTemplate = 'list-header';
         this.action = 'list';
 
+        this.attachEvents();
+        
         //When clicking on eye icon, we need to trigger preview:render with model&collection
         this.context.on("list:preview:fire", function(model) {
             app.events.trigger("preview:render", model, this.collection, true);
         }, this);
-
+        
         //When switching to next/previous record from the preview panel, we need to update the highlighted row
         app.events.on("list:preview:decorate", this.decorateRow, this);
         app.events.on("list:filter:fire", this.filterList, this);
+
+        // Dashboard layout injects shared context with limit: 5. 
+        // Otherwise, we don't set so fetches will use max query in config.
+        this.limit = this.context.has('limit') ? this.context.get('limit') : null;
     },
+
+    /**
+     * Takes the defaultListEventMap and listEventMap and binds the events. This is to allow views that
+     * extend ListView to specify their own events.
+     */
+    attachEvents: function() {
+        this.layoutEventsMap = _.extend(this.defaultLayoutEvents, this.layoutEvents); // If undefined nothing will be added.
+        this.contextEventsMap = _.extend(this.defaultContextEvents, this.contextEvents);
+
+        if (this.layout) {
+            _.each(this.layoutEventsMap, function(callback, event) {
+                this.layout.on(event, this[callback], this);
+            }, this);
+        }
+
+        if (this.context) {
+            _.each(this.contextEventsMap, function(callback, event) {
+                this.context.on(event, this[callback], this);
+            }, this);
+        }
+    },
+
+    previewRow: function(model) {
+        app.events.trigger("preview:render", model, this.collection, true);
+    },
+
+    paginateSuccess: function() {
+        //When fetching more records, we need to update the preview collection
+        app.events.trigger("preview:collection:change", this.collection);
+        this.render();
+    },
+
+    sort: function() {
+        //When sorting the list view, we need to close the preview panel
+        app.events.trigger("preview:close");
+    },
+
     filterFields: function(viewMeta){
         var self = this, fieldsRemoved = 0;
         this.hiddenFields = this.hiddenFields || [];
@@ -97,6 +154,7 @@
         var self = this;
 
         this.collection.fetch({
+            relate: !!this.context.get('link'), // Double bang for boolean coercion.
             filter: filterDef,
             success: function() {
                 if(isNewFilter) {
@@ -131,38 +189,6 @@
             panel = this.addRowActions(panel, options);
         }
         return panel;
-    },
-    _render:function () {
-        var self = this;
-        app.view.View.prototype._render.call(this);
-        // off prevents multiple bindings for each render
-        this.layout.off("list:search:fire", null, this);
-        this.layout.off("list:paginate:success", null, this);
-        this.layout.on("list:search:fire", this.fireSearch, this);
-        this.layout.on("list:paginate:success", function() {
-            //When fetching more records, we need to update the preview collection
-            app.events.trigger("preview:collection:change", this.collection);
-            this.render();
-            // If we have a model in preview, redecorate the row as previewed
-            if(this._previewed){
-                this.decorateRow(this._previewed);
-            }
-        }, this);
-        this.layout.off("list:filter:toggled", null, this);
-        this.layout.on("list:filter:toggled", this.filterToggled, this);
-        this.layout.off("list:alert:show", null, this);
-        this.layout.on("list:alert:show", this.showAlert, this);
-        this.layout.off("list:alert:hide", null, this);
-        this.layout.on("list:alert:hide", this.hideAlert, this);
-        this.layout.off("list:sort:fire", null, this);
-        this.layout.on("list:sort:fire", function() {
-            //When sorting the list view, we need to close the preview panel
-            app.events.trigger("preview:close");
-        }, this);
-
-        // Dashboard layout injects shared context with limit: 5. 
-        // Otherwise, we don't set so fetches will use max query in config.
-        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
     },
     showAlert: function(message) {
         this.$(".alert .container").html(message);

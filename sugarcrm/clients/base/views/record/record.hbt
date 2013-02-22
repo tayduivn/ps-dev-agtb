@@ -6,7 +6,7 @@
                     {{#if header}}
                         <h1>
                             {{#unless isAvatar}}
-                                <span class="label label-module label-{{../../../this.module}}" rel="tooltip" data-title="{{../../../this.module}} avatar" data-original-title="">Xx</span>
+                                <span class="label label-module label-{{../../../module}}" rel="tooltip" data-title="{{../../../module}} avatar" data-original-title="">{{firstChars ../../../module 2}}</span>
                             {{/unless}}
                             {{#each fields}}
                                 <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
