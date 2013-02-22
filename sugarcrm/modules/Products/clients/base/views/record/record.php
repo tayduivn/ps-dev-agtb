@@ -133,7 +133,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 ),
                 'sales_stage',
                 'probability',
-                'status',
+                'sales_status',
                 'date_closed',
                 'product_template_name',
                 'quantity',
