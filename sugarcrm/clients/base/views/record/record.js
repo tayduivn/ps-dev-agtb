@@ -39,7 +39,6 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
-        this.model.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
         this.context.set("viewed", true);
@@ -49,12 +48,6 @@
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
-        }
-    },
-
-    handleSync: function(method, options, error) {
-        if (this.model && this.model.attributes && (method == 'read' || method =='update')) {
-            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes || {}));
         }
     },
 
@@ -371,6 +364,9 @@
     },
 
     editClicked: function() {
+        if (_.isEmpty(this.previousModelState)) {
+            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
+        }
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
@@ -445,6 +441,10 @@
         // Set Editing mode to on.
         this.inlineEditMode = true;
 
+        if (_.isEmpty(this.previousModelState)) {
+            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
+        }
+
         this.setButtonStates(this.STATE.EDIT);
 
         // TODO: Refactor this for fields to support their own focus handling in future.
@@ -470,6 +470,10 @@
         self.inlineEditMode = false;
 
         var finalSuccess = function () {
+            if (!_.isEmpty(self.previousModelState)) {
+                self.previousModelState = {};
+            }
+
             if (self.createMode) {
                 app.navigate(self.context, self.model);
             } else {
@@ -494,7 +498,8 @@
         this.inlineEditMode = false;
         this.toggleEdit(false);
         if (!_.isEmpty(this.previousModelState)) {
-            this.model.set(this.previousModelState);
+            this.model.set(JSON.parse(JSON.stringify(this.previousModelState)));
+            this.previousModelState = {};
         }
     },
 
