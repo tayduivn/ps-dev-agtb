@@ -38,7 +38,6 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                 'name',
                 array(
                     'type' => 'favorite',
-                    'noedit' => true,
                 ),
             )
         ),
@@ -86,7 +85,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                 'team_name',
                 array(
                     'name' => 'date_modified_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_MODIFIED',
                     'fields' => array(
@@ -105,7 +104,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                 'reminder_time',
                 array(
                     'name' => 'date_entered_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_ENTERED',
                     'fields' => array(
@@ -122,7 +121,6 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     ),
                 ),
                 'assigned_user_name',
-                ''
             )
         )
     ),

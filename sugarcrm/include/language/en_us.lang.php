@@ -184,6 +184,10 @@ $app_list_strings = array (
   'SugarFavorites'=>'SugarFavorites',
    'Employees' => 'Employee',
    'Filters' => 'Filter',
+   'Currencies' => 'Currency',
+   'ProductTemplates' => 'Product Template',
+   'ProductCategories' => 'Product Category',
+   'ProductTypes' => 'Product Type',
 
         ),
 
@@ -2951,6 +2955,8 @@ $app_strings = array (
     'ERROR_MAX_FIELD_LENGTH' => 'Error. The max length of this field is {{this}}.',
     'ERROR_MIN_FIELD_LENGTH' => 'Error. The min length of this field is {{this}}.',
     'ERROR_EMAIL' => 'Error. Invalid Email Address: {{#each this}}{{this}} {{/each}}',
+    'ERROR_PRIMARY_EMAIL' => 'Error. At least one primary address should be set.',
+    'ERROR_DUPLICATE_EMAIL' => 'Error. Duplicate Email Address: {{#each this}}{{this}} {{/each}}',
     'ERROR_FIELD_REQUIRED' => 'Error. This field is required.',
     'ERROR_MINVALUE' => 'Error. This minimum value of this field is {{this}}.',
     'ERROR_MAXVALUE' => 'Error. This maximum value of this field is {{this}}.',

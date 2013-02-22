@@ -157,7 +157,7 @@
         // construct a new model from the data in recipientModel, which meets the expectations of the recipient field, to pass to "to_addresses"
         var recipient = new Backbone.Model({
                 id:recipientModel.get("id"),
-                module:recipientModel.get("_module")
+                module:recipientModel.module
             }),
             email = recipientModel.get("email"),
             email1 = recipientModel.get("email1"),
@@ -175,7 +175,7 @@
 
             if (!_.isUndefined(primaryAddress) && !_.isUndefined(primaryAddress.email_address) && primaryAddress.email_address.length > 0) {
                 recipient.set("email", primaryAddress.email_address);
-                name = recipientModel.get("assigned_user_name");
+                name = recipientModel.get("name");
             }
         }
 

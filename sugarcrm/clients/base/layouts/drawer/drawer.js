@@ -352,5 +352,18 @@
             .find('.drawer-tab i')
             .removeClass('icon-chevron-up')
             .addClass('icon-chevron-down');
+    },
+    /**
+     * Test if element is part of active drawer.  Always returns true if there's no inactive components on page.
+     * @param el DOM element to test if it is in the active drawer
+     * @return Active layout
+     */
+    isActive: function(el){
+        if(_.isEmpty(this._components)){
+            return true; // No drawers on page
+        }
+        var top = this._getDrawers(false).$top;
+        return top.find(el).length > 0;
     }
 })
+

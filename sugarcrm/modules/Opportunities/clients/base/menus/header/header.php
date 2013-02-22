@@ -40,7 +40,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#bwc/index.php?module=Reports&action=index&view=opportunities',
         'label' =>'LNK_OPPORTUNITY_REPORTS',
-        'acl_action'=>'view',
+        'acl_action'=>'list',
         'acl_module'=>$module_name,
         'icon' => 'icon-bar-chart',
     ),

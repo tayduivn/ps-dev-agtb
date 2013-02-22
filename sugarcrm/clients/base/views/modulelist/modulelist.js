@@ -106,7 +106,7 @@
             success:function (collection) {
                if (collection.models && collection.models.length >  0) {
                    self.$('[data-module=' + module + '] .favoritesAnchor').show();
-                   self.$('[data-module=' + module + '] .favoritesContainer').html(self.favRowTemplate(collection));
+                   self.$('[data-module=' + module + '] .favoritesContainer').show().html(self.favRowTemplate(collection));
                }
            }
         });
@@ -137,7 +137,7 @@
                     });
                     var collection = app.data.createBeanCollection(module, beans);
                     self.$('[data-module=' + module + '] .recentAnchor').show();
-                    self.$('[data-module=' + module + '] .recentContainer').html(self.recentRowTemplate(collection));
+                    self.$('[data-module=' + module + '] .recentContainer').show().html(self.recentRowTemplate(collection));
                 }
 
             }});
@@ -166,7 +166,7 @@
     },
 
     completeMenuMeta: function(module_list) {
-        var actions, meta, returnList = [];
+        var actions, meta, returnList = [], self = this;
         _.each(module_list, function(value, key) {
             actions = {
                 label: value,
@@ -174,7 +174,7 @@
             };
             meta = app.metadata.getModule(key);
             if (meta && meta.menu && meta.menu.header) {
-                actions.menu = meta.menu.header.meta;
+                actions.menu = self.filterAvailableMenuActions(meta.menu.header.meta);
             } else {
                 actions.menu = [];
             }
@@ -182,6 +182,21 @@
 
         });
         return returnList;
+    },
+
+    /**
+     * Filters menu metadata by acls
+     * @param Array menuMeta
+     * @return {Array}
+     */
+    filterAvailableMenuActions: function(menuMeta){
+        var result = [];
+        _.each(menuMeta, function(menuItem){
+            if(app.acl.hasAccess(menuItem.acl_action, menuItem.acl_module)) {
+                result.push(menuItem);
+            }
+        });
+        return result;
     },
 
     /**

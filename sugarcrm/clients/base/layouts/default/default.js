@@ -1,9 +1,5 @@
 ({
     className: "row-fluid",
-    events: {
-        "click .closeSubdetail": "hidePreviewPanel"
-    },
-
     initialize: function(opts) {
         // TODO: Fix this, right now app.template.getLayout does not retrieve the proper template because
         // it builds the wrong name.
@@ -13,8 +9,6 @@
         app.view.Layout.prototype.initialize.call(this, opts);
         this.processDef();
 
-        app.events.on("preview:open", this.showPreviewPanel, this);
-        app.events.on("preview:close", this.hidePreviewPanel, this);
         this.context.on("toggleSidebar", this.toggleSide, this);
         this.context.on("openSidebar", this.openSide, this);
     },
@@ -50,15 +44,5 @@
         if (component.meta.name) {
             this.$("." + component.meta.name).append(component.$el);
         }
-    },
-
-    showPreviewPanel: function() {
-        this.$(".side-pane").removeClass("active");
-        this.$(".preview-pane").addClass("active");
-    },
-
-    hidePreviewPanel: function() {
-        this.$(".preview-pane").removeClass("active");
-        this.$(".side-pane").addClass("active");
-    },
+    }
 })

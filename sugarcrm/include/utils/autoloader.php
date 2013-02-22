@@ -39,6 +39,7 @@ class SugarAutoLoader
         'Sugar_Smarty'=>'include/Sugar_Smarty.php',
         'CustomSugarView' => 'custom/include/MVC/View/SugarView.php',
 	    'Sugar_Smarty' => 'include/Sugar_Smarty.php',
+	    'HTMLPurifier_Bootstrap' => 'include/HTMLPurifier/HTMLPurifier.standalone.php',
         'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
         'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
         'SugarCurrency'=>'include/SugarCurrency/SugarCurrency.php',
@@ -184,33 +185,6 @@ class SugarAutoLoader
 			require_once(self::$moduleMap[$class]);
 			return true;
 		}
-        $viewPath = self::getFilenameForViewClass($class);
-        if (!empty($viewPath))
-        {
-            return true;
-        }
-        $reportWidget = self::getFilenameForSugarWidget($class);
-        if (!empty($reportWidget))
-        {
-            return true;
-        }
-        $visibility = self::getVisibilityStrategy($class);
-        if (!empty($visibility))
-        {
-            require_once($visibility);
-            return true;
-        }
-        $layout = self::getFilenameForLayoutClass($class);
-        if (!empty($layout)) {
-            require_once($layout);
-            return true;
-        }
-        $filePath = self::getFilepathForSchedulerJobClass($class);
-        if (!empty($filePath))
-        {
-            require_once($filePath);
-            return true;
-        }
 
 	    // Split on _, capitalize elements and make a path
 	    // foo_bar -> Foo/Bar.
@@ -228,11 +202,17 @@ class SugarAutoLoader
 		}
 
 		// Special cases
+		// Special case because lookup goes to $_REQUEST['module']
 		if(self::getFilenameForViewClass($class)) {
 			return true;
 		}
+		// Special case because widget name can be lowercased
 		if(self::getFilenameForSugarWidget($class)) {
 			return true;
+		}
+		// Special case because it checks by ending in Layout
+		if(self::getFilenameForLayoutClass($class)) {
+		    return true;
 		}
         //BEGIN SUGARCRM flav=pro ONLY
         if(self::getFilenameForExpressionClass($class)) {
@@ -261,36 +241,20 @@ class SugarAutoLoader
   		return false;
 	}
 
+	/**
+	 * Load layout class from include/MetaDataManager/layouts
+	 * @param string $class
+	 * @return string|false
+	 */
     protected static function getFilenameForLayoutClass($class)
     {
         if(substr($class, -6) == "Layout") {
-            $filename = get_custom_file_if_exists("include/MetaDataManager/layouts/$class.php");
-            if(file_exists($filename)) {
-                return $filename;
-            }
+            return self::requireWithCustom("include/MetaDataManager/layouts/$class.php");
         }
         return false;
     }
+
     /**
-     * getFilepathForSchedulerJobClass
-     *
-     * This class finds the file path for a scheduler job class
-     *
-     * @access protected
-     * @param $className the class name to find
-     * @return string    path to file, or false if none found
-     */
-    protected static function getFilepathForSchedulerJobClass($className)
-    {
-        if(strpos($className,'SugarJob') === 0) {
-            $filePath = get_custom_file_if_exists("include/SugarQueue/jobs/{$className}.php");
-            if(file_exists($filePath)) {
-                return $filePath;
-            }
-        }
-        return false;
-    }
-	/**
 	 * Add directory for loading classes
 	 * Directory should include trailing /
 	 * @param string $dir
@@ -340,6 +304,8 @@ class SugarAutoLoader
      * This method attempts to autoload classes starting with name "SugarWidget".  It first checks for the file
      * in custom/include/generic/SugarWidgets directory and if not found defaults to include/generic/SugarWidgets.
      * This method is used so that we can easily customize and extend these SugarWidget classes.
+     *
+     * Can not be served by prefixMap because of the lowercasing in class names.
      *
      * @static
      * @param $class String name of the class to load
@@ -400,27 +366,6 @@ class SugarAutoLoader
         }
         return false;
     }
-    /**
-        * Get filename for visibility class
-        * @param string $class
-        * @return bool|string path to class file, or false on fail
-        */
-       protected static function getVisibilityStrategy($class)
-       {
-           if(substr($class, 0, 8) == 'SugarACL') {
-               // ACL class
-               $filePath = get_custom_file_if_exists("data/acl/$class.php");
-               if(file_exists($filePath)) {
-                   return $filePath;
-               }
-               return false;
-           }
-           $filePath = get_custom_file_if_exists("data/visibility/$class.php");
-           if(file_exists($filePath)) {
-               return $filePath;
-           }
-           return false;
-       }
 
     /**
      * Get list of existing files and their customizations.
@@ -825,8 +770,6 @@ class SugarAutoLoader
                 return;
             }
         }
-	    
-        self::$memmap[$filename] = 1;
 
         self::$memmap[$filename] = 1;
 

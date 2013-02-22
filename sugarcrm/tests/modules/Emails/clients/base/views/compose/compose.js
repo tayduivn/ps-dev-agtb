@@ -120,9 +120,9 @@ describe("Emails.Views.Compose", function() {
         beforeEach(function() {
             expectedResult = {'id': '123', 'module': 'Foo'};
             recipientModel = new Backbone.Model({
-                'id': expectedResult.id,
-                '_module': expectedResult.module
+                'id': expectedResult.id
             });
+            recipientModel.module = expectedResult.module;
             contextTriggerStub = sinon.stub(view.context, 'trigger', function(trigger, recipient) {
                 if (recipient) {
                     actualResult = recipient.attributes;
@@ -159,7 +159,7 @@ describe("Emails.Views.Compose", function() {
                 {'email_address': 'foo@bar.com'},
                 {'email_address': expectedResult.email, 'primary_address': 1}
             ]);
-            recipientModel.set('assigned_user_name', expectedResult.name);
+            recipientModel.set('name', expectedResult.name);
             view.populateToRecipients(recipientModel);
             expect(actualResult).toEqual(expectedResult);
         });
