@@ -151,10 +151,6 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      */
     protected function parseGroupBy()
     {
-        global $current_language;
-
-        // get the language strings for the modules that we need
-        $forecast_strings = return_module_language($current_language, 'Forecasts');
         if ($this->group_by == "sales_stage") {
             foreach ($this->dataArray as $data) {
                 $this->group_by_labels[] = $data['sales_stage'];
@@ -188,13 +184,11 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      */
     protected function formatDataForChart()
     {
-        global $current_language;
         // since we are converting everything to base currency, we need to get the base currency id for the formatting
         $currency_id = -99;
 
-        // get the language strings for the modules that we need
-        $forecast_strings = return_module_language($current_language, 'Forecasts');
-        $opp_strings = return_module_language($current_language, 'Opportunities');
+        $forecast_strings = $this->getModuleLanguage('Forecasts');
+        $opp_strings = $this->getModuleLanguage('Opportunities');
 
         // default the label name to empty to prevent a notice from fireing
         $label_name = "";
@@ -280,6 +274,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
 
         // set the properties for the return array
         $properties = $this->defaultPropertiesArray;
+        $properties['goal_marker_label'][0] = $forecast_strings['LBL_QUOTA'];
         $properties['goal_marker_label'][1] = $label;
         $properties['value_name'] = $label;
         $properties['label_name'] = $label_name;
