@@ -106,7 +106,7 @@
             success:function (collection) {
                if (collection.models && collection.models.length >  0) {
                    self.$('[data-module=' + module + '] .favoritesAnchor').show();
-                   self.$('[data-module=' + module + '] .favoritesContainer').html(self.favRowTemplate(collection));
+                   self.$('[data-module=' + module + '] .favoritesContainer').show().html(self.favRowTemplate(collection));
                }
            }
         });
@@ -137,7 +137,7 @@
                     });
                     var collection = app.data.createBeanCollection(module, beans);
                     self.$('[data-module=' + module + '] .recentAnchor').show();
-                    self.$('[data-module=' + module + '] .recentContainer').html(self.recentRowTemplate(collection));
+                    self.$('[data-module=' + module + '] .recentContainer').show().html(self.recentRowTemplate(collection));
                 }
 
             }});
