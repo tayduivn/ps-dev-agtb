@@ -123,7 +123,6 @@
     editClicked: function(evt) {
         var component = _.first(this._components),
             self = this;
-
         app.drawer.open({
             layout: {
                 name: 'dashletconfiguration',
@@ -132,6 +131,7 @@
                         view: component.context.get("dashlet").type,
                         context: {
                             model: new app.Bean(),
+                            module: component.context.get("module"),
                             dashlet: _.extend({
                                 viewName: 'config'
                             },component.context.get("dashlet"))

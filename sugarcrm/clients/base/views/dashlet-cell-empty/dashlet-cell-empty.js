@@ -38,9 +38,9 @@
         if(type === 'edit') {
             this.template = this.originalTemplate;
         } else if(type === 'drag') {
-            this.template = app.template.getView(this.name + '.drop', this.module) || this.originalTemplate;
+            this.template = app.template.getView(this.name + '.drop') || this.originalTemplate;
         } else {
-            this.template = app.template.getView(this.name + '.empty', this.module) || app.template.empty;
+            this.template = app.template.getView(this.name + '.empty') || app.template.empty;
         }
         this.render();
     }

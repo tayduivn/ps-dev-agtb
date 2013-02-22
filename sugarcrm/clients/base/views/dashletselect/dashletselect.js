@@ -60,16 +60,20 @@
                         preview : true,
                         components: [{
                             view: metadata.type,
-                            context: {
+                            context: _.extend({
                                 forceNew: true,
-                                module: metadata.config.module,
-                                model: metadata.config.model,
                                 dashlet: _.extend({
                                     name: metadata.name,
                                     type: metadata.type,
                                     viewName: 'preview'
-                                },metadata.config)
-                            }
+                                },metadata.preview)
+                            }, (metadata.config.module || metadata.config.model) ? {
+                                    module: metadata.config.module,
+                                    model: metadata.config.model
+                                } : {
+                                    model: this.model
+                                }
+                            )
                         }]
                     }
                 }
@@ -96,7 +100,9 @@
                                 name: metadata.name,
                                 type: metadata.type,
                                 viewName: 'config'
-                            },metadata.config)
+                            },{
+                                module: metadata.module
+                            }, metadata.config)
                         }
                     }
                 ]

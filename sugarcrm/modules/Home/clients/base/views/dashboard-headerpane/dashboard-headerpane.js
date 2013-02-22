@@ -13,8 +13,8 @@
     },
     initialize: function(options) {
         app.view.views.HeaderpaneView.prototype.initialize.call(this, options);
-        this.model.off("change change:layout", null, this);
-        this.model.on("change change:layout", function() {
+        this.model.off("change change:layout change:metadata", null, this);
+        this.model.on("change change:layout change:metadata", function() {
             if (this.inlineEditMode) {
                 this.changed = true;
             }

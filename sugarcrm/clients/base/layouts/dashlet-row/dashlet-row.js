@@ -46,11 +46,13 @@
             $body = $("<ul></ul>").addClass("dashlet-row");
             this.$el.append($body);
         }
-        var headerTemplate = app.template.getLayout(this.name + '.header', this.module) || app.template.empty,
+        var headerTemplate = app.template.getLayout(this.name + '.header') || app.template.empty,
             $container = $("<div></div>", {class: 'rows well well-invisible'})
                 .append(headerTemplate())
                 .append(comp.el),
-            $el = $("<li></li>", {class: 'row-fluid'}).data('index', function() {return comp.index;}).append($container);
+            $el = $("<li></li>", {class: 'row-fluid'}).data('index', function() {
+                return comp.index + '';
+            }).append($container);
 
         if(prepend) {
             $body.children("li:last").before($el)
@@ -97,6 +99,9 @@
                 components: components
             }
         }]);
+        _.each(this._components, function(component, index){
+            component.index = this.index + '' + index;
+        }, this);
         this.render();
         this.setMode(this.model.mode);
     },
@@ -141,10 +146,10 @@
             placeholder: "placeholder",
             update: function(event, ui) {
 
-                var targetIndex = ui.item.first().data('index')(),
-                    sourceIndex = ui.item.first().next().data('index')();
+                var sourceIndex = ui.item.first().data('index')(),
+                    targetIndex = ui.item.first().next().data('index')();
 
-                self.switchComponent(sourceIndex, targetIndex);
+                self.switchComponent(targetIndex, sourceIndex);
             }
         });
         this.setMode(this.model.mode);

@@ -5,8 +5,6 @@
         var dashlet = JSON.parse(JSON.stringify(this.context.get("dashlet")));
 
         if(view === 'config') {
-            this.createMode = true;
-            this.action = 'edit';
 
             var metadata = app.metadata.getView(dashlet.module, 'list');
 

@@ -1,11 +1,7 @@
 ({
-    extendsFrom: 'HomeDashletRowLayout',
+    extendsFrom: 'DashletRowLayout',
     tagName: 'ul',
     className: 'dashlet-cell rows row-fluid',
-    initialize: function(options) {
-        app.view.layouts.HomeDashletRowLayout.prototype.initialize.call(this, options);
-
-    },
     _placeComponent: function(comp, def) {
         var span = 'widget-container span' + (def.width || 12),
             self = this;

@@ -1,5 +1,5 @@
 <?php
-$viewdefs["Home"]["base"]["view"]["dashletconfiguration-headerpane"] = array(
+$viewdefs["base"]["view"]["dashletconfiguration-headerpane"] = array(
     "type"    => "headerpane",
     "title"   => "Dashlet Configuration",
     "buttons" => array(

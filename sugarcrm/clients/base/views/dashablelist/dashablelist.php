@@ -11,13 +11,22 @@ $viewdefs['base']['view']['dashablelist'] = array(
                 'my_items' => '1',
             ),
             'preview' => array(
-                'title' => 'My Account'
+                'module' => 'Accounts',
+                'display_columns' => array('name','phone_office'),
+                'my_items' => '1',
             )
         ),
         array(
             'name' => 'My Assigned Bugs',
             'description' => 'Bugs assigned to you',
             'config' => array(
+                'module' => 'Bugs',
+                'display_columns' => array(
+                    'bug_number', 'name', 'status', 'priority'
+                ),
+                'my_items' => '1',
+            ),
+            'preview' => array(
                 'module' => 'Bugs',
                 'display_columns' => array(
                     'bug_number', 'name', 'status', 'priority'
@@ -33,8 +42,15 @@ $viewdefs['base']['view']['dashablelist'] = array(
                 'display_columns' => array(
                     'name', 'account_name', 'amount'
                 ),
+                'my_items' => '1',
             ),
-            'my_items' => '1',
+            'preview' => array(
+                'module' => 'Opportunities',
+                'display_columns' => array(
+                    'name', 'account_name', 'amount'
+                ),
+                'my_items' => '1',
+            ),
         )
     ),
     'dashlet_config_panels' => array(

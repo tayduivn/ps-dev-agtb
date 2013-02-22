@@ -20,7 +20,7 @@
                 module: 'Home',
                 model: Dashboard
             });
-        if(options.meta.method && options.meta.method === 'record' && !context.get("modelId")) {
+        if(options.meta && options.meta.method && options.meta.method === 'record' && !context.get("modelId")) {
             context.set("create", true);
         }
         var model = new Dashboard();
@@ -31,7 +31,9 @@
         context.set("collection", new DashboardCollection());
         app.view.Layout.prototype.initialize.call(this, options);
         this.initDashletPlugin();
-        this.on("render", this.toggleSidebar);
+        if(!this.context.parent) {
+            this.on("render", this.toggleSidebar);
+        }
     },
     initDashletPlugin: function() {
         if(app.plugins._get('Dashlet', 'view')) return;
@@ -47,6 +49,8 @@
                         type: dashlet_context.type
                     }, dashlet_context));
                     if(viewName === "config") {
+                        this.createMode = true;
+                        this.action = 'edit';
                         this.layout.context.set("model", this.context.get("model"));
                         var templateName = this.name + '.dashlet-config';
                         this.template = app.template.getView(templateName, this.module) ||
@@ -97,10 +101,25 @@
             this.collection.on("reset", function() {
                 if(this.collection.models.length > 0) {
                     var model = _.first(this.collection.models);
-                    app.navigate(this.context, model);
+                    if(!this.context.parent) {
+                        app.navigate(this.context, model);
+                    } else {
+                        //For other modules
+                        this.context.set("model", model);
+                        //this.context.unset("collection");
+                        //this.context.set("module", "Home");
+                        model.fetch();
+                        this._addComponentsFromDef([{
+                            layout: 'dashlet-main'
+                        }]);
+                        this.loadData();
+                        this.render();
+                    }
                 } else {
-                    var route = app.router.buildRoute(this.module, null, 'create');
-                    app.router.navigate(route, {trigger: true});
+                    if(!this.context.parent) {
+                        var route = app.router.buildRoute(this.module, null, 'create');
+                        app.router.navigate(route, {trigger: true});
+                    }
                 }
             }, this);
         }
