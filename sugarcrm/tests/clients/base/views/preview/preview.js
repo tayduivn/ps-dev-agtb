@@ -30,7 +30,7 @@ describe("Preview View", function() {
         layout = SugarTest.createLayout('base', "Cases", "preview");
         preview = SugarTest.createView("base", "Cases", "preview", null, null);
         preview.layout = layout;
-        app = SUGAR.App;
+        app = SugarTest.app;
         meta = app.metadata.getView('Cases', 'record');
     });
 
@@ -109,6 +109,11 @@ describe("Preview View", function() {
                expect(model).toEqual(dummyModel);
                expect(collection).toEqual(dummyCollection);
             });
+            app.drawer = {  // Not defined, drawer is a Sugar7 plug-in but only not really relevant to this test.
+                isActive: function(){
+                    return true;
+                }
+            };
             app.events.trigger("preview:render", dummyModel, dummyCollection, false);
             expect(renderPreviewStub).toHaveBeenCalled();
             renderPreviewStub.restore();
@@ -147,6 +152,7 @@ describe("Preview View", function() {
             expect(preview.layout.next).toBeDefined();
             expect(preview.layout.previous.get('id')).toEqual(modelIds[2]);
             expect(preview.layout.next.get('id')).toEqual(modelIds[4]);
+            expect(preview.layout.hideNextPrevious).toBe(false);
         });
 
         it("Should find previous model from list collection", function() {
@@ -155,6 +161,7 @@ describe("Preview View", function() {
             expect(preview.layout.previous).toBeDefined();
             expect(preview.layout.next).not.toBeDefined();
             expect(preview.layout.previous.get('id')).toEqual(modelIds[4]);
+            expect(preview.layout.hideNextPrevious).toBe(false);
         });
 
         it("Should find next model from list collection", function() {
@@ -163,6 +170,21 @@ describe("Preview View", function() {
             expect(preview.layout.previous).not.toBeDefined();
             expect(preview.layout.next).toBeDefined();
             expect(preview.layout.next.get('id')).toEqual(modelIds[1]);
+            expect(preview.layout.hideNextPrevious).toBe(false);
+        });
+
+        it("Should hide next/previous buttons when collection has one or is empty", function() {
+            createListCollection(0, 0);
+            preview.showPreviousNextBtnGroup();
+            expect(preview.layout.previous).not.toBeDefined();
+            expect(preview.layout.next).not.toBeDefined();
+            expect(preview.layout.hideNextPrevious).toBe(true);
+
+            preview.collection = null;
+            preview.showPreviousNextBtnGroup();
+            expect(preview.layout.previous).not.toBeDefined();
+            expect(preview.layout.next).not.toBeDefined();
+            expect(preview.layout.hideNextPrevious).toBe(true);
         });
     });
 });
