@@ -178,6 +178,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'comment' => 'Date meeting ends',
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
+    'studio' => array('wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
   ),
   'parent_type' =>
   array (
@@ -189,7 +190,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'options'=> 'parent_type_display',
     'len' => 100,
     'comment' => 'Module meeting is associated with',
-    'studio' => array('searchview'=>false),
+    'studio' => array('searchview'=>false, 'wirelesslistview'=>false),
   ),
   'status' =>
   array (
@@ -363,6 +364,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 		'group'=>'parent_name',
 		'source'=>'non-db',
 		'options'=> 'parent_type_display',
+    'studio' => true,
 		),
   'users' =>
   array (

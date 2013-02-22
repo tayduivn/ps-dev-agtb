@@ -37,21 +37,6 @@ class SugarFieldRelateTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
     }
     
-	public function testFormatContactNameWithFirstName()
-	{
-        $GLOBALS['current_user']->setPreference('default_locale_name_format','l f');
-        
-	    $vardef = array('name' => 'contact_name');
-	    $value = 'John Mertic';
-	    
-	    $sfr = new SugarFieldRelate('relate');
-	    
-	    $this->assertEquals(
-            $sfr->formatField($value,$vardef),
-            'Mertic John'
-            );
-    }
-    
     /**
      * @ticket 35265
      */

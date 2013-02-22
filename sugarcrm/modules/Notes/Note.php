@@ -186,14 +186,11 @@ class Note extends SugarBean {
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
-        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
-		if($custom_join)
-				$custom_join['join'] .= $relate_link_join;
+        $custom_join = $this->getCustomJoin(true, true, $where);
+        $custom_join['join'] .= $relate_link_join;
 		$query = "SELECT notes.*, contacts.first_name, contacts.last_name, users.user_name as assigned_user_name ";
 
-		if($custom_join) {
-   			$query .= $custom_join['select'];
- 		}
+        $query .= $custom_join['select'];
 
     	$query .= " FROM notes ";
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -204,9 +201,7 @@ class Note extends SugarBean {
 		$query .= "	LEFT JOIN contacts ON notes.contact_id=contacts.id ";
         	$query .= "  LEFT JOIN users ON notes.assigned_user_id=users.id ";
 	
-		if($custom_join) {
-			$query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 
 		$where_auto = " notes.deleted=0 AND (contacts.deleted IS NULL OR contacts.deleted=0)";
 

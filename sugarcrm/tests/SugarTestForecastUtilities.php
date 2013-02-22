@@ -34,6 +34,7 @@
  */
 
 require_once 'modules/Forecasts/Forecast.php';
+require_once 'modules/Opportunities/Opportunity.php';
 
 class SugarTestForecastUtilities
 {
@@ -49,6 +50,9 @@ class SugarTestForecastUtilities
      */
     public static function createForecast($timeperiod, $user)
     {
+        $timedate = TimeDate::getInstance();
+        $timedate->allow_cache = false;
+       
         $forecast = new Forecast();
         $forecast->timeperiod_id = $timeperiod->id;
         $forecast->best_case = 100;
@@ -56,9 +60,12 @@ class SugarTestForecastUtilities
         $forecast->worst_case = 100;
         $forecast->forecast_type = 'Direct';
         $forecast->user_id = $user->id;
-        $forecast->date_modified = db_convert("'" . TimeDate::getInstance()->nowDb() . "'", 'datetime');
+        $forecast->date_modified = db_convert("'" . $timedate->nowDb() . "'", 'datetime');
         $forecast->date_entered = $forecast->date_modified;
+        $forecast->pipeline_opp_count = 0;
+        $forecast->pipeline_amount = 0;
         $forecast->save();
+        
         self::$_createdForecasts[$forecast->id] = $forecast;
         return $forecast;
     }
@@ -185,22 +192,22 @@ class SugarTestForecastUtilities
                  */
                 /* @var $product Product */
                 $product = BeanFactory::getBean('Products');
-				$product->retrieve_by_string_fields(array('opportunity_id'=>$opp->id));
-				$product->name = $opp->name;
-		        $product->best_case = $opp->best_case;
-		        $product->likely_case = $opp->amount;
-		        $product->worst_case = $opp->worst_case;
-		        $product->cost_price = $opp->amount;
-		        $product->quantity = 1;
-		        $product->currency_id = $opp->currency_id;
-		        $product->base_rate = $opp->base_rate;
-		        $product->probability = $opp->probability;
-		        $product->date_closed = $opp->date_closed;
-		        $product->date_closed_timestamp = $opp->date_closed_timestamp;
-		        $product->assigned_user_id = $opp->assigned_user_id;
-		        $product->opportunity_id = $opp->id;
-		        $product->commit_stage = $opp->commit_stage;
-		        $product->save();
+                $product->retrieve_by_string_fields(array('opportunity_id'=>$opp->id));
+                $product->name = $opp->name;
+                $product->best_case = $opp->best_case;
+                $product->likely_case = $opp->amount;
+                $product->worst_case = $opp->worst_case;
+                $product->cost_price = $opp->amount;
+                $product->quantity = 1;
+                $product->currency_id = $opp->currency_id;
+                $product->base_rate = $opp->base_rate;
+                $product->probability = $opp->probability;
+                $product->date_closed = $opp->date_closed;
+                $product->date_closed_timestamp = $opp->date_closed_timestamp;
+                $product->assigned_user_id = $opp->assigned_user_id;
+                $product->opportunity_id = $opp->id;
+                $product->commit_stage = $opp->commit_stage;
+                $product->save();
 
                 if ($include == 1) {
                     $forecast_likely_total += $opp->amount;
@@ -228,7 +235,6 @@ class SugarTestForecastUtilities
     
                         $return['opp_worksheets'][] = $worksheet;
                     }
-
                 }
 
                 $return['opportunities_total'] += $opp_amount;
@@ -246,6 +252,8 @@ class SugarTestForecastUtilities
                 $forecast->likely_case = $forecast_likely_total;
                 $forecast->forecast_type = "Direct";
                 $forecast->opp_count = $config['opportunities']['include_in_forecast'];
+                $forecast->pipeline_amount = $forecast->likely_case;
+                $forecast->pipeline_opp_count = $forecast->opp_count;
                 $forecast->currency_id = $config['currency_id'];
                 $forecast->save();
 
@@ -314,6 +322,8 @@ class SugarTestForecastUtilities
         $tmpForecast->worst_case = $manager['forecast']->worst_case;
         $tmpForecast->likely_case = $manager['forecast']->likely_case;
         $tmpForecast->forecast_type = 'Rollup';
+        $pipelineAmount = 0;
+        $pipelineCount = 0;
 
         //grab the users
         foreach($users as $user) {
@@ -322,6 +332,8 @@ class SugarTestForecastUtilities
                 $tmpForecast->worst_case += $user['forecast']->worst_case;
                 $tmpForecast->likely_case += $user['forecast']->likely_case;
                 $tmpForecast->opp_count += $user['forecast']->opp_count;
+                $pipelineAmount += $user['forecast']->pipeline_amount;
+                $pipelineCount += $user['forecast']->pipeline_opp_count;
             }
         }
         //finish off with the manager
@@ -329,6 +341,9 @@ class SugarTestForecastUtilities
         $tmpForecast->worst_case += $manager['forecast']->worst_case;
         $tmpForecast->likely_case += $manager['forecast']->likely_case;
         $tmpForecast->opp_count += $manager['forecast']->opp_count;
+        $GLOBALS["log"]->log("Pipeline Amounts: " . $pipelineAmount . ", " . $pipelineCount);
+        $tmpForecast->pipeline_amount = $pipelineAmount + $manager['forecast']->pipeline_amount;
+        $tmpForecast->pipeline_opp_count = $pipelineCount + $manager['forecast']->pipeline_opp_count;
         
         $tmpForecast->save();
 
@@ -337,6 +352,40 @@ class SugarTestForecastUtilities
         $mgr_worksheet = BeanFactory::getBean("ForecastManagerWorksheets");
         $mgr_worksheet->reporteeForecastRollUp($manager['user'], $tmpForecast->toArray());
 
+        return $tmpForecast;
+    }
+    
+    /**
+     * Creates direct rep forecasts given a user that has opportunities
+     * 
+     * @param array User array defined above.
+     * @return object Updated forecast.
+     */
+    public static function createRepDirectForecast($user)
+    {
+        $tmpForecast = SugarTestForecastUtilities::createForecast(self::$timeperiod, $user["user"]);
+        $tmpForecast->best_case = 0;
+        $tmpForecast->worst_case = 0;
+        $tmpForecast->likely_case = 0;
+        $tmpForecast->opp_count = 0;
+        $closedAmount = 0;
+        $closedCount = 0;
+        
+        //loop over opportunities
+        foreach($user["opportunities"] as $opp){
+            $tmpForecast->best_case += $opp->best_case;
+            $tmpForecast->worst_case += $opp->worst_case;
+            $tmpForecast->likely_case += $opp->amount;
+            $tmpForecast->opp_count++;
+            
+            if($opp->sales_stage == Opportunity::STAGE_CLOSED_WON || $opp->sales_stage == Opportunity::STAGE_CLOSED_LOST){
+                $closedCount++;
+                $closedAmount += $opp->amount;
+            }
+        }
+        
+        $tmpForecast->calculatePipelineData($closedAmount, $closedCount);
+        $tmpForecast->save();
         return $tmpForecast;
     }
 
@@ -369,12 +418,9 @@ class SugarTestForecastUtilities
          }
 
          return SugarCurrency::formatAmount($amount,
-                                            $user->getPreference('currency'),
-                                            $user->getPreference('default_currency_significant_digits'),
-                                            $user->getPreference('default_number_grouping_seperator')
+            $user->getPreference('currency'),
+            $user->getPreference('default_currency_significant_digits'),
+            $user->getPreference('default_number_grouping_seperator')
          );
     }
-
-
-
 }

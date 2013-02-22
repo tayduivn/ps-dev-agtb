@@ -59,12 +59,6 @@ $viewdefs['Accounts']['mobile']['view']['list'] = array(
                     'default' => true,
                 ),
                 array(
-                    'name' => 'phone_alternate',
-                    'enabled' => true,
-                    'width' => '10%',
-                    'default' => true,
-                ),
-                array(
                     'name' => 'email1',
                     'enabled' => true,
                     'width' => '10%',

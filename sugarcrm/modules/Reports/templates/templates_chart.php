@@ -31,8 +31,8 @@ This code has been moved into include/SugarCharts/ChartDisplay.php as a class so
 $do_thousands = false;
 
 function template_chart(& $reporter, $chart_display_style, $is_dashlet = false, $id = '') {
-    $group_key = (isset($reporter->report_def['group_defs'][0]['table_key']) ? $reporter->report_def['group_defs'][0]['table_key'] : '') . 
-    ':' . 
+    $group_key = (isset($reporter->report_def['group_defs'][0]['table_key']) ? $reporter->report_def['group_defs'][0]['table_key'] : '') .
+    ':' .
     (isset($reporter->report_def['group_defs'][0]['name']) ?  $reporter->report_def['group_defs'][0]['name'] : '');
 
     if (!empty ($reporter->report_def['group_defs'][0]['qualifier'])) {
@@ -91,7 +91,7 @@ function get_row_remap(& $row, & $reporter) {
     }
     $row_remap['group_text'] = $group_text = (isset($reporter->chart_group_position) && !is_array($reporter->chart_group_position)) ? chop($row['cells'][$reporter->chart_group_position]['val']) : '';
     $row_remap['group_key'] = ((isset($reporter->chart_group_position) && !is_array($reporter->chart_group_position)) ? $row['cells'][$reporter->chart_group_position]['key'] : '');
-    $row_remap['count'] = $row['count'];
+    $row_remap['count'] = isset($row['count'])?$row['count']:'';
     $row_remap['group_label'] = ((isset($reporter->chart_group_position) && !is_array($reporter->chart_group_position)) ? $reporter->chart_header_row[$reporter->chart_group_position]['label'] : '');
     $row_remap['numerical_label'] = $reporter->chart_header_row[$reporter->chart_numerical_position]['label'];
     $row_remap['numerical_key'] = $reporter->chart_header_row[$reporter->chart_numerical_position]['column_key'];
@@ -309,6 +309,14 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 		$sugarChart->setData($chart_rows);
 
         $sugarChart->setProperties($chartTitle, '', $chartType, 'on', 'value', 'on', $do_thousands);
+
+        // fill group_by property in order to know how many group levels we have
+        $groupByNames = array();
+        foreach ($reporter->report_def['group_defs'] as $group_def)
+        {
+            $groupByNames[] = $group_def['name'];
+        }
+        $sugarChart->group_by = $groupByNames;
 
 		$xmlFile = get_cache_file_name($reporter);
 

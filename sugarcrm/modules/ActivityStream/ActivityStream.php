@@ -137,7 +137,7 @@ class ActivityStream extends SugarBean
     {
         global $current_language;
 
-        $dataChanges = $GLOBALS['db']->getDataChanges($bean, 'activity');
+        $dataChanges = $GLOBALS['db']->getDataChanges($bean, array('for'=>'activity'));
         $dataChanges = array_values($dataChanges);
         $fieldDefs = $bean->getFieldDefinitions();
         $mod_strings = return_module_language($current_language, $bean->module_dir);

@@ -369,7 +369,6 @@ class QueryBuilder extends SugarBean {
     global $dictionary;
         if(!empty($dictionary[$seed_object->object_name]['fields'][$field]['custom_type'])){
         //field is present in the module's custom table.  Retrieve this table and use as query
-            $custom_join = $this->custom_fields->getJOIN();
             $field_select = $seed_object->table_name."_cstm.".$field;
 
         } else {

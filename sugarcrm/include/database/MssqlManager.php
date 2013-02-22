@@ -393,14 +393,22 @@ class MssqlManager extends DBManager
             $unionOrderBy = ' order by ' . $unionOrderBy;
         }
 
-        //Bug 56560 either start = 0 or > 0, use top query in conjunction
-        //with rownumber() function to create limit query.
-        //otherwise, it shows duplicates when paging on activities subpanel
-        $limitUnionSQL = "SELECT TOP $count * FROM( select ROW_NUMBER() OVER ( order by "
-        .$rowNumOrderBy.") AS row_number, * FROM ("
-        .$unionsql .") As numbered) "
-        . "As top_count_limit WHERE row_number > $start "
-        .$unionOrderBy;
+        //Bug 56560, use top query in conjunction with rownumber() function
+        //to create limit query when paging is needed. Otherwise,
+        //it shows duplicates when paging on activities subpanel.
+        //If not for paging, no need to use rownumber() function
+        if ($count == 1)
+        {
+            $limitUnionSQL = "SELECT TOP $count * FROM (" .$unionsql .") as top_count ".$unionOrderBy;
+        }
+        else
+        {
+            $limitUnionSQL = "SELECT TOP $count * FROM( select ROW_NUMBER() OVER ( order by "
+            .$rowNumOrderBy.") AS row_number, * FROM ("
+            .$unionsql .") As numbered) "
+            . "As top_count_limit WHERE row_number > $start "
+            .$unionOrderBy;
+        }
 
         return $limitUnionSQL;
     }
@@ -733,7 +741,7 @@ class MssqlManager extends DBManager
     {
         //change case to lowercase
         $sql = strtolower($sql);
-        $patt = '/\s+'.trim($orderMatch).'\s*,/';
+        $patt = '/\s+'.trim($orderMatch).'\s*(,|from)/';
 
         //check for the alias, it should contain comma, may contain space, \n, or \t
         $matches = array();
@@ -1207,6 +1215,10 @@ class MssqlManager extends DBManager
                 return "DATEADD({$additional_parameters[1]},{$additional_parameters[0]},$string)";
             case 'add_time':
                 return "DATEADD(hh, {$additional_parameters[0]}, DATEADD(mi, {$additional_parameters[1]}, $string))";
+            case 'add_tz_offset' :
+                $getUserUTCOffset = $GLOBALS['timedate']->getUserUTCOffset();
+                $operation = $getUserUTCOffset < 0 ? '-' : '+';
+                return 'DATEADD(minute, ' . $operation . abs($getUserUTCOffset) . ', ' . $string. ')';
         }
 
         return "$string";

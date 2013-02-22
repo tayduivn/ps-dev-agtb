@@ -744,6 +744,8 @@
             wonCount = 0,
             wonAmount = 0,
             totalCount = 0;
+            includedClosedCount = 0;
+            includedClosedAmount = 0;
 
         if(!this.isVisible()) {
             // if we don't show this worksheet set it all to zero
@@ -761,7 +763,10 @@
                     'won_count': wonCount,
                     'won_amount': wonAmount,
                     'included_opp_count': includedCount,
-                    'total_opp_count': totalCount
+                    'total_opp_count': totalCount,
+                    'includedClosedCount' : 0,
+                    'includedClosedAmount' : 0
+
                 }
             }, {silent: true});
             return false;
@@ -784,18 +789,22 @@
                 best_base = app.currency.convertWithRate(best, base_rate);
 
             if(won) {
-                wonAmount += amount_base;
+                wonAmount = app.math.add(wonAmount, amount_base);
                 wonCount++;
             } else if(lost) {
-                lostAmount += amount_base;
+                lostAmount = app.math.add(lostAmount, amount_base);
                 lostCount++;
             }
-
+            
             if(commit_stage === 'include') {
                 includedAmount += amount_base;
                 includedBest += best_base;
                 includedWorst += worst_base;
                 includedCount++;
+                if(won || lost) {
+                    includedClosedCount++;
+                    includedClosedAmount = app.math.add(amount_base, includedClosedAmount);
+                }
             }
 
             overallAmount += amount_base;
@@ -816,7 +825,10 @@
             'won_count': wonCount,
             'won_amount': wonAmount,
             'included_opp_count': includedCount,
-            'total_opp_count': this.collection.models.length
+            'total_opp_count': this.collection.models.length,
+            'includedClosedCount': includedClosedCount,
+            'includedClosedAmount': includedClosedAmount
+
         };
 
         this.context.unset("updatedTotals", {silent: true});

@@ -138,7 +138,7 @@ class RegisterLeadApi extends SugarApi {
         }
 
         $id = $this->updateBean($bean, $api, $fields);
-
+        $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);;
         return $data;
     }

@@ -50,7 +50,10 @@ class Bug43643Test extends Sugar_PHPUnit_Framework_TestCase
         $current_user->load_relationship('email_addresses');
 
         $non_reply_to_value = 'non-reply-to@example.com';
-        $non_reply_to_address = $this->addEmailAddress($current_user, $non_reply_to_value);
+        $non_reply_to_address = SugarTestEmailAddressUtilities::addAddressToPerson(
+            $current_user,
+            $non_reply_to_value
+        );
 
         require_once 'modules/EmailAddresses/EmailAddress.php';
         $email_address = new EmailAddress();
@@ -66,9 +69,13 @@ class Bug43643Test extends Sugar_PHPUnit_Framework_TestCase
 
         // create reply-to address
         $reply_to_value = 'some-address-2@example.com';
-        $reply_to_address = $this->addEmailAddress($current_user, $reply_to_value, array(
-            'reply_to_address' => true,
-        ));
+        $reply_to_address = SugarTestEmailAddressUtilities::addAddressToPerson(
+            $current_user,
+            $reply_to_value,
+            array(
+                'reply_to_address' => true,
+            )
+        );
 
         // ensure that reply-to address is returned
         $reply_to_only_result2 = $email_address->getReplyToAddress($current_user, true);
@@ -78,30 +85,5 @@ class Bug43643Test extends Sugar_PHPUnit_Framework_TestCase
         $non_reply_to_address->mark_deleted($non_reply_to_address->id);
         $reply_to_address->mark_deleted($reply_to_address->id);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    }
-
-    /**
-     * Create email address instance with specified parameters and adds it as a
-     * M2M relation to specified user
-     *
-     * @param User $user
-     * @param string $address
-     * @param array $additional_values
-     * @return EmailAddress
-     */
-    protected function addEmailAddress(User $user, $address, array $additional_values = array())
-    {
-        /** @var Link2 $email_addresses */
-        $email_addresses = $user->email_addresses;
-
-        // create email address instance
-        $email_address = new EmailAddress();
-        $email_address->email_address = $address;
-        $email_address->save();
-
-        // create relation between user and email address
-        $email_addresses->add(array($email_address), $additional_values);
-        $GLOBALS['db']->commit();
-        return $email_address;
     }
 }

@@ -119,8 +119,9 @@ class ForecastsSeedData {
                     $forecast->likely_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + (($multiplier-1) * 100);
                     $forecast->forecast_type='Direct';
                     $forecast->date_committed = $timedate->asDb($timedate->getNow()->modify("-1 day"));
+                    $forecast->calculatePipelineData($opp_summary_array['CLOSED_AMOUNT'], $opp_summary_array['CLOSED_OPP_COUNT']);             
                     $forecast->save();
-
+                    
                     self::createManagerWorksheet($commit_type_array[0], $forecast->toArray());
 
                     //Create a previous forecast to simulate change
@@ -176,7 +177,9 @@ class ForecastsSeedData {
                     $forecast->best_case=$DirReportsFocus->total_weigh_value_number + ($multiplier * 100);
                     $forecast->worst_case=$DirReportsFocus->total_weigh_value_number + (($multiplier-1) * 100);
                     $forecast->forecast_type='Rollup';
-                    $forecast->date_committed = $timedate->to_display_date_time(date($timedate->get_db_date_time_format(), time()), true);
+                    $forecast->pipeline_opp_count = $DirReportsFocus->pipeline_opp_count;
+                    $forecast->pipeline_amount = $DirReportsFocus->pipeline_amount;
+                    $forecast->date_entered = $timedate->to_display_date_time(date($timedate->get_db_date_time_format(), time()), true);
                     $forecast->save();
 
                     self::createManagerWorksheet($commit_type_array[0], $forecast->toArray());

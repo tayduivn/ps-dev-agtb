@@ -90,7 +90,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $targetedUser = BeanFactory::getBean("Users", $this->getArg('user_id'));
 
         //top level manager has to receive special treatment, but all others can be routed through quota function.
-        if($targetedUser->reports_to_id != "") {
+        if ($targetedUser->reports_to_id != "") {
             $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
         } else {
             $quotaData["amount"] = $this->getQuotaTotalFromData();
@@ -100,14 +100,14 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $this->getPipelineRevenue();
 
         //get data
-		$progressData = array(
+        $progressData = array(
             "closed_amount"     => $this->getClosedAmount(),
             "opportunities"     => $this->pipelineCount,
             "pipeline_revenue"  => $this->pipelineRevenue,
             "quota_amount"      => isset($quotaData["amount"]) ? ($quotaData["amount"]) : 0
-		);
+        );
 
-		return $progressData;
+        return $progressData;
     }
 
     /**
@@ -182,12 +182,15 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
 
         $db = DBManagerFactory::getInstance();
         $amountSum = 0;
+        $query = "";
 
         $user_id = $this->getArg('user_id');
         $timeperiod_id = $this->getArg('timeperiod_id');
         $excluded_sales_stages_won = $this->getArg('sales_stage_won');
         $excluded_sales_stages_lost = $this->getArg('sales_stage_lost');
         $repIds = User::getReporteeReps($user_id);
+        $mgrIds = User::getReporteeManagers($user_id);
+        $arrayLen = 0;
 
         //Note: this will all change in sugar7 to the filter API
         //set up outer part of the query
@@ -196,35 +199,54 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         //build up two subquery strings so we can unify the sales stage loops
         //all manager opps 
         $queryMgrOpps = "SELECT " .
-                            "sum(o.amount*o.base_rate) AS amount, count(*) as recordcount " .
+                            "sum(o.amount/o.base_rate) AS amount, count(*) as recordcount " .
                         "FROM opportunities o " .
                         "INNER JOIN users u  " .
                             "ON o.assigned_user_id = u.id " .
-                        "LEFT JOIN timeperiods t " .
-                            "ON t.start_date_timestamp <= o.date_closed_timestamp " . 
-                            "AND t.end_date_timestamp >= o.date_closed_timestamp " .
+                        "INNER JOIN timeperiods t " .
+                            "ON t.id = {$db->quoted($timeperiod_id)} " . 
                         "WHERE " .
-                            "t.id = {$db->quoted($timeperiod_id)} " . 
+                            "o.assigned_user_id = {$db->quoted($user_id)} " .                            
                             "AND o.deleted = 0 " .
-                            "AND o.assigned_user_id = {$db->quoted($user_id)} ";
+                            "AND t.start_date_timestamp <= o.date_closed_timestamp " . 
+                            "AND t.end_date_timestamp >= o.date_closed_timestamp ";
         
-        //only committed rep opps
-        $queryRepOpps = "select amount, recordcount from " .
-                            "(select sum(f.likely_case*f.base_rate) AS amount, opp_count as recordcount, max(f.date_entered) from forecasts f " .
-                                "INNER JOIN users u " . 
-                                    "ON f.user_id = u.id " .
-                                        "AND ((u.reports_to_id = {$db->quoted($user_id)} and f.forecast_type = 'Rollup') ";
-        
-        //only include this block if we have leaf reps
-        if(count($repIds) == 0){
-            $queryRepOpps .=            ") ";
-        } else {
-        	$queryRepOpps .=            "OR (u.id in('". implode("', '", $repIds) . "') and f.forecast_type='Direct')) ";
+        //only committed direct reportee (manager) opps
+        $queryRepOpps = "";
+        $arrayLen = count($mgrIds);
+        for($index = 0; $index < $arrayLen; $index++) {
+            $subQuery = "(select (pipeline_amount * base_rate) as amount, pipeline_opp_count as recordcount from forecasts " .
+                         "where timeperiod_id = {$db->quoted($timeperiod_id)} " .
+                            "and user_id = {$db->quoted($mgrIds[$index])} " .
+                            "and forecast_type = 'Rollup' " .
+                         "order by date_entered desc ";
+            $queryRepOpps .= $db->limitQuery($subQuery, 0, 1, false, "", false);
+            $queryRepOpps .= ") ";
+            if ($index+1 != $arrayLen) {
+                $queryRepOpps .= "union all ";
+            }
         }
         
-        $queryRepOpps .=        "where timeperiod_id = {$db->quoted($timeperiod_id)}  " .
-                            "group by user_id) as rollup ";
-                
+        $arrayLen = count($repIds);
+        
+        //if we've started adding queries, we need a union to pick up the rest if we have more to add
+        if ($queryRepOpps != "" && $arrayLen > 0) {
+            $queryRepOpps .= " union all ";
+        }
+        //only committed direct reportee (manager) opps
+        for($index = 0; $index < $arrayLen; $index++) {
+            $subQuery = "(select (pipeline_amount * base_rate) as amount, pipeline_opp_count as recordcount from forecasts " .
+                         "where timeperiod_id = {$db->quoted($timeperiod_id)} " .
+                            "and user_id = {$db->quoted($repIds[$index])} " .
+                            "and forecast_type = 'Direct' " .
+                         "order by date_entered desc ";
+            $queryRepOpps .= $db->limitQuery($subQuery, 0, 1, false, "", false);
+            $queryRepOpps .= ") ";
+            if ($index+1 != $arrayLen) {
+                $queryRepOpps .= "union all ";
+            }
+        }
+        
         //per requirements, exclude the sales stages won
         if (count($excluded_sales_stages_won)) {
             foreach ($excluded_sales_stages_won as $exclusion) {
@@ -239,9 +261,12 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
             }
         }
         
-        //Union the two together
-        $query .= $queryMgrOpps . "union all " . $queryRepOpps;
-
+        //Union the two together if we have two separate queries
+        if ($queryRepOpps != "") {
+            $query .= $queryMgrOpps . " union all " . $queryRepOpps;
+        } else {
+            $query .= $queryMgrOpps;
+        }
         //finally, finish up the outer query
         $query .= ") sums";
         

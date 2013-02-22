@@ -26,10 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*
- * Created on May 29, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
+ * bug 59290 - this file was reverted, comment left so upgrader picks up the modified file - rbacon
  */
   $searchdefs['Teams'] = array(
 					'templateMeta' => array(

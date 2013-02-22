@@ -38,7 +38,6 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
         SugarTestHelper::setUp('beanList');
         $this->currencyYen = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87,$this->currencyId);
     	global $current_user;
-    	$this->previousCurrentUser = $current_user;       
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user->setPreference('number_grouping_seperator', ',', 0, 'global');
         $current_user->setPreference('decimal_seperator', '.', 0, 'global');
@@ -52,12 +51,14 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
      */
     public function tearDown() 
     {
+        unset($GLOBALS['current_user']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         global $current_user;
         $current_user = $this->previousCurrentUser;
         $this->currencyYen = null;
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestHelper::tearDown();
+        get_number_seperators(true);
     }
 
     /**

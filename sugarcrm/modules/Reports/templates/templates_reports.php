@@ -299,8 +299,8 @@ function reportCriteriaWithResult(&$reporter,&$args) {
     //Bug#51609: Create action buttons for report view. Previously existed in _reportCriteriaWithResult.tpl
     $buttons = array();
     $buttons[] = <<<EOD
-        <input name="runReportButton" id="runReportButton" type="button" class="button" accessKey="{$mod_strings['LBL_RUN_REPORT_BUTTON_KEY']}" title="{$mod_strings['LBL_RUN_BUTTON_TITLE']}"
-               onclick="var _form = $('#EditView')[0]; _form.to_pdf.value='';_form.to_csv.value='';_form.save_report.value='';_form.submit();" value="{$mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']}">
+        <input name="runReportButton" id="runReportButton" type="submit" class="button" accessKey="{$mod_strings['LBL_RUN_REPORT_BUTTON_KEY']}" title="{$mod_strings['LBL_RUN_BUTTON_TITLE']}"
+               onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='';" value="{$mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']}">
 EOD
     ;
 

@@ -238,7 +238,7 @@ $mod_strings = array (
   'LBL_SOURCE_PHPJS' => 'php.js - Use PHP functions in JavaScript',
   'LBL_SOURCE_PHPSQL' => 'PHP SQL Parser',
   'LBL_SOURCE_HTMLPURIFIER' => 'HTML Purifier - A standards-compliant HTML filtering library.',
-
+  'LBL_SOURCE_XHPROF' => 'XHProf - A function-level hierarchical profiler for PHP.',
   'LBL_DASHLET_TITLE' => 'My Sites',
   'LBL_DASHLET_OPT_TITLE' => 'Title',
   'LBL_DASHLET_OPT_URL' => 'Website Location',

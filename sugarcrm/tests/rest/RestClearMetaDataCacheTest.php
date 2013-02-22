@@ -93,6 +93,8 @@ class RestClearMetadataCacheTest extends RestTestBase
         // Back up the current file if there is one
         if (file_exists($this->_requestMock->ddlCustomFile)) {
             rename($this->_requestMock->ddlCustomFile, $this->_requestMock->ddlCustomFile . '.testbackup');
+        } else {
+            SugarAutoLoader::addToMap($this->_requestMock->ddlCustomFile);
         }
         
         // Create an empty test custom file
@@ -295,6 +297,9 @@ class RestClearMetadataCacheTest extends RestTestBase
         
         if (file_exists($this->_requestMock->ddlCustomFile . '.testbackup')) {
             rename($this->_requestMock->ddlCustomFile . '.testbackup', $this->_requestMock->ddlCustomFile);
+        } else {
+            // There was no back up, so remove this from the file map cache
+            SugarAutoLoader::delFromMap($this->_requestMock->_ddlCustomFile);
         }
         
         // Clear the cache

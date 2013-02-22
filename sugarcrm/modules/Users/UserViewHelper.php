@@ -485,13 +485,9 @@ class UserViewHelper {
         if(!empty($this->bean->id)) {
             require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 
-            //If you're an administrator editing the user or if you're a module level admin, then allow the widget to display all Teams
-            if($this->usertype == 'Administrator' || $GLOBALS['current_user']->isAdminForModule( 'Users')) {
-                $teamsWidget = new EmailSugarFieldTeamsetCollection($this->bean, $this->bean->field_defs, '', $this->viewType);
-            } else {
-                $teamsWidget = new EmailSugarFieldTeamsetCollection($this->bean, $this->bean->field_defs, 'get_non_private_teams_array', $this->viewType);
-                $teamsWidget->user_id = $this->bean->id;
-            }
+            // Display only the teams the user we're editing belongs to
+            $teamsWidget = new EmailSugarFieldTeamsetCollection($this->bean, $this->bean->field_defs, 'get_non_private_teams_array', $this->viewType);
+            $teamsWidget->user_id = $this->bean->id;
 
             $this->ss->assign('DEFAULT_TEAM_OPTIONS', $teamsWidget->get_code());
 

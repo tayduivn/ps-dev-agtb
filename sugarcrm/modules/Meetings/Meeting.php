@@ -97,6 +97,7 @@ class Meeting extends SugarBean {
 	// so you can run get_users() twice and run query only once
 	var $cached_get_users = null;
 	var $new_schema = true;
+    var $date_changed = false;
 
 	public $send_invites = false;
 
@@ -185,26 +186,29 @@ class Meeting extends SugarBean {
 		global $timedate;
 		global $current_user;
 
-		global $disable_date_format;
-
-	    if(isset($this->date_start) && (isset($this->duration_hours) || isset($this->duration_minutes)))
+        if(isset($this->date_start))
         {
-            // Set the duration hours and minutes to 0 if one of them isn't set but the other one is.
-            $this->duration_hours = empty($this->duration_hours) ? 0 : $this->duration_hours;
-            $this->duration_minutes = empty($this->duration_minutes) ? 0 : $this->duration_minutes;
             $td = $timedate->fromDb($this->date_start);
             if(!$td){
-                $this->date_start = $timedate->to_db($this->date_start);
-                $td = $timedate->fromDb($this->date_start);
+            		$this->date_start = $timedate->to_db($this->date_start);
+            		$td = $timedate->fromDb($this->date_start);
             }
             if($td)
             {
-                $this->date_end = $td->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
+                if (isset($this->duration_hours) && $this->duration_hours != '')
+                {
+                    $td->modify("+{$this->duration_hours} hours");
+                }
+                if (isset($this->duration_minutes) && $this->duration_minutes != '')
+                {
+                    $td->modify("+{$this->duration_minutes} mins");
+                }
+                $this->date_end = $td->asDb();
             }
-		}
-				
-		$check_notify = $this->send_invites;
-		if($this->send_invites == false) {
+        }
+
+        $check_notify = $this->send_invites;
+        if($this->send_invites == false) {
 			if(!empty($this->id)) {
 				$old_record = BeanFactory::getBean('Meetings', $this->id);
 				$old_assigned_user_id = $old_record->assigned_user_id;
@@ -308,7 +312,12 @@ class Meeting extends SugarBean {
 			vCal::cache_sugar_vcal($current_user);
 		}
 
-
+        // CCL - Comment out call to set $current_user as invitee
+        // set organizer to auto-accept
+        // if there isn't a fetched row its new
+        if ($this->assigned_user_id == $GLOBALS['current_user']->id && empty($this->fetched_row)) {
+            $this->set_accept_status($GLOBALS['current_user'], 'accept');
+        }
 
 		return $return_id;
 
@@ -335,9 +344,8 @@ class Meeting extends SugarBean {
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
-        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
-		if($custom_join)
-				$custom_join['join'] .= $relate_link_join;
+        $custom_join = $this->getCustomJoin(true, true, $where);
+        $custom_join['join'] .= $relate_link_join;
 		$contact_required = stristr($where, "contacts");
 
 		if($contact_required) {
@@ -345,9 +353,7 @@ class Meeting extends SugarBean {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join) {
-				$query .= $custom_join['select'];
-			}
+            $query .= $custom_join['select'];
 			$query .= " FROM contacts, meetings, meetings_contacts ";
 			$where_auto = " meetings_contacts.contact_id = contacts.id AND meetings_contacts.meeting_id = meetings.id AND meetings.deleted=0 AND contacts.deleted=0";
 		} else {
@@ -355,9 +361,7 @@ class Meeting extends SugarBean {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join) {
-				$query .= $custom_join['select'];
-			}
+            $query .= $custom_join['select'];
 			$query .= ' FROM meetings ';
 			$where_auto = "meetings.deleted=0";
 		}
@@ -368,9 +372,7 @@ class Meeting extends SugarBean {
 		//END SUGARCRM flav=pro ONLY
 		$query .= "  LEFT JOIN users ON meetings.assigned_user_id=users.id ";
 
-		if($custom_join) {
-			$query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 
 		if($where != "")
 			$query .= " where $where AND ".$where_auto;
@@ -473,16 +475,25 @@ class Meeting extends SugarBean {
 		if(empty($this->id) && !empty($_REQUEST['date_start'])){
 			$this->date_start = $_REQUEST['date_start'];
 		}
-		if(!empty($this->date_start)) {
-		    $start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$this->date_start);
-		    if (!empty($start)) {
-		        if (!empty($this->duration_hours) || !empty($this->duration_minutes)) {
-		            $this->date_end = $start->modify("+{$this->duration_hours} Hours +{$this->duration_minutes} Minutes")
-		            ->format($GLOBALS['timedate']->get_date_time_format());
+        if(!empty($this->date_start))
+        {
+            $td = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$this->date_start);
+            if (!empty($td)) 
+            {
+    	        if (!empty($this->duration_hours) && $this->duration_hours != '')
+                {
+		            $td = $td->modify("+{$this->duration_hours} hours");
 		        }
-		    } else {
-		        $GLOBALS['log']->fatal("Meeting::save: Bad date {$this->date_start} for format ".$GLOBALS['timedate']->get_date_time_format());
-		    }
+                if (!empty($this->duration_minutes) && $this->duration_minutes != '')
+                {
+                    $td = $td->modify("+{$this->duration_minutes} mins");
+                }
+                $this->date_end = $td->format($GLOBALS['timedate']->get_date_time_format());
+            } 
+            else 
+            {
+                $GLOBALS['log']->fatal("Meeting::save: Bad date {$this->date_start} for format ".$GLOBALS['timedate']->get_date_time_format());
+            }
 		}
 
 		global $app_list_strings;
@@ -654,6 +665,11 @@ class Meeting extends SugarBean {
 	 * Redefine method to attach ics file to notification email
 	 */
 	public function create_notification_email($notify_user){
+        // reset acceptance status for non organizer if date is changed
+        if (($notify_user->id != $GLOBALS['current_user']->id) && $this->date_changed) {
+            $this->set_accept_status($notify_user, 'none');
+        }
+
 		$mailer = parent::create_notification_email($notify_user);
 
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
@@ -697,9 +713,8 @@ class Meeting extends SugarBean {
 		return $list;
 	}
 
-	function get_invite_meetings($user) {
-		// First, get the list of IDs.
-		$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
+	function get_invite_meetings(&$user) {
+		$template = $this;
 		$query = "SELECT meetings_users.required, meetings_users.accept_status, meetings_users.meeting_id from meetings_users where meetings_users.user_id='$user->id' AND( meetings_users.accept_status IS NULL OR	meetings_users.accept_status='none') AND meetings_users.deleted=0";
 		$result = $this->db->query($query, true);
 		$list = Array();
@@ -879,6 +894,11 @@ class Meeting extends SugarBean {
      */
     public function setUserInvitees($userInvitees, $existingUsers = array())
     {
+    	// if both are empty, don't do anything.  From the App these will always be set [they are set to at least current-user].
+    	// For the api, these sometimes will not be set [linking related records]
+    	if(empty($userInvitees) && empty($existingUsers)) {
+    		return true;
+    	}
         $this->users_arr = $userInvitees;
 
         $deleteUsers = array();

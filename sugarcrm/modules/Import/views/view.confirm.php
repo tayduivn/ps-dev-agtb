@@ -428,16 +428,8 @@ eoq;
             foreach ($rows as &$row) {
                 if (is_array($row)) {
                     foreach ($row as &$val) {
-                        $val = $locale->translateCharset($val, $encoding);
+                        $val = $locale->translateCharset(strip_tags($val), $encoding);
                     }
-                }
-            }
-        }
-
-        foreach ($rows as &$row) {
-            if (is_array($row)) {
-                foreach ($row as &$val) {
-                    $val = strip_tags($val);
                 }
             }
         }

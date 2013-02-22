@@ -25,10 +25,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/json_config.php');
 require_once('include/MVC/View/views/view.list.php');
-
 require_once('include/connectors/ConnectorFactory.php');
-class ViewRetrieveSource extends ViewList
-{
+
+class ViewRetrieveSource extends ViewList {
+   
+ 	function ViewRetrieveSource(){
+ 		parent::ViewList();
+ 	}
+
     function display() {
 
         $source_id = $_REQUEST['source_id'];
@@ -159,4 +163,3 @@ class ViewRetrieveSource extends ViewList
     }
 }
 
-?>

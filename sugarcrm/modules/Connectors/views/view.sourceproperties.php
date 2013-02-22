@@ -28,11 +28,7 @@ class ViewSourceProperties extends ViewList {
  	function ViewSourceProperties(){
  		parent::ViewList();
  	}
-    
- 	function process() {
- 	    parent::process();
- 	}
- 	
+
     function display() {
 		require_once('include/connectors/sources/SourceFactory.php');
 		require_once('include/connectors/utils/ConnectorUtils.php');
@@ -62,4 +58,3 @@ class ViewSourceProperties extends ViewList {
     }
 }
 
-?>

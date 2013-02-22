@@ -169,11 +169,14 @@ $dictionary['Opportunity'] = array(
         ),
         'currency_id' => array(
             'name' => 'currency_id',
-            'type' => 'id',
+            'type' => 'currency_id',
+            'dbType' => 'id',
             'group' => 'currency_id',
+            'required'=>true,
             'vname' => 'LBL_CURRENCY',
             'function' => array('name' => 'getCurrencyDropDown', 'returns' => 'html'),
             'reportable' => false,
+            'default'=>'-99',
             'comment' => 'Currency used for display purposes'
         ),
         'currency_name' => array(
@@ -286,7 +289,7 @@ $dictionary['Opportunity'] = array(
             'len' => '20',
             'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
         ),
-//END SUGARCRM flav=PRO ONLY
+        //END SUGARCRM flav=PRO ONLY
         'accounts' => array(
             'name' => 'accounts',
             'type' => 'link',

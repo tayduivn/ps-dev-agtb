@@ -413,7 +413,7 @@ function get_subscription_lists($focus, $descriptions = false) {
                 	if(!array_search($temp,$unsubs_arr)){
                         $subs_arr[$news_list['name']] = "prospect_list@".$news_list['prospect_list_id']."@campaign@".$news_list['campaign_id'];
                         $match = 'true';
-                        //unset($unsubs_arr[$news_list['name']]);
+                        unset($unsubs_arr[$news_list['name']]);
                     }
                 }
             }else{
@@ -422,7 +422,8 @@ function get_subscription_lists($focus, $descriptions = false) {
         }
          //if this newsletter id never matched a user subscription..
          //..then add to available(unsubscribed) NewsLetters if list is not of type exempt
-         if(($match == 'false') && (strpos($news_list['list_type'],  'exempt') === false)){
+        if (($match == 'false') && (strpos($news_list['list_type'], 'exempt') === false) && (!array_key_exists($news_list['name'], $subs_arr)))
+        {
             $unsubs_arr[$news_list['name']] = "prospect_list@".$news_list['prospect_list_id']."@campaign@".$news_list['campaign_id'];
         }
 

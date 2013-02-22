@@ -3628,7 +3628,7 @@ class InboundEmail extends SugarBean {
 	{
 	   $result = "";
 
-	   foreach ($part->dparamaters as $k => $v)
+	   foreach ($part->dparameters as $k => $v)
 	   {
 	       if( strtolower($v->attribute) == 'filename')
 	       {

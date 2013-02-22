@@ -264,12 +264,14 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 	array (
 		'name' => 'currency_id',
 		'vname' => 'LBL_CURRENCY',
-		'type' => 'id',
+        'type' => 'currency_id',
+		'dbType' => 'id',
 		'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
         'javascript'=>'onchange="ConvertItems(this.options[selectedIndex].value);"',
         'required'=>false,
 		'reportable'=>false,
 		'importable' => 'true',
+        'default'=>'-99',
 		'comment' => 'Currency of the product'
 	),
   'currency_symbol' =>

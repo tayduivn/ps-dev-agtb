@@ -134,6 +134,7 @@ $config['blackList']['corp'] = array(
 'sugarcrm/include/images/sugar_md_sales.png'=>1,
 'sugarcrm/include/images/sugar_md_ult.png'=>1,
 
+'sugarcrm/clients/portal'=>1,
 'sugarcrm/portal2' =>1,
 
 'sugarcrm/styleguide/styleguide'=>1,

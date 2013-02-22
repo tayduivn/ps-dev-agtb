@@ -97,4 +97,22 @@ class SugarArrayIntersectMergeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEquals(array_merge($foo, $bar), $expected);
         $this->assertNotEquals(array_merge_recursive($foo, $bar), $expected);
     }
+
+    public function testDaysOfTheWeek()
+    {
+        $foo = array(
+            'days_of_the_week' => array('mon','tues','weds','thurs','fri','sat','sun'),
+        );
+        $bar = array(
+            'days_of_the_week' => array('1','2','3','4','5','6','7'),
+        );
+        
+        $expected = array(
+            'days_of_the_week' => array('mon','tues','weds','thurs','fri','sat','sun'),
+        );
+        $this->assertEquals(sugarArrayIntersectMerge($foo, $bar), $expected);
+        // insure that internal functions can't duplicate behavior
+        $this->assertNotEquals(array_merge($foo, $bar), $expected);
+        $this->assertNotEquals(array_merge_recursive($foo, $bar), $expected);
+    }    
 }

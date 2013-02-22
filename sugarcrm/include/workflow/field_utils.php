@@ -509,6 +509,7 @@ include_once('include/workflow/expression_utils.php');
 			$field_type=="int" ||
 			$field_type=="num" ||
 			$field_type=="decimal" ||
+            $field_type=="double" ||
 			$field_type=="currency"
 			){
 				//Real type is just a surface variable used by javascript to determine dual type actions

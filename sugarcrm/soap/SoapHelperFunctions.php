@@ -942,7 +942,7 @@ function add_create_account($seed)
 
 	    $arr = array();
 
-	    $query = "select id, deleted from {$focus->table_name} ";
+	    $query = "select {$focus->table_name}.id, {$focus->table_name}.deleted from {$focus->table_name} ";
 	//BEGIN SUGARCRM flav=pro ONLY
 	    $focus->add_team_security_where_clause($query);
 	//END SUGARCRM flav=pro ONLY

@@ -51,6 +51,7 @@ class PersonUnifiedSearchApi extends UnifiedSearchApi {
      * @return array result set
      */
     public function globalSearch(ServiceBase $api, array $args) {
+        $api->action = 'list';
         // This is required to keep the loadFromRow() function in the bean from making our day harder than it already is.
         $GLOBALS['disable_date_format'] = true;
         $options = $this->parseSearchOptions($api,$args);
@@ -73,9 +74,9 @@ class PersonUnifiedSearchApi extends UnifiedSearchApi {
     protected function getCustomWhereForModule($module) {
 
         if ($module == 'Employees') {
-            return "users.employee_status = 'Active'";
+            return "users.employee_status = 'Active' AND users.show_on_employees = 1";
         } 
         
-        return "users.status = 'Active'";
+        return "users.status = 'Active' AND users.portal_only = 0";
     }
 }
