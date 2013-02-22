@@ -348,7 +348,7 @@ class SugarMath
      * @param string   $exp math expression
      * @param array    $args values for the ? parts of the expression
      * @throws SugarMath_Exception
-     * @return string result
+     * @return SugarMath object
      */
     public function exp($exp, $args = array()) {
         if(strlen($exp) == 0) {
