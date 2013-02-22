@@ -31,7 +31,6 @@ describe("Country Chart", function() {
             view.loadData();
             expect(renderStub).not.toHaveBeenCalled();
             apiCallStub.restore();
-            renderStub();
         });
     });
 });

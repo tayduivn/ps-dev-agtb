@@ -47,9 +47,8 @@ describe("Filter View", function() {
 
     describe("dispose safe", function() {
         it("should unregister on disposed", function() {
-            var disposeStub,
-            renderStub = sinon.stub(view, 'render');
-            disposeStub= sinon.stub(app.view.Component.prototype, '_dispose');
+            var renderStub = sinon.stub(view, 'render'),
+                disposeStub= sinon.stub(app.view.Component.prototype, '_dispose');
 
             view.filters = new Backbone.View();
             view.bindDataChange();
@@ -57,6 +56,7 @@ describe("Filter View", function() {
             // Trigger unregistered event and assert render not called
             view.filters.trigger("reset");
             expect(renderStub).not.toHaveBeenCalled();
+            disposeStub.restore();
         });
     });
 
