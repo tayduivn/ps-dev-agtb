@@ -52,10 +52,15 @@ class ReportsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testFormatForApi() 
     {
-        $helper = new ReportsApiHelper(new RestService);
+        $helper = new ReportsApiHelper(new ReportsServiceMockup());
         $data = $helper->formatForApi($this->bean);
         $this->assertEquals($data['report_type'], $this->bean->fetched_row['report_type'], "Report Type Does not match");
-
     }
 
+}
+
+class ReportsServiceMockup extends ServiceBase
+{
+    public function execute() {}
+    protected function handleException(Exception $exception) {}
 }
