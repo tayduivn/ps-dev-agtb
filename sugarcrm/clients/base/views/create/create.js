@@ -54,6 +54,10 @@
         this.enableDuplicateCheck = (moduleMetadata && moduleMetadata.dupCheckEnabled) || false;
     },
 
+    handleSync: function() {
+        //override handleSync since there is no need to save the previous model state
+    },
+
     delegateButtonEvents: function() {
         //override record view's button delegation
     },
@@ -63,10 +67,6 @@
         this.setButtonStates(this.STATE.CREATE);
 
         this.renderDupeCheckList();
-
-        if (this.createMode) {
-            this.setTitle(app.lang.get('LBL_CREATE_BUTTON_LABEL', this.module) + ' ' + this.moduleSingular);
-        }
     },
 
     /**

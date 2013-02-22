@@ -114,11 +114,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                array(
-                    'name' => 'fieldset_name',
-                    'type' => 'fieldset',
-                    'fields' => array('name'),
-                ),
+                'name',
                 array(
                     'type' => 'favorite',
                 ),

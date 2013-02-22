@@ -74,15 +74,9 @@ $viewdefs['Tasks']['base']['view']['create'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
-            'placeholders' => true,
             'header' => true,
-            'labels' => false,
             'fields' => array(
-                array(
-                    'name' => 'name',
-                    'label' => '',
-                    'placeholder' => 'LBL_NAME'
-                ),
+                'name',
             )
         ),
         array(
