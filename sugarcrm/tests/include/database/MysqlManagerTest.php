@@ -219,7 +219,7 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function supportsProvider() {
         return array(
-            array('recursive_queries', false),
+            array('recursive_query', false),
             array('fix:report_as_condition', true)
         );
     }
