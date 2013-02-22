@@ -4,6 +4,8 @@
 ({
     extendsFrom: 'RecordView',
 
+    _lastSelectedSignature: null,
+
     initialize: function(options) {
         _.bindAll(this);
         app.view.views.RecordView.prototype.initialize.call(this, options);
@@ -18,6 +20,8 @@
         this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer);
         this.context.on("actionbar:signature_button:clicked", this._launchSignatureDrawer);
         this.context.on('attachments:updated', this.toggleAttachmentVisibility);
+
+        this._lastSelectedSignature = app.user.getPreference("signature_default");
     },
 
     _render: function () {
@@ -39,7 +43,7 @@
             }
 
             if (this.model.isNew()) {
-                this._updateEditorWithSignature(app.user.getPreference("signature_default"));
+                this._updateEditorWithSignature(this._lastSelectedSignature);
             }
         }
 
@@ -431,7 +435,7 @@
             });
 
             // currently adds the html signature even when the template is text-only
-            this._updateEditorWithSignature(app.user.getPreference("signature_default"));
+            this._updateEditorWithSignature(this._lastSelectedSignature);
         }
     },
     
@@ -530,7 +534,11 @@
         if (_.isObject(signature) && signature.id) {
             var url = app.api.buildURL("Signatures", signature.id);
             app.api.call("read", url, null, {
-                success: this._insertSignature,
+                success: _.bind(function(model) {
+                    if (this._insertSignature(model)) {
+                        this._lastSelectedSignature = model;
+                    }
+                }, this),
                 error: function() {
                     console.log("Retrieving Signature failed.");
                 }
@@ -542,6 +550,7 @@
      * Inserts the signature into the editor.
      *
      * @param signature
+     * @return {Boolean}
      * @private
      */
     _insertSignature: function(signature) {
@@ -571,7 +580,11 @@
             }
 
             this.model.set("html_body", emailBody.replace(regex, "$1" + signatureContent + "$2"));
+
+            return true;
         }
+
+        return false;
     },
 
     /**
