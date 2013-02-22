@@ -51,8 +51,8 @@
         var self = this;
         app.api.call('delete', self.buildUrl({htmlJsonFormat: false}), {}, {
                 success: function(data) {
-                    self.model.set(self.name, null);
-                    self._render();
+                    self.model.set(self.name, "");
+                    self.render();
                 },
                 error: function(data) {
                     // refresh token if it has expired
@@ -60,10 +60,8 @@
                 }}
         );
     },
-    bindDataChange: function() {
-        if (this.view.name != "edit" && this.view.fallbackFieldTemplate != "edit") {
-            //Keep empty because you cannot set a value of a type `file` input
-            app.view.Field.prototype.bindDataChange.call(this);
-        }
+    bindDomChange: function() {
+        //Keep empty because you cannot set a value of a type `file` input
+        //We don't trigger change event so we don't rerender
     }
 })
