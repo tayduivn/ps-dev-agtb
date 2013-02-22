@@ -33,58 +33,120 @@ describe("Email field", function() {
         field = null;
     });
 
-    describe("email", function() {
+    describe("adding an email address", function() {
         it("should add email addresses on the model", function() {
-            var mockEvent = {
-                currentTarget: field.$el
-            };
             field.$('.newEmail').val("test3@test.com");
-            field.add(mockEvent);
+            field.$('.newEmail').trigger('change');
             var emails = model.get('email');
+            expect(emails[2]).toBeDefined();
             expect(emails[2].email_address).toEqual("test3@test.com");
-        });
-        it("should select another primary e-mail address if the primary is deleted", function(){
-            var emails = model.get('email');
-            expect(emails.length).toEqual(2);
-            expect(emails[0].primary_address).toEqual("1");
-            expect(emails[1].primary_address).toEqual("0");
-            var mockEvent = {
-                target: field.$el.find('button')[0]
-            };
-            field.remove(mockEvent);
-            emails = model.get('email');
-            expect(emails.length).toEqual(1);
-            expect(emails[0].primary_address).toEqual("1");
         });
         it("should add an e-mail address automatically when newEmail input changes", function(){
             field.$('.newEmail').val("newEmail@test.com");
             field.$('.newEmail').change();
             expect(model.get('email')[2].email_address).toEqual("newEmail@test.com");
         });
+    });
+
+    describe("updating an email address", function() {
         it("should update email addresses on the model", function() {
-            field.$el.find('input').val("testChanged@test.com");
-            var mockEvent = {
-                currentTarget: field.$el.find('input')
-            };
-            field.updateExistingAddress(mockEvent);
+            field.$('input:first').val("testChanged@test.com");
+            field.$('input:first').trigger('change');
             var emails = model.get('email');
             expect(emails[0].email_address).toEqual("testChanged@test.com");
         });
         it("should update email address properties on the model", function() {
-            var mockEvent = {
-                currentTarget: field.$el.find('button')[1]
-            };
-            field.updateExistingProperty(mockEvent);
             var emails = model.get('email');
+            expect(emails[0].opt_out).toBeUndefined();
+            field.$('[data-emailproperty=opt_out]:first').trigger('click');
+
+            emails = model.get('email');
             expect(emails[0].opt_out).toEqual("1");
+            field.$('[data-emailproperty=opt_out]:first').trigger('click');
+
+            emails = model.get('email');
+            expect(emails[0].opt_out).toEqual("0");
+        });
+        it("should make sure one and only one email is set as primary", function() {
+            var emails = model.get('email');
+            emails[0].primary_address = '1';
+            emails[1].primary_address = '0';
+            expect(emails[0].primary_address).toEqual('1');
+            expect(emails[1].primary_address).toEqual('0');
+
+            //Should cancel the click on primary_address button
+            field.$('[data-emailproperty=primary_address]:first').trigger('click');
+            emails = model.get('email');
+            expect(emails[0].primary_address).toEqual('1');
+            expect(emails[1].primary_address).toEqual('0');
+
+            //Should unset the first email as the primary email
+            field.$('[data-emailproperty=primary_address]:last').trigger('click');
+            emails = model.get('email');
+            expect(emails[0].primary_address).toEqual('0');
+            expect(emails[1].primary_address).toEqual('1');
+        });
+    });
+
+    describe("removing an email address", function() {
+        it("should select another primary e-mail address if the primary is deleted", function(){
+            var emails = model.get('email');
+            expect(emails.length).toEqual(2);
+            expect(emails[0].primary_address).toEqual("1");
+            expect(emails[1].primary_address).toEqual("0");
+
+            field.$('.removeEmail:first-child').trigger('click');
+            emails = model.get('email');
+            expect(emails.length).toEqual(1);
+            expect(emails[0].primary_address).toEqual("1");
         });
         it("should delete email addresses on the model", function() {
-            var mockEvent = {
-                target: field.$el.find('button')[0]
-            };
-            field.remove(mockEvent);
             var emails = model.get('email');
+            expect(emails.length).toEqual(2);
+            field.$('.removeEmail:first').trigger('click');
+            emails = model.get('email');
             expect(emails.length).toEqual(1);
+        });
+    });
+
+    describe("decorating error", function() {
+        it("should decorate each invalid email fields", function(){
+            var $inputs = field.$('input');
+            expect(field.$('.add-on').length).toEqual(0);
+            field.decorateError({email: ["test2@test.com"]});
+            expect(field.$('.add-on').length).toEqual(1);
+            expect(field.$('.add-on').data('title')).toEqual('ERROR_EMAIL');
+            expect($inputs.index(field.$('.add-on').prev())).toEqual(1);
+        });
+        it("should decorate the first field if there isn't any primary address set", function(){
+            var $inputs = field.$('input');
+            var emails = model.get('email');
+            emails[0].primary_address = '0';
+            emails[1].primary_address = '0';
+            expect(field.$('.add-on').length).toEqual(0);
+            field.decorateError({primaryEmail: true});
+            expect(field.$('.add-on').length).toEqual(1);
+            expect(field.$('.add-on').data('title')).toEqual('ERROR_PRIMARY_EMAIL');
+            expect($inputs.index(field.$('.add-on').prev())).toEqual(0);
+        });
+    });
+
+    describe("format and unformat", function() {
+        it("should create flag email strings", function() {
+            var testAddresses =[
+                {
+                    email_address: "test1@test.com",
+                    primary_address: "1"
+                },
+                {
+                    email_address: "test2@test.com",
+                    primary_address: "1",
+                    opt_out: "1"
+                }
+            ];;
+            field.addFlagLabels(testAddresses);
+            expect(testAddresses[0].flagLabel).toEqual("(LBL_EMAIL_PRIMARY)");
+            expect(testAddresses[1].flagLabel).toEqual("(LBL_EMAIL_PRIMARY, LBL_EMAIL_OPT_OUT)");
         });
 
         it("should make an email address a link when metadata allows for links and the address is not opted out or invalid", function() {
@@ -165,7 +227,8 @@ describe("Email field", function() {
                     email_address:   "foo@bar.com",
                     primary_address: "1",
                     hasAnchor:       false,
-                    _wasNotArray:    true
+                    _wasNotArray:    true,
+                    flagLabel: "(LBL_EMAIL_PRIMARY)"
                 },
                 actual;
 
@@ -206,13 +269,14 @@ describe("Email field", function() {
             field.render();
 
             var new_email_address = 'test@blah.co',
-                new_assigned_email = field.unformat(new_email_address);
-            expected = new_email_address;
+                new_assigned_email = field.unformat(new_email_address),
+                expected = new_email_address,
+                actual;
+
             actual = (_.find(new_assigned_email, function(email){
                 return email.primary_address;
             })).email_address;
             expect(actual).toBe(expected);
-
         });
 
     });

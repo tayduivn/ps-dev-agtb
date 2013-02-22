@@ -41,8 +41,9 @@
                 } else {
                     //entire selection
                     massCollection.add(this.view.collection.models);
-                    //TODO: verify that FilterAPI corresponds with the filter parameter
-                    massCollection.filter = this.view.collection.filter;
+                    if (this.view.collection.filterDef && this.view.collection.filterDef.filter) {
+                        massCollection.filter =this.view.collection.filterDef.filter;
+                    }
                 }
             } else { //if checkbox is unchecked
                 if(this.model.id) { //each selection
@@ -215,7 +216,7 @@
         }, this);
 
 
-        if(index <= 1) {
+        if(index < 1) {
             this.$(".dropdown-toggle").hide();
         } else {
             this.$(".dropdown-toggle").show();

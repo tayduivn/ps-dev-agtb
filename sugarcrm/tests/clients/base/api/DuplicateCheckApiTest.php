@@ -25,7 +25,7 @@
 // need to make sure SugarApi is included when extending DuplicateCheckStrategy to avoid a fatal error
 require_once('include/api/SugarApi.php');
 require_once("clients/base/api/DuplicateCheckApi.php");
-
+require_once("tests/SugarTestRestUtilities.php");
 /**
  * @group api
  * @group duplicatecheck
@@ -119,7 +119,7 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
 
-        $this->api               = new ServiceMock();
+        $this->api               = SugarTestRestUtilities::getRestServiceMock();
         $this->duplicateCheckApi = new DuplicateCheckApi();
 
         //make sure any left over test leads from failed tests are removed
@@ -267,14 +267,4 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
                           ->will($this->returnValue(array()));
         $duplicateCheckApi->checkForDuplicates($this->api, $args);
     }
-}
-
-// need to make sure ServiceBase is included when extending it to avoid a fatal error
-require_once("include/api/ServiceBase.php");
-
-class ServiceMock extends ServiceBase
-{
-    public function execute() {}
-
-    protected function handleException(Exception $exception) {}
 }

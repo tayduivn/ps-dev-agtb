@@ -30,11 +30,11 @@
     /**
      * {@inheritdoc}
      *
-     * The html area is always a non editable field.
+     * The html area is always a readonly field.
      * (see htmleditable for an editable html field)
      */
     initialize: function(options) {
-        options.def.noedit = true;
+        options.def.readonly = true;
         app.view.Field.prototype.initialize.call(this, options);
     },
 

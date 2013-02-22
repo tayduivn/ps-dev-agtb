@@ -90,6 +90,13 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
+                    'event' => 'button:convert_to_quote:click',
+                    'name' => 'convert_to_quote_button',
+                    'label' => 'LBL_CONVERT_TO_QUOTE',
+                    'value' => 'view'
+                ),
+                array(
+                    'type' => 'rowaction',
                     'event' => 'button:change_log_button:click',
                     'name' => 'change_log_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
@@ -122,11 +129,12 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'opportunity_name',
                 array(
                     'name' => 'account_name',
-                    'noedit' => true
+                    'readonly' => true,
                 ),
+                'stage',
                 'sales_stage',
                 'probability',
-                'status',
+                'sales_status',
                 'date_closed',
                 'product_template_name',
                 'quantity',
@@ -149,7 +157,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'worst_case',
                 array(
                     'name' => 'category_name',
-                    'noedit' => true
+                    'readonly' => true,
                 ),
                 'type',
                 'lead_source',
@@ -166,9 +174,9 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'list_price',
                 array(
                     'name' => 'tax_class',
-                    'noedit' => true
+                    'readonly' => true,
                 ),
-                'cost_price'
+                'cost_price',
             )
         )
     ),

@@ -50,6 +50,7 @@ $viewdefs['Notes']['base']['view']['list'] = array(
                     'id' => 'CONTACT_ID',
                     'module' => 'Contacts',
                     'default' => true,
+                    'sortable' => false,
                     'ACLTag' => 'CONTACT',
                     'related_fields' =>
                     array (
@@ -94,6 +95,7 @@ $viewdefs['Notes']['base']['view']['list'] = array(
                     'label' => 'LBL_CREATED_BY',
                     'width' => '10%',
                     'default' => true,
+                    'sortable' => false,
                     'related_fields' =>  array ( 'created_by' ),
                 ),
             ),

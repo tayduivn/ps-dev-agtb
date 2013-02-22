@@ -7,16 +7,15 @@
             <div class="btn-group">
                 <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}">{{label}}</a>
                 <a id="{{name}}Drop" role="button" href="#" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
-
+                {{#if menu}}
                 <ul class="dropdown-menu" role="menu" aria-labelledby="{{name}}Drop">
                     {{#each menu}}
                         <li><a class="actionLink" tabindex="-1" {{#if event}}data-event='{{event}}' href='javascript: void(0)'{{else}}href="{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                     {{/each}}
-                    <li class="recentAnchor hide"><a tabindex="-1" href="javascript: void(0)">{{str "LBL_LAST_VIEWED"}}</a></li>
                     <div class="recentContainer "></div>
-                    <li class="favoritesAnchor hide"><a tabindex="-1" href="javascript: void(0)">{{str "LBL_FAVORITES"}}</a></li>
                     <div class="favoritesContainer"></div>
                 </ul>
+                {{/if}}
             </div>
         </li>
         {{/notEq}}

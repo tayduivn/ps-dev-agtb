@@ -26,22 +26,20 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
-require_once ('include/api/ServiceBase.php');
-require_once ("data/SugarBeanApiHelper.php");
-
+require_once 'tests/SugarTestRestUtilities.php';
+require_once 'tests/SugarTestACLUtilities.php';
+require_once 'data/SugarBeanApiHelper.php';
 
 /**
  * @group ApiTests
  */
-class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
+class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
+{
+    public $bean;
+    public $beanApiHelper;
 
-    var $bean;
-    var $beanApiHelper;
-
-    var $oldDate;
-    var $oldTime;
+    public $oldDate;
+    public $oldTime;
 
     public $roles = array();
 
@@ -64,26 +62,21 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
                 ),
             );
         $this->bean = $mock;
-        $this->beanApiHelper = new SugarBeanApiHelper(new ServiceMockup());
+        $serviceMock = SugarTestRestUtilities::getRestServiceMock();
+        $this->beanApiHelper = new SugarBeanApiHelper($serviceMock);
     }
 
     public function tearDown()
     {
-        // clean up all roles created
-        foreach($this->roles AS $role) {
-            $role->mark_deleted($role->id);
-            $role->mark_relationships_deleted($role->id);
-            $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
-        }
-        unset($_SESSION['ACL']);
+        SugarTestACLUtilities::tearDown();
         SugarTestHelper::tearDown();
     }
 
     /**
      * @dataProvider providerFunction
      */
-    public function testFormatForApi($fieldName, $fieldValue, $expectedFormattedValue, $message) {
-
+    public function testFormatForApi($fieldName, $fieldValue, $expectedFormattedValue, $message)
+    {
         $this->bean->$fieldName = $fieldValue;
 
         $data = $this->beanApiHelper->formatForApi($this->bean);
@@ -91,7 +84,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertSame($expectedFormattedValue, $data[$fieldName], $message);
     }
 
-    public function providerFunction() {
+    public function providerFunction()
+    {
         return array(
             array('testInt', '', null, 'Bug 57507 regression: expected formatted value for a null int type to be NULL'),
             array('testDecimal', '', null, 'Bug 59692 regression: expected formatted value for a null decimal type to be NULL'),
@@ -106,35 +100,25 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         );
     }
 
-    public function testJsonFieldSave() {
+    public function testJsonFieldSave()
+    {
         $userPrefs = BeanFactory::newBean('UserPreferences');
-        $serviceBaseMock = new ServiceMockup();
-        $api = new SugarBeanApiHelper($serviceBaseMock);
 
         $submittedData = array(
             'contents' => 'abcd1234'
         );
 
-        $api->populateFromApi($userPrefs, $submittedData);
+        $this->beanApiHelper->populateFromApi($userPrefs, $submittedData);
 
         $this->assertEquals($userPrefs->contents, json_encode($submittedData['contents']));
-
     }
 
-
-    public function testListWithOwnerAccess() {
+    public function testListWithOwnerAccess()
+    {
         // create role that is all fields read only
-        $this->roles[] = $role = $this->createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), array('Meetings'), array('access', 'list', 'view'), array('view'));
+        $role = SugarTestACLUtilities::createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), array('Meetings'), array('access', 'list', 'view'), array('view'));
 
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
+        SugarTestACLUtilities::setupUser($role);
 
         // create a meeting not owned by current user
         $meeting = BeanFactory::newBean('Meetings');
@@ -148,9 +132,10 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertEquals($meeting->name, $data['name'], "Name Doesn't Match");
     }
 
-    public function testListCertainFieldsNoAccess() {
+    public function testListCertainFieldsNoAccess()
+    {
         // create role that is all fields read only
-        $this->roles[] = $role = $this->createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), array('Accounts'), array('access', 'list', 'view'), array('view'));
+        $this->roles[] = $role = SugarTestACLUtilities::createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), array('Accounts'), array('access', 'list', 'view'), array('view'));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -160,7 +145,7 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
 
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        
+
         // set the name field as Read Only
         $aclField = new ACLField();
 
@@ -180,52 +165,5 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
 
         $this->assertNotEmpty($data['_acl']['fields']->website, "Website did not come back and should have.  The acls were: " . print_r($data['_acl'], true));
 
-    }    
-
-    protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
-        $role = new ACLRole();
-        $role->name = $name;
-        $role->description = $name;
-        $role->save();
-        $GLOBALS['db']->commit();
-
-        $roleActions = $role->getRoleActions($role->id);
-
-        foreach ($roleActions as $moduleName => $actions) {
-            // enable allowed modules
-            if (isset($actions['module']['access']['id']) && !in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_DISABLED);
-            } elseif (isset($actions['module']['access']['id']) && in_array($moduleName, $allowedModules)) {
-                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_ENABLED);
-            } else {
-                foreach ($actions as $action => $actionName) {
-                    if (isset($actions[$action]['access']['id'])) {
-                        $role->setAction($role->id, $actions[$action]['access']['id'], ACL_ALLOW_DISABLED);
-                    }
-                }
-            }
-
-            if (in_array($moduleName, $allowedModules)) {
-                foreach ($actions['module'] as $actionName => $action) {
-
-                    if(in_array($actionName, $ownerActions)) {
-                        $aclAllow = ACL_ALLOW_OWNER;
-                    } elseif (in_array($actionName, $allowedActions)) {
-                        $aclAllow = ACL_ALLOW_ALL;
-                    } else {
-                        $aclAllow = ACL_ALLOW_NONE;
-                    }
-                    $role->setAction($role->id, $action['id'], $aclAllow);
-                }
-            }
-
-        }
-        return $role;
-    }    
-}
-
-class ServiceMockup extends ServiceBase
-{
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
+    }
 }

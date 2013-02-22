@@ -45,7 +45,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     ),
     //BEGIN SUGARCRM flav=pro ONLY
     array(
-        'route'=>'#bwc/index.php?module=Reports&action=index&view=cases',
+        'route'=>'#bwc/index.php?module=Reports&action=index&view=contacts',
         'label' =>'LNK_CONTACT_REPORTS',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
@@ -53,7 +53,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     ),
     //END SUGARCRM flav=pro ONLY
     array(
-        'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=Cases&return_module=Cases&return_action=index',
+        'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=Contacts&return_module=Contacts&return_action=index',
         'label' =>'LNK_IMPORT_CONTACTS',
         'acl_action'=>'import',
         'acl_module'=>$module_name,

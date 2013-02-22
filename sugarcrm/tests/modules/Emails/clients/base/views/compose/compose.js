@@ -34,13 +34,14 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe('Render', function() {
-        var setTitleStub, hideFieldStub, toggleSenderOptionsStub, populateToRecipientsStub;
+        var setTitleStub, hideFieldStub, toggleSenderOptionsStub, populateToRecipientsStub, initMainButtonStatusStub;
 
         beforeEach(function() {
             setTitleStub = sinon.stub(view, 'setTitle'),
             hideFieldStub = sinon.stub(view, 'hideField'),
             toggleSenderOptionsStub = sinon.stub(view, 'toggleSenderOptions'),
             populateToRecipientsStub = sinon.stub(view, 'populateToRecipients');
+            initMainButtonStatusStub = sinon.stub(view, 'initMainButtonStatus');
         });
 
         afterEach(function() {
@@ -48,6 +49,7 @@ describe("Emails.Views.Compose", function() {
             hideFieldStub.restore();
             toggleSenderOptionsStub.restore();
             populateToRecipientsStub.restore();
+            initMainButtonStatusStub.restore();
         });
 
         it("No recipients on context - title should be set no recipients populated", function() {
@@ -118,9 +120,9 @@ describe("Emails.Views.Compose", function() {
         beforeEach(function() {
             expectedResult = {'id': '123', 'module': 'Foo'};
             recipientModel = new Backbone.Model({
-                'id': expectedResult.id,
-                '_module': expectedResult.module
+                'id': expectedResult.id
             });
+            recipientModel.module = expectedResult.module;
             contextTriggerStub = sinon.stub(view.context, 'trigger', function(trigger, recipient) {
                 if (recipient) {
                     actualResult = recipient.attributes;
@@ -157,7 +159,7 @@ describe("Emails.Views.Compose", function() {
                 {'email_address': 'foo@bar.com'},
                 {'email_address': expectedResult.email, 'primary_address': 1}
             ]);
-            recipientModel.set('assigned_user_name', expectedResult.name);
+            recipientModel.set('name', expectedResult.name);
             view.populateToRecipients(recipientModel);
             expect(actualResult).toEqual(expectedResult);
         });
@@ -189,7 +191,7 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe('saveModel', function() {
-        var apiCallStub, alertShowStub, alertDismissStub;
+        var apiCallStub, alertShowStub, alertDismissStub, disableButtonStub;
 
         beforeEach(function() {
             apiCallStub = sinon.stub(app.api, 'call', function(method, myURL, model, options) {
@@ -197,6 +199,7 @@ describe("Emails.Views.Compose", function() {
             });
             alertShowStub = sinon.stub(app.alert, 'show');
             alertDismissStub = sinon.stub(app.alert, 'dismiss');
+            disableButtonStub = sinon.stub(view, 'setMainButtonsDisabled');
 
             view.model.off('change');
         });
@@ -205,6 +208,7 @@ describe("Emails.Views.Compose", function() {
             apiCallStub.restore();
             alertShowStub.restore();
             alertDismissStub.restore();
+            disableButtonStub.restore();
         });
 
         it('should call mail api with correctly formatted model', function() {
@@ -249,28 +253,12 @@ describe("Emails.Views.Compose", function() {
             expect(view.isEmailSendable()).toBe(false);
         });
 
-        it('should be enabled when to_addresses and subject fields are populated', function() {
-            view.model.set('to_addresses', 'foo@bar.com');
-            view.model.set('subject', 'foo');
-            view.model.unset('html_body');
-
-            expect(view.isEmailSendable()).toBe(true);
-        });
-
-        it('should be enabled when to_addresses and html_body fields are populated', function() {
-            view.model.set('to_addresses', 'foo@bar.com');
-            view.model.unset('subject');
-            view.model.set('html_body', 'bar');
-
-            expect(view.isEmailSendable()).toBe(true);
-        });
-
-        it('should be disabled when subject and html_body fields are empty', function() {
+        it('should be enabled when to_addresses is populated', function() {
             view.model.set('to_addresses', 'foo@bar.com');
             view.model.unset('subject');
             view.model.unset('html_body');
 
-            expect(view.isEmailSendable()).toBe(false);
+            expect(view.isEmailSendable()).toBe(true);
         });
     });
 
@@ -311,6 +299,16 @@ describe("Emails.Views.Compose", function() {
 
         it('should show confirmation alert message when html_body field is empty', function() {
             view.model.set('subject', 'foo');
+            view.model.unset('html_body');
+
+            view.send();
+
+            expect(saveModelStub.called).toBe(false);
+            expect(alertShowStub.calledOnce).toBe(true);
+        });
+
+        it('should show confirmation alert message when subject and html_body fields are empty', function() {
+            view.model.unset('subject');
             view.model.unset('html_body');
 
             view.send();

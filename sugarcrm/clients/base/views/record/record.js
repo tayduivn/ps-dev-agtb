@@ -39,7 +39,6 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
-        this.model.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
         this.context.set("viewed", true);
@@ -49,12 +48,6 @@
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
-        }
-    },
-
-    handleSync: function(method, model, options, error) {
-        if (this.model && this.model.get('id') == model.get('id') && (method == 'read' || method =='update')) {
-            this.previousModelState = JSON.parse(JSON.stringify(model.attributes || {}));
         }
     },
 
@@ -147,7 +140,7 @@
 
                 //Disable the pencil icon if the user doesn't have ACLs
                 if (!app.acl.hasAccessToModel('edit', this.model, field.name)) {
-                    field.noedit = true;
+                    field.readonly = true;
                 }
 
                 //labels: visibility for the label
@@ -259,8 +252,8 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            //Exclude non editable fields
-            if (field.def.noedit || field.parent || (field.name && this.buttons[field.name])) {
+            //Exclude read only fields
+            if (field.def.readonly || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
@@ -371,6 +364,9 @@
     },
 
     editClicked: function() {
+        if (_.isEmpty(this.previousModelState)) {
+            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
+        }
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
@@ -445,6 +441,10 @@
         // Set Editing mode to on.
         this.inlineEditMode = true;
 
+        if (_.isEmpty(this.previousModelState)) {
+            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
+        }
+
         this.setButtonStates(this.STATE.EDIT);
 
         // TODO: Refactor this for fields to support their own focus handling in future.
@@ -470,6 +470,10 @@
         self.inlineEditMode = false;
 
         var finalSuccess = function () {
+            if (!_.isEmpty(self.previousModelState)) {
+                self.previousModelState = {};
+            }
+
             if (self.createMode) {
                 app.navigate(self.context, self.model);
             } else {
@@ -494,7 +498,8 @@
         this.inlineEditMode = false;
         this.toggleEdit(false);
         if (!_.isEmpty(this.previousModelState)) {
-            this.model.set(this.previousModelState);
+            this.model.set(JSON.parse(JSON.stringify(this.previousModelState)));
+            this.previousModelState = {};
         }
     },
 
@@ -550,6 +555,13 @@
             $title.text(title);
         } else {
             this.$('.headerpane').prepend('<h1 class="title">' + title + '</h1>');
+        }
+    },
+    _dispose: function(){
+        app.view.Component.prototype._dispose.call(this);
+        if(this.context){
+            this.context.off(null, null, this);
+            this.context = null;
         }
     }
 })
