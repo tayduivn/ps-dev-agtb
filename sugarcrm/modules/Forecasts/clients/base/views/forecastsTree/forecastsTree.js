@@ -156,6 +156,9 @@
                     //childEntry to an Array.  This is crucial so that the beginning _.each loop runs correctly.
                     _.each(entry.children, function (childEntry, index2) {
                         entry.children[index2] = self._recursiveReplaceHTMLChars([childEntry]);
+                        if(childEntry.metadata.id == app.user.get('id')) {
+                            childEntry.data = app.utils.formatString(app.lang.get('LBL_MY_OPPORTUNITIES', 'Forecasts'), [childEntry.data]);
+                        }
                     });
                 }
             }
