@@ -52,12 +52,14 @@
     /**
      * Event handlers
      */
-    addNewAddress:function(evt){
+    addNewAddress: function(evt){
         if (!evt) return;
-        //This event can either be triggered by the newEmail input or the removeEmail button
+        //This event can either be triggered by the newEmail input or the newEmail button
         var email = this.$(evt.currentTarget).val() || this.$('.newEmail').val();
 
-        this._addNewAddress(email);
+        if (email !== "") {
+            this._addNewAddress(email);
+        }
     },
     updateExistingAddress: function(evt) {
         if (!evt) return;
@@ -66,7 +68,11 @@
             $input = this.$(evt.currentTarget),
             index = $inputs.index($input),
             newEmail = $input.val();
-        this._updateExistingAddress(index, newEmail);
+        if (newEmail === "") {
+            this._removeExistingAddress(index);
+        } else {
+            this._updateExistingAddress(index, newEmail);
+        }
     },
     removeExistingAddress: function(evt) {
         if (!evt) return;
@@ -92,7 +98,7 @@
     /**
      * Manipulations of the emails object
      */
-    _addNewAddress:function (email) {
+    _addNewAddress: function(email) {
         var existingAddresses = _.clone(this.model.get(this.name)) || [];
         var newObj = {email_address:email};
         //If no address exists, set this one as the primary
@@ -109,7 +115,7 @@
         existingAddresses[index].email_address = newEmail;
         this.updateModel(existingAddresses);
     },
-    _toggleExistingAddressProperty:function (index, property) {
+    _toggleExistingAddressProperty: function(index, property) {
         var existingAddresses = _.clone(this.model.get(this.name));
         //If property is primary_address, we want to make sure one and only one primary email is set
         //As a consequence we reset all the primary_address properties to 0 then we toggle property for this index.
@@ -150,7 +156,7 @@
      * Updates model and triggers appropriate change events;
      * @param value
      */
-    updateModel:function(value) {
+    updateModel: function(value) {
         this.model.set(this.name, value);
         this.model.trigger('change');
         this.model.trigger('change:'+this.name);
@@ -162,7 +168,7 @@
      * @param {Mixed} value
      * @return {Array}
      */
-    massUpdateProperty:function (emails, propName, value) {
+    massUpdateProperty: function(emails, propName, value) {
         _.each(emails, function (emailInfo, index) {
             emails[index][propName] = value;
         });
@@ -224,7 +230,7 @@
      * @param {Backbone.Model} model model this field is bound to.
      * @param {String} fieldName field name.
      */
-    bindDomChange:function () {
+    bindDomChange: function() {
 
         // Bind all tooltips on page
         function bindAll(sel) {
@@ -256,20 +262,20 @@
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
                 email.hasAnchor = this.def.link && email.opt_out != "1" && email.invalid_email != "1";
             }, this);
-        } else {
-            // expected an array but got a string
+        } else if (_.isString(value) || this.view.action === 'list') {
+            // expected an array with a single address but got a string or an empty array
             value = [{
-                email_address:   value,
-                primary_address: "1",
-                hasAnchor:       false,
-                _wasNotArray:    true
+                email_address:value,
+                primary_address:"1",
+                hasAnchor:false,
+                _wasNotArray:true
             }];
         }
 
         value = this.addFlagLabels(value);
         return value;
     },
-    addFlagLabels:function (value) {
+    addFlagLabels: function(value) {
         var flagStr = "", flagArray;
         var flag2Lbl = {
             primary_address:"LBL_EMAIL_PRIMARY",
@@ -344,7 +350,7 @@
 
         return value;
     },
-    focus:function () {
+    focus: function() {
         this.$('input').first().focus();
     },
     getFieldElement: function() {
