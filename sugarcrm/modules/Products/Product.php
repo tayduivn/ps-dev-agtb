@@ -185,42 +185,15 @@ class Product extends SugarBean {
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
-        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
-
-        if($custom_join){
-            $custom_join['join'] .= $relate_link_join;
-        }
+        $custom_join = $this->custom_fields->getJOIN(true, true, $where);
+        $custom_join['join'] .= $relate_link_join;
 
         $query = "SELECT $this->table_name.* ";
-
-        if($custom_join){
-            $query .= $custom_join['select'];
- 		}
-
+        $query .= $custom_join['select'];
  		$query .= " FROM $this->table_name ";
-
-        if($custom_join){
-            $query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 
         $where_auto = "$this->table_name.deleted=0 AND ($this->table_name.opportunity_id is null OR $this->table_name.opportunity_id = '')";
-
-/*
-                                $query = "SELECT
-                                $this->table_name.*,
-                                $this->rel_manufacturers.name as manufacturer_name,
-                                $this->rel_categories.name as category_name,
-                                $this->rel_types.name as type_name,
-                                users.user_name as assigned_user_name
-                                FROM $this->table_name
-                                LEFT JOIN $this->rel_manufacturers
-                                ON $this->table_name.manufacturer_id=$this->rel_manufacturers.id
-								";
-
-                $where_auto = "$this->table_name.deleted=0
-								AND $this->rel_manufacturers.deleted=0
-								";
-*/
 
         if($where != ""){
             $query .= "where ($where) AND ".$where_auto;

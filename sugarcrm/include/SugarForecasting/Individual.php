@@ -110,7 +110,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             $data = array();
             $data["id"] = $row["opp_id"];
             $data["product_id"] = $row["product_id"];
-            $data["date_closed"] = $row["date_closed"];
+            $data["date_closed"] = !empty($row["date_closed"]) ? substr($row["date_closed"],0,10) : $row["date_closed"];
             $data["sales_stage"] = $row["sales_stage"];
             $data["assigned_user_id"] = $row["assigned_user_id"];
             $data["amount"] = $row["likely_case"];
@@ -201,7 +201,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         $settings = $admin->getConfigForModule('Forecasts');
         if (!isset($settings['has_commits']) || !$settings['has_commits']) {
             $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
-            MetaDataManager::refreshModulesCache(array('Administration', 'Forecasts'));
+            MetaDataManager::clearAPICache();
         }
 
         $seed->setWorksheetArgs($this->args);

@@ -467,7 +467,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     protected function _clearCaches() {
         if ($this->implementation->isDeployed()) {
             MetaDataFiles::clearModuleClientCache($this->_moduleName,'view');
-            MetaDataManager::refreshModulesCache(array($this->_moduleName));
+            MetaDataManager::clearAPICache(false);
         }
     }
 }

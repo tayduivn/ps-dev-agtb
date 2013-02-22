@@ -137,15 +137,12 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
             $reportee = BeanFactory::getBean('Users', $reportee_id, array('encode' => $encode_to_html));
             $default_data = $this->defaultData;
             $default_data['id'] = $reportee_id;
-
             $default_data['label'] = $locale->getLocaleFormattedName($reportee->first_name, $reportee->last_name);
+            $default_data['name'] = $default_data['label'];
 
             if ($reportee_id == $user_id) {
-                // we have the owner
-                $default_data['name'] = string_format($mod_strings['LBL_MY_OPPORTUNITIES'], array($default_data['label']));
                 $default_data['show_opps'] = true;
             } else {
-                $default_data['name'] = $default_data['label'];
                 $default_data['show_opps'] = User::isManager($reportee_id) ? false : true;
             }
 
@@ -451,7 +448,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         $settings = $admin->getConfigForModule('Forecasts');
         if (!isset($settings['has_commits']) || !$settings['has_commits']) {
             $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
-            MetaDataManager::refreshCache();
+            MetaDataManager::clearAPICache();
         }
 
         $seed->setWorksheetArgs($this->getArgs());

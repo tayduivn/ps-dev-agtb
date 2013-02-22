@@ -221,6 +221,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'dbType' => 'id',
     'required'=>false,
     'reportable'=>false,
+    'default'=>'-99',
     'comment' => 'Currency used'
   ),
     'products' =>

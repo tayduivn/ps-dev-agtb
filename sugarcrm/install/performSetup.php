@@ -671,10 +671,6 @@ installerHook('post_installModules');
 // rebuild cache after all is said and done
 SugarAutoLoader::buildCache();
 
-// Build the metadata caches after everything else is done.
-require_once 'include/MetaDataManager/MetaDataManager.php';
-MetaDataManager::refreshCache();
-
 $out =<<<EOQ
 <br><p><b>{$mod_strings['LBL_PERFORM_OUTRO_1']} {$setup_sugar_version} {$mod_strings['LBL_PERFORM_OUTRO_2']}</b></p>
 

@@ -349,8 +349,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the time periods you want to forecast over:',
     'LBL_FORECASTS_CONFIG_LEAFPERIOD' => 'Choose the sub period that you want to view your time period over:',
     'LBL_FORECASTS_CONFIG_START_DATE' => 'Choose the date that you would like your time periods to start with each year:',
-    'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose how many future time periods you want users to see:',
-    'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose how many past time periods you want users to see:',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose number of future Time Periods you want users to see in the worksheet (Note: the number of Time Periods will be divided based on the Sub Time Period):',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose number of past Time Periods you want users to see in the worksheet (Note: the number of Time Periods will be divided based on the Sub Time Period):',
 
     // ranges config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
@@ -384,7 +384,6 @@ $mod_strings = array (
     'LBL_FORECASTS_WIZARD_SUCCESS_TITLE' => 'Success:',
     'LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE' => 'You successfully set up your forecasting module. Please wait while the module loads.',
     'LBL_FORECASTS_WIZARD_REFRESH_NOTICE' => 'This is your first time using the Forecasts module and your Opportunities need to be loaded. This process may take a few minutes and you may need to refresh the page.',
-    'LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE' => 'The setting has been saved. Please wait while the module reloads.'
-    
-    
+    'LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE' => 'The setting has been saved. Please wait while the module reloads.',
+    'LBL_UNAUTH_FORECASTS' => 'Unauthorized access to forecast settings.'
 );

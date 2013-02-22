@@ -1385,4 +1385,120 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($lastStartDate, $timedate->fromDbDate($el->start_date)->asDbDate());
         $this->assertEquals($lastEndDate, $timedate->fromDbDate($el->end_date)->asDbDate());
     }
+
+
+    /**
+     * createTimePeriodsProvider
+     *
+     */
+    public function createTimePeriodsProvider() {
+        return array(
+            //Standard Quarter/Month test with January 1st start date
+            array(
+                TimePeriod::QUARTER_TYPE,
+                array(),
+                array(
+                    'timeperiod_start_date'=>'2013-01-01',
+                    'timeperiod_interval'=>TimePeriod::QUARTER_TYPE,
+                    'timeperiod_leaf_interval'=>TimePeriod::MONTH_TYPE,
+                    'timeperiod_shown_backward'=>2,
+                    'timeperiod_shown_forward'=>2
+                ),
+                '2013-01-01',
+                15,
+                '2012-07-01',
+                '2013-09-01',
+            ),
+            //Test Quarter/Month with future date
+            array(
+                TimePeriod::QUARTER_TYPE,
+                array(),
+                array(
+                    'timeperiod_start_date'=>'2013-09-05',
+                    'timeperiod_interval'=>TimePeriod::QUARTER_TYPE,
+                    'timeperiod_leaf_interval'=>TimePeriod::MONTH_TYPE,
+                    'timeperiod_shown_backward'=>2,
+                    'timeperiod_shown_forward'=>2
+                ),
+                '2013-02-22',
+                15,
+                '2012-06-05',
+                '2013-08-05',
+            ),
+            //Test Quarter/Month with past date
+            array(
+                TimePeriod::QUARTER_TYPE,
+                array(),
+                array(
+                    'timeperiod_start_date'=>'2013-02-22',
+                    'timeperiod_interval'=>TimePeriod::QUARTER_TYPE,
+                    'timeperiod_leaf_interval'=>TimePeriod::MONTH_TYPE,
+                    'timeperiod_shown_backward'=>2,
+                    'timeperiod_shown_forward'=>2
+                ),
+                '2013-09-02',
+                15,
+                '2013-02-22',
+                '2014-04-22',
+            ),
+            //Standard Annual/Quarter test with January 1st start date
+            array(
+                TimePeriod::ANNUAL_TYPE,
+                array(),
+                array(
+                    'timeperiod_start_date'=>'2013-01-01',
+                    'timeperiod_interval'=>TimePeriod::ANNUAL_TYPE,
+                    'timeperiod_leaf_interval'=>TimePeriod::QUARTER_TYPE,
+                    'timeperiod_shown_backward'=>2,
+                    'timeperiod_shown_forward'=>2
+                ),
+                '2013-01-01',
+                20,
+                '2011-01-01',
+                '2015-10-01',
+            ),
+        );
+    }
+
+
+    /**
+     * @dataProvider createTimePeriodsProvider
+     * @outputBuffering disabled
+     */
+    public function testCreateTimePeriods($timePeriodType, $priorSettings, $currentSettings, $currentDate, $expectedLeafTimePeriods, $expectedStartDate, $expectedEndDate) {
+        $db = DBManagerFactory::getInstance();
+        $db->query("UPDATE timeperiods SET deleted = 1");
+        $tp = TimePeriod::getByType($timePeriodType);
+        $currentDate = TimeDate::getInstance()->fromDbDate($currentDate);
+        $created = $tp->createTimePeriods($priorSettings, $currentSettings, $currentDate);
+        $leafTimePeriods = array();
+        foreach($created as $t) {
+            if($t->type != $timePeriodType) {
+                $leafTimePeriods[] = $t;
+            }
+        }
+
+        usort($leafTimePeriods, array("ForecastsTimePeriodTest", "sortTimePeriods"));
+        $total = count($leafTimePeriods);
+        /*
+        foreach($leafTimePeriods as $t) {
+            echo $t->name . "\n";
+        }
+        */
+        $this->assertEquals($expectedLeafTimePeriods, $total);
+        $this->assertEquals($expectedStartDate, $leafTimePeriods[0]->start_date);
+        $this->assertEquals($expectedEndDate, $leafTimePeriods[$total-1]->start_date);
+    }
+
+
+    /**
+     * This is an internal function used to sort timeperiods
+     */
+    static function sortTimePeriods($a, $b) {
+        if($a->start_date_timestamp == $b->start_date_timestamp) {
+            return 0;
+        }
+
+        return $a->start_date_timestamp > $b->start_date_timestamp ? 1 : -1;
+    }
 }

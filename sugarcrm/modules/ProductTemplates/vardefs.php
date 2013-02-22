@@ -271,6 +271,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
         'required'=>false,
 		'reportable'=>false,
 		'importable' => 'true',
+        'default'=>'-99',
 		'comment' => 'Currency of the product'
 	),
   'currency_symbol' =>

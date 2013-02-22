@@ -4066,7 +4066,7 @@ function loadSilentUpgradeVars(){
     global $silent_upgrade_vars_loaded;
 
     if(empty($silent_upgrade_vars_loaded)){
-        $cacheFile = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader/silentUpgradeCache.php";
+        $cacheFile = sugar_cached("silentUpgrader/silentUpgradeCache.php");
         // We have no pre existing vars
         if(!file_exists($cacheFile)){
             // Set the vars array so it's loaded
@@ -4088,7 +4088,7 @@ function writeSilentUpgradeVars(){
         return false; // You should have set some values before trying to write the silent upgrade vars
     }
 
-    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader";
+    $cacheFileDir = sugar_cached("silentUpgrader");
     $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
 
     require_once('include/dir_inc.php');
@@ -4126,8 +4126,7 @@ function getSilentUpgradeVar($var){
 
     if(!isset($silent_upgrade_vars_loaded['vars'][$var])){
         return null;
-    }
-    else{
+    }else{
         return $silent_upgrade_vars_loaded['vars'][$var];
     }
 }

@@ -146,9 +146,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   'base_rate' =>
   array (
     'name' => 'base_rate',
-    'vname' => 'LBL_CURRENCY_RATE',
+    'vname' => 'LBL_BASE_RATE',
     'type' => 'double',
-    'required' => true,
     'studio' => false
   ),
   'amount_usdollar' =>
@@ -177,9 +176,11 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'type' => 'currency_id',
     'dbType' => 'id',
     'group'=>'currency_id',
+    'required'=>true,
     'vname' => 'LBL_CURRENCY',
 	'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
     'reportable'=>false,
+    'default'=>'-99',
     'comment' => 'Currency used for display purposes'
   ),
   'currency_name'=>

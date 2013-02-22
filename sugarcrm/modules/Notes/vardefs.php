@@ -165,6 +165,7 @@ $dictionary['Note'] = array(
     'group'=>'parent_name',
     'options'=> 'parent_type_display',
   	'len'=> '255',
+    'studio' => array('wirelesslistview'=>false),
   	'comment' => 'Sugar module the Note is associated with'
   ),
   'parent_id'=>

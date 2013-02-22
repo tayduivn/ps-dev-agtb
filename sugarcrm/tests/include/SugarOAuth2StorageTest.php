@@ -28,8 +28,6 @@ require_once('tests/rest/RestTestPortalBase.php');
 
 class SugarOAuth2StorageTest extends RestTestPortalBase
 {
-    protected $_sessionType;
-    
     public static function setUpBeforeClass()
     {
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE c_key = 'support_portal'");
@@ -69,25 +67,11 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
         // We need to disable the cache headers, otherwise the session_start() complains=
         session_cache_limiter('');
-        
-        // When setting $_SESSION['platform'] to portal we are also, inadvertently
-        // setting $_SESSION['type'] to 'support_portal' in the setPlatformStore()
-        // call. This was lasting beyond this test and causing failure downstream
-        // in full suite runs.
-        if (!empty($_SESSION['type'])) {
-            $this->_sessionType = $_SESSION['type'];
-        }
+
     }
 
     public function tearDown()
     {
-        // Handle session 'type' resetting
-        if (!empty($this->_sessionType)) {
-            $_SESSION['type'] = $this->_sessionType;
-        } else {
-            unset($_SESSION['type']);
-        }
-        
         // Reset the portal login license to previous numbers, if we have it
         if ( isset($this->previousPortalLicense) ) {
             $GLOBALS['db']->query("UPDATE config SET value = '".$this->previousPortalLicense."' WHERE name = 'num_portal_users'");
@@ -199,9 +183,6 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         // SESSION platform needs to be set because it is expected for portal
         // storage. This is usually set in the API before any calls to storage,
         // OR it is set by the storage once it reads the platform type
-        //
-        // NOTE: This will set $_SESSION['type'] to 'support_portal' in the
-        // getPlatformStore() method. That was causing failures later on downstream.
         $_SESSION['platform'] = 'portal';
 
         // First login should work.

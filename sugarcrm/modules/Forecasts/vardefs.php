@@ -348,7 +348,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
   'pipeline_amount' =>
   array (
     'name' => 'pipeline_amount',
-    'vname' => 'LBL_FORECAST_OPP_COMMIT',
+    'vname' => 'LBL_PIPELINE_REVENUE',
     'type' => 'currency',
     'studio' => false,
     'default' => "0",
@@ -367,6 +367,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
        'vname' => 'LBL_CURRENCY',
        'type' => 'currency_id',
        'dbType' => 'id',
+       'default'=>'-99',
        'required' => true,
    ),
    'base_rate' =>
@@ -374,7 +375,6 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
        'name' => 'base_rate',
        'vname' => 'LBL_BASE_RATE',
        'type' => 'double',
-       'required' => true,
    ),
    'best_case' =>
   array (
@@ -403,6 +403,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'name' => 'user_id',
     'vname' => 'LBL_FORECAST_USER',
     'type' => 'id',
+    'reportable' => false,
     'comment' => 'User to which this forecast pertains',
   ),
 'date_entered' =>
@@ -785,7 +786,7 @@ $dictionary['ForecastWorksheet'] = array(
         'base_rate' =>
         array(
             'name' => 'base_rate',
-            'vname' => 'LBL_CURRENCY_RATE',
+            'vname' => 'LBL_BASE_RATE',
             'type' => 'double',
             'required' => true,
             'studio' => false
