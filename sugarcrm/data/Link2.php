@@ -32,7 +32,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 global $dictionary;
-require_once("data/Relationships/RelationshipFactory.php");
 require_once("data/Link.php");
 
 /**

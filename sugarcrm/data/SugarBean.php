@@ -30,7 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *******************************************************************************/
 
 require_once('modules/DynamicFields/DynamicField.php');
-require_once("data/Relationships/RelationshipFactory.php");
 require_once 'data/BeanVisibility.php';
 require_once 'data/BeanDuplicateCheck.php';
 require_once 'data/SugarACL.php';

@@ -1218,7 +1218,6 @@ class ModuleInstaller{
             {
                 $this->rebuild_tabledictionary () ;
             }
-            require_once("data/Relationships/RelationshipFactory.php");
             SugarRelationshipFactory::deleteCache();
         }
     }
