@@ -622,7 +622,7 @@ class SugarTestHelper
             self::$registeredVars['current_user'] = true;
         }
         $GLOBALS['current_user'] = call_user_func_array('SugarTestUserUtilities::createAnonymousUser', $params);
-        return true;
+        return $GLOBALS['current_user'];
     }
 
     /**

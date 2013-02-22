@@ -104,16 +104,22 @@ class Bug52361p2Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        foreach($this->_quote->get_product_bundles() as $bundle)
-        {
-            foreach($bundle->get_products() as $product)
+        if ( $this->_quote ) {
+            foreach($this->_quote->get_product_bundles() as $bundle)
             {
-                $product->mark_deleted($product->id);
+                foreach($bundle->get_products() as $product)
+                {
+                    $product->mark_deleted($product->id);
+                }
             }
+            $this->_quote->mark_deleted($this->_quote->id);
         }
-        $this->_quote->mark_deleted($this->_quote->id);
-        $this->_contact->mark_deleted($this->_contact->id);
-        $this->_account->mark_deleted($this->_account->id);
+        if ( $this->_contact ) {
+            $this->_contact->mark_deleted($this->_contact->id);
+        }
+        if ( $this->_account ) {
+            $this->_account->mark_deleted($this->_account->id);
+        }
         parent::tearDown();
     }
 
