@@ -439,7 +439,7 @@ class ViewConvertLead extends SugarView
                     // If we selected the Contact, just overwrite the $beans['Contacts']
                     if ($module == 'Contacts')
                     {
-                        $beans[$module] = $bean;
+                        $beans[$module] = $selectedBeans[$module];
                     }
                 }
             }
