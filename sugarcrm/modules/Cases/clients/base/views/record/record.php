@@ -38,7 +38,6 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 'name',
                 array(
                     'type' => 'favorite',
-                    'noedit' => true,
                 ),
             )
         ),
@@ -51,7 +50,7 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'fields' => array(
                 array (
                     'name'=>'case_number',
-                    'noedit' => true,
+                    'readonly' => true,
                 ),
                 'priority',
                 'account_name',

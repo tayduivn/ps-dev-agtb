@@ -35,11 +35,13 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                array('name'=>'bug_number', 'noedit'=>true),
+                array(
+                    'name' => 'bug_number',
+                    'readonly' => true,
+                ),
                 'name',
                 array(
                     'type' => 'favorite',
-                    'noedit' => true,
                 ),
             )
         ),

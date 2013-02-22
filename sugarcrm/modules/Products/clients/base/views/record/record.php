@@ -129,7 +129,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'opportunity_name',
                 array(
                     'name' => 'account_name',
-                    'noedit' => true
+                    'readonly' => true,
                 ),
                 'stage',
                 'sales_stage',
@@ -157,7 +157,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'worst_case',
                 array(
                     'name' => 'category_name',
-                    'noedit' => true
+                    'readonly' => true,
                 ),
                 'type',
                 'lead_source',
@@ -174,9 +174,9 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'list_price',
                 array(
                     'name' => 'tax_class',
-                    'noedit' => true
+                    'readonly' => true,
                 ),
-                'cost_price'
+                'cost_price',
             )
         )
     ),

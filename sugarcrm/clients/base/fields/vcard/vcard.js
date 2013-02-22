@@ -6,11 +6,11 @@
     /**
      * {@inheritdoc}
      *
-     * The vCard is always a non editable field.
+     * The vCard is always a readonly field.
      */
     initialize: function(options) {
+        options.def.readonly = true;
         app.view.Field.prototype.initialize.call(this, options);
-        this.def.noedit = true;
     },
 
     /**

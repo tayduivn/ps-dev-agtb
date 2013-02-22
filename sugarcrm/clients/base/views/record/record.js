@@ -147,7 +147,7 @@
 
                 //Disable the pencil icon if the user doesn't have ACLs
                 if (!app.acl.hasAccessToModel('edit', this.model, field.name)) {
-                    field.noedit = true;
+                    field.readonly = true;
                 }
 
                 //labels: visibility for the label
@@ -259,8 +259,8 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            //Exclude non editable fields
-            if (field.def.noedit || field.parent || (field.name && this.buttons[field.name])) {
+            //Exclude read only fields
+            if (field.def.readonly || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
