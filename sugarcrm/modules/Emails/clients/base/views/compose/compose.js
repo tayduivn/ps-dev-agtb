@@ -617,7 +617,7 @@
                 bodyCloseTagLoc = body.indexOf(bodyCloseTag);
 
             if (bodyCloseTagLoc > -1) {
-                preSignature  = body.substr(0, bodyCloseTagLoc.length);
+                preSignature  = body.substr(0, bodyCloseTagLoc);
                 postSignature = body.substr(bodyCloseTagLoc, body.length);
             } else {
                 preSignature = body;
