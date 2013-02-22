@@ -124,7 +124,7 @@ class SugarForecasting_Hierarchy_User_RecursiveDBUserHierarchy implements SugarF
 
             $myOpp = array(
 
-                'data' => string_format($current_module_strings['LBL_MY_OPPORTUNITIES'], array($fullName)),
+                'data' => $fullName,
                 'children' => array(),
                 // Give myOpp the same metadata as the root Manager user
                 'metadata' => array(

@@ -504,40 +504,6 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
 
     /**
-     * This test is to see that the data returned for the name field is set correctly when locale name format changes
-     *
-     * @group testGetLocaleFormattedName
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testGetLocaleFormattedName()
-    {
-        global $locale, $current_language;
-        $defaultPreference = $this->_user->getPreference('default_locale_name_format');
-        $this->_user->setPreference('default_locale_name_format', 'l, f', 0, 'global');
-        $this->_user->savePreferencesToDB();
-        $this->_user->reloadPreferences();
-
-        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
-        $current_module_strings = return_module_language($current_language, 'Forecasts');
-        $expectedName = string_format($current_module_strings['LBL_MY_OPPORTUNITIES'],
-            array($locale->getLocaleFormattedName(self::$manager['user']->first_name, self::$manager['user']->last_name))
-        );
-        $restUserName = '';
-        foreach($restReply['reply'] as $record)
-        {
-            if($record['user_id'] == self::$manager['user']->id) {
-                $restUserName = $record['name'];
-                break;
-            }
-        }
-        $this->assertEquals($expectedName, $restUserName);
-        $this->_user->setPreference('default_locale_name_format', $defaultPreference, 0, 'global');
-        $this->_user->savePreferencesToDB();
-        $this->_user->reloadPreferences();
-    }
-
-    /**
      * @group forecastapi
      * @group forecasts
      */

@@ -39,6 +39,11 @@
         var self = this;
         if(this.name == 'name') {
             this.uid = this.model.get('user_id');
+
+            if(this.uid == app.user.get('id')) {
+                this.model.set('name', app.utils.formatString(app.lang.get('LBL_MY_OPPORTUNITIES', 'Forecasts'), [this.model.get('name')]), {silent:true});
+            }
+
             this.popoverTitleName = this.model.get('name');
 
             // setting the viewName allows us to explicitly set the template to use
