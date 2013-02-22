@@ -64,7 +64,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 	ModuleBuilder = {
 	    init: function(){
             //Check if we shoudln't be in studio and need to load the normal ajaxUI
-            var aRegex = /#.*ajaxUILoc=([^&]*)/.exec(window.location);
+            var aRegex = /#.*ajaxUILoc=([^&]*)/.exec(window.location.href);
             var ajaxLoc = aRegex ? aRegex[1] : false;
             if (ajaxLoc) {
                 window.location = "index.php?action=ajaxui#ajaxUILoc=" + ajaxLoc;
