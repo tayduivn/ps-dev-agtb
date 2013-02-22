@@ -79,9 +79,7 @@ class ProductToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestProductBundleUtilities::setCreatedProductBundle(array($bundle->id));
 
-        var_dump($product);
-
-        $this->assertEquals($product->id, $bundle->product_id);
+        $this->assertEquals($this->product->id, $product->id);
     }
 
 }
