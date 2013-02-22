@@ -1072,6 +1072,14 @@ class Report
                 Report::filtersIterate($current_filter, $where_clause);
             }
             else {
+                if (!empty($current_filter['type']) && ($current_filter['type'] == 'datetimecombo' || $current_filter['type'] == 'datetime')) {
+                    if (!empty($current_filter['input_name0'])) {
+                        $current_filter['input_name0'] = $GLOBALS['timedate']->asDbType(new DateTime($current_filter['input_name0']), $current_filter['type']);
+                    }
+                    if (!empty($current_filter['input_name2'])) {
+                        $current_filter['input_name2'] = $GLOBALS['timedate']->asDbType(new DateTime($current_filter['input_name2']), $current_filter['type']);
+                    }
+                }
                 $this->register_field_for_query($current_filter);
                 $select_piece = "(" . $this->layout_manager->widgetQuery($current_filter) . ")";
                 //$where_arr[count($where_arr)] = $select_piece;

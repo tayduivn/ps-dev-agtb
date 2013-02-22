@@ -764,7 +764,7 @@ function newSelectSpanElement(name, inputTime){
 			}
 			var selectSpan = document.createElement("span");
 			var timevalue = "01:00am";
-			if( inputTime &&inputTime.match(time_reg_format) != null){
+			if( inputTime &&inputTime.match(/([0-9]{1,2})\:([0-9]{1,2})([ap]m)/) != null){
 				timevalue = inputTime;
 			}
 			hrs = parseInt(timevalue.substring(0,2));
@@ -1123,8 +1123,8 @@ function addFilterInputDatetimesBetween(row,filter) {
 		if (typeof(filter.input_name2) == 'undefined') {
 			filter.input_name2 = '';
 		}
-		filter.input_name2 = to_display_date(filter.input_name2);
-		new_input.value=filter.input_name2;
+
+        new_input.value = to_display_date(filter.input_name2);
 		new_input.name="text_input";
 		new_input.size="12";
 		new_input.maxsize="255";
@@ -1477,19 +1477,17 @@ function validateFilterRow(filter, returnObject) {
 		} // if	
 		else if ( field.type == 'datetimecombo') {
 			if ( (typeof(filter.input_name0) != 'undefined' && typeof(filter.input_name0) != 'array') && (typeof(filter.input_name1) != 'undefined' && typeof(filter.input_name1) != 'array')) {
-				var date_match = filter.input_name0.match(date_reg_format);
-				var time_match = filter.input_name1.match(time_reg_format);
-				if ( date_match != null && time_match != null) {
-					filter.input_name0 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']] + ' '+ filter.input_name1;
-				}
+                var dbValue = convertReportDateTimeToDB(filter.input_name0, filter.input_name1);
+                if (dbValue != '') {
+                    filter.input_name0 = dbValue;
+                }
 			}			
 			if ( typeof(filter.input_name2) != 'undefined' && typeof(filter.input_name2) != 'array' && typeof(filter.input_name3) != 'undefined' && typeof(filter.input_name3) != 'array') {
-				var date_match = filter.input_name2.match(date_reg_format);
-				var time_match = filter.input_name3.match(time_reg_format);
-				if ( date_match != null && time_match != null) {
-					filter.input_name2 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']] + ' '+ filter.input_name3;
-				}
-			}			
+                var dbValue = convertReportDateTimeToDB(filter.input_name2, filter.input_name3);
+                if (dbValue != '') {
+                    filter.input_name2 = dbValue;
+                }
+			}
 		}			
 	} // if
 } // fn
