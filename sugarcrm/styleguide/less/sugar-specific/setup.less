@@ -2,13 +2,13 @@
 .modal.setup {
     margin-left: 0px; // this allows jquery to center modal on screen resize
 }
-.setup .to {
-    padding: 0 10px;
-    position: relative;
-    top: -10px;
-}
 
 .setup {
+    .to {
+        padding: 0 10px;
+        position: relative;
+        top: -10px;
+    }
     input[type=checkbox], input[type=radio] {
         margin-right: 10px;
     }
@@ -22,7 +22,6 @@
         border: 1px dashed @grayLight;
         position: relative;
     }
-
     .currency .total {
         height: 20px;
         width: 20px;
@@ -40,12 +39,6 @@
         float: left;
         margin-right: 20px;
         margin-top: 10px;
-    }
-    .nav.nav-tabs {
-        margin-top: 5px;
-    }
-    .nav-tabs > li:first-child {
-        margin-left: 10px;
     }
     .modal-body {
         .screen {
@@ -77,16 +70,14 @@
 }
 
 
-#chartActions, #projectActions {
+#chartActions,
+#projectActions {
     .dropdown-menu {
         padding: 10px 20px;
-
         li {
             padding: 4px 0;
             font-size: 14px;
         }
-
-
         input[type=checkbox] {
             margin-right: 5px;
         }
