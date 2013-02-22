@@ -30,6 +30,9 @@ require_once('modules/ProspectLists/ProspectList.php');
 
 class SugarTestProspectListsUtilities
 {
+    private static $_aCreatedProspectLists = array();
+    private static $_aCreatedProspectListsIds = array();
+
     private static $_createdProspectLists = array();
 
     /**
@@ -98,6 +101,44 @@ class SugarTestProspectListsUtilities
             $prospectListIds[] = $prospectList->id;
         }
         return $prospectListIds;
+    }
+
+    public static function createProspectList($id = '', $aParams = array())
+    {
+        $time = mt_rand();
+        $oProspectList = new ProspectList();
+        $oProspectList->name = 'ProspectList' . $time;
+        if (!empty($id))
+        {
+            $oProspectList->id = $id;
+        }
+        if (!empty($aParams))
+        {
+            foreach ($aParams as $key => $val)
+            {
+                $oProspectList->$key = $val;
+            }
+        }
+        $oProspectList->save();
+        self::$_aCreatedProspectLists[] = $oProspectList;
+        self::$_aCreatedProspectListsIds[] = $oProspectList->id;
+        return $oProspectList;
+    }
+
+    /**
+     * @static
+     * @param mixed $prospect_list_id
+     */
+    public static function removeCreatedProspectLists($id = '')
+    {
+        if (!empty($id))
+        {
+            $GLOBALS['db']->query("DELETE FROM prospect_lists WHERE id = '{$id}'");
+        }
+        elseif (!empty(self::$_aCreatedProspectLists))
+        {
+            $GLOBALS['db']->query("DELETE FROM prospect_lists WHERE id IN ('" . implode("','", self::$_aCreatedProspectListsIds) . "')");
+        }
     }
 
 }
