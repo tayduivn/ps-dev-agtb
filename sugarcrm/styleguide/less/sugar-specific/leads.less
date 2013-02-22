@@ -1,6 +1,5 @@
 // quick create lead modal
 .layout_Leads {
-
   // Modal
   .modal {
     .dataTables_filter {
@@ -28,7 +27,6 @@
       }
     }
   }
-
   // Modal Content
   .modal .dataTables_filter,
   .card2.modal-content {
@@ -57,25 +55,24 @@
       -webkit-border-radius:4px;
     }
   }
+}
 
-  //Converted Results View
-  .converted-results .associated{
-    font-weight: bold;
-  }
+//Converted Results View
+.converted-results .associated{
+  font-weight: bold;
+}
 
-  // ACCORDION
-  // ---------
+.avatar-widget .pull-left {
+  width:12.5%;
+  text-align: center;
+}
+.avatar-widget .avatar.preview .icon-plus {
+  text-align: left;
+}
 
-  // Inner needs the styles because you can't animate properly with any styles on the element
-  .accordion-inner {
-    padding: 0px 0px;
-    border-top: 1px solid #e5e5e5;
-  }
-
-  .accordion-group {
-    margin-bottom: 0px;
-  }
-
+// ACCORDION
+// ---------
+.accordion {
   // Header
   .header {
     background-color:@grayLighter;
@@ -104,62 +101,81 @@
     }
     .subview-toggle-indicator {
       float: right;
+      margin-left: 12px;
       i {
         font-size: 16px;
       }
     }
   }
-
-  // Want Filter
-  .want_filter {
-    .form-search > .row-fluid,
-    .form-search .filter-header {
-      display:none;
+  // Inner needs the styles because you can't animate properly with any styles on the element
+  .accordion-inner {
+    padding: 0px 0px;
+    border-top: 1px solid #e5e5e5;
+  }
+  .accordion-group {
+    margin-bottom: 0px;
+  }
+  table.dataTable {
+    tr:last-child td {
+      border-bottom: none !important;
     }
-    .form-search .extend {
-      margin-top:-5px;
+    td:first-child {
+      text-align: center;
     }
-    .form-search > .hide:not(.mu) {
-      display:block !important;
-    }
-    &.active {
-      padding:0;
-    }
-    .row-fluid {
-      margin: 0;
+    td,
+    th {
+      border-color: darken(#FCF9E8,10%);
+      .controls {
+        padding:  5px 0;
+      }
     }
   }
-
 }
 
-.avatar-widget .pull-left {
-  width:12.5%;
-  text-align: center;
+// Want Filter
+div.want_filter {
+  .form-search > .row-fluid,
+  .form-search .filter-header {
+    display:none;
+  }
+  .form-search .extend {
+    margin-top:-5px;
+  }
+  .form-search > .hide:not(.mu) {
+    display:block !important;
+  }
+  &.active {
+    padding:0;
+  }
+  .row-fluid {
+    margin: 0;
+  }
+  &.highlight {
+    padding: 11px;
+    text-align: center;
+    border-bottom: 1px solid darken(#FCF9E8,10%);
+  }
 }
-.avatar-widget .avatar.preview .icon-plus {
-  text-align: left;
-}
-
 
 div.filter_el,
 div.want_filter {
   line-height: 20px;
-  border-top: 1px solid #E8E8E8;
-  border-bottom: 1px solid #E8E8E8;
+  border-top: 1px solid @white;
 }
 
 div.filter_el {
   padding-right: 0;
   padding-left: 0;
+  border-bottom: 1px solid darken(@grayLighter,10%);
   div.header {
-    padding: 15px 32px 15px 16px;
+    padding: 14px 16px 14px 16px;
   }
   div.step_extend {
     padding: 0;
   }
 }
 
-.record.active .filter_el:last-child {
+.record.active div.filter_el:last-child {
   border-top: 0;
 }
 
@@ -203,7 +219,7 @@ table.duplicates.highlight tbody td {
     width: 20px;
     font-size: 20px;
     line-height: 20px;
-    top: 13px;
+    top: 14px;
     display: inline-block;
     color: @green;
   }
