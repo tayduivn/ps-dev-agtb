@@ -37,6 +37,10 @@
             if (!_.isEmpty(recipientModel)) {
                 this.populateToRecipients(recipientModel);
             }
+
+            if (this.model.isNew()) {
+                this._updateEditorWithSignature(app.user.getPreference("signature_default"));
+            }
         }
 
         this.initMainButtonStatus();
@@ -345,10 +349,7 @@
     launchTemplateDrawer: function() {
         app.drawer.open({
                 layout:'compose-templates',
-                context:{
-                    module:'EmailTemplates',
-                    forceNew:true
-                }
+                context:{module:'EmailTemplates'}
             },
             this.templateDrawerCallback
         );
@@ -394,8 +395,7 @@
      * @param template
      */
     insertTemplate: function(template) {
-        var editor,
-            subject,
+        var subject,
             notes;
 
         if (_.isObject(template)) {
@@ -405,13 +405,11 @@
                 this.model.set('subject', subject);
             }
 
-            editor = this.getField('html_body');
-
             //TODO: May need to move over replaces special characters.
             if (template.get('text_only') === 1) {
-                editor.setEditorContent(template.get('body'));
+                this.model.set("html_body", template.get("body"));
             } else {
-                editor.setEditorContent(template.get('body_html'));
+                this.model.set("html_body", template.get("body_html"));
             }
 
             notes = app.data.createBeanCollection("Notes");
@@ -431,6 +429,9 @@
                     app.logger.error("Unable to fetch the bean collection.");
                 }
             });
+
+            // currently adds the html signature even when the template is text-only
+            this._updateEditorWithSignature(app.user.getPreference("signature_default"));
         }
     },
     
@@ -460,10 +461,7 @@
     launchDocumentDrawer: function() {
         app.drawer.open({
                 layout: 'selection-list',
-                context: {
-                    module: 'Documents',
-                    forceNew:true
-                }
+                context: {module: 'Documents'}
             },
             this.documentDrawerCallback);
     },
