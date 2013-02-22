@@ -208,14 +208,15 @@
      */
     displaySuccessAndReload:function () {
         var alert = app.alert.show('success', {
-            level:'success',
-            autoClose:true,
-            closeable:true,
+            level: 'success',
+            autoClose: true,
+            closeable: false,
+            showCancel: false,
             onAutoClose: function() {
                 window.location.hash = "#";
             },
-            title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
-            messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
+            title: app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+            messages: [app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
         });
 
         alert.getCloseSelector().on('click', function() {

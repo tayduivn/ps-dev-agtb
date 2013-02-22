@@ -55,6 +55,10 @@
             if(_.isUndefined(options)) {
                 return this;
             }
+            if(_.isUndefined(options.showCancel)) {
+                // show cancel by default if it isn't explicitly stated
+                options.showCancel = true;
+            }
             var template = this.getAlertTemplate(options.level, options.messages, options.title, options.showCancel);
             this.$el.html(template);
 
@@ -106,8 +110,7 @@
         getAlertTemplate: function(level, messages, title, showCancel) {
             var template,
                 alertClasses = this.getAlertClasses(level),
-                title = title ? title : this.getDefaultTitle(level),
-                showCancel = showCancel ? showCancel : true;
+                title = title ? title : this.getDefaultTitle(level);
 
             switch (level) {
                 case this.LEVEL.PROCESS:
@@ -123,7 +126,7 @@
                 case this.LEVEL.INFO:
                 case this.LEVEL.ERROR:
                     template = '<div class="alert {{alertClass}} alert-block">' +
-                        '<a class="close">x</a>' +
+                        '{{#if showCancel}}<a class="close">x</a>{{/if}}' +
                         '{{#if title}}<strong>{{title}}</strong>{{/if}}' +
                         ' {{#each messages}}{{{this}}}{{/each}}' +
                         '</div>';
@@ -144,7 +147,8 @@
             return Handlebars.compile(template)({
                 alertClass: alertClasses,
                 title: title,
-                messages: messages
+                messages: messages,
+                showCancel: showCancel
             });
         },
 
