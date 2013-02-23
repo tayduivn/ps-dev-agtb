@@ -2968,6 +2968,7 @@ $app_strings = array (
     'NTC_DELETE_CONFIRMATION_NUM' => 'Are you sure you want to delete the ',
     'NTC_UPDATE_CONFIRMATION_NUM' => 'Are you sure you want to update the ',
     'NTC_DELETE_SELECTED_RECORDS' =>' selected record(s)?',
+    'NTC_UNLINK_CONFIRMATION' => 'Are you sure you want to unlink this record?',
     'NTC_LOGIN_MESSAGE' => 'Please enter your user name and password.',
     'NTC_NO_ITEMS_DISPLAY' => 'none',
     'NTC_REMOVE_CONFIRMATION' => 'Are you sure you want to remove this relationship? Only the relationship will be removed. The record will not be deleted.',
