@@ -150,16 +150,6 @@ $vardefs = array(
 	    'rows' => 6,
 	    'cols' => 80,
 	  ),
-    'img' =>
-    array(
-        'name' => 'img',
-        'vname' => 'LBL_IMAGE',
-        'type' => 'img',
-        'comment' => 'Link to image',
-        'reportable' => false,
-        'dbType' => 'varchar',
-        'len' => 255
-    ),
     'last_activity_date' =>
  	  array (
  	    'name' => 'last_activity_date',
