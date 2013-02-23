@@ -205,7 +205,7 @@ $app_list_strings = array (
       'true' => 'Yes',
   ),
 
-  //e.g. en franï¿½ais 'Analyst'=>'Analyste',
+  //e.g. en français 'Analyst'=>'Analyste',
   'account_type_dom' =>
   array (
     '' => '',
@@ -220,7 +220,7 @@ $app_list_strings = array (
     'Reseller' => 'Reseller',
     'Other' => 'Other',
   ),
-  //e.g. en espaï¿½ol 'Apparel'=>'Ropa',
+  //e.g. en español 'Apparel'=>'Ropa',
   'industry_dom' =>
   array (
     '' => '',
@@ -1774,6 +1774,13 @@ $app_list_strings = array (
         '$starts' => 'starts with',
         '$ends' => 'ends with'
       ),
+    'textarea' => array(
+        '$equals' => 'matches',
+        '$not_equals' => 'does not match',
+        '$contains' => 'contains',
+        '$starts' => 'starts with',
+        '$ends' => 'ends with'
+      ),
     'currency' => array(
         '$equals' => 'is equal to',
         '$gt' => 'is greater than',
@@ -1795,13 +1802,41 @@ $app_list_strings = array (
         '$lt' => 'is less than',
         '$lte' => 'is less than or equal to',
       ),
+    'float' => array(
+        '$equals' => 'is equal to',
+        '$gt' => 'is greater than',
+        '$gte' => 'is greater than or equal to',
+        '$lt' => 'is less than',
+        '$lte' => 'is less than or equal to',
+      ),
+    'decimal' => array(
+        '$equals' => 'is equal to',
+        '$gt' => 'is greater than',
+        '$gte' => 'is greater than or equal to',
+        '$lt' => 'is less than',
+        '$lte' => 'is less than or equal to',
+      ),
+    'date' => array(
+        '$equals' => 'on',
+        '$lt' => 'before',
+        '$gt' => 'after',
+      ),
     'datetime' => array(
         '$equals' => 'on',
         '$lt' => 'before',
-        '$lte' => 'on or before',
-        '$gt' => 'after',
-        '$gte' => 'on or after'
+        '$gt' => 'after'
       ),
+    'bool' => array(
+        '$equals' => 'is'
+      ),
+    'phone' => array(
+        '$starts' => 'starts with',
+        '$equals' => 'is'
+      )
+  ),
+  'filter_checkbox_dom' => array(
+      0 => 'No',
+      1 => 'Yes'
   ),
   'lead_conv_activity_opt' =>
   array(
