@@ -75,7 +75,7 @@
 .cube {
   background: url('@{baseUrl}/img/badge_256f.png') 16px 11px no-repeat;
   float: left;
-  height: 19px;
+  height: 36px;
   width: 36px;
   z-index: 2000;
   display: block;
@@ -84,6 +84,9 @@
           transition: all .2s linear;
   filter:  ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
   -ms-filter: ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
+  &.hide { 
+    display: none;
+  }
 }
 
 //from nutmeg
