@@ -438,7 +438,7 @@ class ActivityStream extends SugarBean
         }
 
         $activities = array_values($activities);
-        $nextOffset = count($activities) < $options['limit'] ? -1 : $options['offset'] + count($activities);
+        $nextOffset = count($activities) < $numActivities ? -1 : $start + count($activities);
         $list = array('next_offset'=>$nextOffset,'records'=>$activities);
 
         return $list;
