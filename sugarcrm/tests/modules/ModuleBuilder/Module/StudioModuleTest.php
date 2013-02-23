@@ -84,4 +84,26 @@ class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $SM = new StudioModule($module);
         $this->assertEquals($type, $SM->getType(), 'Failed asserting that module:' . $module . ' is of type:' . $type);
     }
+
+
+    public function providerBWCHasSearch()
+    {
+        return array(
+            array('Meetings', true),
+            array('Accounts', false),
+            array('Documents', true),
+            array('Calls', false),
+        );
+    }
+    /**
+    * @dataProvider providerBWCHasSearch
+    * @bug SC-519
+    */
+    public function testBWCHasSearch($module, $isBWC)
+    {
+        $SM = new StudioModule($module);
+        $layouts = $SM->getLayouts();
+        $this->assertEquals($isBWC, !empty($layouts[translate('LBL_SEARCH', "ModuleBuilder")]),
+            'Failed asserting that module:' . $module . ' has a search layout when BWC');
+    }
 }

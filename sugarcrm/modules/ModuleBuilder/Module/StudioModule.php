@@ -115,9 +115,7 @@ class StudioModule
     	// If a standard module then just look up its type - type is implicit for standard modules. Perhaps one day we will make it explicit, just as we have done for custom modules...
 		$types = array (
 		'Accounts' => 'company' ,
-		//BEGIN SUGARCRM flav!=sales ONLY
 		'Bugs' => 'issue' ,
-		//END SUGARCRM flav!=sales ONLY
 		'Cases' => 'issue' ,
 		'Contacts' => 'person' ,
 		'Documents' => 'file' ,
@@ -199,67 +197,59 @@ class StudioModule
 
     function getLayouts()
     {
-    	$views = $this->getViews();
-
-        // Now add in the QuickCreates - quickcreatedefs can be created by Studio from editviewdefs if they are absent, so just add them in regardless of whether the quickcreatedefs file exists
-
-        $hideQuickCreateForModules = array ( 'kbdocuments' , 'projecttask' ,
-            //BEGIN SUGARCRM flav!=sales ONLY
-            'campaigns'
-            ) ;
-        //BEGIN SUGARCRM flav=pro ONLY
-
-        array_push ( $hideQuickCreateForModules, 'quotes' ) ;
-        array_push ( $hideQuickCreateForModules, 'producttemplates' ) ;
-        //END SUGARCRM flav=pro ONLY
-        // Some modules should not have a QuickCreate form at all, so do not add them to the list
-        if (! in_array ( strtolower ( $this->module ), $hideQuickCreateForModules ))
-            $views [ 'quickcreatedefs' ] = array ( 'name' => translate('LBL_QUICKCREATE') , 'type' => MB_QUICKCREATE , 'image' => 'QuickCreate' ) ;
+        global $bwcModules;
+        $views = $this->getViews();
 
         $layouts = array ( ) ;
         foreach ( $views as $def )
         {
             $view = !empty($def['view']) ? $def['view'] : $def['type'];
-            $layouts [ $def['name'] ] = array ( 'name' => $def['name'] , 'action' => "module=ModuleBuilder&action=editLayout&view={$view}&view_module={$this->module}" , 'imageTitle' => $def['image'] , 'help' => "viewBtn{$def['type']}" , 'size' => '48' ) ;
-        }
-
-        if($this->isValidDashletModule($this->module)){
-			$dashlets = array( );
-	        $dashlets [] = array('name' => translate('LBL_DASHLETLISTVIEW') , 'type' => 'dashlet' , 'action' => 'module=ModuleBuilder&action=editLayout&view=dashlet&view_module=' . $this->module );
-			$dashlets [] = array('name' => translate('LBL_DASHLETSEARCHVIEW') , 'type' => 'dashletsearch' , 'action' => 'module=ModuleBuilder&action=editLayout&view=dashletsearch&view_module=' . $this->module );
-			$layouts [ translate('LBL_DASHLET') ] = array ( 'name' => translate('LBL_DASHLET') , 'type' => 'Folder', 'children' => $dashlets,  'imageTitle' => 'Dashlet',  'action' => 'module=ModuleBuilder&action=wizard&view=dashlet&view_module=' . $this->module);
+            $layouts [ $def['name'] ] = array (
+                'name' => $def['name'] ,
+                'action' => "module=ModuleBuilder&action=editLayout&view={$view}&view_module={$this->module}" ,
+                'imageTitle' => $def['image'] ,
+                'help' => "viewBtn{$def['type']}" ,
+                'size' => '48'
+            ) ;
         }
 
         //For popup tree node
         $popups = array( );
-        $popups [] = array('name' => translate('LBL_POPUPLISTVIEW') , 'type' => 'popuplistview' , 'action' => 'module=ModuleBuilder&action=editLayout&view=popuplist&view_module=' . $this->module );
-		$popups [] = array('name' => translate('LBL_POPUPSEARCH') , 'type' => 'popupsearch' , 'action' => 'module=ModuleBuilder&action=editLayout&view=popupsearch&view_module=' . $this->module );
-		$layouts [ translate('LBL_POPUP') ] = array ( 'name' => translate('LBL_POPUP') , 'type' => 'Folder', 'children' => $popups, 'imageTitle' => 'Popup', 'action' => 'module=ModuleBuilder&action=wizard&view=popup&view_module=' . $this->module);
+        $popups [] = array(
+            'name' => translate('LBL_POPUPLISTVIEW') ,
+            'type' => 'popuplistview' ,
+            'action' => 'module=ModuleBuilder&action=editLayout&view=popuplist&view_module=' . $this->module
+        );
+		$popups [] = array(
+            'name' => translate('LBL_POPUPSEARCH') ,
+            'type' => 'popupsearch' ,
+            'action' => 'module=ModuleBuilder&action=editLayout&view=popupsearch&view_module=' . $this->module
+        );
+		$layouts [ translate('LBL_POPUP') ] = array (
+            'name' => translate('LBL_POPUP') ,
+            'type' => 'Folder',
+            'children' => $popups,
+            'imageTitle' => 'Popup',
+            'action' => 'module=ModuleBuilder&action=wizard&view=popup&view_module=' . $this->module
+        );
 
         $nodes = $this->getSearch () ;
-        if ( !empty ( $nodes ) )
+        if ( !empty ( $nodes ) && in_array($this->module, $bwcModules))
         {
-        	$layouts [ translate('LBL_SEARCH') ] = array ( 'name' => translate('LBL_SEARCH') , 'type' => 'Folder' , 'children' => $nodes , 'action' => "module=ModuleBuilder&action=wizard&view=search&view_module={$this->module}" , 'imageTitle' => 'BasicSearch' , 'help' => 'searchBtn' , 'size' => '48') ;
+        	$layouts [ translate('LBL_SEARCH') ] = array (
+                'name' => translate('LBL_SEARCH') ,
+                'type' => 'Folder' ,
+                'children' => $nodes ,
+                'action' => "module=ModuleBuilder&action=wizard&view=search&view_module={$this->module}" ,
+                'imageTitle' => 'BasicSearch' , 'help' => 'searchBtn' , 'size' => '48'
+            ) ;
         }
 
     	return $layouts ;
 
     }
 
-	function isValidDashletModule($moduleName){
-		$fileName = "My{$moduleName}Dashlet";
-		$customFileName = "{$moduleName}Dashlet";
-		if (file_exists ( "modules/{$moduleName}/Dashlets/{$fileName}/{$fileName}.php" )
-			|| file_exists ( "custom/modules/{$moduleName}/Dashlets/{$fileName}/{$fileName}.php" )
-			|| file_exists ( "modules/{$moduleName}/Dashlets/{$customFileName}/{$customFileName}.php" )
-			|| file_exists ( "custom/modules/{$moduleName}/Dashlets/{$customFileName}/{$customFileName}.php" ))
-        {
-        	return true;
-        }
-        return false;
-	}
-
-    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     function getWirelessLayouts ()
     {
         $layouts [ translate ('LBL_WIRELESSEDITVIEW') ] = array (
@@ -462,7 +452,7 @@ class StudioModule
         $sources[] = array('type'  => MB_BASICSEARCH);
         $sources[] = array('type'  => MB_ADVANCEDSEARCH);
         $sources[] = array('type'  => MB_POPUPSEARCH);
-        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         $sources = array_merge($sources, $this->getWirelessLayouts());
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
@@ -503,10 +493,7 @@ class StudioModule
 		$sources = $this->getViews();
         $sources[] = array('type'  => MB_BASICSEARCH);
         $sources[] = array('type'  => MB_ADVANCEDSEARCH);
-        $sources[] = array('type'  => MB_DASHLET);
-        $sources[] = array('type'  => MB_DASHLETSEARCH);
         $sources[] = array('type'  => MB_POPUPLIST);
-        $sources[] = array('type'  => MB_QUICKCREATE);
         //BEGIN SUGARCRM flav=pro ONLY
         $sources = array_merge($sources, $this->getWirelessLayouts());
         //END SUGARCRM flav=pro ONLY 
