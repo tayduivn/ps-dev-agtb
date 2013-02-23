@@ -36,7 +36,7 @@
         {{/notEq}}
     {{/each}}
     <li class="dropdown more">
-        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">{{str "LBL_LINK_MORE"}} <b class="caret"></b></a>
+        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><b title="{{str "LBL_LINK_MORE"}}" class="icon-chevron-down"></b></a>
         <ul class="dropdown-menu more-drop-container">
         </ul>
     </li>
