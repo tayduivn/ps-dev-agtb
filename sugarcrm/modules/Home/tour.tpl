@@ -37,7 +37,7 @@
 	<div class="modal-body" {if $view_calendar_url}style="overflow: auto;"{/if}>
         <div style="float: left;">
             <div style="float: left; width: 300px;">
-				{$APP.LBL_TOUR_FEATURES}
+				{$APP.LBL_TOUR_FEATURES_670}
 				<p>{$APP.LBL_TOUR_VISIT} <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$APP.documentation.$sugarFlavor}')">{$APP.LNK_TOUR_DOCUMENTATION}</a>.</p>
 
                 {if $view_calendar_url}
