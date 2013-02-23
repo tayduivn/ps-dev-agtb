@@ -5,7 +5,6 @@
         <li class="dropdown" data-module="{{name}}">
             <a  class="moreLink hide" href="#{{name}}">{{label}}</a>
             <div class="btn-group">
-                <span class="ext" ></span>
                 <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}">{{label}}</a>
                 <a id="{{name}}Drop" role="button" href="#" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
                 {{#if menu}}
