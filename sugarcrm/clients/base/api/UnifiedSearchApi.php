@@ -162,10 +162,6 @@ class UnifiedSearchApi extends SugarListApi {
             // TODO: When the real filters get in, change it so that this is just described as an additional filter.
             $options['my_items'] = $args['my_items'];
         }
-        $options['untouched'] = false;
-        if(isset($args['untouched'])){
-            $options['untouched'] = (int)$args['untouched'];
-        }
 
         $fieldFilters = array();
         // Sort out the multi-module field filter
@@ -386,14 +382,13 @@ class UnifiedSearchApi extends SugarListApi {
     protected function globalSearchSpot(ServiceBase $api, array $args, $searchEngine, array $options) {
         require_once('modules/Home/UnifiedSearchAdvanced.php');
 
-        
+
         $searchOptions = array(
             'modules'=>$options['moduleList'],
             'current_module'=>$options['primaryModule'],
             'return_beans'=>true,
             'my_items'=>$options['my_items'],
             'favorites'=>$options['favorites'],
-            'untouched'=>$options['untouched'],
             'orderBy'=>$options['orderBy'],
             'fields'=>$options['fieldFilters'],
             'selectFields'=>$options['selectFields'],
