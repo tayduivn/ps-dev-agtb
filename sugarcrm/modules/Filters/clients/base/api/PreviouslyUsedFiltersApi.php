@@ -51,15 +51,15 @@ class PreviouslyUsedFiltersApi extends SugarApi {
                 'method' => 'deleteUsed',
                 'shortHelp' => 'This method deletes the used filter for the current user',
                 'longHelp' => '',
-            ),   
-            'deleteUsed' => array(
+            ),
+            'deleteAllUsed' => array(
                 'reqType' => 'DELETE',
                 'path' => array('Filters', '?', 'used',),
                 'pathVars' => array('module', 'module_name', 'used', 'record'),
                 'method' => 'deleteUsed',
                 'shortHelp' => 'This method deletes the used filter for the current user',
                 'longHelp' => '',
-            ),               
+            ),
         );
     }
     /**
