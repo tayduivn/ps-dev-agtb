@@ -75,15 +75,23 @@
 .cube {
   background: url('@{baseUrl}/img/badge_256f.png') 16px 11px no-repeat;
   float: left;
-  height: 19px;
-  width: 36px;
+  height: 32px;
+  width: 28px;
   z-index: 2000;
   display: block;
+/*
   -webkit-transition: all .2s linear;
      -moz-transition: all .2s linear;
           transition: all .2s linear;
   filter:  ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
   -ms-filter: ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
+*/
+  &.hide { 
+    display: none;
+  }
+  &.btn.btn-invisible:hover {
+    background: url('@{baseUrl}/img/badge_256f.png') 16px 11px no-repeat;
+  }
 }
 
 //from nutmeg
@@ -99,6 +107,11 @@
     height: 44px;
     @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1), 0 4px 0 @BorderColor;
     .box-shadow(@shadow);
+  }
+  &> .navbar-inner {
+    &> .container-fluid {
+      padding-left: 0;
+    }
   }
   .cube:hover {
     text-decoration: none;
@@ -258,22 +271,77 @@
       }
     }
 
-    &#module_list{
+    &.megamenu {
       > li.dropdown {
         border-left: 1px solid transparent;
         border-right: 1px solid transparent;
         &.open {
+          &.active {
+            .cube {
+              background-position: 15px 11px;
+            }
+          }
           border-left: 1px solid @black;
           border-right: 1px solid @grayDark;
+          &:before {
+            content: '';
+            display: inline-block;
+            border-left:   7px solid transparent;
+            border-right:  7px solid transparent;
+            border-bottom: 7px solid #ccc;
+            border-bottom-color: @dropdownBorder;
+            position: absolute;
+            top: 44px;
+            left: 9px;
+            z-index:@zindexDropdown;
+          }
+          &:after {
+            content: '';
+            display: inline-block;
+            border-left:   6px solid transparent;
+            border-right:  6px solid transparent;
+            border-bottom: 6px solid @dropdownBackground;
+            position: absolute;
+            top: 45px;
+            left: 10px;
+            z-index:@zindexDropdown;
+          }
+          /* override twitter bootstrap effect, here we need this outside ul since ul itself we make scrollable */
+          ul.dropdown-menu {
+            &:before,
+            &:after {
+              display: none;
+            }
+          }
+        }
+        &.active {
+          border-right-color: darken(@white, 75%);
+          border-left-color: lighten(@black, 20%);
+          div.btn-group:not(.open) {
+            //.box-shadow(~"inset 0px -10px 15px rgba(255,255,255,.3)");
+            background-color: rgba(0,0,0,0.21);
+            #gradient > .vertical(@black, lighten(@black,26%));
+
+
+
+
+            border-left-color: lighten(@black,15%);
+            border-right-color: @black;
+
+
+
+
+          }
         }
         div.btn-group {
+
           margin: 0;
           a.btn-invisible.btn-link {
             text-shadow: none;
             color: lighten(@black,80%);
             margin-top: 0;
             margin-bottom: 0;
-            line-height: 33px;
+            line-height: 32px;
             .caret {
               border-top-color: @white;
               border-bottom-color: @white;
@@ -289,77 +357,19 @@
           }
           border-left: 1px solid transparent;
           border-right: 1px solid transparent;
-          .ext {
-            display:none;
-            height: 10px;
-            width: 10px;
-            position: absolute;
-            bottom: -11px;
-            margin-left: 12px;
-            z-index: 1001;
-          }
           &.open {
             .box-shadow(~"inset 2px 4px 12px rgba(255,255,255,.25)");
-            border-left:1px solid lighten(@gray,10%);
-            border-right:1px solid @black;
+            border-left-color: lighten(@gray,5%);
+            border-right-color: @black;
             .dropdown-toggle {
               background: none;
             }
-            .ext {
-              display:inline-block;
-            }
-            .ext:before {
-                content: "";
-                position: absolute;
-                width: 0;
-                height: 0;
-                border-left:   6px solid transparent;
-                border-right:  6px solid transparent;
-                border-bottom: 6px solid @dropdownBorder;
-                margin-left: -1px;
-                top:-1px;
-            }
-            .ext:after {
-                content: "";
-                position: absolute;
-                width: 0;
-                height: 0;
-                border-left:   5px solid transparent;
-                border-right:  5px solid transparent;
-                border-bottom: 6px solid white;
-            }
-            ul.dropdown-menu.scroll {
-              max-height: 330px;
-              overflow-x: auto;
-            }
-            /* old markup, before drop downs became scrollable
-              ul.dropdown-menu {
-                &:before {
-                  content: '';
-                  display: inline-block;
-                  border-left:   7px solid transparent;
-                  border-right:  7px solid transparent;
-                  border-bottom: 7px solid #ccc;
-                  border-bottom-color: @dropdownBorder;
-                  position: absolute;
-                  top: -7px;
-                  left: 9px;
-                }
-                &:after {
-                  content: '';
-                  display: inline-block;
-                  border-left:   6px solid transparent;
-                  border-right:  6px solid transparent;
-                  border-bottom: 6px solid @dropdownBackground;
-                  position: absolute;
-                  top: -6px;
-                  left: 10px;
-                }
-              }
-            */
           }
         }
-        &.more {
+        &.more:hover {
+          b[class^="icon-"] {
+            color: @white !important;
+          }
           ul.dropdown-menu.more-drop-container {
             li.dropdown {
               div.btn-group {
@@ -383,12 +393,15 @@
     .active > a,
     .active > a:hover {
       text-decoration: none;
+      /*
       border-bottom: 4px solid darken(@red,15%);
+      */
       text-shadow: none;
       color: @navbarLinkColorActive;
       //color: contrast(@NavigationBar, @black, @white, 43%);
-      background-color: lighten(@NavigationBar,5%) !important;
-      .box-shadow(~"inset 0 -1px 0 rgba(0,0,0,.4)");
+
+//      background-color: lighten(@NavigationBar,5%) !important;
+//      .box-shadow(~"inset 0 -1px 0 rgba(0,0,0,.4)");
       text-shadow: 0 -1px 0 rgb(0,0,0);
       //color: @navbarLinkColorActive;
       //background-color: @navbarLinkBackgroundActive;
