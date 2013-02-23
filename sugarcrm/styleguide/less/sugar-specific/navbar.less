@@ -265,6 +265,29 @@
         &.open {
           border-left: 1px solid @black;
           border-right: 1px solid @grayDark;
+          &:before {
+            content: '';
+            display: inline-block;
+            border-left:   7px solid transparent;
+            border-right:  7px solid transparent;
+            border-bottom: 7px solid #ccc;
+            border-bottom-color: @dropdownBorder;
+            position: absolute;
+            top: 44px;
+            left: 9px;
+            z-index:@zindexDropdown;
+          }
+          &:after {
+            content: '';
+            display: inline-block;
+            border-left:   6px solid transparent;
+            border-right:  6px solid transparent;
+            border-bottom: 6px solid @dropdownBackground;
+            position: absolute;
+            top: 45px;
+            left: 10px;
+            z-index:@zindexDropdown;
+          }
         }
         div.btn-group {
           margin: 0;
@@ -305,6 +328,9 @@
             .dropdown-toggle {
               background: none;
             }
+
+
+/*
             .ext {
               display:inline-block;
             }
@@ -328,10 +354,14 @@
                 border-right:  5px solid transparent;
                 border-bottom: 6px solid white;
             }
+
+
             ul.dropdown-menu.scroll {
               max-height: 330px;
               overflow-x: auto;
             }
+*/
+
             /* old markup, before drop downs became scrollable
               ul.dropdown-menu {
                 &:before {
