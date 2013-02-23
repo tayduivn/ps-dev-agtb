@@ -261,7 +261,7 @@
       }
     }
 
-    &#module_list{
+    &.megamenu {
       > li.dropdown {
         border-left: 1px solid transparent;
         border-right: 1px solid transparent;
@@ -291,8 +291,16 @@
             left: 10px;
             z-index:@zindexDropdown;
           }
+          /* override twitter bootstrap effect, here we need this outside ul since ul itself we make scrollable */
+          ul.dropdown-menu {
+            &:before,
+            &:after {
+              display: none;
+            }
+          }
         }
         div.btn-group {
+
           margin: 0;
           a.btn-invisible.btn-link {
             text-shadow: none;
@@ -324,6 +332,11 @@
             margin-left: 12px;
             z-index: 1001;
           }
+
+
+
+
+
           &.open {
             .box-shadow(~"inset 2px 4px 12px rgba(255,255,255,.25)");
             border-left:1px solid lighten(@gray,10%);
@@ -331,65 +344,6 @@
             .dropdown-toggle {
               background: none;
             }
-
-
-/*
-            .ext {
-              display:inline-block;
-            }
-            .ext:before {
-                content: "";
-                position: absolute;
-                width: 0;
-                height: 0;
-                border-left:   6px solid transparent;
-                border-right:  6px solid transparent;
-                border-bottom: 6px solid @dropdownBorder;
-                margin-left: -1px;
-                top:-1px;
-            }
-            .ext:after {
-                content: "";
-                position: absolute;
-                width: 0;
-                height: 0;
-                border-left:   5px solid transparent;
-                border-right:  5px solid transparent;
-                border-bottom: 6px solid white;
-            }
-
-
-            ul.dropdown-menu.scroll {
-              max-height: 330px;
-              overflow-x: auto;
-            }
-*/
-
-            /* old markup, before drop downs became scrollable
-              ul.dropdown-menu {
-                &:before {
-                  content: '';
-                  display: inline-block;
-                  border-left:   7px solid transparent;
-                  border-right:  7px solid transparent;
-                  border-bottom: 7px solid #ccc;
-                  border-bottom-color: @dropdownBorder;
-                  position: absolute;
-                  top: -7px;
-                  left: 9px;
-                }
-                &:after {
-                  content: '';
-                  display: inline-block;
-                  border-left:   6px solid transparent;
-                  border-right:  6px solid transparent;
-                  border-bottom: 6px solid @dropdownBackground;
-                  position: absolute;
-                  top: -6px;
-                  left: 10px;
-                }
-              }
-            */
           }
         }
         &.more {
