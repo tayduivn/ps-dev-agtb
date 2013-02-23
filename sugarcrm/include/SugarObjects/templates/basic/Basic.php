@@ -29,29 +29,18 @@
 class Basic extends SugarBean
 {
     /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Basic()
-    {
-        $this->__construct();
-    }
-
-    /** 
      * Constructor
      */
-	public function __construct()
-	{
-		parent::__construct();
-	}
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-	/**
-	 * @see SugarBean::get_summary_text()
-	 */
-	public function get_summary_text()
-	{
-		return "$this->name";
-	}
+    /**
+     * @see SugarBean::get_summary_text()
+     */
+    public function get_summary_text()
+    {
+        return "$this->name";
+    }
 }
