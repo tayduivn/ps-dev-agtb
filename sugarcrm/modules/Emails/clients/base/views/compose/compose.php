@@ -135,6 +135,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                         'skin' => "sugar7",
                         'plugins' => "style,searchreplace,print,contextmenu,paste,noneditable,visualchars,nonbreaking,xhtmlxtras",
                         'entity_encoding' => "raw",
+                        'forced_root_block' => false,
 
                         // Theme options
                         'theme_advanced_buttons1' => "code,help,separator,bold,italic,underline,strikethrough,separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,justifyfull,separator,forecolor,backcolor,separator,spellchecker,seperator,formatselect,fontselect,fontsizeselect",
