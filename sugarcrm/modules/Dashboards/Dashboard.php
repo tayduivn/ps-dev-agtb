@@ -59,7 +59,7 @@ class Dashboard extends Basic
     public function getDashboardsForUser( User $user, $options = array() )
     {
         $order = !empty($options['order_by']) ? $options['order_by'] : 'date_entered desc';
-        $from = "assigned_user_id = '".$this->db->quote($user->id)."'";
+        $from = "assigned_user_id = '".$this->db->quote($user->id)."' and module ='".$options['module']."'";
         $offset = !empty($options['offset']) ? (int)$options['offset'] : 0;
         $limit = !empty($options['limit']) ? (int)$options['limit'] : -1;
         $result = $this->get_list($order,$from,$offset,$limit,-99,0);

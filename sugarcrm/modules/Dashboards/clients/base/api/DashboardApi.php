@@ -20,6 +20,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('data/BeanFactory.php');
 require_once('include/api/SugarApi.php');
 
 class DashboardApi extends SugarApi
@@ -32,28 +33,73 @@ class DashboardApi extends SugarApi
     public function registerApiRest()
     {
         $dashboardApi = array(
-            'dashboard' => array(
+            'getDashboardsForModule' => array(
+                'reqType' => 'GET',
+                'path' => array('Dashboards', '<module>'),
+                'pathVars' => array('', 'module'),
+                'method' => 'getDashboards',
+                'shortHelp' => 'Get dashboards for a module',
+                'longHelp' => 'include/api/help/get_dashboards.html',
+            ),
+            'getDashboardsForHome' => array(
                 'reqType' => 'GET',
                 'path' => array('Dashboards'),
-                'pathVars' => array(),
-                'method' => 'dashboard',
-                'shortHelp' => 'Home page dashboard',
-                'longHelp' => 'include/api/help/dashboardapi.html',
+                'pathVars' => array(''),
+                'method' => 'getDashboards',
+                'shortHelp' => 'Get dashboards for home',
+                'longHelp' => 'include/api/help/get_dashboards.html',
+            ),
+            'createDashboardForModulePost' => array(
+                'reqType' => 'POST',
+                'path' => array('Dashboards', '<module>'),
+                'pathVars' => array('', 'module'),
+                'method' => 'createDashboard',
+                'shortHelp' => 'Create a new dashboard for a module',
+                'longHelp' => 'include/api/help/create_dashboard.html',
+            ),
+            'createDashboardForHomePost' => array(
+                'reqType' => 'POST',
+                'path' => array('Dashboards'),
+                'pathVars' => array(''),
+                'method' => 'createDashboard',
+                'shortHelp' => 'Create a new dashboard for home',
+                'longHelp' => 'include/api/help/create_dashboard.html',
+            ),
+            'createDashboardForModulePut' => array(
+                'reqType' => 'PUT',
+                'path' => array('Dashboards', '<module>'),
+                'pathVars' => array('', 'module'),
+                'method' => 'createDashboard',
+                'shortHelp' => 'Create a new dashboard for a module',
+                'longHelp' => 'include/api/help/create_dashboard.html',
+            ),
+            'createDashboardForHomePut' => array(
+                'reqType' => 'PUT',
+                'path' => array('Dashboards'),
+                'pathVars' => array(''),
+                'method' => 'createDashboard',
+                'shortHelp' => 'Create a new dashboard for home',
+                'longHelp' => 'include/api/help/create_dashboard.html',
             ),
         );
         return $dashboardApi;
     }
 
     /**
-     * Build get the dashboard for the current user
+     * Get the dashboards for the current user
      *
      * @param ServiceBase $api      The Api Class
      * @param array $args           Service Call Arguments
      * @return mixed
      */
-    public function dashboard($api, $args)
+    public function getDashboards($api, $args)
     {
         global $current_user;
+        
+        if (!isset($args['module'])) {
+            $args['module'] = 'Home';
+        }
+
         $dashboards = BeanFactory::newBean('Dashboards')->getDashboardsForUser($current_user, $args);
 
         $sortedResults = array();
@@ -65,5 +111,43 @@ class DashboardApi extends SugarApi
             "next_offset" => $dashboards['next_offset'],
             "records" => $sortedResults
         );
+    }
+    
+    /**
+     * Create a new dashboard
+     *
+     * @param ServiceBase $api      The Api Class
+     * @param array $args           Service Call Arguments
+     * @return mixed
+     */
+    public function createDashboard($api, $args) {
+        if (!isset($args['module'])) {
+            $args['module'] = 'Home';
+        }
+
+        $bean = BeanFactory::newBean('Dashboards');
+        
+        if (!$bean->ACLAccess('save')) {
+            // No create access so we construct an error message and throw the exception
+            $failed_module_strings = return_module_language($GLOBALS['current_language'], 'Dashboards');
+            $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
+            $args = null;
+            if(!empty($moduleName)){
+                $args = array('moduleName' => $moduleName);
+            }
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED', $args);
+        }
+
+        $id = $this->updateBean($bean, $api, $args);
+        $args['record'] = $id;
+        $args['module'] = 'Dashboards';
+        $bean = $this->loadBean($api, $args, 'view');
+        $data = $this->formatBean($api, $args, $bean);
+        return $data;
+    }
+    
+    protected function matchModule( $module ) {
+        $GLOBALS['log']->fatal(print_r(array_keys($GLOBALS['beanList'])));
+        return isset($GLOBALS['beanList'][$module]) || $module == 'Home';
     }
 }

@@ -30,6 +30,26 @@ $dictionary['Dashboard'] = array(
   'table' => 'dashboards',
   'fields' => 
   array (
+      'module' =>
+      array (
+          'required' => false,
+          'name' => 'module',
+          'vname' => 'LBL_MODULE',
+          'type' => 'varchar',
+          'dbType' => 'varchar',
+          'massupdate' => 0,
+          'no_default' => false,
+          'comments' => '',
+          'help' => '',
+          'importable' => 'true',
+          'duplicate_merge' => 'disabled',
+          'duplicate_merge_dom_value' => '0',
+          'audited' => false,
+          'reportable' => true,
+          'unified_search' => false,
+          'merge_filter' => 'disabled',
+          'calculated' => false,
+      ),          
     'metadata' => 
     array (
       'required' => false,
@@ -50,6 +70,9 @@ $dictionary['Dashboard'] = array(
       'merge_filter' => 'disabled',
       'calculated' => false,
     ),
+  ),
+  'indices' => array (
+    array ('name' => 'user_module', 'type' => 'index', 'fields' => array('assigned_user_id','module')),
   ),
   'relationships' => 
   array (
