@@ -109,6 +109,157 @@ describe("Create View", function() {
         SugarTest.app.drawer = drawer;
     });
 
+    describe('Initialize', function() {
+        var current_user_id = '1234567890';
+        var current_user_name = 'Johnny Appleseed';
+        var save_user_id;
+        var save_user_name;
+        var getModuleMetadata;
+        var fields;  // Must be Set by each Test
+        beforeEach(function() {
+            save_user_id = SugarTest.app.user.id;
+            save_user_name = SugarTest.app.user.attributes.full_name;
+
+            SugarTest.app.user.id = current_user_id;
+            SugarTest.app.user.attributes.full_name = current_user_name;
+
+            getModuleMetadata = sinon.stub(SugarTest.app.metadata, 'getModule', function() {
+                var meta = {
+                    "fields": fields,
+                    favoritesEnabled: true,
+                    views: [],
+                    layouts: [],
+                    _hash: "bc6fc50d9d0d3064f5d522d9e15968fa"
+                };
+                return meta;
+            });
+        });
+
+        afterEach(function() {
+            SugarTest.app.user.id = save_user_id;
+            SugarTest.app.user.attributes.full_name = save_user_name;
+            getModuleMetadata.restore();
+        });
+
+        it("Should create a record view having a Assigned-To field initialized with the Current Signed In User", function() {
+            fields = [
+                {
+                    "group": "assigned_user_name",
+                    "id_name": "assigned_user_id",
+                    "module": "Users",
+                    "name": "assigned_user_id",
+                    "rname": "user_name",
+                    "table": "users",
+                    "type": "relate",
+                    "vname": "LBL_ASSIGNED_TO_ID"
+                }
+            ];
+
+            var view = SugarTest.createView("base", moduleName, viewName, null, context);
+
+            var user_id   = view.model.get('assigned_user_id');
+            var full_name = view.model.get('assigned_user_name');
+
+            expect(user_id).toEqual(current_user_id);
+            expect(full_name).toEqual(current_user_name);
+        });
+
+
+        it("Should create a record view having a Assigned-To field - 'id_name' is assigned_user_id", function() {
+            fields = [
+                {
+                    "group": "assigned_user_name",
+                    "id_name": "assigned_user_id",
+                    "module": "Users",
+                    "name": "some_field",
+                    "rname": "user_name",
+                    "table": "users",
+                    "type": "relate",
+                    "vname": "LBL_ASSIGNED_TO_ID"
+                }
+            ];
+
+            var view = SugarTest.createView("base", moduleName, viewName, null, context);
+
+            var user_id   = view.model.get('assigned_user_id');
+            var full_name = view.model.get('assigned_user_name');
+
+            expect(user_id).toEqual(current_user_id);
+            expect(full_name).toEqual(current_user_name);
+        });
+
+        it("Should create a record view having a Assigned-To field - 'name' is assigned_user_id", function() {
+            fields = [
+                {
+                    "group": "assigned_user_name",
+                    "id_name": "some_field",
+                    "module": "Users",
+                    "name": "assigned_user_id",
+                    "rname": "user_name",
+                    "table": "users",
+                    "type": "relate",
+                    "vname": "LBL_ASSIGNED_TO_ID"
+                }
+            ];
+
+            var view = SugarTest.createView("base", moduleName, viewName, null, context);
+
+            var user_id   = view.model.get('assigned_user_id');
+            var full_name = view.model.get('assigned_user_name');
+
+            expect(user_id).toEqual(current_user_id);
+            expect(full_name).toEqual(current_user_name);
+        });
+
+
+        it("Should Not create a record view having an initialized Assigned-To field - Type is not Relate", function() {
+            fields = [
+                {
+                    "group": "assigned_user_name",
+                    "id_name": "assigned_user_id",
+                    "module": "Users",
+                    "name": "assigned_user_id",
+                    "rname": "user_name",
+                    "table": "users",
+                    "type": "link",
+                    "vname": "LBL_ASSIGNED_TO_ID"
+                }
+            ];
+
+            var view = SugarTest.createView("base", moduleName, viewName, null, context);
+
+            var user_id   = view.model.get('assigned_user_id');
+            var full_name = view.model.get('assigned_user_name');
+
+            expect(user_id).not.toEqual(current_user_id);
+            expect(full_name).not.toEqual(current_user_name);
+        });
+
+        it("Should Not create a record view having an initialized Assigned-To field - neither id_name and name equal 'assigned_user_id' ", function() {
+            fields = [
+                {
+                    "group": "assigned_user_name",
+                    "id_name": "some_field",
+                    "module": "Users",
+                    "name": "some_field",
+                    "rname": "user_name",
+                    "table": "users",
+                    "type": "relate",
+                    "vname": "LBL_ASSIGNED_TO_ID"
+                }
+            ];
+
+            var view = SugarTest.createView("base", moduleName, viewName, null, context);
+
+            var user_id   = view.model.get('assigned_user_id');
+            var full_name = view.model.get('assigned_user_name');
+
+            expect(user_id).not.toEqual(current_user_id);
+            expect(full_name).not.toEqual(current_user_name);
+        });
+
+    });
+
     describe('Render', function() {
         it("Should render 5 buttons and 5 fields", function() {
             var fields = 0,
