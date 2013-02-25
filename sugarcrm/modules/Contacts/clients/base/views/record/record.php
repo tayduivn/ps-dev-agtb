@@ -120,7 +120,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 'portal_name',
                 'portal_active',
                 'preferred_language',
-                'assigned_user_id',
+                'assigned_user_name',
                 'team_name',
                 array(
                     'name' => 'date_modified_by',
