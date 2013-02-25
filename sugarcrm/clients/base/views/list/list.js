@@ -116,14 +116,10 @@
         }
     },
 
-    previewRow: function(model) {
-        app.events.trigger("preview:render", model, this.collection, true);
-    },
-
     paginateSuccess: function() {
         //When fetching more records, we need to update the preview collection
         app.events.trigger("preview:collection:change", this.collection);
-        this.render();
+        if(!this.disposed) this.render();
     },
 
     sort: function() {
@@ -282,7 +278,7 @@
             app.alert.dismiss('loading_' + self.cid);
 
             self.layout.trigger("list:sort:fire", collection, self);
-            self.render();
+            if(!self.disposed) self.render();
         };
         if (this.context.get('link')) {
             options.relate = true;
@@ -402,5 +398,13 @@
         if (this.collection) {
             this.collection.on("reset", this.render, this);
         }
+    },
+    _dispose: function(){
+        this.context.off(null, null, this);
+        this.layout.off(null, null, this);
+        if(this.collection){
+            this.collection.off(null, null, this);
+        }
+        app.view.views.EditableView.prototype._dispose.call(this);
     }
 })

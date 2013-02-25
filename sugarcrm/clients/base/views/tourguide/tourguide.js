@@ -27,7 +27,7 @@
         });
         app.events.on("app:sync:complete", function() {
             self.tourBgImg = app.config.siteUrl + "/clients/base/views/tourguide/tour.jpg";
-            self.render();
+            if(!self.disposed) self.render();
             if( app.user.get("show_tour") ) {
                 // disable the tour flag on initial app sync
                 app.api.call("update", app.api.buildURL("me/tour"));
@@ -41,8 +41,10 @@
     startOverview: function() {
         // TODO: Change this when we have modal layout in footer.php
         this.$(".system-tour").modal("hide");
-        this.render();
-        this.$(".system-tour-overview").modal("show");
+        if(!this.disposed){
+            this.render();
+            this.$(".system-tour-overview").modal("show");
+        }
     },
     startTour: function(e) {
         var data = this.$(e.currentTarget).data();

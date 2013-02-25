@@ -83,16 +83,18 @@
             // Hide loading message
             app.alert.dismiss('show_more_records_' + self.cid);
             self.layout.trigger("list:paginate:success");
-            self.render();
-            // retrieve old screen position
-            window.scrollTo(0, -1*screenPosition);
+            if(!self.disposed){
+                self.render();
+                // retrieve old screen position
+                window.scrollTo(0, -1*screenPosition);
 
-            // Animation for new records
-            self.layout.$('tr.new').animate({
-                opacity:1
-            }, 500, function () {
-                $(this).removeAttr('style class');
-            });
+                // Animation for new records
+                self.layout.$('tr.new').animate({
+                    opacity:1
+                }, 500, function () {
+                    $(this).removeAttr('style class');
+                });
+            }
         };
         options.limit = this.limit;
         this.collection.paginate(options);
@@ -122,6 +124,14 @@
         if(this.collection) {
             this.collection.on("reset", this.render, this);
         }
+    },
+
+    _dispose: function(){
+        if(this.collection){
+            this.collection.off(null, null, this);
+        }
+        this.layout.off(null, null, this);
+        app.view.View.prototype._dispose.call(this);
     },
 
     // For certain layouts that want to trigger
