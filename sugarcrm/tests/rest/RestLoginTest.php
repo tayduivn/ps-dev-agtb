@@ -84,6 +84,32 @@ class RestLoginTest extends RestTestBase
     /**
      * @group rest
      */
+    public function testRestLoginUserInvalidGrant()
+    {
+        $args = array(
+            'grant_type' => 'password',
+            'username' => $this->_user->user_name,
+            'password' => $this->_user->user_name,
+            'client_id' => 'sugar',
+            'client_secret' => '',
+            'platform' => 'base',
+        );
+
+        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply['reply']['access_token']);
+        $this->assertNotEmpty($reply['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
+        $this->assertEquals('bearer',$reply['reply']['token_type']);
+        
+        $this->authToken = 'this-is-not-a-token';
+        $replyPing = $this->_restCall('ping');
+
+        $this->assertEquals($replyPing['reply']['error'], 'invalid_grant');
+    }
+
+    /**
+     * @group rest
+     */
     public function testRestOauthViaGet()
     {
         $args = array(
