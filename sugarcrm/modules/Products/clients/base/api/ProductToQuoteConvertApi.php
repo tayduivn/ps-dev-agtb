@@ -56,7 +56,7 @@ class ProductToQuoteConvertApi extends SugarApi
         $product_bundle = BeanFactory::getBean('ProductBundles');
 
         $total = SugarMath::init()->exp("?*?", array($product->quantity, $product->likely_case))->result();
-        $total_base = SugarCurrency::convertAmountToBase($total, $product->currency_id);
+        $total_base = SugarCurrency::convertWithRate($total, $product->base_rate);
 
         $product_bundle->name = 'Bundle 1';
         $product_bundle->bundle_stage = 'Draft';
