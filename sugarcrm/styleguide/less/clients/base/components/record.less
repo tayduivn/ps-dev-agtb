@@ -7,9 +7,9 @@
 
   h1 {
     float: left;
-    margin-top: 9px;
+    margin-top: 2px;
     margin-left: 20px;
-    line-height: 42px;
+    line-height: 18px;
   }
   .view-forecastsTitle h1 {
     margin-top: 12px;
@@ -29,34 +29,47 @@
     display: inline-block;
     vertical-align: top;
     position: relative;
-    line-height: 40px;
   }
   .ellipsis_inline {
-    margin-left: 10px;
-    padding: 1px 2px;
-  }
-
-  .label {
-    vertical-align: top;
-    margin-top: 13px;
+    padding: 21px 2px;
   }
 
   span[data-type="image"] {
+    top: 6px;
     .record-edit-link-wrapper {
+      top: 8px;
       left: -30px;
     }
+    .image_field.image_edit {
+      top: -2px;
+    }
   }
-  span[data-type="text"],
-  span[data-type="fieldset"] {
+  span[data-type="fieldset-with-labels"] {
+    margin-left: -10px;
     .record-edit-link-wrapper {
-      left: -20px;
+      top: 15px;
+      width: 28px;
+      .record-edit-link {
+        margin-left: 0;
+      }
+    }
+    .index2 {
+      margin-left: 20px;
+    }
+  }
+  span[data-type="badge"] {
+    top: 17px;
+    .label {
+      font-size: 10px;
+      padding: 1px 4px 3px;
     }
     span {
-      display: inline-block;
+      font-size: 14px;
     }
   }
   span[data-type="favorite"] {
     margin-left: 12px;
+    top: 19px;
     [class="icon-favorite"] {
       font-size: 18px !important;
       color: @grayLight;
@@ -67,21 +80,19 @@
   }
 
   .record-edit-link-wrapper {
-    top: -1px;
-    left: -18px;
+    top: 15px;
   }
 
   .record-label {
     font-size: 11px;
     font-color: lighten(@gray, 20%);
     line-height: 14px;
-    margin: -6px 0 0 10px;
+    margin: 0 0 0 8px;
   }
 
   input[type="text"] {
     font-size: 20px;
-    height: 26px;
-    margin: -1px 0 0 5px;
+    padding: 6px;
   }
   .create {
     input[type="text"] {
@@ -92,17 +103,20 @@
   }
 
   .select2-container {
-    margin-left: 8px;
-    width: 88px;
     .select2-choice {
       margin-top: 0;
-      height: 30px;
-      padding: 4px 0 4px 8px;
+      height: 22px;
+      padding: 6px 0 2px 8px;
+      line-height: 20px;
+      min-width: 50px;
+      span {
+        margin-right: 32px;
+      }
       div {
-        padding: 4px 2px;
+        top: 2px;
       }
       abbr {
-        top: 10px;
+        top: 8px;
       }
     }
   }
@@ -110,7 +124,7 @@
   //action buttons
 
   .btn-toolbar {
-    margin: 16px 8px 0;
+    margin: 15px 8px 0;
     padding-left: 0;
     .btn-group {
       vertical-align: middle;
@@ -121,7 +135,7 @@
     }
   }
   .btn-group-previous-next {
-    margin: 0 8px;
+    margin: 0;
     .btn {
       [class^="icon-"] {
         font-size: 16px;
@@ -146,6 +160,8 @@
         font-size: 25px;
         font-weight: 700;
         vertical-align: top;
+        width: 14px;
+        height: 16px;
     }
     .icon-double-angle-left {
         margin: 0 2px 0 -2px;
