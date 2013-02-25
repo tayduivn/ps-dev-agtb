@@ -2,7 +2,7 @@
     <li class="Home" data-module="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
     {{#each module_list}}
         {{#notEq name 'Home'}}
-        <li class="dropdown" data-module="{{name}}">
+        <li class="dropdown" data-module="{{name}}" data-menuindex="{{menuIndex}}">
             <a  class="moreLink hide" href="#{{name}}">{{label}}</a>
             <div class="btn-group">
                 <span class="ext" ></span>
