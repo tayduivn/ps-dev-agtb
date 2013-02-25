@@ -78,11 +78,10 @@ function canSendPassword() {
 
 function  hasPasswordExpired($username)
 {
-    global $current_user;
-	$usr_id=User::retrieve_user_id($username);
+    $usr_id=User::retrieve_user_id($username);
 	$usr= BeanFactory::getBean('Users', $usr_id);
     $type = '';
-	if ($current_user->system_generated_password == '1'){
+	if ($usr->system_generated_password == '1'){
         $type='syst';
     }
 	//BEGIN SUGARCRM flav=pro ONLY
@@ -91,21 +90,21 @@ function  hasPasswordExpired($username)
     }
 	//END SUGARCRM flav=pro ONLY
 
-    if ($current_user->portal_only=='0'){
-	    global $mod_strings, $timedate;
+    if ($usr->portal_only=='0'){
+	    global $mod_strings;
 	    $res=$GLOBALS['sugar_config']['passwordsetting'];
 	  	if ($type != '') {
 		    switch($res[$type.'expiration']){
 
 	        case '1':
 		    	global $timedate;
-		    	if ($current_user->pwd_last_changed == ''){
-		    		$current_user->pwd_last_changed= $timedate->nowDb();
-		    		$current_user->save();
+		    	if ($usr->pwd_last_changed == ''){
+		    		$usr->pwd_last_changed= $timedate->nowDb();
+		    		$usr->save();
 		    		}
 
 		        $expireday = $res[$type.'expirationtype']*$res[$type.'expirationtime'];
-		        $expiretime = $timedate->fromUser($current_user->pwd_last_changed)->get("+{$expireday} days")->ts;
+		        $expiretime = $timedate->fromUser($usr->pwd_last_changed)->get("+{$expireday} days")->ts;
 
 			    if ($timedate->getNow()->ts < $expiretime)
 			    	return false;
@@ -117,9 +116,9 @@ function  hasPasswordExpired($username)
 
 
 		    case '2':
-		    	$login=$current_user->getPreference('loginexpiration');
-		    	$current_user->setPreference('loginexpiration',$login+1);
-		        $current_user->save();
+		    	$login=$usr->getPreference('loginexpiration');
+		    	$usr->setPreference('loginexpiration',$login+1);
+		        $usr->save();
 		        if ($login+1 >= $res[$type.'expirationlogin']){
 		        	$_SESSION['expiration_type']= $mod_strings['LBL_PASSWORD_EXPIRATION_LOGIN'];
 		        	return true;

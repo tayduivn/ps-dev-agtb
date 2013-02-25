@@ -135,10 +135,7 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
                  $reporter->report_def["report_name"] .
                  $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
 
-        // the compared strings will be the same if strip_tags had no affect
-        // if the compared strings are equal, then it's a text-only message
-        $textOnly = (strcmp($body, strip_tags($body)) == 0);
-
+        $textOnly = EmailFormatter::isTextOnly($body);
         if ($textOnly) {
             $mailer->setTextBody($body);
         } else {

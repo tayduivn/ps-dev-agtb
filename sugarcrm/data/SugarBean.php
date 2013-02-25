@@ -2063,20 +2063,18 @@ class SugarBean
         if (($this->object_name == 'Meeting' || $this->object_name == 'Call') || $notify_user->receive_notifications) {
             $this->current_notify_user = $notify_user;
 
-            $sendToEmail = $notify_user->emailAddress->getPrimaryAddress($notify_user);
-            $sendEmail = TRUE;
-            if(empty($sendToEmail)) {
-                $GLOBALS['log']->warn("Notifications: no e-mail address set for user {$notify_user->user_name}, cancelling send");
-                $sendEmail = FALSE;
-            }
+            $templateName = $this->getTemplateNameForNotificationEmail();
+            $xtpl         = $this->createNotificationEmailTemplate($templateName);
+            $subject      = $xtpl->text($templateName . "_Subject");
+            $body         = trim($xtpl->text($templateName));
 
             //BEGIN SUGARCRM flav=notifications ONLY
             //Save the notification
-            $n = BeanFactory::getBean('Notifications');
-            $n->name = $notify_mail->Subject;
-            $n->description = $notify_mail->Body;
-            $n->assigned_user_id = $notify_user->id;
-            $n->save(FALSE);
+            $notification = BeanFactory::getBean('Notifications');
+            $notification->name = $subject;
+            $notification->description = $body;
+            $notification->assigned_user_id = $notify_user->id;
+            $notification->save(FALSE);
             //END SUGARCRM flav=notifications ONLY
 
             $mailTransmissionProtocol = "unknown";
