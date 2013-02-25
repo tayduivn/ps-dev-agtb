@@ -229,6 +229,6 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      * @dataProvider supportsProvider
      */
     public function testSupports($feature, $expectedSupport) {
-        $this->assertEquals($expectedSupport, $this->db->supports($feature));
+        $this->assertEquals($expectedSupport, $this->_db->supports($feature));
     }
 }
