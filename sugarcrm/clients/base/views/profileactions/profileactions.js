@@ -29,6 +29,6 @@
             field: "picture"
         }) : app.config.siteUrl + "/styleguide/assets/img/profile.png";
 
-        this.render();
+        if (!this.disposed) this.render();
     }
 })
