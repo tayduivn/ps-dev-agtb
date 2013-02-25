@@ -362,7 +362,7 @@
 
         var model = app.data.createBean(this.model.module);
         model.copy(this.model);
-        model.id =  this.model.id;
+        model.set('id', this.model.id);
 
         app.drawer.open({
             layout : 'compose',

@@ -368,10 +368,14 @@
     },
 
     findDuplicatesClicked: function() {
+        var model = app.data.createBean(this.model.module);
+
+        model.copy(this.model);
+        model.set('id', this.model.id);
         app.drawer.open({
             layout : 'find-duplicates',
             context: {
-                dupeCheckModel: this.model,
+                dupeCheckModel: model,
                 dupelisttype: 'dupecheck-list-multiselect'
             }
         });
