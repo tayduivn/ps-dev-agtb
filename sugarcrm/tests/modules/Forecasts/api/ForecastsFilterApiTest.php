@@ -199,7 +199,6 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @dataProvider forecastTypesDataProvider
      * @group forecastapi
      * @group forecasts
-     * @group jontest
      */
     public function testForecastFilterDoesNotThrowsAnExceptionWithAValidForecastType($forecast_type)
     {

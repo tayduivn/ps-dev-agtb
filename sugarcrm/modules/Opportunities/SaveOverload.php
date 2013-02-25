@@ -115,6 +115,7 @@ function perform_save($focus){
             $product->date_closed_timestamp = $focus->date_closed_timestamp;
             $product->assigned_user_id = $focus->assigned_user_id;
             $product->opportunity_id = $focus->id;
+            $product->account_id = $focus->account_id;
             $product->commit_stage = $focus->commit_stage;
             $product->deleted = $focus->deleted;
             $product->save();

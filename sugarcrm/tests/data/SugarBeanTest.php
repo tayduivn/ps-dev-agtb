@@ -75,6 +75,24 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotContains("select * from config", $bean->db->lastQuery);
     }
 
+    /**
+     * This test makes sure that the object we are looking for is returned from the build_related_list method as
+     * something changed someplace that is causing it to return the template that was passed in.
+     */
+    public function testBuildRelatedListReturnsRecordBeanVsEmptyBean()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+
+        $bean = new SugarBean();
+
+        $query = 'select id FROM ' . $account->table_name . ' where id = "' . $account->id . '";';
+        $return = array_shift($bean->build_related_list($query, BeanFactory::getBean('Accounts')));
+
+        $this->assertEquals($account->id, $return->id);
+
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+    }
+
 
 
 
