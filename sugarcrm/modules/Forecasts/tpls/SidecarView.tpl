@@ -104,6 +104,9 @@
             }
             }));
 
+        $(window).resize(function(){
+            app.forecasts.utils.adjustContentColHeight();
+        });
      })(SUGAR.App);
 
 //Call initForecast with the session id as token
@@ -124,5 +127,7 @@ $("#productTour").click(function(){
         });
     }
 });
+
+
 </script>
 {/literal}

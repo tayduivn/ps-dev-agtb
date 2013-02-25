@@ -349,6 +349,10 @@
                 returnValue = true;
             }
             return returnValue;
+        },
+        adjustContentColHeight : function() {
+            var winHeight = $(window).height()-92;
+            $('#forecasts #contentflex .row-fluid .span8').height(winHeight);
         }
     };
 })(SUGAR.App);
