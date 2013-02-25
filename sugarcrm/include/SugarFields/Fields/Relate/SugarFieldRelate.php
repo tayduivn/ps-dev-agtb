@@ -126,7 +126,6 @@ class SugarFieldRelate extends SugarFieldBase {
     }
 
     function getPopupViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex){
-    	$displayParams['clearOnly'] = true;
     	return $this->getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     }
 
@@ -216,31 +215,7 @@ class SugarFieldRelate extends SugarFieldBase {
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         return $this->fetch($this->findTemplate('SearchView'));
     }
-
-    function formatField($rawField, $vardef) {
-    	if ('contact_name' == $vardef['name'] && !empty($rawField)){
-    	    $default_locale_name_format = $GLOBALS['current_user']->getPreference('default_locale_name_format');
-    	    $default_locale_name_format = trim(preg_replace('/s/i', '', $default_locale_name_format));
-            $new_field = '';
-    	    $names = array();
-            $temp = explode(' ', $rawField);
-            if ( !isset($temp[1]) ) {
-                $names['f'] = '';
-                $names['l'] = $temp[0];
-            }
-            elseif ( !empty($temp) ) {
-                $names['f'] = $temp[0];
-                $names['l'] = $temp[1];
-            }
-            for($i=0;$i<strlen($default_locale_name_format);$i++){
-        	    $new_field .= array_key_exists($default_locale_name_format{$i}, $names) ? $names[$default_locale_name_format{$i}] : $default_locale_name_format{$i};
-            }
-    	}
-    	else  $new_field = $rawField;
-
-        return $new_field;
-    }
-
+    
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
         $data[$fieldName] = $this->formatField($bean->$fieldName, $properties);
     }
@@ -335,9 +310,7 @@ class SugarFieldRelate extends SugarFieldBase {
                         // add this as a new record in that bean, then relate
                         if ( isset($relatedFieldDef['db_concat_fields'])
                                 && is_array($relatedFieldDef['db_concat_fields']) ) {
-                            $relatedFieldParts = explode(' ',$value);
-                            foreach ($relatedFieldDef['db_concat_fields'] as $relatedField)
-                                $newbean->$relatedField = array_shift($relatedFieldParts);
+                            assignConcatenatedValue($newbean, $relatedFieldDef, $value);
                         }
                         else
                             $newbean->$vardef['rname'] = $value;

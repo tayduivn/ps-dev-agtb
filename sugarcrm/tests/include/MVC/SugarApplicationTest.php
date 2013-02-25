@@ -86,6 +86,9 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         } else {
             unset ($GLOBALS['sugar_config']['http_referer']);
         }
+
+        global $sugar_version, $sugar_db_version, $sugar_flavor, $sugar_build, $sugar_timestamp;
+        require('sugar_version.php');
     }
 
     public function testSetupPrint()

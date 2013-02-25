@@ -215,7 +215,6 @@ if(isset($_POST['clear_loaded'])){
 ////////////////////////////////// Browse Section ///////////////////////////////////////
 
     //print out the needed script tags for tree
-    echo'<script> var site_url= {"site_url":"'.$sugar_config['site_url'].'"};</script>';
 
     echo"        <link rel='stylesheet' href='include/ytree/TreeView/css/folders/tree.css'>
     <script language='JavaScript' src='include/ytree/TreeView/TreeView.js'></script>

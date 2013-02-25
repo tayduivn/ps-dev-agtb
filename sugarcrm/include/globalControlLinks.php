@@ -44,7 +44,7 @@ $global_control_links['profile'] = array(
 //END SUGARCRM flav!=com ONLY
 
 $global_control_links['employees'] = array(
-'linkinfo' => array($app_strings['LBL_EMPLOYEES']=> 'index.php?module=Employees&action=index'),
+'linkinfo' => array($app_strings['LBL_EMPLOYEES']=> 'index.php?module=Employees&action=index&query=true'),
 'submenu' => ''
 );
 if (

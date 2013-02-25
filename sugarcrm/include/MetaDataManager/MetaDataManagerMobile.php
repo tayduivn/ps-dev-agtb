@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,36 +21,45 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-require_once('modules/Contacts/Contact.php');
+require_once 'include/MetaDataManager/MetaDataManager.php';
+require_once 'clients/mobile/api/CurrentUserMobileApi.php';
 
-class ContactsTest extends Sugar_PHPUnit_Framework_TestCase
+class MetaDataManagerMobile extends MetaDataManager
 {
-
-    public function setUp() {
-        SugarTestHelper::setUp('current_user');
-        SugarTestHelper::setUp('app_list_strings');
+    protected function getModules() {
+        // Get the current user module list
+        $modules = $this->getUserModuleList();
+        
+        // add in Users [Bug59548] since it is forcefully removed for the 
+        // CurrentUserApi
+        if(!array_search('Users', $modules)) {
+            $modules[] = 'Users';
+        }
+        
+        return $modules;
     }
 
-    public function tearDown() {
-        SugarTestHelper::tearDown();
-    }
+    /**
+     * Gets the list of mobile modules. Used by getModules and the CurrentUserApi
+     * to get the module list for a user.
+     * 
+     * @return array
+     */
+    public function getUserModuleList() {
+        // replicate the essential part of the behavior of the private loadMapping() method in SugarController
+        foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file){
+            require $file;
+        }
 
-	function testSyncContacts() {
-        $c = BeanFactory::newBean('Contacts');
-        $c->first_name = 'Test';
-        $c->last_name = create_guid();
+        // Forcibly remove the Users module
+        // So if they have added it, remove it here
+        if ( isset($wireless_module_registry['Users']) ) {
+            unset($wireless_module_registry['Users']);
+        }
 
-        $this->assertFalse($c->setSyncContact());
-
-        $c->setUserContactsUserId($GLOBALS['current_user']->id);
-
-        $this->assertTrue($c->setSyncContact());
-
-        $c->removeUserContactsUserId($GLOBALS['current_user']->id);
-
-        $this->assertFalse($c->setSyncContact());
-
-        unset($c);
+        // $wireless_module_registry is defined in the file loaded above
+        return isset($wireless_module_registry) && is_array($wireless_module_registry) ?
+            array_keys($wireless_module_registry) :
+            array();
     }
 }
-?>

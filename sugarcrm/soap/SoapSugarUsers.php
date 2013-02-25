@@ -1160,6 +1160,11 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 	$related_mod->add_team_security_where_clause($sql);
 	//END SUGARCRM flav=pro ONLY
 
+    if (isset($related_mod->custom_fields)) {
+        $customJoin = $related_mod->custom_fields->getJOIN();
+        $sql .= $customJoin ? $customJoin['join'] : '';
+    }
+
 	$sql .= " WHERE {$related_mod->table_name}.id IN ({$in}) ";
 
 	if (!empty($related_module_query)) {
@@ -1980,10 +1985,8 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	$seed->add_team_security_where_clause($sql);
 	//END SUGARCRM flav=pro ONLY
 
-    if (isset($seed->custom_fields)) {
-        $customJoin = $seed->custom_fields->getJOIN();
-        $sql .= $customJoin ? $customJoin['join'] : '';
-    }
+    $customJoin = $seed->getCustomJoin();
+    $sql .= $customJoin['join'];
 
 	// build WHERE clauses, if any
 	$where_clauses = array();

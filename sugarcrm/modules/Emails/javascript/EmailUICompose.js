@@ -1461,7 +1461,8 @@ SE.composeLayout = {
     /**
      * Writes out the signature in the email editor
      */
-    setSignature : function(idx) {
+    setSignature : function(idx)
+    {
         if (!tinyMCE)
             return false;
         var hide = document.getElementById('setEditor' + idx).checked;
@@ -1493,10 +1494,14 @@ SE.composeLayout = {
 
         }
 
-        var openTag = '<br class="signature-begin" />';
-        var closeTag = '<br class="signature-end" />';
+        // The tags are used for finding the signature
+        var openTag = '<div id="signature-begin"><br />';
+        var closeTag = '<span>&nbsp;</span></div>';
+
+        // Get tinyMCE instance
         var t = tinyMCE.getInstanceById('htmleditor' + idx);
-        //IE 6 Hack
+
+        // IE 6 Hack
         if(typeof(t) != 'undefined')
         {
             t.contentDocument = t.contentWindow.document;
@@ -1509,17 +1514,22 @@ SE.composeLayout = {
 
         var htmllow = html.toLowerCase();
         var start = htmllow.indexOf(openTag);
-        var end = htmllow.indexOf(closeTag);
-        if (end >= 0) {
+        // Start looking for the closeTag where the start tag was found
+        var end = htmllow.indexOf(closeTag, start);
+        if (end >= 0)
+        {
             end += closeTag.length;
         }
-        else {
+        else
+        {
             end = htmllow.length;
         }
 
         // selected "none" - remove signature from email
-        if(signature == '') {
-            if (start > -1) {
+        if (signature == '')
+        {
+            if (start > -1)
+            {
                 var htmlPart1 = html.substr(0, start);
                 var htmlPart2 = html.substr(end, html.length);
 
@@ -1530,22 +1540,28 @@ SE.composeLayout = {
             return false;
         }
 
-        if(!SE.signatures.lastAttemptedLoad) // lazy load place holder
+        if (!SE.signatures.lastAttemptedLoad) // lazy load place holder
+        {
             SE.signatures.lastAttemptedLoad = '';
+        }
 
         SE.signatures.lastAttemptedLoad = signature;
 
-        if(typeof(SE.signatures[signature]) == 'undefined') {
+        if (typeof(SE.signatures[signature]) == 'undefined')
+        {
             //lazy load
             SE.signatures.lastAttemptedLoad = ''; // reset this flag for recursion
             SE.signatures.targetInstance = (idx) ? idx : "";
             AjaxObject.target = '';
             AjaxObject.startRequest(callbackLoadSignature, urlStandard + "&emailUIAction=getSignature&id="+signature);
-        } else {
+        }
+        else
+        {
             var newSignature = this.prepareSignature(SE.signatures[signature]);
 
             // clear out old signature
-            if(SE.signatures.lastAttemptedLoad && start > -1) {
+            if (SE.signatures.lastAttemptedLoad && start > -1)
+            {
                 var htmlPart1 = html.substr(0, start);
                 var htmlPart2 = html.substr(end, html.length);
 
@@ -1554,12 +1570,14 @@ SE.composeLayout = {
 
             // pre|append
 			start = html.indexOf('<div><hr></div>');
-            if(SE.userPrefs.signatures.signature_prepend == 'true' && start > -1) {
+            if (SE.userPrefs.signatures.signature_prepend == 'true' && start > -1) // Prepend
+            {
 				var htmlPart1 = html.substr(0, start);
 				var htmlPart2 = html.substr(start, html.length);
                 var newHtml = htmlPart1 + openTag + newSignature + closeTag + htmlPart2;
-            } else if(SUGAR.email2.userPrefs.signatures.signature_prepend == 'true') {
-
+            }
+            else if (SUGAR.email2.userPrefs.signatures.signature_prepend == 'true') // Prepend
+            {
             	//bug 48285
                 var newHtml = html;
 
@@ -1589,17 +1607,34 @@ SE.composeLayout = {
                     newHtml = openTag + newSignature + closeTag + newHtml;
                 }
                 //end bug 48285
-            } else {
+            }
+            else // Append
+            {
+            	// On full compose mail has <body> element empty 
+            	var bodyStringEmpty = htmllow.indexOf("<body>") > -1 && htmllow.replace(/\s/g, "").match(/<body>.+<\/body>/) == null;
+            	// On quick compose a new document has html.length == 0
+                if (htmllow.length == 0 || bodyStringEmpty)
+                {
+                    // Prepend <br /> to openTag because if it's an empty document
+                    // or a document with nothing other than whitespace in <body></body>
+                	// TinyMCE will pick the id of the div containing the signature
+                    // when adding a new row and duplicate it so this might cause
+                    // trouble when changing signatures
+                    openTag = "<br />" + openTag;
+                }
+
                 var body = html.indexOf('</body>');
-                if (body > -1) {
+                if (body > -1)
+                {
                     var part1 = html.substr(0, body);
                     var part2 = html.substr(body, html.length);
                     var newHtml = part1 + openTag + newSignature + closeTag + part2;
-                } else {
+                }
+                else
+                {
                     var newHtml = html + openTag + newSignature + closeTag;
                 }
             }
-            //tinyMCE.setContent(newHtml);
             t.setContent(newHtml);
         }
     },
@@ -2034,6 +2069,12 @@ SE.composeLayout = {
             if(composePackage.to_email_addrs) {
                 document.getElementById("addressTO" + SE.composeLayout.currentInstanceId).value = composePackage.to_email_addrs;
             } // if
+
+            if (composePackage.cc_addrs) {
+                document.getElementById("addressCC" + SE.composeLayout.currentInstanceId).value = composePackage.cc_addrs;
+                SE.composeLayout.showHiddenAddress('cc', SE.composeLayout.currentInstanceId);
+            }
+
             if (composePackage.subject != null && composePackage.subject.length > 0) {
             	document.getElementById("emailSubject" + SE.composeLayout.currentInstanceId).value = composePackage.subject;
             }
@@ -2401,7 +2442,7 @@ SE.composeLayout = {
 			   && ( this['ccHidden'+idx]  == false && this['bccHidden'+idx] == false) )
 			Dom.addClass("add_addr_options_tr"+idx, "yui-hidden");
 
-		// SE.composeLayout.resizeEditor(idx);
+		SE.composeLayout.resizeEditor(idx);
     },
     /**
     *  Hide the cc and bcc fields if they were shown.

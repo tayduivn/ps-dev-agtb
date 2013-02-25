@@ -67,7 +67,7 @@ class UnifiedSearchApi extends SugarListApi {
         $options = parent::parseArguments($api, $args, $seed);
         
         $options['query'] = '';
-        if ( !empty($args['q']) ) {
+        if ( isset($args['q']) ) {
             $options['query'] = trim($args['q']);
         }
 
@@ -206,6 +206,7 @@ class UnifiedSearchApi extends SugarListApi {
      * @return array result set
      */
     public function globalSearch(ServiceBase $api, array $args) {
+        $api->action = 'list';
         //BEGIN SUGARCRM flav=pro ONLY
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 

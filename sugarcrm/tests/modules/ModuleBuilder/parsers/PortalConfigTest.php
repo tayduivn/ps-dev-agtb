@@ -99,6 +99,17 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($this->user->id, $oUserId);
     }
 
+    public function test_RemoveOAuthForPortalUser()
+    {
+        $parser = new ParserModifyPortalConfig();
+        $this->user = $parser->getPortalUser();
+        $result = $GLOBALS['db']->getOne("SELECT name FROM oauth_consumer WHERE c_key='support_portal'");
+        $this->assertNotNull($result, "getPortalUser should create an OAuth consumer");
+        $parser->removeOAuthForPortalUser();
+        $result = $GLOBALS['db']->getOne("SELECT name FROM oauth_consumer WHERE c_key='support_portal'");
+        $this->assertFalse($result, "removeOAuthForPortalUser should remove OAuth consumer");
+    }
+
     public function test_PortalConfigCreateRole()
     {
         $parser = new ParserModifyPortalConfig();

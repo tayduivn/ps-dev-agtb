@@ -436,7 +436,7 @@ class Localization {
 
 	function getNumberGroupingSeparator($user=null) {
 		$sep = $this->getPrecedentPreference('num_grp_sep', $user);
-        $sep = $sep ? $sep : $this->getPrecedentPreference('default_number_grouping_seperator', $user);
+        $sep = !is_null($sep) ? $sep : $this->getPrecedentPreference('default_number_grouping_seperator', $user);
 		return $sep;
 	}
 

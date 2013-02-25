@@ -538,21 +538,14 @@ class User extends Person {
 
 		//BEGIN SUGARCRM flav=pro ONLY
 
-		//this code is meant to allow for the team widget to set the team_id as the 'Primary' team and
-		//then b/c Users uses the default_team field we can map it back when committing the user to the database.
-        if(!$this->is_admin) {
-            //Bug#53249: Prevent admin user set non-member team as a primary team
-            if(!empty($this->team_id)){
-                $this->default_team = $this->team_id;
-            }else{
-                $this->team_id = $this->default_team;
-            }
-        } else {
-            $this->team_id = $this->default_team;
+		// If the 'Primary' team changed then the team widget has set 'team_id' to a new value and we should
+		// assign the same value to default_team because User module uses it for setting the 'Primary' team
+		if (!empty($this->team_id))
+		{
+            $this->default_team = $this->team_id;
         }
-
+        
 		//END SUGARCRM flav=pro ONLY
-
 
 		parent::save($check_notify);
 
@@ -890,9 +883,9 @@ EOQ;
 	/**
 	 * Verify that the current password is correct and write the new password to the DB.
 	 *
-	 * @param string $user name - Must be non null and at least 1 character.
 	 * @param string $user_password - Must be non null and at least 1 character.
 	 * @param string $new_password - Must be non null and at least 1 character.
+     * @param string $system_generated
 	 * @return boolean - If passwords pass verification and query succeeds, return true, else return false.
 	 */
 	function change_password($user_password, $new_password, $system_generated = '0')
@@ -906,11 +899,13 @@ EOQ;
 			return false;
 		}
 
+        // BEGIN SUGARCRM flav=pro ONLY
 		// Check new password against rules set by admin
 		if (!$this->check_password_rules($new_password)) {
 		    $this->error_string = $mod_strings['ERR_PASSWORD_CHANGE_FAILED_1'].$current_user->user_name.$mod_strings['ERR_PASSWORD_CHANGE_FAILED_3'];
 		    return false;
 		}
+        // END SUGARCRM flav=pro ONLY
 
 		if (!$current_user->isAdminForModule('Users')) {
 			//check old password first
@@ -926,6 +921,7 @@ EOQ;
 		return true;
 	}
 
+    // BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Check new password against rules set by admin
 	 * @param string $password
@@ -971,6 +967,7 @@ EOQ;
 
 	    return true;
 	}
+    // END SUGARCRM flav=pro ONLY
 
 	function is_authenticated() {
 		return $this->authenticated;
@@ -981,6 +978,9 @@ EOQ;
 	}
 
 	function fill_in_additional_detail_fields() {
+        // jmorais@dri Bug #56269
+        parent::fill_in_additional_detail_fields();
+        // ~jmorais@dri
 		global $locale;
 
 		$query = "SELECT u1.first_name, u1.last_name from users  u1, users  u2 where u1.id = u2.reports_to_id AND u2.id = '$this->id' and u1.deleted=0";
@@ -993,32 +993,28 @@ EOQ;
 		} else {
 			$this->reports_to_name = '';
 		}
-		//BEGIN SUGARCRM flav=pro ONLY
-		$query = "SELECT team_id, teams.name, teams.name_2 FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.team_id = '{$this->default_team}'";
-		$result = $this->db->query($query, false, "Error retrieving team name: ");
 
-		//rrs bug: 31277 - this tempDefaultTeam works in conjunction with the 'if' stmt below/
-		//what was happening was that if the user was an admin user and they did not have team membership to their primary team
-		//then this query would not return anything and the default_team would be set to empty, which is fine, but
-		//we need to ensure that the team_id is not empty for team set widget purposes.
-		$tempDefaultTeam = $this->default_team;
+        //BEGIN SUGARCRM flav=pro ONLY
+        
+        // Must set team_id for team widget purposes (default_team is primary team id)
+        if (empty($this->team_id))
+        {
+            $this->team_id = $this->default_team;
+        }
 
-		$row = $this->db->fetchByAssoc($result);
-		if (!empty ($row['team_id'])) {
-			$this->default_team = $row['team_id'];
-			$this->default_team_name = Team::getDisplayName($row['name'], $row['name_2'], $this->showLastNameFirst());
-		} else {
-			$this->default_team = '';
-			$this->default_team_name = '';
-			$this->team_set_id = '';
-		}
-
-		if(!empty($this->is_admin) && empty($this->default_team)){
-			$this->team_id = $tempDefaultTeam;
-		}else{
-			$this->team_id = $this->default_team;
-		}
-		//END SUGARCRM flav=pro ONLY
+        //set the team info if the team id has already been set.
+        //running only if team class exists will prevent breakage during upgrade/flavor conversions
+        if (class_exists('Team') ) {
+            // Set default_team_name for Campaigns WebToLeadCreation
+            $this->default_team_name = Team::getTeamName($this->team_id);
+        } else {
+            //if no team id exists, set the team info to blank
+            $this->default_team = '';
+            $this->default_team_name = '';
+            $this->team_set_id = '';
+        }
+        
+        //END SUGARCRM flav=pro ONLY
 
 		$this->_create_proper_name_field();
 	}
@@ -2292,6 +2288,42 @@ EOQ;
             return $reports_to_id !== false;
         }
         return false;
+    }
+
+    /**
+     * Sets value from fetched row into the bean.  Special case override for Users module otherwise we incur the
+     * unnecessary check for user_preferences field for all SugarBean instances.
+     *
+     * @param array $row Fetched row
+     * @todo loop through vardefs instead
+     * @internal runs into an issue when populating from field_defs for users - corrupts user prefs
+     *
+     */
+    function populateFromRow($row)
+    {
+        $nullvalue='';
+        foreach($this->field_defs as $field=>$field_value)
+        {
+            if($field == 'user_preferences') {
+                continue;
+            }
+
+            if(isset($row[$field]))
+            {
+                $this->$field = $row[$field];
+                $owner = $field . '_owner';
+                if(!empty($row[$owner])){
+                    $this->$owner = $row[$owner];
+                }
+            } else {
+                $this->$field = $nullvalue;
+            }
+        }
+        // TODO: add a vardef for my_favorite
+        $this->my_favorite = false;
+        if(!empty($row['my_favorite'])) {
+            $this->my_favorite = true;
+        }
     }
 
     //BEGIN SUGARCRM flav=int ONLY

@@ -245,6 +245,11 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	   sugar_cleanup(true);
 	}
 
+        $newBean = true;
+        if (!empty($focus->id)) {
+            $newBean = false;
+        }
+
 	//add assigned user and current user if this is the first time bean is saved
   	if(empty($focus->id) && !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] =='Calls' && !empty($_REQUEST['return_action']) && $_REQUEST['return_action'] =='DetailView'){
 		//if return action is set to detail view and return module to call, then this is from the long form, do not add the assigned user (only the current user)
@@ -343,10 +348,6 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 
             // Bug #49195 : update vcal
             vCal::cache_sugar_vcal($current_user);
-            
-            // CCL - Comment out call to set $current_user as invitee
-            // set organizer to auto-accept
-            //$focus->set_accept_status($current_user, 'accept');
             
             $this->processRecurring($focus);
 	    }

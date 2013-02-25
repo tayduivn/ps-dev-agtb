@@ -117,7 +117,7 @@ var formatSelect = function(el, rec, col, data)
     var selected = false;
     if (row.select) selected = row.select;
     var ret = "<input type='checkbox' name='" + rec.getData().module + "-" + col.field + "'";
-    if(typeof(relationships[row.module]) == "undefined" || row.module == "Contacts")
+    if(typeof(relationships[row.module]) == "undefined")
     	ret += " disabled />";
     else {
         ret += "onclick='ModuleBuilder.convertLayoutGrid.getRecord(this).setData(\"select\", this.checked ? \""

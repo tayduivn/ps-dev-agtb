@@ -122,4 +122,24 @@ class ForecastsController extends SugarController
         sugar_cleanup(true);
     }
 
+
+    /**
+     * This function allows a user with Forecasts admin rights to reset the Forecasts settings so that the Forecasts wizard
+     * dialog will appear once again.
+     *
+     */
+    public function action_resetSettings() {
+        global $current_user;
+        if($current_user->isAdminForModule('Forecasts')) {
+            $db = DBManagerFactory::getInstance();
+            $db->query("UPDATE config SET value = 0 WHERE category = 'Forecasts' and name in ('is_setup', 'has_commits')");
+            MetaDataManager::clearAPICache();
+            //MetaDataManager::refreshModulesCache(array('Forecasts'));
+            header("Location: index.php?module=Forecasts#config");
+            exit();
+        }
+
+        $this->view = 'noaccess';
+    }
+
 }

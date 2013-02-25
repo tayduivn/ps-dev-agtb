@@ -98,7 +98,8 @@ class RelateRecordApi extends ModuleApi {
         // FIXME: No create ACL yet
         if ( $securityTypeRemote == 'create' ) { $securityTypeRemote = 'edit'; }
 
-        if ( ! $linkSeed->ACLAccess($securityTypeRemote) ) {
+        // only check here for edit...view and list are checked on formatBean
+        if ( $securityTypeRemote == 'edit' && ! $linkSeed->ACLAccess($securityTypeRemote) ) {
             throw new SugarApiExceptionNotAuthorized('No access to '.$securityTypeRemote.' records for module: '.$linkModuleName);
         }
 
@@ -144,6 +145,7 @@ class RelateRecordApi extends ModuleApi {
      * @return array Two elements, 'record' which is the formatted version of $primaryBean, and 'related_record' which is the formatted version of $relatedBean
      */
     protected function formatNearAndFarRecords(ServiceBase $api, $args, SugarBean $primaryBean, $relatedArray = array()) {
+        $api->action = 'view';
         $recordArray = $this->formatBean($api, $args, $primaryBean);
         if (empty($relatedArray))
             $relatedArray = $this->getRelatedRecord($api, $args);

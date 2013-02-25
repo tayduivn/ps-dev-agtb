@@ -63,6 +63,9 @@ class ForecastDirectReports extends SugarBean {
     var $currency;
     var $currencysymbol;
     var $currency_id;
+    
+    var $pipeline_amount;
+    var $pipeline_opp_count;
 
     var $object_name = 'ForecastDirectReports';
     var $module_dir = 'Forecasts';
@@ -188,7 +191,7 @@ class ForecastDirectReports extends SugarBean {
     function create_forecast_query_for_user($this_user,$type,$cur_user_id, $cur_user_forecast_type) {
     global $current_user;
         $query = "SELECT ";
-        $query .= " forecasts.id, forecasts.opp_count, forecasts.opp_weigh_value, forecasts.best_case,forecasts.likely_case,forecasts.worst_case, forecasts.date_entered, '$type' as forecast_type ";
+        $query .= " forecasts.id, forecasts.opp_count, forecasts.pipeline_opp_count, forecasts.pipeline_amount, forecasts.opp_weigh_value, forecasts.best_case,forecasts.likely_case,forecasts.worst_case, forecasts.date_entered, '$type' as forecast_type ";
         $query .= " ,worksheet.id worksheet_id ,worksheet.best_case wk_best_case, worksheet.likely_case wk_likely_case, worksheet.worst_case wk_worst_case";
         $query .= " FROM forecasts";
 
@@ -288,10 +291,12 @@ class ForecastDirectReports extends SugarBean {
         $result = $this->db->query($query,true,"Error fetching forecasts:");
 
         $this->total_opp_count=0;
-        $this->total_weigh_value_number =0;
-        $this->total_likely_case_number=0;
-        $this->total_best_case_number=0;
-        $this->total_worst_case_number=0;
+        $this->total_weigh_value_number = 0;
+        $this->total_likely_case_number = 0;
+        $this->total_best_case_number = 0; 
+        $this->total_worst_case_number = 0;
+        $this->pipeline_opp_count = 0;
+        $this->pipeline_amount = 0;
 
         while(($row = $this->db->fetchByAssoc($result)) != null) {
 
@@ -309,20 +314,23 @@ class ForecastDirectReports extends SugarBean {
             $fresult = $this->db->query($fquery,true,"Error fetching forecasts:");
             $frow = $this->db->fetchByAssoc($fresult);
             if ($frow != null) {
-                $this->total_opp_count+=empty($frow['opp_count']) ? 0 : $frow['opp_count'];
-                $this->total_weigh_value_number +=empty($frow['opp_weigh_value']) ? 0 : $frow['opp_weigh_value'] ;
-                $this->total_likely_case_number +=empty($frow['likely_case']) ? 0 : $frow['likely_case'];
-                $this->total_best_case_number +=empty($frow['best_case']) ? 0 : $frow['best_case'];
-                $this->total_worst_case_number +=empty($frow['worst_case']) ? 0 : $frow['worst_case'];
+                $this->total_opp_count+= empty($frow['opp_count']) ? 0 : $frow['opp_count'];
+                $this->total_weigh_value_number += empty($frow['opp_weigh_value']) ? 0 : $frow['opp_weigh_value'] ;
+                $this->total_likely_case_number += empty($frow['likely_case']) ? 0 : $frow['likely_case'];
+                $this->total_best_case_number += empty($frow['best_case']) ? 0 : $frow['best_case'];
+                $this->total_worst_case_number += empty($frow['worst_case']) ? 0 : $frow['worst_case'];
+                $this->pipeline_opp_count += empty($frow['pipeline_opp_count']) ? 0 : $frow['pipeline_opp_count'];
+                $this->pipeline_amount += empty($frow['pipeline_amount']) ? 0 : $frow['pipeline_amount'];
+                
 
                 if (empty($frow['worksheet_id'])) {
-                    $this->total_wk_likely_case_number +=empty($frow['likely_case'])? 0 :$frow['likely_case'];
-                    $this->total_wk_best_case_number +=empty($frow['best_case']) ? 0 : $frow['best_case'];
-                    $this->total_wk_worst_case_number +=empty($frow['worst_case'])?0:$frow['worst_case'];
+                    $this->total_wk_likely_case_number += empty($frow['likely_case'])? 0 :$frow['likely_case'];
+                    $this->total_wk_best_case_number += empty($frow['best_case']) ? 0 : $frow['best_case'];
+                    $this->total_wk_worst_case_number += empty($frow['worst_case'])?0:$frow['worst_case'];
                 } else {
-                    $this->total_wk_likely_case_number +=empty($frow['wk_likely_case'])?0:$frow['wk_likely_case'];
-                    $this->total_wk_best_case_number +=empty($frow['wk_best_case'])?0:$frow['wk_best_case'];
-                    $this->total_wk_worst_case_number +=empty($frow['wk_worst_case'])?0:$frow['wk_worst_case'];
+                    $this->total_wk_likely_case_number += empty($frow['wk_likely_case'])?0:$frow['wk_likely_case'];
+                    $this->total_wk_best_case_number += empty($frow['wk_best_case'])?0:$frow['wk_best_case'];
+                    $this->total_wk_worst_case_number += empty($frow['wk_worst_case'])?0:$frow['wk_worst_case'];
                 }
             }
         }
@@ -338,21 +346,21 @@ class ForecastDirectReports extends SugarBean {
 
         if ($currency_format) {
             //convert amounts to preferred currency
-            $this->total_commit_value_number=  $this->currency->convertFromDollar($this->total_commit_value_number);
-            $this->total_weigh_value_number=  $this->currency->convertFromDollar($this->total_weigh_value_number);
-            $this->total_likely_case_number=  $this->currency->convertFromDollar($this->total_likely_case_number);
-            $this->total_best_case_number=  $this->currency->convertFromDollar($this->total_best_case_number);
-            $this->total_worst_case_number=  $this->currency->convertFromDollar($this->total_worst_case_number);
-            $this->total_wk_likely_case_number=  $this->currency->convertFromDollar($this->total_wk_likely_case_number);
-            $this->total_wk_best_case_number=  $this->currency->convertFromDollar($this->total_wk_best_case_number);
-            $this->total_wk_worst_case_number=  $this->currency->convertFromDollar($this->total_wk_worst_case_number);
+            $this->total_commit_value_number =  $this->currency->convertFromDollar($this->total_commit_value_number);
+            $this->total_weigh_value_number =  $this->currency->convertFromDollar($this->total_weigh_value_number);
+            $this->total_likely_case_number =  $this->currency->convertFromDollar($this->total_likely_case_number);
+            $this->total_best_case_number =  $this->currency->convertFromDollar($this->total_best_case_number);
+            $this->total_worst_case_number =  $this->currency->convertFromDollar($this->total_worst_case_number);
+            $this->total_wk_likely_case_number =  $this->currency->convertFromDollar($this->total_wk_likely_case_number);
+            $this->total_wk_best_case_number =  $this->currency->convertFromDollar($this->total_wk_best_case_number);
+            $this->total_wk_worst_case_number =  $this->currency->convertFromDollar($this->total_wk_worst_case_number);
 
             //format number and currency.
-            $this->total_commit_value_number= $this->currency->symbol. format_number($this->total_commit_value_number,0,0);
-            $this->total_weigh_value_number= $this->currency->symbol. format_number($this->total_weigh_value_number,0,0);
-            $this->total_likely_case_number= $this->currency->symbol. format_number($this->total_likely_case_number,0,0);
-            $this->total_best_case_number= $this->currency->symbol. format_number($this->total_best_case_number,0,0);
-            $this->total_worst_case_number= $this->currency->symbol. format_number($this->total_worst_case_number,0,0);
+            $this->total_commit_value_number = $this->currency->symbol. format_number($this->total_commit_value_number,0,0);
+            $this->total_weigh_value_number = $this->currency->symbol. format_number($this->total_weigh_value_number,0,0);
+            $this->total_likely_case_number = $this->currency->symbol. format_number($this->total_likely_case_number,0,0);
+            $this->total_best_case_number = $this->currency->symbol. format_number($this->total_best_case_number,0,0);
+            $this->total_worst_case_number = $this->currency->symbol. format_number($this->total_worst_case_number,0,0);
         }
     }
 

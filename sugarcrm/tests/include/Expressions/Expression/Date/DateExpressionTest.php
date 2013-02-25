@@ -28,7 +28,6 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-
     }
     
 	public static function setUpBeforeClass()
@@ -201,20 +200,12 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $task->date_due = 'Chuck Norris';
 	    $expr = 'addDays($date_due, 3)';
-	    try {
-            $result = Parser::evaluate($expr, $task)->evaluate();
-	        $this->assertTrue(false, "Incorrecty converted '{$task->date_due }' to date $result");
-        } catch (Exception $e){
-            $this->assertContains("invalid value to date", $e->getMessage());
-        }
+        $result = Parser::evaluate($expr, $task)->evaluate();
+        $this->assertFalse($result, "Incorrecty converted '{$task->date_due }' to date $result");
 
 	    $expr = 'addDays($date_start, 3)'; // not setting the value
-	    try {
-            $result = Parser::evaluate($expr, $task)->evaluate();
-	        $this->assertTrue(false, "Incorrecty converted empty string to date $result");
-        } catch (Exception $e){
-            $this->assertContains("attempt to get date from empty field", $e->getMessage());
-        }
+        $result = Parser::evaluate($expr, $task)->evaluate();
+        $this->assertFalse($result, "Incorrecty converted empty string to date $result");
 	}
 
 	/**
@@ -232,4 +223,41 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 	    $this->assertEquals($timedate->asUser($timedate->getNow(true)->get("+3 days")), $timedate->asUser($result));
 	}
 
+    /**
+     * @group bug57900
+     * @return array expressions to test
+     */
+    public function providerUserDateExpressions()
+    {
+        return array(
+            array('$date_entered'),
+            // this doesn't give the correct date at all times, due to implicit interpretation of date() as UTC, which when converted to
+            // local timezone could give a date +-1 day from now.
+            //array('date(subStr(toString($date_entered),0,10))')
+        );
+    }
+
+    /**
+     * Test Format of DateTime Field
+     * @param string $expr Expression to test
+     * @dataProvider providerUserDateExpressions
+     * @group bug57900
+     */
+    public function testUserDefinedDateTimeVar($expr)
+    {
+        $opp = new Opportunity();
+        $timedate = TimeDate::getInstance();
+        $now = $timedate->asUser($timedate->getNow());
+        $opp->date_entered = $now;
+
+        try {
+            $result = Parser::evaluate($expr, $opp)->evaluate();
+        }
+        catch (Exception $e)
+        {
+            $this->fail('Failed to evaluate user datetime - threw exception');
+        }
+        $this->assertInstanceOf("DateTime",$result,'Evaluation did not return a DateTime object');
+        $this->assertEquals($now, $timedate->asUser($result), 'The time is not what expected');
+    }
 }

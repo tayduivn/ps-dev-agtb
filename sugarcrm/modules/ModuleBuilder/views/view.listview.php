@@ -28,13 +28,10 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-//Load the parent view class if it exists.  Check for custom file first
-loadParentView('edit');
-
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 require_once ('include/SubPanel/SubPanel.php') ;
 
-class ViewListView extends ViewEdit
+class ViewListView extends SugarView
 {
     /**
 	 * @see SugarView::_getModuleTitleParams()
@@ -52,7 +49,7 @@ class ViewListView extends ViewEdit
     /*
      * Pseudo-constructor to enable subclasses to call a parent's constructor without knowing the parent in PHP4
      */
-    public function __construct()
+    function __construct()
     {
         $this->editModule = $_REQUEST [ 'view_module' ] ;
         $this->editLayout = $_REQUEST [ 'view' ] ;
@@ -77,9 +74,8 @@ class ViewListView extends ViewEdit
 
         $packageName = (! empty ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : null ;
         $subpanelName = (! empty ( $_REQUEST [ 'subpanel' ] )) ? $_REQUEST [ 'subpanel' ] : null ;
-        require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
-        require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
-        $parser = ParserFactory::getParser (  $this->editLayout , $this->editModule , $packageName, $subpanelName, MetaDataFiles::getClientByView($this->editLayout) ) ;
+        require_once 'modules/ModuleBuilder/parsers/ParserFactory.php' ;
+        $parser = ParserFactory::getParser (  $this->editLayout , $this->editModule , $packageName, $subpanelName ) ;
         $smarty = $this->constructSmarty ( $parser ) ;
 
         if ($preview)
@@ -189,7 +185,6 @@ class ViewListView extends ViewEdit
         $smarty->assign ( 'view', $this->editLayout ) ;
         $smarty->assign ( 'module', "ModuleBuilder" ) ;
         $smarty->assign ( 'field_defs', $parser->getFieldDefs () ) ;
-        $smarty->assign('panel_defs', $parser->getPanelDefs());
         $smarty->assign ( 'action', 'listViewSave' ) ;
         $smarty->assign ( 'view_module', $this->editModule ) ;
         if (!empty ( $this->subpanel ) )

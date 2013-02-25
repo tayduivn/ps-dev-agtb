@@ -88,6 +88,10 @@ $HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';
 global $soap_server_object;
 $soap_server_object = $server;
 $server->service($HTTP_RAW_POST_DATA);
+
+$action = substr($server->SOAPAction, strpos($server->SOAPAction, 'soap.php/') + 9);
+SugarMetric_Manager::getInstance()->setTransactionName('soap_' . $action);
+
 ob_end_flush();
 flush();
 sugar_cleanup();

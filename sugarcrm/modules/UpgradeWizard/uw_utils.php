@@ -553,81 +553,6 @@ function removeMd5MatchingFiles($deleteNot=array()){
    }
 }
 
-/**
- * Handles requirements for creating reminder Tasks and Emails
- * @param array skippedFiles Array of files that were not overwriten and must be manually mereged.
- * @param string path Optional full path to alternate upgradeWizard log.
- */
-function commitHandleReminders($skippedFiles, $path='') {
-	global $mod_strings;
-	global $current_user;
-
-	if(empty($mod_strings))
-		$mod_strings = return_module_language('en_us', 'UpgradeWizard');
-
-	if(empty($current_user->id)) {
-		$current_user->getSystemUser();
-	}
-
-	if(count($skippedFiles) > 0) {
-		$desc = $mod_strings['LBL_UW_COMMIT_ADD_TASK_OVERVIEW'] . "\n\n";
-		$desc .= $mod_strings['LBL_UW_COMMIT_ADD_TASK_DESC_1'];
-		$desc .= $_SESSION['uw_restore_dir'] . "\n\n";
-		$desc .= $mod_strings['LBL_UW_COMMIT_ADD_TASK_DESC_2'] . "\n\n";
-
-		foreach($skippedFiles as $file) {
-			$desc .= $file . "\n";
-		}
-
-		//MFH #13468
-		/// Not using new TimeDate stuff here because it needs to be compatible with 6.0
-		$nowDate = gmdate('Y-m-d');
-		$nowTime = gmdate('H:i:s');
-		$nowDateTime = $nowDate . ' ' . $nowTime;
-
-		if($_REQUEST['addTaskReminder'] == 'remind') {
-			logThis('Adding Task for admin for manual merge.', $path);
-
-			$task = new Task();
-			$task->name = $mod_strings['LBL_UW_COMMIT_ADD_TASK_NAME'];
-			$task->description = $desc;
-			$task->date_due = $nowDate;
-			$task->time_due = $nowTime;
-			$task->priority = 'High';
-			$task->status = 'Not Started';
-			$task->assigned_user_id = $current_user->id;
-			$task->created_by = $current_user->id;
-			$task->date_entered = $nowDateTime;
-			$task->date_modified = $nowDateTime;
-			//BEGIN SUGARCRM flav=pro ONLY
-			$task->team_id = '1';
-			//END SUGARCRM flav=pro ONLY
-			$task->save();
-		}
-
-		if($_REQUEST['addEmailReminder'] == 'remind') {
-			logThis('Sending Reminder for admin for manual merge.', $path);
-
-			$email = new Email();
-			$email->assigned_user_id = $current_user->id;
-			$email->name = $mod_strings['LBL_UW_COMMIT_ADD_TASK_NAME'];
-			$email->description = $desc;
-			$email->description_html = nl2br($desc);
-			$email->from_name = $current_user->full_name;
-			$email->from_addr = $current_user->email1;
-			$email->to_addrs_arr = $email->parse_addrs($current_user->email1, '', '', '');
-			$email->cc_addrs_arr = array();
-			$email->bcc_addrs_arr = array();
-			$email->date_entered = $nowDateTime;
-			$email->date_modified = $nowDateTime;
-			//BEGIN SUGARCRM flav=pro ONLY
-			$email->team_id = '1';
-			//END SUGARCRM flav=pro ONLY
-			$email->send();
-			$email->save();
-		}
-	}
-}
 
 function deleteCache(){
 	//Clean modules from cache
@@ -748,6 +673,7 @@ function upgradeUWFiles($file) {
     if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
         $allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
     }
+
     // users
     if(file_exists("$from_dir/modules/Users")) {
         $allFiles[] = findAllFiles("$from_dir/modules/Users", array());
@@ -945,7 +871,6 @@ eoq;
  */
 function updateVersions($version) {
 	global $db;
-	global $sugar_config;
 	global $path;
 
 	logThis('At updateVersions()... updating config table and sugar_version.php.', $path);
@@ -4021,7 +3946,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	} else {
 	   if($write_to_upgrade_log)
 	   {
-	      logThis('config.php values are in sync with config_si.php values.  Skipped merging.');
+	      logThis('config.php values are in sync with config_si.php values.  Skipped merging.', $path);
 	   }
 	   return false;
 	}
@@ -4141,7 +4066,7 @@ function loadSilentUpgradeVars(){
     global $silent_upgrade_vars_loaded;
 
     if(empty($silent_upgrade_vars_loaded)){
-        $cacheFile = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader/silentUpgradeCache.php";
+        $cacheFile = sugar_cached("silentUpgrader/silentUpgradeCache.php");
         // We have no pre existing vars
         if(!file_exists($cacheFile)){
             // Set the vars array so it's loaded
@@ -4163,7 +4088,7 @@ function writeSilentUpgradeVars(){
         return false; // You should have set some values before trying to write the silent upgrade vars
     }
 
-    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader";
+    $cacheFileDir = sugar_cached("silentUpgrader");
     $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
 
     require_once('include/dir_inc.php');
@@ -4201,8 +4126,7 @@ function getSilentUpgradeVar($var){
 
     if(!isset($silent_upgrade_vars_loaded['vars'][$var])){
         return null;
-    }
-    else{
+    }else{
         return $silent_upgrade_vars_loaded['vars'][$var];
     }
 }
@@ -4222,7 +4146,6 @@ function add_unified_search_to_custom_modules_vardefs()
 	}
 
 }
-
 
 /**
  * unlinkUpgradeFiles

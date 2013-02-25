@@ -107,6 +107,7 @@ $dictionary['Task'] = array('table' => 'tasks',
   	'required'=>false,
 	'len'=>'255',
     'comment' => 'The Sugar object to which the call is related',
+    'studio' => array('wirelesslistview'=>false),
     'options' => 'parent_type_display',
 ),
 
@@ -121,6 +122,7 @@ $dictionary['Task'] = array('table' => 'tasks',
 	'group'=>'parent_name',
 	'source'=>'non-db',
 	'options'=> 'parent_type_display',
+  'studio' => true,
   ),
 
   'parent_id' =>
@@ -143,7 +145,7 @@ $dictionary['Task'] = array('table' => 'tasks',
   'contact_name' =>
   array (
     'name' => 'contact_name',
-    'rname'=>'last_name',
+    'rname'=>'name',
     'db_concat_fields'=> array(0=>'first_name', 1=>'last_name'),
     'source' => 'non-db',
     'len' => '510',

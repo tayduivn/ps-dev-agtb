@@ -367,9 +367,21 @@ $buttons_sent_email[] = <<<EOD
 					class="button" onclick="this.form.return_module.value='{$ret_mod}';
 											this.form.return_action.value='{$ret_action}';
 											this.form.return_id.value='{$focus->id}';
-											this.form.action.value='EditView'"
+											this.form.action.value='EditView';
+											this.form.type.value='reply'"
 					type="submit" name="button"
 					value="  {$mod_strings['LBL_BUTTON_REPLY']}  "
+			>
+EOD;
+$buttons_sent_email[] = <<<EOD
+            <input title="{$mod_strings['LBL_BUTTON_REPLY_ALL']}"
+					class="button" onclick="this.form.return_module.value='{$ret_mod}';
+											this.form.return_action.value='{$ret_action}';
+											this.form.return_id.value='{$focus->id}';
+											this.form.action.value='EditView';
+											this.form.type.value='replyAll'"
+					type="submit" name="button"
+					value="  {$mod_strings['LBL_BUTTON_REPLY_ALL']}  "
 			>
 EOD;
 $buttons_sent_email[] = <<<EOD

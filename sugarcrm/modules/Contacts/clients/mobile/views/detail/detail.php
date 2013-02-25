@@ -45,7 +45,6 @@ $viewdefs['Contacts']['mobile']['view']['detail'] = array(
                 'phone_work',
                 'phone_mobile',
                 'phone_home',
-                'phone_other',
                 'email1',
                 'primary_address_street',
                 'primary_address_city',

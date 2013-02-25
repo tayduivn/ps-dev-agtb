@@ -376,7 +376,7 @@ class Opportunity extends SugarBean
                                         base_rate='%s'
                                         where id='%s';",
                     $currency->id,
-                    SugarCurrency::convertAmountToBase($row['amount']),
+                    SugarCurrency::convertAmountToBase($row['amount'], $currency->id),
                     $currency->conversion_rate,
                     $row['id']
                 );

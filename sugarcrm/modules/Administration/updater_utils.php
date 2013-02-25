@@ -543,7 +543,7 @@ function checkDownloadKey($data){
 	$GLOBALS['license']->saveSetting('license', 'expire_date', $data['license_expire_date']);
 	$GLOBALS['license']->saveSetting('license', 'last_validation_success', TimeDate::getInstance()->nowDb());
 	$GLOBALS['license']->saveSetting('license', 'validation_notice', '');
-	$GLOBALS['license']->saveSetting('license', 'enforce_portal_user_limit', isset($data['enforce_portal_user_limit']) ? '1' : '0');
+	$GLOBALS['license']->saveSetting('license', 'enforce_portal_user_limit', (isset($data['enforce_portal_user_limit'])&&$data['enforce_portal_user_limit']=='1') ? '1' : '0');
 
 	if(isset($data['enforce_user_limit']))
 		$GLOBALS['license']->saveSetting('license', 'enforce_user_limit', $data['enforce_user_limit']);

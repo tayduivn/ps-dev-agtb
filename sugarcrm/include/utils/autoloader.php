@@ -468,15 +468,19 @@ class SugarAutoLoader
             if(self::requireWithCustom("include/Expressions/Expression/{$class}.php")) {
                 return true;
             }
+
             $types = array("Boolean", "Date", "Enum", "Generic", "Numeric", "Relationship", "String", "Time");
+
             foreach($types as $type) {
-                if(self::requireWithCustom("include/Expressions/Expression/{$type}/{$class}.php"))
+                if(self::requireWithCustom("include/Expressions/Expression/{$type}/{$class}.php")) {
                     return true;
+                }
             }
         }
         return false;
     }
     //END SUGARCRM flav=pro ONLY
+
 
     /**
      * Load all classes in self::$map

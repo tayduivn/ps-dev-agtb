@@ -56,6 +56,7 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
         foreach($this->accounts AS $account) {
             $account->mark_deleted($account->id);
         }
+        unset($_SESSION['ACL']);
         SugarTestHelper::tearDown();
         parent::tearDown();        
     }
@@ -109,4 +110,22 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertFalse((bool) $result['my_favorite'], "Was not set to False");        
     }
 
+    public function testViewNoneCreate() {
+        // setup ACL
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Accounts']['module']['view']['aclaccess'] = -99;
+        // create a record
+        $result = $this->moduleApi->createRecord(new ModuleApiServiceMockUp, array('module' => 'Accounts','name' => 'Test Account'));
+        // verify only id returns
+        $this->assertNotEmpty($result);
+        $this->assertEquals(count($result), 1);
+        // delete the record
+        $result = $this->moduleApi->deleteRecord(new ModuleApiServiceMockUp, array('module' => 'Accounts','record'=>$result['id']));
+    }
+
+}
+
+class ModuleApiServiceMockUp extends RestService
+{
+    public function execute() {}
+    protected function handleException(Exception $exception) {}
 }

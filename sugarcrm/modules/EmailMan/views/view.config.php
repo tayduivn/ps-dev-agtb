@@ -69,7 +69,7 @@ class ViewConfig extends SugarView
         global $current_user;
         global $sugar_config;
 
-        echo $this->getModuleTitle();
+        echo $this->getModuleTitle(false);
         global $currentModule;
 
         $focus = Administration::getSettings(); //retrieve all admin settings.

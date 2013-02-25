@@ -42,10 +42,14 @@ $viewdefs['Reports']['mobile']['view']['edit'] = array(
                 array(
                     'name' => 'module',
                     'readonly' => true,
+                    'type' => 'enum',
+                    'options' => 'moduleList',
                 ),
                 array(
                     'name' => 'report_type',
                     'readonly' => true,
+                    'type' => 'enum',
+                    'options' => 'dom_report_types',
                 ),
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY

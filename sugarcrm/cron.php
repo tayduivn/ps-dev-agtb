@@ -32,6 +32,8 @@ if (substr($sapi_type, 0, 3) != 'cli') {
     sugar_die("cron.php is CLI only.");
 }
 
+SugarMetric_Manager::getInstance()->setMetricClass('background')->setTransactionName('cron');
+
 if(empty($current_language)) {
 	$current_language = $sugar_config['default_language'];
 }

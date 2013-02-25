@@ -262,7 +262,7 @@ class ExtAPILotusLiveDirect extends OAuthPluginBase implements WebMeeting,WebDoc
         if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
             $reply['success'] = false;
             // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
+            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.$rawResponse->getMessage();
             return;
         }
 
@@ -273,7 +273,7 @@ class ExtAPILotusLiveDirect extends OAuthPluginBase implements WebMeeting,WebDoc
         if ( !is_object($xml) ) {
             $reply['success'] = false;
             // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
+            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.print_r(libxml_get_errors(),true);
             return;
         }
 
@@ -285,7 +285,7 @@ class ExtAPILotusLiveDirect extends OAuthPluginBase implements WebMeeting,WebDoc
         if ( !is_object($url) || !is_object($directUrl) || !is_object($id) ) {
             $reply['success'] = false;
             // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server';
+            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'];
             return;
         }
         $bean->doc_url = $url->item(0)->getAttribute("href");
@@ -341,7 +341,7 @@ class ExtAPILotusLiveDirect extends OAuthPluginBase implements WebMeeting,WebDoc
         if ( !is_object($xml) ) {
             $reply['success'] = false;
             // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
+            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.print_r(libxml_get_errors(),true);
             return;
         }
 
@@ -422,7 +422,7 @@ class ExtAPILotusLiveDirect extends OAuthPluginBase implements WebMeeting,WebDoc
             if ( empty($rawResponse) || !is_array($response) ) {
                 $reply['success'] = FALSE;
                 // FIXME: Translate
-                $reply['errorMessage'] = 'Bad response from the server';
+                $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'];
             } else {
                 $reply['responseJSON'] = $response;
                 $reply['success'] = TRUE;

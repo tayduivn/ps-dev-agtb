@@ -166,6 +166,7 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
         $bean->addVisibilityStrategy('TeamSecurity');
+        $bean->disable_row_level_security = false;
         $query = '';
 
         $bean->add_team_security_where_clause($query,'','INNER',true);

@@ -697,6 +697,11 @@ function get_team_name($team_id)
  */
 function get_team_array($add_blank = FALSE) {
 	global  $current_user;
+    if (empty($current_user) || empty($current_user->id))
+    {
+        return array();
+    }
+
 	$team_array = get_register_value('team_array', $add_blank.'ADDBLANK'.$current_user->id);
 
 	if(!empty($team_array))
@@ -1060,11 +1065,9 @@ function _mergeCustomAppListStrings($file , $appListStrings)
     }
     //Bug 25347: We should not merge custom dropdown fields unless they relate to parent fields or the module list.
     // FG - bug 45525 - Specific codelists must NOT be overwritten
-    $exemptDropdowns[] = "moduleList";
-    $exemptDropdowns[] = "moduleListSingular";
-    $exemptDropdowns[] = "parent_type_display";
-    $exemptDropdowns[] = "record_type_display";
-    $exemptDropdowns[] = "record_type_display_notes";
+	$exemptDropdowns[] = "moduleList";
+	$exemptDropdowns[] = "moduleListSingular";
+    $exemptDropdowns = array_merge($exemptDropdowns, getTypeDisplayList());
 
     foreach($app_list_strings as $key=>$value) {
         if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original)) {
@@ -1758,14 +1761,16 @@ function get_select_options_with_id_separate_key ($label_list, $key_list, $selec
 
 /**
  * Call this method instead of die().
- * Then we call the die method with the error message that is passed in.
+ * We print the error message and then die with an appropriate
+ * exit code.
  */
-function sugar_die($error_message)
+function sugar_die($error_message, $exit_code = 1)
 {
 	@header("HTTP/1.0 500 Server Error");
 	@header("Status: 500 Server Error");
 	sugar_cleanup();
-	die($error_message);
+	echo $error_message;
+	die($exit_code);
 }
 
 
@@ -1881,51 +1886,42 @@ function parse_calendardate($local_format) {
 
 
 function translate($string, $mod='', $selectedValue=''){
-	//$test_start = microtime();
-	//static $mod_strings_results = array();
+    // Bug 60664
+    global $mod_strings;
+    
 	if(!empty($mod)){
 		global $current_language;
 		//Bug 31275
 		if(isset($_REQUEST['login_language'])){
 		    $current_language = ($_REQUEST['login_language'] == $current_language)? $current_language : $_REQUEST['login_language'];
 		}
-		$mod_strings = return_module_language($current_language, $mod);
+		$lang = return_module_language($current_language, $mod);
+        
+        // Bug 60664 - If module language isn't found, just use mod_strings
+        if (empty($lang)) {
+            $lang = $mod_strings;
+        }
         if ($mod == "")
         echo "Language is <pre>" . $mod_strings . "</pre>";
 
 	}else{
-		global $mod_strings;
+		$lang =  $mod_strings;
 	}
 
 	$returnValue = '';
 	global $app_strings, $app_list_strings;
 
-    if (isset($mod_strings[$string]))
+    if (isset($lang[$string])) {
+        $returnValue = $lang[$string];
+    } else if (isset($mod_strings[$string])) {
         $returnValue = $mod_strings[$string];
-    else if (isset($app_strings[$string]))
+    } else if (isset($app_strings[$string])) {
         $returnValue = $app_strings[$string];
-    else if (isset($app_list_strings[$string]))
+    } else if (isset($app_list_strings[$string])){
         $returnValue = $app_list_strings[$string];
-    else if (isset($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$string]))
+    } else if (isset($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$string])) {
         $returnValue = $app_list_strings['moduleList'][$string];
-
-
-	//$test_end = microtime();
-	//
-	//    $mod_strings_results[$mod] = microtime_diff($test_start,$test_end);
-	//
-	//    echo("translate results:");
-	//    $total_time = 0;
-	//    $total_strings = 0;
-	//    foreach($mod_strings_results as $key=>$value)
-	//    {
-	//        echo("Module $key \t\t time $value \t\t<br>");
-	//        $total_time += $value;
-	//    }
-	//
-	//    echo("Total time: $total_time<br>");
-
-
+    }
 
 	if(empty($returnValue)){
 		return $string;
@@ -3944,7 +3940,11 @@ function sugarArrayIntersectMerge($gimp, $dom)
         foreach ($gimp as $domKey => $domVal) {
             if (isset($dom[$domKey])) {
                 if (is_array($dom[$domKey])) {
-                    $gimp[$domKey] = array_merge($gimp[$domKey], array_intersect_key($dom[$domKey], $gimp[$domKey]));
+                	if(is_numeric(key($dom[$domKey]))) {
+						$gimp[$domKey] = array_merge($gimp[$domKey], array_intersect($dom[$domKey], $gimp[$domKey]));
+                	} else {
+                    	$gimp[$domKey] = array_merge($gimp[$domKey], array_intersect_key($dom[$domKey], $gimp[$domKey]));
+                    }
                 } else {
                     $gimp[$domKey] = $dom[$domKey];
                 }
@@ -4803,7 +4803,7 @@ function create_export_query_relate_link_patch($module, $searchFields, $where){
 			}
 		}
 	}
-	$ret_array = array('where'=>$where, 'join'=>$join['join']);
+    $ret_array = array('where'=>$where, 'join'=> isset($join['join']) ? $join['join'] : '');
 	return $ret_array;
 }
 
@@ -5305,3 +5305,51 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
     asort($select_array);
     return $select_array;
 }
+
+/**
+ * Gets the list of "*type_display*".
+ * 
+ * @return array
+ */
+function getTypeDisplayList()
+{
+    return array('record_type_display', 'parent_type_display', 'record_type_display_notes');
+}
+
+/**
+ * Breaks given string into substring according
+ * to 'db_concat_fields' from field definition 
+ * and assigns values to corresponding properties
+ * of bean.
+ *
+ * @param SugarBean $bean
+ * @param array $fieldDef
+ * @param string $value
+ */
+function assignConcatenatedValue(SugarBean $bean, $fieldDef, $value)
+{
+    $valueParts = explode(' ',$value);
+    $valueParts = array_filter($valueParts);
+    $fieldNum   = count($fieldDef['db_concat_fields']);
+
+    if (count($valueParts) == 1 && $fieldDef['db_concat_fields'] == array('first_name', 'last_name'))
+    {
+        $bean->last_name = $value;
+    }
+    // elseif ($fieldNum >= count($valueParts))
+    else
+    {
+        for ($i = 0; $i < $fieldNum; $i++)
+        {
+            $fieldValue = array_shift($valueParts);
+            $fieldName  = $fieldDef['db_concat_fields'][$i];
+            $bean->$fieldName = $fieldValue !== false ? $fieldValue : '';
+        }
+
+        if (!empty($valueParts))
+        {
+            $bean->$fieldName .= ' ' . implode(' ', $valueParts);
+        }
+    }
+}
+

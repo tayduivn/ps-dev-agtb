@@ -93,6 +93,8 @@ class RestClearMetadataCacheTest extends RestTestBase
         // Back up the current file if there is one
         if (file_exists($this->_requestMock->ddlCustomFile)) {
             rename($this->_requestMock->ddlCustomFile, $this->_requestMock->ddlCustomFile . '.testbackup');
+        } else {
+            SugarAutoLoader::addToMap($this->_requestMock->ddlCustomFile);
         }
         
         // Create an empty test custom file
@@ -133,23 +135,33 @@ class RestClearMetadataCacheTest extends RestTestBase
      */
     public function testCustomFieldChangesClearMetadataCache()
     {
+        MetaDataManager::clearAPICache();
         // Start by calling the metadata api to set the cache and get the first result
-        $reply = $this->_restCall('metadata');
+        $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
         $this->assertNotEmpty($reply['reply'], "The reply from the initial metadata request is empty");
+        if ( isset($initialMetadata['reply']['modules']['Accounts']['fields']['unit_testy_c']) ) {
+            // Some test must not have cleaned up after itself
+            $this->_teardownCustomField();
+            $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
+        }
         $initialMetadata = $reply;
+        $this->assertFalse(isset($initialMetadata['reply']['modules']['Accounts']['fields']['unit_testy_c']), "The custom field was found in the initial request but should not have been");
         
         // Add a custom field
         $_REQUEST = $this->_requestMock->createFieldRequestVars;
         $mb = new ModuleBuilderController();
         $mb->action_SaveField();
+
+        $testBean = BeanFactory::getBean('Accounts');
+        $this->assertArrayHasKey('unit_testy_c',$testBean->field_defs,"The Accounts module doesn't think it has a test field.");
         
         // Add the teardown method to the teardown stack in case of failure
         $this->_teardowns['cf'] = '_teardownCustomField';
         
         // Test custom field shows in metadata request
-        $reply = $this->_restCall('metadata');
+        $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
+        $this->assertArrayHasKey('unit_testy_c',$reply['reply']['modules']['Accounts']['fields'],"The metadata doesn't think the test field exists");
         $this->assertNotEmpty($reply['reply']['modules']['Accounts']['fields']['unit_testy_c'], "The created custom field was not found in the metadata response");
-        $this->assertFalse(isset($initialMetadata['reply']['modules']['Accounts']['fields']['unit_testy_c']), "The custom field was found in the initial request but should not have been");
         
         // Change the custom field by adding a formula
         $_REQUEST['name'] .= '_c';
@@ -158,8 +170,9 @@ class RestClearMetadataCacheTest extends RestTestBase
         $mb->action_SaveField();
         
         // Test custom field edit shows in metadata request
-        $reply = $this->_restCall('metadata');
-        $this->assertNotEmpty($reply['reply']['modules']['Accounts']['fields']['unit_testy_c']['formula'], "The custom field formula was not found in the metadata response");
+        $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
+        $this->assertArrayHasKey('unit_testy_c',$reply['reply']['modules']['Accounts']['fields'],"The metadata doesn't think the test field exists #2");
+        $this->assertArrayHasKey('formula',$reply['reply']['modules']['Accounts']['fields']['unit_testy_c'],"The metadata doesn't think the test field has a formula");
         $this->assertEquals($_REQUEST['formula'], $reply['reply']['modules']['Accounts']['fields']['unit_testy_c']['formula'], "The formula that was saved was not the formula that was passed in");
         
         // Change a label
@@ -168,7 +181,7 @@ class RestClearMetadataCacheTest extends RestTestBase
         $mb->action_SaveField();
         
         // Test label change shows up in metadata request
-        $reply = $this->_restCall('metadata');
+        $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
         $this->assertNotEmpty($reply['reply']['modules']['Accounts']['fields']['unit_testy_c']['vname'], "The created custom field label id was not found in the metadata response");
         // Set the label for use in the next test
         $vname = $reply['reply']['modules']['Accounts']['fields']['unit_testy_c']['vname'];
@@ -185,7 +198,7 @@ class RestClearMetadataCacheTest extends RestTestBase
         unset($this->_teardowns['cf']);
         
         // Test custom field no longer shows in metadata
-        $reply = $this->_restCall('metadata');
+        $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
         $this->assertFalse(isset($reply['reply']['modules']['Accounts']['fields']['unit_testy_c']), "The created custom field was found in the metadata response and it should not have been");
         $this->assertEquals(count($initialMetadata['reply']['modules']['Accounts']['fields']), count($reply['reply']['modules']['Accounts']['fields']), "Starting and ending field counts do not match");
     }
@@ -250,6 +263,7 @@ class RestClearMetadataCacheTest extends RestTestBase
         $reply = $this->_restCall('metadata');
         $this->assertNotEmpty($reply['reply']['labels']['en_us'], "Label metadata entry is missing");
         $contents = json_decode(file_get_contents($reply['reply']['labels']['en_us']), true);
+        $this->assertArrayHasKey($_REQUEST['dropdown_name'],$contents['app_list_strings']);
         $this->assertNotEmpty($contents['app_list_strings'][$_REQUEST['dropdown_name']], "The custom dropdown list was not found");
         
         // Delete the dropdown - This could be delegated to the teardown method
@@ -283,6 +297,9 @@ class RestClearMetadataCacheTest extends RestTestBase
         
         if (file_exists($this->_requestMock->ddlCustomFile . '.testbackup')) {
             rename($this->_requestMock->ddlCustomFile . '.testbackup', $this->_requestMock->ddlCustomFile);
+        } else {
+            // There was no back up, so remove this from the file map cache
+            SugarAutoLoader::delFromMap($this->_requestMock->_ddlCustomFile);
         }
         
         // Clear the cache
