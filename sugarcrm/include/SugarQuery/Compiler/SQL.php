@@ -112,6 +112,7 @@ class SugarQuery_Compiler_SQL
 			'file'     => 'string',
 			'decimal_tpl' => 'number',
             'phone'    => 'string',
+            'assigned_user_name' => 'string',
 	);
 
 	public function __construct($db) {
