@@ -56,10 +56,10 @@
         var fields = (moduleMetadata && moduleMetadata.fields) ? moduleMetadata.fields : [];
 
         _.each(fields, function(field){
-            if(((field.name && field.name=='assigned_user_id') || (field.id_name && field.id_name=='assigned_user_id')) &&
-               (field.type && field.type=='relate')) {
-                    this.model.set('assigned_user_id',    app.user.id);
-                    this.model.set('assigned_user_name',  app.user.attributes.full_name);
+            if(((field.name && field.name==='assigned_user_id') || (field.id_name && field.id_name==='assigned_user_id')) &&
+               (field.type && field.type==='relate')) {
+                    this.model.set('assigned_user_id', app.user.id);
+                    this.model.set('assigned_user_name', app.user.attributes.full_name);
             }
         }, this);
 
