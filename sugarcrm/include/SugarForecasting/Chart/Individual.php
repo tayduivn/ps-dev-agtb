@@ -75,7 +75,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
     public function __construct($args)
     {
         if (isset($args['ranges'])) {
-            if(is_array($args['ranges'])) {
+            if (is_array($args['ranges'])) {
                 $this->ranges = $args['ranges'];
             } else {
                 $this->ranges = array($args['ranges']);
@@ -84,13 +84,11 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             $this->ranges = array();
         }
 
-        if (isset($args['group_by']) && !empty($args['group_by']))
-        {
+        if (isset($args['group_by']) && !empty($args['group_by'])) {
             $this->group_by = strtolower($args['group_by']);
         }
 
-        if (isset($args['data_array']) && $args['data_array'])
-        {
+        if (isset($args['data_array']) && $args['data_array']) {
             $this->dataArray = $args['data_array'];
         }
         parent::__construct($args);
@@ -119,16 +117,13 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      */
     protected function parseCategory()
     {
-        if (empty($this->ranges))
-        {
+        if (empty($this->ranges)) {
             // display in chart all products (opps) from the worksheet
             return;
         }
 
-        foreach ($this->dataArray as $key => $val)
-        {
-            if (in_array($val['commit_stage'], $this->ranges))
-            {
+        foreach ($this->dataArray as $key => $val) {
+            if (in_array($val['commit_stage'], $this->ranges)) {
                 continue;
             }
             unset($this->dataArray[$key]);
@@ -156,21 +151,22 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             }
 
             $this->group_by_labels = array_unique($this->group_by_labels);
-        } else if ($this->group_by == "probability") {
-            foreach ($this->dataArray as $data) {
-                $this->group_by_labels[] = $data['probability'] . "%";
-            }
-            $this->group_by_labels = array_unique($this->group_by_labels);
-            ksort($this->group_by_labels);
         } else {
-            // default to forecast, just on the off chance it's not set
-            $this->group_by = "commit_stage";
+            if ($this->group_by == "probability") {
+                foreach ($this->dataArray as $data) {
+                    $this->group_by_labels[] = $data['probability'] . "%";
+                }
+                $this->group_by_labels = array_unique($this->group_by_labels);
+                ksort($this->group_by_labels);
+            } else {
+                // default to forecast, just on the off chance it's not set
+                $this->group_by = "commit_stage";
 
-            foreach ($this->dataArray as $data)
-            {
-                $this->group_by_labels[] = ucfirst($data['commit_stage']);
+                foreach ($this->dataArray as $data) {
+                    $this->group_by_labels[] = ucfirst($data['commit_stage']);
+                }
+                $this->group_by_labels = array_unique($this->group_by_labels);
             }
-            $this->group_by_labels = array_unique($this->group_by_labels);
         }
 
         $this->group_by_labels = array_values($this->group_by_labels);
@@ -205,7 +201,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             $value_key = 0;
             // TODO support more fields.
             // TODO Support bucket Mode.
-            switch($this->group_by) {
+            switch ($this->group_by) {
                 case 'sales_stage':
                     $label_name = $opp_strings['LBL_SALES_STAGE'];
                     $value_key = array_search($data['sales_stage'], $this->group_by_labels);
@@ -227,7 +223,10 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             $dataset_key = $this->dataset . '_case';
 
             // Bug 56330: if the dataset_key doesn't exist default to 0
-            $dataset_value = (isset($data[$dataset_key])) ? SugarCurrency::convertAmountToBase($data[$dataset_key], $data['currency_id']) : 0;
+            $dataset_value = (isset($data[$dataset_key])) ? SugarCurrency::convertAmountToBase(
+                $data[$dataset_key],
+                $data['currency_id']
+            ) : 0;
 
             // put the values in to their proper locations and add to any that are already there
             $this->values[$chart_value_key]['values'][$value_key] += number_format($dataset_value, 2, '.', '');
@@ -240,18 +239,27 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
 
         $goal_value_total = 0;
         // final adjust of the data. this sets the labels and the total values for the goal markers
-        foreach($this->values as $key => $value) {
+        foreach ($this->values as $key => $value) {
             $goal_value_total += $value['gvalue'];
             $this->values[$key]['goalmarkervalue'][0] = number_format($quota, 2, '.', '');
             $this->values[$key]['goalmarkervalue'][1] = number_format($goal_value_total, 2, '.', '');
-            $this->values[$key]['goalmarkervaluelabel'][0] = SugarCurrency::formatAmountUserLocale($quota, $currency_id);
-            $this->values[$key]['goalmarkervaluelabel'][1] = SugarCurrency::formatAmountUserLocale($goal_value_total, $currency_id);
+            $this->values[$key]['goalmarkervaluelabel'][0] = SugarCurrency::formatAmountUserLocale(
+                $quota,
+                $currency_id
+            );
+            $this->values[$key]['goalmarkervaluelabel'][1] = SugarCurrency::formatAmountUserLocale(
+                $goal_value_total,
+                $currency_id
+            );
 
             $this->values[$key]['gvaluelabel'] = SugarCurrency::formatAmountUserLocale($value['gvalue'], $currency_id);
 
             // set the labels to be correct
-            foreach($value['values'] as $val_key => $val) {
-                $this->values[$key]['valuelabels'][$val_key] = SugarCurrency::formatAmountUserLocale($val, $currency_id);
+            foreach ($value['values'] as $val_key => $val) {
+                $this->values[$key]['valuelabels'][$val_key] = SugarCurrency::formatAmountUserLocale(
+                    $val,
+                    $currency_id
+                );
             }
 
         }

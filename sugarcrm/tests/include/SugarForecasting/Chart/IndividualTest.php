@@ -21,8 +21,6 @@
  ********************************************************************************/
 require_once('include/SugarForecasting/Chart/Individual.php');
 require_once("modules/Forecasts/clients/base/api/ForecastWorksheetsFilterApi.php");
-require_once('include/api/RestService.php');
-require_once('tests/modules/Forecasts/api/ForecastsWorksheetsApiTest.php');
 class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
@@ -106,7 +104,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         self::$filterApi = new ForecastWorksheetsFilterApi();
         // get the current data set for use in the processing
         $dataArray = self::$filterApi->forecastWorksheetsGet(
-            self::_getServiceMock(self::$user['user']),
+            SugarTestRestUtilities::getRestServiceMock(self::$user['user']),
             array('user_id' => self::$args['user_id'], 'timeperiod_id' => self::$args['timeperiod_id'], 'module' => 'ForecastWorksheets')
         );
         self::$args['data_array'] = $dataArray['records'];
@@ -131,20 +129,6 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestHelper::tearDown();
         parent::tearDown();
-    }
-
-    /**
-     * Utility Method to get the ServiceMock with a valid user in it
-     *
-     * @param User $user
-     * @return ForecastWorksheetApiServiceMock
-     */
-    protected static function _getServiceMock(User $user)
-    {
-        $serviceApi = new ForecastWorksheetApiServiceMock();
-        $serviceApi->user = $user;
-
-        return $serviceApi;
     }
 
     /**

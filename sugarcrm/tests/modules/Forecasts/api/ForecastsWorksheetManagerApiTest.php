@@ -30,7 +30,6 @@
 
 
 require_once("modules/Forecasts/clients/base/api/ForecastManagerWorksheetsFilterApi.php");
-require_once('include/api/RestService.php');
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
@@ -243,21 +242,6 @@ class ForecastsWorksheetManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Utility Method to get the ServiceMock with a valid user in it
-     *
-     * @param User $user
-     * @return ForecastManagerWorksheetApiServiceMock
-     */
-    protected function _getServiceMock(User $user)
-    {
-        $serviceApi = new ForecastManagerWorksheetApiServiceMock();
-        $serviceApi->user = $user;
-
-        return $serviceApi;
-    }
-
-
-    /**
      * This test asserts that we get back data.
      *
      * @group forecastapi
@@ -268,7 +252,7 @@ class ForecastsWorksheetManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["current_user"] = self::$manager["user"];
 
         $response = $this->filterApi->forecastManagerWorksheetsGet(
-            $this->_getServiceMock(self::$manager['user']),
+            SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
             array(
                 'user_id' => self::$manager['user']->id,
                 'timeperiod_id' => self::$timeperiod->id,
@@ -289,7 +273,7 @@ class ForecastsWorksheetManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["current_user"] = self::$reportee["user"];
 
         $this->filterApi->forecastManagerWorksheetsGet(
-            $this->_getServiceMock(self::$reportee['user']),
+            SugarTestRestUtilities::getRestServiceMock(self::$reportee['user']),
             array(
                 'user_id' => self::$reportee['user']->id,
                 'timeperiod_id' => self::$timeperiod->id,
@@ -308,7 +292,7 @@ class ForecastsWorksheetManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = self::$reportee['user'];
 
         $this->filterApi->forecastManagerWorksheetsGet(
-            $this->_getServiceMock(self::$reportee['user']),
+            SugarTestRestUtilities::getRestServiceMock(self::$reportee['user']),
             array(
                 'timeperiod_id' => self::$timeperiod->id,
                 'module' => 'ForecastManagerWorksheets'

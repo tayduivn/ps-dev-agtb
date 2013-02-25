@@ -183,20 +183,6 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Utility Method to get the ServiceMock with a valid user in it
-     *
-     * @param User $user
-     * @return ForecastWorksheetApiServiceMock
-     */
-    protected function _getServiceMock(User $user)
-    {
-        $serviceApi = new ForecastWorksheetApiServiceMock();
-        $serviceApi->user = $user;
-
-        return $serviceApi;
-    }
-
-    /**
      * @group forecastapi
      * @group forecasts
      */
@@ -206,7 +192,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["current_user"] = self::$reportee["user"];
 
         $response = $this->filterApi->forecastWorksheetsGet(
-            $this->_getServiceMock(self::$reportee['user']),
+            SugarTestRestUtilities::getRestServiceMock(self::$reportee['user']),
             array('user_id' => self::$repData['id'], 'timeperiod_id' => self::$timeperiod->id, 'module' => 'ForecastWorksheets')
         );
 
@@ -225,7 +211,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["current_user"] = self::$reportee["user"];
 
         $response = $this->filterApi->forecastWorksheetsChartGet(
-            $this->_getServiceMock(self::$reportee['user']),
+            SugarTestRestUtilities::getRestServiceMock(self::$reportee['user']),
             array('user_id' => self::$repData['id'], 'timeperiod_id' => self::$timeperiod->id, 'module' => 'ForecastWorksheets')
         );
 
@@ -259,7 +245,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $postData['record'] = $worksheet['id'];
 
         $response = $this->putApi->forecastWorksheetSave(
-            $this->_getServiceMock(self::$reportee["user"]),
+            SugarTestRestUtilities::getRestServiceMock(self::$reportee["user"]),
             $postData
         );
 
@@ -287,7 +273,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["current_user"] = self::$manager["user"];
 
         $response = $this->filterApi->forecastWorksheetsGet(
-            $this->_getServiceMock(self::$manager['user']),
+            SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
             array('user_id' => self::$repData['id'], 'timeperiod_id' => self::$timeperiod->id, 'module' => 'ForecastWorksheets')
         );
 
@@ -331,7 +317,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["current_user"] = self::$manager["user"];
 
         $response = $this->filterApi->forecastWorksheetsGet(
-            $this->_getServiceMock(self::$manager['user']),
+            SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
             array('user_id' => self::$repData['id'], 'timeperiod_id' => self::$timeperiod->id, 'module' => 'ForecastWorksheets')
         );
 
@@ -377,21 +363,10 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestWorksheetUtilities::removeSpecificCreatedWorksheets($worksheetIds);
 
         $response = $this->filterApi->forecastWorksheetsGet(
-            $this->_getServiceMock(self::$manager['user']),
+            SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
             array('user_id' => $newUser["user"]->id, 'timeperiod_id' => self::$timeperiod->id, 'module' => 'ForecastWorksheets')
         );
 
         $this->assertEmpty($response['records'], "Data was returned, this edge case should return no data");
-    }
-}
-
-class ForecastWorksheetApiServiceMock extends RestService
-{
-    public function execute()
-    {
-    }
-
-    protected function handleException(Exception $exception)
-    {
     }
 }

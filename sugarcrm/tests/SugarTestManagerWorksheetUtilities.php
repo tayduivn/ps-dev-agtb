@@ -27,19 +27,11 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-$beanList = array();
-$beanFiles = array();
-require('include/modules.php');
-$GLOBALS['beanList'] = $beanList;
-$GLOBALS['beanFiles'] = $beanFiles;
 require_once 'modules/Forecasts/ForecastManagerWorksheet.php';
 
 class SugarTestManagerWorksheetUtilities
 {
     private static $_createdWorksheets = array();
-
-    private function __construct() {}
 
     public static function createWorksheet($id = '')
     {
