@@ -102,10 +102,21 @@
      * @private
      */
     _setUpFilters: function() {
-        var selectedRanges = this.context.has("selectedRanges") ?
-            this.context.get("selectedRanges") :
-            app.defaultSelections.ranges;
-
+        var selectedRanges = this.context.has("selectedRanges") ? this.context.get("selectedRanges") : app.defaultSelections.ranges,
+            moduleFilterNode = this.$(".related-filter");
+       
+        moduleFilterNode.select2({
+            data: [{id: this.module, text: this.module}],
+            multiple: false,
+            minimumResultsForSearch: 7,
+            formatSelection: this.formatModuleSelection,
+            containerCssClass: "select2-container-disabled",
+            dropdownCss: {display:"none"},            
+            initSelection: function(element, callback) {
+                callback(this.data[0]);
+            }
+        });
+        
         this.node.select2({
             data:this._getRangeFilters(),
             initSelection: function(element, callback) {
@@ -119,9 +130,15 @@
             },
             multiple:true,
             placeholder: app.lang.get("LBL_MODULE_FILTER"),
-            dropdownCss: {width:'auto'},
-            dropdownCssClass: 'search-filter-dropdown'
+            dropdownCss: {width:"auto"},
+            containerCssClass: "select2-choices-pills",
+            containerCss: "border: none",
+            formatSelection: this.formatCustomSelection,
+            dropdownCssClass: "search-filter-dropdown"
         });
+        
+        //run this to "hard code" the module filter to Forecasts
+        moduleFilterNode.select2("val", this.module);
 
         // set the default selections
         this.node.select2("val", selectedRanges);
@@ -135,6 +152,22 @@
                 event.data.view.context.set("selectedRanges", event.val);
             }
         );
+    },
+    
+    /**
+     * Formats pill selections
+     * 
+     * @param object selected item
+     */
+    formatCustomSelection: function(item) {        
+        return '<span class="select2-choice-type">' + app.lang.get("LBL_FILTER") + '</span><a class="select2-choice-filter" rel="'+ item.id + '" href="javascript:void(0)">'+ item.text +'</a>';
+    },
+    
+    /**
+     * Format module pills
+     */
+    formatModuleSelection: function(item) {
+        return '<span class="select2-choice-type">' + app.lang.get("LBL_MODULE") + '</span><a class="select2-choice-related" href="javascript:void(0)">'+ item.text +'</a>';
     },
 
     /**
