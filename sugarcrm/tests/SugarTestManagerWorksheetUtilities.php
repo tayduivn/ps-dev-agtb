@@ -70,7 +70,7 @@ class SugarTestManagerWorksheetUtilities
 
     public static function removeSpecificCreatedWorksheets($ids)
     {
-    	$GLOBALS["db"]->query("delete from forecast_manager_worksheets where id in('" . implode("', '", $ids) . "')" );
+        $GLOBALS["db"]->query("delete from forecast_manager_worksheets where id in('" . implode("', '", $ids) . "')" );
     }
 
     public static function getCreatedWorksheetIds()
