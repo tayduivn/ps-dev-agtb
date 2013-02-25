@@ -234,7 +234,6 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             // put the values in to their proper locations and add to any that are already there
             $this->values[$chart_value_key]['values'][$value_key] += number_format($dataset_value, 2, '.', '');
             $this->values[$chart_value_key]['gvalue'] += number_format($dataset_value, 2, '.', '');
-
         }
 
         // get the quota for the current user
@@ -255,7 +254,6 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             foreach($value['values'] as $val_key => $val) {
                 $this->values[$key]['valuelabels'][$val_key] = SugarCurrency::formatAmountUserLocale($val, $currency_id);
             }
-
         }
 
         // figure out the label
@@ -288,6 +286,18 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             'label' => array_values($this->group_by_labels),
             'values' => array_values($this->values),
         );
+
+        if ($this->group_by != 'sales_stage' && $this->group_by != 'probability') {
+            $assignedColorsArray = array(
+                'Include' => '#468c2b',
+                'Exclude' => '#8c2b2b',
+                'Upside' => '#2b5d8c',
+            );
+
+            foreach($this->group_by_labels as $key => $value) {
+                $chart['color'][$key] = $assignedColorsArray[$value];
+            }
+        }
 
         return $chart;
     }
