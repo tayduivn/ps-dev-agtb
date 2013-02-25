@@ -115,7 +115,8 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
-                    'name' => 'name'
+                    'name' => 'name',
+                    'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
                 ),
             )
         ),
