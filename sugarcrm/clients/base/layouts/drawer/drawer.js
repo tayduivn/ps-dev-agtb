@@ -7,6 +7,8 @@
     pixelsFromFooter: 60, //how many pixels from the footer the drawer will drop down to
 
     initialize: function(options) {
+        _.bindAll(this);
+
         if (!this.$el.is('#drawers')) {
             app.logger.error('Drawer layout can only be included as an Additional Component.');
             return;
@@ -144,9 +146,6 @@
             //make sure that the main application content is set as a drawer
             drawers.$top.addClass('drawer');
             $('body').css('overflow', 'hidden');
-        } else {
-            //expand current drawer if collapsed
-            this._expandDrawer(drawers.$top, drawers.$bottom);
         }
 
         //add the expand tab and the backdrop to the top drawer
@@ -160,12 +159,22 @@
         //start animation
         _.defer(_.bind(function() {
             if (drawers.$bottom) {
-                drawers.$bottom.css('top', drawers.$bottom.offset().top + drawerHeight);
+                drawers.$bottom
+                    .addClass('transition')
+                    .css('top', drawers.$bottom.offset().top + drawerHeight);
             }
-            drawers.$top.css('top', this._isMainAppContent(drawers.$top) ? drawerHeight : drawers.$top.offset().top + drawerHeight);
+            drawers.$top
+                .addClass('transition')
+                .css('top', this._isMainAppContent(drawers.$top) ? drawerHeight : drawers.$top.offset().top + drawerHeight);
+
             drawers.$next
-                .addClass('drawer')
+                .addClass('drawer transition')
                 .css('top','');
+
+            //resize the visible drawer when the browser resizes
+            if (this._components.length === 1) {
+                $(window).on('resize', this._resizeDrawer);
+            }
         }, this));
     },
 
@@ -186,8 +195,11 @@
         drawers.$bottom.one('webkitTransitionEnd oTransitionEnd otransitionend transitionend msTransitionEnd', _.bind(function(){
             this._removeTabAndBackdrop(drawers.$bottom);
             if (this._isMainAppContent(drawers.$bottom)) {
-                drawers.$bottom.removeClass('drawer');
+                drawers.$bottom.removeClass('drawer transition');
                 $('body').css('overflow', '');
+            } else {
+                //refresh drawer position and height for collapsed or resized drawers
+                this._expandDrawer(drawers.$bottom, drawers.$next);
             }
             callback();
         }, this));
@@ -197,6 +209,11 @@
         drawers.$bottom.css('top','');
         if (drawers.$next) {
             drawers.$next.css('top', this._isMainAppContent(drawers.$next) ? drawerHeight : drawers.$next.offset().top - drawerHeight);
+        }
+
+        //remove resize handler
+        if (this._components.length === 1) {
+            $(window).off('resize', this._resizeDrawer)
         }
     },
 
@@ -353,6 +370,7 @@
             .removeClass('icon-chevron-up')
             .addClass('icon-chevron-down');
     },
+
     /**
      * Test if element is part of active drawer.  Always returns true if there's no inactive components on page.
      * @param el DOM element to test if it is in the active drawer
@@ -364,6 +382,16 @@
         }
         var top = this._getDrawers(false).$top;
         return top.find(el).length > 0;
-    }
+    },
+
+    /**
+     * Resize the height of the drawer by expanding.
+     */
+    _resizeDrawer: _.throttle(function() {
+        var drawers = this._getDrawers(false);
+        if (drawers.$top) {
+            this._expandDrawer(drawers.$top, drawers.$bottom);
+        }
+    }, 300)
 })
 
