@@ -26,6 +26,26 @@
  ********************************************************************************/
 ({
     fieldTag: "select",
+    /**
+     * Load the enum's options if not already defined
+     * @param opts
+     */
+    initialize: function(opts){
+        app.view.Field.prototype.initialize.call(this, opts);
+        if(_.isUndefined(this.def.options) && _.isUndefined(this.items)){
+            var self = this;
+            // Load options data using enum API, response is browser cached for 60 minutes by default
+            var url = app.api.buildURL(this.module+"/enum/"+this.name);
+            app.api.call('read', url, null, {
+                success: function(o){
+                    self.def.options = o;
+                    if(!self.disposed){
+                        self.render();
+                    }
+                }
+            });
+        }
+    },
     _render: function() {
         var optionsKeys = [], val;
         var options = this.items = this.items || this.def.options;

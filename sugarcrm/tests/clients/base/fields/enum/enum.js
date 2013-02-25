@@ -29,7 +29,7 @@ describe("enum field", function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
-        field = null,
+        field = null;
         multiEnumField = null;
         stub_appListStrings.restore();
     });
@@ -53,6 +53,24 @@ describe("enum field", function() {
         field.render();
         var actual = field.$el.text().replace(/(\r\n|\n|\r)/gm,"");
         expect($.trim(actual)).toEqual(expected);
+    });
+
+    it("should load options from enum API if options is undefined", function(){
+        var options = {one:"1"};
+        var callStub = sinon.stub(app.api,"call", function(method, url, data, callbacks){
+            expect(method).toEqual("read");
+            expect(url.indexOf("enum/test_enum")).toBeGreaterThan(0);
+            //Call success callback
+            callbacks.success(options);
+        });
+        field = SugarTest.createField("base", fieldName, "enum", "detail", {/* no options */});
+        var renderStub = sinon.stub(app.view.fields.EnumField.prototype, "_render", $.noop());
+        field.model.set(fieldName, "");
+        expect(callStub).toHaveBeenCalled();
+        expect(renderStub).toHaveBeenCalled();
+        expect(field.def.options).toEqual(options);
+        callStub.restore();
+        renderStub.restore();
     });
 
     describe("multi select enum", function() {

@@ -111,6 +111,7 @@ class ModuleApi extends SugarApi {
         $vardef = $bean->field_defs[$args['field']];
         
         $api->setHeader('Cache-Control', 'max-age=3600, private');
+        $api->setHeader('Pragma','');  // Make sure no-cache does not get set
 
         if(isset($vardef['cache_setting'])) {
             $api->setHeader('Cache-Control', "max-age={$vardef['cache_setting']}, private");
