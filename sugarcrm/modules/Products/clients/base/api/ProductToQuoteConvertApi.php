@@ -68,6 +68,8 @@ class ProductToQuoteConvertApi extends SugarApi
         $product_bundle->deal_tot_usdollar = $total_base;
         $product_bundle->new_sub = $total;
         $product_bundle->new_sub_usdollar = $total_base;
+        $product_bundle->tax = 0.00;
+        $product_bundle->tax_usdollar = 0.00;
         $product_bundle->currency_id = $product->currency_id;
         $product_bundle->save();
         $product_bundle->load_relationship('products');
@@ -86,6 +88,8 @@ class ProductToQuoteConvertApi extends SugarApi
         $quote->deal_tot_usdollar = $total_base;
         $quote->new_sub = $total;
         $quote->new_sub_usdollar = $total_base;
+        $quote->tax = 0.00;
+        $quote->tax_usdollar = 0.00;
         $quote->currency_id = $product->currency_id;
         $quote->opportunity_id = $product->opportunity_id;
         $quote->quote_stage = "Draft";
