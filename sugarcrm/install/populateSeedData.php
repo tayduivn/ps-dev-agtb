@@ -66,15 +66,14 @@ $timedate = TimeDate::getInstance();
 // Set the max time to one hour (helps Windows load the seed data)
 ini_set("max_execution_time", "3600");
 
+// ensure we have enough memory
+$memory_needed  = 256;
 // all version below 5.3.0, the memory usage needs to be 1 GIG for demo data
 if(version_compare(PHP_VERSION, '5.3.0', '<'))
 {
-	ini_set("memory_limit", "1024M");
+	$memory_needed = 1024;
 }
 
-
-// ensure we have enough memory
-$memory_needed  = 256;
 $memory_limit   = ini_get('memory_limit');
 if( $memory_limit != "" && $memory_limit != "-1" ){ // if memory_limit is set
     rtrim($memory_limit, 'M');
