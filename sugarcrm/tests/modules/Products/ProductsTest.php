@@ -34,6 +34,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
      * @var Product
      */
     private $product;
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
@@ -65,6 +66,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * This test checks to see that we can save a product where date_closed is set to null
+     *
      * @group products
      */
     public function testCreateProductWithoutDateClosed()
@@ -74,33 +76,49 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($this->product->date_closed);
     }
 
-    
+
     /**
      * This is a test to check that the create_new_list_query function returns a where clause to filter
      * "opportunity_id is null" so that products created for opportunities are not displayed by default
+     *
      * @group forecasts
      * @group products
      */
-    public function testCreateNewListQuery() {
+    public function testCreateNewListQuery()
+    {
         $ret_array = $this->product->create_new_list_query('', '', array(), array(), 0, '', true);
-        $this->assertContains("products.opportunity_id is null OR products.opportunity_id = ''", $ret_array['where'], "Did not find products.opportunity_id is null OR products.opportunity_id = '' clause");
+        $this->assertContains(
+            "products.opportunity_id is not null OR products.opportunity_id <> ''",
+            $ret_array['where'],
+            "Did not find products.opportunity_id is not null OR products.opportunity_id <> '' clause"
+        );
 
         $query = $this->product->create_new_list_query('', '', array(), array(), 0, '', false);
-        $this->assertContains("products.opportunity_id is null OR products.opportunity_id = ''", $query, "Did not find products.opportunity_id is null OR products.opportunity_id = '' clause");
+        $this->assertContains(
+            "products.opportunity_id is not null OR products.opportunity_id <> ''",
+            $query,
+            "Did not find products.opportunity_id is not null OR products.opportunity_id <> '' clause"
+        );
     }
 
 
     /**
      * This is a test to check that the create_export_query function returns a where clause to filter
      * "opportunity_id is null" so that products created for opportunities are not displayed by default
+     *
      * @group forecasts
      * @group products
      */
-    public function testCreateExportQuery() {
+    public function testCreateExportQuery()
+    {
         $orderBy = '';
         $where = '';
         $query = $this->product->create_export_query($orderBy, $where);
-        $this->assertContains("products.opportunity_id is null OR products.opportunity_id = ''", $query, "Did not find products.opportunity_id is null OR products.opportunity_id = '' clause");
+        $this->assertContains(
+            "products.opportunity_id is not null OR products.opportunity_id <> ''",
+            $query,
+            "Did not find products.opportunity_id is not null OR products.opportunity_id <> '' clause"
+        );
     }
 
     /**
@@ -255,7 +273,8 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
      * currently creating Opportunities with new Opportunity() because the test helper for Opportunities
      * creates accounts automatically.
      */
-    public function testSetAccountForOpportunity() {
+    public function testSetAccountForOpportunity()
+    {
         $opp = new Opportunity();
         $opp->name = "opp1";
         $opp->save();
@@ -281,7 +300,8 @@ class MockProduct extends Product
         parent::handleSalesStatus();
     }
 
-    public function setAccountIdForOpportunity($oppId) {
+    public function setAccountIdForOpportunity($oppId)
+    {
         return parent::setAccountIdForOpportunity($oppId);
     }
 }
