@@ -32,9 +32,7 @@ div.sayit {
         .border-radius(@inputBorderRadius);
     }
     &.activitystream-comment-box:focus {
-        -webkit-box-sizing: content-box;
-        -moz-box-sizing: content-box;
-        box-sizing: content-box;
+        .box-sizing(border-box);
     }
 }
 
@@ -71,12 +69,12 @@ div.sayit {
 .activitystream-header {
     margin-left:20px;
 }
-  
+
 .activitystream-calendar {
     span {
         display: inline-block;
     }
-    
+
     table th, table td {
         position:static;
     }
