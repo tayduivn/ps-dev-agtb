@@ -65,7 +65,6 @@
                 app.alert.show('error_xhr', {
                         level: 'error',
                         autoClose: true,
-                        closeable: true,
                         title: app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR", this.module) + ":",
                         messages: [app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE", this.module)]
                     });
