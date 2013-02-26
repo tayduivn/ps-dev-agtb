@@ -288,8 +288,8 @@ class SugarQuery_Compiler_SQL
          * We need to figure out if the field is prefixed with an alias.  If it is and the alias is not the from beans table,
          * we must load the relationship that the alias is referencing so that we can determine if they are using the correct alias
          * and change it around if necessary
-         * An exception must be made for sugarfavorites because there could be multiple joins to different sugarfavorites tables and these aliases are
-         * taken care of automatically when sugarfavorites is joined.
+         * An exception must be made for link tables because there could be multiple joins to different link tables and these aliases are
+         * taken care of automatically when M2M relationships are joined.
          */
         if (strstr($field, '.')) {
             list($table, $field) = explode('.', $field);
@@ -301,9 +301,7 @@ class SugarQuery_Compiler_SQL
                     $module = $bean->$link_name->getRelatedModuleName();
                     $bean = BeanFactory::newBean($module);
                 } else {
-                    if ($this->sugar_query->join[$table]->table == 'sugarfavorites') {
-                        return "{$table}.{$field}";
-                    }
+                    return "{$table}.{$field}";
                 }
             }
         }

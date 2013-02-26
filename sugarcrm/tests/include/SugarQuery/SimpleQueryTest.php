@@ -193,4 +193,32 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    public function testSelectManyToMany()
+    {
+        global $current_user;
+
+        $current_user->load_relationship('email_addresses');
+
+        $email_address = BeanFactory::newBean('EmailAddresses');
+        $email_address->email_address = 'test@test.com';
+        $email_address->deleted = 0;
+        $email_address->save();
+
+        $current_user->email_addresses->add($email_address->id, array('deleted' => 0));
+
+
+        // lets try a query
+        $sq = new SugarQuery();
+        $sq->select(array(array("users.first_name", 'fname')));
+        $sq->from(BeanFactory::newBean('Users'));
+        $sq->join('email_addresses');
+        $sq->where()->starts("email_addresses.email_address","test");
+        $sq->where()->equals('users.id', $current_user->id);
+
+        $result = $sq->execute();
+        $result = reset($result);
+        $this->assertEquals($current_user->first_name, $result['fname'], "Wrong Email Address Result Returned");
+
+    }
+
 }
