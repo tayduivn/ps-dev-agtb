@@ -400,9 +400,8 @@ class SugarQuery
 			list($bean, $alias) = $bean;
 		}
 
-		$relationship = $bean->field_name_map[$join]['name'];
+        $bean->load_relationship($join);
 
-		$link = new Link2($relationship, $bean);
 
 		$bean->$join->buildJoinSugarQuery($this, array('joinTableAlias'=>$bean->module_name, 'myAlias'=>$alias, 'joinType' => $joinType));
 
