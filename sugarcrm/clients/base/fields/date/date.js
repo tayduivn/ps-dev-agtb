@@ -178,11 +178,14 @@
     },
     _verifyDateString: function(value) {
         var dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';
-        // First try generic date parse (since we might have an ISO). This should generally work with the
-        // ISO date strings we get from server.
+        //First try generic date parse (since we might have an ISO). This should generally work with the
+        //ISO date strings we get from server.
         if(_.isNaN(Date.parse(value))) {
-            // use datepicker plugin to verify datepicker format
-            return $.prototype.DateVerifier(value, dateFormat);
+            //Safari chokes on '.', '-', so retry replacing with '/'
+            if(_.isNaN(value.replace(/[\.\-]/g, '/'))) {
+                //Use datepicker plugin to verify datepicker format
+                return $.prototype.DateVerifier(value, dateFormat);
+            }
         }
         return true;
     },
