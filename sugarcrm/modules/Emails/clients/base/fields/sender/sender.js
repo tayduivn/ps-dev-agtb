@@ -33,6 +33,8 @@
             defaultResult,
             defaultValue = {};
 
+        if (this.disposed === true) return; //if field is already disposed, bail out
+
         //sets the default value
         if (!_.isEmpty(results)) {
             defaultResult = _.find(results, function(result) {
@@ -63,12 +65,12 @@
             }
 
         }).on("change", function(e) {
-                var id = e.val,
-                    plugin = $(this).data('select2'),
-                    value = (id) ? plugin.selection.find("span").text() : '';
+            var id = e.val,
+                plugin = $(this).data('select2'),
+                value = (id) ? plugin.selection.find("span").text() : '';
 
-                self.setValue({id: e.val, value: value});
-         });
+            self.setValue({id: e.val, value: value});
+        });
 
         this.$(".select2-container").addClass("tleft");
 
