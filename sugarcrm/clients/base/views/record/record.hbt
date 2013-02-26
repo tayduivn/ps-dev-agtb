@@ -103,7 +103,7 @@
                                         </span>
                                     {{/if}}
                                     {{#unless ../../../../../../createMode}}
-                                        {{#unless noedit}}
+                                        {{#unless readonly}}
                                             <span class="record-edit-link-wrapper" data-name="{{../../name}}">
                                                 <a class="record-edit-link btn btn-invisible" data-type="{{../../type}}" data-name="{{../../name}}"><i class="icon-pencil"></i></a>
                                             </span>
