@@ -28,9 +28,7 @@
 }}
 {{#each value}}
 <div class="control-group email">
-    <div class="input-append widget">
-        <input type="text" class="existingAddress" {{#if ../def.len}} maxlength="{{../../def.len}}"{{/if}} placeholder="{{str "LBL_EMAIL_TITLE"}}" value="{{email_address}}">
-    </div>
+   <input type="text" class="existingAddress" {{#if ../def.len}} maxlength="{{../../def.len}}"{{/if}} placeholder="{{str "LBL_EMAIL_TITLE"}}" value="{{email_address}}">
    <div class="btn-toolbar prevent-mousedown">
       <div class="btn-group" data-toggle="buttons-checkbox">
          <button type="button" class="{{#eq primary_address "1"}}active {{/eq}}is_primary btn btn-edit" data-emailproperty="primary_address" rel="tooltip" data-original-title="{{str "LBL_EMAIL_PRIMARY"}}"><i class="icon-star"></i></button>
@@ -44,9 +42,7 @@
 </div>
 {{/each}}
 <div class="control-group email">
-    <div class="input-append widget">
-        <input type="text" class="newEmail input-append" placeholder="{{str "LBL_EMAIL_ADD"}}">
-    </div>
+    <input type="text" class="newEmail input-append" placeholder="{{str "LBL_EMAIL_ADD"}}">
     <div class="btn-toolbar prevent-mousedown">
        <div class="btn-group">
           <a href="javascript:void(0)" class="btn addEmail" rel="tooltip" data-original-title="{{str "LBL_EMAIL_ADD"}}"><i class="icon-plus"></i></a>

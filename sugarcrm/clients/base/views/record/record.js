@@ -2,7 +2,7 @@
     inlineEditMode: false,
     createMode: false,
     extendsFrom: 'EditableView',
-    plugins: ['SugarLogic', 'ellipsis_inline'],
+    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration'],
     enableHeaderButtons: true,
     enableHeaderPane: true,
     events: {
@@ -30,10 +30,11 @@
 
         this.buttons = {};
         this.createMode = this.context.get("create") ? true : false;
+
         // Even in createMode we want it to start in detail so that we, later, respect
         // this.editableFields (the list after pruning out readonly fields, etc.)
         this.action = 'detail';
-        this.model.on("error:validation", this.handleValidationError, this);
+
         this.context.on("change:record_label", this.setLabel, this);
         this.context.set("viewed", true);
         this.model.on("duplicate:before", this.setupDuplicateFields, this);
@@ -59,29 +60,6 @@
 
     setLabel: function(context, value) {
         this.$(".record-label[data-name=" + value.field + "]").text(value.label);
-    },
-
-    /**
-     * Handle validation errors on save of Record.
-     * Makes the fields editable and decorates the fields that have errors.
-     * Fields decorate themselves because they may have customized HTML/CSS
-     *
-     * @param errors Validation errors
-     */
-    handleValidationError: function(errors){
-        var errorFields = _.filter(this.editableFields,function(field){
-            return errors[field.name];
-        });
-        this.toggleFields(errorFields, true);  // Set field to edit mode before decorating it
-        _.defer(function(errorFields, self){ // Must defer decorating because field toggling is deferred
-            _.each(errorFields, function(field){
-                field.$el.parents('.record-cell').addClass("inline-error");
-                if(field.decorateError){
-                    field.decorateError(errors[field.name]);
-                }
-            });
-        }, errorFields, this);
-
     },
 
     delegateButtonEvents: function() {
@@ -367,7 +345,7 @@
     },
 
     saveClicked: function() {
-        this.$('.inline-error').removeClass('inline-error');
+        this.clearValidationErrors();
         if(this.model.isValid(this.getFields(this.module))){
             this.setButtonStates(this.STATE.VIEW);
             this.handleSave();
@@ -378,22 +356,6 @@
         this.handleCancel();
         this.setButtonStates(this.STATE.VIEW);
         this.clearValidationErrors(this.editableFields);
-    },
-    /**
-     * Remove validation error decoration from fields
-     *
-     * @param fields Fields to remove error from
-     */
-    clearValidationErrors: function(fields){
-        _.defer(function(){
-            _.each(fields, function(field){
-                field.$el.parents('.record-cell').removeClass("inline-error");
-                if(field.clearErrorDecoration){
-                    field.clearErrorDecoration();
-                }
-            });
-        }, fields);
-
     },
 
     deleteClicked: function() {
