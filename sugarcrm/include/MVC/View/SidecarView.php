@@ -25,6 +25,8 @@ class SidecarView extends SugarView
      */
     public function preDisplay()
     {
+        global $app_strings;
+
         //Rebuild config file if it doesn't exist
         if(!file_exists('config.js')) {
            require_once('install/install_utils.php');
@@ -45,6 +47,9 @@ class SidecarView extends SugarView
         //Load sidecar theme css
         $theme = new SidecarTheme();
         $this->ss->assign("css_url", $theme->getCSSURL());
+
+        //Loading label
+        $this->ss->assign('LBL_LOADING', $app_strings['LBL_ALERT_TITLE_LOADING']);
     }
 
     /**

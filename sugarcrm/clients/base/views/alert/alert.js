@@ -113,7 +113,7 @@
             switch (level) {
                 case this.LEVEL.PROCESS:
                     template = '<div class="alert alert-process">' +
-                        '<strong>Loading</strong>' +
+                        '<strong>{{title}}</strong>' +
                         '<div class="loading">' +
                         '<span class="l1"></span><span class="l2"></span><span class="l3"></span>' +
                         '</div>' +
@@ -181,17 +181,17 @@
         getDefaultTitle: function(level) {
             switch (level) {
                 case this.LEVEL.PROCESS:
-                    return '';
+                    return app.lang.getAppString('LBL_ALERT_TITLE_LOADING');
                 case this.LEVEL.SUCCESS:
-                    return 'Success!';
+                    return app.lang.getAppString('LBL_ALERT_TITLE_SUCCESS');
                 case this.LEVEL.WARNING:
-                    return 'Warning!';
+                    return app.lang.getAppString('LBL_ALERT_TITLE_WARNING');
                 case this.LEVEL.INFO:
-                    return 'Notice!';
+                    return app.lang.getAppString('LBL_ALERT_TITLE_NOTICE');
                 case this.LEVEL.ERROR:
-                    return 'Error!';
+                    return app.lang.getAppString('LBL_ALERT_TITLE_ERROR');
                 case this.LEVEL.CONFIRMATION:
-                    return 'Warning!';
+                    return app.lang.getAppString('LBL_ALERT_TITLE_WARNING');
                 default:
                     return '';
             }
