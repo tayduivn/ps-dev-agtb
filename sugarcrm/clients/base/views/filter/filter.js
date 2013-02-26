@@ -251,5 +251,9 @@
                 this.render();
             }, this);
         }
+    },
+    _dispose: function() {
+        this.filters.off("reset");
+        app.view.Component.prototype._dispose.call(this);
     }
 })
