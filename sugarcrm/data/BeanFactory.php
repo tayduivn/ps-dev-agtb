@@ -87,7 +87,7 @@ class BeanFactory {
                 $result = $bean->retrieve($id, $encode, $deleted);
 
                 if(empty($result)) {
-                    if(!isset($params['strict_retrieve']) || $params['strict_retrieve'] != false) {
+                    if(!isset($params['strict_retrieve']) || $params['strict_retrieve'] === false) {
                         return $bean;
                     } else {
                         return null;
