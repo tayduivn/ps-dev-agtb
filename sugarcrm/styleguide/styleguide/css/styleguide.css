@@ -124,6 +124,8 @@ body {
   font-size: 18px;
   height: 38px;
   padding: 5px 28px 5px 8px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 .section-search .btn-toolbar {
