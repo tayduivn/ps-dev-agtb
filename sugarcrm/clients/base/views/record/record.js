@@ -518,7 +518,7 @@
 
             if (self.createMode) {
                 app.navigate(self.context, self.model);
-            } else if (!this.disposed) {
+            } else if (!self.disposed) {
                 self.render();
             }
         };
@@ -532,8 +532,8 @@
             },
             { deleteIfFails:false});
 
-        this.$(".record-save-prompt").hide();
-        if (!this.disposed) this.render();
+        self.$(".record-save-prompt").hide();
+        if (!self.disposed) self.render();
     },
 
     handleCancel: function() {
