@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Cases';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'event' => 'megamenu:create:click',
+        'route'=>'#'.$module_name.'/create',
         'label' =>'LNK_NEW_CASE',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,

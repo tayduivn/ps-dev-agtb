@@ -27,7 +27,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
-        'event' => 'megamenu:create:click'
+        'route'=>'#'.$module_name.'/create',
     ),
     array(
         'route'=>'#'.$module_name,

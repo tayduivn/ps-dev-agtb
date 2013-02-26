@@ -19,29 +19,6 @@
             app.events.trigger($currentTarget.data('event'), module, evt);
         }
     },
-    handleCreateLink:function (module, eventObj) {
-        app.router.navigate(
-            app.router.buildRoute(module, false, false),
-            {
-                trigger:true
-            }
-        );
-
-        app.drawer.open({
-            layout:'create',
-            context:{
-                create:true
-            }
-        }, _.bind(function (refresh) {
-            if (refresh) {
-                var collection = app.controller.context.get('collection');
-                if (collection) {
-                    collection.fetch();
-                }
-            }
-        }, this));
-
-    },
     hideMenu: function(event) {
         this.$(event.target).dropdown('toggle').closest('li.dropdown.open').removeClass('open');
     },
@@ -56,8 +33,6 @@
         app.events.on("app:view:change", this.handleViewChange, this);
         app.user.on("change:module_list", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
-        app.events.register("megamenu:create:click", this);
-        app.events.on("megamenu:create:click", this.handleCreateLink, this);
         if (this.layout) {
             this.layout.on("view:resize", this.resize, this);
         }
