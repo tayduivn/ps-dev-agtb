@@ -154,4 +154,43 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($result['aname'], 'Awesome', 'The Account Name Did Not Match');
     }
 
+    public function testSelectWithJoinToSelf()
+    {
+
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = 'Awesome';
+        $account->save();
+        $account_id = $account->id;
+
+        $account2 = BeanFactory::newBean('Accounts');
+        $account2->name = 'Awesome 2';
+        $account2->save();
+        
+        $account->load_relationship('members');
+        $account->members->add($account2->id);
+
+        $this->accounts[] = $account;
+        $this->accounts[] = $account2;
+
+        // don't need the accounts beans anymore, get rid of'em
+        unset($account2);
+        unset($account);
+        
+
+
+        // lets try a query
+        $sq = new SugarQuery();
+        $sq->select(array(array("accounts.name", 'aname')));
+        $sq->from(BeanFactory::newBean('Accounts'));
+        $sq->join('members');
+        $sq->where()->equals("id",$account_id);
+        
+        $result = $sq->execute();
+        // only 1 record
+        $result = reset($result);
+
+        $this->assertEquals('Awesome', $result['aname'], "Account doesn't match");
+
+    }
+
 }
