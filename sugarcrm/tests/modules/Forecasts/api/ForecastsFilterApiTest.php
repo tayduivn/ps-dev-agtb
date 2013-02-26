@@ -89,20 +89,6 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
         unset($this->api);
     }
 
-    /**
-     * Utility Method to get the ServiceMock with a valid user in it
-     *
-     * @param User $user
-     * @return ForecastWorksheetApiServiceMock
-     */
-    protected function _getServiceMock(User $user)
-    {
-        $serviceApi = new ForecastFilterApiServiceMock();
-        $serviceApi->user = $user;
-
-        return $serviceApi;
-    }
-
     protected function _getMockApi($class_name)
     {
         return $this->getMock($class_name);
@@ -117,7 +103,7 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["current_user"] = self::$reportee;
 
         $response = $this->api->forecastsCommitted(
-            $this->_getServiceMock(self::$manager['user']),
+            SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
             array('module' => 'Forecasts', 'timeperiod_id' => self::$timeperiod->id)
         );
 
@@ -134,7 +120,7 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["current_user"] = self::$reportee;
 
         $this->api->forecastsCommitted(
-            $this->_getServiceMock(self::$reportee),
+            SugarTestRestUtilities::getRestServiceMock(self::$reportee),
             array('module' => 'Forecasts', 'user_id' => self::$manager['user']->id)
         );
 
@@ -150,7 +136,7 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["current_user"] = self::$manager['user'];
 
         $this->api->forecastsCommitted(
-            $this->_getServiceMock(self::$manager['user']),
+            SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
             array('module' => 'Forecasts', 'user_id' => 'im_not_valid')
         );
 
@@ -166,7 +152,7 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["current_user"] = self::$reportee;
 
         $this->api->forecastsCommitted(
-            $this->_getServiceMock(self::$reportee),
+            SugarTestRestUtilities::getRestServiceMock(self::$reportee),
             array('module' => 'Forecasts', 'timeperiod_id' => 'im_not_valid')
         );
 
@@ -190,7 +176,7 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
 
 
         $this->api->forecastsCommitted(
-            $this->_getServiceMock(self::$reportee),
+            SugarTestRestUtilities::getRestServiceMock(self::$reportee),
             array('module' => 'Forecasts', 'timeperiod_id' => self::$timeperiod->id, 'forecast_type' => 'invalid_type')
         );
     }
@@ -213,7 +199,7 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
 
 
         $return = $this->api->forecastsCommitted(
-            $this->_getServiceMock(self::$reportee),
+            SugarTestRestUtilities::getRestServiceMock(self::$reportee),
             array('module' => 'Forecasts', 'timeperiod_id' => self::$timeperiod->id, 'forecast_type' => $forecast_type)
         );
 
