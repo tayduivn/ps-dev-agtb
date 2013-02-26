@@ -217,22 +217,25 @@ class SugarTestForecastUtilities
                     $return['included_opps_totals']['likely'] += $opp->amount;
                     $return['included_opps_totals']['best'] += $opp->best_case;
                     $return['included_opps_totals']['worst'] += $opp->worst_case;
-                    
+
                     if ($config['createWorksheet'] === true) {
                         $worksheet = SugarTestWorksheetUtilities::createWorksheet();
-                        $worksheet->user_id = $user->id;
-                        $worksheet->related_id = $product->id;
-                        $worksheet->related_forecast_type = 'Product';
+                        $worksheet->assigned_user_id = $user->id;
+                        $worksheet->parent_id = $product->id;
+                        $worksheet->parent_type = 'Opportunities';
                         $worksheet->forecast_type = 'Direct';
+                        $worksheet->draft = 1;
                         $worksheet->timeperiod_id = $config['timeperiod_id'];
+                        $worksheet->date_closed = $opp->date_closed;
+                        $worksheet->date_closed_timestamp = $opp->date_closed_timestamp;
                         $worksheet->best_case = $opp->best_case;
                         $worksheet->likely_case = $opp->amount;
                         $worksheet->worst_case = $opp->worst_case;
-                        $worksheet->op_probability = $opp->probability;
+                        $worksheet->probability = $opp->probability;
                         $worksheet->commit_stage = $opp->commit_stage;
                         $worksheet->currency_id = $opp->currency_id;
                         $worksheet->save();
-    
+
                         $return['opp_worksheets'][] = $worksheet;
                     }
                 }
