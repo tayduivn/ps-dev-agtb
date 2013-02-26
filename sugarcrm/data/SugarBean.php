@@ -2156,11 +2156,9 @@ class SugarBean
                $current_user,
                $sugar_version;
 
-        $currentLanguage = $_SESSION['authenticated_user_language'];
-
-        if (empty($currentLanguage)) {
-            $currentLanguage = $sugar_config['default_language'];
-        }
+        $currentLanguage = (!empty($_SESSION['authenticated_user_language'])) ?
+            $_SESSION['authenticated_user_language'] :
+            $sugar_config['default_language'];
 
         $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
 
