@@ -610,6 +610,8 @@
             self.context.forecasts.trigger("forecasts:commitButtons:enabled");
         }
 
+        app.forecasts.utils.adjustContentColHeight();
+
         return this;
     },
 

@@ -343,14 +343,14 @@ $mod_strings = array (
 
     // timeperiod config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-    'LBL_FORECASTS_CONFIG_TIMEPERIOD_SETUP_NOTICE' => 'Please note that Time Period page will be read only after the first commit or save draft; for this reason the time period should be set up carefully.',
-    'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the timeperiods users can forecast over.',
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD_SETUP_NOTICE' => 'Time Period settings cannot be changed after initial setup.',
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the Time Periods used for forecasting.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE' => 'Select the type of year your organization uses for accounting.',
-    'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the time periods you want to forecast over:',
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the type of Time Period',
     'LBL_FORECASTS_CONFIG_LEAFPERIOD' => 'Choose the sub period that you want to view your time period over:',
-    'LBL_FORECASTS_CONFIG_START_DATE' => 'Choose the date that you would like your time periods to start with each year:',
-    'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose number of future Time Periods you want users to see in the worksheet (Note: the number of Time Periods will be divided based on the Sub Time Period):',
-    'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose number of past Time Periods you want users to see in the worksheet (Note: the number of Time Periods will be divided based on the Sub Time Period):',
+    'LBL_FORECASTS_CONFIG_START_DATE' => 'Choose fiscal year start date',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose the number of future Time Periods to view in the worksheet. (Note: This number applies to the base Time Period selected. For example, choosing 2 with Yearly Time Period will show 8 future Quarters)',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose the number of past Time Periods to view in the worksheet. (Note: This number applies to the base Time Period selected. For example, choosing 2 with Monthly Time Period will show 6 past Months)',
 
     // ranges config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
@@ -364,8 +364,8 @@ $mod_strings = array (
 
     // scenarios config
     //TODO-sfa refactors the code references for scenarios to be scenarios (SFA-337).
-    'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS' => 'Select the column you would like the user to fill out for their forecast for each opportunity.',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS' => 'Choose the Scenarios to include on the forecasting worksheet.',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Likely is based on the amount entered in the Opportunities module.',
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_LIKELY' => 'Likely',
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_BEST' => 'Best',
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_WORST' => 'Worst',
