@@ -30,6 +30,13 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-plus',
     ),
     array(
+        'route'=>'#'.$module_name.'/vcard-import',
+        'label' =>'LNK_IMPORT_VCARD',
+        'acl_action'=>'edit',
+        'acl_module'=>$module_name,
+        'icon' => 'icon-plus',
+    ),
+    array(
         'route'=>'#'.$module_name,
         'label' =>'LNK_PROSPECT_LIST',
         'acl_action'=>'list',
