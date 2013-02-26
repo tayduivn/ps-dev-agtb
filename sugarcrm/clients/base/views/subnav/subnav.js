@@ -46,7 +46,7 @@
         }
         this.context.on("subnav:set:title",function(title){
             this.title = title;
-            if(!this.disposed) this.render();
+            this.render();
         }, this);
     },
     /**
@@ -95,7 +95,7 @@
                 "change:"+this.meta.field,
                 function() {
                     self.title = self.model.get(this.meta.field);
-                    if(!self.disposed) self.render();
+                    self.render();
                 },
                 this
           );
@@ -125,12 +125,6 @@
     },
     _dispose: function() {
         $(window).off("resize.subnav");
-        if(this.model){
-            this.model.off(null, null, this);
-        }
-        if(this.context){
-            this.context.off(null, null, this);
-        }
         app.view.View.prototype._dispose.call(this);
     }
 })

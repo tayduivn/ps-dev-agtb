@@ -27,7 +27,7 @@
         });
         app.events.on("app:sync:complete", function() {
             self.tourBgImg = app.config.siteUrl + "/clients/base/views/tourguide/tour.jpg";
-            if(!self.disposed) self.render();
+            self.render();
             if( app.user.get("show_tour") ) {
                 // disable the tour flag on initial app sync
                 app.api.call("update", app.api.buildURL("me/tour"));

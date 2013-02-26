@@ -118,7 +118,7 @@
         if (this.preview === true) {
             self.preview = false;
             self.clearError();
-            if(!this.disposed) self.render();
+            if(!self.disposed) self.render();
         } else {
             var confirmMessage = app.lang.get('LBL_IMAGE_DELETE_CONFIRM', self.module);
             if (confirm(confirmMessage)) {

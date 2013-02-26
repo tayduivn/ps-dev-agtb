@@ -398,13 +398,5 @@
         if (this.collection) {
             this.collection.on("reset", this.render, this);
         }
-    },
-    _dispose: function(){
-        this.context.off(null, null, this);
-        this.layout.off(null, null, this);
-        if(this.collection){
-            this.collection.off(null, null, this);
-        }
-        app.view.views.EditableView.prototype._dispose.call(this);
     }
 })

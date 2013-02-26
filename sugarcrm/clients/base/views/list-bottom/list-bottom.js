@@ -126,14 +126,6 @@
         }
     },
 
-    _dispose: function(){
-        if(this.collection){
-            this.collection.off(null, null, this);
-        }
-        this.layout.off(null, null, this);
-        app.view.View.prototype._dispose.call(this);
-    },
-
     // For certain layouts that want to trigger
     toggleVisibility: function(e) {
         if (e) {
