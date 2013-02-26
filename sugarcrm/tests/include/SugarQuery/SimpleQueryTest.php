@@ -172,13 +172,13 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->accounts[] = $account;
         $this->accounts[] = $account2;
 
-        // don't need the contact bean anymore, get rid of it
+        // don't need the accounts beans anymore, get rid of'em
         unset($account2);
         unset($account);
-        // get the new contact
+        
 
 
-
+        // lets try a query
         $sq = new SugarQuery();
         $sq->select(array(array("accounts.name", 'aname')));
         $sq->from(BeanFactory::newBean('Accounts'));
