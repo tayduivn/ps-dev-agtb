@@ -354,13 +354,13 @@ $mod_strings = array (
 
     // ranges config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-    'LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE' => 'Please note that Ranges page will be read only after the first commit or save draft; for this reason the Forecast Ranges should be set up carefully.',
+    'LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE' => 'Range settings cannot be changed after initial setup.',
     'LBL_FORECASTS_CONFIG_RANGES' => 'Forecast Range Options:',
-    'LBL_FORECASTS_CONFIG_RANGES_OPTIONS' => 'Select the way you would like to categorize opportunities.',
-    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to be included or excluded from a forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be excluded from the forecast.',
+    'LBL_FORECASTS_CONFIG_RANGES_OPTIONS' => 'Configure default probability Ranges for opportunities in the forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'Opportunities can be included or excluded from the forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'Opportunities can be tagged as Include, Upside, or Exclude in the forecast. Upside is not included in forecasts by default, but allows users to further classify the excluded opportunities based on likelihood to close.',
     'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_RANGES' => 'Custom Ranges: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed range, excluded range and any others that you setup.',
-    'LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO' => 'The Exclude Range is from 0% to the minimum of the previous Forecast Range by default.',
+    'LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO' => 'All other opportunities will be excluded.',
 
     // scenarios config
     //TODO-sfa refactors the code references for scenarios to be scenarios (SFA-337).
