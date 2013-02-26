@@ -145,7 +145,7 @@ abstract class SugarApi {
             throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');
         }
 
-        $bean->save();
+        $bean->save(TRUE);
 
         /*
          * Refresh the bean with the latest data.
