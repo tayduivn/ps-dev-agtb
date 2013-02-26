@@ -311,22 +311,8 @@
     },
 
     _renderHtml: function() {
-        this.checkAclForButtons();
         this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
-    },
-
-    /**
-     * Check to see if the buttons should be displayed
-     */
-    checkAclForButtons: function() {
-        if (this.context.get("model").module === "Users") {
-            this.hasAccess = (app.user.get("id") == this.context.get("model").id);
-        } else if (this.createMode) {
-            this.hasAccess = true;
-        } else {
-            this.hasAccess = app.acl.hasAccessToModel("edit", this.model);
-        }
     },
 
     toggleMoreLess: function() {

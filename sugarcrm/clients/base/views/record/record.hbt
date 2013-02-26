@@ -37,11 +37,9 @@
                           <a href="{{#if collection.next}}#{{modelRoute collection.next def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible next-row{{#unless collection.next}} disabled{{/unless}}"><i class="icon-chevron-right"></i></a>
                     </div>
                     {{/unless}}
-                    {{#if hasAccess}}
                         {{#each meta.buttons}}
                             {{field ../this}}
                         {{/each}}
-                    {{/if}}
                 </div>
             </div>
         {{/if}}
