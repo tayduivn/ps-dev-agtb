@@ -3792,6 +3792,13 @@ $app_strings = array (
     'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and create new',
     'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
+
+    //for sidecar alert view
+    'LBL_ALERT_TITLE_SUCCESS' => 'Success!',
+    'LBL_ALERT_TITLE_WARNING' => 'Warning!',
+    'LBL_ALERT_TITLE_NOTICE' => 'Notice!',
+    'LBL_ALERT_TITLE_ERROR' => 'Error!',
+    'LBL_ALERT_TITLE_LOADING' => 'Loading',
 );
 
 
