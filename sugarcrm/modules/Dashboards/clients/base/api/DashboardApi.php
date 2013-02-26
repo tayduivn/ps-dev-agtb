@@ -49,7 +49,7 @@ class DashboardApi extends SugarApi
                 'shortHelp' => 'Get dashboards for home',
                 'longHelp' => 'include/api/help/get_dashboards.html',
             ),
-            'createDashboardForModulePost' => array(
+            'createDashboardForModule' => array(
                 'reqType' => 'POST',
                 'path' => array('Dashboards', '<module>'),
                 'pathVars' => array('', 'module'),
@@ -57,24 +57,8 @@ class DashboardApi extends SugarApi
                 'shortHelp' => 'Create a new dashboard for a module',
                 'longHelp' => 'include/api/help/create_dashboard.html',
             ),
-            'createDashboardForHomePost' => array(
+            'createDashboardForHome' => array(
                 'reqType' => 'POST',
-                'path' => array('Dashboards'),
-                'pathVars' => array(''),
-                'method' => 'createDashboard',
-                'shortHelp' => 'Create a new dashboard for home',
-                'longHelp' => 'include/api/help/create_dashboard.html',
-            ),
-            'createDashboardForModulePut' => array(
-                'reqType' => 'PUT',
-                'path' => array('Dashboards', '<module>'),
-                'pathVars' => array('', 'module'),
-                'method' => 'createDashboard',
-                'shortHelp' => 'Create a new dashboard for a module',
-                'longHelp' => 'include/api/help/create_dashboard.html',
-            ),
-            'createDashboardForHomePut' => array(
-                'reqType' => 'PUT',
                 'path' => array('Dashboards'),
                 'pathVars' => array(''),
                 'method' => 'createDashboard',
@@ -96,15 +80,12 @@ class DashboardApi extends SugarApi
     {
         global $current_user;
         
-        if (!isset($args['module'])) {
-            $args['module'] = 'Home';
-        }
-
+        $args['dashboard_module'] = empty($args['module']) ? 'Home' : $args['module'];
         $dashboards = BeanFactory::newBean('Dashboards')->getDashboardsForUser($current_user, $args);
 
         $sortedResults = array();
         foreach ( $dashboards['records'] as $dashboard ) {
-            $sortedResults[] = array('id'=>$dashboard->id,'name'=>$dashboard->name, 'url' => $api->getResourceURI('Dashboards/'.$dashboard->id));
+            $sortedResults[] = array('id'=>$dashboard->id,'name'=>$dashboard->name, 'view'=>$dashboard->view, 'url' => $api->getResourceURI('Dashboards/'.$dashboard->id));
         }
 
         return array(
@@ -121,10 +102,7 @@ class DashboardApi extends SugarApi
      * @return mixed
      */
     public function createDashboard($api, $args) {
-        if (!isset($args['module'])) {
-            $args['module'] = 'Home';
-        }
-
+        $args['dashboard_module'] = empty($args['module']) ? 'Home' : $args['module'];
         $bean = BeanFactory::newBean('Dashboards');
         
         if (!$bean->ACLAccess('save')) {
@@ -144,10 +122,5 @@ class DashboardApi extends SugarApi
         $bean = $this->loadBean($api, $args, 'view');
         $data = $this->formatBean($api, $args, $bean);
         return $data;
-    }
-    
-    protected function matchModule( $module ) {
-        $GLOBALS['log']->fatal(print_r(array_keys($GLOBALS['beanList'])));
-        return isset($GLOBALS['beanList'][$module]) || $module == 'Home';
     }
 }

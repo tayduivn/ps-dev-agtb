@@ -59,7 +59,10 @@ class Dashboard extends Basic
     public function getDashboardsForUser( User $user, $options = array() )
     {
         $order = !empty($options['order_by']) ? $options['order_by'] : 'date_entered desc';
-        $from = "assigned_user_id = '".$this->db->quote($user->id)."' and module ='".$options['module']."'";
+        $from = "assigned_user_id = '".$this->db->quote($user->id)."' and dashboard_module ='".$this->db->quote($options['dashboard_module'])."'";
+        if (!empty($options['view'])) {
+            $from .= " and view ='".$this->db->quote($options['view'])."'";
+        }
         $offset = !empty($options['offset']) ? (int)$options['offset'] : 0;
         $limit = !empty($options['limit']) ? (int)$options['limit'] : -1;
         $result = $this->get_list($order,$from,$offset,$limit,-99,0);
@@ -74,7 +77,6 @@ class Dashboard extends Basic
     function save($check_notify = FALSE)
     {
         $this->assigned_user_id = $GLOBALS['current_user']->id;
-
         return parent::save($check_notify);
     }
 }

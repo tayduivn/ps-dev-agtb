@@ -30,26 +30,46 @@ $dictionary['Dashboard'] = array(
   'table' => 'dashboards',
   'fields' => 
   array (
-      'module' =>
-      array (
-          'required' => false,
-          'name' => 'module',
-          'vname' => 'LBL_MODULE',
-          'type' => 'varchar',
-          'dbType' => 'varchar',
-          'massupdate' => 0,
-          'no_default' => false,
-          'comments' => '',
-          'help' => '',
-          'importable' => 'true',
-          'duplicate_merge' => 'disabled',
-          'duplicate_merge_dom_value' => '0',
-          'audited' => false,
-          'reportable' => true,
-          'unified_search' => false,
-          'merge_filter' => 'disabled',
-          'calculated' => false,
-      ),          
+    'dashboard_module' =>
+    array (
+      'required' => false,
+      'name' => 'dashboard_module',
+      'vname' => 'LBL_DASHBOARD_MODULE',
+      'type' => 'varchar',
+      'dbType' => 'varchar',
+      'massupdate' => 0,
+      'no_default' => false,
+      'comments' => '',
+      'help' => '',
+      'importable' => 'true',
+      'duplicate_merge' => 'disabled',
+      'duplicate_merge_dom_value' => '0',
+      'audited' => false,
+      'reportable' => true,
+      'unified_search' => false,
+      'merge_filter' => 'disabled',
+      'calculated' => false,
+      ),
+    'view' =>
+    array (
+      'required' => false,
+      'name' => 'view',
+      'vname' => 'LBL_VIEW',
+      'type' => 'varchar',
+      'dbType' => 'varchar',
+      'massupdate' => 0,
+      'no_default' => false,
+      'comments' => '',
+      'help' => '',
+      'importable' => 'true',
+      'duplicate_merge' => 'disabled',
+      'duplicate_merge_dom_value' => '0',
+      'audited' => false,
+      'reportable' => true,
+      'unified_search' => false,
+      'merge_filter' => 'disabled',
+      'calculated' => false,
+    ),
     'metadata' => 
     array (
       'required' => false,
@@ -72,7 +92,7 @@ $dictionary['Dashboard'] = array(
     ),
   ),
   'indices' => array (
-    array ('name' => 'user_module', 'type' => 'index', 'fields' => array('assigned_user_id','module')),
+    array ('name' => 'user_module_view', 'type' => 'index', 'fields' => array('assigned_user_id','dashboard_module', 'view')),
   ),
   'relationships' => 
   array (
