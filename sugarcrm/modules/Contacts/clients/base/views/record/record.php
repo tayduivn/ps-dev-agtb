@@ -124,7 +124,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 'team_name',
                 array(
                     'name' => 'date_modified_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_MODIFIED',
                     'fields' => array(
@@ -142,7 +142,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'date_entered_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_ENTERED',
                     'fields' => array(

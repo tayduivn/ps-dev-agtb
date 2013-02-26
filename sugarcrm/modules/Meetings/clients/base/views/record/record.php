@@ -75,7 +75,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                 'join_url',
                 array(
                     'name' => 'date_modified_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_MODIFIED',
                     'fields' => array(
@@ -94,7 +94,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                 'reminder_checked',
                 array(
                     'name' => 'date_entered_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_ENTERED',
                     'fields' => array(

@@ -49,7 +49,7 @@ $viewdefs['Users']['summer']['view']['record'] = array(
             'labelsOnTop' => false,
             'placeholders' => true,
             'fields' => array(
-                array('name' => 'picture', 'noedit' => true, 'span' => 2, 'label' => '', 'type' => 'image'),
+                array('name' => 'picture', 'readonly' => true, 'span' => 2, 'label' => '', 'type' => 'image'),
                 array('name' => 'full_name', 'cell_css' => 'bigcell', 'css' => 'big', 'span' => 10, 'label' => '', 'placeholder' => 'LBL_NAME'),
             ),
         ),
