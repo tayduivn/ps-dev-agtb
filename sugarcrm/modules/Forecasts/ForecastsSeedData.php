@@ -213,7 +213,10 @@ class ForecastsSeedData
                     self::createManagerWorksheet($commit_type_array[0], $forecast->toArray());
 
                 }
+
+                self::commitRepOpportunities($commit_type_array[0], $timeperiod_id);
             }
+
             // loop though all the managers and commit their forecast
             $managers = array(
                 'seed_sarah_id',
@@ -246,5 +249,29 @@ class ForecastsSeedData
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $worksheet->reporteeForecastRollUp($user, $data);
+    }
+
+    protected static function commitRepOpportunities($user_id, $timeperiod)
+    {
+        /* @var $tp TimePeriod */
+        $tp = BeanFactory::getBean('TimePeriods', $timeperiod);
+
+        $sq = new SugarQuery();
+        $sq->from(BeanFactory::getBean('Opportunities'))->where()
+            ->equals('assigned_user_id', $user_id)
+            ->queryAnd()
+            ->gte('date_closed_timestamp', $tp->start_date_timestamp)
+            ->lte('date_closed_timestamp', $tp->end_date_timestamp);
+        $beans = $sq->execute();
+
+        foreach ($beans as $opp) {
+            /* @var $opportunity Opportunity */
+            $opportunity = BeanFactory::getBean('Opportunities');
+            $opportunity->loadFromRow($opp);
+
+            /* @var $opp_wkst ForecastWorksheet */
+            $opp_wkst = BeanFactory::getBean('ForecastWorksheets');
+            $opp_wkst->saveRelatedOpportunity($opportunity, true);
+        }
     }
 }
