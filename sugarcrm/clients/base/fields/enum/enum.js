@@ -36,7 +36,6 @@
         } else if(_.isObject(this.def.options)) {
             optionsKeys = _.keys(this.def.options);
         }
-
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
         //The chosen plugin displays it correctly, but the value is not set to the select and the model.
@@ -73,13 +72,13 @@
          * to make it differ the dropdownCss.width must be set (i.e.,100%,auto)
          */
         if (this.def.dropdown_width) {
-            select2Options.dropdownCss = {width: this.def.dropdown_width};
+            select2Options.dropdownCss = { width: this.def.dropdown_width };
         }
 
         /* All select2 dropdowns should only show the search bar for fields with 7 or more values,
          * this adds the ability to specify that threshold in metadata.
          */
-        select2Options.minimumResultsForSearch = this.def.searchBarThreshold?this.def.searchBarThreshold:7;
+        select2Options.minimumResultsForSearch = this.def.searchBarThreshold ? this.def.searchBarThreshold : 7;
 
         if(this.tplName === 'edit') {
             this.$(this.fieldTag).select2(select2Options);
@@ -89,7 +88,43 @@
         }
         return this;
     },
-    unformat:function(value) {
-        return value;
+    /**
+     *  Convert select2 value into model appropriate value for sync
+     *
+     * @param value Value from select2 widget
+     * @return {String|Array} Unformatted value as String or String Array
+     */
+    unformat: function(value){
+        if(this.def.isMultiSelect && _.isNull(value)){
+            return [];  // Returning value that is null equivalent to server.  Backbone.js won't sync attributes with null values.
+        } else {
+            return value;
+        }
+    },
+    /**
+     * Convert server value into one appropriate for display in widget
+     *
+     * @param value
+     * @return {Array} Value for select2 widget as String Array
+     */
+    format: function(value){
+        if(this.def.isMultiSelect && _.isString(value)){
+            return this.convertMultiSelectDefaultString(value);
+        } else {
+            return value;
+        }
+    },
+    /**
+     * Converts multiselect default strings into array of option keys for template
+     * @param {String} defaultString string of the format "^option1^,^option2^,^option3^"
+     * @return {Array} of the format ["option1","option2","option3"]
+     */
+    convertMultiSelectDefaultString: function(defaultString) {
+        var result = defaultString.split(",");
+        _.each(result, function(value, key) {
+            result[key] = value.replace(/\^/g,"");
+        });
+        return result;
     }
+
 })
