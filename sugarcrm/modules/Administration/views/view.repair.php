@@ -38,12 +38,6 @@ class ViewRepair extends SugarView
 	    $randc = new RepairAndClear();
         $actions = array();
         $actions[] = 'clearAll';
-        //BEGIN SUGARCRM flav=pro ONLY
-        //Add resetForecasting as an action to run if developer mode is turned on to allow for forecasts settings to be reset
-        if(inDeveloperMode()) {
-            $actions[] = 'resetForecasting';
-        }
-        //END SUGARCRM flav=pro ONLY
         $randc->repairAndClearAll($actions, array(translate('LBL_ALL_MODULES')), false,true);
         
         echo <<<EOHTML

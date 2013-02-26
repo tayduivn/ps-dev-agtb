@@ -80,6 +80,10 @@ switch ($_REQUEST['view']) {
                 $send_module = 'ProspectLists';
         if ($send_module == 'Targets')
                 $send_module = 'Prospects';
+        if($send_module == 'OAuthKeys') {
+        	$send_module = 'Administration';
+        	$send_action = 'OAuthKeys';
+        }
 		// FG - Bug 39819 - Check for custom help files
 		$helpPath = SugarAutoLoader::existingCustomOne('modules/'.$send_module.'/language/'.$send_lang.'.help.'.$send_action.'.html');
 

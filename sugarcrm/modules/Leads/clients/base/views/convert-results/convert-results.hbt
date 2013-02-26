@@ -1,38 +1,18 @@
-{{#with this.model.attributes}}
-{{#eq converted "1"}}
-<table class="table table-striped converted-results">
+{{#eq model.attributes.converted "1"}}
+<table class="table table-striped dataTable converted-results">
         <tbody role="alert" aria-live="polite" aria-relevant="all">
-            {{#if contact_id}}
-               <tr class="contacts">
-                   <td><span class="title"></span><span class="seperator">: </span><span class="associated">{{contact_name}}</span></td>
-                   <td class="preview-list-cell">
-                       <a class="preview-list-item" rel="tooltip" data-placement="bottom" data-title="{{str "LBL_PREVIEW"}}" data-module="Contacts" data-id="{{contact_id}}">
-                           <i class="icon-eye-open"></i>
-                       </a>
-                   </td>
-               </tr>
-            {{/if}}
-            {{#if account_id}}
-                <tr class="accounts">
-                    <td><span class="title"></span><span class="seperator">: </span><span class="associated">{{account_name}}</span></td>
-                    <td class="preview-list-cell">
-                        <a class="preview-list-item" rel="tooltip" data-placement="bottom" data-title="{{str "LBL_PREVIEW"}}" data-module="Accounts" data-id="{{account_id}}">
-                            <i class="icon-eye-open"></i>
-                        </a>
-                    </td>
-                </tr>
-            {{/if}}
-            {{#if opportunity_id}}
-                <tr class="opportunities">
-                    <td><span class="title"></span><span class="seperator">: </span><span class="associated">{{opportunity_name}}</span></td>
-                    <td class="preview-list-cell">
-                        <a class="preview-list-item" rel="tooltip" data-placement="bottom" data-title="{{str "LBL_PREVIEW"}}" data-module="Opportunities" data-id="{{opportunity_id}}">
-                            <i class="icon-eye-open"></i>
-                        </a>
-                    </td>
-                </tr>
-            {{/if}}
+            {{#each associatedModels.models}}
+            <tr name="{{module}}_{{attributes.id}}" class="single">
+                <td>
+                    <div class="controls span12">{{attributes.row_title}}: {{attributes.name}}</div>
+                </td>
+                <td class="preview-list-cell">
+                    <a class="preview-list-item" rel="tooltip" data-placement="bottom" data-title="{{str "LBL_PREVIEW"}}" data-module="{{module}}" data-id="{{attributes.id}}">
+                        <i class="icon-eye-open"></i>
+                    </a>
+                </td>
+            </tr>
+            {{/each}}
         </tbody>
 </table>
 {{/eq}}
-{{/with}}

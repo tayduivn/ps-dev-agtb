@@ -225,6 +225,7 @@ $mod_strings = array (
 	'LBL_BUTTON_REPLY_KEY'		=> 'r',
 	'LBL_BUTTON_REPLY_TITLE'	=> 'Reply',
 	'LBL_BUTTON_REPLY'			=> 'Reply',
+        'LBL_BUTTON_REPLY_ALL'		=> 'Reply All',
 	'LBL_CASES_SUBPANEL_TITLE'	=> 'Cases',
 	'LBL_INBOUND_TITLE'			=> 'Inbound Email',
 	'LBL_INTENT'				=> 'Intent',

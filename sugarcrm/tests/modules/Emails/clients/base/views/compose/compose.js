@@ -120,9 +120,9 @@ describe("Emails.Views.Compose", function() {
         beforeEach(function() {
             expectedResult = {'id': '123', 'module': 'Foo'};
             recipientModel = new Backbone.Model({
-                'id': expectedResult.id,
-                '_module': expectedResult.module
+                'id': expectedResult.id
             });
+            recipientModel.module = expectedResult.module;
             contextTriggerStub = sinon.stub(view.context, 'trigger', function(trigger, recipient) {
                 if (recipient) {
                     actualResult = recipient.attributes;
@@ -159,7 +159,7 @@ describe("Emails.Views.Compose", function() {
                 {'email_address': 'foo@bar.com'},
                 {'email_address': expectedResult.email, 'primary_address': 1}
             ]);
-            recipientModel.set('assigned_user_name', expectedResult.name);
+            recipientModel.set('name', expectedResult.name);
             view.populateToRecipients(recipientModel);
             expect(actualResult).toEqual(expectedResult);
         });
@@ -319,83 +319,34 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe("insert templates", function() {
-        xdescribe("replacing signatures", function() {
-            var apiCallStub,
-                insertTemplateAttachmentsStub,
-                signatureStub;
-
-            beforeEach(function() {
-                insertTemplateAttachmentsStub = sinon.stub(view, 'insertTemplateAttachments');
-                signatureStub                 = sinon.stub(view, '_updateEditorWithSignature');
-
-                apiCallStub = sinon.stub(app.api, 'call', function(method, myURL, model, options) {
-                    options.success(model, null, options);
-                });
-
-                view.model.off('change');
-            });
-
-            afterEach(function() {
-                apiCallStub.restore();
-                insertTemplateAttachmentsStub.restore();
-                signatureStub.restore();
-            });
-
-            it('should call to set signature in editor with default signature id when not signature not selected', function() {
-                var defaultId = '123445';
-                view.defaultSignatureId = defaultId;
-                view.insertTemplate(null);
-
-                expect(apiCallStub.callCount).toEqual(0);
-                expect(insertTemplateAttachmentsStub.callCount).toEqual(0);
-                expect(signatureStub).toHaveBeenCalledWith(defaultId);
-            });
-
-            it('should call to set signature in editor with selected signature instead of default signature id', function() {
-                var defaultId = '123445';
-                var selectedSignatureId = '9999999';
-
-                view.defaultSignatureId = defaultId;
-                view.model.set('signature_id', selectedSignatureId);
-                view.insertTemplate(null);
-
-                expect(apiCallStub.callCount).toEqual(0);
-                expect(insertTemplateAttachmentsStub.callCount).toEqual(0);
-                expect(signatureStub).toHaveBeenCalledWith(selectedSignatureId);
-            });
-        });
-
         describe("replacing templates", function() {
             var insertTemplateAttachmentsStub,
                 createBeanCollectionStub,
-                field,
-                setEditorContentStub,
-                getFieldStub;
+                updateEditorWithSignatureStub;
 
             beforeEach(function() {
                 insertTemplateAttachmentsStub = sinon.stub(view, 'insertTemplateAttachments');
-                field                         = SugarTest.createField("base", "html_email", "htmleditable_tinymce", "edit");
-                setEditorContentStub          = sinon.stub(field, "setEditorContent", function() {});
-                getFieldStub                  = sinon.stub(view, 'getField').returns(field);
                 createBeanCollectionStub      = sinon.stub(app.data, 'createBeanCollection', function() {
                     return {fetch:function(){}}
                 });
+                updateEditorWithSignatureStub = sinon.stub(view, "_updateEditorWithSignature");
 
                 view.model.off('change');
             });
 
             afterEach(function() {
                 insertTemplateAttachmentsStub.restore();
-                setEditorContentStub.restore();
-                getFieldStub.restore();
                 createBeanCollectionStub.restore();
+                updateEditorWithSignatureStub.restore();
             });
 
             it('should not populate editor if template parameter is not an object', function() {
                 view.insertTemplate(null);
-                expect(getFieldStub.callCount).toBe(0);
-                expect(setEditorContentStub.callCount).toBe(0);
+                expect(createBeanCollectionStub.callCount).toBe(0);
                 expect(insertTemplateAttachmentsStub.callCount).toBe(0);
+                expect(updateEditorWithSignatureStub.callCount).toBe(0);
+                expect(view.model.get("subject")).toBeUndefined();
+                expect(view.model.get("html_body")).toBeUndefined();
             });
 
             it("should not set content of subject when the template doesn't include a subject", function() {
@@ -407,10 +358,10 @@ describe("Emails.Views.Compose", function() {
                     });
 
                 view.insertTemplate(templateModel);
-                expect(getFieldStub.callCount).toBe(1);
-                expect(setEditorContentStub.callCount).toBe(1);
                 expect(createBeanCollectionStub.callCount).toBe(1);
+                expect(updateEditorWithSignatureStub.callCount).toBe(1);
                 expect(view.model.get('subject')).toBeUndefined();
+                expect(view.model.get("html_body")).toBe(bodyHtml);
             });
 
             it('should set content of editor with html version of template', function() {
@@ -424,13 +375,13 @@ describe("Emails.Views.Compose", function() {
                     });
 
                 view.insertTemplate(templateModel);
-                expect(getFieldStub.callCount).toBe(1);
-                expect(setEditorContentStub.withArgs(bodyHtml).callCount).toBe(1);
                 expect(createBeanCollectionStub.callCount).toBe(1);
+                expect(updateEditorWithSignatureStub.callCount).toBe(1);
                 expect(view.model.get('subject')).toBe(subject);
+                expect(view.model.get("html_body")).toBe(bodyHtml);
             });
 
-            it('should set content of editor with text only version of template', function () {
+            it('should set content of editor with text only version of template', function() {
                 var Bean          = SUGAR.App.Bean,
                     bodyHtml      = '<h1>Test</h1>',
                     bodyText      = 'Test',
@@ -444,11 +395,27 @@ describe("Emails.Views.Compose", function() {
                     });
 
                 view.insertTemplate(templateModel);
-                expect(getFieldStub.callCount).toBe(1);
-                expect(setEditorContentStub.withArgs(bodyText).callCount).toBe(1);
                 expect(createBeanCollectionStub.callCount).toBe(1);
-                expect(view.model.get('subject')).toEqual(subject);
+                expect(updateEditorWithSignatureStub.callCount).toBe(1);
+                expect(view.model.get('subject')).toBe(subject);
+                expect(view.model.get("html_body")).toBe(bodyText);
             });
+
+            it("should call to insert the signature that was marked as the last one selected", function() {
+                var bodyHtml      = '<h1>Test</h1>',
+                    subject       = 'This is my subject',
+                    templateModel = new app.Bean({
+                        id:        '1234',
+                        subject:   subject,
+                        body_html: bodyHtml
+                    }),
+                    signature     = new app.Bean({id: "abcd"});
+
+                view._lastSelectedSignature = signature;
+
+                view.insertTemplate(templateModel);
+                expect(updateEditorWithSignatureStub).toHaveBeenCalledWith(signature);
+            })
         });
     });
 
@@ -475,74 +442,172 @@ describe("Emails.Views.Compose", function() {
             apiStub.restore();
         });
 
-        dataProvider = [
-            {
-                message:   "should format a signature with &lt; and/or &gt; to use < and > respectively",
-                signature: "This &lt;signature&gt; has HTML-style brackets",
-                expected:  "This <signature> has HTML-style brackets"
-            },
-            {
-                message:   "should leave a signature as is if &lt; and &gt; are not found",
-                signature: "This signature has no HTML-style brackets",
-                expected:  "This signature has no HTML-style brackets"
-            }
-        ];
-
-        _.each(dataProvider, function(data) {
-            it(data.message, function() {
-                var actual = view._formatSignature(data.signature);
-                expect(actual).toBe(data.expected);
-            });
-        }, this);
-
-        describe("insert a signature", function() {
-            var field,
-                fieldStub;
-
-            beforeEach(function() {
-                field = {
-                    _content: "my message body is rockin'",
-
-                    getEditorContent: function() {
-                        return this._content;
-                    },
-
-                    setEditorContent: function(content) {
-                        this._content = content;
-                    }
+        it("should change the last selected signature, on success, to the one that is retrieved", function() {
+            var id        = "abcd",
+                signature = new app.Bean({id: id}),
+                results   = {
+                    id:             id,
+                    name:           "Signature A",
+                    signature:      "Regards",
+                    signature_html: "&lt;p&gt;Regards&lt;/p&gt;"
                 };
 
-                fieldStub = sinon.stub(view, "getField");
-                fieldStub.returns(field);
-            });
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith("GET", new RegExp(".*\/rest\/v10\/Signatures\/" + id + ".*"), [
+                200,
+                {"Content-Type": "application/json"},
+                JSON.stringify(results)
+            ]);
 
-            afterEach(function() {
-                fieldStub.restore();
-            });
+            view._lastSelectedSignature = null;
+            view._updateEditorWithSignature(signature);
+            SugarTest.server.respond();
 
+            expect(view._lastSelectedSignature).toEqual(results);
+        });
+
+        it("should not change the last selected signature, on success, when no signature is returned", function() {
+            var id        = "abcd",
+                signature = new app.Bean({id: id}),
+                results   = [];
+
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith("GET", new RegExp(".*\/rest\/v10\/Signatures\/" + id + ".*"), [
+                200,
+                {"Content-Type": "application/json"},
+                JSON.stringify(results)
+            ]);
+
+            view._lastSelectedSignature = null;
+            view._updateEditorWithSignature(signature);
+            SugarTest.server.respond();
+
+            expect(view._lastSelectedSignature).toBeNull();
+        });
+
+        it("should not change the last selected signature on error", function() {
+            var id        = "abcd",
+                signature = new app.Bean({id: id});
+                //alertStub = sinon.stub(app.alert);
+
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith("GET", new RegExp(".*\/rest\/v10\/Signatures\/" + id + ".*"), [404, {}, ""]);
+
+            view._lastSelectedSignature = null;
+            view._updateEditorWithSignature(signature);
+            SugarTest.server.respond();
+
+            expect(view._lastSelectedSignature).toBeNull();
+
+            //alertStub.restore();
+        });
+
+        describe("signature helpers", function() {
             dataProvider = [
                 {
-                    message:   "should insert a signature because signature is an object and the signature_html attribute exists",
-                    signature: {signature_html: "<b>Sincerely, John</b>"},
-                    expected:  "my message body is rockin'<b>Sincerely, John</b>"
+                    message:   "should format a signature with &lt; and/or &gt; to use < and > respectively",
+                    signature: "This &lt;signature&gt; has HTML-style brackets",
+                    expected:  "This <signature> has HTML-style brackets"
                 },
                 {
-                    message:   "should not insert a signature because signature is not an object",
-                    signature: "<b>Sincerely, John</b>",
-                    expected:  "my message body is rockin'"
-                },
-                {
-                    message:   "should not insert a signature because the signature_html attribute does not exist",
-                    signature: {sig_html: "<b>Sincerely, John</b>"},
-                    expected:  "my message body is rockin'"
+                    message:   "should leave a signature as is if &lt; and &gt; are not found",
+                    signature: "This signature has no HTML-style brackets",
+                    expected:  "This signature has no HTML-style brackets"
                 }
             ];
 
             _.each(dataProvider, function(data) {
                 it(data.message, function() {
-                    view._insertSignature(data.signature);
-                    var actual = field.getEditorContent();
+                    var actual = view._formatSignature(data.signature);
                     expect(actual).toBe(data.expected);
+                });
+            }, this);
+
+            var tag = "<signature />";
+
+            dataProvider = [
+                {
+                    message:  "should prepend the signature block at the absolute beginning when <body> is not found",
+                    body:     "my message body is rockin'",
+                    prepend:  true,
+                    expected: tag + "my message body is rockin'"
+                },
+                {
+                    message:  "should prepend the signature block inside <body> when <body> is found",
+                    body:     "<html><head></head><body>my message body is rockin'",
+                    prepend:  true,
+                    expected: "<html><head></head><body>" + tag + "my message body is rockin'"
+                },
+                {
+                    message:  "should append the signature block at the absolute end when </body> is not found",
+                    body:     "my message body is rockin'",
+                    prepend:  false,
+                    expected: "my message body is rockin'" + tag
+                },
+                {
+                    message:  "should append the signature block inside </body> when </body> is found",
+                    body:     "<html><head></head><body>my message body is rockin'</body></html>",
+                    prepend:  false,
+                    expected: "<html><head></head><body>my message body is rockin'" + tag + "</body></html>"
+                }
+            ];
+
+            _.each(dataProvider, function(data) {
+                it(data.message, function() {
+                    var actual = view._insertSignatureTag(data.body, tag, data.prepend);
+                    expect(actual).toBe(data.expected);
+                });
+            }, this);
+        });
+
+        describe("insert a signature", function() {
+            var htmlBody = "my message body is rockin'";
+
+            dataProvider = [
+                {
+                    message:        "should append a signature when it is an object, the signature_html attribute exists, there is no existing signature, and the user preference says not to prepend the signature",
+                    body:           htmlBody,
+                    signature:      {signature_html: "<b>Sincerely, John</b>"},
+                    expectedReturn: true,
+                    expectedBody:   htmlBody + "<br class=\"signature-begin\" /><b>Sincerely, John</b><br class=\"signature-end\" />"
+                },
+                {
+                    message:        "should insert a signature that runs from open tag until EOF when there is no close tag",
+                    body:           htmlBody + "<br class=\"signature-begin\" /><b>Sincerely, John</b>" + htmlBody,
+                    signature:      {signature_html: "<i>Regards, Jim</i>"},
+                    expectedReturn: true,
+                    expectedBody:   htmlBody + "<br class=\"signature-begin\" /><i>Regards, Jim</i><br class=\"signature-end\" />"
+                },
+                {
+                    message:        "should insert a signature that runs from BOF until close tag when there is no open tag",
+                    body:           htmlBody + "<b>Sincerely, John</b><br class=\"signature-end\" />" + htmlBody,
+                    signature:      {signature_html: "<i>Regards, Jim</i>"},
+                    expectedReturn: true,
+                    expectedBody:   "<br class=\"signature-begin\" /><i>Regards, Jim</i><br class=\"signature-end\" />" + htmlBody
+                },
+                {
+                    message:        "should not insert a signature because signature is not an object",
+                    body:           htmlBody,
+                    signature:      "<b>Sincerely, John</b>",
+                    expectedReturn: false,
+                    expectedBody:   htmlBody
+                },
+                {
+                    message:        "should not insert a signature because the signature_html attribute does not exist",
+                    body:           htmlBody,
+                    signature:      {sig_html: "<b>Sincerely, John</b>"},
+                    expectedReturn: false,
+                    expectedBody:   htmlBody
+                }
+            ];
+
+            _.each(dataProvider, function(data) {
+                it(data.message, function() {
+                    view.model.set("html_body", data.body);
+                    var actualReturn = view._insertSignature(data.signature),
+                        actualBody   = view.model.get("html_body");
+                    expect(actualReturn).toBe(data.expectedReturn);
+                    expect(actualBody).toBe(data.expectedBody);
                 });
             }, this);
         });

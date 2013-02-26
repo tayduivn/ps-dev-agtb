@@ -126,6 +126,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $product->date_closed_timestamp = $opp->date_closed_timestamp;
         $product->assigned_user_id = $opp->assigned_user_id;
         $product->opportunity_id = $opp->id;
+        $product->account_id = $account->id;
         $product->commit_stage = $opp->commit_stage;
         $product->save();
         //END SUGARCRM flav=pro ONLY

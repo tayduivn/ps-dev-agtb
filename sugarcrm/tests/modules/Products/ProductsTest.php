@@ -83,10 +83,10 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateNewListQuery() {
         $ret_array = $this->product->create_new_list_query('', '', array(), array(), 0, '', true);
-        $this->assertContains('products.opportunity_id is null', $ret_array['where'], 'Did not find products.opportunity_id is null clause');
+        $this->assertContains("products.opportunity_id is null OR products.opportunity_id = ''", $ret_array['where'], "Did not find products.opportunity_id is null OR products.opportunity_id = '' clause");
 
         $query = $this->product->create_new_list_query('', '', array(), array(), 0, '', false);
-        $this->assertContains('products.opportunity_id is null', $query, 'Did not find products.opportunity_id is null clause');
+        $this->assertContains("products.opportunity_id is null OR products.opportunity_id = ''", $query, "Did not find products.opportunity_id is null OR products.opportunity_id = '' clause");
     }
 
 
@@ -100,10 +100,27 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $orderBy = '';
         $where = '';
         $query = $this->product->create_export_query($orderBy, $where);
-        $this->assertContains('products.opportunity_id is null', $query, 'Did not find products.opportunity_id is null clause');
+        $this->assertContains("products.opportunity_id is null OR products.opportunity_id = ''", $query, "Did not find products.opportunity_id is null OR products.opportunity_id = '' clause");
     }
-    
-    
+
+    /**
+     * With SFA-585, it cause the LEFT JOIN was getting added twice, and something got fixed in the system
+     * which caused it to be added twice.
+     *
+     * @ticket SFA-585
+     * @group products
+     */
+    public function testCreateNewListQueryOnlyContainsOneLeftJoinToContacts()
+    {
+        $ret_array = $this->product->create_new_list_query('', '', array(), array(), 0, '', true);
+
+        $this->assertEquals(
+            1,
+            substr_count($ret_array['from'], 'LEFT JOIN contacts on contacts.id = products.contact_id')
+        );
+    }
+
+
     /**
      * @group products
      */

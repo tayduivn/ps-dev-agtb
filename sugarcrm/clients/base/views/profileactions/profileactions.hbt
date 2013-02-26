@@ -1,8 +1,8 @@
-<ul class="nav pull-right" id="userList">
+<ul class="nav pull-right megamenu" id="userList">
     <li class="divider-vertical"></li>
     <li class="dropdown" id="userActions">
         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-            <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar"> {{fullName}} <b class="caret"></b></a>
+            <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar"><b class="caret"></b></a>
         <ul class="dropdown-menu">
             <li class="profileactions-profile"><a href="#profile">{{str "LBL_PROFILE"}}</a></li>
             <li class="profileactions-password"><a href="#">{{str "LBL_LOGIN_PASSWORD"}}</a></li>

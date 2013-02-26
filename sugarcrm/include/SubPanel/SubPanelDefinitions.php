@@ -112,17 +112,19 @@ class aSubPanel
                 $this->canDisplay = false;
 			}
 
-			// check that the loaded subpanel definition includes a $subpanel_layout section - some, such as projecttasks/default do not...
-			$this->panel_definition = array () ;
-			if (isset($subpanel_layout))
-			{
-				$this->panel_definition = $subpanel_layout ;
+            // load module info from the module's bean file
+            $this->load_module_info();
+
+            // check that the loaded subpanel definition includes a $subpanel_layout section - some, such as
+            // projecttasks/default do not...
+            $this->panel_definition = array();
+            if (isset($subpanel_layout) && is_array($subpanel_layout)) {
+                $this->set_panel_definition($subpanel_layout);
 
 				//BEGIN SUGARCRM flav=pro ONLY
 				SugarACL::listFilter($this->_instance_properties [ 'module' ], $this->panel_definition [ 'list_fields' ], array("owner_override" => true));
 				//END SUGARCRM flav=pro ONLY
 			}
-			$this->load_module_info () ; //load module info from the module's bean file.
 		}
 
 	}
@@ -526,6 +528,67 @@ class aSubPanel
 	{
 		return array ( '_instance_properties' => $this->_instance_properties , 'db_fields' => $this->db_fields , 'mod_strings' => $this->mod_strings , 'name' => $this->name , 'panel_definition' => $this->panel_definition , 'parent_bean' => get_class ( $this->parent_bean ) , 'sub_subpanels' => $this->sub_subpanels , 'table_name' => $this->table_name , 'template_instance' => get_class ( $this->template_instance ) ) ;
 	}
+
+    /**
+     * Sets definition of the subpanel
+     *
+     * @param array $definition
+     */
+    protected function set_panel_definition(array $definition)
+    {
+        //BEGIN SUGARCRM flav=pro ONLY
+        if (isset($definition['list_fields'])
+            && is_array($definition['list_fields'])) {
+            $definition['list_fields'] = $this->expand_list_fields(
+                $this->template_instance,
+                $definition['list_fields']
+            );
+        }
+        //END SUGARCRM flav=pro ONLY
+        $this->panel_definition = $definition;
+    }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * Expands list fields by adding those ones which existing fields depend on.
+     *
+     * @param  SugarBean $bean   Instance of SugarBean which is displayed
+     *                           in the subpanel
+     * @param  array     $fields Definition if list fields
+     *
+     * @return array             Expanded definition
+     */
+    public function expand_list_fields(SugarBean $bean, array $fields)
+    {
+        $expanded = array();
+        foreach (array_keys($fields) as $name) {
+            if (!empty($bean->field_defs[$name]['dependency'])) {
+                $expr = $bean->field_defs[$name]['dependency'];
+                $extracted = Parser::getFieldsFromExpression($expr, $bean->field_defs);
+                $extracted = array_flip($extracted);
+
+                // remove fields that do not exist in field definitions
+                $expanded += array_intersect_key($extracted, $bean->field_defs);
+
+                // make the dependent field non-sortable since availability of the field
+                // is calculated after the data is retrieved from database
+                $fields[$name]['sortable'] = false;
+            }
+        }
+
+        // ignore dependencies that already present in the list
+        $expanded = array_diff_key($expanded, $fields);
+
+        foreach (array_keys($expanded) as $name) {
+            $fields[$name] = array(
+                'name'  => $name,
+                'usage' => 'query_only',
+            );
+        }
+
+        return $fields;
+    }
+    //END SUGARCRM flav=pro ONLY
 }
 ;
 

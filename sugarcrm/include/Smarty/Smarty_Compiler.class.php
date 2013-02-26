@@ -2160,7 +2160,7 @@ class Smarty_Compiler extends Smarty {
      */
     function _load_filters()
     {
-        if(!function_exists('smarty_core_load_plugins')) {
+        if(!function_exists('smarty_core_load_plugins') && (count($this->_plugins['prefilter']) > 0 || count($this->_plugins['postfilter']) > 0)) {
             require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
         }
         if (count($this->_plugins['prefilter']) > 0) {

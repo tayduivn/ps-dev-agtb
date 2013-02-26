@@ -368,6 +368,43 @@ describe("Drawer Layout", function() {
         });
     });
 
+    describe('isActive()', function(){
+        beforeEach(function() {
+            $contentEl = SugarTest.app.$contentEl;
+            $mainDiv = $('<div id="target"></div>');
+
+            SugarTest.app.$contentEl = $('<div id="content"></div>').append($mainDiv);
+            sinon.stub(drawer, '_animateOpenDrawer', $.noop());
+        });
+
+        afterEach(function() {
+            SugarTest.app.$contentEl = $contentEl;
+        });
+        it('should return true for elements when no drawer is open', function(){
+            expect(drawer.isActive($("<div></div>"))).toBe(true);
+        });
+        it('should return true for elements on active drawer', function(){
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+            expect(drawer.isActive(drawer._getDrawers(false).$top.find(".record"))).toBe(true);
+        });
+        it('should return false for elements not on active drawer', function(){
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+            expect(drawer.isActive($("<div></div>"))).toBe(false);
+            expect(drawer.isActive(drawer._getDrawers(false).$bottom.find(".record"))).toBe(false);
+            expect(drawer.isActive(drawer._getDrawers(false).$top.find(".record"))).toBe(true);
+        });
+    });
+
     describe('_isMainAppContent()', function() {
         var $contentEl, $mainDiv;
 

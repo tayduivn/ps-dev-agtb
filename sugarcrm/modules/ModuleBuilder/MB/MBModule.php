@@ -562,18 +562,6 @@ class MBModule
             $lSubs [] = array ( 'name' => $subLabel , 'type' => 'list' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view=ListView&view_module=' . $this->name . '&view_package=' . $this->package . '&subpanel=' . $sub . '&subpanelLabel=' . $subLabel . '&local=1' ) ;
         }
 
-        $searchSubs = array ( ) ;
-        $searchSubs [] = array ( 'name' => translate('LBL_BASIC_SEARCH') , 'type' => 'list' , 'action' => "module=ModuleBuilder&MB=true&action=editLayout&view=basic_search&view_module={$this->name}&view_package={$this->package}"  ) ;
-        $searchSubs [] = array ( 'name' => translate('LBL_ADVANCED_SEARCH') , 'type' => 'list' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view=advanced_search&view_module=' . $this->name . '&view_package=' . $this->package  ) ;
-        //BEGIN SUGARCRM flav=pro ONLY
-        $wirelessSearchSubs = array ( ) ;
-        $wirelessSearchSubs [] = array ( 'name' => translate('LBL_WIRELESS_BASIC_SEARCH') , 'type' => 'list' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_WIRELESSBASICSEARCH.'&view_module=' . $this->name . '&view_package=' . $this->package  ) ;
-        $wirelessSearchSubs [] = array ( 'name' => translate('LBL_WIRELESS_ADVANCED_SEARCH') , 'type' => 'list' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_WIRELESSADVANCEDSEARCH.'&view_module=' . $this->name . '&view_package=' . $this->package  ) ;
-        //END SUGARCRM flav=pro ONLY
-        $dashlets = array( );
-        $dashlets [] = array('name' => translate('LBL_DASHLETLISTVIEW') , 'type' => 'dashlet' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view=dashlet&view_module=' . $this->name . '&view_package=' . $this->package );
-		$dashlets [] = array('name' => translate('LBL_DASHLETSEARCHVIEW') , 'type' => 'dashletsearch' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view=dashletsearch&view_module=' . $this->name . '&view_package=' . $this->package );
-
 		$popups = array( );
         $popups [] = array('name' => translate('LBL_POPUPLISTVIEW') , 'type' => 'popuplistview' , 'action' => 'module=ModuleBuilder&action=editLayout&view=popuplist&view_module=' . $this->name . '&view_package=' . $this->package );
 		$popups [] = array('name' => translate('LBL_POPUPSEARCH') , 'type' => 'popupsearch' , 'action' => 'module=ModuleBuilder&action=editLayout&view=popupsearch&view_module=' . $this->name . '&view_package=' . $this->package );
@@ -582,11 +570,8 @@ class MBModule
         	array ( 'name' => translate('LBL_EDITVIEW') , 'type' => 'edit' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_EDITVIEW.'&view_module=' . $this->name . '&view_package=' . $this->package ) ,
         	array ( 'name' => translate('LBL_DETAILVIEW') , 'type' => 'detail' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_DETAILVIEW.'&view_module=' . $this->name . '&view_package=' . $this->package ) ,
         	array ( 'name' => translate('LBL_LISTVIEW') , 'type' => 'list' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_LISTVIEW.'&view_module=' . $this->name . '&view_package=' . $this->package ) ,
-        	array ( 'name' => translate('LBL_QUICKCREATE') , 'type' => MB_QUICKCREATE,  'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_QUICKCREATE.'&view_module=' . $this->name . '&view_package=' . $this->package ) ,
-        	array ( 'name' => translate('LBL_DASHLET') , 'type' => 'Folder', 'children' => $dashlets, 'action' => 'module=ModuleBuilder&MB=true&action=wizard&view=dashlet&view_module=' . $this->name . '&view_package=' . $this->package  ),
         	array ( 'name' => translate('LBL_POPUP') , 'type' => 'Folder', 'children' => $popups, 'action' => 'module=ModuleBuilder&MB=true&action=wizard&view=popup&view_module=' . $this->name . '&view_package=' . $this->package  ),
-        	array ( 'name' => translate('LBL_SEARCH_FORMS') , 'action' => 'module=ModuleBuilder&MB=true&action=wizard&view=search&view_module=' . $this->name . '&view_package=' . $this->package , 'type' => 'folder' , 'children' => $searchSubs )
-        	) ;
+            );
 
         $children = array (
         	array ( 'name' => translate('LBL_FIELDS') , 'action' => 'module=ModuleBuilder&action=modulefields&view_module=' . $this->name . '&view_package=' . $this->package ) ,

@@ -45,6 +45,7 @@ class Bug51679Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
     }
 

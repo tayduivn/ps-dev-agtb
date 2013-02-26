@@ -82,6 +82,9 @@ class RestFilterTest extends RestTestBase
         SugarTestFilterUtilities::removeAllCreatedFilters();
    }
 
+    /**
+     * @group rest
+     */
     public function testSimpleFilter()
     {
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"name":"TEST 7 Account"}]').'&fields=id,name');
@@ -90,6 +93,9 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals(1,count($reply['reply']['records']),'Simple: Returned too many results');
     }
 
+    /**
+     * @group rest
+     */
     public function testSimpleJoinFilter()
     {
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"notes.name":"Test 3 Note"}]').'&fields=id,name');
@@ -98,7 +104,9 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals(1,count($reply['reply']['records']),'SimpleJoin: Returned too many results');
     }
 
-
+    /**
+     * @group rest
+     */
     public function testSimpleFilterWithOffset()
     {
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"name":{"$starts":"TEST 1"}}]').'&fields=id,name&max_num=5');
@@ -114,6 +122,9 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals(1,count($reply['reply']['records']),'Offset-3: Returned too many results');
     }
 
+    /**
+     * @group rest
+     */
     public function testOrFilter()
     {
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$or":[{"name":"TEST 7 Account"},{"name":"TEST 17 Account"}]}]').'&fields=id,name&order_by=name:ASC');
@@ -123,6 +134,9 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals(2,count($reply['reply']['records']),'Or: Returned too many results');
     }
 
+    /**
+     * @group rest
+     */
     public function testAndFilter()
     {
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$and":[{"name":{"$starts":"TEST 1"}},{"billing_address_postalcode":"70210"}]}]').'&fields=id,name&order_by=name:ASC');
@@ -132,6 +146,9 @@ class RestFilterTest extends RestTestBase
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * @group rest
+     */
     public function testFavoriteFilter()
     {
         $this->assertEquals('TEST 4 Account',$this->accounts[4]->name,'Favorites: Making sure the name is correct before favoriting.');
@@ -153,6 +170,9 @@ class RestFilterTest extends RestTestBase
         
     }
 
+    /**
+     * @group rest
+     */
     public function testRelatedFavoriteFilter()
     {
         $this->assertEquals('TEST 0 Opportunity FOR 3 Account',$this->opps[6]->name,'FavRelated: Making sure the name is correct before favoriting.');
@@ -173,6 +193,10 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals(1,count($reply['reply']['records']),'FavRelated: Returned too many results');
         
     }
+
+    /**
+     * @group rest
+     */
     public function testMultipleRelatedFavoriteFilter()
     {
         $this->assertEquals('TEST 0 Opportunity FOR 0 Account',$this->opps[0]->name,'FavMulRelated: Making sure the opp name is correct before favoriting.');
@@ -208,6 +232,9 @@ class RestFilterTest extends RestTestBase
     }
     //BEGIN SUGARCRM flav=pro ONLY
 
+    /**
+     * @group rest
+     */
     public function testOwnerFilter()
     {
         $this->assertEquals('TEST 7 Account',$this->accounts[7]->name,'Owner: Making sure the name is correct before ownering.');
@@ -222,6 +249,9 @@ class RestFilterTest extends RestTestBase
         
     }
 
+    /**
+     * @group rest
+     */
     public function testRelatedOwnerFilter()
     {
         $this->assertEquals('TEST 1 Opportunity FOR 3 Account',$this->opps[7]->name,'OwnerRelated: Making sure the name is correct before ownering.');
@@ -236,6 +266,9 @@ class RestFilterTest extends RestTestBase
         
     }
 
+    /**
+     * @group rest
+     */
     public function testUserFilterByName()
     {
         global $current_user;
@@ -263,6 +296,9 @@ class RestFilterTest extends RestTestBase
 
     }
 
+    /**
+     * @group rest
+     */
     public function testsPreviouslyUsedFilters()
     {
         global $current_user;
@@ -289,7 +325,19 @@ class RestFilterTest extends RestTestBase
 
     }
 
-    /*
+    /**
+     * @group rest
+     */
+    public function testFilteringOnARelationship()
+    {
+        $account_id = $this->accounts[0]->id;
+        $oppty_id = $this->opps[0]->id;
+        $url = 'Accounts/' . $account_id . '/link/opportunities/filter?filter='.urlencode('[{"name":{"$starts":"TEST 0 Opportunity"}}]');
+        $reply = $this->_restCall($url);
+        $this->assertEquals($oppty_id, $reply['reply']['records'][0]['id']);
+    }
+
+    /**
      * @group rest
      */
     public function testNoFilter()

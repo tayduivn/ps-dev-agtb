@@ -38,6 +38,7 @@ class TemplateField{
 	var $view = 'edit';
 	var $name = '';
 	var $vname = '';
+    public $label = '';
 	var $id = '';
 	var $size = '20';
 	var $len = '255';

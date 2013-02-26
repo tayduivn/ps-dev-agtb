@@ -51,15 +51,15 @@ class PreviouslyUsedFiltersApi extends SugarApi {
                 'method' => 'deleteUsed',
                 'shortHelp' => 'This method deletes the used filter for the current user',
                 'longHelp' => '',
-            ),   
-            'deleteUsed' => array(
+            ),
+            'deleteAllUsed' => array(
                 'reqType' => 'DELETE',
                 'path' => array('Filters', '?', 'used',),
                 'pathVars' => array('module', 'module_name', 'used', 'record'),
                 'method' => 'deleteUsed',
                 'shortHelp' => 'This method deletes the used filter for the current user',
                 'longHelp' => '',
-            ),               
+            ),
         );
     }
     /**
@@ -90,6 +90,10 @@ class PreviouslyUsedFiltersApi extends SugarApi {
     public function getUsed($api, $args) {
         $user_preference = new UserPreference($GLOBALS['current_user']);
         $used_filters = $user_preference->getPreference($args['module_name'], 'filters');
+        // UserPreference::getPreference returns null if the preference does not exist
+        if (empty($used_filters)) {
+            $used_filters = array();
+        }
         // loop over the filters and return them
         $beans = $this->loadFilters($used_filters);
         $data = array();

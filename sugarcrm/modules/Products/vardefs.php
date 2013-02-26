@@ -280,10 +280,11 @@ $dictionary['Product'] = array(
             'name' => 'currency_id',
             'dbType' => 'id',
             'vname' => 'LBL_CURRENCY_ID',
-            'type' => 'varchar',
+            'type' => 'currency_id',
             'function' => array('name' => 'getCurrencyDropDown', 'returns' => 'html'),
             'required' => false,
             'reportable' => false,
+            'default'=>'-99',
             'comment' => 'Currency of the product'
         ),
         'base_rate' =>  array(

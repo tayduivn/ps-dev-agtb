@@ -29,18 +29,25 @@
     rowFields: {},
     previousModelStates: {},
 
+    contextEvents: {
+        "list:editall:fire": "toggleEdit",
+        "list:editrow:fire": "editClicked",
+        "list:deleterow:fire": "deleteClicked"
+    },
+
     initialize: function(options) {
         //Grab the record list of fields to display from the base metadata
         var recordListMeta = JSON.parse(JSON.stringify(app.metadata.getView(null, 'recordlist') || {}));
-
         options.meta = _.extend({}, recordListMeta, JSON.parse(JSON.stringify(options.meta || {})));
         app.view.views.ListView.prototype.initialize.call(this, options);
     },
+
     populatePanelMetadata: function(panel, options) {
         panel = app.view.views.ListView.prototype.populatePanelMetadata.call(this, panel, options);
         panel = this.addFavorite(panel, options);
         return panel;
     },
+
     addFavorite: function(panel, options) {
         var meta = options.meta;
 
@@ -49,6 +56,7 @@
         }
         return meta;
     },
+
     addRowActions: function(panel, options) {
         panel = app.view.views.ListView.prototype.addRowActions.call(this, panel, options);
         panel.fields[0].fields.push({
@@ -68,15 +76,10 @@
         });
         return panel;
     },
+
     _render:function () {
         app.view.views.ListView.prototype._render.call(this);
-        this.context.off("list:editall:fire", null, this);
-        this.context.on("list:editall:fire", this.toggleEdit, this);
-        this.context.off("list:editrow:fire", null, this);
-        this.context.on("list:editrow:fire", this.editClicked, this);
-        this.context.off("list:deleterow:fire", null, this);
-        this.context.on("list:deleterow:fire", this.deleteClicked, this);
-        delete this.rowFields;
+
         this.rowFields = {};
         _.each(this.fields, function(field) {
             //TODO: Modified date should not be an editable field
@@ -87,6 +90,7 @@
             }
         }, this);
     },
+
     deleteClicked: function(model) {
         var self = this;
         app.alert.show('delete_confirmation', {
@@ -104,9 +108,11 @@
             }
         });
     },
+
     editClicked: function(model) {
         this.toggleRow(model.id, true);
     },
+
     toggleRow: function(modelId, isEdit) {
         var model = this.collection.get(modelId);
         if(isEdit) {
@@ -119,16 +125,18 @@
         this.$("tr[name=" + this.module + "_" + modelId + "]").toggleClass("tr-inline-edit", isEdit);
         this.toggleFields(this.rowFields[modelId], isEdit);
     },
+
     toggleEdit: function(isEdit) {
         var self = this;
         this.viewName = isEdit ? 'edit' : 'list';
         _.each(this.rowFields, function(editableFields, modelId) {
-            //running the toggling jon in each thread to prevent blocking brower performance
+            //running the toggling jon in each thread to prevent blocking browser performance
             _.defer(function(modelId) {
                 self.toggleRow(modelId, isEdit);
             }, modelId);
         }, this);
     },
+
     handleValidationError:function (errors) {
         var rowField = this;
         _.each(errors, function (fieldErrors, fieldName) {
@@ -152,5 +160,18 @@
                 tooltipEl.tooltip({placement:"top", container:"#content"});
             }
         });
+    },
+
+    /**
+     *
+     * @private
+     */
+    _dispose: function(){
+        app.view.views.ListView.prototype._dispose.call(this);
+        delete this.rowFields;
+        if(this.context){
+            this.context.off(null, null, this);
+            this.context = null;
+        }
     }
 })

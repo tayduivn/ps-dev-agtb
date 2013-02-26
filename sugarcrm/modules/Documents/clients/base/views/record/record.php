@@ -42,13 +42,12 @@ $viewdefs['Documents']['base']['view']['record'] = array(
                       'link' => 'filename',
                       'id' => 'document_revision_id',
                     ),
-                    'noedit' => true, 
+                    'readonly' => true,
                     'span' => 12, 
                     'label' => '',                        
                 ),
                 array(
                     'type' => 'favorite',
-                    'noedit' => true,
                 ),
             )
         ),

@@ -335,6 +335,25 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'len' => '5',
     'comment' => 'Number of opportunities represented by this forecast',
   ),
+  'pipeline_opp_count' =>
+  array (
+    'name' => 'pipeline_opp_count',
+    'vname' => 'LBL_FORECAST_OPP_COUNT',
+    'type' => 'int',
+    'len' => '5',
+    'studio' => false,
+    'default' => "0",
+    'comment' => 'Number of opportunities minus closed won/closed lost represented by this forecast',
+  ),
+  'pipeline_amount' =>
+  array (
+    'name' => 'pipeline_amount',
+    'vname' => 'LBL_PIPELINE_REVENUE',
+    'type' => 'currency',
+    'studio' => false,
+    'default' => "0",
+    'comment' => 'Total of opportunities minus closed won/closed lost represented by this forecast',
+  ),
   'opp_weigh_value' =>
   array (
     'name' => 'opp_weigh_value',
@@ -346,7 +365,9 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
    array (
        'name' => 'currency_id',
        'vname' => 'LBL_CURRENCY',
-       'type' => 'id',
+       'type' => 'currency_id',
+       'dbType' => 'id',
+       'default'=>'-99',
        'required' => true,
    ),
    'base_rate' =>
@@ -354,7 +375,6 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
        'name' => 'base_rate',
        'vname' => 'LBL_BASE_RATE',
        'type' => 'double',
-       'required' => true,
    ),
    'best_case' =>
   array (
@@ -383,6 +403,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'name' => 'user_id',
     'vname' => 'LBL_FORECAST_USER',
     'type' => 'id',
+    'reportable' => false,
     'comment' => 'User to which this forecast pertains',
   ),
 'date_entered' =>
@@ -765,7 +786,7 @@ $dictionary['ForecastWorksheet'] = array(
         'base_rate' =>
         array(
             'name' => 'base_rate',
-            'vname' => 'LBL_CURRENCY_RATE',
+            'vname' => 'LBL_BASE_RATE',
             'type' => 'double',
             'required' => true,
             'studio' => false

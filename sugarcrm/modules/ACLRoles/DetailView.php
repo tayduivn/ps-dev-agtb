@@ -39,7 +39,7 @@ $sugar_smarty->assign('APP_LIST', $app_list_strings);
 $role = BeanFactory::getBean('ACLRoles', $_REQUEST['record']);
 $categories = ACLRole::getRoleActions($_REQUEST['record']);
 $names = ACLAction::setupCategoriesMatrix($categories);
-
+//BEGIN SUGARCRM flav=pro ONLY
 $categories2 = array();
 $categories2=$categories;
 $hidden_categories = array(
@@ -50,10 +50,11 @@ foreach($hidden_categories as $v){
 	   unset($categories2[$v]);
 	}
 }
+$sugar_smarty->assign('CATEGORIES2', $categories2);
+//END SUGARCRM flav=pro ONLY
 if(!empty($names))$tdwidth = 100 / sizeof($names);
 $sugar_smarty->assign('ROLE', $role->toArray());
 $sugar_smarty->assign('CATEGORIES', $categories);
-$sugar_smarty->assign('CATEGORIES2', $categories2);
 $sugar_smarty->assign('TDWIDTH', $tdwidth);
 $sugar_smarty->assign('ACTION_NAMES', $names);
 

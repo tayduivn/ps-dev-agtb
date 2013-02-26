@@ -39,7 +39,6 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
-        this.model.on("data:sync:end", this.handleSync, this);
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
         this.context.set("viewed", true);
@@ -49,12 +48,6 @@
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
-        }
-    },
-
-    handleSync: function(method, options, error) {
-        if (this.model && this.model.attributes && (method == 'read' || method =='update')) {
-            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes || {}));
         }
     },
 
@@ -147,7 +140,7 @@
 
                 //Disable the pencil icon if the user doesn't have ACLs
                 if (!app.acl.hasAccessToModel('edit', this.model, field.name)) {
-                    field.noedit = true;
+                    field.readonly = true;
                 }
 
                 //labels: visibility for the label
@@ -248,6 +241,20 @@
         this._renderPanels(this.meta.panels);
 
         app.view.View.prototype._render.call(this);
+
+        // Field labels in headerpane should be hidden on view but displayed in edit and create
+        _.each(this.fields, function(field) {
+            var toggleLabel = _.bind(function() {
+                this.toggleLabelByField(field);
+            }, this);
+
+            field.off('render', toggleLabel);
+            if (field.$el.closest('.headerpane').length > 0) {
+                field.on('render', toggleLabel);
+            }
+        }, this);
+
+        this.toggleHeaderLabels(this.createMode);
         this.initButtons();
         this.setButtonStates(this.STATE.VIEW);
         this.setEditableFields();
@@ -259,8 +266,8 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            //Exclude non editable fields
-            if (field.def.noedit || field.parent || (field.name && this.buttons[field.name])) {
+            //Exclude read only fields
+            if (field.def.readonly || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
@@ -361,16 +368,23 @@
     },
 
     findDuplicatesClicked: function() {
+        var model = app.data.createBean(this.model.module);
+
+        model.copy(this.model);
+        model.set('id', this.model.id);
         app.drawer.open({
             layout : 'find-duplicates',
             context: {
-                dupeCheckModel: this.model,
+                dupeCheckModel: model,
                 dupelisttype: 'dupecheck-list-multiselect'
             }
         });
     },
 
     editClicked: function() {
+        if (_.isEmpty(this.previousModelState)) {
+            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
+        }
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
@@ -445,6 +459,10 @@
         // Set Editing mode to on.
         this.inlineEditMode = true;
 
+        if (_.isEmpty(this.previousModelState)) {
+            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
+        }
+
         this.setButtonStates(this.STATE.EDIT);
 
         // TODO: Refactor this for fields to support their own focus handling in future.
@@ -465,11 +483,39 @@
         }
     },
 
+    /**
+     * Hide/show all field labels in headerpane
+     * @param isEdit
+     */
+    toggleHeaderLabels: function(isEdit) {
+        if (isEdit) {
+            this.$('.headerpane .record-label').show();
+        } else {
+            this.$('.headerpane .record-label').hide();
+        }
+    },
+
+    /**
+     * Hide/show field label given a field
+     * @param field
+     */
+    toggleLabelByField: function(field) {
+        if (field.action === 'edit') {
+            field.$el.closest('.record-cell').find('.record-label').show();
+        } else {
+            field.$el.closest('.record-cell').find('.record-label').hide();
+        }
+    },
+
     handleSave: function() {
         var self = this;
         self.inlineEditMode = false;
 
         var finalSuccess = function () {
+            if (!_.isEmpty(self.previousModelState)) {
+                self.previousModelState = {};
+            }
+
             if (self.createMode) {
                 app.navigate(self.context, self.model);
             } else {
@@ -494,7 +540,8 @@
         this.inlineEditMode = false;
         this.toggleEdit(false);
         if (!_.isEmpty(this.previousModelState)) {
-            this.model.set(this.previousModelState);
+            this.model.set(JSON.parse(JSON.stringify(this.previousModelState)));
+            this.previousModelState = {};
         }
     },
 
@@ -550,6 +597,13 @@
             $title.text(title);
         } else {
             this.$('.headerpane').prepend('<h1 class="title">' + title + '</h1>');
+        }
+    },
+    _dispose: function(){
+        app.view.Component.prototype._dispose.call(this);
+        if(this.context){
+            this.context.off(null, null, this);
+            this.context = null;
         }
     }
 })

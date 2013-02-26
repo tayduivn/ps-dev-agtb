@@ -69,13 +69,13 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $account->save();
         $this->createdBeans[] = $account;
 
-        $validBean = BeanFactory::getBean($module, $account->id);
+        $validBean = BeanFactory::retrieveBean($module, $account->id);
 
         $this->assertEquals($account->id, $validBean->id);
 
         //Ensure we get a false if we try to load a bad bean.
         $uniqueID = uniqid();
-        $invalidBean = BeanFactory::getBean($module, $uniqueID);
-        $this->assertFalse($invalidBean);
+        $invalidBean = BeanFactory::retrieveBean($module, $uniqueID);
+        $this->assertFalse(isset($invalidBean->id));
     }
 }

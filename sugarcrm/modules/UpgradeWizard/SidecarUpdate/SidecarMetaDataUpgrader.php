@@ -379,7 +379,7 @@ class SidecarMetaDataUpgrader
      * @param boolean $deployed Marker to determine if a custom module is deployed or not
      * @return array
      */
-    protected function getUpgradeableFilesInPath($path, $module, $client, $type = 'base', $package = null, $deployed = true) 
+    public function getUpgradeableFilesInPath($path, $module, $client, $type = 'base', $package = null, $deployed = true) 
     {
         $return = array();
         if (file_exists($path)) {
@@ -389,47 +389,8 @@ class SidecarMetaDataUpgrader
             // And if we have any, match them against what we are looking for
             if (!empty($files)) {
                 foreach ($files as $file) {
-                    $timestamp = null;
-                    // Handle history file handling different
-                    $history = is_numeric(substr($file, -4));
-                    
-                    // In the case of undeployed modules, type may be set to base
-                    // If it is, and there is a history file, set type to history
-                    // This is primarily for saving new defs using the MetaDataFiles
-                    // class to get the correct name of the metadata file
-                    if ($history && !$deployed && $type == 'base') {
-                        $type = 'history';
-                    }
-                    
-                    // Only hit history files for history types with a timestamp
-                    // Unless we are looking at undeployed modules
-                    if (($history && $type != 'history') || (!$history && $type == 'history') && $deployed) {
-                        continue;
-                    }
-                    
-                    if ($history) {
-                        $parts = explode(':', str_replace('.php_', ':', $file));
-                        $filename  = basename($parts[0]);
-                        $timestamp = $parts[1];
-                    } else {
-                        $filename = basename($file, '.php');
-                    }
-                    
-                    if (!empty($this->legacyMetaDataFileNames[$client]) && in_array($filename, $this->legacyMetaDataFileNames[$client])) {
-                        // Success! We have a full file path. Add this module to the stack
-                        $this->addUpgradeModule($module);
-                        
-                        $return[] = array(
-                            'client'    => $client,
-                            'module'    => $module,
-                            'type'      => $type,
-                            'basename'  => $filename,
-                            'timestamp' => $timestamp,
-                            'fullpath'  => $file,
-                            'package'   => $package,
-                            'deployed'  => $deployed,
-                            'viewtype'  => $this->getViewTypeFromFilename($filename),
-                        );
+                    if (($data = $this->getUpgradeFileParams($file, $module, $client, $type, $package, $deployed)) !== false) {
+                        $return[] = $data;
                     }
                 }
             }
@@ -483,7 +444,8 @@ class SidecarMetaDataUpgrader
      * @param string $viewtype The view type (list, edit, detail)
      * @return string
      */
-    protected function getUpgraderClass($viewtype) {
+    public function getUpgraderClass($viewtype) 
+    {
         if (isset($this->upgraderClassMap[$viewtype])) {
             return 'Sidecar' . $this->upgraderClassMap[$viewtype] . 'MetaDataUpgrader';
         }
@@ -496,7 +458,8 @@ class SidecarMetaDataUpgrader
      * currently living in OOTB modules and in all of the SugarObject templates
      * metadata directories.
      */
-    protected function cleanupLegacyFiles() {
+    protected function cleanupLegacyFiles() 
+    {
         // In addition to all of the files we already worked on, we need to include
         // the OOTB wireless metadata files that fit the bill.
         $moduledirs = glob('modules/*', GLOB_ONLYDIR);
@@ -543,7 +506,8 @@ class SidecarMetaDataUpgrader
      * @static
      * @return array
      */
-    public static function getFilesForRemoval() {
+    public static function getFilesForRemoval() 
+    {
         return self::$filesForRemoval;
     }
 
@@ -552,7 +516,8 @@ class SidecarMetaDataUpgrader
      * 
      * @return array
      */
-    public function getFilesForUpgrade() {
+    public function getFilesForUpgrade() 
+    {
         return $this->files;
     }
 
@@ -561,7 +526,8 @@ class SidecarMetaDataUpgrader
      * 
      * @return int
      */
-    public function getCountOfFilesForUpgrade() {
+    public function getCountOfFilesForUpgrade() 
+    {
         return count($this->files);
     }
 
@@ -570,7 +536,8 @@ class SidecarMetaDataUpgrader
      * 
      * @param $message
      */
-    public function logUpgradeStatus($message) {
+    public function logUpgradeStatus($message) 
+    {
         if ($this->writeToLog) {
             if (!function_exists('logThis')) {
                 require_once 'modules/UpgradeWizard/uw_utils.php';
@@ -583,7 +550,8 @@ class SidecarMetaDataUpgrader
     /**
      * Toggles the writeToLog flag
      */
-    public function toggleWriteToLog() {
+    public function toggleWriteToLog() 
+    {
         $this->writeToLog = !$this->writeToLog;
     }
 
@@ -592,7 +560,69 @@ class SidecarMetaDataUpgrader
      * 
      * @return bool
      */
-    public function getWriteToLogStatus() {
+    public function getWriteToLogStatus() 
+    {
         return $this->writeToLog;
+    }
+
+    /**
+     * Gets the file data array needed for the upgraders to process the upgrade
+     * 
+     * @param string $file
+     * @param string $module
+     * @param string $client
+     * @param string $type
+     * @param string $package
+     * @param bool $deployed
+     * @return array Array of file params if found, false otherwise
+     */
+    public function getUpgradeFileParams($file, $module, $client, $type = 'base', $package = null, $deployed = true) 
+    {
+        // Timestamp for history files
+        $timestamp = null;
+        
+        // Handle history file handling different
+        $history = is_numeric(substr($file, -4));
+        
+        // In the case of undeployed modules, type may be set to base
+        // If it is, and there is a history file, set type to history
+        // This is primarily for saving new defs using the MetaDataFiles
+        // class to get the correct name of the metadata file
+        if ($history && !$deployed && $type == 'base') {
+            $type = 'history';
+        }
+        
+        // Only hit history files for history types with a timestamp
+        // Unless we are looking at undeployed modules
+        if (($history && $type != 'history') || (!$history && $type == 'history') && $deployed) {
+            return false;
+        }
+        
+        if ($history) {
+            $parts = explode(':', str_replace('.php_', ':', $file));
+            $filename  = basename($parts[0]);
+            $timestamp = $parts[1];
+        } else {
+            $filename = basename($file, '.php');
+        }
+        
+        if (!empty($this->legacyMetaDataFileNames[$client]) && in_array($filename, $this->legacyMetaDataFileNames[$client])) {
+            // Success! We have a full file path. Add this module to the stack
+            $this->addUpgradeModule($module);
+            
+            return array(
+                'client'    => $client,
+                'module'    => $module,
+                'type'      => $type,
+                'basename'  => $filename,
+                'timestamp' => $timestamp,
+                'fullpath'  => $file,
+                'package'   => $package,
+                'deployed'  => $deployed,
+                'viewtype'  => $this->getViewTypeFromFilename($filename),
+            );
+        }
+        
+        return false;
     }
 }

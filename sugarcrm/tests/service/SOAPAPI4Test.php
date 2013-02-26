@@ -87,10 +87,12 @@ class SOAPAPI4Test extends SOAPTestCase
     {
         $contact = SugarTestContactUtilities::createContact();
         $sf = new SugarFavorites();
+        $sf->id = SugarFavorites::generateGUID('Contacts',$contact->id);
         $sf->module = 'Contacts';
         $sf->record_id = $contact->id;
         $sf->save(FALSE);
         $GLOBALS['db']->commit();
+        $this->assertTrue(SugarFavorites::isUserFavorite('Contacts',$contact->id),"The contact wasn't correctly marked as a favorite.");
 
         $result = $this->_soapClient->call(
             'get_entry_list',

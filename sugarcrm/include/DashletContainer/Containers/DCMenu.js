@@ -19,7 +19,7 @@
  ********************************************************************************/
 
 //Use loader to grab the modules needed
-var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('event', 'dd-plugin', 'anim', 'cookie', 'json', 'node-menunav', 'io-base','io-form', 'io-upload-iframe', "overlay", function(Y) {
+var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('event', 'dd-plugin', 'anim', 'cookie', 'json', 'node-menunav', 'io-base','io-form', 'io-upload-iframe', "overlay", function(Y) {
     //Make this an Event Target so we can bubble to it
     var requests = {};
     var overlays = [];
@@ -134,7 +134,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         overlays[overlays.length - 1].hide();
     }
     
-    DCMenu.closeOverlay = function(depth){
+    DCMenu.closeOverlay = function(depth,parentid){
         DCMenu.closeQView();
     	var i=0;
         while(i < overlays.length){
@@ -158,6 +158,9 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                     }
                     overlays[i].hide();
                     overlays[i].set('bodyContent', "");
+                    if(parentid){
+                        $('#'+parentid).removeClass("focused");
+                    }
                 }
             }
             i++;
@@ -186,7 +189,6 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 				return false;
     		DCMenu.closeOverlay(depth);
     		var overlay = getOverlay(depth, params.modal);
-
     		ua = navigator.userAgent.toLowerCase();
     		isIE7 = ua.indexOf('msie 7')!=-1;
 
@@ -208,7 +210,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	    			content += '<div style="float:left"><a href="' +data.url + '">' + data.title + '</a></div>';
 	    		}
 
-                 content += '<div class="close"><a id="dcmenu_close_link" href="#" onclick="DCMenu.closeOverlay(); return false;">[x]</a><a href="#" onclick="DCMenu.minimizeOverlay(); return false;">[-]</a></div></div>';
+                 content += '<div class="close"><a id="dcmenu_close_link" href="#" onclick="DCMenu.closeOverlay(\'\',\''+parentid+'\'); return false;">[x]</a><a href="#" onclick="DCMenu.minimizeOverlay(); return false;">[-]</a></div></div>';
     		}
     		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'"><div class="dashletPanel dc"><div class="hd" id="dchead">';
 			if ( title !== undefined )
@@ -221,7 +223,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             if ( typeof(extraButton) == "string" ) {
                 content += extraButton
             }
-            content += '<a id="dcmenu_close_link" href="#" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay(); return false;"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
+            content += '<a id="dcmenu_close_link" href="#" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay(\'\',\''+parentid+'\'); return false;"><i class="icon-remove icon-sm"></i></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
 
 
             //"resetEvalBool" will only be set to true if an eval() has completed succesfully from a previous request.  It will not get reset again within a request.
@@ -312,7 +314,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		overlay.set('y', 90);
 	}
 	DCMenu.history = function(q){
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=modulelistmenu', spotResults);
+		quickRequest('spot', 'index.php?append_wildcard=true&to_pdf=1&module=' + this.module + '&action=modulelistmenu', spotResults);
 	}
     DCMenu.startSearch = function(e){
         if (window.event) { e = window.event; }
@@ -327,15 +329,15 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             return;
         DCMenu.closeQView();
 	    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q), spotResults);
+		quickRequest('spot', 'index.php?append_wildcard=true&to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q), spotResults);
 	}
         Y.spotFull = function(q){
         DCMenu.closeQView();
             ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
-                quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&full=true&ajax=true&record=' + this.record + '&q=' + encodeURIComponent(q), fullResults);
+                quickRequest('spot', 'index.php?append_wildcard=true&to_pdf=1&module=' + this.module + '&action=spot&full=true&ajax=true&record=' + this.record + '&q=' + encodeURIComponent(q), fullResults);
         }
 	DCMenu.spotZoom = function(q, module, offset){
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q) + '&zoom=' + module + '&offset=' + offset,  spotResults);
+		quickRequest('spot', 'index.php?append_wildcard=true&to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q) + '&zoom=' + module + '&offset=' + offset,  spotResults);
 	}
         fullResults = function(id, data){
             var resultsDiv = document.getElementById('sugar_full_search_results');
@@ -604,7 +606,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		quickRequest('notifications', 'index.php?to_pdf=1&module=Notifications&action=quicklist', notificationsListDisplay );
 	}
 	notificationsListDisplay = function(id, data){
-		var overlay = setBody(data.responseText, 0, 'dcmenuSugarCube');
+		var overlay = setBody(data.responseText, 0, 'dcmenuSugarCube',"",SUGAR.language.get('app_strings', 'LBL_NOTIFICATIONS'));
         var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
    		var dcboxbody = Y.one('#dcboxbody');
 		Y.one('#dcboxbody').setStyle('visibility','visible');
@@ -612,6 +614,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		var dcmenuSugarCubeWidth = dcmenuSugarCube.get('offsetWidth');
 		var dcboxbodyWidth = dcboxbody.get('offsetWidth');
 		overlay.set('x',(dcmenuSugarCubeX + dcmenuSugarCubeWidth) - dcboxbodyWidth);
+        $('#dcmenuSugarCube').addClass("focused");
 		
 		
 		if(isRTL) {
@@ -700,7 +703,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             return;
         }
 
-        content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;"><div class="dashletPanel dc"><div class="hd"><div><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="bd"><div class="bd-center"><div class="dccontent" id="dcgscontent"><br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div></div></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div></div></div></div></div></div>';
+        content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;"><div class="dashletPanel dc"><div class="hd"><div><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()"><i class="icon-remove icon-sm"></i></a></div></div><div class="bd"><div class="bd-center"><div class="dccontent" id="dcgscontent"><br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div></div></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div></div></div></div></div></div>';
 
         overlays[qvDepth].set("bodyContent", content);
         overlays[qvDepth].set("align", {node:"#dcboxbody",
@@ -753,11 +756,11 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             if(SUGAR.themes.theme_name == 'RTL')
             {
                 content += '<div><div style="float:right"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
-                content += '<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png">';
+                content += '<i class="icon-remove icon-sm"></i>';
                 content += '</a></div></div></div><div class="tr"></div><div class="bd">';
             } else {
                 content += '<div><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
-                content += '<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png">';
+                content += '<i class="icon-remove icon-sm"></i>';
                 content += '</a></div></div><div class="tr"></div><div class="bd">';
             }
             content += '<div><div class="dccontent" id="dcgscontent">' +  data.responseText;

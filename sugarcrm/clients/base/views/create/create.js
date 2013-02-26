@@ -52,6 +52,21 @@
         //enable or disable duplicate check?
         var moduleMetadata = app.metadata.getModule(this.module);
         this.enableDuplicateCheck = (moduleMetadata && moduleMetadata.dupCheckEnabled) || false;
+
+        var fields = (moduleMetadata && moduleMetadata.fields) ? moduleMetadata.fields : [];
+
+        _.each(fields, function(field){
+            if(((field.name && field.name==='assigned_user_id') || (field.id_name && field.id_name==='assigned_user_id')) &&
+               (field.type && field.type==='relate')) {
+                    this.model.set('assigned_user_id', app.user.id);
+                    this.model.set('assigned_user_name', app.user.attributes.full_name);
+            }
+        }, this);
+
+    },
+
+    handleSync: function() {
+        //override handleSync since there is no need to save the previous model state
     },
 
     delegateButtonEvents: function() {
@@ -63,10 +78,6 @@
         this.setButtonStates(this.STATE.CREATE);
 
         this.renderDupeCheckList();
-
-        if (this.createMode) {
-            this.setTitle(app.lang.get('LBL_CREATE_BUTTON_LABEL', this.module) + ' ' + this.moduleSingular);
-        }
     },
 
     /**

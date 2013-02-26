@@ -40,15 +40,15 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'type' => 'image',
                     'width' => 42,
                     'height' => 42,
+                    'dismiss_label' => true,
                 ),
                 array(
                     'name' => 'fieldset_name',
-                    'type' => 'fieldset',
+                    'type' => 'fieldset-with-labels',
                     'fields' => array('salutation', 'first_name', 'last_name'),
                 ),
                 array(
                     'type' => 'favorite',
-                    'noedit' => true,
                 ),
             ),
         ),

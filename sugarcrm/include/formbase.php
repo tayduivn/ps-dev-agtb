@@ -111,10 +111,42 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
 			$focus->$field = $value;
 		}
 	}
-
+    //BEGIN SUGARCRM flav=pro ONLY
+    populateFromPostACL($focus);
+    //END SUGARCRM flav=pro ONLY
 	return $focus;
 }
+//BEGIN SUGARCRM flav=pro ONLY
+/**
+ * If current user have not permit to change field function replace default value
+ *
+ * @param SugarBean $focus
+ */
+function populateFromPostACL(SugarBean $focus)
+{
+    $insert = !isset($focus->id) || $focus->new_with_id;
+    $isOwner = $focus->isOwner($GLOBALS['current_user']->id);
 
+    // set up a default bean as per bug 46448, without bringing EditView into the mix
+    // bug 58730
+    require_once 'data/BeanFactory.php';
+
+    $defaultBean = BeanFactory::getBean($focus->module_name);
+    $defaultBean->fill_in_additional_detail_fields();
+    $defaultBean->assigned_user_id = $GLOBALS['current_user']->id;
+
+    foreach (array_keys($focus->field_defs) as $field) {
+        $fieldAccess = ACLField::hasAccess($field, $focus->module_dir, $GLOBALS['current_user']->id, $isOwner);
+        if (!in_array($fieldAccess, array(2, 4))) {
+            if ($insert) {
+                $focus->$field = $defaultBean->$field;
+            } else {
+                unset($focus->$field);
+            }
+        }
+    }
+}
+//END SUGARCRM flav=pro ONLY
 
 function add_hidden_elements($key, $value) {
 
@@ -446,6 +478,13 @@ function add_to_prospect_list($query_panel,$parent_module,$parent_type,$parent_i
     if(empty($thisPanel)) {
         return false;
     }
+
+    // bugfix #57850  filter prospect list based on marketing_id (if it's present)
+    if (isset($_REQUEST['marketing_id']) && $_REQUEST['marketing_id'] != 'all')
+    {
+        $thisPanel->_instance_properties['function_parameters']['EMAIL_MARKETING_ID_VALUE'] = $_REQUEST['marketing_id'];
+    }
+
     $result = SugarBean::get_union_related_list($parent, '', '', '', 0, -99,-99,'', $thisPanel);
 
     if(!empty($result['list'])) {

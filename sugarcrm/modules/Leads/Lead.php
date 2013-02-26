@@ -202,7 +202,7 @@ class Lead extends Person {
 
 	function create_list_query($order_by, $where, $show_deleted=0)
 	{
-		$custom_join = $this->custom_fields->getJOIN();
+        $custom_join = $this->getCustomJoin();
                 $query = "SELECT ";
 
 
@@ -210,9 +210,7 @@ class Lead extends Person {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join){
-   				$query .= $custom_join['select'];
- 			}
+        $query .= $custom_join['select'];
             $query .= " FROM leads ";
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -226,9 +224,7 @@ class Lead extends Person {
             //BEGIN SUGARCRM flav=pro ONLY
             $query .= getTeamSetNameJoin('leads');
             //END SUGARCRM flav=pro ONLY
-			if($custom_join){
-  				$query .= $custom_join['join'];
-			}
+        $query .= $custom_join['join'];
 			$where_auto = '1=1';
 			if($show_deleted == 0){
 				$where_auto = " leads.deleted=0 ";
@@ -259,18 +255,15 @@ class Lead extends Person {
 	
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
-        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
-		if($custom_join)
-				$custom_join['join'] .= $relate_link_join;
+        $custom_join = $this->getCustomJoin(true, true, $where);
+        $custom_join['join'] .= $relate_link_join;
                          $query = "SELECT
                                 leads.*, email_addresses.email_address email_address,
                                 users.user_name assigned_user_name";
                          //BEGIN SUGARCRM flav=pro ONLY
                          $query .= ", teams.name team_name";
                          //END SUGARCRM flav=pro ONLY
-                         if($custom_join){
-   							$query .= $custom_join['select'];
- 						}
+        $query .= $custom_join['select'];
                          $query .= " FROM leads ";
 //BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
@@ -287,9 +280,7 @@ class Lead extends Person {
 				$query .=  ' LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ' ;
 						
             
-            	if($custom_join){
-  					$query .= $custom_join['join'];
-				}
+        $query .= $custom_join['join'];
 
                         $where_auto = " leads.deleted=0 ";
 

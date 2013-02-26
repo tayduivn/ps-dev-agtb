@@ -4,6 +4,8 @@
 ({
     extendsFrom: 'RecordView',
 
+    _lastSelectedSignature: null,
+
     initialize: function(options) {
         _.bindAll(this);
         app.view.views.RecordView.prototype.initialize.call(this, options);
@@ -18,6 +20,8 @@
         this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer);
         this.context.on("actionbar:signature_button:clicked", this._launchSignatureDrawer);
         this.context.on('attachments:updated', this.toggleAttachmentVisibility);
+
+        this._lastSelectedSignature = app.user.getPreference("signature_default");
     },
 
     _render: function () {
@@ -36,6 +40,10 @@
 
             if (!_.isEmpty(recipientModel)) {
                 this.populateToRecipients(recipientModel);
+            }
+
+            if (this.model.isNew()) {
+                this._updateEditorWithSignature(this._lastSelectedSignature);
             }
         }
 
@@ -157,7 +165,7 @@
         // construct a new model from the data in recipientModel, which meets the expectations of the recipient field, to pass to "to_addresses"
         var recipient = new Backbone.Model({
                 id:recipientModel.get("id"),
-                module:recipientModel.get("_module")
+                module:recipientModel.module
             }),
             email = recipientModel.get("email"),
             email1 = recipientModel.get("email1"),
@@ -175,7 +183,7 @@
 
             if (!_.isUndefined(primaryAddress) && !_.isUndefined(primaryAddress.email_address) && primaryAddress.email_address.length > 0) {
                 recipient.set("email", primaryAddress.email_address);
-                name = recipientModel.get("assigned_user_name");
+                name = recipientModel.get("name");
             }
         }
 
@@ -302,7 +310,7 @@
 
         sendModel.set('status', status);
         myURL = app.api.buildURL('Mail');
-        response = app.api.call('create', myURL, sendModel, {
+        app.api.call('create', myURL, sendModel, {
             success: function() {
                 app.alert.dismiss('mail_call_status');
                 app.alert.show('mail_call_status', {autoClose: true, level: 'success', title: successMessage});
@@ -345,10 +353,7 @@
     launchTemplateDrawer: function() {
         app.drawer.open({
                 layout:'compose-templates',
-                context:{
-                    module:'EmailTemplates',
-                    forceNew:true
-                }
+                context:{module:'EmailTemplates'}
             },
             this.templateDrawerCallback
         );
@@ -394,8 +399,7 @@
      * @param template
      */
     insertTemplate: function(template) {
-        var editor,
-            subject,
+        var subject,
             notes;
 
         if (_.isObject(template)) {
@@ -405,13 +409,11 @@
                 this.model.set('subject', subject);
             }
 
-            editor = this.getField('html_body');
-
             //TODO: May need to move over replaces special characters.
             if (template.get('text_only') === 1) {
-                editor.setEditorContent(template.get('body'));
+                this.model.set("html_body", template.get("body"));
             } else {
-                editor.setEditorContent(template.get('body_html'));
+                this.model.set("html_body", template.get("body_html"));
             }
 
             notes = app.data.createBeanCollection("Notes");
@@ -431,6 +433,9 @@
                     app.logger.error("Unable to fetch the bean collection.");
                 }
             });
+
+            // currently adds the html signature even when the template is text-only
+            this._updateEditorWithSignature(this._lastSelectedSignature);
         }
     },
     
@@ -460,10 +465,7 @@
     launchDocumentDrawer: function() {
         app.drawer.open({
                 layout: 'selection-list',
-                context: {
-                    module: 'Documents',
-                    forceNew:true
-                }
+                context: {module: 'Documents'}
             },
             this.documentDrawerCallback);
     },
@@ -532,7 +534,11 @@
         if (_.isObject(signature) && signature.id) {
             var url = app.api.buildURL("Signatures", signature.id);
             app.api.call("read", url, null, {
-                success: this._insertSignature,
+                success: _.bind(function(model) {
+                    if (this._insertSignature(model)) {
+                        this._lastSelectedSignature = model;
+                    }
+                }, this),
                 error: function() {
                     console.log("Retrieving Signature failed.");
                 }
@@ -544,19 +550,81 @@
      * Inserts the signature into the editor.
      *
      * @param signature
+     * @return {Boolean}
      * @private
      */
     _insertSignature: function(signature) {
-        var editor,
-            emailBody;
-
         if (_.isObject(signature) && signature.signature_html) {
-            editor    = this.getField("html_body");
-            emailBody = editor.getEditorContent();
+            var signatureContent          = this._formatSignature(signature.signature_html),
+                emailBody                 = this.model.get("html_body") || "",
+                signatureOpenTag          = '<br class="signature-begin" />',
+                signatureCloseTag         = '<br class="signature-end" />',
+                signatureOpenTagForRegex  = '(<br\ class=[\'"]signature\-begin[\'"].*?\/?>)',
+                signatureCloseTagForRegex = '(<br\ class=[\'"]signature\-end[\'"].*?\/?>)',
+                signatureOpenTagMatches   = emailBody.match(new RegExp(signatureOpenTagForRegex, "gi")),
+                signatureCloseTagMatches  = emailBody.match(new RegExp(signatureCloseTagForRegex, "gi")),
+                regex                     = new RegExp(signatureOpenTagForRegex + ".*?" + signatureCloseTagForRegex, "gi");
 
-            emailBody += this._formatSignature(signature.signature_html);
-            editor.setEditorContent(emailBody);
+            if (signatureOpenTagMatches && !signatureCloseTagMatches) {
+                // there is a signature, but no close tag; so the signature runs from open tag until EOF
+                emailBody = this._insertSignatureTag(emailBody, signatureCloseTag, false); // append the close tag
+            } else if (!signatureOpenTagMatches && signatureCloseTagMatches) {
+                // there is a signature, but no open tag; so the signature runs from BOF until close tag
+                emailBody = this._insertSignatureTag(emailBody, signatureOpenTag, true); // prepend the open tag
+            } else if (!signatureOpenTagMatches && !signatureCloseTagMatches) {
+                // there is no signature, so add the tag to the correct location
+                emailBody = this._insertSignatureTag(
+                    emailBody,
+                    signatureOpenTag + signatureCloseTag, // insert both tags as one
+                    (app.user.getPreference("signature_prepend") == "true"));
+            }
+
+            this.model.set("html_body", emailBody.replace(regex, "$1" + signatureContent + "$2"));
+
+            return true;
         }
+
+        return false;
+    },
+
+    /**
+     * Inserts a tag into the editor to surround the signature so the signature can be identified again.
+     *
+     * @param body
+     * @param tag
+     * @param prepend
+     * @return {String}
+     * @private
+     */
+    _insertSignatureTag: function(body, tag, prepend) {
+        var preSignature  = "",
+            postSignature = "";
+
+        prepend = prepend || false;
+
+        if (prepend) {
+            var bodyOpenTag    = "<body>",
+                bodyOpenTagLoc = body.indexOf(bodyOpenTag);
+
+            if (bodyOpenTagLoc > -1) {
+                preSignature  = body.substr(0, bodyOpenTagLoc + bodyOpenTag.length);
+                postSignature = body.substr(bodyOpenTagLoc + bodyOpenTag.length, body.length);
+            } else {
+                postSignature = body;
+            }
+        } else {
+            var bodyCloseTag    = "</body>",
+                bodyCloseTagLoc = body.indexOf(bodyCloseTag);
+
+            if (bodyCloseTagLoc > -1) {
+                preSignature  = body.substr(0, bodyCloseTagLoc);
+                postSignature = body.substr(bodyCloseTagLoc, body.length);
+            } else {
+                preSignature = body;
+            }
+        }
+
+        return preSignature + tag + postSignature;
     },
 
     /**

@@ -166,7 +166,7 @@ class ModuleApi extends SugarApi {
         $args['record'] = $id;
 
         $bean = $this->loadBean($api, $args, 'view');
-
+        $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
 
         return $data;
@@ -181,6 +181,7 @@ class ModuleApi extends SugarApi {
 
         $bean = $this->loadBean($api, $args, 'view');
 
+        $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
 
         return $data;
@@ -190,7 +191,8 @@ class ModuleApi extends SugarApi {
         $this->requireArgs($args,array('module','record'));
 
         $bean = $this->loadBean($api, $args, 'view');
-
+        
+        $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
 
         return $data;
@@ -210,6 +212,7 @@ class ModuleApi extends SugarApi {
         $this->requireArgs($args, array('module', 'record'));
         $bean = $this->loadBean($api, $args, 'view');
         $this->toggleFavorites($bean, true);
+        $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
         return $data;
     }
@@ -218,6 +221,7 @@ class ModuleApi extends SugarApi {
         $this->requireArgs($args, array('module', 'record'));
         $bean = $this->loadBean($api, $args, 'view');
         $this->toggleFavorites($bean, false);
+        $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
         return $data;
     }

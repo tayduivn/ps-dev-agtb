@@ -40,15 +40,15 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'type' => 'image',
                     'width' => 42,
                     'height' => 42,
+                    'dismiss_label' => true,
                 ),
                 array(
-                    'name' => 'fieldset_full_name',
-                    'type' => 'fieldset',
+                    'name' => 'full_name',
+                    'type' => 'fieldset-with-labels',
                     'fields' => array('salutation', 'first_name', 'last_name')
                 ),
                 array(
                     'type' => 'favorite',
-                    'noedit' => true,
                 ),
             )
         ),
@@ -120,7 +120,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 'portal_name',
                 'portal_active',
                 'preferred_language',
-                'assigned_user_id',
+                'assigned_user_name',
                 'team_name',
                 array(
                     'name' => 'date_modified_by',

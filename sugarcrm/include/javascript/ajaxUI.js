@@ -113,6 +113,7 @@ SUGAR.ajaxUI = {
 
     go : function(url)
     {
+
         if(YAHOO.lang.trim(url) != "")
         {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;

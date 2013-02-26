@@ -56,15 +56,28 @@ class RestExportTest extends RestTestBase
 
     public function testExportWithFilter()
     {
-        $reply = $this->_restCall($this->massRestPath.'?filter='.urlencode('[{"name":"'.$this->accounts[0]->name.'"}]'));
-        $this->assertContains($this->accounts[0]->name, $reply['replyRaw'], 'Reply does not contain '.$this->accounts[0]->name);
+        $chosenIndex = 13;
+        // this filter should retrieve only one account.
+        $reply = $this->_restCall($this->massRestPath.'?filter='.urlencode('[{"name":"'.$this->accounts[$chosenIndex]->name.'"}]'));
+        foreach($this->accounts as $i => $account) {
+            if ($i == $chosenIndex) {
+                $this->assertContains($account->name, $reply['replyRaw'], 'Reply does not contain chosen account '.$i.' '.$account->name);
+            }
+            else {
+                $this->assertNotContains($account->name, $reply['replyRaw'], 'Reply contains non-chosen account '.$i.' '.$account->name);
+            }
+        }
 
     }
 
     public function testExportWithoutFilter()
     {
         $reply = $this->_restCall($this->massRestPath);
-        $this->assertContains($this->accounts[0]->name, $reply['replyRaw'], 'Reply does not contain '.$this->accounts[0]->name);
+
+        // we want them all.
+        foreach($this->accounts as $i => $account) {
+            $this->assertContains($account->name, $reply['replyRaw'], 'Reply does not contain account '.$i.' '.$account->name);
+        }
     }
 
     public function testExportSample()

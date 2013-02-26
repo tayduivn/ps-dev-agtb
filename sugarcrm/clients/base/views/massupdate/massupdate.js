@@ -224,7 +224,9 @@
             app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
             app.api.export({
                     module: this.module,
-                    uid: massExport.pluck('id')
+                    uid: (massExport.entire) ? undefined : massExport.pluck('id'),
+                    entire: massExport.entire,
+                    filter: (massExport.filter) ? massExport.filter : undefined
                 },
                 this.$el,
                 {

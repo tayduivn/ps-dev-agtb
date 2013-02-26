@@ -102,13 +102,15 @@
      * Dependencies are defined in the convert-main.php
      */
     checkDependentModules: function() {
-        var modulesMeta = this.meta.modules;
+        var modulesMeta = this.meta.modules,
+            isEnabled = false;
 
         _.each(modulesMeta, function (moduleMeta) {
             if(!_.isUndefined(moduleMeta.dependentModules)) {
                 if (this.isDependentModulesComplete(moduleMeta)) {
-                    this.context.trigger("lead:convert:" + moduleMeta.module + ":enable");
+                    isEnabled = true;
                 }
+                this.context.trigger("lead:convert:" + moduleMeta.module + ":enable", isEnabled);
             }
         }, this);
     },
@@ -123,7 +125,7 @@
         var isDirtyOrComplete,
             self = this;
 
-        isDirtyOrComplete =  _.all(moduleMeta.dependentModules, function(moduleName) {
+        isDirtyOrComplete =  _.all(moduleMeta.dependentModules, function(module, moduleName, list) {
             var convertPanel,
                 meta = self._getModuleMeta(moduleName);
 
@@ -217,21 +219,6 @@
     },
 
     /**
-     * Creates the parent model that holds all sub-models and logic for performing the convert action
-     * @return {*} instance of a backbone model.
-     */
-    createConvertModel:function (id) {
-        var convertModel = Backbone.Model.extend({
-            sync:function (method, model, options) {
-                myURL = app.api.buildURL('Leads', 'convert', {id:id});
-                return app.api.call(method, myURL, model, options);
-            }
-        });
-
-        return new convertModel();
-    },
-
-    /**
      * When finish button is clicked, need to kick off validation for current module
      */
     initiateFinish: function() {
@@ -247,13 +234,13 @@
         var self = this,
             leadsModel,
             convertModel,
-            models = {};
+            models = {},
+            myURL;
 
         app.alert.show('processing_convert', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
 
         //create parent convert model to hold all sub-models
         leadsModel = this.context.get('leadsModel');
-        convertModel = this.createConvertModel(leadsModel.id);
 
         //grab the associated model for each module
         _.each(this.meta.modules, function (moduleMeta) {
@@ -264,9 +251,13 @@
             }
         });
 
-        convertModel.set('modules', models);
-        convertModel.save(null, {
+        convertModel = new Backbone.Model(_.extend({}, {'modules' : models}));
+
+        myURL = app.api.buildURL('Leads', 'convert', {id:leadsModel.id});
+
+        app.api.call('create', myURL, convertModel, {
             success:function (data) {
+                app.drawer.close();
                 app.alert.dismiss('processing_convert');
                 app.navigate(self.context, leadsModel, 'record');
             }

@@ -84,8 +84,13 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
 
         $args = $this->getArgs();
         $db = DBManagerFactory::getInstance();
-
-        $args['opp_count'] = (!isset($args['opp_count'])) ? 0 : $args['opp_count'];
+        
+        $args['opp_count'] = !isset($args['opp_count']) ? 0 : $args['opp_count'];
+        $args['includedClosedAmount'] = !isset($args['includedClosedAmount']) ? 0 : $args['includedClosedAmount'];
+        $args['includedClosedCount'] = !isset($args['includedClosedCount']) ? 0 : $args['includedClosedCount'];
+        $args['lost_amount'] = !isset($args['lost_amount']) ? 0 : $args['lost_amount'];
+        $args['pipeline_opp_count'] = !isset($args['pipeline_opp_count']) ? 0 : $args['pipeline_opp_count'];
+        $args['pipeline_amount'] = !isset($args['pipeline_amount']) ? 0 : $args['pipeline_amount'];
 
         /* @var $forecast Forecast */
         $forecast = BeanFactory::getBean('Forecasts');
@@ -98,8 +103,15 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->opp_count = $args['opp_count'];
         $forecast->currency_id = $args['currency_id'];
         $forecast->base_rate = $args['base_rate'];
-
-        // TODO-SFA - Switch likely_case to be the configurable amount when that story is done.
+        
+        //If we are committing a rep forecast, calculate things.  Otherwise, for a manager, just use what is passed in.
+        if ($args['pipeline_opp_count'] == 0 && $args['pipeline_amount'] == 0) {
+            $forecast->calculatePipelineData(($args['includedClosedAmount']), ($args['includedClosedCount']));
+        } else {
+            $forecast->pipeline_opp_count = $args['pipeline_opp_count'];
+            $forecast->pipeline_amount = $args['pipeline_amount'];
+        } 
+       
         if ($args['likely_case'] != 0 && $args['opp_count'] != 0) {
             $forecast->opp_weigh_value = $args['likely_case'] / $args['opp_count'];
         }
