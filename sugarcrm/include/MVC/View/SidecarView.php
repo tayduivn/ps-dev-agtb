@@ -52,7 +52,7 @@ class SidecarView extends SugarView
         //Loading label
         $this->ss->assign('LBL_LOADING', $app_strings['LBL_ALERT_TITLE_LOADING']);
 
-        $slFunctionsPath = inDeveloperMode() ? sugar_cached("Expressions/functions_cache_debug.js") : sugar_cached("Expressions/functions_cache.js");
+        $slFunctionsPath = inDeveloperMode() ? "cache/Expressions/functions_cache_debug.js" : "cache/Expressions/functions_cache.js";
         if (!is_file($slFunctionsPath)) {
             $GLOBALS['updateSilent'] = true;
             include("include/Expressions/updatecache.php");

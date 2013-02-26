@@ -129,8 +129,9 @@ class Dependency
 
     /**
      * Returns the definition of the dependency in array format.
+     * @return array
      */
-    function getDefinition() {
+    public function getDefinition() {
         $def = array (
             "name" => $this->id,
             "hooks" => !empty($this->hooks) ? $this->hooks : array("all"),
