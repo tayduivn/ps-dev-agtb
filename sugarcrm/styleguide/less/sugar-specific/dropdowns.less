@@ -42,6 +42,7 @@
       }
     }
   }
+
   li:first-child a {
     border-top: none;
     .border-radius(4px 4px 0 0);
@@ -63,7 +64,6 @@
     line-height: 18px;
     color: @gray;
     white-space: nowrap;
-
     margin: 0;
     border-top: 1px solid @grayLighter;
     //background: #E1F0FA;
@@ -87,6 +87,7 @@
       color: @grayLight !important;
     }
   }
+
   // Hover state
   // -----------
   li > a:hover,
@@ -102,6 +103,7 @@
     background: @dropdownLinkBackgroundHover;
     //background-color: transparent;
   }
+
   label.radio {
     color: lighten(@gray, 20%);
     padding-left: 0px;
@@ -122,6 +124,23 @@
     border-bottom: 1px solid lighten(@grayLight,10%);
     height: 0;
   }
+
+  &.custom {
+    a {
+      display: inline !important;
+      color: @linkColor;
+      border-top: 0;
+    }
+    li {
+      line-height: 32px;
+      padding: 0 10px;
+    }
+    li:hover,
+    .active {
+      color: @dropdownLinkColorHover;
+      background: @dropdownLinkBackgroundHover;
+    }
+  }
 }
 
 .dropdown-toggle {
@@ -133,19 +152,6 @@
   }
 }
 
-//nutmeg
-/*.dropdown-toggle {
-  @shadow: inset 1px 0 0 rgba(255,255,255,.125), inset 0 1px 0 rgba(255,255,255,.2), 0 1px 3px rgba(0,0,0,.1);
-  .box-shadow(@shadow);
-  *padding-top: 5px;
-  *padding-bottom: 5px;
-    .rtlBorderRadiusTopLeft(@direction,3px);
-    .rtlBorderRadiusBottomLeft(@direction,3px);
-    .rtlBorderRadiusBottomRight(@direction,0);
-    .rtlBorderRadiusTopRight(@direction,0);
-}
-
-*/
 .caret {
   .opacity(30);
 }
