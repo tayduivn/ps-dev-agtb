@@ -25,8 +25,8 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/ytree/Tree.php');
-require_once('include/ytree/Node.php');
+require_once('vendors/ytree/Tree.php');
+require_once('vendors/ytree/Node.php');
 class MBPackageTree{
 	
 	function MBPackageTree(){

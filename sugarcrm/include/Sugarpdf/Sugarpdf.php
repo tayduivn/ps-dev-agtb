@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 SugarAutoLoader::requireWithCustom('include/Sugarpdf/sugarpdf_config.php');
-require_once('include/tcpdf/tcpdf.php');
+require_once('vendors/tcpdf/tcpdf.php');
 require_once('include/Sugarpdf/SugarpdfHelper.php');
 
 class Sugarpdf extends TCPDF
@@ -178,7 +178,7 @@ class Sugarpdf extends TCPDF
      * This method is used to render the page header.
      * It is automatically called by AddPage().
      * @access public
-    * @see include/tcpdf/TCPDF#Header()
+    * @see vendors/tcpdf/TCPDF#Header()
      */
     public function Header() {
         $ormargins = $this->getOriginalMargins();
@@ -241,7 +241,7 @@ class Sugarpdf extends TCPDF
     * @param float $size Font size in points. The default value is the current size. If no size has been specified since the beginning of the document, the value taken is 12
     * @param string $fontfile The font definition file. By default, the name is built from the family and style, in lower case with no spaces.
     * @access public
-    * @see include/tcpdf/TCPDF#SetFont()
+    * @see vendors/tcpdf/TCPDF#SetFont()
     */
     public function SetFont($family, $style='', $size=0, $fontfile='') {
 
@@ -273,7 +273,7 @@ class Sugarpdf extends TCPDF
      * This method override the regular Cell() method to apply the prepare_string() function to
      * the string to print in the PDF.
      * The cell method is used by all the methods which print text (Write, MultiCell).
-     * @see include/tcpdf/TCPDF#Cell()
+     * @see vendors/tcpdf/TCPDF#Cell()
      */
     public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=0, $link='', $stretch=0) {
         parent::Cell($w, $h, prepare_string($txt), $border, $ln, $align, $fill, $link, $stretch);

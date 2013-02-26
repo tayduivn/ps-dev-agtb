@@ -60,7 +60,7 @@ $portal->loadSoapClient();
 require_once ('sugar_version.php'); // provides $sugar_version, $sugar_db_version, $sugar_flavor
 require_once ('include/TimeDate.php');
 require_once ('include/modules.php'); // provides $moduleList, $beanList, $beanFiles, $modInvisList, $adminOnlyList
-require_once ('log4php/LoggerManager.php');
+require_once ('vendors/log4php/LoggerManager.php');
 require_once ('modules/Users/authentication/AuthenticationController.php');
 
 global $currentModule;

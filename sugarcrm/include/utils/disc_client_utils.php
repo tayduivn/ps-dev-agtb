@@ -39,7 +39,7 @@ function convert_disc_client(){
 	set_time_limit(3600);
 	ini_set('default_socket_timeout', 360);
 	global $sugar_config;
-	require_once('include/nusoap/nusoap.php');
+	require_once('vendors/nusoap//nusoap.php');
 
     $errors = array();
 
@@ -353,7 +353,7 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
  */
 function get_required_upgrades($soapclient, $session){
 	global $sugar_config, $sugar_version;
-	require_once('include/nusoap/nusoap.php');
+	require_once('vendors/nusoap//nusoap.php');
 
     $errors = array();
 

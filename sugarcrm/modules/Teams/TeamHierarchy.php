@@ -2,8 +2,8 @@
 //FILE SUGARCRM flav=int ONLY
 
 
-require_once('include/ytree/Tree.php');
-require_once('include/ytree/Node.php');
+require_once('vendors/ytree/Tree.php');
+require_once('vendors/ytree/Node.php');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.

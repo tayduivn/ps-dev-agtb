@@ -28,8 +28,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once('include/JSON.php');
 require_once('include/upload_file.php');
-require_once('include/ytree/Tree.php');
-require_once('include/ytree/Node.php');
+require_once('vendors/ytree/Tree.php');
+require_once('vendors/ytree/Node.php');
 require_once('modules/KBTags/TreeData.php');
 require_once('modules/KBTags/KBTree.php');
 

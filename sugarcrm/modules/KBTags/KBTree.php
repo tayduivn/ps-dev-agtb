@@ -34,7 +34,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *		  subsequent tree data calls will be served by the node class.  
  *		  tree view by default make ajax based calls for all requests.
  */
-require_once('include/ytree/Tree.php');
+require_once('vendors/ytree/Tree.php');
 
 class KBTree extends Tree {
 	function KBTree($name) {

@@ -336,7 +336,7 @@ if($show_raw) {
 EOD;
 }
 
-require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+require_once('vendors/Smarty/plugins/function.sugar_action_menu.php');
 $action_button = smarty_function_sugar_action_menu(array(
     'id' => 'detail_header_action_menu',
     'buttons' => $buttons,
@@ -410,7 +410,7 @@ if($show_raw) {
 EOD;
 }
 
-require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+require_once('vendors/Smarty/plugins/function.sugar_action_menu.php');
 $action_button_sent_email = smarty_function_sugar_action_menu(array(
     'id' => 'detail_header_action_menu',
     'buttons' => $buttons_sent_email,

@@ -31,12 +31,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * The order is DB (user or system) -> custom sugarpdf_default -> OOB sugarpdf_default
  */
 $sugarpdf_default = array(
-    "K_PATH_MAIN"=>"include/tcpdf/",
-    "K_PATH_URL"=>"include/tcpdf/",
-    "K_PATH_FONTS"=>"include/tcpdf/fonts/",
-    "K_PATH_CUSTOM_FONTS"=>"custom/include/tcpdf/fonts/",
-    "K_PATH_CACHE"=> sugar_cached("include/tcpdf/"),
-    "K_PATH_URL_CACHE"=> sugar_cached("include/tcpdf/"),
+    "K_PATH_MAIN"=>"vendors/tcpdf/",
+    "K_PATH_URL"=>"vendors/tcpdf/",
+    "K_PATH_FONTS"=>"vendors/tcpdf/fonts/",
+    "K_PATH_CUSTOM_FONTS"=>"custom/vendors/tcpdf/fonts/",
+    "K_PATH_CACHE"=> sugar_cached("vendors/tcpdf/"),
+    "K_PATH_URL_CACHE"=> sugar_cached("vendors/tcpdf/"),
     "K_PATH_CUSTOM_IMAGES"=>"custom/themes/default/images/",
     "K_PATH_IMAGES"=>"themes/default/images/",
     "K_BLANK_IMAGE"=>"themes/default/images/_blank.png",

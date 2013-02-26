@@ -23,7 +23,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/nusoap/nusoap.php');
+require_once('vendors/nusoap//nusoap.php');
 require_once 'tests/service/SOAPTestCase.php';
 require_once('tests/service/APIv3Helper.php');
 

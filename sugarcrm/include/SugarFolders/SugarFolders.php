@@ -10,8 +10,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Reserved. Contributor(s): ______________________________________..
  *********************************************************************************/
 
-require_once("include/ytree/Tree.php");
-require_once("include/ytree/ExtNode.php");
+require_once("vendors/ytree/Tree.php");
+require_once("vendors/ytree/ExtNode.php");
 
 /**
  * Polymorphic buckets - place any item in a folder

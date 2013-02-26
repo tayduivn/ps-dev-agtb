@@ -33,13 +33,13 @@ class SugarAutoLoader
      * @var array name => path
      */
 	public static $map = array(
-		'XTemplate'=>'XTemplate/xtpl.php',
+		'XTemplate'=>'vendors/XTemplate/xtpl.php',
 		'Javascript'=>'include/javascript/javascript.php',
         'ListView'=>'include/ListView/ListView.php',
         'Sugar_Smarty'=>'include/Sugar_Smarty.php',
         'CustomSugarView' => 'custom/include/MVC/View/SugarView.php',
 	    'Sugar_Smarty' => 'include/Sugar_Smarty.php',
-	    'HTMLPurifier_Bootstrap' => 'include/HTMLPurifier/HTMLPurifier.standalone.php',
+	    'HTMLPurifier_Bootstrap' => 'vendors/HTMLPurifier/HTMLPurifier.standalone.php',
         'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
         'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
         'SugarCurrency'=>'include/SugarCurrency/SugarCurrency.php',
@@ -70,7 +70,7 @@ class SugarAutoLoader
 	public static $prefixMap = array(
 	    'SugarACL' => "data/acl/",
 	    'SugarWidget' => "include/generic/SugarWidgets/",
-	    'Zend_' => '',
+	    'Zend_' => 'vendors/',
 	    'SugarJob' => 'include/SugarQueue/jobs/',
 	);
 
@@ -104,15 +104,15 @@ class SugarAutoLoader
         "tests/",
         "examples/",
         'docs/',
-        'log4php/',
+        'vendors/log4php/',
         'upload/',
 	    'portal/',
-	    'include/HTMLPurifier/',
-	    'include/phpmailer/',
-	    'include/reCaptcha/',
-	    'include/ytree/',
-	    'include/pclzip/',
-	    'include/nusoap/',
+	    'vendors/HTMLPurifier/',
+	    'vendors/phpmailer/',
+	    'vendors/reCaptcha/',
+	    'vendors/ytree/',
+	    'vendors/pclzip/',
+	    'vendors/nusoap/',
 	);
 	/**
 	 * Extensions to include in mapping

@@ -41,8 +41,8 @@ global $theme;
 
 
 //include tree view classes.
-require_once('include/ytree/Tree.php');
-require_once('include/ytree/Node.php');
+require_once('vendors/ytree/Tree.php');
+require_once('vendors/ytree/Node.php');
 
 require_once('modules/Documents/TreeData.php');
 

@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/ytree/Node.php');
+require_once('vendors/ytree/Node.php');
 
 //function returns an array of objects of Node type.
 function get_node_data($params,$get_array=false) {

@@ -23,11 +23,11 @@
  ********************************************************************************/
 
 require_once('include/Sugarpdf/sugarpdf_config.php');
-require_once('include/tcpdf/tcpdf.php');
+require_once('vendors/tcpdf/tcpdf.php');
 require_once('include/SugarCache/SugarCacheFile.php');
 require_once('modules/Import/sources/ImportFile.php');
-require_once('Zend/Http/Response.php');
-require_once('Zend/Http/Response/Stream.php');
+require_once('vendors/Zend/Http/Response.php');
+require_once('vendors/Zend/Http/Response/Stream.php');
 
 class SerializeEvilTest extends Sugar_PHPUnit_Framework_TestCase
 {

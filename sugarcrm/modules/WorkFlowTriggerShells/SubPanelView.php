@@ -84,7 +84,7 @@ $button .= "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' accessKey='"
 $button .= "LANGUAGE=javascript onclick='window.open(\"index.php?module=WorkFlowTriggerShells&action=CreateStep1&sugar_body_only=true&form=ComponentView&workflow_id=$focus->id&frame_type=$frame_type\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'>";
 $button .= "</form>\n";
 
-require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+require_once('vendors/Smarty/plugins/function.sugar_action_menu.php');
 $action_buttons = smarty_function_sugar_action_menu(array(
     'id' => 'ACLRoles_EditView_action_menu',
     'buttons' => array($button),

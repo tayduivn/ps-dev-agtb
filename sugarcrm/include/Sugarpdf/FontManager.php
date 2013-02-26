@@ -326,7 +326,7 @@ class FontManager{
 
         $oldStr=ob_get_contents();
         ob_clean();
-        require_once("include/tcpdf/fonts/utils/makefont.php");
+        require_once("vendors/tcpdf/fonts/utils/makefont.php");
         $filename = MakeFont($font_file,$metric_file, $embedded, $encoding_table, $patch, $cid_info);
 
         unlink($font_file);

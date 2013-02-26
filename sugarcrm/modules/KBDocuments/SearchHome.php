@@ -216,10 +216,10 @@ if(isset($_POST['clear_loaded'])){
 
     //print out the needed script tags for tree
 
-    echo"        <link rel='stylesheet' href='include/ytree/TreeView/css/folders/tree.css'>
-    <script language='JavaScript' src='include/ytree/TreeView/TreeView.js'></script>
-    <script language='JavaScript' src='include/ytree/TreeView/TaskNode.js'></script>
-    <script language='JavaScript' src='include/ytree/treeutil.js'></script>";
+    echo"        <link rel='stylesheet' href='vendors/ytree/TreeView/css/folders/tree.css'>
+    <script language='JavaScript' src='vendors/ytree/TreeView/TreeView.js'></script>
+    <script language='JavaScript' src='vendors/ytree/TreeView/TaskNode.js'></script>
+    <script language='JavaScript' src='vendors/ytree/treeutil.js'></script>";
 
     $ss->assign('BROWSETAB', return_browse_tab());
 
@@ -384,8 +384,8 @@ function perform_advanced_search($focus,$default=false){
         $ss_brws->assign("APP", $app_strings);
 
 
-        require_once('include/ytree/Tree.php');
-        require_once('include/ytree/Node.php');
+        require_once('vendors/ytree/Tree.php');
+        require_once('vendors/ytree/Node.php');
         require_once('modules/KBTags/TreeData.php');
 
 

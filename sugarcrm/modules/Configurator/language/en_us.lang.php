@@ -340,22 +340,22 @@ $mod_strings = array (
 "Chinese Traditional :<br>".
 "<pre>\$enc=\'UniCNS-UTF16-H\';<br>".
 "\$cidinfo=array(\'Registry\'=>\'Adobe\', \'Ordering\'=>\'CNS1\',\'Supplement\'=>0);<br>".
-"include(\'include/tcpdf/fonts/uni2cid_ac15.php\');</pre>".
+"include(\'vendors/tcpdf/fonts/uni2cid_ac15.php\');</pre>".
 "</li><li>".
 "Chinese Simplified :<br>".
 "<pre>\$enc=\'UniGB-UTF16-H\';<br>".
 "\$cidinfo=array(\'Registry\'=>\'Adobe\', \'Ordering\'=>\'GB1\',\'Supplement\'=>2);<br>".
-"include(\'include/tcpdf/fonts/uni2cid_ag15.php\');</pre>".
+"include(\'vendors/tcpdf/fonts/uni2cid_ag15.php\');</pre>".
 "</li><li>".
 "Korean :<br>".
 "<pre>\$enc=\'UniKS-UTF16-H\';<br>".
 "\$cidinfo=array(\'Registry\'=>\'Adobe\', \'Ordering\'=>\'Korea1\',\'Supplement\'=>0);<br>".
-"include(\'include/tcpdf/fonts/uni2cid_ak12.php\');</pre>".
+"include(\'vendors/tcpdf/fonts/uni2cid_ak12.php\');</pre>".
 "</li><li>".
 "Japanese :<br>".
 "<pre>\$enc=\'UniJIS-UTF16-H\';<br>".
 "\$cidinfo=array(\'Registry\'=>\'Adobe\', \'Ordering\'=>\'Japan1\',\'Supplement\'=>5);<br>".
-"include(\'include/tcpdf/fonts/uni2cid_aj16.php\');</pre>".
+"include(\'vendors/tcpdf/fonts/uni2cid_aj16.php\');</pre>".
 "</li></ul>".
 "More help : www.tcpdf.org",
     'LBL_FONT_LIST_FILESIZE' => 'Font Size (KB)',

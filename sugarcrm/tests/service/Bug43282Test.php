@@ -23,7 +23,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 require_once 'tests/service/SOAPTestCase.php';
-require_once('include/nusoap/nusoap.php');
+require_once('vendors/nusoap//nusoap.php');
 
 /**
  * @group bug43282

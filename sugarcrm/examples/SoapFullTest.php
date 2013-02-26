@@ -73,13 +73,13 @@ require_once('soap/SoapError.php');
 require_once('soap/SoapHelperFunctions.php');
 
 
-require_once('include/nusoap/nusoap.php');
+require_once('vendors/nusoap//nusoap.php');
 
 
 
 
 
-require_once('include/nusoap/nusoap.php');  //must also have the nusoap code on the ClientSide.
+require_once('vendors/nusoap//nusoap.php');  //must also have the nusoap code on the ClientSide.
 
 $GLOBALS['log'] =& LoggerManager::getLogger('SugarCRM');
 //ignore notices

@@ -20,7 +20,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/oauth2-php/lib/OAuth2.php');
+require_once('vendors/oauth2-php/lib/OAuth2.php');
 
 /**
  * Sugar OAuth2.0 server, is a wrapper around the php-oauth2 library
