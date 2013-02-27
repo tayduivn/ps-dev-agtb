@@ -88,7 +88,6 @@ $viewdefs['base']['view']['recordlist'] = array(
                 'event' => 'list:editrow:fire',
                 'acl_action' => 'edit',
             ),
-
             array(
                 'type' => 'rowaction',
                 'icon' => 'icon-trash',
