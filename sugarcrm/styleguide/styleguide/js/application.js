@@ -43,6 +43,7 @@
       });
       $('table').tooltip({
         selector: "[rel=tooltip]",
+        container: "body"
       });
       $('.thumbnail').tooltip({
         selector: "[rel=tooltip]",
