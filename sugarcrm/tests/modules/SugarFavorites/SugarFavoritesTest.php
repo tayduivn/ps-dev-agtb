@@ -99,4 +99,31 @@ class SugarFavoritesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($assigned_user_ids, "Should not have got back an assigned user ID");
 
     }
+
+    public function testLotsaToggles() {
+        // create a favorite
+        $contactFocus = SugarTestContactUtilities::createContact();
+        
+        $_REQUEST['fav_module'] = 'Contacts';
+        $_REQUEST['fav_id'] = $contactFocus->id;
+        
+        $controller = new SugarFavoritesController;
+        $controller->loadBean();
+        $controller->pre_save();
+        $controller->action_save();
+
+        $guid = SugarFavorites::generateGUID('Contacts', $contactFocus->id, $GLOBALS['current_user']->id);
+
+        // toggle it a few times
+        $fav = new SugarFavorites();
+        $fav->toggleExistingFavorite($guid, 1);
+        $fav->toggleExistingFavorite($guid, 0);
+        $fav->toggleExistingFavorite($guid, 1);
+        $fav->toggleExistingFavorite($guid, 0);
+        // verify I still have it as a favorite
+
+        $assigned_user_ids = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord('Contacts', $contactFocus->id);
+
+        $this->assertNotEmpty($assigned_user_ids, "Should have got back an assigned user ID");
+    }    
 }
