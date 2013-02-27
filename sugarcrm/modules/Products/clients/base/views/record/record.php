@@ -116,7 +116,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
                 ),
             )
         ),
@@ -156,6 +155,13 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'fields' => array(
                 'best_case',
                 'worst_case',
+                array(
+                    'name' => 'quote_name',
+                    'label' => 'LBL_ASSOCIATED_QUOTE',
+                    'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
+                    'readonly' => true,
+                    'bwcLink' => true
+                ),
                 array(
                     'name' => 'category_name',
                     'readonly' => true,

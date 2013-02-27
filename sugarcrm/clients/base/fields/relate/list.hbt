@@ -1,1 +1,5 @@
-<a href="#{{this.def.module}}/{{getFieldValue this.model this.def.id_name}}">{{value}}</a>
+{{#if bwcLink}}
+    <a href="#bwc/index.php?module={{../def.module}}&action=DetailView&record={{getFieldValue ../model ../def.id_name}}">{{value}}</a>
+{{else}}
+    <a href="#{{../def.module}}/{{getFieldValue ../model ../def.id_name}}">{{value}}</a>
+{{/if}}
