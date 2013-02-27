@@ -1,0 +1,28 @@
+{{#if tweets}}
+    <div class="twitter-widget">
+        <ul>
+            {{#each tweets}}
+                <div class="news-article">
+                    <h5>
+                        <a target='twitter' href="https://twitter.com/intent/user?screen_name={{screen_name}}" class="googledoc-fancybox">{{name}}</a>
+                    </h5>
+                    <p>
+                        {{{text}}}
+                    <div style='float:left;font-size:smaller'>
+                        {{timeago date}}
+                    </div><div style='float:right'>
+                    <a target='twitter' href="https://twitter.com/intent/retweet?tweet_id={{id}}" ><i class='icon-retweet' title='retweet'></i></a>
+                    <a target='twitter' href="https://twitter.com/intent/tweet?in_reply_to={{id}}" ><i class='icon-share-alt' title='reply'></i></a>
+                </div>
+                    </p>
+                </div>
+            {{/each}}
+
+        </ul>
+    </div>
+    <div class='block'>
+        <input name='tweet' class='tweet-box' id='tweet-box' style='width:60%'>
+        <a class='btn'  target='twitter' onclick='window.open("https://twitter.com/intent/tweet?{{#if screen_name}}screen_name={{twitter}}{{else}}hashtags={{twitter}}{{/if}}&text=" + encodeURIComponent(document.getElementById("tweet-box").value), "twitter");' class="twitter-mention-button" data-lang="en">Tweet {{#if screen_name}}@{{else}}#{{/if}}{{twitter}}</a>
+        <br/>
+    </div>
+{{/if}}
