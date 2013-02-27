@@ -26,9 +26,19 @@
           display: none;
         }
       }
+      .select2-choices {
+        padding: 4px 4px 2px 0;
+        border: none;
+        background-image: none;
+        .box-shadow(none);
+        .select2-input {
+          box-sizing: border-box;
+          height: 21px;
+          font-size: 12px;
+        }
+      }
+      .select2-search-choice,
       .select2-choice {
-        padding: 0;
-        margin: 0 0 0 4px;
         font-size: @fontSizeSmall;
         background: none;
         border: none;
@@ -355,6 +365,20 @@
     .select2-highlighted {
       background: @dropdownLinkBackgroundHover;
       color: @dropdownLinkColorHover;
+    }
+  }
+}
+
+//specific to forecasts module
+.view-forecastsFilter {
+  .filter-view {
+    white-space: nowrap;
+    .related-filter {
+      position: absolute;
+    }
+    .search-filter {
+      width: 100%;
+      margin-left: 116px;
     }
   }
 }
