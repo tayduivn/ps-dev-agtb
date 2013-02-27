@@ -40,20 +40,20 @@
         this.context.on("subnav:save", this.saveModel, this);
     },
     saveModel: function() {
-        var self = this;
+        var self = this,
+            deleteIfFails = _.isUndefined(self.model.id);
 
         // TODO we need to dismiss this in global error handler
         app.alert.show('save_edit_view', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
         this.model.save(null, {
             success:function () {
-
+                app.alert.dismiss('save_edit_view');
                 app.file.checkFileFieldsAndProcessUpload(self.model, {
                     success: function () {
-                        app.alert.dismiss('save_edit_view');
                         app.navigate(self.context, self.model, 'detail');
                     }
-                });
-
+                },
+                { deleteIfFails: deleteIfFails});
             },
             fieldsToValidate: this.getFields(this.module)
         });
