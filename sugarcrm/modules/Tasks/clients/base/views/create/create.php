@@ -46,24 +46,28 @@ $viewdefs['Tasks']['base']['view']['create'] = array(
             'showOn' => 'select',
         ),
         array(
-            'name'    => 'save_create_button',
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_AND_CREATE_ANOTHER',
-            'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'create',
-        ),
-        array(
-            'name'    => 'save_view_button',
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_AND_VIEW',
-            'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'create',
-        ),
-        array(
-            'name'    => 'save_button',
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
+            'type' => 'actiondropdown',
+            'name' => 'main_dropdown',
+            'primary' => true,
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'save_view_button',
+                    'label' => 'LBL_SAVE_AND_VIEW',
+                    'showOn' => 'create',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'save_create_button',
+                    'label' => 'LBL_SAVE_AND_CREATE_ANOTHER',
+                    'showOn' => 'create',
+                ),
+            ),
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -77,7 +81,7 @@ $viewdefs['Tasks']['base']['view']['create'] = array(
             'header' => true,
             'fields' => array(
                 'name',
-            )
+            ),
         ),
         array(
             'name' => 'panel_body',
@@ -85,9 +89,12 @@ $viewdefs['Tasks']['base']['view']['create'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'date_start', 'priority',
-                'date_due', 'status',
-                'assigned_user_name', 'parent_name',
+                'date_start',
+                'priority',
+                'date_due',
+                'status',
+                'assigned_user_name',
+                'parent_name',
             ),
         ),
         array(
@@ -96,12 +103,20 @@ $viewdefs['Tasks']['base']['view']['create'] = array(
             'columns' => 2,
             'labelsOnTop' => true,
             'fields' => array(
-                array('name' => 'description', 'span' => 12),
+                array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
                 'contact_name',
-                array('label' => 'LBL_CREATED_BY_USER', 'type' => 'fieldset', 'name' => 'created_by_date', 'fields' => array('created_by_name', 'date_entered')),
+                array(
+                    'label' => 'LBL_CREATED_BY_USER',
+                    'type' => 'fieldset',
+                    'name' => 'created_by_date',
+                    'fields' => array('created_by_name', 'date_entered'),
+                ),
                 'team_sets',
                 'date_modified',
-            )
-        )
+            ),
+        ),
     ),
 );

@@ -328,13 +328,13 @@
             }
             if (this.model.isNotEmpty !== true && fieldType !== 'image') {
                 this.model.isNotEmpty = true;
-                this.render();
+                if(!this.disposed) this.render();
             }
         }, this);
     },
 
     duplicateClicked: function() {
-        var self = this, 
+        var self = this,
             prefill = app.data.createBean(this.model.module);
 
         prefill.copy(this.model);
@@ -504,7 +504,7 @@
 
             if (self.createMode) {
                 app.navigate(self.context, self.model);
-            } else {
+            } else if (!self.disposed) {
                 self.render();
             }
         };
@@ -518,8 +518,8 @@
             },
             { deleteIfFails:false});
 
-        this.$(".record-save-prompt").hide();
-        this.render();
+        self.$(".record-save-prompt").hide();
+        if (!self.disposed) self.render();
     },
 
     handleCancel: function() {

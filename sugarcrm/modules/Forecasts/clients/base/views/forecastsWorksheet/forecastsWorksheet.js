@@ -776,6 +776,22 @@
         var sales_stage_won_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_won || [];
         var sales_stage_lost_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_lost || [];
 
+        // set up commit_stages that should be processed in included total
+        var forecast_ranges = app.metadata.getModule('Forecasts', 'config').forecast_ranges,
+            commit_stages_in_included_total = [],
+            ranges;
+
+        if ( forecast_ranges == 'show_custom_buckets' ) {
+            ranges = app.metadata.getModule('Forecasts', 'config')[forecast_ranges + '_ranges'];
+            _.each(ranges, function(value, key){
+                if ( !_.isUndefined(value.in_included_total) && value.in_included_total ) {
+                    commit_stages_in_included_total.push(key);
+                }
+            })
+        } else {
+            commit_stages_in_included_total.push('include');
+        }
+
         _.each(this.collection.models, function(model) {
             var won = _.include(sales_stage_won_setting, model.get('sales_stage')),
                 lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
@@ -795,8 +811,7 @@
                 lostAmount = app.math.add(lostAmount, amount_base);
                 lostCount++;
             }
-            
-            if(commit_stage === 'include') {
+            if ( _.include(commit_stages_in_included_total, commit_stage) ) {
                 includedAmount += amount_base;
                 includedBest += best_base;
                 includedWorst += worst_base;
