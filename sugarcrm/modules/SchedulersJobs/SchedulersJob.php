@@ -86,6 +86,13 @@ class SchedulersJob extends Basic
         }
 	}
 
+    // TODO: Remove this function after ENGRD-17.
+    public function retrieve($id, $encode = false, $deleted = true)
+    {
+        $encode = false;
+        return parent::retrieve($id, $encode, $deleted);
+    }
+
 	public function check_date_relationships_load()
 	{
         // Hack to work around the mess with dates being auto-converted to user format on retrieve
