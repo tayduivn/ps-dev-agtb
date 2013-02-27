@@ -5856,9 +5856,16 @@ height: 38px
 #dcboxbody .hd .close {
 position: absolute;
 right: 10px;
-top:0px;
+top:11px;
 }
 
+#dcboxbody .hd .close a {
+    color: #666;
+}
+
+#dcboxbody.dcmenuSugarCube .hd .close {
+    top: 0px;
+}
 
 #dcmenushortcuts{
 	width:130px;
@@ -7016,6 +7023,7 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
 
 #quickCreate ul.clickMenu li ul.subnav li a:hover, #globalLinksModule ul.clickMenu li ul.subnav li a:hover, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a:hover, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a:hover {
 	color: #fff !important;
+    background-color: #444;
 }
 
 
