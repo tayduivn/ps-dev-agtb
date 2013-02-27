@@ -326,6 +326,9 @@ class UnifiedSearchApi extends SugarListApi {
         $returnedRecords = array();
 
         $total = 0;
+        
+        $api->action = 'list';        
+        
         if(is_object($results)) {
             foreach ( $results as $result ) {
                 $record = BeanFactory::getBean($result->getModule(), $result->getId());
@@ -454,6 +457,9 @@ class UnifiedSearchApi extends SugarListApi {
         $results = $searchEngine->search($options['query'],$offset, $limit, $searchOptions);
 
         $returnedRecords = array();
+
+        $api->action = 'list';
+
         foreach ( $results as $module => $moduleResults ) {
             if ( !is_array($moduleResults['data']) ) {
                 continue;
