@@ -19,6 +19,8 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('modules/Campaigns/utils.php');
+
 class LeadConvert
 {
     const STATUS_CONVERTED = 'Converted';

@@ -4,7 +4,7 @@
     previousModelState: null,
     extendsFrom: 'EditableView',
 
-    enableHeaderPane: true,
+    enableHeaderButtons: true,
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',

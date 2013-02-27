@@ -163,7 +163,7 @@
 
         this.recordView.meta = this.removeFieldsFromMeta(this.recordView.meta, moduleMeta);
         this.$('.' +  this.RECORD_VIEW + 'View').append(this.recordView.el);
-        this.recordView.enableHeaderPane = false;
+        this.recordView.enableHeaderButtons = false;
         this.recordView.render();
 
         this.recordView.validationStatus = this.STATUS_DIRTY;
