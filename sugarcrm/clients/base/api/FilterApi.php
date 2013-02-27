@@ -152,7 +152,7 @@ class FilterApi extends SugarApi
     public function filterRelated(ServiceBase $api, array $args)
     {
         // Load the parent bean.
-        $record = BeanFactory::getBean($args['module'], $args['record']);
+        $record = BeanFactory::retrieveBean($args['module'], $args['record']);
 
         if (empty($record)) {
             throw new SugarApiExceptionNotFound('Could not find parent record '.$args['record'].' in module '.$args['module']);
