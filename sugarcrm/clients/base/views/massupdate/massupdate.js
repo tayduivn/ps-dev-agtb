@@ -163,7 +163,9 @@
         return massModel ? _.extend(massModel, {
             sync: function(default_method, model, options) {
                 var callbacks = {
-                        success: options.success,
+                        success: function(data, response) {
+                            options.success(model, data, response);
+                        },
                         error: options.error,
                         complete: options.complete
                     },
@@ -201,9 +203,11 @@
                             app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
                         },
                         success: function(data, response) {
-                            massUpdate.reset();
                             if(response.status == 'done') {
-                                self.layout.trigger("list:search:fire");
+                                //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
+                                //TODO: Need trigger for fetching new record list
+                                app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_DELETED'), autoClose: true});
+                                self.layout.collection.fetch();
                             } else if(response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
                             }
@@ -262,11 +266,12 @@
                             app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
                         },
                         success: function(data, response) {
-                            massUpdate.reset();
                             self.hide();
                             if(response.status == 'done') {
                                 app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_SUCCESS'), autoClose: true});
-                                self.layout.trigger("list:search:fire");
+                                //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
+                                //TODO: Need trigger for fetching new record list
+                                self.layout.collection.fetch();
                             } else if(response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
                             }

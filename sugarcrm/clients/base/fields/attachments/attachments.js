@@ -282,6 +282,7 @@
         var myURL = app.api.buildURL('MailAttachment', null, null, {oauth_token:app.api.getOAuthToken()});
         app.api.call('create', myURL, null,{
                 success: _.bind(function (result) {
+                    if (this.disposed === true) return; //if field is already disposed, bail out
                     if (!result.guid) {
                         this.handleUploadError(fileId);
                         app.logger.error('Attachment Upload Failed - no guid returned from API');
@@ -300,6 +301,7 @@
                 }, this),
 
                 error: _.bind(function(e) {
+                    if (this.disposed === true) return; //if field is already disposed, bail out
                     this.handleUploadError(fileId);
                     app.logger.error('Attachment Upload Failed: ' + e);
                 }, this)

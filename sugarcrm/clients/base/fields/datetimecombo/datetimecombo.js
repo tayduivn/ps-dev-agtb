@@ -67,7 +67,8 @@
      * @return {String} formatted value
      */
     format:function(value) {
-        var jsDate, output, myUser = app.user, d, parts, before24Hours, datetimeParts;
+        var jsDate, output, myUser = app.user, d, parts, before24Hours, datetimeParts,
+            datePart, timePart, dateParts, timeParts;
 
         if (this.stripIsoTZ) {
             value = app.date.stripIsoTimeDelimterAndTZ(value);
@@ -95,14 +96,36 @@
                 time: this.timeValue
             };
         } else {
-            // If the date value in our datebox is invalid, leave it alone and return. It will
-            // get handled upstream by sidecar (which uniformly handles field validation errors).
-            if (!this._verifyDateString(value)) {
-                return value;
+            if (this.stripIsoTZ) {
+                // Split date and time parts
+                parts = value.split(" ");
+                if (parts && parts.length > 1) {
+                    datePart = parts[0];
+                    timePart = parts[1];
+                    dateParts = datePart.match(/(\d+)/g);
+                    timeParts = timePart.match(/(\d+)/g);
+
+                    // If the date value in our datebox is invalid, leave it alone and return. It will
+                    // get handled upstream by sidecar (which uniformly handles field validation errors).
+                    if (!this._verifyDateString(datePart)) {
+                        return value;
+                    }
+                    jsDate = new Date(dateParts[0], dateParts[1]-1, dateParts[2]);//months are 0-based
+                    jsDate.setHours(timeParts[0]);
+                    jsDate.setMinutes(timeParts[1]);
+                    jsDate.setSeconds(timeParts[2]);
+                } else {
+                    app.logger.warn("Issue parsing datetimecombo value: " + value);
+                }
+            } else {
+                // Probably portal - not stripping the time zone information out
+                if (!this._verifyDateString(value)) {
+                    return value;
+                }
+                // In case ISO 8601 get it back to js native date which date.format understands
+                // Note: if stripIsoTZ true, time zone won't matter since it's already been removed.
+                jsDate = new Date(value);
             }
-            // In case ISO 8601 get it back to js native date which date.format understands
-            // Note: if stripIsoTZ true, time zone won't matter since it's already been removed.
-            jsDate = new Date(value);
         }
 
         // Save the 24 hour based hours in case we're using ampm to determine if am or pm later

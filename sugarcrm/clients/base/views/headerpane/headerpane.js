@@ -34,7 +34,7 @@
 
         this.context.on("headerpane:title",function(title){
             this.title = title;
-            this.render();
+            if (!this.disposed) this.render();
         }, this);
     },
 

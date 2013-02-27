@@ -127,6 +127,7 @@ class SugarQuery_Builder_Join {
 	 */
 	public function addLinkName($linkName) {
 		$this->linkName = $linkName;
+		return $this;
 	}
 
 

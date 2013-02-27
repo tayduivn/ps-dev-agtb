@@ -20,36 +20,69 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$module_name = 'Calls';
+$module_name = 'Campaigns';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'event' => 'megamenu:create:click',
-        'label' =>'LNK_NEW_CALL',
+        'route'=>'#bwc/index.php?module=Campaigns&action=WizardHome&return_module=Campaigns&return_action=index',
+        'label' =>'LNL_NEW_CAMPAIGN_WIZARD',
+        'acl_action'=>'edit',
+        'acl_module'=>$module_name,
+        'icon' => 'icon-magic',
+    ),
+    array(
+        'route'=>'#bwc/index.php?module=Campaigns&action=EditView&return_module=Campaigns&return_action=index',
+        'label' =>'LNK_NEW_CAMPAIGN',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#'.$module_name,
-        'label' =>'LNK_CALL_LIST',
+        'route'=>'#bwc/index.php?module=Campaigns&action=index&return_module=Campaigns&return_action=index',
+        'label' =>'LNK_CAMPAIGN_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
         'icon' => 'icon-reorder',
     ),
     array(
-        'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=Accounts&return_module=Accounts&return_action=index',
-        'label' =>'LNK_IMPORT_CALLS',
-        'acl_action'=>'import',
+        'route'=>'#bwc/index.php?module=Campaigns&action=newsletterlist&return_module=Campaigns&return_action=index',
+        'label' =>'LBL_NEWSLETTERS',
+        'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-upload-alternative',
+        'icon' => 'icon-reorder',
     ),
-    //BEGIN SUGARCRM flav=int ONLY
     array(
-        'route'=>'#bwc/index.php?module=Reports&action=index&view=accounts',
-        'label' =>'LBL_ACTIVITIES_REPORTS',
-        'acl_action'=>'',
-        'acl_module'=>'',
+        'route'=>'#bwc/index.php?module=EmailTemplates&action=EditView&return_module=EmailTemplates&return_action=DetailView',
+        'label' =>'LNK_NEW_EMAIL_TEMPLATE',
+        'acl_action'=>'edit',
+        'acl_module'=>'EmailTemplates',
+        'icon' => 'icon-plus',
+    ),
+    array(
+        'route'=>'#bwc/index.php?module=EmailTemplates&action=index',
+        'label' =>'LNK_EMAIL_TEMPLATE_LIST',
+        'acl_action'=>'list',
+        'acl_module'=>'EmailTemplates',
+        'icon' => 'icon-reorder',
+    ),
+    array(
+        'route'=>'#bwc/index.php?module=Campaigns&action=WizardEmailSetup&return_module=Campaigns&return_action=index',
+        'label' =>'LBL_EMAIL_SETUP_WIZARD',
+        'acl_action'=>'admin',
+        'acl_module'=>$module_name,
+        'icon' => 'icon-cog',
+    ),
+    array(
+        'route'=>'#bwc/index.php?module=Campaigns&action=CampaignDiagnostic&return_module=Campaigns&return_action=index',
+        'label' =>'LBL_DIAGNOSTIC_WIZARD',
+        'acl_action'=>'edit',
+        'acl_module'=>$module_name,
         'icon' => 'icon-bar-chart',
     ),
-    //END SUGARCRM flav=int ONLY
+    array(
+        'route'=>'#bwc/index.php?module=Campaigns&action=WebToLeadCreation&return_module=Campaigns&return_action=index',
+        'label' =>'LBL_WEB_TO_LEAD',
+        'acl_action'=>'edit',
+        'acl_module'=>$module_name,
+        'icon' => 'icon-plus',
+    ),
 );

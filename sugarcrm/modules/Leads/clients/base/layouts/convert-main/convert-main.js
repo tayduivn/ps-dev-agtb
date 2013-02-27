@@ -231,12 +231,12 @@
      * Save the convert model and process the response
      */
     processConvert:function () {
-        var self = this,
-            leadsModel,
+        var leadsModel,
             convertModel,
             models = {},
             myURL;
 
+        this.toggleFinishButton(false);
         app.alert.show('processing_convert', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
 
         //create parent convert model to hold all sub-models
@@ -244,23 +244,42 @@
 
         //grab the associated model for each module
         _.each(this.meta.modules, function (moduleMeta) {
-            var convertPanel = self._getPanelByModuleName(moduleMeta.module),
+            var convertPanel = this._getPanelByModuleName(moduleMeta.module),
                 associatedModel = convertPanel.getAssociatedModel();
             if (!_.isEmpty(associatedModel)) {
                 models[moduleMeta.module] = associatedModel;
             }
-        });
+        }, this);
 
         convertModel = new Backbone.Model(_.extend({}, {'modules' : models}));
 
         myURL = app.api.buildURL('Leads', 'convert', {id:leadsModel.id});
 
         app.api.call('create', myURL, convertModel, {
-            success:function (data) {
-                app.drawer.close();
+            success: _.bind(function (data) {
                 app.alert.dismiss('processing_convert');
-                app.navigate(self.context, leadsModel, 'record');
-            }
+                app.alert.show('convert_success', {
+                    level: 'success',
+                    title: app.lang.getAppString('LBL_SUCCESS'),
+                    messages: app.lang.get('LBL_CONVERTLEAD_SUCCESS', this.module, {leadName:leadsModel.get('name')}),
+                    autoClose: true
+                });
+                if (!this.disposed) {
+                    app.drawer.close();
+                    app.navigate(this.context, leadsModel, 'record');
+                }
+            }, this),
+            error: _.bind(function (error) {
+                var msg = {autoClose: false, level: 'error', title: app.lang.get('LBL_CONVERTLEAD_ERROR', this.module)};
+                if(error && _.isString(error.message)) {
+                    msg.messages = [error.message];
+                }
+                app.alert.dismiss('processing_convert');
+                app.alert.show('convert_error', msg);
+                if (!this.disposed) {
+                    this.toggleFinishButton(true);
+                }
+            }, this)
         });
     }
 })

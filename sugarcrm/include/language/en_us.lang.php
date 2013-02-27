@@ -3480,6 +3480,7 @@ $app_strings = array (
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
+    'LBL_SUCCESS' => 'Success',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
@@ -3791,6 +3792,13 @@ $app_strings = array (
     'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and create new',
     'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
+
+    //for sidecar alert view
+    'LBL_ALERT_TITLE_SUCCESS' => 'Success!',
+    'LBL_ALERT_TITLE_WARNING' => 'Warning!',
+    'LBL_ALERT_TITLE_NOTICE' => 'Notice!',
+    'LBL_ALERT_TITLE_ERROR' => 'Error!',
+    'LBL_ALERT_TITLE_LOADING' => 'Loading',
 );
 
 

@@ -77,5 +77,23 @@ describe("enum field", function() {
             expect($.trim(actual)).toEqual(expected);
         });
 
+        it("should format server's default value into a string array", function(){
+            field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
+            var original = "^Weird^";
+            var expected = ["Weird"];
+            var original2 = "^Very^,^Weird^";
+            var expected2 = ["Very", "Weird"];
+            expect(field.format(original)).toEqual(expected);
+            expect(field.format(original2)).toEqual(expected2);
+        });
+
+        it("should unformat nulls into server equivalent format of array with empty string", function(){
+            // Backbone.js won't sync null values so server doesn't pick up on change and clear multi-select field
+            field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
+            var original = null;
+            var expected = [];
+            expect(field.unformat(original)).toEqual(expected);
+        });
+
     });
 });

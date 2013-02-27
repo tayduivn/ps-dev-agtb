@@ -98,7 +98,7 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 'phone_other',
                 array(
                     'name' => 'date_modified_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_MODIFIED',
                     'fields' => array(
@@ -117,7 +117,7 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 'assigned_user_name',
                 array(
                     'name' => 'date_entered_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_ENTERED',
                     'fields' => array(

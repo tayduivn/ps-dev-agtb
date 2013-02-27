@@ -111,28 +111,10 @@ class EmailReminder
         if (empty($_SESSION["authenticated_user_language"])) {
             $currentLanguage = $GLOBALS["sugar_config"]["default_language"];
         }
+
         $user = BeanFactory::getBean('Users', $bean->created_by);
             
-        $OBCharset = $GLOBALS['locale']->getPrecedentPreference('default_email_charset');
-        require_once("include/SugarPHPMailer.php");
-        $mail = new SugarPHPMailer();
-        $mail->setMailerForSystem();
-        
-        if(empty($admin->settings['notify_send_from_assigning_user']))
-        {
-            $from_address = $admin->settings['notify_fromaddress'];
-            $from_name = $admin->settings['notify_fromname'] ? "" : $admin->settings['notify_fromname'];
-        }
-        else
-        {
-            $from_address = $user->emailAddress->getReplyToAddress($user);
-            $from_name = $user->full_name;
-        }
-
-        $mail->From = $from_address;
-        $mail->FromName = $from_name;
-        
-        $xtpl = new XTemplate(get_notify_template_file($current_language));
+        $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
         $xtpl = $this->setReminderBody($xtpl, $bean, $user);
 
         $templateName = "{$GLOBALS["beanList"][$bean->module_dir]}Reminder";

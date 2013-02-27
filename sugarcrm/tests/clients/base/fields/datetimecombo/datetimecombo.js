@@ -96,6 +96,16 @@ describe("datetimecombo field", function() {
             actual   = field._buildUnformatted('1970.09.12', '02', '00');
             expect(/1970\-09\-12T.*\:00\:00.*Z$/.test(actual)).toBeTruthy()
         });
+        it("should format properly when stripIsoTZ set", function() {
+            var stub = sinon.stub(field, "_verifyDateString", function() { return true; });
+            var date = '2012-04-09';
+            var time = '09:50:58';
+            field.stripIsoTZ = true;
+            expect(field.format(date+' '+time)).toEqual({date: '04/09/2012', time: '10:00', amPm: 'am'});
+            expect(stub).toHaveBeenCalledOnce();
+            expect(stub).toHaveBeenCalledWith(date);
+            stub.restore();
+        });
     });
 
     describe("datetimecombo test with 'H:i' (24 hour) time format", function() {
