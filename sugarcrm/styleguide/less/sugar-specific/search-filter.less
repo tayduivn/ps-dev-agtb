@@ -27,12 +27,13 @@
         }
       }
       .select2-choices {
-        padding: 4px 4px 2px 0;
+        padding: 3px 4px 3px 0;
         border: none;
         background-image: none;
+        background-color: transparent;
         .box-shadow(none);
         .select2-input {
-          box-sizing: border-box;
+          .box-sizing(border-box);
           height: 21px;
           font-size: 12px;
         }
@@ -373,12 +374,17 @@
 .view-forecastsFilter {
   .filter-view {
     white-space: nowrap;
+    padding-left: 116px;
     .related-filter {
       position: absolute;
+      left: 0;
+      .select2-choice {
+        height: 28px;
+        line-height: 28px;
+      }
     }
     .search-filter {
       width: 100%;
-      margin-left: 116px;
     }
   }
 }
