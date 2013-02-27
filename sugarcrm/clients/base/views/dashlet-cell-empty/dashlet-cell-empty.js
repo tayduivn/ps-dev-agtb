@@ -43,5 +43,9 @@
             this.template = app.template.getView(this.name + '.empty') || app.template.empty;
         }
         this.render();
+    },
+    _dispose: function() {
+        this.model.off("setMode", null, this);
+        app.view.View.prototype._dispose.call(this);
     }
 })

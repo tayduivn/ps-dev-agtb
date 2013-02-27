@@ -1,8 +1,8 @@
 <div class="add-row empty">
     <p>{{str "LBL_DASHBOARD_ADD_ROW" module}}</p>
     <p class="options">
-        <a class="add-dashlet" data-value="1"><small>{{str "LBL_DASHBOARD_ADD_1_COLUMN" module}}</small></a>
-        <a class="add-dashlet" data-value="2"><small>{{str "LBL_DASHBOARD_ADD_2_COLUMNS" module}}</small></a>
-        <a class="add-dashlet" data-value="3"><small>{{str "LBL_DASHBOARD_ADD_3_COLUMNS" module}}</small></a>
+        {{#each columnOptions}}
+        <a class="add-dashlet" data-value="{{index}}"><small>{{label}}</small></a>
+        {{/each}}
     </p>
 </div>

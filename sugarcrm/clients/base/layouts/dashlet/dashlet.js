@@ -172,5 +172,9 @@
                 .addClass(self.cssIconDefault);
         };
         app.view.Layout.prototype.loadData.call(this, options);
+    },
+    _dispose: function() {
+        this.off("render");
+        app.view.Layout.prototype._dispose.call(this);
     }
 })

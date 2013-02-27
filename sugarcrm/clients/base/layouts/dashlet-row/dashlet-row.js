@@ -189,5 +189,10 @@
 
         this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
         this.model.trigger("change:layout");
+    },
+    _dispose: function() {
+        this.model.off("applyDragAndDrop", null, this);
+        this.model.off("setMode", null, this);
+        app.view.Layout.prototype._dispose.call(this);
     }
 })

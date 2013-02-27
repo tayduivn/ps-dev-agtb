@@ -1,9 +1,0 @@
-<div class="card2">
-    <div class="row-fluid control-group">
-        <div class="span2">Name</div>
-        <div class="span10 controls">
-            <input type="text" name="dashlet_name" value="" class="input-large">
-            <p class="help-block"></p>
-        </div>
-    </div>
-</div>

@@ -12,8 +12,13 @@
         'click [name=add_button]': 'addClicked'
     },
     initialize: function(options) {
+
+        if(options.context.parent) {
+            options.meta = app.metadata.getView(options.context.parent.get("module"), options.name);
+            options.template = app.template.getView(options.name);
+        }
+
         app.view.views.HeaderpaneView.prototype.initialize.call(this, options);
-        this.model.off("change change:layout change:metadata", null, this);
         this.model.on("change change:layout change:metadata", function() {
             if (this.inlineEditMode) {
                 this.changed = true;
@@ -47,14 +52,22 @@
         this.handleSave();
     },
     createCancelClicked: function(evt) {
-        app.navigate(this.context);
+        if(this.context.parent) {
+            this.model.navigate('list');
+        } else {
+            app.navigate(this.context);
+        }
     },
     deleteClicked: function(evt) {
         this.handleDelete();
     },
     addClicked: function(evt) {
-        var route = app.router.buildRoute(this.module, null, 'create');
-        app.router.navigate(route, {trigger: true});
+        if(this.context.parent) {
+            this.model.navigate('create');
+        } else {
+            var route = app.router.buildRoute(this.module, null, 'create');
+            app.router.navigate(route, {trigger: true});
+        }
     },
     _render: function() {
         app.view.View.prototype._render.call(this);
@@ -78,7 +91,11 @@
                 },
                 success: function() {
                     if(self.context.get("create")) {
-                        app.navigate(self.context, self.model);
+                        if(self.context.parent) {
+                            self.model.navigate(self.model.id);
+                        } else {
+                            app.navigate(self.context, self.model);
+                        }
                     } else {
                         self.changed = false;
                         self.setButtonStates('view');
@@ -115,9 +132,13 @@
 
                 self.model.destroy({
                     success: function() {
-                        app.alert.show('dashboard_notice', {level: 'error', title: message, autoClose: true});
-                        var route = app.router.buildRoute(self.module);
-                        app.router.navigate(route, {trigger: true});
+                        app.alert.show('dashboard_notice', {level: 'success', title: message, autoClose: true});
+                        if(self.context.parent) {
+                            self.model.navigate('list');
+                        } else {
+                            var route = app.router.buildRoute(self.module);
+                            app.router.navigate(route, {trigger: true});
+                        }
                     },
                     error: function() {
                         app.alert.show('error_while_save', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
@@ -170,5 +191,11 @@
                 }
             }
         }, this);
+    },
+    _dispose: function() {
+        this.model.off("error:validation", null, this);
+        this.model.off("change change:layout change:metadata", null, this);
+        app.view.views.EditableView.prototype._dispose.call(this);
     }
+
 })

@@ -35,16 +35,17 @@
         this.previewDashlet(collection[index].metadata);
     },
     previewDashlet: function(metadata) {
-        var layout = this.layout;
+        var layout = this.layout,
+            previewLayout;
         while(layout) {
-            if(_.isFunction(layout.showPreviewPanel)) {
-                layout.showPreviewPanel();
+            if(layout.getComponent('preview-pane')) {
+                previewLayout = layout.getComponent('preview-pane').getComponent("dashlet-preview");
+                previewLayout.showPreviewPanel();
                 break;
             }
             layout = layout.layout;
         }
 
-        var previewLayout = layout.getComponent('preview-pane');
         if(previewLayout) {
             var previousComponent = _.last(previewLayout._components);
             if(previousComponent.name !== "dashlet-preview") {
@@ -118,11 +119,16 @@
         app.view.View.prototype._render.call(this);
         var self = this;
         if(this.context.get("dashlet_collection")) {
+            var parentModule = this.context.parent.get("module"),
+                parentView = this.context.parent.get("layout");
             this.$("#dashletList").dataTable({
-                "bFilter": false,
+                "bFilter": true,
                 "bInfo":false,
                 "bPaginate": false,
-                "aaData": _.pluck(this.context.get("dashlet_collection"), 'table'),
+                "aaData": _.pluck(_.filter(this.context.get("dashlet_collection"), function(dashlet) {
+                    var filter = dashlet.filter;
+                    return _.isUndefined(filter) || (_.indexOf(filter.module || [parentModule], parentModule) >= 0  && (filter.view || parentView) === parentView);
+                }), 'table'),
                 "aoColumns": [
                     {
                         sTitle: "Name"
@@ -137,7 +143,7 @@
                         }
                     },
                     {
-                        sTitle: "",
+                        sTitle: "Preview",
                         fnRender: function(obj) {
                             return '<a class="preview" data-index="' + obj.iDataRow + '" href="javascript:void(0);"><i class=icon-eye-open></i></a>';
                         }
@@ -167,6 +173,7 @@
                         _.each(metadata.dashlets, function(dashlet) {
                             dashlet_collection.push({
                                 type: component.name,
+                                filter: dashlet.filter,
                                 metadata: _.extend({
                                     component: name,
                                     module: component.module,

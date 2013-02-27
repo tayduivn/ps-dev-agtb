@@ -4,26 +4,38 @@
     initialize:function (options) {
 
         var context = options.context,
+            module = context.parent ? context.parent.get("module") : context.get("module"),
+            view = context.parent ? context.parent.get("layout") : '',
             sync = function(method, model, options) {
                 options       = app.data.parseOptionsForSync(method, model, options);
-                var callbacks = app.data.getSyncCallbacks(method, model, options);
-                app.api.records(method, this.apiModule, model.attributes, options.params, callbacks);
+                var callbacks = app.data.getSyncCallbacks(method, model, options),
+                    path = (this.dashboardModule === 'Home' || model.id) ? this.apiModule : this.apiModule + '/' + this.dashboardModule;
+                if(method === 'read') {
+                    options.params.view = view;
+                }
+                app.api.records(method, path, model.attributes, options.params, callbacks);
             },
             Dashboard = app.Bean.extend({
                 sync: sync,
                 apiModule: 'Dashboards',
-                module: 'Home'
+                module: 'Home',
+                dashboardModule: module,
+                maxColumns: (module === 'Home') ? 3 : 1,
+                maxRowColumns: (module === 'Home') ? 3 : 2,
+                navigate: _.bind(this.navigateLayout, this)
             }),
             DashboardCollection = app.BeanCollection.extend({
                 sync: sync,
                 apiModule: 'Dashboards',
                 module: 'Home',
+                dashboardModule: module,
                 model: Dashboard
             });
         if(options.meta && options.meta.method && options.meta.method === 'record' && !context.get("modelId")) {
             context.set("create", true);
         }
         var model = new Dashboard();
+        model.set("view", view);
         if(context.get("modelId")) {
             model.set("id", context.get("modelId"), {silent: true});
         }
@@ -31,7 +43,7 @@
         context.set("collection", new DashboardCollection());
         app.view.Layout.prototype.initialize.call(this, options);
         this.initDashletPlugin();
-        if(!this.context.parent) {
+        if(module === 'Home') {
             this.on("render", this.toggleSidebar);
         }
     },
@@ -41,6 +53,13 @@
             onAttach: function() {
                 this.on("init", function() {
                     this.model.isNotEmpty = true;
+                    if(this.context.parent && this.context.parent.parent) {
+                        this.model.parentModel = this.context.parent.parent.get("model");
+                        this.model.parentCollection = this.context.parent.parent.get("collection");
+                    } else {
+                        this.model.parentModel = this.context.get("model");
+                        this.model.parentCollection = this.context.get("collection");
+                    }
                     var dashlet_context = this.context.get("dashlet"),
                         viewName = dashlet_context.viewName;
                     delete dashlet_context.viewName;
@@ -92,6 +111,8 @@
                     dashboardEl
                 )
             );
+        } else {
+            dashboardEl = dashboardEl.children(".row-fluid");
         }
         dashboardEl.append(component.el);
     },
@@ -99,29 +120,57 @@
         var modelId = this.context.get("modelId");
         if(!(modelId && this.context.get("create")) && this.collection) {
             this.collection.on("reset", function() {
+                if(this.disposed) return;
+
                 if(this.collection.models.length > 0) {
                     var model = _.first(this.collection.models);
-                    if(!this.context.parent) {
-                        app.navigate(this.context, model);
-                    } else {
+                    if(this.context.parent) {
                         //For other modules
-                        this.context.set("model", model);
-                        //this.context.unset("collection");
-                        //this.context.set("module", "Home");
-                        model.fetch();
-                        this._addComponentsFromDef([{
-                            layout: 'dashlet-main'
-                        }]);
-                        this.loadData();
-                        this.render();
+                        this.navigateLayout(model.id);
+                    } else {
+                        app.navigate(this.context, model);
                     }
                 } else {
                     if(!this.context.parent) {
                         var route = app.router.buildRoute(this.module, null, 'create');
                         app.router.navigate(route, {trigger: true});
+                    } else {
+                        this.navigateLayout("create");
                     }
                 }
             }, this);
         }
+    },
+    navigateLayout: function(id) {
+        var layout = this.layout;
+        this.dispose();
+
+        layout._addComponentsFromDef([{
+            layout: {
+                name: 'dashboard',
+                components: [
+                    {
+                        view: 'dashboard-headerpane'
+                    },
+                    {
+                        layout: 'dashlet-main'
+                    }
+                ]
+            },
+            context: _.extend({
+                module: 'Home',
+                forceNew: true
+            }, (id === "create") ? {create: true} : (id !== "list") ? {modelId: id} : {})
+        }]);
+        layout.removeComponent(0);
+        layout.loadData();
+        layout.render();
+    },
+    _dispose: function() {
+        this.off("render");
+        if(this.collection) {
+            this.collection.off("reset");
+        }
+        app.view.Layout.prototype._dispose.call(this);
     }
 })

@@ -143,5 +143,11 @@
         targetComponent.layout.$el.append(sourceComponent.layout.$el.children(":not(.helper)").get(0));
         sourceComponent.layout.$el.append(cloneEl);
 
+    },
+    _dispose: function() {
+        this.model.off("change", null, this);
+        this.model.off("applyDragAndDrop", null, this);
+        this.model.off("setMode", null, this);
+        app.view.Layout.prototype._dispose.call(this);
     }
 })

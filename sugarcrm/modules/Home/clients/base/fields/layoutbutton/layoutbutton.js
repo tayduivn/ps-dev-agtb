@@ -12,7 +12,7 @@
     },
     _loadTemplate: function() {
         app.view.Field.prototype._loadTemplate.call(this);
-        if(this.action !== 'edit') {
+        if(this.action !== 'edit' || (this.model.maxColumns <= 1)) {
             this.template = app.template.empty;
         }
     },
