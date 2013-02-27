@@ -35,17 +35,40 @@
      */
     uid: '',
 
+    /**
+     *
+     * @param options
+     * @returns {*}
+     */
+    initialize: function(options) {
+        this.uid = this.model.get('user_id');
+
+        app.view.Field.prototype.initialize.call(this, options);
+        return this;
+    },
+
+    /**
+     * Use for format to change the value if the selected user is the same as the one that is being displayed
+     * @param value
+     * @returns {*}
+     */
+    format : function(value) {
+        var su = this.context.forecasts.get('selectedUser');
+        if(value == su.full_name) {
+            var hb = Handlebars.compile("{{str_format key module args}}");
+            value = hb({'key': 'LBL_MY_OPPORTUNITIES', 'module': 'Forecasts', 'args': su.full_name});
+        }
+
+        return value;
+    },
+
+    /**
+     * Override the render to set the viewName
+     * @returns {*}
+     * @private
+     */
     _render:function() {
-        var self = this;
         if(this.name == 'name') {
-            this.uid = this.model.get('user_id');
-
-            if(this.uid == app.user.get('id')) {
-                this.model.set('name', app.utils.formatString(app.lang.get('LBL_MY_OPPORTUNITIES', 'Forecasts'), [this.model.get('name')]), {silent:true});
-            }
-
-            this.popoverTitleName = this.model.get('name');
-
             // setting the viewName allows us to explicitly set the template to use
             this.options.viewName = 'userLink';
         }
@@ -59,7 +82,6 @@
      */
     linkClicked: function(event) {
         var uid = $(event.target).data('uid');
-        var self = this;
         var selectedUser = {
             id: '',
             user_name:'',
@@ -73,7 +95,7 @@
         var options = {
             dataType: 'json',
             context: selectedUser,
-            success: function(data) {
+            success: _.bind(function(data) {
                 selectedUser.id = data.id;
                 selectedUser.user_name = data.user_name;
                 selectedUser.full_name = data.full_name;
@@ -81,8 +103,8 @@
                 selectedUser.last_name = data.last_name;
                 selectedUser.isManager = data.isManager;
 
-                self.context.forecasts.set({selectedUser : selectedUser})
-            }
+                this.context.forecasts.set({selectedUser : selectedUser})
+            }, this)
         };
 
         myURL = app.api.buildURL('Forecasts', 'user/' + uid);
