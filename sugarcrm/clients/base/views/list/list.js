@@ -26,20 +26,16 @@
  ********************************************************************************/
 ({
     extendsFrom: 'EditableView',
+    plugins: ['ellipsis_inline'],
 
     /**
      * View that displays a list of models pulled from the context's collection.
      * @class View.Views.ListView
      * @alias SUGAR.App.layout.ListView
-     * @extends View.View
+     * @extends View.Views.EditableView
      */
     events: {
-        'click [class*="orderBy"]':'setOrderBy',
-        'mouseenter .rowaction': 'showTooltip',
-        'mouseleave .rowaction': 'hideTooltip',
-        'mouseenter tr':'showActions',
-        'mouseleave tr':'hideActions',
-        'mouseenter .ellipsis_inline':'addTooltip'
+        'click [class*="orderBy"]':'setOrderBy'
     },
 
     defaultLayoutEvents: {
@@ -52,27 +48,22 @@
     },
 
     defaultContextEvents: {},
-    
+
     // Model being previewed (if any)
     _previewed: null,
-    
-    addTooltip: function(event){
-        if (_.isFunction(app.utils.handleTooltip)) {
-            app.utils.handleTooltip(event, this);
-        }
-    },
+    //Store left column fields
+    _leftActions: [],
+    //Store right column fields
+    _rowActions: [],
+    //Store default and available(+visible) field names
+    _fields: {},
 
     initialize: function(options) {
         //Grab the list of fields to display from the main list view (assuming initialize is being called from a subclass)
-        var listViewMeta = this.filterFields(JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {})));
-
+        var listViewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {}));
         //Extend from an empty object to prevent polution of the base metadata
         options.meta = _.extend({}, listViewMeta, JSON.parse(JSON.stringify(options.meta || {})));
         options.meta.type = options.meta.type || 'list';
-
-        _.each(options.meta.panels, function(panel) {
-            this.populatePanelMetadata(panel, options);
-        }, this);
 
         app.view.View.prototype.initialize.call(this, options);
 
@@ -81,13 +72,6 @@
 
         this.attachEvents();
         
-        //When clicking on eye icon, we need to trigger preview:render with model&collection
-        this.context.on("list:preview:fire", function(model) {
-            app.events.trigger("preview:render", model, this.collection, true);
-        }, this);
-        
-        //When switching to next/previous record from the preview panel, we need to update the highlighted row
-        app.events.on("list:preview:decorate", this.decorateRow, this);
         app.events.on("list:filter:fire", this.filterList, this);
 
         // Dashboard layout injects shared context with limit: 5. 
@@ -131,25 +115,34 @@
         app.events.trigger("preview:close");
     },
 
-    filterFields: function(viewMeta){
-        var self = this, fieldsRemoved = 0;
-        this.hiddenFields = this.hiddenFields || [];
-        // TODO: load stored field prefs
+    /**
+     * Parse fields to identificate default and available(+visible) fields
+     * @param {Object} view metadata
+     * @return {Object} view metadata
+     */
+    parseFields: function(viewMeta){
+        this._fields = {
+            "default": [], //Fields visible by default
+            "available": {
+                "visible": [], //Fields user wants to see
+                "all": [] //Fields hidden by default
+            }
+        };
+        // TODO: load field prefs and store names in this._fields.available.visible
         // no prefs so use viewMeta as default and assign hidden fields
         _.each(viewMeta.panels, function(panel){
-             for (var count = 0; count < panel.fields.length; count ++) {
-                 fieldMeta = panel.fields[count];
-                if (fieldMeta.default === false) {
-                    self.hiddenFields.push(fieldMeta);
-                    panel.fields.splice(count, 1);
-                    // we need to recheck the last one because of the splice
-                    count--;
+            _.each(panel.fields, function(fieldMeta, i) {
+                if (fieldMeta["default"] === false) {
+                    this._fields["available"].all.push(fieldMeta.name);
+                } else {
+                    this._fields["default"].push(fieldMeta.name);
                 }
-            };
-        });
+            }, this);
+        }, this);
         return viewMeta;
 
     },
+
     filterList: function(filterDef, isNewFilter, scope) {
         var self = this;
 
@@ -171,25 +164,7 @@
             }
         });
     },
-    populatePanelMetadata: function(panel, options) {
-        var meta = options.meta;
-        if(meta.selection) {
-            switch (meta.selection.type) {
-                case "single":
-                    panel = this.addSingleSelectionAction(panel, options);
-                    break;
-                case "multi":
-                    panel = this.addMultiSelectionAction(panel, options);
-                    break;
-                default:
-                    break;
-            }
-        }
-        if(meta && meta.rowactions) {
-            panel = this.addRowActions(panel, options);
-        }
-        return panel;
-    },
+
     showAlert: function(message) {
         this.$(".alert .container").html(message);
         this.$(".alert").removeClass("hide");
@@ -274,7 +249,7 @@
         // Treat as a "sorted search" if the filter is toggled open
         options = self.filterOpened ? self.getSearchOptions() : {};
 
-        // If injected context with a limit (dashboard) then fetch only that 
+        // If injected context with a limit (dashboard) then fetch only that
         // amount. Also, add true will make it append to already loaded records.
         options.limit = self.limit || null;
         options.success = function () {
@@ -317,86 +292,6 @@
             options.relate = true;
         }
         return options;
-    },
-    /**
-     * Decorate a row in the list that is being shown in Preview
-     * @param model Model for row to be decorated.  Pass a falsy value to clear decoration.
-     */
-    decorateRow: function(model){
-        // If there are drawers, make sure we're updating only list views on active drawer.
-        if(_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)){
-            this._previewed = model;
-            this.$("tr.highlighted").removeClass("highlighted current above below");
-            if(model){
-                var rowName = model.module+"_"+ model.get("id");
-                var curr = this.$("tr[name='"+rowName+"']");
-                curr.addClass("current highlighted");
-                curr.prev("tr").addClass("highlighted above");
-                curr.next("tr").addClass("highlighted below");
-            }
-        }
-    },
-    addSingleSelectionAction: function(panel, options) {
-        var meta = options.meta,
-            module = options.module,
-            singleSelect = [{
-                'type' : 'selection',
-                'name' : meta.selection.name || module + '_select',
-                'sortable' : false,
-                'label' : meta.selection.label || ''
-            }];
-
-        panel.fields = singleSelect.concat(panel.fields);
-        return panel;
-    },
-    addMultiSelectionAction: function(panel, options) {
-        var meta = options.meta,
-            multiSelect = [{
-            'type' : 'fieldset',
-            'fields' : [{
-                'type' : 'actionmenu',
-                'buttons' : []
-            }],
-            'value' : false,
-            'sortable' : false
-        }];
-        if (!_.isUndefined(meta.selection.actions)) {
-            multiSelect[0].fields[0].buttons = meta.selection.actions;
-        }
-        panel.fields = multiSelect.concat(panel.fields);
-        return panel;
-    },
-    addRowActions: function(panel, options) {
-        var meta = options.meta,
-            rowActions = {
-            'type' : 'fieldset',
-            'fields' : [{
-                'type' : 'rowactions',
-                'label' : meta.rowactions.label || '',
-                'css_class' : meta.rowactions.css_class,
-                'buttons' : []
-            }],
-            'value' : false,
-            'sortable' : false
-        };
-        if (!_.isUndefined(meta.rowactions.actions)) {
-            rowActions.fields[0].buttons = meta.rowactions.actions;
-        }
-        panel.fields = panel.fields.concat(rowActions);
-
-        return panel;
-    },
-    showTooltip: function(e) {
-        this.$(e.currentTarget).tooltip("show");
-    },
-    hideTooltip: function(e) {
-        this.$(e.currentTarget).tooltip("hide");
-    },
-    showActions:function (e) {
-        $(e.currentTarget).children("td").children("span").children(".btn-group").show();
-    },
-    hideActions:function (e) {
-        $(e.currentTarget).children("td").children("span").children(".btn-group").hide();
     },
     bindDataChange:function () {
         if (this.collection) {
