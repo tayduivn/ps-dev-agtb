@@ -8,6 +8,7 @@
 
   // search filter inputs
   .filter-view {
+    border: 1px solid @inputBorder;
     position: relative;
     margin-left: 0px;
     background-color: @white;
@@ -28,7 +29,7 @@
       .select2-choice {
         padding: 0;
         margin: 0 0 0 4px;
-        font-size: 12px;
+        font-size: @fontSizeSmall;
         background: none;
         border: none;
         .border-radius(0);
@@ -153,15 +154,18 @@
   article {
     background-color: transparent;
     border-top: 1px solid @grayLighter;
-    border-bottom: 1px solid @grayLight;
-    padding: 7px 8px 7px 10px;
+    border-bottom: 1px solid darken(@grayLighter, 15%);
+    padding: 7px 10px 7px 10px;
   }
   article.filter-header,
   .inset-form-header {
-    padding: 9px 8px 7px 10px;
-    line-height: 28px;
+    padding: 9px 10px 7px 10px;
     .box-shadow(~"inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5)");
     border-top: none;
+    .pull-right {
+      padding: 2px 0;
+      font-size: 0;
+    }
   }
   article:last-child {
     .box-shadow(~"inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5)");
@@ -192,9 +196,11 @@
   .filter-actions {
     position: relative;
     float: right;
+    padding: 2px 0;
+    font-size: 0;
   }
   .filter-close {
-    margin-left: 4px;
+    margin-left: 8px;
   }
 
   // inset form select2 controls
@@ -315,7 +321,7 @@
     right: 0;
   }
   .removeme {
-    right: 30px;
+    right: 36px;
   }
 
   //adding this for mass update teamset
