@@ -30,6 +30,9 @@ $viewdefs['Forecasts']['base']['layout']['wizardConfig'] = array(
             'view' => 'forecastsConfigWizardStart',
         ),
         array(
+            'view' => 'forecastsConfigGeneral',
+        ),
+        array(
             'view' => 'forecastsConfigTimeperiods',
         ),
         array(

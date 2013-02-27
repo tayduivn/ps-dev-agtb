@@ -337,6 +337,7 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
 
     // Panel and BreadCrumb Labels
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_GENERAL' => 'General',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGES' => 'Ranges',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_SCENARIOS' => 'Scenarios',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS' => 'Time Periods',
@@ -352,6 +353,11 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_START_DATE' => 'Choose the date that you would like your time periods to start with each year:',
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose how many future time periods you want users to see:',
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose how many past time periods you want users to see:',
+
+    // general config
+    'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_TEXT' => 'Select how to populate the forecasting worksheet:',
+    'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_OPPORTUNITIES' => 'Opportunities',
+    'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_PRODUCT_LINE_ITEMS' => 'Product Line Items',
 
     // ranges config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
