@@ -145,3 +145,46 @@
   }
 }
 
+
+/* Dashboard inside right hand side panel */
+.sidebar-content {
+  .dashboard {
+    width: 90%;
+    overflow: visible;
+    .preview-headerbar {
+      border-bottom: 0;
+      h1 {
+        margin-left: 0;
+      }
+      .dropdown-menu {
+        min-width: auto;
+      }
+      input[type=text] {
+        width: 150px;
+      }
+    }
+    .well {
+      padding: 19px 2px 2px 2px;
+      &.well-invisible {
+        padding-right: 0;
+        padding-left: 0;
+        .widget-container {
+          padding: 0;
+        }
+      }
+      [class*="-container"] {
+        padding: 2px;
+      }
+    }
+    .dashlet-row {
+      li:first-child {
+        .well-invisible {
+          padding-top: 0;
+        }
+      }
+    }
+  }
+}
+
+
+
