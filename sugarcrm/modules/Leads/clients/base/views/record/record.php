@@ -50,6 +50,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'label'   => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
                     'showOn'  => 'view',
+                    'value'=>'edit'
                 ),
                 array(
                     'type' => 'rowaction',
@@ -58,6 +59,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'label'   => 'LBL_SAVE_BUTTON_LABEL',
                     'primary' => true,
                     'showOn'  => 'edit',
+                    'value'=>'edit'
                 ),
                 array(
                     'type' => 'rowaction',
@@ -65,6 +67,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'name'  => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
                     'showOn'  => 'view',
+                    'value'=>'edit'
                 ),
                 array(
                     'type' => 'rowaction',
@@ -72,6 +75,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'name'   => 'duplicate_button',
                     'label'  => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'showOn' => 'view',
+                    'value'=>'edit'
                 ),
                 array(
                     'type' => 'rowaction',
@@ -85,7 +89,8 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'event' => 'button:lead_convert_button:click',
                     'name'    => 'lead_convert_button',
                     'label'   => 'LBL_CONVERT_BUTTON_LABEL',
-                    'showOn' => 'view'
+                    'showOn' => 'view',
+                    'value'=>'edit'
                 ),
             ),
         ),
@@ -236,32 +241,8 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 ),
                 'assigned_user_name',
                 array(
-                    'name' => 'date_modified_by',
-                    'noedit' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_MODIFIED',
-                    'fields' => array(
-                        array(
-                            'name' => 'date_modified',
-                        ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY'
-                        ),
-                        array(
-                            'name' => 'modified_by_name',
-                        ),
-                    ),
-                ),
-                //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    "type" => "teamset",
-                    "name" => "team_name",
-                ),
-                //END SUGARCRM flav=pro ONLY
-                array(
                     'name' => 'date_entered_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_ENTERED',
                     'fields' => array(
@@ -274,6 +255,30 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         ),
                         array(
                             'name' => 'created_by_name',
+                        ),
+                    ),
+                ),
+                //BEGIN SUGARCRM flav=pro ONLY
+                array(
+                    "type" => "teamset",
+                    "name" => "team_name",
+                ),
+                //END SUGARCRM flav=pro ONLY
+                array(
+                    'name' => 'date_modified_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_MODIFIED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'modified_by_name',
                         ),
                     ),
                 ),

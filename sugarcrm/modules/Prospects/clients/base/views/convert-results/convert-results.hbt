@@ -1,0 +1,18 @@
+{{#if model.attributes.lead_id}}
+<table class="table table-striped dataTable converted-results">
+        <tbody role="alert" aria-live="polite" aria-relevant="all">
+            {{#each associatedModels.models}}
+            <tr name="{{module}}_{{attributes.id}}" class="single">
+                <td>
+                    <div class="controls span12">{{attributes.row_title}}: {{attributes.name}}</div>
+                </td>
+                <td class="preview-list-cell">
+                    <a class="preview-list-item" rel="tooltip" data-placement="bottom" data-title="{{str "LBL_PREVIEW"}}" data-module="{{module}}" data-id="{{attributes.id}}">
+                        <i class="icon-eye-open"></i>
+                    </a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+</table>
+{{/if}}

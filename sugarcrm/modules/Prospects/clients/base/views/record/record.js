@@ -25,42 +25,46 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'ListView',
+    extendsFrom: 'RecordView',
 
-    initialize: function(options) {
-        app.view.views.ListView.prototype.initialize.call(this, options);
+    delegateButtonEvents: function() {
+        this.context.on('button:convert_button:click', this.convertProspectClicked, this);
+        this.context.on('button:manage_subscriptions:click', this.manageSubscriptionsClicked, this);
+        app.view.views.RecordView.prototype.delegateButtonEvents.call(this);
+    },
 
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(field) {
-                field.sortable = false;
-            });
+    convertProspectClicked: function() {
+        var self = this,
+            prefill = app.data.createBean('Leads');
+
+        prefill.copy(this.model);
+        prefill.unset("id");
+
+        app.drawer.open({
+            layout: 'create',
+            context: {
+                create: true,
+                model: prefill,
+                module: 'Leads',
+                prospect_id: this.model.get('id')
+            }
+        }, function(newModel) {
+            if(newModel && newModel.id) {
+                app.router.navigate("#" + 'Leads' + "/" + newModel.id, {trigger: true});
+            }
         });
-
-        this.on("render", this._removeLinks, this);
-
-        //set the filter on the collection
-        if(!_.isEmpty(this.meta.filterDef)) {
-            this.collection.filterDef = this.meta.filterDef;
-        }
     },
 
-    _removeLinks: function() {
-        this.$('a:not(.rowaction)').contents().unwrap();
-    },
+    manageSubscriptionsClicked: function() {
+        var params = [
+            {'name': 'return_module', value: 'Prospects'},
+        //    {'name': 'return_action', value: 'DetailView'},
+            {'name': 'return_id', value: this.model.id},
+            {'name': 'action', value: 'Subscriptions'},
+            {'name': 'module', value: 'Campaigns'}
+        ];
 
-    addRowActions: function(panel, options) {
-        panel = app.view.views.ListView.prototype.addRowActions.call(this, panel, options);
-
-        if (options.meta.showPreview === true) {
-            panel.fields = panel.fields.concat({
-                type: 'rowaction',
-                css_class: 'btn',
-                tooltip: 'LBL_PREVIEW',
-                event: 'list:preview:fire',
-                icon: 'icon-eye-open'
-            });
-        }
-
-        return panel;
+        var route = '#bwc/index.php?' + $.param(params);
+        app.router.navigate(route, {trigger: true});
     }
 })
