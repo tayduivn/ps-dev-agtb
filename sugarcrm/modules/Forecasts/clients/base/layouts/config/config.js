@@ -206,21 +206,21 @@
     /**
      * Displays an alert  and reloads the page
      */
-    displaySuccessAndReload:function () {
+    displaySuccessAndReload:function (location) {
         var alert = app.alert.show('success', {
             level: 'success',
             autoClose: true,
             closeable: false,
             showCancel: false,
             onAutoClose: function() {
-                window.location.hash = "#";
+                window.location = location;
             },
             title: app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
             messages: [app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
         });
 
         alert.getCloseSelector().on('click', function() {
-            window.location.hash = "#";
+            window.location = location;
         });
     }
 })
