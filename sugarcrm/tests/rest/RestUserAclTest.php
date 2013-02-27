@@ -76,7 +76,7 @@ class RestUserAclTest extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['id']),
             "An user was not created");
 
-        $this->assertEquals($restReply['reply']['is_admin'], 1, "Is admin was not set");
+        $this->assertEquals($restReply['reply']['is_admin'], true, "Is admin was not set");
 
         $this->new_user_id = $restReply['reply']['id'];
 

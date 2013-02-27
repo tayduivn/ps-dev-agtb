@@ -43,6 +43,7 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
         }
+        unset($_SESSION['ACL']);
         SugarTestHelper::tearDown();
     }
 
@@ -84,4 +85,39 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($relatedNoteIds);
         $this->assertEquals($note->id, $relatedNoteIds[0]);
     }
+
+    public function testViewNoneCreate() {
+        // setup ACL
+        unset($_SESSION['ACL']);
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Contacts']['module']['admin']['aclaccess'] = 99;
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Notes']['module']['access']['aclaccess'] = 90;
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Notes']['module']['edit']['aclaccess'] = 90;
+        // create a record
+        $contact = BeanFactory::getBean("Contacts");
+        $contact->last_name = "Related Record Unit Test Contact";
+        $contact->save();
+        // Get the real data that is in the system, not the partial data we have saved
+        $contact->retrieve($contact->id);
+        $this->createdBeans[] = $contact;
+        $noteName = "Related Record Unit Test Note";
+
+        $api = new RestService();
+        //Fake the security
+        $api->user = $GLOBALS['current_user'];
+
+
+        $args = array(
+            "module" => "Contacts",
+            "record" => $contact->id,
+            "link_name" => "notes",
+            "name" => $noteName,
+            "assigned_user_id" => $GLOBALS['current_user']->id,
+        );
+        $apiClass = new RelateRecordApi();
+        $result = $apiClass->createRelatedRecord($api, $args);
+        $this->assertEquals(count($result['related_record']), 1, "More than one field was returned");
+        $this->assertNotEmpty($result['related_record']['id'], "ID was empty");
+        unset($_SESSION['ACL']);
+        $this->createdBeans[] = BeanFactory::getBean("Notes", $result['related_record']['id']);
+    }    
 }

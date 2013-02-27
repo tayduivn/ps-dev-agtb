@@ -123,6 +123,8 @@ class Bug extends SugarBean {
 	{
 		$custom_join = $this->custom_fields->getJOIN();
 
+        $custom_join = $this->getCustomJoin();
+		
                 $query = "SELECT ";
 
 		$query .= "
@@ -132,9 +134,7 @@ class Bug extends SugarBean {
                                 //BEGIN SUGARCRM flav=pro ONLY
                                 $query .= ", teams.name AS team_name";
                                 //END SUGARCRM flav=pro ONLY
-                                 if($custom_join){
-                               		 $query .= $custom_join['select'];
-                                }
+        $query .= $custom_join['select'];
                                 $query .= " FROM bugs ";
 
 
@@ -149,9 +149,7 @@ class Bug extends SugarBean {
                                 $query .= " LEFT JOIN teams ON bugs.team_id=teams.id";
                                 //END SUGARCRM flav=pro ONLY
                                 $query .= "  ";
-								if($custom_join){
-                               		 $query .= $custom_join['join'];
-                                }
+        $query .= $custom_join['join'];
             $where_auto = '1=1';
 			if($show_deleted == 0){
             	$where_auto = " $this->table_name.deleted=0 ";
@@ -176,9 +174,8 @@ class Bug extends SugarBean {
 
         function create_export_query(&$order_by, &$where, $relate_link_join='')
         {
-        	$custom_join = $this->custom_fields->getJOIN(true, true,$where);
-			if($custom_join)
-				$custom_join['join'] .= $relate_link_join;
+            $custom_join = $this->getCustomJoin(true, true, $where);
+            $custom_join['join'] .= $relate_link_join;
                 $query = "SELECT
                                 bugs.*,
                                 r1.name found_in_release_name,
@@ -187,9 +184,7 @@ class Bug extends SugarBean {
 //BEGIN SUGARCRM flav=pro ONLY
 						 $query .= ", teams.name AS team_name ";
 //END SUGARCRM flav=pro ONLY
-                                 if($custom_join){
-									$query .=  $custom_join['select'];
-								}
+            $query .=  $custom_join['select'];
                                 $query .= " FROM bugs ";
 //BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
@@ -202,9 +197,7 @@ class Bug extends SugarBean {
 //BEGIN SUGARCRM flav=pro ONLY
 						 $query .= getTeamSetNameJoin('bugs');
 //END SUGARCRM flav=pro ONLY
-                                 if($custom_join){
-									$query .=  $custom_join['join'];
-								}
+            $query .=  $custom_join['join'];
                                 $query .= "";
                 $where_auto = "  bugs.deleted=0
                 ";

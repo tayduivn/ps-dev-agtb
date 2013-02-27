@@ -432,7 +432,7 @@ abstract class DBManager
 	 */
 	protected function addDistinctClause(&$sql)
 	{
-	    preg_match("|^\w*(\w+)|i", $sql, $firstword);
+	    preg_match("|^\W*(\w+)|i", $sql, $firstword);
 	    if(empty($firstword[1]) || strtolower($firstword[1]) != 'select') {
 	        // take first word of the query, if it's not SELECT - ignore it
 	        return;
@@ -445,20 +445,24 @@ abstract class DBManager
 			}
 			$newSql = '';
 			foreach($parts as $p=>$part){
-			    $part = preg_replace_callback('/INNER JOIN \((select tst\.team_set_id[^\)]*)\)\s*(\w*)_tf on \w*_tf\.team_set_id  = \w*\.team_set_id/i',
+			    $newpart = preg_replace_callback('/INNER JOIN \((select tst\.team_set_id[^\)]*)\)\s*(\w*)_tf on \w*_tf\.team_set_id  = \w*\.team_set_id/i',
 			        array($this, "replaceTeamClause"), $part);
-			    $start = 0;
-			    while(true) {
-    			    $selectPos = stripos($part , 'select', $start);
-	    		    if($selectPos !== false){
-		    	        $distinctPos = stripos($part , 'distinct', $selectPos);
-			        	if($distinctPos === false || $distinctPos > 20){
-			            	$part = substr($part, 0, $selectPos + 6) .' DISTINCT ' . substr( $part, $selectPos + 7);
-			    	    }
-	    		    } else {
-	    		        break;
-	    		    }
-			    	$start = $selectPos+1;
+			    $selects = array();
+			    preg_match_all("/SELECT\s+(.*?)\s+FROM\s+/is", $newpart, $selects, PREG_OFFSET_CAPTURE);
+			    if(!empty($selects[1])) {
+			        $offset = 0;
+			        do {
+    			        foreach($selects[1] as $match) {
+                            if(stripos($match[0], 'distinct') !== false) continue; /* already have distinct */
+                            if(preg_match("/(avg|sum|min|max|count)\(.*\)/i", $match[0])) {
+                                /* bug #61011 - don't rewrite queries with aggregates */
+                                break 2;
+                            }
+                            $newpart = substr($newpart, 0, $match[1]+$offset)."DISTINCT ".substr($newpart, $match[1]+$offset);
+                            $offset += strlen("DISTINCT "); // adjust following offsets since we've added stuff
+    			        }
+			            $part = $newpart;
+			        } while(false);
 			    }
 
 				if( $p < count($parts) - 1 )$part .= 'UNION ALL';
@@ -2872,11 +2876,9 @@ protected function checkQuery($sql, $object_name = false)
 		$values['field_name']= $this->massageValue($changes['field_name'], $fieldDefs['field_name']);
 		$values['data_type'] = $this->massageValue($changes['data_type'], $fieldDefs['data_type']);
 		if ($changes['data_type']=='text') {
-			$bean->fetched_row[$changes['field_name']]=$changes['after'];;
 			$values['before_value_text'] = $this->massageValue($changes['before'], $fieldDefs['before_value_text']);
 			$values['after_value_text'] = $this->massageValue($changes['after'], $fieldDefs['after_value_text']);
 		} else {
-			$bean->fetched_row[$changes['field_name']]=$changes['after'];;
 			$values['before_value_string'] = $this->massageValue($changes['before'], $fieldDefs['before_value_string']);
 			$values['after_value_string'] = $this->massageValue($changes['after'], $fieldDefs['after_value_string']);
 		}
@@ -2904,25 +2906,41 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
     /**
-     * Uses the audit enabled fields array to find fields whose value has changed.
+     * Finds fields whose value has changed.
      * The before and after values are stored in the bean.
      * Uses $bean->fetched_row && $bean->fetched_rel_row to compare
      *
      * @param SugarBean $bean Sugarbean instance that was changed
+     * @param array|null $options Array of optional arguments
+     *                   field_filter => Array of filter names to be inspected (NULL means all fields)
+     *                   for => Who are we getting the changes for, options are audit (default) and activity
      * @return array
      */
-	public function getDataChanges(SugarBean &$bean, $for = 'audit')
+	public function getDataChanges(SugarBean &$bean, array $options = null)
 	{
-		$changed_values=array();
-		$fields= $for == 'audit' ? $bean->getAuditEnabledFieldDefinitions() : $bean->getActivityEnabledFieldDefinitions();
+        $options['for'] = isset($options['for']) ? $options['for'] : 'audit';
+ 		$changed_values=array();
+		$fields = $options['for'] == 'activity' ? $bean->getActivityEnabledFieldDefinitions() : $bean->getAuditEnabledFieldDefinitions();
 
         $fetched_row = array();
-        if (is_array($bean->fetched_row))
-        {
+        if (is_array($bean->fetched_row)) {
             $fetched_row = array_merge($bean->fetched_row, $bean->fetched_rel_row);
         }
+        if (!$fetched_row) {
+            return $changed_values;
+        }
 
-		if ($fetched_row && is_array($fields) and count($fields) > 0) {
+        if (isset($options['field_filter']) && is_array($options['field_filter'])) {
+            $fields = array_intersect_key($fields, array_flip($options['field_filter']));
+        }
+        
+        // remove fields which do not present in fetched row
+        $fields = array_intersect_key($fields, $fetched_row);
+        
+        // remove fields which do not exist as bean property
+        $fields = array_intersect_key($fields, (array) $bean);
+
+		if (is_array($fields) and count($fields) > 0) {
 			foreach ($fields as $field=>$properties) {
 				if (array_key_exists($field, $fetched_row)) {
 					$before_value = $fetched_row[$field];
@@ -2937,36 +2955,50 @@ protected function checkQuery($sql, $object_name = false)
 						else
 							$field_type=$properties['dbtype'];
 					}
-
-					//Because of bug #25078(sqlserver haven't 'date' type, trim extra "00:00:00" when insert into *_cstm table).
-					// so when we read the audit datetime field from sqlserver, we have to replace the extra "00:00:00" again.
-					if(!empty($field_type) && $field_type == 'date'){
-						$before_value = $this->fromConvert($before_value , $field_type);
-					}
-					//if the type and values match, do nothing.
-					if (!($this->_emptyValue($before_value,$field_type) && $this->_emptyValue($after_value,$field_type))) {
-						if (trim($before_value) !== trim($after_value)) {
-                            // Bug #42475: Don't directly compare numeric values, instead do the subtract and see if the comparison comes out to be "close enough", it is necessary for floating point numbers.
-                            // Manual merge of fix 95727f2eed44852f1b6bce9a9eccbe065fe6249f from DBHelper
-                            // This fix also fixes Bug #44624 in a more generic way and therefore eliminates the need for fix 0a55125b281c4bee87eb347709af462715f33d2d in DBHelper
-							if (!($this->isNumericType($field_type) &&
-                                  abs(
-                                      2*((trim($before_value)+0)-(trim($after_value)+0))/((trim($before_value)+0)+(trim($after_value)+0)) // Using relative difference so that it also works for other numerical types besides currencies
-                                  )<0.0000000001)) {    // Smaller than 10E-10
-								if (!($this->isBooleanType($field_type) && ($this->_getBooleanValue($before_value)== $this->_getBooleanValue($after_value)))) {
-									$changed_values[$field]=array('field_name'=>$field,
-										'data_type'=>$field_type,
-										'before'=>$before_value,
-										'after'=>$after_value);
-								}
-							}
-						}
-					}
-				}
+                }
+                    
+                //Because of bug #25078(sqlserver haven't 'date' type, trim extra "00:00:00" when insert into *_cstm table).
+                // so when we read the audit datetime field from sqlserver, we have to replace the extra "00:00:00" again.
+                if(!empty($field_type) && $field_type == 'date'){
+                    $before_value = $this->fromConvert($before_value , $field_type);
+                }
+                //if the type and values match, do nothing.
+                if (!($this->_emptyValue($before_value,$field_type) && $this->_emptyValue($after_value,$field_type))) {
+                    if (trim($before_value) !== trim($after_value)) {
+                        // Bug #42475: Don't directly compare numeric values, instead do the subtract and see if the comparison comes out to be "close enough", it is necessary for floating point numbers.
+                        // Manual merge of fix 95727f2eed44852f1b6bce9a9eccbe065fe6249f from DBHelper
+                        // This fix also fixes Bug #44624 in a more generic way and therefore eliminates the need for fix 0a55125b281c4bee87eb347709af462715f33d2d in DBHelper
+                        if (!($this->isNumericType($field_type) &&
+                              abs(
+                                  2*((trim($before_value)+0)-(trim($after_value)+0))/((trim($before_value)+0)+(trim($after_value)+0)) // Using relative difference so that it also works for other numerical types besides currencies
+                              )<0.0000000001)) {    // Smaller than 10E-10
+                            if (!($this->isBooleanType($field_type) && ($this->_getBooleanValue($before_value)== $this->_getBooleanValue($after_value)))) {
+                                $changed_values[$field]=array('field_name'=>$field,
+                                    'data_type'=>$field_type,
+                                    'before'=>$before_value,
+                                    'after'=>$after_value);
+                            }
+                        }
+                    }
+                }
 			}
-		}
+        }
 		return $changed_values;
 	}
+
+    /**
+     * Uses the audit enabled fields array to find fields whose value has changed.
+     * The before and after values are stored in the bean.
+     * Uses $bean->fetched_row && $bean->fetched_rel_row to compare
+     *
+     * @param SugarBean $bean Sugarbean instance that was changed
+     * @return array
+     */
+    public function getAuditDataChanges(SugarBean $bean)
+    {
+        $audit_fields = $bean->getAuditEnabledFieldDefinitions();
+        return $this->getDataChanges($bean, array('field_filter'=>array_keys($audit_fields)));
+    }
 
 	/**
 	 * Setup FT indexing

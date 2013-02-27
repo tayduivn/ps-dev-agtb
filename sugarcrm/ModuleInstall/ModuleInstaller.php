@@ -44,6 +44,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/utils/progress_bar_utils.php');
 
 require_once('ModuleInstall/ModuleScanner.php');
+require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
+
 define('DISABLED_PATH', 'Disabled');
 
 class ModuleInstaller{
@@ -96,6 +98,7 @@ class ModuleInstaller{
 		$tasks = array(
 			'pre_execute',
 			'install_copy',
+            'update_wireless_metadata',
 		    'install_extensions',
 			'install_images',
 			'install_dcactions',
@@ -2031,7 +2034,7 @@ private function dir_file_count($path){
 					echo '<div id ="displayLoglink" ><a href="#" onclick="toggleDisplay(\'displayLog\')">'.$app_strings['LBL_DISPLAY_LOG'].'</a> </div><div id="displayLog" style="display:none">';
 				}
 
-				require_once($this->base_dir . '/manifest.php');
+				require($this->base_dir . '/manifest.php');
 				if($is_upgrade && !empty($previous_version)){
 					//check if the upgrade path exists
 					if(!empty($upgrade_manifest)){
@@ -2102,7 +2105,7 @@ private function dir_file_count($path){
 					echo '<div id ="displayLoglink" ><a href="#" onclick="toggleDisplay(\'displayLog\')">'.$app_strings['LBL_DISPLAY_LOG'].'</a> </div><div id="displayLog" style="display:none">';
 				}
 
-				require_once($this->base_dir . '/manifest.php');
+				require($this->base_dir . '/manifest.php');
 				$this->installdefs = $installdefs;
 				$this->id_name = $this->installdefs['id'];
 				$installed_modules = array();
@@ -2346,7 +2349,6 @@ private function dir_file_count($path){
         sugar_die("Unknown method ModuleInstaller::$name called");
     }
 
-
 //BEGIN SUGARCRM flav=ent ONLY
     /**
      * handles portal config creation
@@ -2435,6 +2437,71 @@ private function dir_file_count($path){
         $JSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
         sugar_file_put_contents($path, $JSConfig);
     }
+    /**
+     * Update wireless metadata for packages that were created prior to 6.6 but
+     * are being installed or deployed in 6.6+
+     */
+    public function update_wireless_metadata() {
+        // If there was a copy to path then we can work it
+        if (isset($this->installdefs['copy'])) {
+            // Add in Sidecar upgrader after old style metadata changes are brought over
+            $sidecarUpgrader = new SidecarMetaDataUpgrader();
+            
+            // Turn off writing to log
+            $sidecarUpgrader->toggleWriteToLog();
+            
+            // Get our files in the $cp['to'] path to upgrade            
+            foreach($this->installdefs['copy'] as $cp) {
+                // Set the files array
+                $files = array();
+                
+                // Grab the package name
+                $package = basename($cp['to']);
+                
+                // Set the dir to get the files from
+                $modulesDir = $cp['to'] . '/modules/';
+                
+                // If we have the modules directory
+                if (is_dir($modulesDir)) {
+                    // Get the modules from inside the path
+                    $dirs = glob($modulesDir . '*', GLOB_ONLYDIR);
+                    if (!empty($dirs)) {
+                        foreach ($dirs as $dirpath) {
+                            // Get the module to list it in case it needs to be upgraded
+                            $module = basename($dirpath);
+
+                            // Get the metadata directory
+                            $metadatadir = "$dirpath/metadata/";
+                            
+                            // We only want to do this if there is a metadata dir
+                            // and there isn't already a clients dir
+                            if (is_dir($metadatadir) && !is_dir("$dirpath/clients")) {
+                                // Get our upgrade files
+                                $files = array_merge($files, $sidecarUpgrader->getUpgradeableFilesInPath($metadatadir, $module, 'wireless', 'base', $package, false));
+                            }
+                        }
+                    }
+                }
+                
+                // Upgrade them
+                foreach ($files as $file) {
+                    // Get the appropriate upgrade class name for this view type
+                    $class = $sidecarUpgrader->getUpgraderClass($file['viewtype']);
+                    if ($class) {
+                        if (!class_exists($class, false)) {
+                            $classfile = $class . '.php';
+                            require_once "modules/UpgradeWizard/SidecarUpdate/$classfile";
+                        }
+                        
+                        $upgrader = new $class($sidecarUpgrader, $file);
+                        
+                        // Let the upgrader do its thing
+                        $upgrader->upgrade();
+                    }
+                }
+            }
+        }
+    }
 
 }
 
@@ -2475,5 +2542,4 @@ private function dir_file_count($path){
 		    }
 		    //END SUGARCRM flav=pro ONLY
     }
-
 }

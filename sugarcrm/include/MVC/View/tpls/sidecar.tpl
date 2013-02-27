@@ -51,7 +51,7 @@
                 <div id="header"></div>
                 <div id="content">
                     <div class="alert alert-process">
-                        <strong>Loading</strong>
+                        <strong>{$LBL_LOADING}</strong>
                         <div class="loading">
                             <span class="l1"></span><span class="l2"></span><span class="l3"></span>
                         </div>

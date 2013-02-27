@@ -35,7 +35,9 @@ require_once 'data/BeanVisibility.php';
 require_once 'data/BeanDuplicateCheck.php';
 require_once 'data/SugarACL.php';
 require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
-
+//BEGIN SUGARCRM flav=pro ONLY
+require_once('include/Expressions/Expression/Parser/Parser.php');
+//END SUGARCRM flav=pro ONLY
 
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
@@ -58,7 +60,14 @@ class SugarBean
      */
     var $db;
 
-	/**
+    /**
+     * Unique object identifier
+     *
+     * @var string
+     */
+    public $id;
+
+    /**
 	 * When createing a bean, you can specify a value in the id column as
 	 * long as that value is unique.  During save, if the system finds an
 	 * id, it assumes it is an update.  Setting new_with_id to true will
@@ -607,7 +616,7 @@ class SugarBean
      * Before calling this function, check whether audit has been enabled for the table/module or not.
      * You would set the audit flag in the implemting module's vardef file.
      *
-     * @return an array of
+     * @return array
      * @see is_AuditEnabled
      *
      * Internal function, do not override.
@@ -1398,6 +1407,19 @@ class SugarBean
                     }
                 }
                 else {
+
+                    //Expose the cooresponding id field of a relate field if it is only defined as a link so that users can relate records by id during import
+                    if( isset($value_array['type']) && ($value_array['type'] == 'relate') && isset($value_array['id_name']) )
+                    {
+                        $idField = $value_array['id_name'];
+                        if( isset($fieldDefs[$idField]) && isset($fieldDefs[$idField]['type'] ) && $fieldDefs[$idField]['type'] == 'link' )
+                        {
+                            $tmpFieldDefs = $fieldDefs[$idField];
+                            $tmpFieldDefs['vname'] = translate($value_array['vname'], $this->module_dir) . " " . $GLOBALS['app_strings']['LBL_ID'];
+                            $importableFields[$idField]=$tmpFieldDefs;
+                        }
+                    }
+
                     $importableFields[$key]=$value_array;
                 }
             }
@@ -1574,7 +1596,7 @@ class SugarBean
             if(isset($def['dbType']))
                 $type .= $def['dbType'];
 
-            if($def['type'] == 'html') {
+            if($def['type'] == 'html' || $def['type'] == 'longhtml') {
                 $this->$key = SugarCleaner::cleanHtml($this->$key, true);
             } elseif((strpos($type, 'char') !== false ||
                 strpos($type, 'text') !== false ||
@@ -1713,12 +1735,12 @@ class SugarBean
         $this->preprocess_fields_on_save();
 
         //construct the SQL to create the audit record if auditing is enabled.
-        $dataChanges=array();
+        $auditDataChanges=array();
         if ($this->is_AuditEnabled()) {
             if ($isUpdate && !isset($this->fetched_row)) {
                 $GLOBALS['log']->debug('Auditing: Retrieve was not called, audit record will not be created.');
             } else {
-                $dataChanges=$this->db->getDataChanges($this);
+                $auditDataChanges=$this->db->getAuditDataChanges($this);
             }
         }
         $this->_sendNotifications($check_notify);
@@ -1729,9 +1751,9 @@ class SugarBean
             $this->db->insert($this);
         }
 
-        if (!empty($dataChanges) && is_array($dataChanges))
+        if (!empty($auditDataChanges) && is_array($auditDataChanges))
         {
-            foreach ($dataChanges as $change)
+            foreach ($auditDataChanges as $change)
             {
                 $this->db->save_audit_records($this,$change);
             }
@@ -1745,6 +1767,11 @@ class SugarBean
 
         if (empty($GLOBALS['resavingRelatedBeans'])){
             SugarRelationship::resaveRelatedBeans();
+        }
+
+        // populate fetched row with current bean values
+        foreach ($auditDataChanges as $change) {
+            $this->fetched_row[$change['field_name']] = $change['after'];
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -1798,13 +1825,21 @@ class SugarBean
      *
      * @return void
      */
-    function updateDependentField()
+    function updateDependentField($filter_fields = null)
     {
         // This is ignored when coming via a webservice as it's only needed for display and not just raw data.
         // It results in a huge performance gain when pulling multiple records via webservices.
         if(!isset($GLOBALS['service_object']) && !$this->is_updated_dependent_fields) {
             require_once("include/Expressions/DependencyManager.php");
-            $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
+
+            if (empty($filter_fields)) {
+                $filterFields = $this->field_defs;
+            }
+            else {
+                $filterFields = array_intersect_key($this->field_defs, $filter_fields);
+            }
+
+            $deps = DependencyManager::getDependentFieldDependencies($filterFields);
             foreach($deps as $dep)
             {
                 if ($dep->getFireOnLoad())
@@ -1847,20 +1882,16 @@ class SugarBean
                     continue;
                 }
 
-                //If this module has a parent field that changed, resave the old parent
-                //Check that the fields are set in the request and that they don't match the current values.
-                if (!empty($this->field_defs['parent_type']) && $this->field_defs['parent_type']['type'] == 'parent_type'
-                    && !empty($this->field_defs['parent_id']) && $this->field_defs['parent_id']['type'] == 'id'
-                    && !empty($this->fetched_row['parent_type']) && !empty($this->fetched_row['parent_id'])
-                    && (!isset($this->parent_id) || $this->parent_id != $this->fetched_row['parent_id']))
-                {
-                    if (!empty($this->field_defs[$lname]['module'])
-                        && $this->field_defs[$lname]['module'] == $this->fetched_row['parent_type'])
-                    {
-                        SugarRelationship::addToResaveList(
-                            BeanFactory::getBean($this->fetched_row['parent_type'], $this->fetched_row['parent_id'])
-                        );
-                    }
+                $this->addParentRecordsToResave($lname);
+
+                $influencing_fields = $this->get_fields_influencing_linked_bean_calc_fields($lname);
+                $data_changes = $this->db->getDataChanges($this);
+                $changed_fields = array_keys($data_changes);
+
+                // if fields influencing calculated fields are not changed,
+                // skip resaving of related beans
+                if (!array_intersect($influencing_fields, $changed_fields)) {
+                    continue;
                 }
 
                 $beans = $this->$lname->getBeans();
@@ -1885,6 +1916,34 @@ class SugarBean
 
         $updating_relationships = false;
     }
+
+    protected function addParentRecordsToResave($lname) {
+        //If this module has a parent field that changed, resave the old parent
+        //Check that the fields are set in the request and that they don't match the current values.
+        if (!empty($this->field_defs['parent_type']) && $this->field_defs['parent_type']['type'] == 'parent_type'
+            && !empty($this->field_defs['parent_id']) && $this->field_defs['parent_id']['type'] == 'id'
+            && !empty($this->fetched_row['parent_type']) && !empty($this->fetched_row['parent_id'])
+            && (!isset($this->parent_id) || $this->parent_id != $this->fetched_row['parent_id']))
+        {
+            if ($this->$lname->getRelatedModuleName() == $this->fetched_row['parent_type'])
+            {
+                SugarRelationship::addToResaveList(
+                    BeanFactory::getBean($this->fetched_row['parent_type'], $this->fetched_row['parent_id'])
+                );
+            }
+        }
+        //If we have a new parent record that uses this link, make sure to resave that one as well
+        if (!empty($this->field_defs['parent_type']) && $this->field_defs['parent_type']['type'] == 'parent_type'
+            && !empty($this->field_defs['parent_id']) && $this->field_defs['parent_id']['type'] == 'id'
+            && isset($this->parent_id) && $this->parent_id != $this->fetched_row['parent_id']
+            && isset($this->parent_type) && $this->$lname->getRelatedModuleName() == $this->parent_type
+        ) {
+            SugarRelationship::addToResaveList(
+                BeanFactory::getBean($this->parent_type, $this->parent_id)
+            );
+        }
+    }
+
 
     /**
      * Tests if the current module has a calculated field with a link.
@@ -2004,20 +2063,18 @@ class SugarBean
         if (($this->object_name == 'Meeting' || $this->object_name == 'Call') || $notify_user->receive_notifications) {
             $this->current_notify_user = $notify_user;
 
-            $sendToEmail = $notify_user->emailAddress->getPrimaryAddress($notify_user);
-            $sendEmail = TRUE;
-            if(empty($sendToEmail)) {
-                $GLOBALS['log']->warn("Notifications: no e-mail address set for user {$notify_user->user_name}, cancelling send");
-                $sendEmail = FALSE;
-            }
+            $templateName = $this->getTemplateNameForNotificationEmail();
+            $xtpl         = $this->createNotificationEmailTemplate($templateName);
+            $subject      = $xtpl->text($templateName . "_Subject");
+            $body         = trim($xtpl->text($templateName));
 
             //BEGIN SUGARCRM flav=notifications ONLY
             //Save the notification
-            $n = BeanFactory::getBean('Notifications');
-            $n->name = $notify_mail->Subject;
-            $n->description = $notify_mail->Body;
-            $n->assigned_user_id = $notify_user->id;
-            $n->save(FALSE);
+            $notification = BeanFactory::getBean('Notifications');
+            $notification->name = $subject;
+            $notification->description = $body;
+            $notification->assigned_user_id = $notify_user->id;
+            $notification->save(FALSE);
             //END SUGARCRM flav=notifications ONLY
 
             $mailTransmissionProtocol = "unknown";
@@ -2099,11 +2156,9 @@ class SugarBean
                $current_user,
                $sugar_version;
 
-        $currentLanguage = $_SESSION['authenticated_user_language'];
-
-        if (empty($currentLanguage)) {
-            $currentLanguage = $sugar_config['default_language'];
-        }
+        $currentLanguage = (!empty($_SESSION['authenticated_user_language'])) ?
+            $_SESSION['authenticated_user_language'] :
+            $sugar_config['default_language'];
 
         $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
 
@@ -2187,8 +2242,8 @@ class SugarBean
             // if LHSModule and RHSModule are same module use left link to add new item b/s of:
             // $rel_id and $rel_link are not emty - request is from subpanel
             // $rel_link contains relationship name - checked by call load_relationship
-            $this->load_relationship($rel_link);
-            if ( !empty($this->$rel_link) && $this->$rel_link->getRelationshipObject() && $this->$rel_link->getRelationshipObject()->getLHSModule() == $this->$rel_link->getRelationshipObject()->getRHSModule() )
+            $isRelationshipLoaded = $this->load_relationship($rel_link);
+            if ($isRelationshipLoaded && !empty($this->$rel_link) && $this->$rel_link->getRelationshipObject() && $this->$rel_link->getRelationshipObject()->getLHSModule() == $this->$rel_link->getRelationshipObject()->getRHSModule() )
             {
                 // It's a self-referencing relationship
                 if ( $this->$rel_link->getRelationshipObject()->getLHSLink() != $this->$rel_link->getRelationshipObject()->getRHSLink() ) {
@@ -2662,23 +2717,15 @@ class SugarBean
         {
             $id = $this->id;
         }
-        if(isset($this->custom_fields))
-        {
-            $custom_join = $this->custom_fields->getJOIN();
-        }
-        else
-            $custom_join = false;
+        $custom_join = $this->getCustomJoin();
 
         $query_select = "{$this->table_name}.*";
         $query_from = $this->table_name;
         $where = " WHERE $this->table_name.id = ".$this->db->quoted($id);
         if ($deleted) $where .= " AND $this->table_name.deleted=0";
 
-        if($custom_join)
-        {
-            $query_select .= " ".$custom_join['select'];
-            $query_from .= ' '.$custom_join['join'];
-        }
+        $query_select .= " ".$custom_join['select'];
+        $query_from .= ' '.$custom_join['join'];
 
         // Add user names
         if(!empty($this->field_defs['assigned_user_name']) && !empty($this->field_defs['assigned_user_id'])) {
@@ -2733,6 +2780,7 @@ class SugarBean
             $this->addVisibilityWhere($query);
         }
         //END SUGARCRM flav=pro ONLY
+
         $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
         $result = $this->db->limitQuery($query,0,1,true, "Retrieving record by id $this->table_name:$id found ");
         if(empty($result))
@@ -2762,7 +2810,7 @@ class SugarBean
         $this->processed_dates_times = array();
         $this->check_date_relationships_load();
 
-        if($custom_join)
+        if(isset($this->custom_fields))
         {
             $this->custom_fields->fill_relationships();
         }
@@ -2816,7 +2864,6 @@ class SugarBean
      *
      * @param array $row Fetched row
      * @todo loop through vardefs instead
-     * @internal runs into an issue when populating from field_defs for users - corrupts user prefs
      *
      * Internal function, do not override.
      */
@@ -2825,8 +2872,6 @@ class SugarBean
         $nullvalue='';
         foreach($this->field_defs as $field=>$field_value)
         {
-            if($field == 'user_preferences' && $this->module_dir == 'Users')
-                continue;
             if(isset($row[$field]))
             {
                 $this->$field = $row[$field];
@@ -2834,15 +2879,13 @@ class SugarBean
                 if(!empty($row[$owner])){
                     $this->$owner = $row[$owner];
                 }
-            }
-            else
-            {
+            } else {
                 $this->$field = $nullvalue;
             }
         }
         // TODO: add a vardef for my_favorite
         $this->my_favorite = false;
-        if(isset($row['my_favorite']) && !empty($row['my_favorite'])) {
+        if(!empty($row['my_favorite'])) {
             $this->my_favorite = true;
         }
 
@@ -2861,11 +2904,8 @@ class SugarBean
     */
     function add_list_count_joins(&$query, $where)
     {
-        $custom_join = $this->custom_fields->getJOIN();
-        if($custom_join)
-        {
-            $query .= $custom_join['join'];
-        }
+        $custom_join = $this->getCustomJoin();
+        $query .= $custom_join['join'];
 
     }
 
@@ -3224,7 +3264,10 @@ class SugarBean
                 $params['include_custom_fields'] = !$subpanel_def->isCollection();
                 $params['collection_list'] = $subpanel_def->get_inst_prop_value('collection_list');
 
-                $subquery = $submodule->create_new_list_query('',$subwhere ,$list_fields,$params, 0,'', true,$parentbean);
+                // use single select in case when sorting by relate field
+                $singleSelect = $submodule->is_relate_field($order_by);
+
+                $subquery = $submodule->create_new_list_query('',$subwhere ,$list_fields,$params, 0,'', true,$parentbean, $singleSelect);
 
                 $subquery['select'] = $subquery['select']." , '$panel_name' panel_name ";
                 $subquery['from'] = $subquery['from'].$query_array['join'];
@@ -3517,23 +3560,15 @@ class SugarBean
         {
             $ret_array['secondary_select'] = '';
         }
-        $custom_join = false;
-        if((!isset($params['include_custom_fields']) || $params['include_custom_fields']) &&  isset($this->custom_fields))
+        $custom_join = $this->getCustomJoin( empty($filter)? true: $filter );
+        if((!isset($params['include_custom_fields']) || $params['include_custom_fields']))
         {
-
-            $custom_join = $this->custom_fields->getJOIN( empty($filter)? true: $filter );
-            if($custom_join)
-            {
-                $ret_array['select'] .= ' ' .$custom_join['select'];
-            }
+            $ret_array['select'] .= $custom_join['select'];
         }
 
-        if($custom_join)
-        {
-            $ret_array['from'] .= ' ' . $custom_join['join'];
-            // Bug 52490 - Captivea (Sve) - To be able to add custom fields inside where clause in a subpanel
-            $ret_array['from_min'] .= ' ' . $custom_join['join'];
-        }
+        $ret_array['from'] .= $custom_join['join'];
+        // Bug 52490 - Captivea (Sve) - To be able to add custom fields inside where clause in a subpanel
+        $ret_array['from_min'] .= $custom_join['join'];
         $jtcount = 0;
         //LOOP AROUND FOR FIXIN VARDEF ISSUES
         foreach(SugarAutoLoader::existingCustom('include/VarDefHandler/listvardefoverride.php') as $file) {
@@ -3697,7 +3732,8 @@ class SugarBean
                     $jtcount++;
                 }
             }
-            if($data['type'] == 'relate' && isset($data['link']))
+
+            if ($this->is_relate_field($field))
             {
                 $this->load_relationship($data['link']);
                 if(!empty($this->$data['link']))
@@ -4902,6 +4938,12 @@ class SugarBean
             $tracker = BeanFactory::getBean('Trackers');
             $tracker->makeInvisibleForAll($id);
 
+            //BEGIN SUGARCRM flav=pro ONLY
+            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+            $searchEngine = SugarSearchEngineFactory::getInstance();
+            $searchEngine->delete($this);
+            //END SUGARCRM flav=pro ONLY
+
             // call the custom business logic
             $this->call_custom_logic("after_delete", $custom_logic_arguments);
         }
@@ -5006,21 +5048,14 @@ class SugarBean
         $in = $idList['in'];
     }
     // MFH - Added Support For Custom Fields in Searches
-    $custom_join="";
-    if(isset($this->custom_fields)) {
-        $custom_join = $this->custom_fields->getJOIN();
-    }
+    $custom_join = $this->getCustomJoin();
 
     $query = "SELECT id ";
 
-    if (!empty($custom_join)) {
-        $query .= $custom_join['select'];
-    }
+    $query .= $custom_join['select'];
     $query .= " FROM $this->table_name ";
 
-    if (!empty($custom_join) && !empty($custom_join['join'])) {
-        $query .= " " . $custom_join['join'];
-    }
+    $query .= $custom_join['join'];
 
     $query .= " WHERE deleted=0 AND id IN $in";
     if(!empty($where))
@@ -5139,7 +5174,7 @@ class SugarBean
      *
      * return listDef for bean
      */
-    function updateDependentFieldForListView($listview_def_main = '')
+    function updateDependentFieldForListView($listview_def_main = '', $filter_fields = null)
     {
         static $listview_def = '';
         static $module_name = '';
@@ -5167,19 +5202,11 @@ class SugarBean
             $module_name = $this->module_name;
         }
 
-        if (!empty($listview_def))
-        {
-            $temp_field_defs = $this->field_defs;
-            $this->field_defs = array_intersect_ukey($this->field_defs, $listview_def, 'strcasecmp');
-            $this->updateDependentField();
-            $this->field_defs = array_merge($temp_field_defs, $this->field_defs);
-        } else {
-            $this->updateDependentField();
-        }
-		$this->is_updated_dependent_fields = true;
-
+        $this->updateDependentField($filter_fields);
+        $this->is_updated_dependent_fields = true;
     }
 	//END SUGARCRM flav=pro ONLY
+
     /**
      * Assigns all of the values into the template for the list view
      */
@@ -5188,11 +5215,6 @@ class SugarBean
         static $cache = array();
         // cn: bug 12270 - sensitive fields being passed arbitrarily in listViews
         $sensitiveFields = array('user_hash' => '');
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        //fixing bug #46230: Dependent Field values are not refreshed in subpanels & listviews
-        $this->updateDependentField();
-        //END SUGARCRM flav=pro ONLY
 
         $return_array = Array();
         global $app_list_strings, $mod_strings;
@@ -5295,17 +5317,8 @@ class SugarBean
     function retrieve_by_string_fields($fields_array, $encode=true, $deleted=true)
     {
         $where_clause = $this->get_where($fields_array, $deleted);
-        if(isset($this->custom_fields))
-        $custom_join = $this->custom_fields->getJOIN();
-        else $custom_join = false;
-        if($custom_join)
-        {
-            $query = "SELECT $this->table_name.*". $custom_join['select']. " FROM $this->table_name " . $custom_join['join'];
-        }
-        else
-        {
-            $query = "SELECT $this->table_name.* FROM $this->table_name ";
-        }
+        $custom_join = $this->getCustomJoin();
+        $query = "SELECT $this->table_name.*". $custom_join['select']. " FROM $this->table_name " . $custom_join['join'];
         $query .= " $where_clause";
         $GLOBALS['log']->debug("Retrieve $this->object_name: ".$query);
         //requireSingleResult has been deprecated.
@@ -5461,8 +5474,8 @@ class SugarBean
         if ( ( (!$current_user->isAdminForModule($this->module_dir)) || $force_admin ) &&
         !$this->disable_row_level_security	&& ($this->module_dir != 'WorkFlow')){
 
-            $query .= $join_type . " JOIN (select tst.team_set_id from team_sets_teams tst ";
-            $query .= $join_type . " JOIN team_memberships {$team_table_alias} ON tst.team_id = {$team_table_alias}.team_id
+            $query .= " " . $join_type . " JOIN (select tst.team_set_id from team_sets_teams tst";
+            $query .= " " . $join_type . " JOIN team_memberships {$team_table_alias} ON tst.team_id = {$team_table_alias}.team_id
                                     AND {$team_table_alias}.user_id = '$current_user->id'
                                     AND {$team_table_alias}.deleted=0 group by tst.team_set_id) {$table_alias}_tf on {$table_alias}_tf.team_set_id  = {$table_alias}.team_set_id ";
 
@@ -5725,8 +5738,23 @@ class SugarBean
         $handler = new WorkFlowHandler($this, 'after_save');
         if(!empty($_SESSION['WORKFLOW_ALERTS']))
         {
-            $handler->process_alerts($this, $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
-            unset( $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
+            $id_for_save = true;
+            // Bug 55942 the in-save id gets overwritten during resaveRelatedBeans process
+            // here we want to make sure the correct in-save id is used to send the alert
+            if (isset($_SESSION['WORKFLOW_ALERTS']['id']))
+            {
+                $id_for_save = ($_SESSION['WORKFLOW_ALERTS']['id'] == $this->id ? true : false);
+            }
+
+            if ($id_for_save && !($this instanceof SugarFeed))
+            {
+                $handler->process_alerts($this, $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
+                unset( $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
+                if (isset($_SESSION['WORKFLOW_ALERTS']['id']))
+                {
+                    unset( $_SESSION['WORKFLOW_ALERTS']['id']);
+                }
+            }
         }
     }
     //END SUGARCRM flav=pro ONLY
@@ -6456,5 +6484,131 @@ class SugarBean
      */
     public function getFileName() {
         return empty($this->filename) ? '' : $this->filename;
+    }
+
+    /**
+     * Determine whether the given field is a relate field
+     *
+     * @param string $field Field name
+     * @return bool
+     */
+    protected function is_relate_field($field)
+    {
+        if (!isset($this->field_defs[$field]))
+        {
+            return false;
+        }
+
+        $field_def = $this->field_defs[$field];
+
+        return isset($field_def['type'])
+            && $field_def['type'] == 'relate'
+            && isset($field_def['link']);
+    }
+//BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * Returns array of linked bean's calculated fields which use relation to
+     * the current bean in their formulas
+     *
+     * @param string $linkName Name of current bean's link
+     * @return array
+     */
+    protected function get_fields_influencing_linked_bean_calc_fields($linkName)
+    {
+        global $dictionary;
+
+        $result = array();
+
+        if (!$this->load_relationship($linkName)) {
+            return $result;
+        }
+
+        /** @var Link2 $link */
+        $link = $this->$linkName;
+        $relatedModuleName = $link->getRelatedModuleName();
+        $relatedBeanName   = BeanFactory::getObjectName($relatedModuleName);
+        $relatedLinkName   = $link->getRelatedModuleLinkName();
+
+        // iterate over related bean fields
+        foreach ($dictionary[$relatedBeanName]['fields'] as $def) {
+            if (!empty($def['formula'])) {
+                $expr = Parser::evaluate($def['formula'], $this);
+                $fields = $this->get_formula_related_fields($expr, $relatedLinkName);
+                $result = array_merge($result, $fields);
+            }
+        }
+
+        return array_unique($result);
+    }
+
+    /**
+     * Retrieve names of fields of the bean related by the given link included
+     * in expression
+     *
+     * @param AbstractExpression $expr Parsed formula expression or nested expression
+     * @param string $linkName Name of the link to filter "related" expressions by
+     * @return array
+     */
+    protected function get_formula_related_fields(AbstractExpression $expr, $linkName)
+    {
+        $result = array();
+
+        if ($expr instanceof RelatedFieldExpression
+            || $expr instanceof MinRelatedExpression
+            || $expr instanceof MaxRelatedExpression
+            || $expr instanceof AverageRelatedExpression
+            || $expr instanceof SumRelatedExpression
+        ) {
+            /** @var AbstractExpression[] $params */
+            $params = $expr->getParameters();
+
+            // here we don't evaluate the first param since we need the field name
+            // but not it's value
+            if ($params[0] instanceof SugarFieldExpression
+                && $params[0]->varName == $linkName
+            ) {
+                $result[] = $params[1]->evaluate();
+            }
+            return $result;
+        }
+
+        $params = $expr->getParameters();
+        if (is_array($params)) {
+            /** @var AbstractExpression $param */
+            foreach ($params as $param) {
+                $result = array_merge(
+                    $result,
+                    $this->get_formula_related_fields($param, $linkName)
+                );
+            }
+        } else if ($params instanceof AbstractExpression) {
+             $result = array_merge(
+                 $result,
+                 $this->get_formula_related_fields($params, $linkName)
+             );
+        }
+
+        return array_unique($result);
+    }
+//END SUGARCRM flav=pro ONLY
+
+    /**
+     * Proxy method for DynamicField::getJOIN
+     * @param bool $expandedList
+     * @param bool $includeRelates
+     * @param string|bool $where
+     * @return array
+     */
+    public function getCustomJoin($expandedList = false, $includeRelates = false, &$where = false)
+    {
+        $result = array(
+            'select' => '',
+            'join' => ''
+        );
+        if(isset($this->custom_fields))
+        {
+            $result = $this->custom_fields->getJOIN($expandedList, $includeRelates, $where);
+        }
+        return $result;
     }
 }

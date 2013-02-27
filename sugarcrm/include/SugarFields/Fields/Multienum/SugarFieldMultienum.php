@@ -33,12 +33,18 @@ class SugarFieldMultienum extends SugarFieldEnum
     }
 
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
-        $data[$fieldName] = explode('^,^', trim($bean->$fieldName, '^'));
+        if(!empty($bean->$fieldName)){
+            $value = explode('^,^', trim($bean->$fieldName, '^'));
+        } else {
+            $value = array();  // Blank array
+        }
+        $data[$fieldName] = $value;
     }
 
 	public function save(&$bean, $params, $field, $properties, $prefix = ''){
 		if ( isset($params[$prefix.$field]) ) {
-			if($params[$prefix.$field][0] === '' && !empty($params[$prefix.$field][1]) ) {
+			if(!empty($params[$prefix.$field])
+                && $params[$prefix.$field][0] === '' && !empty($params[$prefix.$field][1]) ) {
 				unset($params[$prefix.$field][0]);
 			}
 

@@ -141,6 +141,12 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $a = $db->fetchByAssoc($r);
         $this->assertEquals($this->lead->id, $a['lead_id'], "Lead wasn't set as an invitee");
 
+		$q = "SELECT mu.accept_status FROM meetings_users mu WHERE mu.meeting_id = '{$meeting->id}' AND user_id = '{$GLOBALS['current_user']->id}'";
+        $r = $db->query($q);
+        $a = $db->fetchByAssoc($r);
+        $this->assertEquals('accept', $a['accept_status'], "Meeting wasn't accepted by the User");
+
+
 	}
 }
 ?>

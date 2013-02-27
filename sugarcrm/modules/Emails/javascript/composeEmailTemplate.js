@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 SUGAR.email2.templates['compose'] = '<div id="composeLayout{idx}" class="ylayout-inactive-content"></div>' +
-'<div id="composeOverFrame{idx}" style="height:100%;width:100%">' +
+'<div id="composeOverFrame{idx}" style="height:100%;width:100%;position:absolute;top:0px">' +
 '	<form id="emailCompose{idx}" name="ComposeEditView{idx}" action="index.php" method="POST">' +
 '		<input type="hidden" id="email_id{idx}" name="email_id" value="">' +
 '		<input type="hidden" id="uid{idx}" name="uid" value="">' +

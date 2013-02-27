@@ -974,6 +974,8 @@ SUGAR.expressions.isNumeric = function(str) {
 };
 
 SUGAR.expressions.unFormatNumber = function(num) {
+    if(typeof num == 'string')
+    {
     var SE = SUGAR.expressions;
     var ts = "," , ds= ".";
     if (SE.userPrefs) {
@@ -982,7 +984,7 @@ SUGAR.expressions.unFormatNumber = function(num) {
     };
     num = SE.replaceAll(num, ts, "");
     num = SE.replaceAll(num, ds, ".");
-
+    }
     return num;
 };
 

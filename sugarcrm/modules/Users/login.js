@@ -90,7 +90,11 @@ var callback;
 
 //onReady, check the users browser
 $(function(){
-    if (!SUGAR.isSupportedBrowser()){
-        $("#browser_warning").show()
+
+    if (SUGAR.isIECompatibilityMode()){
+        $("#ie_compatibility_mode_warning").show();
+    }
+    else if (!SUGAR.isSupportedBrowser()){
+        $("#browser_warning").show();
     }
 });

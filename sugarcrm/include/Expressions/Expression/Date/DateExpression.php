@@ -31,14 +31,20 @@ abstract class DateExpression extends AbstractExpression
 
     /**
      * @static
-     * @param  String $date
-     * @return DateTime, returns the DateTime object representing the string passed in
-     * or false if the string could not be converted to a valid date.
+     * @param string $date String to be parsed
+     *
+     * @return DateTime|boolean the DateTime object representing the string passed in
+     *                          or false if the string is empty
+     * @throws Exception        if the string could not be converted to a valid date
      */
     public static function parse($date)
     {
         if ($date instanceof DateTime)
             return $date;
+
+        if (empty($date)) {
+            return false;
+        }
 
         //String dates must be in User format.
         if (is_string($date)) {
@@ -57,7 +63,6 @@ abstract class DateExpression extends AbstractExpression
             return $resdate;
         }
         throw new Exception("attempt to convert invalid value to date: $date");
-        return false;
     }
 
     /**

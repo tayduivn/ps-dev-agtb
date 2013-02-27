@@ -61,6 +61,7 @@ class WorkFlowHandler {
     	$triggeredWorkflows = array();
     }
 
+
     /**
      * Process all of the workflow alerts in the session for this bean
      * @param focus - the bean to use in the alert
@@ -85,6 +86,7 @@ class WorkFlowHandler {
             $focus->retrieve($focus->id);//This will lose all changes to emailaddress
             if(!empty($focus->emailAddress) && isset($old_addresses)) {
                 $focus->emailAddress->addresses = $old_addresses;
+                $focus->emailAddress->populateLegacyFields($focus);
             }
 
             // Bug 45142 - dates need to be converted to DB format for

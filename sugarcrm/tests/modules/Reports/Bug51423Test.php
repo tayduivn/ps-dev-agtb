@@ -88,9 +88,7 @@ class Bug51423Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp("app_strings");
         SugarTestHelper::setUp("app_list_strings");
 
-        $this->_user = SugarTestUserUtilities::createAnonymousUser(false);
-        $this->_user->is_admin = 1;
-        $this->_user->save();
+        $this->_user = SugarTestUserUtilities::createAnonymousUser(true, 1);
         $GLOBALS['current_user'] = $this->_user;
 
         $this->_req['action'] = 'saveField';

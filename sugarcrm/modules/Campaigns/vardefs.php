@@ -116,12 +116,14 @@ $dictionary['Campaign'] = array ('audited'=>true,
   		array (
     		'name' => 'currency_id',
     		'vname' => 'LBL_CURRENCY',
-    		'type' => 'id',
+    		'type' => 'currency_id',
+    		'dbType' => 'id',
     		'group'=>'currency_id',
     		'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
     		'required'=>false,
     		'do_report'=>false,
     		'reportable'=>false,
+            'default'=>'-99',
     		'comment' => 'Currency in use for the campaign'
   		),
 		'budget' => array (

@@ -574,6 +574,11 @@ class SugarSNIP
         	array_unshift($e->all_addrs, $e->from_addr);
         }
 
+        if(empty($e->description) && !empty($e->description_html)) {
+            // html-only mail - provide plaintext if possible
+            $e->description = strip_tags($e->description_html);
+        }
+
         // assign to proper user
         if(!empty($e->all_addrs)) {
         	$this->assignUser($e, $email['user']);

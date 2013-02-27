@@ -77,7 +77,7 @@ class iCal extends vCal {
     */
     protected function escapeNls($string)
     {
-        $str = str_replace("\r\n", "\\n", $string);
+        $str = str_replace(array("\r\n", "\n"), "\\n", $string);
         return $str;
     }
 
@@ -216,17 +216,25 @@ class iCal extends vCal {
         $str = '';
         global $DO_USER_TIME_OFFSET, $sugar_config, $current_user, $timedate;
 
-        $acts_arr = CalendarActivity::get_activities($user_bean->id,
-            false,
-            $start_date_time,
-            $end_date_time,
-            'month');
-
         $hide_calls = false;
         if (!empty($_REQUEST['hide_calls']) && $_REQUEST['hide_calls'] == "true")
         {
             $hide_calls = true;
         }
+
+        $taskAsVTODO = true;
+        if (!empty($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "1"  || $_REQUEST['show_tasks_as_events'] == "true"))
+        {
+            $taskAsVTODO = false;
+        }
+
+        $acts_arr = CalendarActivity::get_activities($user_bean->id,
+            !$taskAsVTODO,
+            $start_date_time,
+            $end_date_time,
+            'month',
+            !$hide_calls);
+
 
         // loop thru each activity, get start/end time in UTC, and return iCal strings
         foreach($acts_arr as $act)
@@ -259,7 +267,22 @@ class iCal extends vCal {
                         {
                             if ($attendee->id != $user_bean->id)
                             {
-                                $str .= 'ATTENDEE;CN="'.$attendee->get_summary_text().'":mailto:'. $attendee->email1 . "\n";
+                                // Define the participant status
+                                $participant_status = '';
+                                if (!empty($attendee->accept_status)) {
+                                    switch ($attendee->accept_status) {
+                                        case 'accept':
+                                            $participant_status = ';PARTSTAT=ACCEPTED';
+                                            break;
+                                        case 'decline':
+                                            $participant_status = ';PARTSTAT=DECLINED';
+                                            break;
+                                        case 'tentative':
+                                            $participant_status = ';PARTSTAT=TENTATIVE';
+                                            break;
+                                    }
+                                }
+                                $str .= 'ATTENDEE'.$participant_status.';CN="'.$attendee->get_summary_text().'":mailto:'. (!empty($attendee->email1) ? $attendee->email1 : 'none@none.tld') . "\n";
                             }
                         }
                     }
@@ -275,12 +298,27 @@ class iCal extends vCal {
                         {
                             if ($attendee->id != $user_bean->id)
                             {
-                                $str .= 'ATTENDEE;CN="'.$attendee->get_summary_text().'":mailto:'. $attendee->email1 . "\n";
+                                // Define the participant status
+                                $participant_status = '';
+                                if (!empty($attendee->accept_status)) {
+                                    switch ($attendee->accept_status) {
+                                        case 'accept':
+                                            $participant_status = ';PARTSTAT=ACCEPTED';
+                                            break;
+                                        case 'decline':
+                                            $participant_status = ';PARTSTAT=DECLINED';
+                                            break;
+                                        case 'tentative':
+                                            $participant_status = ';PARTSTAT=TENTATIVE';
+                                            break;
+                                    }
+                                }
+                                $str .= 'ATTENDEE'.$participant_status.';CN="'.$attendee->get_summary_text().'":mailto:'. (!empty($attendee->email1) ? $attendee->email1 : 'none@none.tld') . "\n";
                             }
                         }
                     }
                 }
-                if ($event->reminder_time > 0 && $event->status != "Held")
+                if (isset($event->reminder_time) && $event->reminder_time > 0 && $event->status != "Held")
                 {
                     $str .= "BEGIN:VALARM\n";
                     $str .= "TRIGGER:-PT" . $event->reminder_time/60 . "M\n";
@@ -301,7 +339,7 @@ class iCal extends vCal {
         require_once('modules/ProjectTask/ProjectTask.php');
         $where = "project_task.assigned_user_id='{$user_bean->id}' ".
             "AND (project_task.status IS NULL OR (project_task.status!='Deferred')) ".
-            "AND (project_task.date_start IS NULL OR project_task.date_start <= '$today')";
+            "AND (project_task.date_start IS NULL OR " . CalendarActivity::get_occurs_within_where_clause('project_task', '', $start_date_time, $end_date_time, 'date_start', 'month') . ")";
         $seedProjectTask = BeanFactory::getBean('ProjectTask');
         $projectTaskList = $seedProjectTask->get_full_list("", $where);
         if (is_array($projectTaskList))
@@ -312,20 +350,21 @@ class iCal extends vCal {
             }
         }
 
-        require_once('modules/Tasks/Task.php');
-        $where = "tasks.assigned_user_id='{$user_bean->id}' ".
-            "AND (tasks.status IS NULL OR (tasks.status!='Deferred')) ".
-            "AND (tasks.date_start IS NULL OR tasks.date_start <= '$today')";
-        $seedTask = BeanFactory::getBean('Tasks');
-        $taskList = $seedTask->get_full_list("", $where);
-        if (is_array($taskList))
-        {
-            foreach($taskList as $task)
+        if ($taskAsVTODO) {
+            $where = "tasks.assigned_user_id='{$user_bean->id}' ".
+                "AND (tasks.status IS NULL OR (tasks.status!='Deferred')) ".
+                "AND (tasks.date_start IS NULL OR " . CalendarActivity::get_occurs_within_where_clause('tasks', '', $start_date_time, $end_date_time, 'date_start', 'month') . ")";
+            $seedTask = BeanFactory::getBean('Tasks');
+            $taskList = $seedTask->get_full_list("", $where);
+            if (is_array($taskList))
             {
-                $str .= $this->createSugarIcalTodo($user_bean, $task, "Tasks", $dtstamp);
+                foreach($taskList as $task)
+                {
+                    $str .= $this->createSugarIcalTodo($user_bean, $task, "Tasks", $dtstamp);
+                }
             }
         }
-
+        
         return $str;
     }
 

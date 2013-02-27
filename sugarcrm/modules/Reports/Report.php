@@ -27,7 +27,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('modules/Reports/config.php');
-
+require_once('include/api/SugarApiException.php');
 
 class Report
 {
@@ -56,6 +56,8 @@ class Report
     var $module = 'Accounts';
     var $focus;
     var $currency_symbol;
+
+    /** @var Currency */
     var $currency_obj;
     var $name;
     var $select_fields = array();
@@ -107,6 +109,9 @@ class Report
     var $chart_total_header_row = array();
     var $jtcount = 0;
 
+    // this is a var not in metadata that is set to bypass the sugar_die calls used throughout this class
+    public $fromApi = false;
+
     /**
      *
      * Default visibility options
@@ -123,6 +128,13 @@ class Report
      * @var array
      */
     var $invalid_fields = array();
+
+    /**
+     * Array, which reflects whether or not to consider the currency in the query.
+     *
+     * @var array
+     */
+    protected $currency_join = array();
 
     function Report($report_def_str = '', $filters_def_str = '', $panels_def_str = '')
     {
@@ -148,7 +160,7 @@ class Report
         $this->name = $mod_strings['LBL_UNTITLED'];
         $this->db = DBManagerFactory::getInstance('reports');
         if (Report::is_old_content($report_def_str)) {
-            sugar_die('this report was created with an older version of reports. please upgrade');
+            $this->handleException('this report was created with an older version of reports. please upgrade');
         }
 
         $json = getJSONobj();
@@ -563,7 +575,7 @@ class Report
 
         global $report_modules;
         if (empty($report_modules[$this->module])) {
-            sugar_die("you are not allowed to report on this module:" . $this->module);
+            $this->handleException("you are not allowed to report on this module:" . $this->module);
         }
     }
 
@@ -742,7 +754,7 @@ class Report
         $this->create_order_by();
         $this->create_summary_select();
         $this->create_where();
-        $this->create_from();
+        $this->create_from('summary_columns');
         $this->create_summary_query();
         $this->execute_summary_query();
 
@@ -753,7 +765,7 @@ class Report
         $this->create_order_by();
         $this->create_total_select();
         $this->create_where();
-        $this->create_from();
+        $this->create_from('summary_columns');
         $this->create_total_query();
         $this->execute_total_query();
     }
@@ -950,7 +962,7 @@ class Report
         if (!$this->is_layout_def_valid($layout_def)) {
             global $current_language;
             $mod_strings = return_module_language($current_language, $this->module_dir);
-            sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>' . $layout_def['name'] . '</b>. ' . $mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
+            $this->handleException($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>' . $layout_def['name'] . '</b>. ' . $mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
         }
 
         $layout_def['table_alias'] = $this->getTableFromField($layout_def);
@@ -988,7 +1000,7 @@ class Report
 	        {
 	            $field_def['type'] = 'currency';
 	        }
-	
+
 	        // In case of DOCUMENTS table must set 'document_name' field type of to 'name' manually, because _load_all_fields() function sets field type to 'name' only if the field name is 'name' also
 	        if (strtolower($layout_def['name']) == 'document_name')
 	        {
@@ -1076,15 +1088,31 @@ class Report
 
     protected function addSecurity($query, $focus, $alias)
     {
-        $from = '';
-        $focus->addVisibilityFrom($from, $this->visibilityOpts);
-        $where = '';
-        $focus->addVisibilityWhere($where, $this->visibilityOpts);
+        $from = ''; $where ='';
+        /*
+         * Here we have a hack because MySQL hates subqueries in joins, see bug #60288 for details
+         */
+        $as_condition = $focus->db->supports("fix:report_as_condition");
+        $options = $this->visibilityOpts;
+        if($as_condition) {
+            $options['table_alias'] = $alias;
+        }
+        $focus->addVisibilityWhere($where, $options);
+        if($as_condition) {
+            $options['as_condition'] = true;
+        }
+        $focus->addVisibilityFrom($from, $options);
         if(!empty($from) || !empty($where)) {
-            if(!empty($where)) {
-                $where = "WHERE $where";
+            if($as_condition && strtolower(substr(ltrim($from), 0, 4)) == "and ") {
+                // check that we indeed got condition - it should start with "and "
+                $query .= "/* from $alias */ $from /* where $alias */ $where";
+            } else {
+                // if we didn't ask for condition or did not get one, get back to subquery mode
+                if(!empty($where)) {
+                    $where = "WHERE $where";
+                }
+                $query = str_replace(" {$focus->table_name} $alias ", "(SELECT {$focus->table_name}.* FROM {$focus->table_name} $from $where) $alias ", $query);
             }
-            $query = str_replace(" {$focus->table_name} $alias ", "(SELECT {$focus->table_name}.* FROM {$focus->table_name} $from $where) $alias ", $query);
         }
         return $query;
     }
@@ -1274,7 +1302,21 @@ return str_replace(' > ','_',
         $got_join = array();
         foreach ($this->report_def[$key] as $index => $display_column) {
             if ($display_column['name'] == 'count') {
-                $select_piece = 'COUNT(*) count';
+                if ('self' != $display_column['table_key'])
+                {
+                    // use table name itself, not it's alias
+                    $table_name = $this->alias_lookup[$display_column['table_key']];
+                }
+                else
+                {
+                    // use table alias
+                    if(isset($this->full_table_list['self']['params']['join_table_alias'])) {
+                        $table_name = $this->full_table_list['self']['params']['join_table_alias'];
+                    } else {
+                        $table_name = $this->full_bean_list['self']->table_name;
+                    }
+                }
+                $select_piece = "COUNT($table_name.id) {$table_name}__allcount, COUNT(DISTINCT  $table_name.id) {$table_name}__count ";
                 $got_count = 1;
             }
             else {
@@ -1285,7 +1327,7 @@ return str_replace(' > ','_',
 
                 // this hack is so that the id field for every table is always selected
                 if (empty($display_column['table_key'])) {
-                    sugar_die('table_key doesnt exist for ' . $display_column['name']);
+                    $this->handleException('table_key doesnt exist for ' . $display_column['name']);
                 }
 
                 if (empty($got_join[$display_column['table_key']])) {
@@ -1316,6 +1358,14 @@ return str_replace(' > ','_',
                         }
                     }
                 }
+                // specify "currency_alias" parameter for fields of currency type
+                if (!empty($display_column['column_key']) && !empty($this->all_fields[$display_column['column_key']])
+                    && $display_column['type'] == 'currency') {
+                    $field_def = $this->all_fields[$display_column['column_key']];
+                    if (strpos($field_def['name'], '_usdoll') === false) {
+                        $display_column['currency_alias'] = $display_column['table_alias'] . '_currencies';
+                    }
+                }
                 $select_piece = $this->layout_manager->widgetQuery($display_column);
             }
             // Bug 40573: addon field for "day" "select" field
@@ -1331,13 +1381,44 @@ return str_replace(' > ','_',
             if (!$this->select_already_defined($select_piece, $field_list_name)) {
                 array_push($this->$field_list_name, $select_piece);
             }
+
             if (!empty($display_column['column_key']) && !empty($this->all_fields[$display_column['column_key']])) {
                 $field_def = $this->all_fields[$display_column['column_key']];
-
                 if (!empty($field_def['ext2'])) {
                     $select_piece = $this->getExt2FieldDefSelectPiece($field_def);
                     array_push($this->$field_list_name, $select_piece);
                 }
+            }
+
+            // for SUM currency fields add params to join 'currencies' table
+            if (!empty($display_column['column_key'])
+                && !empty($this->all_fields[$display_column['column_key']])
+                && !empty($display_column['group_function'])
+                && isset($display_column['field_type'])
+                && $display_column['field_type'] == 'currency'
+                && strpos($display_column['name'], '_usdoll') === false
+                && isset($display_column['currency_alias'])
+                && !isset($this->currency_join[$key][$display_column['currency_alias']])
+            ) {
+                $table_key = $this->full_bean_list[$display_column['table_key']]->table_name;
+
+                $bean_table_alias = $display_column['table_key'] === 'self'
+                    ? $table_key : $this->getRelatedAliasName($display_column['table_key']);
+
+                // by default, currency table is joined to the alias of primary table
+                $table_alias = $bean_table_alias;
+
+                // but if the field is contained in a custom table, use it's alias for join
+                $field_def = $this->all_fields[$display_column['column_key']];
+                if ($field_def['real_table'] != $table_key) {
+                    $columns = $this->db->get_columns($field_def['real_table']);
+                    if (isset($columns['currency_id'])) {
+                        $table_alias = $display_column['table_alias'];
+                    }
+                }
+
+                // create additional join of currency table for each module containing currency fields
+                $this->currency_join[$key][$display_column['currency_alias']] = $table_alias;
             }
         }
 
@@ -1450,7 +1531,7 @@ return str_replace(' > ','_',
         }
     }
 
-    function create_from()
+    protected function create_from($key = null)
     {
         global $beanFiles;
         foreach ($this->full_table_list as $linkKey => $def) {
@@ -1539,7 +1620,7 @@ return str_replace(' > ','_',
 
                     if (isset($this->full_bean_list[$table_def['parent']]->$link_name)) {
                         if (!$this->full_bean_list[$table_def['parent']]->$link_name->loadedSuccesfully())
-                            sugar_die("Unable to load link: $link_name for bean {$table_def['parent']}");
+                            $this->handleException("Unable to load link: $link_name for bean {$table_def['parent']}");
                         // Start ACL check
                         global $current_user, $mod_strings;
                         $linkModName = $this->full_bean_list[$table_def['parent']]->$link_name->getRelatedModuleName();
@@ -1550,7 +1631,7 @@ return str_replace(' > ','_',
                             if ((isset($_REQUEST['DynamicAction']) && $_REQUEST['DynamicAction'] == 'retrievePage') || (isset($_REQUEST['module']) && $_REQUEST['module'] == 'Home')) {
                                 throw new Exception($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
                             } else {
-                                sugar_die($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
+                                $this->handleException($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
                             }
                         }
 
@@ -1566,10 +1647,10 @@ return str_replace(' > ','_',
                         $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view', $type = 'module');
 
                         if (!$this->full_bean_list[$table_def['parent']]->$rel_name->loadedSuccesfully()) {
-                            sugar_die("Unable to load link: $rel_name");
+                            $this->handleException("Unable to load link: $rel_name");
                         }
                         if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
-                            sugar_die($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
+                            $this->handleException($mod_strings['LBL_NO_ACCESS'] . "----" . $linkModName);
                         $this->from .= $this->addSecurity($this->full_bean_list[$table_def['parent']]->$rel_name->getJoin($params),
                             $focus, $params['join_table_alias']);
                         // End ACL check
@@ -1597,6 +1678,17 @@ return str_replace(' > ','_',
                 $this->from .= "LEFT JOIN " . $tablename . " " . $params['join_table_alias'] . " ON " . $params['base_table'] . ".id = ";
                 $this->from .= $params['join_table_alias'] . ".id_c\n";
             }
+        }
+
+        if ($key && isset($this->currency_join[$key])) {
+            $join = array();
+            $currency_table = $this->currency_obj->table_name;
+            foreach ($this->currency_join[$key] as $currency_alias => $table_alias) {
+                $join[] = 'LEFT JOIN ' . $currency_table . ' ' . $currency_alias
+                    . ' ON ' . $table_alias . '.currency_id=' . $currency_alias . '.id'
+                    . ' AND ' . $currency_alias . '.deleted=0';
+            }
+            $this->from .= implode(' ', $join);
         }
     }
 
@@ -1657,7 +1749,7 @@ return str_replace(' > ','_',
         $view_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'view', $type = 'module');
 
         if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
-            sugar_die($mod_strings['LBL_NO_ACCESS']);
+            $this->handleException($mod_strings['LBL_NO_ACCESS']);
         if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
             $where_auto .= " AND " . $this->focus->table_name . ".assigned_user_id='" . $current_user->id . "' \n";
 
@@ -2078,9 +2170,9 @@ return str_replace(' > ','_',
 
                 global $locale;
                 $params = array();
-                $params['currency_id'] = $locale->getPrecedentPreference('currency');
+                $params['currency_id'] = -99;
                 $params['convert'] = true;
-                $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
+                $params['currency_symbol'] = $this->currency_obj->getDefaultCurrencySymbol();
 
                 // Pre-process the value to be converted if it is in different currency than US Dollar (-99)
                 // Because conversion_rates change and the amount_usdollar column isn't updated accordingly
@@ -2112,10 +2204,11 @@ return str_replace(' > ','_',
 
             if (isset($display_column['type'])) {
 
-                $fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_" . strtoupper($display_column['name']));
+                $alias = $this->alias_lookup[$display_column['table_key']];
+                $array_key = strtoupper($alias . '__count');
 
-                if (array_key_exists($field_name, $display_column['fields'])) {
-                    $displayData = $display_column['fields'][$field_name];
+                if (array_key_exists($array_key, $display_column['fields'])) {
+                    $displayData = $display_column['fields'][$array_key];
                     if (empty($displayData) && $display_column['type'] != 'bool' && ($display_column['type'] != 'enum' || $display_column['type'] == 'enum' && $displayData != '0')) {
                         $display = "";
                     }
@@ -2159,8 +2252,19 @@ return str_replace(' > ','_',
 
         $row['cells'] = $cells;
 
-        if (isset($db_row['count'])) {
-            $row['count'] = $db_row['count'];
+        // calculate summary rows count as the product of all count fields in summary
+        $count = 1;
+        $count_exists = false;
+        foreach ($db_row as $count_column => $count_value)
+        {
+            if (substr($count_column, -10) == "__allcount" || $count_column == 'count') {
+                $count *= max($count_value, 1);
+                $count_exists = true;
+            }
+        }
+
+        if ($count_exists) {
+            $row['count'] = $count;
         }
 
         // for charts
@@ -2369,6 +2473,14 @@ return str_replace(' > ','_',
         $select_piece .= $add_alias ? " {$secondaryTableAlias}_name" : ' ';
 
         return $select_piece;
+    }
+
+    protected function handleException($msg, $exit_code=1) {
+        if($this->fromApi === false) {
+            sugar_die($msg, $exit_code);
+        } else {
+            throw new SugarApiExceptionNotAuthorized($msg);
+        }
     }
 
 }

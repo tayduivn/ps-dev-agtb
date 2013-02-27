@@ -102,7 +102,6 @@
      */
     saveAndClose: function() {
         this.initiateSave(_.bind(function() {
-            this.alerts.showSuccess();
             app.drawer.close(this.model);
         }, this));
     },
@@ -122,7 +121,6 @@
         this.initiateSave(_.bind(function() {
             this.clear();
             this.resetDuplicateState();
-            this.alerts.showSuccess();
         }, this));
     },
 
@@ -133,7 +131,6 @@
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_VIEW;
         this.initiateSave(_.bind(function() {
             app.navigate(this.context, this.model);
-            this.alerts.showSuccess();
         }, this));
     },
 
@@ -143,7 +140,7 @@
     restoreModel: function() {
         this.model.clear();
         this.createMode = true;
-        this.render();
+        if (!this.disposed) this.render();
         this.setButtonStates(this.STATE.CREATE);
 
         if (this._origAttributes) {
@@ -163,8 +160,11 @@
             _.bind(this.createRecordWaterfall, this)
         ], _.bind(function(error) {
             if (!error) {
-                this.context.lastSaveAction = null;
-                callback();
+                this.alerts.showSuccess();
+                if (!this.disposed) {
+                    this.context.lastSaveAction = null;
+                    callback();
+                }
             }
         }, this));
     },
@@ -188,6 +188,7 @@
      */
     dupeCheckWaterfall: function(callback) {
         var success = _.bind(function(collection) {
+                if (this.disposed === true) callback(true); //if view is already disposed, bail out
                 if (collection.models.length > 0) {
                     this.handleDuplicateFound(collection);
                     callback(true);
@@ -326,7 +327,7 @@
     clear: function() {
         this.model.clear();
         this.model.set(this.model._defaults);
-        this.render();
+        if (!this.disposed) this.render();
     },
 
     /**
@@ -341,7 +342,7 @@
         this.model.set(this.extendModel(model, origAttributes));
 
         this.createMode = false;
-        this.render();
+        if (!this.disposed) this.render();
         this.toggleEdit(true);
 
         this.hideDuplicates();

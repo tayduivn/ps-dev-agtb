@@ -331,7 +331,7 @@ $mod_strings = array (
     // splash screens
     'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Setting',
     'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the Forecasts Setting!',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'The wizard will guide you through the setup step by step and default values are provided for each section so you\'ll be on your way in no time!',
+    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'This wizard will guide you through the step-by-step setup of the Forecasts module. Default values are provided for each section, so you\'ll be on your way in no time!',
     'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_3' => 'You can also do manual setup by clicking ',
     'LNK_FORECASTS_CONFIG_ADMIN_SPLASH_HERE' => 'here.',
     'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
@@ -386,11 +386,14 @@ $mod_strings = array (
     'LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE' => 'You successfully set up your forecasting module. Please wait while the module loads.',
     'LBL_FORECASTS_WIZARD_REFRESH_NOTICE' => 'This is your first time using the Forecasts module and your Opportunities need to be loaded. This process may take a few minutes and you may need to refresh the page.',
     'LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE' => 'The setting has been saved. Please wait while the module reloads.',
-
     // Labels for Success Messages:
     'LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS' => 'You have saved the forecasting worksheet as draft for the selected time period.',
     'LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS' => 'You have committed the forecasting worksheet for the selected time period.',
 
     // custom ranges
     'LBL_FORECASTS_CUSTOM_RANGES_DEFAULT_NAME' => 'Custom Range',
+    'LBL_UNAUTH_FORECASTS' => 'Unauthorized access to forecast settings.',
+    'LBL_FORECASTS_RANGES_BASED_TITLE' => 'Ranges based on probabilities',
+    'LBL_FORECASTS_CUSTOM_BASED_TITLE' => 'Custom Ranges based on probabilities',
+    'LBL_FORECASTS_CUSTOM_NO_BASED_TITLE' =>'Ranges not based on probabilities',
 );

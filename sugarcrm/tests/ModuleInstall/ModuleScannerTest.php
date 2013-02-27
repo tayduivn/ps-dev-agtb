@@ -160,6 +160,36 @@ EOQ;
         }
     }
 
+	public function testCallMethodObjectOperatorFail()
+    {
+
+    	$fileModContents = <<<EOQ
+<?PHP
+    //doesnt matter what the class name is, what matters is use of the banned method, setlevel
+	\$GlobalLoggerClass->setLevel();
+?>
+EOQ;
+		file_put_contents($this->fileLoc, $fileModContents);
+		$ms = new ModuleScanner();
+		$errors = $ms->scanFile($this->fileLoc);
+		$this->assertNotEmpty($errors, 'There should have been an error caught for use of "->setLevel()');
+    }
+
+	public function testCallMethodDoubleColonFail()
+    {
+
+    	$fileModContents = <<<EOQ
+<?PHP
+    //doesnt matter what the class name is, what matters is use of the banned method, setlevel
+	\$GlobalLoggerClass::setLevel();
+?>
+EOQ;
+		file_put_contents($this->fileLoc, $fileModContents);
+		$ms = new ModuleScanner();
+		$errors = $ms->scanFile($this->fileLoc);
+		$this->assertNotEmpty($errors, 'There should have been an error caught for use of "::setLevel()');
+    }
+
     /**
      * @group bug58072
      */

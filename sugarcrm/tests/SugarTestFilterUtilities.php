@@ -84,4 +84,3 @@ class SugarTestFilterUtilities
         return $filter_ids;
     }
 }
-?>

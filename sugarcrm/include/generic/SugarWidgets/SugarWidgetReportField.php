@@ -127,9 +127,18 @@ class SugarWidgetReportField extends SugarWidgetField
 				return $alias;
     	}
 
-    	// Removed ISNULL check as per bug 49452
-		$alias = "{$layout_def['group_function']}($alias)";
-		//$this->reporter->db->convert($alias, "IFNULL", array(0)));
+        $alias = $this->reporter->db->convert($alias, 'IFNULL', array(0));
+
+        // for a field with type='currency' conversion of values into a user-preferred currency
+        if ($layout_def['type'] == 'currency' && strpos($layout_def['name'], '_usdoll') === false) {
+            $currency = $this->reporter->currency_obj;
+            $currency_alias = isset($layout_def['currency_alias'])
+                ? $layout_def['currency_alias'] : $currency->table_name;
+            $query = $this->reporter->db->convert($currency_alias.".conversion_rate", "IFNULL", array(1));
+            $alias = "{$layout_def['group_function']}($alias/{$query})*{$currency->conversion_rate}";
+        } else {
+            $alias = "{$layout_def['group_function']}($alias)";
+        }
 	}
 
 	$reportAlias[$alias] = $layout_def;
@@ -162,11 +171,7 @@ class SugarWidgetReportField extends SugarWidgetField
                 $order_by .= ', ' . $layout_def['table_alias'].".".$field_def['sort_on2'];
     }
 	else {
-	/**
-         * Bug #54990
-         * use the table and column names in order by in order to support all databases
-         */
-        $order_by = $layout_def['table_alias'] . "." . $layout_def['name'] . " \n";	
+		$order_by = $this->_get_column_alias($layout_def)." \n";
 	}
 
 			if ( empty($layout_def['sort_dir']) || $layout_def['sort_dir'] == 'a')
@@ -260,7 +265,7 @@ class SugarWidgetReportField extends SugarWidgetField
      // this comment is being added to trigger the upgrade package
         if ( ! empty($layout_def['group_function']) && $layout_def['group_function']=='count')
         {
-                return 'count';
+                return $layout_def['table_alias'] . '__count';
         }
 
         if ( ! empty($layout_def['table_alias']))

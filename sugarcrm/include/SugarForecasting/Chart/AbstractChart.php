@@ -90,8 +90,8 @@ abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_Abs
      * @var array
      */
     protected $defaultColorsArray = array(
-        0 => '#8c2b2b',
-        1 => '#468c2b',
+        0 => '#468c2b',
+        1 => '#8c2b2b',
         2 => '#2b5d8c',
         3 => '#cd5200',
         4 => '#e6bf00',

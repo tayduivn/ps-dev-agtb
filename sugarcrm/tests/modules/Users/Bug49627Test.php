@@ -47,33 +47,29 @@ public function setUp()
     global $current_user;
     $current_user = SugarTestUserUtilities::createAnonymousUser();
 
-    $this->normalUser = SugarTestUserUtilities::createAnonymousUser();
+    $this->normalUser = SugarTestUserUtilities::createAnonymousUser(false);
+    $this->normalUser->id = create_guid();
     $this->normalUser->user_type = 'RegularUser';
-    $this->normalUser->save();
 
     //BEGIN SUGARCRM flav=ent ONLY
-    $this->portalUser = SugarTestUserUtilities::createAnonymousUser();
+    $this->portalUser = SugarTestUserUtilities::createAnonymousUser(false);
+    $this->portalUser->id = create_guid();
     $this->portalUser->is_portal = 1;
     $this->portalUser->user_type = 'PORTAL_ONLY';
-    $this->portalUser->save();
     //END SUGARCRM flav=ent ONLY
 
-    $this->groupUser = SugarTestUserUtilities::createAnonymousUser();
+    $this->groupUser = SugarTestUserUtilities::createAnonymousUser(false);
+    $this->groupUser->id = create_guid();
     $this->groupUser->is_group = 1;
     $this->groupUser->user_type = 'GROUP';
-    $this->groupUser->save();
 
     $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-
 }
 
 public function tearDown()
 {
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    unset($this->normalUser);
-    unset($this->groupUser);
-    unset($this->portalUser);
 }
 
 public function testSetupUserTypeDropdownNormalUser()

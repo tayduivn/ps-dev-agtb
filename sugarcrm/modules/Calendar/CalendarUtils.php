@@ -53,16 +53,19 @@ class CalendarUtils
 				'duration_hours',
 				'duration_minutes',
 				'status',
+				'related_to',
 			),
 			'Calls' => array(
 				'name',
 				'duration_hours',
 				'duration_minutes',
 				'status',
+				'related_to',
 			),
 			'Tasks' => array(
 				'name',
 				'status',
+				'related_to',
 			),
 		);
 	}
@@ -123,7 +126,15 @@ class CalendarUtils
 			$field_list = CalendarUtils::get_fields();
 			$field_arr = array();
 			foreach($field_list[$bean->module_dir] as $field){
-				$field_arr[$field] = $bean->$field;
+			    if ($field == 'related_to')
+			    {
+			        $focus = BeanFactory::getBean($bean->parent_type, $bean->parent_id);
+			        $field_arr[$field] = $focus->name;
+			    }
+			    else
+			    {
+			        $field_arr[$field] = $bean->$field;
+			    }
 			}
 
 			$date_field = "date_start";

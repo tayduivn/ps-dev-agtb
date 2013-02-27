@@ -216,13 +216,14 @@ class Product extends SugarBean
         //If return_array is set to true, return as an Array
         if ($return_array) {
             //Add clause to remove opportunity related products
-            $ret_array['where'] = $ret_array['where'] . " AND products.opportunity_id is null";
+            $ret_array['where'] = $ret_array['where'] .
+                " AND (products.opportunity_id is not null OR products.opportunity_id <> '')";
             return $ret_array;
         }
 
         return str_replace(
             'where products.deleted=0',
-            'where products.deleted=0 AND products.opportunity_id is null',
+            "where products.deleted=0 AND (products.opportunity_id is not null OR products.opportunity_id <> '')",
             $ret_array
         );
     }
@@ -244,7 +245,8 @@ class Product extends SugarBean
             $query .= $custom_join['join'];
         }
 
-        $where_auto = "$this->table_name.deleted=0 AND $this->table_name.opportunity_id is null";
+        $where_auto = "$this->table_name.deleted=0 AND
+            ($this->table_name.opportunity_id is not null OR $this->table_name.opportunity_id <> '')";
 
         if ($where != "") {
             $query .= "where ($where) AND " . $where_auto;
@@ -761,7 +763,6 @@ class Product extends SugarBean
             $this->sales_status = Opportunity::STATUS_NEW;
         }
     }
-
 
     public function bean_implements($interface)
     {

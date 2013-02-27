@@ -107,6 +107,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCallEmptyStatusLangConfig()
     {
+        global $db;
          $langpack = new SugarTestLangPackCreator();
          $langpack->setModString('LBL_DEFAULT_STATUS','FAILED!','Calls');
          $langpack->save();
@@ -118,10 +119,16 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
          $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+         $call->assigned_user_id = $GLOBALS['current_user']->id;
          $call->save();
          // then retrieve
          $call = new Call();
          $call->retrieve($this->callid);
          $this->assertEquals('My Call', $call->status);
+
+        $q = "SELECT cu.accept_status FROM calls_users cu WHERE cu.call_id = '{$this->callid}' AND user_id = '{$GLOBALS['current_user']->id}'";
+        $r = $db->query($q);
+        $a = $db->fetchByAssoc($r);
+        $this->assertEquals('accept', $a['accept_status'], "Call wasn't accepted by the User");         
     }
 }

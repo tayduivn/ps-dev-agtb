@@ -516,39 +516,6 @@ document_additionalDetailsCalls = new Array();
 		update_select_count_to_value(0);
 	}
 
-
-	//when called, this function will make ajax call to refresh list view sort order
-	function sortBrowseList(params,name) {
-
-		// if paginating before running a sort, then name will be empty.  Handle this use case
-		if(typeof(name) =='undefined' ){
-			//we will pass in keyword PAGINATE.  This will identify this call as a pagination call
-			name = 'PAGINATE';
-		}
-
-
-		//create data to send across
-		postData = 'module=KBDocuments&action=BrowseListView&to_pdf=1'+ '&sortCol='+name;
-
-		args = '&to_pdf=1'+'&params=' + JSON.stringify(params) + '&sortCol='+name;
-		//create callback function
-		var callback =	{
-			//on success, refresh list
-			  success: function(o) {
-			    	var targetdiv=document.getElementById('selected_directory_children');
-	    			targetdiv.innerHTML=o.responseText;
-	    			SUGAR.util.evalScript(o.responseText);
-			  },
-			  //do nothing on failure
-			  failure: function(o) {/*failure handler code*/}
-		};
-		//make ajax call
-		var trobj = YAHOO.util.Connect.asyncRequest('POST','index.php?'+postData, callback, args);
-
-	}
-
-
-
 	function save_kb_checks(offset) {
 		ar = new Array();
 		if(document.KBAdminView.uid.value != '') {

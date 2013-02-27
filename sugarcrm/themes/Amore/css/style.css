@@ -58,6 +58,10 @@ color:#ef3067;
 
 }
 
+#dcmenuSugarCube.focused {
+    background-color: #d06887;
+}
+
 .dashletPanel.dc {
     margin-left: 2%;
     margin-right: 2%;

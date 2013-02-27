@@ -101,7 +101,7 @@ class RelatedFieldExpression extends GenericExpression
                 
                 if (linkDef && linkDef.id_name && linkDef.module) {
                     var idField = document.getElementById(linkDef.id_name);
-                    if (idField && idField.tagName == "INPUT")
+                    if (idField && (idField.tagName == "INPUT" || idField.hasAttribute("data-id-value")))
                     {
                         linkId = AH.getValue(linkDef.id_name, false, true);
                         module = linkDef.module;

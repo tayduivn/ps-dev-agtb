@@ -586,13 +586,6 @@ if(empty($mod_strings['LBL_UPGRADE_TAKES_TIME_HAVE_PATIENCE'])){
 		$mod_strings['LBL_UPGRADE_TAKES_TIME_HAVE_PATIENCE'] = 'Upgrade may take some time';
 }
 
-///////////////////////////////////////////////////////////////////////////////
-////	HANDLE REMINDERS
-commitHandleReminders($skippedFiles);
-////	HANDLE REMINDERS
-///////////////////////////////////////////////////////////////////////////////
-
-
 logThis("Resetting error_reporting() to system level.");
 error_reporting($standardErrorLevel);
 

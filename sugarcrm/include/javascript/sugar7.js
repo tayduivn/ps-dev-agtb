@@ -55,6 +55,20 @@
                 route: ":module/create"
             },
             {
+                name: "vcardImport",
+                route: ":module/vcard-import",
+                callback: function(module){
+                    app.controller.loadView({
+                        module: module,
+                        layout: "records"
+                    });
+
+                    app.drawer.open({
+                        layout:'vcard-import'
+                    });
+                }
+            },
+            {
                 name: "layout",
                 route: ":module/layout/:view"
             },

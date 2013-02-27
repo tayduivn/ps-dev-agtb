@@ -59,7 +59,10 @@ abstract class SugarApi {
             $fieldList = array();
         }
 
-        $data = ApiHelper::getHelper($api,$bean)->formatForApi($bean,$fieldList);
+        $options = array();
+        $options['action'] = $api->action;
+
+        $data = ApiHelper::getHelper($api,$bean)->formatForApi($bean,$fieldList, $options);
 
         // Should we log this as a recently viewed item?
         if ( !empty($data) && isset($args['viewed']) && $args['viewed'] == true ) {
@@ -104,7 +107,8 @@ abstract class SugarApi {
             if((is_object($value) || is_array($value)) && !empty($value)) {
                 $this->htmlDecodeReturn($value);
             }
-            elseif(!empty($data) && !empty($value)) {
+            // htmldecode screws up bools..returns '1' for true
+            elseif(!is_bool($value) && (!empty($data) && !empty($value))) {
                 // USE ENT_QUOTES TO REMOVE BOTH SINGLE AND DOUBLE QUOTES, WITHOUT THIS IT WILL NOT CONVERT THEM
                 $data[$key] = html_entity_decode($value, ENT_COMPAT|ENT_QUOTES, 'UTF-8');
             }

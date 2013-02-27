@@ -112,6 +112,7 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
         unset($this->searchFields);
         unset($this->timedate);
 
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
     }
 

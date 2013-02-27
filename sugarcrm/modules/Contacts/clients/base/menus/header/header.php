@@ -30,7 +30,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#bwc/index.php?module=Contacts&action=ImportVCard',
+        'route'=>'#'.$module_name.'/vcard-import',
         'label' =>'LNK_IMPORT_VCARD',
         'acl_action'=>'import',
         'acl_module'=>$module_name,

@@ -356,8 +356,28 @@ class ForecastWorksheet extends SugarBean
             "and {$_object->table_name}.related_id = '{$fromUserId}' ";
         $db->query($_query, true);
 
-        //todo: forecast_tree
+        // ForecastWorksheets
+        // reassign entries in forecast_worksheets
+        $_object = BeanFactory::getBean('ForecastWorksheets');
+        $_query = "update {$_object->table_name} set " .
+            "assigned_user_id = '{$toUserId}', " .
+            "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
+            "modified_user_id = '{$current_user->id}' " .
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.assigned_user_id = '{$fromUserId}' ";
+        $db->query($_query, true);
 
+        // ForecastManagerWorksheets
+        // reassign entries in forecast_manager_worksheets
+        $_object = BeanFactory::getBean('ForecastManagerWorksheets');
+        $_query = "update {$_object->table_name} set " .
+            "assigned_user_id = '{$toUserId}', " .
+            "user_id = '{$toUserId}', " .
+            "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
+            "modified_user_id = '{$current_user->id}' " .
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.assigned_user_id = '{$fromUserId}' ";
+        $db->query($_query, true);
+
+        //todo: forecast_tree
         return $affected_rows;
     }
 }

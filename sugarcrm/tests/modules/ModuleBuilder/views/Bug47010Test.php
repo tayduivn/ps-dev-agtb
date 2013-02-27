@@ -27,6 +27,7 @@ require_once("modules/ModuleBuilder/views/view.dropdown.php");
 class Bug47010Test extends Sugar_PHPUnit_Framework_TestCase {
 
     public function setUp() {
+        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $_SESSION['authenticated_user_language'] = 'en_us';
 
@@ -37,6 +38,7 @@ class Bug47010Test extends Sugar_PHPUnit_Framework_TestCase {
         unset($_REQUEST['dropdown_name']);
         unset($_SESSION['authenticated_user_language']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
     }
 
     public function testModuleNameMissingDoesNotThrowExceptionWhenGenereatingSmarty() {

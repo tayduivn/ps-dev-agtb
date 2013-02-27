@@ -25,13 +25,12 @@ require_once('modules/Teams/TeamSet.php');
 require_once('modules/Teams/TeamSetManager.php');
 //END SUGARCRM flav=pro ONLY
 
-global $mod_strings;
+global $mod_strings, $app_strings;
 $mod_strings_users = $mod_strings;
 
 global $current_user;
-if(!$GLOBALS['current_user']->isAdminForModule('Users')
-  ){
-	sugar_die("You cannot access this page.");
+if(!$GLOBALS['current_user']->isAdminForModule('Users')) {
+	sugar_die($app_strings['EXCEPTION_NOT_AUTHORIZED']);
 }
 
 global $locale;
@@ -41,10 +40,12 @@ $db = DBManagerFactory::getInstance();
 $return_module = isset($_REQUEST['return_module']) ? $_REQUEST['return_module'] : '';
 $return_action = isset($_REQUEST['return_action']) ? $_REQUEST['return_action'] : '';
 $return_id = isset($_REQUEST['return_id']) ? $_REQUEST['return_id'] : '';
-if(!empty($return_module))
-    $cancel_location = "index.php?module=".$return_module."&action=".$return_action."&record=".$return_id;
-else
+
+if(!empty($return_module)) {
+    $cancel_location = "index.php?module={$return_module}&action={$return_action}&record={$return_id}";
+} else {
     $cancel_location = "index.php?module=Users&action=index";
+}
 
 echo "<h2 class='moduleTitle' style=\"margin-bottom:0px;\">{$mod_strings_users['LBL_REASS_SCRIPT_TITLE']}</h2>";
 
@@ -142,46 +143,53 @@ echo $teamSetField->getClassicView();
 <select size="6" name='modules[]' multiple="true" id='modulemultiselect' onchange="updateDivDisplay(this);">
 <?php
 if(!isset($_SESSION['reassignRecords']['assignedModuleListCache'])){
-	$beanListDup = $beanList;
-	foreach($beanListDup as $m => $p){
-        $obj = BeanFactory::getBean($m);
-        if(empty($obj)) {
-            unset($beanListDup[$m]);
+
+    $beanListDup = $beanList;
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    unset($beanListDup['ForecastManagerWorksheets']);
+    //END SUGARCRM flav=pro ONLY
+
+    foreach($beanListDup as $m => $p){
+		if(empty($beanFiles[$p])){
+			unset($beanListDup[$m]);
 		} else {
+			$obj = BeanFactory::getBean($m);
 			if( !isset($obj->field_defs['assigned_user_id']) ||
-			     	(
-					isset($obj->field_defs['assigned_user_id']) &&
-					isset($obj->field_defs['assigned_user_id']['source']) &&
-					$obj->field_defs['assigned_user_id']['source'] == "non-db"
-				)
+			     	(isset($obj->field_defs['assigned_user_id']) &&
+                     isset($obj->field_defs['assigned_user_id']['source']) &&
+					 $obj->field_defs['assigned_user_id']['source'] == "non-db")
 			  )
 			{
 				unset($beanListDup[$m]);
 			}
 		}
 	}
+
+    //Get the list of beans without the excluded modules
 	$beanListDup = array_diff($beanListDup, $exclude_modules);
 
 	//Leon bug 20739
-	$beanListDupDisp=array() ;
+	$beanListDupDisp=array();
 	foreach($beanListDup as $m => $p){
-		if (isset($app_list_strings['moduleList'][$m]))
-		{
-		    $beanListDupDisp[$app_list_strings['moduleList'][$m]]=$p;
-		}
+        $beanListDupDisp[$m] = isset($app_list_strings['moduleList'][$m]) ? $app_list_strings['moduleList'][$m] : $p;
 	}
+
+    asort($beanListDup, SORT_STRING);
+
 	$_SESSION['reassignRecords']['assignedModuleListCache'] = $beanListDup;
 	$_SESSION['reassignRecords']['assignedModuleListCacheDisp'] = $beanListDupDisp;
 }
-$beanListDup = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
-$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCacheDisp']);
-asort($beanListFlip);
+
 $selected = array();
-if(!empty($_SESSION['reassignRecords']['modules'])){
-	foreach($_SESSION['reassignRecords']['modules'] as $mod => $arr)
-		$selected[] = $mod;
+
+if(!empty($_SESSION['reassignRecords']['modules'])) {
+	foreach($_SESSION['reassignRecords']['modules'] as $key => $mod) {
+		$selected[] = $key;
+    }
 }
-echo get_select_options_with_id($beanListFlip, $selected);
+
+echo get_select_options_with_id_separate_key($_SESSION['reassignRecords']['assignedModuleListCacheDisp'], $_SESSION['reassignRecords']['assignedModuleListCache'], $selected);
 ?>
 </select>
 <BR>
@@ -194,9 +202,10 @@ foreach($moduleFilters as $modFilter => $fieldArray){
 	$display = (!empty($fieldArray['display_default']) && $fieldArray['display_default'] == true ? "block" : "none");
 	//Leon bug 20739
 	$t_mod_strings=return_module_language($GLOBALS['current_language'], $modFilter);
-	echo "<div id=\"reassign_{$GLOBALS['beanList'][$modFilter]}\" style=\"display:$display\">\n";
+	echo "<div id=\"reassign_{$modFilter}\" style=\"display:$display\">\n";
 	echo "<h5 style=\"padding-left:0px; margin-bottom:4px;\">{$app_list_strings['moduleList'][$modFilter]} ", " {$mod_strings_users['LBL_REASS_FILTERS']}</h5>\n";
-	foreach($fieldArray['fields'] as $meta){
+
+    foreach($fieldArray['fields'] as $meta){
 		$multi = "";
 		$name = (!empty($meta['name']) ? $meta['name'] : "");
 		$size = (!empty($meta['size']) ? "size=\"{$meta['size']}\"" : "");
@@ -251,7 +260,8 @@ else if(!isset($_GET['execute'])){
 	if(empty($_POST['modules'])){
 		sugar_die($mod_strings_users['ERR_REASS_SELECT_MODULE']);
 	}
-	if($_POST['fromuser'] == $_POST['touser']){
+
+    if($_POST['fromuser'] == $_POST['touser']){
 		sugar_die($mod_strings_users['ERR_REASS_DIFF_USERS']);
 	}
 
@@ -280,7 +290,7 @@ else if(!isset($_GET['execute'])){
 
 	$toteamname = TeamSetManager::getTeamsFromSet($team_set_id);
 	//END SUGARCRM flav=pro ONLY
-        echo "{$mod_strings_users['LBL_REASS_DESC_PART2']}\n";
+    echo "{$mod_strings_users['LBL_REASS_DESC_PART2']}\n";
 	echo "<form action=\"index.php?module=Users&action=reassignUserRecords&execute=true\" method=post>\n";
 	echo "<BR>{$mod_strings_users['LBL_REASS_NOTES_TITLE']}\n";
 	echo "<ul>\n";
@@ -294,8 +304,9 @@ else if(!isset($_GET['execute'])){
 	echo "<BR><input type=checkbox name=verbose> {$mod_strings_users['LBL_REASS_VERBOSE_OUTPUT']}".$help_img."<BR>\n";
 	
 	unset($_SESSION['reassignRecords']['modules']);
-	$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
-	foreach($_POST['modules'] as $module){
+	$beanListFlip = $_SESSION['reassignRecords']['assignedModuleListCache'];
+
+    foreach($_POST['modules'] as $module){
 		if(!array_key_exists($module, $beanListFlip)){
 			//echo "$module not found as key in \$beanListFlip. Skipping $module.<BR>";
 			continue;
@@ -307,8 +318,9 @@ else if(!isset($_GET['execute'])){
 			continue;
 		}
 
-		echo "<h5>{$mod_strings_users['LBL_REASS_ASSESSING']} {$app_list_strings['moduleList'][$p_module]}</h5>";
+        $moduleLabel = isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module;
 
+		echo "<h5>{$mod_strings_users['LBL_REASS_ASSESSING']} {$moduleLabel}</h5>";
 		echo "<table border='0' cellspacing='0' cellpadding='0'  class='detail view'>\n";
 		echo "<tr>\n";
 		echo "<td>\n";
@@ -316,8 +328,13 @@ else if(!isset($_GET['execute'])){
 		$q_select = "select id";
 		$q_update = "update ";
 		$q_set = " set assigned_user_id = '{$_POST['touser']}', ".
-			      "date_modified = '".TimeDate::getInstance()->nowDb()."', ".
-			      "modified_user_id = '{$current_user->id}' ";
+			      "date_modified = '". TimeDate::getInstance()->nowDb() . "'";
+
+        //Add modified_user_id clause if it exists in the table
+        if(isset($obj->field_defs['modified_user_id'])) {
+            $q_set .= ", modified_user_id = '{$current_user->id}' ";
+        }
+
 		//BEGIN SUGARCRM flav=pro ONLY
         //make sure team_id and team_set_id columns are available
 		if(!empty($team_id) && isset($object->field_defs['team_id']))
@@ -328,42 +345,48 @@ else if(!isset($_GET['execute'])){
 		$q_tables   = " {$object->table_name} ";
 		$q_where  = "where {$object->table_name}.deleted=0 and {$object->table_name}.assigned_user_id = '{$_POST['fromuser']}' ";
 
-        // nutmeg sfa-219 : Fix reassignment of records when user set to Inactive
-        // for products reassign items that are not related to opportunity
-        // products with opportunity will be reassigned if user select ForecastWorksheet module
-        //BEGIN SUGARCRM flav=pro ONLY
-        if ( $module == 'Product' )
-        {
-            $q_where .= " and {$object->table_name}.opportunity_id IS NULL ";
-        }
-        //END SUGARCRM flav=pro ONLY
-
 		// Process conditions based on metadata
-		if(isset($moduleFilters[$p_module]['fields']) && is_array($moduleFilters[$p_module]['fields'])){
+		if(isset($moduleFilters[$module]['fields']) && is_array($moduleFilters[$module]['fields'])){
 			$custom_added = false;
-			foreach($moduleFilters[$p_module]['fields'] as $meta){
-				if(!empty($_POST[$meta['name']]))
-					$_SESSION['reassignRecords']['filters'][$meta['name']] = $_POST[$meta['name']];
+			foreach($moduleFilters[$module]['fields'] as $meta) {
+
+                $metaName = $meta['name'];
+
+				if(!empty($_POST[$metaName])) {
+					$_SESSION['reassignRecords']['filters'][$metaName] = $_POST[$metaName];
+                }
+
 				$is_custom = isset($meta['custom_table']) && $meta['custom_table'] == true;
-				if($is_custom && !$custom_added){
+
+				if($is_custom && !$custom_added) {
 					$q_tables .= "inner join {$object->table_name}_cstm on {$object->table_name}.id = {$object->table_name}_cstm.id_c ";
 					$custom_added = true;
 				}
+
 				$addcstm = ($is_custom ? "_cstm" : "");
-				switch($meta['type']){
+
+                switch($meta['type']){
 					case "text":
 					case "select":
-						$q_where .= " and {$object->table_name}{$addcstm}.{$meta['dbname']} = '{$_POST[$meta['name']]}' ";
+						$q_where .= " and {$object->table_name}{$addcstm}.{$meta['dbname']} = '{$_POST[$metaName]}' ";
 						break;
 					case "multiselect":
-						if(empty($_POST[$meta['name']])){
-							continue;
-						}
+
+                        if(!isset($_POST[$metaName]) || empty($_POST[$metaName])){
+                            continue;
+                        }
+
+                        //Also check condition where default selected was the only thing and set to none
+                        if(count($_POST[$metaName]) == 1 && empty($_POST[$metaName][0])) {
+                            continue;
+                        }
+
 						$in_string = "";
 						$empty_check = "";
-						foreach($_POST[$meta['name']] as $onevalue){
-							if(empty($onevalue))
+						foreach($_POST[$metaName] as $onevalue) {
+							if(empty($onevalue)) {
 								$empty_check .= " OR {$object->table_name}{$addcstm}.{$meta['dbname']} is null ";
+                            }
 							$in_string .= "'$onevalue', ";
 						}
 						$in_string = substr($in_string, 0, count($in_string) - 3);
@@ -395,7 +418,7 @@ else if(!isset($_GET['execute'])){
 		$res = $db->query($countquery);
 		$row = $db->fetchByAssoc($res);
 
-		echo "{$row['count']} {$mod_strings_users['LBL_REASS_RECORDS_FROM']} {$app_list_strings['moduleList'][$p_module]} {$mod_strings_users['LBL_REASS_WILL_BE_UPDATED']}\n<BR>\n";
+		echo "{$row['count']} {$mod_strings_users['LBL_REASS_RECORDS_FROM']} {$moduleLabel} {$mod_strings_users['LBL_REASS_WILL_BE_UPDATED']}\n<BR>\n";
 		echo "<input type=checkbox name={$module}_workflow> {$mod_strings_users['LBL_REASS_WORK_NOTIF_AUDIT']}<BR>\n";
 		echo "</td></tr></table>\n";
 	}
@@ -411,7 +434,7 @@ else if(!isset($_GET['execute'])){
 ///////////////////// END STEP 2 - Confirm Selections /////////////////////////
 }
 /////////////////// BEGIN STEP 3 - Execute reassignment ///////////////////////
-else if(isset($_GET['execute']) && $_GET['execute'] == true){
+else if(isset($_GET['execute']) && $_GET['execute'] == true) {
 	$fromuser = $_SESSION['reassignRecords']['fromuser'];
 	$touser = $_SESSION['reassignRecords']['touser'];
 	$fromusername = $_SESSION['reassignRecords']['fromusername'];
@@ -422,33 +445,29 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 	$toteamname = $_SESSION['reassignRecords']['toteamname'];
 	//END SUGARCRM flav=pro ONLY
 
-	$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
+	//$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
 
 	foreach($_SESSION['reassignRecords']['modules'] as $module => $queries){
-		$p_module = $beanListFlip[$module];
-		$workflow = false;
-		if(isset($_POST[$module."_workflow"]) && $_POST[$module."_workflow"] = "on")
-			$workflow = true;
+
+        $moduleLabel = isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module;
+
+		$workflow = isset($_POST[$module."_workflow"]) && $_POST[$module."_workflow"] = "on";
 
 		$query = $workflow ? $queries['query'] : $queries['update'];
 
-		echo "<h5>{$mod_strings_users['LBL_PROCESSING']} {$app_list_strings['moduleList'][$p_module]}</h5>";
-
-        //BEGIN SUGARCRM flav=com ONLY
-        $res = $db->query($query, true);
-        $affected_rows = $db->getAffectedRowCount($res);
-        //END SUGARCRM flav=com ONLY
+		echo "<h5>{$mod_strings_users['LBL_PROCESSING']} {$moduleLabel}</h5>";
 
         //BEGIN SUGARCRM flav=pro ONLY
         // nutmeg sfa-219 : Fix reassignment of records when user set to Inactive
-        if ( $module == 'ForecastWorksheet' )
-        {
+        if ($module == 'ForecastWorksheets') {
             $affected_rows = ForecastWorksheet::reassignForecast($fromuser, $touser);
-        }
-        else
-        {
+            echo "{$mod_strings_users['LBL_UPDATE_FINISH']}: $affected_rows {$mod_strings_users['LBL_AFFECTED']}<BR>\n";
+            continue;
+        } else {
+        //END SUGARCRM flav=pro ONLY
             $res = $db->query($query, true);
             $affected_rows = $db->getAffectedRowCount($res);
+        //BEGIN SUGARCRM flav=pro ONLY
         }
         //END SUGARCRM flav=pro ONLY
 
@@ -456,24 +475,26 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 		echo "<table border='0' cellspacing='0' cellpadding='0'  class='detail view'>\n";
 		echo "<tr>\n";
 		echo "<td>\n";
-		if(! $workflow){
+		if(!$workflow) {
 			echo "{$mod_strings_users['LBL_UPDATE_FINISH']}: $affected_rows {$mod_strings_users['LBL_AFFECTED']}<BR>\n";
-		}
-		else{
+		} else {
 			$successarr = array();
 			$failarr = array();
 
-			while($row = $db->fetchByAssoc($res)){
-				if(empty($row['id'])){
+			while($row = $db->fetchByAssoc($res)) {
+
+                if(empty($row['id'])){
 					continue;
 				}
 				$bean = BeanFactory::getBean($p_module, $row['id']);
 
 				// So that we don't create new blank records.
-				if(!isset($bean->id)){
+				if(empty($bean->id)){
 					continue;
 				}
+
 				$bean->assigned_user_id = $touser;
+
 				//BEGIN SUGARCRM flav=pro ONLY
 				if($toteam != '0'){
 					$bean->team_id = $toteam;
@@ -499,28 +520,27 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 					$successstr .= ($toteam != '0' ? ", {$mod_strings_users['LBL_REASS_TEAM_SET_TO']} $toteamname." : ".");
 					//END SUGARCRM flav=pro ONLY
 					$successarr[] = $successstr;
-				}
-				else{
+				} else {
 					$failarr[] = "{$mod_strings_users['LBL_REASS_FAILED_SAVE']} \"<i><a href=\"index.php?module={$bean->module_dir}&action=DetailView&record={$bean->id}\">$linkname</a></i>\".";
 				}
 			}
 
 			if(isset($_POST['verbose']) && $_POST['verbose'] == "on"){
-				echo "<h5>{$mod_strings_users['LBL_REASS_THE_FOLLOWING']} {$app_list_strings['moduleList'][$p_module]} {$mod_strings_users['LBL_REASS_HAVE_BEEN_UPDATED']}</h5>\n";
+				echo "<h5>{$mod_strings_users['LBL_REASS_THE_FOLLOWING']} {$app_list_strings['moduleList'][$module]} {$mod_strings_users['LBL_REASS_HAVE_BEEN_UPDATED']}</h5>\n";
 				foreach($successarr as $ord){
 					echo "$ord\n<BR>\n";
 				}
-				if(empty($successarr))
+				if(empty($successarr)) {
 					echo "{$mod_strings_users['LBL_REASS_NONE']}\n<BR>\n";
-
-				echo "<h5>{$mod_strings_users['LBL_REASS_THE_FOLLOWING']} {$app_list_strings['moduleList'][$p_module]} {$mod_strings_users['LBL_REASS_CANNOT_PROCESS']}</h5>\n";
+                }
+				echo "<h5>{$mod_strings_users['LBL_REASS_THE_FOLLOWING']} {$app_list_strings['moduleList'][$module]} {$mod_strings_users['LBL_REASS_CANNOT_PROCESS']}</h5>\n";
 				foreach($failarr as $failure){
 					echo $failure."\n<BR>\n";
 				}
-				if(empty($failarr))
+				if(empty($failarr)) {
 					echo "{$mod_strings_users['LBL_REASS_NONE']}\n<BR>\n";
-			}
-			else{
+                }
+			} else {
 				echo "{$mod_strings_users['LBL_REASS_UPDATE_COMPLETE']}\n<BR>\n";
 				echo "&nbsp;&nbsp;".count($successarr)." {$mod_strings_users['LBL_REASS_SUCCESSFUL']}\n<BR>\n";
 				echo "&nbsp;&nbsp;".count($failarr)." {$mod_strings_users['LBL_REASS_FAILED']}\n";
@@ -559,6 +579,7 @@ function clearCurrentRecords()
 
 var allselected = [];
 function updateDivDisplay(multiSelectObj){
+    debugger;
     for(var i = 0; i < multiSelectObj.options.length; i++){
         if(multiSelectObj.options[i].selected != allselected[i]){
             allselected[i] = multiSelectObj.options[i].selected;
@@ -568,8 +589,7 @@ function updateDivDisplay(multiSelectObj){
                 if(theElement != null){
                     theElement.style.display = 'block';
                 }
-            }
-            else{
+            } else {
                 theElement = document.getElementById('reassign_'+multiSelectObj.options[i].value);
                 if(theElement != null){
                     theElement.style.display = 'none';

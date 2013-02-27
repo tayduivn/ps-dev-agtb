@@ -51,6 +51,11 @@ class Bug42915Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function tearDown() 
     {
+        $GLOBALS['current_user']->setPreference('num_grp_sep', null, 0, 'global');
+        $GLOBALS['current_user']->setPreference('dec_sep', null, 0, 'global');
+        $GLOBALS['current_user']->save();
+        get_number_seperators(true);
+
         $GLOBALS['db']->query("DELETE FROM saved_search where id = '{$this->saved_search_id}'"); 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         global $current_user;

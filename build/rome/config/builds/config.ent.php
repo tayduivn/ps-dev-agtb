@@ -136,6 +136,5 @@ $config['blackList']['ent'] = array(
 'sugarcrm/styleguide/styleguide'=>1,
 'sugarcrm/styleguide/tests'=>1,
 'sugarcrm/styleguide/build'=>1,
-                            
 );
 $build = 'ent';

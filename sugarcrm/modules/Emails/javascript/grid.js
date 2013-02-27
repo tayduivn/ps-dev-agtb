@@ -192,7 +192,7 @@ function gridInit() {
 					nextPageLinkLabel: 		"<button class='button'><div class='paginator-next'/></button>",
 					lastPageLinkLabel: 		"<button class='button'><div class='paginator-end'/></button>"
 				}),
-				initialRequest:encodeParamsToUrl(params),
+                initialRequest:SUGAR.util.paramsToUrl(params),
 				width:  "800px",
 				height: "400px"
 			});

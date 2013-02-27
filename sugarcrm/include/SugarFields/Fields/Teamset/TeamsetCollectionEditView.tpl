@@ -127,7 +127,7 @@ and push it outside the screen.
 <script type="text/javascript">
 (function() {ldelim}
     SUGAR_callsInProgress++;
-    var field_id = '{$displayParams.formName}_{$vardef.name}';
+    var field_id = '{$displayParams.formName}_{$idname}';
     YAHOO.util.Event.onContentReady(field_id + "_table", function(){ldelim}
 
         //reset the secondary fields array for this form before populating

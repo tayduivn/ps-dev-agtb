@@ -164,7 +164,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 'next_step',
                 array(
                     'name' => 'date_entered_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_ENTERED',
                     'fields' => array(
@@ -182,7 +182,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'date_modified_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_MODIFIED',
                     'fields' => array(

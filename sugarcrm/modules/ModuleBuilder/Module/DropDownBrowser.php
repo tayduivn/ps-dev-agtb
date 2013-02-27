@@ -38,6 +38,8 @@ class DropDownBrowser
         'commit_stage_dom',
         'commit_stage_custom_dom',
         'commit_stage_binary_dom',
+        'forecasts_config_ranges_options_dom',
+        'forecasts_timeperiod_types_dom',
         //END SUGARCRM flav=pro ONLY
         // 'moduleList', // We may want to put this in at a later date
         // 'moduleListSingular', // Same with this

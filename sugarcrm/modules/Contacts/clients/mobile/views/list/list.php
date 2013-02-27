@@ -73,12 +73,6 @@ $viewdefs['Contacts']['mobile']['view']['list'] = array(
                     'width' => '10%',
                     'default' => true,
                 ),
-                array(
-                    'name' => 'phone_other',
-                    'enabled' => true,
-                    'width' => '10%',
-                    'default' => true,
-                ),
                 array (
                     'name' => 'picture',
                     'label' => 'LBL_PICTURE_FILE',

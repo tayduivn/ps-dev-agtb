@@ -115,6 +115,12 @@ class RestCallTest extends RestTestBase {
 
         $restReply = $this->_restCall("Calls/".$this->call_id."/link/contacts");
         $this->assertEquals($this->contact_id,$restReply['reply']['records'][0]['id'],"The contact was not linked to the call.");
+
+        $restReply = $this->_restCall("Calls/{$this->call_id}/link/users");
+
+        $this->assertNotEmpty($restReply['reply']['records'], "No users linked anymore");
+        $this->assertEquals($GLOBALS['current_user']->id, $restReply['reply']['records'][0]['id'], "The users don't match");
+
     }
 
 }

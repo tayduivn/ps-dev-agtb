@@ -72,9 +72,13 @@ echo (empty($_REQUEST['inline']))?$subpanel_object->get_buttons():'' ;
 
 $subpanel_object->display();
 
+$jsAlerts = new jsAlerts();
+if (!isset($_SESSION['isMobile'])) {
+    echo $jsAlerts->getScript();
+}
+
 if(empty($_REQUEST['inline']))
 {
 	insert_popup_footer($theme);
 }
 
-?>

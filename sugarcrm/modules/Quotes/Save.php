@@ -54,16 +54,20 @@ else {
 	$check_notify = FALSE;
 }
 
-$focus->tax = 0;
-$focus->total = 0;
-$focus->subtotal = 0;
-$focus->deal_tot = 0;
-$focus->new_sub = 0;
-$focus->shipping = 0;
-$focus->tax_usdollar = 0;
-$focus->total_usdollar = 0;
-$focus->subtotal_usdollar = 0;
-$focus->shipping_usdollar = 0;
+//bug55337 - Inline edit to different stage, cause total amount to display 0
+if(!isset($_REQUEST['from_dcmenu']))
+{
+    $focus->tax = 0;
+    $focus->total = 0;
+    $focus->subtotal = 0;
+    $focus->deal_tot = 0;
+    $focus->new_sub = 0;
+    $focus->shipping = 0;
+    $focus->tax_usdollar = 0;
+    $focus->total_usdollar = 0;
+    $focus->subtotal_usdollar = 0;
+    $focus->shipping_usdollar = 0;
+}
 
 if(empty($_REQUEST['calc_grand_total'])){
 	$focus->calc_grand_total = 0;
@@ -166,7 +170,7 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 			$GLOBALS['log']->debug("deleting product id ".$_POST['delete'][$i]);
 			$product->mark_deleted($_POST['delete'][$i]);
 		// delete a comment row
-		} else if (isset($_POST['comment_delete'][$i]) && $_POST['comment_delete'][$i] != '1') {
+		} else if (isset($_POST['comment_delete'][$i]) && $_POST['comment_delete'][$i] != '1' && !isset($_REQUEST['duplicateSave'])) {
 			$product_bundle_note = BeanFactory::getBean('ProductBundleNotes');
 			$GLOBALS['log']->debug("Deleting Product Bundle Note Id: ".$_POST['comment_delete'][$i]);
 			$product_bundle_note->mark_deleted($_POST['comment_delete'][$i]);
@@ -230,7 +234,7 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 		// insert comment row
 		else if (!empty($_POST['comment_index'][$i]) && !empty($_POST['parent_group'][$i])) {
 			$product_bundle_note = BeanFactory::getBean('ProductBundleNotes');
-			if (!empty($_POST['comment_id'][$i])) {
+			if (!empty($_POST['comment_id'][$i]) && !isset($_REQUEST['duplicateSave'])) {
 				$product_bundle_note->id = $_POST['comment_id'][$i];
 			}
 			$product_bundle_note->description = $_POST['comment_description'][$i];

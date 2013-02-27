@@ -270,6 +270,8 @@ class SugarController
         $GLOBALS['log']->fatal('Exception in Controller: ' . $e);
         $logicHook = new LogicHook();
 
+        SugarMetric_Manager::getInstance()->handleException($e);
+
         if (isset($this->bean))
         {
             $logicHook->setBean($this->bean);

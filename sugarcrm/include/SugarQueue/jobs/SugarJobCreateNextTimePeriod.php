@@ -120,6 +120,8 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
            $leafTimePeriod->parent_id = $parentTimePeriod->id;
            $leafTimePeriod->save();
         }
+
+        $this->job->succeedJob();
         return true;
     }
 

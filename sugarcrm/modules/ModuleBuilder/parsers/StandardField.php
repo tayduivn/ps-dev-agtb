@@ -45,10 +45,11 @@ class StandardField extends DynamicField
     	global $beanList;
     	if (!empty($beanList[$this->module]) && is_file("custom/Extension/modules/{$this->module}/Ext/Vardefs/sugarfield_$field.php"))
     	{
-    		$dictionary = array($beanList[$this->module] => array("fields" => array($field => array())));
+            $bean_name = get_valid_bean_name($this->module);
+            $dictionary = array($bean_name => array("fields" => array($field => array())));
             include("$this->base_path/sugarfield_$field.php");
-            if (!empty($dictionary[$beanList[$this->module]]) && isset($dictionary[$beanList[$this->module]]["fields"][$field]))
-                $this->custom_def = $dictionary[$beanList[$this->module]]["fields"][$field];
+            if (!empty($dictionary[$bean_name]) && isset($dictionary[$bean_name]["fields"][$field]))
+                $this->custom_def = $dictionary[$bean_name]["fields"][$field];
     	}
     }
 

@@ -113,7 +113,7 @@ class EmailReminder
         }
 
         $user = BeanFactory::getBean('Users', $bean->created_by);
-
+            
         $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
         $xtpl = $this->setReminderBody($xtpl, $bean, $user);
 

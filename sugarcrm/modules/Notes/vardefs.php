@@ -164,6 +164,7 @@ $dictionary['Note'] = array(
     'group'=>'parent_name',
     'options'=> 'parent_type_display',
   	'len'=> '255',
+    'studio' => array('wirelesslistview'=>false),
   	'comment' => 'Sugar module the Note is associated with'
   ),
   'parent_id'=>
@@ -229,6 +230,7 @@ $dictionary['Note'] = array(
 		'type'=>'parent',
 		'source'=>'non-db',
 		'options'=> 'record_type_display_notes',
+    'studio' => true,
 		),
 
  'contact_name'=>

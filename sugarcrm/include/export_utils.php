@@ -56,6 +56,7 @@ function getDelimiter() {
  * @return string delimited string for export
  */
 function export($type, $records = null, $members = false, $sample=false) {
+    global $locale;
     global $beanList;
     global $beanFiles;
     global $current_user;
@@ -69,7 +70,6 @@ function export($type, $records = null, $members = false, $sample=false) {
     //Array of fields that should not be exported, and are only used for logic
     $remove_from_members = array("ea_deleted", "ear_deleted", "primary_address");
     $focus = 0;
-    $content = '';
 
 	$focus = BeanFactory::newBean($type);
     $searchFields = array();
@@ -409,7 +409,7 @@ function getExportContentFromResult(
     $populate=false
 ) {
 
-    global $current_user;
+    global $current_user, $locale;
     $sampleRecordNum = 5;
     $delimiter = getDelimiter();
     $timedate = TimeDate::getInstance();
@@ -431,8 +431,22 @@ function getExportContentFromResult(
         $field_labels[$key] = translateForExport($dbname,$focus);
     }
 
+    $user_agent = $_SERVER['HTTP_USER_AGENT'];
+    if ($locale->getExportCharset() == 'UTF-8' &&
+        ! preg_match('/macintosh|mac os x|mac_powerpc/i', $user_agent)) // Bug 60377 - Mac Excel doesn't support UTF-8
+    {
+        //Bug 55520 - add BOM to the exporting CSV so any symbols are displayed correctly in Excel
+        $BOM = "\xEF\xBB\xBF";
+        $content = $BOM;
+    }
+    else
+    {
+        $content = '';
+    }
+
     // setup the "header" line with proper delimiters
-    $content = "\"".implode("\"". $delimiter ."\"", array_values($field_labels))."\"\r\n";
+    $content .= "\"".implode("\"".getDelimiter()."\"", array_values($field_labels))."\"\r\n";
+
     $pre_id = '';
 
     if($populate){
@@ -590,8 +604,9 @@ function generateSearchWhere($module, $query)
          //retrieve the export content
          $content = export($type, null, false, true);
 
-         //add details on removing the sample data
-         return $content . $app_strings['LBL_IMPORT_SAMPLE_FILE_TEXT'];
+         // Add a new row and add details on removing the sample data
+         // Our Importer will stop after he gets to the new row, ignoring the text below 
+         return $content . "\n" . $app_strings['LBL_IMPORT_SAMPLE_FILE_TEXT'];
 
      }
  //this function will take in the bean and field mapping and return a proper value

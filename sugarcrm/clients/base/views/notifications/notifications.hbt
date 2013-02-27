@@ -1,4 +1,4 @@
-<ul class="nav pull-right">
+<ul class="nav pull-right megamenu">
     <li class="divider-vertical"></li>
     <li class="dropdown">
         <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">0</button>

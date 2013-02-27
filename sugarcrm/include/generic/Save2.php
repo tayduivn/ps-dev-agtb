@@ -108,9 +108,8 @@ else {
 	            $where_clauses = '('. implode(' ) AND ( ', $where_clauses_arr) . ')';
 	        }
         }
-
-		$ret_array = create_export_query_relate_link_patch($module, $searchFields, $where_clauses);
-		$query = $seed->create_export_query($order_by, $ret_array['where'], $ret_array['join']);
+        
+        $query = $seed->create_new_list_query($order_by, $where_clauses);
 		$result = $GLOBALS['db']->query($query,true);
 		$uids = array();
 		while($val = $GLOBALS['db']->fetchByAssoc($result,false))

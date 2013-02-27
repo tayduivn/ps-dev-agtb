@@ -460,9 +460,7 @@ function get_chart_for_user($user=null,$user_id=null,$forecast_type='Direct') {
 function buildExportLink($forecast_type) {
     
     global $mod_strings;
-    //id='$id'
-    //SugarThemeRegistry::current()->getImage("export","border='0' align='absmiddle'", null,null,'.gif',$mod_strings['LBL_COPY'])."&nbsp;
-    //$script = "<a onclick=\"return copyvalue_overlib('{$forecast_type}');\" href=\"#\" >".$mod_strings['LBL_COPY']."</a>";
+
     $buttons = array("<a href='javascript: void(0);'>".$mod_strings['LBL_COPY']."</a>");
 
     if($forecast_type =="direct") {

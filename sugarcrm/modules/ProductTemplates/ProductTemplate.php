@@ -252,18 +252,15 @@ class ProductTemplate extends SugarBean {
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
-        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
-		if($custom_join)
-				$custom_join['join'] .= $relate_link_join;
+        $custom_join = $this->getCustomJoin(true, true, $where);
+        $custom_join['join'] .= $relate_link_join;
                 $query = "SELECT ";
                 $query .= " $this->table_name.*,
                                 $this->rel_manufacturers.name as manufacturer_name,
                                 $this->rel_categories.name as category_name,
                                 $this->rel_types.name as type_name
 					";
-				if($custom_join){
-   					$query .= $custom_join['select'];
- 				}
+        $query .= $custom_join['select'];
                             $query.=   " FROM $this->table_name ";
 
 
@@ -274,9 +271,7 @@ class ProductTemplate extends SugarBean {
                                 LEFT JOIN $this->rel_types
                                 ON $this->table_name.type_id=$this->rel_types.id AND $this->rel_types.deleted=0
 								";
-			if($custom_join){
-   					$query .= $custom_join['join'];
- 				}
+        $query .= $custom_join['join'];
 				$where_auto = $this->table_name.'.deleted = 0 ';
 
                 if($where != "")
@@ -289,12 +284,6 @@ class ProductTemplate extends SugarBean {
 
                 return $query;
 	}
-
-
-
-	function save_relationship_changes($is_update)
-    {
-    }
 
 	function clear_note_product_template_relationship($product_template_id)
 	{

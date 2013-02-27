@@ -135,6 +135,23 @@ class SugarFavorites extends Basic
 	    return $response['list'];
 	}
 
+	/**
+	 * Use a direct DB Query to retreive only the assigned user id's for a module/record. 
+	 * @param string $module - module name
+	 * @param string $id - guid
+	 * @return array $assigned_user_ids - array of assigned user ids
+	 */
+	public static function getUserIdsForFavoriteRecordByModuleRecord($module, $id) {
+		global $db;
+		$query = "SELECT assigned_user_id FROM sugarfavorites WHERE module = '$module' AND record_id = '$id' AND deleted = 0";
+		$queryResult = $db->query($query);
+		$assigned_user_ids = array();
+		while($row = $db->fetchByAssoc($queryResult)) {
+			$assigned_user_ids[] = $row['assigned_user_id'];
+		}
+		return $assigned_user_ids;
+	}
+
 	public function markRecordDeletedInFavoritesByUser($record_id, $module, $assigned_user_id)
 	{
 		$query = "UPDATE {$this->table_name} set deleted=1 , module = '{$module}', date_modified = '$date_modified', modified_user_id = NOW() where record_id='{$record_id}' AND assigned_user_id = '{$assigned_user_id}'";

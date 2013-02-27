@@ -396,17 +396,6 @@ if(empty($errors)) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-////	HANDLE REMINDERS
-if(empty($errors)) {
-	commitHandleReminders($skippedFiles, $path);
-}
-
-if(file_exists(clean_path(getcwd()).'/original451files')){
-	rmdir_recursive(clean_path(getcwd()).'/original451files');
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
 ////	RECORD ERRORS
 $phpErrors = ob_get_contents();
 ob_end_clean();

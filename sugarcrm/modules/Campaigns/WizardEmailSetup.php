@@ -386,6 +386,15 @@ if(!function_exists('imap_open')) {
 </script>
 EOQ;
 
+if(isset($_REQUEST['error'])){
+    //if there is an error flagged, then we are coming here after a save where there was an error detected
+    //on an inbound email save.  Display error to user so they are aware.
+    $errorString = "<div class='error'>".$mod_strings['ERR_NO_OPTS_SAVED']."  <a href='index.php?module=InboundEmail&action=index'>".$mod_strings['ERR_REVIEW_EMAIL_SETTINGS']."</a></div>";
+    $ss->assign('ERROR', $errorString);
+    //navigate to inbound email page by default
+    $divScript .=" <script>navigate('next');</script>";
+}
+
 $ss->assign("DIV_JAVASCRIPT", $divScript);
 
 

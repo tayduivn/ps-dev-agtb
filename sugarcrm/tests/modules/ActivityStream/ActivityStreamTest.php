@@ -28,7 +28,8 @@
 
 
 require_once 'modules/ActivityStream/ActivityStream.php';
-require_once 'modules/ActivityStream/vardefs.php';
+require 'modules/ActivityStream/vardefs.php';
+require 'modules/TableDictionary.php';
 
 class ActivityStreamTest extends Sugar_PHPUnit_Framework_TestCase {
     private $account;
@@ -84,16 +85,24 @@ class ActivityStreamTest extends Sugar_PHPUnit_Framework_TestCase {
         $sql = "SELECT * FROM accounts WHERE id = '".$this->account->id."'";
         $result = $GLOBALS['db']->query($sql);
         $this->account->fetched_row = $GLOBALS['db']->fetchByAssoc($result);
-        $activity = new ActivityStream();
+        $activity = BeanFactory::getBean('ActivityStream');
         $result = $activity->addUpdate($this->account);
         $this->assertEquals(true, $result);   
+
+        $activity = BeanFactory::getBean('ActivityStream');
         $result = $activity->addPost('Accounts', $this->account->id, 'this is a test');
         $this->assertEquals(true, $result);
+
+        $activity = BeanFactory::getBean('ActivityStream');
         $result = $activity->addCreate($this->account, $this->contact);
         $this->assertEquals(true, $result);        
+
+        $activity = BeanFactory::getBean('ActivityStream');
         $activities = $activity->getActivities('Accounts', $this->account->id);
-        $this->assertGreaterThanOrEqual(3, count($activities));
-        $activity->loadFromRow($activities[0]);
+        $this->assertGreaterThanOrEqual(3, count($activities['records']));
+
+        $activity = BeanFactory::getBean('ActivityStream');
+        $activity->loadFromRow($activities['records'][0]);
         $result = $activity->addComment($activity->id, 'this is a test');
         $this->assertEquals(true, $result);      
     } 

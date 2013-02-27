@@ -143,6 +143,15 @@ class Popup_Picker
 		$ListView = new ListView();
 		$ListView->show_export_button = false;
 		$ListView->process_for_popups = true;
+		
+		// Bug 50020
+		// If the popup mode is SINGLE, don't show select dropdown or delete button
+		$mode  = empty($_REQUEST['mode']) ? '' : strtoupper($_REQUEST['mode']);
+		if ($mode == "SINGLE") {
+			$ListView->show_select_menu = false;
+			$ListView->show_delete_button = false;
+		}
+		
 		$ListView->setXTemplate($form);
 		$ListView->multi_select_popup=$multi_select;  //FOR MULTI-SELECT	
 		if ($multi_select) $ListView->xTemplate->assign("TAG_TYPE","SPAN"); else  $ListView->xTemplate->assign("TAG_TYPE","A");//FOR MULTI-SELECT

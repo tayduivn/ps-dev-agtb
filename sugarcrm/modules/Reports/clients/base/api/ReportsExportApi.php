@@ -87,6 +87,7 @@ class ReportsExportApi extends SugarApi {
             //Translate pdf to correct language
             $reporter = new Report(html_entity_decode($report->content), '', '');
             $reporter->layout_manager->setAttribute("no_sort",1);
+            $reporter->fromApi = true;
             //Translate pdf to correct language
             $mod_strings = return_module_language($current_language, 'Reports');
 
@@ -121,6 +122,7 @@ class ReportsExportApi extends SugarApi {
             //Translate pdf to correct language
             $reporter = new Report(html_entity_decode($report->content), '', '');
             $reporter->layout_manager->setAttribute("no_sort",1);
+            $reporter->fromApi = true;
             //Translate pdf to correct language
             $mod_strings = return_module_language($current_language, 'Reports');
 

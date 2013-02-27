@@ -112,7 +112,7 @@ class Bug45287_2Test extends Sugar_PHPUnit_Framework_TestCase
         unset($this->searchDefs);
         unset($this->searchFields);
         unset($this->timezone);
-
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
     }
 

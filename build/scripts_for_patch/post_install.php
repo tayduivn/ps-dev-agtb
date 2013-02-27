@@ -329,12 +329,6 @@ function post_install() {
 		//END SUGARCRM flav=pro ONLY
 		upgradeDbAndFileVersion($new_sugar_version);
 
-    // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.
-    if (version_compare($sugar_version, '6.4.2', '<'))
-    {
-        _logThis('Set upload_maxsize to the new limit that was introduced in 6.4', $path);
-        $sugar_config['upload_maxsize'] = 30000000;
-    }
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
 	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs).
     if(file_exists('modules/Administration/SaveTabs.php'))
@@ -360,6 +354,7 @@ function post_install() {
     upgradeGroupInboundEmailAccounts();
     upgrade_custom_duration_defs();
     upgrade_panel_tab_defs();
+
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	//add language pack config information to config.php
@@ -860,7 +855,7 @@ function process_email_address_relationships()
         $old_email_address = $row['email_address_caps']; // the old email address is in this field
         $old_uuid = $row['id'];
         $time_changed = $row['date_modified']; // the point assumed to be when the email address incorrectly was changed.
-        _logThis('Inconsistent row has address '.$new_email_address.' and caps field '.$old_email_address, $path);
+        //_logThis('Inconsistent row has address '.$new_email_address.' and caps field '.$old_email_address, $path);
 
         // attempt to find a better row for the new email address
         $find_new_rows_qry = $GLOBALS['db']->query("SELECT * from email_addresses WHERE email_address_caps = '".$GLOBALS['db']->quote(strtoupper($new_email_address))."' AND deleted=0");
@@ -868,25 +863,23 @@ function process_email_address_relationships()
         if ($first_new_row) {
             // this will be our new id
             $new_uuid = $first_new_row['id'];
-            _logThis('Found a matching row of id '.$new_uuid.' for email address '.$new_email_address, $path);
+            //_logThis('Found a matching row of id '.$new_uuid.' for email address '.$new_email_address, $path);
         }
         else {
             // create new uuid
-            _logThis('No matching row for new email address '.$new_email_address.', creating one', $path);
+            //_logThis('No matching row for new email address '.$new_email_address.', creating one', $path);
             $new_uuid = create_guid();
             $noMatchQuery = "INSERT INTO email_addresses VALUES ('".$new_uuid."', '".$new_email_address."', '".$GLOBALS['db']->quote(strtoupper($new_email_address))."', '".
                      $row['invalid_email']."', '".$row['opt_out']."', '".$time_changed."', ".$GLOBALS['db']->now().", '0')";
             $GLOBALS['db']->query($noMatchQuery);
-            _logThis("Added as $new_uuid, query was ".$noMatchQuery, $path);
+            //_logThis("Added as $new_uuid, query was ".$noMatchQuery, $path);
         }
 
         fix_email_address_relationships($old_uuid, $new_uuid, $time_changed);
 
-        _logThis('Restoring old row to proper email address', $path);
+        //_logThis('Restoring old row to proper email address', $path);
         $restore_old_row_qry = "UPDATE email_addresses SET email_address = '".$GLOBALS['db']->quote(strtolower($old_email_address))."'  where email_address_caps = '".$GLOBALS['db']->quote($old_email_address)."' ";
         $GLOBALS['db']->query($restore_old_row_qry);
-
-
     }
 
     // at this point handle duplicate emails
@@ -905,7 +898,7 @@ function process_email_address_relationships()
     $dupe_results = $GLOBALS['db']->query($dupe_query);
     while ($row = $GLOBALS['db']->fetchByAssoc($dupe_results,false)) {
         $email_address_caps = $row['email_address_caps'];
-        _logThis("Found ".$email_address_caps.' with rows='.$row['email_count'], $path);
+        //_logThis("Found ".$email_address_caps.' with rows='.$row['email_count'], $path);
 
         $ids = array();
         $opt_out = '0'; // by default don't opt out, unless one of the dupes has an opt-out flag.
@@ -914,11 +907,11 @@ function process_email_address_relationships()
         $matchingRowResult = $GLOBALS['db']->query($find_matching_rows);
         while ($matching_email_row = $GLOBALS['db']->fetchByAssoc($matchingRowResult,false)) {
             $matching_email_id = $matching_email_row['id'];
-            _logThis("Found duplicate with id=".$matching_email_id, $path);
+            //_logThis("Found duplicate with id=".$matching_email_id, $path);
             $ids[] = $matching_email_id;
             if (intval($matching_email_row['opt_out']) == 1) {
                 $opt_out = 1;
-                _logThis("Flagged as opted out.", $path);
+                //_logThis("Flagged as opted out.", $path);
             }
         }
 
@@ -927,21 +920,21 @@ function process_email_address_relationships()
 
     _logThis('Repairing duplicate email address relationships and marking duplicates as deleted', $path);
     foreach ($dupe_email_addresses as $email_address_caps => $data) {
-        _logThis('Working on '.$email_address_caps, $path);
+        //_logThis('Working on '.$email_address_caps, $path);
         $ids = $data['ids'];
 
         // make the first id the canonical one.
         $canonical_id = array_shift($ids);
-        _logThis("Canonical ID is now: ".$canonical_id, $path);
+        //_logThis("Canonical ID is now: ".$canonical_id, $path);
 
         if ($data['opt_out'] == 1) {
-            _logThis("Marking email as opted out due to one of the duplicates being flagged.", $path);
+            //_logThis("Marking email as opted out due to one of the duplicates being flagged.", $path);
             $GLOBALS['db']->query("UPDATE email_addresses SET opt_out=1 WHERE id='$canonical_id'");
         }
         foreach($ids as $id) {
-            _logThis("Duplicate ID: ".$id, $path);
+            //_logThis("Duplicate ID: ".$id, $path);
             fix_email_address_relationships($id, $canonical_id);
-            _logThis("Marking as deleted", $path);
+            //_logThis("Marking as deleted", $path);
             $GLOBALS['db']->query("UPDATE email_addresses SET deleted=1 WHERE id='$id'");
         }
     }
@@ -965,7 +958,7 @@ function fix_email_address_relationships($old_uuid, $new_uuid, $time_changed=nul
         $stm_emails_email_addr = "UPDATE emails_email_addr_rel SET email_address_id='$new_uuid' WHERE email_address_id='$old_uuid'";
         _logThis($stm_emails_email_addr, $path);
         $rs = $GLOBALS['db']->query($stm_emails_email_addr);
-        _logThis(' Number of row(s) changed = '.$GLOBALS['db']->getAffectedRowCount($rs), $path);
+        //_logThis(' Number of row(s) changed = '.$GLOBALS['db']->getAffectedRowCount($rs), $path);
     }
 
     //Relates all beans(People) currently related to duplicates of the current email address to the first id in the array of duplicates
@@ -974,6 +967,6 @@ function fix_email_address_relationships($old_uuid, $new_uuid, $time_changed=nul
 
     _logThis($stm_email_addr_bean, $path);
     $rs = $GLOBALS['db']->query($stm_email_addr_bean);
-    _logThis(' Number of row(s) changed = '.$GLOBALS['db']->getAffectedRowCount($rs), $path);
+    //_logThis(' Number of row(s) changed = '.$GLOBALS['db']->getAffectedRowCount($rs), $path);
 }
 

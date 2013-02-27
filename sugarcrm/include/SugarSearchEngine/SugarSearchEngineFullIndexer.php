@@ -327,7 +327,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $GLOBALS['log']->info("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
 
         //If no items were processed we've exhausted the list and can therefore succeed job.
-        if( $count != -1)
+        if( $count == 0)
         {
             $this->schedulerJob->succeedJob();
         }

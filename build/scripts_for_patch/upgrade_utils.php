@@ -98,7 +98,7 @@ function getUpgradeVersion() {
 	$version = '';
 
 	if(isset($_SESSION['sugar_version_file']) && !empty($_SESSION['sugar_version_file']) && is_file($_SESSION['sugar_version_file'])) {
-		// do an include because the variables will load locally, and it will only popuplate in here.
+		// do an include because the variables will load locally, and it will only populate in here.
 		include($_SESSION['sugar_version_file']);
 		return $sugar_db_version;
 	}
@@ -154,8 +154,7 @@ function upgradeDbAndFileVersion($version) {
 	if(!function_exists('updateVersions')) {
 		if(file_exists('modules/UpgradeWizard/uw_utils.php')){
 			require_once('modules/UpgradeWizard/uw_utils.php');
-		}
-		elseif(file_exists($instancePath.'/modules/UpgradeWizard/uw_utils.php')){
+		} elseif(file_exists($instancePath.'/modules/UpgradeWizard/uw_utils.php')){
 			require_once($instancePath.'/modules/UpgradeWizard/uw_utils.php');
 		}
 	}

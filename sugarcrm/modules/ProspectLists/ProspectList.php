@@ -73,8 +73,8 @@ class ProspectList extends SugarBean {
 
 	function create_list_query($order_by, $where, $show_deleted = 0)
 	{
-		$custom_join = $this->custom_fields->getJOIN();
-
+        $custom_join = $this->getCustomJoin();
+		
 		$query = "SELECT ";
 		$query .= "users.user_name as assigned_user_name, ";
 		$query .= "prospect_lists.*";
@@ -345,6 +345,12 @@ FROM prospect_lists_prospects plp
 
 	}
 
+    function mark_deleted($id){
+        $query = "UPDATE prospect_lists_prospects SET deleted = 1 WHERE prospect_list_id = '{$id}' ";
+        $this->db->query($query);
+        return parent::mark_deleted($id);
+    }
+	
 	 function bean_implements($interface){
 		switch($interface){
 			case 'ACL':return true;
@@ -354,8 +360,3 @@ FROM prospect_lists_prospects plp
 
 }
 
-
-
-
-
-?>

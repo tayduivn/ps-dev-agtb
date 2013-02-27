@@ -53,6 +53,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
              ->will($this->returnValue(true));
         $mock->id = 'SugarBeanApiHelperMockBean-1';
         $mock->favorite = false;
+        $mock->module_name = 'Test';
+        $mock->module_dir = 'Test';
         $mock->field_defs = array(
                 'testInt' => array(
                     'type' => 'int',
@@ -60,6 +62,9 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 'testDecimal' => array(
                     'type' => 'decimal'
                 ),
+                'testBool' => array(
+                    'type' => 'bool'
+                ),                
             );
         $this->bean = $mock;
         $serviceMock = SugarTestRestUtilities::getRestServiceMock();
@@ -97,6 +102,12 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
             array('testDecimal', '0', 0.0, "Decimal type conversion of '0' failed"),
             array('testInt', 0.0, 0, "Int type conversion of 0.0 failed"),
             array('testDecimal', 0, 0.0, "Decimal type conversion of 0 failed"),
+            array('testBool', 1, true, "1 should be true"),
+            array('testBool', 0, false, "0 should be false"),
+            array('testBool', true, true, "true should be true"),
+            array('testBool', false, false, "false should be false"),
+            array('testBool', 'true',true , "true string should be true"),
+            array('testBool', 'false', false, "false string should be false"),
         );
     }
 
@@ -129,7 +140,6 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         // verify I can format the bean for the api and I can see the name and id;
         $data = $this->beanApiHelper->formatForApi($meeting);
         $this->assertEquals($meeting->id, $data['id'], "ID Doesn't Match");
-        $this->assertEquals($meeting->name, $data['name'], "Name Doesn't Match");
     }
 
     public function testListCertainFieldsNoAccess()
@@ -161,9 +171,62 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $account->assigned_user_id = 1;
         $account->id = create_guid();
 
-        $data = $this->beanApiHelper->formatForApi($account, array('id', 'name', 'website'));
+        $data = $this->beanApiHelper->formatForApi($account, array('id', 'name', 'website'), array('action' => 'view'));
 
-        $this->assertNotEmpty($data['_acl']['fields']->website, "Website did not come back and should have.  The acls were: " . print_r($data['_acl'], true));
+        $this->assertNotEmpty($data['id'], "no id was passed back");
 
+    }
+
+    public function updateFieldOwnerReadOwnerWrite()
+    {
+        // set the test field as owner read owner write directly in the session
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Test']['fields']['testInt'] = 40;
+        $data['testInt'] = 4;
+        $data['assigned_user_id'] = 'not_me';
+        $this->beanApiHelper->populateFromApi($this->bean, $data);
+        $this->assertEquals($this->bean->testInt, 4);
+        $this->assertEquals($this->bean->assigned_user_id, 'not_me');
+    }
+
+    protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array())
+    {
+        $role = new ACLRole();
+        $role->name = $name;
+        $role->description = $name;
+        $role->save();
+        $GLOBALS['db']->commit();
+
+        $roleActions = $role->getRoleActions($role->id);
+
+        foreach ($roleActions as $moduleName => $actions) {
+            // enable allowed modules
+            if (isset($actions['module']['access']['id']) && !in_array($moduleName, $allowedModules)) {
+                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_DISABLED);
+            } elseif (isset($actions['module']['access']['id']) && in_array($moduleName, $allowedModules)) {
+                $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_ENABLED);
+            } else {
+                foreach ($actions as $action => $actionName) {
+                    if (isset($actions[$action]['access']['id'])) {
+                        $role->setAction($role->id, $actions[$action]['access']['id'], ACL_ALLOW_DISABLED);
+                    }
+                }
+            }
+
+            if (in_array($moduleName, $allowedModules)) {
+                foreach ($actions['module'] as $actionName => $action) {
+                    if (in_array($actionName, $ownerActions)) {
+                        $aclAllow = ACL_ALLOW_OWNER;
+                    } elseif (in_array($actionName, $allowedActions)) {
+                        $aclAllow = ACL_ALLOW_ALL;
+                    } else {
+                        $aclAllow = ACL_ALLOW_NONE;
+                    }
+                    $role->setAction($role->id, $action['id'], $aclAllow);
+                }
+            }
+
+        }
+
+        return $role;
     }
 }

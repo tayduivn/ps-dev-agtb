@@ -83,6 +83,8 @@ class SugarJobUpdateCurrencyRates implements RunnableSchedulerJob
                 }
             }
         }
+
+        $this->job->succeedJob();
         return true;
     }
 

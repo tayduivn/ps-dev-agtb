@@ -267,6 +267,7 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 <LI><?php echo $mod_strings['LBL_SOURCE_ASYNC']; ?> (<a href="https://github.com/caolan/async/" target="_blank">https://github.com/caolan/async/</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_TIMEAGO']; ?> (<a href="https://github.com/rmm5t/jquery-timeago" target="_blank">https://github.com/rmm5t/jquery-timeago</a>)</LI>
 //END SUGARCRM flav=PRO ONLY
+<LI><?php echo $mod_strings['LBL_SOURCE_XHPROF']; ?> (<a href="https://github.com/facebook/xhprof" target="_blank">https://github.com/facebook/xhprof</a>)</LI>
 </ul>
 
 //BEGIN SUGARCRM flav=PRO ONLY

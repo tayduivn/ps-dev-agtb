@@ -86,12 +86,48 @@ class ViewConvertLead extends SugarView
 
         $this->contact = BeanFactory::getBean('Contacts');
         // Bug #50126 We have to fill account_name & add ability to select account from popup with pre populated name
+        
+        /*
+         * Setup filter for Account/Contact popup picker
+         */ 
+        $filter = '';
+        // Check if Lead has an account set
         if (!empty($this->focus->account_name))
         {
-            $smarty->assign('displayParams', array(
-                'initial_filter' => '&name_advanced=' . urlencode($this->focus->account_name))
-            );
+            $filter .= '&name_advanced=' . urlencode($this->focus->account_name);
         }
+        // Check if Lead First name is available
+        if (!empty($this->focus->first_name))
+        {
+            $filter .= '&first_name_advanced=' . urlencode($this->focus->first_name);
+        }
+        // Lead Last Name is always available
+        $filter .= '&last_name_advanced=' . urlencode($this->focus->last_name);
+        
+        $smarty->assign('initialFilter', $filter);
+        $smarty->assign('displayParams', array('initial_filter' => '{$initialFilter}'));
+        
+        $relatedFields = $this->contact->get_related_fields();
+        $selectFields = array();
+        foreach ($this->defs as $moduleName => $mDefs)
+        {   
+            if (!empty($mDefs[$ev->view]['select']) && !empty($relatedFields[$mDefs[$ev->view]['select']]))
+            {
+                $selectFields[$moduleName] = $mDefs[$ev->view]['select'];
+                continue;
+            }
+            foreach ($relatedFields as $fDef)
+            {
+                if (!empty($fDef['link']) && !empty($fDef['module']) && $fDef['module'] == $moduleName)
+                {
+                    $selectFields[$moduleName] = $fDef['name'];
+                    break;
+                }
+            }
+        }
+        
+        $smarty->assign('selectFields', $selectFields);
+
         $smarty->assign("contact_def", $this->contact->field_defs);
         $smarty->assign("form_name", "ConvertLead");
         $smarty->assign("form_id", "ConvertLead");
@@ -345,6 +381,7 @@ class ViewConvertLead extends SugarView
         } elseif (isset($_POST['ContinueContact'])) {
             $this->new_contact = true;
         }
+        // Accounts
         if (!empty($_REQUEST['selectedAccount']))
         {
             $_REQUEST['account_id'] = $_REQUEST['selectedAccount'];
@@ -374,8 +411,12 @@ class ViewConvertLead extends SugarView
 
             	$this->populateNewBean($module, $beans[$module], $beans['Contacts'], $lead);
 
-                // when creating a new contact, do not populate it with lead's old account_id
-                if ($module == 'Contacts') {
+                // when creating a new contact, create the id for linking with other modules
+                // and do not populate it with lead's old account_id
+                if ($module == 'Contacts')
+                {
+                    $beans[$module]->id = create_guid();
+                    $beans[$module]->new_with_id = true;
                     $beans[$module]->account_id = '';
                 }
             }
@@ -395,6 +436,11 @@ class ViewConvertLead extends SugarView
                     }
                     // Bug 39268 - Add the existing beans to a list of beans we'll potentially add the lead's activities to
                     $selectedBeans[$module] = BeanFactory::getBean($module, $_REQUEST[$fieldDef['id_name']]);;
+                    // If we selected the Contact, just overwrite the $beans['Contacts']
+                    if ($module == 'Contacts')
+                    {
+                        $beans[$module] = $selectedBeans[$module];
+                    }
                 }
             }
         }
@@ -408,6 +454,29 @@ class ViewConvertLead extends SugarView
         {
             $lead->account_id = $selectedBeans['Accounts']->id;
         }
+        
+        // link account to contact, if we picked an existing contact and created a new account
+        if (!empty($beans['Accounts']->id) && !empty($beans['Contacts']->account_id) 
+                && $beans['Accounts']->id != $beans['Contacts']->account_id)
+        {
+            $beans['Contacts']->account_id = $beans['Accounts']->id;
+        }
+        
+        // Saving beans with priorities.
+        // Contacts and Accounts should be saved before lead activities to create correct relations
+        $saveBeanPriority = array('Contacts', 'Accounts');
+        $tempBeans = array();
+
+        foreach ($saveBeanPriority as $name)
+        {
+            if (isset($beans[$name]))
+            {
+                $tempBeans[$name] = $beans[$name];
+            }
+        }
+
+        $beans = array_merge($tempBeans, $beans);
+        unset($tempBeans);
 
         //Handle non-contacts relationships
         foreach ($beans as $bean)

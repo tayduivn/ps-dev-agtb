@@ -159,13 +159,14 @@ $dictionary['Contract'] = array(
 
 		'currency_id' => array (
 	    	'name' => 'currency_id',
+	    	'type' => 'currency_id',
 	    	'dbType' => 'id',
 	    	'vname'=>'LBL_CURRENCY_ID',
-	    	'type' => 'varchar',
 	    	'group'=>'currency_id',
 			'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
 	    	'required'=>false,
 	    	'reportable'=>false,
+            'default'=>'-99',
 	    	'comment' => 'The currency in use for the contract'
 	  	),
 

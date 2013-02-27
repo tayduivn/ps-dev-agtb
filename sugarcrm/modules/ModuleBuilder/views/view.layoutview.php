@@ -22,17 +22,11 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-//Load the parent view class if it exists.  Check for custom file first
-loadParentView('edit');
-
 require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
 require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
-//require_once('include/Utils.php');
-
-
-class ViewLayoutView extends ViewEdit
+class ViewLayoutView extends SugarView
 {
     function ViewLayoutView ()
     {

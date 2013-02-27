@@ -411,14 +411,15 @@ class EditView
 
                 if (isset($this->fieldDefs[$name]['options']) && isset($app_list_strings[$this->fieldDefs[$name]['options']]))
                 {
-                    $this->fieldDefs[$name]['options'] = $app_list_strings[$this->fieldDefs[$name]['options']];
                     if(isset($GLOBALS['sugar_config']['enable_autocomplete']) && $GLOBALS['sugar_config']['enable_autocomplete'] == true)
                     {
 						$this->fieldDefs[$name]['autocomplete'] = true;
 	                	$this->fieldDefs[$name]['autocomplete_options'] = $this->fieldDefs[$name]['options']; // we need the name for autocomplete
 					} else {
                         $this->fieldDefs[$name]['autocomplete'] = false;
-                   }
+                   	}
+                   	// Bug 57472 - $this->fieldDefs[$name]['autocomplete_options' was set too late, it didn't retrieve the list's name, but the list itself (the developper comment show us that developper expected to retrieve list's name and not the options array)
+                   	$this->fieldDefs[$name]['options'] = $app_list_strings[$this->fieldDefs[$name]['options']];
                 }
 
                 if(isset($this->fieldDefs[$name]['options']) && is_array($this->fieldDefs[$name]['options']) && isset($this->fieldDefs[$name]['default_empty']) && !isset($this->fieldDefs[$name]['options'][$this->fieldDefs[$name]['default_empty']])) {

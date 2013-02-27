@@ -55,15 +55,6 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'enabled' => true
                 ),
                 array(
-                    'name' => 'amount_usdollar',
-                    'width' => '10',
-                    'label' => 'LBL_LIST_AMOUNT_USDOLLAR',
-                    'align' => 'right',
-                    'default' => true,
-                    'enabled' => true,
-                    'currency_format' => true,
-                ),
-                array(
                     'name' => 'opportunity_type',
                     'width' => '15',
                     'label' => 'LBL_TYPE',

@@ -182,9 +182,16 @@ else {
 		    }
 		} else {
 
-            header("Content-Type: application/force-download");
-            header("Content-type: application/octet-stream");
-            header("Content-Disposition: attachment; filename=\"".$name."\";");
+            if ($check_image && ($mime = getimagesize($download_location)) !== false)
+            {
+                header("Content-Type: " . $mime['mime']);
+            }
+            else
+            {
+                header("Content-type: application/octet-stream");
+            }
+               header("Content-Disposition: attachment; filename=\"".$name."\";");
+            
 		}
 		// disable content type sniffing in MSIE
 		header("X-Content-Type-Options: nosniff");

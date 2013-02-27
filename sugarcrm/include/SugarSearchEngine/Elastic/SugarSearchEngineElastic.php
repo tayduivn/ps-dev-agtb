@@ -173,7 +173,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 elseif(isset($fieldDef['type']) && $fieldDef['type'] == 'datetimecombo') {
                     // dates have to be in ISO-8601 without the : in the TZ
                     global $timedate;
-                    $date = $timedate->fromDb($bean->$fieldName);
+                    
+                    $date = $timedate->fromUser($bean->$fieldName);
+                    if(empty($date)) {
+                        $date = $timedate->fromDb($bean->$fieldName);
+                    }
+
                     if($date instanceof SugarDateTime) {
                         $keyValues[$fieldName] = $timedate->asIso($date, null, array('stripTZColon' => true));
                     }
@@ -192,16 +197,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $keyValues['team_set_id'] = $this->formatGuidFields($bean->team_set_id);
         
         //BEGIN SUGARCRM flav=pro ONLY
-        $favorites = SugarFavorites::getFavoritesByModuleByRecord($bean->module_dir, $bean->id);
-        $module_favorites_user = array();
+        $user_ids = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord($bean->module_dir, $bean->id);
+        $keyValues['user_favorites'] = array();
         
-        foreach($favorites AS $fav) {
+        foreach($user_ids AS $user_id) {
             // need to replace -'s for elastic search, same as team_set_ids
-            $module_favorites_user[] = $this->formatGuidFields($fav->assigned_user_id);
-        }
+            $keyValues['user_favorites'][] = $this->formatGuidFields($user_id);
 
-        
-        $keyValues['user_favorites'] = $module_favorites_user;
+        }
         //END SUGARCRM flav=pro ONLY
  
         // to index owner
@@ -851,8 +854,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         catch(Exception $e)
         {
-            $this->reportException("Unable to create index", $e);
-            $this->checkException($e);
+            // ignore the IndexAlreadyExistsException exception
+            if (strpos($e->getMessage(), 'IndexAlreadyExistsException') === false) {
+                $this->reportException("Unable to create index", $e);
+                $this->checkException($e);
+            }
         }
 
     }

@@ -63,13 +63,13 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'required'=>false,
     'do_report'=>false,
     'reportable'=>false,
+    'default'=>'-99',
   ),
   'base_rate' =>
   array (
     'name' => 'base_rate',
-    'vname' => 'LBL_CURRENCY_RATE',
+    'vname' => 'LBL_BASE_RATE',
     'type' => 'double',
-    'required' => true,
     'studio' => false
   ),
   'taxrate_id' =>

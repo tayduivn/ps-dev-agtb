@@ -385,6 +385,8 @@ class ModuleBuilderController extends SugarController
     {
         if (!empty ($_REQUEST ['view_module']) && !empty($_REQUEST ['labelValue'])) {
             $_REQUEST ["label_" . $_REQUEST ['label']] = $_REQUEST ['labelValue'];
+
+            require_once 'modules/ModuleBuilder/parsers/parser.label.php';
             $parser = new ParserLabel ($_REQUEST['view_module'], isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null);
             $parser->handleSave($_REQUEST, $GLOBALS ['current_language']);
             
@@ -394,6 +396,22 @@ class ModuleBuilderController extends SugarController
             // method.
             $this->metadataApiCacheCleared;
 
+            $modules = array();
+            $relate_arr = array('Users' => 'Employees',
+                                'Employees' => 'Users');
+            $module = $_REQUEST['view_module'];
+            array_push($modules, $module);
+            if ( array_key_exists($module, $relate_arr))
+            {
+                array_push($modules, $relate_arr[$module]);
+            }
+            $req = $_REQUEST;
+            foreach ($modules as $key)
+            {
+                $req['view_module'] = $key;
+                $parser = new ParserLabel($req['view_module'], isset($req['view_package']) ? $req['view_package'] : null);
+                $parser->handleSave($req, $GLOBALS['current_language']);
+            }
         }
         $this->view = 'modulefields';
     }
@@ -1055,5 +1073,3 @@ class ModuleBuilderController extends SugarController
         }
     }
 }
-
-?>

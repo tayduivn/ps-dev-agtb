@@ -249,7 +249,10 @@ class DynamicField {
     */
   function getJOIN( $expandedList = false , $includeRelates = false, &$where = false){
         if(!$this->bean->hasCustomFields()){
-            return false;
+            return array(
+                'select' => '',
+                'join' => ''
+            );
         }
 
         if (empty($expandedList) )

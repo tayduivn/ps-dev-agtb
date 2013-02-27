@@ -924,6 +924,7 @@ class Email extends SugarBean {
 	public function getNamePlusEmailAddressesForCompose($module, $idsArray)
 	{
 		global $locale;
+        $result = array();
 		global $db;
 		$table = BeanFactory::getBean($module)->table_name;
 		$returndata = array();
@@ -936,43 +937,69 @@ class Email extends SugarBean {
 		} // foreach
 		$where = "({$table}.deleted = 0 AND {$table}.id in ({$idsString}))";
 
-		if ($module == 'Users' || $module == 'Employees') {
-			$selectColumn = "{$table}.first_name, {$table}.last_name, {$table}.title";
-		}
-		elseif (SugarModule::get($module)->moduleImplements('Person')) {
-			$selectColumn = "{$table}.first_name, {$table}.last_name, {$table}.salutation, {$table}.title";
-		}
-		else {
-		    $selectColumn = "{$table}.name";
-		}
-		$query = "SELECT {$table}.id, {$selectColumn}, eabr.primary_address, ea.email_address";
-		$query .= " FROM {$table} ";
-		$query .= "JOIN email_addr_bean_rel eabr ON ({$table}.id = eabr.bean_id and eabr.deleted=0) ";
-		$query .= "JOIN email_addresses ea ON (eabr.email_address_id = ea.id) ";
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->add_team_security_where_clause($query, $table);
-		//END SUGARCRM flav=pro ONLY
-		$query .= " WHERE ({$where}) ORDER BY eabr.primary_address DESC";
-		$r = $this->db->query($query);
+        foreach ($idsArray as $id)
+        {
+            // Load bean
+            $bean = BeanFactory::getBean($module, $id);
 
-		while($a = $this->db->fetchByAssoc($r)) {
-			if (!isset($returndata[$a['id']])) {
-				if ($module == 'Users' || $module == 'Employees') {
-				    $full_name = from_html($locale->getLocaleFormattedName($a['first_name'], $a['last_name'], '', $a['title']));
-					$returndata[$a['id']] = "{$full_name} <".from_html($a['email_address']).">";
-				}
-				elseif (SugarModule::get($module)->moduleImplements('Person')) {
-					$full_name = from_html($locale->getLocaleFormattedName($a['first_name'], $a['last_name'], $a['salutation'], $a['title']));
-					$returndata[$a['id']] = "{$full_name} <".from_html($a['email_address']).">";
-				}
-				else {
-					$returndata[$a['id']] = from_html($a['name']) . " <".from_html($a['email_address']).">";
-				} // else
-			}
-		}
+            // Got a bean
+            if (!empty($bean))
+            {
+                // For CE, just get primary e-mail address
+                $emailAddress = $bean->email1;
 
-        // broken out of method to facilitate unit testing
-        return $this->_arrayToDelimitedString($returndata);
+                //BEGIN SUGARCRM flav=pro ONLY
+                $emailAddress = '';
+                // If has access to primary mail, use it
+                if (ACLField::hasAccess('email1', $module, $GLOBALS['current_user']->id, $bean->isOwner($GLOBALS['current_user']->id)))
+                {
+                    $emailAddress = $bean->email1;
+                }
+                // Otherwise, try to use secondary
+                else if (ACLField::hasAccess('email2', $module, $GLOBALS['current_user']->id, $bean->isOwner($GLOBALS['current_user']->id)))
+                {
+                    $emailAddress = $bean->email2;
+                }
+                //END SUGARCRM flav=pro ONLY
+
+                // If we have an e-mail address loaded
+                if (!empty($emailAddress))
+                {
+                    // Use bean name by default
+                    $fullName = $bean->name;
+
+                    // Depending on module, format the name
+                    if (in_array($module, array('Users', 'Employees')))
+                    {
+                        $fullName = from_html(
+                            $locale->getLocaleFormattedName(
+                                $bean->first_name,
+                                $bean->last_name,
+                                '',
+                                $bean->title
+                            )
+                        );
+                    }
+                    else if (SugarModule::get($module)->moduleImplements('Person'))
+                    {
+                        $fullName = from_html(
+                            $locale->getLocaleFormattedName(
+                                $bean->first_name,
+                                $bean->last_name,
+                                $bean->salutation,
+                                $bean->title
+                            )
+                        );
+                    }
+
+                    // Make e-mail address in format "Name <@email>"
+                    $result[$bean->id] = $fullName . " <" . from_html($emailAddress) . ">";
+                }
+            }
+        }
+
+        // Broken out of method to facilitate unit testing
+        return $this->_arrayToDelimitedString($result);
     }
 
     /**
@@ -1013,7 +1040,8 @@ class Email extends SugarBean {
 			$this->bcc_addrs_names = $this->cleanEmails($this->bcc_addrs_names);
 			$this->reply_to_addr = $this->cleanEmails($this->reply_to_addr);
 			$this->description = SugarCleaner::cleanHtml($this->description);
-			$this->description_html = SugarCleaner::cleanHtml($this->description_html);
+            $this->description_html = SugarCleaner::cleanHtml($this->description_html, true);
+            $this->raw_source = SugarCleaner::cleanHtml($this->raw_source, true);
 			$this->saveEmailText();
 			$this->saveEmailAddresses();
 
@@ -1202,9 +1230,9 @@ class Email extends SugarBean {
 
 		if($ret) {
 			$ret->retrieveEmailText();
-		    $ret->raw_source = SugarCleaner::cleanHtml($ret->raw_source);
+            //$ret->raw_source = SugarCleaner::cleanHtml($ret->raw_source);
 			$ret->description = to_html($ret->description);
-            $ret->description_html = SugarCleaner::cleanHtml($ret->description_html);
+            //$ret->description_html = SugarCleaner::cleanHtml($ret->description_html);
 			$ret->retrieveEmailAddresses();
 
 			$ret->date_start = '';
@@ -2128,13 +2156,11 @@ class Email extends SugarBean {
 		if ($return_array) {
 			return parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, $return_array,$parentbean, $singleSelect);
 		}
-        $custom_join = $this->custom_fields->getJOIN();
+        $custom_join = $this->getCustomJoin();
 
 		$query = "SELECT ".$this->table_name.".*, users.user_name as assigned_user_name\n";
 
-    	if($custom_join){
-			$query .= $custom_join['select'];
-		}
+        $query .= $custom_join['select'];
     	$query .= " FROM emails\n";
     	if ($where != "" && (strpos($where, "contacts.first_name") > 0))  {
 			$query .= " LEFT JOIN emails_beans ON emails.id = emails_beans.email_id\n";
@@ -2151,9 +2177,7 @@ class Email extends SugarBean {
         $query .= " JOIN contacts ON contacts.id= emails_beans.bean_id AND emails_beans.bean_module='Contacts' and contacts.deleted=0 \n";
     	}
 
-		if($custom_join){
-			$query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 
 		if($show_deleted == 0) {
 			$where_auto = " emails.deleted=0 \n";
@@ -2272,18 +2296,17 @@ class Email extends SugarBean {
 
 
 
-	function create_export_query(&$order_by, &$where) {
+	function create_export_query(&$order_by, &$where)
+    {
 		$contact_required = stristr($where, "contacts");
-		$custom_join = $this->custom_fields->getJOIN(true, true,$where);
+		$custom_join = $this->getCustomJoin(true, true, $where);
 
 		if($contact_required) {
 			$query = "SELECT emails.*, contacts.first_name, contacts.last_name";
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join) {
-				$query .= $custom_join['select'];
-			}
+            $query .= $custom_join['select'];
 
 			$query .= " FROM contacts, emails, emails_contacts ";
 			$where_auto = "emails_contacts.contact_id = contacts.id AND emails_contacts.email_id = emails.id AND emails.deleted=0 AND contacts.deleted=0";
@@ -2292,9 +2315,7 @@ class Email extends SugarBean {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join) {
-				$query .= $custom_join['select'];
-			}
+            $query .= $custom_join['select'];
 
             $query .= ' FROM emails ';
             $where_auto = "emails.deleted=0";
@@ -2305,9 +2326,7 @@ class Email extends SugarBean {
 		$this->add_team_security_where_clause($query);
 		$query .= getTeamSetNameJoin('emails');
 		//END SUGARCRM flav=pro ONLY
-		if($custom_join){
-			$query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 
 		if($where != "")
 			$query .= "where $where AND ".$where_auto;

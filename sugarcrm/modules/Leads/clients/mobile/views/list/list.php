@@ -74,12 +74,6 @@ $viewdefs['Leads']['mobile']['view']['list'] = array(
                     'default' => true,
                 ),
                 array(
-                    'name' => 'phone_other',
-                    'enabled' => true,
-                    'width' => '10%',
-                    'default' => true,
-                ),
-                array(
                     'name' => 'primary_address_street',
                     'enabled' => true,
                     'width' => '10%',

@@ -440,6 +440,7 @@ class MetaDataFiles
                 return self::$paths[MB_WORKINGMETADATALOCATION] . 'modulebuilder/packages/' . $packageName . '/modules/' . $module . '/' . $viewPath . $names[$view] . '.php';
             default:
                 // get the module again, all so we can call this method statically without relying on the module stored in the class variables
+                require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
                 $mb = new ModuleBuilder();
                 return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/' . $viewPath . $names[$view] . '.php';
         }

@@ -222,7 +222,7 @@ class Calendar {
 					if($item['detail'] == 1){
 						if(isset($field_list[$item['module_name']])){
 							foreach($field_list[$item['module_name']] as $field){
-								if(!isset($item[$field])){
+								if(!isset($item[$field]) && isset($act->sugar_bean->$field)){
 									$item[$field] = $act->sugar_bean->$field;
 									if(empty($item[$field]))
 										$item[$field] = "";
@@ -230,7 +230,12 @@ class Calendar {
 							}					
 						}				
 					}
-					
+
+                    if (!empty($act->sugar_bean->parent_type) && !empty($act->sugar_bean->parent_id)) {
+                        $focus = BeanFactory::getBean($act->sugar_bean->parent_type, $act->sugar_bean->parent_id);
+                        $item['related_to'] = $focus->name;
+                    }
+
 					if(!isset($item['duration_hours']) || empty($item['duration_hours']))
 						$item['duration_hours'] = 0;
 					if(!isset($item['duration_minutes']) || empty($item['duration_minutes']))

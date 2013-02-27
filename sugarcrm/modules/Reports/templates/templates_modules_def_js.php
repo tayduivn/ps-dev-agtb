@@ -132,7 +132,6 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 				//if (ACLField::hasAccess($field_def, $module, $GLOBALS['current_user']->id,))
 				//$field, $category,$user_id, $is_owner
 
-
 			    if(isset($field_def['reportable']) &&
 			           $field_def['reportable'] == false)
 			    {
@@ -157,13 +156,6 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 			    {
 			       continue;
 			    }
-
-
-			    if ($field_def['type'] == 'encrypt')
-			    {
-			    	continue;
-			    }
-
 ?>
 field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"] = <?php
 
@@ -181,19 +173,15 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"] = <
 						if($field_name == "vname")
 						{
 							$field_value = translate($field_value);
-							if(preg_match('/:$/',$field_value))
-			                                {
+							if(substr($field_value, -1) == ':')
+                            {
 								$field_value = substr($field_value,0,-1);
 							}
-							$field_value = addslashes($field_value);
-						}
-						else if ($field_name == 'comments' || $field_name == 'help') {
-							$field_value = addslashes($field_value);
 						}
 
 						if ($field_name != 'default' && $field_name != 'default_value') {
 						    array_push($js_defs_array,
-								"\"$field_name\":\"$field_value\"");
+								"\"$field_name\":".json_encode($field_value));
 						}
 					}
 				}
@@ -301,6 +289,22 @@ option_arr_<?php echo $module_name; ?>[option_arr_<?php echo $module_name; ?>.le
 field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"].options=option_arr_<?php echo $module_name; ?>;
            <?php
 				}
+                elseif (isset($field_def['type']) && $field_def['type'] == 'currency_id')
+                {
+                    require_once('include/generic/SugarWidgets/SugarWidgetFieldcurrency_id.php');
+                    $tmpList = SugarWidgetFieldcurrency_id::getCurrenciesList();
+                    $currencyList = array();
+                    foreach ($tmpList as $bean)
+                    {
+                        $currencyList[] = array(
+                            'value' => $bean->id,
+                            'text' => $bean->symbol . ' ' . $bean->iso4217
+                        );
+                    }
+                    $json = getJSONobj();
+                    echo "var option_arr_{$module_name} = " . $json->encode($currencyList) . ";\n";
+                    echo "field_defs_{$module_name}[\"{$field_def['name']}\"].options = option_arr_{$module_name};\n";
+                }
 			} //End foreach field
 		}
 //var default_table_columns_<php echo $module_name; > = ["<php echo implode("\",\"",$module->default_table_columns); >"];
@@ -569,6 +573,7 @@ filter_defs['enum'] = qualifiers;
 filter_defs['radioenum'] = qualifiers;
 filter_defs['parent_type'] = qualifiers;
 filter_defs['timeperiod'] = qualifiers;
+filter_defs['currency_id'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};

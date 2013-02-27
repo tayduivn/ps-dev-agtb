@@ -91,6 +91,43 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
         $this->relationContactAccount = $relationContactAccount->addFromPost();
         $relationContactAccount->save();
         $relationContactAccount->build();
+        SugarTestHelper::setUp('relation', array(
+            'Contacts',
+            'Accounts'
+        ));
+
+        //create a new field for accounts
+        $this->field = get_widget('varchar');
+        $this->field->id = 'Accountstest_45339333_c';
+        $this->field->name = 'test_45339333_c';
+        $this->field->vname = 'LBL_TEST_CUSTOM_C';
+        $this->field->help = NULL;
+        $this->field->custom_module = 'Accounts';
+        $this->field->type = 'varchar';
+        $this->field->label = 'LBL_TEST_CUSTOM_C';
+        $this->field->len = 255;
+        $this->field->required = 0;
+        $this->field->default_value = NULL;
+        $this->field->date_modified = '2012-10-31 02:23:23';
+        $this->field->deleted = 0;
+        $this->field->audited = 0;
+        $this->field->massupdate = 0;
+        $this->field->duplicate_merge = 0;
+        $this->field->reportable = 1;
+        $this->field->importable = 'true';
+        $this->field->ext1 = NULL;
+        $this->field->ext2 = NULL;
+        $this->field->ext3 = NULL;
+        $this->field->ext4 = NULL;
+
+        //add field to metadata
+        $this->df = new DynamicField('Accounts');
+        $this->df->setup(new Account());
+        $this->df->addFieldObject($this->field);
+        $this->df->buildCache('Accounts');
+        VardefManager::clearVardef();
+        VardefManager::refreshVardefs('Accounts', 'Account');
+
 
 
            //create a new field for accounts
@@ -145,7 +182,7 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
 
         SugarRelationshipFactory::deleteCache();
 
-        unset($_REQUEST);
+        $_REQUEST = array();
 
         SugarTestHelper::tearDown();
     }
@@ -358,5 +395,6 @@ class Bug45339MBPackageMock extends MBPackage
     {
         return $this->getCustomRelationshipsByModuleName($moduleName, $lhs);
     }
+
 
 }

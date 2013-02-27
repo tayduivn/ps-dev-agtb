@@ -139,6 +139,8 @@ class campaign_charts {
 
 			}
 
+            // Since this isn't a standard report chart (with report defs), set the group_by manually so the chart bars show properly
+            $sugarChart->group_by = array('activity_type', 'target_type');
 
 			if($camp_data)
 			$sugarChart->setData($camp_data);

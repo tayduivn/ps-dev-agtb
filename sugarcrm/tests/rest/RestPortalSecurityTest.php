@@ -335,14 +335,14 @@ class RestPortalSecurityTest extends RestTestPortalBase {
 
         foreach ( $restReply['reply']['records'] as $record ) {
             // We should only get cases that have the portal_viewable flag set to true
-            $this->assertEquals(1,$record['portal_viewable']);
+            $this->assertEquals(true,$record['portal_viewable']);
         }
 
         $restReply = $this->_restCall("Accounts/".$this->accounts[1]->id."/link/bugs");
 
         foreach ( $restReply['reply']['records'] as $record ) {
             // We should only get cases that have the portal_viewable flag set to true
-            $this->assertEquals(1,$record['portal_viewable']);
+            $this->assertEquals(true,$record['portal_viewable']);
         }
 
         // Negative test: We should not be able to fetch an Opportunity
@@ -384,7 +384,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
 
         foreach ( $restReply['reply']['records'] as $record ) {
             // Cases should be linked to accounts[1] or accounts[2]
-            $this->assertEquals('1',$record['portal_viewable']);
+            $this->assertEquals(true,$record['portal_viewable']);
             $foundOne = ($record['account_id']==$this->accounts[1]->id)
                 ||($record['account_id']==$this->accounts[2]->id);
             $this->assertTrue($foundOne);
@@ -394,7 +394,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
 
         foreach ( $restReply['reply']['records'] as $record ) {
             // We should only get cases that have the portal_viewable flag set to true
-            $this->assertEquals('1',$record['portal_viewable']);
+            $this->assertEquals(true,$record['portal_viewable']);
         }
 
         // Negative test: Try and fetch a Bug you shouldn't be able to see
@@ -422,7 +422,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $restReply = $this->_restCall("Bugs");
 
         foreach ( $restReply['reply']['records'] as $record ) {
-            $this->assertEquals('1',$record['portal_viewable']);
+            $this->assertEquals(true,$record['portal_viewable']);
         }
 
         // Note debugging, to figure out which notes have what properties
@@ -479,7 +479,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
             if ( $noteRecord['id'] == $this->notes[13]->id ) {
                 $foundIt = true;
             }
-            $this->assertEquals(1,$noteRecord['portal_flag']);
+            $this->assertEquals(true,$noteRecord['portal_flag']);
         }
         $this->assertTrue($foundIt);
 
@@ -509,7 +509,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $this->assertTrue(is_array($restReply['reply']['records']), "Reply Records was not array");
 
         foreach ( $restReply['reply']['records'] as $kbdoc ) {
-            $this->assertEquals('1',$kbdoc['is_external_article']);
+            $this->assertEquals(true,$kbdoc['is_external_article']);
             $this->assertEquals('Published',$kbdoc['status_id']);
             $startTime = SugarDateTime::createFromFormat('Y-m-d',$kbdoc['active_date'])->getTimestamp();
             $this->assertLessThan(time(),$startTime,"Current date is less than: ".$kbdoc['active_date']);

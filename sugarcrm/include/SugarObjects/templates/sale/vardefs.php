@@ -101,6 +101,7 @@ $vardefs = array(
             'vname' => 'LBL_CURRENCY',
             'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
             'reportable'=>false,
+            'default'=>'-99',
             'comment' => 'Currency used for display purposes'
           ),
           'currency_name'=>

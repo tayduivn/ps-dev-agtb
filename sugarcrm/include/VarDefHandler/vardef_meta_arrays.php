@@ -139,6 +139,7 @@ $vardef_meta_array = array (
 			'reportable' => array('false'),
 			'source' => array('non-db'),
 			'name' => array('created_by', 'parent_type', 'deleted', 'assigned_user_name', 'deleted' ,'filename', 'file_mime_type', 'file_url', 'resource_id'),
+			'auto_increment' => array(true),
             //BEGIN SUGARCRM flav=pro ONLY
             'calculated' => array(true),
             //END SUGARCRM flav=pro ONLY

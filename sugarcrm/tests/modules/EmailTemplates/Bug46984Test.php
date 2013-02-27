@@ -46,9 +46,7 @@ class Bug46984Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
-        $this->_user = SugarTestUserUtilities::createAnonymousUser(false);
-        $this->_user->is_admin = 1;
-        $this->_user->save();
+        $this->_user = SugarTestUserUtilities::createAnonymousUser(true, 1);
         $GLOBALS['current_user'] = $this->_user;
     }
 

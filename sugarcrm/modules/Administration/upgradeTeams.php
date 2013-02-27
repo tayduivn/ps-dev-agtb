@@ -22,14 +22,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=pro ONLY
 //Create User Teams
-
-
 $globalteam = BeanFactory::getBean('Teams', '1');
 if(isset($globalteam->name)){
-   echo 'Global '.$mod_strings['LBL_UPGRADE_TEAM_EXISTS'].'<br>';
-
-}else{
-   $globalteam->create_team("Global", $mod_strings['LBL_GLOBAL_TEAM_DESC'], $globalteam->global_team);
+    echo 'Global '.$mod_strings['LBL_UPGRADE_TEAM_EXISTS'].'<br>';
+    if($globalteam->deleted) {
+        $globalteam->mark_undeleted($globalteam->id);
+    }
+} else {
+    $globalteam->create_team("Global", $mod_strings['LBL_GLOBAL_TEAM_DESC'], $globalteam->global_team);
 }
 
 $results = $GLOBALS['db']->query("SELECT id, user_name FROM users WHERE default_team != '' AND default_team IS NOT NULL");

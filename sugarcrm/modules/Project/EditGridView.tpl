@@ -75,6 +75,7 @@ var resources = new Array();
 {/literal}
 </script>
 
+<h2>{$MOD.LBL_VIEW_GANTT_TITLE}</h2>
 <table width="100%" cellpadding="0" cellspacing="0" border="0" >
 <tr>
 <td>

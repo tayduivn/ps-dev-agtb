@@ -90,6 +90,9 @@ class Bug48135Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * @group user_reassignment
+     */
     public function testReassignedEAPM()
     {
         global $current_user,$app_list_strings,$app_strings,$beanFiles,$mod_strings, $beanFiles;

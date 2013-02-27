@@ -202,7 +202,12 @@ array (
             'len' => '255',
             'group'=>'portal',
             'reportable' => false,
-        	'studio' => array('listview' => false),
+            'studio' => array(
+                'listview' => false,
+                'portaleditview' => false,
+                'portaldetailview' => false,
+                'portallistview' => false,
+            ),
        ),
      'portal_password1' =>
         array (
@@ -214,7 +219,12 @@ array (
             'group'=>'portal',
             'reportable' => false,
             'importable' => 'false',
-        	'studio' => array('listview' => false),
+            'studio' => array(
+                'listview' => false,
+                'portaleditview' => false,
+                'portaldetailview' => false,
+                'portallistview' => false,
+            ),
        ),
 	'portal_app' =>
 		array (

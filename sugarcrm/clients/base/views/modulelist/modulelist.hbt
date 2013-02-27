@@ -1,11 +1,24 @@
-<ul class="nav" id="module_list">
-    <li class="Home" data-module="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
+<ul class="nav megamenu" id="module_list">
     {{#each module_list}}
+        {{#eq name 'Home'}}
+        <li class="dropdown" data-module="Home">
+            <div class="btn-group">
+                <a class="cube btn btn-invisible btn-link" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a>
+                <a id="{{name}}Drop" role="button" href="#" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
+
+                <ul class="dropdown-menu" role="menu" aria-labelledby="{{name}}Drop">
+                    {{#each menu}}
+                        <li><a tabindex="-1" href="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
+                    {{/each}}
+                    <div class="dashboardContainer "></div>
+                </ul>
+            </div>
+        </li>
+        {{/eq}}
         {{#notEq name 'Home'}}
-        <li class="dropdown" data-module="{{name}}">
+        <li class="dropdown" data-module="{{name}}" data-menuindex="{{menuIndex}}">
             <a  class="moreLink hide" href="#{{name}}">{{label}}</a>
             <div class="btn-group">
-                <span class="ext" ></span>
                 <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}">{{label}}</a>
                 <a id="{{name}}Drop" role="button" href="#" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
                 {{#if menu}}
@@ -22,7 +35,7 @@
         {{/notEq}}
     {{/each}}
     <li class="dropdown more">
-        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">{{str "LBL_LINK_MORE"}} <b class="caret"></b></a>
+        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><b title="{{str "LBL_LINK_MORE"}}" class="icon-chevron-down"></b></a>
         <ul class="dropdown-menu more-drop-container">
         </ul>
     </li>

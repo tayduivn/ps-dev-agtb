@@ -537,10 +537,13 @@ class OracleManager extends DBManager
         oci_execute($stmt,OCI_DEFAULT);
         if(!$this->checkError("Update execute failed: $sql", false, $stmt)) {
             foreach ($lobs as $key=>$lob){
-                if(empty($data[$key])) {
-                    $val = '';
+                if (isset($data[$key])) {
+                    // clean the incoming value..
+                    $val = from_html($data[$key]);
+                } elseif (isset($field_defs[$key]['default']) && strlen($field_defs[$key]['default']) > 0) {
+                    $val = $field_defs[$key]['default'];
                 } else {
-                    $val = $data[$key];
+                    $val = null;
                 }
                 $lob->save($val);
             }
@@ -755,6 +758,10 @@ class OracleManager extends DBManager
                 break;
             case 'add_time':
                 return "$string + {$additional_parameters[0]}/24 + {$additional_parameters[1]}/1440";
+            case 'add_tz_offset' :
+                $getUserUTCOffset = $GLOBALS['timedate']->getUserUTCOffset();
+                $operation = $getUserUTCOffset < 0 ? '-' : '+';
+                return $string . ' ' . $operation . ' ' . abs($getUserUTCOffset) . '/1440';
         }
 
         return $string;

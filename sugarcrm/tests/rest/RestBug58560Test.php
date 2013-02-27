@@ -105,6 +105,7 @@ class Bug58560Test extends RestTestBase
         
         // Build up the controller to save the new field
         self::$_mb = new ModuleBuilderController();
+        self::$_mb->metadataApiCacheCleared = false;
         self::$_mb->action_SaveField();
     }
     
@@ -117,6 +118,7 @@ class Bug58560Test extends RestTestBase
         $suffixes = array('street', 'city', 'state', 'postalcode', 'country');
         foreach ($suffixes as $suffix) {
             $_REQUEST['name'] = self::_getFieldName($suffix);
+            self::$_mb->metadataApiCacheCleared = false;
             self::$_mb->action_DeleteField();
         }
         
@@ -181,6 +183,7 @@ class Bug58560Test extends RestTestBase
         // This is kinda dirty, but it saves us from making 5 rest calls
         foreach ($this->_testFieldFileProvider() as $params) {
             $name = self::_getFieldName($params['suffix']);
+            $this->assertArrayHasKey($name,$fields, "The field $name is missing");
             $this->assertNotEmpty($fields[$name]['group'], "Group index of the fields metadata for $name is not set");
             $this->assertEquals($fields[$name]['group'], $field, "Field group {$fields[$name]['group']} did not match the known field name $field");
         }

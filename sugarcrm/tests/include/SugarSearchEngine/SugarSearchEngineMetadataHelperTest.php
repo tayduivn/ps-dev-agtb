@@ -45,7 +45,6 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_list_strings');        
-        
         $this->_cacheFile = sugar_cached('modules/ftsModulesCache.php');
         $this->_backupCacheFile = sugar_cached('modules/ftsModulesCache.php').'.save';
 

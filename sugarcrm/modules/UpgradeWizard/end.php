@@ -292,16 +292,6 @@ logThis('Begin upgrade_connectors', $path);
 upgrade_connectors();
 logThis('End upgrade_connectors', $path);
 
-if (version_compare($_SESSION['current_db_version'], '6.5.0', '<'))
-{
-    // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
-    $db->query("UPDATE email_templates SET type = 'workflow' WHERE
-        coalesce(" . $db->convert("base_module", "length") . ",0) > 0
-        AND
-        coalesce(" . $db->convert("type", "length") . ",0) = 0
-    ");
-}
-
 if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 {
     rebuildSprites(true);

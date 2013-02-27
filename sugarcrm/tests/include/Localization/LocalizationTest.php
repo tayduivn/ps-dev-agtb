@@ -283,4 +283,13 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
             '¥20'
             );
     }
+
+    /**
+     * @bug 60672
+     */
+    public function testGetNumberGroupingSeparatorIfSepIsEmpty()
+    {
+        $this->_user->setPreference('num_grp_sep','');
+        $this->assertEmpty($this->_locale->getNumberGroupingSeparator(), "1000s separator should be ''");
+    }
 }

@@ -323,8 +323,23 @@ class ACLAction  extends SugarBean
                 }
             }
         }
+        
+        // Sort by translated categories
+        uksort($selected_actions, "ACLAction::langCompare");
         return $selected_actions;
     }
+    
+    private static function langCompare($a, $b) 
+    {
+        global $app_list_strings;
+        // Fallback to array key if translation is empty
+        $a = empty($app_list_strings['moduleList'][$a]) ? $a : $app_list_strings['moduleList'][$a];
+        $b = empty($app_list_strings['moduleList'][$b]) ? $b : $app_list_strings['moduleList'][$b];
+        if ($a == $b)
+            return 0;
+        return ($a < $b) ? -1 : 1;
+    }
+    
     /**
     * (static/ non-static)function hasAccess($is_owner= false , $access = 0)
     * checks if a user has access to this acl if the user is an owner it will check if owners have access
@@ -389,7 +404,6 @@ class ACLAction  extends SugarBean
     * @param STRING $type
     * @return INT (ACCESS LEVEL)
     */
-
     public static function getUserAccessLevel($user_id, $category, $action,$type='module'){
         if(empty($_SESSION['ACL'][$user_id][$category][$type][$action])){
             ACLAction::getUserActions($user_id, false);

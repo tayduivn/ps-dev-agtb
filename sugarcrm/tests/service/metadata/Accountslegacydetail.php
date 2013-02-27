@@ -44,7 +44,6 @@ $viewdefs['Accounts']['DetailView'] = array(
     'panels' => array(
     	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
 	    array('phone_office'),
-		array('phone_alternate'),
 		array(array('name'=>'website', 'displayParams'=>array('type'=>'link'))),
 		array('email1'),
 		array('billing_address_street'),

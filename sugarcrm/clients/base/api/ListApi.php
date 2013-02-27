@@ -174,6 +174,7 @@ class ListApi extends SugarListApi {
         $response['args'] = $args;
         $response['records'] = array();
         // Format the records to match every other record result out there
+        $api->action = 'list';
         foreach ( $records as $row ) {
             $rowBean = clone $seed;
             $rowBean->populateFromRow($row);

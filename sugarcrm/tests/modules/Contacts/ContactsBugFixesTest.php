@@ -26,6 +26,7 @@ require_once('modules/Accounts/Account.php');
 require_once('modules/Contacts/ContactFormBase.php');
 require_once('include/api/ServiceBase.php');
 require_once('clients/base/api/ModuleApi.php');
+require_once('modules/Contacts/ContactsApiHelper.php');
 
 class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -72,60 +73,27 @@ class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    public function testBug59675ContactSaveRefactor() {
-
-        $bean = BeanFactory::newBean('Contacts');
-        foreach($this->fields AS $fieldName => $fieldValue) {
-            $bean->$fieldName = $fieldValue;
-        }
-        $bean->save();
-        $this->contacts[] = $bean;
-
-        $this->assertTrue($bean->sync_contact, "Sync Contact was not set to true");
-        unset($bean);
-
-        $bean = BeanFactory::newBean('Contacts');
-        foreach($this->fields AS $fieldName => $fieldValue) {
-            $bean->$fieldName = $fieldValue;
-        }
-        $bean->sync_contact = '0';
-        $bean->save();
-        $this->contacts[] = $bean;
-
-        $this->assertFalse($bean->sync_contact, "Sync Contact was not set to false");
+    public function testPopulateFromApiSyncContactTrue() {
+        $capih = new ContactsApiHelper(new ContactsBugFixesServiceMockup);
+        $contact = BeanFactory::newBean('Contacts');
+        $submittedData = array('sync_contact' => true);
+        $data = $capih->populateFromApi($contact, $submittedData);
+        $contact->save();
+        $contact->retrieve($contact->id);
+        $this->assertTrue($contact->sync_contact);
+        $contact->mark_deleted($contact->id);
     }
 
-    public function testBug59675ContactSaveRefactorWithContactsUsersId() {
-        $bean = BeanFactory::newBean('Contacts');
-        foreach($this->fields AS $fieldName => $fieldValue) {
-            $bean->$fieldName = $fieldValue;
-        }
-        $bean->contacts_users_id = null;
-        $bean->sync_contact = false;
-        $bean->save();
-        $this->contacts[] = $bean;
-
-        $this->assertFalse($bean->sync_contact, "Sync Contact was not set to false");        
-    }
-
-    public function testBug59675SyncContactIsNotSet() {
-        $mapi = new ModuleApi();
-        $sm = new ContactsBugFixesServiceMockup();
-        $args = $this->fields;
-        $args['module'] = 'Contacts';
-        $return = $mapi->createRecord($sm, $args);
-        $this->assertTrue(!empty($return['id']), "Bean was not created");
-        $sync_contact = (bool)$return['sync_contact'];
-        $this->assertTrue($sync_contact, "Sync Contact was not set to true - " . print_r($return, true));
-        $this->contacts[] = BeanFactory::getBean("Contacts", $return['id']);
-
-        $args['sync_contact'] = '0';
-        $return = $mapi->createRecord($sm, $args);
-        $this->assertTrue(!empty($return['id']), "Bean was not created");
-        $sync_contact = (bool)$return['sync_contact'];
-        $this->assertFalse($sync_contact, "Sync Contact was not set to false - " . print_r($return, true));
-        $this->contacts[] = BeanFactory::getBean("Contacts", $return['id']);
-    }
+    public function testPopulateFromApiSyncContactFalse() {
+        $capih = new ContactsApiHelper(new ContactsBugFixesServiceMockup);
+        $contact = BeanFactory::newBean('Contacts');
+        $submittedData = array('sync_contact' => false);
+        $data = $capih->populateFromApi($contact, $submittedData);
+        $contact->save();
+        $contact->retrieve($contact->id);
+        $this->assertEmpty($contact->sync_contact);
+        $contact->mark_deleted($contact->id);
+    }    
 }
 
 class ContactsBugFixesServiceMockup extends ServiceBase {

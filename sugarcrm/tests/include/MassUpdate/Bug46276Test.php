@@ -32,6 +32,10 @@ class Bug46276Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
+        // in case someone wipes out these globals.
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('app_list_strings');
 
 		global $current_user;
         SugarTestHelper::setUp('beanFiles');

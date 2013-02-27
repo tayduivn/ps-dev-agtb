@@ -221,6 +221,7 @@
             'Project',
             'ProjectResources',
             'ProjectTask',
+            'ProspectLists',
             'Quotes',
             'QueryBuilder',
             'Relationships',

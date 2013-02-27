@@ -3212,7 +3212,7 @@ SE.listView = {
 
     refreshGrid : function() {
         SE.grid.getDataSource().sendRequest(
-    	    encodeParamsToUrl(SE.grid.params),
+            SUGAR.util.paramsToUrl(SE.grid.params),
     		SE.grid.onDataReturnInitializeTable,
     		SE.grid
     	);
@@ -3554,18 +3554,4 @@ function setSigEditButtonVisibility() {
         editButt.style.visibility = "hidden";
         deleteButt.style.visibility = "hidden";
     }
-}
-
-//this function is used by emailUI.js and grid.js to create an encoded url from param values
-//basically same as SUGAR.util.paramsToUrl plus the encoding
-function encodeParamsToUrl(params) {
-    var parts = [];
-    for (var i in params)
-    {
-        if (params.hasOwnProperty(i))
-        {
-            parts.push(encodeURIComponent(i) + '=' + encodeURIComponent(params[i]));
-        }
-    }
-    return parts.join("&");
 }

@@ -121,6 +121,35 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
 	}
 
+	public function testDescriptionHTML()
+	{
+		global $current_user;
+
+		// import email through snip
+		$email['message']['message_id'] = '23456';
+		$email['message']['from_name'] = 'Test Emailer <temailer@sugarcrm.com>';
+		$email['message']['description_html'] = 'This is a <b>test</b> <u>email</u>';
+		$email['message']['description'] = '';
+		$email['message']['to_addrs'] = 'sugar.phone@example.name';
+		$email['message']['date_sent'] = '2010-01-01 12:30:00';
+		$email['message']['subject'] = 'PHPUnit Test Email';
+		$email['user'] = 'Administrator';
+		$this->snip->importEmail($email);
+        $sd = strip_tags($email['message']['description_html']);
+
+		// get the email object if it imported correctly
+		$e = new Email();
+		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
+		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
+		$this->email_id = $e->id;
+
+		// populate the whole bean
+		$e->retrieve($e->id);
+		$this->assertEquals($email['message']['message_id'], $e->message_id);
+		$this->assertEquals($sd, $e->description, "Bad plaintext description");
+		$this->assertEquals($email['message']['description_html'], $e->description_html, "Bad html description");
+	}
+
 	public function testExistingEmail ()
 	{
 		// import email through snip

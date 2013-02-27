@@ -86,7 +86,8 @@
 </tbody>
 </table>
 <p>&nbsp;</p>
-<!--START_BUNDLE_LOOP-->
+{literal}{foreach from=$product_bundles item="bundle"}{/literal}
+<p>&nbsp;</p>
 <h3>{literal}{$bundle.name}{/literal}</h3>
 <table style="width: 100%;" border="0">
 <tbody>
@@ -154,7 +155,7 @@
 </table>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<!--END_BUNDLE_LOOP-->
+{literal}{/foreach}{/literal}
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <table>

@@ -123,9 +123,31 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                 $u->aclroles->add($role);
                 $u->save();
             }
+        } else {
+            $this->removeOAuthForPortalUser();
         }
+
     }
 
+    /**
+     * Creates Portal User
+     * @return User
+     */
+    function removeOAuthForPortalUser()
+    {
+        // Try to retrieve the portal user. If exists, check for
+        // corresponding oauth2 and mark deleted.
+        $portalUserName = "SugarCustomerSupportPortalUser";
+        $id = User::retrieve_user_id($portalUserName);
+        if ($id) {
+            $clientSeed = BeanFactory::newBean('OAuthKeys');
+            $clientBean = $clientSeed->fetchKey('support_portal', 'oauth2');
+            if ($clientBean) {
+                $clientSeed->mark_deleted($clientBean->id);
+            }
+        }
+    }
+        
     /**
      * Creates Portal User
      * @return User
@@ -153,26 +175,29 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $user->save();
             $id = $user->id;
 
-            // Make the oauthkey record for this portal user now if it doesn't exists
-            $clientSeed = BeanFactory::newBean('OAuthKeys');
-            $clientBean = $clientSeed->fetchKey('support_portal', 'oauth2');
-
-            if (!$clientBean) {
-                $newKey = BeanFactory::newBean('OAuthKeys');
-                $newKey->oauth_type = 'oauth2';
-                $newKey->c_secret = '';
-                $newKey->client_type = 'support_portal';
-                $newKey->c_key = 'support_portal';
-                $newKey->name = 'OAuth Support Portal Key';
-                $newKey->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable logins to the serf-service portal system in Sugar.';
-                $newKey->save();
-            }
-
             // set user id in system settings
             $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $id);
         }
+        $this->createOAuthForPortalUser();
         $resultUser = BeanFactory::getBean('Users', $id);
         return $resultUser;
+    }
+
+    // Make the oauthkey record for this portal user now if it doesn't exists
+    function createOAuthForPortalUser() 
+    {
+        $clientSeed = BeanFactory::newBean('OAuthKeys');
+        $clientBean = $clientSeed->fetchKey('support_portal', 'oauth2');
+        if (!$clientBean) {
+            $newKey = BeanFactory::newBean('OAuthKeys');
+            $newKey->oauth_type = 'oauth2';
+            $newKey->c_secret = '';
+            $newKey->client_type = 'support_portal';
+            $newKey->c_key = 'support_portal';
+            $newKey->name = 'OAuth Support Portal Key';
+            $newKey->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable logins to the serf-service portal system in Sugar.';
+            $newKey->save();
+        }
     }
 
     /**

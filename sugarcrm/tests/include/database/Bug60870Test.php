@@ -23,6 +23,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 require_once 'modules/Bugs/Bug.php';
+require_once 'include/database/MysqlManager.php';
 
 class Bug60780Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -65,5 +66,34 @@ class Bug60780Test extends Sugar_PHPUnit_Framework_TestCase
         $bug = new Bug();
         $bug->retrieve($this->bugid);
         $this->assertEquals($this->bugid, $bug->id);
+    }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    public function testAddDistinct()
+    {
+        $query = "SELECT accounts.*,accounts_cstm.selected_c FROM accounts  INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
+                                        AND team_memberships.user_id = 'seed_jim_id'
+                                        AND team_memberships.deleted=0 group by tst.team_set_id) accounts_tf on accounts_tf.team_set_id  = accounts.team_set_id LEFT JOIN users
+                                        ON accounts.assigned_user_id=users.id  LEFT JOIN  team_sets ts ON accounts.team_set_id=ts.id  AND ts.deleted=0
+                LEFT JOIN  teams teams ON teams.id=ts.id AND teams.deleted=0 AND teams.deleted=0";
+        $db = new Bug60780Test_Db($GLOBALS['db']);
+        $db->addDistinctClause($query);
+        $this->assertContains("INNER JOIN team_sets_teams tst ON tst.team_set_id = accounts.team_set_id", $query);
+        $this->assertContains("accounts_cstm.selected_c", $query);
+    }
+
+    //END SUGARCRM flav=pro ONLY
+
+}
+
+class Bug60780Test_Db extends MysqlManager
+{
+    public function __construct($db) {
+        $this->db = $db;
+    }
+
+    public function addDistinctClause(&$sql)
+    {
+        return $this->db->addDistinctClause($sql);
     }
 }

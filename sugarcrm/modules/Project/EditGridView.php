@@ -50,7 +50,7 @@ if ($focus->is_template)
 	$params[] = "<a href='index.php?module=Project&action=ProjectTemplatesDetailView&record={$focus->id}'>{$focus->name}</a>";
 else
     $params[] = "<a href='index.php?module=Project&action=DetailView&record={$focus->id}'>{$focus->name}</a>";
-$params[] = $mod_strings['LBL_VIEW_GANTT_TITLE'];
+
 echo getClassicModuleTitle("Project", $params, true);
 
 $GLOBALS['log']->info("Project detail view");

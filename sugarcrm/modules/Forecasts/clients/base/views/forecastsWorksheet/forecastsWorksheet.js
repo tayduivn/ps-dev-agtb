@@ -744,6 +744,8 @@
             wonCount = 0,
             wonAmount = 0,
             totalCount = 0;
+            includedClosedCount = 0;
+            includedClosedAmount = 0;
 
         if(!this.isVisible()) {
             // if we don't show this worksheet set it all to zero
@@ -761,7 +763,10 @@
                     'won_count': wonCount,
                     'won_amount': wonAmount,
                     'included_opp_count': includedCount,
-                    'total_opp_count': totalCount
+                    'total_opp_count': totalCount,
+                    'includedClosedCount' : 0,
+                    'includedClosedAmount' : 0
+
                 }
             }, {silent: true});
             return false;
@@ -770,6 +775,22 @@
         //Get the excluded_sales_stage property.  Default to empty array if not set
         var sales_stage_won_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_won || [];
         var sales_stage_lost_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_lost || [];
+
+        // set up commit_stages that should be processed in included total
+        var forecast_ranges = app.metadata.getModule('Forecasts', 'config').forecast_ranges,
+            commit_stages_in_included_total = [],
+            ranges;
+
+        if ( forecast_ranges == 'show_custom_buckets' ) {
+            ranges = app.metadata.getModule('Forecasts', 'config')[forecast_ranges + '_ranges'];
+            _.each(ranges, function(value, key){
+                if ( !_.isUndefined(value.in_included_total) && value.in_included_total ) {
+                    commit_stages_in_included_total.push(key);
+                }
+            })
+        } else {
+            commit_stages_in_included_total.push('include');
+        }
 
         _.each(this.collection.models, function(model) {
             var won = _.include(sales_stage_won_setting, model.get('sales_stage')),
@@ -784,18 +805,21 @@
                 best_base = app.currency.convertWithRate(best, base_rate);
 
             if(won) {
-                wonAmount += amount_base;
+                wonAmount = app.math.add(wonAmount, amount_base);
                 wonCount++;
             } else if(lost) {
-                lostAmount += amount_base;
+                lostAmount = app.math.add(lostAmount, amount_base);
                 lostCount++;
             }
-
-            if(commit_stage === 'include') {
+            if ( _.include(commit_stages_in_included_total, commit_stage) ) {
                 includedAmount += amount_base;
                 includedBest += best_base;
                 includedWorst += worst_base;
                 includedCount++;
+                if(won || lost) {
+                    includedClosedCount++;
+                    includedClosedAmount = app.math.add(amount_base, includedClosedAmount);
+                }
             }
 
             overallAmount += amount_base;
@@ -816,7 +840,10 @@
             'won_count': wonCount,
             'won_amount': wonAmount,
             'included_opp_count': includedCount,
-            'total_opp_count': this.collection.models.length
+            'total_opp_count': this.collection.models.length,
+            'includedClosedCount': includedClosedCount,
+            'includedClosedAmount': includedClosedAmount
+
         };
 
         this.context.unset("updatedTotals", {silent: true});

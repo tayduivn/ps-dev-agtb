@@ -493,7 +493,10 @@ function buildInstall($path){
      */
     protected function getExtensionsManifestForPackage($path, &$installdefs)
     {
-        $installdefs['copy'] = array();
+        if(empty($installdefs['copy']))
+        {
+            $installdefs['copy']= array();
+        }
         $generalPath = DIRECTORY_SEPARATOR . 'Extension' . DIRECTORY_SEPARATOR . 'modules';
 
         //do not process if path is not a valid directory, or recursiveIterator will break.

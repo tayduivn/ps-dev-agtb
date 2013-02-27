@@ -58,9 +58,7 @@ $app_list_strings = array (
 
   //BEGIN SUGARCRM flav=pro ONLY
     'Reports' => 'Reports',
-    'Reports_1'=>'Reports',
-  //END SUGARCRM flav=pro ONLY
-  //BEGIN SUGARCRM flav=pro ONLY
+    'Reports_1'=>'Saved Reports',
     'Forecasts' => 'Forecasts',
     'ForecastSchedule'=>'Forecast Schedule',
     'ForecastWorksheets' => 'Forecast Worksheets',
@@ -2503,6 +2501,7 @@ $app_strings = array (
     'LBL_ASSIGNED_TO_USER'=>'Assigned to User',
     'LBL_ASSIGNED_TO' => 'Assigned to:',
     'LBL_BACK' => 'Back',
+    'LBL_BASE_RATE'=>'Base Rate',
     'LBL_BILL_TO_ACCOUNT'=>'Bill to Account',
     'LBL_BILL_TO_CONTACT'=>'Bill to Contact',
     'LBL_BILLING_ADDRESS'=>'Billing Address',
@@ -2861,13 +2860,13 @@ $app_strings = array (
 
     /* The following version of LBL_SUGAR_COPYRIGHT is intended for Sugar Open Source only. */
 
-    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2012 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
+    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2013 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
 
 
     // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
 
-    'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2012 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
+    'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
 
     // LOGIN PAGE STRINGS
@@ -2981,7 +2980,8 @@ $app_strings = array (
     'ERROR_FULLY_EXPIRED'=> "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
     'ERROR_LICENSE_EXPIRED'=> "Your company's license for SugarCRM needs to be updated. Only admins may login",
     'ERROR_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated. Only admins may login",
-    'WARN_BROWSER_VERSION_WARNING' => '<p><b>Warning:</b>The browser or browser version you are using is not supported.</p><p>The following browser versions are recommended</p><ul><li>Internet Explorer 9</li><li>Mozilla Firefox 14, 15 </li><li>Safari 6</li><li>Google Chrome 22 (or latest version)</li></ul>',
+    'WARN_BROWSER_VERSION_WARNING' => "<b>Warning:</b> Your browser version is no longer supported or you are using an unsupported browser.<p></p>The following browser versions are recommended:<p></p><ul><li>Internet Explorer 9 (compatibility view not supported)<li>Firefox 17<li>Safari 5.1<li>Chrome 24</ul>",
+    'WARN_BROWSER_IE_COMPATIBILITY_MODE_WARNING' => "<b>Warning:</b> Your browser is in IE compatibility view which is not supported.",
     'WARN_LICENSE_SEATS'=>  "Warning: The number of active users is already the maximum number of licenses allowed.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
@@ -3079,7 +3079,7 @@ $app_strings = array (
     'LBL_RELATED_CAMPAIGN' =>'Related campaign',
     'LBL_ADD_ALL_LEAD_FIELDS' => 'Add All Fields',
     'LBL_REMOVE_ALL_LEAD_FIELDS' => 'Remove All Fields',
-    'LBL_ONLY_IMAGE_ATTACHMENT' => 'Only image type attachment can be embedded',
+    'LBL_ONLY_IMAGE_ATTACHMENT' => 'Only the following supported image type attachments can be embedded: JPG, PNG.',
     'LBL_REMOVE' => 'Remove',
     'LBL_TRAINING' => 'Support',
     'ERR_DATABASE_CONN_DROPPED'=>'Error executing a query. Possibly, your database dropped the connection. Please refresh this page, you may need to restart you web server.',
@@ -3480,6 +3480,7 @@ $app_strings = array (
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
+    'LBL_SUCCESS' => 'Success',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
@@ -3516,7 +3517,7 @@ $app_strings = array (
     'LBL_TOUR_SCREEN_1_TITLE' => 'New Forecasting module allows you',
     'LBL_TOUR_SCREEN_1_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Set up your forecasting parameters</li><li class="icon-ok">Keep track of your pipeline and the distance from quota</li><li class="icon-ok">Forecast your sales teams\' pipeline</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen1-thumb.png" width="220" id="thumbnail_1" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_2_TITLE' => 'Setup your Forecasting Parameters',
-    'LBL_TOUR_SCREEN_2_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select Fiscal Year start date</li><li class="icon-ok">Choose Yearly or Quarterly time periods</li><li class="icon-ok">Select number of Time Periods to Forecast over</li><li class="icon-ok">Select Categories to include in Forecast</li><li class="icon-ok">Select Range to forecast, such as likely, best or worst</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="167" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_2_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select Fiscal Year start date</li><li class="icon-ok">Choose Yearly or Quarterly time periods</li><li class="icon-ok">Select number of Time Periods to Forecast over</li><li class="icon-ok">Select Probability Ranges to include in Forecast</li><li class="icon-ok">Select the scenario to forecast, such as likely, best or worst</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="220" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_3_TITLE' => 'Manage your pipeline',
     'LBL_TOUR_SCREEN_3_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period for your Forecast</li><li class="icon-ok">Review and Edit Amounts and Probabilities for your Opportunities</li><li class="icon-ok">Save your Forecast Worksheet without committing or;</li><li class="icon-ok">Commit Forecast to Manager, and view History of previous Commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen5-thumb.png" width="220" id="thumbnail_5" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_4_TITLE' => 'Manage your pipeline',
@@ -3583,7 +3584,6 @@ $app_strings = array (
     'LBL_EMAILS_SUBPANEL_TITLE' => 'Emails',
     'LNK_SETTINGS' => 'Settings',
     'LBL_MOBILE_SUPPORT' => 'Support',
-    'LBL_SUPPORT_EMAIL_SUBJECT' => 'Support request',
 
     'LBL_MOBILE_SHOW_MORE' => 'Show more...',
     'LBL_MOBILE_SHOW_MORE_TOP' => 'Show more...',
@@ -3618,14 +3618,15 @@ $app_strings = array (
     'ERR_MOBILE_NOT_FOUND' => 'Resource not found.',
     'ERR_MOBILE_TIMEOUT' => 'Server is not responding.',
     'ERR_MOBILE_CONNECTION_FAILED' => 'Can\'t reach the server.',
-    'ERR_MOBILE_NOT_FOUND_LOGIN' => 'Server not found at the given URL.',
+    'ERR_MOBILE_NOT_FOUND_LOGIN' => 'A compatible SugarCRM server not found at the given URL ({{{minVersion}}} {{{supportedFlavors}}} required).',
     'ERR_MOBILE_TIMEOUT_LOGIN' => 'Server is not responding at the given URL.',
     'ERR_MOBILE_CONNECTION_FAILED_LOGIN' => 'Server unavailable at the given URL.',
     'ERR_MOBILE_INTERNET_UNAVAILABLE' => 'Internet connection unavailable.',
     'ERR_MOBILE_INTERNAL' => 'Internal error ({{{code}}}). Please try again later.',
     'ERR_MOBILE_VALIDATION' => 'Record is invalid',
-    'ERR_SERVER_FLAVOR_INCOMPATIBLE' => 'Incompatible server flavor: {{{flavor}}}',
-    'ERR_SERVER_VERSION_INCOMPATIBLE' => 'Incompatible server version: {{{version}}}',
+    'ERR_SERVER_FLAVOR_INCOMPATIBLE' => 'Incompatible server flavor: {{{flavor}}}. Supported flavors: {{{supportedFlavors}}}.',
+    'ERR_SERVER_VERSION_INCOMPATIBLE' => 'Incompatible server version: {{{version}}}. Minimum required version: {{{minVersion}}}.',
+    'ERR_MOBILE_INCOMPATIBLE_CLIENT_VERSION' => "Your app is outdated and is no longer compatible with SugarCRM instance you are connecting to. Do you want to download the new version from App Store?",
     'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
     'ERR_MOBILE_FILE_NOT_SUPPORTED' => 'This document type is unsupported.',
     'ERR_MOBILE_BROWSER_NOT_AUTHORIZED' => 'Authentication failed.',
@@ -3725,13 +3726,13 @@ $app_strings = array (
     'LBL_PORTAL_REQUEST_TIMEOUT' => 'The request timed out.',
     'LBL_PORTAL_REQUEST_TIMEOUT_TITLE' => 'Request timeout',
     'LBL_PORTAL_UNAUTHORIZED' =>'We\'re sorry, but it appears you are unauthorized to access this resource.',
-    'LBL_PORTAL_UNAUTHORIZED_TITLE' =>'HTTP Error: Unauthorized',
+    'LBL_PORTAL_UNAUTHORIZED_TITLE' =>'Unauthorized',
     'LBL_PORTAL_RESOURCE_UNAVAILABLE' => 'Resource not available.',
-    'LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE' => 'HTTP Error: Forbidden',
+    'LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE' => 'Forbidden',
     'LBL_PORTAL_METHOD_NOT_ALLOWED' => 'HTTP method not allowed for this resource. Please contact technical support.',
-    'LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE' => 'HTTP Error: Method Not Allowed',
+    'LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE' => 'Method Not Allowed',
     'LBL_PORTAL_PRECONDITION_MISSING' => 'Request failure, or, missing/invalid parameter. Please contact technical support',
-    'LBL_PORTAL_PRECONDITION_MISSING_TITLE' => 'HTTP Error: ',
+    'LBL_PORTAL_PRECONDITION_MISSING_TITLE' => 'Error: ',
     'LBL_PORTAL_MIN_MODULES' => 'At minimum, you need to have the Cases, Bugs or Knowledge Base module enabled to use this application.',
     'LBL_PORTAL_ERROR' => 'Error',
     'LBL_PORTAL_ROUTE_ERROR'=>'Issue loading module. Please try again later or contact support.',
@@ -3777,6 +3778,7 @@ $app_strings = array (
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
     'LBL_PANEL_DEFAULT' => 'Default',
+    'ERR_BAD_RESPONSE_FROM_SERVER' => 'Bad response from the server',
 
     //BEGIN SUGARCRM flav=pro ONLY
     //These are for the timeperiod name formats
@@ -3790,6 +3792,13 @@ $app_strings = array (
     'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and create new',
     'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
+
+    //for sidecar alert view
+    'LBL_ALERT_TITLE_SUCCESS' => 'Success!',
+    'LBL_ALERT_TITLE_WARNING' => 'Warning!',
+    'LBL_ALERT_TITLE_NOTICE' => 'Notice!',
+    'LBL_ALERT_TITLE_ERROR' => 'Error!',
+    'LBL_ALERT_TITLE_LOADING' => 'Loading',
 );
 
 
@@ -4652,22 +4661,6 @@ $app_list_strings['forecasts_timeperiod_options_dom'] = array(
     'Annual' => 'Yearly (Quarterly sub-periods)',
     'Quarter' => 'Quarterly (Monthly sub-periods)',
 );
-
-$app_list_strings['forecasts_timeperiod_month_options_dom'] = array(
-   			'' => '',
-   			'1' => 'January',
-   			'2' => 'February',
-   			'3' => 'March',
-   			'4' => 'April',
-   			'5' => 'May',
-   			'6' => 'June',
-   			'7' => 'July',
-   			'8' => 'August',
-   			'9' => 'September',
-   			'10' => 'October',
-   			'11' => 'November',
-   			'12' => 'December',
-   		);
 
 $app_list_strings ['pdfmanager_yes_no_list'] = array (
     'yes' => 'Yes' ,

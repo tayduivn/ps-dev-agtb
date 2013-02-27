@@ -29,6 +29,7 @@ require_once 'modules/Users/User.php';
 class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     static public $db;
+    protected $mock;
 
     static public $monitorList;
 
@@ -36,11 +37,11 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-
         self::$monitorList = TrackerManager::getInstance()->getDisabledMonitors();
 
         self::$db = new SugarTestDatabaseMock();
         self::$db->setUp();
+        SugarTestHelper::setUp('current_user');
     }
 
     public static function tearDownAfterClass()
@@ -51,8 +52,8 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         TrackerManager::getInstance()->setDisabledMonitors(self::$monitorList);
     }
 
-    public function setUp()
-    {
+    public function setUp() {
+        $this->mock = new SugarApiMock();
         // We can override the module helpers with mocks.
         ApiHelper::$moduleHelpers = array();
     }
@@ -159,5 +160,31 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         $sugarApi->trackAction($fakeBean);
 
         // No asserts, handled through the saveMonitor ->once() expectation above
+    }
+
+    /**
+     * @dataProvider lotsOData
+     */
+    public function testHtmlEntityDecode($array, $expected, $message) {
+        $this->mock->htmlEntityDecodeStuff($array);
+        $this->assertSame($array, $expected, $message);
+    }
+
+    public function lotsOData()
+    {
+        return array(
+                array(array("bool" => true), array("bool"=>true), "True came out wrong"),
+                array(array("bool" => false), array("bool"=>false), "False came out wrong"),
+                array(array("string" => 'Test'), array("string"=>'Test'), "String came out wrong"),
+                array(array("html" => htmlentities("I'll \"walk\" the <b>dog</b> now")), array("html"=>"I'll \"walk\" the <b>dog</b> now"), "HTML came out wrong"),
+            );
+    }
+}
+
+class SugarApiMock extends SugarApi
+{
+    public function htmlEntityDecodeStuff(&$data)
+    {
+        return parent::htmlDecodeReturn($data);
     }
 }

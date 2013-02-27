@@ -6,7 +6,6 @@
         '{{#each models}}<li><a tabindex="-1" class="recentLink actionLink" href="#{{modelRoute this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
     events: {
-        'click #module_list li a.route': 'onModuleTabClicked',
         'click .dtoggle': 'toggleDropdown',
         'click .more': 'showMore',
         'mouseleave .more-drop-container' : 'hideMore',
@@ -54,15 +53,19 @@
     },
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
-        app.events.on("app:view:change", this.render, this);
+        app.events.on("app:view:change", this.handleViewChange, this);
         app.user.on("change:module_list", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
-        var resizeFn = _.debounce(this.resize, 300);
         app.events.register("megamenu:create:click", this);
         app.events.on("megamenu:create:click", this.handleCreateLink, this);
         if (this.layout) {
-            this.layout.on("view:resize", resizeFn, this);
+            this.layout.on("view:resize", this.resize, this);
         }
+    },
+    handleViewChange: function() {
+        this.closeOpenDrops();
+        this.activeModule.set(app.controller.context.get("module"));
+        $(window).trigger('resize');
     },
     /**
      * toggles dropdowns on mouseover
@@ -166,7 +169,7 @@
     },
 
     completeMenuMeta: function(module_list) {
-        var actions, meta, returnList = [], self = this;
+        var actions, meta, returnList = [], self = this, listLength;
         _.each(module_list, function(value, key) {
             actions = {
                 label: value,
@@ -178,8 +181,8 @@
             } else {
                 actions.menu = [];
             }
-            returnList.push(actions);
-
+            listLength = returnList.push(actions);
+            actions.menuIndex = listLength - 1;
         });
         return returnList;
     },
@@ -199,26 +202,18 @@
         return result;
     },
 
-    /**
-     * When user clicks tab navigation in header
-     */
-    onModuleTabClicked: function(evt) {
-        var module = this.$(evt.currentTarget).closest('li').data('module');
-        if (module) {
-            this.activeModule.set(module);
-            app.router.navigate(module, {trigger: true});
-        }
-
-    },
 
     /**
      * Reset the module list to the full list
      */
     resetMenu: function() {
         this.$('.more').before(this.$('#module_list .more-drop-container').children());
-        this.$('.dropdown.open').removeClass('open');
+        this.closeOpenDrops();
     },
 
+    closeOpenDrops: function() {
+        this.$('.dropdown.open').removeClass('open');
+    },
     /**
      * Resize the module list to the specified width and move the extra module names to the dropdown.
      * We first clone the module list, make adjustments, and then replace.
@@ -228,11 +223,19 @@
         if (width <= 0) {
             return;
         }
+        this.activeModule.set(app.controller.context.get("module"));
+
+        var $activeInMore = this.$('.more').find('.dropdown.active');
+        if ($activeInMore.length >0){
+            //show the drop down toggle and hide the more link
+            $activeInMore.find('.btn-group').show();
+            $activeInMore.find('.moreLink').hide();
+            this.$el.find('.dropdown.more').before($activeInMore);
+        }
 
         var $moduleList = this.$el.find('#module_list'),
             $moduleListClone = $moduleList.clone(),
             $cloneContainer = $('<div></div>');
-
         // make the cloned module list visible but away from user's view to accurately calculate width
         $cloneContainer
             .css({
@@ -383,11 +386,34 @@
         },
 
         /**
-         * Clear active modules
+         * Clear active modules and move anything out of order back to where it belongs
          */
         reset: function() {
+            this.resetActive();
             this._next = null;
-            this._moduleList.$('#module_list').children(this._class).removeClass(this._class);
+            this._moduleList.$('.dropdown.'+this._class).removeClass(this._class);
+        },
+        /**
+         * This function returns active module nodes in the wrong place back to where they belong
+         * and deactivates them
+         */
+        resetActive: function() {
+            var $activeNode = this._moduleList.$('.dropdown.'+this._class);
+            // no point in moving
+            if ($activeNode.length < 1) return;
+            var beforeIndex = $activeNode.prev().data('menuindex');
+            var activeIndex = $activeNode.data('menuindex');
+            var $afterNode = this._moduleList.$('[data-menuindex='+(activeIndex + 1)+']');
+            if (beforeIndex != activeIndex - 1  && activeIndex !== 1) {
+                $afterNode.before($activeNode);
+                // this node needs to go into the more so toggle its styles
+                if ($activeNode.parent().parent().hasClass('more')) {
+                    // hide the drop down toggle and show the more link
+                    $activeNode.find('.btn-group').hide();
+                    $activeNode.find('.moreLink').show();
+                    $activeNode.find('.moreLink').css('display','block');
+                }
+            }
         }
     }
 })

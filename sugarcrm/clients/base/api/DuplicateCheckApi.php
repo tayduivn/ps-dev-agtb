@@ -74,7 +74,7 @@ class DuplicateCheckApi extends SugarApi
         ob_start();
         $results = $bean->findDuplicates();
         $res = ob_get_contents();
-        ob_clean();
+        ob_end_clean();
 
         if (strlen($res) > 0) {
             $GLOBALS['log']->debug("PHP Compiler Errors Issued: ". $res);

@@ -77,9 +77,14 @@ if(isset($_REQUEST['wiz_new_mbox']) && ($_REQUEST['wiz_new_mbox']=='1')){
     require_once('modules/InboundEmail/Save.php');    
 
 }
-//set navigation details
-header("Location: index.php?action=index&module=Campaigns");
-
+    if (!empty($_REQUEST['error'])){
+            //an error was found during inbound save.  This means the save was allowed but the inbound box had problems, return user to wizard
+            //and display error message
+            header("Location: index.php?action=WizardEmailSetup&module=Campaigns&error=true");
+    }else{
+        //set navigation details
+        header("Location: index.php?action=index&module=Campaigns");
+    }
 
 /*
  * This function will re-add the post variables that exist with the specified prefix.  

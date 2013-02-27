@@ -169,9 +169,10 @@ if($email_type == 'archived') {
 		$return_id = $_REQUEST['return_module'];
 	}
 	$replyType = "reply";
-	if ($_REQUEST['type'] == 'forward') {
-		$replyType = 'forward';
-	} // if
+    if ($_REQUEST['type'] == 'forward' || $_REQUEST['type'] == 'replyAll') {
+        $replyType = $_REQUEST['type'];
+    }
+
 	header("Location: index.php?module=Emails&action=Compose&record=$focus->id&replyForward=true&reply=$replyType");
 	return;
 }

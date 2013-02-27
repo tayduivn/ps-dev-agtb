@@ -53,7 +53,9 @@ class Bug47152Test extends Sugar_PHPUnit_Framework_OutputTestCase
     {
         $admin = new Administration();
         $admin->settings = self::$admin_settings;
-        $admin->saveSetting("license", "enforce_user_limit", $admin->settings["license_enforce_user_limit"]);
+        if (isset($admin->settings["license_enforce_user_limit"])) {
+            $admin->saveSetting("license", "enforce_user_limit", $admin->settings["license_enforce_user_limit"]);
+        }
         $admin->saveSetting("license", "users", $admin->settings["license_users"]);
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_list_strings']);

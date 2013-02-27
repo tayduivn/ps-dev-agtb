@@ -26,113 +26,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-
-require_once('include/JSON.php');
 require_once('modules/KBDocuments/SearchUtils.php');
 
 
-    $paramdata = ' ';
-    $lvso = ' ';
-    $n_id = ' ';
-    $sortCol = ' ';
-    $offset = 0;
-    $json = getJSONobj();
+    $node_depth = isset($_REQUEST['PARAMT_depth']) ? $_REQUEST['PARAMT_depth'] : 0;
+    $n_id = isset($_REQUEST['PARAMN_id_'.$node_depth]) ? $_REQUEST['PARAMN_id_'.$node_depth] : '';
+    $zero_node =  isset($_REQUEST['PARAMN_id_0']) ? $_REQUEST['PARAMN_id_0'] : '';
+    $sortCol = '';
     
-    //process request parameters
-    $paramdata = $json->decode(html_entity_decode($_REQUEST['params']));
-    $paramdata = $paramdata['jsonObject'];
-
-    //paramdata contains request object from treedata, lets process it
-    $params = explode('&',$paramdata);
-    
-    //tree data params start with certain key words, all parameters are prefixed with PARAM,
-    //PARAMT_ are tree level parameters, and PARAMN_ are node level parameters.  So we need to look
-    // for node id, which will have the key 'PARAMN_id_0', as well as the regular non tree param, lvso.
-    
-    $param_arr = array();
-    $node_depth = 0;
-    $zero_node = '';
-    //iterate through passed in params
-    foreach($params as $key=>$val){
-        //parse through and recreate params array from passed in url
-        $vals = explode('=', $val);
-        if(isset($vals[0])){
-        $param_arr[$vals[0]] = ' ';
-            if(isset($vals[1])){
-                $param_arr[$vals[0]] = $vals[1];
-            }
-        }
-
-        //while iterating through array, check to see if node depth is passed in
-        if($vals[0] == 'PARAMT_depth'){
-            //depth of tree node selected
-            if(isset($vals[1])){
-                $node_depth = $vals[1];
-            }                 
-        }
-        
-        //while iterating through array, check to see if a node id is passed in
-        if($vals[0] == 'PARAMN_id_'.$node_depth){
-            //id of tree node (KBTag) we are on
-            if(isset($vals[1])){
-                $n_id = $vals[1];
-            }                 
-        }
-        
-        //while iterating through array, check to see if listview sort order has been set
-        if($vals[0] == 'lvso'){
-            //value of List View Sort Order
-            if(isset($vals[1])){
-                $lvso = $vals[1];
-            }                 
-        }
-        
-        //while iterating through array, check to see if an offset has been specified (from pagination)
-        if($vals[0] == 'KBDocuments2_KBDOCUMENT_offset'){
-            //value of List View Sort Order
-            if(isset($vals[1])){
-                $offset = $vals[1];
-            }                 
-        }
-        
-        //while iterating through array, check to see if an order by value has been passed in
-        if($vals[0] == 'KBDocuments2_KBDOCUMENT_ORDER_BY'){
-            //value of List View Order
-            if(isset($vals[1])){
-                $sortCol = $vals[1];
-            }                 
-        }
-        
-        //retrieve the zero depth node name, to see if this is from admin screen
-        if($vals[0] == 'PARAMN_id_0'){
-            //id of tree node (KBTag) we are on
-            if(isset($vals[1])){
-                        $zero_node = $vals[1];
-            }                 
-        }
-        
-         
-    }
-
-    //time to recreate url so we can reset the params element in the request object.  If this is not done, then
-    //each sort/pagination will add on  new set of params (even if they are repeated)to the request object.
-    //As the object gets bloated it will become to big for an http request call and ajax calls will fail
-    $paramurl= 'index.php?';
-     foreach($param_arr as $parkey => $parval){
-                if(is_array($parval)) {
-                    foreach($parval as $pv) {
-                        $paramurl .= $parkey.urlencode('[]').'='.urlencode($pv) . '&';
-                    }
-                }
-                else {
-                    $paramurl .= $parkey.'='.urlencode($parval) . '&';
-                }            
-     }
-     $_REQUEST['params'] = $paramurl;
-     $_POST['params'] = $paramurl;
-     $_GET['params'] = $paramurl;
-
-
     //if we do not get the node id, then cancel this call, we cannot proceed
     if(empty($n_id )){
         return;   
@@ -173,11 +74,7 @@ require_once('modules/KBDocuments/SearchUtils.php');
         }
     }
    //Set Request Object parameter so that Sort order will happen in get_fts_list method
-   $_REQUEST['lvso'] = $lvso;
    $_REQUEST['KBDocuments2_KBDOCUMENT_ORDER_BY'] = $sortCol;
-   $_REQUEST['KBDocuments2_KBDOCUMENT_offset'] = $offset;   
-    
-
        
    //if set to 'all tags', pass in query 'where' clause into method that returns list for admins
    if(!empty($zero_node) && strtolower($zero_node) == 'all_tags'){

@@ -146,16 +146,10 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
 
         $ret_array['select'] = " SELECT " . implode(",", $selectFields);
         $ret_array['from'] = " FROM {$bean->table_name} ";
-        $custom_join = FALSE;
-        if(isset($bean->custom_fields))
-        {
-            $custom_join = $bean->custom_fields->getJOIN();
-            if($custom_join)
-                $ret_array['select'] .= ' ' .$custom_join['select'];
-        }
+        $custom_join = $bean->getCustomJoin();
+        $ret_array['select'] .= $custom_join['select'];
 
-        if($custom_join)
-            $ret_array['from'] .= ' ' . $custom_join['join'];
+        $ret_array['from'] .= $custom_join['join'];
 
         $ret_array['from'] .= " INNER JOIN {$queuTableName} on {$queuTableName}.bean_id = {$bean->table_name}.id AND {$queuTableName}.processed = 0 ";
         $ret_array['where'] = "WHERE {$bean->table_name}.deleted = 0";

@@ -35,11 +35,17 @@ if(isset($_GET['DynamicAction']) && $_GET['DynamicAction'] == "saveImage") {
 	}
 	$image = str_replace(" ", "+", $_POST["imageStr"]);
 	$data = substr($image, strpos($image, ","));
-	$filepath = sugar_cached("images/$filename");
-
-	file_put_contents($filepath, base64_decode($data));
-	if(!verify_uploaded_image($filepath)) {
-	    unlink($filepath);
-	    return false;
-	}
+    if(sugar_mkdir(sugar_cached("images"), 0777, true))
+    {
+        $filepath = sugar_cached("images/$filename");
+        file_put_contents($filepath, base64_decode($data));
+        if(!verify_uploaded_image($filepath)) {
+            unlink($filepath);
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
 }

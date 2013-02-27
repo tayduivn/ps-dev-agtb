@@ -79,6 +79,11 @@ class Bug40209Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $_REQUEST['record'] = $this->lead->id;
         $_REQUEST['handle'] = 'save';
         $_REQUEST['selectedAccount'] = $this->account->id;
+        
+        // Create a Contact
+        $_REQUEST['convert_create_Contacts'] = 'true';
+        // $_POST value needed for Duplicate check
+        $_REQUEST['Contactslast_name'] = $_POST['Contactslast_name'] = 'Test 40209';
 
         //require view and call display class so that convert functionality is called
         require_once('modules/Leads/views/view.convertlead.php');

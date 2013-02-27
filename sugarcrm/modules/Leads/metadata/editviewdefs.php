@@ -60,9 +60,7 @@ $viewdefs['Leads']['EditView'] = array(
     ),
     
     array (
-      array('name'=>'last_name',
-            'displayParams'=>array('required'=>true),
-      ),
+      'last_name',
       'phone_work',
     ),    
     

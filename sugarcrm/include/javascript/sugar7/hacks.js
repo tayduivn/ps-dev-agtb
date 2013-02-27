@@ -6,12 +6,14 @@
      */
     app.metadata.set = function(data){
         _.each(data.modules, function(module){
-            var field = module.fields.team_name;
-            if (field) {
-                delete field.len;
-                field.type = "teamset";
+            if(!_.isUndefined(module.fields)) {
+                var field = module.fields.team_name;
+                if (field) {
+                    delete field.len;
+                    field.type = "teamset";
+                }
             }
         }, this);
         _oldMetadataSet.apply(this, arguments);
-    }
+    };
 })(SUGAR.App);

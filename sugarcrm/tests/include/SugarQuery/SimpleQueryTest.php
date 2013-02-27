@@ -154,4 +154,71 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($result['aname'], 'Awesome', 'The Account Name Did Not Match');
     }
 
+    public function testSelectWithJoinToSelf()
+    {
+
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = 'Awesome';
+        $account->save();
+        $account_id = $account->id;
+
+        $account2 = BeanFactory::newBean('Accounts');
+        $account2->name = 'Awesome 2';
+        $account2->save();
+        
+        $account->load_relationship('members');
+        $account->members->add($account2->id);
+
+        $this->accounts[] = $account;
+        $this->accounts[] = $account2;
+
+        // don't need the accounts beans anymore, get rid of'em
+        unset($account2);
+        unset($account);
+        
+
+
+        // lets try a query
+        $sq = new SugarQuery();
+        $sq->select(array(array("accounts.name", 'aname')));
+        $sq->from(BeanFactory::newBean('Accounts'));
+        $sq->join('members');
+        $sq->where()->equals("id",$account_id);
+        
+        $result = $sq->execute();
+        // only 1 record
+        $result = reset($result);
+
+        $this->assertEquals('Awesome', $result['aname'], "Account doesn't match");
+
+    }
+
+    public function testSelectManyToMany()
+    {
+        global $current_user;
+
+        $current_user->load_relationship('email_addresses');
+
+        $email_address = BeanFactory::newBean('EmailAddresses');
+        $email_address->email_address = 'test@test.com';
+        $email_address->deleted = 0;
+        $email_address->save();
+
+        $current_user->email_addresses->add($email_address->id, array('deleted' => 0));
+
+
+        // lets try a query
+        $sq = new SugarQuery();
+        $sq->select(array(array("users.first_name", 'fname')));
+        $sq->from(BeanFactory::newBean('Users'));
+        $sq->join('email_addresses');
+        $sq->where()->starts("email_addresses.email_address","test");
+        $sq->where()->equals('users.id', $current_user->id);
+
+        $result = $sq->execute();
+        $result = reset($result);
+        $this->assertEquals($current_user->first_name, $result['fname'], "Wrong Email Address Result Returned");
+
+    }
+
 }

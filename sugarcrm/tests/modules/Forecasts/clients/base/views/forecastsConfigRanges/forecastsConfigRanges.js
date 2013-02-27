@@ -425,7 +425,9 @@ describe("The forecastsConfigRanges view", function() {
     });
 
     describe("test addCustomRange method", function() {
-        var options, ranges, _renderCustomRangeStub;
+        var lastRange,
+            options,
+            ranges;
 
         beforeEach(function() {
             ranges = {
@@ -477,21 +479,20 @@ describe("The forecastsConfigRanges view", function() {
                 show_custom_buckets_options: options
             });
         });
-
         afterEach(function() {
             _renderCustomRangeStub.restore();
             connectSlidersStub.restore();
         });
-
         it("test addCustomRange method - add custom field with probability", function() {
             var options_item;
             _.each(['custom_1', 'custom_2'], function(name) {
-                view.addCustomRange({ data: {
-                    view: view, customType: 'custom', category: 'show_custom_buckets'
+                view.addCustomRange({ handleObj: {
+                    selector: '<a class="btn addCustomRange" href="javascript:void(0)" data-type="custom" data-category="show_custom_buckets">'
                 }});
                 expect(ranges[name]).not.toBeUndefined();
                 expect(ranges[name].max).not.toBeUndefined();
                 expect(ranges[name].min).not.toBeUndefined();
+                expect(ranges[name].in_included_total).not.toBeUndefined();
                 if(name == 'custom_1') {
                     expect(ranges[name].max).toBe(69);
                     expect(ranges[name].min).toBe(68);
@@ -499,6 +500,7 @@ describe("The forecastsConfigRanges view", function() {
                     expect(ranges[name].max).toBe(67);
                     expect(ranges[name].min).toBe(66);
                 }
+                expect(ranges[name].in_included_total).toBe(false);
                 options_item = _.filter(options, function(item) {
                     return item[0] == this.name
                 }, {name: name});
@@ -506,18 +508,19 @@ describe("The forecastsConfigRanges view", function() {
                 expect(options_item.length).toBe(1);
             });
         });
-
         it("test addCustomRange method - add custom field without probability", function() {
             var options_item;
             _.each(['custom_without_probability_1', 'custom_without_probability_2'], function(name) {
-                view.addCustomRange({ data: {
-                    view: view, customType: 'custom_without_probability', category: 'show_custom_buckets'
+                view.addCustomRange({ handleObj: {
+                    selector: '<a class="btn addCustomRange" href="javascript:void(0)" data-type="custom_without_probability" data-category="show_custom_buckets">'
                 }});
                 expect(ranges[name]).not.toBeUndefined();
                 expect(ranges[name].max).not.toBeUndefined();
                 expect(ranges[name].min).not.toBeUndefined();
+                expect(ranges[name].in_included_total).not.toBeUndefined();
                 expect(ranges[name].max).toBe(0);
                 expect(ranges[name].min).toBe(0);
+                expect(ranges[name].in_included_total).toBe(false);
                 options_item = _.filter(options, function(item) {
                     return item[0] == this.name
                 }, {name: name});
@@ -528,7 +531,9 @@ describe("The forecastsConfigRanges view", function() {
     });
 
     describe("test removeCustomRange method", function() {
-        var options, ranges;
+        var lastRange,
+            options,
+            ranges;
 
         beforeEach(function() {
             ranges = {
@@ -584,24 +589,22 @@ describe("The forecastsConfigRanges view", function() {
                 show_custom_buckets_options: options
             });
         });
-
         afterEach(function() {
             connectSlidersStub.restore();
         });
-
         it("test removeCustomRange method - remove default custom field", function() {
             var result;
-            _.each(['include', 'upside', 'exclude'], function() {
-                result = view.removeCustomRange({ data: {
-                    view: view, range: view.fieldRanges['show_custom_buckets']['include'], category: 'show_custom_buckets'
+            _.each(['include', 'upside', 'exclude'], function(name) {
+                result = view.removeCustomRange({ handleObj: {
+                    selector: '<a class="btn removeCustomRange" href="javascript:void(0)" data-key="'+name+'" data-category="show_custom_buckets">'
                 }});
                 expect(result).toBeFalsy();
             });
         });
         it("test removeCustomRange method - remove custom field with probability", function() {
             var options_item;
-            view.removeCustomRange({ data: {
-                view: view, range: view.fieldRanges['show_custom_buckets']['custom_1'], category: 'show_custom_buckets'
+            view.removeCustomRange({ handleObj: {
+                selector: '<a class="btn removeCustomRange" href="javascript:void(0)" data-key="custom_1" data-category="show_custom_buckets">'
             }});
             expect(view.fieldRanges['show_custom_buckets']['custom_1']).toBeUndefined();
             expect(view.fieldRanges['show_custom_buckets']['custom_2']).not.toBeUndefined();
@@ -617,8 +620,8 @@ describe("The forecastsConfigRanges view", function() {
             expect(options_item).not.toBeUndefined();
             expect(options_item.length).toBe(1);
 
-            view.removeCustomRange({ data: {
-                view: view, range: view.fieldRanges['show_custom_buckets']['custom_2'], category: 'show_custom_buckets'
+            view.removeCustomRange({ handleObj: {
+                selector: '<a class="btn removeCustomRange" href="javascript:void(0)" data-key="custom_2" data-category="show_custom_buckets">'
             }});
             expect(view.fieldRanges['show_custom_buckets']['custom_2']).toBeUndefined();
             expect(ranges.custom_2).toBeUndefined();
@@ -627,11 +630,10 @@ describe("The forecastsConfigRanges view", function() {
             }, {name: 'custom_2'});
             expect(options_item.length).toBe(0);
         });
-
         it("test removeCustomRange method - remove custom field without probability", function() {
             var options_item;
-            view.removeCustomRange({ data: {
-                view: view, range: view.fieldRanges['show_custom_buckets']['custom_without_probability_1'], category: 'show_custom_buckets'
+            view.removeCustomRange({ handleObj: {
+                selector: '<a class="btn removeCustomRange" href="javascript:void(0)" data-key="custom_without_probability_1" data-category="show_custom_buckets">'
             }});
             expect(view.fieldRanges['show_custom_buckets']['custom_without_probability_1']).toBeUndefined();
             expect(view.fieldRanges['show_custom_buckets']['custom_without_probability_2']).not.toBeUndefined();
@@ -647,8 +649,8 @@ describe("The forecastsConfigRanges view", function() {
             expect(options_item).not.toBeUndefined();
             expect(options_item.length).toBe(1);
 
-            view.removeCustomRange({ data: {
-                view: view, range: view.fieldRanges['show_custom_buckets']['custom_without_probability_2'], category: 'show_custom_buckets'
+            view.removeCustomRange({ handleObj: {
+                selector: '<a class="btn removeCustomRange" href="javascript:void(0)" data-key="custom_without_probability_2" data-category="show_custom_buckets">'
             }});
             expect(view.fieldRanges['show_custom_buckets']['custom_without_probability_2']).toBeUndefined();
             expect(ranges.custom_without_probability_2).toBeUndefined();
@@ -660,7 +662,9 @@ describe("The forecastsConfigRanges view", function() {
     });
 
     describe("test updateCustomRangeLabel method", function() {
-        var options, ranges;
+        var lastRange,
+            options,
+            ranges;
 
         beforeEach(function() {
             options = [];
@@ -687,61 +691,121 @@ describe("The forecastsConfigRanges view", function() {
                 show_custom_buckets_options: options
             });
         });
-
         afterEach(function() {
         });
-
         it("test updateCustomRangeLabel method - rename default custom field", function() {
-            var options_item, inputObj = {};
-
+            var options_item,
+                new_name;
             _.each(['include', 'upside', 'exclude'], function(name) {
-                inputObj.value = name + '_CUSTOM';
-                view.updateCustomRangeLabel.call(inputObj, { data: {
-                    view: view, range: view.fieldRanges['show_custom_buckets'][name], category: 'show_custom_buckets'
-                }});
+                new_name = name + '_CUSTOM';
+                view.updateCustomRangeLabel({ target: '<input type="text" value="'+new_name+'" data-key="'+name+'" data-category="show_custom_buckets">'});
                 options_item = _.filter(options, function(item) {
                     return item[0] == this.name
                 }, {name: name});
                 expect(options_item).not.toBeUndefined();
                 expect(options_item.length).toBe(1);
-                expect(options_item[0][1]).toBe(inputObj.value);
+                expect(options_item[0][1]).toBe(new_name);
                 expect(options_item[0][0]).toBe(name);
             });
         });
-
         it("test updateCustomRangeLabel method - rename custom field with probability", function() {
-            var options_item, inputObj = {};
-
+            var options_item,
+                new_name;
             _.each(['custom_1', 'custom_2'], function(name) {
-                inputObj.value = name + '_CUSTOM';
-                view.updateCustomRangeLabel.call(inputObj, { data: {
-                    view: view, range: view.fieldRanges['show_custom_buckets'][name], category: 'show_custom_buckets'
-                }});
+                new_name = name + '_CUSTOM';
+                view.updateCustomRangeLabel({ target: '<input type="text" value="'+new_name+'" data-key="'+name+'" data-category="show_custom_buckets">'});
                 options_item = _.filter(options, function(item) {
                     return item[0] == this.name
                 }, {name: name});
                 expect(options_item).not.toBeUndefined();
                 expect(options_item.length).toBe(1);
-                expect(options_item[0][1]).toBe(inputObj.value);
+                expect(options_item[0][1]).toBe(new_name);
                 expect(options_item[0][0]).toBe(name);
             });
         });
-
         it("test updateCustomRangeLabel method - rename custom field without probability", function() {
-            var options_item, inputObj = {};
-
+            var options_item,
+                new_name;
             _.each(['custom_without_probability_1', 'custom_without_probability_2'], function(name) {
-                inputObj.value = name + '_CUSTOM_WITHOUT_PR';
-                view.updateCustomRangeLabel.call(inputObj, { data: {
-                    view: view, range: view.fieldRanges['show_custom_buckets'][name], category: 'show_custom_buckets'
-                }});
+                new_name = name + '_CUSTOM_WITHOUT_PR';
+                view.updateCustomRangeLabel({ target: '<input type="text" value="'+new_name+'" data-key="'+name+'" data-category="show_custom_buckets">'});
                 options_item = _.filter(options, function(item) {
                     return item[0] == this.name
                 }, {name: name});
                 expect(options_item).not.toBeUndefined();
                 expect(options_item.length).toBe(1);
-                expect(options_item[0][1]).toBe(inputObj.value);
+                expect(options_item[0][1]).toBe(new_name);
                 expect(options_item[0][0]).toBe(name);
+            });
+        });
+    });
+
+    describe("test updateCustomRangeIncludeInTotal method", function() {
+        var lastRange,
+            options,
+            ranges;
+
+        beforeEach(function() {
+            ranges = {
+                include: {min: 85, max: 100, in_included_total: true},
+                upside: {min: 70, max: 84, in_included_total:false},
+                custom_1: {min: 68, max: 69, in_included_total:false},
+                custom_2: {min: 66, max: 67, in_included_total:false},
+                exclude: {min: 0, max: 65, in_included_total:false},
+                custom_without_probability_1: {min: 0, max: 0, in_included_total:false},
+                custom_without_probability_2: {min: 0, max: 0, in_included_total:false},
+            };
+            // stub view.model
+            view.model = {
+                get: function(key) {
+                    if(key == 'show_custom_buckets_ranges') {
+                        return ranges;
+                    }
+                },
+                set: function(key, value) {
+                    if(key == 'show_custom_buckets_ranges') {
+                        ranges = value;
+                    }
+                },
+                unset: function(key) {
+                    if(key == 'show_custom_buckets_ranges') {
+                        ranges = null;
+                    }
+                }
+            };
+        });
+        afterEach(function() {
+        });
+        it("test updateCustomRangeIncludeInTotal method", function() {
+            _.each(['include', 'upside', 'custom_1', 'custom_2'], function(name) {
+                view.updateCustomRangeIncludeInTotal({
+                    target: '<input type="checkbox" value="1" checked="true" data-key="'+name+'" data-category="show_custom_buckets">'
+                });
+                expect(ranges[name]).not.toBeUndefined();
+                expect(ranges[name].in_included_total).not.toBeUndefined();
+                expect(ranges[name].in_included_total).toBe(true);
+
+                view.updateCustomRangeIncludeInTotal({
+                    target: '<input type="checkbox" value="1" data-key="'+name+'" data-category="show_custom_buckets">'
+                });
+                expect(ranges[name]).not.toBeUndefined();
+                expect(ranges[name].in_included_total).not.toBeUndefined();
+                expect(ranges[name].in_included_total).toBe(false);
+            });
+            _.each(['exclude', 'custom_without_probability_1', 'custom_without_probability_2'], function(name) {
+                view.updateCustomRangeIncludeInTotal({
+                    target: '<input type="checkbox" value="1" checked="true" data-key="'+name+'" data-category="show_custom_buckets">'
+                });
+                expect(ranges[name]).not.toBeUndefined();
+                expect(ranges[name].in_included_total).not.toBeUndefined();
+                expect(ranges[name].in_included_total).toBe(false);
+
+                view.updateCustomRangeIncludeInTotal({
+                    target: '<input type="checkbox" value="1" data-key="'+name+'" data-category="show_custom_buckets">'
+                });
+                expect(ranges[name]).not.toBeUndefined();
+                expect(ranges[name].in_included_total).not.toBeUndefined();
+                expect(ranges[name].in_included_total).toBe(false);
             });
         });
     });

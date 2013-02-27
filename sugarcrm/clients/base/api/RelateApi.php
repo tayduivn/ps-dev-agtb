@@ -98,6 +98,7 @@ class RelateApi extends ListApi {
 
         $response = array();
         $response["next_offset"] = $nextOffset;
+        $api->action = 'list';
         $response["records"] = $this->formatBeans($api, $args, $relatedBeans);
         return $response;
     }

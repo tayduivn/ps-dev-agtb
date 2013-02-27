@@ -397,7 +397,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         if ( !is_object($xml) ) {
             $reply['success'] = false;
             // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
+            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.print_r(libxml_get_errors(),true);
             return;
         }
 
@@ -476,7 +476,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
             if ( empty($rawResponse) || !is_array($response) ) {
                 $reply['success'] = FALSE;
                 // FIXME: Translate
-                $reply['errorMessage'] = 'Bad response from the server';
+                $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'];
             } else {
                 $reply['responseJSON'] = $response;
                 $reply['success'] = TRUE;

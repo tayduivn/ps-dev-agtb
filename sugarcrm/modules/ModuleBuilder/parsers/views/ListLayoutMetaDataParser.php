@@ -346,6 +346,16 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 	                {
 	                    $newViewdefs [ $fieldname ] [ 'currency_format' ] = true;
 	                }
+
+                    if ($this->_fielddefs[$fieldname]['type'] == 'parent') {
+                        $newViewdefs[$fieldname]['link'] = true;
+                        $newViewdefs[$fieldname]['sortable'] = false;
+                        $newViewdefs[$fieldname]['ACLTag' ] = 'PARENT';
+                        $newViewdefs[$fieldname]['dynamic_module'] = strtoupper($this->_fielddefs[$fieldname]['type_name']);
+                        $newViewdefs[$fieldname]['id'] = strtoupper($this->_fielddefs[$fieldname]['id_name']);
+                        $newViewdefs[$fieldname]['related_fields'] = array('parent_id', 'parent_type');
+                    }
+
                 }
                 if (isset($newViewdefs [ $fieldname ]['enabled']))
                 		$newViewdefs [ $fieldname ]['enabled'] = true;

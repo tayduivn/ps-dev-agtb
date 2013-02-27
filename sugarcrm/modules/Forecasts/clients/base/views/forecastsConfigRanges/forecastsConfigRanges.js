@@ -66,6 +66,18 @@
     disableRanges: false,
 
     /**
+     * Adds event listener to elements
+     */
+    events: {
+        'click #btnAddCustomRange a': 'addCustomRange',
+        'click #btnAddCustomRangeWithoutProbability a': 'addCustomRange',
+        'click .addCustomRange': 'addCustomRange',
+        'click .removeCustomRange': 'removeCustomRange',
+        'keyup input[type=text]': 'updateCustomRangeLabel',
+        'change input[type=checkbox]': 'updateCustomRangeIncludeInTotal'
+    },
+
+    /**
      * Initializes the view, and then initializes up the parameters for the field metadata holder parameters that get
      * used to render the fields in the view, since they are not rendered in a standard way.
      * @param options
@@ -247,7 +259,9 @@
      */
     _customSelectionHandler: function(element, showElement) {
         var bucket_dom = this.buckets_dom_field.options[element.value],
-            bucket_dom_options = [], rangeField;
+            bucket_dom_options = [],
+            rangeField,
+            _ranges;
 
         // add the things here...
         this.fieldRanges[element.value] = {};
@@ -258,9 +272,13 @@
             this.model.set(element.value + '_ranges', {});
         }
         _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
-            if(_.isUndefined(this.view.model.get(this.category + '_ranges')[key])) {
-                var _ranges = this.view.model.get(this.category + '_ranges');
-                _ranges[key] = {min: 0, max: 100};
+            if (_.isUndefined(this.view.model.get(this.category + '_ranges')[key]) ) {
+                _ranges = this.view.model.get(this.category + '_ranges');
+                _ranges[key] = {min: 0, max: 100, in_included_total: false};
+                this.view.model.set(this.category + '_ranges', _ranges);
+            } else if ( _.isUndefined(this.view.model.get(this.category + '_ranges')[key].in_included_total) ) {
+                _ranges = this.view.model.get(this.category + '_ranges');
+                _ranges[key].in_included_total = false;
                 this.view.model.set(this.category + '_ranges', _ranges);
             }
             bucket_dom_options.push([key, label]);
@@ -276,7 +294,7 @@
 
 
         // create layout, create pleceholders for different types of custom ranges
-        this._renderCustomRangesLayout(showElement);
+        this._renderCustomRangesLayout(showElement, element.value);
 
         // render custom ranges
         _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
@@ -286,9 +304,6 @@
             this.view.fieldRanges[element.value][key] = rangeField;
         }, { view: this, showElement: showElement, category: element.value });
 
-        // bind handler of add custom range buttons
-        this.$el.find('#btnAddCustomRange a').on('click', { view: this, category: element.value, customType: 'custom' }, this.addCustomRange);
-        this.$el.find('#btnAddCustomRangeWithoutProbability a').on('click', { view: this, category: element.value, customType: 'custom_without_probability' }, this.addCustomRange);
         // if there are custom ranges not based on probability hide add button on the top of block
         if(this._getLastCustomRangeIndex(element.value, 'custom_without_probability')) {
             this.$el.find('#btnAddCustomRangeWithoutProbability').hide();
@@ -298,36 +313,26 @@
     /**
      * render layout for custom ranges, add placeholders for different types of ranges
      * @param showElement
+     * @param category
      * @private
      */
-    _renderCustomRangesLayout: function(showElement) {
-        var plhCustomProbabilityRanges,
-            plhCustomWithoutProbability,
-            plhExclude;
-
-        showElement.append('<p><b>Ranges based on probabilities</b></p>');
-        showElement.append('<div id="plhCustomProbabilityRanges"></div>');
-
-        // main placeholder
-        plhCustomProbabilityRanges = this.$el.find('#plhCustomProbabilityRanges');
-        // placeholder to render include and upside ranges
-        plhCustomProbabilityRanges.append('<div id="plhCustomDefault"></div>');
-        plhCustomProbabilityRanges.append('<p><b>Custom Ranges based on probabilities</b></p>');
-        // placeholder to render custom ranges based on probability
-        plhCustomProbabilityRanges.append('<div id="plhCustom"></div>');
-        // placeholder to render exclude range
-        plhCustomProbabilityRanges.append('<div id="plhExclude"></div>');
-
-        showElement.append('<p><b>Ranges not based on probabilities</b></p>');
-        // placeholder to render custom ranges not based on probability
-        showElement.append('<div id="plhCustomWithoutProbability"></div>');
-
-        // add button to add new custom range based on probability
-        plhExclude = this.$el.find('#plhExclude');
-        plhExclude.append('<div class="btn-group" id="btnAddCustomRange"><a class="btn" href="javascript:void(0)"><i class="icon-plus"></i></a></div>');
-        // add button to add new custom range not based on probability
-        plhCustomWithoutProbability = this.$el.find('#plhCustomWithoutProbability');
-        plhCustomWithoutProbability.append('<div class="btn-group" id="btnAddCustomRangeWithoutProbability"><a class="btn" href="javascript:void(0)"><i class="icon-plus"></i></a></div>');
+    _renderCustomRangesLayout : function(showElement, category)
+    {
+        var template =
+            '<p><b>{{str "LBL_FORECASTS_RANGES_BASED_TITLE" "Forecasts"}}</b></p>'+
+                '<div id="plhCustomProbabilityRanges">'+
+                '   <div id="plhCustomDefault"></div>'+
+                '   <p><b>{{str "LBL_FORECASTS_CUSTOM_BASED_TITLE" "Forecasts"}}</b></p>'+
+                '   <div id="plhCustom"></div>'+
+                '   <div id="plhExclude">'+
+                '       <div class="btn-group" id="btnAddCustomRange"><a class="btn" href="javascript:void(0)" data-type="custom" data-category="{{category}}"><i class="icon-plus"></i></a></div>'+
+                '   </div>'+
+                '</div>'+
+                '<p><b>{{str "LBL_FORECASTS_CUSTOM_NO_BASED_TITLE" "Forecasts"}}</b></p>'+
+                '<div id="plhCustomWithoutProbability">'+
+                '   <div class="btn-group" id="btnAddCustomRangeWithoutProbability"><a class="btn" href="javascript:void(0)" data-type="custom_without_probability" data-category="{{category}}"><i class="icon-plus"></i></a></div>'+
+                '</div>';
+        showElement.append( Handlebars.compile(template)({category: category}) );
     },
 
     /**
@@ -342,7 +347,8 @@
     _renderCustomRange: function(key, label, showElement, category) {
         var customType = key,
             customIndex = 0,
-        // placeholder to insert custom range
+            isExclude = false,
+            // placeholder to insert custom range
             currentPlh = showElement,
             rangeField,
             model = new Backbone.Model(),
@@ -364,13 +370,21 @@
         } else if(key.substring(0, 7) == 'exclude') {
             customType = 'custom_default';
             currentPlh = this.$el.find('#plhExclude');
+            isExclude = true;
         } else {
             customType = 'custom_default';
             currentPlh = this.$el.find('#plhCustomDefault');
         }
 
+        if ( _.isUndefined(this.model.get(category + '_ranges')[key].in_included_total) ) {
+            var _ranges = this.model.get(this.category + '_ranges');
+            _ranges[key].in_included_total = false;
+            this.model.set(this.category + '_ranges', _ranges);
+        }
+
         // get the value in the current model and use it to display the slider
         model.set(key, this.model.get(category + '_ranges')[key]);
+
 
         // build a range field
         fieldSettings = {
@@ -405,15 +419,13 @@
         rangeField.label = label;
         rangeField.customType = customType;
         rangeField.customIndex = customIndex;
+        rangeField.isExclude = isExclude;
+        rangeField.in_included_total = this.model.get(category + '_ranges')[key].in_included_total;
+        rangeField.category = category;
         rangeField.render();
 
         // enable slider after render
         rangeField.$el.find(rangeField.fieldTag).noUiSlider('enable');
-
-        // handlers to add,remove or change custom range
-        rangeField.$el.find(".addCustomRange").on('click', { view: this, category: category, customType: customType }, this.addCustomRange);
-        rangeField.$el.find(".removeCustomRange").on('click', {view: this, range: rangeField, category: category}, this.removeCustomRange);
-        rangeField.$el.find("input").on('keyup', {view: this, range: rangeField, category: category}, this.updateCustomRangeLabel);
 
         // hide add button for previous custom range not based on probability
         lastCustomRange = this._getLastCustomRange(category, rangeField.customType);
@@ -496,13 +508,13 @@
      * add new custom cange field and render it in specific placeholder
      * @param event
      */
-    addCustomRange: function(event) {
-        var view = event.data.view,
-            customType = event.data.customType,
-            category = event.data.category,
+    addCustomRange : function(event) {
+        var view = this,
+            category = $(event.handleObj.selector).data('category') || null,
+            customType = $(event.handleObj.selector).data('type') || null,
             ranges = view.model.get(category + '_ranges'),
             bucket_dom_options = view.model.get(category + '_options'),
-            showElement = ( key == 'custom' ) ? view.$el.find('#plhCustom') : view.$el.find('#plhCustomWithoutProbability'),
+            showElement = ( customType == 'custom' ) ? view.$el.find('#plhCustom') : view.$el.find('#plhCustomWithoutProbability'),
             model = new Backbone.Model(),
             label = app.lang.get('LBL_FORECASTS_CUSTOM_RANGES_DEFAULT_NAME', 'Forecasts'),
             key,
@@ -511,6 +523,11 @@
             lastCustomRange,
             lastCustomRangeIndex,
             lastOptionIndex;
+
+        if ( _.isNull(category) || _.isNull(customType) ||
+            _.isUndefined(ranges) && _.isUndefined(bucket_dom_options) ) {
+            return false;
+        }
 
         lastCustomRange = view._getLastCustomRange(category, customType);
         lastCustomRangeIndex = view._getLastCustomRangeIndex(category, customType);
@@ -522,24 +539,24 @@
         // set up min/max values for new custom range
         if(customType != 'custom') {
             // if range is without probability setup min and max values to 0
-            ranges[key] = {min: 0, max: 0};
-        } else if(ranges.exclude.max - ranges.exclude.min > 3) {
+            ranges[key] = {min: 0, max: 0, in_included_total:false};
+        } else if ( ranges.exclude.max - ranges.exclude.min > 3 ) {
             // decrement exclude range to insert new range
-            ranges[key] = {min: parseInt(ranges.exclude.max, 10) - 1, max: parseInt(ranges.exclude.max, 10)};
+            ranges[key] = {min: parseInt(ranges.exclude.max, 10) - 1, max: parseInt(ranges.exclude.max, 10), in_included_total:false};
             ranges.exclude.max = parseInt(ranges.exclude.max, 10) - 2;
             if(!_.isUndefined(view.fieldRanges[category].exclude.$el)) {
                 view.fieldRanges[category].exclude.$el.find(view.fieldRanges[category].exclude.fieldTag).noUiSlider('move', {handle: 'upper', to: ranges.exclude.max});
             }
         } else if(ranges[lastCustomRange.name].max - ranges[lastCustomRange.name].min > 3) {
             // decrement previous range to insert new range
-            ranges[key] = {min: parseInt(ranges[lastCustomRange.name].min, 10), max: parseInt(ranges[lastCustomRange.name].min, 10) + 1};
+            ranges[key] = {min: parseInt(ranges[lastCustomRange.name].min, 10), max: parseInt(ranges[lastCustomRange.name].min, 10) + 1, in_included_total:false};
             ranges[lastCustomRange.name].min = parseInt(ranges[lastCustomRange.name].min, 10) + 2;
             if(!_.isUndefined(lastCustomRange.$el)) {
                 lastCustomRange.$el.find(lastCustomRange.fieldTag).noUiSlider('move', {handle: 'lower', to: ranges[lastCustomRange.name].min});
             }
         } else {
             // TODO
-            ranges[key] = {min: parseInt(ranges[lastCustomRange.name].min, 10) - 2, max: parseInt(ranges[lastCustomRange.name].min, 10) - 1};
+            ranges[key] = {min: parseInt(ranges[lastCustomRange.name].min, 10) - 2, max: parseInt(ranges[lastCustomRange.name].min, 10) - 1, in_included_total:false};
         }
 
         view.model.unset(category + '_ranges', {silent: true});
@@ -584,18 +601,26 @@
      * @param event
      * @return void
      */
-    removeCustomRange: function(event) {
-        var view = event.data.view,
-            range = event.data.range,
-            category = event.data.category,
+    removeCustomRange : function(event) {
+        var view = this,
+            category = $(event.handleObj.selector).data('category') || null,
+            fieldKey = $(event.handleObj.selector).data('key') || null,
             ranges = view.model.get(category + '_ranges'),
             bucket_dom_options = view.model.get(category + '_options'),
+            range,
             previosCustomRange,
             lastCustomRangeIndex,
             lastCustomRange,
             optionIndex;
 
-        if(_.indexOf(['include', 'upside', 'exclude'], range.name) != -1) {
+        if ( _.isNull(category) || _.isNull(fieldKey) ||
+            _.isUndefined(view.fieldRanges[category]) || _.isUndefined(view.fieldRanges[category][fieldKey]) ||
+            _.isUndefined(ranges) || _.isUndefined(bucket_dom_options)) {
+            return false;
+        }
+        range = view.fieldRanges[category][fieldKey];
+
+        if ( _.indexOf(['include', 'upside', 'exclude'], range.name) != -1 ) {
             return false;
         }
 
@@ -659,22 +684,21 @@
      * change label for custom range in model
      * @param event
      */
-    updateCustomRangeLabel: function(event) {
-        var view = event.data.view,
-            range = event.data.range,
-            category = event.data.category,
-            ranges = view.model.get(category + '_ranges'),
+    updateCustomRangeLabel : function(event) {
+        var view = this,
+            category = $(event.target).data('category') || null,
+            fieldKey = $(event.target).data('key') || null,
             bucket_dom_options = view.model.get(category + '_options'),
             optionIndex;
 
-        _.each(bucket_dom_options, function(item, key) {
-            if(item[0] == this.value) {
-                optionIndex = key;
-            }
-        }, {value: range.name});
-        bucket_dom_options[optionIndex][1] = this.value;
-        view.model.unset(category + '_options', {silent: true});
-        view.model.set(category + '_options', bucket_dom_options);
+        if ( !_.isNull(category) && !_.isNull(fieldKey) && !_.isUndefined(bucket_dom_options) ) {
+            _.each(bucket_dom_options, function(item, key){
+                if (item[0] == this.value) { optionIndex = key; }
+            }, {value: fieldKey});
+            bucket_dom_options[optionIndex][1] = $(event.target).val();
+            view.model.unset(category + '_options', {silent: true});
+            view.model.set(category + '_options', bucket_dom_options);
+        }
     },
 
     /**
@@ -693,6 +717,30 @@
     },
 
     /**
+     * change in_included_total value for custom range in model
+     * @param event
+     */
+    updateCustomRangeIncludeInTotal : function(event) {
+        var view = this,
+            category = $(event.target).data('category') || null,
+            fieldKey = $(event.target).data('key') || null,
+            ranges;
+
+        if ( !_.isNull(category) && !_.isNull(fieldKey) ) {
+            ranges = view.model.get(category + '_ranges');
+            if ( !_.isUndefined(ranges) && !_.isUndefined(ranges[fieldKey]) ) {
+                if ( fieldKey !== 'exclude' && fieldKey.indexOf('custom_without_probability') == -1 ) {
+                    ranges[fieldKey].in_included_total = $(event.target).is(':checked');
+                } else {
+                    ranges[fieldKey].in_included_total = false;
+                }
+                view.model.unset(category + '_ranges', {silent: true});
+                view.model.set(category + '_ranges', ranges);
+            }
+        }
+    },
+
+    /**
      * updates the setting in the model for the specific range types.
      * This gets triggered when the range after the user changes a range slider
      * @param category - the selected category: `show_buckets` or `show_binary`
@@ -702,6 +750,11 @@
     updateRangeSettings: function(category, range, value) {
         var catRange = category + '_ranges',
             setting = this.model.get(catRange);
+
+        if ( category == 'show_custom_buckets' ) {
+            value.in_included_total = setting[range].in_included_total || false;
+        }
+
         setting[range] = value;
         this.model.unset(catRange, {silent: true});
         this.model.set(catRange, setting);

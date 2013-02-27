@@ -129,8 +129,6 @@ $dictionary['emails_beans'] = array('table' => 'emails_beans',
 			'join_table'		=> 'emails_beans',
 			'join_key_lhs'		=> 'email_id',
 			'join_key_rhs'		=> 'bean_id',
-            'relationship_role_column' => 'bean_module',
-            'relationship_role_column_value' => 'Contacts',
 		),
 		'emails_leads_rel' => array(
 			'lhs_module'		=> 'Emails',

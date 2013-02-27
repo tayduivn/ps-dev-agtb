@@ -139,8 +139,8 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		$order_by=$seed->process_order_by($order_by, null);
 
 		$params = array();
-		if(!empty($favorites)) {
-		  $params['favorites'] = true;
+		if(!empty($favorites) && $favorites) {
+		  $params['favorites'] = 2;
 		}
 
 		$query = $seed->create_new_list_query($order_by, $where,array(),$params, $show_deleted);

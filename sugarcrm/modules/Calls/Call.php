@@ -256,6 +256,13 @@ class Call extends SugarBean {
 			vCal::cache_sugar_vcal($current_user);
 		}
 
+        // CCL - Comment out call to set $current_user as invitee
+        // set organizer to auto-accept
+        // if there isn't a fetched row its new
+        if ($this->assigned_user_id == $GLOBALS['current_user']->id && empty($this->fetched_row)) {
+            $this->set_accept_status($GLOBALS['current_user'], 'accept');
+        }
+
         return $return_id;
 	}
 
@@ -280,7 +287,7 @@ class Call extends SugarBean {
 
 	function create_list_query($order_by, $where, $show_deleted=0)
 	{
-		$custom_join = $this->custom_fields->getJOIN();
+        $custom_join = $this->getCustomJoin();
                 $query = "SELECT ";
 		$query .= "
 			calls.*,";
@@ -295,9 +302,7 @@ class Call extends SugarBean {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join){
-   				$query .= $custom_join['select'];
- 			}
+        $query .= $custom_join['select'];
 
 			// this line will help generate a GMT-metric to compare to a locale's timezone
 
@@ -328,9 +333,7 @@ class Call extends SugarBean {
 			$query .= "
 			LEFT JOIN users
 			ON calls.assigned_user_id=users.id ";
-			if($custom_join){
-  				$query .= $custom_join['join'];
-			}
+        $query .= $custom_join['join'];
 			$where_auto = '1=1';
        		 if($show_deleted == 0){
             	$where_auto = " $this->table_name.deleted=0  ";
@@ -354,9 +357,8 @@ class Call extends SugarBean {
 
         function create_export_query(&$order_by, &$where, $relate_link_join='')
         {
-        	$custom_join = $this->custom_fields->getJOIN(true, true,$where);
-			if($custom_join)
-				$custom_join['join'] .= $relate_link_join;
+            $custom_join = $this->getCustomJoin(true, true, $where);
+            $custom_join['join'] .= $relate_link_join;
 			$contact_required = stristr($where, "contacts");
             if($contact_required)
             {
@@ -364,9 +366,7 @@ class Call extends SugarBean {
                     //BEGIN SUGARCRM flav=pro ONLY
                     $query .= ", teams.name AS team_name";
                     //END SUGARCRM flav=pro ONLY
-                    if($custom_join){
-   						$query .= $custom_join['select'];
- 					}
+                    $query .= $custom_join['select'];
                     $query .= " FROM contacts, calls, calls_contacts ";
                     $where_auto = "calls_contacts.contact_id = contacts.id AND calls_contacts.call_id = calls.id AND calls.deleted=0 AND contacts.deleted=0";
             }
@@ -376,9 +376,7 @@ class Call extends SugarBean {
                     //BEGIN SUGARCRM flav=pro ONLY
                     $query .= ", teams.name AS team_name";
                     //END SUGARCRM flav=pro ONLY
-                   	if($custom_join){
-   						$query .= $custom_join['select'];
- 					}
+                    $query .= $custom_join['select'];
                     $query .= ' FROM calls ';
                     $where_auto = "calls.deleted=0";
             }
@@ -393,9 +391,7 @@ class Call extends SugarBean {
 				//END SUGARCRM flav=pro ONLY
 			$query .= "  LEFT JOIN users ON calls.assigned_user_id=users.id ";
 
-			if($custom_join){
-  				$query .= $custom_join['join'];
-			}
+            $query .= $custom_join['join'];
 
 			if($where != "")
                     $query .= "where $where AND ".$where_auto;
@@ -838,6 +834,11 @@ class Call extends SugarBean {
      */
     public function setUserInvitees($userInvitees, $existingUsers = array())
     {
+    	// if both are empty, don't do anything.  From the App these will always be set [they are set to at least current-user].
+    	// For the api, these sometimes will not be set [linking related records]
+    	if(empty($userInvitees) && empty($existingUsers)) {
+    		return true;
+    	}    	
         $this->users_arr = $userInvitees;
 
         $deleteUsers = array();

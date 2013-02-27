@@ -530,7 +530,7 @@ class TimePeriod extends SugarBean {
         $targetStartDate = $timedate->getNow()->setDate($currentDate->format("Y"), $settingsDate->format("m"), $settingsDate->format("d"));
 
         //if the target start date is in the future then keep going back one TimePeriod interval
-        if($currentDate < $targetStartDate) {
+        while($currentDate < $targetStartDate) {
             $targetStartDate->modify($this->previous_date_modifier);
         }
 
@@ -558,7 +558,7 @@ class TimePeriod extends SugarBean {
             $shownForwardDifference++;
         }
 
-        $this->buildLeaves($shownBackwardDifference, $shownForwardDifference);
+        return $this->buildLeaves($shownBackwardDifference, $shownForwardDifference);
     }
 
 

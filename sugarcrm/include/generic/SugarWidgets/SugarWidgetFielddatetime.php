@@ -497,15 +497,37 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 
 	}
 
-	function querySelectmonth($layout_def)
-	{
-	    return $this->reporter->db->convert($this->_get_column_select($layout_def), "date_format", array('%Y-%m'))." ".$this->_get_column_alias($layout_def)."\n";
-	}
+    /**
+     * Returns part of query for select
+     *
+     * @param array $layout_def for field
+     * @return string part of select query with year & month only
+     */
+    function querySelectmonth($layout_def)
+    {
+        $return = $this->_get_column_select($layout_def);
+        if ($layout_def['type'] == 'datetime')
+        {
+            $return = $this->reporter->db->convert($return, 'add_tz_offset');
+        }
+        return $this->reporter->db->convert($return, "date_format", array('%Y-%m')) . ' ' . $this->_get_column_alias($layout_def) . "\n";
+    }
 
-	function queryGroupByMonth($layout_def)
-	{
-        return $this->reporter->db->convert($this->_get_column_select($layout_def), "date_format", array('%Y-%m'))."\n";
-	}
+    /**
+     * Returns part of query for group by
+     *
+     * @param array $layout_def for field
+     * @return string part of group by query with year & month only
+     */
+    function queryGroupByMonth($layout_def)
+    {
+        $return = $this->_get_column_select($layout_def);
+        if ($layout_def['type'] == 'datetime')
+        {
+            $return = $this->reporter->db->convert($return, 'add_tz_offset');
+        }
+        return $this->reporter->db->convert($return, "date_format", array('%Y-%m')) . "\n";
+    }
 
     /**
      * For oracle we have to return order by string like group by string instead of return field alias
@@ -515,7 +537,12 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
      */
     function queryOrderByMonth($layout_def)
     {
-        $orderBy = $this->reporter->db->convert($this->_get_column_select($layout_def), "date_format", array('%Y-%m'));
+        $return = $this->_get_column_select($layout_def);
+        if ($layout_def['type'] == 'datetime')
+        {
+            $return = $this->reporter->db->convert($return, 'add_tz_offset');
+        }
+        $orderBy = $this->reporter->db->convert($return, "date_format", array('%Y-%m'));
 
         if (empty($layout_def['sort_dir']) || $layout_def['sort_dir'] == 'a')
         {
@@ -538,25 +565,69 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         return $this->reporter->db->convert($this->_get_column_select($layout_def), "date_format", array('%Y-%m-%d %H:%i:%s'))." ".$this->_get_column_alias($layout_def)."\n";
     }
 
-	function querySelectday($layout_def)
-	{
-	    return $this->reporter->db->convert($this->_get_column_select($layout_def), "date_format", array('%Y-%m-%d'))." ".$this->_get_column_alias($layout_def)."\n";
-	}
+    /**
+     * Returns part of query for select
+     *
+     * @param array $layout_def for field
+     * @return string part of select query with year & month & day
+     */
+    function querySelectday($layout_def)
+    {
+        $return = $this->_get_column_select($layout_def);
+        if ($layout_def['type'] == 'datetime')
+        {
+            $return = $this->reporter->db->convert($return, 'add_tz_offset');
+        }
+        return $this->reporter->db->convert($return, "date_format", array('%Y-%m-%d')) . ' ' . $this->_get_column_alias($layout_def) . "\n";
+    }
 
-	function queryGroupByDay($layout_def)
-	{
-	    return $this->reporter->db->convert($this->_get_column_select($layout_def), "date_format", array('%Y-%m-%d'))."\n";
-	}
+    /**
+     * Returns part of query for group by
+     *
+     * @param array $layout_def for field
+     * @return string part of group by query with year & month & day
+     */
+    function queryGroupByDay($layout_def)
+    {
+        $return = $this->_get_column_select($layout_def);
+        if ($layout_def['type'] == 'datetime')
+        {
+            $return = $this->reporter->db->convert($return, 'add_tz_offset');
+        }
+        return $this->reporter->db->convert($return, "date_format", array('%Y-%m-%d')) . "\n";
+    }
 
-	function querySelectyear($layout_def)
-	{
-	    return $this->reporter->db->convert($this->_get_column_select($layout_def), "date_format", array('%Y'))." ".$this->_get_column_alias($layout_def)."\n";
-	}
+    /**
+     * Returns part of query for select
+     *
+     * @param array $layout_def for field
+     * @return string part of select query with year only
+     */
+    function querySelectyear($layout_def)
+    {
+        $return = $this->_get_column_select($layout_def);
+        if ($layout_def['type'] == 'datetime')
+        {
+            $return = $this->reporter->db->convert($return, 'add_tz_offset');
+        }
+        return $this->reporter->db->convert($return, "date_format", array('%Y')) . ' ' . $this->_get_column_alias($layout_def) . "\n";
+    }
 
-	function queryGroupByYear($layout_def)
-	{
-	    return $this->reporter->db->convert($this->_get_column_select($layout_def), "date_format", array('%Y'))."\n";
-	}
+    /**
+     * Returns part of query for group by
+     *
+     * @param array $layout_def for field
+     * @return string part of group by query with year only
+     */
+    function queryGroupByYear($layout_def)
+    {
+        $return = $this->_get_column_select($layout_def);
+        if ($layout_def['type'] == 'datetime')
+        {
+            $return = $this->reporter->db->convert($return, 'add_tz_offset');
+        }
+        return $this->reporter->db->convert($return, "date_format", array('%Y')) . "\n";
+    }
 
 	function querySelectquarter($layout_def)
 	{

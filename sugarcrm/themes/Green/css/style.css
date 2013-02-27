@@ -50,6 +50,10 @@
     box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #2f3a11;
 }
 
+#dcmenuSugarCube.focused {
+    background-color: #314200;
+}
+
 .dashletPanel.dc {
     margin-left: 2%;
     margin-right: 2%;

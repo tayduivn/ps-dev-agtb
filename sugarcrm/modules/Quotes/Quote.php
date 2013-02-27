@@ -178,17 +178,14 @@ class Quote extends SugarBean {
 	 */
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
-        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
-		if($custom_join)
-				$custom_join['join'] .= $relate_link_join;
+        $custom_join = $this->getCustomJoin(true, true, $where);
+        $custom_join['join'] .= $relate_link_join;
         $query = "SELECT
         $this->table_name.*,
         $this->user_table.user_name as assigned_user_name";
         $query .= ", teams.name AS team_name";
 
-        if($custom_join) {
-			$query .= $custom_join['select'];
-		}
+        $query .= $custom_join['select'];
         $query .= " FROM $this->table_name ";
 		// We need to confirm that the user is a member of the team of the item.
 		$this->add_team_security_where_clause($query);
@@ -199,9 +196,7 @@ class Quote extends SugarBean {
                    LEFT JOIN quotes_contacts ON quotes_contacts.quote_id=quotes.id
                    LEFT JOIN contacts ON contacts.id=quotes_contacts.contact_id ";*/
 
-		if($custom_join) {
-			$query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 
 		$where_auto = '1=1';
 		if($show_deleted == 0) {

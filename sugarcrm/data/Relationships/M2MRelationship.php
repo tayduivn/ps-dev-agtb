@@ -333,6 +333,7 @@ class M2MRelationship extends SugarRelationship
             $knownKey = $this->def['join_key_lhs'];
             $targetKey = $this->def['join_key_rhs'];
             $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+            $relatedSeedKey = $this->def['rhs_key'];
             $whereTable = "";
             if (empty($params['right_join_table_alias'])){
                 if ($relatedSeed !== false){
@@ -347,6 +348,7 @@ class M2MRelationship extends SugarRelationship
             $knownKey = $this->def['join_key_rhs'];
             $targetKey = $this->def['join_key_lhs'];
             $relatedSeed = BeanFactory::getBean($this->getLHSModule());
+            $relatedSeedKey = $this->def['lhs_key'];
             $whereTable = "";
             if (empty($params['left_join_table_alias'])){
                 if ($relatedSeed !== false){
@@ -368,17 +370,23 @@ class M2MRelationship extends SugarRelationship
         }
 
         $deleted = !empty($params['deleted']) ? 1 : 0;
-        $from = $rel_table;
+        $from = $rel_table . " ";
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($params['enforce_teams']) && $relatedSeed !== false)
         {
-            if ($rel_table != $relatedSeed->table_name)
-                $from .= ", $relatedSeed->table_name";
+            if ($rel_table != $relatedSeed->table_name) {
+                $from .= "JOIN {$relatedSeed->table_name} ON {$rel_table}.{$targetKey} = {$relatedSeed->table_name}.{$relatedSeedKey} ";
+            }
             $relatedSeed->add_team_security_where_clause($from);
         }
         //END SUGARCRM flav=pro ONLY
-        if ((!empty($params['where']) || !empty($params['orderby'])) && !empty($whereTable))
+        if ((!empty($params['where']) || !empty($params['orderby'])) && !empty($whereTable)) {
             $from .= " LEFT JOIN $whereTable on $rel_table.$targetKey=$whereTable.id";
+            if (isset($relatedSeed->custom_fields)) {
+                $customJoin = $relatedSeed->custom_fields->getJOIN();
+                $from .= $customJoin ? $customJoin['join'] : '';
+            }
+        }
 
         $select = "$targetKey id";
         foreach($this->getAdditionalFields() as $field=>$def){
@@ -525,7 +533,7 @@ class M2MRelationship extends SugarRelationship
                     ->on()->equalsField("{$targetTable_alias}.{$targetKey}", "{$joinTable_alias}.{$joinKey}")
                     ->equals("{$targetTable_alias}.deleted","0");
 
-        $this->buildSugarQueryRoleWhere($sugar_query,$joinTable);
+        $this->buildSugarQueryRoleWhere($sugar_query,$joinTable_alias);
         return array($joinTable_alias => $sugar_query->join[$joinTable_alias], $targetTable_alias => $sugar_query->join[$targetTable_alias]);
     }
 
