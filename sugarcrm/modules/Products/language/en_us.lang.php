@@ -153,6 +153,10 @@ $mod_strings = array(
     'LBL_CONVERT_TO_QUOTE' => 'Convert To Quote',
     'LBL_CONVERT_TO_QUOTE_INFO' => 'Please Wait',
     'LBL_CONVERT_TO_QUOTE_INFO_MESSAGE' => 'Converting Product To Quote',
+
+    'LBL_CONVERT_TO_QUOTE_ERROR' => 'Error:',
+    'LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE' => 'There was an error converting this Product Line Item to a Quote',
+
 );
 
 ?>
