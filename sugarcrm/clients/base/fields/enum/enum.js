@@ -83,6 +83,7 @@
         if(this.tplName === 'edit') {
             this.$(this.fieldTag).select2(select2Options);
             this.$(".select2-container").addClass("tleft");
+            this.model.set(this.name, this.$(this.fieldTag).select2('val'));
         } else if(this.tplName === 'disabled') {
             this.$(this.fieldTag).attr("disabled", "disabled").select2();
         }
