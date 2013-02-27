@@ -157,24 +157,8 @@ span.filetype-thumbnail {
     font-size: 10px;
     line-height: 15px;
     text-align: center;
-    background-color: #777;
+    background-color: @gray;
     content: attr(data-filetype);
-  }
-}
-span.filetype-thumbnail[data-filetype="TXT"] {
-  .ft-ribbon {
-    fill: @blue;
-  }
-  &::before {
-    background-color: @blue;
-  }
-}
-span.filetype-thumbnail[data-filetype="PNG"] {
-  .ft-ribbon {
-    fill: @green;
-  }
-  &::before {
-    background-color: @green;
   }
 }
 span.filetype-thumbnail[data-filetype="PDF"] {
@@ -185,15 +169,23 @@ span.filetype-thumbnail[data-filetype="PDF"] {
     background-color: @red;
   }
 }
-span.filetype-thumbnail[data-filetype="GIF"] {
+span.filetype-thumbnail[data-filetype="DOC"] {
   .ft-ribbon {
-    fill: @yellow;
+    fill: darken(@blueDark,10%);
   }
   &::before {
-    background-color: @yellow;
+    background-color: darken(@blueDark,10%);
   }
 }
-span.filetype-thumbnail[data-filetype="DOC"] {
+span.filetype-thumbnail[data-filetype="XLS"] {
+  .ft-ribbon {
+    fill: @green;
+  }
+  &::before {
+    background-color: @green;
+  }
+}
+span.filetype-thumbnail[data-filetype="PPT"] {
   .ft-ribbon {
     fill: @orange;
   }
@@ -201,27 +193,27 @@ span.filetype-thumbnail[data-filetype="DOC"] {
     background-color: @orange;
   }
 }
-span.filetype-thumbnail[data-filetype="XLS"] {
-  .ft-ribbon {
-    fill: @purple;
-  }
-  &::before {
-    background-color: @purple;
-  }
-}
-span.filetype-thumbnail[data-filetype="PPT"] {
-  .ft-ribbon {
-    fill: @pink;
-  }
-  &::before {
-    background-color: @pink;
-  }
-}
 span.filetype-thumbnail[data-filetype="JPG"] {
   .ft-ribbon {
-    fill: @blueDark;
+    fill: lighten(@purple,5%);
   }
   &::before {
-    background-color: @blueDark;
+    background-color: lighten(@purple,5%);
+  }
+}
+span.filetype-thumbnail[data-filetype="PNG"] {
+  .ft-ribbon {
+    fill: lighten(@purple,5%);
+  }
+  &::before {
+    background-color: lighten(@purple,5%);
+  }
+}
+span.filetype-thumbnail[data-filetype="GIF"] {
+  .ft-ribbon {
+    fill: lighten(@purple,5%);
+  }
+  &::before {
+    background-color: lighten(@purple,5%);
   }
 }
