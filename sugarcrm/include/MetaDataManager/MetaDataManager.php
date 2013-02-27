@@ -364,7 +364,6 @@ class MetaDataManager {
 
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
             if ( $outputAcl['access'] == 'yes') {
-
                 // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
                 $outputAcl['create'] = $outputAcl['edit'];
 
@@ -389,16 +388,6 @@ class MetaDataManager {
                     }   
                 }  
                 // get the field names
-
-                // define context variable as to not have it throw a notice when it doesn't exist
-                // SI Bug-60007
-                $context = array();
-
-                // if the bean is not set, or a new bean.. set the owner override
-                // this will allow fields marked Owner to pass through ok.
-                if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
-                    $context['owner_override'] = true;
-                }
 
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
 
