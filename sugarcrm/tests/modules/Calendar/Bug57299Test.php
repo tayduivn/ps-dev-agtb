@@ -61,10 +61,12 @@ class Bug57299Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function setUp()
     {
+        unset($GLOBALS['disable_date_format']);
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('mod_strings', array($this->name));
+        SugarTestHelper::setUp('timedate');
 
         $this->user = $GLOBALS['current_user'];
 
