@@ -27,15 +27,9 @@
  ********************************************************************************/
 }}
 <div class="modal-content hide">
-    <p>{{str "LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_TEXT" "Forecasts"}}</p>
-    {{#with forecast_by_field}}
-        {{#eachOptions options}}
-            <fieldset class="{{{key}}}Field">
-                <p>
-                    <input type="radio" name="{{../name}}" value="{{{key}}}" {{#eq key ../value}}checked{{/eq}}>
-                    <b>{{value}}</b>
-                </p>
-            </fieldset>
-        {{/eachOptions}}
-    {{/with}}
+    {{#each meta.panels}}
+        {{#each fields}}
+            <p>{{field ../../this ../../model}}</p>
+        {{/each}}
+    {{/each}}
 </div>

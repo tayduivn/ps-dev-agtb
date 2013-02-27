@@ -25,34 +25,10 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    // holds forecast_by field data
-    forecast_by_field: {},
-
-    events: {
-        'change input[type=radio]': 'selectionHandler'
-    },
-
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-
-        this.model.set(app.metadata.getModule('Forecasts', 'config'));
-
-        this.forecast_by_field = _.find(_.first(this.meta.panels).fields, function(field) {
-            return field.name == this;
-        }, 'forecast_by');
-
-        this.forecast_by_field.value = this.model.get('forecast_by');
-
         if(!_.isUndefined(options.meta.registerLabelAsBreadCrumb) && options.meta.registerLabelAsBreadCrumb == true) {
             this.layout.registerBreadCrumbLabel(options.meta.panels[0].label);
         }
-    },
-
-    /**
-     * handles when forecast_by radiogroup changes
-     * @param event
-     */
-    selectionHandler: function(event) {
-        this.model.set({forecast_by: event.target.value});
     }
 })
