@@ -857,6 +857,17 @@ $dictionary['User'] = array(
          'options' => 'available_language_dom',
       ),
 
+
+        'activities_users' => array (
+            'name' => 'activities_users',
+            'type' => 'link',
+            'relationship' => 'activities_users',
+            'link_type' => 'many',
+            'module' => 'Activities',
+            'bean_name' => 'Activity',
+            'source' => 'non-db',
+        ),
+
     ) ,
     'indices' => array(
         array(
