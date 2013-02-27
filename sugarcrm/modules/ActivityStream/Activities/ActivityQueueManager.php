@@ -199,7 +199,6 @@ class ActivityQueueManager
     {
         $db = DBManagerFactory::getInstance();
         $sql = 'INSERT INTO activities_users VALUES (';
-        // TODO: Consider teamsec caching later?
         $values = array(
             '"' . create_guid() . '"',
             'NULL',
@@ -212,6 +211,12 @@ class ActivityQueueManager
         );
         $sql .= implode(', ', $values) . ')';
         $db->query($sql);
+        // First argument of next block cannot be null.
+        // $act->subscribed_users->add(null, array(
+        //     'parent_type' => $act->parent_type,
+        //     'parent_id' => $act->parent_id,
+        //     'fields' => '[]'
+        // ));
     }
 
     /**
@@ -222,45 +227,27 @@ class ActivityQueueManager
      */
     protected function processSubscriptions(SugarBean $bean, Activity $act, array $args)
     {
-        $db = DBManagerFactory::getInstance();
-        $sql = 'INSERT INTO activities_users VALUES ';
         $subs = BeanFactory::getBeanName('Subscriptions');
         $user_partials = $subs::getSubscribedUsers($bean);
-        $rows = array();
-        foreach ($user_partials as $user_partial) {
-            $user = BeanFactory::retrieveBean('Users', $user_partial['created_by']);
+        $data = array(
+            'act_id' => $act->id,
+            'bean_module' => $bean->module_name,
+            'bean_id' => $bean->id,
+            'args' => $args,
+            'user_partials' => $user_partials,
+        );
 
-            if ($user) {
-                $context = array('user' => $user);
+        $job = BeanFactory::getBean('SchedulersJobs');
+        $job->requeue = 1;
+        $job->name = "ActivityStream add";
+        $job->data = serialize($data);
+        $job->target = "class::SugarJobAddActivitySubscriptions";
 
-                if ($bean->ACLAccess('view', $context)) {
-                    // If we have access to the bean, we allow the user to see
-                    // the activity on the home page and the records list page.
-                    $fields = array();
-
-                    if ($act->activity_type == 'update') {
-                        foreach ($args['dataChanges'] as $field) {
-                            if ($bean->ACLFieldAccess($field['field_name'], 'read', $context)) {
-                                $fields[] = $field['field_name'];
-                            }
-                        }
-                    }
-
-                    $fields = $db->quote(json_encode($fields));
-                    // Each row must be in the same order as DB.
-                    $values = array(create_guid(), $user->id, $act->id, $act->parent_module, $act->parent_id, $fields, $act->date_modified);
-                    $rows[] = '("' . implode('", "', $values) . '")';
-                } else {
-                    // If we don't have access to the bean, we remove the user's
-                    // subscription to the bean.
-                    $subs::unsubscribeUserFromRecord($user, $bean);
-                }
-            }
-        }
-
-        if (count($rows)) {
-            $sql .= implode(', ', $rows);
-            $db->query($sql);
+        if (count($user_partials) < 5) {
+            $job->runJob();
+        } else {
+            $queue = new SugarJobQueue();
+            $queue->submitJob($job);
         }
     }
 }
