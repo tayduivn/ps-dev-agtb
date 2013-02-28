@@ -60,7 +60,7 @@ class ReadOnlyAction extends AbstractAction{
 					if (field) {
 						field.setDisabled(set);
 					}
-					context.view.setFieldMeta(this.target, {'noedit':set});
+					context.view.setFieldMeta(this.target, {'readonly':set});
 				}
 				else {
 					var el = SUGAR.forms.AssignmentHandler.getElement(this.target);
