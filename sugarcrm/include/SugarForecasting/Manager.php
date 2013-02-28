@@ -220,11 +220,11 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
             "and ((w.related_id = u.id and u2.id = u.id) " .
             "or (w.related_id = u2.id)) " .
             "where u.deleted = 0 AND
-                 u.status = 'Active' AND
-                 u2.deleted = 0 AND
-                 u2.status = 'Active' AND
-                 u.id = '" . $args['user_id'] . "'
-                                and w.deleted = 0 ";
+                u.status = 'Active' AND
+                u2.deleted = 0 AND
+                u2.status = 'Active' AND
+                u.id = '" . $args['user_id'] . "'
+                and w.deleted = 0 ";
 
 
         if ($args['user_id'] == $current_user->id) {
@@ -240,7 +240,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         $result = $db->query($reportees_query);
 
         while (($row = $db->fetchByAssoc($result)) != null) {
-            error_log(var_export($row, true));
             $this->dataArray[$row['user_name']]['worksheet_id'] = $row['worksheet_id'];
             $this->dataArray[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
             $this->dataArray[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
