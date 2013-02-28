@@ -337,7 +337,7 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
 
     // Panel and BreadCrumb Labels
-    'LBL_FORECASTS_CONFIG_BREADCRUMB_GENERAL' => 'General',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_WORKSHEET_LAYOUT' => 'Worksheet Layout',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGES' => 'Ranges',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_SCENARIOS' => 'Scenarios',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS' => 'Time Periods',

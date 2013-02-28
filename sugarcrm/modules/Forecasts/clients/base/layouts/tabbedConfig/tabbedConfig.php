@@ -27,9 +27,6 @@ $viewdefs['Forecasts']['base']['layout']['tabbedConfig'] = array(
     'css_class' => 'modal-body',
     'components' => array(
         array(
-            'view' => 'forecastsConfigGeneral',
-        ),
-        array(
             'view' => 'forecastsConfigTimeperiods',
         ),
         array(
@@ -37,6 +34,9 @@ $viewdefs['Forecasts']['base']['layout']['tabbedConfig'] = array(
         ),
         array(
             'view' => 'forecastsConfigScenarios',
+        ),
+        array(
+            'view' => 'forecastsConfigWorksheetLayout',
         ),
         // BEGIN SUGARCRM flav=int ONLY
         // todo-sfa: Move to flav=ent for when we start on 6.8
