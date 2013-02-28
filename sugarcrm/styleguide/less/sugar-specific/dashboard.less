@@ -1,0 +1,203 @@
+.dashboard {
+  background-image: url('@{textureSecondary}');
+  position: absolute;
+  width: 100%;
+  height: auto;
+  ul {
+    list-style: none;
+    margin: 0;
+  }
+  .cols {
+    margin: 0;
+    list-style: none;
+    &> li:first-child {
+      clear: both;
+    }
+    .rows {
+      margin: 0;
+      list-style: none;
+      &.well {
+        position: relative;
+        &>.btn {
+          position: absolute;
+          top: -4px;
+          right: 0;
+          &:not(:nth-child(1)){
+            right:20px;
+          }
+          &:hover,
+          &:active {
+            text-decoration: none;
+            .box-shadow(none) !important;
+          }
+          &.move {
+            cursor: move;
+          }
+        }
+      }
+      .row-fluid {
+        margin: 0;
+        .widget-container {
+          .widget {
+            /*min-height: 60px;*/
+            padding: 0;
+            &.thumbnail {
+              margin-bottom: 0 !important;
+              &:not(.collapsed) {
+                min-height: 126px;
+              }
+              p {
+                padding: 0;
+              }
+            }
+            div.widget-content {
+              overflow: auto;
+              width: 100%;
+            }
+            h4 {
+              cursor: move;
+            }
+            .news-article:first-child {
+              margin-top: 0;
+            }
+          }
+          .empty {
+            padding: 16px 0;
+            border: 3px dashed lighten(@grayLight,8%);
+            background-color: @white;
+            cursor: pointer;
+            p {
+              font-size: 13px;
+              font-weight: 500px;
+              text-align: center;
+              color: lighten(@grayLight,8%);
+              &.header {
+                line-height: 40px;
+              }
+            }
+            .add-dashlet {
+              color: lighten(@grayLight,8%);
+              text-align: center;
+              small {
+                font-size: 12px;
+              }
+              strong {
+                font-size: 60px;
+                font-weight: 900;
+                i {
+                  color: lighten(@grayLight,8%);
+                }
+              }
+            }
+          }
+          &.active {
+            .widget {
+              background: lighten(@grayLight,8%);
+              border-color: @white;
+              p,
+              strong i {
+                color: @white;
+              }
+            }
+          }
+        }
+        &>ul {
+          margin: 0;
+        }
+      }
+    }
+    .add-row {
+      position: relative;
+      margin: 0;
+      padding-top: 18px;
+      border: 3px dashed lighten(@grayLight,8%);
+      background-color: @white;
+      cursor: pointer;
+      p {
+        font-size: 13px;
+        font-weight: 500px;
+        text-align: center;
+        color: lighten(@grayLight,8%);
+        &.header {
+          line-height: 40px;
+        }
+      }
+      .add-dashlet {
+        color: lighten(@grayLight,8%);
+        text-align: center;
+        small {
+          font-size: 12px;
+        }
+        strong {
+          font-size: 60px;
+          font-weight: 900;
+        }
+      }
+      .options {
+        a {
+          padding:0 12px;
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+  #dashlets {
+    clear: both;
+  }
+  .ui-sortable .ui-sortable-placeholder {
+    height: auto !important;
+  }
+}
+
+
+/* Dashboard inside right hand side panel */
+.sidebar-content {
+  .dashboard {
+    width: 90%;
+    overflow: visible;
+    .preview-headerbar {
+      border-bottom: 0;
+      h1 {
+        margin-left: 0;
+      }
+      .dropdown-menu {
+        min-width: auto;
+      }
+      input[type=text] {
+        width: 150px;
+      }
+    }
+    .well {
+      padding: 19px 2px 2px 2px;
+      &.well-invisible {
+        padding-right: 0;
+        padding-left: 0;
+        .widget-container {
+          padding: 0;
+        }
+      }
+      .widget.thumbnail:not(.collapsed) {
+        max-height: 252px;
+        overflow: hidden;
+        .widget-content {
+          max-height: 218px;
+        }
+      }
+      [class*="-container"] {
+        padding: 2px;
+      }
+    }
+    .dashlet-row {
+      li:first-child {
+        .well-invisible {
+          padding-top: 0;
+        }
+      }
+    }
+  }
+}
+
+
+

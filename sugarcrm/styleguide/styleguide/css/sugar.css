@@ -3067,6 +3067,11 @@ img.pull-left {
 .ui-sortable-placeholder * {
   visibility: hide;
 }
+.ui-draggable-dragging {
+  -webkit-box-shadow: 0 2px 10px rgba(0,0,0,0.1), 0 0 10px rgba(0,0,0,0.4), -1px -1px 20px rgba(0,0,0,0.1), 1px 1px 20px rgba(0,0,0,0.1);
+  -moz-box-shadow: 0 2px 10px rgba(0,0,0,0.1), 0 0 10px rgba(0,0,0,0.4), -1px -1px 20px rgba(0,0,0,0.1), 1px 1px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1), 0 0 10px rgba(0,0,0,0.4), -1px -1px 20px rgba(0,0,0,0.1), 1px 1px 20px rgba(0,0,0,0.1);
+}
 .titlebar {
   color: #fff;
   text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
@@ -3221,6 +3226,8 @@ hr.soften {
   color: #58595B;
   cursor: text;
 }
+<<<<<<< HEAD
+=======
 .filter.controls {
   margin-left: 0 !important;
 }
@@ -3273,6 +3280,7 @@ hr.soften {
 .bwc.layout {
   height: 100%;
 }
+>>>>>>> master_7_0
 [class^="icon-"],
 [class*=" icon-"] {
   -webkit-font-smoothing: antialiased;
@@ -5021,6 +5029,15 @@ input[type="color"].local-error,
 .error .add-on [class*=" icon-"] {
   color: #b60000;
 }
+.headerpane h1 .add-on.local {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  line-height: 36px;
+  height: 26px;
+  right: 8px;
+  background: none;
+}
 @media (max-width: 480px) {
   .error .input-append > .add-on {
     position: relative !important;
@@ -5978,6 +5995,62 @@ header .subnav {
 .main-pane.span8 .subnav.subnav-fixed .span12 {
   margin-left: 0;
 }
+<<<<<<< HEAD
+#contentflex #headerbar .btn-group-previous-next,
+.headerpane .btn-group-previous-next,
+.main-pane.span8 .subnav.subnav-fixed .btn-group-previous-next {
+  margin: 0 8px;
+}
+#contentflex #headerbar .drawerTrig,
+.headerpane .drawerTrig,
+.main-pane.span8 .subnav.subnav-fixed .drawerTrig {
+  margin: 0 0 0 8px;
+  color: #bbb;
+}
+#contentflex #headerbar .drawerTrig.pull-right,
+.headerpane .drawerTrig.pull-right,
+.main-pane.span8 .subnav.subnav-fixed .drawerTrig.pull-right {
+  -webkit-border-radius: 0 2px 2px 0;
+  -moz-border-radius: 0 2px 2px 0;
+  border-radius: 0 2px 2px 0;
+  position: relative;
+}
+#contentflex #headerbar .drawerTrig.pull-left,
+.headerpane .drawerTrig.pull-left,
+.main-pane.span8 .subnav.subnav-fixed .drawerTrig.pull-left {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  margin-right: 0;
+  padding: 4px 4px 0 4px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+#contentflex #headerbar .drawerTrig [class*="icon-"],
+.headerpane .drawerTrig [class*="icon-"],
+.main-pane.span8 .subnav.subnav-fixed .drawerTrig [class*="icon-"] {
+  font-size: 25px;
+  font-weight: 700;
+}
+#contentflex #headerbar .drawerTrig .icon-double-angle-left,
+.headerpane .drawerTrig .icon-double-angle-left,
+.main-pane.span8 .subnav.subnav-fixed .drawerTrig .icon-double-angle-left {
+  margin: 0 2px 0 -2px;
+}
+#contentflex #headerbar .btn-toolbar,
+.headerpane .btn-toolbar,
+.main-pane.span8 .subnav.subnav-fixed .btn-toolbar {
+  margin-top: 15px;
+  margin-right: 8px;
+}
+#contentflex #headerbar .btn-toolbar .btn-group,
+.headerpane .btn-toolbar .btn-group,
+.main-pane.span8 .subnav.subnav-fixed .btn-toolbar .btn-group {
+  vertical-align: middle;
+}
+=======
+>>>>>>> master_7_0
 #contentflex #headerbar .avatar,
 .headerpane .avatar,
 .main-pane.span8 .subnav.subnav-fixed .avatar {
@@ -7954,6 +8027,157 @@ h4.merge-interface-header .preview {
 .inline-drawer table tbody tr:last-child td {
   border-bottom: 0 !important;
 }
+.dashboard {
+  background-image: url('../../assets/img/texture/furley_bg.png');
+  position: absolute;
+  width: 100%;
+  height: auto;
+}
+.dashboard ul {
+  list-style: none;
+  margin: 0;
+}
+.dashboard .cols {
+  margin: 0;
+  list-style: none;
+}
+.dashboard .cols> li:first-child {
+  clear: both;
+}
+.dashboard .cols .rows {
+  margin: 0;
+  list-style: none;
+}
+.dashboard .cols .rows.well {
+  position: relative;
+}
+.dashboard .cols .rows.well>.btn {
+  position: absolute;
+  top: -4px;
+  right: 0;
+}
+.dashboard .cols .rows.well>.btn:not(:nth-child(1)) {
+  right: 20px;
+}
+.dashboard .cols .rows.well>.btn:hover,
+.dashboard .cols .rows.well>.btn:active {
+  text-decoration: none;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+}
+.dashboard .cols .rows.well>.btn.move {
+  cursor: move;
+}
+.dashboard .cols .rows .row-fluid {
+  margin: 0;
+}
+.dashboard .cols .rows .row-fluid .widget-container .widget {
+  padding: 0;
+}
+.dashboard .cols .rows .row-fluid .widget-container .widget.thumbnail {
+  margin-bottom: 0 !important;
+}
+.dashboard .cols .rows .row-fluid .widget-container .widget.thumbnail:not(.collapsed) {
+  min-height: 126px;
+}
+.dashboard .cols .rows .row-fluid .widget-container .widget div.widget-content {
+  overflow: auto;
+  width: 100%;
+}
+.dashboard .cols .rows .row-fluid .widget-container .widget h4 {
+  cursor: move;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty {
+  padding: 16px 0;
+  border: 3px dashed #cfcfcf;
+  background-color: #fff;
+  cursor: pointer;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty p {
+  font-size: 13px;
+  font-weight: 500px;
+  text-align: center;
+  color: #cfcfcf;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty p.header {
+  line-height: 40px;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet {
+  color: #cfcfcf;
+  text-align: center;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet small {
+  font-size: 12px;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet strong {
+  font-size: 60px;
+  font-weight: 900;
+}
+.dashboard .cols .rows .row-fluid .widget-container .empty .add-dashlet strong i {
+  color: #cfcfcf;
+}
+.dashboard .cols .rows .row-fluid .widget-container.active .widget {
+  background: #cfcfcf;
+  border-color: #fff;
+}
+.dashboard .cols .rows .row-fluid .widget-container.active .widget p,
+.dashboard .cols .rows .row-fluid .widget-container.active .widget strong i {
+  color: #fff;
+}
+.dashboard .cols .rows .row-fluid>ul {
+  margin: 0;
+}
+.dashboard .cols .add-row {
+  position: relative;
+  margin: 0;
+  padding-top: 18px;
+  border: 3px dashed #cfcfcf;
+  background-color: #fff;
+  cursor: pointer;
+}
+.dashboard .cols .add-row p {
+  font-size: 13px;
+  font-weight: 500px;
+  text-align: center;
+  color: #cfcfcf;
+}
+.dashboard .cols .add-row p.header {
+  line-height: 40px;
+}
+.dashboard .cols .add-row .add-dashlet {
+  color: #cfcfcf;
+  text-align: center;
+}
+.dashboard .cols .add-row .add-dashlet small {
+  font-size: 12px;
+}
+.dashboard .cols .add-row .add-dashlet strong {
+  font-size: 60px;
+  font-weight: 900;
+}
+.dashboard .cols .add-row .options a {
+  padding: 0 12px;
+}
+.dashboard .cols .add-row .options a:hover {
+  text-decoration: none;
+}
+.dashboard #dashlets {
+  clear: both;
+}
+.dashboard .ui-sortable .ui-sortable-placeholder {
+  height: auto !important;
+}
+.well-invisible {
+  background-color: transparent;
+  border-color: transparent;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: None;
+  -moz-box-shadow: None;
+  box-shadow: None;
+}
 .ui-timepicker-list {
   overflow: visible;
   height: 150px;
@@ -9196,6 +9420,13 @@ a.preview-list-item:hover {
   top: 0;
   height: 100%;
   width: 100%;
+<<<<<<< HEAD
+  -webkit-transition: top .3s;
+  -moz-transition: top .3s;
+  -o-transition: top .3s;
+  transition: top .3s;
+=======
+>>>>>>> master_7_0
 }
 .drawer .drawer-backdrop {
   height: 100%;

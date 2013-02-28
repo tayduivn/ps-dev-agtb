@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link href="../css/bootstrap.css" rel="stylesheet">
+  <link href="../css/sugar.css" rel="stylesheet">
+  <script>
+    var page = {
+        "title": "My Sugar"
+      , "description": ""
+      , "templates": [
+          {"file":"common/head","target":"head","method":"append"}
+        , {"file":"common/navbar","target":"#header","method":"append"}
+        , {"file":"common/header","target":"#view .headerpane","method":"append"}
+        , {"file":"common/footer-master","target":"#footer","method":"append"}
+        , {"file":"widget/widget-control","target":"#overview","method":"replace"}
+      ]
+    };
+  </script>
+
+
+</head>
+<body>
+  <div id="sugarcrm">
+    <div id="sidecar">
+      <div id="alerts" class="alert-top"></div>
+      <div id="header"></div>
+      <div id="content">
+
+
+
+
+
+
+      <div class="layout_Home row-fluid">
+        <div id="dashboard" class="dashboard main-pane">
+          <ul id="dashlets" class="cols row-fluid">
+
+
+
+
+
+
+
+
+            <div class="span12 layout_Home">
+
+
+
+
+
+          <div class="headerpane">
+            <span class="record-cell">
+            <h1>
+              <span sfuuid="1">
+                <input type="text" name="name" value="" placeholder="Dashboard" class="inherit-width local-error"><span class="add-on local error-tooltip" rel="tooltip" data-original-title="Error. This field is required." data-placement="bottom"><i class="icon-exclamation-sign"></i></span>
+                <p class="help-block"></p>
+              </span>
+            </h1>
+            </span>
+            <span class="record-cell">
+              <h1>
+                <span sfuuid="2"><div class="btn-group" data-toggle="buttons-radio">
+                  <button class="btn layout active" rel="tooltip" data-original-title="1 column layout" data-value="1" data-placement="bottom"><i class="icon-list-alt"></i></button>
+                  <button class="btn layout" rel="tooltip" data-original-title="2 column layout" data-value="2" data-placement="bottom"><i class="icon-columns"></i></button>
+                  <button class="btn layout" rel="tooltip" data-original-title="3 column layout" data-value="3" data-placement="bottom"><i class="icon-table"></i></button>
+                </div>
+                </span>
+              </h1>
+            </span>
+            <div class="btn-toolbar pull-right dropdown">
+                <span sfuuid="3" class="actions dropdown btn-group" style="display: none;"><span sfuuid="4"><a href="javascript:void(0);" name="add_button" class="btn btn-primary" style="">Create New Dashboard</a></span><a class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="javascript:void(0);" style=""><span class="icon-caret-down"></span></a><ul class="dropdown-menu"><span class="ext"></span><li><span sfuuid="5"><a href="javascript:void(0);" name="edit_button" style="">Edit Dashboard</a></span></li></ul></span>
+                <span sfuuid="6">
+                <a class="btn btn-invisible btn-link" href="javascript:void(0)" name="cancel_button" style="display: none;">
+                Cancel</a>
+                </span>
+                <span sfuuid="7">
+                <a class="btn btn-danger" href="javascript:void(0)" name="delete_button" style="display: none;">
+                Delete</a>
+                </span> 
+                <span sfuuid="8">
+                <a class="btn btn-primary" href="javascript:void(0)" name="save_button" style="display: none;">
+                Save</a>
+                </span> 
+                <span sfuuid="9">
+                <a class="btn btn-invisible btn-link" href="javascript:void(0)" name="create_cancel_button" style="">
+                Cancel</a>
+                </span> 
+                <span sfuuid="10">
+                <a class="btn btn-primary" href="javascript:void(0)" name="create_button" style="">
+                Save</a>
+                </span>
+            </div>
+          </div>
+
+
+
+
+
+
+
+
+
+                  <li class="row-fluid">
+                      <div class="rows well">
+                          <ul class="row-fluid layout_Home">
+                              <li class="widget-container span12 ui-droppable">
+                                  <div class="layout_Home">
+                                      <div>
+                                          <div class="widget empty ui-draggable" data-action="addDashlet">
+                                              <p>Add a Dashlet</p>
+                                              <div class="add-dashlet"><strong><i class="icon-plus"></i></strong>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </li>
+                          </ul>
+                      </div>
+                  </li>
+
+
+                  <li class="row-fluid">
+                      <div class="rows well">
+                          <ul class="row-fluid layout_Home">
+                              <li class="widget-container span6 ui-droppable active">
+                                  <div class="layout_Home">
+                                      <div>
+                                          <div class="widget empty ui-draggable" data-action="addDashlet">
+                                              <p>Drop dashlet here</p>
+                                              <div class="add-dashlet"><strong><i class="icon-download-alt"></i></strong>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </li>
+                              <li class="widget-container span6 ui-droppable">
+                                  <div class="layout_Home">
+                                      <div>
+                                          <div class="widget empty ui-draggable" data-action="addDashlet">
+                                              <p>Add a Dashlet</p>
+                                              <div class="add-dashlet"><strong><i class="icon-plus"></i></strong>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </li>
+                          </ul>
+                      </div>
+                  </li>
+
+
+
+                  <li class="row-fluid">
+                      <div class="rows well">
+                          <ul class="row-fluid layout_Home">
+                              <li class="widget-container span4 ui-droppable">
+                                  <div class="layout_Home">
+                                      <div>
+                                          <div class="widget empty ui-draggable" data-action="addDashlet">
+                                              <p>Add a Dashlet</p>
+                                              <div class="add-dashlet"><strong><i class="icon-plus"></i></strong>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </li>
+                              <li class="widget-container span4 ui-droppable">
+                                  <div class="layout_Home">
+                                      <div>
+                                          <div class="widget empty ui-draggable" data-action="addDashlet">
+                                              <p>Add a Dashlet</p>
+                                              <div class="add-dashlet"><strong><i class="icon-plus"></i></strong>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </li>
+                              <li class="widget-container span4 ui-droppable">
+                                  <div class="layout_Home">
+                                      <div>
+                                          <div class="widget empty ui-draggable" data-action="addDashlet">
+                                              <p>Add a Dashlet</p>
+                                              <div class="add-dashlet"><strong><i class="icon-plus"></i></strong>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </li>
+                          </ul>
+                      </div>
+                  </li>
+
+                  <li class="row-fluid">
+                          <div class="rows well well-invisible">
+                            <div class="layout_Home"><div>
+                            <div class="add-row">
+                              <p>Add a Row</p>
+                              <p class="options">
+                                <a class="add-dashlet" data-value="1"><small>+ 1 column</small></a>
+                                <a class="add-dashlet" data-value="2"><small>+ 2 columns</small></a>
+                                <a class="add-dashlet" data-value="3"><small>+ 3 columns</small></a>
+                              </p>
+                            </div>
+                          </div>
+                        </li>
+                  </li>
+
+
+
+            </div>
+
+
+
+
+
+
+          </ul>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <div id="footer"></div>
+    </div>
+  </div>
+  <div id="modal"></div>
+
+  <script src="../js/jquery-1.7.2.min.js"></script>
+  <script src="../js/ICanHaz.min.js"></script>
+  <script src="js/prototype.js"></script>
+
+  <script src="../../assets/js/bootstrap.min.js"></script>
+  <script src="../../assets/js/bootstrapx-clickover.js"></script>
+  <script src="../../assets/js/bootstrap-datepicker.js"></script>
+
+  <script src="../js/jquery.datatables.js"></script>
+  <script src="../js/jquery.jeditable.js"></script>
+  <script src="../js/jquery.jstree.js"></script>
+  <script src="../js/jquery.prettynumber.js"></script>
+  <script src="../js/jquery.nouislider.min.js"></script>
+  <script src="../js/chosen.jquery.min.js"></script>
+
+  <!-- new D3 charting library files -->
+  <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
+  <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
+
+  <script src="../js/editable.js"></script>
+  <script src="../js/wicked.js"></script>
+  <script src="../js/cookie.js"></script>
+
+  <script src="../js/application.js"></script>
+
+  <script>
+    $(document).ready(function(el) {
+    });
+  </script>
+
+</body>
+</html>

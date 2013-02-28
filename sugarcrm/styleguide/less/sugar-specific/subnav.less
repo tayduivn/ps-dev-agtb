@@ -91,6 +91,51 @@ header .subnav {
     margin-left: 0;
   }
 
+  .btn-group-previous-next {
+    margin: 0 8px;
+  }
+
+  .drawerTrig {
+    margin: 0 0 0 8px;
+    color: @grayLight;
+    &.pull-right {
+      .border-radius(0 2px 2px 0);
+      position: relative;
+    }
+
+    &.pull-left {
+      .border-radius(2px);
+      margin-right: 0;
+      padding: 4px 4px 0 4px;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    [class*="icon-"]{
+        //.opacity(20);
+        //font-size: 18px;
+        //line-height: 18px;
+        //font-weight: 800;
+        font-size: 25px;
+        font-weight: 700;
+    }
+    .icon-double-angle-left {
+        margin: 0 2px 0 -2px;
+    }
+  }
+
+  .btn-toolbar {
+    margin-top: 15px;
+    margin-right: 8px;
+    .btn-group {
+      vertical-align: middle;
+      i {
+        //was making icons gray
+        //color: @gray !important;
+      }
+    }
+  }
+
   .avatar {
     margin: 10px -5px 0 20px;
   }
