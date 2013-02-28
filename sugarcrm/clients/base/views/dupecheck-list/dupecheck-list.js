@@ -25,14 +25,19 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'ListView',
+    /**
+     * @class View.DupecheckListView
+     * @alias SUGAR.App.view.views.DupecheckListView
+     * @extends View.FlexListView
+     */
+    extendsFrom: 'FlexListView',
 
     collectionSync: null,
 
     initialize: function(options) {
         _.bindAll(this);
         //turn off sorting & links for dupe check lists
-        app.view.views.ListView.prototype.initialize.call(this, options);
+        app.view.views.FlexListView.prototype.initialize.call(this, options);
         _.each(this.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
                 field.sortable = false;
@@ -58,7 +63,7 @@
     },
 
     _renderHtml: function() {
-        app.view.views.ListView.prototype._renderHtml.call(this);
+        app.view.views.FlexListView.prototype._renderHtml.call(this);
         this.$('table.table-striped').addClass('duplicates highlight');
     },
 
@@ -82,11 +87,11 @@
         this.collection.fetch(options);
     },
 
-    addRowActions: function(panel, options) {
-        panel = app.view.views.ListView.prototype.addRowActions.call(this, panel, options);
+    addActions: function() {
+        app.view.views.FlexListView.prototype.addActions.call(this);
 
-        if (options.meta.showPreview === true) {
-            panel.fields = panel.fields.concat({
+        if (this.meta.showPreview === true) {
+            this.rightColumns.push({
                 type: 'rowaction',
                 css_class: 'btn',
                 tooltip: 'LBL_PREVIEW',
@@ -94,7 +99,5 @@
                 icon: 'icon-eye-open'
             });
         }
-
-        return panel;
     }
 })

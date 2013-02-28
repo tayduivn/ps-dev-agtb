@@ -29,6 +29,7 @@ describe("Base.Field.ActionMenu", function() {
         field = SugarTest.createField("base","actionmenu", "actionmenu", "list", def);
         SugarTest.loadComponent("base", "view", "editable");
         SugarTest.loadComponent("base", "view", "list");
+        SugarTest.loadComponent("base", "view", "flex-list");
         field.view = SugarTest.createView("base", "Account", "recordlist", {});
         field.view.collection = { next_offset : -1 };
 

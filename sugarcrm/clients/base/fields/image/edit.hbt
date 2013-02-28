@@ -28,8 +28,8 @@
 }}
 <div class="image_field image_edit hide">
     <label>
-        <span class="image_input"><input type="file" name="{{name}}" /></span>
-        <span class="image_btn image_btn_label">Edit</span>
+        <span class="image_input"><input type="file" name="{{name}}"></span>
+        <span class="image_btn image_btn_label">{{str "LBL_EDIT_BUTTON"}}</span>
         <span class="image_preview">{{#if value}}<img src="{{value}}">{{else}}<i class="icon-plus"></i>{{/if}}</span>
     </label>
 </div>

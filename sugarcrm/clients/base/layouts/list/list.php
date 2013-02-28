@@ -30,7 +30,7 @@
 $layout = MetaDataManager::getLayout("GenericLayout");
 $listLayout = MetaDataManager::getLayout("GenericLayout", array("name" => "list"));
 $listLayout->push(array("view" => "massupdate"));
-$listLayout->push(array("view" => "recordlist"));
+$listLayout->push(array("view" => "recordlist", "primary" => true));
 $listLayout->push(array('view' => 'list-bottom'));
 $layout->push($listLayout->getLayout(true));
 $viewdefs['base']['layout']['list'] = $layout->getLayout();
