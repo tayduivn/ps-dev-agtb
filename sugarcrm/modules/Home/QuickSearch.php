@@ -376,6 +376,11 @@ class quicksearchQuery
             }
         }
 
+        // Run ACL Fields Filtering for each bean
+        foreach ($data as $bean) {
+            $bean->ACLFilterFields();
+        }
+
         return $data;
     }
 

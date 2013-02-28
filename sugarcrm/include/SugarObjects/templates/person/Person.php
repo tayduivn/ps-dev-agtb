@@ -143,24 +143,35 @@ class Person extends Basic
     {
         $this->_create_proper_name_field();
         return $this->name;
-    }
+	}
 
-    /**
-     *
-     * @see parent::get_list_view_data()
-     */
-    public function get_list_view_data()
-    {
-        global $system_config;
-        global $current_user;
-        $this->_create_proper_name_field();
-        $temp_array = $this->get_list_view_array();
+	/**
+ 	 * @see parent::get_list_view_data()
+ 	 */
+	public function get_list_view_data()
+	{
+		global $system_config;
+		global $current_user;
+
+		$this->_create_proper_name_field();
+		$temp_array = $this->get_list_view_array();
+
         $temp_array['NAME'] = $this->name;
+        $temp_array["ENCODED_NAME"] = $this->full_name;
+        $temp_array["FULL_NAME"] = $this->full_name;
+
         $temp_array['EMAIL1'] = $this->emailAddress->getPrimaryAddress($this);
-        $this->email1 = $temp_array['EMAIL1'];
+
+        // Fill in the email1 field only if the user has access to it
+        // This is a special case, because getEmailLink() uses email1 field for making the link
+        // Otherwise get_list_view_data() shouldn't set any fields except fill the template data
+        if ($this->ACLFieldAccess('email1', 'read')) {
+            $this->email1 = $temp_array['EMAIL1'];
+        }
         $temp_array['EMAIL1_LINK'] = $current_user->getEmailLink('email1', $this, '', '', 'ListView');
-        return $temp_array;
-    }
+
+		return $temp_array;
+	}
 
     /**
      *
