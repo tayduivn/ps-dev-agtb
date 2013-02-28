@@ -3,9 +3,9 @@
     createMode: false,
     previousModelState: null,
     extendsFrom: 'EditableView',
-    plugins: ['ellipsis_inline'],
+    plugins: ['SugarLogic', 'ellipsis_inline'],
 
-    enableHeaderButtons: true,
+    enableHeaderPane: true,
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',

@@ -28,7 +28,7 @@ describe("radioenum field", function() {
         }
 
         //Because this controller depends on enum and listeditable controllers
-        fields.enum = SugarTest.createField("base", "test_enum", "enum", "edit", {options: "bugs_type_dom"});
+        fields['enum'] = SugarTest.createField("base", "test_enum", "enum", "edit", {options: "bugs_type_dom"});
         fields.listeditable = SugarTest.createField("base", "test_enum", "listeditable", "edit");
     });
 

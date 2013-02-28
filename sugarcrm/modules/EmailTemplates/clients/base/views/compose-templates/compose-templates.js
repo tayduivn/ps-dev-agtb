@@ -49,11 +49,6 @@
         }
     },
 
-    _renderHtml: function() {
-        app.view.views.FlexListView.prototype._renderHtml.call(this);
-        this.$('table.table-striped').addClass('duplicates highlight');
-    },
-
     _removeLinks: function() {
         this.$('a:not(.rowaction)').contents().unwrap();
     },

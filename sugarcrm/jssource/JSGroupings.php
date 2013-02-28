@@ -205,6 +205,7 @@
             ),
            $sugar_grp1 = array(
                 //scripts loaded on first page
+                "sidecar/lib/backbone/underscore.js" => "include/javascript/sugar_grp1.js",
                 'include/javascript/sugar_3.js'         => 'include/javascript/sugar_grp1.js',
                 'include/javascript/ajaxUI.js'          => 'include/javascript/sugar_grp1.js',
                 'include/javascript/cookie.js'          => 'include/javascript/sugar_grp1.js',
@@ -219,10 +220,10 @@
                 'include/javascript/phpjs/htmlentities.js' => 'include/javascript/sugar_grp1.js',
 				//BEGIN SUGARCRM flav=pro ONLY
 	            //Expression Engine
-	            'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
+                'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
 	            'include/Expressions/javascript/dependency.js'   => 'include/javascript/sugar_grp1.js',
 	            //END SUGARCRM flav=pro ONLY
-               'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
+                'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
             ),
 			// solo jquery libraries
 			$sugar_grp_jquery_core = getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_jquery_core.js'),
@@ -369,6 +370,11 @@
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
+                   //BEGIN SUGARCRM flav=pro ONLY
+                   //Expression Engine
+                   'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_sidecar.min.js',
+                   'include/Expressions/javascript/sidecarExpressionContext.js'   => 'include/javascript/sugar_sidecar.min.js',
+                   //END SUGARCRM flav=pro ONLY
                 )
            ),
            //BEGIN SUGARCRM flav=ent ONLY

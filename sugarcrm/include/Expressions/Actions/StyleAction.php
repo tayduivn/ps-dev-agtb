@@ -70,7 +70,7 @@ SUGAR.util.extend(SUGAR.forms.StyleAction, SUGAR.forms.AbstractAction, {
             {
                 temp[i] = this.evalExpression(this.attrs[i], context);
             }
-            SUGAR.forms.AssignmentHandler.setStyle(this.target, temp);
+            context.setStyle(this.target, temp);
         } catch (e) {return;}
     }
 });";

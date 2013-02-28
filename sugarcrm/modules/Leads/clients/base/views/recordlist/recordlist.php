@@ -76,7 +76,7 @@ $viewdefs['Leads']['base']['view']['recordlist'] = array(
                                 }'
                 ),
                 'label' => 'LBL_CONVERT_BUTTON_LABEL',
-                'value' => 'convert',
+                'value' => 'edit',
             ),
         ),
     ),

@@ -65,7 +65,7 @@ class DependencyManager
                     if ($includeReadOnly) {
                         $readOnlyDep = new Dependency("readOnly$field");
                         $readOnlyDep->setFireOnLoad(true);
-                        $readOnlyDep->setTrigger(new Trigger('true', array()));
+                        $readOnlyDep->setTrigger(new Trigger('true', $triggerFields));
                         $readOnlyDep->addAction(ActionFactory::getNewAction('ReadOnly',
                             array('target' => $field,
                                 'value' => 'true')));
@@ -294,7 +294,7 @@ class DependencyManager
                 $deps[] = self::getPanelDependency(strtoupper($id), $expr);
             }
         }
-        if ($view == "EditView" || strpos($view, "QuickCreate") !== false) {
+        if ($view == "RecordView" || $view == "EditView" || strpos($view, "QuickCreate") !== false) {
             $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'edit', $view));
         }
         else

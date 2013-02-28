@@ -394,6 +394,80 @@ describe("Create View", function() {
         });
     });
 
+    describe('SaveModel', function() {
+        it("Should retrieve custom save options and params options should be appended to request url", function() {
+            var moduleName = "Contacts",
+                bean,
+                app = SugarTest.app,
+                dm = app.data,
+                ajaxSpy = sinon.spy($, 'ajax');
+
+            bean = dm.createBean(moduleName, { id: "1234" });
+
+            var checkFileStub = sinon.stub(SugarTest.app.file, 'checkFileFieldsAndProcessUpload', function(success) {
+                    success();
+                }),
+                getCustomSaveOptionsStub = sinon.stub(view, 'getCustomSaveOptions', function() {
+                    return {'params': {'param1': true, 'param2': false}};
+                });
+
+            view.render();
+            view.model = bean;
+
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\/1234.*/,
+                [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
+
+            var success = function(){};
+            var failure = function(){};
+
+            view.saveModel(success, failure);
+
+            SugarTest.server.respond();
+            expect(getCustomSaveOptionsStub.calledOnce).toBe(true);
+            checkFileStub.restore();
+            getCustomSaveOptionsStub.restore();
+
+            expect(ajaxSpy.getCall(0).args[0].url).toContain('?param1=true&param2=false&viewed=1');
+            ajaxSpy.restore();
+        });
+
+        it("Should not append options to url if custom options method not overridden", function() {
+            var moduleName = "Contacts",
+                bean,
+                app = SugarTest.app,
+                dm = app.data,
+                ajaxSpy = sinon.spy($, 'ajax');
+
+            bean = dm.createBean(moduleName, { id: "1234" });
+
+            var checkFileStub = sinon.stub(SugarTest.app.file, 'checkFileFieldsAndProcessUpload', function(success) {
+                    success();
+                }),
+                getCustomSaveOptionsStub = sinon.stub(view, 'getCustomSaveOptions');
+
+            view.render();
+            view.model = bean;
+
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\/1234.*/,
+                [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
+
+            var success = function(){};
+            var failure = function(){};
+
+            view.saveModel(success, failure);
+
+            SugarTest.server.respond();
+            expect(getCustomSaveOptionsStub.calledOnce).toBe(true);
+            checkFileStub.restore();
+            getCustomSaveOptionsStub.restore();
+
+            expect(ajaxSpy.getCall(0).args[0].url).toContain('?viewed=1');
+            ajaxSpy.restore();
+        });
+    })
+
     describe('Save', function() {
         it("Should save data when save button is clicked, form data are valid, and no duplicates are found.", function() {
             var flag = false,
@@ -616,6 +690,7 @@ describe("Create View", function() {
                 isValidStub = sinon.stub(view.model, 'isValid', function() {
                     return true;
                 }),
+
                 checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
                     success(SugarTest.app.data.createBeanCollection(moduleName));
                 }),

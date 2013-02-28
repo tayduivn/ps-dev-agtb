@@ -57,7 +57,7 @@ class ForecastManagerWorksheet extends SugarBean
     {
 
         // make sure that the User passed in is actually a manager
-        if(!User::isManager($manager->id)) {
+        if (!User::isManager($manager->id)) {
             return false;
         }
 
@@ -65,27 +65,33 @@ class ForecastManagerWorksheet extends SugarBean
         $db = DBManagerFactory::getInstance();
 
         $sql = 'SELECT name, assigned_user_id, team_id, team_set_id, quota, best_case, best_case_adjusted,
-                likely_case, likely_case_adjusted, worst_case, worst_case_adjusted, currency_id, base_rate, timeperiod_id,
-                user_id FROM ' . $this->table_name . ' WHERE assigned_user_id = "' . $manager->id . '"
+                likely_case, likely_case_adjusted, worst_case, worst_case_adjusted, currency_id, base_rate,
+                timeperiod_id, user_id FROM ' . $this->table_name . ' WHERE assigned_user_id = "' . $manager->id . '"
                 AND timeperiod_id = "' . $db->quote($timeperiod) . '" and draft = 1 and deleted = 0';
 
         $results = $db->query($sql);
 
-        while($row = $db->fetchByAssoc($results)) {
+        while ($row = $db->fetchByAssoc($results)) {
             /* @var $worksheet ForecastManagerWorksheet */
             $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
 
-            $worksheet->retrieve_by_string_fields(array(
-                'user_id' => $row['user_id'],         // user id comes from the user model
-                'assigned_user_id' => $row['assigned_user_id'],     // the assigned user of the row is who the user reports to
-                'timeperiod_id' => $row['timeperiod_id'],      // the current timeperiod
-                'draft' => 0,                                   // we want to update the committed row
-                'deleted' => 0,
-            ));
-            foreach($row as $key => $value) {
+            $worksheet->retrieve_by_string_fields(
+                array(
+                    'user_id' => $row['user_id'],
+                    // user id comes from the user model
+                    'assigned_user_id' => $row['assigned_user_id'],
+                    // the assigned user of the row is who the user reports to
+                    'timeperiod_id' => $row['timeperiod_id'],
+                    // the current timeperiod
+                    'draft' => 0,
+                    // we want to update the committed row
+                    'deleted' => 0,
+                )
+            );
+            foreach ($row as $key => $value) {
                 $worksheet->$key = $value;
             }
-            $worksheet->draft = 0;                  // make sure this is always 0!
+            $worksheet->draft = 0; // make sure this is always 0!
             $worksheet->save();
             unset($worksheet);
         }
@@ -109,34 +115,37 @@ class ForecastManagerWorksheet extends SugarBean
 
         // handle top level managers
         $reports_to = $reportee->reports_to_id;
-        if(empty($reports_to)) {
+        if (empty($reports_to)) {
             $reports_to = $reportee->id;
         }
 
-        if(isset($data['forecast_type'])) {
+        if (isset($data['forecast_type'])) {
             // check forecast type to see if the assigned_user_id should be equal to the $reportee as it's their own
             // rep worksheet
-            if($data['forecast_type'] == "Direct" && User::isManager($reportee->id)) {
-                // this is the manager committing their own data, the $reports_to should be them and not their actual manager
+            if ($data['forecast_type'] == "Direct" && User::isManager($reportee->id)) {
+                // this is the manager committing their own data, the $reports_to should be them
+                // and not their actual manager
                 $reports_to = $reportee->id;
-            } else if($data['forecast_type'] == "Rollup" && $reports_to == $reportee->id) {
-                // if type is rollup and reports_to is equal to the $reportee->id (aka no top level manager),
-                // we don't want to update their draft record so just ignore this,
-                return false;
+            } else {
+                if ($data['forecast_type'] == "Rollup" && $reports_to == $reportee->id) {
+                    // if type is rollup and reports_to is equal to the $reportee->id (aka no top level manager),
+                    // we don't want to update their draft record so just ignore this,
+                    return false;
+                }
             }
         }
 
-        if(isset($data['draft']) && $data['draft'] == '1' && $data['current_user'] == $reportee->id) {
+        if (isset($data['draft']) && $data['draft'] == '1' && $data['current_user'] == $reportee->id) {
             // this data is for the current user, but is not a commit so we need to update their own draft record
             $reports_to = $reportee->id;
         }
 
         $this->retrieve_by_string_fields(
             array(
-                'user_id' => $reportee->id,         // user id comes from the user model
-                'assigned_user_id' => $reports_to,     // the assigned user of the row is who the user reports to
-                'timeperiod_id' => $data['timeperiod_id'],      // the current timeperiod
-                'draft' => 1,                                   // we only ever update the draft row
+                'user_id' => $reportee->id, // user id comes from the user model
+                'assigned_user_id' => $reports_to, // the assigned user of the row is who the user reports to
+                'timeperiod_id' => $data['timeperiod_id'], // the current timeperiod
+                'draft' => 1, // we only ever update the draft row
                 'deleted' => 0,
             )
         );
@@ -155,25 +164,27 @@ class ForecastManagerWorksheet extends SugarBean
         );
 
         // we don't have a row to update, so set the values to the adjusted column
-        if(empty($this->id)) {
+        if (empty($this->id)) {
             // array key equals value on the bean, array value equals field in the data variable
-            if(!isset($data['likely_adjusted'])) {
+            if (!isset($data['likely_adjusted'])) {
                 $copyMap[] = array('likely_case_adjusted' => 'likely_case');
             }
-            if(!isset($data['best_adjusted'])) {
+            if (!isset($data['best_adjusted'])) {
                 $copyMap[] = array('best_case_adjusted' => 'best_case');
             }
-            if(!isset($data['worst_adjusted'])) {
+            if (!isset($data['worst_adjusted'])) {
                 $copyMap[] = array('worst_case_adjusted' => 'worst_case');
             }
 
-            if(!isset($data['quota']) || empty($data['quota'])) {
+            if (!isset($data['quota']) || empty($data['quota'])) {
                 // we need to get the quota if one exists
                 /* @var $quotaSeed Quota */
                 $quotaSeed = BeanFactory::getBean('Quotas');
 
                 // check if we need to get the roll up amount
-                $getRollupQuota = (User::isManager($reportee->id) && isset($data['forecast_type']) && $data['forecast_type'] == 'Rollup');
+                $getRollupQuota = (User::isManager(
+                    $reportee->id
+                ) && isset($data['forecast_type']) && $data['forecast_type'] == 'Rollup');
 
                 $quota = $quotaSeed->getRollupQuota($data['timeperiod_id'], $reportee->id, $getRollupQuota);
 
@@ -194,6 +205,44 @@ class ForecastManagerWorksheet extends SugarBean
 
         $this->save();
 
+        // roll up the draft value for best/likely/worst case values to the committed record if one exists
+        $this->rollupDraftToCommittedWorksheet($this);
+
+        return true;
+    }
+
+    /**
+     * @param ForecastManagerWorksheet $worksheet
+     * @return bool
+     */
+    protected function rollupDraftToCommittedWorksheet(ForecastManagerWorksheet $worksheet)
+    {
+        /* @var $committed_worksheet ForecastManagerWorksheet */
+        $committed_worksheet = BeanFactory::getBean($this->module_name);
+        $committed_worksheet->retrieve_by_string_fields(
+            array(
+                'user_id' => $worksheet->user_id, // user id comes from the user model
+                'assigned_user_id' => $worksheet->assigned_user_id,
+                'timeperiod_id' => $worksheet->timeperiod_id, // the current timeperiod
+                'draft' => 0,
+                'deleted' => 0,
+            )
+        );
+
+        if (empty($committed_worksheet->id)) {
+            return false;
+        }
+
+        $copyMap = array(
+            'likely_case',
+            'best_case',
+            'worst_case',
+        );
+
+        $this->copyValues($copyMap, $worksheet->toArray(), $committed_worksheet);
+
+        $committed_worksheet->save();
+
         return true;
     }
 
@@ -202,20 +251,25 @@ class ForecastManagerWorksheet extends SugarBean
      *
      * @param array $fields
      * @param array $seed
+     * @param ForecastManagerWorksheet $bean        Optional, If not set, it will be set to the current object
      */
-    protected function copyValues($fields, array $seed)
+    protected function copyValues($fields, array $seed, ForecastManagerWorksheet &$bean = null)
     {
+        if (is_null($bean)) {
+            $bean = $this;
+        }
+
         foreach ($fields as $field) {
             $key = $field;
             if (is_array($field)) {
-                // if we have an array it should be a key value pair, where the key is the destination value and the value,
-                // is the seed value
+                // if we have an array it should be a key value pair, where the key is the destination
+                // value and the value, is the seed value
                 $key = array_shift(array_keys($field));
                 $field = array_shift($field);
             }
             // make sure the field is set, as not to cause a notice since a field might get unset() from the $seed class
-            if(isset($seed[$field])) {
-                $this->$key = $seed[$field];
+            if (isset($seed[$field])) {
+                $bean->$key = $seed[$field];
             }
         }
     }
@@ -321,18 +375,21 @@ class ForecastManagerWorksheet extends SugarBean
             ->equals('timeperiod_id', $this->timeperiod_id);
         $beans = $sq->execute();
 
-        if(empty($beans)) {
+        if (empty($beans)) {
             $this->show_history_log = 0;
         } else {
             $bean = $beans[0];
             $committed_date = $this->db->fromConvert($bean["date_modified"], "datetime");
-            $timedate=TimeDate::getInstance();
-            $this->show_history_log = intval(strtotime($committed_date) < strtotime($timedate->to_db($this->date_modified)));
+            $timedate = TimeDate::getInstance();
+            $this->show_history_log = intval(
+                strtotime($committed_date) < strtotime($timedate->to_db($this->date_modified))
+            );
         }
     }
 
     /**
      * Sets Worksheet args so that we save the supporting tables.
+     *
      * @param array $args Arguments passed to save method through PUT
      */
     public function setWorksheetArgs($args)
@@ -467,7 +524,7 @@ class ForecastManagerWorksheet extends SugarBean
     protected function updateManagerWorksheetQuota($manager_id, $timeperiod, $quota)
     {
         // safe guard to make sure user is actually a manager
-        if(!User::isManager($manager_id)) {
+        if (!User::isManager($manager_id)) {
             return false;
         }
 
@@ -476,20 +533,20 @@ class ForecastManagerWorksheet extends SugarBean
 
         $return = $worksheet->retrieve_by_string_fields(
             array(
-                'user_id' => $manager_id,         // user id comes from the user model
-                'assigned_user_id' => $manager_id,     // the assigned user of the row is who the user reports to
-                'timeperiod_id' => $timeperiod,      // the current timeperiod
-                'draft' => 1,                                   // we only ever update the draft row
+                'user_id' => $manager_id, // user id comes from the user model
+                'assigned_user_id' => $manager_id, // the assigned user of the row is who the user reports to
+                'timeperiod_id' => $timeperiod, // the current timeperiod
+                'draft' => 1, // we only ever update the draft row
                 'deleted' => 0,
             )
         );
 
-        if(is_null($return)) {
+        if (is_null($return)) {
             // no record found, just ignore this
             return false;
         }
 
-        if($quota != $worksheet->quota) {
+        if ($quota != $worksheet->quota) {
             $worksheet->quota = $quota;
             $worksheet->save();
         }
