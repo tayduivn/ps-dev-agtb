@@ -610,7 +610,7 @@
             self.context.forecasts.trigger("forecasts:commitButtons:enabled");
         }
 
-        app.forecasts.utils.adjustContentColHeight();
+        this.$el.children("div.dataTables_wrapper").height(this.$el.find("table.dataTable").height());
 
         return this;
     },
