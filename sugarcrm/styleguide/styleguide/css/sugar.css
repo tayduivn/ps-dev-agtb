@@ -6269,6 +6269,34 @@ footer .btn-toolbar.pull-left {
 body.modal-open {
   overflow: hidden;
 }
+div.error-page {
+  background: #000 url('../../assets/img/triangles.png') 0 0 repeat;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+div.dark_cube {
+  background: transparent url('../../assets/img/dark_cube.png') center 16px no-repeat;
+  padding-top: 234px;
+}
+div.dark_cube h1,
+div.dark_cube p,
+div.dark_cube a {
+  color: #fff;
+  font-weight: 200 !important;
+}
+div.dark_cube h1 {
+  font-size: 24px !important;
+}
+div.dark_cube p {
+  font-size: 16px;
+}
+div.dark_cube a {
+  text-decoration: underline;
+}
+div.dark_cube hr.invisible {
+  margin: 8px 0;
+}
 .chartWrap {
   margin: 0;
   padding: 0;
