@@ -1,10 +1,15 @@
 ({
-    extendsFrom: 'ListView',
+    /**
+     * @class View.SelectionListView
+     * @alias SUGAR.App.view.views.SelectionListView
+     * @extends View.FlexListView
+     */
+    extendsFrom: 'FlexListView',
     initialize: function(options) {
         options.meta = options.meta || {};
         options.meta.selection = { type: 'single', label: ' ' };
 
-        app.view.views.ListView.prototype.initialize.call(this, options);
+        app.view.views.FlexListView.prototype.initialize.call(this, options);
 
         this.context.off("change:selection_model", this._selectModel);
         this.context.on("change:selection_model", this._selectModel, this);

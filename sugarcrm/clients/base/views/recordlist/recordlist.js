@@ -25,7 +25,13 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'ListView',
+    /**
+     * @class View.RecordlistView
+     * @alias SUGAR.App.view.views.RecordlistView
+     * @extends View.FlexListView
+     */
+    extendsFrom: 'FlexListView',
+    plugins: ['ellipsis_inline', 'list-column-ellipsis'],
     rowFields: {},
     previousModelStates: {},
 
@@ -39,46 +45,50 @@
         //Grab the record list of fields to display from the base metadata
         var recordListMeta = JSON.parse(JSON.stringify(app.metadata.getView(null, 'recordlist') || {}));
         options.meta = _.extend({}, recordListMeta, JSON.parse(JSON.stringify(options.meta || {})));
-        app.view.views.ListView.prototype.initialize.call(this, options);
+
+        app.view.views.FlexListView.prototype.initialize.call(this, options);
     },
 
-    populatePanelMetadata: function(panel, options) {
-        panel = app.view.views.ListView.prototype.populatePanelMetadata.call(this, panel, options);
-        panel = this.addFavorite(panel, options);
-        return panel;
-    },
+    addActions:function () {
+        app.view.views.FlexListView.prototype.addActions.call(this);
 
-    addFavorite: function(panel, options) {
-        var meta = options.meta;
+        //Add Favorite to left
+        this.addFavorite();
 
-        if(meta.favorite) {
-            panel.fields[0].fields.push({type: 'favorite'});
+        //Add Save & Cancel
+        var firstLeftColumn = this.leftColumns[0];
+        if (firstLeftColumn && _.isArray(firstLeftColumn.fields)) {
+            //Add Cancel button to left
+            firstLeftColumn.fields.push({
+                type:'editablelistbutton',
+                label:'LBL_CANCEL_BUTTON_LABEL',
+                name:'inline-cancel',
+                css_class:'btn-link btn-invisible inline-cancel'
+            });
         }
-        return meta;
+        this.leftColumns[0] = firstLeftColumn;
+        var firstRightColumn = this.rightColumns[0];
+        if (firstRightColumn && _.isArray(firstRightColumn.fields)) {
+            //Add Save button to right
+            firstRightColumn.css_class = 'overflow-visible';
+            firstRightColumn.fields.push({
+                type:'editablelistbutton',
+                label:'LBL_SAVE_BUTTON_LABEL',
+                name:'inline-save',
+                css_class:'btn-primary'
+            });
+        }
+        this.rightColumns[0] = firstRightColumn;
     },
 
-    addRowActions: function(panel, options) {
-        panel = app.view.views.ListView.prototype.addRowActions.call(this, panel, options);
-        panel.fields[0].fields.push({
-            type: 'editablelistbutton',
-            label: 'LBL_CANCEL_BUTTON_LABEL',
-            name: 'inline-cancel',
-            css_class: 'btn-link btn-invisible inline-cancel'
-        });
-
-        var lastCell = _.last(panel.fields);
-        lastCell.cell_css_class = 'overflow-visible';
-        lastCell.fields.push({
-            type: 'editablelistbutton',
-            label: 'LBL_SAVE_BUTTON_LABEL',
-            name: 'inline-save',
-            css_class: 'btn-primary'
-        });
-        return panel;
+    addFavorite: function() {
+        if (this.meta.favorite && this.leftColumns[0] && _.isArray(this.leftColumns[0].fields)) {
+            this.leftColumns[0].fields.push({type:'favorite'});
+        }
     },
 
     _render:function () {
-        app.view.views.ListView.prototype._render.call(this);
+        app.view.views.FlexListView.prototype._render.call(this);
 
         this.rowFields = {};
         _.each(this.fields, function(field) {

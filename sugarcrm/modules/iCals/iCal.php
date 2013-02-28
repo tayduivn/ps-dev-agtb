@@ -36,8 +36,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): Chris Owen <owenc@hubris.net>, Ray Gauss II <rgauss@drscomptech.com>
  ********************************************************************************/
 
-
-require_once('include/utils.php');
 require_once('modules/Calendar/Calendar.php');
 require_once('modules/vCals/vCal.php');
 
@@ -364,7 +362,7 @@ class iCal extends vCal {
                 }
             }
         }
-        
+
         return $str;
     }
 

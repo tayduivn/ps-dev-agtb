@@ -25,10 +25,15 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'ListView',
+    /**
+     * @class EmailTemplates.View.ComposeTemplates
+     * @alias SUGAR.App.view.views.EmailTemplatesComposeTemplatesView
+     * @extends View.FlexListView
+     */
+    extendsFrom: 'FlexListView',
 
     initialize: function(options) {
-        app.view.views.ListView.prototype.initialize.call(this, options);
+        app.view.views.FlexListView.prototype.initialize.call(this, options);
 
         _.each(this.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
@@ -48,11 +53,11 @@
         this.$('a:not(.rowaction)').contents().unwrap();
     },
 
-    addRowActions: function(panel, options) {
-        panel = app.view.views.ListView.prototype.addRowActions.call(this, panel, options);
+    addActions: function() {
+        app.view.views.FlexListView.prototype.addActions.call(this);
 
-        if (options.meta.showPreview === true) {
-            panel.fields = panel.fields.concat({
+        if (this.meta.showPreview === true) {
+            this.rightColumns.push({
                 type: 'rowaction',
                 css_class: 'btn',
                 tooltip: 'LBL_PREVIEW',
@@ -60,7 +65,5 @@
                 icon: 'icon-eye-open'
             });
         }
-
-        return panel;
     }
 })
