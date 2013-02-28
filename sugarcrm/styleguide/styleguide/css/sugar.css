@@ -2034,6 +2034,12 @@ table input {
 table.dataTable th:first-child,
 table.dataTable td:first-child {
   padding-left: 20px;
+  padding-right: 0;
+  width: 30px;
+}
+table.dataTable th:last-child,
+table.dataTable td:last-child {
+  width: 44px;
 }
 table.dataTable th {
   border-color: #e8e8e8;
@@ -2116,16 +2122,6 @@ table.dataTable td .actions ul.dropdown-menu .ext {
   border-left: 1px solid rgba(0,0,0,0.2);
   border-top: 1px solid rgba(0,0,0,0.2);
 }
-table.dataTable td:not(:hover) .dropdown.btn-group .btn {
-  border-color: transparent !important;
-  background: transparent !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  box-shadow: none !important;
-}
-table.dataTable td:not(:hover) .dropdown.btn-group .btn.dropdown-toggle {
-  visibility: hidden;
-}
 table.dataTable td span.longtext {
   display: inline-block;
   width: 100%;
@@ -2150,9 +2146,6 @@ table.dataTable tbody tr.active td .icon-eye-open {
 }
 table.dataTable tbody tr.tr-inline-edit td {
   overflow: visible;
-}
-table.dataTable tbody tr:not(:hover) td .btn-group {
-  visibility: hidden;
 }
 table.dataTable tbody td {
   max-width: 100px;
@@ -6232,6 +6225,34 @@ footer .btn-toolbar.pull-left {
 }
 body.modal-open {
   overflow: hidden;
+}
+div.error-page {
+  background: #000 url('../../assets/img/triangles.png') 0 0 repeat;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+div.dark_cube {
+  background: transparent url('../../assets/img/dark_cube.png') center 16px no-repeat;
+  padding-top: 234px;
+}
+div.dark_cube h1,
+div.dark_cube p,
+div.dark_cube a {
+  color: #fff;
+  font-weight: 200 !important;
+}
+div.dark_cube h1 {
+  font-size: 24px !important;
+}
+div.dark_cube p {
+  font-size: 16px;
+}
+div.dark_cube a {
+  text-decoration: underline;
+}
+div.dark_cube hr.invisible {
+  margin: 8px 0;
 }
 .chartWrap {
   margin: 0;

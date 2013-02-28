@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link href="../css/bootstrap.css" rel="stylesheet">
+  <link href="../css/sugar.css" rel="stylesheet">
+  <link href="../css/prototype.css" rel="stylesheet">
+  <script>
+    var page = {
+        "title": "Leads"
+      , "module": "lead"
+      , "mode": "list"
+      , "description": ""
+      , "convertLead": function () {
+          return function (text, render) {
+            if (render(text) === 'lead') {
+              return '<li id="convert_lead_option"><a class="convert_lead" href="lead/lead-convert.html" data-toggle="proto" data-target="#edit .record" data-mode="edit">Convert Lead</a></li>';
+            }
+          }
+        }
+      , "data_table" : "module-list"
+      , "activity_stream" : "module-activitystream"
+      , "templates": [
+        //generic
+          {"file":"common/head","target":"head","method":"append"}
+        , {"file":"common/navbar","target":"#header","method":"append"}
+
+        , {"file":"common/footer-master","target":"#footer","method":"append"}
+        
+
+
+      ]
+    };
+
+  </script>
+</head>
+
+<body>
+  <div id="sugarcrm">
+    <div id="sidecar">
+      <div id="alerts" class="alert-top"></div>
+      <div id="header"></div>
+
+
+
+
+        <div id="content"><div class="layout_Error"><div class="error-page">
+          <div class="dark_cube tcenter">
+              <h1>404</h1>
+              <hr class="invisible">
+              <p>HTTP: 404 Not Found</p>
+              <p>We're sorry but the resource you asked for cannot be found.</p>
+          </div>
+        </div></div></div>
+
+
+
+
+      <div id="footer"></div>
+    </div>
+  </div>
+  <div id="modal"></div>
+
+  <script src="../js/jquery-1.7.2.min.js"></script>
+  <script src="../js/ICanHaz.min.js"></script>
+  <script src="../js/prototype.js"></script>
+
+  <script src="../../assets/js/bootstrap.min.js"></script>
+  <script src="../../assets/js/bootstrapx-clickover.js"></script>
+  <script src="../../assets/js/bootstrap-datepicker.js"></script>
+  <script src="../../assets/js/jquery.form.js"></script>
+
+  <script src="../js/jquery.datatables.js"></script>
+  <script src="../js/FixedColumns.min.js"></script>
+  <script src="../js/jquery.jeditable.js"></script>
+  <script src="../js/jquery.jstree.js"></script>
+  <script src="../js/jquery.prettynumber.js"></script>
+  <script src="../js/jquery.nouislider.min.js"></script>
+  <script src="../js/select2.min.js"></script>
+
+  <script src="../../assets/js/jquery-ui-1.10.0.custom.min.js"></script>
+
+  <!-- new D3 charting library files -->
+  <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
+  <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
+
+  <script src="../js/editable.js"></script>
+  <script src="../js/wicked.js"></script>
+  <script src="../js/cookie.js"></script>
+
+  <script src="../js/application.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#overview").sortable({
+        items: ".thumbnail.widget",
+        axis: "y",
+      });
+      $('body').on('click', '#example td input[type=checkbox]', function(){
+        var ltbl = $('#example')
+        if (ltbl.hasClass('checkbox_strike')===false) {
+          ltbl.addClass('checkbox_strike')
+        } else {
+          ltbl.find('thead .dropdown-menu li.merge').removeClass('disabled');
+        }
+      });
+      $('body').on('click', '.dropdown-menu li.merge', function(){
+        drawer(true);
+        loadPartials([
+          {"file":"merge/merge-interface-header.html","target":"#edit .headerpane","method":"replace"},
+          {"file":"merge/merge-interface.html","target":"#edit .record","method":"replace"},
+          {"file":"merge/merge-interface-sidebar.html","target":".sidebar-content .side-pane","method":"replace"}
+        ]);
+      });
+      $('body').on('click', '.view_change_log', function(){
+        loadPartials([
+          {"file":"common/drawer-container.html","target":".change_log_container","method":"replace"},
+        ]);
+        $('#pageConfig .dropdown-toggle').trigger('click');
+        return false;
+      });
+    });
+
+  </script>
+</body>
+</html>
