@@ -87,7 +87,6 @@ class VisibilityAction extends AbstractAction{
 							this.legacyExec(context, target, hide);
 					}
 				} catch (e) {
-					debugger;
 					if (console && console.log) console.log(e);
 				}
 			},
