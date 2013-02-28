@@ -217,7 +217,7 @@ $mod_strings = array (
     'LBL_GRAPH_COMMIT_LEGEND'=>'Committed Forecast',
     'LBL_GRAPH_OPPS_LEGEND'=>'Closed Opportunities',
     'LBL_TP_QUOTA'=>'Quota:',
-    'LBL_CHART_FOOTER'=>'Forecast History<br/>Quota vs Forecasted Amount vs Closed Opportunity Value',
+    'LBL_CHART_FOOTER'=>'Forecast History<br>Quota vs Forecasted Amount vs Closed Opportunity Value',
     'LBL_TOTAL_VALUE'=>'Totals:',
     'LBL_COPY_AMOUNT'=>'Total amount',
     'LBL_COPY_WEIGH_AMOUNT'=>'Total weighted amount',
@@ -349,8 +349,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the type of Time Period',
     'LBL_FORECASTS_CONFIG_LEAFPERIOD' => 'Choose the sub period that you want to view your time period over:',
     'LBL_FORECASTS_CONFIG_START_DATE' => 'Choose fiscal year start date',
-    'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose the number of future Time Periods to view in the worksheet. (Note: This number applies to the base Time Period selected. For example, choosing 2 with Yearly Time Period will show 8 future Quarters)',
-    'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose the number of past Time Periods to view in the worksheet. (Note: This number applies to the base Time Period selected. For example, choosing 2 with Monthly Time Period will show 6 past Months)',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose the number of future Time Periods to view in the worksheet.<br><i>This number applies to the base Time Period selected. For example, choosing 2 with Yearly Time Period will show 8 future Quarters</i>',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose the number of past Time Periods to view in the worksheet.<br><i>This number applies to the base Time Period selected. For example, choosing 2 with Monthly Time Period will show 6 past Months</i>',
 
     // ranges config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
