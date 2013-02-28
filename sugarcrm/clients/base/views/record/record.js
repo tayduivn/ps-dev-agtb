@@ -4,7 +4,7 @@
     previousModelState: null,
     extendsFrom: 'EditableView',
     plugins: ['SugarLogic', 'ellipsis_inline'],
-
+    enableHeaderButtons: true,
     enableHeaderPane: true,
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
