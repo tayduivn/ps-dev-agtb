@@ -344,7 +344,7 @@ class FileApi extends SugarApi {
         $field = $args['field'];
 
         // Get the bean
-        $bean = $this->loadBean($api, $arg);
+        $bean = $this->loadBean($api, $args);
 
         if(!$bean->ACLAccess('view')) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
