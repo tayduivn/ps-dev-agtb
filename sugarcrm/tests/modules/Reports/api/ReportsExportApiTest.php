@@ -138,6 +138,36 @@ class ReportsExportApiTest extends RestTestBase
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['Accounts']['module']['list']['aclaccess'] = ACL_ALLOW_NONE;
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['Meetings']['module']['list']['aclaccess'] = ACL_ALLOW_NONE;
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['Users']['module']['list']['aclaccess'] = ACL_ALLOW_NONE;
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Reports']['module']['view']['aclaccess'] = 90;
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Reports']['module']['admin']['aclaccess'] = 90;
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Reports']['module']['access']['aclaccess'] = 90;
+        // The summary report goes through a different file and was having issues
+
+        $summaryReportDef = '{"report_type":"summary","display_columns":[],"summary_columns":[{"name":"count","label":"Count","group_function":"count","table_key":"self"},{"name":"name","label":"Team: Team Name","table_key":"self_link_0","is_group_by":"visible"},{"name":"user_name","label":"Assigned to User: User Name","table_key":"self_link_1","is_group_by":"visible"}],"filters_def":[],"filters_combiner":"AND","group_defs":[{"name":"name","label":"Team Name","table_key":"self_link_0"},{"name":"user_name","label":"User Name","table_key":"self_link_1"}],"full_table_list":{"self":{"parent":"","value":"Meetings","module":"Meetings","label":"Meetings","children":{"self_link_0":"self_link_0","self_link_1":"self_link_1"}},"self_link_0":{"parent":"self","children":[],"value":"team_link","label":"Team","link_def":{"name":"team_link","relationship_name":"meetings_team","bean_is_lhs":"","link_type":"one","label":"Team","table_key":"self_link_0"},"module":"Teams"},"self_link_1":{"parent":"self","children":[],"value":"assigned_user_link","label":"Assigned to User","link_def":{"name":"assigned_user_link","relationship_name":"meetings_assigned_user","bean_is_lhs":"","link_type":"one","label":"Assigned to User","table_key":"self_link_1"},"module":"Users"}},"module":"Meetings","report_name":"Meetings By Team By User","chart_type":"hBarF","chart_description":"","numerical_chart_column":"count","assigned_user_id":"1"}';
+
+        $rep = new SavedReport();
+        $rep->save_report(-1, $GLOBALS['current_user']->id, "Test Account Report", "Accounts","tabular",$summaryReportDef, 0, 1);
+        
+        $GLOBALS['db']->commit();
+
+        $id = $rep->id;
+        // call the Rest
+        $val = $this->reportsExportApi->exportRecord($this->serviceMock, array('record'=> $id, 'export_type' => 'pdf'));
+
+        $this->assertTrue(!empty($restReply), 'no file received');
+    }
+
+    /**
+     * @group rest
+     */
+    public function testNoAccessReportView()
+    {
+
+        $this->setExpectedException(
+          'SugarApiExceptionNotAuthorized'
+        );        
+        // take away access
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Reports']['module']['view']['aclaccess'] = ACL_ALLOW_NONE;
         // The summary report goes through a different file and was having issues
 
         $summaryReportDef = '{"report_type":"summary","display_columns":[],"summary_columns":[{"name":"count","label":"Count","group_function":"count","table_key":"self"},{"name":"name","label":"Team: Team Name","table_key":"self_link_0","is_group_by":"visible"},{"name":"user_name","label":"Assigned to User: User Name","table_key":"self_link_1","is_group_by":"visible"}],"filters_def":[],"filters_combiner":"AND","group_defs":[{"name":"name","label":"Team Name","table_key":"self_link_0"},{"name":"user_name","label":"User Name","table_key":"self_link_1"}],"full_table_list":{"self":{"parent":"","value":"Meetings","module":"Meetings","label":"Meetings","children":{"self_link_0":"self_link_0","self_link_1":"self_link_1"}},"self_link_0":{"parent":"self","children":[],"value":"team_link","label":"Team","link_def":{"name":"team_link","relationship_name":"meetings_team","bean_is_lhs":"","link_type":"one","label":"Team","table_key":"self_link_0"},"module":"Teams"},"self_link_1":{"parent":"self","children":[],"value":"assigned_user_link","label":"Assigned to User","link_def":{"name":"assigned_user_link","relationship_name":"meetings_assigned_user","bean_is_lhs":"","link_type":"one","label":"Assigned to User","table_key":"self_link_1"},"module":"Users"}},"module":"Meetings","report_name":"Meetings By Team By User","chart_type":"hBarF","chart_description":"","numerical_chart_column":"count","assigned_user_id":"1"}';
