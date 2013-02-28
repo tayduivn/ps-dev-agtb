@@ -187,12 +187,11 @@ class CalendarDisplay {
 	/**
 	 * load settings popup template
 	 */
-	protected function load_settings_template(&$ss){
-
+	protected function load_settings_template($ss)
+	{
 		list($d_start_hour,$d_start_min) =  explode(":",$this->cal->day_start_time);
 		list($d_end_hour,$d_end_min) =  explode(":",$this->cal->day_end_time);
 
-		require_once("include/utils.php");
 		global $app_strings,$app_list_strings,$beanList;
 		global $timedate;
 

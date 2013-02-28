@@ -4,17 +4,9 @@
         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
             <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar"><b class="caret"></b></a>
         <ul class="dropdown-menu">
-            <li class="profileactions-profile"><a href="#profile">{{str "LBL_PROFILE"}}</a></li>
-            <li class="profileactions-password"><a href="#">{{str "LBL_LOGIN_PASSWORD"}}</a></li>
-            <li class="profileactions-advanced"><a href="#">{{str "LBL_ADVANCED"}}</a></li>
-            {{#if extAccts}}
-            <li class="profileactions-eapm"><a href="#">{{extAccts}}</a></li>
-            {{/if}}
             {{#if showAdmin}}
-            <li class="divider"></li>
             <li class="administration"><a href="#Administration">{{str "LBL_ADMIN"}}</a></li>
             {{/if}}
-            <li class="divider"></li>
             <li class="profileactions-about"><a href="#bwc/index.php?module=Home&action=About">{{str "LNK_ABOUT"}}</a></li>
             <li class="profileactions-logout"><a href="#logout/?clear=1">{{str "LBL_LOGOUT"}}</a></li>
         </ul>

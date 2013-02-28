@@ -41,8 +41,10 @@
     startOverview: function() {
         // TODO: Change this when we have modal layout in footer.php
         this.$(".system-tour").modal("hide");
-        this.render();
-        this.$(".system-tour-overview").modal("show");
+        if(!this.disposed){
+            this.render();
+            this.$(".system-tour-overview").modal("show");
+        }
     },
     startTour: function(e) {
         var data = this.$(e.currentTarget).data();

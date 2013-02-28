@@ -25,6 +25,11 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    /**
+     * @class EmailTemplates.View.ComposeTemplates
+     * @alias SUGAR.App.view.views.EmailTemplatesComposeTemplatesView
+     * @extends View.SelectionListView
+     */
     extendsFrom: "SelectionListView",
 
     _beanCollectionSync: null,

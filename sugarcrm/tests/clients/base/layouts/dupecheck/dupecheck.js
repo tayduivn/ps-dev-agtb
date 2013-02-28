@@ -5,7 +5,10 @@ describe("Base.Layout.DupeCheck", function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadHandlebarsTemplate("dupecheck-header", "view", "base", "dupecheck-header");
+        SugarTest.loadComponent('base', 'view', 'list');
+        SugarTest.loadComponent('base', 'view', 'flex-list');
+        SugarTest.loadComponent('base', 'view', 'recordlist');
+        SugarTest.loadComponent("base", "view", "dupecheck-list");
         SugarTest.loadComponent("base", "view", "dupecheck-header");
         SugarTest.testMetadata.addViewDefinition('list', {
             "panels":[
@@ -26,10 +29,6 @@ describe("Base.Layout.DupeCheck", function() {
                 }
             ]
         }, moduleName);
-        SugarTest.loadHandlebarsTemplate("list", "view", "base", "list");
-        SugarTest.loadComponent('base', 'view', 'list');
-        SugarTest.loadComponent('base', 'view', 'recordlist');
-        SugarTest.loadComponent("base", "view", "dupecheck-list");
         SugarTest.testMetadata.set();
         defaultListView = "dupecheck-list";
         defaultMeta = {
