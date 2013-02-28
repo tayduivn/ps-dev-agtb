@@ -4839,7 +4839,6 @@ input[type=radio] {
   width: 100%;
 }
 .image_input input {
-  position: absolute;
   top: 0;
   right: 0;
   float: right;
