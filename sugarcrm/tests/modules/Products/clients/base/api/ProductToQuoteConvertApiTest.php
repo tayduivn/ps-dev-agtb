@@ -57,8 +57,7 @@ class ProductToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_TestCase
     public function testCreateQuoteFromProductApi()
     {
         /* @var $restService RestService */
-        $restService = $this->getMock('ServiceBase');
-        $restService->user = $GLOBALS['current_user'];
+        $restService = SugarTestRestUtilities::getRestServiceMock();
 
         $api = new ProductToQuoteConvertApi();
         $return = $api->convertToQuote($restService, array('module' => 'Products', 'record' => $this->product->id));

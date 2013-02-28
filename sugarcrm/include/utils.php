@@ -1044,22 +1044,22 @@ function _mergeCustomAppListStrings($file , $appListStrings)
 {
 	// Bug 60008 + Bugs 60607, 60608, 60609, 60612 + 60393
     // There is a chance that some app_list_strings were in fact in $GLOBALS['app_list_strings'].
-    // In case of that, the customizations end up being blown away because they 
+    // In case of that, the customizations end up being blown away because they
     // are written to the global app_list_strings, not the function scope $app_list_strings.
     // This fixes that. rgonzalez, jbartek
     global $app_list_strings;
     $app_list_strings_original = $appListStrings;
-    
+
     // FG - bug 45525 - $exemptDropdown array is defined (once) here, not inside the foreach
     //                  This way, language file can add items to save specific standard codelist from being overwritten
     $exemptDropdowns = array();
-    
+
     // Include the language file. With $app_list_strings globalized above it should
     // make no difference if the content of the file is $app_list_strings or
     // $GLOBALS['app_list_strings'] or a mixture of the two, even if indexes overlap.
     // Accordingly, the latest additions to the file will trump older additions.
     include($file);
-    
+
     if(empty($app_list_strings) || !is_array($app_list_strings)){
         return $app_list_strings_original;
     }
@@ -1888,7 +1888,7 @@ function parse_calendardate($local_format) {
 function translate($string, $mod='', $selectedValue=''){
     // Bug 60664
     global $mod_strings;
-    
+
 	if(!empty($mod)){
 		global $current_language;
 		//Bug 31275
@@ -1896,7 +1896,7 @@ function translate($string, $mod='', $selectedValue=''){
 		    $current_language = ($_REQUEST['login_language'] == $current_language)? $current_language : $_REQUEST['login_language'];
 		}
 		$lang = return_module_language($current_language, $mod);
-        
+
         // Bug 60664 - If module language isn't found, just use mod_strings
         if (empty($lang)) {
             $lang = $mod_strings;
@@ -3162,7 +3162,6 @@ function sugar_root_dir()
     return realpath(dirname(__FILE__) . '/..');
 }
 
-
 function sugar_cleanup($exit = false) {
 	static $called = false;
 	if($called)return;
@@ -3226,9 +3225,6 @@ function sugar_cleanup($exit = false) {
 		}
 	}
 }
-
-register_shutdown_function('sugar_cleanup');
-
 
 /*
  check_logic_hook - checks to see if your custom logic is in the logic file
@@ -5308,7 +5304,7 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
 
 /**
  * Gets the list of "*type_display*".
- * 
+ *
  * @return array
  */
 function getTypeDisplayList()
@@ -5318,7 +5314,7 @@ function getTypeDisplayList()
 
 /**
  * Breaks given string into substring according
- * to 'db_concat_fields' from field definition 
+ * to 'db_concat_fields' from field definition
  * and assigns values to corresponding properties
  * of bean.
  *

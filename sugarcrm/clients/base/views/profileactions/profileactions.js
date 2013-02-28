@@ -30,5 +30,9 @@
         }) : app.config.siteUrl + "/styleguide/assets/img/profile.png";
 
         this.render();
+    },
+    _dispose: function() {
+        if (app.user) app.user.off(null, null, this);
+        app.view.Component.prototype._dispose.call(this);
     }
 })

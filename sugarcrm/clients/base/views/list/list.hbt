@@ -29,29 +29,25 @@
 {{#each meta.panels}}
 <table class="table table-striped dataTable">
     <thead>
-    <tr role="row">
+    <tr>
         {{#each fields}}
-        <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.columnName name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
-            role="columnheader" data-fieldname="{{name}}" data-orderby="{{orderBy}}">
-            {{field ../../this null "list-header"}}
-        </th>
+            <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.columnName name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
+                 data-fieldname="{{name}}" data-orderby="{{orderBy}}">
+                {{str label ../../module}}
+            </th>
         {{/each}}
-    <tr class="alert alert-warning hide">
-        <td colspan="{{fields.length}}" class="container"></td>
-    </tr>
     </tr>
     </thead>
-    <tbody role="alert" aria-live="polite" aria-relevant="all">
+    <tbody>
     {{#each ../collection.models}}
     <tr name="{{module}}_{{attributes.id}}" class="single">
         {{#each ../fields}}
-        <td>
-            <div class="controls span12{{#if cell_css_class}} {{cell_css_class}}{{/if}}">{{field ../../../this ../this ../../../this.viewName}}</div>
-        </td>
+            <td>
+              {{field ../../../this ../this ../../../this.viewName}}
+            </td>
         {{/each}}
     </tr>
     {{/each}}
     </tbody>
 </table>
 {{/each}}
-

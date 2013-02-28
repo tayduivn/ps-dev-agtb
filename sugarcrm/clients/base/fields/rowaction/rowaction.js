@@ -33,8 +33,11 @@
         app.view.fields.ButtonField.prototype.initialize.call(this, options);
     },
     rowActionSelect: function(evt) {
-        if ($(evt.currentTarget).data('event')) {
-            this.view.context.trigger($(evt.currentTarget).data('event'), this.model);
+        // make sure that we are not disabled first
+        if(this.preventClick(evt) !== false) {
+            if ($(evt.currentTarget).data('event')) {
+                this.view.context.trigger($(evt.currentTarget).data('event'), this.model);
+            }
         }
     }
 })
