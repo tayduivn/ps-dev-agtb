@@ -1880,6 +1880,9 @@ table th,
 table td {
   position: relative;
 }
+table th:last-child {
+  border-right: 0;
+}
 table th {
   white-space: nowrap;
   line-height: 26px !important;
@@ -4974,6 +4977,26 @@ input[type="color"].local-error,
 .uneditable-input.local-error {
   border-color: #b60000;
   color: #b60000;
+}
+.record-cell [class*='address_'] {
+  display: inline-block;
+}
+.record-cell .address_street,
+.record-cell .address_country,
+.record-cell .address_misc_block {
+  width: 100%;
+  clear: both;
+}
+.record-cell .address_city:after,
+.record-cell .address_state:after {
+  content: ",";
+  margin-left: -2px;
+}
+.record-cell .address_city> div.ellipsis_inline,
+.record-cell .address_state> div.ellipsis_inline,
+.record-cell .address_zip> div.ellipsis_inline {
+  display: inline !important;
+  overflow: visible;
 }
 .add-on.local {
   line-height: 10px;
