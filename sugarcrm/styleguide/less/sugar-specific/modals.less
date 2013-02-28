@@ -73,17 +73,11 @@
 .modal-navigation {
   position: absolute;
   top: 0;
-  padding: 0;
   width: 100%;
   background-color: @grayLighter;
-  border-bottom: 1px solid @grayLight;
   .nav-tabs {
-    margin-top: 8px;
-    margin-bottom: 0px;
-    border-bottom: 0px none @trasparent;
-  }
-  .nav-tabs > li:first-child {
-    margin-left: 10px;
+    margin: 8px 0 0;
+    padding-left: 10px;
   }
   .breadcrumb.two {
     padding: 2px 0 3px;
@@ -105,31 +99,6 @@
         width: 100%;
         .box-sizing(border-box);
         line-height: 18px;
-      }
-      &.highlight {
-        a {
-          background-color: @blueLight;
-        }
-        a::after {
-          border-color: @transparent @transparent @transparent @blueLight;
-        }
-        a::before{
-          border-color: @blueLight @blueLight @blueLight @transparent;
-        }
-      }
-      &.disabled {
-        a {
-          cursor: default;
-        }
-        a:hover {
-          background: @grayLighter !important;
-        }
-        a:hover::before {
-          border-color: @grayLighter @grayLighter @grayLighter @transparent;
-        }
-        a:hover::after {
-          border-left-color: @grayLighter;
-        }
       }
     }
   }
