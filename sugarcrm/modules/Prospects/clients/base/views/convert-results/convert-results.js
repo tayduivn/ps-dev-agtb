@@ -1,5 +1,5 @@
 ({
-    extendsFrom: 'ConvertResults',
+    extendsFrom: 'ConvertResultsView',
 
     /**
      * Fetches the data for the leads model

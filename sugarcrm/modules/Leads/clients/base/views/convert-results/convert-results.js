@@ -1,5 +1,5 @@
 ({
-    extendsFrom: 'ConvertResults',
+    extendsFrom: 'ConvertResultsView',
 
     /**
      * Build a collection of associated models and re-render the view
