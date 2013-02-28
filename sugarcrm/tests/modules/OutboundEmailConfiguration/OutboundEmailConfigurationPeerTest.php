@@ -45,7 +45,10 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
         OutboundEmailConfigurationTestHelper::backupExistingConfigurations();
 
-        $config             = OutboundEmailConfigurationTestHelper::createOutboundEmailConfig();
+        $config             = OutboundEmailConfigurationTestHelper::createOutboundEmailConfig(
+            $name = "Name", $GLOBALS["current_user"]->id,  $type = "system-override",
+            $fromEmail = "system@unit.net", $fromName = "From Name"
+        );
         $this->systemConfig = OutboundEmailConfigurationTestHelper::createOutboundEmail($config);
     }
 
@@ -72,7 +75,6 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         );
 
         $configs = OutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
-
         $actualEmailConfigurations = array();
 
         if (is_array($configs)) {

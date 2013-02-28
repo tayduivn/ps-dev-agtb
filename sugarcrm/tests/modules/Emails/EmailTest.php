@@ -35,7 +35,8 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    global $current_user;
 		
-	    $current_user = SugarTestUserUtilities::createAnonymousUser();
+	    $current_user = BeanFactory::getBean("Users");
+        $current_user->getSystemUser();
 	    $this->email = new Email();
 	    $this->email->email2init();
 	}
@@ -43,7 +44,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 	public function tearDown()
 	{
 		unset($this->email);
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+		// SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		unset($GLOBALS['current_user']);
 	}
 	

@@ -190,16 +190,27 @@ class OutboundEmailConfigurationPeer
             }
         }
 
-        $oe     = new OutboundEmail();
-        $system = $oe->getSystemMailerSettings();
-
-        //Substitute in the users system override if its available.
-        $userSystemOverride = $oe->getUsersMailerForSystemOverride($user->id);
-        $personal           = false;
-
-        if ($userSystemOverride != null) {
-            $system   = $userSystemOverride;
+        $oe = new OutboundEmail();
+        if ($oe->isAllowUserAccessToSystemDefaultOutbound()) {
+            $system = $oe->getSystemMailerSettings();
+            $personal = false;
+        } else {
+            $system = $oe->getUsersMailerForSystemOverride($user->id);
             $personal = true;
+            if (empty($system)) {
+                $oe = $oe->createUserSystemOverrideAccount($user->id);
+                $system = $oe->getUsersMailerForSystemOverride($user->id);
+            }
+            // Note: We do not Require the User System-Override to be populated if the User is the System Administrator
+            // The System Administrator is able to use the System Mail Configuration if it has not been overridden
+            if ((empty($system->mail_smtpserver))) {
+                $systemUser = BeanFactory::getBean("Users");
+                $systemUser->getSystemUser();
+                if ($user->id == $systemUser->id) {
+                    $personal = false;
+                    $system = $oe->getSystemMailerSettings();
+                }
+            }
         }
 
         if (empty($system->id)) {

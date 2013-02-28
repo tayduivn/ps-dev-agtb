@@ -162,6 +162,10 @@ class MailApiTest extends RestTestBase {
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+
+        $sql = "DELETE FROM outbound_email WHERE type='system-override' AND  user_id='" .$GLOBALS['current_user']->id. "'";
+        $GLOBALS['db']->query($sql);
+
         unset($GLOBALS['current_user']);
 
         if (isset($this->email_id)) {
@@ -621,7 +625,7 @@ class MailApiTest extends RestTestBase {
             $GLOBALS['db']->query($sql);
         }
 
-        $q = "SELECT id FROM outbound_email WHERE type = 'system'";
+        $q = "SELECT id FROM outbound_email WHERE user_id == '" .$this->current_user->id. "'";
         $r = $GLOBALS['db']->query($q);
         $a = $GLOBALS['db']->fetchByAssoc($r);
 
@@ -629,26 +633,17 @@ class MailApiTest extends RestTestBase {
         if(empty($a)) {
             $oe->id = '';
             $oe->name = 'system';
-            $oe->type = 'system';
-            $oe->user_id = '1';
+            $oe->type = 'system-override';
+            $oe->user_id = $this->current_user->id;
             $oe->mail_sendtype = 'SMTP';
             $oe->mail_smtptype = 'other';
             $oe->mail_smtpserver = 'localhost';
             $oe->mail_smtpport = 25;
             $oe->mail_smtpuser = '';
             $oe->mail_smtppass = '';
-            $oe->mail_smtpauth_req = 1;
+            $oe->mail_smtpauth_req = 0;
             $oe->mail_smtpssl = 0;
             $oe->save();
-        }
-        else {
-            $oe->retrieve($a['id']);
-            if(empty($oe->mail_smtpserver)) {
-                $oe->mail_sendtype = 'SMTP';
-                $oe->mail_smtptype = 'other';
-                $oe->mail_smtpserver = 'localhost';
-                $oe->save();
-            }
         }
     }
 }
