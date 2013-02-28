@@ -7345,9 +7345,6 @@ body.full-screen .nv-chart {
 .preview-data {
   margin: 8px;
 }
-.preview-data .row-fluid span:first-child {
-  padding: 8px;
-}
 .preview-data .row-fluid label.original {
   margin-bottom: 0px;
   display: inline-block;
