@@ -44,48 +44,82 @@ $viewdefs['Leads']['base']['view']['record'] = array(
             'primary' => true,
             'buttons' => array(
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:edit_button:click',
+                    'type'    => 'rowaction',
+                    'event'   => 'button:edit_button:click',
                     'name'    => 'edit_button',
                     'label'   => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
                     'showOn'  => 'view',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:save_button:click',
+                    'type'    => 'rowaction',
+                    'event'   => 'button:save_button:click',
                     'name'    => 'save_button',
                     'label'   => 'LBL_SAVE_BUTTON_LABEL',
                     'primary' => true,
                     'showOn'  => 'edit',
+                    'value'   => 'edit',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:delete_button:click',
-                    'name'  => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'showOn'  => 'view',
+                    'type'   => 'rowaction',
+                    'event'  => 'button:delete_button:click',
+                    'name'   => 'delete_button',
+                    'label'  => 'LBL_DELETE_BUTTON_LABEL',
+                    'showOn' => 'view',
+                    'value'  => 'delete',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:duplicate_button:click',
+                    'type'   => 'rowaction',
+                    'event'  => 'button:duplicate_button:click',
                     'name'   => 'duplicate_button',
                     'label'  => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'showOn' => 'view',
+                    'value'  => 'create',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:find_duplicates_button:click',
+                    'type'   => 'rowaction',
+                    'event'  => 'button:find_duplicates_button:click',
                     'name'   => 'find_duplicates_button',
                     'label'  => 'LBL_DUP_MERGE',
                     'showOn' => 'view',
+                    'value'  => 'list',
+                ),
+                array(
+                    'type'   => 'rowaction',
+                    'event'  => 'button:lead_convert_button:click',
+                    'name'   => 'lead_convert_button',
+                    'label'  => 'LBL_CONVERT_BUTTON_LABEL',
+                    'showOn' => 'view',
+                    'value'  => 'edit',
+                ),
+                array(
+                    'type'  => 'rowaction',
+                    'event' => 'button:create_related_button:click',
+                    'name'  => 'create_related_button',
+                    'label' => 'LBL_CREATE_RELATED_RECORD',
+                    'value' => 'create',
+                ),
+                array(
+                    'type'  => 'rowaction',
+                    'event' => 'button:link_related_button:click',
+                    'name'  => 'link_related_button',
+                    'label' => 'LBL_ASSOC_RELATED_RECORD',
+                    'value' => 'edit',
+                ),
+                array(
+                    'type'   => 'rowaction',
+                    'event'  => 'button:manage_subscriptions:click',
+                    'name'   => 'convert_button',
+                    'label'  => 'LBL_MANAGE_SUBSCRIPTIONS',
+                    'showOn' => 'view',
+                    'value'  => 'edit'
                 ),
                 array(
                     'type' => 'rowaction',
-                    'event' => 'button:lead_convert_button:click',
-                    'name'    => 'lead_convert_button',
-                    'label'   => 'LBL_CONVERT_BUTTON_LABEL',
-                    'showOn' => 'view'
+                    'event' => 'button:change_log_button:click',
+                    'name' => 'change_log_button',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                    'value' => 'view'
                 ),
             ),
         ),
@@ -100,10 +134,10 @@ $viewdefs['Leads']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
-                    'name' => 'picture',
-                    'type' => 'image',
-                    'width' => 42,
-                    'height' => 42,
+                    'name'          => 'picture',
+                    'type'          => 'image',
+                    'width'         => 42,
+                    'height'        => 42,
                     'dismiss_label' => true,
                 ),
                 array(
@@ -121,12 +155,19 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     ),
                 ),
                 array(
-                    'type' => 'badge',
-                    'readonly'=> true,
-                    'related_fields' => array('converted', 'account_id', 'contact_id', 'contact_name', 'opportunity_id', 'opportunity_name'),
+                    'type'           => 'badge',
+                    'readonly'       => true,
+                    'related_fields' => array(
+                        'converted',
+                        'account_id',
+                        'contact_id',
+                        'contact_name',
+                        'opportunity_id',
+                        'opportunity_name'
+                    ),
                 ),
                 array(
-                    'type'   => 'favorite',
+                    'type' => 'favorite',
                 ),
             ),
         ),
@@ -236,16 +277,16 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 ),
                 'assigned_user_name',
                 array(
-                    'name' => 'date_modified_by',
+                    'name'     => 'date_modified_by',
                     'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_MODIFIED',
-                    'fields' => array(
+                    'type'     => 'fieldset',
+                    'label'    => 'LBL_DATE_MODIFIED',
+                    'fields'   => array(
                         array(
                             'name' => 'date_modified',
                         ),
                         array(
-                            'type' => 'label',
+                            'type'          => 'label',
                             'default_value' => 'LBL_BY'
                         ),
                         array(
@@ -260,16 +301,16 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
-                    'name' => 'date_entered_by',
+                    'name'     => 'date_entered_by',
                     'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'fields' => array(
+                    'type'     => 'fieldset',
+                    'label'    => 'LBL_DATE_ENTERED',
+                    'fields'   => array(
                         array(
                             'name' => 'date_entered',
                         ),
                         array(
-                            'type' => 'label',
+                            'type'          => 'label',
                             'default_value' => 'LBL_BY'
                         ),
                         array(
