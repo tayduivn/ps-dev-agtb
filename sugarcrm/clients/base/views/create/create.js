@@ -265,7 +265,7 @@
      * Override to return set of custom options
      */
     getCustomSaveOptions: function(){
-
+        return {};
     },
 
     /**
@@ -292,7 +292,7 @@
             viewed: true
         };
 
-        options = _.extend({}, options, self.getCustomSaveOptions() || {});
+        options = _.extend({}, options, self.getCustomSaveOptions());
         self.model.save(null, options);
     },
 

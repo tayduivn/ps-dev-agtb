@@ -182,17 +182,10 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 ),
                 'phone_other',
                 array(
-<<<<<<< HEAD
                     'name'   => 'date_modified_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type'   => 'fieldset',
                     'label'  => 'LBL_DATE_MODIFIED',
-=======
-                    'name' => 'date_modified_by',
-                    'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_MODIFIED',
->>>>>>> 99b4e979e4e4f9222c7ae4b0b89f108fe50d0e36
                     'fields' => array(
                         array(
                             'name' => 'date_modified',
@@ -208,17 +201,10 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 ),
                 'assigned_user_name',
                 array(
-<<<<<<< HEAD
                     'name'   => 'date_entered_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type'   => 'fieldset',
                     'label'  => 'LBL_DATE_ENTERED',
-=======
-                    'name' => 'date_entered_by',
-                    'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_ENTERED',
->>>>>>> 99b4e979e4e4f9222c7ae4b0b89f108fe50d0e36
                     'fields' => array(
                         array(
                             'name' => 'date_entered',
