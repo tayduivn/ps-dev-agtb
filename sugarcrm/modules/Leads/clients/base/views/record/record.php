@@ -240,6 +240,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'name'   => 'fieldset_altaddress',
                     'type'   => 'fieldset',
                     'label'  => 'Other Address',
+                    'span'   => 12,
                     'fields' => array(
                         array(
                             'name'        => 'alt_address_street',
