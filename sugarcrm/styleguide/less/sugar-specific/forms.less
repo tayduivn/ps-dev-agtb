@@ -696,6 +696,32 @@ input[type="color"],
   margin-bottom: 0;
 }
 
+/* Special treatment for the address fields */
+.record-cell {
+  [class*='address_'] {
+    display: inline-block;
+  }
+  .address_street,
+  .address_country,
+  .address_misc_block /* miscelaneous class for more complex/international address formats */ {
+    width: 100%;
+    clear: both;
+  }
+  .address_city:after,
+  .address_state:after {
+    content: ",";
+    margin-left: -2px;
+  }
+  .address_city,
+  .address_state,
+  .address_zip {
+    &> div.ellipsis_inline {
+      display: inline !important;
+      overflow: visible;
+    }
+  }
+}
+
 .add-on.local {
   line-height: 10px;
   display: inline-block;
@@ -764,7 +790,3 @@ input[type="color"],
     display:none !important;
   }
 }
-
-
-
-
