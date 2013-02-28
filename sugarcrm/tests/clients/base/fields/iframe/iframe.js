@@ -3,7 +3,7 @@ describe("iframe", function() {
 
     beforeEach(function() {
         var def = {
-            default:"http://www.sugarcrm.com/{ONE}"
+            'default': "http://www.sugarcrm.com/{ONE}"
         };
         app = SugarTest.app;
         field = SugarTest.createField("base","iframe", "iframe", "detail", def);

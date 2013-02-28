@@ -27,11 +27,11 @@
 ({
     extendsFrom: 'RecordView',
 
-    initialize: function(options) {
-        this.events = _.extend({}, this.events, {'click [name=lead_convert_button]': 'initiateDrawer'});
-        app.view.views.RecordView.prototype.initialize.call(this, options);
+    delegateButtonEvents: function() {
+        this.context.on('button:lead_convert_button:click', this.initiateDrawer, this);
+        this.context.on('button:manage_subscriptions:click', this.manageSubscriptionsClicked, this);
+        app.view.views.RecordView.prototype.delegateButtonEvents.call(this);
     },
-
     /**
      * Set the save button to show if the model has been edited.
      */
@@ -52,6 +52,9 @@
         }
     },
 
+    /**
+     * Event to trigger the convert lead process for the lead
+     */
     initiateDrawer: function() {
         var model = app.data.createBean(this.model.module);
         model.copy(this.model);
@@ -65,5 +68,20 @@
                 leadsModel: model
             }
         });
+    },
+
+    /**
+     * Event to trigger the Manage Subscriptions for the lead
+     */
+    manageSubscriptionsClicked: function() {
+        var params = [
+            {'name': 'return_module', value: this.module},
+            {'name': 'return_id', value: this.model.id},
+            {'name': 'action', value: 'Subscriptions'},
+            {'name': 'module', value: 'Campaigns'}
+        ];
+
+        var route = '#bwc/index.php?' + $.param(params);
+        app.router.navigate(route, {trigger: true});
     }
 })
