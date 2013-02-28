@@ -31,10 +31,12 @@
         app.view.Field.prototype._render.call(this);
 
         var optionsKeys = [];
-        if(_.isString(this.def.options)) {
-            optionsKeys = _.keys(app.lang.getAppListStrings(this.def.options));
-        } else if(_.isObject(this.def.options)) {
-            optionsKeys = _.keys(this.def.options);
+        var options = this.items = this.items || this.def.options;
+
+        if(_.isString(options)) {
+            optionsKeys = _.keys(app.lang.getAppListStrings(options));
+        } else if(_.isObject(options)) {
+            optionsKeys = _.keys(options);
         }
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.

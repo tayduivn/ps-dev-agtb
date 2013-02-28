@@ -712,9 +712,9 @@ AH.getRelatedField = function(link, ftype, field, view){
     var linkDef = SUGAR.forms.AssignmentHandler.getLink(link);
     var currId;
     if (linkDef.id_name)
-     {
-         currId = SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name, false, true);
-     }
+    {
+        currId = SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name, false, true);
+    }
 
     if (typeof(linkDef[ftype]) == "undefined"
         || (field && typeof(linkDef[ftype][field]) == "undefined")
@@ -722,7 +722,7 @@ AH.getRelatedField = function(link, ftype, field, view){
         // make sure that at least one of old and new value of the relate field is not empty.
         // otherwise the cache considered invalid in case when both values are empty but have
         // different types (null, false, undefined or empty string)
-        || (ftype == "related" && (linkDef.relId || currId) && linkDef.relId != currId)
+        || (ftype == "related" && (linkDef.relId || !_.isUndefined(currId)) && linkDef.relId != currId)
     ){
         var params = {link: link, type: ftype};
         if (field)
@@ -853,6 +853,34 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
     addListener : function(varname, callback, scope)
     {
     	AH.addListener(varname, callback, scope, this.formName);
+    },
+    getRelatedField : function(link, ftype, field){
+        //For 'related' fields, the ID of the related record can be changed on the form so we need to look for it
+        //before we call down to the server
+        if (ftype == 'related')
+        {
+            //We just have a field name, assume its the name of a link field
+            //and the parent module is the current module.
+            //Try and get the current module and record ID
+            var module = AH.getValue("module");
+            var record = AH.getValue("record");
+            var linkDef = AH.getLink(link);
+            var linkId = false, url = "index.php?";
+
+            if (linkDef && linkDef.id_name && linkDef.module) {
+                var idField = document.getElementById(linkDef.id_name);
+                if (idField && idField.tagName == "INPUT")
+                {
+                    linkId = AH.getValue(linkDef.id_name, false, true);
+                    module = linkDef.module;
+                }
+                //Clear the cache for this link if the id has changed
+                if (linkDef.relId && linkDef.relId != linkId)
+                    AH.clearRelatedFieldCache(link);
+            }
+        }
+
+        return AH.getRelatedField(link, ftype, field);
     }
 });
 

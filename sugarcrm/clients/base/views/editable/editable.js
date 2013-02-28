@@ -11,6 +11,11 @@
             if(field.action == viewName){
                 return; //don't toggle if it's the same
             }
+            var meta = this.getFieldMeta(field.name);
+            if (meta && isEdit && meta.readonly) {
+                return;
+            }
+
             _.defer(function(field){
                 field.setMode(viewName);
             }, field);

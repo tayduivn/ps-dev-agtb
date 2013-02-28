@@ -111,10 +111,11 @@ function recursiveParse($dir, $silent = false)
 /**
  * Construct a new $entry.
  */
-SUGAR.$entry = function(params) {
+SUGAR.expressions.$entry = function(params, context) {
+	this.context = context;
 	this.init(params);
 }
-SUGAR.util.extend(SUGAR.$entry, SUGAR.$parent_class, {
+SUGAR.util.extend(SUGAR.expressions.$entry, SUGAR.expressions.$parent_class, {
     className: "$entry",
 	evaluate: function() {
 $js_code
@@ -237,7 +238,7 @@ EOQ;
 if ( isset($FUNCTION_MAP) && is_array($FUNCTION_MAP) ) {
     foreach ( $FUNCTION_MAP as $key=>$value ) {
         $entry = $FUNCTION_MAP[$key]['class'];
-        $cache_contents .= "\t'$key'\t:\tSUGAR.$entry,";
+        $cache_contents .= "\t'$key'\t:\tSUGAR.expressions.$entry,";
     }
 }
 $cache_contents = substr($cache_contents, 0, -1);
