@@ -28,13 +28,13 @@
 }}
 <div class="modal-content hide">
     <!--TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).-->
-    <p><em>{{str "LBL_FORECASTS_CONFIG_TIMEPERIOD_SETUP_NOTICE" "Forecasts"}}</em></p>
+    <p><i>{{str "LBL_FORECASTS_CONFIG_TIMEPERIOD_SETUP_NOTICE" "Forecasts"}}</i></p>
 {{#each meta.panels}}
     <p>{{str "LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC" "Forecasts"}}</p>
     <ol>
     {{#each fields}}
         <li>
-            <p>{{str label "Forecasts"}}</p>
+            <p>{{{str label "Forecasts"}}}</p>
             <p>{{field ../../this ../../model}}<p>
         </li>
     {{/each}}
