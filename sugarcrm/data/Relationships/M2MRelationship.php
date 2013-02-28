@@ -792,4 +792,11 @@ class M2MRelationship extends SugarRelationship
         return $ret;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getType($side)
+    {
+        return REL_TYPE_MANY;
+    }
 }

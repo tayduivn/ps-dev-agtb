@@ -33,15 +33,18 @@ class RelationshipFactory
     static function newRelationship ($definition = array())
     {
         // handle the case where a relationship_type is not provided - set it to Many-To-Many as this was the usual type in ModuleBuilder
-        if (! isset ( $definition [ 'relationship_type' ] ))
-            $definition [ 'relationship_type' ] = MB_MANYTOMANY ;
-            
+        if (!isset($definition ['relationship_type'])) {
+            $definition['relationship_type'] = MB_MANYTOMANY;
+        }
+        $type = !empty($definition['true_relationship_type'])
+            ? $definition['true_relationship_type']
+            : $definition['relationship_type'];
     	if (!empty ($definition['for_activities']) && $definition['for_activities'] == true) {
         	require_once 'modules/ModuleBuilder/parsers/relationships/ActivitiesRelationship.php';
         	return new ActivitiesRelationship ($definition);
         }
         
-        switch ( strtolower ( $definition [ 'relationship_type' ] ))
+        switch (strtolower($type))
         {
             case strtolower ( MB_ONETOONE ) :
                 require_once 'modules/ModuleBuilder/parsers/relationships/OneToOneRelationship.php' ;
@@ -64,4 +67,4 @@ class RelationshipFactory
     
     }
 }
-?>
+

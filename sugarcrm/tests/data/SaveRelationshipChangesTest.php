@@ -26,18 +26,25 @@
 class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-    public function setUp()
+    protected function setUp()
     {
+        global $reload_vardefs;
+        parent::setUp();
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('current_user', array(true, 1));
+        $reload_vardefs = true;
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
+        global $reload_vardefs;
+        SugarTestRelationshipUtilities::removeAllCreatedRelationships();
         SugarTestHelper::tearDown();
+        parent::tearDown();
+        $reload_vardefs = false;
     }
 
     public function setRelationshipInfoDataProvider()
@@ -208,11 +215,6 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
         $ret = $macc->handle_remaining_relate_fields();
 
         $this->assertContains($rel_name, $ret['remove']['success']);
-
-        // variable cleanup
-        // delete the test relationship
-        //$this->removeRelationship($rel_name, 'Accounts');
-        SugarTestRelationshipUtilities::removeAllCreatedRelationships();
 
         unset($macc);
         SugarTestAccountUtilities::removeAllCreatedAccounts();

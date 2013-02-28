@@ -235,16 +235,7 @@ class Link2 {
      */
     public function getType()
     {
-        switch ($this->relationship->type)
-        {
-            case REL_MANY_MANY:
-                return "many";
-            case REL_ONE_ONE:
-                return "one";
-            case REL_ONE_MANY:
-                return $this->getSide() == REL_LHS ? "many" : "one";
-        }
-        return "many";
+        return $this->relationship->getType($this->getSide());
     }
 
     /**
