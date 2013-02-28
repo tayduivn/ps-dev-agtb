@@ -88,16 +88,16 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $ret_array = $this->product->create_new_list_query('', '', array(), array(), 0, '', true);
         $this->assertContains(
-            "products.opportunity_id is null OR products.opportunity_id = ''",
+            "products.opportunity_id is not null OR products.opportunity_id <> ''",
             $ret_array['where'],
-            "Did not find products.opportunity_id is null OR products.opportunity_id = '' clause"
+            "Did not find products.opportunity_id is not null OR products.opportunity_id <> '' clause"
         );
 
         $query = $this->product->create_new_list_query('', '', array(), array(), 0, '', false);
         $this->assertContains(
-            "products.opportunity_id is null OR products.opportunity_id = ''",
+            "products.opportunity_id is not null OR products.opportunity_id <> ''",
             $query,
-            "Did not find products.opportunity_id is null OR products.opportunity_id = '' clause"
+            "Did not find products.opportunity_id is not null OR products.opportunity_id <> '' clause"
         );
     }
 
@@ -115,9 +115,9 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $where = '';
         $query = $this->product->create_export_query($orderBy, $where);
         $this->assertContains(
-            "products.opportunity_id is null OR products.opportunity_id = ''",
+            "products.opportunity_id is not null OR products.opportunity_id <> ''",
             $query,
-            "Did not find products.opportunity_id is null OR products.opportunity_id = '' clause"
+            "Did not find products.opportunity_id is not null OR products.opportunity_id <> '' clause"
         );
     }
 
