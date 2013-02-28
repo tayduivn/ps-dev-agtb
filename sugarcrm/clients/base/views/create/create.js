@@ -259,12 +259,23 @@
     },
 
     /**
+     * Called when current record is being saved to allow customization of options and params
+     * during save
+     *
+     * Override to return set of custom options
+     */
+    getCustomSaveOptions: function(){
+        return {};
+    },
+
+    /**
      * Create a new record
      * @param success
      * @param error
      */
     saveModel: function(success, error) {
-        var self = this;
+        var self = this,
+            options;
         success = _.wrap(success, function (func) {
             app.file.checkFileFieldsAndProcessUpload(self.model, {
                     success:function () {
@@ -273,12 +284,16 @@
                 },
                 { deleteIfFails:true});
         });
-        self.model.save(null, {
+
+        options = {
             fieldsToValidate: self.getFields(self.module),
             success: success,
             error: error,
             viewed: true
-        });
+        };
+
+        options = _.extend({}, options, self.getCustomSaveOptions());
+        self.model.save(null, options);
     },
 
     /**

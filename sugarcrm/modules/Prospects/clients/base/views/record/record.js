@@ -25,45 +25,42 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    /**
-     * @class EmailTemplates.View.ComposeTemplates
-     * @alias SUGAR.App.view.views.EmailTemplatesComposeTemplatesView
-     * @extends View.FlexListView
-     */
-    extendsFrom: 'FlexListView',
+    extendsFrom: 'RecordView',
 
-    initialize: function(options) {
-        app.view.views.FlexListView.prototype.initialize.call(this, options);
+    delegateButtonEvents: function() {
+        this.context.on('button:convert_button:click', this.convertProspectClicked, this);
+        this.context.on('button:manage_subscriptions:click', this.manageSubscriptionsClicked, this);
+        app.view.views.RecordView.prototype.delegateButtonEvents.call(this);
+    },
 
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(field) {
-                field.sortable = false;
-            });
+    convertProspectClicked: function() {
+        var prefill = app.data.createBean('Leads');
+
+        prefill.copy(this.model);
+        app.drawer.open({
+            layout: 'create',
+            context: {
+                create: true,
+                model: prefill,
+                module: 'Leads',
+                prospect_id: this.model.get('id')
+            }
+        }, function(newModel) {
+            if(newModel && newModel.id) {
+                app.router.navigate(app.router.buildRoute('Leads', newModel.id));
+            }
         });
-
-        this.on("render", this._removeLinks, this);
-
-        //set the filter on the collection
-        if(!_.isEmpty(this.meta.filterDef)) {
-            this.collection.filterDef = this.meta.filterDef;
-        }
     },
 
-    _removeLinks: function() {
-        this.$('a:not(.rowaction)').contents().unwrap();
-    },
+    manageSubscriptionsClicked: function() {
+        var params = [
+            {'name': 'return_module', value: 'Prospects'},
+            {'name': 'return_id', value: this.model.id},
+            {'name': 'action', value: 'Subscriptions'},
+            {'name': 'module', value: 'Campaigns'}
+        ];
 
-    addActions: function() {
-        app.view.views.FlexListView.prototype.addActions.call(this);
-
-        if (this.meta.showPreview === true) {
-            this.rightColumns.push({
-                type: 'rowaction',
-                css_class: 'btn',
-                tooltip: 'LBL_PREVIEW',
-                event: 'list:preview:fire',
-                icon: 'icon-eye-open'
-            });
-        }
+        var route = '#bwc/index.php?' + $.param(params);
+        app.router.navigate(route, {trigger: true});
     }
 })

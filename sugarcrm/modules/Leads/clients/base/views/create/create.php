@@ -6,7 +6,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
+ *not use this fil e except in compliance with the License. Under the terms of the license, You
  *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
  *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
  *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
@@ -28,7 +28,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['base']['view']['create'] = array(
+$viewdefs['Leads']['base']['view']['create'] = array(
     'type' => 'record',
     'buttons' => array(
         array(

@@ -50,6 +50,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'label'   => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
                     'showOn'  => 'view',
+                    'value'=>'edit'
                 ),
                 array(
                     'type'    => 'rowaction',
@@ -59,6 +60,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'primary' => true,
                     'showOn'  => 'edit',
                     'value'   => 'edit',
+                    'value'=>'edit'
                 ),
                 array(
                     'type'   => 'rowaction',
@@ -67,6 +69,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'label'  => 'LBL_DELETE_BUTTON_LABEL',
                     'showOn' => 'view',
                     'value'  => 'delete',
+                    'value'  =>'edit'
                 ),
                 array(
                     'type'   => 'rowaction',
@@ -75,6 +78,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'label'  => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'showOn' => 'view',
                     'value'  => 'create',
+                    'value'=>'edit'
                 ),
                 array(
                     'type'   => 'rowaction',
@@ -278,6 +282,30 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 ),
                 'assigned_user_name',
                 array(
+                    'name' => 'date_entered_by',
+                    'readonly' => true,
+                    'type'     => 'fieldset',
+                    'label'    => 'LBL_DATE_ENTERED',
+                    'fields'   => array(
+                        array(
+                            'name' => 'date_entered',
+                        ),
+                        array(
+                            'type'          => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'created_by_name',
+                        ),
+                    ),
+                ),
+                //BEGIN SUGARCRM flav=pro ONLY
+                array(
+                    "type" => "teamset",
+                    "name" => "team_name",
+                ),
+                //END SUGARCRM flav=pro ONLY
+                array(
                     'name'     => 'date_modified_by',
                     'readonly' => true,
                     'type'     => 'fieldset',
@@ -292,30 +320,6 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         ),
                         array(
                             'name' => 'modified_by_name',
-                        ),
-                    ),
-                ),
-                //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    "type" => "teamset",
-                    "name" => "team_name",
-                ),
-                //END SUGARCRM flav=pro ONLY
-                array(
-                    'name'     => 'date_entered_by',
-                    'readonly' => true,
-                    'type'     => 'fieldset',
-                    'label'    => 'LBL_DATE_ENTERED',
-                    'fields'   => array(
-                        array(
-                            'name' => 'date_entered',
-                        ),
-                        array(
-                            'type'          => 'label',
-                            'default_value' => 'LBL_BY'
-                        ),
-                        array(
-                            'name' => 'created_by_name',
                         ),
                     ),
                 ),
