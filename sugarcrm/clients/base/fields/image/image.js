@@ -63,5 +63,16 @@
     bindDomChange: function() {
         //Keep empty because you cannot set a value of a type `file` input
         //We don't trigger change event so we don't rerender
+    },
+    bindDataChange: function() {
+        if (this.model) {
+            this.model.on("change:" + this.name, function() {
+                var isValue = this.$(this.fieldTag).val();
+                if (!isValue) {
+                    //Rerender only if the input type file is empty
+                    this.render();
+                }
+            }, this);
+        }
     }
 })

@@ -169,12 +169,13 @@ class SugarFavorites extends Basic
 	 */
 	public function toggleExistingFavorite($id, $deleted)
 	{
+		global $current_user;
 		$deleted = (int) $deleted;
 		if($deleted != 0 && $deleted != 1) {
 			return false;
 		}
 
-		$query = "UPDATE {$this->table_name} SET deleted = {$deleted} WHERE id = '{$id}'";
+		$query = "UPDATE {$this->table_name} SET deleted = {$deleted}, created_by = '{$current_user->id}', modified_user_id = '{$current_user->id}', assigned_user_id = '{$current_user->id}' WHERE id = '{$id}'";
 		$this->db->query($query, true, "Error marking favorites deleted to {$deleted}: ");
 		return true;
 	}

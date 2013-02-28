@@ -255,6 +255,13 @@ class Call extends SugarBean {
             }
 	    }
 
+	    if(!empty($this->contact_id)) {
+	    	$this->load_relationship('contacts');
+	    	if(!$this->contacts->relationship_exists('contacts', array('id' => $this->contact_id))) {
+	    		$this->contacts->add($this->contact_id);
+	    	}
+	    }
+
         $this->setUserInvitees($this->users_arr);
 
         vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $this->assigned_user_id));

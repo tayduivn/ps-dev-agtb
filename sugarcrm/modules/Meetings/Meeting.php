@@ -279,6 +279,12 @@ class Meeting extends SugarBean {
             }
 	    }
 
+	    if(!empty($this->contact_id)) {
+	    	$this->load_relationship('contacts');
+	    	if(!$this->contacts->relationship_exists('contacts', array('id' => $this->contact_id))) {
+	    		$this->contacts->add($this->contact_id);
+	    	}
+	    }
 
         if ( isset($api) && is_a($api,'WebMeeting') && empty($this->in_relationship_update) ) {
             // Make sure the API initialized and it supports Web Meetings
