@@ -170,6 +170,10 @@ class FileApi extends SugarApi {
         // Get the bean before we potentially delete if fails (e.g. see below if attachment too large, etc.)
         $bean = $this->loadBean($api, $args);
 
+        if(!$bean->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+        }        
+
         // Simple validation
         // In the case of very large files that are too big for the request too handle AND
         // if the auth token was sent as part of the request body, you will get a no auth error
@@ -288,7 +292,11 @@ class FileApi extends SugarApi {
      */
     public function getFileList($api, $args) {
         // Validate and load up the bean because we need it
-        $bean = $this->loadBean($api, $args);
+        $bean = $this->loadBean($api, $args, 'view');
+
+        if(!$bean->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+        }
 
         // Special cases for document revision sets
         if (property_exists($bean, 'document_revision_id') && !empty($bean->document_revision_id)) {
@@ -336,7 +344,12 @@ class FileApi extends SugarApi {
         $field = $args['field'];
 
         // Get the bean
-        $bean = $this->loadBean($api, $args);
+        $bean = $this->loadBean($api, $arg);
+
+        if(!$bean->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+        }
+
         if (empty($bean->{$field})) {
             // @TODO Localize this exception message
             throw new SugarApiExceptionNotFound("The requested file $args[module] :: $field could not be found.");
