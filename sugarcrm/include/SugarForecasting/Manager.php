@@ -174,13 +174,15 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
     {
         //getting quotas from quotas table
         $db = DBManagerFactory::getInstance();
-        $quota_query = "SELECT u.user_name user_name, q.amount quota, q.id quota_id " .
-            "FROM quotas q " .
-            "INNER JOIN users u " .
-            "ON q.user_id = u.id " .
-            "WHERE u.deleted = 0 AND u.status = 'Active' AND q.timeperiod_id = '{$this->getArg('timeperiod_id')}' " .
-            "AND ((u.id = '{$this->getArg('user_id')}' and q.quota_type = 'Direct') " .
-            "OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup')) and q.deleted = 0";
+        $quota_query = "SELECT u.user_name user_name, q.amount quota, q.id quota_id 
+                        FROM quotas q 
+                        INNER JOIN users u 
+                        ON q.user_id = u.id 
+                        WHERE u.deleted = 0 AND u.status = 'Active'
+                            AND q.timeperiod_id = '{$this->getArg('timeperiod_id')}'
+                            AND ((u.id = '{$this->getArg('user_id')}' and q.quota_type = 'Direct')
+                            OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup'))
+                            AND q.deleted = 0";
 
         $result = $db->query($quota_query);
 
@@ -199,38 +201,36 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 
         global $current_user;
         //getting data from worksheet table for reportees
-        $reportees_query = "SELECT u2.user_name, " .
-            "w.id worksheet_id, " .
-            "w.best_case best_adjusted, " .
-            "w.likely_case likely_adjusted, " .
-            "w.worst_case worst_adjusted, " .
-            "w.forecast_type, " .
-            "w.related_id, " .
-            "w.version, " .
-            "w.quota, " .
-            "w.currency_id, " .
-            "w.base_rate " .
-            "from users u " .
-            "inner join users u2 " .
-            "on u.id = u2.reports_to_id " .
-            "or u.id = u2.id " .
-            "inner join worksheet w " .
-            "on w.user_id = u.id " .
-            "and w.timeperiod_id = '" . $args['timeperiod_id'] . "'" .
-            "and ((w.related_id = u.id and u2.id = u.id) " .
-            "or (w.related_id = u2.id)) " .
-            "where u.deleted = 0 AND
-                u.status = 'Active' AND
-                u2.deleted = 0 AND
-                u2.status = 'Active' AND
-                u.id = '" . $args['user_id'] . "'
-                and w.deleted = 0 ";
+        $reportees_query = "SELECT u2.user_name, 
+                            w.id worksheet_id,
+                            w.best_case best_adjusted,
+                            w.likely_case likely_adjusted,
+                            w.worst_case worst_adjusted,
+                            w.forecast_type,
+                            w.related_id,
+                            w.version,
+                            w.quota,
+                            w.currency_id,
+                            w.base_rate
+                            FROM users u
+                            INNER JOIN users u2
+                                on u.id = u2.reports_to_id or u.id = u2.id
+                            INNER JOIN worksheet w
+                                on w.user_id = u.id  and w.timeperiod_id = '" . $args['timeperiod_id'] . "'
+                                    AND ((w.related_id = u.id and u2.id = u.id) OR (w.related_id = u2.id))
+                            WHERE u.deleted = 0 AND
+                                u.status = 'Active' AND
+                                u2.deleted = 0 AND
+                                u2.status = 'Active' AND
+                                u.id = '" . $args['user_id'] . "'
+                                and w.deleted = 0 ";
 
 
         if ($args['user_id'] == $current_user->id) {
-            $reportees_query .= "and w.revision = (select max(revision) from worksheet " .
-                "where user_id = u.id and related_id = u2.id " .
-                "and timeperiod_id = '" . $args['timeperiod_id'] . "')";
+            $reportees_query .= "and w.revision = (select max(revision) from worksheet
+                                    where user_id = u.id
+                                        and related_id = u2.id
+                                        and timeperiod_id = '" . $args['timeperiod_id'] . "')";
         } else {
             $reportees_query .= "and w.version = 1";
         }
@@ -290,8 +290,11 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 
         $args = $this->getArgs();
 
-        $query = "SELECT id, user_name FROM users
-            WHERE reports_to_id = '" . $args['user_id'] . "' AND deleted = 0 and status = 'Active' ";
+        $query = "SELECT id, user_name
+                    FROM users
+                    WHERE reports_to_id = '" . $args['user_id'] . "'
+                        AND deleted = 0
+                        AND status = 'Active'";
         $db = DBManagerFactory::getInstance();
         $result = $db->query($query);
 
@@ -309,12 +312,14 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
             // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
             $forecast_type = (User::isManager($id) && $id != $args['user_id']) ? 'ROLLUP' : 'DIRECT';
             $forecast_query = sprintf(
-                "SELECT id, best_case, likely_case, worst_case, date_modified, currency_id, base_rate, opp_count, pipeline_opp_count, pipeline_amount FROM forecasts " .
-                    "WHERE timeperiod_id = '%s' " .
-                    "AND forecast_type = '%s' " .
-                    "AND user_id = '%s' " .
-                    "AND deleted = 0 " .
-                    "ORDER BY forecasts.date_modified DESC",
+                "SELECT id, best_case, likely_case, worst_case, date_modified, currency_id, base_rate,
+                        opp_count, pipeline_opp_count, pipeline_amount
+                    FROM forecasts
+                    WHERE timeperiod_id = '%s'
+                        AND forecast_type = '%s'
+                        AND user_id = '%s'
+                        AND deleted = 0
+                    ORDER BY forecasts.date_modified DESC",
                 $args['timeperiod_id'],
                 $forecast_type,
                 $id
@@ -391,16 +396,19 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
             $user_id = $this->getArg('user_id');
         }
 
-        $sql = "select u.user_name, sum(amount) as amount from opportunities o " .
-            "left join timeperiods t " .
-            "on t.start_date_timestamp <= o.date_closed_timestamp " .
-            "and t.end_date_timestamp >= o.date_closed_timestamp " .
-            "INNER JOIN users u " .
-            "ON o.assigned_user_id = u.id " .
-            "and (u.reports_to_id = '{$user_id}' " .
-            "OR u.id = '{$user_id}') " .
-            "where u.deleted=0 and u.status = 'Active' AND t.id = '{$this->getArg('timeperiod_id')}' " .
-            "GROUP BY u.user_name";
+        $sql = "SELECT u.user_name, sum(amount) as amount
+                FROM opportunities o
+                INNER JOIN timeperiods t
+                    on t.start_date_timestamp <= o.date_closed_timestamp
+                    and t.end_date_timestamp >= o.date_closed_timestamp
+                INNER JOIN users u
+                    ON o.assigned_user_id = u.id
+                    and (u.reports_to_id = '{$user_id}'
+                        OR u.id = '{$user_id}')
+                WHERE u.deleted=0
+                    AND u.status = 'Active'
+                    AND t.id = '{$this->getArg('timeperiod_id')}'
+                GROUP BY u.user_name";
 
         $db = DBManagerFactory::getInstance();
 
