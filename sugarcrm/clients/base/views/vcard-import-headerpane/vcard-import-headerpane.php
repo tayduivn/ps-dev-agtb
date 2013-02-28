@@ -42,6 +42,7 @@ $viewdefs['base']['view']['vcard-import-headerpane'] = array(
             'name'    => 'vcard_finish_button',
             'type'    => 'button',
             'label'   => 'LBL_CREATE_BUTTON_LABEL',
+            'acl_action' => 'create',
             'css_class' => 'btn-primary',
         ),
         array(

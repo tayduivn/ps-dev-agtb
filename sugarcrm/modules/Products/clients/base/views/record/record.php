@@ -44,7 +44,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'label' => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'btn btn-primary',
             'showOn' => 'edit',
-            'value' => 'edit',
+            'acl_action' => 'edit',
         ),
         array(
             'type' => 'actiondropdown',
@@ -58,49 +58,49 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'edit_button',
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
-                    'value' => 'edit',
+                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:delete_button:click',
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'value' => 'delete',
+                    'acl_action' => 'delete',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'value' => 'create',
+                    'acl_action' => 'create',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:create_related_button:click',
                     'name' => 'create_related_button',
                     'label' => 'LBL_CREATE_RELATED_RECORD',
-                    'value' => 'create',
+                    'acl_action' => 'create',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:link_related_button:click',
                     'name' => 'link_related_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'value' => 'edit',
+                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:convert_to_quote:click',
                     'name' => 'convert_to_quote_button',
                     'label' => 'LBL_CONVERT_TO_QUOTE',
-                    'value' => 'view'
+                    'acl_action' => 'view'
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:change_log_button:click',
                     'name' => 'change_log_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
-                    'value' => 'view'
+                    'acl_action' => 'view'
                 ),
             ),
         ),
