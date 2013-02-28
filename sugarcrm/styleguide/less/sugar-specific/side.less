@@ -60,103 +60,11 @@
 }
 
 
-
-//UIUX-130
-body.preview {
-  .side {
-    .box-shadow(~"3px -1px 14px 2px rgba(0, 0, 0, .25)");
-    border: none;
-  }
-  .preview-pane {
-    display: block;
-  }
-  .side-pane.active {
-    display: none;
-  }
-}
-
-//from nutmeg
-//UIUX-130
-&.preview #folded {
-  z-index: 1;
-  position: absolute;
-  right: 1px;
-  .box-shadow( ~"3px -1px 14px 2px rgba(0, 0, 0, .25)" );
-  height: 100%
-}
-&.preview #folded .tab-pane.active {
-  .box-shadow(none);
-  padding: 0;
-  border: none;
-}
-
-
-.preview-headerbar {
-  height: 60px;
-  border-bottom: 1px solid #CCC;
-  h1 {
-    float: left;
-    margin-top: 12px;
-    margin-left: 20px;
-  }
-  .btn-toolbar {
-    margin: 15px 10px 9px;
-  }
-}
-
-.preview-data {
-  padding: 28px 5% 0;
-  margin: 8px;
-  .row-fluid {
-    .span5 {
-      text-align: right;
-      padding: 6px;
-      font-size: 11px;
-      color: lighten(@gray,15%);
-    }
-    .span7 {
-      font-weight: bold;
-      padding: 6px;
-    }
-    label.original {
-      margin-bottom: 0px;
-      display: inline-block;
-      background-color: #CDCCCB;
-      padding: 2px 4px;
-      .border-radius(4px);
-    }
-  }
-}
-
 // below is for nutmeg
-
 #folded {
   > div {
     width: inherit;
   }
-  /*.tab-pane#overview {
-    border-left: none;
-  }
-  .tab-pane.active#overview {
-    border-left: 1px solid darken(@grayLighter, 4%);
-    .box-shadow(~"inset 6px 0 6px rgba(0,0,0,.2)");
-  }
-  .tab-pane.active {
-    top: 48px;
-    right: 0;
-    background-image: url('@{textureSecondary}');
-    height: 100%;
-    width: auto;
-    padding: 20px 1%;
-    border-left: 2px solid @grayLight;
-  }
-  .tab-pane .block span.label {
-    margin: 0 10px 0 0;
-  }
-  .tab-pane .block {
-    width: 90%;
-    margin-left: 5%;
-  }*/
   [data-toggle="tab"].actions {
     top: 0;
     color: @gray;

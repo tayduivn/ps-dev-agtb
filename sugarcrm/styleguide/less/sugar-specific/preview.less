@@ -1,43 +1,83 @@
 //UIUX-130
-
-.preview table.table.dataTable th.preview.above,
-.preview table.table.dataTable td.preview.above {
-  .box-shadow(~"inset 0px -6px 3px -5px rgba(0, 0, 0, 0.25)");
+.preview-container {
+  .side {
+    .box-shadow(~"3px -1px 14px 2px rgba(0, 0, 0, .25)");
+    border: none;
+  }
+  .preview-pane {
+    display: block;
+  }
+  .side-pane.active {
+    display: none;
+  }
 }
 
-.preview table.table.dataTable th.preview.below,
-.preview table.table.dataTable td.preview.below {
-  .box-shadow(~"inset 0px 5px 6px -5px rgba(0, 0, 0, 0.25)");
+//from nutmeg
+//UIUX-130
+&.preview #folded {
+  z-index: 1;
+  position: absolute;
+  right: 1px;
+  .box-shadow( ~"3px -1px 14px 2px rgba(0, 0, 0, .25)" );
+  height: 100%
 }
-
-.preview table.table.dataTable td.highlighted {
-  background-image: url('@{textureSecondary}');
+&.preview #folded .tab-pane.active {
+  .box-shadow(none);
+  padding: 0;
+  border: none;
 }
+//
 
-.preview table.table.dataTable td.highlighted:last-child {
-  z-index: 2;
+.preview table.table.dataTable {
+  th.preview.above,
+  td.preview.above {
+    .box-shadow(~"inset 0px -6px 3px -5px rgba(0, 0, 0, 0.25)");
+  }
+  th.preview.below,
+  td.preview.below {
+    .box-shadow(~"inset 0px 5px 6px -5px rgba(0, 0, 0, 0.25)");
+  }
+  td.highlighted {
+    background-image: url('@{textureSecondary}');
+  }
+  td.highlighted:last-child {
+    z-index: 2;
+  }
 }
 
 .preview-headerbar {
   height: 60px;
   border-bottom: 1px solid #CCC;
-}
-.preview-headerbar h1 {
-  float: left;
-  margin-top: 12px;
-  margin-left: 20px;
-}
-.preview-headerbar .btn-toolbar {
-  margin: 15px 10px 9px;
-}
-.preview-data {
-  margin: 8px;
+  h1 {
+    float: left;
+    margin-top: 12px;
+    margin-left: 20px;
+  }
+  .btn-toolbar {
+    margin: 15px 10px 9px;
+  }
 }
 
-.preview-data .row-fluid label.original {
-  margin-bottom: 0px;
-  display: inline-block;
-  background-color: #CDCCCB;
-  padding: 2px 4px;
-  .border-radius(4px);
+.preview-data {
+  padding: 28px 5% 0;
+  margin: 8px;
+  .row-fluid {
+    .span5 {
+      text-align: right;
+      padding: 6px;
+      font-size: 11px;
+      color: lighten(@gray,15%);
+    }
+    .span7 {
+      font-weight: bold;
+      padding: 6px;
+    }
+    label.original {
+      margin-bottom: 0px;
+      display: inline-block;
+      background-color: #CDCCCB;
+      padding: 2px 4px;
+      .border-radius(4px);
+    }
+  }
 }
