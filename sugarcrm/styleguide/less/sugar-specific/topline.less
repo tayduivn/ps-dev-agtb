@@ -1,10 +1,13 @@
 .topline {
+  clear: both;
   position: relative;
-
+  border-bottom: 1px solid darken(@grayLighter,5%);
   //this is the container
   .control-group.datefilter {
     float: left;
-
+    .control-label {
+      margin-bottom: 0;
+    }
     //this is the anchor styled as select
     .select2-choice {
       //get rid of select box styling
@@ -15,7 +18,8 @@
       padding-left: 0px;
       //this is the font and text
       span {
-        font-size: 22px;
+        font-size: 20px;
+        line-height: 28px;
         .rtlMargin(@direction,0 0 0 22px);
         .rtl(@direction,ltr);
       }
@@ -46,8 +50,8 @@
     margin: 0;
     font-size: 20px;
     line-height: 28px;
-    display: inline;
-    margin-right: -2px;
+    display: inline-block;
+    margin-right: -10px;
   }
 
   hr {
@@ -86,7 +90,7 @@
     .rtlFloat(@direction,right);
   }
   .datapoint:last-child {
-    padding-right: 20px;
+    padding-right: 15px;
     .rtlPadding(@direction,0px 0px 0px 20px);
   }
   .datapoint1 {
@@ -119,8 +123,11 @@
       right: 20px;
     }
     .title {
-      padding: 0px 20px 10px 0;
+      padding: 0px 10px 10px 0;
       .rtlPadding(@direction,0 0 10px 20px);
+    }
+    .toggle {
+      padding-top: 3px;
     }
   }
 
@@ -143,7 +150,7 @@
     height: 80px;
     width: 1px;
     top: 0px;
-    padding-left: 10px;
+    padding-left: 13px;
     margin-right: 10px;
   }
 
@@ -164,6 +171,8 @@
   [class^="icon-"].committed_arrow,
   [class*=" icon-"].committed_arrow {
     line-height: 28px;
+    float: left;
+    margin-right: 8px;
   }
   .icon-arrow-down:before {
     color: @red;

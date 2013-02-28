@@ -23,6 +23,10 @@
 
 @media (max-width: 480px) {
 
+  .navbar {
+    min-width: 320px;
+  }
+
   // Smooth out the collapsing/expanding nav
   .nav-collapse {
     -webkit-transform: translate3d(0, 0, 0); // activate the GPU
@@ -121,9 +125,12 @@
   .thumbnail {
     .border-radius(0px);
   }
-  #searchForm, #createList, #userList {
-    display: none
+
+  /*#createList,*/
+  #searchForm, #userList {
+    display: none !important;
   }
+
   .thumbnail {
     overflow: scroll;
   }

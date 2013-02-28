@@ -43,6 +43,7 @@
       });
       $('table').tooltip({
         selector: "[rel=tooltip]",
+        container: "body"
       });
       $('.thumbnail').tooltip({
         selector: "[rel=tooltip]",
@@ -104,13 +105,16 @@
       })
       .on( 'mousedown', '.more', function(e) {
         e.preventDefault();
-        var link = $(this);
+        var link = $(this),
+            icon_text = link.find('[class^="class="icon-"]').length ? true : false;
+
         link.css('text-decoration', 'none');
+
         if ( link.text().indexOf('More') !== -1 ) {
-          link.html(link.text().replace('More','Less')+'<i class="icon-caret-up"></i>');
+          link.html( link.text().replace('More','Less') + (icon_text?'<i class="icon-caret-up"></i>':'') );
           link.parent().prev('.extend').removeClass('hide');
         } else {
-          link.html(link.text().replace('Less','More')+'<i class="icon-caret-down"></i>');
+          link.html( link.text().replace('Less','More') + (icon_text?'<i class="icon-caret-down"></i>':'') );
           link.parent().prev('.extend').addClass('hide');
         }
       });
@@ -239,7 +243,7 @@
         $(this).closest('.span10').find('label.file-upload span strong').trigger('click');
     });
 
-    if ($('table.datatable').length !== 0) {
+    if ($('table#example').length !== 0) {
       $('table.datatable').dataTable({
         "bPaginate": false,
         "bFilter": true,

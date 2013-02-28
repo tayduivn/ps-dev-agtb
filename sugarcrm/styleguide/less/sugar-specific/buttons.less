@@ -15,7 +15,7 @@
     width: 12px;
     height: 12px;
     display: inline-block;
-    line-height: 12px;
+    line-height: 18px;
     font-size: @baseFontSize + 1;
   }
 }
@@ -93,28 +93,37 @@
   .box-shadow(none);
 }
 
-.btn-link {
-  color: @linkColor;
-  font-weight: normal;
-}
-
-.btn-dark [class^="icon-"] {
-  color: lighten(@gray,10%) !important;
-}
-
 // invisible appears as no button
 .btn-invisible {
-  background: none;
+  background: transparent;
   border: 1px solid transparent;
   box-shadow: none !important;
   .box-shadow(none);
   &.active {
+    color: @grayLight;
     color: rgba(255,255,255,.75);
   }
   &:hover {
     border: 1px solid lighten(@btnBorder, 1%);
     *border: 0; // Remove the border to prevent IE7's black border on input:focus
     border-top-color: darken(@btnBorder, 5%);
+  }
+  [class^="icon-"] {
+    color: @grayLight !important;
+  }
+  &.disabled,
+  &.disabled:hover {
+    background-color: transparent;
+    background-image: none;
+    .box-shadow(none);
+    border: 1px solid transparent;
+    text-decoration: none;
+    color: @grayLight !important;
+    .opacity(65);
+    [class^="icon-"] {
+      .opacity(65);
+      color: @grayLight !important;
+    }
   }
   &.btn-link:hover {
     text-decoration: underline;
@@ -123,15 +132,18 @@
     //from nutmeg
     .box-shadow(none);
     text-shadow:none;
-    color: @linkColor !important;
+    color: @linkColorHover !important;
   }
 }
-// from nutmeg
-/*.btn-invisible:hover {
-  border: 1px solid #d0cfce;
-  *border: 0;
-  border-top-color: #c1bfbe;
-}*/
+
+.btn-link {
+  color: @linkColor;
+  font-weight: normal;
+}
+
+.btn-dark [class^="icon-"] {
+  color: lighten(@gray,10%) !important;
+}
 
 // Small button dropdowns
 .btn-small .caret {

@@ -31,6 +31,27 @@
 		items: ".col",
         axis: "x",
 	});
+
+	init_primary_drop();
+
+	function init_primary_drop (){
+
+
+
+	    $( ".primary-edit-mode .primary-lbl" ).draggable({
+	      helper: function( event ) {
+	        return $('<div class="primary-lbl static-ui-draggable"> Primary</div>');
+	      },
+	      stop: function(e) {
+			var dropped_to = $(document.elementFromPoint(e.clientX, e.clientY+24)).closest('.col');
+			$('.col').removeClass('primary-edit-mode');
+			$('.col .primary-lbl').removeAttr('style');
+			dropped_to.addClass('primary-edit-mode');
+			setTimeout(init_primary_drop, 500);
+	      }
+	    });
+	}
+
   </script>
 
 
@@ -66,7 +87,7 @@
 
 
 	<div class="fluid-div">
-        <div class="col">
+        <div class="col primary-edit-mode">
         	<div class="primary-lbl"> Primary</div>
 			<div class="box">
 				<div class="merge-view">

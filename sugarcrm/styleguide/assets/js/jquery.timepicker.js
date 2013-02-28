@@ -136,6 +136,7 @@ requires jQuery 1.6+
 				list.css({ 'left':(self.offset().left), 'top': self.offset().top + topMargin + self.outerHeight() });
 			}
 			*/
+			self.parent().css('position','relative');
 			var offset = self.position();
 			list.css({ 'left': (offset.left), 'top': offset.top + self.outerHeight() });
 			list.show();

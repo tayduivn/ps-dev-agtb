@@ -6,14 +6,6 @@
   right: 0; top: 6px;
 }
 
-.card2 .icon-pencil {
-  position: absolute;
-  left: -16px;
-  top: 0px;
-  padding: 0 2px !important;
-  .opacity(60);
-}
-
 .eSelect:hover {}
 
 .editable {
@@ -114,6 +106,21 @@
     color:@errorText;
     &:focus {
       z-index:3;
+    }
+  }
+
+  .control-group.email input {
+    border-color: @gray;
+    color: @gray;
+  }
+  .control-group.email.inline-error input {
+    border-color: @errorText;
+    color: @errorText;
+  }
+  .add-on {
+    [class^="icon-"],
+    [class*=" icon-"] {
+      color: @errorText;
     }
   }
 }

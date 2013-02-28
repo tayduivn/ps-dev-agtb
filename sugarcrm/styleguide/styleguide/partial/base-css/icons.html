@@ -690,4 +690,52 @@
 </pre>
     </div>
   </div>
+
+<style>
+.filetype-thumbnails span[class^="filetype-"] {
+  margin: 0 12px 12px 0;
+  float: left;
+}
+</style>
+
+  <div class="row">
+    <div class="span12">
+      <h4>Filetype Thumbnails</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="span3">
+      <p>
+        File type thumbnails are created by inserting a <code>span</code> tag with a classname of <code>.filetype-thumbnail</code> and adding a data-filetype property that is set to the file extension. If the file extension is one of "PDF,PNG,TXT,JPG,GIF,PPT,DOC,XLS" then it will have a colored background, else it will be grey. The last step is to insert the thumbmail SVG into the span.
+      </p>
+    </div>
+    <div class="span4 filetype-thumbnails">
+      <span class="filetype-thumbnail" data-filetype="PDF"></span>
+      <span class="filetype-thumbnail" data-filetype="DOC"></span>
+      <span class="filetype-thumbnail" data-filetype="PPT"></span>
+      <span class="filetype-thumbnail" data-filetype="XLS"></span>
+      <span class="filetype-thumbnail" data-filetype="PNG"></span>
+      <span class="filetype-thumbnail" data-filetype="JPG"></span>
+      <span class="filetype-thumbnail" data-filetype="GIF"></span>
+      <span class="filetype-thumbnail" data-filetype="TXT"></span>
+      <span class="filetype-thumbnail" data-filetype="XYZ"></span>
+    </div>
+    <div class="span5">
+<pre class="prettyprint linenums">
+&lt;script&gt;
+$('span[class^="filetype-"]').each(function(){
+  $(this).html( '&lt;svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="28" height="33" id="filetype-svg2"&gt;&lt;g id="layer1"&gt;&lt;path d="m 1,1 19,0 7,7 0,24 -26,0 z" id="rect2985" style="fill:#ececec;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4" /&gt;&lt;path d="m 20,1 0,7 7,0 z" style="fill:#cccccc;stroke:#000000;stroke-width:1px;stroke-linecap:square;stroke-linejoin:round;" /&gt;&lt;/g&gt;&lt;/svg&gt;' );
+});
+&lt;/script&gt;
+</pre>
+    </div>
+  </div>
 </section>
+
+<script>
+  $(document).ready(function(){
+    $('span[class^="filetype-"]').each(function(){
+      $(this).html( '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="28" height="33"><g><path class="ft-ribbon" d="M 0,15 0,29 3,29 3,13 z" /><path d="M 3,1 20.5,1 27,8 27,32 3,32 z" style="fill:#ececec;stroke:#b3b3b3;stroke-width:1;stroke-linecap:butt;" /><path d="m 20,1 0,7 7,0 z" style="fill:#b3b3b3;stroke-width:0" /></g></svg>' );
+    });
+  });
+</script>

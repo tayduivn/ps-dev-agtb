@@ -15,7 +15,7 @@
 
   <div class="row">
     <div class="span12 padded">
-      <label>Basic Example</label>
+      <h3>Basic Example</h3>
       <select name="priority" class="select2" data-placeholder="Choose a priority...">
         <option></option>
         <option value="Urgent">Urgent</option>
@@ -55,7 +55,7 @@
 
   <div class="row">
     <div class="span12 padded">
-      <label>Retreive Selected Value</label>
+      <h3>Retreive Selected Value</h3>
       <select id="priority" data-placeholder="Choose a priority...">
         <option></option>
         <option value="Urgent">Urgent</option>
@@ -94,7 +94,7 @@
 
   <div class="row">
     <div class="span12 padded">
-      <label>Loading results from json</label>
+      <h3>Loading results from json</h3>
      <input type="hidden" class="bigdrop" id="e6" style="width:600px"/></p>
       <script>
       $("#e6").select2({
@@ -125,7 +125,7 @@
 
   <div class="row">
     <div class="span12 padded">
-      <label>Full Width Dynamic</label>
+      <h3>Full Width Dynamic</h3>
       <select id="priority2" class="select2 inherit-width" data-placeholder="Choose a priority...">
         <option></option>
         <option value="Urgent">Urgent</option>
@@ -160,7 +160,7 @@
 </pre>
 
       <div class="padded">
-        <label>Small Select Container Width</label>
+        <h3>Small Select Container Width</h3>
         <select id="state" class="select2 narrow" tabindex="3" data-placeholder="State...">
           <option></option>
           <option value="NC">North Carolina</option>
@@ -243,7 +243,7 @@
 
   <div class="row">
     <div class="span12 padded">
-      <label>Deselect &amp; Dropdown Fitler</label>
+      <h3>Deselect &amp; Dropdown Fitler</h3>
       <select id="states3" class="select2" data-placeholder="Select a state...">
 <option></option>
 <option value="AL">Alabama</option>
@@ -325,7 +325,7 @@
 
   <div class="row">
     <div class="span12 padded">
-      <label>Select with Hidden Input</label>
+      <h3>Select with Hidden Input</h3>
       <input type="hidden" id="s2_hidden" class="select2 inherit-width">
       <script>
         var $this = $('#s2_hidden')
@@ -360,7 +360,7 @@
 <!--
   <div class="row">
     <div class="span12 padded">
-      <label>Deselect &amp; Dropdown Fitler</label>
+      <h3>Deselect &amp; Dropdown Fitler</h3>
       <select id="states4" class="select2" data-placeholder="Select a state...">
         <option></option>
         <option value="AL">Alabama</option>
@@ -442,7 +442,7 @@
 
   <div class="row">
     <div class="span12 padded">
-      <label>Use images in Dropdowns</label>
+      <h3>Use images in Dropdowns</h3>
       <select name="chart_type" class="select2" data-placeholder="Choose a chart type...">
         <option></option>
         <option value="Donut">Donut</option>
@@ -489,7 +489,7 @@
     <div class="span12 padded">
 
       <div class="control-group error">
-        <label style="display:block">Single Select Error</label>
+        <label style="display:block">Single Select Error</h3>
         <div class="input-append select">
           <select id="priority3" class="select2" data-placeholder="Choose a priority...">
             <option></option>
@@ -548,7 +548,7 @@
   <div class="row">
     <div class="span6">
       <div class="control-group padded">
-        <label style="display:block">Multi Select with Basic Choices</label>
+        <label style="display:block">Multi Select with Basic Choices</h3>
         <select id="multi1" size="3" multiple="multiple" class="select2">
             <option>Option 2</option>
             <option>Option 3</option>
@@ -561,7 +561,7 @@
       </script>
 
       <div class="control-group error padded">
-        <label style="display:block">Label</label>
+        <label style="display:block">Label</h3>
         <div class="input-append select">
           <select id="multi2" size="3" multiple="multiple" class="select2">
               <option value="2">Option 2</option>
@@ -587,7 +587,71 @@
 
   <div class="row">
     <div class="span6 padded">
-      <label>Custom Formaters</label>
+      <h3>Standard Pill Style</h3>
+      <select id="states5" class="select2" multiple="multiple" data-placeholder="Select a state...">
+        <option></option>
+        <option value="MO">Missouri</option>
+        <option value="MT">Montana</option>
+        <option value="NE">Nebraska</option>
+        <option value="NV">Nevada</option>
+        <option value="NH">New Hampshire</option>
+        <option value="NJ">New Jersey</option>
+        <option value="NM">New Mexico</option>
+        <option value="NY">New York</option>
+        <option value="NC">North Carolina</option>
+        <option value="ND">North Dakota</option>
+        <option value="OH">Ohio</option>
+        <option value="OK">Oklahoma</option>
+        <option value="OR">Oregon</option>
+        <option value="PA">Pennsylvania</option>
+        <option value="RI">Rhode Island</option>
+        <option value="SC">South Carolina</option>
+        <option value="SD">South Dakota</option>
+        <option value="TN">Tennessee</option>
+        <option value="TX">Texas</option>
+        <option value="UT">Utah</option>
+        <option value="VT">Vermont</option>
+        <option value="VA">Virginia</option>
+        <option value="WA">Washington</option>
+        <option value="WV">West Virginia</option>
+        <option value="WI">Wisconsin</option>
+        <option value="WY">Wyoming</option>
+      </select>
+      <script>
+        $('#states5').select2({
+          width:'100%',
+          minimumResultsForSearch:7,
+          closeOnSelect: false,
+          containerCssClass: 'select2-choices-pills-close'
+        });
+      </script>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span6">
+<pre class="prettyprint linenums" style="margin-bottom: 9px;">
+&lt;script&gt;
+  $('#states5').select2({
+    width:'100%',
+    minimumResultsForSearch:7,
+    closeOnSelect: false,
+    containerCssClass: 'select2-choices-pills-close'
+  });
+&lt;/script&gt;
+</pre>
+    </div>
+    <div class="span6">
+      <p>The Select2 multiselect choices can be styled to look like our standard pills by setting the <code>containerCssClass</code> constructuor property to <code>select2-choices-pills-close</code>. If you want to keep the dropdown open for fast multi select actions, pass the <code>closeOnSelect: false</code> option.</p>
+      <p>Deleting the custom choice pill is like in Outlook where you use the delete key to focus on a pill and then delete again to remove.</p>
+    </div>
+  </div>
+
+  <!-- ==================== -->
+
+  <div class="row">
+    <div class="span6 padded">
+      <h3>Custom Formaters</h3>
       <select id="states4" class="select2" multiple="multiple" data-placeholder="Select a state...">
         <option></option>
         <option value="AL">Alabama</option>
@@ -615,32 +679,7 @@
         <option value="MI">Michigan</option>
         <option value="MN">Minnesota</option>
         <option value="MS">Mississippi</option>
-        <option value="MO">Missouri</option>
-        <option value="MT">Montana</option>
-        <option value="NE">Nebraska</option>
-        <option value="NV">Nevada</option>
-        <option value="NH">New Hampshire</option>
-        <option value="NJ">New Jersey</option>
-        <option value="NM">New Mexico</option>
-        <option value="NY">New York</option>
-        <option value="NC">North Carolina</option>
-        <option value="ND">North Dakota</option>
-        <option value="OH">Ohio</option>
-        <option value="OK">Oklahoma</option>
-        <option value="OR">Oregon</option>
-        <option value="PA">Pennsylvania</option>
-        <option value="RI">Rhode Island</option>
-        <option value="SC">South Carolina</option>
-        <option value="SD">South Dakota</option>
-        <option value="TN">Tennessee</option>
-        <option value="TX">Texas</option>
-        <option value="UT">Utah</option>
-        <option value="VT">Vermont</option>
-        <option value="VA">Virginia</option>
-        <option value="WA">Washington</option>
-        <option value="WV">West Virginia</option>
-        <option value="WI">Wisconsin</option>
-        <option value="WY">Wyoming</option>
+
       </select>
       <script>
         $('#states4').select2({
@@ -670,8 +709,7 @@
 </pre>
     </div>
     <div class="span6">
-      <p>The Select2 multiselect choices can be styled to look like our standard pills by adding the <code>select2-choices-pills</code> class to the constructor and passing a custom formatter for the choices.</p>
-      <p>Deleting the custom choice pill is like in Outlook where you use the delete key to focus on a pill and then delete again to remove.</p>
+      <p>The Select2 multiselect choices can be styled to look like our split filter pills by adding the <code>select2-choices-pills</code> class to the constructor and passing the custom formatter for the choices in the <code>formatSelection</code> option.</p>
     </div>
   </div>
 

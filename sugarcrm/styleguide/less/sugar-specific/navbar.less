@@ -1,5 +1,4 @@
 /*sugar mods*/
-
 .btn-navbar {
   @shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.075);
   .box-shadow(@shadow);
@@ -51,7 +50,6 @@
     .transition(none);
     // Hover states
     &:hover {
-      color: @white;
       background-color: @grayLight;
       background-color: rgba(255,255,255,.5);
     }
@@ -75,17 +73,25 @@
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
 .cube {
-  background: url('@{baseUrl}/img/badge_256g.png') 10px 8px no-repeat;
+  background: url('@{baseUrl}/img/badge_256f.png') 16px 11px no-repeat;
   float: left;
-  height: 19px;
-  width: 36px;
+  height: 32px;
+  width: 28px;
   z-index: 2000;
   display: block;
+/*
   -webkit-transition: all .2s linear;
      -moz-transition: all .2s linear;
           transition: all .2s linear;
   filter:  ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
   -ms-filter: ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
+*/
+  &.hide { 
+    display: none;
+  }
+  &.btn.btn-invisible:hover {
+    background: url('@{baseUrl}/img/badge_256f.png') 16px 11px no-repeat;
+  }
 }
 
 //from nutmeg
@@ -101,6 +107,11 @@
     height: 44px;
     @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1), 0 4px 0 @BorderColor;
     .box-shadow(@shadow);
+  }
+  &> .navbar-inner {
+    &> .container-fluid {
+      padding-left: 0;
+    }
   }
   .cube:hover {
     text-decoration: none;
@@ -142,7 +153,7 @@
       left: 12px;
       text-indent: 0;
       color: @grayLight;
-      line-height: 16px;
+      line-height: 15px;
     }
     .dropdownMinWidth();
     margin-top: 0;
@@ -155,7 +166,7 @@
     }
     li a {
       display: block;
-      padding: 8px;
+      padding: 6px 8px 8px;
       text-indent: 32px;
     }
     li,
@@ -173,7 +184,7 @@
       text-indent: 40px;
       line-height: 18px;
       li:first-child > a {
-        border-top: 1px solid @grayLighter;
+        border-top: 1px solid @grayLight;
         .border-radius(0);
       }
     }
@@ -202,8 +213,9 @@
       right: 29px;
       top: 35px;
       left: auto;
+      padding: 4px 8px;
       li {
-        padding: 8px;
+        padding: 4px 8px;
         &.divider {
           padding: 0;
         }
@@ -234,7 +246,7 @@
   }
   .container-fluid {
     margin-top: 0;
-    padding-left: 10px;
+    padding-left: 5px;
   }
 
   // Links
@@ -259,66 +271,105 @@
       }
     }
 
-    &#module_list{
+    &.megamenu {
       > li.dropdown {
         border-left: 1px solid transparent;
         border-right: 1px solid transparent;
         &.open {
+          &.active {
+            .cube {
+              background-position: 15px 11px;
+            }
+          }
           border-left: 1px solid @black;
           border-right: 1px solid @grayDark;
+          &:before {
+            content: '';
+            display: inline-block;
+            border-left:   7px solid transparent;
+            border-right:  7px solid transparent;
+            border-bottom: 7px solid #ccc;
+            border-bottom-color: @dropdownBorder;
+            position: absolute;
+            top: 44px;
+            left: 9px;
+            z-index:@zindexDropdown;
+          }
+          &:after {
+            content: '';
+            display: inline-block;
+            border-left:   6px solid transparent;
+            border-right:  6px solid transparent;
+            border-bottom: 6px solid @dropdownBackground;
+            position: absolute;
+            top: 45px;
+            left: 10px;
+            z-index:@zindexDropdown;
+          }
+          /* override twitter bootstrap effect, here we need this outside ul since ul itself we make scrollable */
+          ul.dropdown-menu {
+            &:before,
+            &:after {
+              display: none;
+            }
+          }
+        }
+        &.active {
+          border-right-color: darken(@white, 75%);
+          border-left-color: lighten(@black, 20%);
+          div.btn-group:not(.open) {
+            //.box-shadow(~"inset 0px -10px 15px rgba(255,255,255,.3)");
+            background-color: rgba(0,0,0,0.21);
+            #gradient > .vertical(@black, lighten(@black,26%));
+
+
+
+
+            border-left-color: lighten(@black,15%);
+            border-right-color: @black;
+
+
+
+
+          }
         }
         div.btn-group {
+
           margin: 0;
           a.btn-invisible.btn-link {
             text-shadow: none;
             color: lighten(@black,80%);
+            margin-top: 0;
+            margin-bottom: 0;
+            line-height: 32px;
             .caret {
               border-top-color: @white;
               border-bottom-color: @white;
+              margin-top: 15px;
             }
             &:hover {
               color: lighten(@black,100%) !important;
               text-decoration: none;
             }
             &:not(.dropdown-toggle) {
-              padding-right: 0;
+              padding-right: 1px;
             }
           }
           border-left: 1px solid transparent;
           border-right: 1px solid transparent;
           &.open {
             .box-shadow(~"inset 2px 4px 12px rgba(255,255,255,.25)");
-            border-left:1px solid lighten(@gray,10%);
-            border-right:1px solid @black;
+            border-left-color: lighten(@gray,5%);
+            border-right-color: @black;
             .dropdown-toggle {
               background: none;
             }
-            ul.dropdown-menu {
-              &:before {
-                content: '';
-                display: inline-block;
-                border-left:   7px solid transparent;
-                border-right:  7px solid transparent;
-                border-bottom: 7px solid #ccc;
-                border-bottom-color: @dropdownBorder;
-                position: absolute;
-                top: -7px;
-                left: 9px;
-              }
-              &:after {
-                content: '';
-                display: inline-block;
-                border-left:   6px solid transparent;
-                border-right:  6px solid transparent;
-                border-bottom: 6px solid @dropdownBackground;
-                position: absolute;
-                top: -6px;
-                left: 10px;
-              }
-            }
           }
         }
-        &.more {
+        &.more:hover {
+          b[class^="icon-"] {
+            color: @white !important;
+          }
           ul.dropdown-menu.more-drop-container {
             li.dropdown {
               div.btn-group {
@@ -336,21 +387,45 @@
       border-top-color: @white;
     }
     // Active nav items
+
+
+    .active:not(.open) > .btn-group > .btn.btn-invisible.btn-link,
     .active > a,
     .active > a:hover {
       text-decoration: none;
+      /*
       border-bottom: 4px solid darken(@red,15%);
-      padding-bottom: 13px;
+      */
       text-shadow: none;
-      font-weight: bold;
       color: @navbarLinkColorActive;
       //color: contrast(@NavigationBar, @black, @white, 43%);
-      background-color: lighten(@NavigationBar,5%) !important;
-      .box-shadow(~"inset 0 -1px 0 rgba(0,0,0,.4)");
+
+//      background-color: lighten(@NavigationBar,5%) !important;
+//      .box-shadow(~"inset 0 -1px 0 rgba(0,0,0,.4)");
       text-shadow: 0 -1px 0 rgb(0,0,0);
       //color: @navbarLinkColorActive;
       //background-color: @navbarLinkBackgroundActive;
     }
+
+    .active > a,
+    .active > a:hover {
+      padding-bottom: 13px;
+      font-weight: bold;
+    }
+
+    .active:not(.open) > .btn-group > .btn.btn-invisible.btn-link {
+      padding-bottom: 6px;
+      .border-radius(0px) !important;
+      border-left:0;
+      border-right:0;
+      padding-left: 8px;
+      outline: none !important;
+      &.dtoggle {
+        padding-left: 10px;
+        padding-right: 9px;
+      }
+    }
+
     // Secondary (floated right) nav in topbar
     &.pull-right {
       margin-left: 10px;

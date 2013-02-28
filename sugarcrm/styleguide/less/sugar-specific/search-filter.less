@@ -1,36 +1,220 @@
-//from nutmeg
-/*.form-search {
-  margin: 0;
-  text-align: center;
-  padding: 5px;
-  #gradient > .vertical(darken(@grayLighter, 4%), @grayLighter);
-  @shadow: inset 0 1px 0 rgba(0,0,0,.2), inset 0 -1px 0 rgba(0,0,0,.1);
-  .box-shadow(@shadow);
-  margin: -11px 0 20px;
-  z-index: 0;
-}*/
-
 // search filter widget
-.form-search {
-  position: relative;
-  margin: -1px 0 0 0;
-  border-top: 1px solid darken(@grayLighter, 5%);
+.form-search-related {
 
-  //padding: 5px 10px;
-  background: @grayLighter;
-  border-bottom: 1px solid darken(@grayLighter, 5%);
-  //z-index: 1000;
+  // outer wrapper
   .control-group {
-    padding: 5px 10px 4px;
+    padding: 5px 10px;
   }
-  /*chzn filter styles*/
-  .filter {
+
+  // search filter inputs
+  .filter-view {
+    border: 1px solid @inputBorder;
     position: relative;
     margin-left: 0px;
-    background-color: @grayLighter;
+    background-color: @white;
     margin-bottom: 0px;
+    overflow: hidden;
+    height: 28px;
+    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,0.075)");
+    .border-radius(2px);
+
+    // select2 filter pills
+    .select2-container {
+      &.select2-container-disabled .select2-choice div {
+        background: none;
+        .icon-caret-down {
+          display: none;
+        }
+      }
+      .select2-choices {
+        padding: 3px 4px 3px 0;
+        border: none;
+        background-image: none;
+        background-color: transparent;
+        .box-shadow(none);
+        .select2-input {
+          .box-sizing(border-box);
+          height: 21px;
+          font-size: 12px;
+        }
+      }
+      .select2-search-choice,
+      .select2-choice {
+        font-size: @fontSizeSmall;
+        background: none;
+        border: none;
+        .border-radius(0);
+        .box-shadow(none);
+        span {
+          display: inline;
+          margin-right: 0;
+        }
+        div {
+          display: inline-block;
+          width: auto;
+          height: auto;
+          position: relative;
+          right: auto;
+          top: auto;
+        }
+        span.select2-choice-type {
+          .border-radius(10px 0 0 10px);
+          color: #777;
+          padding: 4px 4px 4px 6px;
+          margin-right: 2px;
+          background: @grayLighter;
+          i[class^="icon-"] {
+            margin-left: 4px;
+          }
+        }
+        span.select2-choice-related,
+        a.select2-choice-related,
+        span.select2-choice-filter,
+        a.select2-choice-filter {
+          .border-radius(0 10px 10px 0);
+          padding: 4px 6px 4px 4px;
+        }
+        span.select2-choice-related,
+        a.select2-choice-related {
+          background: #c0f0ca;
+          color: #407648;
+          cursor: text;
+        }
+        span.select2-choice-filter,
+        a.select2-choice-filter {
+          background: @dropdownLinkBackgroundHover;
+          color: @dropdownLinkColorHover;
+        }
+        a:hover {
+          text-decoration: none;
+        }
+        a.select2-search-choice-close {
+          display: none;
+        }
+        .filter-disabled a {
+          background: @grayLighter;
+          color: @gray;
+          cursor: pointer;
+          &:hover {
+            color: @gray;
+          }
+        }
+      }
+    }
+
+    // search input field
+    .search-name {
+      position: absolute;
+      left: auto;
+      width: 100%;
+      .box-sizing(border-box);
+      height: 26px;
+      border: 0;
+      margin-top: 2px;
+      padding: 4px 8px;
+      box-shadow: none;
+    }
+    .search-name:focus {
+      border: 0;
+      .box-shadow(none);
+    }
   }
 
+  //not working for input focus
+  .filter-view:focus {
+    border-color: rgba(82,168,236,0.8);
+    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)");
+  }
+}
+
+// inset forms - specific
+.form-search-related,
+.form-search  {
+  margin: -1px 0 0 0;
+  background: @grayLighter;
+  border-top: 1px solid darken(@grayLighter, 5%);
+  border-bottom: 1px solid darken(@grayLighter, 5%);
+
+  .mu.extend,
+  .inset-form.extend {
+    margin-top:-1px;
+    article.filter-header,
+    .inset-form-header {
+      padding-left: 20px;
+    }
+  }
+}
+
+// inset forms - general
+.filter-options.extend,
+.mu.extend,
+.inset-form.extend {
+  background: darken(@grayLighter, 5%);
+
+  .filter-body {
+    .controls {
+      line-height: 16px;
+    }
+    input[type=checkbox] {
+      margin-bottom: inherit;
+      vertical-align: baseline;
+    }
+  }
+
+  // inset form rows
+  article {
+    background-color: transparent;
+    border-top: 1px solid @grayLighter;
+    border-bottom: 1px solid darken(@grayLighter, 15%);
+    padding: 7px 10px 7px 10px;
+  }
+  article.filter-header,
+  .inset-form-header {
+    padding: 9px 10px 7px 10px;
+    .box-shadow(~"inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5)");
+    border-top: none;
+    .pull-right {
+      padding: 2px 0;
+      font-size: 0;
+    }
+  }
+  article:last-child {
+    .box-shadow(~"inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5)");
+  }
+
+  // containing divs for create filter
+  .filter-field,
+  .filter-operator {
+  }
+  .filter-value {
+    position: relative;
+    .date {
+      width: 100%;
+      input[type="text"].datepicker,
+      input[type="text"].ui-timepicker-input {
+        width: 46%;
+        padding: 4px 3%;
+      }
+      input.ui-timepicker-input {
+        margin-left: 4%;
+      }
+      .add-on {
+        height: 11px;
+        padding: 9px 5px;
+      }
+    }
+  }
+  .filter-actions {
+    position: relative;
+    float: right;
+    padding: 2px 0;
+    font-size: 0;
+  }
+  .filter-close {
+    margin-left: 8px;
+  }
+
+  // inset form select2 controls
   .select2-container {
     width: 100%;
     .select2-single-with-drop div b {
@@ -55,12 +239,11 @@
     .select2-search-choice {
       padding: 0;
       margin: 4px 4px 4px;
-      font-size: 11px;
+      font-size: 12px;
       background: none;
       border: none;
       .border-radius(0);
       .box-shadow(none);
-
       span {
         .border-radius(10px 0 0 10px);
         background: #ddd;
@@ -92,15 +275,6 @@
           color: @gray;
         }
       }
-
-      /*&.search-choice-focus {
-        border-color: rgba(82, 168, 236, 0.8);
-        outline: 0;
-        outline: thin dotted 9;
-        .box-shadow(~"0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6)");
-        .border-radius(11px);
-        background-color: rgba(82, 168, 236, 0.4);
-      }*/
     }
     .select2-select-legend {
       .icon-plus {
@@ -110,6 +284,24 @@
     }
   }
 
+  // line up input text with left hand vertical
+  input {
+    padding: 4px 8px;
+  }
+
+  // datetime picker
+  .input-append {
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+  .help-block {
+    display: none;
+  }
+  .datepicker {
+    margin-top: 0;
+  }
+
+  // not used?
   .toolbar-btns {
     width: 150px;
     position: absolute;
@@ -125,76 +317,8 @@
     }
   }
 
-  input {
-    padding: 4px 8px;
-  }
-
-  /*.actions {
-    position: absolute;
-  }
-  .actions {
-    right: 10px !important;
-    top: 8px !important;
-  }
-  .actions {
-    right: 0 !important;
-    top: 0 !important;
-  }*/
-
-  .extend {
-    background: darken(@grayLighter, 5%);
-    margin-top:-1px;
-    text-align: left;
-
-    article:nth-child(even),
-    article:nth-child(odd) {
-      background-color: transparent;
-      border-top: 1px solid @grayLighter;
-      border-bottom: 1px solid @grayLight;
-      padding: 7px 8px 7px 20px;
-    }
-
-    article.filter-header {
-      padding: 9px 8px 7px 20px;
-      .box-shadow(~"inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5)");
-    }
-
-    article:last-child {
-      .box-shadow(~"inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5)");
-    }
-  }
-
-  .mu.extend {
-    .fieldPlaceHolder {
-      margin-left:4px;
-    }
-  }
-
-  .filter-value {
-    position: relative;
-    .date {
-      width: 100%;
-      input[type="text"].datepicker,
-      input[type="text"].ui-timepicker-input {
-        width: 46%;
-        padding: 4px 3%;
-      }
-      input.ui-timepicker-input {
-        margin-left: 4%;
-      }
-      .add-on {
-        height: 11px;
-        padding: 9px 5px;
-      }
-    }
-  }
-  .filter-actions {
-    position: relative;
-    float: right;
-  }
-  .filter-close {
-    margin-left: 4px;
-  }
+  // inset form row controls
+  // mass update controls are named .add and .remove
   .addme,
   .removeme,
   .updateme {
@@ -208,10 +332,19 @@
     right: 0;
   }
   .removeme {
-    right: 30px;
+    right: 36px;
+  }
+
+  //adding this for mass update teamset
+  label {
+    padding-left: 16px;
+    text-indent: -16px;
+    line-height: 16px;
+    margin-bottom: 0;
   }
 }
 
+// dropdown menu for filter pills
 .search-filter-dropdown {
   border: 1px solid @grayLight;
   width: auto;
@@ -220,38 +353,14 @@
   .result-selected {
     display: block;
     font-weight: bold;
-    /*&:before { //content:"â\00a0\00a0\00a0";
-    //content:"\f00c\00a0\00a0\00a0";
-    }*/
   }
   .select2-results {
     margin: 0;
     padding: 0;
     max-height: 235px;
-    /*.icon-ok,
-    .icon-plus {
-      position: absolute;
-      margin-top: -29px;
-      margin-left: 9px;
-      z-index: 1;
-    }
-    .icon-plus {
-      z-index: 2;
-    }*/
     li {
-      /*position: relative;
-      text-indent: 22px;
-      z-index: 1;
-      padding: 6px 8px;*/
       line-height: 26px;
       border-bottom: 1px solid darken(@grayLighter, 5%);
-      /*&.active-result {
-        z-index: 2;
-      }
-      &:not(:hover) {
-        background: @white;
-        color: @black;
-      }*/
     }
     li:hover,
     .select2-highlighted {
@@ -261,10 +370,21 @@
   }
 }
 
-.inset-form {
-  padding-top: 0;
-  .filter-options {
-    margin-top: 0;
-    .box-shadow(~"inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5)");
+//specific to forecasts module
+.view-forecastsFilter {
+  .filter-view {
+    white-space: nowrap;
+    padding-left: 116px;
+    .related-filter {
+      position: absolute;
+      left: 0;
+      .select2-choice {
+        height: 28px;
+        line-height: 28px;
+      }
+    }
+    .search-filter {
+      width: 100%;
+    }
   }
 }

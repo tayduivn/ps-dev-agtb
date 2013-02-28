@@ -186,7 +186,7 @@
                 if (item.id === item.text) {
                     return item.text;
                 } else {
-                    return '<div class="'+ item.classes +'"><span class="select2-choice-type">'+ (_hasRelated?'Related':'Module') +'<i class="icon-caret-down"></i></span><a class="select2-choice-related" href="javascript:void(0)" data-id="' + item.id.replace('filter_','') +'" rel="'+item.index+'">'+ item.text +'</a></div>';
+                    return '<div class="'+ item.classes +'"><span class="select2-choice-type">'+ (_hasRelated?'Related':'Module') +'<i class="icon-caret-down"></i></span><span class="select2-choice-related" data-id="' + item.id.replace('filter_','') +'" rel="'+item.index+'">'+ item.text +'</span></div>';
                 }
             },
             formatResult: function (option) {
@@ -210,7 +210,7 @@
               if (item.id === item.text) {
                   return item.text;
               } else {
-                  return '<div class="'+ item.classes +'"><span class="select2-choice-type">Filter<i class="icon-caret-down"></i></span><a class="select2-choice-filter" href="javascript:void(0)" data-id="' + item.id.replace('filter_','') +'" rel="'+item.index+'">'+ item.text +'</a></div>';
+                  return '<div class="'+ item.classes +'"><span class="select2-choice-type">Filter<i class="icon-caret-down"></i></span><span class="select2-choice-filter" data-id="' + item.id.replace('filter_','') +'" rel="'+item.index+'">'+ item.text +'</span></div>';
               }
           },
           formatResult: function (option) {
@@ -229,10 +229,10 @@
       // disable all related record filters for list view
 
       // define global select2 elements
-      _related_choices = $('#{{sourceid}} #s2id_search_related');
+      _related_choices = $('#{{sourceid}} #s2id_related_filter .select2-choice');
       _related_results = $('.search-related-dropdown .select2-results');
 
-      _filter_choices = $('#{{sourceid}} #s2id_search_filter');
+      _filter_choices = $('#{{sourceid}} #s2id_search_filter .select2-choice');
       _fitler_results = $('.search-filter-dropdown .select2-results');
 
       // prepend legend to .select2-choices
@@ -248,8 +248,13 @@
           }
       });
 
+      _related_choices.on('mousedown', 'span.select2-choice-related', function(e){
+          e.preventDefault();
+          e.stopPropagation();
+      });
+
       //edit existing filter
-      _filter_choices.on('mousedown', 'a.select2-choice-filter', function(e){
+      _filter_choices.on('mousedown', 'span.select2-choice-filter', function(e){
           var index = isNaN($(this).attr('rel'))?0:$(this).attr('rel');
           editFilterForm( index, false );
           e.preventDefault();

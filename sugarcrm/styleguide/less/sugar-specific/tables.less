@@ -26,13 +26,6 @@ div.inline-edit {
   }
 }
 
-
-.click input {
-  width: 50px !important;
-  float: left;
-  margin-top: 0px !important;
-}
-
 div.sugareditable {
   border: 1px solid transparent;
   position: relative;
@@ -80,89 +73,104 @@ div.sugareditable {
   }
 }
 
-table td {
-  overflow:visible !important;
-}
-
-//from nutmeg
-.layout_Forecasts {
-  table th {
-    white-space: nowrap;
-  }
-
-  tfoot th,
-  table.datatable tbody td {
-    white-space: normal;
-    word-break: break-word;
-  }
-
-  td div {
-    word-break: break-word;
-  }
-}
-
-/* Tables
------------------*/
-table tbody tr:last-child td:last-child,
-table tbody tr:last-child td:first-child,
-table tfoot tr:last-child td:last-child,
-table tfoot tr:last-child td:first-child {
-  .border-radius(0 0 4px 4px)
-}
-table.datatable {
-  margin: 0;
-}
-table.datatable tbody td {
-  white-space: nowrap;
-  max-width: 100px;
-  //new from nutmeg
-  overflow-x: hidden;
-}
-table.datatable tbody td:last-child {
-  overflow-x: visible;
-}
-table th,
-table td {
-  position: relative;
-}
-table th {
-  white-space: nowrap;
-  line-height: 26px !important;
-  min-width: 20px;
-  color: @tableHeader;
-  border-right: 1px solid @grayLighter;
-}
-table th .btn-group {
-  margin: 0 0 0 -10px;
-  width: 60px;
-}
-table th .btn input {
-  margin: -2px 0 0 0;
-}
-table th .toggle-all {
-  margin: 10px;
-}
-table td .btn-toolbar {
-  margin: -5px 0 -10px;
-}
-table input {
-  position: relative;
+.click input {
+  width: 50px !important;
+  float: left;
+  margin-top: 0px !important;
 }
 .dblclick input {
   padding: 3px 3px 2px;
   position: absolute;
-  top: 1px; width: 80% !important;
+  top: 1px;
+  width: 80% !important;
 }
-table tfoot td {
-  font-weight: bold;
-  border-top: 2px solid @grayLight !important;
-}
-//from nutmeg
-tfoot th,
-table.datatable tbody td {
-  white-space: normal;
-  word-break: break-word;
-}
-td div {
-  word-break: break-word;
+
+/* Tables
+-----------------*/
+table {
+  margin: 0;
+  tbody {
+    tr:last-child {
+      td:last-child,
+      td:first-child,
+      td:last-child,
+      td:first-child {
+        .border-radius(0 0 4px 4px)
+      }
+    }
+  }
+  th,
+  td {
+    position: relative;
+  }
+  th:last-child {
+    border-right: 0;
+  }
+  th {
+    white-space: nowrap;
+    line-height: 26px !important;
+    min-width: 20px;
+    color: @tableHeader;
+    border-right: 1px solid @grayLighter;
+    .btn-group {
+      margin: 0 0 0 -8px;
+      width: 60px;
+    }
+    .btn input {
+      margin: -2px 0 0 0;
+    }
+    .toggle-all {
+      margin: 10px;
+    }
+    &.nosort.select-all {
+      padding: 0;
+      .btn-group {
+        position: absolute;
+        top: 0;
+        //centering checkbox in btn-group
+        > .btn:first-child {
+          padding-top: 7px;
+          padding-bottom: 1px;
+        }
+      }
+    }
+  }
+  td {
+    overflow: visible !important;
+    white-space: normal;
+    word-break: break-word;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    &:last-child {
+      overflow-x: visible;
+    }
+    .btn-toolbar {
+      margin: -5px 0 -10px;
+    }
+    div {
+      word-break: break-word;
+    }
+    .actions {
+      //position: absolute;
+      //top: 8px;
+      //right: 8px;
+      a:hover {
+        color: @grayDark;
+      }
+    }
+  }
+  tfoot {
+    th {
+      white-space: normal;
+      word-break: break-word;
+    }
+    td {
+      font-weight: bold;
+      border-top: 2px solid @grayLight !important;
+    }
+  }
+  input {
+    position: relative;
+  }
 }

@@ -1,50 +1,243 @@
 
 //headerpane record name edit
+//nutmeg
+#contentflex #headerbar,
+//sugar7
 .headerpane {
+
+  h1 {
+    float: left;
+    margin: 20px 0 0 20px;
+    line-height: 24px;
+  }
+  .view-forecastsTitle h1 {
+    margin-top: 18px;
+  }
+
+  .record-edit-link-wrapper {
+    top: 1px;
+    left: -10px;
+    width: 28px;
+    .record-edit-link {
+      margin-left: 0;
+    }
+  }
+
+  //module type element label
+  .label-module {
+    width: 32px !important;
+    height: 32px !important;
+    vertical-align: top;
+    margin-left: 1px !important;
+    top: -8px;
+    display: inline-block;
+    position: relative;
+  }
+
+  //40+1+1=42px=standard height of headerpane elements
+  .record-cell {
+    padding-left: 12px;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    top: -8px;
+    .record-cell {
+      padding: 13px 0 0;
+      top: -8px;
+      .record-edit-link-wrapper {
+        top: 14px;
+      }
+      .record-label {
+        top: 0;
+      }
+    }
+  }
+  .ellipsis_inline {
+    padding: 4px 0;
+  }
+
+  span[data-type="image"] {
+    top: -10px;
+    padding: 0;
+    .record-edit-link-wrapper {
+      top: 10px;
+      left: -24px;
+    }
+    .image_field.image_edit {
+      top: -2px;
+    }
+  }
+  span[data-type="text"] {
+    top: -4px;
+  }
+  span[data-type="fieldset-with-labels"] {
+    margin: 0 0 0 -10px;
+    top: -9px;
+    .record-edit-link-wrapper {
+      left: -2px;
+      top: 6px;
+    }
+    .index2 {
+      margin-left: 6px;
+    }
+  }
+  span[data-type="badge"] {
+    margin-left: 8px;
+    top: -3px;
+    padding: 0;
+    .label {
+      font-size: 10px;
+      padding: 3px 4px 2px;
+    }
+    span {
+      font-size: 14px;
+    }
+  }
+  span[data-type="favorite"] {
+    margin-left: 8px;
+    top: -1px;
+    padding: 0;
+    [class="icon-favorite"] {
+      font-size: 18px !important;
+      color: @grayLight;
+    }
+    &:hover [class="icon-favorite"] {
+      color: @gray;
+    }
+    .record-edit-link-wrapper {
+      display: none;
+    }
+  }
+
+  .record-label {
+    font-size: 11px;
+    font-color: lighten(@gray, 20%);
+    line-height: 14px;
+    margin: 0 0 0 8px;
+    position: absolute;
+    top: -14px;
+  }
+
+  input[type="text"] {
+    font-size: 20px;
+    padding: 5px 6px 7px;
+  }
+
+  .select2-container {
+    .select2-choice {
+      height: 22px;
+      padding: 6px 0 2px 8px;
+      line-height: 20px;
+      min-width: 50px;
+      span {
+        margin-right: 32px;
+      }
+      div {
+        top: 2px;
+      }
+      abbr {
+        top: 8px;
+      }
+    }
+  }
+
+  .help-block {
+    margin-bottom: 0;
+  }
+
+  //action buttons
+
+  .btn-toolbar {
+    margin: 16px 10px 0 8px;
+    padding-left: 0;
+    .btn-group {
+      vertical-align: middle;
+      i {
+        //was making icons gray
+        //color: @gray !important;
+      }
+    }
+  }
+  .btn-group-previous-next {
+    margin: 0;
+    .btn {
+      [class^="icon-"] {
+        font-size: 16px;
+        line-height: 20px;
+      }
+    }
+  }
   &.btn-group > .btn {
     float: none;
   }
-  .dropdown-menu {
-    .caret-top(auto,auto,8px,7px);
-    left: auto;
-    right: 0;
-    z-index:1001;
+  .view-forecastsCommitButtons,
+  .actions {
+    .dropdown-menu {
+      .caret-top(auto,auto,8px,7px);
+      left: auto;
+      right: 0;
+      z-index:1001;
+    }
   }
-}
-h1 {
-  input[type="text"] {
-    font-size: 20px;
-    height: 28px;
-    margin: 0 0 0 5px;
-  }
-  span {
-    margin-left: 0;
-    display: inline-block;
-    vertical-align: top;
-  }
-  .ellipsis_inline {
-    margin-left: 10px;
-  }
-  .record-edit-link-wrapper {
-    margin-left: 5px;
-  }
-  .select2-container {
-    margin-left: 12px;
-    .select2-choice {
-      margin-top: 1px;
-      height: 28px;
-      padding: 4px 0 4px 8px;
-      div {
-        padding: 4px 2px;
-      }
+  .drawerTrig {
+    [class*="icon-"]{
+        font-size: 25px;
+        font-weight: 700;
+        vertical-align: top;
+        width: 12px;
+        height: 16px;
+    }
+    .icon-double-angle-left {
+        margin: 0 2px 0 -2px;
     }
   }
 }
 
 //main record edit
 .record {
+
   clear: both;
-  margin: 10px 30px 10px 15px;
+  margin: 20px 20px 10px 5px;
+
+  .form-horizontal {
+
+    .record-cell,
+    .normal {
+      min-height: 50px;
+      padding-left: 0;
+    }
+    .record-cell {
+      input[type="text"],
+      select,
+      textarea,
+      .uneditable-input,
+      .select2-container {
+        margin-left: 0px !important;
+        z-index: 1;
+      }
+      .compose-sender-options {
+        position: absolute;
+        top: 7px;
+        right: 51px;
+        z-index: 2;
+      }
+      //for email compose
+      input[name="to_addresses"] {
+        padding-right: 115px;
+      }
+      .help-block {
+        min-height: 8px;
+      }
+    }
+    .record-edit-link-wrapper {
+      top: 2px;
+      left: -32px;
+    }
+    .mceLayout {
+      width: 100% !important;
+      .border-radius(4px);
+    }
+  }
 
   .record-cell {
 
@@ -73,13 +266,17 @@ h1 {
     .uneditable-input {
       position: relative;
       z-index: 1;
-      //this has to be important because there is an input that is a .row-fluid [class*="span"]:first-child
       margin-top: 0;
+      //this has to be important because there is an input that is a .row-fluid [class*="span"]:first-child
       margin-left: -7px !important;
       font-size: 14px;
       padding: 6px;
       color: lighten(@gray, 20%);
       width: 100%;
+    }
+
+    .select2-container {
+      z-index: 1;
     }
 
     input[type="radio"],
@@ -106,19 +303,23 @@ h1 {
 
     &[data-type="textarea"] {
       .normal > span {
-        display: inline !important;
-        margin-bottom: 9px;
+        display: block !important;
+        //margin-bottom: 9px;
+        padding: 7px 0;
+        width: 100%;
       }
       .textarea-text {
-        display: inline !important;
-        padding: 7px 0;
+        //display: inline-block !important;
+      }
+      textarea {
+        margin-top: -7px;
       }
     }
 
     &[data-type="url"] {
       .normal > span {
         display: block !important;
-        margin-bottom: 9px;
+        //margin-bottom: 9px;
         a {
           display: block !important;
           white-space: nowrap;
@@ -137,12 +338,16 @@ h1 {
       .control-group.email {
         padding-right: 132px;
         position: relative;
+        min-height: 30px;
+        margin-bottom: 0;
         .input-append.widget {
           margin-bottom: 0;
           input[type="text"],
           select,
           textarea,
           .uneditable-input {
+            .box-sizing(border-box);
+            height: 32px;
             margin-top: 0;
             width: 100%;
             .border-radius(0);
@@ -188,18 +393,23 @@ h1 {
       .normal > span {
         display: block !important;
         white-space: nowrap;
-        overflow: hidden;
         text-overflow: ellipsis;
         padding: 7px 0;
         .select2-container {
-          margin: -5px 0 0 -9px;
+          margin: -7px 0 0 -9px;
           position: absolute;
         }
       }
     }
 
     &[data-type="teamset"] {
-      .normal .row-fluid {
+      .control-group.teamset {
+        padding: 7px 0;
+        label {
+          margin-bottom: 0;
+        }
+      }
+      .normal .control-group {
         margin-bottom: 4px;
         .select2-container {
           margin: 0 0 0 -9px;
@@ -273,38 +483,35 @@ h1 {
           width: 210px;
           font-size: 20px;
         }
-        .record-edit-link-wrapper {
-          display: none;
-        }
       }
     }
 
     &[data-type="favorite"] {
       display: none;
     }
+
+    &[data-type="compose-actionbar"] {
+      min-height: 0;
+      .normal {
+        min-height: 0;
+      }
+      padding-bottom: 8px;
+      .btn {
+        [class^="icon-"] {
+          margin-right: 6px;
+        }
+      }
+      .btn.dropdown-toggle {
+        [class^="icon-"] {
+          margin-right: 0;
+        }
+      }
+    }
   }
 
   .record-edit-link-wrapper {
-    .record-edit-link {
-      position: absolute;
-      top: 18px;
-      left: -16px;
-      z-index: 0;
-      padding: 4px 7px 4px;
-    }
-    .icon-pencil {
-      display: none;
-      text-decoration: none;
-      cursor: pointer;
-    }
-  }
-
-  .record-cell:hover {
-    .record-edit-link-wrapper {
-      .icon-pencil {
-        display: inline-block;
-      }
-    }
+    top: 18px;
+    left: -18px;
   }
 
   .wide {
@@ -339,7 +546,28 @@ h1 {
 
 }
 
+//common to both .record and .headerpane
+.record-edit-link-wrapper {
+  position: absolute;
+  z-index: 0;
+  .record-edit-link {
+    display: none;
+    padding: 4px 7px 4px;
+    text-decoration: none;
+    cursor: pointer;
+    &.btn-invisible:hover {
+      border: 1px solid transparent;
+      background: none;
+    }
+  }
+}
+.record-cell:hover {
+  .record-edit-link {
+    display: inline-block;
+  }
+}
+
 //show more-less control
 .show-hide-toggle {
-  margin: 0 20px 10px 30px;
+  margin: 0 20px 10px 20px;
 }

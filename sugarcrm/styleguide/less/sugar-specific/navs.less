@@ -7,7 +7,7 @@
     > li {
       margin: 0;
       text-align: center;
-      width: 33.33%;
+      width: 33.333%;
       > a {
         background-color: @tableBackgroundAccent;
         border: 1px solid darken(@tableBackgroundAccent,5%);
@@ -34,10 +34,31 @@
   .listed li {
     padding: 12px;
   }
-  &.tabs-four {
+  &.two {
+    .nav-tabs {
+      > li {
+        width: 50%;
+      }
+    }
+  }
+  &.three {
+    .nav-tabs {
+      > li {
+        width: 33.333%;
+      }
+    }
+  }
+  &.four {
     .nav-tabs {
       > li {
         width: 25%;
+      }
+    }
+  }
+  &.five {
+    .nav-tabs {
+      > li {
+        width: 20%;
       }
     }
   }
