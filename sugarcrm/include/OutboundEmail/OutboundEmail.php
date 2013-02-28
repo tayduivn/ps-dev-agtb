@@ -472,12 +472,6 @@ class OutboundEmail {
 		require_once('include/utils/encryption_utils.php');
 	    $updateFields = array('mail_smtptype','mail_sendtype','mail_smtpserver', 'mail_smtpport','mail_smtpauth_req','mail_smtpssl');
 
-	    //Update the username ans password for the override accounts if alloweed access.
-	    if( $this->isAllowUserAccessToSystemDefaultOutbound() )
-	    {
-	        $updateFields[] = 'mail_smtpuser';
-	        $updateFields[] = 'mail_smtppass';
-	    }
         $values = $this->getValues($updateFields);
         $updvalues = array();
 		foreach($values as $k => $val) {
@@ -487,15 +481,7 @@ class OutboundEmail {
 
 	    $this->db->query($query);
 	}
-	/**
-	 * Remove all of the user override accounts.
-	 *
-	 */
-	function removeUserOverrideAccounts()
-	{
-	    $query = "DELETE FROM outbound_email WHERE type = 'system-override'";
-		return $this->db->query($query);
-	}
+
 	/**
 	 * Deletes an instance
 	 */
