@@ -32,15 +32,14 @@
             'click .disabled' : 'preventClick'
         });
         app.view.Field.prototype.initialize.call(this, options);
-        this.model.on("data:sync:end", this.render, this);
     },
     _render:function(){
-        this.action = this.def.value || this.action;
         // buttons use the value property in metadata to denote their action for acls
-        if (!app.acl.hasAccessToModel(this.def.value, this.model, this)) {
+        if (app.acl.hasAccessToModel(this.def.value, this.model, this)) {
+            app.view.Field.prototype._render.call(this);
+        } else {
             this.isHidden = true;
         }
-        app.view.Field.prototype._render.call(this);
     },
     getFieldElement: function() {
         return this.$(this.fieldTag);
