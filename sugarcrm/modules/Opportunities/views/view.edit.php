@@ -43,7 +43,7 @@ class OpportunitiesViewEdit extends ViewEdit
     /**
      * @deprecated
      */
-    function OpportunitiesViewEdit()
+    public function OpportunitiesViewEdit()
     {
         $this->__construct();
     }
