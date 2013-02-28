@@ -1,5 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -29,28 +31,39 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-class OpportunitiesViewEdit extends ViewEdit {
+class OpportunitiesViewEdit extends ViewEdit
+{
 
- 	function OpportunitiesViewEdit(){
- 		parent::ViewEdit();
- 		$this->useForSubpanel = true;
- 	}
+    public function __construct()
+    {
+        parent::__construct();
+        $this->useForSubpanel = true;
+    }
 
- 	function display() {
-		global $app_list_strings;
-		$json = getJSONobj();
-		$prob_array = $json->encode($app_list_strings['sales_probability_dom']);
-		$prePopProb = '';
- 		if(empty($this->bean->id) && empty($_REQUEST['probability'])) {
-		   $prePopProb = 'document.getElementsByName(\'sales_stage\')[0].onchange();';
-		}
-		//BEGIN SUGARCRM flav=pro ONLY
-		$admin = BeanFactory::getBean('Administration');
-		$settings = $admin->getConfigForModule('Forecasts');
-		$wonStages = $json->encode($settings['sales_stage_won']);
-		//END SUGARCRM flav=pro ONLY
+    /**
+     * @deprecated
+     */
+    function OpportunitiesViewEdit()
+    {
+        $this->__construct();
+    }
 
-$probability_script=<<<EOQ
+    public function display()
+    {
+        global $app_list_strings;
+        $json = getJSONobj();
+        $prob_array = $json->encode($app_list_strings['sales_probability_dom']);
+        $prePopProb = '';
+        if (empty($this->bean->id) && empty($_REQUEST['probability'])) {
+            $prePopProb = 'document.getElementsByName(\'sales_stage\')[0].onchange();';
+        }
+        //BEGIN SUGARCRM flav=pro ONLY
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        $wonStages = $json->encode($settings['sales_stage_won']);
+        //END SUGARCRM flav=pro ONLY
+
+        $probability_script = <<<EOQ
 	<script>
 	prob_array = $prob_array;
 	var sales_stage = document.getElementsByName('sales_stage')[0];
@@ -117,8 +130,7 @@ $probability_script=<<<EOQ
 	</script>
 EOQ;
 
-	    $this->ss->assign('PROBABILITY_SCRIPT', $probability_script);
- 		parent::display();
- 	}
+        $this->ss->assign('PROBABILITY_SCRIPT', $probability_script);
+        parent::display();
+    }
 }
-?>
