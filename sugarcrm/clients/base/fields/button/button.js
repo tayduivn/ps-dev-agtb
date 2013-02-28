@@ -34,8 +34,20 @@
         app.view.Field.prototype.initialize.call(this, options);
     },
     _render:function(){
-        // buttons use the value property in metadata to denote their action for acls
-        if (app.acl.hasAccessToModel(this.def.value, this.model, this)) {
+        // buttons use the acl_action and acl_module properties in metadata to denote their action for acls
+        var acl_module = this.def.acl_module,
+            acl_action = this.def.acl_action,
+            hasAccess;
+
+        this.full_route = _.isString(this.def.route) ? this.def.route : null;
+
+        if (!acl_module) {
+            hasAccess = app.acl.hasAccessToModel(acl_action, this.model, this);
+        } else {
+            hasAccess = app.acl.hasAccess(acl_action, acl_module);
+        }
+
+        if (hasAccess) {
             app.view.Field.prototype._render.call(this);
         } else {
             this.isHidden = true;

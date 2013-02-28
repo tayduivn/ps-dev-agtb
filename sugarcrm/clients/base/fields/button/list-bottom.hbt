@@ -26,6 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<a href="{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}
-{{else}}javascript:void(0){{/if}}" name="{{name}}" class="btn {{#if def.primary}}btn-primary{{/if}}">
+<a class="btn{{#if def.primary}} btn-primary{{/if}}"
+   href="{{#if full_route}}#{{full_route}}{{else}}{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}{{else}}javascript:void(0);{{/if}}{{/if}}"
+   name="{{name}}">
 {{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{label}}</a>
