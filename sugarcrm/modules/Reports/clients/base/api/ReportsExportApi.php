@@ -66,7 +66,7 @@ class ReportsExportApi extends SugarApi {
 
         $saved_report = $this->loadBean($api, $args, 'view');
         
-        if(!$saved_report->ACLAccess('view', array('user' => $GLOBALS['current_user']))) {
+        if(!$saved_report->ACLAccess('view')) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: Reports');
         }
 
