@@ -159,8 +159,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 			    $sigs[$k] = $v;
 			}
         }
+
+        $configArray=array();
+        $configs = OutboundEmailConfigurationPeer::listMailConfigurations($current_user);
+        foreach ($configs as $config) {
+            $configItem = array(
+                    "value" => $config->getConfigId(),
+                    "text"  => $config->getDisplayName()
+             );
+            $configArray[] = $configItem;
+        }
+
         $out['signatures'] = $sigs;
-        $out['fromAccounts'] = $email->et->getFromAccountsArray($ie);
+        // $out['fromAccounts']  = $email->et->getFromAccountsArray($ie);
+        $out['fromAccounts'] = $configArray;
         $out['errorArray'] = array();
 
         $oe = new OutboundEmail();
