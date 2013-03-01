@@ -338,7 +338,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
   'pipeline_opp_count' =>
   array (
     'name' => 'pipeline_opp_count',
-    'vname' => 'LBL_FORECAST_OPP_COUNT',
+    'vname' => 'LBL_FORECAST_PIPELINE_OPP_COUNT',
     'type' => 'int',
     'len' => '5',
     'studio' => false,
