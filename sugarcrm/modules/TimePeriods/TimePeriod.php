@@ -333,7 +333,7 @@ class TimePeriod extends SugarBean {
         if(!empty($timeperiod_id)) {            
             $tp = BeanFactory::getBean('TimePeriods');
             $tp->retrieve($timeperiod_id);
-            $tp->save();
+            
             return $tp;
         }
 
