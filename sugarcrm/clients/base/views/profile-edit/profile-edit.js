@@ -62,7 +62,7 @@
                     success: function () {
                         var langKey = self.model.get('preferred_language');
                         if (langKey && langKey != app.lang.getLanguage())
-                            app.lang.setLanguage(langKey,{},{noUserUpdate: true});
+                            app.lang.setLanguage(langKey,null,{noUserUpdate: true});
 
                         app.router.navigate('profile', {trigger: true});
                     }
