@@ -56,24 +56,37 @@ describe("Filter View", function() {
         });
 
         describe("getFilters", function() {
-            it("fetches the list of filters for the current module", function() {
-                var apiSpy = sinon.spy(app.api, "call");
-                view.getFilters();
-                expect(apiSpy).toHaveBeenCalledWithMatch("read", /.*Filters\/filter.*/);
-                apiSpy.restore();
-            });
-        });
-
-        describe("getPreviouslyUsedFilter", function() {
-            var apiSpy;
+            var apiSpy, jQStub;
 
             beforeEach(function() {
                 apiSpy = sinon.spy(app.api, "call");
-
+                jQStub = sinon.stub($, "ajax");
             });
 
             afterEach(function() {
                 apiSpy.restore();
+                jQStub.restore();
+            });
+
+            it("fetches the list of filters for the current module", function() {
+                view.getFilters();
+                expect(apiSpy).toHaveBeenCalledOnce();
+                expect(apiSpy).toHaveBeenCalledWithMatch("filter", /.*Filters\/filter.*/);
+            });
+        });
+
+        describe("getPreviouslyUsedFilter", function() {
+            var apiSpy, handleFilterSelectionStub;
+
+            beforeEach(function() {
+                apiSpy = sinon.spy(app.api, "call");
+                handleFilterSelectionStub = sinon.stub(view, "handleFilterSelection");
+                SugarTest.seedFakeServer();
+            });
+
+            afterEach(function() {
+                apiSpy.restore();
+                handleFilterSelectionStub.restore();
             });
 
             it("should call the correct URL", function() {
@@ -84,36 +97,35 @@ describe("Filter View", function() {
 
             it("should add the previously used filter to the filter collection", function() {
                 var filters = [{id: "foobar", filter_definition: {}}],
-                    mock = sinon.mock(view.filters);
+                    spy = sinon.spy(view.filters, "add");
 
-                SugarTest.seedFakeServer();
-                SugarTest.server.respondWith("GET", new RegExp(".*\/rest\/v10\/Filters\/Cases\/used"), [
+                SugarTest.server.respondWith("GET", new RegExp(".*\/Filters\/Cases\/used"), [
                     200,
                     {"Content-Type": "application/json"},
                     JSON.stringify(filters)
                 ]);
-                view.getPreviouslyUsedFilter();
 
-                mock.expects('add').once().withArgs(filters);
+                view.getPreviouslyUsedFilter();
                 SugarTest.server.respond();
-                mock.verify();
+                expect(spy).toHaveBeenCalledOnce();
+                expect(spy).toHaveBeenCalledWith(filters);
+                spy.reset();
             });
 
             it("should not add to the filter collection if a previously used filter is not returned", function() {
                 var filters = [],
-                    mock = sinon.mock(view.filters);
+                    spy = sinon.spy(view.filters, "add");
 
                 SugarTest.seedFakeServer();
-                SugarTest.server.respondWith("GET", new RegExp(".*\/rest\/v10\/Filters\/Cases\/used"), [
+                SugarTest.server.respondWith("GET", new RegExp(".*\/Filters\/Cases\/used"), [
                     200,
                     {"Content-Type": "application/json"},
                     JSON.stringify(filters)
                 ]);
                 view.getPreviouslyUsedFilter();
-
-                mock.expects('add').never();
                 SugarTest.server.respond();
-                mock.verify();
+                expect(spy).not.toHaveBeenCalled();
+                spy.reset();
             });
         });
 
@@ -228,7 +240,7 @@ describe("Filter View", function() {
         });
     });
 
-    describe("integration tests", function() {
+    xdescribe("integration tests", function() {
         describe("records view (list)", function() {
             it("should set the module pill to the module name and disable it", function() {
                 var viewSpy = sinon.spy(view, "updateModuleList"), select2;
