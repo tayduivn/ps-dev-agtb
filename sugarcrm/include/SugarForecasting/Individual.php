@@ -102,8 +102,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             /* if we are a manager looking at a reportee worksheet and they haven't committed anything yet 
              * (no worksheet row), we don't want to add this row to the output.
              */
-            if(!isset($row["worksheet_id"]) && $this->getArg("user_id") != $current_user->id)
-            {
+            if ((!isset($row["worksheet_id"]) || empty($row['worksheet_id']))
+                && $this->getArg("user_id") != $current_user->id) {
                 continue;
             }
             
@@ -121,9 +121,11 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             $data["version"] = 1;
             $data["worksheet_id"] = $row["worksheet_id"];
             $data["date_modified"] = $this->convertDateTimeToISO($db->fromConvert($row["date_modified"], "datetime"));
-            
-            if(isset($row["worksheet_id"])){
-            	$data["w_date_modified"] = $this->convertDateTimeToISO($db->fromConvert($row["w_date_modified"], "datetime"));
+
+            if (isset($row["worksheet_id"]) && !empty($row['worksheet_id'])) {
+                $data["w_date_modified"] = $this->convertDateTimeToISO(
+                    $db->fromConvert($row["w_date_modified"], "datetime")
+                );
             }
             if (isset($row["worksheet_id"]) && $this->getArg("user_id") != $current_user->id) {
                 //use the worksheet data if it exists

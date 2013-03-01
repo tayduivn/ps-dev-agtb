@@ -78,7 +78,11 @@ class SugarTestWorksheetUtilities
     
     public static function removeSpecificCreatedWorksheets($ids)
     {
-    	$GLOBALS["db"]->query("delete from worksheet where id in('" . implode("', '", $ids) . "')" );
+        /* @var $db DBManager */
+        $db = DBManagerFactory::getInstance();
+        $query = "delete from worksheet where id in('" . implode("', '", $ids) . "')";
+        $db->query($query);
+        $db->commit();
     }
 
     public static function getCreatedWorksheetIds()
