@@ -506,7 +506,6 @@
     },
 
     handleCancel: function() {
-        this.inlineEditMode = false;
         this.toggleEdit(false);
         if (this.model.isDirty()) {
             this.model.revertAttributes({silent: !this.inlineEditMode});
