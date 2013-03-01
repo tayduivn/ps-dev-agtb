@@ -7,6 +7,9 @@
 
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
+        // This is in place to get the lang strings from the right module. See
+        // if there is a better way to do this later.
+        this.parentModule = this.context.parent.get("module");
     },
 
     hidePanel: function(e) {
