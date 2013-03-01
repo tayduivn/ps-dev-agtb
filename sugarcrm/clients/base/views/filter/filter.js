@@ -1,7 +1,8 @@
 ({
     events: {
         "keyup .search-name": "throttledSearch",
-        "paste .search-name": "throttledSearch"
+        "paste .search-name": "throttledSearch",
+        "click .choice-filter": "handleEditFilter"
     },
 
     initialize: function(opts) {
@@ -159,24 +160,20 @@
     },
 
     formatCustomSelection: function(item) {
-        var self = this,
-            result = $('<span class="select2-choice-type">' + app.lang.get("LBL_FILTER") + '<i class="icon-caret-down"></i></span><a class="select2-choice-filter" rel="'+ item.id + '" href="javascript:void(0)">'+ item.text +'</a>');
+        // Update the text for the selected filter.
+        this.$('.choice-filter').html(item.text);
 
-        // TODO: Only bind this event if the filter has been created by the user (do we want users to be able to edit pre-defined filters? probably not) [ABE-283].
-        if (item.id !== "all_records" /* && if not editable */) {
-            $(result[1]).on("click", function() {
-                self.openPanel(self.filters.get(item.id));
-            });
-        }
-
-        return result;
+        return '<span class="select2-choice-type">' + app.lang.get("LBL_FILTER") + '<i class="icon-caret-down"></i></span>';
     },
     formatModuleSelection: function(item) {
         var selectionLabel = app.lang.get("LBL_RELATED") + '<i class="icon-caret-down"></i>';
         if(this.layoutType !== "record") {
             selectionLabel = app.lang.get("LBL_MODULE");
         }
-        return '<span class="select2-choice-type">' + selectionLabel + '</span><a class="select2-choice-related" href="javascript:void(0)">'+ item.text +'</a>';
+
+        // Update the text for the selected module.
+        this.$('.choice-related').html(item.text);
+        return '<span class="select2-choice-type">' + selectionLabel + '</span>';
     },
     formatResult: function (option) {
         // TODO: Determine whether active filters should be highlighted in bold in this menu.
@@ -184,10 +181,22 @@
     },
 
     /**
-     * This function is a handler for when the custom filter dropdown value changes.
-     * (Either via a click or manually calling jQuery's .trigger("change") event).
+     * Handler for when the user clicks the filter in the filter bar.
+     * Triggers the openPanel() function.
+     */
+    handleEditFilter: function() {
+        // TODO: Only call openPanel if the filter has been created by the user
+        // (do we want users to be able to edit pre-defined filters? probably not) [ABE-283].
+        if (this.currentFilter !== "all_records" /* && if not editable */) {
+            this.openPanel(this.filters.get(this.currentFilter));
+        }
+    },
+
+    /**
+     * Handler for when the custom filter dropdown value changes, either via a
+     * click or manually calling jQuery's .trigger("change") event.
      * @param  {obj} e      jQuery Change Event Object.
-     * @param  {string} newVal (optional) ID passed in when manually changing the filter dropdown value.
+     * @param  {string} overrideVal (optional) ID passed in when manually changing the filter dropdown value.
      */
     sanitizeFilter: function(e, newVal) {
         var self = this,
@@ -196,15 +205,21 @@
         if(val === "create") {
             // Create a new filter.
             this.currentFilter = "all_records";
+            this.$('.choice-filter').css("cursor", "text");
             this.openPanel();
         } else if(val === "all_records") {
             // All records.
             this.currentFilter = "all_records";
+            this.$('.choice-filter').css("cursor", "text");
             // Close the panel.
             this.layout.trigger("filter:create:close");
         } else if(this.filters.get(val)) {
             // Is a valid filter.
             this.currentFilter = val;
+
+            // TODO: Check to see whether this is a default filter [ABE-283].
+            this.$('.choice-filter').css("cursor", "pointer");
+
             if(!this.layout.$(".filter-options").hasClass('hide')) {
                 self.openPanel(self.filters.get(val));
             }
