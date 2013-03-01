@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'ACLRoles';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#'.$module_name.'/create',
+        'event' => 'megamenu:create:click',
         'label' =>'LBL_CREATE_ROLE',
         'acl_module'=>$module_name,
         'acl_action'=>'edit',

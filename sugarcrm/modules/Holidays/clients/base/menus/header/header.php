@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Holidays';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#'.$module_name.'/create',
+        'event' => 'megamenu:create:click',
         'label' =>'LNK_NEW_HOLIDAY',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
