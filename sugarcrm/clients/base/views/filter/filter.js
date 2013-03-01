@@ -126,8 +126,7 @@
                 }
             }, this);
         } else {
-            // TODO: Translate the text param.
-            this.moduleFilterList.push({id: this.module, text: this.module});
+            this.moduleFilterList.push({id: this.module, text: app.lang.get('LBL_MODULE_NAME', this.module)});
         }
 
         this.moduleFilterNode.select2({
