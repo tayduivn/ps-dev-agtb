@@ -236,7 +236,7 @@ describe("Emails.Views.Compose", function() {
 
             expect(alertShowStub.firstCall.args[1].title).toEqual(pending);
             expect(alertDismissStub.firstCall.args[0]).toEqual(alertShowStub.firstCall.args[0]);
-            expect(alertShowStub.secondCall.args[1].title).toEqual(success);
+            expect(alertShowStub.secondCall.args[1].messages).toEqual(success);
         })
     });
 

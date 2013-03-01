@@ -1895,7 +1895,7 @@ $app_strings = array (
   'LBL_JS_CALENDAR' => 'Calendar' /*for 508 compliance fix*/,
     'LBL_ADVANCED' => 'Advanced',
     'LBL_BASIC' => 'Basic',
-    'LBL_MODULE_FILTER' => 'Filter By',
+    'LBL_MODULE_FILTER' => 'Filter by...',
     'LBL_CONNECTORS_POPUPS'=>'Connectors Popups',
     'LBL_CLOSEINLINE'=>'Close',
     'LBL_MOREDETAIL'=>'More Detail',
@@ -2575,6 +2575,7 @@ $app_strings = array (
     'LBL_FILTER_SELECT_OPERATOR' => 'Select operator...',
     'LBL_FILTER_CREATE_NEW' => 'Create New',
     'LBL_FILTER_ALL_RECORDS' => 'All Records',
+    'LBL_FILTER_SAVE' => 'You successfully created the filter',
     'LBL_VCARD' => 'vCard',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
     'LBL_IMAGE' => 'Image',
@@ -2660,7 +2661,7 @@ $app_strings = array (
     'LBL_MASS_UPDATE_JOB_QUEUED' => 'Your request for mass update has been scheduled.',
     'LBL_MASS_UPDATE_SUCCESS' => 'All records were updated successfully.',
     'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The following attributes have empty values: ',
-    'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Do you want to continue?',
+    'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Existing values will be replaced with empty values. Do you want to continue?',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
@@ -4660,6 +4661,10 @@ $app_list_strings['forecasts_timeperiod_types_dom'] = array(
 $app_list_strings['forecasts_timeperiod_options_dom'] = array(
     'Annual' => 'Yearly (Quarterly sub-periods)',
     'Quarter' => 'Quarterly (Monthly sub-periods)',
+);
+$app_list_strings['forecasts_config_worksheet_layout_forecast_by_options_dom'] = array(
+    'line_items' => 'Product Line Items',
+    'opportunities' => 'Opportunities',
 );
 
 $app_list_strings ['pdfmanager_yes_no_list'] = array (

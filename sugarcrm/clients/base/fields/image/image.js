@@ -106,7 +106,7 @@
                      var errors = {};
                      errors[error.responseText] = {};
                      self.model.trigger('error:validation:' + this.field, errors);
-                     self.model.trigger('error:validation');
+                     self.model.trigger('error:validation', errors);
                      self.displayError();
                  }
               },
@@ -118,7 +118,7 @@
         if (this.preview === true) {
             self.preview = false;
             self.clearError();
-            self.render();
+            if(!self.disposed) self.render();
         } else {
             var confirmMessage = app.lang.get('LBL_IMAGE_DELETE_CONFIRM', self.module);
             if (confirm(confirmMessage)) {
@@ -128,7 +128,7 @@
                             //Need to fire the change event twice so model.previous(self.name) is also changed.
                             self.model.unset(self.name);
                             self.model.set(self.name, null);
-                            self.render();
+                            if(!self.disposed) self.render();
                         },
                         error: function(data) {
                             // refresh token if it has expired

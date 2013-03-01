@@ -70,4 +70,8 @@ class Trigger
 	function getCondition() {
 		return $this->conditionFunction;
 	}
+
+    function getFields(){
+        return $this->triggerFields;
+    }
 }

@@ -62,6 +62,10 @@
             this.layout.on("view:resize", this.resize, this);
         }
     },
+    _dispose: function(){
+        app.user.off("change:module_list", this.render);
+        app.view.View.prototype._dispose.call(this);
+    },
     handleViewChange: function() {
         this.closeOpenDrops();
         this.activeModule.set(app.controller.context.get("module"));
@@ -72,7 +76,22 @@
      * @param event
      */
     toggleDropdown:function (event) {
-        var $currentTarget = $(event.currentTarget);
+        event.stopPropagation();
+        var self = this;
+        var $currentTarget = $(event.currentTarget), showCallback = false,
+            numberMenuItems = $currentTarget.siblings('ul').find('li').length,
+        toggleCallback = _.once(function() {
+            // NOTE: this is a workaround for bootstrap dropdowns lack of support for events
+            // we manually turn this into a dropdown and get rid of its events and reapply our own
+            $currentTarget.attr("data-toggle", "dropdown").dropdown('toggle');
+            $currentTarget.off();
+            self.delegateEvents();
+
+            $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
+        });
+        if (numberMenuItems < 1) {
+            showCallback= toggleCallback;
+        }
         if ($currentTarget.next('.dropdown-menu').is(":visible")) {
             $currentTarget.next('.dropdown-menu').dropdown('toggle');
             $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
@@ -84,23 +103,20 @@
             var module = $currentTarget.parent().parent().data('module');
             var moduleMeta = app.metadata.getModule(module);
             if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
-                this.populateFavorites(module);
-                this.populateRecents(module);
+                this.populateFavorites(module, showCallback);
+                this.populateRecents(module, showCallback);
             }
-            // NOTE: this is a workaround for bootstrap dropdowns lack of support for events
-            // we manually turn this into a dropdown and get rid of its events and reapply our own
-            $currentTarget.attr("data-toggle", "dropdown").dropdown('toggle');
-            $currentTarget.off();
-            this.delegateEvents();
+            if (numberMenuItems >= 1) {
+                toggleCallback();
+            }
 
-            $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
         }
     },
     /**
      * Populates favorites on open menu
      * @param module
      */
-    populateFavorites: function(module) {
+    populateFavorites: function(module, populatecallback) {
         var self = this;
         var rowCollection = app.data.createBeanCollection(module);
         rowCollection.fetch({
@@ -108,6 +124,9 @@
             limit:3,
             success:function (collection) {
                if (collection.models && collection.models.length >  0) {
+                   if (_.isFunction(populatecallback)) {
+                       populatecallback();
+                   }
                    self.$('[data-module=' + module + '] .favoritesAnchor').show();
                    self.$('[data-module=' + module + '] .favoritesContainer').show().html(self.favRowTemplate(collection));
                }
@@ -118,7 +137,7 @@
      * Populates recents on open menu
      * @param module
      */
-    populateRecents:function (module) {
+    populateRecents:function (module, populatecallback) {
         var self = this;
         var filter = {
             "filter":[
@@ -134,6 +153,9 @@
         app.api.call('create', url, filter, {
             success:function (data) {
                 if (data.records && data.records.length > 0) {
+                    if (_.isFunction(populatecallback)) {
+                        populatecallback();
+                    }
                     var beans = [];
                     _.each(data.records, function (recordData) {
                         beans.push(app.data.createBean(module, recordData));

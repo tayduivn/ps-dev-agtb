@@ -1,4 +1,4 @@
-describe("sugarviews", function() {
+describe("Base.View.List", function() {
     var view, layout, app;
 
     beforeEach(function() {
@@ -30,50 +30,12 @@ describe("sugarviews", function() {
     describe("list",function() {
         it('should open an alert message on sort', function() {
             view.render();
-            var ajaxStub = sinon.stub(app.api, 'call');
+            var ajaxStub = sinon.stub(view.collection, 'fetch');
             var alertStub = sinon.stub(app.alert, 'show');
             view.setOrderBy({target:'[data-fieldname=case_number]'});
             expect(alertStub).toHaveBeenCalled();
             alertStub.restore();
             ajaxStub.restore();
-        });
-        it('should be able to remove hidden default=false fields from meta', function() {
-            var viewMeta = {
-                panels: [
-                    {
-                        fields: [
-                            {
-                                name: 'test1',
-                                default: false
-                            },
-                            {
-                                name: 'test2',
-                                default: false
-                            }
-                        ]
-                    },
-                    {
-                        fields: [
-                            {
-                                name: 'test3',
-                                default: true
-                            },
-                            {
-                                name: 'test4',
-                                default: false
-                            }
-                        ]
-                    }
-                ]
-            };
-
-            var resultMeta = view.filterFields(viewMeta);
-
-            _.each(resultMeta, function(panel){
-                _.each(panel.fields, function(field){
-                    expect(field.default).toEqual(true);
-                })
-            });
         });
     });
 });

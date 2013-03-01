@@ -27,6 +27,8 @@ class Product extends SugarBean
 {
     CONST STATUS_CONVERTED_TO_QUOTE = 'Converted to Quote';
 
+    const STATUS_QUOTED = 'Quotes';
+
     // Stored fields
     public $id;
     public $deleted;

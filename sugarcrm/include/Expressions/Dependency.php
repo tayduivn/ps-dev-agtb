@@ -35,6 +35,7 @@ class Dependency
 	protected $falseActions = array();
 	protected $id = "";
 	protected $fireOnLoad = false;
+    protected $hooks = array();
 
 	function Dependency($id) {
 		$this->id = $id;
@@ -126,22 +127,30 @@ class Dependency
 		return $js;
 	}
 
-	/**
-	 * Returns the definition of the dependency in array format.
-	 */
-	function getDefinition() {
-		$def = array (
-			"name" => $this->id,
-	        "condition" => $this->trigger->getCondition(),
-			"actions" => array(),
-		);
+    /**
+     * Returns the definition of the dependency in array format.
+     * @return array
+     */
+    public function getDefinition() {
+        $def = array (
+            "name" => $this->id,
+            "hooks" => !empty($this->hooks) ? $this->hooks : array("all"),
+            "trigger" => $this->trigger->getCondition(),
+            "triggerFields" => $this->trigger->getFields(),
+            "onload" => $this->fireOnLoad,
+            "actions" => array(),
+            "notActions" => array(),
+        );
 
-		foreach($this->actions as $action) {
-			$def['actions'][] = $action->getDefinition();
-		}
+        foreach($this->actions as $action) {
+            $def['actions'][] = $action->getDefinition();
+        }
+        foreach($this->falseActions as $action) {
+            $def['notActions'][] = $action->getDefinition();
+        }
 
-		return  $def;
-	}
+        return  $def;
+    }
 
 	/**
 	 * Runs the dependency on the target bean.
@@ -190,6 +199,10 @@ class Dependency
 	{
 		return $this->fireOnLoad;
 	}
+
+    function addHook(String $hook) {
+        $this->hooks[] = $hook;
+    }
 
 }
 ?>

@@ -10,7 +10,10 @@ describe("Leads.Views.ConvertResults", function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadHandlebarsTemplate('convert-results', 'view', 'base', null, 'Leads');
+        SugarTest.loadHandlebarsTemplate('convert-results', 'view', 'base');
+        SugarTest.loadComponent('base', 'view', 'convert-results');
+        SugarTest.loadComponent('base', 'view', 'convert-results', 'Leads');
+
         SugarTest.testMetadata.set();
 
         createBeanStub = sinon.stub(app.data, 'createBean', function(moduleName, attributes) {
@@ -26,10 +29,6 @@ describe("Leads.Views.ConvertResults", function() {
         app.view.reset();
         delete Handlebars.templates;
         createBeanStub.restore();
-    });
-
-    it("should have no models in collection", function() {
-        expect(view.associatedModels.length).toEqual(0);
     });
 
     it("should have account model with name in collection", function() {

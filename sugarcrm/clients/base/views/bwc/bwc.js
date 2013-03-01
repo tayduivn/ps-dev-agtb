@@ -171,6 +171,7 @@
             'Administration',
             'Audit',
             'Calendar',
+            'Calls',
             'CampaignLog',
             'Campaigns',
             'CampaignTrackers',

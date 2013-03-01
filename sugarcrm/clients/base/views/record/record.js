@@ -3,19 +3,14 @@
     createMode: false,
     previousModelState: null,
     extendsFrom: 'EditableView',
-
+    plugins: ['SugarLogic', 'ellipsis_inline'],
+    enableHeaderButtons: true,
     enableHeaderPane: true,
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess',
-        'mouseenter .ellipsis_inline':'addTooltip'
-    },
-    addTooltip: function(event){
-        if (_.isFunction(app.utils.handleTooltip)) {
-            app.utils.handleTooltip(event, this);
-        }
+        'click .less': 'toggleMoreLess'
     },
     // button fields defined in view definition
     buttons: null,
@@ -384,8 +379,8 @@
     },
 
     cancelClicked: function() {
-        this.setButtonStates(this.STATE.VIEW);
         this.handleCancel();
+        this.setButtonStates(this.STATE.VIEW);
         this.clearValidationErrors(this.editableFields);
     },
     /**
@@ -419,7 +414,6 @@
         } else {
             this.$('.record-edit-link-wrapper').show();
         }
-
         this.toggleFields(this.editableFields, isEdit);
     },
 
@@ -523,12 +517,12 @@
     },
 
     handleCancel: function() {
-        this.inlineEditMode = false;
-        this.toggleEdit(false);
         if (!_.isEmpty(this.previousModelState)) {
-            this.model.set(JSON.parse(JSON.stringify(this.previousModelState)));
+            this.model.set(JSON.parse(JSON.stringify(this.previousModelState)),{silent: !this.inlineEditMode});
             this.previousModelState = {};
         }
+        this.toggleEdit(false);
+        this.inlineEditMode = false;
     },
 
     handleDelete: function() {

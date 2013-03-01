@@ -437,6 +437,9 @@ class RepairAndClear
     public function clearMetadataAPICache() {
         // Bug 55141: Metadata Cache is a Smart cache so we can delete everything from the cache dir
         MetaDataManager::clearAPICache();
+        foreach($this->module_list as $module_name_singular ) {
+            $this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular).'/clients', '.php');
+        }
     }
 
 

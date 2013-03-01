@@ -141,4 +141,49 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($result['SUCCESS'],  $emailBeanResponseValue, "Unexpected Success Value");
     }
+
+    /**
+     * @group email
+     * @group mailer
+     * @group mailrecordtest
+     */
+    public function testGetErrorMessage_ErrorCodeExists_ReturnsMappedModuleString()
+    {
+        global $current_user, $mod_string;
+        $expected = 'bar';
+        $mod_string['LBL_INTERNAL_ERROR'] = $expected;
+
+        $mailRecord = new MailRecordCaller($current_user);
+
+        $exception = new MailerException('foo', MailerException::FailedToSend);
+        $result = $mailRecord->getErrorMessageCaller($exception);
+
+        $this->assertEquals($expected,  $result, 'Should map to the correct error message');
+        unset($mod_string['LBL_INTERNAL_ERROR']);
+    }
+
+    /**
+     * @group email
+     * @group mailer
+     * @group mailrecordtest
+     */
+    public function testGetErrorMessage_ErrorCodeDoesNotExist_ReturnsErrorMessage()
+    {
+        global $current_user;
+        $expected = 'foo';
+
+        $mailRecord = new MailRecordCaller($current_user);
+
+        $exception = new MailerException($expected, 99999);
+        $result = $mailRecord->getErrorMessageCaller($exception);
+
+        $this->assertEquals($expected,  $result, 'Should return the specified error message in the exception');
+    }
+}
+
+class MailRecordCaller extends MailRecord
+{
+    public function getErrorMessageCaller($exception) {
+        return $this->getErrorMessage($exception);
+    }
 }

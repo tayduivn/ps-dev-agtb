@@ -51,7 +51,7 @@ $layout_defs['Tasks'] = array(
 					'subpanel_name' => 'ForTasks',
 					'get_subpanel_data' => 'notes',
 				),		
-			),	
+			),
 		), /* end history subpanel def */
 	),
 );

@@ -87,7 +87,7 @@
      * @return {String}
      */
     buildDefaultButtonSection: function(def) {
-        var $defaultSection = $('<div class="actions btn-group"></div>');
+        var $defaultSection = $('<div class="actions"></div>');
 
         if (def.css_class) {
             $defaultSection.addClass(def.css_class);

@@ -1,48 +1,48 @@
 <div data-tour="tour-{{module}}-businesscard">
     {{#if model.isNotEmpty}}
-        {{#if enableHeaderPane}}
-            <div class="headerpane">
-                {{#each meta.panels}}
-                    {{#if header}}
-                        <h1>
-                            {{#unless isAvatar}}
-                                <span class="label label-module label-{{../../../module}}" rel="tooltip" data-title="{{../../../module}} avatar" data-original-title="">{{firstChars ../../../module 2}}</span>
-                            {{/unless}}
-                            {{#each fields}}
-                                <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
-                                    {{#if ../../this.labels}}
-                                        {{#unless ../this.dismiss_label}}
-                                            <div class="record-label" data-name="{{name}}">{{str label ../../../../../this.model.module}}</div>
-                                        {{/unless}}
-                                    {{/if}}
-                                    {{#unless ../../../createMode}}
-                                        {{#unless readonly}}
-                                            <span class="record-edit-link-wrapper" data-name="{{name}}">
-                                                <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="icon-pencil"></i></a>
-                                            </span>
-                                        {{/unless}}
+        <div class="headerpane">
+            {{#each meta.panels}}
+                {{#if header}}
+                    <h1>
+                        {{#unless isAvatar}}
+                            <span class="label label-module label-{{../../../module}}" rel="tooltip" data-title="{{../../../module}} avatar" data-original-title="">{{firstChars ../../../module 2}}</span>
+                        {{/unless}}
+                        {{#each fields}}
+                            <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
+                                {{#if ../../this.labels}}
+                                    {{#unless ../this.dismiss_label}}
+                                        <div class="record-label" data-name="{{name}}">{{str label ../../../../../this.model.module}}</div>
                                     {{/unless}}
-                                    <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
-                                        {{field ../../../this ../../../this.model ../../../this.action}}
-                                    </span>
+                                {{/if}}
+                                {{#unless ../../../createMode}}
+                                    {{#unless readonly}}
+                                        <span class="record-edit-link-wrapper" data-name="{{name}}">
+                                            <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="icon-pencil"></i></a>
+                                        </span>
+                                    {{/unless}}
+                                {{/unless}}
+                                <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
+                                    {{field ../../../this ../../../this.model ../../../this.action}}
                                 </span>
-                            {{/each}}
-                        </h1>
-                    {{/if}}
-                {{/each}}
-                <div class="btn-toolbar pull-right dropdown">
-                    {{#unless createMode}}
-                    <div class="btn-group btn-group-previous-next">
-                          <a href="{{#if collection.previous}}#{{modelRoute collection.previous def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible previous-row{{#unless collection.previous}} disabled{{/unless}}"><i class="icon-chevron-left"></i></a>
-                          <a href="{{#if collection.next}}#{{modelRoute collection.next def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible next-row{{#unless collection.next}} disabled{{/unless}}"><i class="icon-chevron-right"></i></a>
-                    </div>
-                    {{/unless}}
-                        {{#each meta.buttons}}
-                            {{field ../this}}
+                            </span>
                         {{/each}}
+                    </h1>
+                {{/if}}
+            {{/each}}
+            {{#if enableHeaderButtons}}
+            <div class="btn-toolbar pull-right dropdown">
+                {{#unless createMode}}
+                <div class="btn-group btn-group-previous-next">
+                      <a href="{{#if collection.previous}}#{{modelRoute collection.previous def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible previous-row{{#unless collection.previous}} disabled{{/unless}}"><i class="icon-chevron-left"></i></a>
+                      <a href="{{#if collection.next}}#{{modelRoute collection.next def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible next-row{{#unless collection.next}} disabled{{/unless}}"><i class="icon-chevron-right"></i></a>
                 </div>
+                {{/unless}}
+                    {{#each meta.buttons}}
+                        {{field ../this}}
+                    {{/each}}
             </div>
-        {{/if}}
+            {{/if}}
+        </div>
         <div class="record">
             {{#each meta.panels}}
                 {{#unless header}}
