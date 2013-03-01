@@ -1,5 +1,7 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
@@ -45,7 +47,8 @@ class OutboundEmailConfigurationPeer
      * @param string $mode required
      * @return bool
      */
-    public static function isValidMode($mode) {
+    public static function isValidMode($mode)
+    {
         switch ($mode) {
             case self::MODE_DEFAULT:
             case self::MODE_SMTP:
@@ -63,7 +66,8 @@ class OutboundEmailConfigurationPeer
      * @param User $user required
      * @return bool
      */
-    public static function validSystemMailConfigurationExists(User $user) {
+    public static function validSystemMailConfigurationExists(User $user)
+    {
         $configExists = false;
 
         try {
@@ -94,10 +98,11 @@ class OutboundEmailConfigurationPeer
      * @return OutboundEmailConfiguration System- or User-defined System-Override Mail Configuration
      * @throws MailerException
      */
-    public static function getSystemMailConfiguration(User $user, Localization $locale = null, $charset = null) {
+    public static function getSystemMailConfiguration(User $user, Localization $locale = null, $charset = null)
+    {
         $mailConfigurations = self::listMailConfigurations($user, $locale, $charset);
 
-        foreach($mailConfigurations AS $mailConfiguration) {
+        foreach ($mailConfigurations AS $mailConfiguration) {
             if ($mailConfiguration->getConfigType() == 'system') {
                 return $mailConfiguration;
             }
@@ -108,16 +113,23 @@ class OutboundEmailConfigurationPeer
 
     /**
      * @access public
-     * @param User         $user    required
+     * @param User         $user              required
      * @param string       $configuration_id  Outbound_Email Id  or  Inbound_Email Id
      * @param Localization $locale
      * @param string       $charset
      * @return OutboundEmailConfiguration or null if not found
      */
-    public static function getMailConfigurationFromId(User $user, $configuration_id, Localization $locale = null, $charset = null) {
+    public static function getMailConfigurationFromId(
+        User $user,
+        $configuration_id,
+        Localization $locale = null,
+        $charset = null
+    ) {
         $mailConfigurations = self::listMailConfigurations($user, $locale, $charset);
-        foreach($mailConfigurations AS $mailConfiguration) {
-            if ($mailConfiguration->getConfigId() == $configuration_id || $mailConfiguration->getInboxId() == $configuration_id) {
+        foreach ($mailConfigurations AS $mailConfiguration) {
+            if ($mailConfiguration->getConfigId() == $configuration_id || $mailConfiguration->getInboxId(
+                                                                          ) == $configuration_id
+            ) {
                 return $mailConfiguration;
             }
         }
@@ -132,7 +144,8 @@ class OutboundEmailConfigurationPeer
      * @return array MailConfigurations
      * @throws MailerException
      */
-    public static function listMailConfigurations(User $user, Localization $locale = null, $charset = null) {
+    public static function listMailConfigurations(User $user, Localization $locale = null, $charset = null)
+    {
         $outboundEmailConfigurations = array();
         $ret                         = $user->getUsersNameAndEmail();
 
@@ -165,7 +178,7 @@ class OutboundEmailConfigurationPeer
             $oe                 = null;
 
             if (!empty($outbound_config_id)) {
-                $oe = new OutboundEmail();
+                $oe = static::loadOutboundEmail();
                 $oe->retrieve($outbound_config_id);
             }
 
@@ -180,25 +193,31 @@ class OutboundEmailConfigurationPeer
                 $configurations["display_name"]  = "{$name} ({$addr})";
                 $configurations["personal"]      = (bool)($v->is_personal);
                 $configurations["replyto_email"] = (!empty($storedOptions["reply_to_addr"])) ?
-                                                    $storedOptions["reply_to_addr"] :
-                                                    $addr;
+                    $storedOptions["reply_to_addr"] :
+                    $addr;
                 $configurations["replyto_name"]  = (!empty($storedOptions["reply_to_name"])) ?
-                                                    $storedOptions["reply_to_name"] :
-                                                    $name;
-                $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration($user, $configurations, $oe, $locale, $charset);
+                    $storedOptions["reply_to_name"] :
+                    $name;
+                $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration(
+                    $user,
+                    $configurations,
+                    $oe,
+                    $locale,
+                    $charset
+                );
                 $outboundEmailConfigurations[]   = $outboundEmailConfiguration;
             }
         }
 
-        $oe = new OutboundEmail();
+        $oe = static::loadOutboundEmail();
         if ($oe->isAllowUserAccessToSystemDefaultOutbound()) {
-            $system = $oe->getSystemMailerSettings();
+            $system   = $oe->getSystemMailerSettings();
             $personal = false;
         } else {
-            $system = $oe->getUsersMailerForSystemOverride($user->id);
+            $system   = $oe->getUsersMailerForSystemOverride($user->id);
             $personal = true;
             if (empty($system)) {
-                $oe = $oe->createUserSystemOverrideAccount($user->id);
+                $oe     = $oe->createUserSystemOverrideAccount($user->id);
                 $system = $oe->getUsersMailerForSystemOverride($user->id);
             }
             // Note: We do not Require the User System-Override to be populated if the User is the System Administrator
@@ -208,7 +227,7 @@ class OutboundEmailConfigurationPeer
                 $systemUser->getSystemUser();
                 if ($user->id == $systemUser->id) {
                     $personal = false;
-                    $system = $oe->getSystemMailerSettings();
+                    $system   = $oe->getSystemMailerSettings();
                 }
             }
         }
@@ -218,7 +237,7 @@ class OutboundEmailConfigurationPeer
         }
 
         // turn the OutboundEmail object into a useable set of mail configurations
-        $oe = new OutboundEmail();
+        $oe = static::loadOutboundEmail();
         $oe->retrieve($system->id);
 
         $configurations                  = array();
@@ -231,7 +250,13 @@ class OutboundEmailConfigurationPeer
         $configurations["personal"]      = $personal;
         $configurations["replyto_email"] = $system_replyToAddress;
         $configurations["replyto_name"]  = $system_replyToName;
-        $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration($user, $configurations, $oe, $locale, $charset);
+        $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration(
+            $user,
+            $configurations,
+            $oe,
+            $locale,
+            $charset
+        );
         $outboundEmailConfigurations[]   = $outboundEmailConfiguration;
 
         return $outboundEmailConfigurations;
@@ -246,8 +271,12 @@ class OutboundEmailConfigurationPeer
      * @param string        $charset
      * @return OutboundEmailConfiguration
      */
-    public static function buildOutboundEmailConfiguration(User $user, $configurations, $outboundEmail,
-        Localization $locale = null, $charset = null
+    public static function buildOutboundEmailConfiguration(
+        User $user,
+        $configurations,
+        $outboundEmail,
+        Localization $locale = null,
+        $charset = null
     ) {
         $outboundEmailConfiguration = null;
         $mode                       = strtolower($outboundEmail->mail_sendtype);
@@ -268,9 +297,13 @@ class OutboundEmailConfigurationPeer
 
                 // determine the appropriate encryption layer for the sending strategy
                 if ($outboundEmail->mail_smtpssl == 1) {
-                    $outboundEmailConfiguration->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolSsl);
+                    $outboundEmailConfiguration->setSecurityProtocol(
+                        OutboundSmtpEmailConfiguration::SecurityProtocolSsl
+                    );
                 } elseif ($outboundEmail->mail_smtpssl == 2) {
-                    $outboundEmailConfiguration->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolTls);
+                    $outboundEmailConfiguration->setSecurityProtocol(
+                        OutboundSmtpEmailConfiguration::SecurityProtocolTls
+                    );
                 }
 
                 break;
@@ -305,13 +338,15 @@ class OutboundEmailConfigurationPeer
             $outboundEmailConfiguration->setDisplayName($configurations["display_name"]);
         }
 
-        if (!empty($configurations["personal"])) {
-            $outboundEmailConfiguration->setPersonal($configurations["personal"]);
-        }
-
         if (!empty($configurations["replyto_email"])) {
             $outboundEmailConfiguration->setReplyTo($configurations["replyto_email"], $configurations["replyto_name"]);
         }
+
+        if (!is_bool($configurations["personal"])) {
+            $configurations["personal"] = ($configurations["personal"]) ? true : false;
+        }
+
+        $outboundEmailConfiguration->setPersonal($configurations["personal"]);
 
         if (is_null($locale)) {
             $locale = $GLOBALS["locale"];
@@ -326,5 +361,13 @@ class OutboundEmailConfigurationPeer
         $outboundEmailConfiguration->setCharset($charset);
 
         return $outboundEmailConfiguration;
+    }
+
+    /**
+     * @return OutboundEmail
+     */
+    public static function loadOutboundEmail()
+    {
+        return new OutboundEmail();
     }
 }

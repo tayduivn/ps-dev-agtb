@@ -29,106 +29,225 @@
 require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php";
 require_once "OutboundEmailConfigurationTestHelper.php";
 
+/**
+ * @group email
+ * @group outboundemailconfiguration
+ */
 class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public $systemConfig;
+    private $systemOverrideConfiguration;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
-
-        $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS["db"]->commit(); // call a commit for transactional dbs
+        SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp("app_list_strings");
         SugarTestHelper::setUp("app_strings");
         SugarTestHelper::setUp("beanFiles");
         SugarTestHelper::setUp("beanList");
+        OutboundEmailConfigurationTestHelper::setUp();
 
-        OutboundEmailConfigurationTestHelper::backupExistingConfigurations();
-
-        $config             = OutboundEmailConfigurationTestHelper::createOutboundEmailConfig(
-            $name = "Name", $GLOBALS["current_user"]->id,  $type = "system-override",
-            $fromEmail = "system@unit.net", $fromName = "From Name"
-        );
-        $this->systemConfig = OutboundEmailConfigurationTestHelper::createOutboundEmail($config);
+        $this->systemOverrideConfiguration =
+            OutboundEmailConfigurationTestHelper::createSystemOverrideOutboundEmailConfiguration(
+                $GLOBALS["current_user"]->id
+            );
     }
 
-    public function tearDown() {
-        OutboundEmailConfigurationTestHelper::restoreExistingConfigurations();
-
+    public function tearDown()
+    {
+        OutboundEmailConfigurationTestHelper::tearDown();
         SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-
         parent::tearDown();
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testListMailConfigurations_All_Success() {
-        $seedConfigs = OutboundEmailConfigurationTestHelper::createSeedConfigurations(2);
+    public function testListMailConfigurations_NoSystemOrSystemOverrideConfigurationsExist_SystemConfigurationIsNotAllowed_SystemOverrideConfigurationIsCreatedAndReturned()
+    {
+        OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
 
-        $expectedEmailConfigurations = array(
-            $seedConfigs[0]["outbound"]->id => $seedConfigs[0]["outbound"]->name,
-            $seedConfigs[1]["outbound"]->id => $seedConfigs[1]["outbound"]->name,
-            $this->systemConfig->id         => $this->systemConfig->name
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+
+        $configuration = $mockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
+
+        $expected = "system";
+        $actual   = $configuration[0]->getConfigType();
+        $this->assertEquals($expected, $actual, "The system-override configuration should be of type 'system'");
+
+        $actual = $configuration[0]->getPersonal();
+        $this->assertTrue($actual, "The system-override configuration should be a personal configuration");
+    }
+
+    public function testListMailConfigurations_NoSystemOrSystemOverrideConfigurationsExist_SystemConfigurationIsAllowed_SystemConfigurationIsCreatedAndReturned()
+    {
+        OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
+
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
+
+        $configuration = $mockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
+
+        $expected = "system";
+        $actual   = $configuration[0]->getConfigType();
+        $this->assertEquals($expected, $actual, "The system configuration should be of type 'system'");
+
+        $actual = $configuration[0]->getPersonal();
+        $this->assertFalse($actual, "The system configuration should not be a personal configuration");
+    }
+
+    public function testListMailConfigurations_SystemConfigurationIsNotAllowedAndUserHasUserAndSystemOverrideConfigurations_ReturnsAllExceptTheSystemConfiguration()
+    {
+        $userConfigurations = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfigurations(2);
+
+        $expected = array(
+            $this->systemOverrideConfiguration->id => $this->systemOverrideConfiguration->name,
+            $userConfigurations[0]["outbound"]->id => $userConfigurations[0]["outbound"]->name,
+            $userConfigurations[1]["outbound"]->id => $userConfigurations[1]["outbound"]->name,
         );
 
-        $configs = OutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
-        $actualEmailConfigurations = array();
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
 
-        if (is_array($configs)) {
-            foreach ($configs AS $config) {
-                $actualEmailConfigurations[$config->getConfigId()] = $config->getConfigName();
-            }
+        $configurations = $mockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
+        $actual         = array();
+
+        foreach ($configurations AS $configuration) {
+            $actual[$configuration->getConfigId()] = $configuration->getConfigName();
         }
 
-        $this->assertEquals(
-            $expectedEmailConfigurations,
-            $actualEmailConfigurations,
-            "Unexpected list for 'ALL' MailConfigurations"
+        $this->assertEquals($expected, $actual, "The wrong configurations were returned");
+    }
+
+    public function testListMailConfigurations_SystemConfigurationIsAllowedAndUserHasUserAndSystemOverrideConfigurations_ReturnsAllExceptTheSystemOverrideConfiguration()
+    {
+        $userConfigurations  = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfigurations(2);
+        $systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
+
+        $expected = array(
+            $systemConfiguration->id               => $systemConfiguration->name,
+            $userConfigurations[0]["outbound"]->id => $userConfigurations[0]["outbound"]->name,
+            $userConfigurations[1]["outbound"]->id => $userConfigurations[1]["outbound"]->name,
         );
+
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
+
+        $configurations = $mockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
+        $actual         = array();
+
+        foreach ($configurations AS $configuration) {
+            $actual[$configuration->getConfigId()] = $configuration->getConfigName();
+        }
+
+        $this->assertEquals($expected, $actual, "The wrong configurations were returned");
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testListMailConfigurations_SystemOnly_Success() {
-        $seedConfigs = OutboundEmailConfigurationTestHelper::createSeedConfigurations(2);
+    public function testGetSystemMailConfiguration_SystemConfigurationIsNotAllowed_ReturnsTheUsersSystemOverrideConfiguration()
+    {
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
 
-        $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS["current_user"]);
+        $configuration = $mockOutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS["current_user"]);
 
-        $this->assertNotEmpty($config, "SYSTEM OutboundEmailConfiguration Not Found");
-        $this->assertEquals(
-            $config->getConfigId(),
-            $this->systemConfig->id,
-            "Unexpected 'SYSTEM' OutboundEmailConfiguration"
+        $expected = $this->systemOverrideConfiguration->id;
+        $actual   = $configuration->getConfigId();
+        $this->assertEquals($expected, $actual, "The user's system-override configuration should have been returned");
+    }
+
+    public function testGetSystemMailConfiguration_SystemConfigurationIsAllowed_ReturnsTheSystemConfiguration()
+    {
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
+
+        $configuration = $mockOutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS["current_user"]);
+
+        $expected = "system";
+        $actual   = $configuration->getConfigType();
+        $this->assertEquals($expected, $actual, "The system configuration should be of type 'system'");
+
+        $actual = $configuration->getPersonal();
+        $this->assertFalse($actual, "The system configuration should not be a personal configuration");
+    }
+
+    public function testValidSystemMailConfigurationExists_SystemConfigurationIsAllowedAndSystemConfigurationIsValid_ReturnsTrue()
+    {
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
+
+        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        self::assertTrue($actual, "There should be a system configuration and the host should not be empty");
+    }
+
+    public function testValidSystemMailConfigurationExists_SystemConfigurationIsAllowedAndSystemConfigurationIsInvalid_ReturnsFalse()
+    {
+        OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
+
+        $configuration = array(
+            "name"              => "System",
+            "type"              => "system",
+            "user_id"           => "1",
+            "from_email"        => "foo@bar.com",
+            "from_name"         => "Foo Bar",
+            "mail_sendtype"     => "SMTP",
+            "mail_smtptype"     => "other",
+            "mail_smtpserver"   => "",
+            "mail_smtpport"     => "25",
+            "mail_smtpuser"     => "foo",
+            "mail_smtppass"     => "foobar",
+            "mail_smtpauth_req" => "1",
+            "mail_smtpssl"      => "0",
         );
+        OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
+
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
+
+        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        self::assertFalse($actual, "There should be a system configuration but the host should be empty");
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testValidSystemMailConfigurationExists_SystemConfigExistsAndIsValid_ReturnsTrue() {
-        $actual = OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
-        self::assertTrue($actual, "A system mail configuration should exist");
+    public function testValidSystemMailConfigurationExists_SystemConfigurationIsNotAllowedAndSystemOverrideConfigurationIsValid_ReturnsTrue()
+    {
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+
+        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        self::assertTrue($actual, "There should be a system-override configuration and the host should not be empty");
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testValidSystemMailConfigurationExists_NoSystemConfigExists_ReturnsFalse() {
-        // delete the system configuration
-        $this->systemConfig->delete();
+    public function testValidSystemMailConfigurationExists_SystemConfigurationIsNotAllowedAndSystemOverrideConfigurationIsInvalid_ReturnsFalse()
+    {
+        OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
 
-        $actual = OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
-        self::assertFalse($actual, "No system mail configuration should be found");
+        $configuration = array(
+            "name"              => "System Override",
+            "type"              => "system-override",
+            "user_id"           => $GLOBALS["current_user"]->id,
+            "from_email"        => "foo@bar.com",
+            "from_name"         => "Foo Bar",
+            "mail_sendtype"     => "SMTP",
+            "mail_smtptype"     => "other",
+            "mail_smtpserver"   => "",
+            "mail_smtpport"     => "25",
+            "mail_smtpuser"     => "foo",
+            "mail_smtppass"     => "foobar",
+            "mail_smtpauth_req" => "1",
+            "mail_smtpssl"      => "0",
+        );
+        OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
-        // restore the system configuration
-        $this->systemConfig->new_with_id = true;
-        $this->systemConfig->save();
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+
+        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        self::assertFalse($actual, "There should be a system-override configuration but the host should be empty");
+    }
+
+    private function getMockOutboundEmailConfigurationPeer($isAllowUserAccessToSystemDefaultOutbound = false)
+    {
+        $mockOutboundEmail = $this->getMock("OutboundEmail", array("isAllowUserAccessToSystemDefaultOutbound"));
+        $mockOutboundEmail->expects($this->any())
+            ->method("isAllowUserAccessToSystemDefaultOutbound")
+            ->will($this->returnValue($isAllowUserAccessToSystemDefaultOutbound));
+
+        $mockOutboundEmailConfigurationPeer = $this->getMockClass(
+            "OutboundEmailConfigurationPeer",
+            array("loadOutboundEmail")
+        );
+        $mockOutboundEmailConfigurationPeer::staticExpects($this->any())
+            ->method("loadOutboundEmail")
+            ->will($this->returnValue($mockOutboundEmail));
+
+        return $mockOutboundEmailConfigurationPeer;
     }
 }

@@ -29,30 +29,27 @@
 require_once "tests/rest/RestTestBase.php";
 require_once "tests/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
 
-class OutboundEmailConfigurationApiTest extends RestTestBase {
-    public $systemConfig;
-
-    public function setUp() {
+/**
+ * @group email
+ * @group outboundemailconfiguration
+ */
+class OutboundEmailConfigurationApiTest extends RestTestBase
+{
+    public function setUp()
+    {
         parent::setUp();
-
-        OutboundEmailConfigurationTestHelper::backupExistingConfigurations();
-
-        $config             = OutboundEmailConfigurationTestHelper::createOutboundEmailConfig();
-        $this->systemConfig = OutboundEmailConfigurationTestHelper::createOutboundEmail($config);
+        OutboundEmailConfigurationTestHelper::setUp();
     }
 
-    public function tearDown() {
-        OutboundEmailConfigurationTestHelper::restoreExistingConfigurations();
-
+    public function tearDown()
+    {
+        OutboundEmailConfigurationTestHelper::tearDown();
         parent::tearDown();
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testList_ReturnsAllConfigurationsWithTheSystemAsDefault() {
-        $seedConfigs = OutboundEmailConfigurationTestHelper::createSeedConfigurations(2);
+    public function testList_ReturnsAllConfigurationsWithTheSystemAsDefault()
+    {
+        $seedConfigs = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfigurations(2);
 
         $response = $this->_restCall("/OutboundEmailConfiguration/list");
         $reply    = $response["reply"];
@@ -61,18 +58,18 @@ class OutboundEmailConfigurationApiTest extends RestTestBase {
         $actual   = count($reply);
         self::assertEquals($expected, $actual, "There should be {$expected} configurations");
 
-        foreach ($reply as $config) {
+        foreach ($reply as $configuration) {
             $expected = false;
 
-            if ($config["type"] == "system") {
+            if ($configuration["type"] == "system") {
                 $expected = true;
             }
 
-            $actual = $config["default"];
+            $actual = $configuration["default"];
             self::assertEquals(
                 $expected,
                 $actual,
-                "The configuration with id={$config["id"]} and name={$config["name"]} should have default=" .
+                "The configuration with id={$configuration["id"]} and name={$configuration["name"]} should have default=" .
                 ($expected ? "true" : "false")
             );
         }
