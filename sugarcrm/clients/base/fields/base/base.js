@@ -37,5 +37,13 @@
     },
     getFieldElement: function() {
         return this.$(this.fieldTag);
+    },
+    /**
+     * Trim whitespace from value if it is a String
+     * @param value
+     * @return {*}
+     */
+    unformat: function(value){
+        return _.isString(value) ? value.trim() : value;
     }
 })
