@@ -382,8 +382,10 @@ class FilterApi extends SugarApi
         $q->joinRaw(" LEFT JOIN tracker ON tracker.item_id={$q->from->getTableName()}.id "
                     ."AND tracker.module_name='{$q->from->module_name}' "
                     ."AND tracker.user_id='{$GLOBALS['current_user']->id}' ",array('alias'=>'tracker'));
-        // This date_add is broken, and will need to be changed when FRM-226 goes in. This does not correctly handle the GMT switch
-        $where->addRaw("tracker.date_modified >= DATE_ADD(NOW(), INTERVAL ".$GLOBALS['db']->quote($interval).") ");
+
+        $td = new SugarDateTime();
+        $td->modify($interval);        
+        $where->addRaw("tracker.date_modified >= '".$td->asDb()."' ");
 
         // Now, if they want tracker records, so let's order it by the tracker date_modified
         $q->order_by = array(array('tracker.date_modified','DESC'));
