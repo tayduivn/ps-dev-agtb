@@ -342,7 +342,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'dbType' => 'varchar',
     'source'=>'non-db',
     'len' => 36,
-  	'studio' => 'false',
+    'studio' => array('required' => false, 'listview'=>true, 'visible' => false),
 	),
 
   'contacts' =>
