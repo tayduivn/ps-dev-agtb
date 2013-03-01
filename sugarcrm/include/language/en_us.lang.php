@@ -2575,6 +2575,7 @@ $app_strings = array (
     'LBL_FILTER_SELECT_OPERATOR' => 'Select operator...',
     'LBL_FILTER_CREATE_NEW' => 'Create New',
     'LBL_FILTER_ALL_RECORDS' => 'All Records',
+    'LBL_FILTER_SAVE' => 'You successfully created the filter',
     'LBL_VCARD' => 'vCard',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
     'LBL_IMAGE' => 'Image',

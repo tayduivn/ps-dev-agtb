@@ -296,6 +296,12 @@
             filter.save(obj, {success: function(model) {
                 self.layout.trigger("filter:add", model);
                 self.$(".filter-header").data("model", model);
+                app.alert.show("filter-saved", {
+                    level: "success",
+                    title: app.lang.get("LBL_EMAIL_SUCCESS") + ":",
+                    messages: app.lang.get("LBL_FILTER_SAVE") + " " + model.get("name"),
+                    autoClose: true
+                });
             }});
 
             this.triggerClose();
