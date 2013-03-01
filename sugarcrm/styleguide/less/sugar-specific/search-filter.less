@@ -18,6 +18,26 @@
     .box-shadow(~"inset 0 1px 1px rgba(0,0,0,0.075)");
     .border-radius(2px);
 
+    // non-select2 filter pills
+    div.choice-related,
+    div.choice-filter {
+      .border-radius(0 10px 10px 0);
+      padding: 4px 6px 4px 4px;
+      display: inline;
+      white-space: nowrap;
+      margin-left: -6px;
+    }
+    div.choice-related {
+      background: #c0f0ca;
+      color: #407648;
+      cursor: text;
+    }
+    div.choice-filter {
+      background: @dropdownLinkBackgroundHover;
+      color: @dropdownLinkColorHover;
+      line-height: 30px;
+    }
+
     // select2 filter pills
     .select2-container {
       &.select2-container-disabled .select2-choice div {
@@ -70,36 +90,21 @@
         span.select2-choice-related,
         a.select2-choice-related,
         span.select2-choice-filter,
-        a.select2-choice-filter,
-        div.select2-choice-related,
-        div.select2-choice-filter {
+        a.select2-choice-filter {
           .border-radius(0 10px 10px 0);
           padding: 4px 6px 4px 4px;
           display:inline;
         }
         span.select2-choice-related,
-        a.select2-choice-related,
-        div.select2-choice-related {
+        a.select2-choice-related {
           background: #c0f0ca;
           color: #407648;
           cursor: text;
         }
         span.select2-choice-filter,
-        a.select2-choice-filter,
-        div.elect2-choice-filter {
+        a.select2-choice-filter {
           background: @dropdownLinkBackgroundHover;
           color: @dropdownLinkColorHover;
-        }
-        div.select2-choice-filter,
-        div.select2-choice-related {
-          white-space: nowrap;
-          margin-left: -6px;
-        }
-        div.select2-choice-filter {
-          cursor: text;
-        }
-        div.select2-choice-filter {
-          line-height: 30px;
         }
         a:hover {
           text-decoration: none;
