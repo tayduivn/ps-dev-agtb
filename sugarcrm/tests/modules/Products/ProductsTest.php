@@ -40,6 +40,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('Products'));
         parent::setUpBeforeClass();
     }
@@ -66,7 +67,6 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * This test checks to see that we can save a product where date_closed is set to null
-     *
      * @group products
      */
     public function testCreateProductWithoutDateClosed()
@@ -290,6 +290,29 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestOpportunityUtilities::setCreatedOpportunity(array($opp->id, $opp2->id));
         $product2 = new MockProduct();
         $this->assertFalse($product2->setAccountIdForOpportunity($opp2->id));
+    }
+
+    /**
+     * @group products
+     * @ticket SFA-567
+     */
+    public function testProductCreatedFromOpportunityContainsSalesStage()
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        $opp->load_relationship('products');
+
+        $products = $opp->products->getBeans();
+
+        $this->assertEquals(1, count($products));
+        /* @var $product Product */
+        $product = array_shift($products);
+
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+
+        $this->assertNotNull($opp->sales_stage); // make sure it's not set to null
+        $this->assertEquals($opp->sales_stage, $product->sales_stage);
+
     }
 }
 

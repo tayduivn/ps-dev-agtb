@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('include/api/SugarApi.php');
 require_once('include/SugarQuery/SugarQuery.php');
+require_once('data/Relationships/RelationshipFactory.php');
 
 class FilterApi extends SugarApi
 {
@@ -152,7 +153,7 @@ class FilterApi extends SugarApi
     public function filterRelated(ServiceBase $api, array $args)
     {
         // Load the parent bean.
-        $record = BeanFactory::getBean($args['module'], $args['record']);
+        $record = BeanFactory::retrieveBean($args['module'], $args['record']);
 
         if (empty($record)) {
             throw new SugarApiExceptionNotFound('Could not find parent record '.$args['record'].' in module '.$args['module']);
@@ -173,14 +174,32 @@ class FilterApi extends SugarApi
             throw new SugarApiExceptionNotAuthorized('No access to list records for module: '.$linkModuleName);
         }
 
+        $rf = SugarRelationshipFactory::getInstance();
+        $relObj = $record->$linkName->getRelationshipObject();
+        $relDef = $rf->getRelationshipDef($relObj->name);
+        $tableName = $linkName;
+        foreach ($linkSeed->field_defs as $def) {
+            if ($def['type'] !== 'link') {
+                continue;
+            }
+            if ($def['relationship'] === $relObj->name) {
+                $tableName = $def['name'];
+                break;
+            }
+        }
+
+        if ($record->$linkName->getSide() == REL_LHS) {
+            $column = $relDef['rhs_key'];
+        } else {
+            $column = $relDef['lhs_key'];
+        }
+
         $options = $this->parseOptions($api, $args, $linkSeed);
         $q = $this->getQueryObject($linkSeed, $options);
-
-        // return $args['filter'];
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
-        $args['filter'][][$record->table_name . '.id'] = array('$equals' => $record->id);
+        $args['filter'][][$tableName . '.' . $column] = array('$equals' => $record->id);
         $this->addFilters($args['filter'], $q->where(), $q);
         return $this->runQuery($api, $args, $q, $options);
     }
@@ -243,6 +262,8 @@ class FilterApi extends SugarApi
                     $this->addFavoriteFilter($q, $where, $filter);
                 } else if ($field == '$owner') {
                     $this->addOwnerFilter($q, $where, $filter);
+                } else if ($field == '$tracker') {
+                    $this->addTrackerFilter($q, $where, $filter);
                 } else {
                     // Looks like just a normal field, parse it's options
                     if ( strpos($field, '.')) {
@@ -304,16 +325,6 @@ class FilterApi extends SugarApi
                                 // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
                                 $where->addRaw("{$field} >= DATE_ADD(NOW(), INTERVAL {$value} DAY)");
                                 break;
-                            case '$tracker':
-                                // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
-                                $where->addRaw(
-                                    "{$q->from->getTableName()}.id in (select item_id from tracker
-                                        where module_name='{$q->from->module_name}'
-                                        and user_id='{$GLOBALS['current_user']->id}'
-                                        and DATE_ADD({$field}, INTERVAL {$value})
-                                    )"
-                                );
-                                break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: ".$op);
                         }
@@ -361,5 +372,25 @@ class FilterApi extends SugarApi
         $sfAlias = $sf->addToSugarQuery($q, $sfOptions);
 
         $where->notNull($sfAlias . '.id');
+    }
+
+    protected function addTrackerFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $interval)
+    {
+        // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
+
+        // Since tracker relationships don't actually exist, we're gonna have to add a direct join
+        $q->joinRaw(" LEFT JOIN tracker ON tracker.item_id={$q->from->getTableName()}.id "
+                    ."AND tracker.module_name='{$q->from->module_name}' "
+                    ."AND tracker.user_id='{$GLOBALS['current_user']->id}' ",array('alias'=>'tracker'));
+
+        $td = new SugarDateTime();
+        $td->modify($interval);        
+        $where->addRaw("tracker.date_modified >= '".$td->asDb()."' ");
+
+        // Now, if they want tracker records, so let's order it by the tracker date_modified
+        $q->order_by = array(array('tracker.date_modified','DESC'));
+        
+        // Also, turn the distinct part off otherwise the sorting doesn't work.
+        $q->distinct(false);
     }
 }

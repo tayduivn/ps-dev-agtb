@@ -25,6 +25,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 // Product is used to store customer information.
 class Product extends SugarBean
 {
+    const STATUS_QUOTED = 'Quotes';
+
     // Stored fields
     public $id;
     public $deleted;

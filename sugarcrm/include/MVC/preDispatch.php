@@ -31,6 +31,9 @@ if( isset($_GET["entryPoint"]) )
 		require_once('include/utils.php');
         require_once('include/SugarTheme/SugarTheme.php');
         require_once('include/utils/autoloader.php');
+        require_once('include/SugarLogger/LoggerManager.php');
+        $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
+
         SugarAutoLoader::init();
 
         SugarAutoLoader::requireWithCustom('include/SugarMetric/Helper.php');
@@ -42,6 +45,9 @@ if( isset($_GET["entryPoint"]) )
 	else if($_GET["entryPoint"] == "getYUIComboFile")
     {
         require_once 'include/SugarMetric/Helper.php';
+        require_once('include/SugarLogger/LoggerManager.php');
+        $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
+
         SugarMetric_Helper::run('YUIComboFile');
 
 		include("include/javascript/getYUIComboFile.php");

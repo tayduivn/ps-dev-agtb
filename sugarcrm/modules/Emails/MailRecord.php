@@ -57,6 +57,19 @@ class MailRecord {
 
     private $email_id;
 
+    /* Mapping Error Code to Error Message */
+    static protected $errorMessageMappings = array(
+        MailerException::ResourceNotFound              => 'LBL_INTERNAL_ERROR',
+        MailerException::InvalidConfiguration          => 'LBL_INVALID_CONFIGURATION',
+        MailerException::InvalidHeader                 => 'LBL_INVALID_HEADER',
+        MailerException::InvalidEmailAddress           => 'LBL_INVALID_EMAIL',
+        MailerException::FailedToSend                  => 'LBL_INTERNAL_ERROR',
+        MailerException::FailedToConnectToRemoteServer => 'LBL_FAILED_TO_CONNECT',
+        MailerException::FailedToTransferHeaders       => 'LBL_INTERNAL_ERROR',
+        MailerException::InvalidAttachment             => 'LBL_INVALID_ATTACHMENT',
+        MailerException::InvalidMailer                 => 'LBL_INTERNAL_ERROR',
+    );
+
     function __construct(User $current_user)
     {
         $this->current_user = $current_user;
@@ -300,7 +313,7 @@ class MailRecord {
                 "SUCCESS"    => false,
                 "EMAIL"      => $email,
                 "REQUEST"    => $request,
-                "ERROR_MESSAGE" => $e->getMessage(),
+                "ERROR_MESSAGE" => $this->getErrorMessage($e),
                 "ERROR_DATA" => $edata,
             );
             return $result;
@@ -331,6 +344,24 @@ class MailRecord {
             $recipient = new EmailIdentity($email, $name);
         }
         return $recipient;
+    }
+
+    /**
+     * Get the appropriate error message given the error code.
+     * @param $exception
+     * @return string
+     */
+    protected function getErrorMessage($exception) {
+        global $mod_string;
+        $message = self::$errorMessageMappings[$exception->getCode()];
+
+        if (empty($message)) {
+            $message = $exception->getMessage(); //use the exception message if a user-friendly version is not available
+        } else {
+            $message = $mod_string[$message]; //get the translated version
+        }
+
+        return $message;
     }
 
 }

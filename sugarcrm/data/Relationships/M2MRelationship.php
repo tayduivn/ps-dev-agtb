@@ -501,12 +501,7 @@ class M2MRelationship extends SugarRelationship
         
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
 
-        $join_type= isset($options['join_type']) ? $options['join_type'] : 'INNER';
-
-        if(isset($options['joinType']))
-        {
-            $join_type= $options['joinType'];    
-        }
+        $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
         
         $join = '';
 

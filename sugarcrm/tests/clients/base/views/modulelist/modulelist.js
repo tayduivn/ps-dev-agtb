@@ -86,7 +86,89 @@ describe("Module List", function() {
 
             getModuleStub.restore();
         });
+        it("Should populate favorites and call favorite populate callback", function() {
+            var cbMock = sinon.mock();
+            var module = 'Accounts';
+            var beanCreateMock = sinon.stub(SugarTest.app.data,'createBeanCollection', function() {
+               var collection = new Backbone.Collection();
+                collection.url = "/test/url";
+                return collection;
+            });
+            // Workaround because router not defined yet
+            var oRouter = SugarTest.app.router;
+            SugarTest.app.router = {buildRoute: function(){}};
+            sinon.stub(SugarTest.app.router,'buildRoute',function(){
+                        return 'testRouteString';
+                    }
+            );
 
+            view.activeModule._moduleList = view;
+            view.render();
+
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith("GET", /.*\/test\/url.*/,
+                [200, {  "Content-Type": "application/json"},
+                    JSON.stringify( [
+                            new Backbone.Model({
+                                id:'model1',
+                                name:'model1'
+                            }),
+                            new Backbone.Model({
+                                id:'model2',
+                                name:'model2'
+                            })
+                        ]
+                    )]);
+
+            view.populateFavorites(module, cbMock);
+            SugarTest.server.respond();
+            expect(cbMock).toHaveBeenCalled();
+            expect(view.$el.find("[data-module='Accounts']").find('.favoritesContainer').find('li').length).toEqual(2);
+            beanCreateMock.restore();
+            SugarTest.app.router = oRouter;
+        });
+        it("Should populate Recents and call recents populate callback", function() {
+            var cbMock = sinon.mock();
+            var module = 'Accounts';
+            var beanCreateMock = sinon.stub(SugarTest.app.data,'createBeanCollection', function(module, models) {
+                var collection = new Backbone.Collection(models);
+                return collection;
+            });
+            // Workaround because router not defined yet
+            var oRouter = SugarTest.app.router;
+            SugarTest.app.router = {buildRoute: function(){}};
+            sinon.stub(SugarTest.app.router,'buildRoute',function(){
+                    return 'testRouteString';
+                }
+            );
+
+            view.activeModule._moduleList = view;
+            view.render();
+
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith("POST", /.*\/Accounts.*/,
+                [200, {  "Content-Type": "application/json"},
+                    JSON.stringify( {
+                        records: [
+                            new Backbone.Model({
+                                id:'model1',
+                                name:'model1'
+                            }),
+                            new Backbone.Model({
+                                id:'model2',
+                                name:'model2'
+                            })
+                        ]
+                    }
+                    )]);
+
+            view.populateRecents(module, cbMock);
+            SugarTest.server.respond();
+            expect(cbMock).toHaveBeenCalled();
+            expect(view.$el.find("[data-module='Accounts']").find('.recentContainer').find('li').length).toEqual(2);
+            beanCreateMock.restore();
+            SugarTest.app.router = oRouter;
+        });
         it("Should be able to filter menu items by acl", function() {
             sinon.stub(SugarTest.app.acl, 'hasAccess', function(action,module) {
                 if (module == 'noAccess' || action =='edit') {

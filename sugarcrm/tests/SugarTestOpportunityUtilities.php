@@ -58,8 +58,8 @@ class SugarTestOpportunityUtilities
     {
         $opportunity = self::_createOpportunity($id);
 
-        if($account !== null) {
-            $opportunity->account_id   = $account->id;
+        if ($account !== null) {
+            $opportunity->account_id = $account->id;
             $opportunity->account_name = $account->name;
             $opportunity->save();
         }
@@ -74,15 +74,22 @@ class SugarTestOpportunityUtilities
 
         $opportunity = new Opportunity();
 
-        if (!empty($id))
-        {
+        global $app_list_strings;
+
+        // make sure it's setup to be an array so it doesn't fail below
+        if (!isset($app_list_strings['sales_stage_dom'])) {
+            $app_list_strings['sales_stage_dom'] = array();
+        }
+
+        if (!empty($id)) {
             $opportunity->new_with_id = true;
             $opportunity->id = $id;
         }
 
-        $opportunity->name         = $name . time();
-        $opportunity->amount       = 10000;
-        $opportunity->date_closed  = $timedate->getNow()->asDbDate();
+        $opportunity->name = $name . time();
+        $opportunity->amount = 10000;
+        $opportunity->date_closed = $timedate->getNow()->asDbDate();
+        $opportunity->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
         $opportunity->save();
 
         $GLOBALS['db']->commit();
@@ -94,8 +101,7 @@ class SugarTestOpportunityUtilities
 
     public static function setCreatedOpportunity($opportunity_ids)
     {
-        foreach ($opportunity_ids as $opportunity_id)
-        {
+        foreach ($opportunity_ids as $opportunity_id) {
             $opportunity = new Opportunity();
             $opportunity->id = $opportunity_id;
             self::$_createdOpportunities[] = $opportunity;
@@ -106,17 +112,31 @@ class SugarTestOpportunityUtilities
     {
         $opportunity_ids = self::getCreatedOpportunityIds();
 
-        if (!empty($opportunity_ids))
-        {
-            $GLOBALS['db']->query('DELETE FROM products_audit WHERE parent_id IN (SELECT id FROM products WHERE opportunity_id IN (\'' . implode("', '", $opportunity_ids) . '\'))');
-        	$GLOBALS['db']->query('DELETE FROM products WHERE opportunity_id IN (\'' . implode("', '", $opportunity_ids) . '\')');
-            $GLOBALS['db']->query('DELETE FROM opportunities WHERE id IN (\'' . implode("', '", $opportunity_ids) . '\')');
-            $GLOBALS['db']->query('DELETE FROM opportunities_audit WHERE parent_id IN (\'' . implode("', '", $opportunity_ids) . '\')');
-            $GLOBALS['db']->query('DELETE FROM opportunities_contacts WHERE opportunity_id IN (\'' . implode("', '", $opportunity_ids) . '\')');
+        if (!empty($opportunity_ids)) {
+            $GLOBALS['db']->query(
+                'DELETE FROM products_audit WHERE parent_id IN (SELECT id FROM products WHERE opportunity_id IN (\'' . implode(
+                    "', '",
+                    $opportunity_ids
+                ) . '\'))'
+            );
+            $GLOBALS['db']->query(
+                'DELETE FROM products WHERE opportunity_id IN (\'' . implode("', '", $opportunity_ids) . '\')'
+            );
+            $GLOBALS['db']->query(
+                'DELETE FROM opportunities WHERE id IN (\'' . implode("', '", $opportunity_ids) . '\')'
+            );
+            $GLOBALS['db']->query(
+                'DELETE FROM opportunities_audit WHERE parent_id IN (\'' . implode("', '", $opportunity_ids) . '\')'
+            );
+            $GLOBALS['db']->query(
+                'DELETE FROM opportunities_contacts WHERE opportunity_id IN (\'' . implode(
+                    "', '",
+                    $opportunity_ids
+                ) . '\')'
+            );
         }
 
-        if (self::$_createdAccount !== null && self::$_createdAccount->id)
-        {
+        if (self::$_createdAccount !== null && self::$_createdAccount->id) {
             $GLOBALS['db']->query('DELETE FROM accounts WHERE id = \'' . self::$_createdAccount->id . '\'');
         }
         self::$_createdOpportunities = array();
@@ -126,8 +146,7 @@ class SugarTestOpportunityUtilities
     {
         $opportunity_ids = array();
 
-        foreach (self::$_createdOpportunities as $opportunity)
-        {
+        foreach (self::$_createdOpportunities as $opportunity) {
             $opportunity_ids[] = $opportunity->id;
         }
 

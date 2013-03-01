@@ -159,8 +159,9 @@ describe("Base.View.FlexList", function () {
             };
             view._fields = view.parseFields();
 
-            expect(view._fields["default"]).toEqual(["test3"]);
-            expect(view._fields["available"]["all"]).toEqual(["test1","test2","test4"]);
+            expect(view._fields['default']).toEqual(['test3']);
+            expect(view._fields['available']).toEqual(['test1','test2','test4']);
+            expect(view._fields['visible']).toEqual(['test3']);
         });
     });
 });

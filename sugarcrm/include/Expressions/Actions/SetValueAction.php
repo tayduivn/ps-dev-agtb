@@ -37,8 +37,13 @@ class SetValueAction extends AbstractAction{
 	static function getJavascriptClass() {
 		return  "
 		SUGAR.forms.SetValueAction = function(target, valExpr) {
-			this.expr = valExpr;
-			this.target = target;
+			if (_.isObject(target)){
+			    this.expr = target.value;
+			    this.target = target.target;
+			} else {
+                this.expr = valExpr;
+                this.target = target;
+			}
 		};
 		SUGAR.util.extend(SUGAR.forms.SetValueAction, SUGAR.forms.AbstractAction, {
 			exec : function(context)
@@ -47,16 +52,10 @@ class SetValueAction extends AbstractAction{
 				    context = this.context;
 
 				try {
-				//BEGIN SUGARCRM flav=een ONLY
-				SUGAR.forms.AssignmentHandler.clearError(this.target);
-				//END SUGARCRM flav=een ONLY
 				    var val = this.evalExpression(this.expr, context);
 				    context.setValue(this.target, val);
 				} catch (e) {
-	                //BEGIN SUGARCRM flav=een ONLY
-			        SUGAR.forms.AssignmentHandler.showError(this.target, e + '');
-		            //END SUGARCRM flav=een ONLY
-			        context.setValue(this.target, '');
+	                context.setValue(this.target, '');
 			    }
 	       }
 		});";
@@ -130,8 +129,10 @@ class SetValueAction extends AbstractAction{
 	function getDefinition() {
 		return array(
 			"action" => $this->getActionName(),
-	        "target" => $this->targetField,
-	        "value" => $this->expression,
+	        "params" => array(
+                "target" => $this->targetField,
+	            "value" => $this->expression,
+            )
 	    );
 	}
 

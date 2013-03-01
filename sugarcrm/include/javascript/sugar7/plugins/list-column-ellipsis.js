@@ -33,11 +33,11 @@
                 var $li = this.$(event.currentTarget).closest('li'),
                     column = $li.data('fieldname');
 
-                if (_.indexOf(this._fields.available.visible, column) !== -1) {
-                    this._fields.available.visible = _.without(this._fields.available.visible, column);
+                if (_.indexOf(this._fields.visible, column) !== -1) {
+                    this._fields.visible = _.without(this._fields.visible, column);
                 }
                 else {
-                    this._fields.available.visible.push(column);
+                    this._fields.visible.push(column);
                 }
                 this.render();
                 this.toggleDropdown();

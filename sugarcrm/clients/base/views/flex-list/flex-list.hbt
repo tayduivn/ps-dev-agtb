@@ -36,13 +36,7 @@
         </th>
         {{/each}}
         {{#each fields}}
-            {{#has name ../../_fields.default}}
-            <th class="{{#isSortable ../../../module this}}sorting{{#eq ../../../../collection.orderBy.columnName name}}{{{../../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
-                data-fieldname="{{name}}" data-orderby="{{orderBy}}">
-                {{str label ../../../module}}
-            </th>
-            {{/has}}
-            {{#has name ../../_fields.available.visible}}
+            {{#has name ../../_fields.visible}}
             <th class="{{#isSortable ../../../module this}}sorting{{#eq ../../../../collection.orderBy.columnName name}}{{{../../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
                 data-fieldname="{{name}}" data-orderby="{{orderBy}}">
                 {{str label ../../../module}}
@@ -52,22 +46,18 @@
         {{#each ../rightColumns}}
             {{#if isColumnDropdown}}
             <th class="nosort morecol">
-                {{#if ../../../_fields.available.all.length}}
-                    <div class="dropdown">
+                <div class="dropdown">
                     <a href="javascript:void(0);" class="rowaction">. . .</a>
                     <ul class="dropdown-menu left carettop">
-                    {{#each ../../../fields}}
-                        {{#has name ../../../../../_fields.available.all}}
+                    {{#each ../../fields}}
                         <li data-fieldname="{{name}}">
-                        <a class="rowaction" href="javascript:void(0);">{{str label ../../../../../../module}}
-                        {{#has name ../../../../../../_fields.available.visible}} <i class="icon icon-ok"></i>{{/has}}
+                        <a class="rowaction" href="javascript:void(0);">{{str label ../../../../module}}
+                        {{#has name ../../../../_fields.visible}} <i class="icon icon-ok"></i>{{/has}}
                         </a>
                         </li>
-                        {{/has}}
                     {{/each}}
                     </ul>
-                    </div>
-               {{/if}}
+                </div>
             </th>
             {{else}}
             <th data-fieldname="{{name}}">
@@ -89,14 +79,9 @@
         </td>
         {{/each}}
         {{#each ../fields}}
-            {{#has name ../../../_fields.default}}
+            {{#has name ../../../_fields.visible}}
             <td>
               {{field ../../../../this ../../this ../../../../this.viewName}}</div>
-            </td>
-            {{/has}}
-            {{#has name ../../../_fields.available.visible}}
-            <td>
-                {{field ../../../../this ../../this ../../../../this.viewName}}</div>
             </td>
             {{/has}}
         {{/each}}

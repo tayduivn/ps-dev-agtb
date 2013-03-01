@@ -45,6 +45,8 @@ if(!empty($config['cleanCache'])){
         $rome->remove($path ."/cache/blowfish");
         $rome->remove($path ."/cache/dashlets");
         $rome->remove($path ."/cache/include/api");
+        $rome->remove($path ."/cache/javascript");
+        $rome->remove($path ."/cache/include/javascript");
         $rome->remove($path ."/cache/include/javascript/sugar_grp1.js");
         $rome->remove($path ."/cache/include/javascript/sugar_grp1_yui.js");
     }

@@ -112,7 +112,7 @@
 
             switch (level) {
                 case this.LEVEL.PROCESS:
-                    template = '<div class="alert alert-process">' +
+                    template = '<div class="alert {{alertClass}}">' +
                         '<strong>{{title}}</strong>' +
                         '<div class="loading">' +
                         '<span class="l1"></span><span class="l2"></span><span class="l3"></span>' +
@@ -144,8 +144,8 @@
 
             return Handlebars.compile(template)({
                 alertClass: alertClasses,
-                title: title,
-                messages: messages
+                title: this.getTranslatedLabels(title),
+                messages: this.getTranslatedLabels(messages)
             });
         },
 
@@ -181,21 +181,40 @@
         getDefaultTitle: function(level) {
             switch (level) {
                 case this.LEVEL.PROCESS:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_LOADING');
+                    return 'LBL_ALERT_TITLE_LOADING';
                 case this.LEVEL.SUCCESS:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_SUCCESS');
+                    return 'LBL_ALERT_TITLE_SUCCESS';
                 case this.LEVEL.WARNING:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_WARNING');
+                    return 'LBL_ALERT_TITLE_WARNING';
                 case this.LEVEL.INFO:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_NOTICE');
+                    return 'LBL_ALERT_TITLE_NOTICE';
                 case this.LEVEL.ERROR:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_ERROR');
+                    return 'LBL_ALERT_TITLE_ERROR';
                 case this.LEVEL.CONFIRMATION:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_WARNING');
+                    return 'LBL_ALERT_TITLE_WARNING';
                 default:
                     return '';
             }
         },
+
+    /**
+     * Return translated text, given a string or an array of strings.
+     * @param stringOrArray
+     * @return {*}
+     */
+    getTranslatedLabels: function(stringOrArray) {
+        var result;
+
+        if (_.isArray(stringOrArray)) {
+            result = _.map(stringOrArray, function(text) {
+                return app.lang.getAppString(text);
+            });
+        } else {
+            result = app.lang.getAppString(stringOrArray);
+        }
+
+        return result;
+    },
 
     bindDataChange : function() {}
 })

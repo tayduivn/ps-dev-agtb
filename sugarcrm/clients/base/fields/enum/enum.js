@@ -28,13 +28,15 @@
     fieldTag: "select",
     _render: function() {
 
-        app.view.Field.prototype._render.call(this);
+
 
         var optionsKeys = [];
-        if(_.isString(this.def.options)) {
-            optionsKeys = _.keys(app.lang.getAppListStrings(this.def.options));
-        } else if(_.isObject(this.def.options)) {
-            optionsKeys = _.keys(this.def.options);
+        var options = this.items = this.items || this.def.options;
+
+        if(_.isString(options)) {
+            optionsKeys = _.keys(app.lang.getAppListStrings(options));
+        } else if(_.isObject(options)) {
+            optionsKeys = _.keys(options);
         }
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
@@ -79,10 +81,11 @@
          * this adds the ability to specify that threshold in metadata.
          */
         select2Options.minimumResultsForSearch = this.def.searchBarThreshold ? this.def.searchBarThreshold : 7;
-
+        app.view.Field.prototype._render.call(this);
         if(this.tplName === 'edit') {
             this.$(this.fieldTag).select2(select2Options);
             this.$(".select2-container").addClass("tleft");
+            this.model.set(this.name, this.$(this.fieldTag).select2('val'));
         } else if(this.tplName === 'disabled') {
             this.$(this.fieldTag).attr("disabled", "disabled").select2();
         }

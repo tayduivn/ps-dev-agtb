@@ -110,6 +110,7 @@ class ProductToQuoteConvertApi extends SugarApi
 
         # Set the quote_id on the product so we know it's linked
         $product->quote_id = $quote->id;
+        $product->status = Product::STATUS_QUOTED;
         $product->save();
 
         return array('id' => $quote->id, 'name' => $quote->name);

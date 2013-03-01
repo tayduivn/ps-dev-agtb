@@ -106,7 +106,7 @@
                      var errors = {};
                      errors[error.responseText] = {};
                      self.model.trigger('error:validation:' + this.field, errors);
-                     self.model.trigger('error:validation');
+                     self.model.trigger('error:validation', errors);
                      self.displayError();
                  }
               },

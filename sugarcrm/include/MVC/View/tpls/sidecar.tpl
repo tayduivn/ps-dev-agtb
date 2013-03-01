@@ -33,8 +33,13 @@
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
 
         <!-- App Scripts -->
-        <script src='sidecar/minified/sidecar.min.js'></script>
+        {if !empty($developerMode)}
+            <script src='sidecar/minified/sidecar.js'></script>
+        {else}
+            <script src='sidecar/minified/sidecar.min.js'></script>
+        {/if}
         <script src='{$sugarSidecarPath}'></script>
+        <script src='{$SLFunctionsPath}'></script>
         <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
         <script src='{$configFile}'></script>
         <script src="include/javascript/jquery/jquery.dataTables.min.js"></script>
