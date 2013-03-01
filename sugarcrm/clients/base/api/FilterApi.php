@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('include/api/SugarApi.php');
 require_once('include/SugarQuery/SugarQuery.php');
+require_once('data/Relationships/RelationshipFactory.php');
 
 class FilterApi extends SugarApi
 {
@@ -152,7 +153,7 @@ class FilterApi extends SugarApi
     public function filterRelated(ServiceBase $api, array $args)
     {
         // Load the parent bean.
-        $record = BeanFactory::getBean($args['module'], $args['record']);
+        $record = BeanFactory::retrieveBean($args['module'], $args['record']);
 
         if (empty($record)) {
             throw new SugarApiExceptionNotFound('Could not find parent record '.$args['record'].' in module '.$args['module']);
@@ -173,14 +174,32 @@ class FilterApi extends SugarApi
             throw new SugarApiExceptionNotAuthorized('No access to list records for module: '.$linkModuleName);
         }
 
+        $rf = SugarRelationshipFactory::getInstance();
+        $relObj = $record->$linkName->getRelationshipObject();
+        $relDef = $rf->getRelationshipDef($relObj->name);
+        $tableName = $linkName;
+        foreach ($linkSeed->field_defs as $def) {
+            if ($def['type'] !== 'link') {
+                continue;
+            }
+            if ($def['relationship'] === $relObj->name) {
+                $tableName = $def['name'];
+                break;
+            }
+        }
+
+        if ($record->$linkName->getSide() == REL_LHS) {
+            $column = $relDef['rhs_key'];
+        } else {
+            $column = $relDef['lhs_key'];
+        }
+
         $options = $this->parseOptions($api, $args, $linkSeed);
         $q = $this->getQueryObject($linkSeed, $options);
-
-        // return $args['filter'];
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
-        $args['filter'][][$record->table_name . '.id'] = array('$equals' => $record->id);
+        $args['filter'][][$tableName . '.' . $column] = array('$equals' => $record->id);
         $this->addFilters($args['filter'], $q->where(), $q);
         return $this->runQuery($api, $args, $q, $options);
     }
