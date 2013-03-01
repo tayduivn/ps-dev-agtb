@@ -38,7 +38,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     ),
     array(
         'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=Accounts&return_module=Accounts&return_action=index',
-        'label' =>'LNK_IMPORT_ACCOUNTS',
+        'label' =>'LNK_IMPORT_CALLS',
         'acl_action'=>'import',
         'acl_module'=>$module_name,
         'icon' => 'icon-upload-alternative',

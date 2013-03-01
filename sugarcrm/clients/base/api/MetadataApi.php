@@ -103,6 +103,11 @@ class MetadataApi extends SugarApi {
 
         $this->setPlatformList($api);
 
+        $hash = $this->getCachedMetadataHash();
+        if (!empty($hash)){
+            generateETagHeader($hash);
+        }
+        //If we have gotten here, either the hash cache was empty or the etag didn't match the hash so we have to send data
 
         $data = $this->getMetadataCache($this->platforms[0],false);
 
@@ -119,7 +124,10 @@ class MetadataApi extends SugarApi {
         // to string. This trims that value prior to sending it to the client.
         $data = $this->normalizeCurrencyIds($data);
 
-        generateETagHeader($data['_hash']);
+        if(empty($hash) || $hash != $data['_hash']){
+            $this->cacheMetadataHash($data['_hash']);
+            generateETagHeader($data['_hash']);
+        }
 
         $baseChunks = array('fields','labels','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource', 'server_info');
         $perModuleChunks = array('modules');
@@ -153,6 +161,11 @@ class MetadataApi extends SugarApi {
             $onlyHash = true;
         }
 
+        $hash = $this->getCachedMetadataHash(true);
+        if (!empty($hash)){
+            generateETagHeader($hash);
+        }
+
         $data = $this->getMetadataCache($this->platforms[0],true);
         
         if ( empty($data) ) {
@@ -176,7 +189,10 @@ class MetadataApi extends SugarApi {
             $this->putMetadataCache($data, $this->platforms[0], TRUE);
 
         }
-        generateETagHeader($data['_hash']);
+        if(empty($hash) || $hash != $data['_hash']){
+            $this->cacheMetadataHash($data['_hash'], true);
+            generateETagHeader($data['_hash']);
+        }
 
         $baseChunks = array('fields','labels','views', 'layouts', 'config', 'jssource');
 
@@ -674,5 +690,26 @@ class MetadataApi extends SugarApi {
         }
         
         return $data;
+    }
+
+    protected function cacheMetadataHash($hash, $isPublic = false)
+    {
+        $public = $isPublic ? "public_" : "";
+        $key = "meta_hash_$public" . implode( ",", $this->platforms);
+        $path = sugar_cached("api/metadata/$key.php");
+        file_put_contents($path, "<?php\n \$_hash='$hash';");
+    }
+
+    protected function getCachedMetadataHash($isPublic = false)
+    {
+        $_hash = false;
+        $public = $isPublic ? "public_" : "";
+        $key = "meta_hash_$public" . implode( ",", $this->platforms);
+        $path = sugar_cached("api/metadata/$key.php");
+        if (file_exists($path))
+        {
+            include($path);
+        }
+        return $_hash;
     }
 }

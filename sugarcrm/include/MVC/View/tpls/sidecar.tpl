@@ -33,8 +33,13 @@
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
 
         <!-- App Scripts -->
-        <script src='sidecar/minified/sidecar.min.js'></script>
+        {if !empty($developerMode)}
+            <script src='sidecar/minified/sidecar.js'></script>
+        {else}
+            <script src='sidecar/minified/sidecar.min.js'></script>
+        {/if}
         <script src='{$sugarSidecarPath}'></script>
+        <script src='{$SLFunctionsPath}'></script>
         <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
         <script src='{$configFile}'></script>
         <script src="include/javascript/jquery/jquery.dataTables.min.js"></script>
@@ -51,7 +56,7 @@
                 <div id="header"></div>
                 <div id="content">
                     <div class="alert alert-process">
-                        <strong>Loading</strong>
+                        <strong>{$LBL_LOADING}</strong>
                         <div class="loading">
                             <span class="l1"></span><span class="l2"></span><span class="l3"></span>
                         </div>
@@ -67,6 +72,8 @@
         <script language="javascript" src="include/javascript/sugar7/utils.js"></script>
         <script language="javascript" src="include/javascript/sugar7/field.js"></script>
         <script language="javascript" src="include/javascript/sugar7/hacks.js"></script>
+        <script language="javascript" src="include/javascript/sugar7/plugins/ellipsis_inline.js"></script>
+        <script language="javascript" src="include/javascript/sugar7/plugins/list-column-ellipsis.js"></script>
 		<script language="javascript">
 			var App;
 

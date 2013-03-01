@@ -129,7 +129,10 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 'account_name',
-                'date_closed',
+                array(
+                    'name' => 'date_closed',
+                    'readonly' => true,
+                ),
                 'sales_status',
                 array(
                     'name' => 'amount',
@@ -140,10 +143,36 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         'currency_id',
                         'base_rate',
                     ),
+                    'readonly' => true,
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
-                array('name'=>'htmlfield', 'type'=>'html', 'default_value'=>'&nbsp;'),
+                array(
+                    'name' => 'best_case',
+                    'type' => 'currency',
+                    'label' => 'LBL_BEST_CASE',
+                    'related_fields' => array(
+                        'best_case',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'readonly' => true,
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                ),
+                array(
+                    'name' => 'worst_case',
+                    'type' => 'currency',
+                    'label' => 'LBL_WORST_CASE',
+                    'related_fields' => array(
+                        'worst_case',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'readonly' => true,
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                ),
             )
         ),
         array(
@@ -164,7 +193,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 'next_step',
                 array(
                     'name' => 'date_entered_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_ENTERED',
                     'fields' => array(
@@ -182,7 +211,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'date_modified_by',
-                    'noedit' => true,
+                    'readonly' => true,
                     'type' => 'fieldset',
                     'label' => 'LBL_DATE_MODIFIED',
                     'fields' => array(

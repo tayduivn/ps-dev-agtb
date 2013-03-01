@@ -1895,7 +1895,7 @@ $app_strings = array (
   'LBL_JS_CALENDAR' => 'Calendar' /*for 508 compliance fix*/,
     'LBL_ADVANCED' => 'Advanced',
     'LBL_BASIC' => 'Basic',
-    'LBL_MODULE_FILTER' => 'Filter By',
+    'LBL_MODULE_FILTER' => 'Filter by...',
     'LBL_CONNECTORS_POPUPS'=>'Connectors Popups',
     'LBL_CLOSEINLINE'=>'Close',
     'LBL_MOREDETAIL'=>'More Detail',
@@ -2660,7 +2660,7 @@ $app_strings = array (
     'LBL_MASS_UPDATE_JOB_QUEUED' => 'Your request for mass update has been scheduled.',
     'LBL_MASS_UPDATE_SUCCESS' => 'All records were updated successfully.',
     'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The following attributes have empty values: ',
-    'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Do you want to continue?',
+    'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Existing values will be replaced with empty values. Do you want to continue?',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
@@ -3480,6 +3480,7 @@ $app_strings = array (
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
+    'LBL_SUCCESS' => 'Success',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
@@ -3791,6 +3792,13 @@ $app_strings = array (
     'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and create new',
     'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
+
+    //for sidecar alert view
+    'LBL_ALERT_TITLE_SUCCESS' => 'Success!',
+    'LBL_ALERT_TITLE_WARNING' => 'Warning!',
+    'LBL_ALERT_TITLE_NOTICE' => 'Notice!',
+    'LBL_ALERT_TITLE_ERROR' => 'Error!',
+    'LBL_ALERT_TITLE_LOADING' => 'Loading',
 );
 
 

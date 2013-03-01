@@ -119,14 +119,14 @@ class One2OneBeanRelationship extends One2MBeanRelationship
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
 
 
-        $join_type= isset($options['join_type']) ? $options['join_type'] : 'INNER';
+        $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
-        $sugar_query->joinTable($targetTable, array('alias' => $targetTable, 'joinType' => $join_type))
-            ->on()->equalsField("{$startingTable}.{$startingKey}","{$targetTable}.{$targetKey}")
+        $sugar_query->joinTable($targetTable, array('alias' => $options['myAlias'], 'joinType' => $join_type))
+            ->on()->equalsField("{$startingTable}.{$startingKey}","{$options['myAlias']}.{$targetKey}")
             ->equals("{$targetTable}.deleted","0");
 
-        $this->buildSugarQueryRoleWhere($sugar_query, $targetTable);
+        $this->buildSugarQueryRoleWhere($sugar_query, $options['myAlias']);
 
-        return $sugar_query->join[$targetTable];
+        return $sugar_query->join[$options['myAlias']];
     }    
 }

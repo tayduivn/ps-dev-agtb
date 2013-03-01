@@ -39,8 +39,16 @@
                         url: url
                     };
                     var module = /module=([^&]*)/.exec(url);
+
                     if (!_.isNull(module) && !_.isEmpty(module[1])) {
                         params.module = module[1];
+                        // on BWC import we want to try and take the import module as the module
+                        if (module[1] === 'Import') {
+                            module = /import_module=([^&]*)/.exec(url);
+                            if (!_.isNull(module) && !_.isEmpty(module[1])) {
+                                params.module = module[1];
+                            }
+                        }
                     }
 
                     app.controller.loadView(params);
@@ -53,6 +61,20 @@
             {
                 name: "record",
                 route: ":module/create"
+            },
+            {
+                name: "vcardImport",
+                route: ":module/vcard-import",
+                callback: function(module){
+                    app.controller.loadView({
+                        module: module,
+                        layout: "records"
+                    });
+
+                    app.drawer.open({
+                        layout:'vcard-import'
+                    });
+                }
             },
             {
                 name: "layout",

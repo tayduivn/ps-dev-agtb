@@ -324,7 +324,9 @@
                 app.alert.show('mail_call_status', msg);
             },
             complete:_.bind(function() {
-                this.setMainButtonsDisabled(false);
+                if (!this.disposed) {
+                    this.setMainButtonsDisabled(false);
+                }
             }, this)
         });
     },
@@ -369,7 +371,7 @@
         if (model) {
             var emailTemplate = app.data.createBean('EmailTemplates', { id: model.id });
             emailTemplate.fetch({
-                success: _.bind(this.confirmTemplate, this),
+                success: this.confirmTemplate,
                 error: function() {
                     app.logger.error.log("error");
                 }
@@ -384,6 +386,7 @@
      * @param template
      */
     confirmTemplate: function(template) {
+        if (this.disposed === true) return; //if view is already disposed, bail out
         app.alert.show('delete_confirmation', {
             level:'confirmation',
             messages:app.lang.get('LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG', this.module),
@@ -425,6 +428,7 @@
                     ]
                 },
                 success:_.bind(function(data) {
+                    if (this.disposed === true) return; //if view is already disposed, bail out
                     if (!_.isEmpty(data.models)) {
                         this.insertTemplateAttachments(data.models);
                     }
@@ -481,6 +485,7 @@
             var sugarDocument = app.data.createBean('Documents', { id: model.id });
             sugarDocument.fetch({
                 success:_.bind(function (model) {
+                    if (this.disposed === true) return; //if view is already disposed, bail out
                     this.context.trigger("attachment:add", {
                         id:model.id,
                         name:model.filename,
@@ -535,12 +540,13 @@
             var url = app.api.buildURL("Signatures", signature.id);
             app.api.call("read", url, null, {
                 success: _.bind(function(model) {
+                    if (this.disposed === true) return; //if view is already disposed, bail out
                     if (this._insertSignature(model)) {
                         this._lastSelectedSignature = model;
                     }
                 }, this),
                 error: function() {
-                    console.log("Retrieving Signature failed.");
+                    app.logger.error("Retrieving Signature failed.");
                 }
             });
         }

@@ -1,9 +1,6 @@
-<?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
+ * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -17,7 +14,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
+ *  (i) the ""Powered by SugarCRM"" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -27,44 +24,18 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+({
+    extendsFrom: 'CreateView',
 
-$viewdefs ['Prospects']['base']['view']['detail'] = array(
-    'panels' => array(
-        array(
-            'fields' => array(
-                'name',
-                'title',
-                'department',
-                'account_name',
-                'primary_address_street',
-                'primary_address_city',
-                'primary_address_state',
-                'primary_address_postalcode',
-                'primary_address_country',
-                array(
-                    'name' => 'email',
-                    'label' => 'LBL_EMAIL_ADDRESSES',
-                ),
-                'phone_work',
-                'phone_mobile',
-                'phone_fax',
-                'alt_address_street',
-                'alt_address_city',
-                'alt_address_state',
-                'alt_address_postalcode',
-                'alt_address_country',
-                'description',
-                'email_opt_out',
-                'do_not_call',
-                'assigned_user_name',
-                'created_by_name',
-                'date_entered',
-                'modified_by_name',
-                'date_modified',
-                //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
-                //END SUGARCRM flav=pro ONLY
-            ),
-        ),
-    ),
-);
+    getCustomSaveOptions: function(){
+        var options = {};
+
+        if(this.context.get('prospect_id')) {
+            options.params = {};
+            options.params.prospect_id = this.context.get('prospect_id');
+            this.context.unset('prospect_id');
+        }
+
+        return options;
+    }
+})

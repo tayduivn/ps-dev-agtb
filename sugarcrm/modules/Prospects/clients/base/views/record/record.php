@@ -30,21 +30,105 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Prospects']['base']['view']['record'] = array(
-    'panels' => array(
+    'buttons' => array(
         array(
-            'name' => 'panel_header',
+            'type'      => 'button',
+            'name'      => 'cancel_button',
+            'label'     => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
+            'showOn'    => 'edit',
+        ),
+        array(
+            'type'    => 'actiondropdown',
+            'name'    => 'main_dropdown',
+            'primary' => true,
+            'buttons' => array(
+                array(
+                    'type'    => 'rowaction',
+                    'event'   => 'button:edit_button:click',
+                    'name'    => 'edit_button',
+                    'label'   => 'LBL_EDIT_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn'  => 'view',
+                    'value'   => 'edit'
+                ),
+                array(
+                    'type'    => 'rowaction',
+                    'event'   => 'button:save_button:click',
+                    'name'    => 'save_button',
+                    'label'   => 'LBL_SAVE_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn'  => 'edit',
+                    'value'   => 'edit'
+                ),
+                array(
+                    'type'   => 'rowaction',
+                    'event'  => 'button:duplicate_button:click',
+                    'name'   => 'duplicate_button',
+                    'label'  => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'showOn' => 'view',
+                    'value'  => 'edit'
+                ),
+                array(
+                    'type'   => 'rowaction',
+                    'event'  => 'button:delete_button:click',
+                    'name'   => 'delete_button',
+                    'label'  => 'LBL_DELETE_BUTTON_LABEL',
+                    'showOn' => 'view',
+                    'value'  => 'edit'
+                ),
+                array(
+                    'type'   => 'rowaction',
+                    'event'  => 'button:convert_button:click',
+                    'name'   => 'convert_button',
+                    'label'  => 'LBL_CONVERT_BUTTON_LABEL',
+                    'showOn' => 'view',
+                    'value'  => 'edit'
+                ),
+                array(
+                    'type'  => 'rowaction',
+                    'event' => 'button:create_related_button:click',
+                    'name'  => 'create_related_button',
+                    'label' => 'LBL_CREATE_RELATED_RECORD',
+                    'value' => 'create',
+                ),
+                array(
+                    'type'  => 'rowaction',
+                    'event' => 'button:link_related_button:click',
+                    'name'  => 'link_related_button',
+                    'label' => 'LBL_ASSOC_RELATED_RECORD',
+                    'value' => 'edit',
+                ),
+                array(
+                    'type'   => 'rowaction',
+                    'event'  => 'button:manage_subscriptions:click',
+                    'name'   => 'convert_button',
+                    'label'  => 'LBL_MANAGE_SUBSCRIPTIONS',
+                    'showOn' => 'view',
+                    'value'  => 'edit'
+                ),
+            ),
+        ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
+    ),
+    'panels'  => array(
+        array(
+            'name'   => 'panel_header',
             'header' => true,
             'fields' => array(
                 array(
-                    'name' => 'picture',
-                    'type' => 'image',
-                    'width' => 42,
-                    'height' => 42,
+                    'name'          => 'picture',
+                    'type'          => 'image',
+                    'width'         => 42,
+                    'height'        => 42,
                     'dismiss_label' => true,
                 ),
                 array(
-                    'name' => 'fieldset_name',
-                    'type' => 'fieldset-with-labels',
+                    'name'   => 'fieldset_name',
+                    'type'   => 'fieldset-with-labels',
                     'fields' => array('salutation', 'first_name', 'last_name'),
                 ),
                 array(
@@ -53,12 +137,12 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
             ),
         ),
         array(
-            'name' => 'panel_body',
-            'columns' => 2,
-            'labels' => true,
-            'labelsOnTop' => true,
+            'name'         => 'panel_body',
+            'columns'      => 2,
+            'labels'       => true,
+            'labelsOnTop'  => true,
             'placeholders' => true,
-            'fields' => array(
+            'fields'       => array(
                 array(
                     'name' => 'account_name',
                     'span' => 12,
@@ -68,9 +152,9 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 'department',
                 'phone_mobile',
                 array(
-                    'name' => 'fieldset_address',
-                    'type' => 'fieldset',
-                    'label' => 'Primary Address',
+                    'name'   => 'fieldset_address',
+                    'type'   => 'fieldset',
+                    'label'  => 'Primary Address',
                     'fields' => array(
                         'primary_address_street',
                         'primary_address_city',
@@ -85,28 +169,29 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
             ),
         ),
         array(
-            'name' => 'panel_hidden',
-            'hide' => true,
-            'columns' => 2,
-            'labelsOnTop' => true,
+            'name'         => 'panel_hidden',
+            'hide'         => true,
+            'columns'      => 2,
+            'labelsOnTop'  => true,
             'placeholders' => true,
-            'fields' => array(
+            'fields'       => array(
                 array(
-                    'name' => 'description',
-                    'span' => 12,
+                    'name'           => 'description',
+                    'span'           => 12,
+                    'related_fields' => array('lead_id'),
                 ),
                 'phone_other',
                 array(
-                    'name' => 'date_modified_by',
-                    'noedit' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_MODIFIED',
+                    'name'   => 'date_modified_by',
+                    'readonly' => true,
+                    'type'   => 'fieldset',
+                    'label'  => 'LBL_DATE_MODIFIED',
                     'fields' => array(
                         array(
                             'name' => 'date_modified',
                         ),
                         array(
-                            'type' => 'label',
+                            'type'          => 'label',
                             'default_value' => 'LBL_BY'
                         ),
                         array(
@@ -116,16 +201,16 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 ),
                 'assigned_user_name',
                 array(
-                    'name' => 'date_entered_by',
-                    'noedit' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_ENTERED',
+                    'name'   => 'date_entered_by',
+                    'readonly' => true,
+                    'type'   => 'fieldset',
+                    'label'  => 'LBL_DATE_ENTERED',
                     'fields' => array(
                         array(
                             'name' => 'date_entered',
                         ),
                         array(
-                            'type' => 'label',
+                            'type'          => 'label',
                             'default_value' => 'LBL_BY'
                         ),
                         array(
@@ -133,10 +218,12 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
+                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     "type" => "teamset",
                     "name" => "team_name"
                 ),
+                //END SUGARCRM flav=pro ONLY
             ),
         ),
     ),

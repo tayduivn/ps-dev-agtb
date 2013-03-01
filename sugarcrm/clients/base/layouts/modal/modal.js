@@ -189,7 +189,7 @@
     },
 
     show: function(params, callback) {
-        if (!this.triggerBefore("show")) return false;
+        if (!this.triggerBefore("show") || this.disposed) return false;
         var self = this;
         if (params.before){
             _.each(params.before, function(callback, event){

@@ -31,11 +31,13 @@ if ( typeof(SUGAR) == 'undefined' ) SUGAR = {};
 if ( typeof(SUGAR.util) == 'undefined' ) SUGAR.util = {};
 if ( typeof(SUGAR.expressions) == 'undefined' ) SUGAR.expressions= {};
 
+SUGAR.util.extend = SUGAR.util.extend || (SUGAR.App ? SUGAR.App.utils.extendFrom : null);
 
 /**
  * Constructs an Expression object given the parameters.
  */
-SUGAR.expressions.Expression = function() {
+SUGAR.expressions.Expression = function(context) {
+    this.context = context;
 };
 
 
@@ -283,10 +285,10 @@ SUGAR.expressions.Expression.prototype.getParameterTypes = function() {
 
 
 /** GENERIC TYPE EXPRESSIONS **/
-SUGAR.GenericExpression = function(params) {
+SUGAR.expressions.GenericExpression = function(params) {
 
 };
-SUGAR.util.extend(SUGAR.GenericExpression, SUGAR.expressions.Expression, {
+SUGAR.util.extend(SUGAR.expressions.GenericExpression, SUGAR.expressions.Expression, {
 	/**
 	 * All parameters have to be a number by default.
 	 */
@@ -299,10 +301,10 @@ SUGAR.util.extend(SUGAR.GenericExpression, SUGAR.expressions.Expression, {
 /**
  * Construct a new NumericExpression.
  */
-SUGAR.NumericExpression = function(params) {
+SUGAR.expressions.NumericExpression = function(params) {
 	//this.init(params);
 };
-SUGAR.util.extend(SUGAR.NumericExpression, SUGAR.expressions.Expression, {
+SUGAR.util.extend(SUGAR.expressions.NumericExpression, SUGAR.expressions.Expression, {
 	/**
 	 * All parameters have to be a number by default.
 	 */
@@ -315,10 +317,10 @@ SUGAR.util.extend(SUGAR.NumericExpression, SUGAR.expressions.Expression, {
 /**
  * Construct a new StringExpression.
  */
-SUGAR.StringExpression = function(params) {
+SUGAR.expressions.StringExpression = function(params) {
 	//this.init(params);
 };
-SUGAR.util.extend(SUGAR.StringExpression, SUGAR.expressions.Expression, {
+SUGAR.util.extend(SUGAR.expressions.StringExpression, SUGAR.expressions.Expression, {
 	/**
 	 * All parameters have to be a string by default.
 	 */
@@ -331,10 +333,10 @@ SUGAR.util.extend(SUGAR.StringExpression, SUGAR.expressions.Expression, {
 /**
  * Construct a new BooleanExpression.
  */
-SUGAR.BooleanExpression = function(params) {
+SUGAR.expressions.BooleanExpression = function(params) {
 	//this.init(params);
 };
-SUGAR.util.extend(SUGAR.BooleanExpression, SUGAR.expressions.Expression, {
+SUGAR.util.extend(SUGAR.expressions.BooleanExpression, SUGAR.expressions.Expression, {
 	/**
 	 * All parameters have to be a sugar-boolean by default.
 	 */
@@ -347,10 +349,10 @@ SUGAR.util.extend(SUGAR.BooleanExpression, SUGAR.expressions.Expression, {
 /**
  * Construct a new EnumExpression.
  */
-SUGAR.EnumExpression = function(params) {
+SUGAR.expressions.EnumExpression = function(params) {
 	//this.init(params);
 };
-SUGAR.util.extend(SUGAR.EnumExpression, SUGAR.expressions.Expression, {
+SUGAR.util.extend(SUGAR.expressions.EnumExpression, SUGAR.expressions.Expression, {
 	/**
 	 * All parameters have to be an enumeration by default.
 	 */
@@ -363,10 +365,10 @@ SUGAR.util.extend(SUGAR.EnumExpression, SUGAR.expressions.Expression, {
 /**
  * Construct a new DateExpression.
  */
-SUGAR.DateExpression = function(params) {
+SUGAR.expressions.DateExpression = function(params) {
 	//this.init(params);
 };
-SUGAR.util.extend(SUGAR.DateExpression, SUGAR.expressions.Expression, {
+SUGAR.util.extend(SUGAR.expressions.DateExpression, SUGAR.expressions.Expression, {
 	/**
 	 * All parameters have to be date by default.
 	 */
@@ -379,10 +381,10 @@ SUGAR.util.extend(SUGAR.DateExpression, SUGAR.expressions.Expression, {
 /**
  * Construct a new TimeExpression.
  */
-SUGAR.TimeExpression = function(params) {
+SUGAR.expressions.TimeExpression = function(params) {
 	//this.init(params);
 };
-SUGAR.util.extend(SUGAR.TimeExpression, SUGAR.expressions.Expression, {
+SUGAR.util.extend(SUGAR.expressions.TimeExpression, SUGAR.expressions.Expression, {
 	/**
 	 * All parameters have to be time by default.
 	 */
@@ -391,11 +393,10 @@ SUGAR.util.extend(SUGAR.TimeExpression, SUGAR.expressions.Expression, {
 	}
 });
 
-/** GENERIC TYPE EXPRESSIONS **/
-SUGAR.RelateExpression = function(params) {
+SUGAR.expressions.RelateExpression = function(params) {
 
 };
-SUGAR.util.extend(SUGAR.RelateExpression, SUGAR.expressions.Expression, {
+SUGAR.util.extend(SUGAR.expressions.RelateExpression, SUGAR.expressions.Expression, {
 	/**
 	 * All parameters have to be a number by default.
 	 */
@@ -412,14 +413,14 @@ SUGAR.util.extend(SUGAR.RelateExpression, SUGAR.expressions.Expression, {
  * creation and type validation.
  */
 SUGAR.expressions.Expression.TYPE_MAP	= {
-		"number" 	: SUGAR.NumericExpression,
-		"string" 	: SUGAR.StringExpression,
-		"date" 		: SUGAR.DateExpression,
-		"time" 		: SUGAR.TimeExpression,
-		"boolean" 	: SUGAR.BooleanExpression,
-		"enum" 		: SUGAR.EnumExpression,
-		"relate" 	: SUGAR.RelateExpression,
-		"generic" 	: SUGAR.GenericExpression
+		"number" 	: SUGAR.expressions.NumericExpression,
+		"string" 	: SUGAR.expressions.StringExpression,
+		"date" 		: SUGAR.expressions.DateExpression,
+		"time" 		: SUGAR.expressions.TimeExpression,
+		"boolean" 	: SUGAR.expressions.BooleanExpression,
+		"enum" 		: SUGAR.expressions.EnumExpression,
+		"relate" 	: SUGAR.expressions.RelateExpression,
+		"generic" 	: SUGAR.expressions.GenericExpression
 };
 
 
@@ -427,11 +428,11 @@ SUGAR.expressions.Expression.TYPE_MAP	= {
 /**
  * Construct a new ConstantExpression.
  */
-SUGAR.ConstantExpression = function(params) {
+SUGAR.expressions.ConstantExpression = function(params) {
 	this.init(params);
 }
 
-SUGAR.util.extend(SUGAR.ConstantExpression, SUGAR.NumericExpression, {
+SUGAR.util.extend(SUGAR.expressions.ConstantExpression, SUGAR.expressions.NumericExpression, {
 	evaluate: function() {
 		return this.getParameters();
 	},
@@ -443,10 +444,10 @@ SUGAR.util.extend(SUGAR.ConstantExpression, SUGAR.NumericExpression, {
 /**
  * Construct a new StringLiteralExpression.
  */
-SUGAR.StringLiteralExpression = function(params) {
+SUGAR.expressions.StringLiteralExpression = function(params) {
 	this.init(params);
 }
-SUGAR.util.extend(SUGAR.StringLiteralExpression, SUGAR.StringExpression, {
+SUGAR.util.extend(SUGAR.expressions.StringLiteralExpression, SUGAR.expressions.StringExpression, {
 	evaluate: function() {
 		return this.getParameters();
 	},
@@ -458,10 +459,10 @@ SUGAR.util.extend(SUGAR.StringLiteralExpression, SUGAR.StringExpression, {
 /**
  * Construct a new FalseExpression.
  */
-SUGAR.FalseExpression = function(params) {
+SUGAR.expressions.FalseExpression = function(params) {
 	this.init(params);
 }
-SUGAR.util.extend(SUGAR.FalseExpression, SUGAR.BooleanExpression, {
+SUGAR.util.extend(SUGAR.expressions.FalseExpression, SUGAR.expressions.BooleanExpression, {
 	evaluate: function() {
 		return SUGAR.expressions.Expression.FALSE;
 	},
@@ -473,10 +474,10 @@ SUGAR.util.extend(SUGAR.FalseExpression, SUGAR.BooleanExpression, {
 /**
  * Construct a new TrueExpression.
  */
-SUGAR.TrueExpression = function(params) {
+SUGAR.expressions.TrueExpression = function(params) {
 	this.init(params);
 }
-SUGAR.util.extend(SUGAR.TrueExpression, SUGAR.BooleanExpression, {
+SUGAR.util.extend(SUGAR.expressions.TrueExpression, SUGAR.expressions.BooleanExpression, {
 	evaluate: function() {
 		return SUGAR.expressions.Expression.TRUE;
 	},
@@ -492,6 +493,104 @@ SUGAR.expressions.ExpressionParser = function() {
 	// nothing
 };
 
+SUGAR.expressions.ExpressionParser.getFieldsFromExpression = function(expression)
+{
+	var re = /[^$]*?\$(\w+)[^$]*?/g,
+		matches = [],
+		result;
+	while (result = re.exec(expression))
+	{
+		matches.push(result[result.length-1]);
+	}
+	return matches;
+}
+
+
+SUGAR.expressions.ExpressionParser.prototype._generateRange = function(prefix, start, end)
+{
+    var str = "";
+    var i = parseInt(start);
+    if ( typeof(end) == 'undefined' )
+        while ( this.getElement(prefix + '' + i) != null )
+            str += '$' + prefix + '' + (i++) + ',';
+    else
+        for ( ; i <= end ; i ++ ) {
+            var t = prefix + '' + i;
+            if ( this.getElement(t) != null )
+                str += '$' + t + ',';
+        }
+    return str.substring(0, str.length-1);
+}
+
+SUGAR.expressions.ExpressionParser.prototype._valueReplace = function(val) {
+    if ( !(/^\$.*$/).test(val) )
+    {
+        return val;
+    }
+
+    return this.getValue(val.substring(1));
+}
+
+SUGAR.expressions.ExpressionParser.prototype._performRangeReplace = function(expression)
+{
+    var isInQuotes = false;
+    var prev;
+    var inRange;
+
+    // go character by character
+    for ( var i = 0 ;  ; i ++ ) {
+        // due to fluctuating expression length
+        if ( i == expression.length ) break;
+
+        var ch = expression.charAt(i);
+
+        if ( ch == '"' && prev != '\\' )	isInQuotes = !isInQuotes;
+
+        if ( !isInQuotes && ch == '%' ) {
+            inRange = true;
+
+            // perform the replace
+            var loc_start = expression.indexOf( '[' , i+1 );
+            var loc_comma = expression.indexOf(',', loc_start );
+            var loc_end   = expression.indexOf(']', loc_start );
+
+            // invalid expression syntax?
+            if ( loc_start < 0 || loc_end < 0 )	throw ("Invalid range syntax");
+
+            // construct the pieces
+            var prefix = expression.substring( i+1 , loc_start );
+            var start, end;
+
+            // optional param is there
+            if ( loc_comma > -1 && loc_comma < loc_end ) {
+                start = expression.substring( loc_start+1, loc_comma );
+                end = expression.substring( loc_comma + 1, loc_end );
+            } else {
+                start = expression.substring( loc_start+1, loc_end );
+            }
+
+            // optional param is there
+            if ( loc_comma > -1 && loc_comma < loc_end )	end = expression.substring( loc_comma + 1, loc_end );
+
+            // construct the range
+            var result = this._generateRange(prefix, this._valueReplace(start), this._valueReplace(end));
+            //var result = this.generateRange(prefix, start, end);
+
+            // now perform the replace
+            if ( typeof(end) == 'undefined' )
+                expression = expression.replace('%'+prefix+'['+start+']', result);
+            else
+                expression = expression.replace('%'+prefix+'['+start+','+end+']', result);
+
+            // skip on
+            i = i + result.length - 1;
+        }
+
+        prev = ch;
+    }
+
+    return expression;
+}
 SUGAR.expressions.ExpressionParser.prototype.validate = function(expr)
 {
 	if ( typeof(expr) != 'string' )	throw "ExpressionParser requires a string expression.";
@@ -648,7 +747,7 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	// require and return the appropriate expression object
 	return {
 		type: "function",
-		name: YAHOO.lang.trim(func),
+		name: $.trim(func),
 		args: args
 	}
 }
@@ -814,7 +913,7 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 	if ( level != 0 )	throw ("Syntax Error (Incorrectly Matched Parantheses)");
 
 	// require and return the appropriate expression object
-	return new SUGAR.FunctionMap[func](args);
+	return new SUGAR.FunctionMap[func](args, context);
 }
 
 
@@ -827,31 +926,31 @@ SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 
 	// a raw numeric constant
 	if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(expr) != null ) {
-		return new SUGAR.ConstantExpression( parseFloat(expr) );
+		return new SUGAR.expressions.ConstantExpression( parseFloat(expr) );
 	}
 
 	// a pre defined numeric constant
 	var fixed = SUGAR.expressions.NumericConstants[expr];
 	if ( fixed != null && typeof(fixed) != 'undefined' )
-		return new SUGAR.ConstantExpression( parseFloat(fixed) );
+		return new SUGAR.expressions.ConstantExpression( parseFloat(fixed) );
 
 	// a constant string literal
 	if ( (/^".*"$/).exec(expr) != null ) {
 		expr = expr.substring(1, expr.length-1);		// remove start/end quotes
-		return new SUGAR.StringLiteralExpression( expr );
+		return new SUGAR.expressions.StringLiteralExpression( expr );
 	}
 
     // empty string
     if (expr == '')
     {
-        return new SUGAR.StringLiteralExpression( expr );
+        return new SUGAR.expressions.StringLiteralExpression( expr );
     }
 
 	// a boolean
 	if ( expr == "true" ) {
-		return new SUGAR.TrueExpression();
+		return new SUGAR.expressions.TrueExpression();
 	} else if ( expr == "false" ) {
-		return new SUGAR.FalseExpression();
+		return new SUGAR.expressions.FalseExpression();
 	}
 
 	// a date
@@ -958,8 +1057,8 @@ SUGAR.expressions.ExpressionContext.prototype.addListener = function(varname, ca
 SUGAR.expressions.ExpressionContext.prototype.getRelatedValue = function(linkField, relField)
 {
 	return new SUGAR.RelatedFieldExpression([
-		new SUGAR.StringLiteralExpression( linkField ),
-		new SUGAR.StringLiteralExpression( relField )
+		new SUGAR.expressions.StringLiteralExpression( linkField ),
+		new SUGAR.expressions.StringLiteralExpression( relField )
 	]);
 }
 

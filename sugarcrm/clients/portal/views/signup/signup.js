@@ -120,9 +120,10 @@
 
                         // show a Back button
                         self.options.meta.buttons = self._backButton;
-
-                        self.render();
-                        $('#content').show();
+                        if(!self.disposed){
+                            self.render();
+                            $('#content').show();
+                        }
                     }
                 });
         }

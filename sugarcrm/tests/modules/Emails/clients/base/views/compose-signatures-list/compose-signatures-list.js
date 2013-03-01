@@ -7,6 +7,7 @@ describe("Emails.Views.ComposeSignaturesList", function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadComponent("base", "view", "list");
+        SugarTest.loadComponent("base", "view", "flex-list");
         SugarTest.loadComponent("base", "view", "selection-list");
         SugarTest.loadComponent("base", "view", "compose-signatures-list", "Emails");
         SugarTest.testMetadata.set();

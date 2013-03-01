@@ -236,6 +236,7 @@ class SugarQuery
         if(!isset($options['alias'])) {
             $options['alias'] = $link_name;
         }
+
 		$this->loadBeans($link_name, $options);
 		$this->join[$options['alias']]->addLinkName($link_name);
 		return $this->join[$options['alias']];
@@ -399,13 +400,12 @@ class SugarQuery
 			list($bean, $alias) = $bean;
 		}
 
-		$relationship = $bean->field_name_map[$join]['name'];
+        $bean->load_relationship($join);
 
-		$link = new Link2($relationship, $bean);
 
-		$link->buildJoinSugarQuery($this, array('joinTableAlias'=>$bean->module_name, 'myAlias'=>$alias, 'joinType' => $joinType));
+		$bean->$join->buildJoinSugarQuery($this, array('joinTableAlias'=>$bean->module_name, 'myAlias'=>$alias, 'joinType' => $joinType));
 
-		$joined = BeanFactory::newBean($link->getRelatedModuleName());
+		$joined = BeanFactory::newBean($bean->$join->getRelatedModuleName());
 
 		if($joined->hasCustomFields())
 		{

@@ -3,19 +3,14 @@
     createMode: false,
     previousModelState: null,
     extendsFrom: 'EditableView',
-
+    plugins: ['SugarLogic', 'ellipsis_inline'],
+    enableHeaderButtons: true,
     enableHeaderPane: true,
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess',
-        'mouseenter .ellipsis_inline':'addTooltip'
-    },
-    addTooltip: function(event){
-        if (_.isFunction(app.utils.handleTooltip)) {
-            app.utils.handleTooltip(event, this);
-        }
+        'click .less': 'toggleMoreLess'
     },
     // button fields defined in view definition
     buttons: null,
@@ -311,22 +306,8 @@
     },
 
     _renderHtml: function() {
-        this.checkAclForButtons();
         this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
-    },
-
-    /**
-     * Check to see if the buttons should be displayed
-     */
-    checkAclForButtons: function() {
-        if (this.context.get("model").module === "Users") {
-            this.hasAccess = (app.user.get("id") == this.context.get("model").id);
-        } else if (this.createMode) {
-            this.hasAccess = true;
-        } else {
-            this.hasAccess = app.acl.hasAccessToModel("edit", this.model);
-        }
     },
 
     toggleMoreLess: function() {
@@ -342,13 +323,13 @@
             }
             if (this.model.isNotEmpty !== true && fieldType !== 'image') {
                 this.model.isNotEmpty = true;
-                this.render();
+                if(!this.disposed) this.render();
             }
         }, this);
     },
 
     duplicateClicked: function() {
-        var self = this, 
+        var self = this,
             prefill = app.data.createBean(this.model.module);
 
         prefill.copy(this.model);
@@ -518,7 +499,7 @@
 
             if (self.createMode) {
                 app.navigate(self.context, self.model);
-            } else {
+            } else if (!self.disposed) {
                 self.render();
             }
         };
@@ -532,8 +513,8 @@
             },
             { deleteIfFails:false});
 
-        this.$(".record-save-prompt").hide();
-        this.render();
+        self.$(".record-save-prompt").hide();
+        if (!self.disposed) self.render();
     },
 
     handleCancel: function() {

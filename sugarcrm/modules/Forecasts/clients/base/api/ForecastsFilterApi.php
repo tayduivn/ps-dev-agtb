@@ -84,15 +84,15 @@ class ForecastsFilterApi extends FilterApi
     {
 
         // if no timeperiod is set, just set it to false, and the current time period will be set
-        if(!isset($args['timeperiod_id'])) {
+        if (!isset($args['timeperiod_id'])) {
             $args['timeperiod_id'] = false;
         }
         // if no user id is set, just set it to false so it will use the default user
-        if(!isset($args['user_id'])) {
+        if (!isset($args['user_id'])) {
             $args['user_id'] = false;
         }
         // make sure the type arg is set to prevent notices
-        if(!isset($args['forecast_type'])) {
+        if (!isset($args['forecast_type'])) {
             $args['forecast_type'] = false;
         }
 
@@ -101,13 +101,13 @@ class ForecastsFilterApi extends FilterApi
         return parent::filterList($api, $args);
     }
 
-
     /**
      * Forecast Worksheet Filter API Handler
      *
      * @param ServiceBase $api
      * @param array $args
      * @return array
+     * @throws SugarApiExceptionNotAuthorized
      */
     public function filterList(ServiceBase $api, array $args)
     {
@@ -158,7 +158,7 @@ class ForecastsFilterApi extends FilterApi
      * @param ServiceBase $api                  Service Api Class
      * @param mixed $user_id                    Passed in User ID, if false, it will use the current use from $api->user
      * @param mixed $timeperiod_id              TimePeriod Id, if false, the current time period will be found an used
-     * @param string $parent_type               Type of worksheet to return, defaults to 'opportunities', but can be 'products'
+     * @param string $forecast_type             Type of forecast to return, direct or rollup
      * @return array                            The Filer array to be passed back into the filerList Api
      * @throws SugarApiExceptionNotAuthorized
      * @throws SugarApiExceptionInvalidParameter
@@ -176,7 +176,7 @@ class ForecastsFilterApi extends FilterApi
             /* @var $user User */
             // we use retrieveBean so it will return NULL and not an empty bean if the $args['user_id'] is invalid
             $user = BeanFactory::retrieveBean('Users', $user_id);
-            if (is_null($user)) {
+            if (is_null($user) || is_null($user->id)) {
                 throw new SugarApiExceptionInvalidParameter('Provided User is not valid');
             }
 
@@ -185,24 +185,25 @@ class ForecastsFilterApi extends FilterApi
             $mod_strings = return_module_language($current_language, 'Forecasts');
 
             if (!User::isManager($api->user->id)) {
-                throw new SugarApiExceptionNotAuthorized(string_format(
-                    $mod_strings['LBL_ERROR_NOT_MANAGER'],
-                    array($api->user->id, $user_id)
-                ));
+                throw new SugarApiExceptionNotAuthorized(
+                    string_format($mod_strings['LBL_ERROR_NOT_MANAGER'], array($api->user->id, $user_id))
+                );
             }
         }
 
         // set the assigned_user_id
         array_push($filter, array('user_id' => $user_id));
 
-        if($forecast_type !== false) {
+        if ($forecast_type !== false) {
             // make sure $forecast_type is valid (e.g. Direct or Rollup)
-            switch(strtolower($forecast_type)) {
+            switch (strtolower($forecast_type)) {
                 case 'direct':
                 case 'rollup':
                     break;
                 default:
-                    throw new SugarApiExceptionInvalidParameter('Forecast Type of ' . $forecast_type . ' is not valid. Valid options Direct or Rollup.');
+                    throw new SugarApiExceptionInvalidParameter(
+                        'Forecast Type of ' . $forecast_type . ' is not valid. Valid options Direct or Rollup.'
+                    );
             }
             // set the forecast type, make sure it's always capitalized
             array_push($filter, array('forecast_type' => ucfirst($forecast_type)));
@@ -217,10 +218,10 @@ class ForecastsFilterApi extends FilterApi
         /* @var $tp TimePeriod */
         // we use retrieveBean so it will return NULL and not an empty bean if the $args['timeperiod_id'] is invalid
         $tp = BeanFactory::retrieveBean('TimePeriods', $timeperiod_id);
-        if (is_null($tp)) {
+        if (is_null($tp) || is_null($tp->id)) {
             throw new SugarApiExceptionInvalidParameter('Provided TimePeriod is not valid');
         }
-        array_push($filter,array('timeperiod_id' => $tp->id));
+        array_push($filter, array('timeperiod_id' => $tp->id));
 
         return $filter;
     }

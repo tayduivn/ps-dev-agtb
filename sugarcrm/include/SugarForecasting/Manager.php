@@ -79,14 +79,14 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
     /**
      * Run all the tasks we need to process get the data back
      *
-     * @return array|string
+     * @return array
      */
     public function process()
     {
         try {
             $this->loadUsers();
         } catch (SugarForecasting_Exception $sfe) {
-            return "";
+            return array();
         }
 
         $this->loadUsersAmount();
