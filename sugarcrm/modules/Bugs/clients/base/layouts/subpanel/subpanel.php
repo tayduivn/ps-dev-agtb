@@ -1,9 +1,11 @@
 <?php
-$layout = MetaDataManager::getLayout("SubPanelLayout");
-// Eventually change this to the proper syntax when we have subpanel lists.
-$layout->push(array("name" => "Cases", "context" => array("link" => "cases")));
-$layout->push(array("name" => "Contacts", "context" => array("link" => "contacts")));
-$layout->push(array("name" => "Accounts", "context" => array("link" => "accounts")));
-$layout->push(array("name" => "Notes", "context" => array("link" => "notes")));
-$layout->push(array("name" => "Documents", "context" => array("link" => "documents")));
+
+$subpanels = array(
+    'LBL_CASES_SUBPANEL_TITLE' => 'cases',
+    'LBL_CONTACTS_SUBPANEL_TITLE' => 'contacts',
+    'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'accounts',
+    'Notes' => 'notes',
+    'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'documents',
+);
+$layout = MetaDataManager::getLayout("SubPanelLayout", $subpanels);
 $viewdefs['Bugs']['base']['layout']['subpanel'] = $layout->getLayout();

@@ -1,5 +1,8 @@
 <?php
-$layout = MetaDataManager::getLayout("SubPanelLayout");
-// Eventually change this to the proper syntax when we have subpanel lists.
-$layout->push(array("name" => "Notes", "context" => array("link" => "notes")));
+
+$subpanels = array(
+    'LBL_HISTORY_SUBPANEL_TITLE' => 'notes',
+);
+
+$layout = MetaDataManager::getLayout("SubPanelLayout", $subpanels);
 $viewdefs['Tasks']['base']['layout']['subpanel'] = $layout->getLayout();

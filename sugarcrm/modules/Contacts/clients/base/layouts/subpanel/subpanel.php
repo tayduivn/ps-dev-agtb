@@ -1,13 +1,15 @@
 <?php
-$layout = MetaDataManager::getLayout("SubPanelLayout");
-// Eventually change this to the proper syntax when we have subpanel lists.
-$layout->push(array("name" => "Leads", "context" => array("link" => "leads")));
-$layout->push(array("name" => "Opportunities", "context" => array("link" => "opportunities")));
-$layout->push(array("name" => "Quotes", "context" => array("link" => "quotes")));
-$layout->push(array("name" => "Campaigns", "context" => array("link" => "campaign_contacts")));
-$layout->push(array("name" => "Cases", "context" => array("link" => "cases")));
-$layout->push(array("name" => "Bugs", "context" => array("link" => "bugs")));
-$layout->push(array("name" => "Direct Reports", "context" => array("link" => "reports_to_link")));
-$layout->push(array("name" => "Notes", "context" => array("link" => "notes")));
-$layout->push(array("name" => "Documents", "context" => array("link" => "documents")));
+
+$subpanels = array(
+    'LBL_LEADS_SUBPANEL_TITLE' => 'leads',
+    'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'opportunities',
+    'LBL_QUOTES_SUBPANEL_TITLE' => 'quotes',
+    'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE' => 'campaign_contacts',
+    'LBL_CASES_SUBPANEL_TITLE' => 'cases',
+    'LBL_BUGS_SUBPANEL_TITLE' => 'bugs',
+    'LBL_DIRECT_REPORTS_SUBPANEL_TITLE' => 'reports_to_link',
+    'Notes' => 'notes',
+    'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'documents',
+);
+$layout = MetaDataManager::getLayout("SubPanelLayout", $subpanels);
 $viewdefs['Contacts']['base']['layout']['subpanel'] = $layout->getLayout();

@@ -118,14 +118,11 @@
         if(this.layoutType === "record") {
             this.moduleFilterList.push({id: "all_modules", text: app.lang.get("LBL_TABGROUP_ALL")});
 
-            // TODO: Fix this when we have a more concrete way of retrieving a list of related modules.
-            // Subpanels are retrieved from the global module and not the
-            // subpanel module, therefore we use this.module instead of
-            // this.currentModule.
-            var subpanels = app.metadata.getModule(this.module).subpanels.subpanel_setup;
-            _.each(subpanels, function(value){
-                if (app.acl.hasAccess("list", value.module)) {
-                    this.moduleFilterList.push({id:value.module, text:app.lang.get(value.title_key, this.module)});
+            var subpanels = this.pullSubpanelRelationships();
+            _.each(subpanels, function(value, key){
+                var module = app.data.getRelatedModule(this.module, value);
+                if (app.acl.hasAccess("list", module)) {
+                    this.moduleFilterList.push({id:value, text:app.lang.get(key, this.module)});
                 }
             }, this);
         } else {
@@ -151,6 +148,13 @@
 
         this.moduleFilterNode.off("change");
         this.moduleFilterNode.on("change", this.handleModuleSelection);
+    },
+
+    pullSubpanelRelationships: function() {
+        // Subpanels are retrieved from the global module and not the
+        // subpanel module, therefore we use this.module instead of
+        // this.currentModule.
+        return app.metadata.getModule(this.module).layouts.subpanel.meta.subpanelList;
     },
 
     throttledSearch: _.debounce(function(e) {
@@ -227,6 +231,7 @@
      * @param  {obj} e jQuery Change Event Object.
      */
     handleModuleSelection: function(e) {
+        var val;
         this.currentModule = e.val || this.currentModule;
         this.handleFilterSelection(e, "all_records");
         if (this.currentModule === "all_modules") {
@@ -236,7 +241,9 @@
             this.layout.trigger("filter:create:close");
             this.customFilterNode.select2("enable");
             this.getPreviouslyUsedFilter();
+            val = this.currentModule;
         }
+        this.layout.trigger("subpanel:change", val);
     },
 
     /**
