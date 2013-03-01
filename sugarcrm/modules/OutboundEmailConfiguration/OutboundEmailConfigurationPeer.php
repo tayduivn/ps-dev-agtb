@@ -146,6 +146,7 @@ class OutboundEmailConfigurationPeer
      */
     public static function listMailConfigurations(User $user, Localization $locale = null, $charset = null)
     {
+        global $app_strings;
         $outboundEmailConfigurations = array();
         $ret                         = $user->getUsersNameAndEmail();
 
@@ -190,7 +191,7 @@ class OutboundEmailConfigurationPeer
                 $configurations["inbox_id"]      = $k;
                 $configurations["from_email"]    = $addr;
                 $configurations["from_name"]     = $name;
-                $configurations["display_name"]  = "{$name} ({$addr})";
+                $configurations["display_name"]  = "{$name} ({$addr}) - [" . $app_strings['LBL_USER_OUTBOUND_EMAIL_ACCOUNT_CONFIGURATION'] . "]";
                 $configurations["personal"]      = (bool)($v->is_personal);
                 $configurations["replyto_email"] = (!empty($storedOptions["reply_to_addr"])) ?
                     $storedOptions["reply_to_addr"] :
@@ -232,6 +233,29 @@ class OutboundEmailConfigurationPeer
             }
         }
 
+        $systemUser = BeanFactory::getBean("Users");
+        $systemUser->getSystemUser();
+
+        $oe = new OutboundEmail();
+        $systemMailerConfiguration = $oe->getSystemMailerSettings();
+
+        if ($oe->isAllowUserAccessToSystemDefaultOutbound()) {
+            $system = $systemMailerConfiguration;
+            $personal = false;
+        } else {
+            $system = $oe->getUsersMailerForSystemOverride($user->id);
+            $personal = true;
+
+            if (empty($system)) { // Create a User System-Override Configuration
+                if ($user->id == $systemUser->id) {
+                    $oe = $oe->createUserSystemOverrideAccount($user->id, $systemMailerConfiguration->mail_smtpuser, $systemMailerConfiguration->mail_smtppass);
+                } else {
+                    $oe = $oe->createUserSystemOverrideAccount($user->id);
+                }
+                $system = $oe->getUsersMailerForSystemOverride($user->id);
+            }
+        }
+
         if (empty($system->id)) {
             throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
         }
@@ -246,7 +270,7 @@ class OutboundEmailConfigurationPeer
         $configurations["inbox_id"]      = null;
         $configurations["from_email"]    = $ret["email"];
         $configurations["from_name"]     = $ret["name"];
-        $configurations["display_name"]  = "{$ret["name"]} ({$ret["email"]})";
+        $configurations["display_name"]  = "{$ret['name']} ({$ret['email']}) - [" . ($personal ? $app_strings['LBL_USER_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION'] : $app_strings['LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION']) . "]";
         $configurations["personal"]      = $personal;
         $configurations["replyto_email"] = $system_replyToAddress;
         $configurations["replyto_name"]  = $system_replyToName;
