@@ -27,10 +27,7 @@
 ({
     fieldTag: "select",
     _render: function() {
-
-
-
-        var optionsKeys = [];
+        var optionsKeys = [], val;
         var options = this.items = this.items || this.def.options;
 
         if(_.isString(options)) {
@@ -85,7 +82,10 @@
         if(this.tplName === 'edit') {
             this.$(this.fieldTag).select2(select2Options);
             this.$(".select2-container").addClass("tleft");
-            this.model.set(this.name, this.$(this.fieldTag).select2('val'));
+            val = this.$(this.fieldTag).select2('val');
+            if (val) {
+                this.model.set(this.name, val);
+            }
         } else if(this.tplName === 'disabled') {
             this.$(this.fieldTag).attr("disabled", "disabled").select2();
         }
