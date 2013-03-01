@@ -77,9 +77,10 @@ color:#ef3067;
     background-image:linear-gradient(top,#eec9d4,#dc8fa6);
     background-repeat:repeat-x;
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#eec9d4', endColorstr='#dc8fa6', GradientType=0);
-    -webkit-box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #8b465a;
-    -moz-box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #8b465a;
-    box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #8b465a;
+}
+
+#dcboxbody .hd .close a {
+    color: #EEC9D4;
 }
 
 .dashletPanel .sugarFeedDashlet {
