@@ -11,5 +11,5 @@ $layout->push(array("name" => "Cases", "context" => array("link" => "cases")));
 $layout->push(array("name" => "Bugs", "context" => array("link" => "bugs")));
 $layout->push(array("name" => "Products", "context" => array("link" => "products")));
 $layout->push(array("name" => "Notes", "context" => array("link" => "notes")));
-$layout->push(array("name" => "Documents", "context" => array("link" => "documentsw")));
+$layout->push(array("name" => "Documents", "context" => array("link" => "documents")));
 $viewdefs['Accounts']['base']['layout']['subpanel'] = $layout->getLayout();
