@@ -26,8 +26,8 @@
  ********************************************************************************/
 /*********************************************************************************
 
- * Description:  Contains a variety of utility functions used to display UI 
- * components such as form headers and footers.  Intended to be modified on a per 
+ * Description:  Contains a variety of utility functions used to display UI
+ * components such as form headers and footers.  Intended to be modified on a per
  * theme basis.
  ********************************************************************************/
 
@@ -107,6 +107,7 @@ color:#ef3067;
 #moduleList .sf-menu > li.current > a {
     background-color:#d67b96 !important;
     border-bottom:4px solid #ff2262;
+    text-shadow: none;
 }
 
 ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
