@@ -1,5 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -22,7 +24,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class ForecastsDefaults
 {
-
     /**
      * Sets up the default forecasts config settings
      *
@@ -30,7 +31,7 @@ class ForecastsDefaults
      * @param string $currentVersion if isUpgrade == true, the current version the user has
      * @param string $targetVersion if isUpgrade == true, the version the user is upgrading to
      */
-    public static function setupForecastSettings($isUpgrade=false,$currentVersion="670",$targetVersion="670")
+    public static function setupForecastSettings($isUpgrade = false, $currentVersion = "670", $targetVersion = "670")
     {
         $isSetup = false;
         $admin = BeanFactory::getBean('Administration');
@@ -41,22 +42,19 @@ class ForecastsDefaults
 
         // Any version-specific changes to the defaults can be added here
         // and determined by $currentVersion & $targetVersion
-
-        if($isUpgrade) {
+        if ($isUpgrade) {
             // get current settings
             $adminConfig = $admin->getConfigForModule('Forecasts');
             // if admin has already been set up
-            if(!empty($adminConfig['is_setup'])) {
-                foreach($adminConfig as $key => $val) {
+            if (!empty($adminConfig['is_setup'])) {
+                foreach ($adminConfig as $key => $val) {
                     $forecastConfig[$key] = $val;
                 }
             }
         }
 
-        foreach ($forecastConfig as $name => $value)
-        {
-            if(is_array($value))
-            {
+        foreach ($forecastConfig as $name => $value) {
+            if (is_array($value)) {
                 $admin->saveSetting('Forecasts', $name, json_encode($value), 'base');
             } else {
                 $admin->saveSetting('Forecasts', $name, $value, 'base');
@@ -70,9 +68,10 @@ class ForecastsDefaults
      * @param int $isSetup pass in if you want is_setup to be 1 or 0, 0 by default
      * @return array default config settings for Forecasts to use
      */
-    public static function getDefaults($isSetup=0) {
+    public static function getDefaults($isSetup = 0)
+    {
         // If isSetup happens to get passed as a boolean false, change to 0 for the db
-        if($isSetup === false) {
+        if ($isSetup === false) {
             $isSetup = 0;
         }
 
@@ -85,6 +84,8 @@ class ForecastsDefaults
             //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
             // this is used to indicate whether any user has made commits since the forecasts module has been set up.
             'has_commits' => 0,
+            // indicates how data is displayed in the worksheet
+            'forecast_by' => 'line_items', // options: 'line_items' or 'opportunities'
             // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from forecasts_timeperiod_types_dom
             'timeperiod_type' => 'chronological', //options:  'chronological' or 'fiscal'
             // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
@@ -98,16 +99,27 @@ class ForecastsDefaults
             // number of timeperiods in the past from the current that are displayed
             'timeperiod_shown_backward' => 2,
             // used to indicate the available option for grouping opportunities
-            'forecast_ranges' => 'show_binary',  // options:  'show_binary', 'show_buckets', 'show_custom_buckets'
+            'forecast_ranges' => 'show_binary', // options:  'show_binary', 'show_buckets', 'show_custom_buckets'
             // used to reference the app_list_string entry to indicate the commit stage list to use
             'buckets_dom' => 'commit_stage_binary_dom', // options:  commit_stage_binary_dom, commit_stage_dom, commit_stage_extended_dom
             // the defined binary ranges the different buckets opportunities will fall in by default based on their probability
-            'show_binary_ranges' => array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)),
+            'show_binary_ranges' => array(
+                'include' => array('min' => 70, 'max' => 100),
+                'exclude' => array('min' => 0, 'max' => 69)
+            ),
             // the defined bucket ranges the different buckets opportunities will fall in by default based on their probability
-            'show_buckets_ranges' => array('include' => array('min' => 85, 'max' => 100), 'upside' => array('min' => 70, 'max' => 84), 'exclude' => array('min' => 0, 'max' => 69)),
+            'show_buckets_ranges' => array(
+                'include' => array('min' => 85, 'max' => 100),
+                'upside' => array('min' => 70, 'max' => 84),
+                'exclude' => array('min' => 0, 'max' => 69)
+            ),
             //BEGIN SUGARCRM flav=ent ONLY
             // the defined custom ranges the different buckets opportunities will fall in by default based on their probability
-            'show_custom_buckets_ranges' => array('include' => array('min' => 85, 'max' => 100, 'in_included_total' => true), 'upside' => array('min' => 70, 'max' => 84), 'exclude' => array('min' => 0, 'max' => 69)),
+            'show_custom_buckets_ranges' => array(
+                'include' => array('min' => 85, 'max' => 100),
+                'upside' => array('min' => 70, 'max' => 84),
+                'exclude' => array('min' => 0, 'max' => 69)
+            ),
             //END SUGARCRM flav=ent ONLY
 
             //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
@@ -136,11 +148,11 @@ class ForecastsDefaults
      * @param $key
      * @return mixed
      */
-    public static function getConfigDefaultByKey($key) {
+    public static function getConfigDefaultByKey($key)
+    {
         $forecastsDefault = self::getDefaults();
         return $forecastsDefault[$key];
     }
-
 
     /**
      * Runs SQL to upgrade columns specific for Forecasts modules.  This is a helper function called from silentUpgrade_step2.php and end.php
@@ -148,21 +160,21 @@ class ForecastsDefaults
      *
      * @static
      */
-    public static function upgradeColumns() {
+    public static function upgradeColumns()
+    {
         $db = DBManagerFactory::getInstance();
 
         $nonDefaultRates = array();
         $result = $db->query("SELECT id, conversion_rate FROM currencies WHERE deleted = 0 AND id <> '-99'");
-        while($row = $db->fetchByAssoc($result)) {
+        while ($row = $db->fetchByAssoc($result)) {
             $nonDefaultRates[$row['id']] = $row['conversion_rate'];
         }
 
         //Update the currency_id and base_rate columns for existing records so that we have currency_id and base_rate values set up correctly
         $tables = array('opportunities', 'products', 'worksheet', 'forecasts', 'quotes', 'quotas');
-        foreach($tables as $table)
-        {
+        foreach ($tables as $table) {
             $isUsDollar = true; // set false if table has no usdollar fields
-            switch($table) {
+            switch ($table) {
                 case 'opportunities':
                     $amount = 'amount';
                     $amount_usdollar = 'amount_usdollar';
@@ -185,21 +197,28 @@ class ForecastsDefaults
                     $amount_usdollar = 'amount_base_currency';
                     break;
             }
-            if($isUsDollar) {
+            if ($isUsDollar) {
                 //update base_rate where usdollar fields exist, reverse calculate the rate
-                $db->query("UPDATE {$table} SET base_rate = {$amount_usdollar} / {$amount} WHERE base_rate IS NULL AND {$amount_usdollar} IS NOT NULL and {$amount} IS NOT NULL and {$amount} <> 0");
+                $db->query(
+                    "UPDATE {$table} SET base_rate = {$amount_usdollar} / {$amount} WHERE base_rate IS NULL AND {$amount_usdollar} IS NOT NULL and {$amount} IS NOT NULL and {$amount} <> 0"
+                );
             }
             // Update currency_id to base (-99) with NULL values
             $db->query("UPDATE {$table} SET currency_id='-99' WHERE currency_id IS NULL");
 
             // Update base_rate for from currency table for NULL values
-            foreach($nonDefaultRates as $id=>$rate) {
-                $db->query(sprintf("UPDATE {$table} SET base_rate = %d WHERE base_rate IS NULL AND currency_id IS NOT NULL AND currency_id <> '-99' AND currency_id = '%s'", $rate, $id));
+            foreach ($nonDefaultRates as $id => $rate) {
+                $db->query(
+                    sprintf(
+                        "UPDATE {$table} SET base_rate = %d WHERE base_rate IS NULL AND currency_id IS NOT NULL AND currency_id <> '-99' AND currency_id = '%s'",
+                        $rate,
+                        $id
+                    )
+                );
             }
 
             // Update remaining base_rate for records with NULL values
             $db->query("UPDATE {$table} SET base_rate = 1 WHERE base_rate IS NULL");
         }
     }
-
 }

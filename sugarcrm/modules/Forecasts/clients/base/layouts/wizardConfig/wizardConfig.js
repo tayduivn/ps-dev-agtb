@@ -145,10 +145,7 @@
             }
         });
 
-        // jQuery.extend is used with the `true` parameter to do a deep copy
-        return (_.has(options.context,'config')) ?
-            new SettingsModel($.extend(true, {}, options.context.config.attributes)) :
-            new SettingsModel();
+        return new SettingsModel();
     },
 
     /**

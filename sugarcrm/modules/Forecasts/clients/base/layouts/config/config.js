@@ -179,6 +179,7 @@
             }
         } else {
             window.location.hash = this.getRedirectURL(state);
+            window.location.reload(true);
         }
     },
 
@@ -216,6 +217,7 @@
             closeable:true,
             onAutoClose: function() {
                 window.location.hash = "#Forecasts";
+                window.location.reload(true);
             },
             title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
             messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
@@ -223,6 +225,7 @@
 
         alert.getCloseSelector().on('click', function() {
             window.location.hash = "#Forecasts";
+            window.location.reload(true);
         });
     }
 })

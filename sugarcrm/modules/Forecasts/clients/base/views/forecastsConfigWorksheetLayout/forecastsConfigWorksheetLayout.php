@@ -22,30 +22,23 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Forecasts']['base']['layout']['tabbedConfig'] = array(
-    'type' => 'tabbedConfig',
-    'css_class' => 'modal-body',
-    'components' => array(
+
+$viewdefs['Forecasts']['base']['view']['forecastsConfigWorksheetLayout'] = array(
+    'registerLabelAsBreadCrumb' => true,
+    'panels' => array(
         array(
-            'view' => 'forecastsConfigTimeperiods',
+            'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_WORKSHEET_LAYOUT',
+            'fields' => array(
+                array(
+                    'name' =>'forecast_by',
+                    'type' => 'radioenum',
+                    'label' => 'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_PRODUCT_LINE_ITEMS',
+                    'view' => 'edit',
+                    'options' => 'forecasts_config_worksheet_layout_forecast_by_options_dom',
+                    'default' => false,
+                    'enabled' => true,
+                ),
+            ),
         ),
-        array(
-            'view' => 'forecastsConfigRanges',
-        ),
-        array(
-            'view' => 'forecastsConfigScenarios',
-        ),
-        array(
-            'view' => 'forecastsConfigWorksheetLayout',
-        ),
-        // BEGIN SUGARCRM flav=int ONLY
-        // todo-sfa: Move to flav=ent for when we start on 6.8
-        array(
-            'view' => 'forecastsConfigVariables',
-        ),
-        // END SUGARCRM flav=int ONLY
-        array(
-            'view' => 'forecastsConfigTabbedButtons'
-        )
     ),
 );

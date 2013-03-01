@@ -126,19 +126,6 @@ describe("The forecastsWizardConfig layout controller", function(){
                 expect(testModel).toBeDefined();
                 expect(testModel.attributes).toEqual({});
             });
-
-            it("should be a copy of the model if one exists, so a cancel will not keep values lying around", function() {
-                options.context.config = new Backbone.Model({
-                    defaults: {
-                        test: 'test'
-                    }
-                });
-
-                testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
-                var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
-                expect(testModel).not.toBe(options.context.config);
-                expect(testModel.attributes).toEqual(options.context.config.attributes);
-            });
         });
     });
 });

@@ -109,13 +109,13 @@
                 is_setup:true,
                 show_forecasts_commit_warnings: true
             });
-            
+
             // push this model back to the main config model
-            this.context.config.set(this.model.toJSON());
+            this.context.get('model').set({config: this.model.toJSON()});
 
-            this.context.set({ saveClicked : true }, {silent:true});
+            this.context.set({saveClicked: true }, {silent:true});
 
-            this.context.config.save({}, {
+            this.context.get('model').save({}, {
                 success: function() {
                     var url = app.api.buildURL("Forecasts/init");
                     app.api.call('GET', url, null, {success: function(forecastData) {
