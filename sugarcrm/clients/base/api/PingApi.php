@@ -30,7 +30,7 @@ class PingApi extends SugarApi {
                 'pathVars' => array(''),
                 'method' => 'ping',
                 'shortHelp' => 'An example API only responds with pong',
-                'longHelp' => 'include/api/html/ping_base_help.html',
+                'longHelp' => 'include/api/help/ping_get_help.html',
             ),
             'pingWithTime' => array(
                 'reqType' => 'GET',
@@ -38,7 +38,7 @@ class PingApi extends SugarApi {
                 'pathVars' => array('', 'sub_method'),
                 'method' => 'ping',
                 'shortHelp' => 'An example API only responds with the current time in server format.',
-                'longHelp' => 'include/api/html/ping_whattimeisit_help.html',
+                'longHelp' => 'include/api/help/ping_whattimeisit_get_help.html',
             ),
         );
     }

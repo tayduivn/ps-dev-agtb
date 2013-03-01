@@ -48,7 +48,7 @@ class MassUpdateApi extends SugarApi {
                 'jsonParams' => array('filter'),
                 'method' => 'massUpdate',
                 'shortHelp' => 'An API to handle mass update.',
-                'longHelp' => 'include/api/help/massUpdate.html',
+                'longHelp' => 'include/api/help/module_massupdate_put_help.html',
             ),
             'massUpdateDelete' => array(
                 'reqType' => 'DELETE',
@@ -57,7 +57,7 @@ class MassUpdateApi extends SugarApi {
                 'jsonParams' => array('filter'),
                 'method' => 'massDelete',
                 'shortHelp' => 'An API to handle mass delete.',
-                'longHelp' => 'include/api/help/massUpdate.html',
+                'longHelp' => 'include/api/help/module_massupdate_delete_help.html',
             ),
         );
     }

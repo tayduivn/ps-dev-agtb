@@ -1,0 +1,204 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
+<h2>Overview</h2>
+<span class="lead">
+    Attaches a file to a field on a record.
+</span>
+
+
+<h2>Query String Parameters</h2>
+<span class="lead">
+    This endpoint does not accept any query string parameters.
+</span>
+
+<h2>Input Parameters</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Required</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            format
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            The data format. Currently accepts 'sugar-html-json'.
+        </td>
+        <td>
+            True
+        </td>
+    </tr>
+    <tr>
+        <td>
+            delete_if_fails
+        </td>
+        <td>
+            Boolean
+        </td>
+        <td>
+            Indicates whether the API is to mark related record deleted if the file upload fails.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            oauth_token
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            The oauth_token value.
+        </td>
+        <td>
+            False - Required if only if delete_if_fails is true.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            &lt;attachment field&gt;
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            The field and file to populate.
+            <br>
+            Example: <code>{"<attachment field>":"@\/path\/to\/ExampleDocument.txt"}</code>
+        </td>
+        <td>
+            True
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Input Example</h3>
+<pre class="pre-scrollable">
+{
+   "format":"sugar-html-json",
+   "delete_if_fails":true,
+   "oauth_token":"43b6b327-cc70-c301-3299-512ffb99ad97",
+   "&lt;attachment field&gt;":"@\/path\/to\/ExampleDocument.txt"
+}
+</pre>
+
+<h2>Result</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <tr>
+        <td>
+            content-type
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            The files content type.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            content-length
+        </td>
+        <td>
+            Integer
+        </td>
+        <td>
+            The files content length.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            name
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            The files name.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            uri
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            The URI of the file.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Output Example</h3>
+<pre class="pre-scrollable">
+{
+   "content-type":"text\/plain",
+   "content-length":16,
+   "name":"ExampleDocument.txt",
+   "uri":"http:\/\/sugarcrm\/rest\/v10\/Notes\/ca66c92f-5a8b-28b4-4fc8-512d099b790b\/file\/&lt;attachment field&gt;?format=sugar-html-json&delete_if_fails=1&oauth_token=6ec91cf3-1f97-25b9-e0b1-512f8971b2d4"
+}
+</pre>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    <tr>
+        <td>
+            v10
+        </td>
+        <td>
+            Added <code>/&lt;module&gt;/:record/file/:field</code> POST endpoint.
+        </td>
+    </tr>
+</table>

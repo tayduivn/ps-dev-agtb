@@ -31,7 +31,7 @@ class PersonUnifiedSearchApi extends UnifiedSearchApi {
                 'pathVars' => array('module_list'),
                 'method' => 'globalSearch',
                 'shortHelp' => 'Search User records',
-                'longHelp' => 'include/api/help/getListModule.html',
+                'longHelp' => 'include/api/help/module_get_help.html',
             ),
             'EmployeeSearch' => array(
                 'reqType' => 'GET',
@@ -39,7 +39,7 @@ class PersonUnifiedSearchApi extends UnifiedSearchApi {
                 'pathVars' => array('module_list'),
                 'method' => 'globalSearch',
                 'shortHelp' => 'Search Employee records',
-                'longHelp' => 'include/api/help/getListModule.html',
+                'longHelp' => 'include/api/help/module_get_help.html',
             ),
         );
     }

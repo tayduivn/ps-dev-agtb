@@ -32,7 +32,7 @@ class UnifiedSearchApi extends SugarListApi {
                 'method' => 'globalSearch',
                 'jsonParams' => array('fields'),
                 'shortHelp' => 'Globally search records',
-                'longHelp' => 'include/api/help/globalSearch.html',
+                'longHelp' => 'include/api/help/module_get_help.html',
             ),
             'moduleSearch' => array(
                 'reqType' => 'GET',
@@ -40,7 +40,7 @@ class UnifiedSearchApi extends SugarListApi {
                 'pathVars' => array('module_list'),
                 'method' => 'globalSearch',
                 'shortHelp' => 'Search records in this module',
-                'longHelp' => 'include/api/help/getListModule.html',
+                'longHelp' => 'include/api/help/module_get_help.html',
             ),
 
         );

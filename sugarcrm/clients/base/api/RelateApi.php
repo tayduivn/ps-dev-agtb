@@ -31,7 +31,7 @@ class RelateApi extends ListApi {
                 'pathVars' => array('module','record','','link_name'),
                 'method' => 'listRelated',
                 'shortHelp' => 'List related records to this module',
-                'longHelp' => 'include/api/help/module_relate_help.html',
+                'longHelp' => 'include/api/help/module_record_link_link_name_get_help.html',
             ),
         );
     }
