@@ -59,7 +59,7 @@
                 route: ":module"
             },
             {
-                name: "listCreate",
+                name: "create",
                 route: ":module/create",
                 callback: function(module){
                     app.controller.loadView({
@@ -101,7 +101,7 @@
                 route: ":module/layout/:view"
             },
             {
-                name: "create",
+                name: "record",
                 route: ":module/:id"
             },
             {
