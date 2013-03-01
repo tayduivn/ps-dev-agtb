@@ -834,7 +834,6 @@ $dictionary['Product'] = array(
         //END SUGARCRM flav=pro ONLY
     ),
 
-
     'duplicate_check' => array(
         'enabled' => true,
         'FilterDuplicateCheck' => array(
