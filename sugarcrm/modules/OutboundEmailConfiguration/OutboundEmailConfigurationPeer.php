@@ -210,48 +210,31 @@ class OutboundEmailConfigurationPeer
             }
         }
 
-        $oe = static::loadOutboundEmail();
+        $systemUser = BeanFactory::getBean("Users");
+        $systemUser->getSystemUser();
+
+        $oe                        = static::loadOutboundEmail();
+        $systemMailerConfiguration = $oe->getSystemMailerSettings();
+
         if ($oe->isAllowUserAccessToSystemDefaultOutbound()) {
-            $system   = $oe->getSystemMailerSettings();
+            $system   = $systemMailerConfiguration;
             $personal = false;
         } else {
             $system   = $oe->getUsersMailerForSystemOverride($user->id);
             $personal = true;
+
             if (empty($system)) {
-                $oe     = $oe->createUserSystemOverrideAccount($user->id);
-                $system = $oe->getUsersMailerForSystemOverride($user->id);
-            }
-            // Note: We do not Require the User System-Override to be populated if the User is the System Administrator
-            // The System Administrator is able to use the System Mail Configuration if it has not been overridden
-            if ((empty($system->mail_smtpserver))) {
-                $systemUser = BeanFactory::getBean("Users");
-                $systemUser->getSystemUser();
+                // Create a User System-Override Configuration
                 if ($user->id == $systemUser->id) {
-                    $personal = false;
-                    $system   = $oe->getSystemMailerSettings();
-                }
-            }
-        }
-
-        $systemUser = BeanFactory::getBean("Users");
-        $systemUser->getSystemUser();
-
-        $oe = new OutboundEmail();
-        $systemMailerConfiguration = $oe->getSystemMailerSettings();
-
-        if ($oe->isAllowUserAccessToSystemDefaultOutbound()) {
-            $system = $systemMailerConfiguration;
-            $personal = false;
-        } else {
-            $system = $oe->getUsersMailerForSystemOverride($user->id);
-            $personal = true;
-
-            if (empty($system)) { // Create a User System-Override Configuration
-                if ($user->id == $systemUser->id) {
-                    $oe = $oe->createUserSystemOverrideAccount($user->id, $systemMailerConfiguration->mail_smtpuser, $systemMailerConfiguration->mail_smtppass);
+                    $oe = $oe->createUserSystemOverrideAccount(
+                        $user->id,
+                        $systemMailerConfiguration->mail_smtpuser,
+                        $systemMailerConfiguration->mail_smtppass
+                    );
                 } else {
                     $oe = $oe->createUserSystemOverrideAccount($user->id);
                 }
+
                 $system = $oe->getUsersMailerForSystemOverride($user->id);
             }
         }
