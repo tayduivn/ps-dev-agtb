@@ -177,7 +177,7 @@ $sugar_smarty->assign("VALID_PUBLIC_KEY", $valid_public_key);
 $res=$GLOBALS['sugar_config']['passwordsetting'];
 
 $outboundMailConfig = OutboundEmailConfigurationPeer::getSystemDefaultMailConfiguration();
-$smtpServerIsSet = (OutboundEmailConfigurationPeer::isMailConfigurationValid($outboundMailConfig)) ? "0" : "1";
+$smtpServerIsSet    = (OutboundEmailConfigurationPeer::isMailConfigurationValid($outboundMailConfig)) ? "0" : "1";
 $sugar_smarty->assign("SMTP_SERVER_NOT_SET", $smtpServerIsSet);
 
 $focus = BeanFactory::getBean('InboundEmail');

@@ -2025,7 +2025,6 @@ class SugarBean
 
     protected function create_notification_email($notify_user) {
         return MailerFactory::getSystemDefaultMailer();
-
     }
 
     protected function getTemplateNameForNotificationEmail() {
