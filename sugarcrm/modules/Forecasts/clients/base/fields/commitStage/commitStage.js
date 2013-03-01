@@ -263,7 +263,7 @@
         this.currentView = "default";
         this.getLanguageValue();
         this.delegateEvents();
-        this.render();
+        if (!this.disposed) this.render();
     },
 
     /**

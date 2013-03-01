@@ -308,5 +308,33 @@ describe("forecast commitStage field", function() {
                 expect(field.disabled).toBeTruthy();
             });
         });
+
+        describe("dispose safe", function() {
+            beforeEach(function() {
+                context.get = function(key) {
+                    return {id: "tester"};
+                };
+
+                model = new Backbone.Model({sales_stage: "Closed Lost"});
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
+            });
+
+            afterEach(function() {
+
+            });
+
+            it("should not render if disposed", function() {
+                var renderStub = sinon.stub(field, 'render');
+
+                field.resetBucket();
+                expect(renderStub).toHaveBeenCalled();
+                renderStub.reset();
+
+                field.disposed = true;
+                field.resetBucket();
+                expect(renderStub).not.toHaveBeenCalled();
+
+            });
+        });
     });
 });
