@@ -8887,6 +8887,7 @@ h3.popover-title {
     line-height: 18px;
     margin-bottom: 10px;
     text-align: left;
+    font-size: 14px;
 }
 
 .modal.tour .well {
