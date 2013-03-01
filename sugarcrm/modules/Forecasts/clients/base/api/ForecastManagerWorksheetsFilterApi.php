@@ -178,6 +178,7 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
                 $blankWorksheet->worst_case = 0;
                 $blankWorksheet->worst_case_adjusted = 0;
                 $blankWorksheet->currency_id = '-99';
+                $blankWorksheet->base_rate = 1.0;
                 $blankWorksheet->id = '';
                 $blankWorksheet->name = '';
                 array_push($worksheetData['records'], $this->formatBean($api, $args, $blankWorksheet));

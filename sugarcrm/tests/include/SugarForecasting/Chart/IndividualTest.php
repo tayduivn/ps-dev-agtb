@@ -178,7 +178,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
             $actual += $value['gvalue'];
         }
 
-        $expected = SugarCurrency::convertAmountToBase(self::$user['included_opps_totals'][$dataset], self::$currency->id);
+        $expected = SugarCurrency::convertWithRate(self::$user['included_opps_totals'][$dataset], self::$user['included_opps_totals']['base_rate']);
         $actual = doubleval($actual);
 
         $this->assertEquals($expected, $actual, null, 2);

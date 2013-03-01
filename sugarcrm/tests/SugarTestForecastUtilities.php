@@ -217,24 +217,18 @@ class SugarTestForecastUtilities
                     $return['included_opps_totals']['likely'] += $opp->amount;
                     $return['included_opps_totals']['best'] += $opp->best_case;
                     $return['included_opps_totals']['worst'] += $opp->worst_case;
+                    $return['included_opps_totals']['base_rate'] = $opp->base_rate;
 
                     if ($config['createWorksheet'] === true) {
-                        $worksheet = SugarTestWorksheetUtilities::createWorksheet();
-                        $worksheet->assigned_user_id = $user->id;
-                        $worksheet->parent_id = $product->id;
-                        $worksheet->parent_type = 'Opportunities';
-                        $worksheet->forecast_type = 'Direct';
-                        $worksheet->draft = 1;
-                        $worksheet->timeperiod_id = $config['timeperiod_id'];
-                        $worksheet->date_closed = $opp->date_closed;
-                        $worksheet->date_closed_timestamp = $opp->date_closed_timestamp;
-                        $worksheet->best_case = $opp->best_case;
-                        $worksheet->likely_case = $opp->amount;
-                        $worksheet->worst_case = $opp->worst_case;
-                        $worksheet->probability = $opp->probability;
-                        $worksheet->commit_stage = $opp->commit_stage;
-                        $worksheet->currency_id = $opp->currency_id;
-                        $worksheet->save();
+                        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+                        $worksheet->retrieve_by_string_fields(
+                            array(
+                                'parent_id' => $opp->id,
+                                'parent_type' => $opp->module_name,
+                                'deleted' => 0,
+                                'draft' => 1
+                            )
+                        );
 
                         $return['opp_worksheets'][] = $worksheet;
                     }

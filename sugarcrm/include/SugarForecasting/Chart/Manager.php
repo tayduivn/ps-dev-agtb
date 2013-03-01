@@ -77,7 +77,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
     {
         global $current_language;
         // since we are converting everything to base currency, we need to get the base currency id for the formatting
-        $currency_id = -99;
+        $currency_id = '-99';
 
         // get the language strings for the modules that we need
         $forecast_strings = return_module_language($current_language, 'Forecasts');
@@ -114,10 +114,10 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
                 }
 
                 // converts the amounts to base
-                $data_case = SugarCurrency::convertAmountToBase($data[$dataset . '_case'], $data['currency_id']);
-                $data_adjusted = SugarCurrency::convertAmountToBase(
+                $data_case = SugarCurrency::convertWithRate($data[$dataset . '_case'], $data['base_rate']);
+                $data_adjusted = SugarCurrency::convertWithRate(
                     $data[$dataset . '_case_adjusted'],
-                    $data['currency_id']
+                    $data['base_rate']
                 );
 
                 $dataset_sums[$dataset] += $data_case;
