@@ -85,10 +85,10 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function testUpgradeLegacyTimePeriodsUpgradesTimePeriodsWithOutDateStamps()
     {
         $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
-        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2009-04-01', '2009-06-31');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2009-04-01', '2009-06-30');
 
         // create a third just to make sure that only two are really updated
-        SugarTestTimePeriodUtilities::createTimePeriod('2009-07-01', '2009-09-31');
+        SugarTestTimePeriodUtilities::createTimePeriod('2009-07-01', '2009-09-30');
 
         $sql = "UPDATE timeperiods
                 SET start_date_timestamp = null, end_date_timestamp = null
