@@ -85,6 +85,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'buttonSections' => array(
                         array(
                             'name' => 'attachments_dropdown',
+                            'css_class' => 'btn-group',
                             'type' => 'actiondropdown',
                             'buttons' => array(
                                 array(
@@ -96,7 +97,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                                 ),
                                 array(
                                     'name'      => 'attach_sugardoc_button',
-                                    'type'      => 'button',
+                                    'type' => 'rowaction',
                                     'label'     => 'LBL_ATTACH_SUGAR_DOC',
                                 ),
                             ),
