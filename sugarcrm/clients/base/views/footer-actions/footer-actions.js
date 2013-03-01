@@ -1,6 +1,6 @@
 ({
     events: {
-        'click .tour': 'showTourModal',
+        'click #tour': 'showTourModal',
         'click #print': 'print',
         'click #top': 'top'
     },
@@ -21,3 +21,4 @@
         $('.system-tour').modal('show');
     }
 })
+
