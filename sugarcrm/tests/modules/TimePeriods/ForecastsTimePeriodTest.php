@@ -1164,7 +1164,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
       * 3) TimePeriod End Date as a String
       * 4) an associative array containing the expected start and end dates of the leaf periods
       *
-      * @group timeperiodOddCases
       * @return array
       */
     public function getOddEdgeCasesProvider()
@@ -1293,7 +1292,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
       * @dataProvider getOddEdgeCasesProvider
       * @group timeperiods
       * @group forecasts
-      * @group timeperiodOddCases
       */
      public function testOddEdgeCases($tpType, $tpLeafType, $tpStartDate, $tpExpectedCloseDate, $tpExpectedLeafDatesArray)
      {
