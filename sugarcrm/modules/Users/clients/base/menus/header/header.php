@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Users';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'event' => 'megamenu:create:click',
+        'route'=>'#'.$module_name.'/create',
         'label' =>'LNK_NEW_USER',
         'acl_action'=>'admin',
         'acl_module'=>$module_name,
