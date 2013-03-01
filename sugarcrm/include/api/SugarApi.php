@@ -84,6 +84,10 @@ abstract class SugarApi {
             $data = html_entity_decode($data, ENT_COMPAT|ENT_QUOTES, 'UTF-8');
         }
 
+        if (!empty($bean->module_name)) {
+            $data['_module'] = $bean->module_name;
+        }
+
         return $data;
     }
 
