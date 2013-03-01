@@ -59,28 +59,8 @@
                 route: ":module"
             },
             {
-                name: "listCreate",
-                route: ":module/create",
-                callback: function(module){
-                    app.controller.loadView({
-                        module: module,
-                        layout: "records"
-                    });
-
-                    app.drawer.open({
-                        layout:'create',
-                        context:{
-                            create:true
-                        }
-                    }, _.bind(function (refresh) {
-                        if (refresh) {
-                            var collection = app.controller.context.get('collection');
-                            if (collection) {
-                                collection.fetch();
-                            }
-                        }
-                    }, this));
-                }
+                name: "record",
+                route: ":module/create"
             },
             {
                 name: "vcardImport",
@@ -101,7 +81,7 @@
                 route: ":module/layout/:view"
             },
             {
-                name: "create",
+                name: "record",
                 route: ":module/:id"
             },
             {
