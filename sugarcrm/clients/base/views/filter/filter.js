@@ -1,14 +1,19 @@
 ({
     events: {
         "keyup .search-name": "throttledSearch",
-        "paste .search-name": "throttledSearch"
+        "paste .search-name": "throttledSearch",
+        "click .choice-filter": "handleEditFilter"
     },
 
     initialize: function(opts) {
         // Select2 callbacks require us to _.bindAll(this)
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, opts);
+
         this.layoutType = this.context.get("layout") || app.controller.context.get("layout");
+        this.currentModule = (this.layoutType === "record")? "all_modules" : this.module;
+        this.currentFilter = "all_records";
+        this.aclToCheck = (this.layoutType === "record")? "view" : "list";
 
         // TODO: temporary fix. We need this condition or else record view is
         // prevented from loading (this is due to subpanels not having their own context).
@@ -17,7 +22,6 @@
         }
 
         this.filters = app.data.createBeanCollection('Filters');
-        this.getPreviouslyUsedFilter();
 
         this.layout.off("filter:add");
         this.layout.off("filter:set");
@@ -32,7 +36,8 @@
 
     setFilter: function(id) {
         this.currentFilter = id;
-        this.render();
+        this.customFilterNode.select2("val", id).trigger("change", id);
+        this.updateFilterList();
     },
 
     /**
@@ -42,35 +47,46 @@
         this.filters.fetch({
             filter: [
                 {"created_by": app.user.id},
-                {"module_name": this.module}
+                {"module_name": this.currentModule}
             ]
         });
     },
 
     getPreviouslyUsedFilter: function() {
-        var url = app.api.buildURL('Filters', this.module + "/used"),
+        if (this.currentModule !== "all_modules") {
+            var url = app.api.buildURL('Filters', this.currentModule + "/used"),
             self = this;
-        app.api.call("read", url, null, {
-            success: function(data) {
-                if (_.isEmpty(data)) {
-                    self.currentFilter = self.previousFilter = "all_records";
-                } else {
-                    self.filters.add(data);
-                    self.currentFilter = self.previousFilter = self.filters.first().id;
+
+            app.api.call("read", url, null, {
+                success: function(data) {
+                    if (!_.isEmpty(data)) {
+                        self.filters.add(data);
+                        self.currentFilter = self.previousFilter = self.filters.first().id;
+                    }
+                    self.handleFilterSelection(null, self.currentFilter);
+                    self.getFilters();
                 }
-                self.getFilters();
-            }
-        });
+            });
+        }
     },
 
     render: function() {
-        if(!this.currentFilter || !app.acl.hasAccess("list", this.module)) { return;
-        }
+        // The ACL check needs to refer to the global module, not the subpanel
+        // module, so we use this.module instead of this.currentModule.
+        if(app.acl.hasAccess(this.aclToCheck, this.module)) {
 
-        var self = this,
-            moduleFilterList = [],
-            customFilterList = [],
-            defaultId = this.currentFilter;
+            app.view.View.prototype.render.call(this);
+            this.updateModuleList();
+            this.updateFilterList();
+
+            this.moduleFilterNode.select2("val", this.currentModule).trigger("change");
+            this.customFilterNode.select2("val", this.currentFilter);
+        }
+    },
+
+    updateFilterList: function() {
+        var customFilterList = [];
+        this.customFilterNode = this.$(".search-filter");
 
         customFilterList.push({id: "all_records", text: app.lang.get("LBL_FILTER_ALL_RECORDS")});
 
@@ -79,32 +95,6 @@
         }, this);
 
         customFilterList.push({id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")});
-
-        if(this.layoutType === "record") {
-            moduleFilterList.push({id: "all_modules", text: app.lang.get("LBL_TABGROUP_ALL")});
-
-            // TODO: Fix this when we have a more concrete way of retrieving a list of related modules.
-            var subpanels = app.metadata.getModule(this.module).subpanels.subpanel_setup;
-            _.each(subpanels, function(value, key){
-                moduleFilterList.push({id:key, text:app.lang.get(value.title_key, self.module)});
-            }, this);
-        }
-
-        app.view.View.prototype.render.call(this);
-
-        this.moduleFilterNode = this.$(".related-filter");
-        this.customFilterNode = this.$(".search-filter");
-
-        this.moduleFilterNode.select2({
-            data: moduleFilterList,
-            multiple: false,
-            minimumResultsForSearch: 7,
-            formatSelection: this.formatModuleSelection,
-            formatResult: this.formatResult,
-            dropdownCss: {width:'auto'},
-            dropdownCssClass: 'search-related-dropdown',
-            initSelection: this.initSelection
-        });
 
         this.customFilterNode.select2({
             data: customFilterList,
@@ -117,19 +107,50 @@
             initSelection: this.initSelection
         });
 
-        // Disable the module filter dropdown
-        if(this.layoutType !== "record") {
-            this.moduleFilterNode.select2("disable", true);
+        this.customFilterNode.off("change");
+        this.customFilterNode.on("change", this.handleFilterSelection);
+    },
+
+    updateModuleList: function() {
+        this.moduleFilterNode = this.$(".related-filter");
+        this.moduleFilterList = [];
+
+        if(this.layoutType === "record") {
+            this.moduleFilterList.push({id: "all_modules", text: app.lang.get("LBL_TABGROUP_ALL")});
+
+            // TODO: Fix this when we have a more concrete way of retrieving a list of related modules.
+            // Subpanels are retrieved from the global module and not the
+            // subpanel module, therefore we use this.module instead of
+            // this.currentModule.
+            var subpanels = app.metadata.getModule(this.module).subpanels.subpanel_setup;
+            _.each(subpanels, function(value){
+                if (app.acl.hasAccess("list", value.module)) {
+                    this.moduleFilterList.push({id:value.module, text:app.lang.get(value.title_key, this.module)});
+                }
+            }, this);
+        } else {
+            // TODO: Translate the text param.
+            this.moduleFilterList.push({id: this.module, text: this.module});
         }
 
-        this.customFilterNode.on("change", this.sanitizeFilter);
-
-        this.customFilterNode.select2("val", defaultId).trigger("change", defaultId);
-        this.moduleFilterNode.select2("val", "all_modules");
-
-        this.moduleFilterNode.on("change", function(e) {
-            // Relationships dropdown stuff goes here.
+        this.moduleFilterNode.select2({
+            data: this.moduleFilterList,
+            multiple: false,
+            minimumResultsForSearch: 7,
+            formatSelection: this.formatModuleSelection,
+            formatResult: this.formatResult,
+            dropdownCss: {width:'auto'},
+            dropdownCssClass: 'search-related-dropdown',
+            initSelection: this.initSelection
         });
+
+        // Disable the module filter dropdown.
+        if(this.layoutType !== "record") {
+            this.moduleFilterNode.select2("disable");
+        }
+
+        this.moduleFilterNode.off("change");
+        this.moduleFilterNode.on("change", this.handleModuleSelection);
     },
 
     throttledSearch: _.debounce(function(e) {
@@ -141,7 +162,8 @@
     }, 400),
 
     initSelection: function(el, callback) {
-        var data, model;
+        var data, model, obj;
+
         if(el.val() !== "create") {
             if(el.is(this.customFilterNode)) {
                 if (el.val() !== "all_records") {
@@ -151,60 +173,100 @@
                     data = {id: "all_records", text: app.lang.get("LBL_FILTER_ALL_RECORDS")};
                 }
             } else {
-                data = {id: "all_modules", text: (this.layoutType === "record")? app.lang.get("LBL_TABGROUP_ALL") : this.module};
+                if (el.val() !== "all_modules") {
+                    obj = _.findWhere(this.moduleFilterList, {id: el.val()});
+                    data = {id: obj.id, text: obj.text};
+                } else {
+                    // TODO: Use an i18n version of the module name instead of
+                    // this.module.
+                    data = {id: "all_modules", text: (this.layoutType === "record")? app.lang.get("LBL_TABGROUP_ALL") : this.module};
+                }
             }
-
             callback(data);
         }
     },
 
     formatCustomSelection: function(item) {
-        var self = this,
-            result = $('<span class="select2-choice-type">' + app.lang.get("LBL_FILTER") + '<i class="icon-caret-down"></i></span><a class="select2-choice-filter" rel="'+ item.id + '" href="javascript:void(0)">'+ item.text +'</a>');
+        // Update the text for the selected filter.
+        this.$('.choice-filter').html(item.text);
 
-        // TODO: Only bind this event if the filter has been created by the user (do we want users to be able to edit pre-defined filters? probably not) [ABE-283].
-        if (item.id !== "all_records" /* && if not editable */) {
-            $(result[1]).on("click", function() {
-                self.openPanel(self.filters.get(item.id));
-            });
-        }
-
-        return result;
+        return '<span class="select2-choice-type">' + app.lang.get("LBL_FILTER") + '<i class="icon-caret-down"></i></span>';
     },
+
     formatModuleSelection: function(item) {
         var selectionLabel = app.lang.get("LBL_RELATED") + '<i class="icon-caret-down"></i>';
+
         if(this.layoutType !== "record") {
             selectionLabel = app.lang.get("LBL_MODULE");
         }
-        return '<span class="select2-choice-type">' + selectionLabel + '</span><a class="select2-choice-related" href="javascript:void(0)">'+ item.text +'</a>';
+
+        // Update the text for the selected module.
+        this.$('.choice-related').html(item.text);
+        return '<span class="select2-choice-type">' + selectionLabel + '</span>';
     },
+
     formatResult: function (option) {
         // TODO: Determine whether active filters should be highlighted in bold in this menu.
         return '<div><span class="select2-match"></span>'+ option.text +'</div>';
     },
 
     /**
-     * This function is a handler for when the custom filter dropdown value changes.
-     * (Either via a click or manually calling jQuery's .trigger("change") event).
-     * @param  {obj} e      jQuery Change Event Object.
-     * @param  {string} newVal (optional) ID passed in when manually changing the filter dropdown value.
+     * Handler for when the user clicks the filter in the filter bar.
+     * Triggers the openPanel() function.
      */
-    sanitizeFilter: function(e, newVal) {
+    handleEditFilter: function() {
+        // TODO: Only call openPanel if the filter has been created by the user
+        // (do we want users to be able to edit pre-defined filters? probably not) [ABE-283].
+        if (this.currentFilter !== "all_records" /* && if not editable */) {
+            this.openPanel(this.filters.get(this.currentFilter));
+        }
+    },
+
+    /**
+     * Handler for when the module filter dropdown value changes.
+     * @param  {obj} e jQuery Change Event Object.
+     */
+    handleModuleSelection: function(e) {
+        this.currentModule = e.val || this.currentModule;
+        this.handleFilterSelection(e, "all_records");
+        if (this.currentModule === "all_modules") {
+            this.customFilterNode.select2("disable");
+        } else {
+            // Close the panel.
+            this.layout.trigger("filter:create:close");
+            this.customFilterNode.select2("enable");
+            this.getPreviouslyUsedFilter();
+        }
+    },
+
+    /**
+     * Handler for when the custom filter dropdown value changes, either via a
+     * click or manually calling jQuery's .trigger("change") event.
+     * @param  {obj} e      jQuery Change Event Object.
+     * @param  {string} overrideVal (optional) ID passed in when manually changing the filter dropdown value.
+     */
+    handleFilterSelection: function(e, overrideVal) {
         var self = this,
-            val = e.val || newVal;
+            val = overrideVal || e.val;
 
         if(val === "create") {
             // Create a new filter.
             this.currentFilter = "all_records";
+            this.$('.choice-filter').css("cursor", "text");
             this.openPanel();
         } else if(val === "all_records") {
             // All records.
             this.currentFilter = "all_records";
+            this.$('.choice-filter').css("cursor", "text");
             // Close the panel.
             this.layout.trigger("filter:create:close");
         } else if(this.filters.get(val)) {
             // Is a valid filter.
             this.currentFilter = val;
+
+            // TODO: Check to see whether this is a default filter [ABE-283].
+            this.$('.choice-filter').css("cursor", "pointer");
+
             if(!this.layout.$(".filter-options").hasClass('hide')) {
                 self.openPanel(self.filters.get(val));
             }
@@ -225,11 +287,14 @@
      * Filters the data set by making a create call to the filter API.
      */
     filterDataSetAndSearch: function() {
-        if(!this.currentFilter) return;
+        if (!this.previousFilter && this.layoutType === "records") {
+            this.previousFilter = this.currentFilter;
+            return;
+        }
         var filterDef = {
             filter: []
         },
-        isNewFilter = (this.currentFilter !== this.previousFilter);
+            isNewFilter = (this.currentFilter !== this.previousFilter);
 
         if(this.filters.get(this.currentFilter)) {
             filterDef = JSON.parse(JSON.stringify(this.filters.get(this.currentFilter).get('filter_definition')));
@@ -248,7 +313,7 @@
     bindDataChange: function() {
         if(this.filters) {
             this.filters.on("reset", function() {
-                this.render();
+                this.updateFilterList();
             }, this);
         }
     },
