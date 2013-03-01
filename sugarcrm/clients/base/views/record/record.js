@@ -1,7 +1,6 @@
 ({
     inlineEditMode: false,
     createMode: false,
-    previousModelState: null,
     extendsFrom: 'EditableView',
     plugins: ['SugarLogic', 'ellipsis_inline'],
     enableHeaderButtons: true,
@@ -363,9 +362,6 @@
     },
 
     editClicked: function() {
-        if (_.isEmpty(this.previousModelState)) {
-            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
-        }
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
@@ -439,10 +435,6 @@
         // Set Editing mode to on.
         this.inlineEditMode = true;
 
-        if (_.isEmpty(this.previousModelState)) {
-            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
-        }
-
         this.setButtonStates(this.STATE.EDIT);
 
         // TODO: Refactor this for fields to support their own focus handling in future.
@@ -492,9 +484,6 @@
         self.inlineEditMode = false;
 
         var finalSuccess = function () {
-            if (!_.isEmpty(self.previousModelState)) {
-                self.previousModelState = {};
-            }
 
             if (self.createMode) {
                 app.navigate(self.context, self.model);
@@ -517,9 +506,10 @@
     },
 
     handleCancel: function() {
-        if (!_.isEmpty(this.previousModelState)) {
-            this.model.set(JSON.parse(JSON.stringify(this.previousModelState)),{silent: !this.inlineEditMode});
-            this.previousModelState = {};
+        this.inlineEditMode = false;
+        this.toggleEdit(false);
+        if (this.model.isDirty()) {
+            this.model.revertAttributes({silent: !this.inlineEditMode});
         }
         this.toggleEdit(false);
         this.inlineEditMode = false;
