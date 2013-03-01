@@ -177,7 +177,7 @@ class OutboundEmailConfigurationPeer
                 $configurations["inbox_id"]      = $k;
                 $configurations["from_email"]    = $addr;
                 $configurations["from_name"]     = $name;
-                $configurations["display_name"]  = "{$name} <{$addr}>  [user account]";
+                $configurations["display_name"]  = "{$name} ({$addr}) - [user account]";
                 $configurations["personal"]      = (bool)($v->is_personal);
                 $configurations["replyto_email"] = (!empty($storedOptions["reply_to_addr"])) ?
                                                     $storedOptions["reply_to_addr"] :
@@ -250,7 +250,7 @@ class OutboundEmailConfigurationPeer
         $configurations["inbox_id"]      = null;
         $configurations["from_email"]    = $ret["email"];
         $configurations["from_name"]     = $ret["name"];
-        $configurations["display_name"]  = "{$ret['name']} <{$ret['email']}>  [" . ($personal ? 'user default':'system default') . "]";
+        $configurations["display_name"]  = "{$ret['name']} ({$ret['email']}) - [" . ($personal ? 'user default':'system default') . "]";
         $configurations["personal"]      = $personal;
         $configurations["replyto_email"] = $system_replyToAddress;
         $configurations["replyto_name"]  = $system_replyToName;
