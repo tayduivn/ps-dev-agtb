@@ -133,6 +133,7 @@ class OutboundEmailConfigurationPeer
      * @throws MailerException
      */
     public static function listMailConfigurations(User $user, Localization $locale = null, $charset = null) {
+        global $app_strings;
         $outboundEmailConfigurations = array();
         $ret                         = $user->getUsersNameAndEmail();
 
@@ -177,7 +178,7 @@ class OutboundEmailConfigurationPeer
                 $configurations["inbox_id"]      = $k;
                 $configurations["from_email"]    = $addr;
                 $configurations["from_name"]     = $name;
-                $configurations["display_name"]  = "{$name} ({$addr}) - [user account]";
+                $configurations["display_name"]  = "{$name} ({$addr}) - [" . $app_strings['LBL_USER_OUTBOUND_EMAIL_ACCOUNT_CONFIGURATION'] . "]";
                 $configurations["personal"]      = (bool)($v->is_personal);
                 $configurations["replyto_email"] = (!empty($storedOptions["reply_to_addr"])) ?
                                                     $storedOptions["reply_to_addr"] :
@@ -250,7 +251,7 @@ class OutboundEmailConfigurationPeer
         $configurations["inbox_id"]      = null;
         $configurations["from_email"]    = $ret["email"];
         $configurations["from_name"]     = $ret["name"];
-        $configurations["display_name"]  = "{$ret['name']} ({$ret['email']}) - [" . ($personal ? 'user default':'system default') . "]";
+        $configurations["display_name"]  = "{$ret['name']} ({$ret['email']}) - [" . ($personal ? $app_strings['LBL_USER_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION'] : $app_strings['LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION']) . "]";
         $configurations["personal"]      = $personal;
         $configurations["replyto_email"] = $system_replyToAddress;
         $configurations["replyto_name"]  = $system_replyToName;
