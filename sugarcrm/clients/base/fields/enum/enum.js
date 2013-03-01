@@ -28,7 +28,7 @@
     fieldTag: "select",
     _render: function() {
 
-        app.view.Field.prototype._render.call(this);
+
 
         var optionsKeys = [];
         var options = this.items = this.items || this.def.options;
@@ -81,7 +81,7 @@
          * this adds the ability to specify that threshold in metadata.
          */
         select2Options.minimumResultsForSearch = this.def.searchBarThreshold ? this.def.searchBarThreshold : 7;
-
+        app.view.Field.prototype._render.call(this);
         if(this.tplName === 'edit') {
             this.$(this.fieldTag).select2(select2Options);
             this.$(".select2-container").addClass("tleft");
