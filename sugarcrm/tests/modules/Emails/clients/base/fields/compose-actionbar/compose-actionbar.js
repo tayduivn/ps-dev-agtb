@@ -77,7 +77,7 @@ describe("Emails.fields.compose-actionbar", function() {
             };
             $result = $(field.getPlaceholder().toString());
             expect(field.fields.length).toBe(2);
-            expect($result.find('.actions.btn-group').length).toBe(1);
+            expect($result.find('.actions').length).toBe(1);
             expect($result.find('span').length).toBe(2); //2 placeholders for buttons
         });
 
@@ -112,7 +112,7 @@ describe("Emails.fields.compose-actionbar", function() {
             };
             $result = $(field.getPlaceholder().toString());
             expect(field.fields.length).toBe(3); //3 buttons total
-            $sections = $result.find('.actions.btn-group');
+            $sections = $result.find('.actions');
             expect($sections.length).toBe(2); //2 placeholders
             expect($sections.filter(':eq(0)').find('span').length).toBe(1); //1 button in first section
             expect($sections.filter(':eq(1)').find('span').length).toBe(2); //2 buttons in second section
