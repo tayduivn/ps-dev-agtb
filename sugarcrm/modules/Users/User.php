@@ -2202,9 +2202,9 @@ EOQ;
      */
     public static function isManager($user_id, $include_deleted=false)
     {
-        $query = 'SELECT count(id) as total FROM users WHERE reports_to_id = ' .  $GLOBALS['db']->quoted(clean_string($user_id));
-        if(!$include_deleted)
-        {
+        $query = 'SELECT count(id) as total FROM users
+                WHERE reports_to_id = ' .  $GLOBALS['db']->quoted(clean_string($user_id)) . ' AND status = "Active"';
+        if (!$include_deleted) {
             $query .= " AND deleted=0";
         }
         $count = $GLOBALS['db']->getOne($query);
@@ -2226,13 +2226,13 @@ EOQ;
         $returnArray = array();
         $query      = "SELECT u.id, count(u2.id) as total FROM users u " .
                           "LEFT JOIN users u2 " .
-                              "ON u.id = u2.reports_to_id ";
+                              "ON u.id = u2.reports_to_id AND u2.status = 'Active' ";
         if(!$include_deleted){
             $query .=         "AND u2.deleted = 0 ";
         }        
         $query     .=   "WHERE u.reports_to_id = {$db->quoted(clean_string($user_id))} ";
         if(!$include_deleted){
-            $query .=       "AND u.deleted = {$deleted} ";
+            $query .=       "AND u.deleted = {$deleted} AND u.status = 'Active' ";
         }
         $query     .=   "GROUP BY u.id";
         
