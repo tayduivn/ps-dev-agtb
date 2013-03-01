@@ -2203,7 +2203,7 @@ EOQ;
     public static function isManager($user_id, $include_deleted=false)
     {
         $query = 'SELECT count(id) as total FROM users
-                WHERE reports_to_id = ' .  $GLOBALS['db']->quoted(clean_string($user_id)) . ' AND status = "Active"';
+                WHERE reports_to_id = ' .  $GLOBALS['db']->quoted(clean_string($user_id)) . ' AND status = ' .  $GLOBALS['db']->quoted(clean_string('Active'));
         if (!$include_deleted) {
             $query .= " AND deleted=0";
         }

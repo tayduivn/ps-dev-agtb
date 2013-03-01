@@ -1033,7 +1033,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             if($timeZoneBDay != $timeZoneADay)
             {
                 //check if they are in reverse order, we want A to come before B
-                if($timeZoneBDay < $timeZoneADay && $timeZoneBMonth == $timeZoneAMonth)
+                if ( strcmp($timeZoneBNow->format('Y-m-d H:i:s'), $timeZoneANow->format('Y-m-d H:i:s')) < 0 )
                 {
                     $timeZoneB = new DateTimeZone($timeZones[0]);
                     $timeZoneA = new DateTimeZone($tz);

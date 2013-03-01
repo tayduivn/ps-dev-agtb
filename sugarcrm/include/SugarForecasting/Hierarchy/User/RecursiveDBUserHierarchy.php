@@ -44,7 +44,7 @@ class SugarForecasting_Hierarchy_User_RecursiveDBUserHierarchy implements SugarF
         $returnParent = false;
 
         $sql = $db->getRecursiveSelectSQL('users', 'id', 'reports_to_id',
-            'id, user_name, first_name, last_name, reports_to_id, _level', false,
+            'id, user_name, first_name, last_name, reports_to_id, level', false,
             "id = '{$id}' AND status = 'Active' AND deleted = 0", null, " AND status = 'Active' AND deleted = 0"
         );
 
@@ -56,8 +56,8 @@ class SugarForecasting_Hierarchy_User_RecursiveDBUserHierarchy implements SugarF
         $flatUsers = array();
         while($row = $db->fetchByAssoc($result))
         {
-            if(empty($users[$row['_level']]))  {
-                $users[$row['_level']] = array();
+            if(empty($users[$row['level']]))  {
+                $users[$row['level']] = array();
             }
 
             $fullName = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
@@ -72,7 +72,7 @@ class SugarForecasting_Hierarchy_User_RecursiveDBUserHierarchy implements SugarF
                     "first_name" => $row['first_name'],
                     "last_name" => $row['last_name'],
                     "reports_to_id" => $row['reports_to_id'],
-                    "level" => $row['_level']
+                    "level" => $row['level']
                 ),
                 'state' => '',
                 'attr' => array(
