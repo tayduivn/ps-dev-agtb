@@ -69,23 +69,13 @@
      * @private
      */
     _setUpTimeperiodField: function (field) {
-
-        /**
-         * The model for the field should be context, since that is where the value gets set for all the
-         * views using it.
-         */
-        field.model = this.context;
-
-        /**
-         * Overtake the way the field sets the value, since we need it set on context as an
-         * object containing the id and the label of the selected timeperiod
-         */
-        field.unformat = _.bind(
-            function(value) {
-                return {id: value, label: this.$el.find('option:[value=' + value + ']').text()};
-            },
-            field
-        );
+        // listen for the select2 field model to change so we can take the id value of the selected item
+        // that was set on the model, and push it up in object form to our forecast context
+        field.model.on('change', _.bind(function(fieldModel) {
+            var tpId = fieldModel.get('selectedTimePeriod'),
+                tp = {id: tpId, label: this.$el.find('option:[value=' + tpId + ']').text()};
+            this.context.set({selectedTimePeriod: tp});
+        }, this));
 
         /**
          * Populates the dropdown from the endpoint with the timeperiods that were created by the admin when they set up
