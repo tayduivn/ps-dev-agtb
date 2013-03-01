@@ -1,4 +1,5 @@
 <?php
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -23,102 +24,160 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * This file is here to provide a HTML template for the rest help api.
  */
+
+$theme = new SidecarTheme();
+
+$bootstrap_css = $theme->getCSSURL();
+
 ?>
+
 <!DOCTYPE HTML>
 <html>
-<head>
-<title>SugarCRM Auto Generated API Help</title>
-<style type="text/css">
-    table#endpointList {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    .hidden {
-        display: none;
-    }
-    .endpointMain {
-        background: #eeeeee;
-    }
-    code {
-        white-space: pre;
-        height: 150px;
-        overflow-x: scroll;
-        display: inline-block;
-        background: #eeeeff;
-    }
-    .params table, .params table td, .params table th {
-        border: 1px solid #000000;
-        border-collapse: collapse;
-    }
-    .params table {
-        empty-cells: show;
-    }
-    .params table th {
-        background-color: #efefef;
-    }
-    .params table th, .params table td {
-        padding: 2px 4px;
-    }
-    .codesample .note {
-        background: #ffffff;
-        font-style: italic;
-    }
-    .showHide {
-        cursor: pointer;
-        padding: 0 3px;
-        text-align: center;
-        width: 20px;
-    }
 
-</style>
-<script type="text/javascript" src="<?php echo SugarConfig::get('site_url') ?>/include/javascript/jquery/jquery.js"></script>
-</head>
+    <head>
+        <title>SugarCRM Auto Generated API Help</title>
+        <link rel="stylesheet" href="../../<?php echo $bootstrap_css ?>">
 
-<body>
-<h1>SugarCRM API</h1>
+        <style>
 
-<table id="endpointList" border="1" cellspacing="0" cellpadding="2">
-<?php
-  foreach ( $endpointList as $i => $endpoint ) {
-      if ( empty($endpoint['shortHelp']) ) { continue; }
-?>
-  <tr id="endpoint_<?php echo $i ?>" class="endpointMain">
-    <td class="showHide" id="showHide<?php echo $i ?>">+</td>
-    <td class="reqType"><?php echo htmlspecialchars($endpoint['reqType']) ?></td>
-    <td class="fullPath"><?php echo htmlspecialchars($endpoint['fullPath']) ?></td>
-    <td class="shortHelp"><?php echo htmlspecialchars($endpoint['shortHelp']) ?></td>
-    <td class="score"><?php echo sprintf("%.02f",$endpoint['score']) ?></td>
-  </tr>
-  <tr id="endpoint_<?php echo $i ?>_full" class="endpointExtra hidden">
-    <td class="empty">&nbsp;</td>
-    <td class="fullHelp" colspan="4">
-      <?php
-      if ( file_exists($endpoint['longHelp']) ) {
-          echo file_get_contents($endpoint['longHelp']);
-      } else if ( !empty($endpoint['longHelp']) ) {
-          echo 'Long help file not found: ' . htmlspecialchars($endpoint['longHelp']);
-      } else {
-          echo 'No additional help.';
-      }
-      ?>
-      <hr>
-      <b>File:</b><?php echo $endpoint['file']; ?><br>
-      <b>Method:</b><?php echo $endpoint['method']; ?><br>
-    </td>
-  </tr>
-<?php
-  }
-?>
-</table>
-<script type="text/javascript">
-    $(function() {
-        $('.showHide').click(function() {
-            var id = $(this).attr('id').replace('showHide', '');
-            var currentSign = $(this).text();
-            var newSign = currentSign == '+' ? '-' : '+';
-            $('#endpoint_' + id + '_full').toggle();
-            $(this).text(newSign);
-        });
-    });
-</script>
-</body> </html>
+            body {
+                padding: 5px;
+            }
+
+            .container-fluid div{
+                background-color: @NavigationBar;
+            }
+
+            .line{
+                border-bottom: 1px solid black;
+            }
+
+            .score{
+                text-align: right;
+            }
+
+            .pre-scrollable {
+                width: 600px;
+                background-color: white;
+                color: red;
+            }
+
+            .table {
+
+                background-color: white;
+            }
+
+            .table td {
+                white-space: normal;
+                word-wrap: break-word;
+            }
+
+            h2{
+                padding-top: 30px;
+            }
+
+            .well-small {
+                background-color: white;
+            }
+
+            .alert {
+                padding: 20px;
+                text-align: center;
+            }
+
+        </style>
+
+        <script type="text/javascript" src="../../cache/include/javascript/sugar_grp1_jquery.js"></script>
+        <script type="text/javascript" src="../../cache/include/javascript/sugar_grp1_bootstrap_core.js"></script>
+    </head>
+
+    <body>
+
+        <h2>SugarCRM API</h2>
+
+        <div class="container-fluid">
+
+            <div class="row-fluid">
+
+                <div class="span1"><h1>Type</h1></div>
+                <div class="span4"><h1>Endpoint</h1></div>
+                <div class="span2"><h1>Method</h1></div>
+                <div class="span4"><h1>Description</h1></div>
+                <div class="span1 score"><h1>Score</h1></div>
+            </div>
+
+        <?php
+            foreach ( $endpointList as $i => $endpoint )
+            {
+                if ( empty($endpoint['shortHelp']) ) { continue; }
+        ?>
+
+            <div class="row-fluid line">
+
+                <div class="row-fluid">
+
+                    <div class="span1">
+                            <?php echo htmlspecialchars($endpoint['reqType']) ?>
+                    </div>
+
+                    <div class="span4">
+
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#endpoint_<?php echo $i ?>_full">
+                            <?php echo htmlspecialchars($endpoint['fullPath']) ?>
+                        </button>
+                    </div>
+
+                    <div class="span2">
+
+                        <?php echo $endpoint['method']; ?>
+                    </div>
+
+                    <div class="span4">
+                        <?php echo htmlspecialchars($endpoint['shortHelp']) ?>
+                    </div>
+
+                    <div class="span1 score">
+                        <?php echo sprintf("%.02f",$endpoint['score']) ?>
+                    </div>
+
+                </div>
+
+                <div id="endpoint_<?php echo $i ?>_full" class="row-fluid collapse">
+                    <div class="span12 well">
+
+                        <?php
+
+                            if ( file_exists($endpoint['longHelp']) )
+                            {
+                                echo file_get_contents($endpoint['longHelp']);
+                            }
+                            else
+                            {
+                                echo '<span class="lead">No additional help.</span>';
+                            }
+
+                        ?>
+
+                        <div class="pull-right muted">
+                            <i class="icon-file"></i>
+                            <?php echo "./" . htmlspecialchars($endpoint['longHelp']); ?>
+                        </div>
+
+                    </div>
+
+                    <div class="pull-right">
+                        <i class="icon-file"></i>
+                        <?php echo "./" . htmlspecialchars($endpoint['file']); ?>
+                    </div>
+                </div>
+
+            </div>
+
+        <?php
+            }
+        ?>
+
+        </div>
+
+    </body>
+</html>

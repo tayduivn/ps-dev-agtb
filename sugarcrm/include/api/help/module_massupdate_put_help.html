@@ -1,0 +1,273 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
+<h2>Overview</h2>
+<span class="lead">
+    An API to mass update records.
+</span>
+
+<h2>Query String Parameters</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Required</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            massupdate_params
+        </td>
+        <td>
+            Array
+        </td>
+        <td>
+            Mass update parameters.
+        </td>
+        <td>
+            True
+        </td>
+    </tr>
+    <tr>
+        <td>
+            massupdate_params.uid
+        </td>
+        <td>
+            Array
+        </td>
+        <td>
+            A list of ids.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            massupdate_params.[field name]
+        </td>
+        <td>
+            [field type]
+        </td>
+        <td>
+            The field to be modified.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            massupdate_params.team_name
+        </td>
+        <td>
+            Array
+        </td>
+        <td>
+            Team array.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            massupdate_params.team_name_type
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            Whether to replace or add teams. Possible values are 'add' and 'replace'.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            massupdate_params.entire
+        </td>
+        <td>
+            Boolean
+        </td>
+        <td>
+            True for all records.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            massupdate_params.filter
+        </td>
+        <td>
+            Array
+        </td>
+        <td>
+            The filter expression. More information on filter expressions can be found in <code>/&lt;module&gt;/filter</code>.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Input Examples</h3>
+<h4>Mass Updating Records by ID in a Module</h4>
+<pre class="pre-scrollable">
+{
+    "massupdate_params":{
+        "uid":[
+            "f22d1955-97d8-387d-9866-512d09cc1520",
+            "ef1b40aa-5815-4f8d-e909-512d09617ac8"
+        ],
+        "department":"Marketing"
+    }
+}
+</pre>
+
+<h4>Mass Updating All Records in a Module</h4>
+<pre class="pre-scrollable">
+{
+   "massupdate_params":{
+      "entire":true,
+      "department":"Marketing"
+   }
+}
+</pre>
+
+<h4>Mass Updating Records Using a Filter</h4>
+<pre class="pre-scrollable">
+{
+   "massupdate_params":{
+      "entire":true,
+      "Department":"Marketing",
+      "filter":[
+         {
+            "name":"airline"
+         }
+      ]
+   }
+}
+</pre>
+
+<h4>Mass Updating Records with Teams</h4>
+<pre class="pre-scrollable">
+{
+   "massupdate_params":{
+      "uid":[
+         "f22d1955-97d8-387d-9866-512d09cc1520",
+         "ef1b40aa-5815-4f8d-e909-512d09617ac8"
+      ],
+      "team_name":[
+         {
+            "id":"35eab226-c20d-48f4-4670-512d095c8c6f",
+            "primary":true
+         },
+         {
+            "id":"8f640aba-f356-7374-7eb4-512d09745551",
+            "primary":false
+         }
+      ],
+      "team_name_type":"replace"
+   }
+}
+</pre>
+
+<h2>Result</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <tr>
+        <td>
+            Status
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            The status of the mass update. Possible values are 'done' and 'queued'.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            jobid
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            The ID of the job if queued. This is only returned if the status is 'queued'.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Output Done Example</h3>
+<pre class="pre-scrollable">
+{
+    "status":"done"
+}
+</pre>
+
+<h3>Output Queued Example</h3>
+<pre class="pre-scrollable">
+{
+    "status":"queued",
+    "jobId":"1530025c-7329-5243-be2e-512ff0171b7a"
+}
+</pre>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    <tr>
+        <td>
+            v10
+        </td>
+        <td>
+            Added <code>/&lt;module&gt;/MassUpdate</code> PUT endpoint.
+        </td>
+    </tr>
+</table>

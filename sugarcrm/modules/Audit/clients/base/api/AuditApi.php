@@ -43,7 +43,7 @@ class AuditApi extends ListApi
                 'pathVars' => array(''),
                 'method' => 'viewChangeLog',
                 'shortHelp' => 'View change log in record view',
-                'longHelp' => 'include/api/help/audit_view_change_log_help.html',
+                'longHelp' => 'include/api/help/audit_get_help.html',
             ),
         );
     }

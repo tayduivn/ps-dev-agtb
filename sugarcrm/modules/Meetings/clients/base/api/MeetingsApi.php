@@ -29,7 +29,7 @@ class MeetingsApi extends UnifiedSearchApi {
                 'pathVars' => array(''),
                 'method' => 'globalSearch',
                 'shortHelp' => 'Search records in this module',
-                'longHelp' => 'include/api/help/getListModule.html',
+                'longHelp' => 'include/api/help/module_get_help.html',
             ),
             'getAgenda' => array(
                 'reqType' => 'GET',
@@ -37,7 +37,7 @@ class MeetingsApi extends UnifiedSearchApi {
                 'pathVars' => array('',''),
                 'method' => 'getAgenda',
                 'shortHelp' => 'Fetch an agenda for a user',
-                'longHelp' => 'include/api/html/ping_base_help.html',
+                'longHelp' => 'include/api/html/meetings_agenda_get_help',
             ),
         );
     }

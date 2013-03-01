@@ -45,7 +45,7 @@ class vCardApi extends SugarApi {
                 'method' => 'vCardSave',
                 'rawReply' => true,
                 'shortHelp' => 'An API to download a contact as a vCard.',
-                'longHelp' => 'include/api/help/vCard.html',
+                'longHelp' => 'include/api/help/vcarddownload_get_help.html',
             ),
             'vCardImportPost' => array(
                 'reqType' => 'POST',
@@ -54,7 +54,7 @@ class vCardApi extends SugarApi {
                 'method' => 'vCardImport',
                 'rawPostContents' => true,
                 'shortHelp' => 'Imports a person record from a vcard',
-                'longHelp' => 'include/api/help/vCardImportPost.html',
+                'longHelp' => 'include/api/help/module_file_vcard_import_post_help.html',
             ),
         );
     }

@@ -40,8 +40,8 @@ class FileTempApi extends FileApi {
                 'pathVars' => array('module', 'temp', '', 'field'),
                 'method' => 'saveTempImagePost',
                 'rawPostContents' => true,
-                'shortHelp' => 'Saves a temporary image.',
-                'longHelp' => 'include/api/help/tempImagePost.html',
+                'shortHelp' => 'Saves an image to a temporary folder.',
+                'longHelp' => 'include/api/help/module_temp_file_field_post_help.html',
             ),
             'getTempImage' => array(
                 'reqType' => 'GET',
@@ -50,7 +50,7 @@ class FileTempApi extends FileApi {
                 'method' => 'getTempImage',
                 'rawReply' => true,
                 'shortHelp' => 'Reads a temporary image and deletes it.',
-                'longHelp' => 'include/api/help/tempImageGet.html',
+                'longHelp' => 'include/api/help/module_temp_file_field_temp_id_get_help.html',
             ),
         );
     }

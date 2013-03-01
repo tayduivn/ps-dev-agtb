@@ -34,7 +34,7 @@ class ProspectListsApi extends ModuleApi
                 'pathVars' => array('', ''),
                 'method' => 'addRecordsToProspectList',
                 'shortHelp' => 'This method updates a target list with selected users/contacts/leads',
-                'longHelp' => '',
+                'longHelp' => 'include/api/help/module_addtolist_post_help.html',
             ),
         );
     }

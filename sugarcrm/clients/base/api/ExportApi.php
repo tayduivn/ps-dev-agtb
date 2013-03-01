@@ -48,8 +48,8 @@ class ExportApi extends SugarApi {
                 'method' => 'export',
                 'jsonParams' => array('filter'),
                 'rawReply' => true,
-                'shortHelp' => 'An API to handle export.',
-                'longHelp' => 'include/api/help/export.html',
+                'shortHelp' => 'Returns a record set in CSV format along with HTTP headers to indicate content type.',
+                'longHelp' => 'include/api/help/module_export_post_help.html',
             ),
             'exportGet' => array(
                 'reqType' => 'GET',
@@ -58,8 +58,8 @@ class ExportApi extends SugarApi {
                 'method' => 'export',
                 'jsonParams' => array('filter'),
                 'rawReply' => true,
-                'shortHelp' => 'An API to handle export.',
-                'longHelp' => 'include/api/help/export.html',
+                'shortHelp' => 'Returns a record set in CSV format along with HTTP headers to indicate content type.',
+                'longHelp' => 'include/api/help/module_export_get_help.html',
             ),
         );
     }
