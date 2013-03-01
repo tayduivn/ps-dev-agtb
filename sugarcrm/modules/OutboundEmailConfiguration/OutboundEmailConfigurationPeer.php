@@ -73,7 +73,7 @@ class OutboundEmailConfigurationPeer
         $systemUser = BeanFactory::getBean("Users");
         $systemUser->getSystemUser();
 
-        $systemMailerConfiguration = BeanFactory::getBean("OutboundEmail");
+        $systemMailerConfiguration = static::loadOutboundEmail();
         $systemMailerConfiguration->getSystemMailerSettings();
 
         $systemUserInfo = $systemUser->getUsersNameAndEmail();
@@ -108,6 +108,8 @@ class OutboundEmailConfigurationPeer
         return $outboundEmailConfiguration;
     }
 
+
+
     /**
      * @access public
      * @param User $user required
@@ -120,19 +122,33 @@ class OutboundEmailConfigurationPeer
         try {
             $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($user);
 
-            if ($config instanceof OutboundSmtpEmailConfiguration) {
-                $host = $config->getHost();
-
-                if (!empty($host)) {
-                    $configExists = true;
-                }
-            }
+            $configExists =  self::isMailConfigurationValid($config);
         } catch (MailerException $me) {
             $GLOBALS["log"]->warn(
                 "An error occurred while searching for a valid system mail configuration: " .
                 $me->getMessage()
             );
         }
+
+        return $configExists;
+    }
+
+    /**
+     * @access public
+     * @param OutboundEmailConfiguration $configuration required
+     * @return bool
+     */
+    public static function isMailConfigurationValid(OutboundEmailConfiguration $configuration)
+    {
+        $configExists = false;
+
+         if ($configuration instanceof OutboundSmtpEmailConfiguration) {
+            $host = $configuration->getHost();
+
+            if (!empty($host)) {
+                $configExists = true;
+            }
+         }
 
         return $configExists;
     }
