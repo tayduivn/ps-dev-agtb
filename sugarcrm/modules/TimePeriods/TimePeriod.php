@@ -331,8 +331,9 @@ class TimePeriod extends SugarBean {
         $timeperiod_id = $db->getOne("SELECT id FROM timeperiods WHERE start_date <= '{$db_date}' AND end_date >= '{$db_date}' and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($db_date)));
 
         if(!empty($timeperiod_id)) {            
-            $tp = new TimePeriod();
+            $tp = BeanFactory::getBean('TimePeriods');
             $tp->retrieve($timeperiod_id);
+            $tp->save();
             return $tp;
         }
 
@@ -529,8 +530,8 @@ class TimePeriod extends SugarBean {
 
         $updated = 0;
         while($row = $this->db->fetchByAssoc($result)) {
-            $tp = new TimePeriod();
-            $tp = $tp->retrieve($row['id']);
+            $tp = BeanFactory::getBean('TimePeriods');
+            $tp->retrieve($row['id']);
             $tp->save();
 
             $updated++;
