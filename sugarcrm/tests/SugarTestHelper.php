@@ -540,6 +540,9 @@ class SugarTestHelper
         // backup of SugarThemeRegistry
         self::$systemVars['SugarThemeRegistry'] = SugarThemeRegistry::current();
 
+        // Disable the activity stream from creating messages.
+        Activity::disable();
+
         self::$isInited = true;
     }
 
@@ -606,6 +609,9 @@ class SugarTestHelper
                 $GLOBALS[$scope][$name] = $value;
             }
         }
+
+        // Restore the activity stream.
+        Activity::enable();
 
         // Restoring of theme
         SugarThemeRegistry::set(self::$systemVars['SugarThemeRegistry']->dirName);

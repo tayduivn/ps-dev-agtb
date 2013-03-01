@@ -181,6 +181,9 @@ $nonStandardModules = array (
     //'Tracker',
 );
 
+// Disable the activity stream from creating messages while installing.
+Activity::disable();
+
 //BEGIN SUGARCRM flav=pro ONLY
 //If this is MIcrosoft install and FTS is enabled, then fire index wake up method to prime the indexing service.
 if($db->supports('fulltext') && $db->full_text_indexing_installed()){
@@ -636,6 +639,9 @@ installerHook('post_installModules');
 
 // rebuild cache after all is said and done
 SugarAutoLoader::buildCache();
+
+// Restore the activity stream behaviour.
+Activity::enable();
 
 $out =<<<EOQ
 <br><p><b>{$mod_strings['LBL_PERFORM_OUTRO_1']} {$setup_sugar_version} {$mod_strings['LBL_PERFORM_OUTRO_2']}</b></p>

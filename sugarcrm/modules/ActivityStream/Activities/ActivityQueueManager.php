@@ -40,7 +40,7 @@ class ActivityQueueManager
         if ($bean instanceof Activity && $bean->activity_type == 'post') {
             // Posts.
             $this->processPostSubscription($bean);
-        } else if ($bean->is_AuditEnabled()) {
+        } else if ($bean->is_AuditEnabled() && Activity::isEnabled()) {
             $activity = BeanFactory::getBean('Activities');
             if ($event == 'after_save') {
                 $this->createOrUpdate($bean, $args, $activity);

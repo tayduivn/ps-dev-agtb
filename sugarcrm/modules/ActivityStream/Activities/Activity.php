@@ -21,6 +21,8 @@ class Activity extends Basic
     public $created_by;
     public $created_by_name;
 
+    public static $enabled = true;
+
     /**
      * Constructor for the Activity bean.
      *
@@ -107,5 +109,20 @@ class Activity extends Basic
         $this->last_comment = $this->last_comment_bean->toJson();
         $return = parent::save($check_notify);
         return $return;
+    }
+
+    public static function enable()
+    {
+        self::$enabled = true;
+    }
+
+    public static function disable()
+    {
+        self::$enabled = false;
+    }
+
+    public static function isEnabled()
+    {
+        return self::$enabled;
     }
 }
