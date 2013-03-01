@@ -50,7 +50,9 @@ class ForecastsViewSidecar extends SidecarView
     {
         //Load sidecar theme css
         $theme = new SidecarTheme();
+        
         $this->ss->assign("css_url", getVersionedPath($theme->getCSSURL()));
+        $this->ss->assign("yui_widget_css_url", getVersionedPath("cache/include/javascript/sugar_grp_yui_widgets.css"));
 
         $module = $this->module;
         $displayTemplate = SugarAutoLoader::existingCustomOne("modules/Forecasts/tpls/SidecarView.tpl");
@@ -210,6 +212,7 @@ EOHTML;
             echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery_menus.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_bootstrap.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
+            echo getVersionedScript('cache/include/javascript/sugar_grp_yui_widgets.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');
 
