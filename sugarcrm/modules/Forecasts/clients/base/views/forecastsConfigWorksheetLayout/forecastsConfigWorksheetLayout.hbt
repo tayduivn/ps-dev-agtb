@@ -27,6 +27,9 @@
  ********************************************************************************/
 }}
 <div class="modal-content hide">
+    {{#if isSetup}}
+        <p>{{str "LBL_FORECASTS_CONFIG_WORKSHEET_LAYOUT_DETAIL_MESSAGE" "Forecasts"}}</p>
+    {{/if}}
     {{#each meta.panels}}
         {{#each fields}}
             <p>{{field ../../this ../../model}}</p>

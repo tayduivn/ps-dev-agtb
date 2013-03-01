@@ -25,10 +25,30 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    isSetup: false,
+
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.isSetup = this.model.get('is_setup');
         if(!_.isUndefined(options.meta.registerLabelAsBreadCrumb) && options.meta.registerLabelAsBreadCrumb == true) {
             this.layout.registerBreadCrumbLabel(options.meta.panels[0].label);
         }
+    },
+
+    /**
+     * Overriding _renderField because we need to set up a binding to the start month drop down to populate the day drop down on change
+     * @param field
+     * @private
+     */
+    _renderField: function(field) {
+        /**
+         * This is needed to make sure that this view is read only when forecasts module has been set up.
+         */
+        if(this.isSetup) {
+            // if forecasts has been setup, this is read only!
+            field.options.def.view = 'detail';
+        }
+        app.view.View.prototype._renderField.call(this, field);
+
     }
 })

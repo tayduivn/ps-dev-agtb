@@ -34,7 +34,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigWorksheetLayout'] = array
                     'type' => 'radioenum',
                     'label' => 'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_PRODUCT_LINE_ITEMS',
                     'view' => 'edit',
-                    'options' => 'forecasts_config_general_forecast_by_options_dom',
+                    'options' => 'forecasts_config_worksheet_layout_forecast_by_options_dom',
                     'default' => false,
                     'enabled' => true,
                 ),
