@@ -39,7 +39,7 @@ $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
 $mailer = null;
 
 try {
-    $mailer = MailerFactory::getMailerForUser($current_user);
+    $mailer = MailerFactory::getSystemDefaultMailer();
 } catch (MailerException $me) {
     $GLOBALS['log']->fatal("Email delivery error:" . $me->getMessage());
     return;

@@ -113,7 +113,7 @@ class EmailAuthenticateUser extends SugarAuthenticateUser
             $mailTransmissionProtocol = "unknown";
 
             try {
-                $mailer                   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+                $mailer                   = MailerFactory::getSystemDefaultMailer();
                 $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
                 // add the recipient...

@@ -38,6 +38,22 @@ require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.
 class MailerFactory
 {
     /**
+     * This retrieves the System Default Outbound Mail configuration
+     *
+     * @return mixed the System Default Mail Configuration.
+     * @throws MailerException Allows MailerExceptions to bubble up.
+     */
+    public static function getSystemDefaultMailer() {
+        // get the System Default configuration that the Mailer needs
+        $mailConfiguration = OutboundEmailConfigurationPeer::getSystemDefaultMailConfiguration();
+
+         // generate the Mailer
+        $mailer = static::getMailer($mailConfiguration);
+
+        return $mailer;
+    }
+
+    /**
      * In many cases, the correct Mailer is the one that is produced from the configuration associated with a
      * particular user. This method makes the necessary calls to produce that Mailer, in order to obey the DRY
      * principle.
