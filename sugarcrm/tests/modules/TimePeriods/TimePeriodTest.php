@@ -100,4 +100,51 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, $updated);
     }
+
+    /**
+     * @group timeperiods
+     */
+    public function testCreateTimePeriodsForUpgradeCreates4Quarters()
+    {
+        $timedate = TimeDate::getInstance();
+        $currentDate = $timedate->getNow();
+        $currentYear = $currentDate->format('Y');
+        $currentMonth = $currentDate->format('n');
+        $currentDay = $currentDate->format('j');
+        if($currentMonth < 10 || ($currentMonth == 10 && $currentDay < 4)) {
+            $currentYear = $currentYear - 1;
+        }
+
+        $forecastConfigSettings = array (
+                'timeperiod_type' => 'chronological',
+                'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
+                'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
+                'timeperiod_start_date' => ($currentYear-2) . '-10-04',
+                'timeperiod_shown_forward' => '1',
+                'timeperiod_shown_backward' => '1',
+        );
+
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod($currentYear-2 . '-10-04', $currentYear-1 . '-10-03');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod($currentYear-1 . '-10-04', $currentYear . '-10-03');
+        $tp3 = SugarTestTimePeriodUtilities::createTimePeriod($currentYear . '-10-04', $currentYear+1 . '-10-03');
+
+        $seed = BeanFactory::getBean("TimePeriods");
+
+        $timeperiods = $seed->createTimePeriodsForUpgrade($forecastConfigSettings, $currentDate);
+
+        $testTimePeriods = SugarTestTimePeriodUtilities::getCreatedTimePeriodIds();
+
+        foreach($timeperiods as $t) {
+            $testTimePeriods[] = $t->id;
+        }
+
+        SugarTestTimePeriodUtilities::setCreatedTimePeriods($testTimePeriods);
+
+        $currentTimePeriod = TimePeriod::getCurrentTimePeriod(TimePeriod::ANNUAL_TYPE);
+
+        $currentLeaves = $currentTimePeriod->getLeaves();
+
+        $this->assertEquals(4, count($currentLeaves));
+
+    }
 }
