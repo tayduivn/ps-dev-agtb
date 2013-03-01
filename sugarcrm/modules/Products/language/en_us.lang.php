@@ -54,6 +54,7 @@ $mod_strings = array(
     'LBL_NAME' => 'Product:',
     'LBL_URL' => 'Product URL:',
     'LBL_QUOTE_NAME' => 'Quote Name:',
+    'LBL_ASSOCIATED_QUOTE' => 'Associated Quote:',
     'LBL_CONTACT_NAME' => 'Contact Name:',
     'LBL_DATE_PURCHASED' => 'Purchased:',
     'LBL_DATE_SUPPORT_EXPIRES' => 'Support Expires:',

@@ -28,6 +28,7 @@
     allow_single_deselect: true,
     minChars: 1,
     fieldTag: 'input.select2',
+    bwcLink: false,
     /**
      * Initializes field and binds all function calls to this
      * @param {Object} options
@@ -35,6 +36,7 @@
     initialize: function(options) {
         _.bindAll(this);
         this.minChars = options.def.minChars || this.minChars;
+        this.bwcLink = options.def.bwcLink || this.bwcLink;
         app.view.Field.prototype.initialize.call(this, options);
     },
     /**

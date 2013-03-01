@@ -60,7 +60,12 @@ $viewdefs['Products']['base']['view']['list'] = array(
                 'date_support_expires',
                 'category_name',
                 'contact_name',
-                'quote_name',
+                array(
+                    'name' => 'quote_name',
+                    'bwcLink' => true,
+                    'label' => 'LBL_ASSOCIATED_QUOTE',
+                    'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
+                ),
                 'type_name',
                 'serial_number',
                 'date_entered'
