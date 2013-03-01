@@ -165,7 +165,6 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 ),
                 'phone_work',
                 'do_not_call',
-                'email_opt_out',
             ),
         ),
         array(
