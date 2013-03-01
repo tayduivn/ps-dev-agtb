@@ -150,7 +150,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '2',
     'comment' => 'Duration (minutes)',
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
-
+    'required' => true,
   ),
   'date_start' =>
   array (
