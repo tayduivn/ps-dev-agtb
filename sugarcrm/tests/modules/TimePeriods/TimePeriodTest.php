@@ -102,6 +102,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test is meant to test what happens with an upgrade where timeperiods existed previously.
+     * Historical Timeperiods should remain in the database, but anything current and future should be deleted
+     *
      * @group timeperiods
      */
     public function testCreateTimePeriodsForUpgradeCreates4Quarters()
@@ -132,19 +135,23 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $timeperiods = $seed->createTimePeriodsForUpgrade($forecastConfigSettings, $currentDate);
 
-        $testTimePeriods = SugarTestTimePeriodUtilities::getCreatedTimePeriodIds();
-
         foreach($timeperiods as $t) {
-            $testTimePeriods[] = $t->id;
+            SugarTestTimePeriodUtilities::addCreatedTimePeriod($t);
         }
-
-        SugarTestTimePeriodUtilities::setCreatedTimePeriods($testTimePeriods);
 
         $currentTimePeriod = TimePeriod::getCurrentTimePeriod(TimePeriod::ANNUAL_TYPE);
 
         $currentLeaves = $currentTimePeriod->getLeaves();
 
-        $this->assertEquals(4, count($currentLeaves));
+        $this->assertEquals(4, count($currentLeaves), "Upgrade failed to create the correct number of leaves for the current time period");
+        $this->assertFalse(BeanFactory::getBean("TimePeriods", $tp3->id), "Upgrade failed to delete the current time period set prior to upgrade.");
+        $this->assertNotEquals(false, BeanFactory::getBean("TimePeriods", $tp2->id), "Upgrade failed to save a historical time period for record keeping");
 
+        $currentTimePeriod = $currentTimePeriod->getNextTimePeriod();
+        $this->assertNotNull($currentTimePeriod);
+        $this->assertEquals($currentYear+1 . '-10-04', $currentTimePeriod->start_date, "Upgrade failed to create a future time period with the correct start date");
+        $this->assertEquals($currentYear+2 . '-10-03', $currentTimePeriod->end_date, "Upgrade failed to create a future time period with the correct start end");
+        $currentLeaves = $currentTimePeriod->getLeaves();
+        $this->assertEquals(4, count($currentLeaves), "Upgrade failed to create the correct number of leaves for the future time period");
     }
 }
