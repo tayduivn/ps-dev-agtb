@@ -504,12 +504,35 @@ class TimePeriod extends SugarBean {
        $isUpgrade = !empty($currentSettings['is_upgrade']);
 
        //If this an upgrade AND there are existing non-fiscal leaf TimePeriods
-       if($isUpgrade && !empty($count))
-       {
+       if ($isUpgrade && !empty($count)) {
+           $this->upgradeLegacyTimePeriods();
            $this->createTimePeriodsForUpgrade($currentSettings, $currentDate);
        } else {
            $this->createTimePeriods($priorSettings, $currentSettings, $currentDate);
        }
+    }
+
+    /**
+     * Just load up any TimePeriods that are missing their DateStamps and save them, so they will be generated,
+     * and usable in the ForecastModule
+     *
+     * @return int      The number of TimePeriods Updated
+     */
+    public function upgradeLegacyTimePeriods()
+    {
+        $sql = "SELECT id FROM timeperiods
+                WHERE deleted = 0
+                    AND (start_date_timestamp is null OR end_date_timestamp is null);";
+        $result = $this->db->query($sql);
+
+        $updated = 0;
+        while($row = $this->db->fetchByAssoc($result)) {
+            $tp = BeanFactory::getBean('TimePeriods', $row['id']);
+            $tp->save();
+
+            $updated++;
+        }
+        return $updated;
     }
 
 
@@ -1028,7 +1051,7 @@ class TimePeriod extends SugarBean {
      * @param $type String value of the TimePeriod interval type
      * @param $id String value of optional id for TimePeriod
      *
-     * @return bean A TimePeriod instance bean based on the interval type
+     * @return TimePeriod A TimePeriod instance bean based on the interval type
      */
     public static function getByType($type, $id='')
     {

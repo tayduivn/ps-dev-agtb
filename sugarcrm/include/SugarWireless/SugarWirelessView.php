@@ -388,10 +388,10 @@ class SugarWirelessView extends SugarView
                     // Handle fieldset splitting as needed
                     if (is_array($field) && isset($field['type']) && $field['type'] == 'fieldset' && isset($field['related_fields'])) {
                         $fieldset = array();
-                        foreach ($field['related_fields'] as $fName) {
-                            $info = $this->{$method}($fName);
+                        foreach ($field['fields'] as $field_info) {
+                            $info = $this->{$method}($field_info);
                             if (is_array($info)) {
-                                $fieldset[$fName] = $info;
+                                $fieldset[$field_info['name']] = $info;
                             }
                         }
                         

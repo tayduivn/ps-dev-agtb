@@ -27,6 +27,8 @@
  ********************************************************************************/
 *}
 <link rel="stylesheet" type="text/css" href="{$css_url}" />
+<link rel="stylesheet" type="text/css" href="{$yui_widget_css_url}" />
+
 <div class="content" id="forecasts">
     <div id="alerts" class="alert-top">
         <div class="alert alert-process">
@@ -103,10 +105,6 @@
                 return app;
             }
             }));
-
-        $(window).resize(function(){
-            app.forecasts.utils.adjustContentColHeight();
-        });
      })(SUGAR.App);
 
 //Call initForecast with the session id as token

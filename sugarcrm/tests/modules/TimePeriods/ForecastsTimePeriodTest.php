@@ -1198,15 +1198,15 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
                   )
             ),
             array(TimePeriod::ANNUAL_TYPE,
-                  TimePeriod::QUARTER_TYPE,
-                  ($currentYear-1).'-02-'.($febEndDate),
-                  ($currentYear).'-02-'.($febEndDate-1),
-                  array(
-                      array('expectedStartDate' => ($currentYear-1).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear-1).'-05-27'),
-                      array('expectedStartDate' => ($currentYear-1).'-05-28', 'expectedEndDate' => ($currentYear-1).'-08-27'),
-                      array('expectedStartDate' => ($currentYear-1).'-08-28', 'expectedEndDate' => ($currentYear-1).'-11-27'),
-                      array('expectedStartDate' => ($currentYear-1).'-11-28', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate-1)),
-                  )
+                TimePeriod::QUARTER_TYPE,
+                ($currentYear).'-02-'.($febEndDate),
+                ($currentYear+1).'-02-'.($febEndDate-1),
+                array(
+                    array('expectedStartDate' => ($currentYear).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear).'-05-30'),
+                    array('expectedStartDate' => ($currentYear).'-05-31', 'expectedEndDate' => ($currentYear).'-08-30'),
+                    array('expectedStartDate' => ($currentYear).'-08-31', 'expectedEndDate' => ($currentYear).'-11-29'),
+                    array('expectedStartDate' => ($currentYear).'-11-30', 'expectedEndDate' => ($currentYear+1).'-02-'.($febEndDate-1)),
+                )
             ),
             array(TimePeriod::ANNUAL_TYPE,
                   TimePeriod::QUARTER_TYPE,

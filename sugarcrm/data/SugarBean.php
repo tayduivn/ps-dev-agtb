@@ -1907,13 +1907,16 @@ class SugarBean
     * Determines which users receive a notification
     */
     function get_notification_recipients() {
-        $notify_user = new User();
-        $notify_user->retrieve($this->assigned_user_id);
-        $this->new_assigned_user_name = $notify_user->full_name;
+        $user_list = array();
+        if(!empty($this->assigned_user_id)) {
+            $notify_user = new User();
+            $notify_user->retrieve($this->assigned_user_id);
+            $this->new_assigned_user_name = $notify_user->full_name;
 
-        $GLOBALS['log']->info("Notifications: recipient is $this->new_assigned_user_name");
+            $GLOBALS['log']->info("Notifications: recipient is $this->new_assigned_user_name");
 
-        $user_list = array($notify_user);
+            $user_list = array($notify_user);
+        }
         return $user_list;
         /*
         //send notifications to followers, but ensure to not query for the assigned_user.
