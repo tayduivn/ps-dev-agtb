@@ -81,7 +81,7 @@
         // - If current view is blocked by drawer
         if (targetPlaceHolder.length > 0
             || currFieldParent.find(":focus").length > 0
-            || currFieldParent.parents(".drawer-squeezed").length > 0) {
+            || app.drawer.isActive($(evt.target))) {
             return;
         }
         this.toggleField(field, false);

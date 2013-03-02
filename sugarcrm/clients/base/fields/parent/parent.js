@@ -21,6 +21,11 @@
                     module: module
                 });
             });
+
+            if(this.model.get('parent_type') !== this.$(this.typeFieldTag).val()) {
+                this.model.set('parent_type', this.$(this.typeFieldTag).val());
+            }
+
             if(app.acl.hasAccessToModel('edit', this.model, this.name) === false) {
                 this.$(this.typeFieldTag).attr("disabled", "disabled");
             } else {
@@ -38,7 +43,6 @@
         } else {
             this.$(this.fieldTag).attr("disabled", false);
         }
-        this.$(this.fieldTag).trigger("liszt:updated");
     },
     setValue: function(model) {
         if (model) {

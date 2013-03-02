@@ -57,6 +57,11 @@ describe("Editable View", function() {
             case_number: 123,
             description: 'Description'
         });
+        app.drawer = {
+            isActive: function() {
+                return false;
+            }
+        };
 
         var keys = _.keys(view.fields),
             randomFieldIndex = parseInt(Math.random() * (keys.length - 1), 10),
@@ -66,6 +71,8 @@ describe("Editable View", function() {
         expect(randomField.tplName).toBe('edit');
         view.fieldClose({target: null}, randomField);
         expect(randomField.tplName).toBe(view.action);
+
+        delete app.drawer;
     });
 
     it("Should toggle all selected fields to edit modes", function() {
