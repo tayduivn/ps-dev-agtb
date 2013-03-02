@@ -127,11 +127,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 'opportunity_name',
-                array(
-                    'name' => 'account_name',
-                    'readonly' => true,
-                ),
-                'stage',
+                'account_name',
                 'sales_stage',
                 'probability',
                 'sales_status',
@@ -139,9 +135,19 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'product_template_name',
                 'quantity',
                 'discount_price',
-                'discount_amount',
                 array(
-                    'name' => 'likely_case',
+                    'name' => 'discount_amount',
+                    'type' => 'currency'
+                ),
+                
+                array(
+                    'name' => 'product_line_item_amount',
+                    'type' => 'text', // change to currency with sugarlogic
+                    'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
+                    'readonly' => true
+                ),
+                array(
+                    'name' => 'likely_case',    
                     'required' => true
                 )
             ),
@@ -153,6 +159,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'worst_case',
                 'best_case',
                 'worst_case',
                 array(
@@ -161,29 +168,35 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
                     'readonly' => true,
                     'bwcLink' => true
-                ),
-                array(
-                    'name' => 'category_name',
-                    'readonly' => true,
-                ),
-                'type',
+                ),                
+                'product_type',
                 'lead_source',
                 'campaign_name',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
-                    "type" => "teamset",
-                    "name" => "team_name",
+                    'type' => 'teamset',
+                    'name' => 'team_name',
                 ),
                 //END SUGARCRM flav=pro ONLY
                 'next_step',
-                'description',
-                'list_price',
+                array(
+                    'name' => 'description',
+                    'span' => 12
+                ),
+                array(
+                    'name' => 'list_price',
+                    'readonly' => true
+                ),                                
                 array(
                     'name' => 'tax_class',
-                    'readonly' => true,
+                    'readonly' => true
                 ),
-                'cost_price',
+                array(
+                    'name' => 'cost_price',
+                    'readonly' => true
+                ),
+                
             )
         )
     ),
