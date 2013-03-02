@@ -6822,9 +6822,6 @@ ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu li a:hover, ul.
 ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
     color: #313130;
     text-decoration: none;
-    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
     font-weight: 500;
 cursor: pointer;
 text-shadow: none;
@@ -8890,6 +8887,7 @@ h3.popover-title {
     line-height: 18px;
     margin-bottom: 10px;
     text-align: left;
+    font-size: 14px;
 }
 
 .modal.tour .well {

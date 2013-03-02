@@ -53,7 +53,6 @@ class ViewWirelessedit extends SugarWirelessView
                 if($defs) {
                     require $defs;
                 }
-	            break;
 
                 if ( isset($layout_defs[$_POST['related_module']]['subpanel_setup']) ) {
                 foreach ( $layout_defs[$_POST['related_module']]['subpanel_setup'] as $data ) {

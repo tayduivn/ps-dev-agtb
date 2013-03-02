@@ -50,7 +50,8 @@ $mod_strings = array (
     'LBL_FORECAST_ID' => 'Forecast ID',
     'LBL_FORECAST_TIME_ID' => 'Time Period ID',
     'LBL_FORECAST_TYPE' => 'Forecast Type',
-    'LBL_FORECAST_OPP_COUNT' => 'Opportunities',
+    'LBL_FORECAST_OPP_COUNT' => 'Total Opportunity Count',
+    'LBL_FORECAST_PIPELINE_OPP_COUNT' => 'Pipeline Opportunity Count',
     'LBL_FORECAST_OPP_WEIGH'=> 'Weighted Amount',
     'LBL_FORECAST_OPP_COMMIT' => 'Likely Case',
     'LBL_FORECAST_OPP_BEST_CASE'=>'Best Case',
@@ -354,7 +355,7 @@ $mod_strings = array (
 
     // ranges config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-    'LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE' => 'Range settings cannot be changed after initial setup.',
+    'LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE' => 'Range settings cannot be changed after first save or commit.',
     'LBL_FORECASTS_CONFIG_RANGES' => 'Forecast Range Options:',
     'LBL_FORECASTS_CONFIG_RANGES_OPTIONS' => 'Configure default probability Ranges for opportunities in the forecast.',
     'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'Opportunities can be included or excluded from the forecast.',
