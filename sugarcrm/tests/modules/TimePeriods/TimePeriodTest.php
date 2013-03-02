@@ -105,7 +105,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * Test is meant to test what happens with an upgrade where timeperiods existed previously.
      * Historical Timeperiods should remain in the database, but anything current and future should be deleted
      *
+     * @ticket 61489
      * @group timeperiods
+     * @group forecasts
      */
     public function testCreateTimePeriodsForUpgradeCreates4Quarters()
     {
