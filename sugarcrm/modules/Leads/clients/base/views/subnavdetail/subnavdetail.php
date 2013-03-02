@@ -35,7 +35,7 @@ $viewdefs['Leads']['base']['view']['subnavdetail'] = array(
             'name'    => 'edit_button',
             'type'    => 'button',
             'label'   => 'LBL_EDIT_BUTTON_LABEL',
-            'value'   => 'edit',
+            'acl_action'   => 'edit',
             'css_class' => 'btn-primary',
         ),
         array(
@@ -43,7 +43,7 @@ $viewdefs['Leads']['base']['view']['subnavdetail'] = array(
             'type'    => 'button',
             'icon'    => 'icon-eye-open',
             'label'   => 'LBL_CONVERTLEAD',
-            'value'   => 'convert',
+            'acl_action'   => 'convert',
             'css_class' => 'btn-primary',
             'route'   => array (
                 'action'=> 'convert'

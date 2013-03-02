@@ -34,14 +34,13 @@ $viewdefs['Opportunities']['base']['view']['edit'] = array(
 			'name'    => 'save_button',
 			'type'    => 'button',
 			'label'   => 'Save',
-			'value'   => 'save',
+			'acl_action'   => 'edit',
 			'primary' => true,
 		),
 		array(
 			'name'    => 'cancel_button',
 			'type'    => 'button',
 			'label'   => 'Cancel',
-			'value'   => 'cancel',
 			'events'  => array(
 				'click' => 'function(){ window.history.back(); }',
 			),
