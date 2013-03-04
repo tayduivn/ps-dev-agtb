@@ -1,6 +1,8 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -36,8 +38,12 @@ require_once('modules/SchedulersJobs/SchedulersJob.php');
  * Class to run a job which will create the ForecastWorksheet entries for the timeperiod and user
  *
  */
-class SugarJobUpdateForecastWorksheets implements RunnableSchedulerJob {
+class SugarJobUpdateForecastWorksheets implements RunnableSchedulerJob
+{
 
+    /**
+     * @var SchedulersJob
+     */
     protected $job;
 
     /**
@@ -49,18 +55,26 @@ class SugarJobUpdateForecastWorksheets implements RunnableSchedulerJob {
     }
 
 
-
     /**
      * @param string $data The job data set for this particular Scheduled Job instance
      * @return boolean true if the run succeeded; false otherwise
      */
     public function run($data)
     {
-        $db = DBManagerFactory::getInstance();
+
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        if ($settings['is_setup'] == false) {
+            $GLOBALS['log']->fatal("Forecast Module is not setup. " . __CLASS__ . " should not be running");
+            return false;
+        }
+
         $args = json_decode(html_entity_decode($data), true);
         $this->job->runnable_ran = true;
 
-        if(empty($args['timeperiod_id']) || empty($args['user_id'])) {
+        if (empty($args['timeperiod_id']) || empty($args['user_id'])) {
             $GLOBALS['log']->fatal("Unable to run job due to missing arguments");
             return false;
         }
@@ -68,27 +82,39 @@ class SugarJobUpdateForecastWorksheets implements RunnableSchedulerJob {
         /* @var $tp TimePeriod */
         $tp = BeanFactory::getBean('TimePeriods', $args['timeperiod_id']);
 
-        if(empty($tp->id)) {
+        if (empty($tp->id)) {
             $GLOBALS['log']->fatal("Unable to load TimePeriod for id: " . $args['timeperiod_id']);
             return false;
         }
 
+        $type = ucfirst($settings['forecast_by']);
+
         $sq = new SugarQuery();
-        $sq->from(BeanFactory::getBean('Opportunities'))->where()
+        $sq->from(BeanFactory::getBean($type))->where()
             ->equals('assigned_user_id', $args['user_id'])
             ->queryAnd()
                 ->gte('date_closed_timestamp', $tp->start_date_timestamp)
                 ->lte('date_closed_timestamp', $tp->end_date_timestamp);
         $beans = $sq->execute();
 
-        foreach($beans as $opp) {
-            /* @var $opportunity Opportunity */
-            $opportunity = BeanFactory::getBean('Opportunities');
-            $opportunity->loadFromRow($opp);
+        foreach ($beans as $bean) {
+            /* @var $obj Opportunity|Product */
+            $obj = BeanFactory::getBean($type);
+            $obj->loadFromRow($bean);
 
-            /* @var $opp_wkst ForecastWorksheet */
-            $opp_wkst = BeanFactory::getBean('ForecastWorksheets');
-            $opp_wkst->saveRelatedOpportunity($opportunity, true);
+            /* @var $worksheet ForecastWorksheet */
+            $worksheet = BeanFactory::getBean('ForecastWorksheets');
+            if ($type == 'Opportunities') {
+                $worksheet->saveRelatedOpportunity($obj, true);
+                //BEGIN SUGARCRM flav=ent ONLY
+                // for opps we need to commit any products attached to them
+                $worksheet->saveOpportunityProducts($obj, true);
+                //END SUGARCRM flav=ent ONLY
+
+            } elseif ($type == 'Products') {
+                $worksheet->saveRelatedProduct($obj, true);
+            }
+
         }
 
         $this->job->succeedJob();

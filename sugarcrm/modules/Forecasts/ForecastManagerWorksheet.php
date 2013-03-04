@@ -66,7 +66,8 @@ class ForecastManagerWorksheet extends SugarBean
 
         $sql = 'SELECT name, assigned_user_id, team_id, team_set_id, quota, best_case, best_case_adjusted,
                 likely_case, likely_case_adjusted, worst_case, worst_case_adjusted, currency_id, base_rate,
-                timeperiod_id, user_id FROM ' . $this->table_name . ' WHERE assigned_user_id = "' . $manager->id . '"
+                timeperiod_id, user_id, opp_count, pipeline_opp_count, pipeline_amount
+                FROM ' . $this->table_name . ' WHERE assigned_user_id = "' . $manager->id . '"
                 AND timeperiod_id = "' . $db->quote($timeperiod) . '" and draft = 1 and deleted = 0';
 
         $results = $db->query($sql);
@@ -160,7 +161,10 @@ class ForecastManagerWorksheet extends SugarBean
             'currency_id',
             'base_rate',
             'timeperiod_id',
-            'quota'
+            'quota',
+            'opp_count',
+            'pipeline_opp_count',
+            'pipeline_amount'
         );
 
         // we don't have a row to update, so set the values to the adjusted column
@@ -579,6 +583,76 @@ class ForecastManagerWorksheet extends SugarBean
         $quota->save();
 
         return $newTotal;
+    }
+
+    /**
+     * This method emulates the Forecast Manager Worksheet calculateTotals method.
+     *
+     * @param $timperiod_id
+     * @param $user_id
+     * @return array
+     */
+    public function worksheetTotals($timeperiod_id, $user_id)
+    {
+        /* @var $tp TimePeriod */
+        $tp = BeanFactory::getBean('TimePeriods', $timeperiod_id);
+        if (empty($tp->id)) {
+            // timeperiod not found
+            return false;
+        }
+
+        $return = array(
+            "quota" =>  0,
+            "best_case" =>  0,
+            "best_adjusted" =>  0,
+            "likely_case" =>  0,
+            "likely_adjusted" =>  0,
+            "worst_case" =>  0,
+            "worst_adjusted" =>  0,
+            "included_opp_count" =>  0,
+            "pipeline_opp_count" =>  0,
+            "pipeline_amount" =>  0
+        );
+
+        $sql = "SELECT *
+                FROM   " . $this->table_name . "
+                WHERE  timeperiod_id = '" . $tp->id . "'
+                   AND draft = 1
+                   AND deleted = 0
+                   AND assigned_user_id = '" . $user_id . "';";
+
+        $results = $this->db->query($sql);
+
+        while ($row = $this->db->fetchByAssoc($results)) {
+            $return['quota'] = SugarMath::init($return['quota'], 6)->add(
+                SugarCurrency::convertWithRate($row['quota'], $row['base_rate'])
+            )->result();
+            $return['best_case'] = SugarMath::init($return['best_case'], 6)->add(
+                SugarCurrency::convertWithRate($row['best_case'], $row['base_rate'])
+            )->result();
+            $return['best_adjusted'] = SugarMath::init($return['best_adjusted'], 6)->add(
+                SugarCurrency::convertWithRate($row['best_case_adjusted'], $row['base_rate'])
+            )->result();
+            $return['likely_case'] = SugarMath::init($return['likely_case'], 6)->add(
+                SugarCurrency::convertWithRate($row['likely_case'], $row['base_rate'])
+            )->result();
+            $return['likely_adjusted'] = SugarMath::init($return['likely_adjusted'], 6)->add(
+                SugarCurrency::convertWithRate($row['likely_case_adjusted'], $row['base_rate'])
+            )->result();
+            $return['worst_case'] = SugarMath::init($return['worst_case'], 6)->add(
+                SugarCurrency::convertWithRate($row['worst_case'], $row['base_rate'])
+            )->result();
+            $return['worst_adjusted'] = SugarMath::init($return['worst_adjusted'], 6)->add(
+                SugarCurrency::convertWithRate($row['worst_case_adjusted'], $row['base_rate'])
+            )->result();
+
+            $return['included_opp_count'] += $row['opp_count'];
+            $return['pipeline_opp_count'] += $row['pipeline_opp_count'];
+            $return['pipeline_amount'] = SugarMath::init($return['pipeline_amount'], 6)
+                                ->add($row['pipeline_amount'])->result();
+        }
+
+        return $return;
     }
 
 

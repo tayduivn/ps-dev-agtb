@@ -39,7 +39,15 @@ class ProductToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         self::$opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         self::$product = array_shift(self::$opp->getProducts());
+        //END SUGARCRM flav=pro && flav!=ent ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        self::$product = SugarTestProductUtilities::createProduct();
+        self::$product->opportunity_id = self::$opp->id;
+        self::$product->save();
+        //END SUGARCRM flav=ent ONLY
     }
 
     public static function tearDownAfterClass()

@@ -621,8 +621,13 @@ class Product extends SugarBean
         }
 
         $this->handleSalesStatus();
+        $this->convertDateClosedToTimestamp();
 
         $id = parent::save($check_notify);
+        //BEGIN SUGARCRM flav=ent ONLY
+        // this only happens when ent is built out
+        $this->saveProductWorksheet();
+        //END SUGARCRM flav=ent ONLY
 
         // We need to update the associated product bundle and quote totals that might be impacted by this product.
         if (isset($id)) {
@@ -720,6 +725,47 @@ class Product extends SugarBean
         return $id;
     }
 
+    /**
+     * Handle Converting DateClosed to a Timestamp
+     */
+    protected function convertDateClosedToTimestamp()
+    {
+        $timedate = TimeDate::getInstance();
+        if ($timedate->check_matching_format($this->date_closed, TimeDate::DB_DATE_FORMAT)) {
+            $date_close_db = $this->date_closed;
+        } else {
+            $date_close_db = $timedate->to_db_date($this->date_closed);
+        }
+
+        if (!empty($date_close_db)) {
+            $date_close_datetime = $timedate->fromDbDate($date_close_db);
+            $this->date_closed_timestamp = $date_close_datetime->getTimestamp();
+        }
+    }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Save the updated product to the worksheet, this will create one if one does not exist
+     * this will also update one if a draft version exists
+     *
+     * @return bool         True if the worksheet was saved/updated, false otherwise
+     */
+    protected function saveProductWorksheet()
+    {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        if ($settings['is_setup']) {
+            // save the a draft of each product
+            /* @var $worksheet ForecastWorksheet */
+            $worksheet = BeanFactory::getBean('ForecastWorksheets');
+            $worksheet->saveRelatedProduct($this);
+            return true;
+        }
+
+        return false;
+    }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * Sets the account_id value for instance given an opportunityId argument of the Opportunity id
