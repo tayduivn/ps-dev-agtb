@@ -25,6 +25,7 @@
 
 require_once('include/api/RestService.php');
 require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
+require_once('modules/Forecasts/clients/base/api/ForecastManagerWorksheetsFilterApi.php');
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
@@ -96,7 +97,7 @@ class ForecastsChartManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->_user = self::$manager['user'];
-        $this->chartApi = new ForecastsChartApi();
+        $this->chartApi = new ForecastManagerWorksheetsFilterApi();
     }
 
     /**
@@ -129,15 +130,17 @@ class ForecastsChartManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected function runRestCommand($dataset = 'likely')
     {
+        $GLOBALS['current_user'] = self::$manager['user'];
         $args = array(
             'timeperiod_id' => self::$timeperiod->id,
             'user_id' => self::$manager['user']->id,
             'display_manager' => true,
             'group_by' => 'sales_stage',
-            'dataset' => $dataset
+            'dataset' => $dataset,
+            'module' => 'ForecastManagerWorksheets'
         );
 
-        return $this->chartApi->chart($this->_getServiceMock(self::$manager['user']), $args);
+        return $this->chartApi->forecastManagerWorksheetsChartGet($this->_getServiceMock(self::$manager['user']), $args);
     }
 
     /**
@@ -224,9 +227,7 @@ class ForecastsChartManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         global $app_list_strings;
         $app_list_strings = return_app_list_strings_language('en_us');
-        $rep = SugarTestUserUtilities::createAnonymousUser();
-        $rep->reports_to_id = self::$manager['user']->id;
-        $rep->save();
+        $rep = SugarTestForecastUtilities::createForecastUser(array('createOpportunities' => false,'user' => array('reports_to' => self::$manager['user']->id)));
 
         $repOpp = SugarTestOpportunityUtilities::createOpportunity();
         $repOpp->assigned_user_id = self::$manager['user']->id;

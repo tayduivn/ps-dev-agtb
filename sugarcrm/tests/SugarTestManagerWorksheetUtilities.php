@@ -27,19 +27,17 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/Forecasts/ForecastWorksheet.php';
+require_once 'modules/Forecasts/ForecastManagerWorksheet.php';
 
-class SugarTestWorksheetUtilities
+class SugarTestManagerWorksheetUtilities
 {
     private static $_createdWorksheets = array();
-
-    private function __construct() {}
 
     public static function createWorksheet($id = '')
     {
         $time = mt_rand();
-        $name = 'SugarWorksheet';
-        $worksheet = BeanFactory::newBean("ForecastWorksheets");
+        $name = 'SugarManagerWorksheet';
+        $worksheet = BeanFactory::newBean("ForecastManagerWorksheets");
         $worksheet->name = $name . $time;
 
         if(!empty($id))
@@ -56,7 +54,7 @@ class SugarTestWorksheetUtilities
     {
         foreach($worksheet_ids as $worksheet_id)
         {
-            $worksheet = BeanFactory::newBean("ForecastWorksheets");
+            $worksheet = BeanFactory::newBean("ForecastManagerWorksheets");
             $worksheet->id = $worksheet_id;
             self::$_createdWorksheets[] = $worksheet;
         }
@@ -67,12 +65,12 @@ class SugarTestWorksheetUtilities
         $worksheet_ids = self::getCreatedWorksheetIds();
         //clean up any worksheets and draft versions as well.  The drafts were made by code, not the tests,
         //so we have to do some shenanigans to find them.
-        $GLOBALS["db"]->query("delete from forecast_worksheets where id in('" . implode("', '", $worksheet_ids) . "')" );
+        $GLOBALS["db"]->query("delete from forecast_manager_worksheets where id in('" . implode("', '", $worksheet_ids) . "')" );
     }
-    
+
     public static function removeSpecificCreatedWorksheets($ids)
     {
-    	$GLOBALS["db"]->query("delete from forecast_worksheets where id in('" . implode("', '", $ids) . "')" );
+        $GLOBALS["db"]->query("delete from forecast_manager_worksheets where id in('" . implode("', '", $ids) . "')" );
     }
 
     public static function getCreatedWorksheetIds()

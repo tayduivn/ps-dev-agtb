@@ -131,6 +131,7 @@ require_once 'SugarTestQuoteUtilities.php';
 require_once 'SugarTestTeamUtilities.php';
 require_once 'SugarTestTimePeriodUtilities.php';
 require_once 'SugarTestWorksheetUtilities.php';
+require_once 'SugarTestManagerWorksheetUtilities.php';
 require_once 'SugarTestProspectUtilities.php';
 require_once 'SugarTestProspectListsUtilities.php';
 require_once 'SugarTestNotificationUtilities.php';
