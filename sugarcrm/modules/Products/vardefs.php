@@ -930,7 +930,7 @@ $dictionary['Product'] = array(
     ),
 
     'duplicate_check' => array(
-        'enabled' => false,
+        'enabled' => true,
         'FilterDuplicateCheck' => array(
             'filter_template' => array(
                 array('$and' => array(
@@ -942,6 +942,7 @@ $dictionary['Product'] = array(
                 )),
             ),
             'ranking_fields' => array(
+                array('in_field_name' => 'opportunity_id', 'dupe_field_name' => 'opportunity_id'),
                 array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
             )
         )
