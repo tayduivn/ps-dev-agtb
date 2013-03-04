@@ -127,6 +127,22 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group forecastapi
+     * @group forecasts
+     */
+    public function testForecastFilterDoesNotThrowExceptionWhenRepViewingHisOwnSheet()
+    {
+        $GLOBALS["current_user"] = self::$reportee;
+
+        $return = $this->api->forecastsCommitted(
+            SugarTestRestUtilities::getRestServiceMock(self::$reportee),
+            array('module' => 'Forecasts', 'user_id' => self::$reportee->id)
+        );
+
+        $this->assertInternalType('array', $return);
+    }
+
+    /**
      * @expectedException SugarApiExceptionInvalidParameter
      * @group forecastapi
      * @group forecasts
