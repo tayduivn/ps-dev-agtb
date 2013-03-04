@@ -101,6 +101,7 @@ $mod_strings = array (
   'LBL_EXPORT_CREATED_BY' => 'Created By ID',
   'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
   'LBL_EXPORT_PARENT_ID' => 'Related To ID',
+  'LBL_TASK_CLOSE_SUCCESS' => 'Task closed successfully.',
   'LBL_ASSIGNED_USER' => 'Assigned to',
 
 );
