@@ -160,8 +160,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 'worst_case',
-                'best_case',
-                'worst_case',
+                'best_case',  
                 array(
                     'name' => 'quote_name',
                     'label' => 'LBL_ASSOCIATED_QUOTE',
