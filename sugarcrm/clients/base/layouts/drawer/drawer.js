@@ -18,12 +18,7 @@
         this.onCloseCallback = [];
 
         //clear out drawers before routing to another page
-        var before = app.routing.before;
-        app.routing.before = _.bind(function(route, args) {
-            this.reset();
-            return before(route, args);
-        }, this);
-
+        app.routing.before("route", this.reset, this, true);
         app.view.Layout.prototype.initialize.call(this, options);
     },
 
@@ -385,6 +380,12 @@
         }
         var top = this._getDrawers(false).$top;
         return top.find(el).length > 0;
+    },
+
+    _dispose: function() {
+        app.routing.offBefore("route", this.reset, this);
+        this.reset();
+        app.view.View.prototype._dispose.call(this);
     },
 
     /**
