@@ -108,12 +108,16 @@
     addItem: function(evt) {
         if(!$(evt.currentTarget).hasClass("disabled")) {
             this.addUpdateField();
+            // this will not be called in an async process so no need to
+            // check for the view to be disposed
             this.render();
         }
     },
     removeItem: function(evt) {
         var index = $(evt.currentTarget).data('index');
         this.removeUpdateField(index);
+        // this will not be called in an async process so no need to
+        // check for the view to be disposed
         this.render();
     },
     addUpdateField: function() {
@@ -357,6 +361,9 @@
         massModel.off("add remove reset", null, this);
         massModel.on("add remove reset", this.setDisabled, this);
 
+        // show will be called only on context.trigger("list:massupdate:fire").
+        // therefore this should never be called in a situation in which
+        // the view is disposed.
         this.$el.show();
         this.render();
     },

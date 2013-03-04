@@ -85,5 +85,4 @@ describe("Base.View.Massupdate", function() {
         view.replaceUpdateField(selectedOption, 0);
         expect(view.defaultOption).toBe(selectedOption);
     });
-
 });
