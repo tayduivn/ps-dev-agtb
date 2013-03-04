@@ -506,10 +506,7 @@
     },
 
     handleCancel: function() {
-        this.toggleEdit(false);
-        if (this.model.isDirty()) {
-            this.model.revertAttributes({silent: !this.inlineEditMode});
-        }
+        this.model.revertAttributes({silent: !this.inlineEditMode});
         this.toggleEdit(false);
         this.inlineEditMode = false;
     },

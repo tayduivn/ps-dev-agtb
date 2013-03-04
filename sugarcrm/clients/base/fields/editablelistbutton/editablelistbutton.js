@@ -40,9 +40,7 @@
     },
     cancelEdit: function() {
         this.changed = false;
-        if (this.model.isDirty()) {
-            this.model.revertAttributes();
-        }
+        this.model.revertAttributes();
         this.view.toggleRow(this.model.id, false);
     },
     saveClicked: function(evt) {

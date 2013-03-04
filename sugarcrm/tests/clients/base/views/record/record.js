@@ -221,7 +221,6 @@ describe("Record View", function() {
                 case_number: 123,
                 description: 'Description'
             });
-            view.model.isDirty = function(){return false};
             var descriptionField = _.find(view.fields, function(field){
                 return field.name === 'description';
             });
@@ -305,8 +304,6 @@ describe("Record View", function() {
 
         it("Should ask the model to revert if cancel clicked", function() {
             view.render();
-            view.model.isDirty = function(){return true};
-            var dirtySpy  = sinon.spy(view.model, 'isDirty');
             view.model.revertAttributes = function(){};
             var revertSpy = sinon.spy(view.model, 'revertAttributes');
             view.context.trigger('button:edit_button:click');
@@ -315,7 +312,6 @@ describe("Record View", function() {
             });
 
             view.$('a[name=cancel_button]').click();
-            expect(dirtySpy).toHaveBeenCalled();
             expect(revertSpy).toHaveBeenCalled();
         });
     });
