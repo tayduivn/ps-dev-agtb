@@ -526,12 +526,26 @@
     },
 
     handleDelete: function() {
-        var self = this;
+        var self = this,
+            moduleContext = {
+                module: app.lang.get('LBL_MODULE_NAME_SINGULAR',this.module),
+                name: (this.model.get('name') ||
+                    (this.model.get('first_name') + ' ' + this.model.get('last_name')) || '').trim()
+            };
+
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
-            messages: app.lang.get('NTC_DELETE_CONFIRMATION'),
+            messages: app.lang.get('NTC_RECORD_DELETE_CONFIRMATION', null, moduleContext),
             onConfirm: function() {
-                self.model.destroy();
+                self.model.destroy({
+                    success: function(model, response, options) {
+                        app.alert.show('delete_success', {
+                           level: 'success',
+                           autoClose: true,
+                           messages: app.lang.get('NTC_RECORD_DELETE_SUCCESS', null, moduleContext)
+                        });
+                    }
+                });
                 app.router.navigate("#" + self.module, {trigger: true});
             }
         });

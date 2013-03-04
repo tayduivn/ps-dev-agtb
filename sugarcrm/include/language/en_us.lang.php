@@ -3803,11 +3803,15 @@ $app_strings = array (
     'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
 
+    // record delete
+    'NTC_RECORD_DELETE_CONFIRMATION' => 'Are you sure you want to delete the {{module}} {{name}}?',
+    'NTC_RECORD_DELETE_SUCCESS' => 'You deleted the {{module}} {{name}}.',
+
     //for sidecar alert view
-    'LBL_ALERT_TITLE_SUCCESS' => 'Success!',
-    'LBL_ALERT_TITLE_WARNING' => 'Warning!',
-    'LBL_ALERT_TITLE_NOTICE' => 'Notice!',
-    'LBL_ALERT_TITLE_ERROR' => 'Error!',
+    'LBL_ALERT_TITLE_SUCCESS' => 'Success:',
+    'LBL_ALERT_TITLE_WARNING' => 'Warning:',
+    'LBL_ALERT_TITLE_NOTICE' => 'Notice:',
+    'LBL_ALERT_TITLE_ERROR' => 'Error:',
     'LBL_ALERT_TITLE_LOADING' => 'Loading',
 );
 
