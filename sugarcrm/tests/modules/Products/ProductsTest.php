@@ -265,6 +265,65 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         unset($product);
     }
 
+    /**
+     * @group products
+     */
+    public function testSalesStatusChangedToConvertedToQuoteWhenQuoteIdSavedToProduct()
+    {
+        $product = new MockProduct();
+        $product->id = "test_id";
+        $product->quote_id = 'my_awesome_new_quote_id';
+        $product->sales_stage = 'test1';
+        $product->fetched_row = array(
+            'sales_status' => 'New',
+            'sales_stage' => 'test1',
+            'quote_id' => '',
+        );
+
+        $product->handleSalesStatus();
+
+        $this->assertEquals(Product::STATUS_CONVERTED_TO_QUOTE, $product->sales_status);
+        unset($product);
+    }
+
+    /**
+     * @dataProvider dataProviderSalesStatusDoesNotChangeWhenQuoteIdIsEmpty
+     * @group products
+     *
+     * @param string $quote_id        The quote_id to test with
+     */
+    public function testSalesStatusDoesNotChangeWhenQuoteIdIsEmpty($quote_id)
+    {
+        $product = new MockProduct();
+        $product->id = "test_id";
+        $product->quote_id = $quote_id;
+        $product->sales_status = Opportunity::STATUS_NEW;
+        $product->sales_stage = 'test1';
+        $product->fetched_row = array(
+            'sales_status' => Opportunity::STATUS_NEW,
+            'sales_stage' => 'test1',
+            'quote_id' => '',
+        );
+
+        $product->handleSalesStatus();
+
+        $this->assertEquals(Opportunity::STATUS_NEW, $product->sales_status);
+        unset($product);
+    }
+
+    /**
+     * Data Providers
+     *
+     * @return array
+     */
+    public static function dataProviderSalesStatusDoesNotChangeWhenQuoteIdIsEmpty()
+    {
+        return array(
+            array(''),
+            array(null)
+        );
+    }
+
 
     /**
      * @group products

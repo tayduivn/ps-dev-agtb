@@ -25,6 +25,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 // Product is used to store customer information.
 class Product extends SugarBean
 {
+    CONST STATUS_CONVERTED_TO_QUOTE = 'Converted to Quote';
+
     const STATUS_QUOTED = 'Quotes';
 
     // Stored fields
@@ -740,8 +742,6 @@ class Product extends SugarBean
 
     /**
      * Code to make sure that the Sales Status field is mapped correctly with the Sales Stage field
-     *
-     * TODO: handle when this item gets converted to a quote
      */
     protected function handleSalesStatus()
     {
@@ -749,14 +749,22 @@ class Product extends SugarBean
         // products
 
         // only run this when the sales_status doesn't change and the sales_stage does
-        if (($this->fetched_row['sales_status'] == $this->sales_status) && $this->fetched_row['sales_stage'] != $this->sales_stage) {
+        if (($this->fetched_row['sales_status'] == $this->sales_status)
+            && $this->fetched_row['sales_stage'] != $this->sales_stage
+        ) {
             // handle closed lost and closed won
-            if ($this->sales_stage == Opportunity::STAGE_CLOSED_LOST || $this->sales_stage == Opportunity::STAGE_CLOSED_WON) {
+            if ($this->sales_stage == Opportunity::STAGE_CLOSED_LOST
+                || $this->sales_stage == Opportunity::STAGE_CLOSED_WON
+            ) {
                 $this->sales_status = $this->sales_stage;
             } else {
                 // move it to in progress
                 $this->sales_status = Opportunity::STATUS_IN_PROGRESS;
             }
+        }
+
+        if (empty($this->fetched_row['quote_id']) && !empty($this->quote_id)) {
+            $this->sales_status = Product::STATUS_CONVERTED_TO_QUOTE;
         }
 
         // if we have a new bean, set the sales_status to be 'New'
