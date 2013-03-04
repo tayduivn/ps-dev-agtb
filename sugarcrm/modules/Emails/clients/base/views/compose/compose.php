@@ -41,7 +41,6 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
             'fields'       => array(
                 array(
                     'name'      => 'email_config',
-                    'id_name'   => 'email_config_id',
                     'label'     => 'LBL_FROM',
                     'type'      => 'sender',
                     'css_class' => 'inherit-width',
