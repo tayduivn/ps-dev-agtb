@@ -36,6 +36,9 @@ class SugarForecasting_ReportingUsersTest extends Sugar_PHPUnit_Framework_TestCa
         SugarTestHelper::setUp('beanList');
 
         self::$users['mgr'] = SugarTestUserUtilities::createAnonymousUser();
+
+        $GLOBALS['current_user'] = self::$users['mgr'];
+
         self::$users['mgr2'] = SugarTestUserUtilities::createAnonymousUser();
         self::$users['mgr2']->reports_to_id = self::$users['mgr']->id;
         self::$users['mgr2']->save();
@@ -67,6 +70,7 @@ class SugarForecasting_ReportingUsersTest extends Sugar_PHPUnit_Framework_TestCa
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
+        $GLOBALS['current_user'] = null;
         parent::tearDown();
     }
     
