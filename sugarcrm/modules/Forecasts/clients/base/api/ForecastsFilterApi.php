@@ -184,7 +184,7 @@ class ForecastsFilterApi extends FilterApi
             global $mod_strings, $current_language;
             $mod_strings = return_module_language($current_language, 'Forecasts');
 
-            if (!User::isManager($api->user->id)) {
+            if ($user_id != $api->user->id && !User::isManager($api->user->id)) {
                 throw new SugarApiExceptionNotAuthorized(
                     string_format($mod_strings['LBL_ERROR_NOT_MANAGER'], array($api->user->id, $user_id))
                 );
