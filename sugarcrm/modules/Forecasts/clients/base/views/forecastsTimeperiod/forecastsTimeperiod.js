@@ -93,7 +93,7 @@
         /**
          * Set the initial selection value from app defaults, eventually, this should probably come from a user pref.
          */
-        field.def.value = app.defaultSelections.timeperiod_id.id;
+        field.model.set({'selectedTimePeriod': app.defaultSelections.timeperiod_id.id});
         return field;
     }
 
