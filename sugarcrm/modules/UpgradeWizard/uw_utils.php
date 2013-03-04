@@ -395,7 +395,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 // to use this function to empty a directory, write:
 // recursive_remove_directory('path/to/full_directory');
 
-function recursive_empty_or_remove_directory($directory, $exclude_dirs=null,$exclude_files=null,$empty=TRUE)
+function recursive_empty_or_remove_directory($directory, $exclude_dirs=null,$exclude_files=null,$empty=true)
 {
 	// if the path has a slash at the end we remove it here
 	if(substr($directory,-1) == '/')
@@ -407,13 +407,13 @@ function recursive_empty_or_remove_directory($directory, $exclude_dirs=null,$exc
 	if(!file_exists($directory) || !is_dir($directory))
 	{
 		// ... we return false and exit the function
-		return FALSE;
+		return false;
 
 	// ... if the path is not readable
 	}elseif(!is_readable($directory))
 	{
 		// ... we return false and exit the function
-		return FALSE;
+		return false;
 
 	// ... else if the path is readable
 	}else{
@@ -422,7 +422,7 @@ function recursive_empty_or_remove_directory($directory, $exclude_dirs=null,$exc
 		$handle = opendir($directory);
 
 		// and scan through the items inside
-		while (FALSE !== ($item = readdir($handle)))
+		while (false !== ($item = readdir($handle)))
 		{
 			// if the filepointer is not the current directory
 			// or the parent directory
@@ -457,17 +457,17 @@ function recursive_empty_or_remove_directory($directory, $exclude_dirs=null,$exc
 		closedir($handle);
 
 		// if the option to empty is not set to true
-		if($empty == FALSE)
+		if($empty == false)
 		{
 			// try to delete the now empty directory
 			if(!rmdir($directory))
 			{
 				// return false if not possible
-				return FALSE;
+				return false;
 			}
 		}
 		// return success
-		return TRUE;
+		return true;
 	}
 }
 // ------------------------------------------------------------
@@ -2396,7 +2396,7 @@ function set_upgrade_vars(){
     	$upgrade_config[1]['upgrade_vars'] = array();
     }
 
-	if(!isset($upgrade_vars) || $upgrade_vars == NULL){
+	if(!isset($upgrade_vars) || $upgrade_vars == null){
 		$upgrade_vars = array();
 	}
 	if(isset($_SESSION['unzip_dir']) && !empty($_SESSION['unzip_dir']) && file_exists($_SESSION['unzip_dir'])){
@@ -4511,5 +4511,15 @@ function updateOpportunitiesForForecasting()
     $job->assigned_user_id = $current_user->id;
     $job->save();
     return $job->id;
+}
+
+/**
+ * Add the platform to the portal config settings
+ */
+function updatePortalConfigToContainPlatform()
+{
+    $db = DBManagerFactory::getInstance();
+    $sql = "UPDATE config SET platform = 'support' where category = 'portal'";
+    $db->query($sql);
 }
 //END SUGARCRM flav=pro ONLY

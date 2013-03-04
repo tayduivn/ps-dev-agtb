@@ -346,6 +346,9 @@ if (version_compare($sugar_version, '6.7.0', '<')) {
     require_once($unzip_dir.'/'.$zip_from_dir.'/modules/Forecasts/ForecastsDefaults.php');
     ForecastsDefaults::setupForecastSettings(true, $sugar_version, getUpgradeVersion());
     ForecastsDefaults::upgradeColumns();
+
+    // do the config update to add the 'support' platform to any config with the category of 'portal'
+    updatePortalConfigToContainPlatform();
 }
 //END SUGARCRM flav=PRO ONLY
 
