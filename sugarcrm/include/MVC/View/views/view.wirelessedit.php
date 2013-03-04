@@ -44,12 +44,12 @@ class ViewWirelessedit extends SugarWirelessView
         $this->ss->assign('RELATE_FIELD',strtolower($beanList[$_POST['related_module']]).'_id');
 
         if ( isset($_POST['from_subpanel']) && $_POST['from_subpanel'] == '1' ) {
-	            $defs = SugarAutoLoader::existingCustomOne('modules/'.$module.'/metadata/wireless.subpaneldefs.php');
+	            $defs = SugarAutoLoader::existingCustomOne('modules/'.$_POST['related_module'].'/metadata/wireless.subpaneldefs.php');
 	            if($defs) {
 	                require $defs;
 	            }
                 //If an Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php file exists, then also load it as well
-                $defs = SugarAutoLoader::loadExtension("wireless_subpanels", $module);
+                $defs = SugarAutoLoader::loadExtension("wireless_subpanels", $_POST['related_module']);
                 if($defs) {
                     require $defs;
                 }
