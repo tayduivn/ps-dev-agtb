@@ -53,11 +53,11 @@ class OutboundEmailConfigurationApi extends ModuleApi
         $configs = OutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
 
         foreach ($configs as $config) {
+            $inboxId    = $config->getInboxId();
             $configType = $config->getConfigType();
 
             $list[] = array(
-                "id"      => $config->getConfigId(),
-                "name"    => $config->getConfigName(),
+                "id"      => (is_null($inboxId)) ? $config->getConfigId() : $inboxId,
                 "display" => $config->getDisplayName(),
                 "type"    => $configType,
                 "default" => ($configType == "system"),
