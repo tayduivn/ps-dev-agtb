@@ -1,8 +1,8 @@
 ({
-    extendsFrom: "ListView",
+    extendsFrom: "FlexListView",
 
     initialize: function(options) {
-        app.view.views.ListView.prototype.initialize.call(this, options);
+        app.view.views.FlexListView.prototype.initialize.call(this, options);
         this.collection.sync = this.sync;
         this.context.on("compose:addressbook:search", this._search, this);
     },
