@@ -217,22 +217,19 @@ class SugarTestForecastUtilities
                     $return['included_opps_totals']['likely'] += $opp->amount;
                     $return['included_opps_totals']['best'] += $opp->best_case;
                     $return['included_opps_totals']['worst'] += $opp->worst_case;
-                    
+                    $return['included_opps_totals']['base_rate'] = $opp->base_rate;
+
                     if ($config['createWorksheet'] === true) {
-                        $worksheet = SugarTestWorksheetUtilities::createWorksheet();
-                        $worksheet->user_id = $user->id;
-                        $worksheet->related_id = $product->id;
-                        $worksheet->related_forecast_type = 'Product';
-                        $worksheet->forecast_type = 'Direct';
-                        $worksheet->timeperiod_id = $config['timeperiod_id'];
-                        $worksheet->best_case = $opp->best_case;
-                        $worksheet->likely_case = $opp->amount;
-                        $worksheet->worst_case = $opp->worst_case;
-                        $worksheet->op_probability = $opp->probability;
-                        $worksheet->commit_stage = $opp->commit_stage;
-                        $worksheet->currency_id = $opp->currency_id;
-                        $worksheet->save();
-    
+                        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+                        $worksheet->retrieve_by_string_fields(
+                            array(
+                                'parent_id' => $opp->id,
+                                'parent_type' => $opp->module_name,
+                                'deleted' => 0,
+                                'draft' => 1
+                            )
+                        );
+
                         $return['opp_worksheets'][] = $worksheet;
                     }
                 }
@@ -242,6 +239,35 @@ class SugarTestForecastUtilities
                 $opportunities[] = $opp;
 
                 $return['opportunities'][] = $opp;
+            }
+
+            if ($config['createQuota'] === true) {
+                //create rollup quota too
+                if(!empty($user->reports_to_id))
+                {
+                    $quota = SugarTestQuotaUtilities::createQuota($config['quota']['amount']);
+                    $quota->user_id = $user->id;
+                    $quota->created_by = 1;
+                    $quota->modified_user_id = 1;
+                    $quota->quota_type = 'Rollup';
+                    $quota->timeperiod_id = $config['timeperiod_id'];
+                    $quota->team_set_id = 1;
+                    $quota->currency_id = $config['currency_id'];
+                    $quota->committed = 1;
+                    $quota->save();
+                }
+                $quota = SugarTestQuotaUtilities::createQuota($config['quota']['amount']);
+                $quota->user_id = $user->id;
+                $quota->created_by = 1;
+                $quota->modified_user_id = 1;
+                $quota->quota_type = 'Direct';
+                $quota->timeperiod_id = $config['timeperiod_id'];
+                $quota->team_set_id = 1;
+                $quota->currency_id = $config['currency_id'];
+                $quota->committed = 1;
+                $quota->save();
+
+                $return['quota'] = $quota;
             }
 
             if ($config['createForecast'] === true) {
@@ -264,34 +290,18 @@ class SugarTestForecastUtilities
 
                 $return['forecast'] = $forecast;
             }
-
-            if ($config['createQuota'] === true) {
-                $quota = SugarTestQuotaUtilities::createQuota($config['quota']['amount']);
-                $quota->user_id = $user->id;
-                $quota->created_by = 1;
-                $quota->modified_user_id = 1;
-                $quota->quota_type = (empty($user->reports_to_id)) ? 'Direct' : 'Rollup';
-                $quota->timeperiod_id = $config['timeperiod_id'];
-                $quota->team_set_id = 1;
-                $quota->currency_id = $config['currency_id'];
-                $quota->committed = 1;
-                $quota->save();
-
-                $return['quota'] = $quota;
-            }
-
             if ($config['createWorksheet'] === true) {
-                $worksheet = SugarTestWorksheetUtilities::createWorksheet();
-                $worksheet->user_id = (empty($user->reports_to_id)) ? $user->id : $user->reports_to_id;
-                $worksheet->related_id = $user->id;
-                $worksheet->related_forecast_type = 'User';
-                $worksheet->forecast_type = 'Rollup';
-                $worksheet->forecast_type = 'Rollup';
+                $worksheet = SugarTestManagerWorksheetUtilities::createWorksheet();
+                $worksheet->assigned_user_id = (empty($user->reports_to_id)) ? $user->id : $user->reports_to_id;
                 $worksheet->timeperiod_id = $config['timeperiod_id'];
-                $worksheet->best_case = $forecast_best_total + 100;
-                $worksheet->likely_case = $forecast_likely_total + 100;
-                $worksheet->worst_case = $forecast_likely_total + 100;
+                $worksheet->best_case = $forecast_best_total;
+                $worksheet->likely_case = $forecast_likely_total;
+                $worksheet->worst_case = $forecast_worst_total;
+                $worksheet->best_case_adjusted = $forecast_best_total + 100;
+                $worksheet->likely_case_adjusted = $forecast_likely_total + 100;
+                $worksheet->worst_case_adjusted = $forecast_worst_total + 100;
                 $worksheet->currency_id = $config['currency_id'];
+                $worksheet->quota = $config['quota']['amount'];
                 $worksheet->save();
 
                 $return['worksheet'] = $worksheet;
@@ -400,6 +410,7 @@ class SugarTestForecastUtilities
         SugarTestQuotaUtilities::setCreatedUserIds(SugarTestUserUtilities::getCreatedUserIds());
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
+        SugarTestManagerWorksheetUtilities::removeAllCreatedWorksheets();
     }
 
 

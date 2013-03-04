@@ -1836,6 +1836,13 @@ $app_list_strings = array (
       0 => 'No',
       1 => 'Yes'
   ),
+
+  'opportunity_metrics_dom' => array(
+      'won' => 'Won',
+      'lost' => 'Lost',
+      'active' => 'Active',
+  ),
+
   'lead_conv_activity_opt' =>
   array(
         'copy' => 'Copy',
@@ -1861,7 +1868,6 @@ $app_strings = array (
   'LBL_TOUR_SKIP' => 'Skip',
   'LBL_TOUR_BACK' => 'Back',
   'LBL_TOUR_CLOSE' => 'Close',
-  'LBL_TOUR_BTN_DONE' => 'Done',
   'LBL_TOUR_BTN_DONE' => 'Done',
   'LBL_TOUR_TAKE_TOUR' => 'Take the tour',
   'LBL_TOUR_FULL_TOUR' => 'Full Tour',
@@ -2745,6 +2751,9 @@ $app_strings = array (
     'LBL_REMINDERS_UPCOMING' => 'Upcoming',
     'LBL_REMINDERS_NONE_FOUND' => 'No reminders found.',
     'LBL_REMINDERS_FINISHED' => 'Finished!',
+
+    // Strings for Opportunity Metrics widget
+    'LBL_OPPORTUNITY_METRICS' => 'Opportunity Metrics',
 
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',

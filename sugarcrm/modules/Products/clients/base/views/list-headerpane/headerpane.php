@@ -37,7 +37,7 @@ $viewdefs['Products']['base']['view']['list-headerpane'] = array(
             'type'    => 'button',
             'label'   => 'LBL_CREATE_BUTTON_LABEL',
             'css_class' => 'btn-primary',
-            'value' => 'create'
+            'acl_action' => 'create'
         ),
         array(
             'name' => 'sidebar_toggle',

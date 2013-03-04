@@ -224,6 +224,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('mod_strings', array('Users'));
         $admin = BeanFactory::getBean('Administration');
         $adminConfig = $admin->getConfigForModule('Forecasts');
         self::$_isSetup = $adminConfig['is_setup'];
@@ -559,8 +560,6 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
      */
     public function testWorksheetManagerToManager()
     {
-        $db = DBManagerFactory::getInstance();
-
         $this->_createOpportunityForUser('sarah', 10);
         $this->_created_items = ForecastsSeedData::populateSeedData( array($this->_timeperiod->id => $this->_timeperiod) );
         $worksheets_ids = WorksheetSeedData::populateSeedData();
@@ -580,7 +579,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
 
         $api = new SugarForecasting_Manager( array('timeperiod_id' => $this->_timeperiod->id, 'user_id' => $this->_users['sarah']->id) );
         $result = $api->process();
-        $this->assertEquals(1, sizeof($result)); // sarah opps only
+        $this->assertEquals(0, sizeof($result)); // this is really 0 since she it a manger any more
     }
 
     /**

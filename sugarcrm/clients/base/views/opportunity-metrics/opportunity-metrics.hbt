@@ -1,22 +1,14 @@
-<div class="block thumbnail widget">
-    <div class="opportunity-metrics-widget">
-        <h4 data-tour="tour-opportunity-metrics">Opportunity Metrics</h4>
-        <div class="opportunity-metrics-wrapper">
-            <div class="opportunity-metric">
-                <h6 class="opportunity-metric-description">{{this.collections.won.count}}{{#eq this.collections.won.count "1"}} deal{{else}} deals{{/eq}} won for</h6>
-                <h6 class="deal-amount-metric won">{{this.collections.won.amount_usdollar}} <i class="icon-caret-up"></i>
-                </h6>
-            </div>
-            <div class="opportunity-metric">
-                <h6 class="opportunity-metric-description">{{this.collections.lost.count}}{{#eq this.collections.lost.count "1"}} deal{{else}} deals{{/eq}} lost for</h6>
-                <h6 class="deal-amount-metric lost">{{this.collections.lost.amount_usdollar}} <i class="icon-caret-down"></i>
-                </h6>
-            </div>
-            <div class="opportunity-metric">
-                <h6 class="opportunity-metric-description">{{this.collections.active.count}}{{#eq this.collections.active.count "1"}} deal{{else}} deals{{/eq}} active for</h6>
-                <h6 class="deal-amount-metric active">{{this.collections.active.amount_usdollar}} <i class="icon-minus"></i>
-                </h6>
+<h4 data-tour="tour-opportunity-metrics">{{str "LBL_OPPORTUNITY_METRICS"}}</h4>
+<div class="opportunity-metrics-wrapper">
+    {{#eachOptions metricsCollection}}
+        <div class="opportunity-metric">
+            <div class="deal-amount-metric {{key}}">{{value.formattedAmount}} <i class="icon-{{value.icon}}"></i></div>
+            <div class="opportunity-metric-description">
+                <span class="label label-{{value.cssClass}}">
+                    {{value.count}}
+                </span>
+                {{str value.dealLabel "Opportunities"}} {{value.stageLabel}}
             </div>
         </div>
-    </div>
+    {{/eachOptions}}
 </div>

@@ -39,6 +39,10 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
     {
         $this->isManager = true;
 
+        if (isset($args['data_array']) && $args['data_array']) {
+            $this->dataArray = $args['data_array'];
+        }
+
         parent::__construct($args);
 
         if (!is_array($this->dataset)) {
@@ -52,7 +56,6 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
      */
     public function process()
     {
-        $this->getManagerData();
         return $this->formatDataForChart();
     }
 
@@ -74,7 +77,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
     {
         global $current_language;
         // since we are converting everything to base currency, we need to get the base currency id for the formatting
-        $currency_id = -99;
+        $currency_id = '-99';
 
         // get the language strings for the modules that we need
         $forecast_strings = return_module_language($current_language, 'Forecasts');
@@ -96,7 +99,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
             $val = $this->defaultValueArray;
 
             $val['chart_id'] = md5($data['id']);
-            $val['label'] = html_entity_decode($data['label'], ENT_QUOTES);
+            $val['label'] = html_entity_decode($data['name'], ENT_QUOTES);
             $val['goalmarkervaluelabel'][] = SugarCurrency::formatAmountUserLocale($quota, $currency_id);
             $val['goalmarkervalue'][] = number_format($quota, 2, '.', '');
             $val['links'] = array();
@@ -107,15 +110,18 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
             foreach ($this->dataset as $dataset) {
                 if (!isset($dataset_sums[$dataset])) {
                     $dataset_sums[$dataset] = 0;
-                    $dataset_sums[$dataset . '_adjusted'] = 0;
+                    $dataset_sums[$dataset . '_case_adjusted'] = 0;
                 }
 
                 // converts the amounts to base
-                $data_case = SugarCurrency::convertAmountToBase($data[$dataset . '_case'], $data['currency_id']);
-                $data_adjusted = SugarCurrency::convertAmountToBase($data[$dataset . '_adjusted'], $data['currency_id']);
+                $data_case = SugarCurrency::convertWithRate($data[$dataset . '_case'], $data['base_rate']);
+                $data_adjusted = SugarCurrency::convertWithRate(
+                    $data[$dataset . '_case_adjusted'],
+                    $data['base_rate']
+                );
 
                 $dataset_sums[$dataset] += $data_case;
-                $dataset_sums[$dataset . '_adjusted'] += $data_adjusted;
+                $dataset_sums[$dataset . '_case_adjusted'] += $data_adjusted;
 
                 // set the empty  links
                 $val['links'][] = "";
@@ -126,9 +132,15 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
                 $val['valuelabels'][] = SugarCurrency::formatAmountUserLocale($data_case, $currency_id);
                 $val['valuelabels'][] = SugarCurrency::formatAmountUserLocale($data_adjusted, $currency_id);
                 $val['goalmarkervalue'][] = number_format($dataset_sums[$dataset], 2, '.', '');
-                $val['goalmarkervalue'][] = number_format($dataset_sums[$dataset . '_adjusted'], 2, '.', '');
-                $val['goalmarkervaluelabel'][] = SugarCurrency::formatAmountUserLocale($dataset_sums[$dataset], $currency_id);
-                $val['goalmarkervaluelabel'][] = SugarCurrency::formatAmountUserLocale($dataset_sums[$dataset . '_adjusted'], $currency_id);
+                $val['goalmarkervalue'][] = number_format($dataset_sums[$dataset . '_case_adjusted'], 2, '.', '');
+                $val['goalmarkervaluelabel'][] = SugarCurrency::formatAmountUserLocale(
+                    $dataset_sums[$dataset],
+                    $currency_id
+                );
+                $val['goalmarkervaluelabel'][] = SugarCurrency::formatAmountUserLocale(
+                    $dataset_sums[$dataset . '_case_adjusted'],
+                    $currency_id
+                );
             }
             $values[] = $val;
         }
@@ -212,7 +224,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         //grab user that is the target of this call to check if it is the top level manager
         $targetedUser = BeanFactory::getBean("Users", $this->getArg('user_id'));
 
-        if(!empty($targetedUser->reports_to_id)) {
+        if (!empty($targetedUser->reports_to_id)) {
             $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
             return SugarCurrency::convertAmountToBase($quotaData["amount"], $quotaData['currency_id']);
         }
@@ -235,17 +247,19 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         $sumA = 0;
         $sumB = 0;
 
-        foreach($this->dataset as $dataset) {
-            $sumA += SugarCurrency::convertAmountToBase($a[$dataset . '_adjusted'], $a['currency_id']);
-            $sumB += SugarCurrency::convertAmountToBase($b[$dataset . '_adjusted'], $b['currency_id']);
+        foreach ($this->dataset as $dataset) {
+            $sumA += SugarCurrency::convertAmountToBase($a[$dataset . '_case_adjusted'], $a['currency_id']);
+            $sumB += SugarCurrency::convertAmountToBase($b[$dataset . '_case_adjusted'], $b['currency_id']);
         }
 
         if (intval($sumA) > intval($sumB)) {
             return -1;
-        } else if (intval($sumA) < intval($sumB)) {
-            return 1;
         } else {
-            return 0;
+            if (intval($sumA) < intval($sumB)) {
+                return 1;
+            } else {
+                return 0;
+            }
         }
     }
 

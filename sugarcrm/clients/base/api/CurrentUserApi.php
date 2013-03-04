@@ -35,7 +35,7 @@ class CurrentUserApi extends SugarApi
                 'pathVars' => array(),
                 'method' => 'retrieveCurrentUser',
                 'shortHelp' => 'Returns current user',
-                'longHelp' => 'include/api/help/me.html',
+                'longHelp' => 'include/api/help/me_get_help.html',
             ),
             'update' => array(
                 'reqType' => 'PUT',
@@ -43,7 +43,7 @@ class CurrentUserApi extends SugarApi
                 'pathVars' => array(),
                 'method' => 'updateCurrentUser',
                 'shortHelp' => 'Updates current user',
-                'longHelp' => 'include/api/help/me.html',
+                'longHelp' => 'include/api/help/me_put_help.html',
             ),
             'updatePassword' =>  array(
                 'reqType' => 'PUT',
@@ -51,7 +51,7 @@ class CurrentUserApi extends SugarApi
                 'pathVars'=> array(''),
                 'method' => 'updatePassword',
                 'shortHelp' => "Updates current user's password",
-                'longHelp' => 'include/api/help/change_password.html',
+                'longHelp' => 'include/api/help/me_password_put_help.html',
             ),
             'verifyPassword' =>  array(
                 'reqType' => 'POST',
@@ -59,7 +59,7 @@ class CurrentUserApi extends SugarApi
                 'pathVars'=> array(''),
                 'method' => 'verifyPassword',
                 'shortHelp' => "Verifies current user's password",
-                'longHelp' => 'include/api/help/verify_password.html',
+                'longHelp' => 'include/api/help/me_password_post_help.html',
             ),
 
             'userPreferences' =>  array(
@@ -68,7 +68,7 @@ class CurrentUserApi extends SugarApi
                 'pathVars'=> array(),
                 'method' => 'userPreferences',
                 'shortHelp' => "Returns all the current user's stored preferences",
-                'longHelp' => 'include/api/help/user_preferences.html',
+                'longHelp' => 'include/api/help/me_preferences_get_help.html',
             ),
 
             'userPreferencesSave' =>  array(
@@ -77,7 +77,7 @@ class CurrentUserApi extends SugarApi
                 'pathVars'=> array(),
                 'method' => 'userPreferencesSave',
                 'shortHelp' => "Mass Save Updated Preferences For a User",
-                'longHelp' => 'include/api/help/user_preferences.html',
+                'longHelp' => 'include/api/help/me_preferences_put_help.html',
             ),
 
             'userPreference' =>  array(
@@ -86,7 +86,7 @@ class CurrentUserApi extends SugarApi
                 'pathVars'=> array('', '', 'preference_name'),
                 'method' => 'userPreference',
                 'shortHelp' => "Returns a specific preference for the current user",
-                'longHelp' => 'include/api/help/user_preferences.html',
+                'longHelp' => 'include/api/help/me_preference_preference_name_get_help.html',
             ),
 
             'userPreferenceCreate' =>  array(
@@ -95,7 +95,7 @@ class CurrentUserApi extends SugarApi
                 'pathVars'=> array('', '', 'preference_name'),
                 'method' => 'userPreferenceSave',
                 'shortHelp' => "Create a preference for the current user",
-                'longHelp' => 'include/api/help/user_preferences.html',
+                'longHelp' => 'include/api/help/me_preference_preference_name_post_help.html',
             ),
             'userPreferenceUpdate' =>  array(
                 'reqType' => 'PUT',
@@ -103,7 +103,7 @@ class CurrentUserApi extends SugarApi
                 'pathVars'=> array('', '', 'preference_name'),
                 'method' => 'userPreferenceSave',
                 'shortHelp' => "Update a specific preference for the current user",
-                'longHelp' => 'include/api/help/user_preferences.html',
+                'longHelp' => 'include/api/help/me_preference_preference_name_put_help.html',
             ),
             'userPreferenceDelete' =>  array(
                 'reqType' => 'DELETE',
@@ -111,7 +111,7 @@ class CurrentUserApi extends SugarApi
                 'pathVars'=> array('', '', 'preference_name'),
                 'method' => 'userPreferenceDelete',
                 'shortHelp' => "Delete a specific preference for the current user",
-                'longHelp' => 'include/api/help/user_preferences.html',
+                'longHelp' => 'include/api/help/me_preference_preference_name_delete_help.html',
             ),
         );
     }

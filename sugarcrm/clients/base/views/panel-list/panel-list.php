@@ -35,33 +35,32 @@ $viewdefs['base']['view']['panel-list'] = array(
                 'name' => 'edit_button',
                 'type' => 'button',
                 'label' => 'LBL_MASS_UPDATE',
-                'value' => 'edit',
                 'primary' => true,
                 'events' => array(
                     'click' => 'function(e){
                     this.view.layout.trigger("list:massupdate:fire");
                     }'
                 ),
-                'value' => 'massupdate',
+                'acl_action' => 'massupdate',
             ),
             array(
                 'name' => 'delete_button',
                 'type' => 'button',
                 'label' => 'LBL_DELETE',
-                'value' => 'delete',
+                'acl_action' => 'delete',
                 'primary' => true,
                 'events' => array(
                     'click' => 'function(e){
                     this.view.layout.trigger("list:massdelete:fire");
                     }'
                 ),
-                'value' => 'delete',
+                'acl_action' => 'delete',
             ),
             array(
                 'name' => 'export_button',
                 'type' => 'button',
                 'label' => 'LBL_EXPORT',
-                'value' => 'export',
+                'acl_action' => 'export',
                 'primary' => true,
                 'events' => array(
                     'click' => 'function(e){
@@ -80,7 +79,7 @@ $viewdefs['base']['view']['panel-list'] = array(
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
                 'icon' => 'icon-eye-open',
-                'value' => 'view',
+                'acl_action' => 'view',
             ),
             array(
                 'type' => 'rowaction',
@@ -88,7 +87,7 @@ $viewdefs['base']['view']['panel-list'] = array(
                 'icon' => 'icon-pencil',
                 'label' => 'LBL_EDIT_BUTTON',
                 'event' => 'list:editrow:fire',
-                'value' => 'edit',
+                'acl_action' => 'edit',
             ),
 
             array(
@@ -96,7 +95,7 @@ $viewdefs['base']['view']['panel-list'] = array(
                 'icon' => 'icon-trash',
                 'event' => 'list:unlinkrow:fire',
                 'label' => 'LBL_UNLINK_BUTTON',
-                'value' => 'unlink',
+                'acl_action' => 'delete',
             ),
         ),
     ),

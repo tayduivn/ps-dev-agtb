@@ -35,13 +35,14 @@ $viewdefs['Prospects']['base']['view']['headerpane'] = array(
             'type'    => 'button',
             'label'   => 'LBL_CREATE_BUTTON_LABEL',
             'css_class' => 'btn-primary',
-            'value' => 'create'
+            'acl_action' => 'create'
         ),
         array(
             'name'    => 'import_vcard_button',
             'type'    => 'button',
             'label'   => 'LBL_IMPORT_VCARD',
             'css_class' => 'btn-primary',
+            'acl_action' => 'create',
             'events' => array(
                 'click' => 'function(e){
                     app.drawer.open({

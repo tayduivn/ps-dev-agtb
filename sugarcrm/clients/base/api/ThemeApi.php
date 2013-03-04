@@ -42,7 +42,7 @@ class ThemeApi extends SugarApi
                 'pathVars' => array(''),
                 'method' => 'previewCSS',
                 'shortHelp' => 'Generate the bootstrap.css file',
-                'longHelp' => 'include/api/help/themePreview.html',
+                'longHelp' => 'include/api/help/css_get_help.html',
                 'noLoginRequired' => true,
             ),
             'getCustomThemeVars' => array(
@@ -51,7 +51,7 @@ class ThemeApi extends SugarApi
                 'pathVars' => array(''),
                 'method' => 'getCustomThemeVars',
                 'shortHelp' => 'Get the customizable variables of a custom theme',
-                'longHelp' => 'include/api/help/themeGet.html',
+                'longHelp' => 'include/api/help/theme_get_help.html',
                 'noLoginRequired' => true,
             ),
             'updateCustomTheme' => array(
@@ -60,7 +60,7 @@ class ThemeApi extends SugarApi
                 'pathVars' => array(''),
                 'method' => 'updateCustomTheme',
                 'shortHelp' => 'Update the customizable variables of a custom theme',
-                'longHelp' => 'include/api/help/themePost.html',
+                'longHelp' => 'include/api/help/theme_post_help.html',
             ),
         );
     }

@@ -31,7 +31,7 @@ class RelateRecordApi extends ModuleApi {
                 'pathVars'  => array('module',  'record','',    'link_name','remote_id'),
                 'method'    => 'getRelatedRecord',
                 'shortHelp' => 'Fetch a single record related to this module',
-                'longHelp'  => 'include/api/help/getRelatedRecord.html',
+                'longHelp'  => 'include/api/help/module_record_link_link_name_remote_id_get_help.html',
             ),
             'createRelatedRecord' => array(
                 'reqType'   => 'POST',
@@ -39,7 +39,7 @@ class RelateRecordApi extends ModuleApi {
                 'pathVars'  => array('module',  'record','',    'link_name'),
                 'method'    => 'createRelatedRecord',
                 'shortHelp' => 'Create a single record and relate it to this module',
-                'longHelp'  => 'include/api/help/createRelatedRecord.html',
+                'longHelp'  => 'include/api/help/module_record_link_link_name_post_help.html',
             ),
             'createRelatedLink' => array(
                 'reqType'   => 'POST',
@@ -47,7 +47,7 @@ class RelateRecordApi extends ModuleApi {
                 'pathVars'  => array('module',  'record','',    'link_name','remote_id'),
                 'method'    => 'createRelatedLink',
                 'shortHelp' => 'Relates an existing record to this module',
-                'longHelp'  => 'include/api/help/createRelatedLink.html',
+                'longHelp'  => 'include/api/help/module_record_link_link_name_remote_id_post_help.html',
             ),
             'updateRelatedLink' => array(
                 'reqType'   => 'PUT',
@@ -55,7 +55,7 @@ class RelateRecordApi extends ModuleApi {
                 'pathVars'  => array('module',  'record','',    'link_name','remote_id'),
                 'method'    => 'updateRelatedLink',
                 'shortHelp' => 'Updates relationship specific information ',
-                'longHelp'  => 'include/api/help/updateRelatedLink.html',
+                'longHelp'  => 'include/api/help/module_record_link_link_name_remote_id_put_help.html',
             ),
             'deleteRelatedLink' => array(
                 'reqType'   => 'DELETE',
@@ -63,7 +63,7 @@ class RelateRecordApi extends ModuleApi {
                 'pathVars'  => array('module'  ,'record',''    ,'link_name','remote_id'),
                 'method'    => 'deleteRelatedLink',
                 'shortHelp' => 'Deletes a relationship between two records',
-                'longHelp'  => 'include/api/help/deleteRelatedLink.html',
+                'longHelp'  => 'include/api/help/module_record_link_link_name_remote_id_delete_help.html',
             ),
         );
     }

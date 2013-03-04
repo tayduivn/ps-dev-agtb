@@ -62,15 +62,15 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
                        "p.id product_id, " .
                        "p.date_modified, " .
                        "w.id worksheet_id, " .
-                       "w.user_id w_user_id, " .
+                       "w.assigned_user_id w_user_id, " .
                        "w.best_case w_best_case, " .
                        "w.likely_case w_likely_case, " .
                        "w.worst_case w_worst_case, " .
-                       "w.forecast_type w_forecast_type, " .
-                       "w.related_id w_related_id, " .
-                       "w.version w_version, " .
+                       "w.parent_type w_forecast_type, " .
+                       "w.parent_id w_related_id, " .
+                       "w.draft w_version, " .
                        "w.commit_stage w_commit_stage, " .
-                       "w.op_probability w_probability, " .
+                       "w.probability w_probability, " .
                        "w.currency_id w_currency_id, " .
                        "w.base_rate w_base_rate, " .
                        "w.date_modified w_date_modified " .
@@ -82,11 +82,11 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
                        "and p.assigned_user_id = '" . $this->getArg('user_id') . "' " .
                    "inner join opportunities o " .
                        "on p.opportunity_id = o.id " .
-                   "left join worksheet w " .
-                   "on p.id = w.related_id ";
+                   "left join forecast_worksheets w " .
+                   "on p.id = w.parent_id ";
 
         if ($this->getArg('user_id') != $current_user->id) {
-               $sql .= "and w.version = 1 ";
+               $sql .= "and w.draft = 1 ";
         }
 
         $sql .= "where p.deleted = 0 " .

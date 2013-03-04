@@ -31,7 +31,7 @@ class HelpApi extends SugarApi {
                 'pathVars' => array(''),
                 'method' => 'getHelp',
                 'shortHelp' => 'Shows Help information',
-                'longHelp' => 'include/api/help/getHelp.html',
+                'longHelp' => 'include/api/help/help_get_help.html',
                 'rawReply' => true,
                 // Everyone needs some help sometimes.
                 'noLoginRequired' => true,

@@ -38,7 +38,7 @@ class DuplicateCheckApi extends SugarApi
                 'pathVars' => array('module',''),
                 'method' => 'checkForDuplicates',
                 'shortHelp' => 'Check for duplicate records within a module',
-                'longHelp' => 'include/api/help/duplicateCheck.html',
+                'longHelp' => 'include/api/help/module_duplicatecheck_post_help.html',
             ),
         );
     }

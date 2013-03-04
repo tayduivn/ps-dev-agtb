@@ -25,6 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    className: 'list-view',
     extendsFrom: 'EditableView',
     plugins: ['ellipsis_inline'],
 

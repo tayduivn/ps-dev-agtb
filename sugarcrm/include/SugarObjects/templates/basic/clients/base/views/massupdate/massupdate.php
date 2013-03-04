@@ -35,7 +35,7 @@ $viewdefs[$module_name]['base']['view']['massupdate'] = array(
             'name' => 'update_button',
             'type' => 'button',
             'label' => 'Update',
-            'value' => 'save',
+            'acl_action' => 'massupdate',
             'css_class' => 'btn-primary',
             'primary' => true,
         ),
