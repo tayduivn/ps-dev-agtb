@@ -38,7 +38,7 @@ $dictionary['Product'] = array(
             'name' => 'product_template_name',
             'rname' => 'name',
             'id_name' => 'product_template_id',
-            'vname' => 'LBL_PRODUCT_TEMPLATE',
+            'vname' => 'LBL_PRODUCT',
             'join_name' => 'templates',
             'type' => 'relate',
             'link' => 'product_categories_link',
@@ -484,6 +484,14 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
             'type' => 'int',
             'studio' => false
+        ),        
+        'next_step' => array(
+            'name' => 'next_step',
+            'vname' => 'LBL_NEXT_STEP',
+            'type' => 'varchar',
+            'len' => '100',
+            'comment' => 'The next step in the sales process',
+            'merge_filter' => 'enabled',
         ),
         'commit_stage' => array(
             'name' => 'commit_stage',
@@ -523,6 +531,48 @@ $dictionary['Product'] = array(
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',
         ),
+        'lead_source' => array(
+            'name' => 'lead_source',
+            'vname' => 'LBL_LEAD_SOURCE',
+            'type' => 'enum',
+            'options' => 'lead_source_dom',
+            'len' => '50',
+            'comment' => 'Source of the product',
+            'merge_filter' => 'enabled',
+        ),
+        'campaign_id' => array(
+            'name' => 'campaign_id',
+            'comment' => 'Campaign that generated lead',
+            'vname' => 'LBL_CAMPAIGN_ID',
+            'rname' => 'id',
+            'type' => 'id',
+            'dbType' => 'id',
+            'table' => 'campaigns',
+            'isnull' => 'true',
+            'module' => 'Campaigns',
+            'reportable' => false,
+            'massupdate' => false,
+            'duplicate_merge' => 'disabled',
+        ),
+        'campaign_name' => array(
+            'name' => 'campaign_name',
+            'rname' => 'name',
+            'id_name' => 'campaign_id',
+            'vname' => 'LBL_CAMPAIGN',
+            'type' => 'relate',
+            'link' => 'campaign_products',
+            'isnull' => 'true',
+            'table' => 'campaigns',
+            'module' => 'Campaigns',
+            'source' => 'non-db',
+        ),
+        'campaign_products' => array(
+            'name' => 'campaign_products',
+            'type' => 'link',
+            'vname' => 'LBL_CAMPAIGN_PRODUCT',
+            'relationship' => 'campaign_products',
+            'source' => 'non-db',
+        ),
 //END SUGARCRM flav=pro ONLY
         'related_products' =>  array(
             'name' => 'related_products',
@@ -561,6 +611,22 @@ $dictionary['Product'] = array(
             'source' => 'non-db',
             'comment' => 'Currency String of the loaded currency_id',
             'importable' => 'false',
+        ),
+        'assigned_user_name' => array(
+            'name' => 'assigned_user_name',
+            'rname' => 'name',
+            'id_name' => 'opportunity_id',
+            'vname' => 'LBL_ASSIGNED_TO',
+            'join_name' => 'users',
+            'type' => 'relate',
+            'link' => 'assigned_user_link',
+            'table' => 'users',
+            'isnull' => 'true',
+            'module' => 'Users',
+            'source' => 'non-db',
+            'unified_search' => true,
+            'full_text_search' => array('boost' => 1),
+            'comment' => 'The user name associated with the assigned_user_id'
         ),
         'quote_name' =>  array(
             'name' => 'quote_name',
@@ -625,6 +691,16 @@ $dictionary['Product'] = array(
             'full_text_search' => array('boost' => 1),
             'comment' => 'The opportunity name associated with the opportunity_id'
         ),
+        'product_type' => array(
+            'name' => 'product_type',
+            'vname' => 'LBL_TYPE',
+            'type' => 'enum',
+            'options' => 'opportunity_type_dom',
+            'len' => '255',
+            'audited' => true,
+            'comment' => 'Type of product ( from opportunities opportunity_type ex: Existing, New)',
+            'merge_filter' => 'enabled',
+        ),
         'opportunities' =>  array(
             'name' => 'opportunities',
             'type' => 'link',
@@ -634,6 +710,16 @@ $dictionary['Product'] = array(
             'module' => 'Opportunities',
             'bean_name' => 'Opportunity',
             'vname' => 'LBL_OPPORTUNITIES',
+        ),
+        'assigned_user_link' =>  array(
+            'name' => 'assigned_user_link',
+            'type' => 'link',
+            'relationship' => 'products_assigned_user',
+            'vname' => 'LBL_USER',
+            'link_type' => 'one',
+            'module' => 'Users',
+            'bean_name' => 'User',
+            'source' => 'non-db',
         ),
 //END SUGARCRM flav=pro ONLY
         'type_name' =>  array(
@@ -811,6 +897,15 @@ $dictionary['Product'] = array(
             'rhs_key' => 'modified_user_id',
             'relationship_type' => 'one-to-many'
         ),
+        'products_assigned_user' =>  array(
+            'lhs_module' => 'Users',
+            'lhs_table' => 'users',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Products',
+            'rhs_table' => 'products',
+            'rhs_key' => 'assigned_user_id',
+            'relationship_type' => 'one-to-many'
+        ),
         'products_created_by' =>  array(
             'lhs_module' => 'Users',
             'lhs_table' => 'users',
@@ -835,7 +930,7 @@ $dictionary['Product'] = array(
     ),
 
     'duplicate_check' => array(
-        'enabled' => false,
+        'enabled' => true,
         'FilterDuplicateCheck' => array(
             'filter_template' => array(
                 array('$and' => array(
@@ -847,6 +942,7 @@ $dictionary['Product'] = array(
                 )),
             ),
             'ranking_fields' => array(
+                array('in_field_name' => 'opportunity_id', 'dupe_field_name' => 'opportunity_id'),
                 array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
             )
         )

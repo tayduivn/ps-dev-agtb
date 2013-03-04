@@ -13,7 +13,7 @@ describe('Base.Field.Rowaction', function() {
             'tooltip':'LBL_PREVIEW',
             'event':'list:preview:fire',
             'icon':'icon-eye-open',
-            'value':'view'
+            'acl_action':'view'
         }, moduleName);
     });
 

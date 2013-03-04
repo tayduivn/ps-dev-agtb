@@ -379,8 +379,8 @@
     },
 
     cancelClicked: function() {
-        this.setButtonStates(this.STATE.VIEW);
         this.handleCancel();
+        this.setButtonStates(this.STATE.VIEW);
         this.clearValidationErrors(this.editableFields);
     },
     /**
@@ -414,7 +414,6 @@
         } else {
             this.$('.record-edit-link-wrapper').show();
         }
-
         this.toggleFields(this.editableFields, isEdit);
     },
 
@@ -456,7 +455,8 @@
                             self.toggleField(field);
                         }
                     },
-                    { deleteIfFails:false}
+                    { deleteIfFails:false},
+                    self
                 );
                 break;
             default:
@@ -511,28 +511,42 @@
                     });
                 }
             },
-            { deleteIfFails:false});
+            { deleteIfFails:false}, self);
 
         self.$(".record-save-prompt").hide();
         if (!self.disposed) self.render();
     },
 
     handleCancel: function() {
-        this.inlineEditMode = false;
-        this.toggleEdit(false);
         if (!_.isEmpty(this.previousModelState)) {
-            this.model.set(JSON.parse(JSON.stringify(this.previousModelState)));
+            this.model.set(JSON.parse(JSON.stringify(this.previousModelState)),{silent: !this.inlineEditMode});
             this.previousModelState = {};
         }
+        this.toggleEdit(false);
+        this.inlineEditMode = false;
     },
 
     handleDelete: function() {
-        var self = this;
+        var self = this,
+            moduleContext = {
+                module: app.lang.get('LBL_MODULE_NAME_SINGULAR',this.module),
+                name: (this.model.get('name') ||
+                    (this.model.get('first_name') + ' ' + this.model.get('last_name')) || '').trim()
+            };
+
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
-            messages: app.lang.get('NTC_DELETE_CONFIRMATION'),
+            messages: app.lang.get('NTC_RECORD_DELETE_CONFIRMATION', null, moduleContext),
             onConfirm: function() {
-                self.model.destroy();
+                self.model.destroy({
+                    success: function(model, response, options) {
+                        app.alert.show('delete_success', {
+                           level: 'success',
+                           autoClose: true,
+                           messages: app.lang.get('NTC_RECORD_DELETE_SUCCESS', null, moduleContext)
+                        });
+                    }
+                });
                 app.router.navigate("#" + self.module, {trigger: true});
             }
         });

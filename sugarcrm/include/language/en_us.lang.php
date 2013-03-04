@@ -1836,6 +1836,13 @@ $app_list_strings = array (
       0 => 'No',
       1 => 'Yes'
   ),
+
+  'opportunity_metrics_dom' => array(
+      'won' => 'Won',
+      'lost' => 'Lost',
+      'active' => 'Active',
+  ),
+
   'lead_conv_activity_opt' =>
   array(
         'copy' => 'Copy',
@@ -1861,7 +1868,6 @@ $app_strings = array (
   'LBL_TOUR_SKIP' => 'Skip',
   'LBL_TOUR_BACK' => 'Back',
   'LBL_TOUR_CLOSE' => 'Close',
-  'LBL_TOUR_BTN_DONE' => 'Done',
   'LBL_TOUR_BTN_DONE' => 'Done',
   'LBL_TOUR_TAKE_TOUR' => 'Take the tour',
   'LBL_TOUR_FULL_TOUR' => 'Full Tour',
@@ -2575,6 +2581,7 @@ $app_strings = array (
     'LBL_FILTER_SELECT_OPERATOR' => 'Select operator...',
     'LBL_FILTER_CREATE_NEW' => 'Create New',
     'LBL_FILTER_ALL_RECORDS' => 'All Records',
+    'LBL_FILTER_SAVE' => 'You successfully created the filter',
     'LBL_VCARD' => 'vCard',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
     'LBL_IMAGE' => 'Image',
@@ -2660,7 +2667,7 @@ $app_strings = array (
     'LBL_MASS_UPDATE_JOB_QUEUED' => 'Your request for mass update has been scheduled.',
     'LBL_MASS_UPDATE_SUCCESS' => 'All records were updated successfully.',
     'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The following attributes have empty values: ',
-    'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Do you want to continue?',
+    'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Existing values will be replaced with empty values. Do you want to continue?',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
@@ -2744,6 +2751,9 @@ $app_strings = array (
     'LBL_REMINDERS_UPCOMING' => 'Upcoming',
     'LBL_REMINDERS_NONE_FOUND' => 'No reminders found.',
     'LBL_REMINDERS_FINISHED' => 'Finished!',
+
+    // Strings for Opportunity Metrics widget
+    'LBL_OPPORTUNITY_METRICS' => 'Opportunity Metrics',
 
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',
@@ -3793,11 +3803,15 @@ $app_strings = array (
     'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
 
+    // record delete
+    'NTC_RECORD_DELETE_CONFIRMATION' => 'Are you sure you want to delete the {{module}} {{name}}?',
+    'NTC_RECORD_DELETE_SUCCESS' => 'You deleted the {{module}} {{name}}.',
+
     //for sidecar alert view
-    'LBL_ALERT_TITLE_SUCCESS' => 'Success!',
-    'LBL_ALERT_TITLE_WARNING' => 'Warning!',
-    'LBL_ALERT_TITLE_NOTICE' => 'Notice!',
-    'LBL_ALERT_TITLE_ERROR' => 'Error!',
+    'LBL_ALERT_TITLE_SUCCESS' => 'Success:',
+    'LBL_ALERT_TITLE_WARNING' => 'Warning:',
+    'LBL_ALERT_TITLE_NOTICE' => 'Notice:',
+    'LBL_ALERT_TITLE_ERROR' => 'Error:',
     'LBL_ALERT_TITLE_LOADING' => 'Loading',
 );
 
@@ -4660,6 +4674,10 @@ $app_list_strings['forecasts_timeperiod_types_dom'] = array(
 $app_list_strings['forecasts_timeperiod_options_dom'] = array(
     'Annual' => 'Yearly (Quarterly sub-periods)',
     'Quarter' => 'Quarterly (Monthly sub-periods)',
+);
+$app_list_strings['forecasts_config_worksheet_layout_forecast_by_options_dom'] = array(
+    'products' => 'Product Line Items',
+    'opportunities' => 'Opportunities',
 );
 
 $app_list_strings ['pdfmanager_yes_no_list'] = array (

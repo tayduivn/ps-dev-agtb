@@ -41,4 +41,13 @@ describe("Base.Field.Base", function() {
         expect(field.callback).not.toBe("blur excuted");
         expect(field.callback).toBeUndefined();
     });
+
+    it('should trim whitespace on unformat', function(){
+        field = SugarTest.createField("base","button", "base", "list");
+        expect(field.unformat("  ")).toEqual("");
+        expect(field.unformat("")).toEqual("");
+        expect(field.unformat(" abc   ")).toEqual("abc");
+        expect(field.unformat(123)).toEqual(123);
+        expect(field.unformat({})).toEqual({});
+    });
 });

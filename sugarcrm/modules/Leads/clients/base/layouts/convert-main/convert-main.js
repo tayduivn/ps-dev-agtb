@@ -256,30 +256,102 @@
         myURL = app.api.buildURL('Leads', 'convert', {id:leadsModel.id});
 
         app.api.call('create', myURL, convertModel, {
-            success: _.bind(function (data) {
-                app.alert.dismiss('processing_convert');
-                app.alert.show('convert_success', {
-                    level: 'success',
-                    title: app.lang.getAppString('LBL_SUCCESS'),
-                    messages: app.lang.get('LBL_CONVERTLEAD_SUCCESS', this.module, {leadName:leadsModel.get('name')}),
-                    autoClose: true
-                });
-                if (!this.disposed) {
-                    app.drawer.close();
-                    app.navigate(this.context, leadsModel, 'record');
-                }
-            }, this),
-            error: _.bind(function (error) {
-                var msg = {autoClose: false, level: 'error', title: app.lang.get('LBL_CONVERTLEAD_ERROR', this.module)};
-                if(error && _.isString(error.message)) {
-                    msg.messages = [error.message];
-                }
-                app.alert.dismiss('processing_convert');
-                app.alert.show('convert_error', msg);
-                if (!this.disposed) {
-                    this.toggleFinishButton(true);
-                }
-            }, this)
+            success: this.uploadAssociatedRecordFiles,
+            error: this.convertError
         });
+    },
+
+    /**
+     * After successfully converting a lead, loop through all modules and attempt to upload file input fields
+     * All modules are done asynchronously and the last one to complete calls the appropriate completion callback
+     *
+     * @param convertResults
+     */
+    uploadAssociatedRecordFiles: function(convertResults) {
+        var modulesToProcess = this.meta.modules.length,
+            failureCount = 0;
+
+        var completeFn = _.bind(function() {
+            modulesToProcess--;
+            if (modulesToProcess === 0) {
+                if (failureCount > 0) {
+                    this.convertWarning();
+                } else {
+                    this.convertSuccess();
+                }
+            }
+        }, this);
+
+        _.each(this.meta.modules, function(moduleMeta) {
+            var convertPanel = this._getPanelByModuleName(moduleMeta.module),
+                associatedModel = convertPanel.getAssociatedModel(),
+                moduleResult;
+
+            moduleResult = _.find(convertResults.modules, function(module) {
+                return (moduleMeta.module === module._module);
+            }, this);
+
+            if (moduleResult && _.isEmpty(associatedModel.get('id'))) {
+                associatedModel.set('id', moduleResult.id);
+                app.file.checkFileFieldsAndProcessUpload(
+                    associatedModel,
+                    {
+                        success: function() { completeFn(); },
+                        error: function() { failureCount++; completeFn(); }
+                    },
+                    {deleteIfFails:false},
+                    convertPanel.recordView,
+                    false
+                );
+            } else {
+                completeFn();
+            }
+
+        }, this);
+    },
+
+    /**
+     * Lead was successfully converted
+     */
+    convertSuccess: function() {
+        this.convertComplete('success', 'LBL_CONVERTLEAD_SUCCESS', true);
+    },
+
+    /**
+     * Lead was converted, but some files failed to upload
+     */
+    convertWarning: function() {
+        this.convertComplete('warning', 'LBL_CONVERTLEAD_FILE_WARN', true);
+    },
+
+    /**
+     * There was a problem converting the lead
+     */
+    convertError: function() {
+        this.convertComplete('error', 'LBL_CONVERTLEAD_ERROR', false);
+
+        if (!this.disposed) {
+            this.toggleFinishButton(true);
+        }
+    },
+
+    /**
+     * Based on success of lead conversion, display the appropriate messages and optionally close the drawer
+     * @param level
+     * @param message
+     * @param doClose
+     */
+    convertComplete: function(level, message, doClose) {
+        var leadsModel = this.context.get('leadsModel');
+        app.alert.dismiss('processing_convert');
+        app.alert.show('convert_complete', {
+            level: level,
+            messages: app.lang.get(message, this.module, {leadName:leadsModel.get('first_name')+' '+leadsModel.get('last_name')}),
+            autoClose: (level === 'success')
+        });
+        if (!this.disposed && doClose) {
+            app.drawer.close();
+            app.navigate(this.context, leadsModel, 'record');
+        }
     }
 })

@@ -30,9 +30,10 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
     // holds any current config already set up in the DB for forecasts
     private static $currentConfig;
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass()
+    {
         SugarTestHelper::setUp('current_user');
-    	SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         // Save the current config to be put back later
         $admin = BeanFactory::getBean('Administration');
@@ -53,7 +54,8 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass()
+    {
         // Clear config table of Forecasts values after the last test in case tests
         // set any values that the bean doesnt normally have
         $db = DBManagerFactory::getInstance();
@@ -71,8 +73,8 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @group forecasts
      */
-    public function testSetupForecastSettingsFreshInstall() {
-
+    public function testSetupForecastSettingsFreshInstall()
+    {
         ForecastsDefaults::setupForecastSettings();
 
         $admin = BeanFactory::getBean('Administration');
@@ -88,9 +90,8 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @group forecasts
      */
-    public function testSetupForecastSettingsUpgradeNotSetup() {
-        $db = DBManagerFactory::getInstance();
-
+    public function testSetupForecastSettingsUpgradeNotSetup()
+    {
         // set up config table with one test value and is_setup set to 0
         // test should show that if is_setup is 0, already existing values are overwritten
         // by any new defaults used in the ForecastsDefaults class
@@ -111,7 +112,11 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         $defaultConfig = ForecastsDefaults::getDefaults();
 
         // Check value from ForecastDefaults and make sure they're in the db on upgrade
-        $this->assertNotEquals($timeperiodType, $adminConfig['timeperiod_type'], "On an upgrade with config data existing but NOT set up, new default settings should override pre-existing settings in the config table");
+        $this->assertNotEquals(
+            $timeperiodType,
+            $adminConfig['timeperiod_type'],
+            "On an upgrade with config data existing but NOT set up, new default settings should override pre-existing settings in the config table"
+        );
     }
 
     /**
@@ -120,9 +125,8 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @group forecasts
      */
-    public function testSetupForecastSettingsUpgradeAlreadySetup() {
-        $db = DBManagerFactory::getInstance();
-
+    public function testSetupForecastSettingsUpgradeAlreadySetup()
+    {
         // set up config table with one test value and is_setup set to 1
         // test should show that if is_setup is 1, already existing values are preserved
         // while if the value doesnt exist, defaults are used
@@ -139,12 +143,18 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $adminConfig = $admin->getConfigForModule('Forecasts');
 
-        $this->assertEquals($timeperiodType, $adminConfig['timeperiod_type'], "On an upgrade with config data already set up, pre-existing settings should be preserved");
+        $this->assertEquals(
+            $timeperiodType,
+            $adminConfig['timeperiod_type'],
+            "On an upgrade with config data already set up, pre-existing settings should be preserved"
+        );
 
         // Check value from ForecastDefaults
-        $this->assertEquals('Annual', $adminConfig['timeperiod_interval'], "On an upgrade with config data already set up, default settings that don't override pre-existing settings should be in the config table");
-
-
+        $this->assertEquals(
+            'Annual',
+            $adminConfig['timeperiod_interval'],
+            "On an upgrade with config data already set up, default settings that don't override pre-existing settings should be in the config table"
+        );
     }
 
     /**
@@ -152,7 +162,8 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * This is the data provider for testForecastsSettingsForIsUpgradeProvider
      */
-    public function setupForecastsSettingsForIsUpgradeProvider() {
+    public function setupForecastsSettingsForIsUpgradeProvider()
+    {
         return array(
             array(true, 1),
             array(false, 0)
@@ -166,7 +177,8 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
      * @group forecasts
      *
      */
-    public function testSetupForecastsSettingsForIsUpgrade($isUpgrade, $expectedValue) {
+    public function testSetupForecastsSettingsForIsUpgrade($isUpgrade, $expectedValue)
+    {
         ForecastsDefaults::setupForecastSettings($isUpgrade);
         $admin = BeanFactory::getBean('Administration');
         $adminConfig = $admin->getConfigForModule('Forecasts');
@@ -178,11 +190,16 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @group forecasts
      */
-    public function testGetConfigDefaultByKey() {
+    public function testGetConfigDefaultByKey()
+    {
         $defaultConfig = ForecastsDefaults::getDefaults();
         $key = 'timeperiod_type';
 
-        $this->assertEquals($defaultConfig[$key], ForecastsDefaults::getConfigDefaultByKey($key), "The default value returned by ForecastsDefaults::getConfigDefaultByKey was not the same as in ForecastsDefaults::getDefaults");
+        $this->assertEquals(
+            $defaultConfig[$key],
+            ForecastsDefaults::getConfigDefaultByKey($key),
+            "The default value returned by ForecastsDefaults::getConfigDefaultByKey was not the same as in ForecastsDefaults::getDefaults"
+        );
     }
 
     /**
@@ -191,11 +208,10 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
      * @param $cfg {Array} an array of key => value pairs of config values for the config table
      * @param $adminBean {SugarBean} the Administration bean from BeanFactory
      */
-    protected function saveConfig($cfg, $adminBean) {
-        foreach($cfg as $name => $value)
-        {
-            if(is_array($value))
-            {
+    protected function saveConfig($cfg, $adminBean)
+    {
+        foreach ($cfg as $name => $value) {
+            if (is_array($value)) {
                 $adminBean->saveSetting('Forecasts', $name, json_encode($value), 'base');
             } else {
                 $adminBean->saveSetting('Forecasts', $name, $value, 'base');
@@ -203,20 +219,20 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-
     /**
      * This tests checks to ensure that the base_rate and currency_id values for the opportunities table are correctly
      * set after running the ForecastsDefaults::upgradeColumns() function
      *
      * @group forecasts
      */
-    public function testOpportunitySaves() {
+    public function testOpportunitySaves()
+    {
         require_once('modules/Forecasts/ForecastsDefaults.php');
         $db = DBManagerFactory::getInstance();
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
         $admin->saveSetting('Forecasts', 'sales_stage_won', '[]', 'base');
-        $currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
+        $currency = SugarTestCurrencyUtilities::createCurrency('Yen', '¥', 'YEN', 78.87);
 
         // base_rate should get calculated from usdollar field
         $opp1 = SugarTestOpportunityUtilities::createOpportunity();
@@ -234,9 +250,9 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 
         // see if upgrade took effect
         $base_rate = $db->getOne("select base_rate from opportunities where id='{$opp1->id}'");
-        $this->assertEquals(2.0,$base_rate,'',2);
+        $this->assertEquals(2.0, $base_rate, '', 2);
         $currencyId = $db->getOne("select currency_id from opportunities where id='{$opp1->id}'");
-        $this->assertEquals('-99',$currencyId,'',2);
+        $this->assertEquals('-99', $currencyId, '', 2);
 
         // base_rate should get calculated from usdollar field, even with currency_id set
         $opp2 = SugarTestOpportunityUtilities::createOpportunity();
@@ -254,7 +270,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 
         // see if upgrade took effect
         $base_rate = $db->getOne("select base_rate from opportunities where id='{$opp2->id}'");
-        $this->assertEquals(2.0,$base_rate,'',2);
+        $this->assertEquals(2.0, $base_rate, '', 2);
 
         // base_rate should get set from currency conversion_rate
         $opp3 = SugarTestOpportunityUtilities::createOpportunity();
@@ -272,7 +288,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 
         // see if upgrade took effect
         $base_rate = $db->getOne("select base_rate from opportunities where id='{$opp3->id}'");
-        $this->assertEquals(78.87,$base_rate,'',2);
+        $this->assertEquals(78.87, $base_rate, '', 2);
 
         // base_rate should get set to 1.0 for null values
         $opp4 = SugarTestOpportunityUtilities::createOpportunity();
@@ -283,14 +299,16 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp4->save();
 
         // force values to be null in db as in a possible upgrade situation.
-        $db->query("update opportunities set currency_id=NULL, base_rate=NULL, amount_usdollar=NULL where id='{$opp4->id}'");
+        $db->query(
+            "update opportunities set currency_id=NULL, base_rate=NULL, amount_usdollar=NULL where id='{$opp4->id}'"
+        );
 
         // upgrade currency columns
         ForecastsDefaults::upgradeColumns();
 
         // see if upgrade took effect
         $base_rate = $db->getOne("select base_rate from opportunities where id='{$opp4->id}'");
-        $this->assertEquals(1.0,$base_rate,'',2);
+        $this->assertEquals(1.0, $base_rate, '', 2);
 
         // base_rate should get calculated from usdollar field, even with currency_id set
         $opp5 = SugarTestOpportunityUtilities::createOpportunity();
@@ -308,9 +326,6 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 
         // see if upgrade took effect
         $base_rate = $db->getOne("select base_rate from opportunities where id='{$opp5->id}'");
-        $this->assertEquals(78.87,$base_rate,'',2);
-
+        $this->assertEquals(78.87, $base_rate, '', 2);
     }
-
-
 }

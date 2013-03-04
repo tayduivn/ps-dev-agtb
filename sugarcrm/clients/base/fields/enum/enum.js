@@ -27,10 +27,7 @@
 ({
     fieldTag: "select",
     _render: function() {
-
-        app.view.Field.prototype._render.call(this);
-
-        var optionsKeys = [];
+        var optionsKeys = [], val;
         var options = this.items = this.items || this.def.options;
 
         if(_.isString(options)) {
@@ -81,10 +78,14 @@
          * this adds the ability to specify that threshold in metadata.
          */
         select2Options.minimumResultsForSearch = this.def.searchBarThreshold ? this.def.searchBarThreshold : 7;
-
+        app.view.Field.prototype._render.call(this);
         if(this.tplName === 'edit') {
             this.$(this.fieldTag).select2(select2Options);
             this.$(".select2-container").addClass("tleft");
+            val = this.$(this.fieldTag).select2('val');
+            if (val) {
+                this.model.set(this.name, val);
+            }
         } else if(this.tplName === 'disabled') {
             this.$(this.fieldTag).attr("disabled", "disabled").select2();
         }

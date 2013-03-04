@@ -315,7 +315,7 @@ class One2MBeanRelationship extends One2MRelationship
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
 
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
-        $join_type= isset($options['join_type']) ? $options['join_type'] : 'INNER';
+        $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
         $sugar_query->joinTable($targetTable, array('alias' => $options['myAlias'], 'joinType' => $join_type))
             ->on()->equalsField("{$startingTable}.{$startingKey}", "{$options['myAlias']}.{$targetKey}")

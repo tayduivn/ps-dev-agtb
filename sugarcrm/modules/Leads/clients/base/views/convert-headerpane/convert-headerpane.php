@@ -41,6 +41,7 @@ $viewdefs['Leads']['base']['view']['convert-headerpane'] = array(
             'type'    => 'button',
             'label'   => 'LBL_FINISH_BUTTON_LABEL',
             'css_class' => 'btn-primary disabled',
+            'acl_action' => 'edit',
         ),
     ),
 );

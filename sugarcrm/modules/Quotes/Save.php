@@ -191,7 +191,7 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 			if ($field == 'name') $j = 'product_name';
 			elseif ($field == 'description') $j = 'product_description';
 			else $j = $field;
-			if(isset($_POST[$j][$i]))
+			if(isset($_POST[$j]) && is_array($_POST[$j]) && isset($_POST[$j][$i]))
 			{
 				$value = $_POST[$j][$i];
                 if ( isset($product->field_defs[$field]['type']) ) {

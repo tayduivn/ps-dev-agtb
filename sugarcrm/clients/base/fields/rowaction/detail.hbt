@@ -1,2 +1,12 @@
-<a href="{{#if def.events}}javascript:void(0);{{else}}{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}{{else}}javascript:void(0);{{/if}}{{/if}}"
-    {{#if def.event}} class="rowaction" data-event="{{def.event}}"{{/if}} {{#if def.tooltip}}rel="tooltip" data-placement="bottom" data-original-title="{{str def.tooltip}}"{{/if}} name="{{name}}">{{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{str label}}</a>
+<a href="{{#if full_route}}#{{full_route}}{{else}}{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}{{else}}javascript:void(0);{{/if}}{{/if}}"
+{{#if def.event}}
+   class="rowaction"
+   data-event="{{def.event}}"
+{{/if}}
+{{#if def.tooltip}}
+   rel="tooltip"
+   data-placement="bottom"
+   data-original-title="{{str def.tooltip}}"
+{{/if}}
+   name="{{name}}">
+{{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{str label}}</a>

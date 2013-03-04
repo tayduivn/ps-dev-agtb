@@ -43,6 +43,7 @@ $viewdefs['base']['view']['find-duplicates-headerpane'] = array(
             'type'    => 'button',
             'label'   => 'LBL_MERGE_DUPLICATES',
             'css_class' => 'btn-primary disabled',
+            'acl_action' => 'edit',
         ),
         array(
             'name' => 'sidebar_toggle',

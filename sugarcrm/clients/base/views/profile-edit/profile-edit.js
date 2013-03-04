@@ -68,7 +68,7 @@
                         app.router.navigate('profile', {trigger: true});
                     }
                 },
-                { deleteIfFails: false});
+                {deleteIfFails: false}, self);
             },
             error: function(error) {
                 app.alert.dismiss('save_profile_edit_view');

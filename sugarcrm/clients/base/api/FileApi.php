@@ -39,7 +39,7 @@ class FileApi extends SugarApi {
                 'method' => 'saveFilePost',
                 'rawPostContents' => true,
                 'shortHelp' => 'Saves a file. The file can be a new file or a file override.',
-                'longHelp' => 'include/api/help/filePost.html',
+                'longHelp' => 'include/api/help/module_record_file_field_post_help.html',
             ),
             'saveFilePut' => array(
                 'reqType' => 'PUT',
@@ -48,7 +48,7 @@ class FileApi extends SugarApi {
                 'method' => 'saveFilePut',
                 'rawPostContents' => true,
                 'shortHelp' => 'Saves a file. The file can be a new file or a file override. (This is an alias of the POST method save.)',
-                'longHelp' => 'include/api/help/filePut.html',
+                'longHelp' => 'include/api/help/module_record_file_field_put_help.html',
             ),
             'getFileList' => array(
                 'reqType' => 'GET',
@@ -56,7 +56,7 @@ class FileApi extends SugarApi {
                 'pathVars' => array('module', 'record', ''),
                 'method' => 'getFileList',
                 'shortHelp' => 'Gets a listing of files related to a field for a module record.',
-                'longHelp' => 'include/api/help/fileGetList.html',
+                'longHelp' => 'include/api/help/module_record_file_get_help.html',
             ),
             'getFileContents' => array(
                 'reqType' => 'GET',
@@ -65,7 +65,7 @@ class FileApi extends SugarApi {
                 'method' => 'getFile',
                 'rawReply' => true,
                 'shortHelp' => 'Gets the contents of a single file related to a field for a module record.',
-                'longHelp' => 'include/api/help/fileGet.html',
+                'longHelp' => 'include/api/help/module_record_file_field_get_help.html',
             ),
             'removeFile' => array(
                 'reqType' => 'DELETE',
@@ -74,7 +74,7 @@ class FileApi extends SugarApi {
                 'method' => 'removeFile',
                 'rawPostContents' => true,
                 'shortHelp' => 'Removes a file from a field.',
-                'longHelp' => 'include/api/help/fileDelete.html',
+                'longHelp' => 'include/api/help/module_record_file_field_delete_help.html',
             ),
         );
     }

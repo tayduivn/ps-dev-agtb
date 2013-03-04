@@ -56,37 +56,21 @@
             if(_.isUndefined(options)) {
                 return this;
             }
-            var template = this.getAlertTemplate(options.level, options.messages, options.title, options.showCancel);
+            var template = this.getAlertTemplate(options.level, options.messages, options.title);
             this.$el.html(template);
-
-            // set confirmation dialog as a modal
-            if (options.level === this.LEVEL.CONFIRMATION) {
-                this.$('.modal').modal({
-                    'backdrop': 'static',
-                    'show': false
-                });
-            }
-
             this.show(options.level);
         },
 
         show: function(level) {
-            if (level === this.LEVEL.CONFIRMATION) {
-                this.$('.modal').modal('show');
-            } else {
-                this.$el.show();
-            }
+            this.$el.show();
         },
 
         close: function() {
-            if (this.alertLevel === this.LEVEL.CONFIRMATION) {
-                this.$('.modal').modal('hide');
-            }
             this.$el.fadeOut().remove();
         },
 
         cancel: function() {
-            this.$('.close').click(); //need to click close to call app.alert.dismiss()
+            app.alert.dismiss(this.key);
         },
 
         confirm: function() {
@@ -101,18 +85,17 @@
          * @param level
          * @param messages
          * @param title (optional)
-         * @param showCancel (optional) boolean flag
          * @return {String}
          */
-        getAlertTemplate: function(level, messages, title, showCancel) {
+        getAlertTemplate: function(level, messages, title) {
             var template,
-                alertClasses = this.getAlertClasses(level),
-                title = title ? title : this.getDefaultTitle(level),
-                showCancel = showCancel ? showCancel : true;
+                alertClasses = this.getAlertClasses(level);
+
+            title = title ? title : this.getDefaultTitle(level);
 
             switch (level) {
                 case this.LEVEL.PROCESS:
-                    template = '<div class="alert alert-process">' +
+                    template = '<div class="alert {{alertClass}}">' +
                         '<strong>{{title}}</strong>' +
                         '<div class="loading">' +
                         '<span class="l1"></span><span class="l2"></span><span class="l3"></span>' +
@@ -130,12 +113,12 @@
                         '</div>';
                     break;
                 case this.LEVEL.CONFIRMATION:
-                    template = '<div class="alert {{alertClass}} alert-block modal">' +
-                        '<a class="close">×</a>' +
+                    template = '<div class="alert {{alertClass}} alert-block">' +
                         '{{#if title}}<strong>{{title}}</strong>{{/if}}' +
                         ' {{#each messages}}{{{this}}}{{/each}}' +
-                        '{{#if showCancel}}<a class="btn cancel">' + app.lang.get('LBL_CANCEL_BUTTON_LABEL') + '</a>{{/if}}' +
-                        '<a class="btn btn-primary pull-right confirm">' + app.lang.get('LBL_CONFIRM_BUTTON_LABEL') + '</a>' +
+                        ' <a class="btn-link confirm">' + app.lang.get('LBL_CONFIRM_BUTTON_LABEL') + '</a> ' +
+                        app.lang.get('LBL_OR').toLocaleLowerCase() +
+                        ' <a class="btn-link cancel">' + app.lang.get('LBL_CANCEL_BUTTON_LABEL') + '</a>' +
                         '</div>';
                     break;
                 default:
@@ -144,8 +127,8 @@
 
             return Handlebars.compile(template)({
                 alertClass: alertClasses,
-                title: title,
-                messages: messages
+                title: this.getTranslatedLabels(title),
+                messages: this.getTranslatedLabels(messages)
             });
         },
 
@@ -167,7 +150,7 @@
                 case this.LEVEL.ERROR:
                     return 'alert-danger';
                 case this.LEVEL.CONFIRMATION:
-                    return 'alert-warning span4';
+                    return 'alert-warning';
                 default:
                     return '';
             }
@@ -181,21 +164,40 @@
         getDefaultTitle: function(level) {
             switch (level) {
                 case this.LEVEL.PROCESS:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_LOADING');
+                    return 'LBL_ALERT_TITLE_LOADING';
                 case this.LEVEL.SUCCESS:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_SUCCESS');
+                    return 'LBL_ALERT_TITLE_SUCCESS';
                 case this.LEVEL.WARNING:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_WARNING');
+                    return 'LBL_ALERT_TITLE_WARNING';
                 case this.LEVEL.INFO:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_NOTICE');
+                    return 'LBL_ALERT_TITLE_NOTICE';
                 case this.LEVEL.ERROR:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_ERROR');
+                    return 'LBL_ALERT_TITLE_ERROR';
                 case this.LEVEL.CONFIRMATION:
-                    return app.lang.getAppString('LBL_ALERT_TITLE_WARNING');
+                    return 'LBL_ALERT_TITLE_WARNING';
                 default:
                     return '';
             }
         },
+
+    /**
+     * Return translated text, given a string or an array of strings.
+     * @param stringOrArray
+     * @return {*}
+     */
+    getTranslatedLabels: function(stringOrArray) {
+        var result;
+
+        if (_.isArray(stringOrArray)) {
+            result = _.map(stringOrArray, function(text) {
+                return app.lang.getAppString(text);
+            });
+        } else {
+            result = app.lang.getAppString(stringOrArray);
+        }
+
+        return result;
+    },
 
     bindDataChange : function() {}
 })

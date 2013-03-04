@@ -44,7 +44,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'label' => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'btn btn-primary',
             'showOn' => 'edit',
-            'value' => 'edit',
+            'acl_action' => 'edit',
         ),
         array(
             'type' => 'actiondropdown',
@@ -58,49 +58,49 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'edit_button',
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
-                    'value' => 'edit',
+                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:delete_button:click',
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'value' => 'delete',
+                    'acl_action' => 'delete',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'value' => 'create',
+                    'acl_action' => 'create',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:create_related_button:click',
                     'name' => 'create_related_button',
                     'label' => 'LBL_CREATE_RELATED_RECORD',
-                    'value' => 'create',
+                    'acl_action' => 'create',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:link_related_button:click',
                     'name' => 'link_related_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'value' => 'edit',
+                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:convert_to_quote:click',
                     'name' => 'convert_to_quote_button',
                     'label' => 'LBL_CONVERT_TO_QUOTE',
-                    'value' => 'view'
+                    'acl_action' => 'view'
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:change_log_button:click',
                     'name' => 'change_log_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
-                    'value' => 'view'
+                    'acl_action' => 'view'
                 ),
             ),
         ),
@@ -116,7 +116,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
                 ),
             )
         ),
@@ -128,11 +127,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 'opportunity_name',
-                array(
-                    'name' => 'account_name',
-                    'readonly' => true,
-                ),
-                'stage',
+                'account_name',
                 'sales_stage',
                 'probability',
                 'sales_status',
@@ -140,9 +135,19 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'product_template_name',
                 'quantity',
                 'discount_price',
-                'discount_amount',
                 array(
-                    'name' => 'likely_case',
+                    'name' => 'discount_amount',
+                    'type' => 'currency'
+                ),
+                
+                array(
+                    'name' => 'product_line_item_amount',
+                    'type' => 'text', // change to currency with sugarlogic
+                    'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
+                    'readonly' => true
+                ),
+                array(
+                    'name' => 'likely_case',    
                     'required' => true
                 )
             ),
@@ -154,30 +159,44 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'worst_case',
                 'best_case',
                 'worst_case',
                 array(
-                    'name' => 'category_name',
+                    'name' => 'quote_name',
+                    'label' => 'LBL_ASSOCIATED_QUOTE',
+                    'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
                     'readonly' => true,
-                ),
-                'type',
+                    'bwcLink' => true
+                ),                
+                'product_type',
                 'lead_source',
                 'campaign_name',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
-                    "type" => "teamset",
-                    "name" => "team_name",
+                    'type' => 'teamset',
+                    'name' => 'team_name',
                 ),
                 //END SUGARCRM flav=pro ONLY
                 'next_step',
-                'description',
-                'list_price',
+                array(
+                    'name' => 'description',
+                    'span' => 12
+                ),
+                array(
+                    'name' => 'list_price',
+                    'readonly' => true
+                ),                                
                 array(
                     'name' => 'tax_class',
-                    'readonly' => true,
+                    'readonly' => true
                 ),
-                'cost_price',
+                array(
+                    'name' => 'cost_price',
+                    'readonly' => true
+                ),
+                
             )
         )
     ),

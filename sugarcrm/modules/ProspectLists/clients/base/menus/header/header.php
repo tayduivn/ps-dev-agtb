@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'ProspectLists';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'event' => 'megamenu:create:click',
+        'route' => '#bwc/index.php?module=ProspectLists&action=EditView&return_module=ProspectLists&return_action=DetailView',
         'label' =>'LNK_NEW_PROSPECT_LIST',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,

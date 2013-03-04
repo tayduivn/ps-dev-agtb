@@ -27,13 +27,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-$beanList = array();
-$beanFiles = array();
-require('include/modules.php');
-$GLOBALS['beanList'] = $beanList;
-$GLOBALS['beanFiles'] = $beanFiles;
-require_once 'modules/Forecasts/Worksheet.php';
+require_once 'modules/Forecasts/ForecastWorksheet.php';
 
 class SugarTestWorksheetUtilities
 {
@@ -45,7 +39,7 @@ class SugarTestWorksheetUtilities
     {
         $time = mt_rand();
         $name = 'SugarWorksheet';
-        $worksheet = new Worksheet();
+        $worksheet = BeanFactory::newBean("ForecastWorksheets");
         $worksheet->name = $name . $time;
 
         if(!empty($id))
@@ -62,7 +56,7 @@ class SugarTestWorksheetUtilities
     {
         foreach($worksheet_ids as $worksheet_id)
         {
-            $worksheet = new Worksheet();
+            $worksheet = BeanFactory::newBean("ForecastWorksheets");
             $worksheet->id = $worksheet_id;
             self::$_createdWorksheets[] = $worksheet;
         }
@@ -73,12 +67,12 @@ class SugarTestWorksheetUtilities
         $worksheet_ids = self::getCreatedWorksheetIds();
         //clean up any worksheets and draft versions as well.  The drafts were made by code, not the tests,
         //so we have to do some shenanigans to find them.
-        $GLOBALS['db']->query('delete from worksheet where user_id in(select user_id from (select user_id FROM worksheet WHERE id IN (\'' . implode("', '", $worksheet_ids) . '\')) temp)');
+        $GLOBALS["db"]->query("delete from forecast_worksheets where id in('" . implode("', '", $worksheet_ids) . "')" );
     }
     
     public static function removeSpecificCreatedWorksheets($ids)
     {
-    	$GLOBALS["db"]->query("delete from worksheet where id in('" . implode("', '", $ids) . "')" );
+    	$GLOBALS["db"]->query("delete from forecast_worksheets where id in('" . implode("', '", $ids) . "')" );
     }
 
     public static function getCreatedWorksheetIds()

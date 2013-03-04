@@ -1,0 +1,192 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
+<h2 xmlns="http://www.w3.org/1999/html">Overview</h2>
+<span class="lead">
+    Returns a record set in CSV format along with HTTP headers to indicate content type.
+</span>
+
+<h2>Query String Parameters</h2>
+<span class="lead">
+    This endpoint does not accept any query string parameters.
+</span>
+
+<h2>Input Parameters</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Required</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            uid
+        </td>
+        <td>
+            Array
+        </td>
+        <td>
+            A list of bean ids.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            filter
+        </td>
+        <td>
+            Array
+        </td>
+        <td>
+            The filter expression. More information on filter expressions can be found in <code>/&lt;module&gt;/filter</code>.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            sample
+        </td>
+        <td>
+            Array
+        </td>
+        <td>
+            Indicates whether to download sample data.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Input Example</h3>
+
+<h4>Exporting Records by Specific IDs</h4>
+<pre class="pre-scrollable">
+{
+   "uid":"d43243c6-9b8e-2973-aee2-512d09bc34b4"
+}
+</pre>
+
+<h4>Exporting Records by a List of IDs</h4>
+<pre class="pre-scrollable">
+{
+   "uid":[
+      "d43243c6-9b8e-2973-aee2-512d09bc34b4",
+      "b3e87a3f-cd8f-7b86-467a-512d09e8d240"
+   ]
+}
+</pre>
+
+<h4>Exporting Records Using a Filter</h4>
+<pre class="pre-scrollable">
+{
+   "filter":[
+      {
+         "name":"airline"
+      }
+   ]
+}
+</pre>
+
+
+<h4>Exporting a Sample Result Set</h4>
+<pre class="pre-scrollable">
+{
+    "sample":true
+}
+</pre>
+
+<h2>Result</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            &lt;csv export&gt;
+        </td>
+        <td>
+            String;
+        </td>
+        <td>
+            Returns the selected records in CSV format with the content headers.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Output Example</h3>
+<pre class="pre-scrollable">
+result: HTTP/1.1 200 OK
+Date: Fri, 01 Mar 2013 04:05:55 GMT
+Server: Apache/2.2.22 (Unix) DAV/2 PHP/5.3.17
+X-Powered-By: PHP/5.3.17
+Expires: Mon, 26 Jul 1997 05:00:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: cache
+Content-Disposition: attachment; filename=Accounts.csv
+Content-transfer-encoding: binary
+Last-Modified: Fri, 01 Mar 2013 04:05:55 GMT
+Cache-Control: post-check=0, pre-check=0
+Content-Length: 1080
+Connection: close
+Content-Type: application/octet-stream; charset=UTF-8
+
+"Name","ID","Website","Email Address","Office Phone","Alternate Phone","Fax","Billing Street","Billing City","Billing State","Billing Postal Code","Billing Country","Shipping Street","Shipping City","Shipping State","Shipping Postal Code","Shipping Country","Description","Type","Industry","Annual Revenue","Employees","SIC Code","Ticker Symbol","Parent Account ID","Ownership","Campaign ID","Rating","Assigned User Name","Assigned To","Team ID","Teams","Team Set ID","Date Created","Date Modified","Modified By","Created By","Deleted","Image","last_activity_date","Linkedin Company ID","Facebook Account","Twitter Account","Google Plus ID"
+"Arts & Crafts Inc","d43243c6-9b8e-2973-aee2-512d09bc34b4","","","(052) 034-1853","","","777 West Filmore Ln","Santa Monica","CA","35354","USA","777 West Filmore Ln","Santa Monica","CA","35354","USA","","Customer","Transportation","","","","","","","","","sally","seed_sally_id","West","West","West","02/26/2013 07:12 pm","02/26/2013 07:12 pm","1","1","0","","02/26/2013 07:12 pm","","","",""
+</pre>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    <tr>
+        <td>
+            v10
+        </td>
+        <td>
+            Added <code>/&lt;module&gt;/export</code> POST endpoint.
+        </td>
+    </tr>
+</table>

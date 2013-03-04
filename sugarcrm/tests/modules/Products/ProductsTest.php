@@ -40,6 +40,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('Products'));
         parent::setUpBeforeClass();
     }
@@ -66,7 +67,6 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * This test checks to see that we can save a product where date_closed is set to null
-     *
      * @group products
      */
     public function testCreateProductWithoutDateClosed()
@@ -265,6 +265,65 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         unset($product);
     }
 
+    /**
+     * @group products
+     */
+    public function testSalesStatusChangedToConvertedToQuoteWhenQuoteIdSavedToProduct()
+    {
+        $product = new MockProduct();
+        $product->id = "test_id";
+        $product->quote_id = 'my_awesome_new_quote_id';
+        $product->sales_stage = 'test1';
+        $product->fetched_row = array(
+            'sales_status' => 'New',
+            'sales_stage' => 'test1',
+            'quote_id' => '',
+        );
+
+        $product->handleSalesStatus();
+
+        $this->assertEquals(Product::STATUS_CONVERTED_TO_QUOTE, $product->sales_status);
+        unset($product);
+    }
+
+    /**
+     * @dataProvider dataProviderSalesStatusDoesNotChangeWhenQuoteIdIsEmpty
+     * @group products
+     *
+     * @param string $quote_id        The quote_id to test with
+     */
+    public function testSalesStatusDoesNotChangeWhenQuoteIdIsEmpty($quote_id)
+    {
+        $product = new MockProduct();
+        $product->id = "test_id";
+        $product->quote_id = $quote_id;
+        $product->sales_status = Opportunity::STATUS_NEW;
+        $product->sales_stage = 'test1';
+        $product->fetched_row = array(
+            'sales_status' => Opportunity::STATUS_NEW,
+            'sales_stage' => 'test1',
+            'quote_id' => '',
+        );
+
+        $product->handleSalesStatus();
+
+        $this->assertEquals(Opportunity::STATUS_NEW, $product->sales_status);
+        unset($product);
+    }
+
+    /**
+     * Data Providers
+     *
+     * @return array
+     */
+    public static function dataProviderSalesStatusDoesNotChangeWhenQuoteIdIsEmpty()
+    {
+        return array(
+            array(''),
+            array(null)
+        );
+    }
+
 
     /**
      * @group products
@@ -290,6 +349,29 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestOpportunityUtilities::setCreatedOpportunity(array($opp->id, $opp2->id));
         $product2 = new MockProduct();
         $this->assertFalse($product2->setAccountIdForOpportunity($opp2->id));
+    }
+
+    /**
+     * @group products
+     * @ticket SFA-567
+     */
+    public function testProductCreatedFromOpportunityContainsSalesStage()
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        $opp->load_relationship('products');
+
+        $products = $opp->products->getBeans();
+
+        $this->assertEquals(1, count($products));
+        /* @var $product Product */
+        $product = array_shift($products);
+
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+
+        $this->assertNotNull($opp->sales_stage); // make sure it's not set to null
+        $this->assertEquals($opp->sales_stage, $product->sales_stage);
+
     }
 }
 

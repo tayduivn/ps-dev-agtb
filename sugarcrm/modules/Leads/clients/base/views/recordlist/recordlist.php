@@ -38,7 +38,7 @@ $viewdefs['Leads']['base']['view']['recordlist'] = array(
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
                 'icon' => 'icon-eye-open',
-                'value' => 'view',
+                'acl_action' => 'view',
             ),
             array(
                 'type' => 'rowaction',
@@ -46,14 +46,14 @@ $viewdefs['Leads']['base']['view']['recordlist'] = array(
                 'icon' => 'icon-pencil',
                 'label' => 'LBL_EDIT_BUTTON',
                 'event' => 'list:editrow:fire',
-                'value' => 'edit',
+                'acl_action' => 'edit',
             ),
             array(
                 'type' => 'rowaction',
                 'icon' => 'icon-trash',
                 'event' => 'list:deleterow:fire',
                 'label' => 'LBL_DELETE_BUTTON',
-                'value' => 'delete',
+                'acl_action' => 'delete',
             ),
             array(
                 'type' => 'rowaction',
@@ -76,7 +76,7 @@ $viewdefs['Leads']['base']['view']['recordlist'] = array(
                                 }'
                 ),
                 'label' => 'LBL_CONVERT_BUTTON_LABEL',
-                'value' => 'edit',
+                'acl_action' => 'edit',
             ),
         ),
     ),

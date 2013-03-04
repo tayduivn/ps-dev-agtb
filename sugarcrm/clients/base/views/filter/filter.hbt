@@ -1,3 +1,5 @@
 <input type="hidden" class="select2 related-filter">
+<div class="choice-related"></div>
 <input type="hidden" class="select2 search-filter" data-placeholder='{{str "LBL_FILTER"}}'>
+<div class="choice-filter"></div>
 <input type="text" size=" " class="search-name" placeholder='{{str "LBL_BASIC_SEARCH"}}&hellip;'>

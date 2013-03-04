@@ -29,21 +29,20 @@ class ProductToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @var Opportunity
      */
-    protected $opp;
+    protected static $opp;
 
     /**
      * @var Product
      */
-    protected $product;
+    protected static $product;
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        $this->opp = SugarTestOpportunityUtilities::createOpportunity();
-
-        $this->product = array_shift($this->opp->getProducts());
+        self::$opp = SugarTestOpportunityUtilities::createOpportunity();
+        self::$product = array_shift(self::$opp->getProducts());
     }
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestProductBundleUtilities::removeAllCreatedProductBundles();
@@ -60,7 +59,7 @@ class ProductToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_TestCase
         $restService = SugarTestRestUtilities::getRestServiceMock();
 
         $api = new ProductToQuoteConvertApi();
-        $return = $api->convertToQuote($restService, array('module' => 'Products', 'record' => $this->product->id));
+        $return = $api->convertToQuote($restService, array('module' => 'Products', 'record' => self::$product->id));
 
         $this->assertNotEmpty($return['id']);
 
@@ -70,7 +69,7 @@ class ProductToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_TestCase
         /* @var $quote Quote */
         $quote = BeanFactory::getBean('Quotes', $return['id']);
 
-        $this->assertEquals($this->opp->id, $quote->opportunity_id);
+        $this->assertEquals(self::$opp->id, $quote->opportunity_id);
 
         // get the product bundle to make sure it contains the product id
         $bundle = array_shift($quote->get_product_bundles());
@@ -78,7 +77,19 @@ class ProductToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestProductBundleUtilities::setCreatedProductBundle(array($bundle->id));
 
-        $this->assertEquals($this->product->id, $product->id);
+        $this->assertEquals(self::$product->id, $product->id);
+
+        return $product;
     }
 
+    /**
+     * @param $product
+     * @group products
+     * @group quotes
+     * @depends testCreateQuoteFromProductApi
+     */
+    public function testProductStatusIsQuotes($product)
+    {
+        $this->assertEquals(Product::STATUS_QUOTED, $product->status);
+    }
 }

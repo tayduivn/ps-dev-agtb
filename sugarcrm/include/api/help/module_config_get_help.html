@@ -1,0 +1,156 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
+<h2>Overview</h2>
+<span class="lead">
+    Retrieves the config settings for a given module.
+</span>
+
+<h2>Summary</h2>
+<span class="lead">
+    This endpoint is normally used for the forecasting module.
+</span>
+
+<h2>Query String Parameters</h2>
+<span class="lead">
+    This endpoint does not accept any query string parameters.
+</span>
+
+<h2>Input Parameters</h2>
+<span class="lead">
+    This endpoint does not accept any input parameters.
+</span>
+
+<h2>Result</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <tr>
+        <td>
+            &lt;config field&gt;
+        </td>
+        <td>
+            &lt;config field type&gt;
+        </td>
+        <td>
+            The list of config fields will be returned.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Output Example</h3>
+<pre class="pre-scrollable">
+{
+   "is_setup":1,
+   "is_upgrade":0,
+   "has_commits":1,
+   "timeperiod_type":"chronological",
+   "timeperiod_interval":"Annual",
+   "timeperiod_leaf_interval":"Quarter",
+   "timeperiod_start_date":"2013-01-01",
+   "timeperiod_shown_forward":2,
+   "timeperiod_shown_backward":2,
+   "forecast_ranges":"show_binary",
+   "buckets_dom":"commit_stage_binary_dom",
+   "show_binary_ranges":{
+      "include":{
+         "min":70,
+         "max":100
+      },
+      "exclude":{
+         "min":0,
+         "max":69
+      }
+   },
+   "show_buckets_ranges":{
+      "include":{
+         "min":85,
+         "max":100
+      },
+      "upside":{
+         "min":70,
+         "max":84
+      },
+      "exclude":{
+         "min":0,
+         "max":69
+      }
+   },
+   "show_custom_buckets_ranges":{
+      "include":{
+         "min":85,
+         "max":100
+      },
+      "upside":{
+         "min":70,
+         "max":84
+      },
+      "exclude":{
+         "min":0,
+         "max":69
+      }
+   },
+   "sales_stage_won":[
+      "Closed Won"
+   ],
+   "sales_stage_lost":[
+      "Closed Lost"
+   ],
+   "show_worksheet_likely":1,
+   "show_worksheet_best":1,
+   "show_worksheet_worst":0,
+   "show_projected_likely":1,
+   "show_projected_best":1,
+   "show_projected_worst":0,
+   "show_forecasts_commit_warnings":1
+}
+</pre>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    <tr>
+        <td>
+            v10
+        </td>
+        <td>
+            Added <code>/&lt;module&gt;/config</code> GET endpoint.
+        </td>
+    </tr>
+</table>

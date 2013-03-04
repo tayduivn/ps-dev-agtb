@@ -47,7 +47,7 @@
             success: function() {
                 app.file.checkFileFieldsAndProcessUpload(createModel, {
                     success: function() { self.saveComplete(); }
-                });
+                }, null, self);
             },
             error: function() {
                 self.resetButton();

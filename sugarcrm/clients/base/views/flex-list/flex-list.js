@@ -83,19 +83,18 @@
     parseFields: function(){
         var catalog = {
             'default': [], //Fields visible by default
-            'available': {
-                'visible': [], //Fields user wants to see
-                'all': [] //Fields hidden by default
-            }
+            'available': [], //Fields hidden by default
+            'visible': []//Fields user wants to see
         };
         // TODO: load field prefs and store names in this._fields.available.visible
         // no prefs so use viewMeta as default and assign hidden fields
         _.each(this.meta.panels, function(panel){
             _.each(panel.fields, function(fieldMeta, i) {
                 if (fieldMeta['default'] === false) {
-                    catalog.available.all.push(fieldMeta.name);
+                    catalog.available.push(fieldMeta.name);
                 } else {
                     catalog['default'].push(fieldMeta.name);
+                    catalog.visible.push(fieldMeta.name);
                 }
             }, this);
         }, this);

@@ -34,14 +34,13 @@ $viewdefs['Leads']['base']['view']['edit'] = array(
             'name'    => 'save_button',
             'type'    => 'button',
             'label'   => 'LBL_SAVE_BUTTON_LABEL',
-            'value'   => 'save',
+            'acl_action'   => 'save',
             'css_class' => 'btn-primary',
         ),
         array(
             'name'    => 'cancel_button',
             'type'    => 'button',
             'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-            'value'   => 'cancel',
             'css_class' => 'btn-invisible btn-link',
             'events'  => array(
                 'click' => 'function(){ window.history.back(); }',

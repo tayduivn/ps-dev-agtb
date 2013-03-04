@@ -3,7 +3,7 @@ describe("Base.Field.Button", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        app.view.Field.prototype._renderHtml = function() {};
+        SugarTest.loadComponent('base', 'field', 'button');
     });
 
     afterEach(function() {
@@ -25,10 +25,10 @@ describe("Base.Field.Button", function() {
         };
 
         field = SugarTest.createField("base","button", "button", "edit", def);
+
         field._loadTemplate = function() {  this.template = function(){ return '<a class="btn" href="javascript:void(0);"></a>'}; };
 
         field.render();
-        field._renderHtml();
         expect(field.callback).toBeUndefined();
         field.$(".btn").trigger('click');
         expect(field.callback).toBe("stuff excuted");
@@ -90,5 +90,56 @@ describe("Base.Field.Button", function() {
         expect(field.isHidden).toBe(true);
         triggers2.restore();
 
+    });
+
+    it('should call app.acl.hasAccessToModel if acl_module is not specified', function() {
+        var def = {
+            'acl_action' : 'edit'
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        var stub_hasAccess = sinon.stub(app.acl, "hasAccess");
+        var stub_hasAccessToModel = sinon.stub(app.acl, "hasAccessToModel");
+        var stub_render = sinon.stub(app.view.Field.prototype, "_render");
+        field._render();
+        expect(stub_hasAccess).not.toHaveBeenCalled();
+        expect(stub_hasAccessToModel).toHaveBeenCalled();
+        stub_hasAccess.restore();
+        stub_hasAccessToModel.restore();
+        stub_render.restore();
+    });
+
+    it('should call app.acl.hasAccess if acl_module is specified', function() {
+        var def = {
+            'acl_module' : 'Contacts',
+            'acl_action' : 'edit'
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        var stub_hasAccess = sinon.stub(app.acl, "hasAccess");
+        var stub_hasAccessToModel = sinon.stub(app.acl, "hasAccessToModel");
+        var stub_render = sinon.stub(app.view.Field.prototype, "_render");
+        field._render();
+        expect(stub_hasAccess).toHaveBeenCalled();
+        expect(stub_hasAccessToModel).not.toHaveBeenCalled();
+        stub_hasAccess.restore();
+        stub_hasAccessToModel.restore();
+        stub_render.restore();
+    });
+
+    it("should differenciate string routes from sidecar route object", function() {
+        var def = {
+            'route' : {
+                'action' : 'edit'
+            }
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        field.render();
+        expect(field.full_route).toBeNull();
+
+        def = {
+            'route' : 'custom/route'
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        field.render();
+        expect(field.full_route).toEqual('custom/route');
     });
 });

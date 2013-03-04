@@ -313,7 +313,7 @@
         app.api.call('create', myURL, sendModel, {
             success: function() {
                 app.alert.dismiss('mail_call_status');
-                app.alert.show('mail_call_status', {autoClose: true, level: 'success', title: successMessage});
+                app.alert.show('mail_call_status', {autoClose: true, level: 'success', messages: successMessage});
             },
             error: function(error) {
                 var msg = {autoClose: false, level: 'error', title: errorMessage};

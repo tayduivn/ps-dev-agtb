@@ -419,6 +419,101 @@ describe("ConvertLeadLayout", function() {
         });
     });
 
+    describe("uploadAssociatedRecordFiles", function () {
+        var layout, convertCompleteStub, uploadFileFieldStub, getPanelStub, isUploadSuccess, uploadSuccessCount, uploadErrorCount;
+
+        beforeEach(function () {
+            layout = initializeLayout();
+            layout.meta.modules = [
+                {module:'Foo'},
+                {module:'Bar'}
+            ];
+            convertCompleteStub = sinon.stub(layout, 'convertComplete');
+            uploadSuccessCount = 0;
+            uploadErrorCount = 0;
+            uploadFileFieldStub = sinon.stub(app.file, 'checkFileFieldsAndProcessUpload', function (model, callbacks, options, view, showAlert) {
+                if (isUploadSuccess) {
+                    uploadSuccessCount++;
+                    callbacks.success();
+                } else {
+                    uploadErrorCount++;
+                    callbacks.error();
+                }
+            });
+            getPanelStub = sinon.stub(layout, '_getPanelByModuleName', function (moduleName) {
+                var view = new Backbone.View();
+                view.getAssociatedModel = function() {
+                    return new Backbone.Model();
+                };
+                view.recordView = new Backbone.View();
+                return view;
+            });
+        });
+
+        afterEach(function () {
+            convertCompleteStub.restore();
+            uploadFileFieldStub.restore();
+            getPanelStub.restore();
+            delete layout;
+        });
+
+        it("should successfully call upload twice and convertSuccess once", function () {
+            var convertResults = {
+                modules: [
+                    {_module: 'Foo', id: '123'},
+                    {_module: 'Bar', id: '456'}
+                ]
+            };
+            isUploadSuccess = true;
+            layout.uploadAssociatedRecordFiles(convertResults);
+            expect(uploadSuccessCount).toBe(2);
+            expect(uploadErrorCount).toBe(0);
+            expect(convertCompleteStub.callCount).toBe(1);
+            expect(convertCompleteStub.lastCall.args[0]).toEqual('success');
+        });
+
+        it("should successfully call upload once if only one module data was returned and convertSuccess once", function () {
+            var convertResults = {
+                modules: [
+                    {_module: 'Bar', id: '456'}
+                ]
+            };
+            isUploadSuccess = true;
+            layout.uploadAssociatedRecordFiles(convertResults);
+            expect(uploadSuccessCount).toBe(1);
+            expect(uploadErrorCount).toBe(0);
+            expect(convertCompleteStub.callCount).toBe(1);
+            expect(convertCompleteStub.lastCall.args[0]).toEqual('success');
+        });
+
+        it("should only call convertSuccess if no convert results returned", function () {
+            var convertResults = {
+                modules: []
+            };
+            isUploadSuccess = true;
+            layout.uploadAssociatedRecordFiles(convertResults);
+            expect(uploadSuccessCount).toBe(0);
+            expect(uploadErrorCount).toBe(0);
+            expect(convertCompleteStub.callCount).toBe(1);
+            expect(convertCompleteStub.lastCall.args[0]).toEqual('success');
+        });
+
+        it("should call convertWarning if there was an error during upload", function () {
+            var convertResults = {
+                modules: [
+                    {_module: 'Foo', id: '123'},
+                    {_module: 'Bar', id: '456'}
+                ]
+            };
+            isUploadSuccess = false;
+            layout.uploadAssociatedRecordFiles(convertResults);
+            expect(uploadSuccessCount).toBe(0);
+            expect(uploadErrorCount).toBe(2);
+            expect(convertCompleteStub.callCount).toBe(1);
+            expect(convertCompleteStub.lastCall.args[0]).toEqual('warning');
+        });
+    });
+
     var mockDupesToFind = 2;
     var mockDupes = [
         {'id': '123', 'name': 'abc'},
