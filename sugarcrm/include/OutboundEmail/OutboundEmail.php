@@ -112,7 +112,7 @@ class OutboundEmail {
 	       return $userCredentialsReq;
 
 	    $userOverideAccount = $this->getUsersMailerForSystemOverride($user_id);
-	    if( $userOverideAccount == null || empty($userOverideAccount->mail_smtpuser) || empty($userOverideAccount->mail_smtpuser) )
+	    if( $userOverideAccount == null || empty($userOverideAccount->mail_smtpuser) || empty($userOverideAccount->mail_smtppass) )
 	       $userCredentialsReq = TRUE;
 
         return $userCredentialsReq;
@@ -459,13 +459,44 @@ class OutboundEmail {
 		$this->user_id = '1';
 		$this->save();
 
-		$this->updateUserSystemOverrideAccounts();
+        // If there is no system-override record for the System User - Create One using the System Mailer Configuration
+        // If there already is one, update the smtpuser and smtppass
+        //      If User Access To System Default Outbound is enabled
+        //   Or If SMTP Auth is required And Either the smtpuser or smtppass is empty
+        $oe_system = $this->getSystemMailerSettings();
+        $oe_override = $this->getUsersMailerForSystemOverride($this->user_id);
+        if ($oe_override == null) {
+            $this->createUserSystemOverrideAccount($this->user_id, $oe_system->mail_smtpuser, $oe_system->mail_smtppass);
+        }
+        else if ($this->doesUserOverrideAccountRequireCredentials($this->user_id) ||
+                 $this->isAllowUserAccessToSystemDefaultOutbound() ||
+                   ( $oe_override->mail_smtpauth_req &&
+                     $oe_override->mail_smtpserver == $oe_system->mail_smtpserver &&
+                     ( empty($oe_override->mail_smtpuser) || ($oe_system->mail_smtpuser==$oe_override->mail_smtpuser) || empty($oe_override->mail_smtppass))) ) {
+            $this->updateAdminSystemOverrideAccount();
+        }
 
+        $this->updateUserSystemOverrideAccounts();
 	}
 
-	/**
+    /**
+     * Update the Admin's user system override account with the system information if anything has changed.
+     */
+    function updateAdminSystemOverrideAccount()
+    {
+        $updateFields = array('mail_smtptype','mail_sendtype','mail_smtpserver', 'mail_smtpport','mail_smtpauth_req','mail_smtpssl','mail_smtpuser','mail_smtppass');
+
+        $values = $this->getValues($updateFields);
+        $updvalues = array();
+        foreach($values as $k => $val) {
+            $updvalues[] = "{$updateFields[$k]} = $val";
+        }
+        $query = "UPDATE outbound_email set ".implode(', ', $updvalues)." WHERE user_id='1' AND type='system-override'";
+        $this->db->query($query);
+    }
+
+    /**
 	 * Update the user system override accounts with the system information if anything has changed.
-	 *
 	 */
 	function updateUserSystemOverrideAccounts()
 	{
