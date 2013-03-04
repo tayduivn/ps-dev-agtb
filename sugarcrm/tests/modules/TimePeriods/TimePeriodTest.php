@@ -27,15 +27,29 @@ require_once('modules/TimePeriods/TimePeriod.php');
 
 class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private $preTestIds = array();
+
     public function setUp()
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        $this->preTestIds = TimePeriod::get_timeperiods_dom();
+
+        $db = DBManagerFactory::getInstance();
+
+        $db->query('UPDATE timeperiods set deleted = 1');
     }
 
     public function tearDown()
     {
+        $db = DBManagerFactory::getInstance();
+
+        $db->query("UPDATE timeperiods set deleted = 1");
+
+        //Clean up anything else left in timeperiods table that was not deleted
+        $db->query("UPDATE timeperiods SET deleted = 0 WHERE id IN ('" . implode("', '", array_keys($this->preTestIds))  . "')");
+
         SugarTestHelper::tearDown();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
