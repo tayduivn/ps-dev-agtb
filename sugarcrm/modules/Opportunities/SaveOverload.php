@@ -86,20 +86,20 @@ function perform_save($focus)
 
 //BEGIN SUGARCRM flav=pro ONLY
     if ($settings['is_setup']) {
+        if (empty($focus->id)) {
+            $focus->id = create_guid();
+            $focus->new_with_id = true;
+        }    
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         //We create a related product entry for any new opportunity so that we may forecast on products
         // create an empty product module
         /* @var $product Product */
         $product = BeanFactory::getBean('Products');
-        if (empty($focus->id)) {
-            $focus->id = create_guid();
-            $focus->new_with_id = true;
-        } else {
-            //We still need to update the associated product with changes
-            $product->retrieve_by_string_fields(array('opportunity_id' => $focus->id));
-        }
-
+        
+        //We still need to update the associated product with changes
+        $product->retrieve_by_string_fields(array('opportunity_id' => $focus->id));
+        
         //If $product is set then we need to copy values into it from the opportunity
         if (isset($product)) {
             $product->name = $focus->name;
