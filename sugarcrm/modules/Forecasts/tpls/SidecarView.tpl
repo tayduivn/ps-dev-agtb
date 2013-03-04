@@ -26,8 +26,10 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<link rel="stylesheet" type="text/css" href="{$css_url}" />
 <link rel="stylesheet" type="text/css" href="{$yui_widget_css_url}" />
+<link rel="stylesheet" type="text/css" href="{$css_url}" />
+{$sprite_url}
+
 
 <div class="content" id="forecasts">
     <div id="alerts" class="alert-top">
