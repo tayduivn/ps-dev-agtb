@@ -50,8 +50,29 @@ class ForecastsViewSidecar extends SidecarView
     {
         //Load sidecar theme css
         $theme = new SidecarTheme();
-        
+
+        // sprites
+        $sprites = "";
+        if(!empty($GLOBALS['sugar_config']['use_sprites']) && $GLOBALS['sugar_config']['use_sprites']) {
+
+            // system wide sprites
+            if(file_exists(sugar_cached("sprites/default/sprites.css"))) {
+                $sprites .= '<link rel="stylesheet" type="text/css" href="'.getJSPath('cache/sprites/default/sprites.css').'" />';
+            }
+
+            // theme specific sprites
+            if(file_exists(sugar_cached("sprites/RacerX/sprites.css"))) {
+                $sprites .= '<link rel="stylesheet" type="text/css" href="'.getJSPath('cache/sprites/RacerX/sprites.css').'" />';
+            }
+
+            // repeatable sprites
+            if(file_exists(sugar_cached("sprites/Repeatable/sprites.css"))) {
+                $sprites .= '<link rel="stylesheet" type="text/css" href="'.getJSPath('cache/sprites/Repeatable/sprites.css').'" />';
+            }
+        }
+
         $this->ss->assign("css_url", getVersionedPath($theme->getCSSURL()));
+        $this->ss->assign("sprite_url", $sprites);
         $this->ss->assign("yui_widget_css_url", getVersionedPath("cache/include/javascript/sugar_grp_yui_widgets.css"));
 
         $module = $this->module;
