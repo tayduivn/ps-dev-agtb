@@ -26,35 +26,19 @@
  ********************************************************************************/
 ({
     fieldTag: "select",
-    /**
-     * Load the enum's options if not already defined
-     * @param opts
-     */
     initialize: function(opts){
         app.view.Field.prototype.initialize.call(this, opts);
-        if(_.isUndefined(this.def.options) && _.isUndefined(this.items)){
-            var self = this;
-            // Load options data using enum API, response is browser cached for 60 minutes by default
-            var url = app.api.buildURL(this.module+"/enum/"+this.name);
-            app.api.call('read', url, null, {
-                success: function(o){
-                    self.def.options = o;
-                    if(!self.disposed){
-                        self.render();
-                    }
-                }
-            });
-        }
+        this.loadEnumOptions(false, function(){
+            //Re-render widget since we have fresh options list
+            if(!this.disposed){
+                this.render();
+            }
+        });
     },
     _render: function() {
-        var optionsKeys = [], val;
-        var options = this.items = this.items || this.def.options;
-
-        if(_.isString(options)) {
-            optionsKeys = _.keys(app.lang.getAppListStrings(options));
-        } else if(_.isObject(options)) {
-            optionsKeys = _.keys(options);
-        }
+        var val;
+        var options = this.items = this.items || this.enumOptions;
+        var optionsKeys = _.isObject(options) ? _.keys(options) : [];
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
         //The chosen plugin displays it correctly, but the value is not set to the select and the model.
@@ -66,7 +50,51 @@
                 this.model.set(this.name, defaultValue);
             }
         }
-
+        app.view.Field.prototype._render.call(this);
+        if(this.tplName === 'edit') {
+            var select2Options = this.getSelect2Options(optionsKeys);
+            this.$(this.fieldTag).select2(select2Options);
+            this.$(".select2-container").addClass("tleft");
+            val = this.$(this.fieldTag).select2('val');
+            if (val) {
+                this.model.set(this.name, val);
+            }
+        } else if(this.tplName === 'disabled') {
+            this.$(this.fieldTag).attr("disabled", "disabled").select2();
+        } else if(_.isEmpty(optionsKeys)){
+            // Set loading message in place of empty DIV while options are loaded via API
+            this.$el.html(app.lang.get("LBL_LOADING"));
+        }
+        return this;
+    },
+    /**
+     * Load the options for this field and pass them to callback function.  May be asynchronous.
+     * @param {Boolean} fetch (optional) Force use of Enum API to load options
+     * @param {Function} callback (optional) Called when enum options are available
+     */
+    loadEnumOptions: function(fetch, callback){
+        var self = this;
+        if(_.isUndefined(self.enumOptions)){
+            var items = self.def.options;
+            if(_.isString(items)) {
+                items = app.lang.getAppListStrings(items);
+            }
+            if(fetch || _.isUndefined(items)){
+                app.api.enum(self.module, self.name, {
+                    success: function(o){
+                        if(self.enumOptions !== o){
+                            self.enumOptions = o;
+                            callback.call(self);
+                        }
+                    }
+                    //Use default error handler
+                });
+            } else {
+                self.enumOptions = items;
+            }
+        }
+    },
+    getSelect2Options: function(optionsKeys){
         var select2Options = {};
         var emptyIdx = _.indexOf(optionsKeys, "");
         if (emptyIdx !== -1) {
@@ -75,6 +103,11 @@
             if (emptyIdx > 1) {
                 this.hasBlank = true;
             }
+        }
+
+        // Options are being loaded via app.api.enum
+        if(_.isEmpty(optionsKeys)){
+            select2Options.placeholder = app.lang.get("LBL_LOADING");
         }
 
         /* From http://ivaynberg.github.com/select2/#documentation:
@@ -98,18 +131,7 @@
          * this adds the ability to specify that threshold in metadata.
          */
         select2Options.minimumResultsForSearch = this.def.searchBarThreshold ? this.def.searchBarThreshold : 7;
-        app.view.Field.prototype._render.call(this);
-        if(this.tplName === 'edit') {
-            this.$(this.fieldTag).select2(select2Options);
-            this.$(".select2-container").addClass("tleft");
-            val = this.$(this.fieldTag).select2('val');
-            if (val) {
-                this.model.set(this.name, val);
-            }
-        } else if(this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled").select2();
-        }
-        return this;
+        return select2Options;
     },
     /**
      *  Convert select2 value into model appropriate value for sync

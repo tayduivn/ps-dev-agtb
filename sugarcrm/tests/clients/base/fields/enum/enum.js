@@ -55,11 +55,19 @@ describe("enum field", function() {
         expect($.trim(actual)).toEqual(expected);
     });
 
+    it("should call loadEnumOptions and set enumOptions during initialize", function() {
+        var field = SugarTest.createField("base", fieldName, "enum", "edit", {options: "bugs_type_dom"});
+        var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
+        field.initialize(field.options);
+        expect(loadEnumSpy.called).toBe(true);
+        expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
+        loadEnumSpy.restore();
+    });
+
     it("should load options from enum API if options is undefined", function(){
         var options = {one:"1"};
-        var callStub = sinon.stub(app.api,"call", function(method, url, data, callbacks){
-            expect(method).toEqual("read");
-            expect(url.indexOf("enum/test_enum")).toBeGreaterThan(0);
+        var callStub = sinon.stub(app.api,"enum", function(module, field, callbacks){
+            expect(field).toEqual("test_enum");
             //Call success callback
             callbacks.success(options);
         });
@@ -68,7 +76,7 @@ describe("enum field", function() {
         field.model.set(fieldName, "");
         expect(callStub).toHaveBeenCalled();
         expect(renderStub).toHaveBeenCalled();
-        expect(field.def.options).toEqual(options);
+        expect(field.enumOptions).toEqual(options);
         callStub.restore();
         renderStub.restore();
     });

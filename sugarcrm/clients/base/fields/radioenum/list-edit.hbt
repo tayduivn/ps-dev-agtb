@@ -27,7 +27,7 @@
  ********************************************************************************/
 }}
 <select data-placeholder=" " name="{{name}}">
-    {{#eachOptions def.options}}
+    {{#eachOptions enumOptions}}
         <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
     {{/eachOptions}}
 </select>
