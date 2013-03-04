@@ -455,7 +455,8 @@
                             self.toggleField(field);
                         }
                     },
-                    { deleteIfFails:false}
+                    { deleteIfFails:false},
+                    self
                 );
                 break;
             default:
@@ -510,7 +511,7 @@
                     });
                 }
             },
-            { deleteIfFails:false});
+            { deleteIfFails:false}, self);
 
         self.$(".record-save-prompt").hide();
         if (!self.disposed) self.render();

@@ -55,7 +55,7 @@
                         app.navigate(self.context, self.model, 'detail');
                     }
                 },
-                { deleteIfFails: false});
+                {deleteIfFails: false}, self);
 
             },
             fieldsToValidate: this.getFields(this.module)

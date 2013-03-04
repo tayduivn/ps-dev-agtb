@@ -51,6 +51,6 @@
                 });
             }
         },
-        {deleteIfFails: true, htmlJsonFormat: false});
+        {deleteIfFails: true, htmlJsonFormat: false}, self);
     }
 })

@@ -282,7 +282,9 @@
                         func();
                     }
                 },
-                { deleteIfFails:true});
+                {deleteIfFails:true},
+                self
+            );
         });
 
         options = {
