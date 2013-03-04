@@ -207,8 +207,7 @@ class Relationship extends SugarBean {
 		sugar_mkdir($this->cache_file_dir(), null, true);
         $out = "<?php \n \$relationships = " . var_export($relationships, true) . ";";
         sugar_file_put_contents_atomic(Relationship::cache_file_dir() . '/' . Relationship::cache_file_name_only(), $out);
-		
-        require_once("data/Relationships/RelationshipFactory.php");
+
         SugarRelationshipFactory::deleteCache();
 	}
 
@@ -225,7 +224,6 @@ class Relationship extends SugarBean {
 		if (file_exists($filename)) {
 			unlink($filename);
 		}
-        require_once("data/Relationships/RelationshipFactory.php");
         SugarRelationshipFactory::deleteCache();
 	}
 

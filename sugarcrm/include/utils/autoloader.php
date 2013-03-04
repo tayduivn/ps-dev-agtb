@@ -43,6 +43,7 @@ class SugarAutoLoader
         'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
         'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
         'SugarCurrency'=>'include/SugarCurrency/SugarCurrency.php',
+        'SugarRelationshipFactory' => 'data/Relationships/RelationshipFactory.php',
 	);
 
 	/**
@@ -81,6 +82,7 @@ class SugarAutoLoader
 	 */
 	public static $dirMap = array(
 	    "data/visibility/",
+        "data/Relationships/",
 	    "data/duplicatecheck/",
 	    "include/SugarSearchEngine/",
 	    "include/",

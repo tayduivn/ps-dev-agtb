@@ -20,8 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
 ********************************************************************************/
 
-require_once("data/Relationships/One2MBeanRelationship.php");
-
 /**
  * 1-1 Bean relationship
  * @api

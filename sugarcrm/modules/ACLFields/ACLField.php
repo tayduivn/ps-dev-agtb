@@ -296,7 +296,7 @@ class ACLField  extends ACLAction
     static function hasAccess($field, $module,$user_id, $is_owner){
         static $is_admin = null;
         if (is_null($is_admin)) {
-            $is_admin = is_admin($GLOBALS['current_user']);
+            $is_admin = is_admin(BeanFactory::retrieveBean('Users', $user_id));
         }
         if ($is_admin) {
             return 4;

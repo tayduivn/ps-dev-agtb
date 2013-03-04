@@ -232,7 +232,6 @@ class MetaDataManager {
      * @return array An array of relationships, indexed by the relationship name
      */
     public function getRelationshipData() {
-        require_once('data/Relationships/RelationshipFactory.php');
         $relFactory = SugarRelationshipFactory::getInstance();
 
         $data = $relFactory->getRelationshipDefs();

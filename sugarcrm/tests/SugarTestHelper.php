@@ -119,6 +119,8 @@ require_once 'SugarTestOpportunityUtilities.php';
 require_once 'SugarTestJobQueueUtilities.php';
 require_once 'SugarTestFilterUtilities.php';
 require_once 'SugarTestRestUtilities.php';
+require_once 'SugarTestActivityUtilities.php';
+require_once 'SugarTestCommentUtilities.php';
 
 //BEGIN SUGARCRM flav=pro ONLY
 require_once 'SugarTestForecastUtilities.php';
@@ -538,6 +540,9 @@ class SugarTestHelper
         // backup of SugarThemeRegistry
         self::$systemVars['SugarThemeRegistry'] = SugarThemeRegistry::current();
 
+        // Disable the activity stream from creating messages.
+        Activity::disable();
+
         self::$isInited = true;
     }
 
@@ -604,6 +609,9 @@ class SugarTestHelper
                 $GLOBALS[$scope][$name] = $value;
             }
         }
+
+        // Restore the activity stream.
+        Activity::enable();
 
         // Restoring of theme
         SugarThemeRegistry::set(self::$systemVars['SugarThemeRegistry']->dirName);

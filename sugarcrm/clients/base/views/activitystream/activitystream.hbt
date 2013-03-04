@@ -1,0 +1,63 @@
+{{#with model.attributes}}
+{{#eq activity_type "post"}}
+<a href="#Users/{{created_by}}" class="pull-left avatar avatar42" rel="tooltip" data-html="true" data-title="{{created_by_name}}" data-original-title="">
+    <img src="{{picture_url}}" alt="{{created_by_name}} avatar">
+</a>
+{{else}}
+<div class="label label-module label-{{parent_type}} pull-left" rel="tooltip" data-title="{{parent_type}}" data-original-title="">
+    {{firstChars parent_type 2}}
+</div>
+{{/eq}}
+<p>
+    {{{str ../tpl "Activities" data}}}
+    <br>
+    <date class="date">
+        <a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
+    </date>
+</p>
+<ul class="commented">
+{{#if comment_count}}
+    {{#each comments.models}}
+    {{#with attributes}}
+    <li>
+        <a href="#Users/{{created_by}}" class="pull-left avatar">
+            <img src="{{picture_url}}" alt="{{created_by_name}} avatar">
+        </a>
+        <p>
+            {{str "TPL_COMMENT" "Activities" data}}<br>
+            <date class="date"><a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}</date>
+        </p>
+    </li>
+    {{/with}}
+    {{/each}}
+    {{#if remaining_comments}}
+    <li>
+        <a class="more" style="text-decoration: initial;">
+            {{str ../../../more_tpl "Activities" remaining_comments}}
+            <i class="icon-caret-down"></i>
+        </a>
+    </li>
+    {{/if}}
+{{/if}}
+    <li class="acomment hide">
+        <div class="control-group form-horizontal">
+            <input class="reply span11" placeholder="Add your comment">
+            <input class="btn btn-primary span1 reply-btn" type="submit" value="Reply">
+        </div>
+    </li>
+</ul>
+<div class="actions btn-group">
+    <a class="btn btn-mini comment" rel="tooltip" data-title="Comment" data-original-title="">
+        <i class="icon-comment"></i>
+    </a>
+    <a class="btn btn-mini preview" rel="tooltip" data-title="Preview" data-original-title="">
+        <i class="icon-eye-open"></i>
+    </a>
+    <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
+        <i class="icon-caret-down"></i>
+    </a>
+    <ul class="dropdown-menu pull-right">
+        <li><a>Delete</a></li>
+    </ul>
+</div>
+{{/with}}

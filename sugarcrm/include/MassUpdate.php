@@ -377,7 +377,7 @@ eoq;
 	}
 
     public static function setMassUpdateFielddefs(Array $fielddefs, $moduleName) {
-        $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1, 'last_activity_date'=>1,);
+        $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1,);
 
         foreach ($fielddefs as $name => $def) {
             if(isset($def['type'])){

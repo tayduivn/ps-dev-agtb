@@ -26,7 +26,12 @@ class FilterPanelLayout
 
         $this->layout->set("toggles", $this->defaultToggles);
 
-        $this->layout->push(array("layout" => "activitystream"));
+        $this->layout->push(
+            array(
+                'layout' => 'activitystream',
+                'context' => array('module' => 'Activities'),
+            )
+        );
 
         // Set default toggle
         $this->layout->set("default", (isset($opts["default"]) ? $opts["default"] : $this->initialToggle));

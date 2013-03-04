@@ -181,6 +181,9 @@ $nonStandardModules = array (
     //'Tracker',
 );
 
+// Disable the activity stream from creating messages while installing.
+Activity::disable();
+
 //BEGIN SUGARCRM flav=pro ONLY
 //If this is MIcrosoft install and FTS is enabled, then fire index wake up method to prime the indexing service.
 if($db->supports('fulltext') && $db->full_text_indexing_installed()){
@@ -265,6 +268,10 @@ foreach( $beanFiles as $bean => $file ) {
 //END SUGARCRM flav=int ONLY
 }
 installerHook('post_createAllModuleTables');
+
+$mi = new ModuleInstaller();
+$mi->silent = true;
+$mi->rebuild_extensions();
 
 echo "<br>";
 ////    END TABLE STUFF
@@ -420,33 +427,6 @@ require_once ('install/createSnipUser.php');
 // Enable the InsideView connector and add all modules
 installLog("Enable InsideView Connector");
 enableInsideViewConnector();
-
-// Install the logic hook for FTS
-installLog("Creating FTS logic hook");
-if (!function_exists('createFTSLogicHook')) {
-    function createFTSLogicHook($filePath = 'application/Ext/LogicHooks/logichooks.ext.php')
-    {
-        $customFileLoc = create_custom_directory($filePath);
-        $fp = sugar_fopen($customFileLoc, 'wb');
-        $contents = <<<CIA
-<?php
-if (!isset(\$hook_array) || !is_array(\$hook_array)) {
-    \$hook_array = array();
-}
-if (!isset(\$hook_array['after_save']) || !is_array(\$hook_array['after_save'])) {
-    \$hook_array['after_save'] = array();
-}
-\$hook_array['after_save'][] = array(1, 'fts', 'include/SugarSearchEngine/SugarSearchEngineQueueManager.php', 'SugarSearchEngineQueueManager', 'populateIndexQueue');
-CIA;
-
-        fwrite($fp,$contents);
-        fclose($fp);
-
-    }
-}
-createFTSLogicHook();
-// also write it to Extension directory so it won't be lost when rebuilding extensions
-createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA
@@ -659,6 +639,9 @@ installerHook('post_installModules');
 
 // rebuild cache after all is said and done
 SugarAutoLoader::buildCache();
+
+// Restore the activity stream behaviour.
+Activity::enable();
 
 $out =<<<EOQ
 <br><p><b>{$mod_strings['LBL_PERFORM_OUTRO_1']} {$setup_sugar_version} {$mod_strings['LBL_PERFORM_OUTRO_2']}</b></p>

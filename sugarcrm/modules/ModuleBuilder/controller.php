@@ -53,7 +53,6 @@ require_once 'include/TemplateHandler/TemplateHandler.php';
 // Used in relationship actions
 require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php';
 require_once 'modules/ModuleBuilder/parsers/relationships/UndeployedRelationships.php';
-require_once 'data/Relationships/RelationshipFactory.php';
 
 // Used in action_SaveDropDown
 require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
@@ -76,13 +75,13 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class ModuleBuilderController extends SugarController
 {
-    
+
     public $action_remap = array();
 
     /**
      * Flag used in the metadata api cache clearing method to prevent duplication
      * of the metadata cache clear call
-     * 
+     *
      * @var bool
      */
     public $metadataApiCacheCleared = false;
@@ -389,10 +388,10 @@ class ModuleBuilderController extends SugarController
             require_once 'modules/ModuleBuilder/parsers/parser.label.php';
             $parser = new ParserLabel ($_REQUEST['view_module'], isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null);
             $parser->handleSave($_REQUEST, $GLOBALS ['current_language']);
-            
-            // Mark the metadata cache clear as done because it is done in the 
-            // language cache clear in $parser->handleSave(). This needs to be 
-            // set here so that it isn't called again in methods that call this 
+
+            // Mark the metadata cache clear as done because it is done in the
+            // language cache clear in $parser->handleSave(). This needs to be
+            // set here so that it isn't called again in methods that call this
             // method.
             $this->metadataApiCacheCleared;
 
@@ -424,7 +423,7 @@ class ModuleBuilderController extends SugarController
         $description = $_REQUEST ['description'];
         ob_clean();
         if (!empty ($modules) && !empty ($name)) {
-            
+
             $mb = new MBPackage ($name);
             $mb->author = $author;
             $mb->description = $description;
@@ -491,8 +490,8 @@ class ModuleBuilderController extends SugarController
                 //#28707 ,clear all the js files in cache
                 $repair->module_list = array();
                 $repair->clearJsFiles();
-                
-                // Clear the metadata cache so this change can be reflected 
+
+                // Clear the metadata cache so this change can be reflected
                 // immediately. This could have taken place already in action_SaveLabel
                 // so don't do it again if we don't need to.
                 if (!$this->metadataApiCacheCleared) {
@@ -516,12 +515,12 @@ class ModuleBuilderController extends SugarController
     function action_saveSugarField()
     {
         global $mod_strings;
-        
+
         $field = get_widget($_REQUEST ['type']);
         $_REQUEST ['name'] = trim($_POST ['name']);
 
         $field->populateFromPost();
-        
+
         $module = $_REQUEST ['view_module'];
 
         // Need to map Employees -> Users
@@ -572,9 +571,9 @@ class ModuleBuilderController extends SugarController
         if ($module == 'Users') {
             TemplateHandler::clearCache('Employees');
         }
-        
+
         // Bug 59210
-        // Clear the metadata cache so this change can be reflected 
+        // Clear the metadata cache so this change can be reflected
         // immediately. This could have taken place already in action_SaveLabel
         // so don't do it again if we don't need to.
         if (!$this->metadataApiCacheCleared) {
@@ -718,7 +717,7 @@ class ModuleBuilderController extends SugarController
             $this->DeleteLabel($GLOBALS['current_language'], $_REQUEST['label'], $_REQUEST['labelValue'], $_REQUEST['view_module']);
             $this->metadataApiCacheCleared = true;
         }
-        
+
         // Clear the metadata cache if it hasn't been done already
         if (!$this->metadataApiCacheCleared) {
             $this->clearMetaDataAPICache();
@@ -916,7 +915,7 @@ class ModuleBuilderController extends SugarController
     function action_searchViewSave()
     {
         $packageName = (isset ($_REQUEST ['view_package'])) ? $_REQUEST ['view_package'] : null;
-        
+
         // Bug 56789 - Set the client from the view to ensure the proper viewdef file
         $client = MetaDataFiles::getClientByView($_REQUEST['view']);
         $parser = new SearchViewMetaDataParser($_REQUEST ['view'], $_REQUEST ['view_module'], $packageName, $client);
@@ -1067,7 +1066,7 @@ class ModuleBuilderController extends SugarController
         if (!$this->metadataApiCacheCleared) {
             // Clear out the api metadata cache
             MetaDataManager::clearAPICache();
-            
+
             // Used to prevent duplication of this process
             $this->metadataApiCacheCleared = true;
         }

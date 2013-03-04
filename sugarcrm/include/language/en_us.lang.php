@@ -70,7 +70,8 @@ $app_list_strings = array (
     'Manufacturers' => 'Manufacturers',
     //END SUGARCRM flav=pro ONLY
     'Activities' => 'Activities',
-    'ActivityStream' => 'Activity Stream',
+    'Comments' => 'Comments',
+    'Subscriptions' => 'Subscriptions',
     'Bugs' => 'Bug Tracker',
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',
@@ -3475,7 +3476,7 @@ $app_strings = array (
     'LBL_TIME_AGO_SECONDS' => 'less than a minute ago',
     'LBL_TIME_AGO_MINUTE' => 'about 1 minute ago',
     'LBL_TIME_AGO_MINUTES' => '{{this}} minutes ago',
-    'LBL_TIME_AGO_HOUR' => 'about a hour ago',
+    'LBL_TIME_AGO_HOUR' => 'about an hour ago',
     'LBL_TIME_AGO_HOURS' => '{{this}} hours ago',
     'LBL_TIME_AGO_DAY' => 'yesterday',
     'LBL_TIME_AGO_DAYS' => '{{this}} days ago',
@@ -3813,6 +3814,9 @@ $app_strings = array (
     'LBL_ALERT_TITLE_NOTICE' => 'Notice:',
     'LBL_ALERT_TITLE_ERROR' => 'Error:',
     'LBL_ALERT_TITLE_LOADING' => 'Loading',
+
+    // Activity stream
+    'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
 );
 
 

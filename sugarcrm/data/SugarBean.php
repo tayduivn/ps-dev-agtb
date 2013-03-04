@@ -30,7 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *******************************************************************************/
 
 require_once('modules/DynamicFields/DynamicField.php');
-require_once("data/Relationships/RelationshipFactory.php");
 require_once 'data/BeanVisibility.php';
 require_once 'data/BeanDuplicateCheck.php';
 require_once 'data/SugarACL.php';
@@ -1786,7 +1785,10 @@ class SugarBean
             $this->track_view($current_user->id, $this->module_dir, 'save');
         }
 
-        $this->call_custom_logic('after_save', '');
+        $this->call_custom_logic('after_save', array(
+            'isUpdate' => $isUpdate,
+            'dataChanges' => $auditDataChanges,
+        ));
 
         //Now that the record has been saved, we don't want to insert again on further saves
         $this->new_with_id = false;
@@ -6450,7 +6452,7 @@ class SugarBean
 	 */
 	public function getCopy()
 	{
-	    return BeanFactory::getBean($this->module_dir);
+        return BeanFactory::getBean($this->module_name);
 	}
 
     /**

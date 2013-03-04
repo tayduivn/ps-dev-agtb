@@ -89,7 +89,6 @@ if ($focus->object_name == "User" && $linked_field == 'eapm') {
     BeanFactory::deleteBean('EAPM', $linked_id);
 }
 //BEGIN SUGARCRM flav=pro ONLY
-require_once("data/Relationships/SugarRelationship.php");
 SugarRelationship::resaveRelatedBeans();
 //END SUGARCRM flav=pro ONLY
 

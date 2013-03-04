@@ -20,16 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
 ********************************************************************************/
 
-
-require_once "data/Relationships/SugarRelationship.php";
-
-// Used in getRelationship
-require_once "data/Relationships/EmailAddressRelationship.php";
-require_once "data/Relationships/M2MRelationship.php";
-require_once "data/Relationships/One2MBeanRelationship.php";
-require_once "data/Relationships/One2OneBeanRelationship.php";
-require_once "data/Relationships/One2OneRelationship.php";
-
 // For clearing the metadata API cache
 require_once "include/MetaDataManager/MetaDataManager.php";
 
@@ -70,7 +60,7 @@ class SugarRelationshipFactory {
         {
             unlink($file);
         }
-        
+
         //clear out the api metadata cache
         MetaDataManager::clearAPICache();
     }

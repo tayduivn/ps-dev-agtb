@@ -399,7 +399,6 @@ class SugarQuery_Compiler_SQL
     protected function compileWhere(array $where)
     {
         $sql = false;
-        $first_object = true;
         foreach ($where AS $whereObj) {
             if ($whereObj instanceof SugarQuery_Builder_Andwhere) {
                 $operator = " AND ";
@@ -426,10 +425,6 @@ class SugarQuery_Compiler_SQL
                     }
                 }
             }
-            if ($first_object == false) {
-                $sql .= ')';
-            }
-            $first_object = false;
             $prev_operator = $operator;
         }
         return $sql;
