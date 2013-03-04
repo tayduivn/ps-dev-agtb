@@ -230,15 +230,13 @@
      */
     initializeSendEmailModel: function() {
         var sendModel = new Backbone.Model(_.extend({}, this.model.attributes, {
-            to_addresses: [ {
-                                email: this.model.get('to_addresses')
-                            }],
-            cc_addresses: [ {
-                                email: this.model.get('cc_addresses')
-                            }],
-            bcc_addresses: [ {
-                                 email: this.model.get('bcc_addresses')
-                             }],
+            // use of *_addresses_collection is only temporary, until the recipients field prioritizes the collection
+            // as its underlying data structure, instead of the string in *_addresses
+            // in the meantime, we must replace the the string stored in *_addresses with the contents of the
+            // synchronized collection
+            to_addresses: this.model.get('to_addresses_collection'),
+            cc_addresses: this.model.get('cc_addresses_collection'),
+            bcc_addresses: this.model.get('bcc_addresses_collection'),
             attachments: this.getAttachmentsByType('upload'),
             documents: this.getAttachmentsByType('document')
         }));
@@ -314,6 +312,7 @@
             success: function() {
                 app.alert.dismiss('mail_call_status');
                 app.alert.show('mail_call_status', {autoClose: true, level: 'success', title: successMessage});
+                app.drawer.close();
             },
             error: function(error) {
                 var msg = {autoClose: false, level: 'error', title: errorMessage};
