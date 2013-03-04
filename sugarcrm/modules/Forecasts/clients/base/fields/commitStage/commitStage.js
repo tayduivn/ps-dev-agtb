@@ -105,8 +105,8 @@
 
             //custom namespaced window click event to destroy the chosen dropdown on "blur".
             //this is removed in this.resetBuckets
-            $(window).on("click." + self.cid, function(e) {
-                if(!_.isEqual(self.cid, $(e.target).attr("cid"))) {
+            $(window).on("click." + this.cid, function(e) {
+                if(!_.isEqual(this.cid, $(e.target).attr("cid"))) {
                     this.resetBucket();
                 }
             }, this);
@@ -181,7 +181,7 @@
             this.buckets += "<option value='' selected></option>";
             _.each(options, function(item, key) {
                 this.buckets += "<option value='" + key + "'>" + item + "</options>"
-            });
+            }, this);
             this.buckets += "</select>";
             $.data(document.body, "commitStageBuckets", this.buckets);
         }
