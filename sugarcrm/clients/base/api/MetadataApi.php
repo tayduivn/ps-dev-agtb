@@ -72,6 +72,15 @@ class MetadataApi extends SugarApi {
     }
 
     public function getAllMetadata(ServiceBase $api, array $args) {
+        global $current_language, $app_strings, $app_list_strings, $current_user;
+
+        // asking for a specific language
+        if (isset($args['lang']) && !empty($args['lang'])) {
+            $current_language = $args['lang'];
+            $app_strings = return_application_language($current_language);
+            $app_list_strings = return_app_list_strings_language($current_language);
+
+        }        
         // Default the type filter to everything
         $this->typeFilter = array('modules','full_module_list','fields', 'labels', 'module_list', 'views', 'layouts','relationships','currencies', 'jssource', 'server_info');
         if ( !empty($args['type_filter']) ) {
