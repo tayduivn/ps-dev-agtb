@@ -61,14 +61,14 @@ class OutboundEmailConfigurationPeer
         }
     }
 
-
     /**
      * @access public
-     * @param  $locale  Localization
-     * @param $charset
-     * @return $outboundEmailConfiguration  OutboundEmailConfiguration
+     * @param Localization $locale
+     * @param string       $charset
+     * @return OutboundEmailConfiguration $outboundEmailConfiguration
      */
-    public static function getSystemDefaultMailConfiguration(Localization $locale = null, $charset = null) {
+    public static function getSystemDefaultMailConfiguration(Localization $locale = null, $charset = null)
+    {
         global $app_strings;
         $systemUser = BeanFactory::getBean("Users");
         $systemUser->getSystemUser();
@@ -76,26 +76,27 @@ class OutboundEmailConfigurationPeer
         $systemMailerConfiguration = static::loadOutboundEmail();
         $systemMailerConfiguration->getSystemMailerSettings();
 
-        $systemUserInfo = $systemUser->getUsersNameAndEmail();
+        $system_replyToAddress = '';
+        $systemUserInfo        = $systemUser->getUsersNameAndEmail();
+
         if (empty($systemUserInfo['email'])) {
-            $systemDefaultInfo = $systemUser->getSystemDefaultNameAndEmail();
+            $systemDefaultInfo       = $systemUser->getSystemDefaultNameAndEmail();
             $systemUserInfo['email'] = $systemDefaultInfo['email'];
-            $systemUserInfo['name'] = $systemDefaultInfo['name'];
-            $system_replyToAddress = $systemUserInfo['email'];
-        } else {
-            $system_replyToAddress = '';
+            $systemUserInfo['name']  = $systemDefaultInfo['name'];
+            $system_replyToAddress   = $systemUserInfo['email'];
         }
 
         $system_replyToName = $systemUserInfo['name'];
         $replyTo            = $systemUser->emailAddress->getReplyToAddress($systemUser, true);
+
         if (!empty($replyTo)) {
             $system_replyToAddress = $replyTo;
         }
 
-        $configurations                  = array();
-        $configurations["config_id"]     = $systemUser->id;
-        $configurations["config_type"]   = "system";
-        $configurations["inbox_id"]      = null;
+        $configurations                = array();
+        $configurations["config_id"]   = $systemUser->id;
+        $configurations["config_type"] = "system";
+        $configurations["inbox_id"]    = null;
 
         $configurations["from_email"]    = $systemUserInfo["email"];
         $configurations["from_name"]     = $systemUserInfo["name"];
@@ -103,12 +104,16 @@ class OutboundEmailConfigurationPeer
         $configurations["personal"]      = false;
         $configurations["replyto_email"] = $system_replyToAddress;
         $configurations["replyto_name"]  = $system_replyToName;
-        $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration($systemUser, $configurations, $systemMailerConfiguration, $locale, $charset);
+        $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration(
+            $systemUser,
+            $configurations,
+            $systemMailerConfiguration,
+            $locale,
+            $charset
+        );
 
         return $outboundEmailConfiguration;
     }
-
-
 
     /**
      * @access public
@@ -122,7 +127,7 @@ class OutboundEmailConfigurationPeer
         try {
             $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($user);
 
-            $configExists =  self::isMailConfigurationValid($config);
+            $configExists = self::isMailConfigurationValid($config);
         } catch (MailerException $me) {
             $GLOBALS["log"]->warn(
                 "An error occurred while searching for a valid system mail configuration: " .
@@ -142,13 +147,13 @@ class OutboundEmailConfigurationPeer
     {
         $configExists = false;
 
-         if ($configuration instanceof OutboundSmtpEmailConfiguration) {
+        if ($configuration instanceof OutboundSmtpEmailConfiguration) {
             $host = $configuration->getHost();
 
             if (!empty($host)) {
                 $configExists = true;
             }
-         }
+        }
 
         return $configExists;
     }

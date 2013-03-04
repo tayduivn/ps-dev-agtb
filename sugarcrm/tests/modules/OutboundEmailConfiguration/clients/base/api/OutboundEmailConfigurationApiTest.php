@@ -69,8 +69,7 @@ class OutboundEmailConfigurationApiTest extends RestTestBase
             self::assertEquals(
                 $expected,
                 $actual,
-                "The configuration with id={$configuration["id"]} and name={$configuration["name"]} should have default=" .
-                ($expected ? "true" : "false")
+                "The configuration with id={$configuration["id"]} should have default=" . ($expected ? "true" : "false")
             );
         }
     }
