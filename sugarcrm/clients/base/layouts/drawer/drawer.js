@@ -151,6 +151,8 @@
         //add the expand tab and the backdrop to the top drawer
         this._createTabAndBackdrop(drawers.$next, drawers.$top);
 
+        //indicate that it's a drawer
+        drawers.$next.addClass('drawer');
         //set the height of the new drawer
         drawers.$next.css('height', drawerHeight);
         //set the animation starting point for the new drawer
@@ -163,12 +165,13 @@
                     .addClass('transition')
                     .css('top', drawers.$bottom.offset().top + drawerHeight);
             }
+
             drawers.$top
                 .addClass('transition')
                 .css('top', this._isMainAppContent(drawers.$top) ? drawerHeight : drawers.$top.offset().top + drawerHeight);
 
             drawers.$next
-                .addClass('drawer transition')
+                .addClass('transition')
                 .css('top','');
 
             //resize the visible drawer when the browser resizes
