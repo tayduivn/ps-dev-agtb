@@ -195,7 +195,9 @@
     createURL: function() {
         // we need to default the type to products
         var args_filter = [
-            {"type": "opportunities"}
+            {
+                "type": app.metadata.getModule('Forecasts', 'config').forecast_by
+            }
         ];
         if(this.timePeriod) {
             args_filter.push({"timeperiod_id": this.timePeriod});

@@ -21,14 +21,15 @@
 
 describe("The forecasts worksheet", function() {
 
-    var app, view, testMethodStub, collection, apiCallStub;
+    var app, view, testMethodStub, collection, apiCallStub, getModuleStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        sinon.stub(app.metadata, "getModule", function(module, type) {
+        getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
             return {
                 sales_stage_won: ["Closed Won"],
                 sales_stage_lost: ["Closed Lost"],
+                forecast_by: 'products'
             };
         });
 
@@ -74,12 +75,32 @@ describe("The forecasts worksheet", function() {
     });
 
     afterEach(function() {
-        app.metadata.getModule.restore();
+        getModuleStub.restore();
         apiCallStub.restore();
         app.user.unset('id');
         view.unbindData();
     });
 
+    describe('createUrl test', function() {
+        var url;
+        it('should return products in url', function() {
+            url = view.createURL();
+            expect(url.filters.filter[0].type).toBe("products");
+        });
+        it('should return opportunities in url', function() {
+            // reset getModuleStub for just this test
+            getModuleStub.restore();
+            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+                return {
+                    sales_stage_won: ["Closed Won"],
+                    sales_stage_lost: ["Closed Lost"],
+                    forecast_by: 'opportunities'
+                };
+            });
+            url = view.createURL();
+            expect(url.filters.filter[0].type).toBe("opportunities");
+        });
+    });
 
     describe("isMyWorksheet method", function() {
         beforeEach(function() {
