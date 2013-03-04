@@ -36,24 +36,184 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
      */
     public function process()
     {
-        // base file and class name
-        $file = 'include/SugarForecasting/Hierarchy/User/RecursiveDBUserHierarchy.php';
-        $klass = 'SugarForecasting_Hierarchy_User_RecursiveDBUserHierarchy';
 
-        $db = DBManagerFactory::getInstance();
-        //If the database driver does not support recursive queries, use the NonRecursiveDBUserHierarchy class
-        if(!$db->supports('recursive_query')) {
-            $file = 'include/SugarForecasting/Hierarchy/User/NonRecursiveDBUserHierarchy.php';
-            $klass = 'SugarForecasting_Hierarchy_User_NonRecursiveDBUserHierarchy';
+        /* @var $userBean User */
+        $userBean = BeanFactory::getBean('Users', $this->getArg('user_id'));
+
+        $user = array(
+            'id' => $userBean->id,
+            'first_name' => $userBean->first_name,
+            'last_name' => $userBean->last_name,
+            'user_name' => $userBean->user_name,
+            'reports_to_id' => $userBean->reports_to_id,
+            'children' => array()
+        );
+
+        if (User::isManager($userBean->id)) {
+            $user['children'] = $this->getChildren();
         }
 
-        // check for a custom file exists
-        SugarAutoLoader::requireWithCustom($file);
-        $klass = SugarAutoLoader::customClass($klass);
+        $tree = $this->formatForTree($user);
 
-        // create the class
-        $obj = new $klass($args);
-        return $obj->getReportees($this->getArgs());
+        if ($GLOBALS['current_user']->id != $this->getArg('user_id')) {
+            // we need to create a parent record
+            if (!empty($userBean->reports_to_id)) {
+                $parent = $this->getParentLink($userBean->reports_to_id);
+                // the open user should be marked as a manager now
+                $tree['attr']['rel'] = 'manager';
+
+                // put the parent link and the tree in the same level
+                $tree = array($parent, $tree);
+            }
+        }
+
+        return $tree;
+    }
+
+    /**
+     * Load up all the reporting users for a give user
+     *
+     * @return array
+     */
+    protected function getChildren()
+    {
+        $additional_fields = array(
+            'user_name',
+            'first_name',
+            'last_name',
+            'reports_to_id'
+        );
+
+        return User::getReporteesWithLeafCount($this->getArg('user_id'), false, $additional_fields);
+    }
+
+    /**
+     * Format the main part of the tree
+     *
+     * @param $data
+     * @return array
+     */
+    protected function formatForTree($data)
+    {
+        $tree = $this->getTreeArray(
+            $data['id'],
+            $data['first_name'],
+            $data['last_name'],
+            $data['user_name'],
+            $data['reports_to_id'],
+            'root'
+        );
+
+        if (isset($data['children']) && !empty($data['children'])) {
+            // we have children
+            // add the manager again as the my opportunities bunch
+            $tree['children'][] = $this->getTreeArray(
+                $data['id'],
+                $data['first_name'],
+                $data['last_name'],
+                $data['user_name'],
+                $data['reports_to_id'],
+                'my_opportunities'
+            );
+
+            foreach ($data['children'] as $child) {
+                $tree['children'][] = $this->getTreeArray(
+                    $child['id'],
+                    $child['first_name'],
+                    $child['last_name'],
+                    $child['user_name'],
+                    $child['reports_to_id']
+                );
+            }
+
+            $tree['state'] = 'open';
+        }
+
+        return $tree;
+    }
+
+    /**
+     * Utility method to get the Parent Link
+     *
+     * @param string $manager_reports_to
+     * @return array
+     */
+    protected function getParentLink($manager_reports_to)
+    {
+        /* @var $parentBean User */
+        $parentBean = BeanFactory::getBean('Users', $manager_reports_to);
+        $parent = $this->getTreeArray(
+            $parentBean->id,
+            $parentBean->first_name,
+            $parentBean->last_name,
+            $parentBean->user_name,
+            $parentBean->reports_to_id,
+            'parent_link'
+        );
+
+        global $current_language;
+        $current_module_strings = return_module_language($current_language, 'Forecasts');
+        $parent['data'] = $current_module_strings['LBL_TREE_PARENT'];
+
+        // overwrite the whole attr array for the parent
+        $parent['attr'] = array(
+            'rel' => 'parent_link',
+            'class' => 'parent',
+            // adding id tag for QA's voodoo tests
+            'id' => 'jstree_node_parent'
+        );
+
+        return $parent;
+    }
+
+    /**
+     * Utility method to build out a tree node array
+     *
+     * @param string $id
+     * @param string $first_name
+     * @param string $last_name
+     * @param string $user_name
+     * @param string $reports_to_id
+     * @param string $rel
+     * @return array
+     */
+    protected function getTreeArray($id, $first_name, $last_name, $user_name, $reports_to_id, $rel = 'rep')
+    {
+        global $locale;
+        $fullName = $locale->getLocaleFormattedName($first_name, $last_name);
+
+        $qa_id = 'jstree_node_';
+        if ($rel == "my_opportunities") {
+            $qa_id .= 'myopps_';
+        }
+
+        $state = '';
+
+        if ($rel == 'rep' && User::isManager($id)) {
+            // check if the user is a manager and if they are change the rel to be 'manager'
+            $rel = 'manager';
+            $state = 'closed';
+        }
+
+        return array(
+            'data' => $fullName,
+            'children' => array(),
+            'metadata' => array(
+                'id' => $id,
+                'user_name' => $user_name,
+                'full_name' => $fullName,
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'reports_to_id' => $reports_to_id,
+            ),
+            'state' => $state,
+            'attr' => array(
+                // set all users to rep by default
+                'rel' => $rel,
+                // adding id tag for QA's voodoo tests
+                'id' => $qa_id . $user_name
+            )
+        );
     }
 
 }

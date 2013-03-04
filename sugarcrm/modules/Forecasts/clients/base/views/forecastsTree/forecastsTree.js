@@ -37,6 +37,8 @@
     currentTreeUrl:'',
     currentRootId:'',
 
+    selectedUser: {},
+
     /**
      * Initialize the View
      *
@@ -49,6 +51,8 @@
         this.reporteesEndpoint = app.api.serverUrl + "/Forecasts/reportees/";
         this.currentTreeUrl = this.reporteesEndpoint + app.user.get('id');
         this.currentRootId = app.user.get('id');
+
+        this.selectedUser = app.user.toJSON();
     },
 
     /**
@@ -90,6 +94,7 @@
      */
     checkRender:function (context, selectedUser) {
         // handle the case for user clicking MyOpportunities first
+        this.selectedUser = selectedUser;
         if (selectedUser.showOpps) {
             var nodeId = (selectedUser.isManager ? 'jstree_node_myopps_' : 'jstree_node_') + selectedUser.user_name;
             this.selectJSTreeNode(nodeId)
@@ -156,13 +161,13 @@
                     //childEntry to an Array.  This is crucial so that the beginning _.each loop runs correctly.
                     _.each(entry.children, function (childEntry, index2) {
                         entry.children[index2] = self._recursiveReplaceHTMLChars([childEntry]);
-                        if(childEntry.metadata.id == app.user.get('id')) {
+                        if(childEntry.metadata.id == this.selectedUser.id) {
                             childEntry.data = app.utils.formatString(app.lang.get('LBL_MY_OPPORTUNITIES', 'Forecasts'), [childEntry.data]);
                         }
-                    });
+                    }, this);
                 }
             }
-        });
+        }, this);
 
         return data;
     },

@@ -318,7 +318,6 @@
 
         // init the alerts
         app.alert.init();
-        $('div.tab-pane.active').height($(document).height());
         return this;
     }
 

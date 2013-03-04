@@ -181,6 +181,42 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @group user
+     */
+    public function testGetReporteesWithLeafCountWithAdditionalFields()
+    {
+        $manager = SugarTestUserUtilities::createAnonymousUser();
+
+        //set up users
+        $subManager1 = SugarTestUserUtilities::createAnonymousUser();
+        $subManager2 = SugarTestUserUtilities::createAnonymousUser();
+        $rep1 = SugarTestUserUtilities::createAnonymousUser();
+        $rep2 = SugarTestUserUtilities::createAnonymousUser();
+        $rep3 = SugarTestUserUtilities::createAnonymousUser();
+
+        //set up relationships
+        $subManager1->reports_to_id = $manager->id;
+        $subManager1->save();
+        $subManager2->reports_to_id = $manager->id;
+        $subManager2->save();
+        $rep1->reports_to_id = $subManager1->id;
+        $rep1->save();
+        $rep2->reports_to_id = $subManager2->id;
+        $rep2->save();
+
+        $rep3->status = 'Inactive';
+        $rep3->reports_to_id = $subManager2->id;
+        $rep3->save();
+
+        //get leaf arrays
+        $managerReportees = User::getReporteesWithLeafCount($manager->id, false, array('first_name'));
+
+        //check normal scenario
+        $this->assertEquals("1", $managerReportees[$subManager1->id]['total'], "SubManager leaf count did not match");
+        $this->assertEquals($subManager1->first_name, $managerReportees[$subManager1->id]['first_name']);
+    }
+
     public function testGetReporteeManagers()
     {
         $manager = SugarTestUserUtilities::createAnonymousUser();

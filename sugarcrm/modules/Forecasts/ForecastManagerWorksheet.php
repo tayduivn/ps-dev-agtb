@@ -65,8 +65,8 @@ class ForecastManagerWorksheet extends SugarBean
 
         $sql = 'SELECT name, assigned_user_id, team_id, team_set_id, quota, best_case, best_case_adjusted,
                 likely_case, likely_case_adjusted, worst_case, worst_case_adjusted, currency_id, base_rate, timeperiod_id,
-                user_id FROM ' . $this->table_name . ' WHERE assigned_user_id = "' . $manager->id . '"
-                AND timeperiod_id = "' . $db->quote($timeperiod) . '" and draft = 1 and deleted = 0';
+                user_id FROM ' . $this->table_name . ' WHERE assigned_user_id = ' . $db->quoted($manager->id) . '
+                AND timeperiod_id = ' . $db->quoted($timeperiod) . ' and draft = 1 and deleted = 0';
 
         $results = $db->query($sql);
 

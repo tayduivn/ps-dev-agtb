@@ -93,12 +93,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadUsersThrowExceptionWhenUserIsNotManager()
     {
-        $db = DBManagerFactory::getInstance();
-        if (!$db->supports('recursive_query')) {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $testUser = SugarTestUserUtilities::createAnonymousUser();
 
         $args = $this->args;
@@ -120,12 +114,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadUsersReturnsTwoUsersForCurrentUser()
     {
-        $db = DBManagerFactory::getInstance();
-        if (!$db->supports('recursive_query')) {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
 
@@ -139,12 +127,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadUserAmount($user)
     {
-        $db = DBManagerFactory::getInstance();
-        if (!$db->supports('recursive_query')) {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
         $obj->loadUsersAmount();
@@ -173,12 +155,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadUsersQuota($user)
     {
-        $db = DBManagerFactory::getInstance();
-        if (!$db->supports('recursive_query')) {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
         $obj->loadUsersQuota();
@@ -196,12 +172,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadForecastValuesForUser($user, $dataKey)
     {
-        $db = DBManagerFactory::getInstance();
-        if (!$db->supports('recursive_query')) {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
         $obj->loadForecastValues();
@@ -233,11 +203,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadWorksheetAdjustedValuesForUser($user, $dataKey, $worksheetKey)
     {
-        $db = DBManagerFactory::getInstance();
-        if (!$db->supports('recursive_query')) {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
 
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
@@ -269,12 +234,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadManagerAmountsForReporteeIsTotalOfReporteeAndHisReportee()
     {
-        $db = DBManagerFactory::getInstance();
-        if (!$db->supports('recursive_query')) {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
         $obj->loadUsersAmount();
@@ -295,12 +254,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMakeSureAdjustedNumberAreNotEmpty($user, $dataKey, $worksheetKey)
     {
-        $db = DBManagerFactory::getInstance();
-        if (!$db->supports('recursive_query')) {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
         $obj->loadWorksheetAdjustedValues();
