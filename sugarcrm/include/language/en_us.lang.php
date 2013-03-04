@@ -4672,7 +4672,7 @@ $app_list_strings['forecasts_timeperiod_options_dom'] = array(
     'Quarter' => 'Quarterly (Monthly sub-periods)',
 );
 $app_list_strings['forecasts_config_worksheet_layout_forecast_by_options_dom'] = array(
-    'line_items' => 'Product Line Items',
+    'products' => 'Product Line Items',
     'opportunities' => 'Opportunities',
 );
 
