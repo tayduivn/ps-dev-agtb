@@ -140,7 +140,8 @@
         if (this._isMainAppContent(drawers.$top)) {
             //make sure that the main application content is set as a drawer
             drawers.$top.addClass('drawer');
-            $('body').css('overflow', 'hidden');
+            app.$rootEl.addClass('noscroll');
+            app.$contentEl.addClass('noscroll');
         }
 
         //add the expand tab and the backdrop to the top drawer
@@ -194,7 +195,8 @@
             this._removeTabAndBackdrop(drawers.$bottom);
             if (this._isMainAppContent(drawers.$bottom)) {
                 drawers.$bottom.removeClass('drawer transition');
-                $('body').css('overflow', '');
+                app.$rootEl.removeClass('noscroll');
+                app.$contentEl.removeClass('noscroll');
             } else {
                 //refresh drawer position and height for collapsed or resized drawers
                 this._expandDrawer(drawers.$bottom, drawers.$next);
