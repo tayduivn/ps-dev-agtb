@@ -74,9 +74,9 @@
             this.format = function(value) {
                 return value == "include";
             };
-            this.unformat = function(value) {
-                return self.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
-            };
+            this.unformat = _.bind(function(value) {
+                return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
+            }, this);
         }
         else if(forecastRanges == "show_buckets") {
             this.def.view = "default";
