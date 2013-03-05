@@ -189,14 +189,20 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
                 'timeperiod_shown_backward' => '2',
         );
 
-        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2012-08-06', '2012-11-04');
-        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2012-08-13', '2012-11-11');
-        $tp3 = SugarTestTimePeriodUtilities::createTimePeriod('2012-08-20', '2012-11-18');
-        $tp4 = SugarTestTimePeriodUtilities::createTimePeriod('2012-08-27', '2012-11-25');
-        $tp5 = SugarTestTimePeriodUtilities::createTimePeriod('2012-09-03', '2012-12-02');
-        $tp6 = SugarTestTimePeriodUtilities::createTimePeriod('2012-09-10', '2012-12-09');
-        $tp7 = SugarTestTimePeriodUtilities::createTimePeriod('2012-09-17', '2012-12-16');
-        $tp8 = SugarTestTimePeriodUtilities::createTimePeriod('2012-09-24', '2012-12-23');
+        //oddity time periods found in OD database
+        $extraTP = SugarTestTimePeriodUtilities::createTimePeriod('2012-01-01', '2012-12-31', 'Year 2012');
+        $extraTP->is_fiscal_year = 1;
+        $extraTP->save();
+
+        SugarTestTimePeriodUtilities::createTimePeriod('2012-08-06', '2012-11-04','13 Weeks (From Aug. 6th)', $extraTP->id);
+        SugarTestTimePeriodUtilities::createTimePeriod('2012-08-13', '2012-11-11','13 Weeks (From Aug. 13th)', $extraTP->id);
+        SugarTestTimePeriodUtilities::createTimePeriod('2012-08-20', '2012-11-18','13 Weeks (From Aug. 20th)', $extraTP->id);
+        SugarTestTimePeriodUtilities::createTimePeriod('2012-08-27', '2012-11-25','13 Weeks (From Aug. 27th)', $extraTP->id);
+        SugarTestTimePeriodUtilities::createTimePeriod('2012-09-03', '2012-12-02','13 Weeks (From Sep. 3rd)', $extraTP->id);
+        SugarTestTimePeriodUtilities::createTimePeriod('2012-09-10', '2012-12-09','13 Weeks (From Sep. 10th)', $extraTP->id);
+        SugarTestTimePeriodUtilities::createTimePeriod('2012-09-17', '2012-12-16','13 Weeks (From Sep. 17th)', $extraTP->id);
+        SugarTestTimePeriodUtilities::createTimePeriod('2012-09-24', '2012-12-23','13 Weeks (From Sep. 24th)', $extraTP->id);
+        SugarTestTimePeriodUtilities::createTimePeriod('2012-10-01', '2012-12-30','13 Weeks (From Oct. 1st)', $extraTP->id);
 
         $seed = BeanFactory::getBean("TimePeriods");
 
@@ -210,8 +216,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $currentLeaves = $currentTimePeriod->getLeaves();
 
-        $this->assertEquals(3, count($currentLeaves), "Upgrade failed to create the correct number of leaves for the current time period");
-        //$this->assertNotEquals(false, BeanFactory::getBean("TimePeriods")->retrieve($tp2->id), "Upgrade failed to save a historical time period for record keeping");
+        $this->assertEquals(4, count($currentLeaves), "Upgrade failed to create the correct number of leaves for the current time period");
 
         $currentTimePeriod = $currentTimePeriod->getNextTimePeriod();
         $this->assertNotNull($currentTimePeriod);
