@@ -1,50 +1,46 @@
 describe("Emails.Field.Sender", function() {
-
     var app, field;
 
     beforeEach(function() {
         app = SugarTest.app;
+
         var def = {
-            'name':'email_config',
-            'id_name' : 'email_config_id',
-            'label':'LBL_FROM',
-            'type':'sender',
-            'css_class':'inherit-width',
-            'endpoint':{
-                'module' : 'EmailTemplates',
-                'action' : 'listTemplates'
+            name:      'email_config',
+            label:     'LBL_FROM',
+            type:      'sender',
+            css_class: 'inherit-width',
+            endpoint:  {
+                module: 'OutboundEmailConfiguration',
+                action: 'list'
             }
         };
 
         SugarTest.loadComponent("base", "field", "sender", "Emails");
 
-        var view = new app.view.View({ name: 'edit', context: null }),
+        var view    = new app.view.View({name: 'edit', context: null}),
             context = app.context.getContext(),
-            model = model || new Backbone.Model();
+            model   = new Backbone.Model();
 
-        if (def) {
-            model.fields = {};
-            model.fields[def.name] = def;
-        }
+        model.fields           = {};
+        model.fields[def.name] = def;
 
         field = app.view.createField({
-            def: def,
-            view: view,
+            def:     def,
+            view:    view,
             context: context,
-            module:'Emails',
-            model: model
+            module:  'Emails',
+            model:   model
         });
-
-        field.model = new Backbone.Model({email_config_id: "111-222-33333", email_config: "blob"});
 
         //used as mock for select2 library
         if (!$.fn.select2) {
             $.fn.select2 = function(options) {
                 var obj = {
-                    on : function() {
+                    on: function() {
                         return obj;
                     }
                 };
+
                 return obj;
             };
         }
@@ -54,35 +50,55 @@ describe("Emails.Field.Sender", function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
-        field.model = null;
-        field = null;
+        delete field.model;
+        delete field;
     });
 
-    it("should set value correctly", function() {
-        var populateValues = sinon.spy(field, 'populateValues'),
-            expectedId = "c0e9fb1f-52e8-bca1-20e1-51094f123246",
-            expectedValue = "System-generated password email",
-            results = [
-                {"id":expectedId, "display":expectedValue},
-                {"id":"c9680513-d932-8ee6-ebbe-51094ff7384c", "display":"Forgot Password email"}
-            ];
+    it("should call custom endpoint on render when tplName is 'edit'", function() {
+        var populateValues = sinon.spy(field, "populateValues");
 
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/EmailTemplates\/listTemplates.*/,
-            [200, {  "Content-Type": "application/json"},
-                JSON.stringify(results)]);
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/OutboundEmailConfiguration\/list.*/,
+            [200, {"Content-Type": "application/json"}, ""]);
 
-        field.render();
+        field.tplName = "edit";
+        field._render();
         SugarTest.server.respond();
         expect(populateValues.calledOnce).toBeTruthy();
 
-        //Setting values through method for Mocking of onchange event from select2
-        field.setValue({id: expectedId, value: expectedValue});
-        var actualId = field.model.get(field.def.id_name),
-            actualName = field.model.get(field.def.name);
-        expect(actualId).toEqual(expectedId);
-        expect(actualName).toEqual(expectedValue);
+        populateValues.restore();
+    });
+
+    it("should not call custom endpoint on render when tplName is not 'edit'", function() {
+        var populateValues = sinon.spy(field, "populateValues");
+
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/OutboundEmailConfiguration\/list.*/,
+            [200, {"Content-Type": "application/json"}, ""]);
+
+        field.options.viewName = "foo";
+        field._render();
+        SugarTest.server.respond();
+        expect(populateValues.calledOnce).toBeFalsy();
 
         populateValues.restore();
+    });
+
+    it("should set the default value if custom endpoint returns data and the model does not yet have a value", function() {
+        var results = [
+                {id: "abcd", display: "Configuration A", type: "system", default: true},
+                {id: "efgh", display: "Configuration B", type: "user", default: false}
+            ];
+
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/OutboundEmailConfiguration\/list.*/,
+            [200, {"Content-Type": "application/json"},
+            JSON.stringify(results)]);
+
+        field.model.unset("email_config", {silent: true});
+        field._render();
+        SugarTest.server.respond();
+
+        expect(field.model.get("email_config")).toBe(results[0].id);
     });
 });
