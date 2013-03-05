@@ -214,7 +214,7 @@ class Meeting extends SugarBean {
 				$old_record->retrieve($this->id);
 				$old_assigned_user_id = $old_record->assigned_user_id;
 			}
-			if((empty($this->id) && isset($this->assigned_user_id) && !empty($this->assigned_user_id) && $this->current_user->id != $this->assigned_user_id) || (isset($old_assigned_user_id) && !empty($old_assigned_user_id) && isset($this->assigned_user_id) && !empty($this->assigned_user_id) && $old_assigned_user_id != $this->assigned_user_id) ){
+			if((empty($this->id) && isset($_REQUEST['assigned_user_id']) && !empty($_REQUEST['assigned_user_id']) && $GLOBALS['current_user']->id != $_REQUEST['assigned_user_id']) || (isset($old_assigned_user_id) && !empty($old_assigned_user_id) && isset($_REQUEST['assigned_user_id']) && !empty($_REQUEST['assigned_user_id']) && $old_assigned_user_id != $_REQUEST['assigned_user_id']) ){
 				$this->special_notification = true;
 				$check_notify = true;
                 if(isset($_REQUEST['assigned_user_name'])) {
