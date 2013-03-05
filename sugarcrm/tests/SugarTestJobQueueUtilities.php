@@ -98,5 +98,12 @@ class SugarTestJobQueueUtilities
         }
         return $jobIds;
     }
+
+    public static function setCreatedJobs(array $jobs)
+    {
+        foreach ($jobs as $job) {
+            self::$_createdJobs[] = $job;
+        }
+    }
 }
 ?>

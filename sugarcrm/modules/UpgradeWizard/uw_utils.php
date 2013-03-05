@@ -4493,20 +4493,54 @@ function addPdfManagerTemplate() {
 
 /**
  *
+ *
  * This function creates a job for to run the SugarJobUpdateOpportunities class
  *
  */
-function updateOpportunitiesForForecasting()
+function updateOpportunitiesForForecasting($perJob = 100)
+{
+    /* @var $db DBManager */
+    $db = DBManagerFactory::getInstance();
+    // get all the opps to break into groups of 100 and go newest to oldest
+    $sql = "select id from opportunities where deleted = 0 ORDER By date_closed DESC;";
+    $results = $db->query($sql);
+
+    $jobs = array();
+
+    $toProcess = array();
+    while ($row = $db->fetchRow($results)) {
+        $toProcess[] = $row['id'];
+
+        if (count($toProcess) == $perJob) {
+            $jobs[] = createUpgradeOpportunitiesJob($toProcess);
+            $toProcess = array();
+        }
+    }
+
+    if (!empty($toProcess)) {
+        $jobs[] = createUpgradeOpportunitiesJob($toProcess);
+    }
+
+    // if only one job was created, just return that id
+    if (count($jobs) == 1) {
+        return array_shift($jobs);
+    }
+
+    return $jobs;
+}
+
+function createUpgradeOpportunitiesJob(array $data)
 {
     global $current_user;
-    $timedate = TimeDate::getInstance();
+
     //Create an entry in the job queue to run UpdateOppsJob which handles updating all opportunities
+    /* @var $job SchedulersJob */
     $job = BeanFactory::getBean('SchedulersJobs');
-    $job->execute_time = $timedate->nowDb();
+    $job->execute_time = TimeDate::getInstance()->nowDb();
     $job->name = "Update Old Opportunities";
     $job->status = SchedulersJob::JOB_STATUS_QUEUED;
     $job->target = "class::SugarJobUpdateOpportunities";
-    $job->data = '';
+    $job->data = json_encode($data);
     $job->retry_count = 0;
     $job->assigned_user_id = $current_user->id;
     $job->save();
