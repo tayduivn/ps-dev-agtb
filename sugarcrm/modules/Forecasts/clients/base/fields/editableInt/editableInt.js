@@ -109,6 +109,20 @@
     },
 
     /**
+     * override _dispose and make sure if user is using IE we remove the added listener
+     * @private
+     */
+    _dispose: function() {
+        if($.browser.msie) {
+            // only look for the element if we're using IE
+            var el = this.$el.find(this.fieldTag);
+            if(el.is("input")) {
+                el.off("input");
+            }
+        }
+    },
+
+    /**
      * handle click/blur/keypress events in one place
      *
      * @param {Object} evt
@@ -157,7 +171,9 @@
     renderDetail: function() {
         this.isErrorState = false;
         this.options.viewName = 'detail';
-        this.render();
+        if (!this.disposed) {
+            this.render();
+        }
     },
 
     /**
@@ -190,7 +206,9 @@
         }
 
         this.options.viewName = 'edit';
-        this.render();
+        if (!this.disposed) {
+            this.render();
+        }
 
         // put the focus on the input
         this.$el.find(this.inputSelector).removeClass('local-error').select();
