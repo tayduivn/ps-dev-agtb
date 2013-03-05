@@ -130,8 +130,12 @@ abstract class SugarApi {
      * @return SugarBean The loaded bean
      */
     protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read') {
+        $record = null;
+        if (isset($args['record']) && !empty($args['record'])) {
+            $record = $args['record'];
+        }
 
-        $bean = BeanFactory::retrieveBean($args['module'],$args['record']);
+        $bean = BeanFactory::retrieveBean($args['module'],$record);
 
         if ( $bean == FALSE || $bean->deleted == 1) {
             // Couldn't load the bean
