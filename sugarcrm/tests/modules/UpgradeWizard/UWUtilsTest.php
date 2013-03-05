@@ -46,6 +46,8 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $admin->saveSetting('Forecasts', 'forecast_ranges', 'show_binary', 'base');
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 1");
+
+        parent::setUpBeforeClass();
     }
 
     public static function tearDownAfterClass()
@@ -53,12 +55,20 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'is_setup', self::$isSetup, 'base');
         $admin->saveSetting('Forecasts', 'forecast_ranges', self::$forecastRanges, 'base');
-        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestJobQueueUtilities::removeAllCreatedJobs();
+
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 0");
         SugarTestHelper::tearDown();
+
+        parent::tearDown();
+        parent::tearDownAfterClass();
+    }
+
+    public function tearDown()
+    {
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestJobQueueUtilities::removeAllCreatedJobs();
     }
 
 

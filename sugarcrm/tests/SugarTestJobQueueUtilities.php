@@ -94,7 +94,12 @@ class SugarTestJobQueueUtilities
     {
         $jobIds = array();
         foreach (self::$_createdJobs as $job) {
-            $jobIds[] = $job->id;
+            // handle the use case where $job could be an array
+            if ($job instanceof SchedulersJob) {
+                $jobIds[] = $job->id;
+            } else {
+                $jobIds[] = $job;
+            }
         }
         return $jobIds;
     }
