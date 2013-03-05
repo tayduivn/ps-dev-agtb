@@ -311,13 +311,13 @@
         app.api.call('create', myURL, sendModel, {
             success: function() {
                 app.alert.dismiss('mail_call_status');
-                app.alert.show('mail_call_status', {autoClose: true, level: 'success', title: successMessage});
+                app.alert.show('mail_call_status', {autoClose: true, level: 'success', messages: successMessage});
                 app.drawer.close();
             },
             error: function(error) {
-                var msg = {autoClose: false, level: 'error', title: errorMessage};
-                if(error && _.isString(error.message)) {
-                    msg.messages = [error.message];
+                var msg = {autoClose: false, level: 'error'};
+                if (error && _.isString(error.message)) {
+                    msg.messages = error.message;
                 }
                 app.alert.dismiss('mail_call_status');
                 app.alert.show('mail_call_status', msg);
