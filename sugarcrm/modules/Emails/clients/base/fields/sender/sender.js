@@ -43,7 +43,7 @@
 
             defaultValue = (defaultResult) ? defaultResult : results[0];
 
-            if (!this.model.has(this.name)) {
+            if (!this.model.has(this.name) || this.model.get(this.name) !== defaultValue.id) {
                 this.model.set(this.name, defaultValue.id);
             }
         }
@@ -63,22 +63,14 @@
                       callback(defaultValue);
                 }
             }
-
         }).on("change", function(e) {
-            var id = e.val,
-                plugin = $(this).data('select2'),
-                value = (id) ? plugin.selection.find("span").text() : '';
-
-            self.setValue({id: e.val, value: value});
+            if (self.model.get(self.name) !== e.val) {
+                self.model.set(self.name, e.val, {silent: true});
+            }
         });
 
         this.$(".select2-container").addClass("tleft");
 
-    },
-
-    setValue: function(model) {
-        this.model.set(this.def.id_name, model.id, {silent: true});
-        this.model.set(this.def.name, model.value, {silent: true});
     },
 
     /**

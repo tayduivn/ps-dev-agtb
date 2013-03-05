@@ -54,7 +54,7 @@ function canSendPassword() {
         $emailErrors = $mod_strings['ERR_EMAIL_NOT_SENT_ADMIN'];
 
         try {
-            $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
+            $config = OutboundEmailConfigurationPeer::getSystemDefaultMailConfiguration();
 
             if ($config instanceof OutboundSmtpEmailConfiguration) {
                 $emailErrors .= "<br>-{$mod_strings['ERR_SMTP_URL_SMTP_PORT']}";

@@ -2068,7 +2068,7 @@ EOQ;
         }
 
         try {
-            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+            $mailer = MailerFactory::getSystemDefaultMailer();
 
             // set the subject
             $mailer->setSubject($emailTemplate->subject);

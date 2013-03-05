@@ -26,10 +26,28 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class OutboundEmailConfigurationTestHelper {
+class OutboundEmailConfigurationTestHelper
+{
     private static $existingConfigurations = array();
+    private static $systemConfiguration;
 
-    public static function backupExistingConfigurations() {
+    public static function setUp()
+    {
+        self::backupExistingConfigurations();
+        self::$systemConfiguration = self::createSystemOutboundEmailConfiguration();
+    }
+
+    public static function tearDown()
+    {
+        self::restoreExistingConfigurations();
+    }
+
+    public static function getSystemConfiguration() {
+        return self::$systemConfiguration;
+    }
+
+    public static function backupExistingConfigurations()
+    {
         self::$existingConfigurations = array();
 
         $sql    = "SELECT id FROM outbound_email";
@@ -53,104 +71,146 @@ class OutboundEmailConfigurationTestHelper {
         }
     }
 
-    public static function restoreExistingConfigurations() {
+    public static function restoreExistingConfigurations()
+    {
         self::removeAllCreatedEmailRecords();
 
-        foreach (self::$existingConfigurations as $config) {
-            $config->new_with_id = true;
-            $config->save();
+        foreach (self::$existingConfigurations as $configuration) {
+            $configuration->new_with_id = true;
+            $configuration->save();
         }
     }
 
-    public static function createSeedConfigurations($seedCount = 1) {
-        $configs = array();
+    public static function createSystemOutboundEmailConfiguration()
+    {
+        $configuration = self::mergeOutboundEmailConfigurations();
+
+        return self::createOutboundEmail($configuration);
+    }
+
+    public static function createSystemOverrideOutboundEmailConfiguration($userId = "1")
+    {
+        if (empty($userId)) {
+            $userId = $GLOBALS["current_user"]->id;
+        }
+
+        $name   = "System Override";
+        $configuration = array(
+            "name"       => $name,
+            "type"       => "system-override",
+            "user_id"    => $userId,
+            "from_email" => "{$userId}@unit.net",
+            "from_name"  => $name,
+        );
+        $configuration = self::mergeOutboundEmailConfigurations($configuration);
+
+        return self::createOutboundEmail($configuration);
+    }
+
+    public static function createUserOutboundEmailConfiguration($userId = "1")
+    {
+        if (empty($userId)) {
+            $userId = $GLOBALS["current_user"]->id;
+        }
+
+        $name   = "For User {$userId}";
+        $configuration = array(
+            "name"       => $name,
+            "type"       => "user",
+            "user_id"    => $userId,
+            "from_email" => "{$userId}@unit.net",
+            "from_name"  => $name,
+        );
+        $configuration = self::mergeOutboundEmailConfigurations($configuration);
+
+        return self::createOutboundEmail($configuration);
+    }
+
+    public static function createUserOutboundEmailConfigurations($seedCount = 1)
+    {
+        $configurations = array();
 
         for ($i = 0; $i < $seedCount; $i++) {
-            $config = OutboundEmailConfigurationTestHelper::createOutboundEmailConfig(
-                "User{$i}",
-                $GLOBALS["current_user"]->id,
-                "user",
-                "user{$i}@unit.net",
-                "User{$i}"
+            $outboundEmail = self::createUserOutboundEmailConfiguration($GLOBALS["current_user"]->id);
+
+            $storedOptions = array(
+                "from_addr"      => "{$GLOBALS["current_user"]->id}@unit.net",
+                "from_name"      => "For User {$GLOBALS["current_user"]->id}",
+                "outbound_email" => $outboundEmail->id,
             );
+            $inboundEmail  = self::createInboundEmail($GLOBALS["current_user"]->id, $storedOptions);
 
-            list($inboundEmail, $outboundEmail) =
-                OutboundEmailConfigurationTestHelper::createInboundAndOutboundEmail($config);
-
-            $configs[$i] = array(
+            $configurations[$i] = array(
                 "inbound"  => $inboundEmail,
                 "outbound" => $outboundEmail,
             );
         }
 
-        return $configs;
+        return $configurations;
     }
 
-    public static function createOutboundEmailConfig($name = "System", $userId = "1", $type = "system",
-        $fromEmail = "system@unit.net", $fromName = "System"
-    ) {
-        $config                        = array();
-        $config["name"]                = $name;
-        $config["type"]                = $type;
-        $config["user_id"]             = $userId;
-        $config["from_email"]          = $fromEmail;
-        $config["from_name"]           = $fromName;
-        $config["mail_sendtype"]       = "SMTP";
-        $config["mail_smtptype"]       = "other";
-        $config["mail_smtpserver"]     = "smtp.yahoomailservice.com";
-        $config["mail_smtpport"]       = "25";
-        $config["mail_smtpuser"]       = "YahooUser";
-        $config["mail_smtppass"]       = "YahooUserPassword";
-        $config["mail_smtpauth_req"]   = "1";
-        $config["mail_smtpssl"]        = "0";
+    public static function mergeOutboundEmailConfigurations($configuration = array()) {
+        $defaults = array(
+            "name"              => "System",
+            "type"              => "system",
+            "user_id"           => "1",
+            "from_email"        => "foo@bar.com",
+            "from_name"         => "Foo Bar",
+            "mail_sendtype"     => "SMTP",
+            "mail_smtptype"     => "other",
+            "mail_smtpserver"   => "smtp.bar.com",
+            "mail_smtpport"     => "25",
+            "mail_smtpuser"     => "foo",
+            "mail_smtppass"     => "foobar",
+            "mail_smtpauth_req" => "1",
+            "mail_smtpssl"      => "0",
+        );
 
-        return $config;
+        return array_merge($defaults, $configuration);
     }
 
-    public static function createOutboundEmail($config) {
+    public static function createOutboundEmail($configuration)
+    {
         $outboundEmail                    = new OutboundEmail();
         $outboundEmail->new_with_id       = true;
         $outboundEmail->id                = create_guid();
-        $outboundEmail->name              = $config["name"];
-        $outboundEmail->type              = $config["type"];
-        $outboundEmail->user_id           = $config["user_id"];
-        $outboundEmail->mail_sendtype     = $config["mail_sendtype"];
-        $outboundEmail->mail_smtptype     = $config["mail_smtptype"];
-        $outboundEmail->mail_smtpserver   = $config["mail_smtpserver"];
-        $outboundEmail->mail_smtpport     = $config["mail_smtpport"];
-        $outboundEmail->mail_smtpuser     = $config["mail_smtpuser"];
-        $outboundEmail->mail_smtppass     = $config["mail_smtppass"];
-        $outboundEmail->mail_smtpauth_req = $config["mail_smtpauth_req"];
-        $outboundEmail->mail_smtpssl      = $config["mail_smtpssl"];
+        $outboundEmail->name              = $configuration["name"];
+        $outboundEmail->type              = $configuration["type"];
+        $outboundEmail->user_id           = $configuration["user_id"];
+        $outboundEmail->mail_sendtype     = $configuration["mail_sendtype"];
+        $outboundEmail->mail_smtptype     = $configuration["mail_smtptype"];
+        $outboundEmail->mail_smtpserver   = $configuration["mail_smtpserver"];
+        $outboundEmail->mail_smtpport     = $configuration["mail_smtpport"];
+        $outboundEmail->mail_smtpuser     = $configuration["mail_smtpuser"];
+        $outboundEmail->mail_smtppass     = $configuration["mail_smtppass"];
+        $outboundEmail->mail_smtpauth_req = $configuration["mail_smtpauth_req"];
+        $outboundEmail->mail_smtpssl      = $configuration["mail_smtpssl"];
         $outboundEmail->save();
 
         return $outboundEmail;
     }
 
-    public static function createInboundAndOutboundEmail($config) {
-        // outbound email
-        $outboundEmail = OutboundEmailConfigurationTestHelper::createOutboundEmail($config);
+    public static function createInboundEmail($userId = "1", $storedOptions = array())
+    {
+        if (empty($userId)) {
+            $userId = $GLOBALS["current_user"]->id;
+        }
 
-        // inbound email
-        $storedOptions                   = array();
-        $storedOptions["from_addr"]      = $config["from_email"];
-        $storedOptions["from_name"]      = $config["from_name"];
-        $storedOptions["outbound_email"] = $outboundEmail->id;
-
-        $inboundEmail                 = new InboundEmail();
+        $inboundEmail                 = BeanFactory::getBean("InboundEmail");
         $inboundEmail->new_with_id    = true;
         $inboundEmail->id             = create_guid();
-        $inboundEmail->name           = $config["name"];
+        $inboundEmail->name           = "For User {$userId}";
         $inboundEmail->stored_options = base64_encode(serialize($storedOptions));
         $inboundEmail->is_personal    = true;
-        $inboundEmail->created_by     = $config["user_id"];
-        $inboundEmail->group_id       = $config["user_id"];
+        $inboundEmail->created_by     = $userId;
+        $inboundEmail->group_id       = $userId;
         $inboundEmail->save();
 
-        return array($inboundEmail, $outboundEmail);
+        return $inboundEmail;
     }
 
-    private static function removeAllCreatedEmailRecords() {
+    public static function removeAllCreatedEmailRecords()
+    {
         $sql = "DELETE FROM outbound_email";
         $GLOBALS["db"]->query($sql);
 

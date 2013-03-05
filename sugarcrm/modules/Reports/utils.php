@@ -51,7 +51,7 @@ class ReportsUtilities
      * @throws MailerException Allows exceptions to bubble up for the caller to report if desired.
      */
     public function sendNotificationOfInvalidReport($recipient, $message) {
-        $mailer = MailerFactory::getMailerForUser($this->user);
+        $mailer = MailerFactory::getSystemDefaultMailer();
 
         // set the subject of the email
         $mod_strings = return_module_language($this->language, "Reports");

@@ -21,90 +21,81 @@
 
 require_once "modules/OutboundEmailConfiguration/OutboundEmailConfiguration.php";
 
+/**
+ * @group email
+ * @group outboundemailconfiguration
+ */
 class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp() {
-        $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
+    public function setUp()
+    {
+        parent::setUp();
+        SugarTestHelper::setUp("current_user");
     }
 
-    public function tearDown() {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS["current_user"]);
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testLoadDefaultConfigs_CharsetIsReset_WordwrapIsInitialized() {
-        $config = new OutboundEmailConfiguration($GLOBALS["current_user"]);
+    public function testLoadDefaultConfigs_CharsetIsReset_WordwrapIsInitialized()
+    {
+        $configuration = new OutboundEmailConfiguration($GLOBALS["current_user"]);
 
         // change the default charset in order to show that loadDefaultConfigs will reset it
-        $config->setCharset("asdf"); // some asinine value that wouldn't actually be used
+        $configuration->setCharset("asdf"); // some asinine value that wouldn't actually be used
 
         // test that the charset has been changed from its default
         $expected = "asdf";
-        $actual   = $config->getCharset();
+        $actual   = $configuration->getCharset();
         self::assertEquals($expected, $actual, "The charset should have been set to {$expected}");
 
-        $config->loadDefaultConfigs();
+        $configuration->loadDefaultConfigs();
 
         // test that the charset has been returned to its default
         $expected = "utf-8";
-        $actual   = $config->getCharset();
+        $actual   = $configuration->getCharset();
         self::assertEquals($expected, $actual, "The charset should have been reset to {$expected}");
 
         // test that the wordwrap has been initialized correctly
         $expected = 996;
-        $actual   = $config->getWordwrap();
+        $actual   = $configuration->getWordwrap();
         self::assertEquals($expected, $actual, "The wordwrap should have been initialized to {$expected}");
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testSetEncoding_PassInAValidEncoding_EncodingIsSet() {
-        $config   = new OutboundEmailConfiguration($GLOBALS["current_user"]);
-        $expected = Encoding::EightBit;
+    public function testSetEncoding_PassInAValidEncoding_EncodingIsSet()
+    {
+        $configuration = new OutboundEmailConfiguration($GLOBALS["current_user"]);
+        $expected      = Encoding::EightBit;
 
-        $config->setEncoding($expected);
-        $actual = $config->getEncoding();
+        $configuration->setEncoding($expected);
+        $actual = $configuration->getEncoding();
         self::assertEquals($expected, $actual, "The encoding should have been set to {$expected}");
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testSetEncoding_PassInAnInvalidEncoding_ThrowsException() {
-        $config   = new OutboundEmailConfiguration($GLOBALS["current_user"]);
-        $encoding = "asdf"; // some asinine value that wouldn't actually be used
+    public function testSetEncoding_PassInAnInvalidEncoding_ThrowsException()
+    {
+        $configuration = new OutboundEmailConfiguration($GLOBALS["current_user"]);
+        $encoding      = "asdf"; // some asinine value that wouldn't actually be used
 
         self::setExpectedException("MailerException");
-        $config->setEncoding($encoding);
+        $configuration->setEncoding($encoding);
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testSetMode_ModeIsInvalid_ThrowsException() {
-        $config      = new OutboundEmailConfiguration($GLOBALS["current_user"]);
-        $invalidMode = "asdf"; // some asinine value that wouldn't actually be used
+    public function testSetMode_ModeIsInvalid_ThrowsException()
+    {
+        $configuration = new OutboundEmailConfiguration($GLOBALS["current_user"]);
+        $invalidMode   = "asdf"; // some asinine value that wouldn't actually be used
 
         self::setExpectedException("MailerException");
-        $config->setMode($invalidMode); // hopefully nothing is actually returned
+        $configuration->setMode($invalidMode); // hopefully nothing is actually returned
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     * @group functional
-     */
-    public function testSetFrom_EmailIsInvalid_ThrowsMailerException() {
+    public function testSetFrom_EmailIsInvalid_ThrowsMailerException()
+    {
         self::setExpectedException("MailerException");
-        $config = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $config->setFrom(1234); // an invalid email address
+        $configuration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $configuration->setFrom(1234); // an invalid email address
     }
 }

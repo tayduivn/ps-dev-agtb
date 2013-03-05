@@ -21,65 +21,60 @@
 
 require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php";
 
+/**
+ * @group email
+ * @group outboundemailconfiguration
+ */
 class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp() {
-        $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
+    public function setUp()
+    {
+        parent::setUp();
+        SugarTestHelper::setUp("current_user");
     }
 
-    public function tearDown() {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS["current_user"]);
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testSetSecurityProtocol_PassInAValidProtocol_SecurityProtocolIsSet() {
-        $config   = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $expected = OutboundSmtpEmailConfiguration::SecurityProtocolSsl;
+    public function testSetSecurityProtocol_PassInAValidProtocol_SecurityProtocolIsSet()
+    {
+        $configuration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $expected      = OutboundSmtpEmailConfiguration::SecurityProtocolSsl;
 
-        $config->setSecurityProtocol($expected);
-        $actual = $config->getSecurityProtocol();
+        $configuration->setSecurityProtocol($expected);
+        $actual = $configuration->getSecurityProtocol();
         self::assertEquals($expected, $actual, "The security protocol should have been set to {$expected}");
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testSetSecurityProtocol_PassInAnInvalidProtocol_ThrowsException() {
-        $config           = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+    public function testSetSecurityProtocol_PassInAnInvalidProtocol_ThrowsException()
+    {
+        $configuration    = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $securityProtocol = "asdf"; // some asinine value that wouldn't actually be used
 
         self::setExpectedException("MailerException");
-        $config->setSecurityProtocol($securityProtocol);
+        $configuration->setSecurityProtocol($securityProtocol);
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testSetMode_ValidModeSmtpIsInAllCaps_ModeBecomesLowerCaseSmtp() {
-        $config = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+    public function testSetMode_ValidModeSmtpIsInAllCaps_ModeBecomesLowerCaseSmtp()
+    {
+        $configuration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
 
         $expected = OutboundEmailConfigurationPeer::MODE_SMTP;
-        $config->setMode(strtoupper($expected));
-        $actual = $config->getMode();
+        $configuration->setMode(strtoupper($expected));
+        $actual = $configuration->getMode();
         self::assertEquals($expected, $actual, "The mode should have been a {$expected}");
     }
 
-    /**
-     * @group email
-     * @group outboundemailconfiguration
-     */
-    public function testSetMode_NoMode_ModeBecomesSmtp() {
-        $config = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $config->setMode("");
+    public function testSetMode_NoMode_ModeBecomesSmtp()
+    {
+        $configuration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $configuration->setMode("");
 
         $expected = OutboundEmailConfigurationPeer::MODE_SMTP;
-        $actual   = $config->getMode();
+        $actual   = $configuration->getMode();
         self::assertEquals($expected, $actual, "The mode should have been a {$expected}");
     }
 }

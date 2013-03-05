@@ -124,7 +124,7 @@ class EmailReminder
         $mailTransmissionProtocol = "unknown";
 
         try {
-            $mailer                   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+            $mailer                   = MailerFactory::getSystemDefaultMailer();
             $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
             // set the subject of the email

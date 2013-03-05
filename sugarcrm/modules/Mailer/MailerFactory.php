@@ -1,5 +1,7 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -22,8 +24,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once "MailerException.php"; // requires MailerException in order to throw exceptions of that type
-require_once "EmailHeaders.php";    // email headers are contained in an EmailHeaders object
-require_once "EmailIdentity.php";   // requires EmailIdentity to build the From header
+require_once "EmailHeaders.php"; // email headers are contained in an EmailHeaders object
+require_once "EmailIdentity.php"; // requires EmailIdentity to build the From header
 
 // external imports
 require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php"; // needs the constants that
@@ -38,6 +40,23 @@ require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.
 class MailerFactory
 {
     /**
+     * This retrieves the System Default Outbound Mail configuration.
+     *
+     * @return mixed the System Default Mail Configuration.
+     * @throws MailerException Allows MailerExceptions to bubble up.
+     */
+    public static function getSystemDefaultMailer()
+    {
+        // get the System Default configuration that the Mailer needs
+        $mailConfiguration = OutboundEmailConfigurationPeer::getSystemDefaultMailConfiguration();
+
+        // generate the Mailer
+        $mailer = static::getMailer($mailConfiguration);
+
+        return $mailer;
+    }
+
+    /**
      * In many cases, the correct Mailer is the one that is produced from the configuration associated with a
      * particular user. This method makes the necessary calls to produce that Mailer, in order to obey the DRY
      * principle.
@@ -46,7 +65,8 @@ class MailerFactory
      * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
      * @throws MailerException Allows MailerExceptions to bubble up.
      */
-    public static function getMailerForUser(User $user) {
+    public static function getMailerForUser(User $user)
+    {
         // get the configuration that the Mailer needs
         $mailConfiguration = static::getOutboundEmailConfiguration($user);
         // Bug #59513
@@ -65,12 +85,13 @@ class MailerFactory
      *
      * @static
      * @access public
-     * @param OutboundEmailConfiguration $config required The configuration that provides context to the chosen sending
+     * @param OutboundEmailConfiguration $config          required The configuration that provides context to the chosen sending
      *                                                    strategy.
      * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
      * @throws MailerException Allows MailerExceptions to bubble up.
      */
-    public static function getMailer(OutboundEmailConfiguration $config) {
+    public static function getMailer(OutboundEmailConfiguration $config)
+    {
         $headers = static::buildHeadersForMailer($config->getFrom(), $config->getReplyTo());
         $mailer  = static::buildMailer($config);
         $mailer->setHeaders($headers);
@@ -83,12 +104,13 @@ class MailerFactory
      *
      * @static
      * @access private
-     * @param OutboundEmailConfiguration $config required Must be an OutboundEmailConfiguration or a type that derives
+     * @param OutboundEmailConfiguration $config          required Must be an OutboundEmailConfiguration or a type that derives
      *                                                    from it.
      * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
      * @throws MailerException
      */
-    private static function buildMailer(OutboundEmailConfiguration $config) {
+    private static function buildMailer(OutboundEmailConfiguration $config)
+    {
         $mode     = $config->getMode();
         $strategy = static::getStrategy($mode);
         $mailer   = null;
@@ -120,13 +142,14 @@ class MailerFactory
      *
      * @static
      * @access private
-     * @param EmailIdentity $from    required The true sender of the email.
+     * @param EmailIdentity $from             required The true sender of the email.
      * @param EmailIdentity $replyTo          Should be an EmailIdentity, but null is acceptable if no Reply-To header
      *                                        is to be set.
      * @return EmailHeaders
      * @throws MailerException
      */
-    private static function buildHeadersForMailer(EmailIdentity $from, EmailIdentity $replyTo = null) {
+    private static function buildHeadersForMailer(EmailIdentity $from, EmailIdentity $replyTo = null)
+    {
         // add the known email headers
         $headers = new EmailHeaders();
         $headers->setHeader(EmailHeaders::From, $from);
@@ -148,7 +171,8 @@ class MailerFactory
      * @return OutboundEmailConfiguration An OutboundEmailConfiguration object or one that derives from it.
      * @throws MailerException Allows MailerExceptions to bubble up.
      */
-    protected static function getOutboundEmailConfiguration(User $user) {
+    protected static function getOutboundEmailConfiguration(User $user)
+    {
         return OutboundEmailConfigurationPeer::getSystemMailConfiguration($user);
     }
 
@@ -160,7 +184,8 @@ class MailerFactory
      * @access protected
      * @return array key = mode; value = mailer class
      */
-    protected static function getStrategies() {
+    protected static function getStrategies()
+    {
         return array(
             OutboundEmailConfigurationPeer::MODE_SMTP => "SmtpMailer",
             OutboundEmailConfigurationPeer::MODE_WEB  => "WebMailer",
@@ -175,7 +200,8 @@ class MailerFactory
      * @param $mode
      * @return null|string The class name for the chosen strategy.
      */
-    protected static function getStrategy($mode) {
+    protected static function getStrategy($mode)
+    {
         $strategy   = null;
         $strategies = static::getStrategies();
 
