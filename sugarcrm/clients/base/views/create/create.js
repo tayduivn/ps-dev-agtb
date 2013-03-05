@@ -281,13 +281,12 @@
         var self = this,
             options;
         success = _.wrap(success, function (func) {
-            app.file.checkFileFieldsAndProcessUpload(self.model, {
+            app.file.checkFileFieldsAndProcessUpload(self, {
                     success:function () {
                         func();
                     }
                 },
-                {deleteIfFails:true},
-                self
+                {deleteIfFails:true}
             );
         });
 

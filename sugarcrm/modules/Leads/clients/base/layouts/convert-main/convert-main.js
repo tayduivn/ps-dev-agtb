@@ -291,18 +291,19 @@
                 return (moduleMeta.module === module._module);
             }, this);
 
+            //if associatedModel has no id, then it came from recordView on convertPanel and may need file uploads
             if (moduleResult && _.isEmpty(associatedModel.get('id'))) {
                 associatedModel.set('id', moduleResult.id);
                 app.file.checkFileFieldsAndProcessUpload(
-                    associatedModel,
+                    convertPanel.recordView,
                     {
                         success: function() { completeFn(); },
                         error: function() { failureCount++; completeFn(); }
                     },
                     {deleteIfFails:false},
-                    convertPanel.recordView,
                     false
                 );
+            //no files to upload because an existing record was selected for this module, just run complete
             } else {
                 completeFn();
             }

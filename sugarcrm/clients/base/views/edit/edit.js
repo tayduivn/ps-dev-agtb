@@ -49,13 +49,13 @@
         this.model.save(null, {
             success:function () {
 
-                app.file.checkFileFieldsAndProcessUpload(self.model, {
+                app.file.checkFileFieldsAndProcessUpload(self, {
                     success: function () {
                         app.alert.dismiss('save_edit_view');
                         app.navigate(self.context, self.model, 'detail');
                     }
                 },
-                {deleteIfFails: false}, self);
+                {deleteIfFails: false});
 
             },
             fieldsToValidate: this.getFields(this.module)
