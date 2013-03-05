@@ -66,7 +66,7 @@
     },
 
     // the holder for the breadcrumb class used to style the chevrons
-    breadCrumbClass: "three",
+    breadCrumbClass: "four",
 
     events:{
         'click [name=close_button]':'close',
@@ -81,7 +81,9 @@
         app.view.View.prototype.initialize.call(this, options);
 
         this.breadCrumbLabels = this.layout.getBreadCrumbLabels();
-        this.breadCrumbClass = this.breadCrumbClassTable[this.breadCrumbLabels.length];
+        this.breadCrumbClass = _.has(this.breadCrumbClassTable, this.breadCrumbLabels.length) ?
+            this.breadCrumbClassTable[this.breadCrumbLabels.length] :
+            this.breadCrumbClass;
     },
 
     /**
