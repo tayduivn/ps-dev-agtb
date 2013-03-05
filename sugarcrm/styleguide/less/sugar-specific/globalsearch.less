@@ -12,9 +12,24 @@
     }
     label {
         display: inline-block;
+        input {
+            display: inline-block;
+            &[type=checkbox]{
+                margin: 0 0 3px 0;
+            }
+        }
         &.hide {
             display: none;
         }
     }
     .rtlFloat(@direction,left);
+    .dropdown-menu {
+        padding: 0;
+        li {
+            padding: 7px 20px 4px;
+            &:not(:last-child) {
+                border-bottom: 1px solid @grayLighter;
+            }
+        }
+    }
 }

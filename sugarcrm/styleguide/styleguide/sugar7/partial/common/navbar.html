@@ -73,14 +73,14 @@
                     <li class="title">Advanced Search:</li>
                     <li class="divider"></li>
                   -->
-                    <li><input class="search_all" type="checkbox"> Search All</li>
-                    <li><input class="search_accounts" type="checkbox"> Accounts</li>
-                    <li><input class="search_cases" type="checkbox"> Cases</li>
-                    <li><input class="search_contacts" type="checkbox"> Contacts</li>
-                    <li><input class="search_leads" type="checkbox"> Leads</li>
-                    <li><input class="search_notes" type="checkbox"> Notes</li>
-                    <li><input class="search_opportunities" type="checkbox"> Opportunities</li>
-                    <li><input class="search_reports" type="checkbox"> Reports</li>
+                    <li><label><input class="search_all" type="checkbox"> Search All</label></li>
+                    <li><label><input class="search_accounts" type="checkbox"> Accounts</label></li>
+                    <li><label><input class="search_cases" type="checkbox"> Cases</label></li>
+                    <li><label><input class="search_contacts" type="checkbox"> Contacts</label></li>
+                    <li><label><input class="search_leads" type="checkbox"> Leads</label></li>
+                    <li><label><input class="search_notes" type="checkbox"> Notes</label></li>
+                    <li><label><input class="search_opportunities" type="checkbox"> Opportunities</label></li>
+                    <li><label><input class="search_reports" type="checkbox"> Reports</label></li>
                   </ul>
                   <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
                 </div>
@@ -174,10 +174,7 @@ $(document).ready(function() {
     if ($this.data('typeahead')) return
     e.preventDefault()
     $this.typeahead($this.data())
-  })
-
-
-
+  });
 
 });
 </script>
