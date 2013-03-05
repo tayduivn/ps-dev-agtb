@@ -179,6 +179,15 @@
     },
 
     /**
+     * override dispose function to remove custom listener off the window
+     * @private
+     */
+    _dispose: function() {
+        $(window).off();
+        app.view.Component.prototype._dispose.call(this);
+    },
+
+    /**
      * Overwrite Load Data for now
      */
     loadData: function() {
@@ -386,7 +395,9 @@
         if(this.collection) {
             this.collection.on("reset", function() {
                 this.cleanUpDirtyModels();
-                this.render();
+                if (!this.disposed) {
+                    this.render();
+                }
             }, this);
 
             this.collection.on("change", function(model) {
