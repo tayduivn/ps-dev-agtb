@@ -201,7 +201,12 @@ describe("Emails.fields.recipients", function() {
             expected:  { email: "will@example.com", name: "Will Westin" }
         },
         {
-            message:   "should get back an object with an email and an empty name",
+            message:   "should get back an object with an email and a name even when white space surrounds recipient string",
+            recipient: '    "Tom Terrific"      <tom@terrific.com>     ',
+            expected:  { email: "tom@terrific.com", name: "Tom Terrific" }
+        },
+        {
+            message:   "should get back an object with an email and an empty name when email address in brackets",
             recipient: '<will@example.com>',
             expected:  { email: "will@example.com", name: "" }
         },
