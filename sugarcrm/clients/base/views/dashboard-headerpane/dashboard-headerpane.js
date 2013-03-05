@@ -53,7 +53,7 @@
     },
     createCancelClicked: function(evt) {
         if(this.context.parent) {
-            this.model.navigate('list');
+            this.model.dashboardLayout.navigateLayout('list');
         } else {
             app.navigate(this.context);
         }
@@ -63,7 +63,7 @@
     },
     addClicked: function(evt) {
         if(this.context.parent) {
-            this.model.navigate('create');
+            this.model.dashboardLayout.navigateLayout('create');
         } else {
             var route = app.router.buildRoute(this.module, null, 'create');
             app.router.navigate(route, {trigger: true});
@@ -92,7 +92,7 @@
                 success: function() {
                     if(self.context.get("create")) {
                         if(self.context.parent) {
-                            self.model.navigate(self.model.id);
+                            self.model.dashboardLayout.navigateLayout(self.model.id);
                         } else {
                             app.navigate(self.context, self.model);
                         }
@@ -134,7 +134,7 @@
                     success: function() {
                         app.alert.show('dashboard_notice', {level: 'success', title: message, autoClose: true});
                         if(self.context.parent) {
-                            self.model.navigate('list');
+                            self.model.dashboardLayout.navigateLayout('list');
                         } else {
                             var route = app.router.buildRoute(self.module);
                             app.router.navigate(route, {trigger: true});

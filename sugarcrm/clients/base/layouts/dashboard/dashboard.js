@@ -22,7 +22,7 @@
                 dashboardModule: module,
                 maxColumns: (module === 'Home') ? 3 : 1,
                 maxRowColumns: (module === 'Home') ? 3 : 2,
-                navigate: _.bind(this.navigateLayout, this)
+                dashboardLayout: this
             }),
             DashboardCollection = app.BeanCollection.extend({
                 sync: sync,
