@@ -4536,15 +4536,14 @@ function createUpgradeOpportunitiesJob(array $data)
     //Create an entry in the job queue to run UpdateOppsJob which handles updating all opportunities
     /* @var $job SchedulersJob */
     $job = BeanFactory::getBean('SchedulersJobs');
-    $job->execute_time = TimeDate::getInstance()->nowDb();
     $job->name = "Update Old Opportunities";
-    $job->status = SchedulersJob::JOB_STATUS_QUEUED;
     $job->target = "class::SugarJobUpdateOpportunities";
     $job->data = json_encode($data);
     $job->retry_count = 0;
     $job->assigned_user_id = $current_user->id;
-    $job->save();
-    return $job->id;
+
+    $job_queue = new SugarJobQueue();
+    return $job_queue->submitJob($job);
 }
 
 /**
