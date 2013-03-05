@@ -145,6 +145,7 @@ abstract class SugarApi {
             throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');
         }
 
+        // This code replicates the behavior in Sugar_Controller::pre_save()
         $check_notify = TRUE;
         // check update
         if(!empty($GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir])) {
