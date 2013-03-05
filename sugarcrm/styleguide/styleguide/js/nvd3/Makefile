@@ -27,6 +27,7 @@ JS_FILES = \
 	src/models/stackedAreaChart_sugar.js \
 	src/models/treemap.js \
 	src/models/treemapChart.js \
+	src/models/tree.js \
 	src/outro.js
 
 JS_COMPILER = \
@@ -48,7 +49,7 @@ nv.d3.min.js: Makefile
 d3.v2.min.js: Makefile
 	rm -f ../../../assets/js/nvd3/lib/$@
 	cat lib/d3.v2.js | $(JS_COMPILER) >> ../../../assets/js/nvd3/lib/$@
-	
+
 clean:
 	rm -rf nv.d3.js ../../../assets/js/nvd3/nv.d3.min.js
 
