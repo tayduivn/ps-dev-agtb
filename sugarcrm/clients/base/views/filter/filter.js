@@ -22,6 +22,7 @@
         }
 
         this.filters = app.data.createBeanCollection('Filters');
+        this.determineCreatability();
 
         this.layout.off("filter:add");
         this.layout.off("filter:set");
@@ -44,11 +45,21 @@
      * Retrieve filters from the server.
      */
     getFilters: function() {
+        var self = this;
         this.filters.fetch({
             filter: [
                 {"created_by": app.user.id},
                 {"module_name": this.currentModule}
-            ]
+            ],
+            success: function() {
+                var filters = app.metadata.getModule(self.currentModule).filters;
+                _.each(filters, function(value) {
+                    if (_.isObject(value)) {
+                        self.filters.add(value.meta.filters);
+                    }
+                });
+                self.filters.trigger('reset');
+            }
         });
     },
 
@@ -84,17 +95,28 @@
         }
     },
 
+    determineCreatability: function() {
+        this.creatable = (this.currentModule === 'all_modules')? false : true;
+        if (this.currentModule !== 'all_modules') {
+            _.each(app.metadata.getModule(this.currentModule).filters, function(value) {
+                if (_.isObject(value) && !value.meta.create) {
+                    this.creatable = false;
+                }
+            }, this);
+        }
+    },
+
     updateFilterList: function() {
         var customFilterList = [];
         this.customFilterNode = this.$(".search-filter");
-
-        customFilterList.push({id: "all_records", text: app.lang.get("LBL_FILTER_ALL_RECORDS")});
 
         _.each(this.filters.models, function(model){
             customFilterList.push({id:model.id, text:model.get("name")});
         }, this);
 
-        customFilterList.push({id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")});
+        if(this.creatable) {
+            customFilterList.push({id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")});
+        }
 
         this.customFilterNode.select2({
             data: customFilterList,
@@ -190,10 +212,16 @@
     },
 
     formatCustomSelection: function(item) {
-        // Update the text for the selected filter.
-        this.$('.choice-filter').html(item.text);
+        var filterLabel = app.lang.get("LBL_FILTER"),
+            selectionLabel = filterLabel + '<i class="icon-caret-down"></i>';
 
-        return '<span class="select2-choice-type">' + app.lang.get("LBL_FILTER") + '<i class="icon-caret-down"></i></span>';
+        // Update the text for the selected filter.
+        this.$('.choice-filter').html(app.lang.get(item.text, "Filters"));
+
+        if(this.currentModule === "all_modules") {
+            selectionLabel = filterLabel;
+        }
+        return '<span class="select2-choice-type">' + selectionLabel +'</span>';
     },
 
     formatModuleSelection: function(item) {
@@ -210,7 +238,7 @@
 
     formatResult: function (option) {
         // TODO: Determine whether active filters should be highlighted in bold in this menu.
-        return '<div><span class="select2-match"></span>'+ option.text +'</div>';
+        return '<div><span class="select2-match"></span>'+ app.lang.get(option.text, "Filters") +'</div>';
     },
 
     /**
