@@ -27,7 +27,7 @@
  ********************************************************************************/
 }}
 <div class="modal-navigation hide">
-    <ul class="breadcrumb two">
+    <ul class="breadcrumb chevron {{breadCrumbClass}}">
         {{#each breadCrumbLabels}}
             <li class="disabled"><a href="#" data-index="{{index}}">{{str label "Forecasts"}}</a></li>
         {{/each}}

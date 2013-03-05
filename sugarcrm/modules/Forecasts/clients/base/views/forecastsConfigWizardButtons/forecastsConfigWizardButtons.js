@@ -57,6 +57,17 @@
 
     breadCrumbLabels: [],
 
+    // hash table to get the class for the breadcrumb styling
+    breadCrumbClassTable: {
+        2: 'two',
+        3: 'three',
+        4: 'four',
+        5: 'five'
+    },
+
+    // the holder for the breadcrumb class used to style the chevrons
+    breadCrumbClass: "three",
+
     events:{
         'click [name=close_button]':'close',
         'click [name=done_button]':'save',
@@ -70,6 +81,7 @@
         app.view.View.prototype.initialize.call(this, options);
 
         this.breadCrumbLabels = this.layout.getBreadCrumbLabels();
+        this.breadCrumbClass = this.breadCrumbClassTable[this.breadCrumbLabels.length];
     },
 
     /**
