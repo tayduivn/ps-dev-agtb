@@ -72,27 +72,27 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                         array(
                             'name' => 'billing_address_street',
                             'css_class' => 'address_street',
-                            'placeholder' => 'LBL_STREET',
+                            'placeholder' => 'LBL_BILLING_ADDRESS_STREET',
                         ),
                         array(
                             'name' => 'billing_address_city',
                             'css_class' => 'address_city',
-                            'placeholder' => 'LBL_CITY',
+                            'placeholder' => 'LBL_BILLING_ADDRESS_CITY',
                         ),
                         array(
                             'name' => 'billing_address_state',
                             'css_class' => 'address_state',
-                            'placeholder' => 'LBL_STATE',
+                            'placeholder' => 'LBL_BILLING_ADDRESS_STATE',
                         ),
                         array(
                             'name' => 'billing_address_postalcode',
                             'css_class' => 'address_zip',
-                            'placeholder' => 'LBL_POSTAL_CODE',
+                            'placeholder' => 'LBL_BILLING_ADDRESS_POSTALCODE',
                         ),
                         array(
                             'name' => 'billing_address_country',
                             'css_class' => 'address_country',
-                            'placeholder' => 'LBL_COUNTRY',
+                            'placeholder' => 'LBL_BILLING_ADDRESS_COUNTRY',
                         ),
                     ),
                 ),
@@ -105,32 +105,32 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                         array(
                             'name' => 'shipping_address_street',
                             'css_class' => 'address_street',
-                            'placeholder' => 'LBL_STREET',
+                            'placeholder' => 'LBL_SHIPPING_ADDRESS_STREET',
                         ),
                         array(
                             'name' => 'shipping_address_city',
                             'css_class' => 'address_city',
-                            'placeholder' => 'LBL_CITY',
+                            'placeholder' => 'LBL_SHIPPING_ADDRESS_CITY',
                         ),
                         array(
                             'name' => 'shipping_address_state',
                             'css_class' => 'address_state',
-                            'placeholder' => 'LBL_STATE',
+                            'placeholder' => 'LBL_SHIPPING_ADDRESS_STATE',
                         ),
                         array(
                             'name' => 'shipping_address_postalcode',
                             'css_class' => 'address_zip',
-                            'placeholder' => 'LBL_POSTAL_CODE',
+                            'placeholder' => 'LBL_SHIPPING_ADDRESS_POSTALCODE',
                         ),
                         array(
                             'name' => 'shipping_address_country',
                             'css_class' => 'address_country',
-                            'placeholder' => 'LBL_COUNTRY',
+                            'placeholder' => 'LBL_SHIPPING_ADDRESS_COUNTRY',
                         ),
                         array(
-                            'name'    => 'copy',
+                            'name' => 'copy',
                             'label'   => 'NTC_COPY_BILLING_ADDRESS',
-                            'type'    => 'copy',
+                            'type' => 'copy',
                             'mapping' => array(
                                 'billing_address_street' => 'shipping_address_street',
                                 'billing_address_city' => 'shipping_address_city',
