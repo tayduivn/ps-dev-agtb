@@ -142,9 +142,7 @@
         var filter = {
             "filter":[
                 {
-                    "date_modified":{
-                        "$tracker":"-7 DAY"
-                    }
+                    "$tracker":"-7 DAY"
                 }
             ],
             "max_num":3
