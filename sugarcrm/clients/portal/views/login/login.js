@@ -50,9 +50,6 @@
             this.logoURL = app.config.logoURL;
         }
         app.view.View.prototype.render.call(this);
-        if (!SUGAR.App.api.isAuthenticated()) {
-            $(".navbar").hide();
-        }
         /**
          * Added browser version check for MSIE since we are dropping support
          * for MSIE 8.0 for portal in Sugar 6.6  (Bug56031)
