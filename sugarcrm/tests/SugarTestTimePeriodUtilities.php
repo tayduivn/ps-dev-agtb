@@ -145,6 +145,16 @@ class SugarTestTimePeriodUtilities
 
     /**
      * @static
+     * this is a staitc function to append another timeperiod to the static timeperiods array
+     *
+     * @param $timeperiod
+     */
+    public static function addCreatedTimePeriod($timeperiod) {
+        self::$_createdTimePeriods[] = $timeperiod;
+    }
+
+    /**
+     * @static
      * This is a static function to return all ids of created TimePeriod instances
      *
      * @return array of ids of the TimePeriod instances created
