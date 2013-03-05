@@ -185,7 +185,6 @@ describe("The forecasts chart view", function () {
         });
 
         describe("sidebarHidden listener, stopRender value", function(){
-
             var renderChartStub;
 
             beforeEach(function(){
@@ -215,9 +214,7 @@ describe("The forecasts chart view", function () {
         it("should return properly formatted url", function(){
             var params = {
                     timeperiod_id: 'a',
-                    user_id: 'b',
-                    display_manager: false
-
+                    user_id: 'b'
                 },
                 result = view.buildChartUrl(params);
 
@@ -233,9 +230,7 @@ describe("The forecasts chart view", function () {
         it("should return properly formatted url", function(){
             var params = {
                     timeperiod_id: 'a',
-                    user_id: 'b',
-                    display_manager: true
-
+                    user_id: 'b'
                 },
                 result = view.buildChartUrl(params);
 
