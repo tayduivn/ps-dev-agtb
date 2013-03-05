@@ -75,6 +75,12 @@
 
     _render: function() {
         app.view.views.RecordView.prototype._render.call(this);
+        // RecordView starts with action as detail; once this.editableFields has been set (e.g.
+        // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
+        this.toggleFields(this.editableFields, true);
+        this.$('[data-fieldname="date_entered_by"]').hide();
+        this.$('[data-fieldname="date_modified_by"]').hide();
+
         this.setButtonStates(this.STATE.CREATE);
 
         this.renderDupeCheckList();
