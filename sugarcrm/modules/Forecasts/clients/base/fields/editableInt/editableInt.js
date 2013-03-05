@@ -120,6 +120,7 @@
                 el.off("input");
             }
         }
+        app.view.Component.prototype._dispose.call(this);
     },
 
     /**
