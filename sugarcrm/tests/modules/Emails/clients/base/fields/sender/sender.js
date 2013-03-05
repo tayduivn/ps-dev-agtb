@@ -61,7 +61,7 @@ describe("Emails.Field.Sender", function() {
         SugarTest.server.respondWith("GET", /.*\/rest\/v10\/OutboundEmailConfiguration\/list.*/,
             [200, {"Content-Type": "application/json"}, ""]);
 
-        field.tplName = "edit";
+        field.options.viewName = "edit";
         field._render();
         SugarTest.server.respond();
         expect(populateValues.calledOnce).toBeTruthy();
