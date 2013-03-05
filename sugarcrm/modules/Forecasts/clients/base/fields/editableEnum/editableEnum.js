@@ -67,6 +67,7 @@
         this.$("select").off();
         this.$el.find(".select2-input").off();
         $(window).off("click." + this.cid);
+        app.view.Component.prototype._dispose.call(this);
     },
 
     /**
