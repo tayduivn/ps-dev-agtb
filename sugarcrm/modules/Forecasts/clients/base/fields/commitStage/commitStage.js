@@ -263,7 +263,9 @@
         this.currentView = "default";
         this.getLanguageValue();
         this.delegateEvents();
-        if (!this.disposed) this.render();
+        if (!this.disposed) {
+            this.render();
+        }
     },
 
     /**
