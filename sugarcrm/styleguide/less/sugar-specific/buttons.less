@@ -41,8 +41,6 @@
 // Reposition the caret
 .btn .caret {
   margin-top: 6px;
-  //nutmeg
-  //margin-top: 7px;
   margin-left: 0;
 }
 .btn:hover .caret,
@@ -81,7 +79,6 @@
   [class^="icon-"],
   [class*=" icon-"] {
     color: @white !important;
-    margin-right: 4px;
   }
 }
 
@@ -152,4 +149,9 @@
 
 .btn.down {
     .buttonBackground(@btnBackgroundHighlight,@btnBackground);
+}
+
+.btn-toolbar .rowaction.btn:first-child {
+  margin-left: 0;
+  .border-radius(3px 0px 0px 3px) !important;
 }
