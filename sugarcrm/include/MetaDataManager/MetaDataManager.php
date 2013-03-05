@@ -446,7 +446,8 @@ class MetaDataManager {
      */
     public function getModuleStrings( $moduleName, $language = 'en_us' ) {
         // Bug 58174 - Escaped labels are sent to the client escaped
-        $strings = return_module_language($language,$moduleName);
+        // TODO: SC-751, fix the way languages merge
+        $strings = return_module_language($language,$moduleName,true);
         if (is_array($strings)) {
             foreach ($strings as $k => $v) {
                 $strings[$k] = $this->decodeStrings($v);
