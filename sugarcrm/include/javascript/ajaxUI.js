@@ -227,6 +227,7 @@ SUGAR.ajaxUI = {
                     }
                     else
                     {
+
                         YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
                     }
                     return;
@@ -261,10 +262,12 @@ SUGAR.ajaxUI = {
                 }
             }
             else {
+                SUGAR_callsInProgress++;
                 SUGAR.ajaxUI.showLoadingPanel();
                 ui.lastCall = YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1' + loadLanguageJS, {
                     success: SUGAR.ajaxUI.callback,
                     failure: function(){
+                        SUGAR_callsInProgress--;
                         SUGAR.ajaxUI.hideLoadingPanel();
                         SUGAR.ajaxUI.showErrorMessage(SUGAR.language.get('app_strings','ERR_AJAX_LOAD_FAILURE'));
                     }
