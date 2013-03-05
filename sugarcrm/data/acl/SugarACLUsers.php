@@ -231,7 +231,7 @@ class SugarACLUsers extends SugarACLStrategy
             } elseif($is_admin === true) {
                 $result[$key] = SugarACL::ACL_READ_WRITE;
             } else {
-                if($action == 'field' && ($field == 'user_hash' || $field == 'password')) {
+                if($field == 'user_hash' || $field == 'password') {
                     $result[$key] = SugarACL::ACL_NO_ACCESS;
                 } elseif(!empty($this->no_edit_fields[$field])) {
                     $result[$key] = SugarACL::ACL_READ_ONLY;
