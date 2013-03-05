@@ -27,15 +27,29 @@ require_once('modules/TimePeriods/TimePeriod.php');
 
 class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private $preTestIds = array();
+
     public function setUp()
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        $this->preTestIds = TimePeriod::get_timeperiods_dom();
+
+        $db = DBManagerFactory::getInstance();
+
+        $db->query('UPDATE timeperiods set deleted = 1');
     }
 
     public function tearDown()
     {
+        $db = DBManagerFactory::getInstance();
+
+        $db->query("UPDATE timeperiods set deleted = 1");
+
+        //Clean up anything else left in timeperiods table that was not deleted
+        $db->query("UPDATE timeperiods SET deleted = 0 WHERE id IN ('" . implode("', '", array_keys($this->preTestIds))  . "')");
+
         SugarTestHelper::tearDown();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
@@ -101,5 +115,54 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $updated = $tp1->upgradeLegacyTimePeriods();
 
         $this->assertEquals(2, $updated);
+    }
+
+    /**
+     * Test is meant to test what happens with an upgrade where timeperiods existed previously.
+     * Historical Timeperiods should remain in the database, but anything current and future should be deleted
+     *
+     * @ticket 61489
+     * @group timeperiods
+     * @group forecasts
+     */
+    public function testCreateTimePeriodsForUpgradeCreates4Quarters()
+    {
+        $timedate = TimeDate::getInstance();
+        $timedate->setNow($timedate->getNow()->setDate(2013, 3, 1));
+
+        $forecastConfigSettings = array (
+                'timeperiod_type' => 'chronological',
+                'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
+                'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
+                'timeperiod_start_date' => '2010-10-04',
+                'timeperiod_shown_forward' => '1',
+                'timeperiod_shown_backward' => '1',
+        );
+
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2010-10-04', '2011-10-03');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2011-10-04', '2012-10-03');
+        $tp3 = SugarTestTimePeriodUtilities::createTimePeriod('2012-10-04', '2013-10-03');
+
+        $seed = BeanFactory::getBean("TimePeriods");
+
+        $timeperiods = $seed->createTimePeriodsForUpgrade($forecastConfigSettings, $timedate->getNow());
+
+        foreach($timeperiods as $t) {
+            SugarTestTimePeriodUtilities::addCreatedTimePeriod($t);
+        }
+
+        $currentTimePeriod = TimePeriod::getCurrentTimePeriod(TimePeriod::ANNUAL_TYPE);
+
+        $currentLeaves = $currentTimePeriod->getLeaves();
+
+        $this->assertEquals(3, count($currentLeaves), "Upgrade failed to create the correct number of leaves for the current time period");
+        $this->assertNotEquals(false, BeanFactory::getBean("TimePeriods")->retrieve($tp2->id), "Upgrade failed to save a historical time period for record keeping");
+
+        $currentTimePeriod = $currentTimePeriod->getNextTimePeriod();
+        $this->assertNotNull($currentTimePeriod);
+        $this->assertEquals('2013-10-04', $currentTimePeriod->start_date, "Upgrade failed to create a future time period with the correct start date");
+        $this->assertEquals('2014-10-03', $currentTimePeriod->end_date, "Upgrade failed to create a future time period with the correct start end");
+        $currentLeaves = $currentTimePeriod->getLeaves();
+        $this->assertEquals(4, count($currentLeaves), "Upgrade failed to create the correct number of leaves for the future time period");
     }
 }

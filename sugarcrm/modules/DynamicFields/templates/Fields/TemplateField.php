@@ -367,6 +367,10 @@ class TemplateField{
 		if(!empty($this->size)){
 			$array['size'] = $this->size;
 		}
+        // Bug 61736 - Address fields in undeployed modules do not have a group property
+        if (!empty($this->group)) {
+            $array['group'] = $this->group;
+        }
 
         $this->get_dup_merge_def($array);
 
