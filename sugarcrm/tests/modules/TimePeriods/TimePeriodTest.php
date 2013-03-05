@@ -165,4 +165,59 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $currentLeaves = $currentTimePeriod->getLeaves();
         $this->assertEquals(4, count($currentLeaves), "Upgrade failed to create the correct number of leaves for the future time period");
     }
+
+    /**
+     * Test is meant to test what happens with an upgrade where timeperiods existed previously.
+     * Historical Timeperiods should remain in the database, but anything current and future should be deleted
+     *
+     * @ticket 60606
+     * @group timeperiods
+     * @group forecasts
+     */
+    public function testCreateTimePeriodsForUpgradeCreatesFuturePeriods()
+    {
+        //reset now to be static point in time to make sure that this test will continue passing with the progression of time
+        $timedate = TimeDate::getInstance();
+        $timedate->setNow($timedate->getNow()->setDate(2013, 3, 5));
+
+        $forecastConfigSettings = array (
+                'timeperiod_type' => 'chronological',
+                'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
+                'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
+                'timeperiod_start_date' => '2013-01-01',
+                'timeperiod_shown_forward' => '1',
+                'timeperiod_shown_backward' => '2',
+        );
+
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2012-08-06', '2012-11-04');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2012-08-13', '2012-11-11');
+        $tp3 = SugarTestTimePeriodUtilities::createTimePeriod('2012-08-20', '2012-11-18');
+        $tp4 = SugarTestTimePeriodUtilities::createTimePeriod('2012-08-27', '2012-11-25');
+        $tp5 = SugarTestTimePeriodUtilities::createTimePeriod('2012-09-03', '2012-12-02');
+        $tp6 = SugarTestTimePeriodUtilities::createTimePeriod('2012-09-10', '2012-12-09');
+        $tp7 = SugarTestTimePeriodUtilities::createTimePeriod('2012-09-17', '2012-12-16');
+        $tp8 = SugarTestTimePeriodUtilities::createTimePeriod('2012-09-24', '2012-12-23');
+
+        $seed = BeanFactory::getBean("TimePeriods");
+
+        $timeperiods = $seed->createTimePeriodsForUpgrade($forecastConfigSettings, $timedate->getNow());
+
+        foreach($timeperiods as $t) {
+            SugarTestTimePeriodUtilities::addCreatedTimePeriod($t);
+        }
+
+        $currentTimePeriod = TimePeriod::getCurrentTimePeriod(TimePeriod::ANNUAL_TYPE);
+
+        $currentLeaves = $currentTimePeriod->getLeaves();
+
+        $this->assertEquals(3, count($currentLeaves), "Upgrade failed to create the correct number of leaves for the current time period");
+        //$this->assertNotEquals(false, BeanFactory::getBean("TimePeriods")->retrieve($tp2->id), "Upgrade failed to save a historical time period for record keeping");
+
+        $currentTimePeriod = $currentTimePeriod->getNextTimePeriod();
+        $this->assertNotNull($currentTimePeriod);
+        $this->assertEquals('2014-01-01', $currentTimePeriod->start_date, "Upgrade failed to create a future time period with the correct start date");
+        $this->assertEquals('2014-12-31', $currentTimePeriod->end_date, "Upgrade failed to create a future time period with the correct start end");
+        $currentLeaves = $currentTimePeriod->getLeaves();
+        $this->assertEquals(4, count($currentLeaves), "Upgrade failed to create the correct number of leaves for the future time period");
+    }
 }
