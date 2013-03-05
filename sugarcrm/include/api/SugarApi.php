@@ -145,7 +145,13 @@ abstract class SugarApi {
             throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');
         }
 
-        $bean->save(TRUE);
+        $check_notify = TRUE;
+
+        if($bean->assigned_user_id == $GLOBALS['current_user']->id) {
+            $check_notify = FALSE;
+        }
+
+        $bean->save($check_notify);
 
         /*
          * Refresh the bean with the latest data.
