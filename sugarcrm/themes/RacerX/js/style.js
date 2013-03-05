@@ -407,7 +407,7 @@ SUGAR.append(SUGAR.themes, {
                     if(isRTL) {
                         $("#moduleList").width(menuItemsWidth + _ie_adjustment);
                     }
-                    SUGAR.themes.menuItemsWidth = menuItemsWidth;
+                    SUGAR.themes.menuItemsWidth = false;
                 } else {
                     moreNode.prepend(menuNode);
                     menuItemsWidth = currentModuleList.width();
@@ -442,7 +442,7 @@ SUGAR.append(SUGAR.themes, {
                 if($.browser.msie) {
                     menuItemsWidth += parseInt(menuNodeWidth);
                     insertNode.before(menuNode);
-                    SUGAR.themes.menuItemsWidth = menuItemsWidth;
+                    SUGAR.themes.menuItemsWidth = false;
                     currentModuleList.width(menuItemsWidth + _ie_adjustment);
                     if(isRTL) {
                         $("#moduleList").width(menuItemsWidth + _ie_adjustment);
