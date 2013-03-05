@@ -71,7 +71,7 @@ describe("Filter View", function() {
             it("fetches the list of filters for the current module", function() {
                 view.getFilters();
                 expect(apiSpy).toHaveBeenCalledOnce();
-                expect(apiSpy).toHaveBeenCalledWithMatch("filter", /.*Filters\/filter.*/);
+                expect(apiSpy).toHaveBeenCalledWithMatch("read", /.*Filters\/filter.*/);
             });
         });
 
