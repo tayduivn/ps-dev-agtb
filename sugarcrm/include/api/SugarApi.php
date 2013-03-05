@@ -146,8 +146,12 @@ abstract class SugarApi {
         }
 
         $check_notify = TRUE;
-
-        if($bean->assigned_user_id == $GLOBALS['current_user']->id) {
+        // check update
+        if(!empty($GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir])) {
+            $check_notify = FALSE;
+        } elseif(!empty($bean->fetched_row['assigned_user_id']) && $bean->fetched_row['assigned_user_id'] == $bean->assigned_user_id && $bean->assigned_user_id == $GLOBALS['current_user']->id){
+            $check_notify = FALSE;
+        } elseif($bean->assigned_user_id == $GLOBALS['current_user']->id) {
             $check_notify = FALSE;
         }
 
