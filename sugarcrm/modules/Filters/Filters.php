@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,47 +27,38 @@
  ********************************************************************************/
 
 class Filters extends Basic {
-	var $new_schema = true;
-	var $module_dir = 'Filters';
-	var $object_name = 'Filters';
-	var $table_name = 'filters';
-	var $importable = false;
-	var $id;
-	var $name;
-	var $date_entered;
-	var $date_modified;
-	var $modified_user_id;
-	var $modified_by_name;
-	var $created_by;
-	var $created_by_name;
-	var $deleted;
-	var $created_by_link;
-	var $modified_user_link;
-	var $team_id;
-	var $team_set_id;
-	var $team_count;
-	var $team_name;
-	var $team_link;
-	var $team_count_link;
-	var $teams;
-	var $assigned_user_id;
-	var $assigned_user_name;
-	var $assigned_user_link;
-	var $filter_definition;
-		
-	public function __construct(){
-		parent::__construct();
-	}
-	
-	public function bean_implements($interface){
-		switch($interface){
-			case 'ACL': return true;
-		}
-		return false;
-	}
+    public $module_dir = 'Filters';
+    public $object_name = 'Filters';
+    public $table_name = 'filters';
+    public $importable = false;
+    public $id;
+    public $name;
+    public $date_entered;
+    public $date_modified;
+    public $modified_user_id;
+    public $modified_by_name;
+    public $created_by;
+    public $created_by_name;
+    public $deleted;
+    public $created_by_link;
+    public $modified_user_link;
+    public $team_id;
+    public $team_set_id;
+    public $team_count;
+    public $team_name;
+    public $team_link;
+    public $team_count_link;
+    public $teams;
+    public $assigned_user_id;
+    public $assigned_user_name;
+    public $assigned_user_link;
+    public $filter_definition;
 
-	public function retrieve($id='-1', $encode=false,$deleted=true) {
-		return parent::retrieve($id, false, $deleted);
-	}		
+    public function bean_implements($interface){
+        switch($interface){
+            case 'ACL': return true;
+        }
+        return false;
+    }
+
 }
-?>
