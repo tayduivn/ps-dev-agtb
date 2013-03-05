@@ -14,11 +14,14 @@ nv.addGraph(function() {
              '<p>Events: <b>' +  parseInt(y) + '</b></p>';
     });
 
-    d3.select("#donut svg")
-      .datum(pie_data)
-      .transition().duration(1200)
-      .call(chart);
+  d3.select("#donut svg")
+    .datum(pie_data)
+    .transition().duration(1200)
+    .call(chart);
 
-    nv.utils.windowResize(function(){chart.update();});
-    return chart;
+  nv.utils.windowResize(function(){ chart.update(); });
+
+  //attachToggleExpand(chart);
+
+  return chart;
 });

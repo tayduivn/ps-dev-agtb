@@ -2,12 +2,13 @@
       <div class="page-header">
         <h2>Custom Charts <small>used for comparing values in a process</small></h2>
       </div>
+
       <div class="row">
         <div class="span6">
           <h3>Pipeline By Sales Stage</h3>
           <p>This is a new NVD3 funnel chart type created for SugarCRM. <a href="charts/funnelChart.html">Full Screen</a></p>
           <div>
-<div id="funnel1" class="nv-chart">
+<div id="funnel1" class="thumbnail nv-chart">
   <svg></svg>
 </div>
           </div>
@@ -16,18 +17,19 @@
           <h3>Closed Won Opportunities</h3>
           <p>This is a new NVD3 gauge chart type created for SugarCRM. <a href="charts/gaugeChart.html">Full Screen</a></p>
           <div>
-<div id="gauge" class="nv-chart">
+<div id="gauge" class="thumbnail nv-chart">
   <svg></svg>
 </div>
           </div>
         </div>
       </div>
+
       <div class="row" style="margin-top:8px">
         <div class="span6">
           <h3>Treemap Chart</h3>
           <p>This is a new NVD3 treemap chart type created for SugarCRM. <a href="charts/treemapChart.html">Full Screen</a></p>
           <div>
-<div id="treemap1" class="nv-treemap nv-chart">
+<div id="treemap1" class="thumbnail nv-chart nv-treemap">
   <svg></svg>
 </div>
           </div>
@@ -36,10 +38,25 @@
           <h3>Opportunities</h3>
           <p>This is a new NVD3 treemap chart type created for SugarCRM. <a href="charts/treemapChart_opportunities.html">Full Screen</a></p>
           <div>
-<div id="treemap2" class="nv-treemap nv-chart">
+<div id="treemap2" class="thumbnail nv-chart nv-treemap">
   <svg></svg>
 </div>
           </div>
+        </div>
+      </div>
+      </div>
+
+      <div class="row" style="margin-top:8px">
+        <div class="span6">
+          <h3>Org Chart</h3>
+          <p>This is a new NVD3 tree chart type created for SugarCRM. <a href="charts/orgChart.html">Full Screen</a></p>
+          <div>
+<div id="tree1" class="thumbnail nv-tree nv-chart">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+        <div class="span6">
         </div>
       </div>
     </section>
@@ -48,6 +65,7 @@
 <script src="js/nvd3/data/funnel_data.js"></script>
 <script src="js/nvd3/data/treemap_data.js"></script>
 <script src="js/nvd3/data/flare.js"></script>
+<script src="js/nvd3/data/tree_data.js"></script>
 
 <script>
   // Funnel Chart
@@ -58,8 +76,7 @@
               return '<p>Stage: <b>' + key + '</b></p>' +
                      '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
                      '<p>Percent: <b>' +  x + '%</b></p>'
-            })
-        ;
+            });
 
     chart.yAxis
         .tickFormat(d3.format(',.1f'));
@@ -75,15 +92,15 @@
   // Gauge Chart
   nv.addGraph(function() {
     var gauge = nv.models.gaugeChart()
-        .x(function(d) { return d.key })
-        .y(function(d) { return d.y })
-        .showLabels(true)
-        .showTitle(false)
-        .colorData( 'default' )
-        .colorFill( 'gradient' )
-        .ringWidth(50)
-        .maxValue(9)
-        .transitionMs(4000);
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          .showLabels(true)
+          .showTitle(false)
+          .colorData( 'default' )
+          .colorFill( 'gradient' )
+          .ringWidth(50)
+          .maxValue(9)
+          .transitionMs(4000);
 
     d3.select("#gauge svg")
         .datum(gauge_data)
@@ -120,6 +137,22 @@
         .datum(flare_data)
       .transition().duration(500)
         .call(chart);
+
+    return chart;
+  });
+
+  // Tree org chart
+  nv.addGraph(function() {
+
+    var chart = nv.models.tree()
+          .nodeImgPath('img/');
+
+    d3.select("#tree1 svg")
+        .datum(tree_data)
+      .transition().duration(700)
+        .call(chart);
+
+    nv.utils.windowResize(function(){ chart.resize(); });
 
     return chart;
   });

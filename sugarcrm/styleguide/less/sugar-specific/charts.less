@@ -107,26 +107,81 @@
 }
 
 
-.thumbnail {
-  &.viz {
-
-    &.expanded {
-      position: fixed;
-      top: 48px;
+.thumbnail.viz {
+  &.expanded {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    right: 0;
+    bottom: 45px;
+    z-index: 1000;
+    margin: 0 !important;
+    .widget-content {
+      position: absolute;
+      top: 60px;
       left: 0;
-      width: 100% !important;
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-      z-index: 1000;
-      .nv-chart {
-        padding: 20px 20px 10px;
-      }
-      svg text {
-        font-size: 14px;
-      }
-      .nvd3 .nv-x.nv-axis text {
-        font-size: 12px;
-      }
+      right: 0;
+      bottom: 0px;
+      padding: 20px;
+    }
+    svg {
+      max-height: none;
+    }
+    svg text {
+      font-size: 14px;
+    }
+    .nvd3 .nv-x.nv-axis text {
+      font-size: 12px;
+    }
+    a[data-toggle="widget"] {
+      display: none;
+    }
+    h4.headerpane {
+      font-size: 24px;
+      padding: 20px 0 0 20px;
+      box-sizing: border-box;
+    }
+    .btn-toolbar {
+      margin: 16px 20px 0 8px;
+    }
+  }
+  .btn-slider {
+    display: inline-block;
+    padding: 5px;
+  }
+  .noUiSlider {
+    width: 50px;
+    height: 4px;
+    display: inline-block;
+    margin: 0;
+    top: -1px;
+  }
+  .noUiSliderEnds {
+    width: 50px;
+    margin: 0px 30px 0 0;
+    .zoom-control {
+      position: absolute;
+      top: 1px;
+      font-size: 18px;
+    }
+    a[href="#reduce-zoom"] {
+      left: -26px;
+    }
+    a[href="#increase-zoom"] {
+      right: -26px;
+    }
+    &:before,
+    &:after {
+      top: 6px;
+      height: 4px;
+    }
+    &:before {
+      border-radius: 2px 0px 0px 2px;
+      left: -6px;
+    }
+    &:after {
+      border-radius: 0px 2px 2px 0px;
+      right: -6px;
     }
   }
 }
