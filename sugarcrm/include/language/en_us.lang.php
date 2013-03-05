@@ -3811,6 +3811,9 @@ $app_strings = array (
     'NTC_RECORD_DELETE_CONFIRMATION' => 'Are you sure you want to delete the {{module}} {{name}}?',
     'NTC_RECORD_DELETE_SUCCESS' => 'You deleted the {{module}} {{name}}.',
 
+    //record save
+    'LBL_RECORD_SAVED' => 'Record saved.',
+
     //for sidecar alert view
     'LBL_ALERT_TITLE_SUCCESS' => 'Success:',
     'LBL_ALERT_TITLE_WARNING' => 'Warning:',
@@ -3820,6 +3823,10 @@ $app_strings = array (
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
+
+    //application error messages
+    'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',
+    'ERR_RESOLVE_ERRORS' => 'Please resolve any errors before proceeding.',
 );
 
 

@@ -8,8 +8,12 @@ describe("Create View", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
+        SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
         SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'field', 'button');
+        SugarTest.loadComponent('base', 'field', 'rowaction');
+        SugarTest.loadComponent('base', 'field', 'fieldset');
+        SugarTest.loadComponent('base', 'field', 'actiondropdown');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.addViewDefinition('record', {
             "panels":[
@@ -17,7 +21,6 @@ describe("Create View", function() {
                     "name":"panel_header",
                     "placeholders":true,
                     "header":true,
-                    "labels":false,
                     "fields":[
                         {
                             "name":"first_name",
@@ -32,8 +35,6 @@ describe("Create View", function() {
                     ]
                 }, {
                     "name":"panel_body",
-                    "columns":2,
-                    "labels":false,
                     "labelsOnTop":true,
                     "placeholders":true,
                     "fields":[
@@ -47,7 +48,7 @@ describe("Create View", function() {
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
             "type":"record",
-            "buttons":[
+            "buttons": [
                 {
                     "name":"cancel_button",
                     "type":"button",
@@ -60,22 +61,26 @@ describe("Create View", function() {
                     "css_class":"hide btn-invisible btn-link",
                     "showOn" : "select"
                 }, {
-                    "name":"save_create_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_AND_CREATE_ANOTHER",
-                    "css_class":"hide btn-invisible btn-link",
-                    "showOn" : "create"
-                }, {
-                    "name":"save_view_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_AND_VIEW",
-                    "css_class":"hide btn-invisible btn-link",
-                    "showOn" : "create"
-                }, {
-                    "name":"save_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_BUTTON_LABEL",
-                    "css_class":"btn-primary"
+                    "type":"actiondropdown",
+                    "name":"main_dropdown",
+                    "primary":true,
+                    "buttons": [
+                        {
+                            "type":"rowaction",
+                            "name":"save_button",
+                            "label":"LBL_SAVE_BUTTON_LABEL"
+                        }, {
+                            "type":"rowaction",
+                            "name":"save_view_button",
+                            "label":"LBL_SAVE_AND_VIEW",
+                            "showOn":"create"
+                        }, {
+                            "type":"rowaction",
+                            "name":"save_create_button",
+                            "label":"LBL_SAVE_AND_CREATE_ANOTHER",
+                            "showOn":"create"
+                        }
+                    ]
                 }
             ]
         }, moduleName);
@@ -268,7 +273,7 @@ describe("Create View", function() {
             view.render();
 
             _.each(view.fields, function(field) {
-                if (field.type === 'button') {
+                if ((field.type === 'button') || (field.type === 'actiondropdown') || (field.type === 'rowaction')) {
                     buttons++;
                 } else {
                     fields++;
@@ -276,7 +281,7 @@ describe("Create View", function() {
             });
 
             expect(fields).toBe(5);
-            expect(buttons).toBe(5);
+            expect(buttons).toBe(6);
         });
     });
 
