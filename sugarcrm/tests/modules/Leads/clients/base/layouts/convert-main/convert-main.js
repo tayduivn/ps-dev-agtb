@@ -431,7 +431,7 @@ describe("ConvertLeadLayout", function() {
             convertCompleteStub = sinon.stub(layout, 'convertComplete');
             uploadSuccessCount = 0;
             uploadErrorCount = 0;
-            uploadFileFieldStub = sinon.stub(app.file, 'checkFileFieldsAndProcessUpload', function (model, callbacks, options, view, showAlert) {
+            uploadFileFieldStub = sinon.stub(app.file, 'checkFileFieldsAndProcessUpload', function (view, callbacks, options, showAlert) {
                 if (isUploadSuccess) {
                     uploadSuccessCount++;
                     callbacks.success();

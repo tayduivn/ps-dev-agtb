@@ -58,7 +58,7 @@
         options = {
             success: function() {
                 app.alert.dismiss('save_profile_edit_view');
-                app.file.checkFileFieldsAndProcessUpload(self.model, {
+                app.file.checkFileFieldsAndProcessUpload(self, {
                     success: function () {
 
                         var langKey = self.model.get('preferred_language');
@@ -68,7 +68,7 @@
                         app.router.navigate('profile', {trigger: true});
                     }
                 },
-                {deleteIfFails: false}, self);
+                {deleteIfFails: false});
             },
             error: function(error) {
                 app.alert.dismiss('save_profile_edit_view');

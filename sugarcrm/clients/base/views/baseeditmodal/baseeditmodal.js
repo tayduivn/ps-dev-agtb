@@ -45,9 +45,10 @@
             relate: true,
             fieldsToValidate: this.getFields(this.module),
             success: function() {
-                app.file.checkFileFieldsAndProcessUpload(createModel, {
+                var view = _.extend({}, self, {model:createModel});
+                app.file.checkFileFieldsAndProcessUpload(view, {
                     success: function() { self.saveComplete(); }
-                }, null, self);
+                });
             },
             error: function() {
                 self.resetButton();
