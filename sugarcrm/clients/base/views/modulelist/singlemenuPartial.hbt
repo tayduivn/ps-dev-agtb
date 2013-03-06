@@ -1,0 +1,16 @@
+<li class="dropdown" data-module="{{name}}" data-menuindex="{{menuIndex}}">
+    <a  class="moreLink hide" href="#{{name}}">{{label}}</a>
+    <div class="btn-group">
+        <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}">{{label}}</a>
+        <a id="{{name}}Drop" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
+        {{#if menu}}
+            <ul class="dropdown-menu scroll" role="menu" aria-labelledby="{{name}}Drop">
+                {{#each menu}}
+                    <li><a class="actionLink" tabindex="-1" {{#if event}}data-event='{{event}}' href='javascript: void(0)'{{else}}href="{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
+                {{/each}}
+                <div class="recentContainer hide"></div>
+                <div class="favoritesContainer hide"></div>
+            </ul>
+        {{/if}}
+    </div>
+</li>
