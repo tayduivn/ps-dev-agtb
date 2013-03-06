@@ -434,7 +434,6 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'LBL_WIZARD_SYSTEM_DESC' => 'Provide your organization\'s name and logo in order to brand your Sugar.',
     'LBL_WIZARD_LOCALE_DESC' => 'Specify how you would like data in Sugar to be displayed, based on your geographical location. The settings you provide here will be the default settings. Users will be able set their own preferences.',
     'LBL_WIZARD_SMTP_DESC' => 'Provide the email account that will be used to send emails, such as the assignment notifications and new user passwords. Users will receive emails from Sugar, as sent from the specified email account.',
-    'LBL_MOBILE_MOD_REPORTS_RESTRICTION' => '* The Reports module is only available for the Sugar Mobile iPhone client.',
 	'LBL_GMAIL_LOGO' => 'Gmail Logo' /*for 508 compliance fix*/,
 	'LBL_YAHOO_MAIL' => 'Yahoo Mail' /*for 508 compliance fix*/,
 	'LBL_EXCHANGE_LOGO' => 'Exchange' /*for 508 compliance fix*/,
@@ -443,6 +442,7 @@ To configure additional system settings, click <a href="index.php?module=Adminis
 	'LBL_WELCOME' => 'Welcome' /*for 508 compliance fix*/,
 	'LBL_LOGO' => 'Logo' /*for 508 compliance fix*/,
     'LBL_MOBILE_MOD_REPORTS_RESTRICTION' => '* The Reports module is only available for the SugarCRM and Sugar Mobile native clients',
+    'LBL_MOBILE_MOD_REPORTS_RESTRICTION2' => '* The Reports module is not available for the browser-based mobile view.',
 );
 
 
