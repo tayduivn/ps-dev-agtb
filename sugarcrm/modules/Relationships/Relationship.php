@@ -200,6 +200,7 @@ class Relationship extends SugarBean {
 		$query="SELECT * from relationships where deleted=0";
 		$result=$this->db->query($query);
 
+        $relationships = array();
 		while (($row=$this->db->fetchByAssoc($result))!=null) {
 			$relationships[$row['relationship_name']] = $row;
 		}
