@@ -84,6 +84,7 @@
 body {
   padding: 0;
   overflow: auto;
+  margin-bottom: 30px;
 }
 .subnav {
   z-index: 1020;
@@ -108,11 +109,12 @@ body {
 }
 .hero-unit .cube {
   height: 28px;
-  background-position: 0 1px;
+  background: url('../../assets/img/badge_256g.png') 0 1px no-repeat;
 }
 .hero-unit h1 {
   display: inline-block;
   margin-top: 0;
+  font-size: 32px;
 }
 .hero-unit #s2id_find_patterns {
   z-index: 1030;
