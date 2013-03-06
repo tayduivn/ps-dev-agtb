@@ -1,5 +1,6 @@
 ({
     events: {
+        'click #tour': 'showTourModal',
         'click #print': 'print',
         'click #top': 'top'
     },
@@ -13,5 +14,11 @@
     },
     top: function() {
         scroll(0,0);
+    },
+    showTourModal: function() {
+        // TODO: When the <footer> tags have been replaced/start respecting z-indexes
+        // call this.layout.trigger(eventName, ...) to show a modal layout instead
+        $('.system-tour').modal('show');
     }
 })
+

@@ -7,9 +7,6 @@ $viewdefs['base']['layout']['footer'] = array(
             'view' => 'reminders'
         ),
         array(
-            'view' => 'tour-action'
-        ),
-        array(
             'view' => 'footer-actions'
         )
     ),

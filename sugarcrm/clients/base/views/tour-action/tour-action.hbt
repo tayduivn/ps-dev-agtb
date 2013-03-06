@@ -1,5 +1,0 @@
-{{#if isAuthenticated}}
-<div class="btn-group">
-    <a title="{{str "LBL_TOUR"}}" class="btn btn-invisible tour"><i class="icon-road"></i> {{str "LNK_TOUR"}}</a>
-</div>
-{{/if}}
