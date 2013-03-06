@@ -27,6 +27,9 @@ describe("The forecasts worksheet totals calculation test", function(){
         SugarTest.seedMetadata(true);
         SugarTest.seedApp();
         app = SugarTest.app;
+        sinon.stub(app.user, "getPreference", function(name) {
+            return 2
+        });
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) { return eval(d); });
         var model1 = new Backbone.Model({amount: 100, sales_stage: 'Closed Won', probability: 70, commit_stage: 'include',  best_case : 100, likely_case : 100, base_rate : 1 });
         var model2 = new Backbone.Model({amount: 100, sales_stage: 'Closed Lost', probability: 70, commit_stage: 'exclude', best_case : 100, likely_case : 100, base_rate : 1 });
@@ -45,6 +48,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
     afterEach(function() {
         formatWithRateStub.restore();
+        app.user.getPreference.restore();
     });
 
     /*
