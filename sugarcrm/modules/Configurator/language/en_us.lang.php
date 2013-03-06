@@ -441,6 +441,7 @@ To configure additional system settings, click <a href="index.php?module=Adminis
 	'LBL_DELETE' => 'Delete' /*for 508 compliance fix*/,
 	'LBL_WELCOME' => 'Welcome' /*for 508 compliance fix*/,
 	'LBL_LOGO' => 'Logo' /*for 508 compliance fix*/,
+    'LBL_MOBILE_MOD_REPORTS_RESTRICTION' => '* The Reports module is only available for the SugarCRM and Sugar Mobile native clients',
     'LBL_MOBILE_MOD_REPORTS_RESTRICTION2' => '* The Reports module is not available for the browser-based mobile view.',
 );
 
