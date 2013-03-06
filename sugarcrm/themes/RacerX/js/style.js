@@ -376,7 +376,7 @@ SUGAR.append(SUGAR.themes, {
             menuItemsWidth += _ie_adjustment;
             currentModuleList.width(menuItemsWidth);
             menuItemsWidth += _ie_adjustment;
-            $("#moduleList").width(menuItemsWidth);
+            //$("#moduleList").width(menuItemsWidth);   commented out for bug 61756
 
         }
         SUGAR.themes.menuItemsWidth = menuItemsWidth;
@@ -407,7 +407,7 @@ SUGAR.append(SUGAR.themes, {
                     if(isRTL) {
                         $("#moduleList").width(menuItemsWidth + _ie_adjustment);
                     }
-                    SUGAR.themes.menuItemsWidth = false;
+                    SUGAR.themes.menuItemsWidth = menuItemsWidth;
                 } else {
                     moreNode.prepend(menuNode);
                     menuItemsWidth = currentModuleList.width();
@@ -442,7 +442,7 @@ SUGAR.append(SUGAR.themes, {
                 if($.browser.msie) {
                     menuItemsWidth += parseInt(menuNodeWidth);
                     insertNode.before(menuNode);
-                    SUGAR.themes.menuItemsWidth = false;
+                    SUGAR.themes.menuItemsWidth = menuItemsWidth;
                     currentModuleList.width(menuItemsWidth + _ie_adjustment);
                     if(isRTL) {
                         $("#moduleList").width(menuItemsWidth + _ie_adjustment);
