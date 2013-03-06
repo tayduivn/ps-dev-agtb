@@ -44,13 +44,17 @@
      */
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
+        app.events.on("app:logout", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
     },
     _renderHtml: function() {
         var self = this,
             menuTemplate;
 
-        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
+        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') {
+            this.$el.empty();
+            return;
+        }
 
         self.setModuleInfo();
         self.setCreateTasksList();
@@ -147,10 +151,10 @@
         this.$('#module_list li a[href="'+hashModule+'"]').parent().addClass('active');
     },
     hide: function() {
-        this.$el.hide();
+        this.$el.children().hide();
     },
     show: function() {
-        this.$el.show();
+        this.$el.children().show();
     },
     setCurrentUserName: function() {
         this.fullName = app.user.get('full_name');

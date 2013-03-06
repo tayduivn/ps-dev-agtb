@@ -53,6 +53,13 @@ class SugarMetric_Manager
     protected $transactionNamed = false;
 
     /**
+     * EntryPointHandler class instance
+     *
+     * @var SugarMetric_EntryPointHandler
+     */
+    protected $entryPointHandler = null;
+
+    /**
      * Singleton constructor
      */
     protected function __construct()
@@ -67,9 +74,7 @@ class SugarMetric_Manager
         if (isset($sugar_config['metric_providers'])) {
             foreach ($sugar_config['metric_providers'] as $name => $path) {
 
-                // Could not use SugarAutoLoader there, because in case of
-                // entryPoint=getYUIComboFile script do not loads SugarAutoLoader
-                if (file_exists($path)) {
+                if (SugarAutoLoader::fileExists($path)) {
                     require_once $path;
 
                     $additionalConfig = isset($sugar_config['metric_settings'][$name])
@@ -161,6 +166,38 @@ class SugarMetric_Manager
     public function isNamedTransaction()
     {
         return $this->transactionNamed;
+    }
+
+    /**
+     * Set up transaction name for known entry points
+     *
+     * Entry point custom naming could be done in SugarMetric_EntryPointHandler class
+     *
+     * @see include/MVC/Controller/entry_point_registry.php
+     * @param string $entryPoint
+     * @return SugarMetric_Manager
+     */
+    public function setEntryPointName($entryPoint)
+    {
+        // Do not apply entry point handler class if no metric providers is loaded
+        if (count($this->metricProviders) == 0) {
+            return $this;
+        }
+
+        if ($this->entryPointHandler === null) {
+            SugarAutoLoader::requireWithCustom('include/SugarMetric/EntryPointHandler.php');
+            $this->entryPointHandler = new SugarMetric_EntryPointHandler();
+        }
+
+        $entryPoint = strtolower($entryPoint);
+
+        $name = (method_exists($this->entryPointHandler, $entryPoint))
+                    ? $this->entryPointHandler->{$entryPoint}()
+                    : $entryPoint;
+
+        $this->setTransactionName($name);
+
+        return $this;
     }
 
     /**

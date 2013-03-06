@@ -805,6 +805,7 @@ class SugarController
 			$entryPoint = $_REQUEST['entryPoint'];
 
 			if(!empty($this->entry_point_registry[$entryPoint])){
+                SugarMetric_Manager::getInstance()->setEntryPointName($entryPoint);
 				require_once($this->entry_point_registry[$entryPoint]['file']);
 				$this->_processed = true;
 				$this->view = '';
