@@ -509,7 +509,6 @@ class TimePeriod extends SugarBean {
        //If this an upgrade AND there are existing non-fiscal leaf TimePeriods
        if ($isUpgrade && !empty($count)) {
            $this->upgradeLegacyTimePeriods();
-           //$this->createTimePeriodsForUpgrade($currentSettings, $currentDate);
            $this->createTimePeriods($priorSettings, $currentSettings, $currentDate);
        } else {
            $this->createTimePeriods($priorSettings, $currentSettings, $currentDate);
