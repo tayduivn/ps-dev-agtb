@@ -590,39 +590,6 @@ class TimePeriod extends SugarBean {
     }
 
     /**
-     * based on a time period type and a start date, determine what the start date of the current time period
-     * ought to be.
-     * @param $timePeriodInterval class type of timeperiod to return current timeperiod start date of
-     * @param $startDate DB date formatted string for the start date to begin with
-     * @return string of date formatted to db date format
-     */
-    public function determineCurrentStartDateByType($timePeriodInterval, $startDate) {
-        //get timedate to determine now and use for various date formatting
-        $timedate = TimeDate::getInstance();
-        $currentDateTimeStamp = $timedate->getNow()->format('U');
-        $startDate = $timedate->fromDbDate($startDate);
-
-        $currentTimePeriod = TimePeriod::getByType($timePeriodInterval);
-        $currentTimePeriod->setStartDate($startDate->asDbDate());
-
-        $currentTPStartDateTimeStamp = $timedate->fromDbDate($currentTimePeriod->start_date)->format('U');
-        $currentTPEndDateTimeStamp = $timedate->fromDbDate($currentTimePeriod->end_date)->format('U');
-
-        //current date is prior to start date meaning we need to go backwards
-        while($currentTPStartDateTimeStamp > $currentDateTimeStamp) {
-
-        }
-
-        //current date
-        while($currentTPEndDateTimeStamp < $currentDateTimeStamp) {
-
-        }
-
-        return $currentStartDate;
-    }
-
-
-    /**
      * createTimePeriodsForUpgrade
      *
      * This function creates the TimePeriods for the case where the system is handling upgrades
