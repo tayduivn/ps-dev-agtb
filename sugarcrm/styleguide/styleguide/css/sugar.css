@@ -5575,6 +5575,7 @@ input[type="color"].local-error,
   display: block;
   padding: 6px 8px 8px;
   text-indent: 32px;
+  position: relative;
 }
 .navbar .dropdown-menu li,
 .navbar .dropdown-menu li.divider {
@@ -5738,6 +5739,7 @@ input[type="color"].local-error,
   box-shadow: none;
   top: 42px;
   padding-top: 8px;
+  overflow: hidden;
 }
 .navbar .nav.megamenu > li.dropdown.open .dropdown-menu:before,
 .navbar .nav.megamenu > li.dropdown.open .dropdown-menu:after {
@@ -5749,6 +5751,9 @@ input[type="color"].local-error,
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
+  max-height: 330px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .navbar .nav.megamenu > li.dropdown.active {
   border-right-color: #404040;
