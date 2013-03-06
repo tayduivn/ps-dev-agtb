@@ -60,7 +60,7 @@ class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
         $this->job->runnable_ran = true;
         $this->job->runnable_data = $data;
 
-        $keys = json_decode($data, true);
+        $keys = json_decode(html_entity_decode($data), true);
 
         foreach ($keys as $key) {
             /* @var $opp Opportunity */

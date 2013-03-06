@@ -427,7 +427,7 @@ class Opportunity extends SugarBean
         // backward compatibility, amount_usdollar is deprecated
         $this->amount_usdollar = $this->amount * $this->base_rate;
 
-        //if probablity isn't set, set it based on the sales stage
+        //if probability isn't set, set it based on the sales stage
 		if ( !isset($this->probability) && !empty($this->sales_stage) ) {
 			$prob_arr = $app_list_strings['sales_probability_dom'];
 			if ( isset($prob_arr[$this->sales_stage]) ) {
