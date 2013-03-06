@@ -148,12 +148,17 @@ abstract class SugarApi {
         // This code replicates the behavior in Sugar_Controller::pre_save()
         $check_notify = TRUE;
         // check update
+        // if Notifications are disabled for this module set check notify to false
         if(!empty($GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir]) && $GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir] == true) {
             $check_notify = FALSE;
-        } elseif(!empty($bean->fetched_row['assigned_user_id']) && $bean->fetched_row['assigned_user_id'] == $bean->assigned_user_id && $bean->assigned_user_id == $GLOBALS['current_user']->id){
-            $check_notify = FALSE;
-        } elseif($bean->assigned_user_id == $GLOBALS['current_user']->id) {
-            $check_notify = FALSE;
+        } else {
+            // if the assigned user hasn't changed, set check notify to false
+            if(!empty($bean->fetched_row['assigned_user_id']) && $bean->fetched_row['assigned_user_id'] == $bean->assigned_user_id) {
+                $check_notify = FALSE;
+                // if its the same user, don't send
+            } elseif($bean->assigned_user_id == $GLOBALS['current_user']->id) {
+                $check_notify = FALSE;
+            }
         }
 
         $bean->save($check_notify);
