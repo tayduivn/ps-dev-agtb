@@ -35,7 +35,7 @@ describe("The forecasts tree view", function(){
 
         testMethodStub2 = sinon.stub(app.lang, "get", function(property) {
             var lang = {
-                LBL_MY_OPPORTUNITIES : "Opportunity ({0})"
+                LBL_MY_OPPORTUNITIES : "Opportunities ({0})"
             };
             return lang[property];
         });
@@ -53,8 +53,7 @@ describe("The forecasts tree view", function(){
         beforeEach(function() {
 
             //This is a global namespace function of window if loaded so we can stub it out; otherwise let's just create a similar function
-            if(typeof window.replaceHTMLChars == "function")
-            {
+            if(typeof window.replaceHTMLChars == "function") {
                 replaceHTMLChars = sinon.stub(window, "replaceHTMLChars", function(value) {
                     return value.replace(/&#039;/gi,'\'');
                 });
@@ -72,18 +71,18 @@ describe("The forecasts tree view", function(){
                 },
 
                 children : {
-                    0 : {
+                    0: {
                         attr: {
                            id: "jstree_node_jim",
                            rel: "reportee"
                         },
-                        metadata: {id : "jstree_node_jim"},
+                        metadata: {id: "jstree_node_jim"},
                         children: [],
 
                         data: "Jim O&#039;Gara"
                     },
 
-                    1 : {
+                    1: {
                         attr: {
                            id: "jstree_node_sarah",
                            rel: "reportee"
@@ -105,18 +104,21 @@ describe("The forecasts tree view", function(){
             replaceHTMLChars = null;
         });
 
-        it("correctly encodes Jim and Sarah's name", function()
-        {
+        it("correctly encodes Jim and Sarah's name", function() {
            var result = view._recursiveReplaceHTMLChars(data, view);
-           expect(result[0].data === "Jim O'Gara").toBeTruthy("Correctly encoded Jim's name");
+           expect(result[0].data).toMatch("Jim O'Gara");
            var children = result[0].children[1];
-           expect(children[0].data === "Sarah O'Reilly").toBeTruthy("Correctly encoded Sarah's name");
+           expect(children[0].data).toMatch("Sarah O'Reilly");
         });
 
-        it("correctly translates the LBL_MY_OPPORTUNITIES string where children.metadata.id == app.user.get('id')", function() {
-            var result = view._recursiveReplaceHTMLChars(data, view);
-            var children = result[0].children[0]
-            expect(children[0].data === "Opportunity (Jim O'Gara)").toBeTruthy("Correctly translated LBL_MY_OPPORTUNITIES");
+        it("correctly translates and adds the LBL_MY_OPPORTUNITIES string to the tree for the selected user", function() {
+            view.selectedUser = {
+                id: "jstree_node_jim",
+                rel: "reportee"
+            };
+            var result = view._recursiveReplaceHTMLChars(data, view),
+                children = result[0].children[0];
+            expect(children[0].data).toMatch('Opportunities \\\(Jim O\\\'Gara\\\)');
         })
 
     });
