@@ -1,5 +1,6 @@
 <div class="main-pane"></div>
 <div class="side sidebar-content">
     <div class="side-pane active"></div>
+    <div class="dashboard-pane"></div>
     <div class="preview-pane"></div>
 </div>

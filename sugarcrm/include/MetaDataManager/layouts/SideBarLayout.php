@@ -17,10 +17,12 @@ class SideBarLayout
 
         $this->containers['main'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'main-pane'));
         $this->containers['side'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'side-pane'));
+        $this->containers['dashboard'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'dashboard-pane'));
         $this->containers['preview'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'preview-pane'));
 
         $this->setSectionSpan('main', 8);
         $this->setSectionSpan('side', 4);
+        $this->setSectionSpan('dashboard', 4);
         $this->setSectionSpan('preview', 8);
     }
 
