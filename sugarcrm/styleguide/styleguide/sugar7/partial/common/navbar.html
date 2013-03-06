@@ -96,21 +96,6 @@
 <script>
 $(document).ready(function() {
 
-    $('body').on('click', 'ul.dropdown-menu > li [type=checkbox]', function(el){
-      if($(this).hasClass('search_all')===true) {
-        if($(this).attr('checked')) {
-          $(this).closest('ul').find('li').each(function(){
-            $(this).find('input[type=checkbox]').attr('checked','checked');
-          });
-        } else {
-          $(this).closest('ul').find('li').each(function(){
-            $(this).find('input[type=checkbox]').removeAttr('checked');
-          });
-        }
-      }
-      el.stopPropagation();
-    });
-
     //http://jsfiddle.net/vNqTF/
     $(window).resize(  (function(){
         // Closure to initialize everything...
@@ -175,6 +160,25 @@ $(document).ready(function() {
     e.preventDefault()
     $this.typeahead($this.data())
   });
+
+  $('body').on('click','.dropdown-menu.reset-width li, .dropdown-menu.reset-width li label, .dropdown-menu.reset-width li input[type=checkbox],',function(e){
+    var thisel = $(this).get(0).tagName;
+    if (thisel !== 'LI') {
+      if(thisel !== 'LABEL') {
+        var checkc = $(this).closest('label');
+      } else {
+        var checkc = $(this);
+      }
+      if($(checkc).find('input[type=checkbox]').attr('checked') == 'checked') {
+        $(checkc).addClass('active')
+      } else {
+        $(checkc).removeClass('active')
+      }
+    }
+    e.stopPropagation();
+  });
+
+
 
 });
 </script>

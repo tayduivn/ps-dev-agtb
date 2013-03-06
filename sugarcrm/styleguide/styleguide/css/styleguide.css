@@ -109,7 +109,7 @@ body {
 }
 .hero-unit .cube {
   height: 28px;
-  background: url('../../assets/img/badge_256g.png') 0 1px no-repeat;
+  background: url('../../assets/img/badge_256g.png') -3px 3px no-repeat;
 }
 .hero-unit h1 {
   display: inline-block;
