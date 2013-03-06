@@ -163,11 +163,19 @@
       position: absolute;
       top: 1px;
       font-size: 18px;
+      &.disabled {
+        [class^="icon-"] {
+          color: lighten(@grayLight,10%) !important;
+        }
+      }
     }
-    a[href="#reduce-zoom"] {
+    a:hover {
+      text-decoration: none;
+    }
+    a[href="#zoom-out"] {
       left: -26px;
     }
-    a[href="#increase-zoom"] {
+    a[href="#zoom-in"] {
       right: -26px;
     }
     &:before,

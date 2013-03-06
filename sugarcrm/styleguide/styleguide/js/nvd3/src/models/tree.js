@@ -35,6 +35,7 @@ nv.models.tree = function() {
     , padding = { 'top': 10, 'right': 10, 'bottom': 10, 'left': 10 } // this is the distance from the edges of the svg to the chart
     , nodeSize = { 'width': 115, 'height': 42 }
     , nodeImgPath = '../img/'
+    , zoomExtents = { 'min': 0.25, 'max': 2 }
   ;
 
   //============================================================
@@ -48,7 +49,7 @@ nv.models.tree = function() {
       var bbox = false;      // the actual size of a node
 
       var diagonal = d3.svg.diagonal();
-      var zoom = d3.behavior.zoom().scaleExtent([0.25, 2])
+      var zoom = d3.behavior.zoom().scaleExtent([zoomExtents.min, zoomExtents.max])
             .on('zoom', function() {
               gEnter.attr('transform',
                 'translate('+ d3.event.translate +')scale('+ d3.event.scale +')'
@@ -356,6 +357,33 @@ nv.models.tree = function() {
         gEnter.attr('transform', 'translate('+ [0,0] +')scale('+ 1 +')');
       };
 
+      chart.zoomIn = function(step) {
+        var scale = Math.min( zoom.scale() + step, zoomExtents.max)
+          , limit = (scale === zoomExtents.max);
+        if (!limit) {
+          zoom.translate([0, 0]).scale(scale);
+          gEnter.attr('transform', 'translate('+ [0,0] +')scale('+ scale +')');
+        }
+        return scale;
+      };
+
+      chart.zoomOut = function(step) {
+        var scale = Math.max( zoom.scale() - step, zoomExtents.min)
+          , limit = (scale === zoomExtents.min);
+        if (!limit) {
+          zoom.translate([0, 0]).scale(scale);
+          gEnter.attr('transform', 'translate('+ [0,0] +')scale('+ scale +')');
+        }
+        return scale;
+      };
+
+      chart.zoomLevel = function(level) {
+        var scale = Math.min( Math.max( level, zoomExtents.min), zoomExtents.max);
+        zoom.translate([0, 0]).scale(scale);
+        gEnter.attr('transform', 'translate('+ [0,0] +')scale('+ scale +')');
+        return scale;
+      };
+
       chart.gradient( fillGradient );
       chart.update(data);
 
@@ -481,6 +509,12 @@ nv.models.tree = function() {
   chart.nodeImgPath = function(_) {
     if (!arguments.length) return nodeImgPath;
     nodeImgPath = _;
+    return chart;
+  };
+
+  chart.zoomExtents = function(_) {
+    if (!arguments.length) return zoomExtents;
+    zoomExtents = _;
     return chart;
   };
 

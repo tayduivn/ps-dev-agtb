@@ -15,7 +15,6 @@
     .thumbnail.viz.expanded .dashlet-options {
       padding: 10px 20px;
     }
-
   </style>
 <div class="thumbnail widget viz" {{{target_id}}}>
   {{>dashletControls}}
@@ -35,15 +34,15 @@
         </div>
       </div>
       <div class="span8">
-        <div class="pull-right dashlet-group">
+        <div class="dashlet-group pull-right">
           <a href="#show-all-nodes" class="btn" rel="tooltip" data-original-title="Show all nodes"><i class="icon-sitemap"></i></a>
           <a href="#zoom-to-fit" class="btn" rel="tooltip" data-original-title="Zoom to fit"><i class="icon-fullscreen"></i></a>
         </div>
         <div class="btn-slider pull-right">
           <div class="noUiSliderEnds">
-            <a href="#reduce-zoom" class="zoom-control"><i class="icon-minus-sign"></i></a>
+            <a href="#zoom-out" class="zoom-control"><i class="icon-minus-sign"></i></a>
               <div id="sliderChartZoom" class="noUiSlider"></div>
-            <a href="#increase-zoom" class="zoom-control"><i class="icon-plus-sign"></i></a>
+            <a href="#zoom-in" class="zoom-control"><i class="icon-plus-sign"></i></a>
           </div>
         </div>
       </div>
