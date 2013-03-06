@@ -4645,6 +4645,10 @@ table.detail
     border: none;	
 }
 
+div.edit.view {
+    padding: 0 2px !important;
+}
+
 .detail {
 background-color: #fff;
 }
