@@ -140,8 +140,10 @@ public static function populateSeedData($records, $app_list_strings, $accounts
             $product->best_case = $amount+$rand_best_worst;
             $product->likely_case = $amount;
             $product->worst_case = $amount-$rand_best_worst;
-            $product->cost_price = $amount;
-            $product->quantity = 1;
+            $product->list_price = $amount;
+            $product->discount_price = $amount;
+            $product->cost_price = $amount/2;
+            $product->quantity = rand(1, 10);
             $product->currency_id = $opp->currency_id;
             $product->base_rate = $opp->base_rate;
             $product->probability = $opp->probability;

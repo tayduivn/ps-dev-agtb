@@ -133,10 +133,9 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testForecastFilterDoesNotThrowExceptionWhenRepViewingHisOwnSheet()
     {
         $GLOBALS["current_user"] = self::$reportee;
-
         $return = $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$reportee),
-            array('module' => 'Forecasts', 'user_id' => self::$reportee->id)
+            array('module' => 'Forecasts', 'user_id' => self::$reportee->id, 'timeperiod_id' => self::$timeperiod->id)
         );
 
         $this->assertInternalType('array', $return);
