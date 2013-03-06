@@ -1027,7 +1027,7 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'type' => 'int',
             'len' => '5',
             'studio' => false,
-            'default' => "0",
+            'default' => '0',
             'comment' => 'Number of opportunities minus closed won/closed lost represented by this forecast',
         ),
         'pipeline_amount' =>
@@ -1036,7 +1036,7 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'vname' => 'LBL_PIPELINE_REVENUE',
             'type' => 'currency',
             'studio' => false,
-            'default' => "0",
+            'default' => '0',
             'comment' => 'Total of opportunities minus closed won/closed lost represented by this forecast',
         ),
         'show_history_log' =>

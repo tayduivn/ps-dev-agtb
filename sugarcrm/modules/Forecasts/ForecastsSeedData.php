@@ -50,15 +50,7 @@ class ForecastsSeedData
 
         $forecast_by = $settings['forecast_by'];
 
-        switch(strtolower($forecast_by)) {
-            case 'products':
-                $forecast_by = 'Products';
-                break;
-            case 'opportunities':
-            default:
-                $forecast_by = 'Opportunities';
-                break;
-        }
+        $forecast_by = ucfirst(strtolower($forecast_by));
 
         foreach ($timeperiods as $timeperiod_id => $timeperiod) {
 
@@ -146,10 +138,14 @@ class ForecastsSeedData
                     $forecast->timeperiod_id = $timeperiod_id;
                     $forecast->user_id = $commit_type_array[0];
                     $forecast->opp_count = $totals['included_opp_count'];
-                    $forecast->opp_weigh_value = SugarMath::init()->exp(
-                        '(?/?)/?',
-                        array($totals['amount'], $ratio[$key], $totals['included_opp_count'])
-                    )->result();
+                    if ($totals['included_opp_count'] > 0) {
+                        $forecast->opp_weigh_value = SugarMath::init()->exp(
+                            '(?/?)/?',
+                            array($totals['amount'], $ratio[$key], $totals['included_opp_count'])
+                        )->result();
+                    } else {
+                        $forecast->opp_weigh_value = '0';
+                    }
                     $forecast->best_case = SugarMath::init()->exp('?/?', array($totals['best_case'], $ratio[$key]))->result();
                     $forecast->worst_case = SugarMath::init()->exp('?/?', array($totals['worst_case'], $ratio[$key]))->result();
                     $forecast->likely_case = SugarMath::init()->exp('?/?', array($totals['amount'], $ratio[$key]))->result();
@@ -169,10 +165,14 @@ class ForecastsSeedData
                     $forecast2->timeperiod_id = $timeperiod_id;
                     $forecast2->user_id = $commit_type_array[0];
                     $forecast2->opp_count = $totals['included_opp_count'];
-                    $forecast2->opp_weigh_value = SugarMath::init()->exp(
-                        '?/?',
-                        array($totals['amount'], $totals['included_opp_count'])
-                    )->result();
+                    if ($totals['include_opp_count'] > 0) {
+                        $forecast2->opp_weigh_value = SugarMath::init()->exp(
+                            '?/?',
+                            array($totals['amount'], $totals['included_opp_count'])
+                        )->result();
+                    } else {
+                        $forecast2->opp_weigh_value = '0';
+                    }
                     $forecast2->best_case = $totals['best_case'];
                     $forecast2->worst_case = $totals['worst_case'];
                     $forecast2->likely_case = $totals['amount'];

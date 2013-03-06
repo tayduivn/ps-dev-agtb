@@ -602,28 +602,29 @@ class ForecastManagerWorksheet extends SugarBean
         }
 
         $return = array(
-            "quota" =>  0,
-            "best_case" =>  0,
-            "best_adjusted" =>  0,
-            "likely_case" =>  0,
-            "likely_adjusted" =>  0,
-            "worst_case" =>  0,
-            "worst_adjusted" =>  0,
-            "included_opp_count" =>  0,
-            "pipeline_opp_count" =>  0,
-            "pipeline_amount" =>  0
+            "quota" => '0',
+            "best_case" => '0',
+            "best_adjusted" => '0',
+            "likely_case" => '0',
+            "likely_adjusted" => '0',
+            "worst_case" => '0',
+            "worst_adjusted" => '0',
+            "included_opp_count" => 0,
+            "pipeline_opp_count" => 0,
+            "pipeline_amount" => '0'
         );
 
-        $sql = "SELECT *
-                FROM   " . $this->table_name . "
-                WHERE  timeperiod_id = '" . $tp->id . "'
-                   AND draft = 1
-                   AND deleted = 0
-                   AND assigned_user_id = '" . $user_id . "';";
+        require_once('include/SugarQuery/SugarQuery.php');
+        $sq = new SugarQuery();
+        $sq->select(array('*'));
+        $sq->from(BeanFactory::getBean($this->module_name))->where()
+            ->equals('timeperiod_id', $tp->id)
+            ->equals('assigned_user_id', $user_id)
+            ->equals('draft', 1)
+            ->equals('deleted', 0);
+        $results = $sq->execute();
 
-        $results = $this->db->query($sql);
-
-        while ($row = $this->db->fetchByAssoc($results)) {
+        foreach ($results as $row) {
             $return['quota'] = SugarMath::init($return['quota'], 6)->add(
                 SugarCurrency::convertWithRate($row['quota'], $row['base_rate'])
             )->result();
@@ -649,7 +650,7 @@ class ForecastManagerWorksheet extends SugarBean
             $return['included_opp_count'] += $row['opp_count'];
             $return['pipeline_opp_count'] += $row['pipeline_opp_count'];
             $return['pipeline_amount'] = SugarMath::init($return['pipeline_amount'], 6)
-                                ->add($row['pipeline_amount'])->result();
+                ->add($row['pipeline_amount'])->result();
         }
 
         return $return;

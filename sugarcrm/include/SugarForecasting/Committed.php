@@ -110,7 +110,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         } else {
             $forecast->pipeline_opp_count = $args['pipeline_opp_count'];
             $forecast->pipeline_amount = $args['pipeline_amount'];
-        } 
+        }
        
         if ($args['likely_case'] != 0 && $args['opp_count'] != 0) {
             $forecast->opp_weigh_value = $args['likely_case'] / $args['opp_count'];

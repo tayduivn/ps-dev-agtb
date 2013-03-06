@@ -87,7 +87,7 @@ class SugarJobUpdateForecastWorksheets implements RunnableSchedulerJob
             return false;
         }
 
-        $type = ucfirst($settings['forecast_by']);
+        $type = ucfirst(strtolower($settings['forecast_by']));
 
         $sq = new SugarQuery();
         $sq->from(BeanFactory::getBean($type))->where()

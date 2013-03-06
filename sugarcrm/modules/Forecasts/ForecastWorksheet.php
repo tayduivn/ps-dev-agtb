@@ -381,48 +381,42 @@ class ForecastWorksheet extends SugarBean
             return false;
         }
 
-        switch(strtolower($forecast_by)) {
-            case 'products':
-                $forecast_by = 'Products';
-                break;
-            case 'opportunities':
-            default:
-                $forecast_by = 'Opportunities';
-                break;
-        }
+        $forecast_by = ucfirst(strtolower($forecast_by));
 
         // setup the return array
         $return = array(
-            'amount' => 0,
-            'best_case' => 0,
-            'worst_case' => 0,
-            'overall_amount' => 0,
-            'overall_best' => 0,
-            'overall_worst' => 0,
+            'amount' => '0',
+            'best_case' => '0',
+            'worst_case' => '0',
+            'overall_amount' => '0',
+            'overall_best' => '0',
+            'overall_worst' => '0',
             'timeperiod_id' => $tp->id,
-            'lost_count' => 0,
-            'lost_amount' => 0,
-            'won_count' => 0,
-            'won_amount' => 0,
+            'lost_count' => '0',
+            'lost_amount' => '0',
+            'won_count' => '0',
+            'won_amount' => '0',
             'included_opp_count' => 0,
             'total_opp_count' => 0,
             'includedClosedCount' => 0,
-            'includedClosedAmount' => 0,
-            'pipeline_amount' => 0,
+            'includedClosedAmount' => '0',
+            'pipeline_amount' => '0',
             'pipeline_opp_count' => 0,
         );
 
-        // get all the worksheet rows for a timeperiod/user_id
-        $query = "SELECT * FROM " . $this->table_name . "
-                    WHERE  assigned_user_id = '". $user_id . "'
-                       AND ( date_closed_timestamp >= " . $tp->start_date_timestamp . "
-                             AND date_closed_timestamp <= " . $tp->end_date_timestamp . " )
-                       AND parent_type = '" . $forecast_by . "'
-                       AND deleted = 0 and draft = 1";
+        $sq = new SugarQuery();
+        $sq->select(array('*'));
+        $sq->from(BeanFactory::getBean($this->module_name))->where()
+            ->equals('assigned_user_id', $user_id)
+            ->equals('parent_type', $forecast_by)
+            ->equals('deleted', 0)
+            ->equals('draft', 1)
+            ->queryAnd()
+                ->gte('date_closed_timestamp', $tp->start_date_timestamp)
+                ->lte('date_closed_timestamp', $tp->end_date_timestamp);
+        $results = $sq->execute();
 
-        $results = $this->db->query($query);
-
-        while ($row = $this->db->fetchByAssoc($results)) {
+        foreach ($results as $row) {
             $worst_base = SugarCurrency::convertWithRate($row['worst_case'], $row['base_rate']);
             $amount_base = SugarCurrency::convertWithRate($row['likely_case'], $row['base_rate']);
             $best_base = SugarCurrency::convertWithRate($row['best_case'], $row['base_rate']);
