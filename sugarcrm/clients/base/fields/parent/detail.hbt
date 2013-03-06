@@ -2,5 +2,5 @@
 {{value}}
 {{/eq}}
 {{#notEq value hiddenValue}}
-<a href="#{{this.def.module}}/{{getFieldValue this.model "parent_id"}}">{{value}}</a>
+<a href="#{{getFieldValue this.model "parent_type"}}/{{getFieldValue this.model "parent_id"}}">{{value}}</a>
 {{/notEq}}
