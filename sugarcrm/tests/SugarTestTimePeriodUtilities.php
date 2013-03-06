@@ -49,7 +49,7 @@ class SugarTestTimePeriodUtilities
      * @param $end_date String value of a db date default end date
      * @return TimePeriod Mixed TimePeriod test instance
      */
-    public static function createTimePeriod($start_date='', $end_date='', $name='', $parent_id='' )
+    public static function createTimePeriod($start_date='', $end_date='', $name='', $parent_id='')
     {
         global $timedate;
         $timedate = TimeDate::getInstance();
@@ -68,7 +68,7 @@ class SugarTestTimePeriodUtilities
 
         $year = $timedate->getNow()->format('Y');
         $time = mt_rand();
-        if($name == '') {
+        if ($name == '') {
             $name = 'SugarTimePeriod' . $time;
         }
         $timeperiod = new TimePeriod();
@@ -87,7 +87,7 @@ class SugarTestTimePeriodUtilities
         $timeperiod->end_date = $end_date;
         $timeperiod->name = $name;
         $timeperiod->is_fiscal_year = 0;
-        if(!empty($parent_id)) {
+        if (!empty($parent_id)) {
             $timeperiod->parent_id = $parent_id;
         }
         $timeperiod->save();

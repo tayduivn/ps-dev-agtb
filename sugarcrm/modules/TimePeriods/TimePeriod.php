@@ -617,7 +617,7 @@ class TimePeriod extends SugarBean {
         $timedate = TimeDate::getInstance();
         $db = DBManagerFactory::getInstance();
 
-        $query = sprintf("SELECT id FROM timeperiods WHERE start_date <= %s  AND (parent_id IS NOT NULL OR parent_id <> '') AND deleted = 0 ORDER BY start_date DESC",
+        $query = sprintf("SELECT id FROM timeperiods WHERE start_date <= %s AND (parent_id IS NOT NULL OR parent_id <> '') AND deleted = 0 ORDER BY start_date DESC",
             $db->convert($db->quoted($currentDate->asDbDate()), 'date'));
 
         $result = $db->limitQuery($query, 0 , 1);
