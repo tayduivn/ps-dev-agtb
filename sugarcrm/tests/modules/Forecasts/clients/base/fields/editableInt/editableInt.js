@@ -175,4 +175,18 @@ describe("forecast editableInt field", function() {
         });
     });
 
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(field, 'render');
+
+            field.renderDetail();
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            field.disposed = true;
+            field.renderDetail();
+            expect(renderStub).not.toHaveBeenCalled();
+
+        });
+    });
 });
