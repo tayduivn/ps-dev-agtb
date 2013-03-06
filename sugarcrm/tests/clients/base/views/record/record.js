@@ -82,6 +82,7 @@ describe("Record View", function() {
     });
 
     afterEach(function() {
+        view.dispose();
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
         sinonSandbox.restore();
