@@ -155,7 +155,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $currentLeaves = $currentTimePeriod->getLeaves();
 
-        $this->assertEquals(3, count($currentLeaves), "Upgrade failed to create the correct number of leaves for the current time period");
+        $this->assertEquals(4, count($currentLeaves), "Upgrade failed to create the correct number of leaves for the current time period");
         $this->assertNotEquals(false, BeanFactory::getBean("TimePeriods")->retrieve($tp2->id), "Upgrade failed to save a historical time period for record keeping");
 
         $currentTimePeriod = $currentTimePeriod->getNextTimePeriod();

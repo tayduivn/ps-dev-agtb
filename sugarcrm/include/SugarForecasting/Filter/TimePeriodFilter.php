@@ -71,7 +71,7 @@ class SugarForecasting_Filter_TimePeriodFilter extends SugarForecasting_Abstract
         }
 
         $db = DBManagerFactory::getInstance();
-        $query = sprintf("SELECT id, name FROM timeperiods WHERE parent_id is not null AND deleted = 0 AND start_date >= %s AND start_date <= %s ORDER BY start_date ASC",
+        $query = sprintf("SELECT id, name FROM timeperiods WHERE parent_id is not null AND deleted = 0 AND start_date >= %s AND start_date <= %s AND type != '' ORDER BY start_date ASC",
             $db->convert($db->quoted($startDate->asDbDate()), 'date'),
             $db->convert($db->quoted($endDate->asDbDate()), 'date')
         );

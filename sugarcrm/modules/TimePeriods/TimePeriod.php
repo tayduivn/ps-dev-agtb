@@ -509,7 +509,8 @@ class TimePeriod extends SugarBean {
        //If this an upgrade AND there are existing non-fiscal leaf TimePeriods
        if ($isUpgrade && !empty($count)) {
            $this->upgradeLegacyTimePeriods();
-           $this->createTimePeriodsForUpgrade($currentSettings, $currentDate);
+           //$this->createTimePeriodsForUpgrade($currentSettings, $currentDate);
+           $this->createTimePeriods($priorSettings, $currentSettings, $currentDate);
        } else {
            $this->createTimePeriods($priorSettings, $currentSettings, $currentDate);
        }
@@ -588,6 +589,38 @@ class TimePeriod extends SugarBean {
         return $this->buildLeaves($shownBackwardDifference, $shownForwardDifference);
     }
 
+    /**
+     * based on a time period type and a start date, determine what the start date of the current time period
+     * ought to be.
+     * @param $timePeriodInterval class type of timeperiod to return current timeperiod start date of
+     * @param $startDate DB date formatted string for the start date to begin with
+     * @return string of date formatted to db date format
+     */
+    public function determineCurrentStartDateByType($timePeriodInterval, $startDate) {
+        //get timedate to determine now and use for various date formatting
+        $timedate = TimeDate::getInstance();
+        $currentDateTimeStamp = $timedate->getNow()->format('U');
+        $startDate = $timedate->fromDbDate($startDate);
+
+        $currentTimePeriod = TimePeriod::getByType($timePeriodInterval);
+        $currentTimePeriod->setStartDate($startDate->asDbDate());
+
+        $currentTPStartDateTimeStamp = $timedate->fromDbDate($currentTimePeriod->start_date)->format('U');
+        $currentTPEndDateTimeStamp = $timedate->fromDbDate($currentTimePeriod->end_date)->format('U');
+
+        //current date is prior to start date meaning we need to go backwards
+        while($currentTPStartDateTimeStamp > $currentDateTimeStamp) {
+
+        }
+
+        //current date
+        while($currentTPEndDateTimeStamp < $currentDateTimeStamp) {
+
+        }
+
+        return $currentStartDate;
+    }
+
 
     /**
      * createTimePeriodsForUpgrade
@@ -618,7 +651,7 @@ class TimePeriod extends SugarBean {
         $timedate = TimeDate::getInstance();
         $db = DBManagerFactory::getInstance();
 
-        $query = sprintf("SELECT id FROM timeperiods WHERE start_date <= %s AND parent_id IS NOT NULL AND deleted = 0 ORDER BY start_date DESC",
+        $query = sprintf("SELECT id FROM timeperiods WHERE start_date <= %s  AND (parent_id IS NOT NULL OR parent_id <> '') AND deleted = 0 ORDER BY start_date DESC",
             $db->convert($db->quoted($currentDate->asDbDate()), 'date'));
 
         $result = $db->limitQuery($query, 0 , 1);
@@ -663,10 +696,10 @@ class TimePeriod extends SugarBean {
                     $isLeafTimePeriod = false;
                 }
 
-                //If a current TimePeriod still cannot be determined, just create one with a start date set to today
+                //If a current TimePeriod still cannot be determined, just create a leaf with the correct current start date for the current date
                 if(empty($currentTimePeriod)) {
                     $currentTimePeriod = TimePeriod::getByType($timePeriodLeafInterval);
-                    $currentTimePeriod->setStartDate($timedate->getNow()->asDbDate());
+                    $currentTimePeriod->setStartDate($this->determineCurrentStartDateByType($timePeriodLeafInterval, $timedate->getNow()->asDbDate()));
                     $currentTimePeriod->save();
                     $created[] = $currentTimePeriod;
                 }
