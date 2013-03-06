@@ -165,7 +165,7 @@ class ForecastsSeedData
                     $forecast2->timeperiod_id = $timeperiod_id;
                     $forecast2->user_id = $commit_type_array[0];
                     $forecast2->opp_count = $totals['included_opp_count'];
-                    if ($totals['include_opp_count'] > 0) {
+                    if ($totals['included_opp_count'] > 0) {
                         $forecast2->opp_weigh_value = SugarMath::init()->exp(
                             '?/?',
                             array($totals['amount'], $totals['included_opp_count'])
