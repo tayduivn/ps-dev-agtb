@@ -32,7 +32,7 @@ abstract class SugarApi {
      */
     public function requireArgs(&$args,$requiredFields = array()) {
         foreach ( $requiredFields as $fieldName ) {
-            if ( !isset($args[$fieldName]) ) {
+            if ( !array_key_exists($fieldName, $args) ) {
                 throw new SugarApiExceptionMissingParameter('Missing parameter: '.$fieldName);
             }
         }
@@ -130,12 +130,9 @@ abstract class SugarApi {
      * @return SugarBean The loaded bean
      */
     protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read') {
-        $record = null;
-        if (isset($args['record']) && !empty($args['record'])) {
-            $record = $args['record'];
-        }
+        $this->requireArgs($args, array('module','record'));
 
-        $bean = BeanFactory::retrieveBean($args['module'],$record);
+        $bean = BeanFactory::retrieveBean($args['module'],$args['record']);
 
         if ( $bean == FALSE || $bean->deleted == 1) {
             // Couldn't load the bean

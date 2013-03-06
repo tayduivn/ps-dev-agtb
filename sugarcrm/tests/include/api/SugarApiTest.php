@@ -99,10 +99,8 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $api = new SugarApiTestServiceMock();
+        $this->setExpectedException('SugarApiExceptionMissingParameter');
         $bean=$this->mock->callLoadBean($api, $args);
-
-        $this->assertTrue($bean instanceof Contact);
-        $this->assertEquals( '', $bean->first_name . $bean->first_name,  "Unexpected Contact Loaded");
     }
 
     public function testFormatBeanCallsTrackView()
