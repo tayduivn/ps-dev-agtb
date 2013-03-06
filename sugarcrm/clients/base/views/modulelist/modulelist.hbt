@@ -4,7 +4,7 @@
         <li class="dropdown" data-module="Home">
             <a class="cube hide" href="#" rel="tooltip" style="display:none" title="{{str "LBL_TABGROUP_HOME"}}"></a>
             <div class="btn-group">
-                <a class="cube" href="#" rel="tooltip" style="height:36px" title="{{str "LBL_TABGROUP_HOME"}}"></a>
+                <a class="cube" href="#" rel="tooltip" style="height:36px;width:36px" title="{{str "LBL_TABGROUP_HOME"}}"></a>
                 <a id="{{name}}Drop" role="button" href="#" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
 
                 <ul class="dropdown-menu" role="menu" aria-labelledby="{{name}}Drop">
