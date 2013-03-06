@@ -34,4 +34,9 @@ if (!isset($hook_array['after_entry_point']) || !is_array($hook_array['after_ent
     $hook_array['after_entry_point'] = array();
 }
 
-$hook_array['after_entry_point'][] = array(2, 'metric_manager', 'include/SugarMetric/HookManager.php', 'SugarMetric_HookManager', 'afterEntryPoint');
+if (!isset($hook_array['server_round_trip']) || !is_array($hook_array['server_round_trip'])) {
+    $hook_array['server_round_trip'] = array();
+}
+
+$hook_array['after_entry_point'][] = array(2, 'smm', 'include/SugarMetric/HookManager.php', 'SugarMetric_HookManager', 'afterEntryPoint');
+$hook_array['server_round_trip'][] = array(3, 'smm', 'include/SugarMetric/HookManager.php', 'SugarMetric_HookManager', 'serverRoundTrip');
