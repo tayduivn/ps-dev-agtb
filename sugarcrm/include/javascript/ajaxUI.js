@@ -126,6 +126,7 @@ SUGAR.ajaxUI = {
             SUGAR.ajaxUI.hideLoadingPanel();
             SUGAR.ajaxUI.showErrorMessage(o.responseText);
         }
+        SUGAR_callsInProgress--;
     },
     showErrorMessage : function(errorMessage)
     {
@@ -208,7 +209,6 @@ SUGAR.ajaxUI = {
 
     go : function(url)
     {
-
         if(YAHOO.lang.trim(url) != "")
         {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;
@@ -227,7 +227,6 @@ SUGAR.ajaxUI = {
                     }
                     else
                     {
-
                         YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
                     }
                     return;

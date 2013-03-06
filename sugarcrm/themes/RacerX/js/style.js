@@ -376,7 +376,7 @@ SUGAR.append(SUGAR.themes, {
             menuItemsWidth += _ie_adjustment;
             currentModuleList.width(menuItemsWidth);
             menuItemsWidth += _ie_adjustment;
-            $("#moduleList").width(menuItemsWidth);
+            //$("#moduleList").width(menuItemsWidth);   commented out for bug 61756
 
         }
         SUGAR.themes.menuItemsWidth = menuItemsWidth;

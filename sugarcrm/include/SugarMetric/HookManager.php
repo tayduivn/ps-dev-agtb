@@ -26,8 +26,6 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "include/SugarMetric/Helper.php";
-
 /**
  * SugarMetric hook handler class
  *
@@ -37,44 +35,14 @@ require_once "include/SugarMetric/Helper.php";
 class SugarMetric_HookManager
 {
     /**
-     * Initialization state
-     *
-     * @var bool
-     */
-    protected $initialized = false;
-
-    /**
      * SugarMetric initialization hook
      *
      * Serve "after_entry_point" hook handling
      */
     public function afterEntryPoint()
     {
-        if ($this->initialized) {
-            return;
-        }
-
-        SugarMetric_Helper::run(false);
-        $this->initialized = true;
-    }
-
-    /**
-     * Called on sugar_cleanup
-     *
-     * Serve "server_round_trip" hook handling
-     */
-    public function serverRoundTrip()
-    {
-        $instance = SugarMetric_Manager::getInstance();
-
-        // Check transaction name was set on endPoints
-        if (!$instance->isNamedTransaction()) {
-            if (isset($GLOBALS['log'])) {
-
-                // Log REQUEST_URI to debug "dead" entryPoints
-                $GLOBALS['log']->debug('Unregistered Transaction name for URI: ' . $_SERVER['REQUEST_URI']);
-            }
-        }
+        SugarAutoLoader::requireWithCustom('include/SugarMetric/Manager.php');
+        SugarMetric_Manager::getInstance();
     }
 
 }

@@ -38,7 +38,8 @@ class RestMeetingHelperTest extends RestTestBase {
         $meeting = array(
             'name' => 'Test Meeting',
             'duration' => 1,
-            'start_date' => date('Y-m-d'),
+            'date_start' => '2012-12-13T10:00:00-07:00',
+            'date_end' => '2012-12-13T10:15:00-07:00',
             'assigned_user_id' => 1,
         );
 
@@ -69,7 +70,8 @@ class RestMeetingHelperTest extends RestTestBase {
         $meeting = array(
             'name' => 'Test Meeting',
             'duration' => 1,
-            'start_date' => date('Y-m-d'),
+            'date_start' => '2012-12-13T10:00:00-07:00',
+            'date_end' => '2012-12-13T10:15:00-07:00',
             'assigned_user_id' => 1,
             'status' => 'Held',
         );

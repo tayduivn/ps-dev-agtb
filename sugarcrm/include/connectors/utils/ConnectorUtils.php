@@ -325,6 +325,10 @@ class ConnectorUtils
                       $order = isset($config['order']) ? $config['order'] : 99; //default to end using 99 if no order set
 
                       $instance = ConnectorFactory::getInstance($source['id']);
+                      if(empty($instance)) {
+                          $GLOBALS['log']->fatal("Failed to load source {$source['id']}");
+                          continue;
+                      }
                       $source['eapm'] = empty($config['eapm'])?false:$config['eapm'];
                       $mapping = $instance->getMapping();
                       $modules = array();

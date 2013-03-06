@@ -38,6 +38,9 @@ require_once('modules/SchedulersJobs/SchedulersJob.php');
  */
 class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
 
+    /**
+     * @var SchedulersJob
+     */
     protected $job;
 
     /**
@@ -47,23 +50,23 @@ class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
     {
         $this->job = $job;
     }
+
     /**
-     * @param string $data opportunity id
+     * @param $data
+     * @return bool
      */
     public function run($data)
     {
         $this->job->runnable_ran = true;
         $this->job->runnable_data = $data;
 
-        $db = DBManagerFactory::getInstance();
-        $sql = "SELECT id FROM opportunities WHERE deleted = 0";
-        $result = $db->query($sql);
+        $keys = json_decode(html_entity_decode($data), true);
 
-        while (($row = $db->fetchByAssoc($result)) != null)
-        {
+        foreach ($keys as $key) {
+            /* @var $opp Opportunity */
             $opp = BeanFactory::getBean('Opportunities');
-            $opp->retrieve($row['id']);
-            $opp->save();
+            $opp->retrieve($key);
+            $opp->save(false);
         }
 
         $this->job->succeedJob();

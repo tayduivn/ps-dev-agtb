@@ -857,6 +857,7 @@ class ModuleInstaller{
 					copy_recursive($cp['formatter'] , $formatter_path);
 				}
 			}
+			$this->reset_file_cache();
 			require_once('include/connectors/utils/ConnectorUtils.php');
 			ConnectorUtils::installSource($cp['name']);
 		}
@@ -873,8 +874,8 @@ class ModuleInstaller{
 				rmdir_recursive($source_path);
 				rmdir_recursive($formatter_path);
 			}
+			$this->reset_file_cache();
 			require_once('include/connectors/utils/ConnectorUtils.php');
-			//ConnectorUtils::getConnectors(true);
 			ConnectorUtils::uninstallSource($cp['name']);
 		}
 	}
@@ -2382,21 +2383,21 @@ private function dir_file_count($path){
         if (isset($this->installdefs['copy'])) {
             // Add in Sidecar upgrader after old style metadata changes are brought over
             $sidecarUpgrader = new SidecarMetaDataUpgrader();
-            
+
             // Turn off writing to log
             $sidecarUpgrader->toggleWriteToLog();
-            
-            // Get our files in the $cp['to'] path to upgrade            
+
+            // Get our files in the $cp['to'] path to upgrade
             foreach($this->installdefs['copy'] as $cp) {
                 // Set the files array
                 $files = array();
-                
+
                 // Grab the package name
                 $package = basename($cp['to']);
-                
+
                 // Set the dir to get the files from
                 $modulesDir = $cp['to'] . '/modules/';
-                
+
                 // If we have the modules directory
                 if (is_dir($modulesDir)) {
                     // Get the modules from inside the path
@@ -2408,7 +2409,7 @@ private function dir_file_count($path){
 
                             // Get the metadata directory
                             $metadatadir = "$dirpath/metadata/";
-                            
+
                             // We only want to do this if there is a metadata dir
                             // and there isn't already a clients dir
                             if (is_dir($metadatadir) && !is_dir("$dirpath/clients")) {
@@ -2418,7 +2419,7 @@ private function dir_file_count($path){
                         }
                     }
                 }
-                
+
                 // Upgrade them
                 foreach ($files as $file) {
                     // Get the appropriate upgrade class name for this view type
@@ -2428,9 +2429,9 @@ private function dir_file_count($path){
                             $classfile = $class . '.php';
                             require_once "modules/UpgradeWizard/SidecarUpdate/$classfile";
                         }
-                        
+
                         $upgrader = new $class($sidecarUpgrader, $file);
-                        
+
                         // Let the upgrader do its thing
                         $upgrader->upgrade();
                     }
