@@ -81,7 +81,10 @@ class RestService extends ServiceBase {
                 throw new SugarApiExceptionIncorrectVersion("Please change your url to reflect version between {$this->min_version} and {$this->max_version}");
             }
 
-            $isLoggedIn = $this->authenticateUser();
+            $authenticateUser = $this->authenticateUser();
+
+            $isLoggedIn = $authenticateUser['isLoggedIn'];
+            $loginException = $authenticateUser['exception'];
 
             // Figure out the platform
             if ( $isLoggedIn ) {
@@ -106,8 +109,12 @@ class RestService extends ServiceBase {
 
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
                 if ( !$isLoggedIn ) {
-                    // @TODO Localize exception strings
-                    throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
+                    if(!$loginException) {
+                        // @TODO Localize exception strings
+                        throw new SugarApiExceptionNeedLogin("No valid authentication for user.");                        
+                    } else {
+                        throw $loginException;
+                    }
                 }
             }
 
@@ -444,8 +451,8 @@ class RestService extends ServiceBase {
                     }
                 }
             }
-
-            return false;
+            $exception = (isset($e)) ? $e : false;
+            return array('isLoggedIn' => false, 'exception' => $exception);
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -459,7 +466,7 @@ class RestService extends ServiceBase {
 
         $this->user = $GLOBALS['current_user'];
 
-        return true;
+        return array('isLoggedIn' => true, 'exception' => false);
     }
 
     /**
