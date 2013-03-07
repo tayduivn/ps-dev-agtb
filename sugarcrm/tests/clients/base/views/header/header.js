@@ -44,7 +44,7 @@ describe("Header View", function() {
 
     it("should set the current module list", function() {
         view.setModuleInfo();
-        expect(_.values(view.module_list)).toEqual(_.toArray(fixtures.metadata.module_list));
+        expect(_.values(view.module_list)).toEqual(_.toArray(_.intersection(app.config.displayModules, fixtures.metadata.module_list)));
     });
 
     it("should properly set the create task list dropdown", function() {
