@@ -377,7 +377,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group products
      */
-    public function testProductCreatedUpdatesNewOpportunitySalesStageNew()
+    public function testProductCreatedUpdatesNewOpportunitySalesStatusNew()
     {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
 
@@ -385,20 +385,40 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+
     /**
-     * @group products
+     * Data Providers
+     *
+     * @return array
      */
-    public function testProductCreatedUpdatesNewOpportunitySalesStageInProgress()
+    public static function dataProviderTestHandleOppStalesStatus()
+    {
+        return array(
+            array(Opportunity::STATUS_NEW,Opportunity::STATUS_NEW, false),
+            array(Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_IN_PROGRESS, false),
+            array(Opportunity::STAGE_CLOSED_WON, Opportunity::STAGE_CLOSED_WON, true),
+            array(Opportunity::STAGE_CLOSED_LOST, Opportunity::STAGE_CLOSED_LOST, true),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderTestHandleOppStalesStatus
+     * @group products
+     *
+     * @param $productLineItemStatus status to set product line item(s) to
+     * @param $expectedOppSalesStatus status expected to see on opportunity
+     * @param $updateAllProducts flag to determine if one product should update or all associated products
+     */
+    public function testProductHandleOppSalesStatus($productLineItemStatus, $expectedOppSalesStatus, $updateAllProducts)
     {
         $db = DBManagerFactory::getInstance();
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->load_relationship('products');
 
+        //create mock product and add it to the opportunity
         $product = new MockProduct();
         $product->name = "mockProductTest";
         $product->sales_status = Opportunity::STATUS_NEW;
-        //$product->opportunity_id = $opp->id;
-        $product->sales_stage = 'Closed Won';
         $product->fetched_row = array(
             'sales_status' => 'New',
             'sales_stage' => 'test1'
@@ -408,14 +428,22 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestProductUtilities::setCreatedProduct(array($product->id));
         $opp->products->add($product->id);
 
-        $updateQuery = 'UPDATE products SET sales_status = ' . $db->quoted(Opportunity::STATUS_IN_PROGRESS) . ' where id = ' . $db->quoted($product->id);
+        //update the product via query to new sales status, as the piece of code we are testing will end up using a query to retrieve the data
+        //and we can't save the bean, as that will execute the code being tested prematurely
+        $updateQuery = 'UPDATE products SET sales_status = ' . $db->quoted($productLineItemStatus);
+        if($updateAllProducts) {
+            $updateQuery = $updateQuery . ' where opportunity_id = ' . $db->quoted($opp->id);
+        } else {
+            $updateQuery = $updateQuery . ' where id = ' . $db->quoted($product->id);
+        }
+
         $db->query($updateQuery);
 
         $product->handleOppSalesStatus();
 
         $opp = BeanFactory::getBean('Opportunities')->retrieve($opp->id);
 
-        $this->assertEquals(Opportunity::STATUS_IN_PROGRESS, $opp->sales_status);
+        $this->assertEquals($expectedOppSalesStatus, $opp->sales_status);
         unset($product);
     }
 }

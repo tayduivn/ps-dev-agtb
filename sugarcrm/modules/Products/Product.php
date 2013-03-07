@@ -750,7 +750,11 @@ class Product extends SugarBean
         if (!empty($this->opportunity_id)) {
             $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
             if($opp->load_relationship('products')) {
-                $productLineItems = $opp->products->query(array(
+                //No need to do anything if there were no products associated to this opportunity
+                if(count($opp->products->rows) == 0) {
+                    return;
+                }
+                $inProgressLineItems = $opp->products->query(array(
                                                    'where'=>array(
                                                        // query adds the prefix so we don't need contact.id
                                                        'lhs_field'=>'sales_status',
@@ -758,10 +762,45 @@ class Product extends SugarBean
                                                        'rhs_value'=>$GLOBALS['db']->quote(Opportunity::STATUS_IN_PROGRESS),
                                                        ),
                                                     'deleted'=>'0'));
-                //if productLineItems found with  and the Opp sales stage is New, bump to In Progress
-                if(count($productLineItems['rows']) > 0 && $opp->sales_status == Opportunity::STATUS_NEW) {
+                //if productLineItems found with In Progress Sales Status and the Opp sales stage is New, bump to In Progress
+                if(count($inProgressLineItems['rows']) > 0 && $opp->sales_status == Opportunity::STATUS_NEW) {
                     $opp->sales_status = Opportunity::STATUS_IN_PROGRESS;
                     $opp->save();
+                    return;
+                }
+
+                //find all product line items with a Closed Won Sales Status
+                $closedWonLineItems = $opp->products->query(array(
+                                                   'where'=>array(
+                                                       // query adds the prefix so we don't need contact.id
+                                                       'lhs_field'=>'sales_status',
+                                                       'operator'=>'=',
+                                                       'rhs_value'=>$GLOBALS['db']->quote(Opportunity::STAGE_CLOSED_WON),
+                                                       ),
+                                                    'deleted'=>'0'));
+                //if the amount of Closed Won Products found matches the number of products for the Opportunity
+                //then update the Opportunity Sales Status to Closed Won
+                if(count($closedWonLineItems['rows']) == count($opp->products->rows) && $opp->sales_status != Opportunity::STAGE_CLOSED_WON) {
+                    $opp->sales_status = Opportunity::STAGE_CLOSED_WON;
+                    $opp->save();
+                    return;
+                }
+
+                //find all product line items with a Closed Lost Sales Status
+                $closedLostLineItems = $opp->products->query(array(
+                                                   'where'=>array(
+                                                       // query adds the prefix so we don't need contact.id
+                                                       'lhs_field'=>'sales_status',
+                                                       'operator'=>'=',
+                                                       'rhs_value'=>$GLOBALS['db']->quote(Opportunity::STAGE_CLOSED_LOST),
+                                                       ),
+                                                    'deleted'=>'0'));
+                //if the amount of Closed Lost Products found matches the number of products for the Opportunity
+                //then update the Opportunity Sales Status to Closed Lost
+                if(count($closedLostLineItems['rows']) == count($opp->products->rows) && $opp->sales_status != Opportunity::STAGE_CLOSED_LOST) {
+                    $opp->sales_status = Opportunity::STAGE_CLOSED_LOST;
+                    $opp->save();
+                    return;
                 }
             }
         }
