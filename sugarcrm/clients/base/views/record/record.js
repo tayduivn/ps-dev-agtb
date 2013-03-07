@@ -30,10 +30,10 @@
         app.view.views.EditableView.prototype.initialize.call(this, options);
 
         this.buttons = {};
-
         this.createMode = this.context.get("create") ? true : false;
-        this.action = this.createMode ? 'edit' : 'detail';
-
+        // Even in createMode we want it to start in detail so that we, later, respect
+        // this.editableFields (the list after pruning out readonly fields, etc.)
+        this.action = 'detail';
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
         this.context.set("viewed", true);
