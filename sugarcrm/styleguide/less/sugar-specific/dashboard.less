@@ -44,7 +44,7 @@
             &.thumbnail {
               margin-bottom: 0 !important;
               &:not(.collapsed) {
-                min-height: 126px;
+                min-height: 140px;
               }
               p {
                 padding: 0;
@@ -155,10 +155,14 @@
 /* Dashboard inside right hand side panel */
 .sidebar-content {
   .dashboard {
-    width: 90%;
-    overflow: visible;
     .preview-headerbar {
-      border-bottom: 0;
+      border-bottom-color: transparent;
+      .btn-toolbar.pull-right {
+        margin-right: 5%;
+      }
+      .record-cell:first-child h1 {
+        margin-left: 5%;
+      }
       h1 {
         margin-left: 0;
       }
@@ -167,6 +171,20 @@
       }
       input[type=text] {
         width: 150px;
+      }
+    }
+    &.edit {
+      .preview-headerbar {
+        border-bottom-color: #CCC;
+      }
+      #dashlets {
+        margin-top: 5%;
+      }
+    }
+    .cols {
+      #dashlets {
+        width: 90%;
+        margin-left: 5%;
       }
     }
     .well {
