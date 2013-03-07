@@ -72,8 +72,6 @@
         this.action = 'list';
 
         this.attachEvents();
-        
-        app.events.on("list:filter:fire", this.filterList, this);
 
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
@@ -138,28 +136,6 @@
         }, this);
         return viewMeta;
 
-    },
-
-    filterList: function(filterDef, isNewFilter, scope) {
-        var self = this;
-
-        this.collection.fetch({
-            relate: !!this.context.get('link'), // Double bang for boolean coercion.
-            filter: filterDef,
-            success: function() {
-                if(isNewFilter) {
-                    var method = "update";
-                    if(scope.currentFilter === "all_records") {
-                        method = "delete";
-                    }
-                    // We're dealing with a new collection that may not have the current preview record in the collection.
-                    // Closing the preview will keep it from getting out of sync
-                    app.events.trigger("preview:close");
-                    var url = app.api.buildURL('Filters/' + self.options.module + '/used');
-                    app.api.call(method, url, {filters: [scope.currentFilter]}, {});
-                }
-            }
-        });
     },
 
     showAlert: function(message) {

@@ -21,7 +21,7 @@ class FilterPanelLayout
         $this->layout = MetaDataManager::getLayout("GenericLayout", array("type" => "filterpanel"));
 
         // Add header view and subpanel layout
-        $this->layout->push(array("view" => "filter"));
+        $this->layout->push(array("layout" => "filter"));
         $this->layout->push(array("view" => "filter-create"));
 
         $this->layout->set("toggles", $this->defaultToggles);

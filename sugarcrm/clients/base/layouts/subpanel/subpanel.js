@@ -7,8 +7,10 @@
     showSubpanel: function(linkName) {
         _.each(this._components, function(component) {
             if(!linkName || linkName === component.context.get("link")) {
+                component.context.set("hidden", false);
                 component.show();
             } else {
+                component.context.set("hidden", true);
                 component.hide();
             }
         });

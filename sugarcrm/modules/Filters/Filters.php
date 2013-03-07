@@ -61,4 +61,11 @@ class Filters extends Basic {
         return false;
     }
 
+    public function retrieve($id, $encode = true, $deleted = false)
+    {
+        // TODO: Remove after ENGRD-8/ENGRD-17.
+        $encode = false;
+        parent::retrieve($id, $encode, $deleted);
+    }
+
 }
