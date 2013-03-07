@@ -12,10 +12,17 @@ nv.addGraph(function() {
         .nodeRenderer(nodeRenderer)
         .zoomExtents(zoomExtents);
 
-  d3.select("#org svg")
-      .datum(tree_data)
-    .transition().duration(300)
-      .call(chart);
+  d3.json("../js/nvd3/data/tree_data.json", function(json) {
+    var tree_data = json;
+
+    tree_data.x0 = 0;
+    tree_data.y0 = 0;
+
+    d3.select("#org svg")
+        .datum(tree_data)
+      .transition().duration(700)
+        .call(chart);
+  });
 
   nv.utils.windowResize(function(){ chart.resize(); });
 

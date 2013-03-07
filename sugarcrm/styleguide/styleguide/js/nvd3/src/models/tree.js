@@ -2,7 +2,7 @@
 nv.models.tree = function() {
 
   // issues: 1. zoom slider doesn't zoom on chart center
-  
+
   // all hail, stepheneb
   // https://gist.github.com/1182434
   // http://mbostock.github.com/d3/talk/20111018/tree.html
@@ -210,7 +210,7 @@ nv.models.tree = function() {
               .attr('d', function(d) {
                 var o = { x: 0, y: 0 };
                 if (source.x0===0) {
-                  o.x = root.x; 
+                  o.x = root.x;
                   o.y = root.y;
                 } else if (d.parent) {
                   o.x = d.parent.x0;
@@ -260,6 +260,9 @@ nv.models.tree = function() {
           }
         }
 
+      };
+
+      chart.showall = function() {
         function expandAll(d) {
           if (d.children || d._children) {
             if (d._children) {
@@ -269,14 +272,10 @@ nv.models.tree = function() {
             d.children.forEach(expandAll);
           }
         }
-
-        chart.showall = function() {
-          expandAll(_data);
-          zoom.translate([0, 0]).scale(1);
-          gEnter.attr('transform', 'translate('+ [0,0] +')scale('+ 1 +')');
-          chart.update(_data);
-        };
-
+        expandAll(_data);
+        zoom.translate([0, 0]).scale(1);
+        gEnter.attr('transform', 'translate('+ [0,0] +')scale('+ 1 +')');
+        chart.update(_data);
       };
 
       chart.resize = function() {
