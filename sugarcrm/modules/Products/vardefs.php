@@ -612,22 +612,6 @@ $dictionary['Product'] = array(
             'comment' => 'Currency String of the loaded currency_id',
             'importable' => 'false',
         ),
-        'assigned_user_name' => array(
-            'name' => 'assigned_user_name',
-            'rname' => 'name',
-            'id_name' => 'opportunity_id',
-            'vname' => 'LBL_ASSIGNED_TO',
-            'join_name' => 'users',
-            'type' => 'relate',
-            'link' => 'assigned_user_link',
-            'table' => 'users',
-            'isnull' => 'true',
-            'module' => 'Users',
-            'source' => 'non-db',
-            'unified_search' => true,
-            'full_text_search' => array('boost' => 1),
-            'comment' => 'The user name associated with the assigned_user_id'
-        ),
         'quote_name' =>  array(
             'name' => 'quote_name',
             'rname' => 'name',
