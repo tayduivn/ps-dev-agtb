@@ -50,7 +50,7 @@
     <a class="btn btn-mini comment" rel="tooltip" data-title="Comment" data-original-title="">
         <i class="icon-comment"></i>
     </a>
-    <a class="btn btn-mini preview" rel="tooltip" data-title="Preview" data-original-title="">
+    <a class="btn btn-mini preview" rel="tooltip" data-title="Preview" data-original-title="" data-module="{{parent_type}}" data-id="{{parent_id}}">
         <i class="icon-eye-open"></i>
     </a>
     <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
