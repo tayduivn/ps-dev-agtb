@@ -65,6 +65,10 @@ public static function populateSeedData($records, $app_list_strings, $accounts
 
     $opp_ids = array();
     $timedate = TimeDate::getInstance();
+
+    // get the additional currencies from the table
+    /* @var $currency Currency */
+    $currency = SugarCurrency::getCurrencyByISO('EUR');
     
     while($records-- > 0)
     {
@@ -81,8 +85,18 @@ public static function populateSeedData($records, $app_list_strings, $accounts
 
         $opp->assigned_user_id = $account->assigned_user_id;
         $opp->assigned_user_name = $account->assigned_user_name;
-        $opp->currency_id = '-99';
-        $opp->base_rate = 1;
+
+        // figure out which one to use
+        $seed = rand(1, 15);
+        if($seed%5 == 0) {
+            $opp->currency_id = $currency->id;
+            $opp->base_rate = $currency->conversion_rate;
+        } else {
+            // use the base rate
+            $opp->currency_id = '-99';
+            $opp->base_rate = 1;
+        }
+
         $opp->name = substr($account->name." - 1000 units", 0, 50);
         $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
         $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
