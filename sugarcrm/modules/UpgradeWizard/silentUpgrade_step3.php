@@ -258,7 +258,7 @@ logThis('End rebuild relationships.', $path);
 // Bug 61826 - We need to run these SQL files after the tables are first created.
 $sugar_version = getSilentUpgradeVar('origVersion');
 if (version_compare($sugar_version, '6.7.0', '<')) {
-	require_once(clean_path($unzip_dir.'/scripts/upgrade_utils.php'));
+	require_once(clean_path($unzip_dir.'/scripts/post_install.php'));
 	$new_sugar_version = getUpgradeVersion();
 	runSqlFiles($sugar_version, $new_sugar_version, 'sql_query');
 }
