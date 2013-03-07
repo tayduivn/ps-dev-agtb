@@ -398,6 +398,8 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
             array(Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_IN_PROGRESS, false),
             array(Opportunity::STAGE_CLOSED_WON, Opportunity::STAGE_CLOSED_WON, true),
             array(Opportunity::STAGE_CLOSED_LOST, Opportunity::STAGE_CLOSED_LOST, true),
+            array(Opportunity::STAGE_CLOSED_WON, Opportunity::STATUS_NEW, false),
+            array(Opportunity::STAGE_CLOSED_LOST, Opportunity::STATUS_NEW, false),
         );
     }
 
@@ -417,11 +419,25 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
         //create mock product and add it to the opportunity
         $product = new MockProduct();
-        $product->name = "mockProductTest";
+        $product->name = "mockProductTest1";
         $product->sales_status = Opportunity::STATUS_NEW;
         $product->fetched_row = array(
             'sales_status' => 'New',
-            'sales_stage' => 'test1'
+            'sales_stage' => 'New'
+        );
+
+        $product->save();
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+        $opp->products->add($product->id);
+
+        //create another mock product and add it to the opportunity, so we can
+        //test a few different scenarios
+        $product = new MockProduct();
+        $product->name = "mockProductTest2";
+        $product->sales_status = Opportunity::STATUS_NEW;
+        $product->fetched_row = array(
+            'sales_status' => 'New',
+            'sales_stage' => 'New'
         );
 
         $product->save();
@@ -431,6 +447,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         //update the product via query to new sales status, as the piece of code we are testing will end up using a query to retrieve the data
         //and we can't save the bean, as that will execute the code being tested prematurely
         $updateQuery = 'UPDATE products SET sales_status = ' . $db->quoted($productLineItemStatus);
+        //we may want to test updating all products or a single one to determine effect
         if($updateAllProducts) {
             $updateQuery = $updateQuery . ' where opportunity_id = ' . $db->quoted($opp->id);
         } else {
