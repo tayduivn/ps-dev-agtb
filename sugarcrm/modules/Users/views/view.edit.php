@@ -161,11 +161,11 @@ var $useForSubpanel = true;
         // Build viewable versions of a few fields for non-admins
         if(!empty($this->bean->id)) {
             if( !empty($this->bean->status) ) {
+                $this->ss->assign('STATUS_READONLY',$app_list_strings['user_status_dom'][$this->bean->status]);
             }
             if( !empty($this->bean->employee_status) ) {
+                $this->ss->assign('EMPLOYEE_STATUS_READONLY', $app_list_strings['employee_status_dom'][$this->bean->employee_status]);
             }
-            $this->ss->assign('STATUS_READONLY',$app_list_strings['user_status_dom'][$this->bean->status]);
-            $this->ss->assign('EMPLOYEE_STATUS_READONLY', $app_list_strings['employee_status_dom'][$this->bean->employee_status]);
             if( !empty($this->bean->reports_to_id) ) {
                 $reportsToUserField = "<input type='text' name='reports_to_name' id='reports_to_name' value='{$this->bean->reports_to_name}' disabled>\n";
                 $reportsToUserField .= "<input type='hidden' name='reports_to_id' id='reports_to_id' value='{$this->bean->reports_to_id}'>";
