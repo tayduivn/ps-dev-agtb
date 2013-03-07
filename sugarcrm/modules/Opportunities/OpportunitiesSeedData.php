@@ -153,6 +153,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
             $product->opportunity_id = $opp->id;
             $product->account_id = $account->id;
             $product->commit_stage = $opp->commit_stage;
+            $product->sales_stage = $opp->sales_stage;
             $product->save();
 
             $opp_amount += $amount;

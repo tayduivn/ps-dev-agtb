@@ -61,7 +61,11 @@ class ForecastWorksheet extends SugarBean
         $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
         $bean->probability = $this->probability;
         $bean->best_case = $this->best_case;
-        $bean->amount = $this->likely_case;
+        if ($bean instanceof Product) {
+            $bean->likely_case = $this->likely_case;
+        } else {
+            $bean->amount = $this->likely_case;
+        }
         $bean->sales_stage = $this->sales_stage;
         $bean->commit_stage = $this->commit_stage;
         $bean->worst_case = $this->worst_case;

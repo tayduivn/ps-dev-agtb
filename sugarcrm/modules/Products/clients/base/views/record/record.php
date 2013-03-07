@@ -137,7 +137,14 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'discount_price',
                 array(
                     'name' => 'discount_amount',
-                    'type' => 'currency'
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'discount_amount',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
                 
                 array(
@@ -147,8 +154,16 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'readonly' => true
                 ),
                 array(
-                    'name' => 'likely_case',    
-                    'required' => true
+                    'name' => 'likely_case',
+                    'required' => true,
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'likely_case',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 )
             ),
         ),
@@ -159,8 +174,30 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'worst_case',
-                'best_case',  
+                array(
+                    'name' => 'best_case',
+                    'required' => true,
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'best_case',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                ),
+                array(
+                    'name' => 'worst_case',
+                    'required' => true,
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'worst_case',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                ),
                 array(
                     'name' => 'quote_name',
                     'label' => 'LBL_ASSOCIATED_QUOTE',
