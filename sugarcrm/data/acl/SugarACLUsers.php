@@ -191,7 +191,7 @@ class SugarACLUsers extends SugarACLStrategy
             } else {
                 if($action == 'field' && ($field == 'user_hash' || $field == 'password')) {
                     $result[$key] = false;
-                }elseif(!empty($this->view_checks[$action]) && !empty($this->no_access_fields[$field])) {
+                } elseif(!$myself && !empty($this->no_access_fields[$field])) {
                     $result[$key] = false;
                 } elseif(($action == 'edit' || $action == 'massupdate' || $action == 'delete') && !empty($this->no_edit_fields[$field])) {
                     $result[$key] = false;
@@ -228,7 +228,9 @@ class SugarACLUsers extends SugarACLStrategy
                 if($field == 'status' || $field == 'employee_status') {
                     $result[$key] = SugarACL::ACL_READ_ONLY;
                 }
-            } elseif($is_admin === true) {
+            }
+
+            if($is_admin === true) {
                 $result[$key] = SugarACL::ACL_READ_WRITE;
             } else {
                 if($field == 'user_hash' || $field == 'password') {
