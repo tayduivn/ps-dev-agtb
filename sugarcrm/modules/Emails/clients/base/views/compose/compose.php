@@ -92,7 +92,6 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                                     'type'    => 'button',
                                     'icon'    => 'icon-paper-clip',
                                     'label'   => 'LBL_UPLOAD_ATTACHMENT',
-                                    'primary' => true,
                                 ),
                                 //TODO: Add back once Sugar Documents have been implemented
                                 /*array(
