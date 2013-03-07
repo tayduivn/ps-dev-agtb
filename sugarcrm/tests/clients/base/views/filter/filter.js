@@ -27,7 +27,7 @@ describe("Filter View", function() {
     });
 
 
-    describe("unit tests", function() {
+    xdescribe("unit tests", function() {
         describe("addFilters", function() {
             it("should add a model to the filter collection", function() {
                 var filter = app.data.createBean("Filters", {id: "guidguidguid"});
