@@ -808,7 +808,7 @@ $GLOBALS['mod_strings']  = $installerStrings;
 
     //BEGIN SUGARCRM flav=pro ONLY
     $products = $account->build_related_list('SELECT id FROM products', new Product(), 0, 50);
-    $opportunity_ids = OpportunitiesSeedData::populateSeedData($number_companies, $app_list_strings, $accounts, $products, $sugar_demodata['users']);
+    $opportunity_ids = OpportunitiesSeedData::populateSeedData($number_companies*3, $app_list_strings, $accounts, $products, $sugar_demodata['users']);
     //END SUGARCRM flav=pro ONLY
 
     foreach($contacts as $id)
@@ -822,8 +822,6 @@ $GLOBALS['mod_strings']  = $installerStrings;
     //BEGIN SUGARCRM flav=pro ONLY
     require_once('modules/Forecasts/ForecastsSeedData.php');
     ForecastsSeedData::populateSeedData($timeperiods);
-    require_once('modules/Forecasts/WorksheetSeedData.php');
-    WorksheetSeedData::populateSeedData();
     //END SUGARCRM flav=pro ONLY
 
     //BEGIN SUGARCRM flav=ent ONLY

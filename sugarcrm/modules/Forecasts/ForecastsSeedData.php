@@ -35,7 +35,6 @@ class ForecastsSeedData
      */
     public static function populateSeedData($timeperiods)
     {
-
         require_once('modules/Forecasts/Common.php');
 
         global $timedate, $current_user, $app_list_strings;
@@ -44,25 +43,34 @@ class ForecastsSeedData
         $comm = new Common();
         $commit_order = $comm->get_forecast_commit_order();
 
+        // get what we are forecasting on
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        $forecast_by = $settings['forecast_by'];
+
+        $forecast_by = ucfirst(strtolower($forecast_by));
+
         foreach ($timeperiods as $timeperiod_id => $timeperiod) {
 
             foreach ($commit_order as $commit_type_array) {
                 //create forecast schedule for this timeperiod record and user.
-                //create forecast schedule using this record becuse there will be one
+                //create forecast schedule using this record because there will be one
                 //direct entry per user, and some user will have a Rollup entry too.
+
+                $ratio = array('.8', '1', '1.2', '1.4');
+                $key = array_rand($ratio);
+
                 if ($commit_type_array[1] == 'Direct') {
+                    // get the worksheet total for a given user
+                    /* @var $worksheet ForecastWorksheet */
+                    $worksheet = BeanFactory::getBean('ForecastWorksheets');
+                    $totals = $worksheet->worksheetTotals($timeperiod_id, $commit_type_array[0], $forecast_by);
 
-                    //commit a direct forecast for this user and timeperiod.
-                    $forecastopp = BeanFactory::getBean('ForecastOpportunities');
-                    $forecastopp->current_timeperiod_id = $timeperiod_id;
-                    $forecastopp->current_user_id = $commit_type_array[0];
-                    $opp_summary_array = $forecastopp->get_opportunity_summary(false);
-
-                    if ($opp_summary_array['OPPORTUNITYCOUNT'] == 0) {
+                    if ($totals['total_opp_count'] == 0) {
                         continue;
                     }
-
-                    $multiplier = mt_rand(1, 6);
 
                     /* @var $quota Quota */
                     $quota = BeanFactory::getBean('Quotas');
@@ -70,9 +78,8 @@ class ForecastsSeedData
                     $quota->user_id = $commit_type_array[0];
                     $quota->quota_type = 'Direct';
                     $quota->currency_id = -99;
-                    $ratio = array('.8', '1', '1.2', '1.4');
-                    $key = array_rand($ratio);
-                    $quota->amount = ($opp_summary_array['TOTAL_AMOUNT'] * $ratio[$key]) / 2;
+
+                    $quota->amount = SugarMath::init()->exp('?*?', array($totals['amount'], $ratio[$key]))->result();
                     $quota->amount_base_currency = $quota->amount;
                     $quota->committed = 1;
                     $quota->set_created_by = false;
@@ -102,7 +109,7 @@ class ForecastsSeedData
                         $quotaRollup->user_id = $commit_type_array[0];
                         $quotaRollup->quota_type = 'Rollup';
                         $quota->currency_id = -99;
-                        $quotaRollup->amount = ($opp_summary_array['TOTAL_AMOUNT'] * $ratio[$key]) / 2;
+                        $quotaRollup->amount = $quota->amount;
                         $quotaRollup->amount_base_currency = $quotaRollup->amount;
                         $quotaRollup->committed = 1;
                         $quotaRollup->set_created_by = false;
@@ -126,54 +133,71 @@ class ForecastsSeedData
                         $quotaRollup->save();
                     }
 
+                    // create a previous forecast to simulate a change
                     /* @var $forecast Forecast */
                     $forecast = BeanFactory::getBean('Forecasts');
                     $forecast->timeperiod_id = $timeperiod_id;
                     $forecast->user_id = $commit_type_array[0];
-                    $forecast->opp_count = $opp_summary_array['OPPORTUNITYCOUNT'];
-                    $forecast->opp_weigh_value = $opp_summary_array['WEIGHTEDVALUENUMBER'];
-                    $forecast->best_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] + (($multiplier + 1) * 100);
-                    $forecast->worst_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
-                    $forecast->likely_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] + (($multiplier - 1) * 100);
+                    $forecast->opp_count = $totals['included_opp_count'];
+                    if ($totals['included_opp_count'] > 0) {
+                        $forecast->opp_weigh_value = SugarMath::init()->exp(
+                            '(?/?)/?',
+                            array($totals['amount'], $ratio[$key], $totals['included_opp_count'])
+                        )->result();
+                    } else {
+                        $forecast->opp_weigh_value = '0';
+                    }
+                    $forecast->best_case = SugarMath::init()->exp('?/?', array($totals['best_case'], $ratio[$key]))->result();
+                    $forecast->worst_case = SugarMath::init()->exp('?/?', array($totals['worst_case'], $ratio[$key]))->result();
+                    $forecast->likely_case = SugarMath::init()->exp('?/?', array($totals['amount'], $ratio[$key]))->result();
                     $forecast->forecast_type = 'Direct';
                     $forecast->date_committed = $timedate->asDb($timedate->getNow()->modify("-1 day"));
+                    $forecast->date_entered = $timedate->asDb($timedate->getNow()->modify("-1 day"));
+                    $forecast->date_modified = $timedate->asDb($timedate->getNow()->modify("-1 day"));
                     $forecast->calculatePipelineData(
-                        $opp_summary_array['CLOSED_AMOUNT'],
-                        $opp_summary_array['CLOSED_OPP_COUNT']
+                        SugarMath::init()->exp('?/?', array($totals['includedClosedAmount'], $ratio[$key]))->result(),
+                        $totals['includedClosedCount']
                     );
                     $forecast->save();
 
                     self::createManagerWorksheet($commit_type_array[0], $forecast->toArray());
 
-                    //Create a previous forecast to simulate change
+                    // create the current forecast
                     /* @var $forecast2 Forecast */
                     $forecast2 = BeanFactory::getBean('Forecasts');
                     $forecast2->timeperiod_id = $timeperiod_id;
                     $forecast2->user_id = $commit_type_array[0];
-                    $forecast2->opp_count = $opp_summary_array['OPPORTUNITYCOUNT'];
-                    $forecast2->opp_weigh_value = $opp_summary_array['WEIGHTEDVALUENUMBER'];
-                    $forecast2->best_case = $forecast->best_case - 100;
-                    $forecast2->worst_case = $forecast->worst_case - 100;
-                    $forecast2->likely_case = $forecast->likely_case - 100;
+                    $forecast2->opp_count = $totals['included_opp_count'];
+                    if ($totals['included_opp_count'] > 0) {
+                        $forecast2->opp_weigh_value = SugarMath::init()->exp(
+                            '?/?',
+                            array($totals['amount'], $totals['included_opp_count'])
+                        )->result();
+                    } else {
+                        $forecast2->opp_weigh_value = '0';
+                    }
+                    $forecast2->best_case = $totals['best_case'];
+                    $forecast2->worst_case = $totals['worst_case'];
+                    $forecast2->likely_case = $totals['amount'];
                     $forecast2->forecast_type = 'Direct';
                     $forecast2->date_committed = $timedate->asDb($timedate->getNow());
+                    $forecast2->calculatePipelineData(
+                        $totals['includedClosedAmount'],
+                        $totals['includedClosedCount']
+                    );
                     $forecast2->save();
 
                     self::createManagerWorksheet($commit_type_array[0], $forecast2->toArray());
 
                 } else {
-                    //create where clause....
-                    $where = " users.deleted=0 ";
-                    $where .= " AND (users.id = '$commit_type_array[0]'";
-                    $where .= " or users.reports_to_id = '$commit_type_array[0]')";
-                    //Get the forecasts created by the direct reports.
-                    /* @var $DirReportsFocus ForecastDirectReports */
-                    $DirReportsFocus = BeanFactory::getbean('ForecastDirectReports');
-                    $DirReportsFocus->current_user_id = $commit_type_array[0];
-                    $DirReportsFocus->current_timeperiod_id = $timeperiod_id;
-                    $DirReportsFocus->compute_rollup_totals('', $where, false);
 
-                    $multiplier = mt_rand(1, 6);
+                    /* @var $mgr_worksheet ForecastManagerWorksheet */
+                    $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+                    $totals = $mgr_worksheet->worksheetTotals($timeperiod_id, $commit_type_array[0]);
+
+                    if ($totals['included_opp_count'] == 0) {
+                        continue;
+                    }
 
                     /* @var $quota Quota */
                     $quota = BeanFactory::getBean('Quotas');
@@ -181,14 +205,8 @@ class ForecastsSeedData
                     $quota->user_id = $commit_type_array[0];
                     $quota->quota_type = 'Rollup';
                     $quota->currency_id = -99;
-                    $quota->amount = $quota->getGroupQuota($timeperiod_id, false, $commit_type_array[0]);
-                    if (!isset($quota->amount)) {
-                        $quota->amount = $multiplier * 1000;
-                    }
-                    $quota->amount_base_currency = $quota->getGroupQuota($timeperiod_id, false, $commit_type_array[0]);
-                    if (!isset($quota->amount_base_currency)) {
-                        $quota->amount_base_currency = $quota->amount;
-                    }
+                    $quota->amount = SugarMath::init($totals['quota'], 6)->mul($ratio[$key])->result();
+                    $quota->amount_base_currency = $quota->amount;
                     $quota->committed = 1;
                     $quota->save();
 
@@ -196,25 +214,25 @@ class ForecastsSeedData
                     $forecast = BeanFactory::getBean('Forecasts');
                     $forecast->timeperiod_id = $timeperiod_id;
                     $forecast->user_id = $commit_type_array[0];
-                    $forecast->opp_count = $DirReportsFocus->total_opp_count;
-                    $forecast->opp_weigh_value = $DirReportsFocus->total_weigh_value_number;
-                    $forecast->likely_case = $DirReportsFocus->total_weigh_value_number + (($multiplier + 1) * 100);
-                    $forecast->best_case = $DirReportsFocus->total_weigh_value_number + ($multiplier * 100);
-                    $forecast->worst_case = $DirReportsFocus->total_weigh_value_number + (($multiplier - 1) * 100);
+                    $forecast->opp_count = $totals['included_opp_count'];
+                    $forecast->opp_weigh_value = SugarMath::init()->exp(
+                        '?/?',
+                        array($totals['likely_adjusted'], $totals['included_opp_count'])
+                    )->result();
+                    $forecast->likely_case = $totals['likely_adjusted'];
+                    $forecast->best_case = $totals['best_adjusted'];
+                    $forecast->worst_case = $totals['worst_adjusted'];
                     $forecast->forecast_type = 'Rollup';
-                    $forecast->pipeline_opp_count = $DirReportsFocus->pipeline_opp_count;
-                    $forecast->pipeline_amount = $DirReportsFocus->pipeline_amount;
-                    $forecast->date_entered = $timedate->to_display_date_time(
-                        date($timedate->get_db_date_time_format(), time()),
-                        true
-                    );
+                    $forecast->pipeline_opp_count = $totals['pipeline_opp_count'];
+                    $forecast->pipeline_amount = $totals['pipeline_amount'];
+                    $forecast->date_entered = $timedate->asDb($timedate->getNow());
                     $forecast->save();
 
                     self::createManagerWorksheet($commit_type_array[0], $forecast->toArray());
 
                 }
 
-                self::commitRepOpportunities($commit_type_array[0], $timeperiod_id);
+                self::commitRepItems($commit_type_array[0], $timeperiod_id, $forecast_by);
             }
 
             // loop though all the managers and commit their forecast
@@ -251,27 +269,31 @@ class ForecastsSeedData
         $worksheet->reporteeForecastRollUp($user, $data);
     }
 
-    protected static function commitRepOpportunities($user_id, $timeperiod)
+    protected static function commitRepItems($user_id, $timeperiod, $forecast_by)
     {
         /* @var $tp TimePeriod */
         $tp = BeanFactory::getBean('TimePeriods', $timeperiod);
 
         $sq = new SugarQuery();
-        $sq->from(BeanFactory::getBean('Opportunities'))->where()
+        $sq->from(BeanFactory::getBean($forecast_by))->where()
             ->equals('assigned_user_id', $user_id)
             ->queryAnd()
             ->gte('date_closed_timestamp', $tp->start_date_timestamp)
             ->lte('date_closed_timestamp', $tp->end_date_timestamp);
         $beans = $sq->execute();
 
-        foreach ($beans as $opp) {
-            /* @var $opportunity Opportunity */
-            $opportunity = BeanFactory::getBean('Opportunities');
-            $opportunity->loadFromRow($opp);
+        foreach ($beans as $bean) {
+            /* @var $obj Opportunity|Product */
+            $obj = BeanFactory::getBean($forecast_by);
+            $obj->loadFromRow($bean);
 
             /* @var $opp_wkst ForecastWorksheet */
             $opp_wkst = BeanFactory::getBean('ForecastWorksheets');
-            $opp_wkst->saveRelatedOpportunity($opportunity, true);
+            if ($forecast_by == 'Opportunities') {
+                $opp_wkst->saveRelatedOpportunity($obj, true);
+            } else {
+                $opp_wkst->saveRelatedProduct($obj, true);
+            }
         }
     }
 }

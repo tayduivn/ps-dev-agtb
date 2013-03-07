@@ -25,6 +25,9 @@ describe("The Forecasts Progress Calculations display", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        app.user.setPreference('decimal_precision', 2);
+        app.user.setPreference('decimal_separator', '.');
+        app.user.setPreference('number_grouping_separator', ',');
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsProgress", "forecastsProgress", "js", function(d) {return eval(d); });
     });
 
@@ -60,6 +63,7 @@ describe("The Forecasts Progress Calculations display", function() {
             view.selectedUser = {isManager: false, showOpps: true, id: "seed_test"};
             view.selectedTimePeriod = {id: "seed_test"};
             view.shouldRollup = false;
+            app.user.set({id: "seed_test"});
             //reset base model
             view.model = new Backbone.Model({closed_amount: 0,
                                             closed_best_above: false,
@@ -85,6 +89,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             quota_likely_percent: 0,
                                             revenue: 0});
 
+        });
+        afterEach(function() {
+            app.user.unset('id');
         });
 
         it("should calculate the model based on a change to the totals model based on rep test case 1", function() {

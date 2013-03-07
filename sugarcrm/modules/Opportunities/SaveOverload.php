@@ -84,8 +84,10 @@ function perform_save($focus)
         $focus->amount_usdollar = SugarCurrency::convertWithRate($focus->amount, $focus->base_rate);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=pro ONLY
     if ($settings['is_setup']) {
+//END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         //We create a related product entry for any new opportunity so that we may forecast on products
         // create an empty product module
         /* @var $product Product */
@@ -119,12 +121,12 @@ function perform_save($focus)
             $product->deleted = $focus->deleted;
             $product->save();
         }
-
-
+//END SUGARCRM flav=pro && flav!=ent ONLY
+//BEGIN SUGARCRM flav=pro ONLY
         // save the a draft of each opportunity
         /* @var $worksheet ForecastWorksheet */
         $worksheet = BeanFactory::getBean('ForecastWorksheets');
         $worksheet->saveRelatedOpportunity($focus);
     }
-    //END SUGARCRM flav=pro ONLY
+//END SUGARCRM flav=pro ONLY
 }
