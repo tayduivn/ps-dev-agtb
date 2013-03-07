@@ -37,7 +37,7 @@ describe("Theme Roller View", function() {
     });
 
     it("should make right api call", function() {
-        var url;
+        var url, platform = app.config.platform;
         $('<input>').attr({type:"text", name:"a", value:"aaaa"}).appendTo(view.$el);
 
 
@@ -46,7 +46,7 @@ describe("Theme Roller View", function() {
         var showMessageSpy = sinon.stub(view, "showMessage");
         view.loadTheme();
 
-        url = app.api.buildURL('theme', '', {}, {platform: "base", themeName: "default"});
+        url = app.api.buildURL('theme', '', {}, {platform: platform, themeName: "default"});
         expect(themeApiSpy.lastCall.args[0]).toEqual("read");
         expect(themeApiSpy.lastCall.args[1]).toEqual(url);
         expect(themeApiSpy.lastCall.args[2]).toEqual({});
@@ -56,13 +56,13 @@ describe("Theme Roller View", function() {
         url = app.api.buildURL('theme', '', {}, {});
         expect(themeApiSpy.lastCall.args[0]).toEqual("create");
         expect(themeApiSpy.lastCall.args[1]).toEqual(url);
-        expect(themeApiSpy.lastCall.args[2]).toEqual({a: "aaaa", platform: "base", themeName: "default"});
+        expect(themeApiSpy.lastCall.args[2]).toEqual({a: "aaaa", platform: platform, themeName: "default"});
 
         //Describe resetTheme
         view.resetTheme();
         expect(themeApiSpy.lastCall.args[0]).toEqual("create");
         expect(themeApiSpy.lastCall.args[1]).toEqual(url);
-        expect(themeApiSpy.lastCall.args[2]).toEqual({reset: true, platform: "base", themeName: "default"});
+        expect(themeApiSpy.lastCall.args[2]).toEqual({reset: true, platform: platform, themeName: "default"});
 
         //Restore stubs
         themeApiSpy.restore();
