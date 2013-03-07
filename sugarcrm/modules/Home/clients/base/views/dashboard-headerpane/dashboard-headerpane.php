@@ -72,11 +72,6 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                     "name" => "layout",
                     "showOn" => "edit",
                 ),
-                array(
-                    "type" => "layoutsizer",
-                    "name" => "width",
-                    "showOn" => "edit",
-                ),
             )
         )
     )
