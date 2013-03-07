@@ -9,7 +9,9 @@
         'click [name=create_button]' : 'saveClicked',
         'click [name=create_cancel_button]' : 'createCancelClicked',
         'click [name=delete_button]' : 'deleteClicked',
-        'click [name=add_button]': 'addClicked'
+        'click [name=add_button]': 'addClicked',
+        'click [name=collapse_button]': 'collapseClicked',
+        'click [name=expand_button]': 'expandClicked'
     },
     initialize: function(options) {
 
@@ -68,6 +70,12 @@
             var route = app.router.buildRoute(this.module, null, 'create');
             app.router.navigate(route, {trigger: true});
         }
+    },
+    collapseClicked: function(evt) {
+        this.context.trigger("dashboard:collapse:fire", true);
+    },
+    expandClicked: function(evt) {
+        this.context.trigger("dashboard:collapse:fire", false);
     },
     _render: function() {
         app.view.View.prototype._render.call(this);

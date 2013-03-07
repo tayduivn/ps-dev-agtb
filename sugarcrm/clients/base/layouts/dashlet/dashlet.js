@@ -13,6 +13,7 @@
         this.on("render", function() {
             this.model.trigger("applyDragAndDrop");
         }, this);
+        this.context.on("dashboard:collapse:fire", this.collapse, this);
     },
     _addComponentsFromDef: function(components) {
         if(this.meta.empty)
@@ -158,9 +159,15 @@
         });
     },
     toggleMinify: function(evt) {
-        $(evt.currentTarget).children("i").toggleClass("icon-chevron-down icon-chevron-up");
+        this.$(".minify > i").toggleClass("icon-chevron-down icon-chevron-up");
         this.$(".thumbnail").toggleClass("collapsed");
         this.$(".widget-content").toggleClass("hide");
+    },
+    collapse: function(collapsed) {
+        this.$(".minify > i").toggleClass("icon-chevron-down", collapsed);
+        this.$(".minify > i").toggleClass("icon-chevron-up", !collapsed);
+        this.$(".thumbnail").toggleClass("collapsed", collapsed);
+        this.$(".widget-content").toggleClass("hide", collapsed);
     },
     loadData: function(options) {
         this.$(".dropdown-toggle > i").removeClass(this.cssIconDefault).addClass(this.cssIconRefresh);
@@ -175,6 +182,7 @@
     },
     _dispose: function() {
         this.off("render");
+        this.context.off("dashboard:collapse:fire", null, this);
         app.view.Layout.prototype._dispose.call(this);
     }
 })

@@ -3135,6 +3135,9 @@ $app_strings = array (
     'LBL_REMOVING_DASHLET' => 'Removing Sugar Dashlet ...',
     'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
 
+    'LBL_COLLAPSE_ALL' => 'Collapse All',
+    'LBL_EXPAND_ALL' => 'Expand All',
+
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
     'LBL_DELETE_PAGE' => 'Delete Page',

@@ -17,6 +17,18 @@ $viewdefs["base"]["view"]["dashboard-headerpane"] = array(
                     "type"      => "rowaction",
                     "label"     => "LBL_EDIT_BUTTON",
                 ),
+
+                array(
+                    "name"      => "collapse_button",
+                    "type"      => "rowaction",
+                    "label"     => "LBL_COLLAPSE_ALL",
+                ),
+
+                array(
+                    "name"      => "expand_button",
+                    "type"      => "rowaction",
+                    "label"     => "LBL_EXPAND_ALL",
+                ),
             ),
             "showOn" => "view",
         ),
