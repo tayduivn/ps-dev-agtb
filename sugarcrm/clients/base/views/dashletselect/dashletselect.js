@@ -131,21 +131,21 @@
                 }), 'table'),
                 "aoColumns": [
                     {
-                        sTitle: "Name"
+                        sTitle: app.lang.get("LBL_NAME")
                     },
                     {
-                        sTitle: "Description"
+                        sTitle: app.lang.get("LBL_DESCRIPTION")
                     },
                     {
-                        sTitle: "Actions",
+                        sTitle: app.lang.get("LBL_LISTVIEW_ACTIONS"),
                         fnRender: function(obj) {
-                            return '<a class="select" data-index="' + obj.iDataRow + '" href="javascript:void(0);">Select and edit</a>';
+                            return '<a class="select" data-index="' + obj.aData[obj.iDataColumn] + '" href="javascript:void(0);">' + app.lang.get("LBL_LISTVIEW_SELECT_AND_EDIT") + '</a>';
                         }
                     },
                     {
-                        sTitle: "Preview",
+                        sTitle: app.lang.get("LBL_PREVIEW"),
                         fnRender: function(obj) {
-                            return '<a class="preview" data-index="' + obj.iDataRow + '" href="javascript:void(0);"><i class=icon-eye-open></i></a>';
+                            return '<a class="preview" data-index="' + obj.aData[obj.iDataColumn] + '" href="javascript:void(0);"><i class=icon-eye-open></i></a>';
                         }
                     }
                 ]
@@ -171,6 +171,7 @@
                     var metadata = app.metadata.getView(component.module, component.name);
                     if(!parentDashlet && metadata.dashlets) {
                         _.each(metadata.dashlets, function(dashlet) {
+                            var index = dashlet_collection.length;
                             dashlet_collection.push({
                                 type: component.name,
                                 filter: dashlet.filter,
@@ -182,8 +183,8 @@
                                 table: [
                                     dashlet.name,
                                     dashlet.description,
-                                    '',
-                                    ''
+                                    index,
+                                    index
                                 ]
                             });
                         }, this);
