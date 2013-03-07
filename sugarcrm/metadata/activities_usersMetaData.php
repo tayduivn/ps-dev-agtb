@@ -62,9 +62,14 @@ $dictionary['activities_users'] = array(
             'fields' => array('id'),
         ),
         array(
-            'name' => 'activities_users_modules',
+            'name' => 'activities_records',
             'type' => 'index',
-            'fields' => array('user_id', 'parent_type'),
+            'fields' => array('parent_type', 'parent_id'),
+        ),
+        array(
+            'name' => 'activities_users',
+            'type' => 'index',
+            'fields' => array('user_id'),
         ),
     ),
 
@@ -79,7 +84,9 @@ $dictionary['activities_users'] = array(
             'relationship_type' => 'many-to-many',
             'join_table' => 'activities_users',
             'join_key_lhs' => 'activity_id',
-            'join_key_rhs' => 'user_id',
-        )
+            'join_key_rhs' => 'parent_id',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Users'
+        ),
     )
 );

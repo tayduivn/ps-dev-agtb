@@ -183,6 +183,16 @@ $vardefs = array(
     'bean_name'=>'User',
     'source'=>'non-db',
   ),
+    'activities' => array(
+        'name' => 'activities',
+        'type' => 'link',
+        'relationship' => $_object_name . '_activities',
+        'vname' => 'LBL_ACTIVITIES',
+        'link_type' => 'many',
+        'module' => 'Activities',
+        'bean_name' => 'Activity',
+        'source' => 'non-db'
+    )
 
 ),
 'indices' => array (
@@ -196,7 +206,22 @@ $vardefs = array(
    ,strtolower($module).'_created_by' =>
    array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
    'rhs_module'=> $module, 'rhs_table'=> strtolower($module), 'rhs_key' => 'created_by',
-   'relationship_type'=>'one-to-many')
+   'relationship_type'=>'one-to-many'),
+
+    $_object_name . '_activities' => array(
+        'lhs_module'=> $module,
+        'lhs_table'=> strtolower($module),
+        'lhs_key' => 'id',
+        'rhs_module' => 'Activities',
+        'rhs_table' => 'activities',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table'        => 'activities_users',
+        'join_key_lhs'      => 'parent_id',
+        'join_key_rhs'      => 'activity_id',
+        'relationship_role_column' => 'parent_type',
+        'relationship_role_column_value' => $module,
+    ),
 ),
 
 
