@@ -152,12 +152,15 @@ abstract class SugarApi {
         if(!empty($GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir]) && $GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir] == true) {
             $check_notify = FALSE;
         } else {
-            // if the assigned user hasn't changed, set check notify to false
-            if(!empty($bean->fetched_row['assigned_user_id']) && $bean->fetched_row['assigned_user_id'] == $bean->assigned_user_id) {
-                $check_notify = FALSE;
-                // if its the same user, don't send
-            } elseif($bean->assigned_user_id == $GLOBALS['current_user']->id) {
-                $check_notify = FALSE;
+            // some modules, like Users don't have an assigned_user_id
+            if(isset($bean->assigned_user_id)) {
+                // if the assigned user hasn't changed, set check notify to false
+                if(!empty($bean->fetched_row['assigned_user_id']) && $bean->fetched_row['assigned_user_id'] == $bean->assigned_user_id) {
+                    $check_notify = FALSE;
+                    // if its the same user, don't send
+                } elseif($bean->assigned_user_id == $GLOBALS['current_user']->id) {
+                    $check_notify = FALSE;
+                }
             }
         }
 
