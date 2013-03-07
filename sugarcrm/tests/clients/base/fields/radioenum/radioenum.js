@@ -41,9 +41,10 @@ describe("radioenum field", function() {
         stub_appListStrings.restore();
     });
 
-    it("should call loadEnumOptions and set enumOptions during initialize", function() {
+    it("should call loadEnumOptions and set enumOptions during render", function() {
         var loadEnumSpy = sinon.spy(app.view.fields.EnumField.prototype, "loadEnumOptions");
         var field = SugarTest.createField("base", fieldName, fieldType, "edit", {options: "bugs_type_dom"});
+        field.render();
         expect(loadEnumSpy.called).toBe(true);
         expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
         loadEnumSpy.restore();
@@ -71,7 +72,7 @@ describe("radioenum field", function() {
 
         field.view.action = 'list';
 
-        original = 'Defect',
+        original = 'Defect';
         expected = 'DefectValue';
         field.model.set(fieldName, original);
         field.render();

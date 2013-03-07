@@ -26,27 +26,23 @@
  ********************************************************************************/
 ({
     fieldTag: "select",
-    initialize: function(opts){
-        app.view.Field.prototype.initialize.call(this, opts);
-        this.loadEnumOptions(false, function(){
-            //Re-render widget since we have fresh options list
-            if(!this.disposed){
-                this.render();
-            }
-        });
-    },
     _render: function() {
         var val;
         var options = this.items = this.items || this.enumOptions;
+        if(_.isUndefined(options)){
+            options = this.items = this.loadEnumOptions(false, function(){
+                //Re-render widget since we have fresh options list
+                if(!this.disposed){
+                    this.render();
+                }
+            });
+        }
         var optionsKeys = _.isObject(options) ? _.keys(options) : [];
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
-        //The chosen plugin displays it correctly, but the value is not set to the select and the model.
-        //Below the workaround to save this option to the model manually.
         if (_.isUndefined(this.model.get(this.name))) {
             var defaultValue = _.first(optionsKeys);
             if (defaultValue) {
-                this.$(this.fieldTag).val(defaultValue);
                 this.model.set(this.name, defaultValue);
             }
         }
@@ -74,25 +70,25 @@
      */
     loadEnumOptions: function(fetch, callback){
         var self = this;
-        if(_.isUndefined(self.enumOptions)){
-            var items = self.def.options;
+        var items = self.def.options;
+        fetch = fetch || false;
+        if(fetch || _.isUndefined(items)){
+            app.api.enum(self.module, self.name, {
+                success: function(o){
+                    if(self.enumOptions !== o){
+                        self.enumOptions = o;
+                        callback.call(self);
+                    }
+                }
+                // Use Sugar7's default error handler
+            });
+        } else {
             if(_.isString(items)) {
                 items = app.lang.getAppListStrings(items);
             }
-            if(fetch || _.isUndefined(items)){
-                app.api.enum(self.module, self.name, {
-                    success: function(o){
-                        if(self.enumOptions !== o){
-                            self.enumOptions = o;
-                            callback.call(self);
-                        }
-                    }
-                    //Use default error handler
-                });
-            } else {
-                self.enumOptions = items;
-            }
+            self.enumOptions = items;
         }
+        return items;
     },
     getSelect2Options: function(optionsKeys){
         var select2Options = {};

@@ -55,30 +55,29 @@ describe("enum field", function() {
         expect($.trim(actual)).toEqual(expected);
     });
 
-    it("should call loadEnumOptions and set enumOptions during initialize", function() {
+    it("should call loadEnumOptions and set enumOptions during render", function() {
         var field = SugarTest.createField("base", fieldName, "enum", "edit", {options: "bugs_type_dom"});
         var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
-        field.initialize(field.options);
+        field.render();
         expect(loadEnumSpy.called).toBe(true);
         expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
         loadEnumSpy.restore();
     });
 
     it("should load options from enum API if options is undefined", function(){
-        var options = {one:"1"};
         var callStub = sinon.stub(app.api,"enum", function(module, field, callbacks){
             expect(field).toEqual("test_enum");
             //Call success callback
-            callbacks.success(options);
+            callbacks.success(app.lang.getAppListStrings());
         });
         field = SugarTest.createField("base", fieldName, "enum", "detail", {/* no options */});
-        var renderStub = sinon.stub(app.view.fields.EnumField.prototype, "_render", $.noop());
-        field.model.set(fieldName, "");
+        var renderSpy = sinon.spy(field, "_render");
+        field.render();
         expect(callStub).toHaveBeenCalled();
-        expect(renderStub).toHaveBeenCalled();
-        expect(field.enumOptions).toEqual(options);
+        expect(renderSpy.calledTwice).toBe(true);
+        expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
         callStub.restore();
-        renderStub.restore();
+        renderSpy.restore();
     });
 
     describe("multi select enum", function() {

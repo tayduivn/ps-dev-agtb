@@ -5225,8 +5225,8 @@ function get_help_url($send_edition = '', $send_version = '', $send_lang = '', $
  *
  * @param string $etag ETag to use for this content.
  */
-function generateETagHeader($etag){
-	header("cache-control:");
+function generateETagHeader($etag, $cache_age = 0){
+	header("Cache-Control: max-age={$cache_age}, private");
 	header('Expires: ');
 	header("ETag: " . $etag);
 	header("Pragma:");
