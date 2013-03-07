@@ -142,9 +142,10 @@
 
     filterList: function(filterDef, isNewFilter, scope) {
         var self = this;
-
-        this.collection.fetch({
-            relate: !!this.context.get('link'), // Double bang for boolean coercion.
+        this.context.set("skipFetch", false);
+        //Don't reset any childen, its only our context we need to reload.
+        this.context.resetLoadFlag(false);
+        this.context.loadData({
             filter: filterDef,
             success: function() {
                 if(isNewFilter) {
