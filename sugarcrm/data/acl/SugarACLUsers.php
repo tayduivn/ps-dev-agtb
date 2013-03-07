@@ -189,16 +189,12 @@ class SugarACLUsers extends SugarACLStrategy
                 $result[$key] = true;
                 // everything else should go through checks
             } else {
-                // you can't set user_hash or password directly
                 if($action == 'field' && ($field == 'user_hash' || $field == 'password')) {
                     $result[$key] = false;
-                    // if its not you and there is a no access field, return false
                 } elseif(!$myself && !empty($this->no_access_fields[$field])) {
                     $result[$key] = false;
-                    // if the action is an edit action and this is touching a no edit field, don't allow it
                 } elseif(($action == 'edit' || $action == 'massupdate' || $action == 'delete') && !empty($this->no_edit_fields[$field])) {
                     $result[$key] = false;
-                    // all other fields should go through the normal checkAccess
                 } else {
                     $result[$key] = $this->checkAccess($module, "field", $context + array("field" => $field, "action" => $action));
                 }
@@ -228,29 +224,23 @@ class SugarACLUsers extends SugarACLStrategy
 
         $result = array();
         foreach($field_list as $key => $field) {
-            // no one, not even an admin should be able to set their own status
             if($myself == true) {
                 if($field == 'status' || $field == 'employee_status') {
                     $result[$key] = SugarACL::ACL_READ_ONLY;
                 }
+            }
+
+            if($is_admin === true) {
+                $result[$key] = SugarACL::ACL_READ_WRITE;
             } else {
-                // all other fields for admin are fair game
-                if($is_admin === true) {
-                    $result[$key] = SugarACL::ACL_READ_WRITE;
+                if($field == 'user_hash' || $field == 'password') {
+                    $result[$key] = SugarACL::ACL_NO_ACCESS;
+                } elseif(!empty($this->no_edit_fields[$field])) {
+                    $result[$key] = SugarACL::ACL_READ_ONLY;
+                } elseif(!empty($this->no_access_fields[$field])) {
+                    $result[$key] = SugarACL::ACL_NO_ACCESS;
                 } else {
-                    // user hash and password should never be able to be updated
-                    if($field == 'user_hash' || $field == 'password') {
-                        $result[$key] = SugarACL::ACL_NO_ACCESS;
-                        // no edit fields should be read only
-                    } elseif(!empty($this->no_edit_fields[$field])) {
-                        $result[$key] = SugarACL::ACL_READ_ONLY;
-                        // no access fields should be no access
-                    } elseif(!empty($this->no_access_fields[$field])) {
-                        $result[$key] = SugarACL::ACL_NO_ACCESS;
-                        // all other fields are read write
-                    } else {
-                        $result[$key] = SugarACL::ACL_READ_WRITE;
-                    }
+                    $result[$key] = SugarACL::ACL_READ_WRITE;
                 }
             }
         }
