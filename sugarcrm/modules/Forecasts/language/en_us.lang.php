@@ -355,7 +355,7 @@ $mod_strings = array (
 
     // ranges config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-    'LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE' => 'Range settings cannot be changed after first save draft or commit in the Forecasts module.',
+    'LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE' => 'Range settings cannot be changed after first save draft or commit in the Forecasts module. For an upgraded instance however, Range settings cannot be changed after the initial setup as the Forecasts data is already available through the upgrade.',
     'LBL_FORECASTS_CONFIG_RANGES' => 'Forecast Range Options:',
     'LBL_FORECASTS_CONFIG_RANGES_OPTIONS' => 'Configure default probability Ranges for opportunities in the forecast.',
     'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'Opportunities can be included or excluded from the forecast.',
