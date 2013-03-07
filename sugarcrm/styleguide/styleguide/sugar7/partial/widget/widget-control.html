@@ -54,4 +54,32 @@ $(function() {
 
 });
 
+// toggle expand full screen
+function attachToggleExpand(chartSelector, chart) {
+  var widget = $(chartSelector).parents('.thumbnail.viz');
+  widget
+    .find('.dropdown-menu a[href="#expand"]')
+    .on('click', function(){ toggleExpand(widget, chart); });
+}
+
+function toggleExpand(widget,chart) {
+    if ( widget.hasClass('expanded') )
+    {
+        widget.removeClass('expanded');
+        widget.find('h4').removeClass('headerpane');
+        widget
+          .find('.dropdown-menu a[href="#expand"]')
+          .text('Expand');
+        chart.resize();
+    }
+    else
+    {
+        widget.addClass('expanded');
+        widget.find('h4').addClass('headerpane');
+        widget
+          .find('.dropdown-menu a[href="#expand"]')
+          .text('Collapse');
+        setTimeout( function(){ chart.resize(); }, 200);
+    }
+}
 </script>

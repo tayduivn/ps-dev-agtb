@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=320" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Organization Chart</title>
+  <link href="../css/bootstrap.css" rel="stylesheet" type="text/css">
+  <link href="../css/sugar.css" rel="stylesheet" type="text/css">
+</head>
+<body class="full-screen">
+
+<div id="org" class="nv-chart nv-chart-texture">
+  <svg></svg>
+</div>
+
+<script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
+<script src="../../assets/js/nvd3/nv.d3.min.js"></script>
+<script src="../js/nvd3/data/tree_data.js"></script>
+
+<script>
+  nv.addGraph(function() {
+
+    var nodeRenderer = function(d){
+      return '<img src="../img/'+ d.image +'" class="rep-avatar" width="32" height="32"><div class="rep-name">'+ d.name +'</div><div class="rep-title">'+ d.title + '</div>';
+    }
+
+    var chart = nv.models.tree()
+          .duration(300)
+          .nodeSize({ 'width': 124, 'height': 56 })
+          .nodeRenderer(nodeRenderer)
+          .zoomExtents({ 'min': 0.25, 'max': 4 });
+
+    d3.select("#org svg")
+        .datum(tree_data)
+      .transition().duration(700)
+        .call(chart);
+
+    nv.utils.windowResize(function(){ chart.resize(); });
+
+    return chart;
+  });
+</script>
+
+</body>
+</html>

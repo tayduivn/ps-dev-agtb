@@ -1,101 +1,41 @@
-    <style type="text/css">
-      /*body {
-        overflow: hidden;
-        font-size: 14px;
-        font-family: "Helvetica Neue", Helvetica;
-      }*/
-      svg {
-        max-height: none;
-      }
-      .thumbnail.viz .nv-chart,
-      .thumbnail.viz.expanded .nv-chart {
-        padding: 0;
-        border: none;
-      }
-      #org {
-        border: 1px solid #ddd;
-        margin: 8px;
-        height: 200px;
-        background: url(../img/texture-noise.png);
-      }
-      .nv-card {
-        fill: #E9EFEF;
-        stroke: #AAA;
-        stroke-width: .5px;
-      }
-      .nv-card circle {
-        cursor: pointer;
-        /*stroke: steelblue;*/
-        stroke-width: 0;
-      }
-      .nv-card text {
-        stroke: none;
-      }
-      .nv-card line {
-        stroke-width: 2;
-      }
-      .nv-card text.nv-cardName  {
-        fill: steelblue;
-      }
-      .nv-card text.nv-cardTitle  {
-        fill: black;
-      }
-      path.link {
-        fill: none;
-        stroke: #ccc;
-        stroke-width: 1.5px;
-      }
-    </style>
-<div class="thumbnail widget viz" {{{target_id}}}>
-  <div class="btn-toolbar pull-right">
-    <a href="#" data-toggle="widget" class="btn btn-invisible"><i class="icon-chevron-up"></i></a>
-    <a href="#" class="btn btn-invisible btn-expand-full"><span class="icon-resize-full"></span></a>
-    <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><i class="icon-cog"></i></a>
-    <ul class="dropdown-menu left carettop">
-      <div>
-        <li><a href="#" class="primary">Expand</a></li>
-        <li><a href="#">Chart options</a></li>
-        <li><a href="#" class="widget-remove">Remove</a></li>
-      </div>
-    </ul>
-  </div>
-  <h4 data-toggle="widget">Org Chart</h4>
-  <div class="widget-content">
-    <div id="org" class="nv-chart">
+<div class="thumbnail widget viz with-options" {{{target_id}}}>
+    {{>dashletControls}}
+    <h4>Org Chart</h4>
+    <div class="dashlet-options">
+        <div class="row-fluid">
+            <div class="span4">
+                <div class="btn-group">
+                    <a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
+                      <span>Jim Brennan</span>
+                      <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu carettop">
+                        <li>
+                            <div id="organization" class="jstree-sugar jstree jstree-0 jstree-focused"></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="span8">
+                <div class="dashlet-group pull-right">
+                    <a href="#show-all-nodes" class="btn" rel="tooltip" data-original-title="Show all nodes"><i class="icon-sitemap"></i></a>
+                    <a href="#zoom-to-fit" class="btn" rel="tooltip" data-original-title="Zoom to fit"><i class="icon-fullscreen"></i></a>
+                </div>
+                <div class="btn-slider pull-right">
+                    <div class="noUiSliderEnds">
+                        <a href="#zoom-out" class="zoom-control"><i class="icon-minus-sign"></i></a>
+                        <div id="sliderChartZoom" class="noUiSlider"></div>
+                        <a href="#zoom-in" class="zoom-control"><i class="icon-plus-sign"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+    <div class="widget-content">
+        <div id="org" class="nv-chart nv-chart-texture">
+            <svg></svg>
+        </div>
+    </div>
 </div>
-
+<script src="../js/nvd3/data/tree_data.js"></script>
 <script src="js/charts/org-chart.js"></script>
-
-<script type="text/javascript">
-  var graph = new SimpleGraph("#org", {
-      "xmax": 60, "xmin": 0,
-      "ymax": 40, "ymin": 0
-    }, "../js/nvd3/data/tree_data.json");
-
-  $(document).ready(function() {
-    $('.thumbnail.viz .btn-expand-full').on('click', toggleExpand);
-  });
-
-  function toggleExpand()
-  {
-      if ( $('.thumbnail.viz').hasClass('expanded') )
-      {
-          $('.thumbnail.viz').removeClass('expanded');
-          $('.thumbnail.viz .nv-chart').css({'height':'200px'});
-          $('.thumbnail.viz .btn-expand-full').addClass('btn-invisible');
-          $('.thumbnail.viz .btn-expand-full span').removeClass('icon-resize-small');
-          graph.resize()();
-      }
-      else
-      {
-
-          $('.thumbnail.viz').addClass('expanded');
-          $('.thumbnail.viz .nv-chart').css({'height':$(window).height()-144});
-          $('.thumbnail.viz .btn-expand-full').removeClass('btn-invisible');
-          $('.thumbnail.viz .btn-expand-full span').addClass('icon-resize-small');
-          setTimeout( function(){graph.resize()();}, 200);
-      }
-  }
-</script>

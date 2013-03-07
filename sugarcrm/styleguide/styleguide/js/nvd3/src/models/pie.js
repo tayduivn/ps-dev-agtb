@@ -145,99 +145,99 @@ nv.models.pie = function() {
                 d3.event.stopPropagation();
               });
 
-        slices
-            .attr('fill', function(d,i) { return fill(d, i); })
-            .attr('stroke', function(d,i) { return fill(d, i); });
+      slices
+          .attr('fill', function(d,i) { return fill(d, i); })
+          .attr('stroke', function(d,i) { return fill(d, i); });
 
-        var paths = ae.append('path')
-            .each(function(d) { this._current = d; });
-            //.attr('d', arc);
+      var paths = ae.append('path')
+          .each(function(d) { this._current = d; });
+          //.attr('d', arc);
 
-        d3.transition(slices.select('path'))
-            .attr('d', arc)
-            .attrTween('d', arcTween);
+      d3.transition(slices.select('path'))
+          .attr('d', arc)
+          .attrTween('d', arcTween);
 
-        if (showLabels) {
-          // This does the normal label
-          var labelsArc = arc;
-          if (donutLabelsOutside) {
-            labelsArc = d3.svg.arc().outerRadius(arc.outerRadius())
-          }
+      if (showLabels) {
+        // This does the normal label
+        var labelsArc = arc;
+        if (donutLabelsOutside) {
+          labelsArc = d3.svg.arc().outerRadius(arc.outerRadius())
+        }
 
-          ae.append("g").classed("nv-label", true)
-            .each(function(d, i) {
-              var group = d3.select(this);
+        ae.append("g").classed("nv-label", true)
+          .each(function(d, i) {
+            var group = d3.select(this);
 
-              group
-                .attr('transform', function(d) {
-                   d.outerRadius = radius + 10; // Set Outer Coordinate
-                   d.innerRadius = radius + 15; // Set Inner Coordinate
-                   return 'translate(' + labelsArc.centroid(d) + ')'
-                });
-
-              group.append('rect')
-                  .style('stroke', '#fff')
-                  .style('fill', '#fff')
-                  .attr("rx", 3)
-                  .attr("ry", 3);
-
-              group.append('text')
-                  .style('text-anchor', 'middle') //center the text on it's origin
-                  .style('fill', '#000')
-
-
-          });
-
-          slices.select(".nv-label").transition()
-            .attr('transform', function(d) {
-                d.outerRadius = radius + 10; // Set Outer Coordinate
-                d.innerRadius = radius + 15; // Set Inner Coordinate
-                return 'translate(' + labelsArc.centroid(d) + ')';
-            });
-
-          slices.each(function(d, i) {
-            var slice = d3.select(this);
-
-            slice
-              .select(".nv-label text")
-                .text(function(d, i) {
-                  var percent = (d.endAngle - d.startAngle) / (2 * Math.PI);
-                  return (d.value && percent > labelThreshold) ? getX(d.data) : '';
-                });
-
-            var textBox = slice.select('text').node().getBBox();
-            slice.select(".nv-label rect")
-              .attr("width", textBox.width + 10)
-              .attr("height", textBox.height + 10)
-              .attr("transform", function() {
-                return "translate(" + [textBox.x - 5, textBox.y - 5] + ")";
+            group
+              .attr('transform', function(d) {
+                 d.outerRadius = radius + 10; // Set Outer Coordinate
+                 d.innerRadius = radius + 15; // Set Inner Coordinate
+                 return 'translate(' + labelsArc.centroid(d) + ')'
               });
+
+            group.append('rect')
+                .style('stroke', '#fff')
+                .style('fill', '#fff')
+                .attr("rx", 3)
+                .attr("ry", 3);
+
+            group.append('text')
+                .style('text-anchor', 'middle') //center the text on it's origin
+                .style('fill', '#000')
+
+
+        });
+
+        slices.select(".nv-label").transition()
+          .attr('transform', function(d) {
+              d.outerRadius = radius + 10; // Set Outer Coordinate
+              d.innerRadius = radius + 15; // Set Inner Coordinate
+              return 'translate(' + labelsArc.centroid(d) + ')';
           });
-        }
+
+        slices.each(function(d, i) {
+          var slice = d3.select(this);
+
+          slice
+            .select(".nv-label text")
+              .text(function(d, i) {
+                var percent = (d.endAngle - d.startAngle) / (2 * Math.PI);
+                return (d.value && percent > labelThreshold) ? getX(d.data) : '';
+              });
+
+          var textBox = slice.select('text').node().getBBox();
+          slice.select(".nv-label rect")
+            .attr("width", textBox.width + 10)
+            .attr("height", textBox.height + 10)
+            .attr("transform", function() {
+              return "translate(" + [textBox.x - 5, textBox.y - 5] + ")";
+            });
+        });
+      }
 
 
-        // Computes the angle of an arc, converting from radians to degrees.
-        function angle(d) {
-          var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
-          return a > 90 ? a - 180 : a;
-        }
+      // Computes the angle of an arc, converting from radians to degrees.
+      function angle(d) {
+        var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
+        return a > 90 ? a - 180 : a;
+      }
 
-        function arcTween(a) {
-          if (!donut) a.innerRadius = 0;
-          var i = d3.interpolate(this._current, a);
-          this._current = i(0);
-          return function(t) {
+      function arcTween(a) {
+        if (!donut) a.innerRadius = 0;
+        var i = d3.interpolate(this._current, a);
+        this._current = i(0);
+        return function(t) {
+          return arc(i(t));
+        };
+      }
+
+      function tweenPie(b) {
+        b.innerRadius = 0;
+        var i = d3.interpolate({startAngle: 0, endAngle: 0}, b);
+        return function(t) {
             return arc(i(t));
-          };
-        }
-
-        function tweenPie(b) {
-          b.innerRadius = 0;
-          var i = d3.interpolate({startAngle: 0, endAngle: 0}, b);
-          return function(t) {
-              return arc(i(t));
-          };
-        }
+        };
+      }
 
     });
 
