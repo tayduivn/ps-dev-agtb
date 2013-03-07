@@ -18,8 +18,13 @@
 
             app.api.call('GET', myURL, null, {
                 success: this.populateValues,
-                error:   function(e) {
-                    app.logger.error('Failed to retrieve the outbound configs: ' + e);
+                error:   function(error) {
+                    app.alert.show("server-error", {
+                        level: "error",
+                        messages: "ERR_GENERIC_SERVER_ERROR",
+                        autoClose: false
+                    });
+                    app.error.handleHttpError(error);
                 }
             });
         }

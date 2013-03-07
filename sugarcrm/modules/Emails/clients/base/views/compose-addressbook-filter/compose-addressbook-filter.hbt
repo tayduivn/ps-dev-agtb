@@ -1,16 +1,13 @@
-<div class="control-group" style="padding: 8px 8px 0; border-bottom: 1px solid #ededed;">
-    <input id="addressbook_search" class="inline" placeholder="{{#if searchFields}}{{str "LBL_SEARCH_BY"}}: {{arrayJoin searchFields ", "}}{{else}}{{str "LBL_REFINE_LIST"}}{{/if}}" type="text">
-    <div id="addressbook_btn" class="btn-group inline pull-right">
-        <a class="btn" href="#" module="all">Search</a>
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-            <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li><a href="#" module="accounts">Accounts</a></li>
-            <li><a href="#" module="contacts">Contacts</a></li>
-            <li><a href="#" module="leads">Leads</a></li>
-            <li><a href="#" module="prospects">Prospects</a></li>
-            <li><a href="#" module="users">Users</a></li>
-        </ul>
+<form class="form-search-related" action="">
+    <div class="control-group">
+        <div class="filter controls controls-two btn-group-fit">
+            <div class="filter-view search">
+                <div>
+                    <input type="hidden" class="select2 search-filter" data-placeholder="{{str "LBL_MODULE"}}">
+                    <div class="choice-filter"></div>
+                    <input type="text" size=" " class="search-name" placeholder="{{str "LBL_BASIC_SEARCH"}}&hellip;">
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</form>

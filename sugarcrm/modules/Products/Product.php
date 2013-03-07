@@ -86,7 +86,6 @@ class Product extends SugarBean
     public $date_closed;
     public $date_closed_timestamp;
     public $commit_stage;
-    public $assigned_user_id;
     public $opportunity_id;
 
     /**
@@ -99,6 +98,8 @@ class Product extends SugarBean
     public $sales_status;
 
     // These are for related fields
+    public $assigned_user_id;
+    public $assigned_user_name;
     public $type_name;
     public $type_id;
     public $quote_id;
