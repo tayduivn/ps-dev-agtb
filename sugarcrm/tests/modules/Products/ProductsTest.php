@@ -456,6 +456,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $db->query($updateQuery);
 
+        //run the function we are actually wanting to test with this unit test
         $product->handleOppSalesStatus();
 
         $opp = BeanFactory::getBean('Opportunities')->retrieve($opp->id);
@@ -463,10 +464,29 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedOppSalesStatus, $opp->sales_status);
         unset($product);
     }
+    //TODO: Add has been called test for save with handleOppSalesStatus
+
+    /**
+     * @group products
+     */
+    public function testProductSaveCallsHandleOppSalesStatus()
+    {
+        //create mock product to check that the save does what is expected
+        $product = new MockProduct();
+        $product->name = "mockProductTest1";
+        $product->sales_status = Opportunity::STATUS_NEW;
+
+        $product->save();
+
+        $this->assertTrue($product->handleOppSalesStatusCalled());
+    }
+
 }
 
 class MockProduct extends Product
 {
+    private $handleOppSalesStatusCalled = false;
+
     public function handleSalesStatus()
     {
         parent::handleSalesStatus();
@@ -474,7 +494,13 @@ class MockProduct extends Product
 
     public function handleOppSalesStatus()
     {
+        $this->handleOppSalesStatusCalled = true;
         parent::handleOppSalesStatus();
+    }
+
+    public function handleOppSalesStatusCalled()
+    {
+        return $this->handleOppSalesStatusCalled;
     }
 
     public function setAccountIdForOpportunity($oppId)
