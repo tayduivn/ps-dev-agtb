@@ -373,6 +373,51 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($opp->sales_stage, $product->sales_stage);
 
     }
+
+    /**
+     * @group products
+     */
+    public function testProductCreatedUpdatesNewOpportunitySalesStageNew()
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        $this->assertEquals(Opportunity::STATUS_NEW, $opp->sales_status);
+
+    }
+
+    /**
+     * @group products
+     */
+    public function testProductCreatedUpdatesNewOpportunitySalesStageInProgress()
+    {
+        $db = DBManagerFactory::getInstance();
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->load_relationship('products');
+
+        $product = new MockProduct();
+        $product->name = "mockProductTest";
+        $product->sales_status = Opportunity::STATUS_NEW;
+        //$product->opportunity_id = $opp->id;
+        $product->sales_stage = 'Closed Won';
+        $product->fetched_row = array(
+            'sales_status' => 'New',
+            'sales_stage' => 'test1'
+        );
+
+        $product->save();
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+        $opp->products->add($product->id);
+
+        $updateQuery = 'UPDATE products SET sales_status = ' . $db->quoted(Opportunity::STATUS_IN_PROGRESS) . ' where id = ' . $db->quoted($product->id);
+        $db->query($updateQuery);
+
+        $product->handleOppSalesStatus();
+
+        $opp = BeanFactory::getBean('Opportunities')->retrieve($opp->id);
+
+        $this->assertEquals(Opportunity::STATUS_IN_PROGRESS, $opp->sales_status);
+        unset($product);
+    }
 }
 
 class MockProduct extends Product
@@ -380,6 +425,11 @@ class MockProduct extends Product
     public function handleSalesStatus()
     {
         parent::handleSalesStatus();
+    }
+
+    public function handleOppSalesStatus()
+    {
+        parent::handleOppSalesStatus();
     }
 
     public function setAccountIdForOpportunity($oppId)

@@ -624,6 +624,8 @@ class Product extends SugarBean
 
         $id = parent::save($check_notify);
 
+        $this->handleOppSalesStatus();
+
         // We need to update the associated product bundle and quote totals that might be impacted by this product.
         if (isset($id)) {
             $tax_rate = 0.00;
@@ -738,6 +740,31 @@ class Product extends SugarBean
             }
         }
         return false;
+    }
+
+    /**
+     * Code to make sure that the Sales Status field of the associated opportunity
+     */
+    protected function handleOppSalesStatus()
+    {
+        if (!empty($this->opportunity_id)) {
+            $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
+            if($opp->load_relationship('products')) {
+                $productLineItems = $opp->products->query(array(
+                                                   'where'=>array(
+                                                       // query adds the prefix so we don't need contact.id
+                                                       'lhs_field'=>'sales_status',
+                                                       'operator'=>'=',
+                                                       'rhs_value'=>$GLOBALS['db']->quote(Opportunity::STATUS_IN_PROGRESS),
+                                                       ),
+                                                    'deleted'=>'0'));
+                //if productLineItems found with  and the Opp sales stage is New, bump to In Progress
+                if(count($productLineItems['rows']) > 0 && $opp->sales_status == Opportunity::STATUS_NEW) {
+                    $opp->sales_status = Opportunity::STATUS_IN_PROGRESS;
+                    $opp->save();
+                }
+            }
+        }
     }
 
     /**
