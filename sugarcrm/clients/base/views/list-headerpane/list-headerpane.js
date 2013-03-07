@@ -25,22 +25,5 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'HeaderpaneView',
-
-    events: {
-        'click a[name=create_button]': 'create'
-    },
-
-    create: function() {
-        app.drawer.open({
-            layout: 'create',
-            context: {
-                create: true
-            }
-        }, _.bind(function(refresh) {
-            if (refresh) {
-                this.collection.fetch();
-            }
-        }, this));
-    }
+    extendsFrom: 'HeaderpaneView'
 })
