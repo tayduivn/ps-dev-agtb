@@ -60,7 +60,7 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 		$GLOBALS['log']->debug('have saml data.'); // JMH
 		// Look for custom versions of settings.php if it exists
         require_once('modules/Users/authentication/SAMLAuthenticate/lib/onelogin/saml.php');
-        require(get_custom_file_if_exists('modules/Users/authentication/SAMLAuthenticate/settings.php'));
+        require(SugarAutoLoader::existingCustomOne('modules/Users/authentication/SAMLAuthenticate/settings.php'));
 
 
         $samlresponse = new SamlResponse($settings, $_POST['SAMLResponse']);

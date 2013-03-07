@@ -26,7 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ********************************************************************************/
 require_once('modules/Users/authentication/SAMLAuthenticate/lib/onelogin/saml.php');
-require(get_custom_file_if_exists('modules/Users/authentication/SAMLAuthenticate/settings.php'));
+require(SugarAutoLoader::existingCustomOne('modules/Users/authentication/SAMLAuthenticate/settings.php'));
 
 $authrequest = new SamlAuthRequest($settings);
 $url = $authrequest->create();
