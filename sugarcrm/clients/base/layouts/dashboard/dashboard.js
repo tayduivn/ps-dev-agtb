@@ -42,6 +42,13 @@
         context.set("model", model);
         context.set("collection", new DashboardCollection());
         app.view.Layout.prototype.initialize.call(this, options);
+        this.model.on("setMode", function(mode) {
+            if(mode === "edit") {
+                this.$("#dashboard").addClass("edit");
+            } else {
+                this.$("#dashboard").removeClass("edit");
+            }
+        }, this);
         this.initDashletPlugin();
         if(module === 'Home') {
             this.on("render", this.toggleSidebar);
@@ -168,6 +175,7 @@
     },
     _dispose: function() {
         this.off("render");
+        this.model.off("setMode", null, this);
         if(this.collection) {
             this.collection.off("reset");
         }
