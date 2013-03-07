@@ -133,6 +133,7 @@ class ForecastsSeedData
                         $quotaRollup->save();
                     }
 
+                    // create a previous forecast to simulate a change
                     /* @var $forecast Forecast */
                     $forecast = BeanFactory::getBean('Forecasts');
                     $forecast->timeperiod_id = $timeperiod_id;
@@ -151,6 +152,8 @@ class ForecastsSeedData
                     $forecast->likely_case = SugarMath::init()->exp('?/?', array($totals['amount'], $ratio[$key]))->result();
                     $forecast->forecast_type = 'Direct';
                     $forecast->date_committed = $timedate->asDb($timedate->getNow()->modify("-1 day"));
+                    $forecast->date_entered = $timedate->asDb($timedate->getNow()->modify("-1 day"));
+                    $forecast->date_modified = $timedate->asDb($timedate->getNow()->modify("-1 day"));
                     $forecast->calculatePipelineData(
                         SugarMath::init()->exp('?/?', array($totals['includedClosedAmount'], $ratio[$key]))->result(),
                         $totals['includedClosedCount']
@@ -159,7 +162,7 @@ class ForecastsSeedData
 
                     self::createManagerWorksheet($commit_type_array[0], $forecast->toArray());
 
-                    //Create a previous forecast to simulate change
+                    // create the current forecast
                     /* @var $forecast2 Forecast */
                     $forecast2 = BeanFactory::getBean('Forecasts');
                     $forecast2->timeperiod_id = $timeperiod_id;
