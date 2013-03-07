@@ -61,6 +61,18 @@
       top: -2px;
     }
   }
+
+  span {
+    &[data-type="text"],
+    &[data-type="int"] {
+      top: 0;
+      padding-top: 0;
+      div {
+        padding: 0;
+      }
+    }
+  }
+
   span[data-type="fieldset-with-labels"] {
     margin: 3px 0 0 -10px;
     .record-edit-link-wrapper {
@@ -71,6 +83,7 @@
       margin-left: 6px;
     }
   }
+
   span[data-type="badge"] {
     margin-left: 6px;
     top: -4px;
