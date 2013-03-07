@@ -117,7 +117,7 @@ class SugarQuery
      */
     public function select($fields = false) {
 		if(empty($this->select)) {
-			$this->select = new SugarQuery_Builder_Select($fields);
+			$this->select = new SugarQuery_Builder_Select($this, $fields);
 		}
 		return $this->select;
 	}
@@ -140,6 +140,9 @@ class SugarQuery
         if($team_security === true) {
             $bean->addVisibilityQuery($this);
         }
+
+        if ($this->select)
+            $this->select->updateFrom();
 
         return $this;
 	}

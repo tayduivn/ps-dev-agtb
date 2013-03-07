@@ -127,6 +127,11 @@ class FilterApi extends SugarApi
         // type.
         $options['module'] = $seed->module_name;
 
+        //Set the list of fields to be used in the select.
+        $options['select'] = !empty($args['fields']) ? explode(",", $args['fields']) : array();
+        //Force id into the select
+        $options['select'][] = "id";
+
         return $options;
     }
 
@@ -148,7 +153,7 @@ class FilterApi extends SugarApi
         }
         $this->addFilters($args['filter'], $q->where(), $q);
 
-        return $this->runQuery($api, $args, $q, $options);
+        return $this->runQuery($api, $args, $q, $options, $seed);
     }
 
     public function filterRelated(ServiceBase $api, array $args)
@@ -202,15 +207,15 @@ class FilterApi extends SugarApi
         }
         $args['filter'][][$tableName . '.' . $column] = array('$equals' => $record->id);
         $this->addFilters($args['filter'], $q->where(), $q);
-        return $this->runQuery($api, $args, $q, $options);
+        return $this->runQuery($api, $args, $q, $options, $linkSeed);
     }
 
     protected function getQueryObject(SugarBean $seed, array $options)
     {
         $q = new SugarQuery();
         // Just need ID, we need to fetch beans so we can format them later.
-        $q->select(array('id'));
         $q->from($seed);
+        $q->select(isset($options['select']) ? $options['select'] : array('id'));
         $q->distinct(true);
         $q->where()->equals("deleted", 0);
 
@@ -224,7 +229,7 @@ class FilterApi extends SugarApi
         return $q;
     }
 
-    protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options)
+    protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed)
     {
         $GLOBALS['log']->info("Filter SQL: ".$q->compileSql());
         $idRows = $q->execute();
@@ -239,8 +244,14 @@ class FilterApi extends SugarApi
                 $data['next_offset'] = (int)($options['limit']+$options['offset']);
                 continue;
             }
-            $bean = BeanFactory::getBean($options['module'], $row['id']);
-            if ($bean) {
+            if (empty($args['fields'])){
+                //Without a field list, we need to just do a full retrieve to make sure we get the entire bean.
+                $bean = BeanFactory::getBean($options['module'], $row['id']);
+            } else {
+                $bean = clone $seed;
+                $seed->populateFromRow($row);
+            }
+            if ($bean && !empty($bean->id)) {
                 // Sometimes team security changes mid-query
                 $beans[] = $bean;
             }
