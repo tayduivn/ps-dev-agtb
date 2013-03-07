@@ -75,27 +75,27 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_action' => 'create',
                 ),
-                array(
-                    'type'  => 'rowaction',
-                    'event' => 'button:find_duplicates_button:click',
-                    'name'  => 'find_duplicates_button',
-                    'label' => 'LBL_DUP_MERGE',
-                    'acl_action' => 'edit',
-                ),
-                array(
-                    'type'  => 'rowaction',
-                    'event' => 'button:create_related_button:click',
-                    'name'  => 'create_related_button',
-                    'label' => 'LBL_CREATE_RELATED_RECORD',
-                    'acl_action' => 'create',
-                ),
-                array(
-                    'type'  => 'rowaction',
-                    'event' => 'button:link_related_button:click',
-                    'name'  => 'link_related_button',
-                    'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'acl_action' => 'edit',
-                ),
+                // array(
+                //     'type'  => 'rowaction',
+                //     'event' => 'button:find_duplicates_button:click',
+                //     'name'  => 'find_duplicates_button',
+                //     'label' => 'LBL_DUP_MERGE',
+                //     'acl_action' => 'edit',
+                // ),
+                // array(
+                //     'type'  => 'rowaction',
+                //     'event' => 'button:create_related_button:click',
+                //     'name'  => 'create_related_button',
+                //     'label' => 'LBL_CREATE_RELATED_RECORD',
+                //     'acl_action' => 'create',
+                // ),
+                // array(
+                //     'type'  => 'rowaction',
+                //     'event' => 'button:link_related_button:click',
+                //     'name'  => 'link_related_button',
+                //     'label' => 'LBL_ASSOC_RELATED_RECORD',
+                //     'acl_action' => 'edit',
+                // ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'type'  => 'rowaction',
