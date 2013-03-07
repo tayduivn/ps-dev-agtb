@@ -32,6 +32,7 @@
             'click .disabled' : 'preventClick'
         });
         app.view.Field.prototype.initialize.call(this, options);
+        this.model.on('data:sync:end', this.render, this);
     },
     _render:function(){
         // buttons use the acl_action and acl_module properties in metadata to denote their action for acls
@@ -47,10 +48,11 @@
             hasAccess = app.acl.hasAccess(acl_action, acl_module);
         }
 
-        if (hasAccess) {
-            app.view.Field.prototype._render.call(this);
+        app.view.Field.prototype._render.call(this);
+        if (!hasAccess  || this.isHidden) {
+            this.hide();
         } else {
-            this.isHidden = true;
+            this.show();
         }
     },
     getFieldElement: function() {

@@ -58,7 +58,11 @@
                     self.handleKeyDown.call(self, evt, field);
                 });
                 $(document).on("mousedown.record" + field.name, _.debounce(function(evt) {
-                    self.fieldClose.call(self, evt, field);
+                    //Some fields (like email) may have buttons and the mousedown event will fire before the one
+                    //attached to the button is fired. As a workaround we wrap the buttons with .prevent-mousedown
+                    if ($(evt.target).closest('.prevent-mousedown').length === 0) {
+                        self.fieldClose.call(self, evt, field);
+                    }
                 }, 0));
             }
         } else {
@@ -81,7 +85,7 @@
         // - If current view is blocked by drawer
         if (targetPlaceHolder.length > 0
             || currFieldParent.find(":focus").length > 0
-            || currFieldParent.parents(".drawer-squeezed").length > 0) {
+            || app.drawer.isActive($(evt.target))) {
             return;
         }
         this.toggleField(field, false);

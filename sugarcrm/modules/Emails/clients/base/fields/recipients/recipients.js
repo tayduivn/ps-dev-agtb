@@ -219,12 +219,14 @@
      * @private
      */
     _unformatRecipient: function(recipient) {
-        var openBracket  = recipient.indexOf("<"),
-            closeBracket = recipient.indexOf(">"),
-            email        = "",
-            name         = "";
+        var openBracket,
+            closeBracket,
+            email = "",
+            name  = "";
 
         recipient = recipient.trim();
+        openBracket  = recipient.indexOf("<");
+        closeBracket = recipient.indexOf(">");
 
         if (openBracket < 0 && closeBracket < 0) {
             email = recipient;

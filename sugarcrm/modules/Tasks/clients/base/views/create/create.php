@@ -114,7 +114,7 @@ $viewdefs['Tasks']['base']['view']['create'] = array(
                     'name' => 'created_by_date',
                     'fields' => array('created_by_name', 'date_entered'),
                 ),
-                'team_sets',
+                'team_name',
                 'date_modified',
             ),
         ),

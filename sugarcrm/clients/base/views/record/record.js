@@ -450,13 +450,12 @@
         switch (field.type) {
             case "image":
                 var self = this;
-                app.file.checkFileFieldsAndProcessUpload(self.model, {
+                app.file.checkFileFieldsAndProcessUpload(self, {
                         success:function () {
                             self.toggleField(field);
                         }
                     },
-                    { deleteIfFails:false},
-                    self
+                    { deleteIfFails:false}
                 );
                 break;
             default:
@@ -503,7 +502,7 @@
                 self.render();
             }
         };
-        app.file.checkFileFieldsAndProcessUpload(self.model, {
+        app.file.checkFileFieldsAndProcessUpload(self, {
                 success:function () {
                     self.model.save({}, {
                         success:finalSuccess,
@@ -511,7 +510,7 @@
                     });
                 }
             },
-            { deleteIfFails:false}, self);
+            { deleteIfFails:false});
 
         self.$(".record-save-prompt").hide();
         if (!self.disposed) self.render();

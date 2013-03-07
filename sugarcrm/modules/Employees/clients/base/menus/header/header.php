@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Employees';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'event' => 'megamenu:create:click',
+        'route' => '#bwc/index.php?module='.$module_name.'&action=EditView',
         'label' =>'LNK_NEW_EMPLOYEE',
         'acl_action'=>'admin',
         'acl_module'=>$module_name,

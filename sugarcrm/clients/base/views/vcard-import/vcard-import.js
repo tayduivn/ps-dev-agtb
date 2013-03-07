@@ -40,7 +40,7 @@
             app.alert.show('error_validation_vcard', {level:'error', title: app.lang.getAppString('LBL_EMPTY_VCARD'), messages: app.lang.getAppString('LBL_EMPTY_VCARD'), autoClose: true});
         }
 
-        app.file.checkFileFieldsAndProcessUpload(self.model, {
+        app.file.checkFileFieldsAndProcessUpload(self, {
             success: function (data) {
                 var route = app.router.buildRoute(self.module, data.vcard_import, 'record');
                 app.router.navigate(route, {trigger: true});
@@ -51,6 +51,6 @@
                 });
             }
         },
-        {deleteIfFails: true, htmlJsonFormat: false}, self);
+        {deleteIfFails: true, htmlJsonFormat: false});
     }
 })

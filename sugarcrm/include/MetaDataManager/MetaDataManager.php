@@ -200,6 +200,9 @@ class MetaDataManager {
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
         //END SUGARCRM flav=pro ONLY
 
+        // TODO we need to have this kind of information on the module itself not hacked around on globals
+        $data['isBwcEnabled'] = in_array($moduleName, $GLOBALS['bwcModules']);
+
         $seed = BeanFactory::newBean($moduleName);
 
         //BEGIN SUGARCRM flav=pro ONLY
