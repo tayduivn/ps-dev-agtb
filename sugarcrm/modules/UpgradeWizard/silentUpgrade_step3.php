@@ -254,6 +254,13 @@ logThis('Start rebuild relationships.', $path);
 @rebuildRelations();
 logThis('End rebuild relationships.', $path);
 
+// Bug 61826 - We need to run these SQL files after the tables are first created.
+if (version_compare(getSilentUpgradeVar('origVersion'), '6.7.0', '<')) {
+	require_once(clean_path($unzip_dir.'/scripts/post_install.php'));
+	runSqlFiles(getSilentUpgradeVar('origVersion'), getSilentUpgradeVar('destVersion'), 'sql_query');
+}
+// End Bug 61826 /////////////////////////////////
+
 //Make sure to call preInstall on database instance to setup additional tables for hierarchies if needed
 if($db->supports('recursive_query')) {
     $db->preInstall();
