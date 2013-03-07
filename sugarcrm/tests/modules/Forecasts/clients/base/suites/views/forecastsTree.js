@@ -106,9 +106,9 @@ describe("The forecasts tree view", function(){
 
         it("correctly encodes Jim and Sarah's name", function() {
            var result = view._recursiveReplaceHTMLChars(data, view);
-           expect(result[0].data).toMatch("Jim O'Gara");
+           expect(result[0].data).toContain("Jim O'Gara");
            var children = result[0].children[1];
-           expect(children[0].data).toMatch("Sarah O'Reilly");
+           expect(children[0].data).toContain("Sarah O'Reilly");
         });
 
         it("correctly translates and adds the LBL_MY_OPPORTUNITIES string to the tree for the selected user", function() {
@@ -118,7 +118,7 @@ describe("The forecasts tree view", function(){
             };
             var result = view._recursiveReplaceHTMLChars(data, view),
                 children = result[0].children[0];
-            expect(children[0].data).toMatch('Opportunities \\\(Jim O\\\'Gara\\\)');
+            expect(children[0].data).toContain("Opportunities (Jim O'Gara)");
         })
 
     });
