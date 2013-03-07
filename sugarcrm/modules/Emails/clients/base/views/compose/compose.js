@@ -371,9 +371,9 @@
             var emailTemplate = app.data.createBean('EmailTemplates', { id: model.id });
             emailTemplate.fetch({
                 success: this.confirmTemplate,
-                error: function() {
-                    app.logger.error.log("error");
-                }
+                error: _.bind(function(error) {
+                    this._showServerError(error);
+                }, this)
             });
         }
     },
@@ -432,9 +432,9 @@
                         this.insertTemplateAttachments(data.models);
                     }
                 }, this),
-                error:function() {
-                    app.logger.error("Unable to fetch the bean collection.");
-                }
+                error: _.bind(function(error) {
+                    this._showServerError(error);
+                }, this)
             });
 
             // currently adds the html signature even when the template is text-only
@@ -492,9 +492,9 @@
                         type: 'documents'
                     });
                 }, this),
-                error: function() {
-                    app.logger.error("Unable to fetch the bean collection:");
-                }
+                error: _.bind(function(error) {
+                    this._showServerError(error);
+                }, this)
             });
         }
     },
@@ -544,9 +544,9 @@
                         this._lastSelectedSignature = model;
                     }
                 }, this),
-                error: function() {
-                    app.logger.error("Retrieving Signature failed.");
-                }
+                error: _.bind(function(error) {
+                    this._showServerError(error);
+                }, this)
             });
         }
     },
@@ -642,5 +642,21 @@
         signature = signature.replace(/&gt;/gi, ">");
 
         return signature;
+    },
+
+    /**
+     * Show a generic alert for server errors resulting from custom API calls during Email Compose workflows. Logs
+     * the error message for system administrators as well.
+     *
+     * @param error
+     * @private
+     */
+    _showServerError: function(error) {
+        app.alert.show("server-error", {
+            level: "error",
+            messages: "ERR_GENERIC_SERVER_ERROR",
+            autoClose: false
+        });
+        app.error.handleHttpError(error);
     }
 })
