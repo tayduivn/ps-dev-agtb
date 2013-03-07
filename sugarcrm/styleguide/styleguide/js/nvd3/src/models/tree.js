@@ -1,14 +1,11 @@
 
 nv.models.tree = function() {
 
-  // ISSUES
-  /*
-  */
-
+  // issues: 1. zoom slider doesn't zoom on chart center
+  
   // all hail, stepheneb
   // https://gist.github.com/1182434
   // http://mbostock.github.com/d3/talk/20111018/tree.html
-  // Compute the new tree layout.
   // https://groups.google.com/forum/#!topic/d3-js/-qUd_jcyGTw/discussion
   // http://ajaxian.com/archives/foreignobject-hey-youve-got-html-in-my-svg
 
@@ -31,11 +28,12 @@ nv.models.tree = function() {
 
   // specific to org chart
   var r = 5.5
-    , duration = 300
     , padding = { 'top': 10, 'right': 10, 'bottom': 10, 'left': 10 } // this is the distance from the edges of the svg to the chart
-    , nodeSize = { 'width': 115, 'height': 42 }
-    , nodeImgPath = '../img/'
+    , duration = 300
     , zoomExtents = { 'min': 0.25, 'max': 2 }
+    , nodeSize = { 'width': 100, 'height': 50 }
+    , nodeImgPath = '../img/'
+    , nodeRenderer = function(d){ return '<div class="nv-tree-node"></div>'; }
   ;
 
   //============================================================
@@ -45,8 +43,6 @@ nv.models.tree = function() {
     selection.each(
 
     function(data) {
-
-      var bbox = false;      // the actual size of a node
 
       var diagonal = d3.svg.diagonal();
       var zoom = d3.behavior.zoom().scaleExtent([zoomExtents.min, zoomExtents.max])
@@ -59,14 +55,13 @@ nv.models.tree = function() {
       // Setup svgs and skeleton of chart
 
       var svg = d3.select(this);
-      var wrap = svg.selectAll('.nv-wrap').data([data]);
+      var wrap = svg.selectAll('.nv-wrap').data([1]);
       var wrapEnter = wrap.enter().append('g')
             .attr('class', 'nvd3 nv-wrap')
             .attr('id', 'nv-chart-' + id)
             .call( zoom );
 
       var defsEnter = wrapEnter.append('defs');
-      var dropShadow = nv.utils.dropShadow('cardShadow', defsEnter, { 'height': '120%', 'offset': 1.5, 'blur': 1 });
 
       var backg = wrapEnter.append('svg:rect')
             .attr('id', 'backg')
@@ -79,6 +74,7 @@ nv.models.tree = function() {
             .attr('class', 'nv-tree')
             .attr('id', 'vis');
 
+      // Compute the new tree layout.
       var tree = d3.layout.tree()
             .size(null)
             .elementsize([nodeSize.width,1])
@@ -89,21 +85,11 @@ nv.models.tree = function() {
         , 'height': parseInt(svg.style('height'), 10)
       };
 
-      //------------------------------------------------------------
-      // svg
-      //     .on('click', function(d,i) {
-      //         dispatch.chartClick({
-      //             data: d,
-      //             index: i,
-      //             pos: d3.event,
-      //             id: id
-      //         });
-      //     });
-      //------------------------------------------------------------
+      var _data = data;
 
       chart.update = function(source) {
 
-        var nodes = tree.nodes(data);
+        var nodes = tree.nodes(_data);
              //.sort(function(a, b) { return (a.x+((6-a.depth)*10000)) - (b.x+((6-b.depth)*10000)); });
 
         var availableSize = { // the size of the svg container minus padding
@@ -126,7 +112,7 @@ nv.models.tree = function() {
                 [ ((availableSize.width/scale)-chartSize.width)/2, 0 ]
               ;
 
-        var offset = { 'top': padding.top + nodeSize.height, 'left': padding.left };  // this is needed because the origin of a node is at the bottom
+        var offset = { 'top': nodeSize.height, 'left': 0 };  // this is needed because the origin of a node is at the bottom
 
         backg
           .attr('width', availableSize.width)
@@ -159,54 +145,18 @@ nv.models.tree = function() {
               .on('click', function(d){ leafClick(d); });
 
         // node content
-        nodeEnter
-          .append('image')
-            .attr('class', 'nv-cardAvatar')
-            .attr('xlink:href', function(d) { return nodeImgPath + d.image; })
-            .attr('x', -54)
-            .attr('y', -36)
-            .attr('width', 32)
-            .attr('height', 32)
-            .style('opacity', 1e-6);
-        nodeEnter
-          .append('svg:text')
-            .attr('class', 'nv-cardName')
-            .attr('x', -18)
-            .attr('y', -24)
-            .attr('text-anchor', 'start')
-            .text(function(d) { return d.name; })
-            .style('fill-opacity', 1e-6)
-            .style('font-size', 0.7+'em');
-        nodeEnter
-          .append('svg:text')
-            .attr('class', 'nv-cardTitle')
-            .attr('x', -18)
-            .attr('y', -10)
-            .attr('text-anchor', 'start')
-            .text(function(d) { return d.title; })
-            .style('fill-opacity', 1e-6)
-            .style('font-size', 0.5+'em');
-
-        // node box
-        nodeEnter
-          .insert('svg:path', '.nv-cardAvatar')
-            .attr('class', 'nv-cardBox')
-            .attr('d', function(d) {
-              if ( !bbox ) {
-                bbox = nodeEnter.node().getBBox();
-              }
-              //(x, y, width, height, radius)
-              return nv.utils.roundedRectangle(
-                -((bbox.width+16)/2), -(bbox.height+4), bbox.width+16, bbox.height+6, 3
-              );
-            })
-            .style('stroke-opacity', 1e-6)
-            .style('fill-opacity', 1e-6)
-            .style('filter', dropShadow);
+        nodeEnter.append("foreignObject").attr('class', 'nv-foreign-object')
+            .attr("width", 2)
+            .attr("height", 1)
+            .attr("x",-1)
+            .attr("y",-1)
+          .append("xhtml:body")
+            .style("font", "14px 'Helvetica Neue'")
+            .html(function(d){ return nodeRenderer(d); });
 
         // node circle
         var xcCircle = nodeEnter.append('svg:g').attr('class', 'nv-expcoll')
-              .style('opacity',1e-6);
+              .style('opacity', 1e-6);
             xcCircle.append('svg:circle').attr('class', 'nv-circ-back')
               .attr('r', r);
             xcCircle.append('svg:line').attr('class', 'nv-line-vert')
@@ -228,13 +178,11 @@ nv.models.tree = function() {
             nodeUpdate.select('.nv-line-vert')
               .style('stroke', function(d) { return d._children ? '#fff' : '#bbb'; });
 
-            nodeUpdate.selectAll('text')
-              .style('fill-opacity', 1);
-            nodeUpdate.select('.nv-cardBox')
-              .style('stroke-opacity', 1)
-              .style('fill-opacity', 1);
-            nodeUpdate.select('.nv-cardAvatar')
-              .style('opacity', 1);
+            nodeUpdate.selectAll('.nv-foreign-object')
+              .attr("width", nodeSize.width)
+              .attr("height", nodeSize.height)
+              .attr("x", -nodeSize.width/2)
+              .attr("y", -nodeSize.height+11);
 
         // Transition exiting nodes to the parent's new position.
         var nodeExit = node.exit().transition()
@@ -244,13 +192,11 @@ nv.models.tree = function() {
             nodeExit.selectAll('.nv-expcoll')
               .style('stroke-opacity', 1e-6);
 
-            nodeExit.selectAll('text')
-              .style('fill-opacity', 1e-6);
-            nodeExit.select('.nv-cardBox')
-              .style('stroke-opacity', 1e-6)
-              .style('fill-opacity', 1e-6);
-            nodeExit.select('.nv-cardAvatar')
-              .style('opacity', 1e-6);
+            nodeExit.selectAll('.nv-foreign-object')
+              .attr("width", 2)
+              .attr("height", 1)
+              .attr("x",-1)
+              .attr("y",-1);
 
         // Update the links
         var link = treeChart.selectAll('path.link')
@@ -314,16 +260,6 @@ nv.models.tree = function() {
           }
         }
 
-        function collapseAll(d) {
-          if (d.children || d._children) {
-            if (d.children) {
-              d._children = d.children;
-              d.children = null;
-            }
-            d._children.forEach(collapseAll);
-          }
-        }
-
         function expandAll(d) {
           if (d.children || d._children) {
             if (d._children) {
@@ -335,10 +271,10 @@ nv.models.tree = function() {
         }
 
         chart.showall = function() {
-          expandAll(data);
+          expandAll(_data);
           zoom.translate([0, 0]).scale(1);
           gEnter.attr('transform', 'translate('+ [0,0] +')scale('+ 1 +')');
-          chart.update(data);
+          chart.update(_data);
         };
 
       };
@@ -357,20 +293,10 @@ nv.models.tree = function() {
         gEnter.attr('transform', 'translate('+ [0,0] +')scale('+ 1 +')');
       };
 
-      chart.zoomIn = function(step) {
-        var scale = Math.min( zoom.scale() + step, zoomExtents.max)
-          , limit = (scale === zoomExtents.max);
-        if (!limit) {
-          zoom.translate([0, 0]).scale(scale);
-          gEnter.attr('transform', 'translate('+ [0,0] +')scale('+ scale +')');
-        }
-        return scale;
-      };
-
-      chart.zoomOut = function(step) {
-        var scale = Math.max( zoom.scale() - step, zoomExtents.min)
-          , limit = (scale === zoomExtents.min);
-        if (!limit) {
+      chart.zoom = function(step) {
+        var limit = (step>0 ? zoomExtents.max : zoomExtents.min)
+          , scale = Math.min( Math.max( zoom.scale() + step, zoomExtents.min), zoomExtents.max);
+        if (scale !== limit) {
           zoom.translate([0, 0]).scale(scale);
           gEnter.attr('transform', 'translate('+ [0,0] +')scale('+ scale +')');
         }
@@ -384,8 +310,32 @@ nv.models.tree = function() {
         return scale;
       };
 
+      chart.filter = function(node) {
+        var __data = {}
+          , found = false;
+
+        function findNode(d) {
+          if (d.id === node) {
+            __data = d;
+            found = true;
+          } else if (!found && d.children) {
+            d.children.forEach(findNode);
+          }
+        }
+
+        // Initialize the display to show a few nodes.
+        findNode(data);
+
+        __data.x0 = 0;
+        __data.y0 = 0;
+
+        _data = __data;
+
+        chart.update(_data);
+      }
+
       chart.gradient( fillGradient );
-      chart.update(data);
+      chart.update(_data);
 
     });
 
@@ -494,6 +444,12 @@ nv.models.tree = function() {
     return chart;
   };
 
+  chart.zoomExtents = function(_) {
+    if (!arguments.length) return zoomExtents;
+    zoomExtents = _;
+    return chart;
+  };
+
   chart.padding = function(_) {
     if (!arguments.length) return padding;
     padding = _;
@@ -512,9 +468,9 @@ nv.models.tree = function() {
     return chart;
   };
 
-  chart.zoomExtents = function(_) {
-    if (!arguments.length) return zoomExtents;
-    zoomExtents = _;
+  chart.nodeRenderer = function(_) {
+    if (!arguments.length) return nodeRenderer;
+    nodeRenderer = _;
     return chart;
   };
 

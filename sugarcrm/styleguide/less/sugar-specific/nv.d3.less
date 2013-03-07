@@ -561,34 +561,26 @@ svg .title {
 }
 
 /**********
-* Dendigraph
+* Dendrogram
 */
 .nv-card {
   fill: #E9EFEF;
   stroke: #AAA;
   stroke-width: .5px;
   cursor: pointer;
+  .nv-circ-front {
+    stroke-width: 0;
+  }
+  line {
+    stroke-width: 2;
+  }
 }
-.nv-card .nv-circ-front {
-  stroke-width: 0;
-}
-.nv-card text {
-  stroke: none;
-  font-size: 14px;
-}
-.nv-card line {
-  stroke-width: 2;
-}
-.nv-card text.nv-cardName  {
-  fill: steelblue;
-}
-.nv-card text.nv-cardTitle  {
-  fill: black;
-}
-.nv-tree path.link {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 1.5px;
+.nv-tree {
+  path.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+  }
 }
 
 

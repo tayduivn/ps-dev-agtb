@@ -144,11 +144,22 @@
     .btn-toolbar {
       margin: 16px 20px 0 8px;
     }
+    &.with-options .widget-content {
+      top: 108px;
+    }
+    .dashlet-options {
+      padding: 10px 20px;
+    }
+    .nv-chart#org {
+      margin: 0;
+    }
   }
-  .btn-slider {
-    display: inline-block;
-    padding: 5px;
-  }
+}
+
+// org chart zoom control
+.btn-slider {
+  display: inline-block;
+  padding: 5px;
   .noUiSlider {
     width: 50px;
     height: 4px;
@@ -192,6 +203,37 @@
       right: -6px;
     }
   }
+}
+
+.thumbnail.viz:not(.expanded) .nv-chart#org {
+  height: 200px;
+}
+
+// for org chart demo renderer
+.nv-chart#org {
+  margin: 8px;
+  border: 1px solid #ddd;
+  .nv-foreign-object body {
+    width: 100px;
+    height: 32px;
+    padding: 5px;
+    margin: 5px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    background-color: #E9EFEF;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+  .nv-foreign-object img.rep-avatar {
+    float: left;
+    margin-right: 4px;
+  }
+  .nv-foreign-object div.rep-name {
+    font-size: 10px;
+    color: steelblue;
+  }
+  .nv-foreign-object div.rep-title {
+    font-size: 8px;
+  } 
 }
 
 /*TOOLTIPS*/

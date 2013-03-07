@@ -1,61 +1,41 @@
-  <style type="text/css">
-    .thumbnail.viz:not(.expanded) .nv-chart#org {
-      height: 200px;
-    }
-    .thumbnail.viz .nv-chart#org {
-      margin: 8px;
-      border: 1px solid #ddd;
-    }
-    .thumbnail.viz.expanded .nv-chart#org {
-      margin: 0;
-    }
-    .thumbnail.viz.expanded .widget-content {
-      top: 108px;
-    }
-    .thumbnail.viz.expanded .dashlet-options {
-      padding: 10px 20px;
-    }
-  </style>
-<div class="thumbnail widget viz" {{{target_id}}}>
-  {{>dashletControls}}
-  <h4>Org Chart</h4>
-  <div class="dashlet-options">
-    <div class="row-fluid">
-      <div class="span4">
-        <div class="btn-group">
-
-          <a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
-            <span>Jim Brennan</span>
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu carettop">
-              <li><div id="people" class="jstree jstree-0 jstree-focused jstree-sugar"><ul class="list"><li class="jstree-leaf parent"><ins class="jstree-icon">&nbsp;</ins><a href="#" class="jstree-clicked"><ins class="jstree-icon">&nbsp;</ins>Parent</a></li><li class="jstree-open jstree-last"><ins class="jstree-icon">&nbsp;</ins><a href="#" class="jstree-clicked"><ins class="jstree-icon">&nbsp;</ins>Sabra Khan</a><ul><li class="jstree-leaf"><ins class="jstree-icon">&nbsp;</ins><a href="#"><ins class="jstree-icon">&nbsp;</ins>Mark Gibson</a></li><li class="jstree-leaf"><ins class="jstree-icon">&nbsp;</ins><a href="#"><ins class="jstree-icon">&nbsp;</ins>James Joplin</a></li><li class="jstree-leaf"><ins class="jstree-icon">&nbsp;</ins><a href="#"><ins class="jstree-icon">&nbsp;</ins>Terrence Li</a></li><li class="jstree-closed jstree-last"><ins class="jstree-icon">&nbsp;</ins><a href="#"><ins class="jstree-icon">&nbsp;</ins>Amy McCray</a></li></ul></li></ul></div> </li>
-          </ul>
+<div class="thumbnail widget viz with-options" {{{target_id}}}>
+    {{>dashletControls}}
+    <h4>Org Chart</h4>
+    <div class="dashlet-options">
+        <div class="row-fluid">
+            <div class="span4">
+                <div class="btn-group">
+                    <a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
+                      <span>Jim Brennan</span>
+                      <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu carettop">
+                        <li>
+                            <div id="organization" class="jstree-sugar jstree jstree-0 jstree-focused"></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="span8">
+                <div class="dashlet-group pull-right">
+                    <a href="#show-all-nodes" class="btn" rel="tooltip" data-original-title="Show all nodes"><i class="icon-sitemap"></i></a>
+                    <a href="#zoom-to-fit" class="btn" rel="tooltip" data-original-title="Zoom to fit"><i class="icon-fullscreen"></i></a>
+                </div>
+                <div class="btn-slider pull-right">
+                    <div class="noUiSliderEnds">
+                        <a href="#zoom-out" class="zoom-control"><i class="icon-minus-sign"></i></a>
+                        <div id="sliderChartZoom" class="noUiSlider"></div>
+                        <a href="#zoom-in" class="zoom-control"><i class="icon-plus-sign"></i></a>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="span8">
-        <div class="dashlet-group pull-right">
-          <a href="#show-all-nodes" class="btn" rel="tooltip" data-original-title="Show all nodes"><i class="icon-sitemap"></i></a>
-          <a href="#zoom-to-fit" class="btn" rel="tooltip" data-original-title="Zoom to fit"><i class="icon-fullscreen"></i></a>
-        </div>
-        <div class="btn-slider pull-right">
-          <div class="noUiSliderEnds">
-            <a href="#zoom-out" class="zoom-control"><i class="icon-minus-sign"></i></a>
-              <div id="sliderChartZoom" class="noUiSlider"></div>
-            <a href="#zoom-in" class="zoom-control"><i class="icon-plus-sign"></i></a>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-  <div class="widget-content">
-    <div id="org" class="nv-chart nv-chart-texture">
-      <svg></svg>
+    <div class="widget-content">
+        <div id="org" class="nv-chart nv-chart-texture">
+            <svg></svg>
+        </div>
     </div>
-  </div>
 </div>
-
-<script src="../../assets/js/chart-utils.js"></script>
 <script src="../js/nvd3/data/tree_data.js"></script>
-<script src="../js/nvd3/src/models/tree.js"></script>
 <script src="js/charts/org-chart.js"></script>

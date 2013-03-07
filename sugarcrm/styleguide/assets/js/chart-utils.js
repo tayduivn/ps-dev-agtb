@@ -1,3 +1,4 @@
+// Chart type icons
 function select2ChartIcon(type) {
   switch(type) {
     case 'Donut':

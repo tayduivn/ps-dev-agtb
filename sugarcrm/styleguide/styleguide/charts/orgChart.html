@@ -10,31 +10,28 @@
 </head>
 <body class="full-screen">
 
-<div id="tree" class="nv-chart nv-chart-texture">
+<div id="org" class="nv-chart nv-chart-texture">
   <svg></svg>
 </div>
 
 <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
 <script src="../js/nvd3/data/tree_data.js"></script>
-<script src="../js/nvd3/src/models/tree.js"></script>
 
 <script>
   nv.addGraph(function() {
 
-  //   function nodeRenderer(d){
+    var nodeRenderer = function(d){
+      return '<img src="../img/'+ d.image +'" class="rep-avatar" width="32" height="32"><div class="rep-name">'+ d.name +'</div><div class="rep-title">'+ d.title + '</div>';
+    }
 
-  // <foreignObject class="node" x="46" y="22" width="200" height="300">
-  //   <body xmlns="http://www.w3.org/1999/xhtml">
-  //     <div>The quick brown fox jumps over the lazy dog. Pack my box with
-  //        five dozen liquor jugs</div>
-  //   </body>
-  // </foreignObject>
-  //   }
-     var chart = nv.models.tree()
-  //         .nodeRenderer(nodeRenderer);
+    var chart = nv.models.tree()
+          .duration(300)
+          .nodeSize({ 'width': 124, 'height': 56 })
+          .nodeRenderer(nodeRenderer)
+          .zoomExtents({ 'min': 0.25, 'max': 4 });
 
-    d3.select("#tree svg")
+    d3.select("#org svg")
         .datum(tree_data)
       .transition().duration(700)
         .call(chart);
