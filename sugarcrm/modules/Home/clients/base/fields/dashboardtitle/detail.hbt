@@ -1,0 +1,12 @@
+<div class="dropdown">
+<a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">{{value}} <b class="caret"></b></a>
+<ul class="dropdown-menu">
+    {{#if dashboards}}
+        {{#each this.dashboards.models}}
+            <li><a href="javascript:void(0);" data-id="{{getFieldValue this "id"}}">{{getFieldValue this "name"}}</a></li>
+        {{/each}}
+    {{else}}
+        <li>{{str "LBL_PORTAL_LOADING"}}</li>
+    {{/if}}
+</ul>
+</div>

@@ -9,14 +9,14 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                 array(
                     "name"      => "add_button",
                     "type"      => "rowaction",
-                    "label"     => "LBL_DASHBOARD_Add",
+                    "label"     => "LBL_CREATE_BUTTON_LABEL",
                     "css_class" => "btn btn-primary",
                 ),
 
                 array(
                     "name"      => "edit_button",
                     "type"      => "rowaction",
-                    "label"     => "LBL_DASHBOARD_EDIT",
+                    "label"     => "LBL_EDIT_BUTTON",
                 ),
             ),
             "showOn" => "view",

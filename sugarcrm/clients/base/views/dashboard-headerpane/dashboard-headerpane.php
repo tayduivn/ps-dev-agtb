@@ -4,19 +4,18 @@ $viewdefs["base"]["view"]["dashboard-headerpane"] = array(
     "buttons" => array(
         array(
             "type" => "actiondropdown",
-            "primary" => true,
             "buttons" => array(
                 array(
                     "name"      => "add_button",
                     "type"      => "rowaction",
-                    "label"     => "LBL_DASHBOARD_Add",
-                    "css_class" => "btn btn-primary",
+                    "label"     => "LBL_CREATE_BUTTON_LABEL",
+                    "css_class" => "btn",
                 ),
 
                 array(
                     "name"      => "edit_button",
                     "type"      => "rowaction",
-                    "label"     => "LBL_DASHBOARD_EDIT",
+                    "label"     => "LBL_EDIT_BUTTON",
                 ),
             ),
             "showOn" => "view",
@@ -63,7 +62,7 @@ $viewdefs["base"]["view"]["dashboard-headerpane"] = array(
             "name" => "header",
             "fields" => array(
                 array(
-                    "type" => "base",
+                    "type" => "dashboardtitle",
                     "name" => "name",
                     "placeholder" => "LBL_DASHBOARD_TITLE",
                 ),
