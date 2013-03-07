@@ -112,6 +112,7 @@
                     success: function() {
                         app.alert.dismiss('delete_list_record');
                         self.collection.remove(model);
+                        app.events.trigger("preview:close");
                         if(!self.disposed) self.render();
                     }
                 });
