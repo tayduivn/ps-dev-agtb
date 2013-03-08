@@ -25,8 +25,8 @@
         var fieldsToValidate = this.view.getFields(this.module);
         this.view.clearValidationErrors();
         if (this.model.isValid(fieldsToValidate)) {
-            if(!this.changed) {
-                        this.cancelEdit();
+            if (!this.changed) {
+                this.cancelEdit();
             }
             else {
                 var self = this;
