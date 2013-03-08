@@ -90,22 +90,27 @@
      * @param model Model for the object to preview
      * @param collection Collection of related objects to the current model
      * @param {Boolean} fetch Optional Indicates if model needs to be synched with server to populate with latest data
+     * @param {Number|String} previewId Optional identifier use to determine event origin. If event origin is not the same
+     * but the model id is the same, preview should still render the same model.
      * @private
      */
-    _renderPreview: function(model, collection, fetch){
+    _renderPreview: function(model, collection, fetch, previewId){
         var self = this;
+
         // If there are drawers there could be multiple previews, make sure we are only rendering preview for active drawer
         if(app.drawer && !app.drawer.isActive(self.$el)){
             return;  //This preview isn't on the active layout
         }
+
         // Close preview if we are already displaying this model
-        if(self.model && model && self.model.get("id") == model.get("id")){
+        if(self.model && model && (self.model.get("id") == model.get("id") && previewId == this.previewId)) {
             // Remove the decoration of the highlighted row
             app.events.trigger("list:preview:decorate", false);
             // Close the preview panel
             app.events.trigger('preview:close');
             return;
         }
+
         if(fetch){
             model.fetch({
                 success: function(model) {
@@ -116,6 +121,8 @@
         } else {
             self.renderPreview(model, collection);
         }
+
+        this.previewId = previewId;
     },
 
     /**
@@ -141,6 +148,7 @@
             }
         }
     },
+
     /**
      * Normalizes the metadata, and removes favorite fields, that gets shown in Preview dialog
      * @param meta Layout metadata to be trimmed
