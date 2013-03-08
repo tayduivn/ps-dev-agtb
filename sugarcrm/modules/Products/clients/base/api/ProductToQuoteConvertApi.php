@@ -78,7 +78,6 @@ class ProductToQuoteConvertApi extends SugarApi
         // now that we have the product bundle, lets create the quote
         /* @var $quote Quote */
         $quote = BeanFactory::getBean('Quotes');
-        $quote->name = "Quote - " . $product->name;
 
         $quote->total = $total;
         $quote->total_usdollar = $total_base;
@@ -93,13 +92,37 @@ class ProductToQuoteConvertApi extends SugarApi
         $quote->currency_id = $product->currency_id;
         $quote->opportunity_id = $product->opportunity_id;
         $quote->quote_stage = "Draft";
-        $quote->date_quote_expected_closed = TimeDate::getInstance()->getNow()->modify('+30 days')->asDbDate();
+        $quote->assigned_user_id = $GLOBALS['current_user']->id;
+
+        // get the account from the product
+        /* @var $account Account */
+        $account = BeanFactory::getBean('Accounts', $product->account_id);
+        if (isset($account->id)) {
+            $quote->billing_address_street = $account->billing_address_street;
+            $quote->billing_address_city = $account->billing_address_city;
+            $quote->billing_address_country = $account->billing_address_country;
+            $quote->billing_address_state = $account->billing_address_state;
+            $quote->billing_address_postalcode = $account->billing_address_postalcode;
+
+            $quote->shipping_address_street = $account->shipping_address_street;
+            $quote->shipping_address_city = $account->shipping_address_city;
+            $quote->shipping_address_country = $account->shipping_address_country;
+            $quote->shipping_address_state = $account->shipping_address_state;
+            $quote->shipping_address_postalcode = $account->shipping_address_postalcode;
+        }
+
 
         $quote->save();
 
         $quote->set_relationship(
             'quotes_accounts',
             array('quote_id' => $quote->id, 'account_id' => $product->account_id, 'account_role' => 'Bill To'),
+            false
+        );
+
+        $quote->set_relationship(
+            'quotes_accounts',
+            array('quote_id' => $quote->id, 'account_id' => $product->account_id, 'account_role' => 'Ship To'),
             false
         );
 

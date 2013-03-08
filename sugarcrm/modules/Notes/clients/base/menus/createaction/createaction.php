@@ -1,6 +1,5 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -28,19 +27,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$viewdefs["Emails"]["base"]["view"]["compose-signatures-headerpane"] = array(
-    "type"    => "headerpane",
-    "title"   => "LBL_SELECT_SIGNATURE_TITLE",
-    "buttons" => array(
-        array(
-            "name"      => "cancel_button",
-            "type"      => "button",
-            "label"     => "LBL_CANCEL_BUTTON_LABEL",
-            "css_class" => "btn-invisible btn-link",
-        ),
-        array(
-            'name' => 'sidebar_toggle',
-            'type' => 'sidebartoggle',
-        ),
-    ),
+$module_name = 'Notes';
+$viewdefs[$module_name]['base']['menu']['createaction'] = array(
+    'route' => '#'.$module_name.'/create',
+    'label' => 'LNK_NEW_NOTE',
+    'visible' => true
 );
