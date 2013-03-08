@@ -1,7 +1,6 @@
 ({
     inlineEditMode: false,
     createMode: false,
-    previousModelState: null,
     extendsFrom: 'EditableView',
     plugins: ['SugarLogic', 'ellipsis_inline'],
     enableHeaderButtons: true,
@@ -30,10 +29,10 @@
         app.view.views.EditableView.prototype.initialize.call(this, options);
 
         this.buttons = {};
-
         this.createMode = this.context.get("create") ? true : false;
-        this.action = this.createMode ? 'edit' : 'detail';
-
+        // Even in createMode we want it to start in detail so that we, later, respect
+        // this.editableFields (the list after pruning out readonly fields, etc.)
+        this.action = 'detail';
         this.model.on("error:validation", this.handleValidationError, this);
         this.context.on("change:record_label", this.setLabel, this);
         this.context.set("viewed", true);
@@ -363,9 +362,6 @@
     },
 
     editClicked: function() {
-        if (_.isEmpty(this.previousModelState)) {
-            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
-        }
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
@@ -439,10 +435,6 @@
         // Set Editing mode to on.
         this.inlineEditMode = true;
 
-        if (_.isEmpty(this.previousModelState)) {
-            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
-        }
-
         this.setButtonStates(this.STATE.EDIT);
 
         // TODO: Refactor this for fields to support their own focus handling in future.
@@ -492,9 +484,6 @@
         self.inlineEditMode = false;
 
         var finalSuccess = function () {
-            if (!_.isEmpty(self.previousModelState)) {
-                self.previousModelState = {};
-            }
 
             if (self.createMode) {
                 app.navigate(self.context, self.model);
@@ -517,10 +506,7 @@
     },
 
     handleCancel: function() {
-        if (!_.isEmpty(this.previousModelState)) {
-            this.model.set(JSON.parse(JSON.stringify(this.previousModelState)),{silent: !this.inlineEditMode});
-            this.previousModelState = {};
-        }
+        this.model.revertAttributes({silent: !this.inlineEditMode});
         this.toggleEdit(false);
         this.inlineEditMode = false;
     },

@@ -33,7 +33,6 @@
     extendsFrom: 'FlexListView',
     plugins: ['ellipsis_inline', 'list-column-ellipsis'],
     rowFields: {},
-    previousModelStates: {},
 
     contextEvents: {
         "list:editall:fire": "toggleEdit",
@@ -112,6 +111,7 @@
                     success: function() {
                         app.alert.dismiss('delete_list_record');
                         self.collection.remove(model);
+                        app.events.trigger("preview:close");
                         if(!self.disposed) self.render();
                     }
                 });
@@ -127,10 +127,8 @@
         var model = this.collection.get(modelId);
         if(isEdit) {
             model.on("error:validation", this.handleValidationError, this.rowFields[modelId]);
-            this.previousModelStates[modelId] = model.previousAttributes();
         } else {
             model.off("error:validation", this.handleValidationError, this.rowFields[modelId]);
-            delete this.previousModelStates[modelId];
         }
         this.$("tr[name=" + this.module + "_" + modelId + "]").toggleClass("tr-inline-edit", isEdit);
         this.toggleFields(this.rowFields[modelId], isEdit);

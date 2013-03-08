@@ -70,7 +70,7 @@
         this.currentState.selectedId = null;
 
         this.duplicateView.validationStatus = this.STATUS_INIT;
-        this.recordView.validationStatus = this.STATUS_DIRTY;
+        this.recordView.validationStatus = this.STATUS_INIT;
     },
 
     /**
@@ -166,7 +166,7 @@
         this.recordView.enableHeaderButtons = false;
         this.recordView.render();
 
-        this.recordView.validationStatus = this.STATUS_DIRTY;
+        this.recordView.validationStatus = this.STATUS_INIT;
     },
 
     /**
@@ -199,6 +199,10 @@
         this.$('.header').addClass('active');
         this.showBody();
         this.showSubViewToggle();
+        //set status of the panel to dirty if the currently active view is the record view
+        if ((this.currentState.activeView === this.RECORD_VIEW) && (this.getStatus() === this.STATUS_INIT)) {
+            this.setStatus(this.STATUS_DIRTY);
+        }
     },
 
     /**
@@ -238,6 +242,9 @@
             this.toggleSubViews(this.DUPLICATE_VIEW);
         } else if (this.$(event.target).hasClass('show-record')) {
             this.toggleSubViews(this.RECORD_VIEW);
+            if (this.getStatus() === this.STATUS_INIT) {
+                this.setStatus(this.STATUS_DIRTY);
+            }
         }
         event.stopPropagation();
     },
@@ -287,7 +294,8 @@
 
         this.currentState.selectedId = selectedModel.get('id');
         this.currentState.selectedName = selectedModel.get('name');
-        this.setStatus(this.STATUS_DIRTY);
+        this.setStatus(this.STATUS_COMPLETE);
+        this.updatePanelHeader();
 
         this.context.trigger("dupecheck:" + this.meta.module+":model:change", this.meta.module, selectedModel);
     },
@@ -490,6 +498,7 @@
             var view = this.recordView,
                 model = view.model;
 
+            view.clearValidationErrors(view.editableFields);
             if (model.isValid(view.getFields(view.module))) {
                 this.setStatus(this.STATUS_COMPLETE);
                 callback();
@@ -524,7 +533,7 @@
             if (this.recordView && this.recordView.validationStatus) {
                 return this.recordView.validationStatus;
             } else {
-                return this.STATUS_DIRTY;
+                return this.STATUS_INIT;
             }
         }
     },

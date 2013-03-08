@@ -32,7 +32,7 @@
                 model.set(field.id_name, parentModel.get("id"));
             }, this);
         }
-
+        var self = this;
         app.drawer.open({
             layout: 'create',
             context: {
@@ -40,13 +40,14 @@
                 module: model.module,
                 model: model
             }
-        });
+        }, function(model) {
+            if(!model) {
+                return;
+            }
 
-        model.on("sync", function(model) {
-            this.collection.add(model);
-            this.collection.trigger("reset");
-            model.off("sync");
-        }, this);
+            self.context.resetLoadFlag();
+            self.context.loadData();
+        });
     },
 
     bindDataChange: function() {

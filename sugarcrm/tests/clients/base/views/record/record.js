@@ -95,39 +95,6 @@ describe("Record View", function() {
             expect(_.size(view.fields)).toBe(0);
         });
 
-        it("Should update previous props on editClicked only", function() {
-            var modelAttributes = {
-                id: '123',
-                name: 'Name',
-                case_number: 123,
-                description: 'Description'
-            };
-            view.model.set(modelAttributes);
-            view.editClicked();
-            view.model.set({name:'Test'});
-            view.cancelClicked();
-            expect(JSON.stringify(modelAttributes)).toEqual(JSON.stringify(view.model.attributes));
-        });
-        
-        it("Should change team after cancel twice", function() {
-            var modelAttributes = {
-                id: '123',
-                name: 'Name',
-                case_number: 123,
-                description: 'Description',
-                team_name: [{id:'123',name:'West',primary:true}]
-            };
-            view.model.set(modelAttributes);
-            view.editClicked();
-            view.model.set('team_name', [{id:'234',name:'East', primary:true}]);
-            view.cancelClicked();
-            view.editClicked();
-            view.model.set('team_name', [{id:'234',name:'East', primary:true}]);
-            view.cancelClicked(); 
-            view.editClicked();
-            view.model.set('team_name', [{id:'234',name:'East', primary:true}]);
-            expect(JSON.stringify(view.model.attributes['team_name'])).toEqual(JSON.stringify([{id:'234',name:'East',primary:true}]));
-        });        
 
         it("Should render 8 editable fields and 6 buttons", function() {
 
@@ -335,22 +302,17 @@ describe("Record View", function() {
             });
         });
 
-        it("Should revert data back to the old value when the cancel button is clicked after data has been changed", function() {
+        it("Should ask the model to revert if cancel clicked", function() {
             view.render();
-            var data = {
-                name: 'Foo',
-                case_number: 123,
-                description: 'Description'
-            };
-            view.model.set(data);
+            view.model.revertAttributes = function(){};
+            var revertSpy = sinon.spy(view.model, 'revertAttributes');
             view.context.trigger('button:edit_button:click');
             view.model.set({
                 name: 'Bar'
             });
 
-            expect(view.model.get('name')).toBe('Bar');
             view.$('a[name=cancel_button]').click();
-            expect(view.model.get('name')).toBe('Foo');
+            expect(revertSpy).toHaveBeenCalled();
         });
     });
 

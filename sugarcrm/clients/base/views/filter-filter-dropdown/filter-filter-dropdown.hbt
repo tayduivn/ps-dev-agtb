@@ -1,0 +1,2 @@
+<input type="hidden" class="select2 search-filter" data-placeholder='{{str "LBL_FILTER"}}'>
+<div class="choice-filter"></div>

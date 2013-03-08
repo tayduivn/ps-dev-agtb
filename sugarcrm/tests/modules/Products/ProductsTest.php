@@ -54,6 +54,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestProductUtilities::removeAllCreatedProducts();
+        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         parent::tearDown();
     }
 
@@ -67,6 +68,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * This test checks to see that we can save a product where date_closed is set to null
+     *
      * @group products
      */
     public function testCreateProductWithoutDateClosed()
@@ -351,6 +353,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse($product2->setAccountIdForOpportunity($opp2->id));
     }
 
+    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     /**
      * @group products
      * @ticket SFA-567
@@ -371,8 +374,64 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNotNull($opp->sales_stage); // make sure it's not set to null
         $this->assertEquals($opp->sales_stage, $product->sales_stage);
-
     }
+    //end SUGARCRM flav=pro && flav!=ent ONLY
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @group products
+     */
+    public function testSaveProductWorksheetReturnsFalseWhenForecastNotSetup()
+    {
+        /* @var $admin Administration */
+        // get the current settings and set is_setup to 0
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        $admin->saveSetting('Forecasts', 'is_setup', 0, 'base');
+
+        /* @var $product Product */
+        $product = BeanFactory::getBean('Products');
+        $ret = SugarTestReflection::callProtectedMethod($product, "saveProductWorksheet", array());
+
+        $this->assertFalse($ret);
+
+        // resave the settings to put it back like it was
+        $admin->saveSetting('Forecasts', 'is_setup', intval($settings['is_setup']), 'base');
+    }
+
+    /**
+     * @group products
+     */
+    public function testCreateProductCreatesForecastWorksheet()
+    {
+        /* @var $admin Administration */
+        // get the current settings and set is_setup to 1
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
+
+        $product = SugarTestProductUtilities::createProduct();
+
+        /* @var $worksheet ForecastWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $worksheet->retrieve_by_string_fields(
+            array(
+                'parent_type' => $product->module_name,
+                'parent_id' => $product->id,
+                'draft' => 1,
+                'deleted' => 0
+            )
+        );
+
+        $this->assertNotEmpty($worksheet->id);
+        $this->assertEquals($product->id, $worksheet->parent_id);
+        // get the worksheet
+        SugarTestWorksheetUtilities::setCreatedWorksheet(array($worksheet->id));
+
+        // resave the settings to put it back like it was
+        $admin->saveSetting('Forecasts', 'is_setup', intval($settings['is_setup']), 'base');
+    }
+    //END SUGARCRM flav=ent ONLY
 }
 
 class MockProduct extends Product

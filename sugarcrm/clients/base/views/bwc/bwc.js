@@ -39,7 +39,8 @@
      * Render the iFrame and listen for content changes on it.
      *
      * Every time there is an update on the iFrame, we:
-     * <li>update our url to match the current iFrame location in bwc way;</li>
+     * <li>update the controller context to mach our bwc module (if exists)</li>
+     * <li>update our url to match the current iFrame location in bwc way</li>
      * <li>rewrite links for sidecar modules</li>
      * <li>rewrite links that go for new windows</li>
      *
@@ -51,6 +52,15 @@
         app.view.View.prototype._renderHtml.call(this);
 
         this.$el.load(function() {
+            var module = /module=([^&]*)/.exec(this.contentWindow.location.search);
+            module = (_.isArray(module)) ? module[1] : null;
+            if (module) {
+                // update bwc context
+                var app = window.parent.SUGAR.App;
+                app.controller.context.set('module', module);
+                app.events.trigger('app:view:change');
+            }
+
             window.parent.location.hash = '#bwc/index.php' + this.contentWindow.location.search;
 
             if (this.contentWindow.$ === undefined) {

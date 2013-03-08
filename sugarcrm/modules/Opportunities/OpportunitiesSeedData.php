@@ -65,6 +65,10 @@ public static function populateSeedData($records, $app_list_strings, $accounts
 
     $opp_ids = array();
     $timedate = TimeDate::getInstance();
+
+    // get the additional currencies from the table
+    /* @var $currency Currency */
+    $currency = SugarCurrency::getCurrencyByISO('EUR');
     
     while($records-- > 0)
     {
@@ -81,8 +85,18 @@ public static function populateSeedData($records, $app_list_strings, $accounts
 
         $opp->assigned_user_id = $account->assigned_user_id;
         $opp->assigned_user_name = $account->assigned_user_name;
-        $opp->currency_id = '-99';
-        $opp->base_rate = 1;
+
+        // figure out which one to use
+        $seed = rand(1, 15);
+        if($seed%5 == 0) {
+            $opp->currency_id = $currency->id;
+            $opp->base_rate = $currency->conversion_rate;
+        } else {
+            // use the base rate
+            $opp->currency_id = '-99';
+            $opp->base_rate = 1;
+        }
+
         $opp->name = substr($account->name." - 1000 units", 0, 50);
         $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
         $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
@@ -112,23 +126,61 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $opp->id = create_guid();
         $opp->new_with_id = true;
 
-        /* @var $product Product */
-        $product->name = $opp->name;
-        $product->best_case = $opp->best_case;
-        $product->likely_case = $opp->amount;
-        $product->worst_case = $opp->worst_case;
-        $product->cost_price = $opp->amount;
-        $product->quantity = 1;
-        $product->currency_id = $opp->currency_id;
-        $product->base_rate = $opp->base_rate;
-        $product->probability = $opp->probability;
-        $product->date_closed = $opp->date_closed;
-        $product->date_closed_timestamp = $opp->date_closed_timestamp;
-        $product->assigned_user_id = $opp->assigned_user_id;
-        $product->opportunity_id = $opp->id;
-        $product->account_id = $account->id;
-        $product->commit_stage = $opp->commit_stage;
-        $product->save();
+        //END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+        $products_to_create = 1;
+        //end SUGARCRM flav=pro && flav!=ent ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        $products_to_create = rand(3, 10);
+        //END SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+        $products_created = 0;
+
+        $opp_best_case = 0;
+        $opp_worst_case = 0;
+        $opp_amount = 0;
+
+        while($products_created < $products_to_create) {
+            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            $amount = $opp->amount;
+            $rand_best_worst = rand(1000,5000);
+            //end SUGARCRM flav=pro && flav!=ent ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
+            $amount = rand(10000, 75000);
+            $rand_best_worst = rand(1000, 9000);
+            //END SUGARCRM flav=ent ONLY
+            /* @var $product Product */
+            $product->name = $opp->name;
+            $product->best_case = $amount+$rand_best_worst;
+            $product->likely_case = $amount;
+            $product->worst_case = $amount-$rand_best_worst;
+            $product->list_price = $amount;
+            $product->discount_price = $amount;
+            $product->cost_price = $amount/2;
+            $product->quantity = rand(1, 10);
+            $product->currency_id = $opp->currency_id;
+            $product->base_rate = $opp->base_rate;
+            $product->probability = $opp->probability;
+            $product->date_closed = $opp->date_closed;
+            $product->date_closed_timestamp = $opp->date_closed_timestamp;
+            $product->assigned_user_id = $opp->assigned_user_id;
+            $product->opportunity_id = $opp->id;
+            $product->account_id = $account->id;
+            $product->commit_stage = $opp->commit_stage;
+            $product->sales_stage = $opp->sales_stage;
+            $product->save();
+
+            $opp_amount += $amount;
+            $opp_best_case += $amount+$rand_best_worst;
+            $opp_worst_case += $amount-$rand_best_worst;
+
+            $products_created++;
+        }
+
+        $opp->amount = $opp_amount;
+        $opp->best_case = $opp_best_case;
+        $opp->worst_case = $opp_worst_case;
+
         //END SUGARCRM flav=pro ONLY
 
         $opp->save();
@@ -138,13 +190,9 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         /* @var $worksheet ForecastWorksheet */
         $worksheet = BeanFactory::getBean('ForecastWorksheets');
         $worksheet->saveRelatedOpportunity($opp);
-
-        // save a draft worksheet for the new forecasts stuff
-        /* @var $product_worksheet ForecastWorksheet */
-        $product_worksheet = BeanFactory::getBean('ForecastWorksheets');
-        $product_worksheet->saveRelatedProduct($product);
-
-        //END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        $worksheet->saveOpportunityProducts($opp);
+        //END SUGARCRM flav=ent ONLY
 
         // Create a linking table entry to assign an account to the opportunity.
         $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
