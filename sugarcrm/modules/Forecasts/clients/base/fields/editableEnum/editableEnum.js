@@ -189,7 +189,7 @@
 
         var salesStage = this.model.get('sales_stage'),
             disableIfSalesStageIs = ["Closed Won", "Closed Lost"];
-        if(salesStage && _.indexOf(disableIfSalesStageIs, salesStage) == -1) {
+        if(salesStage && _.indexOf(disableIfSalesStageIs, salesStage) != -1) {
             this.disabled = true;
         }
     }
