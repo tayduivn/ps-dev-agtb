@@ -115,7 +115,7 @@ describe("Email field", function() {
             expect(field.$('.add-on').length).toEqual(0);
             field.decorateError({email: ["test2@test.com"]});
             expect(field.$('.add-on').length).toEqual(1);
-            expect(field.$('.add-on').data('title')).toEqual('ERROR_EMAIL');
+            expect(field.$('.add-on').data('original-title')).toEqual('ERROR_EMAIL');
             expect($inputs.index(field.$('.add-on').prev())).toEqual(1);
         });
         it("should decorate the first field if there isn't any primary address set", function(){
@@ -126,7 +126,7 @@ describe("Email field", function() {
             expect(field.$('.add-on').length).toEqual(0);
             field.decorateError({primaryEmail: true});
             expect(field.$('.add-on').length).toEqual(1);
-            expect(field.$('.add-on').data('title')).toEqual('ERROR_PRIMARY_EMAIL');
+            expect(field.$('.add-on').data('original-title')).toEqual('ERROR_PRIMARY_EMAIL');
             expect($inputs.index(field.$('.add-on').prev())).toEqual(0);
         });
     });

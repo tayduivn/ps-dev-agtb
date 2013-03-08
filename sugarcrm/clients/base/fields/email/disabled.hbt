@@ -29,7 +29,7 @@
 {{#each value}}
     <div class="control-group email span12" data-emailaddress="{{email_address}}">
         <div class="span6">
-            <div class="input-append widget">
+            <div class="input-append">
                 <div class="row-fluid">
                     <input type="text" class="span12 existingAddress" data-id="{{email_address}}" value="{{email_address}}" disabled>
                     <p class="help-block"></p>
@@ -47,7 +47,7 @@
 {{/each}}
 <div class="control-group email span12">
     <div class="span6 pull-left">
-        <div class="input-append widget">
+        <div class="input-append">
             <div class="row-fluid">
                 <input type="text" class="span12 newEmail input-append" placeholder="{{str "LBL_EMAIL_ADD"}}" disabled>
                 <p class="help-block"></p>

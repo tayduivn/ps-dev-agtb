@@ -375,6 +375,11 @@
                    'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_sidecar.min.js',
                    'include/Expressions/javascript/sidecarExpressionContext.js'   => 'include/javascript/sugar_sidecar.min.js',
                    //END SUGARCRM flav=pro ONLY
+                   //Plugins
+                    'include/javascript/sugar7/plugins/ellipsis_inline.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/list-column-ellipsis.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/timeago.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/error-decoration.js'  => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
            //BEGIN SUGARCRM flav=ent ONLY

@@ -182,7 +182,7 @@
     decorateError: function(errors){
         var emails;
 
-        this._removeErrorDecoration();
+        this.$el.closest('.record-cell').addClass("error");
 
         //Select all existing emails
         emails = this.$('input:not(.newEmail)');
@@ -209,20 +209,18 @@
             }
         }, this);
     },
-    _removeErrorDecoration: function() {
-        //Remove existing error classes
-        this.$el.find('.control-group.email').removeClass("inline-error");
-        //Remove error message
-        this.$('.help-block').html('');
-        // Remove previous exclamation marks.
-        this.$('.add-on').remove();
-    },
     _addErrorDecoration: function($input, errorName, errorContext) {
-        $input.closest('.control-group.email').addClass("inline-error");
-        var $addon = $('<span class="add-on" data-placement="bottom"><i class="icon-exclamation-sign"></i></span>');
-        $addon.data("title", app.error.getErrorString(errorName, errorContext)).insertAfter($input);
-        if (_.isFunction($addon.tooltip)) {
-            $addon.tooltip();
+        var isWrapped = $input.parent().hasClass('input-append');
+        if (!isWrapped)
+            $input.wrap('<div class="input-append error '+this.fieldTag+'">');
+        $input.next('.error-tooltip').remove();
+        $input.after(this.exclamationMarkTemplate([app.error.getErrorString(errorName, errorContext)]));
+        var $tooltip = $input.next('.error-tooltip');
+        if (_.isFunction($tooltip.tooltip)) {
+            $tooltip.tooltip({
+                container:'body',
+                placement:'top'
+            });
         }
     },
     /**
