@@ -63,6 +63,7 @@
         <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
         <script src='{$configFile}'></script>
         <script src="include/javascript/jquery/jquery.dataTables.min.js"></script>
+
         {literal}
         <script language="javascript" src="include/javascript/sugar7.js"></script>
         <script language="javascript" src="include/javascript/sugar7/utils.js"></script>
@@ -83,5 +84,9 @@
             App.api.debug = App.config.debugSugarApi;
         </script>
         {/literal}
+
+        {if !empty($voodooFile)}
+            <script src="{$voodooFile}"></script>
+        {/if}
     </body>
 </html>
