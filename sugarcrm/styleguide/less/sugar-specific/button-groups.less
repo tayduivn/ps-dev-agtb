@@ -125,3 +125,11 @@
 .btn-toolbar > .dropdown-menu {
   font-size: @baseFontSize; // redeclare as part 2 of font-size inline-block hack
 }
+
+.btn-group span:first-child .btn {
+  border-radius: 3px 0px 0px 3px !important;
+  margin-left: 0;
+}
+.btn-group span:last-child .btn {
+  border-radius: 0px 3px 3px 0px !important;
+}
