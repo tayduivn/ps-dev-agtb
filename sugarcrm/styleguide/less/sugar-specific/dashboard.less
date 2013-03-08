@@ -165,6 +165,27 @@
       }
       h1 {
         margin-left: 0;
+        div.dropdown {
+          &> a {
+            font-size: 20px;
+            color: inherit;
+            padding-let: 0;
+            margin-left: 0;
+            &:hover {
+              color: inherit !important;
+              text-decoration: none;
+            }
+          }
+          ul.dropdown-menu {
+            min-width: 160px;
+            &> li {
+              font-size: 12px;
+              .alert-process {
+                padding: 8px 10px;
+              }
+            }
+          }
+        }
       }
       .dropdown-menu {
         min-width: auto;
