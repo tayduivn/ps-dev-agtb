@@ -30,7 +30,7 @@
              * @param fields Fields to remove error from
              */
             clearValidationErrors:function (fields) {
-                fields = fields || [];
+                fields = fields || _.toArray(this.fields);
                 if (fields.length > 0) {
                     _.defer(function () {
                         _.each(fields, function (field) {
@@ -41,12 +41,10 @@
                         });
                     }, fields);
                 }
-                else {
-                    _.defer(function () {
-                        this.$('.error').removeClass('error');
-                        this.$('.error-tooltip').remove();
-                    }, this);
-                }
+                _.defer(function() {
+                    this.$('.error').removeClass('error');
+                    this.$('.error-tooltip').remove();
+                }, this);
             }
         });
     });
