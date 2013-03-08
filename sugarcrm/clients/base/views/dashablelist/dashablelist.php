@@ -7,12 +7,16 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'description' => 'Listing of your accounts',
             'config' => array(
                 'module' => 'Accounts',
-                'display_columns' => array('name','phone_office'),
+                'display_columns' => array(
+                    'name','phone_office', 'billing_address_country'
+                ),
                 'my_items' => '1',
             ),
             'preview' => array(
                 'module' => 'Accounts',
-                'display_columns' => array('name','phone_office'),
+                'display_columns' => array(
+                    'name','phone_office', 'billing_address_country'
+                ),
                 'my_items' => '1',
             )
         ),
@@ -40,14 +44,50 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'config' => array(
                 'module' => 'Opportunities',
                 'display_columns' => array(
-                    'name', 'account_name', 'amount'
+                    'name', 'account_name', 'amount', 'date_closed'
                 ),
                 'my_items' => '1',
             ),
             'preview' => array(
                 'module' => 'Opportunities',
                 'display_columns' => array(
-                    'name', 'account_name', 'amount'
+                    'name', 'account_name', 'amount', 'date_closed'
+                ),
+                'my_items' => '1',
+            ),
+        ),
+        array(
+            'name' => 'My Contacts',
+            'description' => 'Listing of your contacts',
+            'config' => array(
+                'module' => 'Contacts',
+                'display_columns' => array(
+                    'name', 'title', 'phone_work', 'date_entered', 'assigned_user_name'
+                ),
+                'my_items' => '1',
+            ),
+            'preview' => array(
+                'module' => 'Contacts',
+                'display_columns' => array(
+                    'name', 'title', 'phone_work', 'date_entered', 'assigned_user_name'
+                ),
+                'my_items' => '1',
+            ),
+        ),
+        array(
+            'name' => 'My Leads',
+            'description' => 'Listing of your leads',
+            'config' => array(
+                'module' => 'Leads',
+                'display_columns' => array(
+                    'name', 'title', 'phone_work', 'email'
+                ),
+                'my_items' => '1',
+            ),
+            'preview' => array(
+                'module' => 'Leads',
+                'display_columns' => array(
+                    'name', 'title', 'phone_work', 'email'
                 ),
                 'my_items' => '1',
             ),

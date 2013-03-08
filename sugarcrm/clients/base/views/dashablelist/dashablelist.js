@@ -31,18 +31,6 @@
             collection.myItems = (dashlet.my_items === "1") ? true : false;
             collection.favorites = (dashlet.favorites === "1") ? true : false;
 
-
-            //Filter
-            /*
-            collection.filter = {filter : [
-                {
-                    "$and" :[
-                        {"name":{"$starts":"a"}}
-                    ]
-                }
-            ]};
-            */
-
             if(dashlet.auto_refresh && dashlet.auto_refresh > 0) {
                 if(this.timerId) {
                     clearInterval(this.timerId);
@@ -53,11 +41,15 @@
                 }, this), dashlet.auto_refresh * 1000 * 60);
             }
 
+            var metadata = app.metadata.getView(dashlet.module, 'list');
             _.each(dashlet.display_columns, function(name, index){
-                dashlet.display_columns[index] = {
+                var field = _.find(_.flatten(_.pluck(metadata.panels, 'fields')), function(field){
+                    return field.name === name;
+                }, this);
+                dashlet.display_columns[index] = _.extend({
                     name: name,
                     sortable: true
-                };
+                }, field || {});
             }, this);
             this.meta.panels[0].fields = dashlet.display_columns;
         }
