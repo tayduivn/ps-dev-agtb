@@ -71,8 +71,7 @@
                 $ftag.after(this.exclamationMarkTemplate(errorMessages));
                 $tooltip = this.$('.error-tooltip');
                 if (_.isFunction($tooltip.tooltip)) {
-                    var tooltipOpts = { container:'body', placement:'top' };
-                    if (ftag.match(/select/i)) tooltipOpts.trigger = 'click';
+                    var tooltipOpts = { container:'body', placement:'top', trigger: 'click' };
                     $tooltip.tooltip(tooltipOpts);
                 }
             },
