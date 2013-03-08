@@ -44,6 +44,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         //Set is_setup to 0 for testing purposes
         $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
         $admin->saveSetting('Forecasts', 'forecast_ranges', 'show_binary', 'base');
+        $admin->saveSetting('Forecasts', 'forecast_by', 'opportunities', 'base');
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 1");
     }
@@ -53,6 +54,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'is_setup', self::$isSetup, 'base');
         $admin->saveSetting('Forecasts', 'forecast_ranges', self::$forecastRanges, 'base');
+        $admin->saveSetting('Forecasts', 'forecast_by', 'products', 'base');
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 0");
@@ -89,10 +91,10 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $job->runnable_data = '';
         $job->runJob();
 
-        $updated_opp = BeanFactory::getBean('Opportunities', $opp->id);
+        $updated_opp = BeanFactory::getBean('Opportunities');
+        $updated_opp->retrieve($opp->id);
         $this->assertNotEmpty($updated_opp->commit_stage, "Updated opportunity's commit stage should not be empty");
 
-        $timedate = TimeDate::getInstance();
         $exp_product = array('name' => $updated_opp->name,
             'best_case' => $updated_opp->best_case,
             'likely_case' => $updated_opp->amount,
@@ -110,6 +112,8 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
 
+        // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+        // this only pertains to Pro and Corp, not End and Ult
         $product = BeanFactory::getBean('Products');
         $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
 
@@ -127,6 +131,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
             'commit_stage' => $product->commit_stage);
 
         $this->assertEquals($exp_product, $act_product, "Product info doesn't equal to related opp's one");
+        // END SUGARCRM flav=pro && flav!=ent ONLY
     }
 }
 ?>

@@ -110,7 +110,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         } else {
             $forecast->pipeline_opp_count = $args['pipeline_opp_count'];
             $forecast->pipeline_amount = $args['pipeline_amount'];
-        } 
+        }
        
         if ($args['likely_case'] != 0 && $args['opp_count'] != 0) {
             $forecast->opp_weigh_value = $args['likely_case'] / $args['opp_count'];
@@ -128,17 +128,17 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
             'timeperiod_id' => $args['timeperiod_id']
         );
 
-        $timedate = TimeDate::getInstance();
         /* @var $job SchedulersJob */
         $job = BeanFactory::getBean('SchedulersJobs');
-        $job->execute_time = $timedate->nowDb();
         $job->name = "Update ForecastWorksheets";
-        $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->target = "class::SugarJobUpdateForecastWorksheets";
         $job->data = json_encode($data);
         $job->retry_count = 0;
         $job->assigned_user_id = $current_user->id;
-        $job->save();
+
+        require_once('include/SugarQueue/SugarJobQueue.php');
+        $jq = new SugarJobQueue();
+        $jq->submitJob($job);
 
         $mgr_worksheet->commitManagerForecast($current_user, $args['timeperiod_id']);
 

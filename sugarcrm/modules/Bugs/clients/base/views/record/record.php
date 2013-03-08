@@ -75,6 +75,7 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_action' => 'create',
                 ),
+                /*
                 array(
                     'type'  => 'rowaction',
                     'event' => 'button:find_duplicates_button:click',
@@ -96,6 +97,7 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
                     'acl_action' => 'edit',
                 ),
+                */
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'type'  => 'rowaction',

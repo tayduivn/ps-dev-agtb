@@ -430,7 +430,6 @@
      */
     _worksheetSaveHelper: function(saveObj) {
         saveObj.model.set({
-            draft: (saveObj.isDraft == true) ? 1 : 0,
             timeperiod_id: saveObj.timeperiod || this.timePeriod,
             current_user: saveObj.userId || this.selectedUser.id
         }, {silent: true});

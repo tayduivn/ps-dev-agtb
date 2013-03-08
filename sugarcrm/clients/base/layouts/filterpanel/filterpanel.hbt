@@ -1,7 +1,6 @@
 <form class="form-search-related" action="">
     <div class="control-group">
         <div class="filter controls controls-two btn-group-fit">
-            <div class="filter-view search"></div>
             <div class="toggle-actions actions">
                 <div class="btn-group" data-toggle="buttons-radio">
                     {{#each toggles}}

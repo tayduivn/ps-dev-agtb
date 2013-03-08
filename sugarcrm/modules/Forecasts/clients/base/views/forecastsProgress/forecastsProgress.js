@@ -198,11 +198,22 @@
         this.likelyTotal = totals.amount;
         this.bestTotal = totals.best_case;
         this.worstTotal = totals.worst_case;
-        this.model.set({
-            closed_amount : totals.won_amount,
-            opportunities : totals.total_opp_count - totals.lost_count - totals.won_count,
-            revenue : totals.overall_amount - totals.lost_amount - totals.won_amount
-        });
+
+        var _model = {
+            closed_amount: totals.won_amount,
+            opportunities : 0,
+            revenue : 0
+        };
+
+        if (app.user.get('id') != this.selectedUser.id) {
+            _model.revenue = app.math.sub(totals.amount, totals.includedClosedAmount);
+            _model.opportunities = app.math.sub(totals.included_opp_count, totals.includedClosedCount);
+        } else {
+            _model.revenue = app.math.sub(totals.overall_amount, app.math.add(totals.lost_amount, totals.won_amount));
+            _model.opportunities = app.math.sub(totals.total_opp_count, app.math.add(totals.lost_count, totals.won_count));
+        }
+
+        this.model.set(_model);
         this.recalculateModel();
     },
 

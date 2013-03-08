@@ -3019,6 +3019,9 @@ $app_strings = array (
     'LBL_MANAGE_SUBSCRIPTIONS_FOR'=>'Manage Subscriptions for ',
     'LBL_SUBSCRIBE'=>'Subscribe',
     'LBL_UNSUBSCRIBE'=>'Unsubscribe',
+    'LBL_CREATE_LINK_RECORD' => 'Create and Link Record',
+    'LBL_CREATE_LINK_BUTTON_LABEL' => 'Create and Link Record',
+    'ERROR_EMPTY_LINK_MODULE' => 'Please select a module first.',
     // Ajax status strings
     'LBL_LOADING' => 'Loading...',
     'LBL_SEARCHING' => 'Searching...',
@@ -3165,6 +3168,7 @@ $app_strings = array (
     'LBL_NO_IMAGE' => 'No Image',
 
     'LBL_MODULE' => 'Module',
+    'LBL_RELATIONSHIP' => 'Relationship',
 
     //adding a label for address copy from left
     'LBL_COPY_ADDRESS_FROM_LEFT' => 'Copy address from left:',

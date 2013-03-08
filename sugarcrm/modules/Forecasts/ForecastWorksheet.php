@@ -50,51 +50,27 @@ class ForecastWorksheet extends SugarBean
     public $disable_custom_fields = true;
 
     /**
-     * handle saving to the real tables for 6.7.  Currently forecast is mapped to opportunities
-     * and likely_case, worst_case and best_case go to both worksheets and opportunities.
-     *
+     * Update the real table with the values when a save happens on the front end
      *
      * @param bool $check_notify        Should we send the notifications
      */
     public function saveWorksheet($check_notify = false)
     {
-        $opp_id = $this->findOpportunityId();
-
         //Update the Opportunities bean -- should update the product line item as well through SaveOverload.php
-        /* @var $opp Opportunity */
-        $opp = BeanFactory::getBean('Opportunities', $opp_id);
-        $opp->probability = $this->probability;
-        $opp->best_case = $this->best_case;
-        $opp->amount = $this->likely_case;
-        $opp->sales_stage = $this->sales_stage;
-        $opp->commit_stage = $this->commit_stage;
-        $opp->worst_case = $this->worst_case;
-        $opp->commit_stage = $this->commit_stage;
-        $opp->save($check_notify);
-    }
-
-    /**
-     * Find the Opportunity Id for this worksheet
-     *
-     * @return bool|string      Return the SugarGUID for the opportunity if found, otherwise, return false
-     */
-    protected function findOpportunityId()
-    {
-        // check parent type
-        if($this->parent_type == 'Opportunities') {
-            return $this->parent_id;
-        } else if ($this->parent_type == 'Products') {
-            // load the product to get the opp id
-            /* @var $product Product */
-            $product = BeanFactory::getBean('Products', $this->parent_id);
-
-            if($product->id == $this->parent_id) {
-                return $product->opportunity_id;
-            }
+        /* @var $bean Opportunity|Product */
+        $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+        $bean->probability = $this->probability;
+        $bean->best_case = $this->best_case;
+        if ($bean instanceof Product) {
+            $bean->likely_case = $this->likely_case;
+        } else {
+            $bean->amount = $this->likely_case;
         }
-
-        // this should never happen.
-        return false;
+        $bean->sales_stage = $this->sales_stage;
+        $bean->commit_stage = $this->commit_stage;
+        $bean->worst_case = $this->worst_case;
+        $bean->commit_stage = $this->commit_stage;
+        $bean->save($check_notify);
     }
 
     /**
@@ -159,22 +135,33 @@ class ForecastWorksheet extends SugarBean
 
         $this->save(false);
 
+        //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+        $this->saveOpportunityProducts($opp, $isCommit);
+        //END SUGARCRM flav=pro && flav!=ent ONLY
+    }
 
+    /**
+     * Commit All Related Products from an Opportunity
+     *
+     * @param Opportunity $opp
+     * @param $isCommit
+     */
+    public function saveOpportunityProducts(Opportunity $opp, $isCommit = false)
+    {
         // remove the relationship if it exists as it could cause errors with the cached beans in the BeanFactory
-        if(isset($opp->products)) {
+        if (isset($opp->products)) {
             unset($opp->products);
         }
         // now save all related products to the opportunity
         // commit every product associated with the Opportunity
         $products = $opp->get_linked_beans('products', 'Products');
         /* @var $product Product */
-        foreach($products as $product) {
+        foreach ($products as $product) {
             /* @var $product_wkst ForecastWorksheet */
             $product_wkst = BeanFactory::getBean('ForecastWorksheets');
             $product_wkst->saveRelatedProduct($product, $isCommit, $opp);
             unset($product_wkst);   // clear the cache
         }
-
     }
 
     /**
@@ -379,5 +366,96 @@ class ForecastWorksheet extends SugarBean
 
         //todo: forecast_tree
         return $affected_rows;
+    }
+
+    /**
+     * This method emulates the Forecast Rep Worksheet calculateTotals method.
+     *
+     * @param $timeperiod_id
+     * @param $user_id
+     * @param $forecast_by
+     * @return bool
+     */
+    public function worksheetTotals($timeperiod_id, $user_id, $forecast_by)
+    {
+        /* @var $tp TimePeriod */
+        $tp = BeanFactory::getBean('TimePeriods', $timeperiod_id);
+        if (empty($tp->id)) {
+            // timeperiod not found
+            return false;
+        }
+
+        $forecast_by = ucfirst(strtolower($forecast_by));
+
+        // setup the return array
+        $return = array(
+            'amount' => '0',
+            'best_case' => '0',
+            'worst_case' => '0',
+            'overall_amount' => '0',
+            'overall_best' => '0',
+            'overall_worst' => '0',
+            'timeperiod_id' => $tp->id,
+            'lost_count' => '0',
+            'lost_amount' => '0',
+            'won_count' => '0',
+            'won_amount' => '0',
+            'included_opp_count' => 0,
+            'total_opp_count' => 0,
+            'includedClosedCount' => 0,
+            'includedClosedAmount' => '0',
+            'pipeline_amount' => '0',
+            'pipeline_opp_count' => 0,
+        );
+
+        $sq = new SugarQuery();
+        $sq->select(array('*'));
+        $sq->from(BeanFactory::getBean($this->module_name))->where()
+            ->equals('assigned_user_id', $user_id)
+            ->equals('parent_type', $forecast_by)
+            ->equals('deleted', 0)
+            ->equals('draft', 1)
+            ->queryAnd()
+                ->gte('date_closed_timestamp', $tp->start_date_timestamp)
+                ->lte('date_closed_timestamp', $tp->end_date_timestamp);
+        $results = $sq->execute();
+
+        foreach ($results as $row) {
+            $worst_base = SugarCurrency::convertWithRate($row['worst_case'], $row['base_rate']);
+            $amount_base = SugarCurrency::convertWithRate($row['likely_case'], $row['base_rate']);
+            $best_base = SugarCurrency::convertWithRate($row['best_case'], $row['base_rate']);
+
+            $closed_won = false;
+            if ($row['sales_stage'] == Opportunity::STAGE_CLOSED_WON) {
+                $return['won_amount'] = SugarMath::init($return['won_amount'], 6)->add($amount_base)->result();
+                $return['won_count']++;
+                $closed_won = true;
+            } elseif ($row['sales_stage'] == Opportunity::STAGE_CLOSED_LOST) {
+                $return['lost_amount'] = SugarMath::init($return['lost_amount'], 6)->add($amount_base)->result();
+                $return['lost_count']++;
+                $closed_won = true;
+            }
+
+            if ($row['commit_stage'] == "include") {
+                $return['amount'] = SugarMath::init($return['amount'], 6)->add($amount_base)->result();
+                $return['best_case'] = SugarMath::init($return['best_case'], 6)->add($best_base)->result();
+                $return['worst_case'] = SugarMath::init($return['worst_case'], 6)->add($worst_base)->result();
+                $return['included_opp_count']++;
+                if ($closed_won) {
+                    $return['includedClosedCount']++;
+                    $return['includedClosedAmount'] = SugarMath::init($return['includedClosedAmount'], 6)
+                        ->add($amount_base)->result();
+                }
+            }
+
+            $return['total_opp_count']++;
+            $return['overall_amount'] = SugarMath::init($return['overall_amount'], 6)->add($amount_base)->result();
+            $return['overall_best'] = SugarMath::init($return['overall_best'], 6)->add($best_base)->result();
+            $return['overall_worst'] = SugarMath::init($return['overall_worst'], 6)->add($worst_base)->result();
+        }
+
+        // send back the totals
+        return $return;
+
     }
 }

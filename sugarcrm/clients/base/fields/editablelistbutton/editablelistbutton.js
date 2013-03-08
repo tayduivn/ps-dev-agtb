@@ -40,9 +40,7 @@
     },
     cancelEdit: function() {
         this.changed = false;
-        if (!_.isEmpty(this.view.previousModelStates[this.model.id])) {
-            this.model.set(this.view.previousModelStates[this.model.id]);
-        }
+        this.model.revertAttributes();
         this.view.toggleRow(this.model.id, false);
     },
     saveClicked: function(evt) {

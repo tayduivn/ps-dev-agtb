@@ -54,8 +54,53 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp() {
         $this->mock = new SugarApiMock();
+        $this->contact = SugarTestContactUtilities::createContact();
         // We can override the module helpers with mocks.
         ApiHelper::$moduleHelpers = array();
+    }
+
+    public function tearDown() {
+        SugarTestContactUtilities::removeAllCreatedContacts();
+    }
+
+    public function testLoadBeanById_BeanExists_Success() {
+        $this->mock = new SugarApiMock();
+
+        $args = array(
+            'module' => 'Contacts',
+            'record' => $this->contact->id
+        );
+
+       $api = new SugarApiTestServiceMock();
+       $bean=$this->mock->callLoadBean($api, $args);
+
+       $this->assertTrue($bean instanceof Contact);
+       $this->assertEquals($this->contact->id, $bean->id, "Unexpected Contact Loaded");
+    }
+
+    public function testLoadBeanById_BeanNotExists_NotFound() {
+        $this->mock = new SugarApiMock();
+
+        $args = array(
+            'module' => 'Contacts',
+            'record' => '12345'
+        );
+
+        $api = new SugarApiTestServiceMock();
+        $this->setExpectedException('SugarApiExceptionNotFound');
+        $bean=$this->mock->callLoadBean($api, $args);
+    }
+
+    public function testLoadBean_CreateTempBean_Success() {
+        $this->mock = new SugarApiMock();
+
+        $args = array( /* Note: No "record" element */
+            'module' => 'Contacts',
+        );
+
+        $api = new SugarApiTestServiceMock();
+        $this->setExpectedException('SugarApiExceptionMissingParameter');
+        $bean=$this->mock->callLoadBean($api, $args);
     }
 
     public function testFormatBeanCallsTrackView()
@@ -181,10 +226,26 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
+
+// need to make sure ServiceBase is included when extending it to avoid a fatal error
+require_once("include/api/ServiceBase.php");
+
 class SugarApiMock extends SugarApi
 {
     public function htmlEntityDecodeStuff(&$data)
     {
         return parent::htmlDecodeReturn($data);
     }
+
+    public function callLoadBean(ServiceBase $api, $args)
+    {
+        return parent::loadBean($api, $args);
+    }
+}
+
+class SugarApiTestServiceMock extends ServiceBase
+{
+    public function execute() {}
+
+    protected function handleException(Exception $exception) {}
 }

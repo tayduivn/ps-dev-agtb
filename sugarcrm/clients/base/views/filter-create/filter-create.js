@@ -68,17 +68,16 @@
             return !!this.filterOperatorMap[el.type] && !_.isUndefined(el.text);
         }, this);
 
-        this.layout.off("filter:create:new");
+        this.layout.off("filter:create:open");
         this.layout.off("filter:create:close");
-        this.layout.on("filter:create:new", function(filter) {
-            if(_.isUndefined(filter)) {
+        this.layout.on("filter:create:open", function(filterModel) {
+            if (!filterModel) {
                 this.render();
                 this.addRow();
             } else {
-                this.populateFilter(filter);
+                this.populateFilter(filterModel.get("filter_definition"));
             }
             this.$el.removeClass('hide');
-
         }, this);
         this.layout.on("filter:create:close", function() {
             this.$el.addClass('hide');
@@ -372,7 +371,7 @@
             obj.filter.push(fieldParams);
         });
 
-        return obj;
+        return obj.filter;
     },
 
     /**

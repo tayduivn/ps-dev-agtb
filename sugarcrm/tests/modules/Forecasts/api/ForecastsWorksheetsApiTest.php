@@ -86,6 +86,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp("app_list_strings");
         SugarTestHelper::setUp("beanFiles");
         SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp('current_user');
         // get current settings
         self::$admin = BeanFactory::getBean('Administration');
         $adminConfig = self::$admin->getConfigForModule('Forecasts');
@@ -95,6 +96,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
         self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
         self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'forecast_by', 'opportunities', 'base');
 
         // setup the test users
         self::$manager = SugarTestForecastUtilities::createForecastUser();
@@ -179,6 +181,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         //Reset all columns to be hidden
         self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 0, 'base');
         self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 0, 'base');
+        self::$admin->saveSetting('Forecasts', 'forecast_by', 'products', 'base');
         parent::tearDown();
     }
 

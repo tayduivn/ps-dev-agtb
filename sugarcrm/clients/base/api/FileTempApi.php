@@ -64,6 +64,9 @@ class FileTempApi extends FileApi {
      * @throws SugarApiExceptionError
      */
     public function saveTempImagePost($api, $args) {
+        if (!isset($args['record'])) {
+            $args['record'] = null;
+        }
         $temp = true;
         return $this->saveFilePost($api, $args, $temp);
     }
