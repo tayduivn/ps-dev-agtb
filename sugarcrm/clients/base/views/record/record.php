@@ -59,12 +59,6 @@ $viewdefs['base']['view']['record'] = array(
                     'acl_action' => 'edit',
                 ),
                 array(
-                    'type' => 'linkbutton',
-                    'name' => 'create_link_button',
-                    'label' => 'LBL_CREATE_LINK_BUTTON_LABEL',
-                    'acl_action' => 'edit',
-                ),
-                array(
                     'type' => 'rowaction',
                     'event' => 'button:delete_button:click',
                     'name' => 'delete_button',
