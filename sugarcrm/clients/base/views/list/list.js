@@ -151,17 +151,14 @@
     fireSearch:function (term) {
         var options = {
             limit:this.limit || null,
-            params:{},
-            fields:this.collection.fields || {}
+            params:{}
         };
         if(term) {
             options.params.q = term;
         }
-        //TODO: This should be handled automagically by the collection by checking its own tie to the context
-        if (this.context.get('link')) {
-            options.relate = true;
-        }
-        this.collection.fetch(options);
+        this.context.resetLoadFlag(false);
+        this.context.set('skipFetch', false);
+        this.context.loadData(options);
     },
 
     /**
@@ -232,15 +229,14 @@
             self.layout.trigger("list:sort:fire", collection, self);
             if(!self.disposed) self.render();
         };
-        if (this.context.get('link')) {
-            options.relate = true;
-        }
 
         // Display Loading message
         app.alert.show('loading_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_LOADING')});
 
         // refetch the collection
-        collection.fetch(options);
+        self.context.resetLoadFlag(false);
+        self.context.set('skipFetch', false);
+        self.context.loadData(options);
     },
     getSearchOptions:function () {
         var collection, options, previousTerms, term = '';
