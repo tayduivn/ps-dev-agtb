@@ -1,11 +1,6 @@
 <div class="label label-module-sm label-{{module}} pull-left" rel="tooltip" data-title="{{name}}">{{firstChars module 2}}</div> <h4 class="pull-left">{{str layout.name parentModule}} ({{collection.length}})</h4>
 <div class="subpanel-controls btn-toolbar pull-right">
-    <a href="javascript:void(0)" data-toggle="subpanel" class="btn btn-invisible" data-target="{{panel_id}}" data-placement="top"><i class="icon-chevron-down"></i></a>
-    <div class="actions btn-group">
-        <a class="btn" name="create_button" href="javascript:void(0)" rel="tooltip" data-title="Create Related Record"><i class="icon-plus"></i></a>
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-        <ul class="dropdown-menu"><span class="ext"></span>
-            <li><a class="link" href="javascript:void(0)"><i class="icon-pencil"></i> Link Related Records</a></li>
-        </ul>
-    </div>
+    {{#each meta.buttons}}
+        {{field ../this}}
+    {{/each}}
 </div>
