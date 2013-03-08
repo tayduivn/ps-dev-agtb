@@ -15,10 +15,9 @@
         </div>
         <div class="span10">
           <span sfuuid="1">
-              <div class="input-append error">
-                  <input type="text" name="name" value="" class="input-large">
-                  <span class="error-tooltip  add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span>
-              </div>
+            <input type="text" name="name" value="" class="input-large"> <span><i class="icon-info-sign" rel="popover" data-content="This will have an explanation on what is going on." data-original-title="Legacy Item"></i></span>
+            <p class="help-block">
+            </p>
           </span>
           <p class="help-block">
           </p>
@@ -859,23 +858,19 @@ Error: This field is required, very log validation message this isvery log valid
   });
 
   $('.error input, .error textarea').on('focus', function(){
-      $(this).next().tooltip({
-              trigger: 'hover',
-              container: 'body'
-          }).tooltip('show');
+      $(this).next().tooltip('show');
   });
 
   $('.error input, .error textarea').on('blur', function(){
-    $(this).next().tooltip({
-            trigger: 'hover',
-            container: 'body'
-        }).tooltip('hide');
+      $(this).next().tooltip('hide');
   });
 
-  $('.error .image_field .error-tooltip').tooltip({
-        trigger: 'click',
-        container: 'body'
-    });
+  $('.add-on')
+      .tooltip('destroy')  // I cannot find where _this_ tooltip gets initialised with 'hover', so i detroy it first, -f1vlad
+      .tooltip({
+          trigger: 'click',
+          container: 'body'
+  });
 
   $('.preview.avatar').click(function(e){
       $(this).closest('.span10').find('label.file-upload span strong').trigger('click');

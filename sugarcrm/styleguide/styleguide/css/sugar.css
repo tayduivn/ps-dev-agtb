@@ -521,7 +521,7 @@ code {
   padding-right: 14px;
 }
 .tooltip {
-  z-index: 1035;
+  z-index: 1050;
   text-shadow: none;
   font-weight: normal;
   word-wrap: break-word;
@@ -4504,9 +4504,6 @@ input[type=radio] {
   top: 1px;
   right: 0;
 }
-.input-append.textarea {
-  display: inline;
-}
 .input-append input {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -5106,13 +5103,19 @@ input[type="color"].error,
 .error input:focus + span.error-tooltip > i {
   display: none;
 }
-.error .control-group.email input {
-  border-color: #58595B;
-  color: #58595B;
+.error textarea {
+  border-color: #b60000 !important;
+  color: #b60000 !important;
 }
-.error .control-group.email .input-append.error input {
-  border-color: #b60000;
-  color: #b60000;
+.error .control-group.email input,
+.error[data-type=fieldset] input {
+  border-color: #58595B !important;
+  color: #58595B !important;
+}
+.error .control-group.email .input-append.error input,
+.error[data-type=fieldset] .error input {
+  border-color: #b60000 !important;
+  color: #b60000 !important;
 }
 .error>div:first-child,
 .error>div:first-child label,
@@ -6099,7 +6102,7 @@ header .subnav {
     top: 47px;
     left: 0;
     right: 0;
-    z-index: 1035;
+    z-index: 1050;
     border-width: 0 0 1px !important;
     -webkit-border-radius: 0px !important;
     -moz-border-radius: 0px !important;
