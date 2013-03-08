@@ -230,6 +230,12 @@
         this.initButtons();
         this.setButtonStates(this.STATE.VIEW);
         this.setEditableFields();
+
+        if (this.createMode) {
+            // RecordView starts with action as detail; once this.editableFields has been set (e.g.
+            // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
+            this.toggleFields(this.editableFields, true);
+        }
     },
 
     setEditableFields: function() {
