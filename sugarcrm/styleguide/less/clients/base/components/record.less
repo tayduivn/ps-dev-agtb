@@ -47,11 +47,11 @@
     top: -17px;
     padding-top: 14px;
     .record-cell {
-      padding: 13px 0 0;
+      padding: 0;
     }
   }
   .ellipsis_inline {
-    padding: 4px 0;
+    padding: 17px 0 0;
   }
 
   span[data-type="image"] {
@@ -69,10 +69,10 @@
   span {
     &[data-type="text"],
     &[data-type="int"] {
-      top: 0;
       padding-top: 0;
-      div {
-        padding: 0;
+      [data-fieldname="bug_number"] span {
+        padding-top: 17px;
+        display: inline-block;
       }
     }
   }
@@ -118,8 +118,6 @@
     color: lighten(@gray, 12%);
     line-height: 14px;
     margin: 0 0 0 8px;
-    position: absolute;
-    top: 0;
   }
 
   input[type="text"] {
