@@ -38,5 +38,9 @@ $viewdefs["Emails"]["base"]["view"]["compose-signatures-headerpane"] = array(
             "label"     => "LBL_CANCEL_BUTTON_LABEL",
             "css_class" => "btn-invisible btn-link",
         ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
     ),
 );
