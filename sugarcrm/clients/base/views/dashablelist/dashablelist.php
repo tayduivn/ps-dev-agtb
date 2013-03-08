@@ -80,14 +80,14 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'config' => array(
                 'module' => 'Leads',
                 'display_columns' => array(
-                    'name', 'title', 'phone_work', 'email'
+                    'name', 'phone_work', 'email'
                 ),
                 'my_items' => '1',
             ),
             'preview' => array(
                 'module' => 'Leads',
                 'display_columns' => array(
-                    'name', 'title', 'phone_work', 'email'
+                    'name', 'phone_work', 'email'
                 ),
                 'my_items' => '1',
             ),
