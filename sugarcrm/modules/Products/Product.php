@@ -806,7 +806,7 @@ class Product extends SugarBean
                                                        // query adds the prefix so we don't need contact.id
                                                        'lhs_field'=>'sales_status',
                                                        'operator'=>'=',
-                                                       'rhs_value'=>$GLOBALS['db']->quote(Opportunity::STATUS_IN_PROGRESS),
+                                                       'rhs_value'=>$this->db->quote(Opportunity::STATUS_IN_PROGRESS),
                                                        ),
                                                     'deleted'=>'0'));
                 //if productLineItems found with In Progress Sales Status and the Opp sales stage is New, bump to In Progress
@@ -822,7 +822,7 @@ class Product extends SugarBean
                                                        // query adds the prefix so we don't need contact.id
                                                        'lhs_field'=>'sales_status',
                                                        'operator'=>'=',
-                                                       'rhs_value'=>$GLOBALS['db']->quote(Opportunity::STAGE_CLOSED_WON),
+                                                       'rhs_value'=>$this->db->quote(Opportunity::STAGE_CLOSED_WON),
                                                        ),
                                                     'deleted'=>'0'));
                 //if the amount of Closed Won Products found matches the number of products for the Opportunity
@@ -839,7 +839,7 @@ class Product extends SugarBean
                                                        // query adds the prefix so we don't need contact.id
                                                        'lhs_field'=>'sales_status',
                                                        'operator'=>'=',
-                                                       'rhs_value'=>$GLOBALS['db']->quote(Opportunity::STAGE_CLOSED_LOST),
+                                                       'rhs_value'=>$this->db->quote(Opportunity::STAGE_CLOSED_LOST),
                                                        ),
                                                     'deleted'=>'0'));
                 //if the amount of Closed Lost Products found matches the number of products for the Opportunity

@@ -435,6 +435,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group products
+     * @group opportunities
      */
     public function testProductCreatedUpdatesNewOpportunitySalesStatusNew()
     {
@@ -464,6 +465,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProviderTestHandleOppStalesStatus
      * @group products
+     * @group opportunities
      *
      * @param $productLineItemStatus status to set product line item(s) to
      * @param $expectedOppSalesStatus status expected to see on opportunity
@@ -525,6 +527,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group products
+     * @group opportunities
      */
     public function testProductSaveCallsHandleOppSalesStatus()
     {
