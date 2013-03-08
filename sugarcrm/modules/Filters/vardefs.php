@@ -28,10 +28,9 @@
 
 $dictionary['Filters'] = array(
 	'table'=>'filters',
-	'audited'=>true,
 		'duplicate_merge'=>true,
 		'fields'=>array (
-  'filter_definition' => 
+  'filter_definition' =>
   array (
     'required' => true,
     'name' => 'filter_definition',
@@ -56,33 +55,13 @@ $dictionary['Filters'] = array(
     'cols' => '20',
   ),
 
-  'module_name' => 
+  'module_name' =>
   array (
     'required' => true,
     'name' => 'module_name',
     'vname' => 'LBL_MODULE_NAME',
     'dbType' => 'text',
     'type' => 'text',
-    'massupdate' => 0,
-    'no_default' => false,
-    'comments' => '',
-    'help' => '',
-    'importable' => 'true',
-    'duplicate_merge' => 'disabled',
-    'duplicate_merge_dom_value' => '0',
-    'audited' => false,
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-    'calculated' => false,
-  ),
-  'default_filter' => 
-  array (
-    'required' => true,
-    'name' => 'default_filter',
-    'vname' => 'LBL_DEFAULT_FILTER',
-    'dbType' => 'int',
-    'type' => 'bool',
     'massupdate' => 0,
     'no_default' => false,
     'comments' => '',
