@@ -167,6 +167,9 @@ describe("Create View", function() {
 
             expect(user_id).toEqual(current_user_id);
             expect(full_name).toEqual(current_user_name);
+
+            expect(view.model._defaults.assigned_user_id).toBe(user_id);
+            expect(view.model._defaults.assigned_user_name).toBe(full_name);
         });
 
 
