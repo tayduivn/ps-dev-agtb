@@ -21,6 +21,7 @@ table.dataTable {
   TABLE BODY*/
   tbody {
     tr {
+      //from tables.less?
       &:last-child {
         td:last-child,
         td:first-child,
@@ -37,20 +38,34 @@ table.dataTable {
           }
         }
       }
+      div.sugareditable {
+        td {
+          overflow: visible;
+          &> *:not(.overflow-visible) {
+            overflow: visible;
+          }
+        }
+      }
       &.tr-inline-edit {
         td {
           &> span {
             width: 100%;
           }
           overflow: visible;
-          background: #E5F4FB;
+          background: #e5f1fc;
           padding-bottom: 0;
           vertical-align: top;
-          &:first-child .btn {
-            margin-left: 0;
+          &:first-child {
+            padding-top: 10px;
+            .btn {
+              margin-left: 0;
+            }
           }
-          &:first-child .btn {
-            float: right;
+          &:first-child {
+            padding-top: 10px;
+            .btn {
+              float: right;
+            }
           }
           &> *:not(.overflow-visible) {
             overflow: visible;
@@ -77,6 +92,26 @@ table.dataTable {
             }
           }
         }
+
+// from Wes, I think I already fixed these by ajusting padding
+/*+    input {
++      margin: -5px 0 -5px -7px;
++      position: relative;
++      width: 99%;
++    }
++    .select2-container {
++      margin: -5px 0 -5px -7px;
++    }
++    .select2-container .select2-choice {
++      position: relative;
++      height: 26px;
++      margin: 0;
++    }
++    .inline-cancel {
++      margin: -5px 0 0 -10px;
++    }*/
+
+
       }
     }
     td {
@@ -90,7 +125,7 @@ table.dataTable {
       &> *:not(.overflow-visible) {
         overflow-x: hidden;
         text-overflow: ellipsis;
-        max-width: 100px;
+        max-width: 100%;
         display: inline-block;
         white-space: nowrap;
         word-break: break-word;
@@ -107,7 +142,7 @@ table.dataTable {
   /* ---------
   TABLE ROW*/
   tr:last-child td {
-    border-bottom: 1px solid @grayLight !important;
+    border-bottom-size: 2px;
   }
 
   //for preview
@@ -147,19 +182,6 @@ table.dataTable {
     position: relative;
     vertical-align: middle;
   }
-  th:first-child,
-  td:first-child {
-    padding-left: 20px;
-    padding-right: 0;
-    width: 30px;
-    overflow-x: visible;
-  }
-  th:last-child,
-  td:last-child {
-    width: 60px;
-    border-right: 0;
-    overflow-x: visible;
-  }
 
   /* ---------
   TABLE HEADER*/
@@ -168,11 +190,12 @@ table.dataTable {
     min-width: 20px;
     margin-top: 0px !important;
     font-weight:normal;
+    font-size: @fontSizeSmall;
     color: @tableHeader;
     border-right: 1px solid darken(@grayLighter,5%);
     .rtl(@direction,ltr);
     a {
-      color:@gray;
+      color:@grayLight;
       text-decoration:none;
     }
     &.sorting {
@@ -181,7 +204,6 @@ table.dataTable {
     &.sorting_asc,
     &.sorting_desc {
       font-weight: bold;
-      .box-shadow(none);
     }
     &.header-quota {
       min-width: 70px;
@@ -213,6 +235,9 @@ table.dataTable {
   /* ---------
   TABLE CELL*/
   td {
+    border-top: 1px solid darken(@grayLighter, 5%);
+    border-bottom: 1px solid darken(@grayLighter, 5%);
+    background-color: @white;
     .rtl(@direction,ltr);
     &.details {
       padding: 0px;
@@ -238,10 +263,10 @@ table.dataTable {
       }
     }
     .actions {
-      //position: absolute;
-      //right: 8px;
       display:inline-block;
-      //top: 0;
+      white-space: nowrap;
+      margin: 0;
+      float: right;
       span {
         width: 13px;
       }
@@ -253,8 +278,8 @@ table.dataTable {
       &.open a .icon-eye-open {
         color: @gray !important;
       }
-      ul.dropdown-menu {
-        padding: 10px 0 0;
+      .dropdown-menu {
+        padding: 0;
         li:first-child a {
           border-top:none;
         }
@@ -341,6 +366,25 @@ table.dataTable {
   .active .icon-star {
     color: @orange;
   }
+
+  th:first-child,
+  td:first-child {
+    overflow-x: visible;
+    padding-left: 15px;
+    padding-right: 0;
+    width: 30px;
+  }
+
+  th:last-child,
+  td:last-child {
+    max-width: 60px;
+    min-width: 60px;
+    padding: 0 8px 0 5px;
+    width: 60px;
+    vertical-align: middle;
+    overflow-x: visible;
+    border-right: 0;
+  }
 }
 
 .dataTables_filter {
@@ -365,8 +409,26 @@ table.dataTable {
 
 .morecol {
   text-align: center !important;
-  padding: 8px 23px !important;
+  font-weight: bold;
+  color: @gray;
   .dropdown-menu {
     text-align: left !important;
+    font-size: @baseFontSize;
+    font-weight: normal;
+    color: @grayLight;
+    a {
+      padding-left: 22px;
+    }
+    .active {
+      color: @gray;
+      font-weight: bold;
+      padding-left: 0;
+      margin-left: 0;
+    }
+    .active .icon-ok {
+      color: @gray;
+      font-weight: normal;
+      margin-right: 5px;
+    }
   }
 }
