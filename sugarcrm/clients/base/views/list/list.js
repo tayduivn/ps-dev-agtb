@@ -66,7 +66,8 @@
         options.meta = _.extend({}, listViewMeta, JSON.parse(JSON.stringify(options.meta || {})));
         options.meta.type = options.meta.type || 'list';
 
-        this.action = 'list';
+        options.meta.action = 'list';
+
         app.view.View.prototype.initialize.call(this, options);
 
         this.fallbackFieldTemplate = 'list-header';
