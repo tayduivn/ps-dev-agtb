@@ -46,6 +46,7 @@ describe("Module List", function() {
         });
 
         afterEach(function() {
+            view.dispose();
             modStrings.restore();
             isAuthenticatedStub.restore();
             getModuleNamesStub.restore();

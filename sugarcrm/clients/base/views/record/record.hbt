@@ -1,5 +1,6 @@
 <div data-tour="tour-{{module}}-businesscard">
     {{#if model.isNotEmpty}}
+        {{#if enableHeaderPane}}
         <div class="headerpane">
             {{#each meta.panels}}
                 {{#if header}}
@@ -43,6 +44,7 @@
             </div>
             {{/if}}
         </div>
+        {{/if}}
         <div class="record">
             {{#each meta.panels}}
                 {{#unless header}}

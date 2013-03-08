@@ -20,24 +20,32 @@
  ********************************************************************************/
 
 describe("forecast editableEnum field", function() {
-    var field, fieldDef, context, model, e;
+    var field, fieldDef, context, model, e, getModuleStub;
     
     beforeEach(function() {
-        fieldDef = {
-                "name": "sales_stage",
-                "type": "editableEnum",
-                "options": "sales_stage_dom",
-                "view": "default"
-            };
-        
         app = SugarTest.app;
         app.user.id = "tester";
-                
+
+        fieldDef = {
+            "name": "sales_stage",
+            "type": "editableEnum",
+            "options": "sales_stage_dom",
+            "view": "default"
+        };
+
+        getModuleStub = sinon.stub(app.metadata, "getModule", function() {
+            return {
+                sales_stage_won: ["Closed Won"],
+                sales_stage_lost: ["Closed Lost"]
+            };
+        });
+
         context = app.context.getContext();
         SugarTest.loadComponent('base', 'field', 'enum');
     });
     
     afterEach(function(){
+        getModuleStub.restore();
         app.user.id = null;
         delete app;
     });
@@ -222,6 +230,21 @@ describe("forecast editableEnum field", function() {
                 expect(field.def.view).toBe("default");
             });
         });        
+    });
+
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(field, 'render');
+
+            field.resetField();
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            field.disposed = true;
+            field.resetField();
+            expect(renderStub).not.toHaveBeenCalled();
+
+        });
     });
 
     describe("isEditable with sales_stage set", function() {
