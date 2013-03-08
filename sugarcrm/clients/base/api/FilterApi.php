@@ -215,7 +215,16 @@ class FilterApi extends SugarApi
         $q = new SugarQuery();
         // Just need ID, we need to fetch beans so we can format them later.
         $q->from($seed);
-        $q->select(isset($options['select']) ? $options['select'] : array('id'));
+        if(empty($options['select'])) {
+            $options['select'] = array('id', 'date_modified');
+        }
+        $fields = array();
+        foreach($options['select'] as $field) {
+            if(!empty($seed->field_defs[$field])) {
+                $fields[] = $field;
+            }
+        }
+        $q->select($fields);
         $q->distinct(true);
         $q->where()->equals("deleted", 0);
 
@@ -245,14 +254,13 @@ class FilterApi extends SugarApi
                 continue;
             }
             if (empty($args['fields'])){
-                //Without a field list, we need to just do a full retrieve to make sure we get the entire bean.
+                //FIXME: Without a field list, we need to just do a full retrieve to make sure we get the entire bean.
                 $bean = BeanFactory::getBean($options['module'], $row['id']);
             } else {
                 $bean = clone $seed;
-                $seed->populateFromRow($row);
+                $seed->populateFromRow($seed->convertRow($row));
             }
             if ($bean && !empty($bean->id)) {
-                // Sometimes team security changes mid-query
                 $beans[] = $bean;
             }
         }
@@ -396,12 +404,12 @@ class FilterApi extends SugarApi
                     ."AND tracker.user_id='{$GLOBALS['current_user']->id}' ",array('alias'=>'tracker'));
 
         $td = new SugarDateTime();
-        $td->modify($interval);        
+        $td->modify($interval);
         $where->addRaw("tracker.date_modified >= '".$td->asDb()."' ");
 
         // Now, if they want tracker records, so let's order it by the tracker date_modified
         $q->order_by = array(array('tracker.date_modified','DESC'));
-        
+
         // Also, turn the distinct part off otherwise the sorting doesn't work.
         $q->distinct(false);
     }
