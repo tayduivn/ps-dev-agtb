@@ -61,11 +61,15 @@
      */
     onClick : function(evt) {
         evt.preventDefault();
-        if (!this.isEditable()) return;
+        if (!this.isEditable()) {
+            return;
+        }
 
         //this.options.viewName = 'edit';
         this.options.def.view = 'edit';
-        this.render();
+        if (!this.disposed) {
+            this.render();
+        }
 
         // put the focus on the input
         this.$el.find(this.inputSelector).focus().select();
@@ -114,7 +118,9 @@
         evt.preventDefault();
         //this.options.viewName = 'detail';
         this.options.def.view = 'detail';
-        this.render();
+        if (!this.disposed) {
+            this.render();
+        }
     },
 
     /**
