@@ -1,0 +1,17 @@
+<div class="inset-form">
+    <article class="filter-header clearfix">
+        <div class="row-fluid">
+            <div class="controls filter-field span3">
+                <label class="tright" for="relationship">{{str "LBL_RELATIONSHIP"}}</label>
+            </div>
+            <div class="controls filter-value span7">
+                <select class="select2" id="relationship">
+                    <option></option>
+                    {{#eachOptions this.linkModules}}
+                        <option value="{{key}}">{{str value.label ../this.module}}</option>
+                    {{/eachOptions}}
+                </select>
+            </div>
+        </div>
+    </article>
+</div>

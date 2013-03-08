@@ -57,9 +57,12 @@
 
         _.each(fields, function(field){
             if(((field.name && field.name==='assigned_user_id') || (field.id_name && field.id_name==='assigned_user_id')) &&
-               (field.type && field.type==='relate')) {
+                (field.type && field.type==='relate')) {
                     this.model.set('assigned_user_id', app.user.id);
                     this.model.set('assigned_user_name', app.user.attributes.full_name);
+                    this.model._defaults = this.model._defaults || {};
+                    this.model._defaults['assigned_user_id'] = app.user.id;
+                    this.model._defaults['assigned_user_name'] = app.user.attributes.full_name;
             }
         }, this);
 
@@ -304,7 +307,8 @@
             fieldsToValidate: self.getFields(self.module),
             success: success,
             error: error,
-            viewed: true
+            viewed: true,
+            relate: (self.model.link) ? true : null
         };
 
         options = _.extend({}, options, self.getCustomSaveOptions());

@@ -39,10 +39,10 @@
  * @copyright  2009-2012 Robert Hafner <tedivm@tedivm.com>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       https://github.com/tedivm/JShrink
- * @version    Release: 0.4
+ * @version    Release: 0.5.1
  */
 
-// Some changes done by Akshay Joshi to preserve compatibility with PHP 5.2.
+ namespace JShrink;
 
 /**
  * Minifier
@@ -51,7 +51,6 @@
  * Usage - Minifier::minify($js, $options);
  * Usage - Minifier::minify($js, array('flaggedComments' => false));
  *
- * @version 0.4
  * @package JShrink
  * @author  Robert Hafner <tedivm@tedivm.com>
  * @license http://www.opensource.org/licenses/bsd-license.php  BSD License
@@ -66,7 +65,8 @@ class Minifier
     protected $input;
 
     /**
-     * The location of the character (in the input string) that is next to be processed.
+     * The location of the character (in the input string) that is next to be
+     * processed.
      *
      * @var int
      */
@@ -102,22 +102,25 @@ class Minifier
     protected $options;
 
     /**
-     * Contains the default options for minification. This array is merged with the one passed in by the user to create
-     * the request specific set of options (stored in the $options attribute).
+     * Contains the default options for minification. This array is merged with
+     * the one passed in by the user to create the request specific set of
+     * options (stored in the $options attribute).
      *
      * @var array
      */
     static protected $defaultOptions = array('flaggedComments' => true);
 
     /**
-     * Contains a copy of the JShrink object used to run minification. This is only used internally, and is only stored
-     * for performance reasons. There is no internal data shared between minification requests.
+     * Contains a copy of the JShrink object used to run minification. This is
+     * only used internally, and is only stored for performance reasons. There
+     * is no internal data shared between minification requests.
      */
     static protected $jshrink;
 
     /**
-     * Minifier::minify takes a string containing javascript and removes unneeded characters in order to shrink the code
-     * without altering it's functionality.
+     * Minifier::minify takes a string containing javascript and removes
+     * unneeded characters in order to shrink the code without altering it's
+     * functionality.
      */
     static public function minify($js, $options = array())
     {
@@ -141,7 +144,8 @@ class Minifier
     }
 
     /**
-     * Processes a javascript string and outputs only the required characters, stripping out all unneeded characters.
+     * Processes a javascript string and outputs only the required characters,
+     * stripping out all unneeded characters.
      *
      * @param string $js The raw javascript to be minified
      * @param array $currentOptions Various runtime options in an associative array
@@ -155,13 +159,13 @@ class Minifier
 
         $js = str_replace("\r\n", "\n", $js);
         $this->input = str_replace("\r", "\n", $js);
-        $this->input = preg_replace('/\h/u', ' ', $this->input);
 
 
         $this->a = $this->getReal();
 
-        // the only time the length can be higher than 1 is if a conditional comment needs to be displayed
-        // and the only time that can happen for $a is on the very first run
+        // the only time the length can be higher than 1 is if a conditional
+        // comment needs to be displayed and the only time that can happen for
+        // $a is on the very first run
         while(strlen($this->a) > 1)
         {
             echo $this->a;
@@ -173,7 +177,8 @@ class Minifier
         while($this->a !== false && !is_null($this->a) && $this->a !== '')
         {
 
-            // now we give $b the same check for conditional comments we gave $a before we began looping
+            // now we give $b the same check for conditional comments we gave $a
+            // before we began looping
             if(strlen($this->b) > 1)
             {
                 echo $this->a . $this->b;
@@ -186,8 +191,9 @@ class Minifier
             {
                 // new lines
                 case "\n":
-                    // if the next line is something that can't stand alone preserve the newline
-                    if($this->b != '' && strpos('(-+{[@', $this->b) !== false)
+                    // if the next line is something that can't stand alone
+                    // preserve the newline
+                    if(strpos('(-+{[@', $this->b) !== false)
                     {
                         echo $this->a;
                         $this->saveString();
@@ -281,9 +287,10 @@ class Minifier
     }
 
     /**
-     * This function gets the next "real" character. It is essentially a wrapper around the getChar function that skips
-     * comments. This has signifigant peformance benefits as the skipping is done using native functions (ie, c code)
-     * rather than in script php.
+     * This function gets the next "real" character. It is essentially a wrapper
+     * around the getChar function that skips comments. This has significant
+     * performance benefits as the skipping is done using native functions (ie,
+     * c code) rather than in script php.
      *
      * @return string Next 'real' character to be processed.
      */
@@ -307,7 +314,7 @@ class Minifier
                 {
                     $endPoint = ($this->index) - $startIndex;
                     unset($this->c);
-                    $char = "\n" . substr($this->input, $startIndex, $endPoint);// . "\n";
+                    $char = "\n" . substr($this->input, $startIndex, $endPoint);
                 }else{
                     $char = $this->getChar();
                     $char = $this->getChar();
@@ -322,8 +329,9 @@ class Minifier
                 {
                     // conditional comment
 
-                    // we're gonna back up a bit and and send the comment back, where the first
-                    // char will be echoed and the rest will be treated like a string
+                    // we're gonna back up a bit and and send the comment back,
+                    // where the first char will be echoed and the rest will be
+                    // treated like a string
                     $this->index = $this->index-2;
                     return '/';
 
@@ -347,7 +355,7 @@ class Minifier
                 }
 
                 if($char === false)
-                    throw new RuntimeException('Stray comment. ' . $this->index);
+                    throw new \RuntimeException('Stray comment. ' . $this->index);
 
                 // if we're here c is part of the comment and therefore tossed
                 if(isset($this->c))
@@ -358,10 +366,10 @@ class Minifier
     }
 
     /**
-     * Pushes the index ahead to the next instance of the supplied string. If it is found the first character of the
-     * string is returned.
+     * Pushes the index ahead to the next instance of the supplied string. If it
+     * is found the first character of the string is returned.
      *
-     * @return string|false Returns the first character of the string if found, false otherwise.
+     * @return string|false Returns the first character of the string or false.
      */
     protected function getNext($string)
     {
@@ -375,7 +383,8 @@ class Minifier
     }
 
     /**
-     * When a javascript string is detected this function crawls for the end of it and saves the whole string.
+     * When a javascript string is detected this function crawls for the end of
+     * it and saves the whole string.
      *
      */
     protected function saveString()
@@ -397,7 +406,7 @@ class Minifier
                         break 2;
 
                     case "\n":
-                        throw new RuntimeException('Unclosed string. ' . $this->index);
+                        throw new \RuntimeException('Unclosed string. ' . $this->index);
                         break;
 
                     case '\\':
@@ -409,7 +418,8 @@ class Minifier
     }
 
     /**
-     * When a regular expression is detected this funcion crawls for the end of it and saves the whole regex.
+     * When a regular expression is detected this funcion crawls for the end of
+     * it and saves the whole regex.
      */
     protected function saveRegex()
     {
@@ -427,7 +437,7 @@ class Minifier
             }
 
             if($this->a == "\n")
-                throw new RuntimeException('Stray regex pattern. ' . $this->index);
+                throw new \RuntimeException('Stray regex pattern. ' . $this->index);
 
             echo $this->a;
         }
@@ -435,7 +445,8 @@ class Minifier
     }
 
     /**
-     * Resets attributes that do not need to be stored between requests so that the next request is ready to go.
+     * Resets attributes that do not need to be stored between requests so that
+     * the next request is ready to go.
      */
     protected function clean()
     {
