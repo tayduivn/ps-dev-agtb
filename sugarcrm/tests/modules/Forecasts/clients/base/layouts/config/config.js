@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts config layout controller", function(){
+describe("forecasts_layout_config", function(){
     var app, layout, stubs, indexLayout;
 
     beforeEach(function() {
@@ -50,7 +50,7 @@ describe("The forecasts config layout controller", function(){
             selectedUser: {}
         };
 
-        stubs.push(sinon.stub(app.metadata, "getLayout", function(layout){
+        stubs.push(sinon.stub(app.metadata, "getLayout", function(){
             return {
                 forecasts: {
                     meta: {
@@ -60,13 +60,13 @@ describe("The forecasts config layout controller", function(){
                 componentsMeta: {}
             };
         }));
-        stubs.push(sinon.stub(app.metadata, "getModule", function(module){
+        stubs.push(sinon.stub(app.metadata, "getModule", function(){
             return {
                 config : {
                 }
             };
         }));
-        stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
+        stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function () {}));
         stubs.push(sinon.stub(app.api, "call"));
         indexLayout = SugarTest.createComponent('Layout', {
             name: "records",
@@ -109,9 +109,9 @@ describe("The forecasts config layout controller", function(){
         });
 
         afterEach(function() {
-            delete options;
-            delete testLayout;
-            delete baseIndexLayout;
+            options = null;
+            testLayout = null;
+            baseIndexLayout = null;
         });
 
         it("should get a model", function() {
@@ -168,12 +168,12 @@ describe("The forecasts config layout controller", function(){
         });
 
         afterEach(function() {
-            delete options;
-            delete testLayout;
-            delete baseIndexLayout;
-            delete homeLocation;
-            delete forecastsLocation;
-            delete state;
+            options = null;
+            testLayout = null;
+            baseIndexLayout = null;
+            homeLocation = null;
+            forecastsLocation = null;
+            state = null;
         });
        it("should go home if not admin", function() {
            state = {

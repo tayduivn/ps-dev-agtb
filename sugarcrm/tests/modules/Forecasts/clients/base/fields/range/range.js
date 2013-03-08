@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("Range field", function() {
+describe("forecasts_field_range", function() {
     var app, field, fieldDef;
 
     beforeEach(function() {
@@ -38,9 +38,9 @@ describe("Range field", function() {
     afterEach(function() {
         app.view.Field.prototype._render.restore();
         app.view.Field.prototype.initialize.restore();
-        delete field;
-        delete fieldDef;
-        delete app;
+        field = null;
+        fieldDef = null;
+        app = null;
     });
 
     it("should have the selector stored for the relevant DOM element", function() {
@@ -59,7 +59,7 @@ describe("Range field", function() {
 
         beforeEach(function() {
             field.model = {
-                set: function(key, value) {  }
+                set: function() {  }
             };
 
             // we aren't calling from the event, so we have to fake a context switch, instead, we just add the things
@@ -132,7 +132,7 @@ describe("Range field", function() {
     describe("_sliderChange method", function() {
         beforeEach(function() {
             field.model = {
-                set: function(key, value) {  }
+                set: function() {  }
             };
 
             // we aren't calling from the event, so we have to fake a context switch, instead, we just add the things
@@ -211,7 +211,7 @@ describe("Range field", function() {
 
         afterEach(function() {
             field._setupSlider.restore();
-        })
+        });
 
         it("should render the field", function() {
             expect(app.view.Field.prototype._render).toHaveBeenCalled();
@@ -316,7 +316,7 @@ describe("Range field", function() {
             field.model.set.restore();
             field.model.get.restore();
             delete field.model;
-        })
+        });
 
         it("should retrieve the start positions from the model", function() {
             field._setupSliderStartPositions();
@@ -350,7 +350,7 @@ describe("Range field", function() {
             field.def.minRange = 15;
             expect(field._setupSliderStartPositions()).toEqual([field.def.minRange, 100]);
             delete field.def.minRange;
-        })
+        });
 
         it("should be [0, 100] if there is no value in the model and both minRange and maxRange are not set in metadata", function() {
             expect(field._setupSliderStartPositions()).toEqual([0, 100]);
@@ -383,7 +383,7 @@ describe("Range field", function() {
             field._setupSliderStartPositions.restore();
             field._addStyle.restore();
             el.noUiSlider.restore();
-            delete el;
+            el = null;
         });
 
         it("should add a noUiSlider jquery object on the fieldTag element", function () {
@@ -447,7 +447,7 @@ describe("Range field", function() {
 
         beforeEach(function() {
             el = {
-                noUiSlider: function(action, settings) { }
+                noUiSlider: function() { }
             };
             sinon.stub(el, "noUiSlider", function(){ return [43, 78]; });
         });

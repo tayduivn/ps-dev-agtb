@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts filter view", function () {
+describe("forecasts_view_forecastsFilter", function () {
 
     var app, view;
 
@@ -36,16 +36,16 @@ describe("The forecasts filter view", function () {
     });
 
     afterEach(function() {
-        delete view;
-        delete app;
-    })
+        view = null;
+        app = null;
+    });
 
     describe("when rendering", function() {
         beforeEach(function() {
             sinon.stub(app.view.View.prototype, "_render");
             view.$ = function(stuff) {
                 return stuff;
-            }
+            };
             sinon.stub(view, "_getRangeFilters");
             sinon.stub(view, "_setUpFilters");
             sinon.stub(view, "toggleRangesFieldVisibility");

@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts title view", function () {
+describe("forecasts_view_forecastsTitle", function () {
 
     var app, view, testMethodStub, context, viewController, stubs = [];
 

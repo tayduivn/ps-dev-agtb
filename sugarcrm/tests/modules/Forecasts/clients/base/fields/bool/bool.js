@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecast bool field", function() {
+describe("forecasts_field_bool", function() {
     var fieldDef, field, model;
 
     describe("test detail (default) view", function() {

@@ -19,12 +19,12 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecastsConfigRanges view", function() {
+describe("forecasts_view_forecastsConfigRanges", function() {
     var app, view, testStub, addHandlerStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        sinon.stub(app.metadata, "getModule", function(module, type) {
+        sinon.stub(app.metadata, "getModule", function() {
             return {
                 has_commits: 1,
                 forecast_ranges: 'show_binary'
@@ -38,8 +38,8 @@ describe("The forecastsConfigRanges view", function() {
 
     afterEach(function() {
         app.metadata.getModule.restore();
-        delete view;
-        delete app;
+        view = null;
+        app = null;
     });
 
     it("should have a label parameter to hold the label from metadata for the template", function() {
@@ -136,7 +136,7 @@ describe("The forecastsConfigRanges view", function() {
                 });
                 // Restore stub to set it custom for these tests
                 app.metadata.getModule.restore();
-                sinon.stub(app.metadata, "getModule", function(module, type) {
+                sinon.stub(app.metadata, "getModule", function() {
                     return {
                         has_commits: 1,
                         forecast_ranges: 'test_ranges',
@@ -242,7 +242,7 @@ describe("The forecastsConfigRanges view", function() {
 
             // stub view.$el
             view.$el = {
-                find: function(key) {
+                find: function() {
                     return {
                         children: function() {
                             return [];
@@ -425,8 +425,7 @@ describe("The forecastsConfigRanges view", function() {
     });
 
     describe("test addCustomRange method", function() {
-        var lastRange,
-            options,
+        var options,
             ranges;
 
         beforeEach(function() {
@@ -448,7 +447,7 @@ describe("The forecastsConfigRanges view", function() {
             };
             // stub method _renderCustomRange, the method _renderCustomRange should return new created field
             // return stub object to add to view.fieldRanges
-            _renderCustomRangeStub = sinon.stub(view, "_renderCustomRange", function(key, label, showElement, category) {
+            _renderCustomRangeStub = sinon.stub(view, "_renderCustomRange", function(key) {
                 var customType, customIndex;
                 if(key.substring(0, 26) == 'custom_without_probability') {
                     customType = 'custom_without_probability';
@@ -465,7 +464,7 @@ describe("The forecastsConfigRanges view", function() {
             connectSlidersStub = sinon.stub(view, "connectSliders");
             // stub view.$el
             view.$el = {
-                find: function(key) {
+                find: function() {
                     return {
                         noUiSlider: function() {
                         },
@@ -531,8 +530,7 @@ describe("The forecastsConfigRanges view", function() {
     });
 
     describe("test removeCustomRange method", function() {
-        var lastRange,
-            options,
+        var options,
             ranges;
 
         beforeEach(function() {
@@ -662,8 +660,7 @@ describe("The forecastsConfigRanges view", function() {
     });
 
     describe("test updateCustomRangeLabel method", function() {
-        var lastRange,
-            options,
+        var options,
             ranges;
 
         beforeEach(function() {
@@ -741,9 +738,7 @@ describe("The forecastsConfigRanges view", function() {
     });
 
     describe("test updateCustomRangeIncludeInTotal method", function() {
-        var lastRange,
-            options,
-            ranges;
+        var ranges;
 
         beforeEach(function() {
             ranges = {
@@ -753,7 +748,7 @@ describe("The forecastsConfigRanges view", function() {
                 custom_2: {min: 66, max: 67, in_included_total:false},
                 exclude: {min: 0, max: 65, in_included_total:false},
                 custom_without_probability_1: {min: 0, max: 0, in_included_total:false},
-                custom_without_probability_2: {min: 0, max: 0, in_included_total:false},
+                custom_without_probability_2: {min: 0, max: 0, in_included_total:false}
             };
             // stub view.model
             view.model = {

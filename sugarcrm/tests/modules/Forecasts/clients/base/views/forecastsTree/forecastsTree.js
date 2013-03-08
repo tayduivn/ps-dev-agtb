@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts tree view", function(){
+describe("forecasts_view_forecastsTree", function(){
 
     var app, view, data, replaceHTMLChars;
 

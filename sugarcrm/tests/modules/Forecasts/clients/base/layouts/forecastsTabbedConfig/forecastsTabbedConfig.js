@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecastsTabbedConfig layout controller", function(){
+describe("forecasts_layout_forecastsTabbedConfig", function(){
 
     var app, layout, stubs;
 
@@ -40,7 +40,7 @@ describe("The forecastsTabbedConfig layout controller", function(){
         app.viewModule = "Forecasts";
         app.initData = {};
 
-        stubs.push(sinon.stub(app.metadata, "getLayout", function(layout){
+        stubs.push(sinon.stub(app.metadata, "getLayout", function(){
             return {
                 forecasts: {
                     meta: {
@@ -50,7 +50,7 @@ describe("The forecastsTabbedConfig layout controller", function(){
                 componentsMeta: {}
             };
         }));
-        stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
+        stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function () {}));
         stubs.push(sinon.stub(app.api, "call"));
         layout = SugarTest.createComponent('Layout', {
             name: "tabbedConfig",
@@ -103,8 +103,8 @@ describe("The forecastsTabbedConfig layout controller", function(){
         });
 
         afterEach(function() {
-            delete options;
-            delete testLayout;
+            options = null;
+            testLayout = null;
         });
 
         it("should get a model", function() {
