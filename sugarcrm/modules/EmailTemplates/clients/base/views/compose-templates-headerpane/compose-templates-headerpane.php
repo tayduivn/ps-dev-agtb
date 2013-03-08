@@ -44,5 +44,9 @@ $viewdefs["EmailTemplates"]["base"]["view"]["compose-templates-headerpane"] = ar
             "label"     => "LBL_DONE_BUTTON_LABEL",
             "css_class" => "btn-primary",
         ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
     ),
 );
