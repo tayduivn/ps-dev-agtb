@@ -1,6 +1,7 @@
 ({
     events: {
-        'click .add-dashlet' : 'layoutClicked'
+        'click .add-dashlet' : 'layoutClicked',
+        'click .add-row.empty' : 'addClicked'
     },
     originalTemplate: null,
     columnOptions: [],
@@ -20,6 +21,9 @@
                     app.lang.get('LBL_DASHBOARD_ADD_' + n + '_COLUMN', this.module)
             });
         }, this);
+    },
+    addClicked: function(evt) {
+        this.layout.addRow(1);
     },
     layoutClicked: function(evt) {
         var columns = $(evt.currentTarget).data('value');
