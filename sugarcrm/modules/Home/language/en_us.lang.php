@@ -155,7 +155,7 @@ $mod_strings = array (
   'LBL_DASHBOARD_3_COLUMN_LAYOUT' => '3 column layout',
 
   'LBL_TRAINING_TITLE' => 'Training',
-
+  'LBL_SEARCH_DASHLET' => 'Search dashlets',
   'LBL_CREATING_NEW_PAGE' => 'Creating New Page...',
   'LBL_NEW_PAGE_FEEDBACK' => 'You have created a new page. You can add new content with the Add Sugar Dashlets option.',
   'LBL_DELETE_PAGE_CONFIRM' => 'Are you sure you want to delete this page?',

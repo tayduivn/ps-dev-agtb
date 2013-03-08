@@ -26,5 +26,14 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
+<div class="mu extend">
+    <article class="filter-header">
+        <div class="row-fluid">
+            <div class="controls span4">
+                <input type="text" placeholder="{{str "LBL_SEARCH_DASHLET" this.module}}" class="span12 search">
+            </div>
+        </div>
+    </article>
+</div>
 <table class="table table-striped dataTable" id="dashletList"></table>
 

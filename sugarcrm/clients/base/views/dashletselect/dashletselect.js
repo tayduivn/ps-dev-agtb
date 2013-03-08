@@ -27,7 +27,13 @@
 ({
     events: {
         "click .select" : "selectClicked",
-        'click .preview' : "previewClicked"
+        "click .preview" : "previewClicked",
+        "keyup .search" : "searchFired"
+    },
+    dataTable: null,
+    searchFired: function(evt) {
+        var value = $(evt.currentTarget).val();
+        this.dataTable.fnFilter(value, 0);
     },
     previewClicked: function(evt) {
         var index = $(evt.currentTarget).data('index');
@@ -121,7 +127,7 @@
         if(this.context.get("dashlet_collection")) {
             var parentModule = this.context.parent.get("module"),
                 parentView = this.context.parent.get("layout");
-            this.$("#dashletList").dataTable({
+            this.dataTable = this.$("#dashletList").dataTable({
                 "bFilter": true,
                 "bInfo":false,
                 "bPaginate": false,
