@@ -38,6 +38,8 @@ class ProductToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('current_user');
+        parent::setUpBeforeClass();
         self::$opp = SugarTestOpportunityUtilities::createOpportunity();
 
         //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
@@ -55,6 +57,7 @@ class ProductToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_TestCase
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestProductBundleUtilities::removeAllCreatedProductBundles();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();
+        parent::tearDownAfterClass();
     }
 
     /**
