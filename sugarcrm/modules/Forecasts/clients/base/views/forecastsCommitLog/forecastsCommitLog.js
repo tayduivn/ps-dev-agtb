@@ -218,7 +218,9 @@
         // if we have no models, exit out of the method
         if(_.isEmpty(this.collection.models)) {
             this.resetCommittedLog();
-            this.render();
+            if (!this.disposed) {
+                this.render();
+            }
             return;
         }
 
@@ -249,6 +251,8 @@
         this.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
         this.previousWorstCase = app.currency.formatAmountLocale(previousModel.get('worst_case'));
 
-        this.render();
+        if (!this.disposed) {
+            this.render();
+        }
     }
 })
