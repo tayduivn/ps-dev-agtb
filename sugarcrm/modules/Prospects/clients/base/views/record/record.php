@@ -157,6 +157,7 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 array(
                     'name'   => 'fieldset_address',
                     'type'   => 'fieldset',
+                    'css_class' => 'address',
                     'label'  => 'LBL_PRIMARY_ADDRESS',
                     'fields' => array(
                         'primary_address_street',

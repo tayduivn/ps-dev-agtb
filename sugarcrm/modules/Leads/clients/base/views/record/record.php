@@ -193,6 +193,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 array(
                     'name'   => 'fieldset_primaryaddress',
                     'type'   => 'fieldset',
+                    'css_class' => 'address',
                     'label'  => 'LBL_PRIMARY_ADDRESS',
                     'fields' => array(
                         array(
@@ -244,6 +245,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 array(
                     'name'   => 'fieldset_altaddress',
                     'type'   => 'fieldset',
+                    'css_class' => 'address',
                     'label'  => 'LBL_ALT_ADDRESS',
                     'span'   => 12,
                     'fields' => array(

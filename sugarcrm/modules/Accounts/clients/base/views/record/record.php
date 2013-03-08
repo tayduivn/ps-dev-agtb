@@ -64,7 +64,8 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'fieldset_address',
-                    'type' => 'fieldset',
+                    'type'   => 'addressfieldset',
+                    'css_class' => 'address',
                     'label' => 'Billing Address',
                     'fields' => array(
                         'billing_address_street',
@@ -76,7 +77,8 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'fieldset_shipping_address',
-                    'type' => 'fieldset',
+                    'type'   => 'addressfieldset',
+                    'css_class' => 'address',
                     'label' => 'Shipping Address',
                     'fields' => array(
                         'shipping_address_street',
