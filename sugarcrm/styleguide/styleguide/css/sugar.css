@@ -9128,6 +9128,18 @@ h3.popover-title {
 .record .record-cell[data-type="bool"] label {
   margin-bottom: 0;
 }
+.record .record-cell[data-type="radioenum"] p {
+  margin: 0;
+  padding: 0;
+}
+.record .record-cell[data-type="radioenum"] label,
+.record .record-cell[data-type="radioenum"] .add-on {
+  display: inline-block;
+}
+.record .record-cell[data-type="radioenum"] .add-on {
+  left: 10px;
+  font-size: 12px;
+}
 .record .record-cell[data-type="enum"] .normal > span,
 .record .record-cell[data-type="relate"] .normal > span {
   display: block !important;
@@ -9143,12 +9155,13 @@ h3.popover-title {
 .record .record-cell[data-type="enum"] .error .input-append,
 .record .record-cell[data-type="relate"] .error .input-append {
   position: static;
+  font-size: inherit;
 }
 .record .record-cell[data-type="enum"] .error .add-on.error-tooltip,
 .record .record-cell[data-type="relate"] .error .add-on.error-tooltip {
   position: absolute;
   right: -5px;
-  top: 21px;
+  top: 16px;
 }
 .record .record-cell[data-type="teamset"] .control-group.teamset {
   padding: 7px 0;

@@ -373,6 +373,19 @@
       }
     }
 
+    &[data-type="radioenum"] {
+       p {
+         margin: 0;
+         padding: 0;
+       }
+       label, .add-on {
+         display: inline-block;
+       }
+      .add-on {
+        left: 10px;
+        font-size: 12px;
+      }
+    }
     &[data-type="enum"],
     &[data-type="relate"] {
       .normal > span {
@@ -388,11 +401,12 @@
       .error {
         .input-append {
             position:static;
+            font-size: inherit;
         }
         .add-on.error-tooltip {
           position: absolute;
           right: -5px;
-          top: 21px;
+          top: 16px;
         }
       }
     }
