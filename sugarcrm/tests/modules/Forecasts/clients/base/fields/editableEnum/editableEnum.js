@@ -223,5 +223,31 @@ describe("forecast editableEnum field", function() {
             });
         });        
     });
-    
+
+    describe("isEditable with sales_stage set", function() {
+        beforeEach(function() {
+            context.get = function(key){
+                return {id:"tester"};
+            }
+
+            field = SugarTest.createField("../modules/Forecasts/clients/base", "editableEnum", "editableEnum", "detail", fieldDef, "Forecasts", null, context);
+        });
+
+        afterEach(function() {
+            field.model.unset('sales_stage');
+            context.unset('get');
+        });
+
+        it("should not be able to edit", function() {
+            field.model.set({sales_stage : "Closed Won"});
+            field.isEditable();
+            expect(field.disabled).toBeTruthy();
+        });
+
+        it("should be able to edit", function() {
+            field.model.set({sales_stage : "asdf"});
+            field.isEditable();
+            expect(field.disabled).toBeFalsy();
+        })
+    });
 });

@@ -180,12 +180,17 @@
      * Utility Method to check if the field is editable
      */
     isEditable: function() {
-        var self = this;        
-        self.disabled = false;
+        this.disabled = false;
         
         //Check to see if you're a manager on someone else's sheet, disable changes
-        if(self.context.get("selectedUser")["id"] != app.user.id){
-            self.disabled = true; 
+        if(this.context.get("selectedUser")["id"] != app.user.id){
+            this.disabled = true;
         }
-    },
+
+        var salesStage = this.model.get('sales_stage'),
+            disableIfSalesStageIs = ["Closed Won", "Closed Lost"];
+        if(salesStage && _.indexOf(disableIfSalesStageIs, salesStage) == -1) {
+            this.disabled = true;
+        }
+    }
 })

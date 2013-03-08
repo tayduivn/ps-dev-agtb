@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecast editableCurrency field", function () {
+describe("forecast editableDate field", function () {
     var field, fieldDef, context, model, app;
 
     beforeEach(function () {
@@ -59,4 +59,17 @@ describe("forecast editableCurrency field", function () {
         });
     });
 
+    describe("checkIfCanEdit", function() {
+        it("should not be able to edit", function() {
+            field.model.set({sales_stage : "Closed Won"});
+            field.checkIfCanEdit();
+            expect(field._canEdit).toBeFalsy();
+        });
+
+        it("should be able to edit", function() {
+            field.model.set({sales_stage : "asdf"});
+            field.checkIfCanEdit();
+            expect(field._canEdit).toBeTruthy();
+        })
+    });
 });
