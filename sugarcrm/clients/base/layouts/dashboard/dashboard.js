@@ -43,7 +43,7 @@
         context.set("collection", new DashboardCollection());
         app.view.Layout.prototype.initialize.call(this, options);
         this.model.on("setMode", function(mode) {
-            if(mode === "edit") {
+            if(mode === "edit" || mode === "create") {
                 this.$("#dashboard").addClass("edit");
             } else {
                 this.$("#dashboard").removeClass("edit");
@@ -105,7 +105,8 @@
         }
     },
     _placeComponent: function(component) {
-        var dashboardEl = this.$("#dashboard");
+        var dashboardEl = this.$("#dashboard"),
+            css = this.context.get("create") ? " edit" : "";
         if(dashboardEl.length == 0) {
             dashboardEl = $("<div></div>").attr({
                 class: 'cols row-fluid'
@@ -113,7 +114,7 @@
             this.$el.append(
                 $("<div></div>").attr({
                     id : 'dashboard',
-                    class: 'dashboard main-pane'
+                    class: 'dashboard main-pane' + css
                 }).append(
                     dashboardEl
                 )
