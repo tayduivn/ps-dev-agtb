@@ -10,6 +10,12 @@ $viewdefs['base']['view']['opportunity-metrics'] = array(
                     'Accounts'
                 ),
                 'view' => 'record'
+            ),
+            'config' => array(
+
+            ),
+            'preview' => array(
+
             )
         ),
     ),
