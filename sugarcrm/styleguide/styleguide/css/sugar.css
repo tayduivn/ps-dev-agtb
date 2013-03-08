@@ -521,7 +521,7 @@ code {
   padding-right: 14px;
 }
 .tooltip {
-  z-index: 1000;
+  z-index: 1050;
   text-shadow: none;
   font-weight: normal;
   word-wrap: break-word;
@@ -4423,10 +4423,6 @@ input:-moz-placeholder {
   color: #bbb;
   font-weight: normal;
 }
-.error .input-append > .add-on {
-  position: absolute;
-  right: 40px;
-}
 .control-group.error > .input-append > input {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -4465,6 +4461,9 @@ input[type=radio] {
 .input-append {
   position: relative;
   display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  margin-bottom: 0px;
 }
 .input-append .add-on {
   border: none;
@@ -4472,6 +4471,8 @@ input[type=radio] {
   margin-left: -26px;
   position: relative;
   font-size: 12px;
+  right: 2px;
+  top: 5px;
 }
 .input-append span {
   font-size: 12px;
@@ -4486,8 +4487,7 @@ input[type=radio] {
 .input-append.select .add-on,
 .input-append.checkbox .add-on,
 .input-append.radio .add-on {
-  top: 1px;
-  right: 0;
+  top: 5px;
   background: transparent !important;
   border: none;
 }
@@ -4504,13 +4504,12 @@ input[type=radio] {
   top: 1px;
   right: 0;
 }
-.input-append.textarea {
-  display: inline;
-}
 .input-append input {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
+  width: 100%;
+  padding-right: 0;
 }
 .input-append .ui-timepicker-list {
   font-size: 12px;
@@ -4578,37 +4577,6 @@ input[type=radio] {
 .control-group.email .controls.pull-left {
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.control-group.error>div:first-child,
-.control-group.error>div:first-child label,
-.control-group.error> label {
-  font-weight: 500;
-  color: #b60000;
-}
-.control-group.error .input-append label {
-  color: #b60000;
-}
-.control-group.error .select2-choice,
-.control-group.error .select2-choices,
-.control-group.error .upload-field-custom.btn.avatar {
-  border-color: #b60000;
-}
-.control-group.error .select2-choice > div {
-  margin-right: 18px;
-}
-.control-group.error .help-block {
-  font-weight: normal;
-}
-.control-group.error .preview > span > .icon-plus {
-  border-color: #b60000;
-  color: #b60000;
-}
-.control-group.error label.file-upload {
-  background: #b60000;
-}
-.control-group.error .urleditable-wrap .editable-trigger > i,
-.control-group.error .urleditable-wrap .urleditable-field a {
-  color: #b60000 !important;
 }
 .controls[class*="span"] input[type="text"].inherit-width,
 .controls[class*="span"] textarea.inherit-width,
@@ -4857,6 +4825,7 @@ input[type=radio] {
   width: 100%;
 }
 .image_input input {
+  position: absolute;
   top: 0;
   right: 0;
   float: right;
@@ -4932,12 +4901,20 @@ input[type=radio] {
 .image_preview i.icon-plus {
   display: block;
 }
-.control-group.error .image_field,
-.error.image_field {
+.error .image_field {
   border: 3px dashed #b60000;
 }
-.error .image_preview {
-  color: #b60000;
+.error .image_field .image_preview > i {
+  color: #b60000 !important;
+}
+.error .image_field > .add-on.error-tooltip {
+  position: absolute;
+  bottom: 0;
+  top: auto;
+  left: auto;
+  right: -20px;
+  padding: 0;
+  margin: 0;
 }
 .datepicker span.year.active:hover,
 .datepicker span.year.active,
@@ -4974,95 +4951,32 @@ input[type="color"],
 .uneditable-input {
   margin-bottom: 0;
 }
-textarea.local-error,
-input[type="text"].local-error,
-input[type="password"].local-error,
-input[type="datetime"].local-error,
-input[type="datetime-local"].local-error,
-input[type="date"].local-error,
-input[type="month"].local-error,
-input[type="time"].local-error,
-input[type="week"].local-error,
-input[type="number"].local-error,
-input[type="email"].local-error,
-input[type="url"].local-error,
-input[type="search"].local-error,
-input[type="tel"].local-error,
-input[type="color"].local-error,
-.uneditable-input.local-error {
+textarea.error,
+input[type="text"].error,
+input[type="password"].error,
+input[type="datetime"].error,
+input[type="datetime-local"].error,
+input[type="date"].error,
+input[type="month"].error,
+input[type="time"].error,
+input[type="week"].error,
+input[type="number"].error,
+input[type="email"].error,
+input[type="url"].error,
+input[type="search"].error,
+input[type="tel"].error,
+input[type="color"].error,
+.uneditable-input.error {
   border-color: #b60000;
   color: #b60000;
 }
-.record-cell [class*='address_'] {
-  display: inline-block;
-}
-.record-cell .address_street,
-.record-cell .address_country,
-.record-cell .address_misc_block {
-  width: 100%;
-  clear: both;
-}
-.record-cell .address_city:after,
-.record-cell .address_state:after {
-  content: ",";
-  margin-left: -2px;
-}
-.record-cell .address_city> div.ellipsis_inline,
-.record-cell .address_state> div.ellipsis_inline,
-.record-cell .address_zip> div.ellipsis_inline {
-  display: inline !important;
-  overflow: visible;
-}
-.add-on.local {
-  line-height: 10px;
-  display: inline-block;
-  height: 10px;
-  width: 10px;
-  margin-left: -18px;
-  position: relative;
-  color: #b60000;
-  box-shadow: 0 0 0 5px #fff;
-  -webkit-box-shadow: 0 0 0 5px #fff;
-  -moz-box-shadow: 0 0 0 5px #fff;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  background: #fff;
-  top: 1px;
-}
-.error-tooltip.add-on [class^="icon-"],
-.error-tooltip.add-on [class*=" icon-"],
-.error .add-on [class^="icon-"],
-.error .add-on [class*=" icon-"] {
-  color: #b60000;
-}
-.headerpane h1 .add-on.local,
-.preview-headerbar h1 .add-on.local {
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-  line-height: 36px;
-  height: 26px;
-  right: 8px;
-  background: none;
-}
 @media (max-width: 480px) {
-  .error .input-append > .add-on {
-    position: relative !important;
-    margin-right: -28px;
-    right: 27px !important;
-  }
   .row > .empty,
   .row-fluid > .empty {
     display: none !important;
   }
 }
 @media (max-width: 768px) {
-  .error .input-append > .add-on {
-    position: relative !important;
-    margin-right: -28px;
-    right: 27px !important;
-  }
   .card2 {
     margin: 10px 0;
   }
@@ -5153,41 +5067,86 @@ input[type="color"].local-error,
   left: 1px;
   height: 20px;
 }
-.inline-error label,
-.inline-error .record-label {
+.error.input-append.select,
+.error.input-append.select2 {
+  display: inline;
+}
+.error label,
+.error .record-label {
+  font-weight: 500;
+  color: #b60000 !important;
+}
+.error .help-block {
+  color: #b60000;
+  position: relative;
+}
+.error .add-on {
+  color: #b60000;
+  position: relative;
+  z-index: 2;
+  line-height: 10px;
+}
+.error .add-on [class^="icon-"],
+.error .add-on [class*=" icon-"] {
+  color: #b60000;
+}
+.error input {
+  border-color: #b60000 !important;
+  margin-bottom: 0px;
+  color: #b60000 !important;
+}
+.error input:focus {
+  z-index: 3;
+  border-color: #b60000 !important;
+  border-width: 1px !important;
+}
+.error input:focus + span.error-tooltip > i {
+  display: none;
+}
+.error textarea {
+  border-color: #b60000 !important;
+  color: #b60000 !important;
+}
+.error .control-group.email input,
+.error[data-type=fieldset] input {
+  border-color: #58595B !important;
+  color: #58595B !important;
+}
+.error .control-group.email .input-append.error input,
+.error[data-type=fieldset] .error input {
+  border-color: #b60000 !important;
+  color: #b60000 !important;
+}
+.error>div:first-child,
+.error>div:first-child label,
+.error> label {
   font-weight: 500;
   color: #b60000;
 }
-.inline-error .help-block {
+.error .input-append label {
   color: #b60000;
-  position: relative;
 }
-.inline-error .add-on {
-  color: #b60000;
-  position: relative;
-  margin-left: -20px;
-  z-index: 2;
-  top: 2px;
-}
-.inline-error input {
+.error .select2-choice,
+.error .select2-choices,
+.error .upload-field-custom.btn.avatar {
   border-color: #b60000;
-  margin-bottom: 0px;
-  color: #b60000;
 }
-.inline-error input:focus {
-  z-index: 3;
+.error .select2-choice > div {
+  margin-right: 18px;
 }
-.inline-error .control-group.email input {
-  border-color: #58595B;
-  color: #58595B;
+.error .help-block {
+  font-weight: normal;
 }
-.inline-error .control-group.email.inline-error input {
+.error .preview > span > .icon-plus {
   border-color: #b60000;
   color: #b60000;
 }
-.inline-error .add-on [class^="icon-"],
-.inline-error .add-on [class*=" icon-"] {
-  color: #b60000;
+.error label.file-upload {
+  background: #b60000;
+}
+.error .urleditable-wrap .editable-trigger > i,
+.error .urleditable-wrap .urleditable-field a {
+  color: #b60000 !important;
 }
 .upload-field-custom {
   overflow: hidden;
@@ -6143,7 +6102,7 @@ header .subnav {
     top: 47px;
     left: 0;
     right: 0;
-    z-index: 1020;
+    z-index: 1050;
     border-width: 0 0 1px !important;
     -webkit-border-radius: 0px !important;
     -moz-border-radius: 0px !important;
@@ -9169,6 +9128,18 @@ h3.popover-title {
 .record .record-cell[data-type="bool"] label {
   margin-bottom: 0;
 }
+.record .record-cell[data-type="radioenum"] p {
+  margin: 0;
+  padding: 0;
+}
+.record .record-cell[data-type="radioenum"] label,
+.record .record-cell[data-type="radioenum"] .add-on {
+  display: inline-block;
+}
+.record .record-cell[data-type="radioenum"] .add-on {
+  left: 10px;
+  font-size: 12px;
+}
 .record .record-cell[data-type="enum"] .normal > span,
 .record .record-cell[data-type="relate"] .normal > span {
   display: block !important;
@@ -9180,6 +9151,17 @@ h3.popover-title {
 .record .record-cell[data-type="relate"] .normal > span .select2-container {
   margin: -7px 0 0 -9px;
   position: absolute;
+}
+.record .record-cell[data-type="enum"] .error .input-append,
+.record .record-cell[data-type="relate"] .error .input-append {
+  position: static;
+  font-size: inherit;
+}
+.record .record-cell[data-type="enum"] .error .add-on.error-tooltip,
+.record .record-cell[data-type="relate"] .error .add-on.error-tooltip {
+  position: absolute;
+  right: -5px;
+  top: 16px;
 }
 .record .record-cell[data-type="teamset"] .control-group.teamset {
   padding: 7px 0;
