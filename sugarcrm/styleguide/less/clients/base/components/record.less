@@ -4,10 +4,14 @@
 #contentflex #headerbar,
 //sugar7
 .headerpane {
+  height: 60px;
+  z-index: 1000;
+  background: @grayLighter;
+  border-bottom: 1px solid darken(@grayLighter,10%);
 
   h1 {
     float: left;
-    margin: 20px 0 0 18px;
+    margin: 18px 0 0 18px;
     line-height: 24px;
   }
   .view-forecastsTitle h1 {
@@ -117,7 +121,7 @@
     position: absolute;
     top: 0;
   }
-  
+
   input[type="text"] {
     font-size: 20px;
     padding: 6px;
@@ -158,12 +162,12 @@
       }
     }
   }
+
   .btn-group-previous-next {
     margin: 0;
     .btn {
       [class^="icon-"] {
         font-size: @baseFontSize;
-        line-height: 20px;
       }
     }
   }
@@ -180,11 +184,31 @@
       z-index:1001;
     }
   }
+
   .drawerTrig {
+    margin: 0 0 0 8px;
+    color: @grayLight;
+    &.pull-right {
+      .border-radius(0 2px 2px 0);
+      position: relative;
+    }
+
+    &.pull-left {
+      .border-radius(2px);
+      margin-right: 0;
+      padding: 4px 4px 0 4px;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
     [class*="icon-"]{
+        line-height: 16px;
         font-size: @fontSizeLarge + 4;
         vertical-align: top;
         font-weight: 500;
+    }
+    .icon-double-angle-left {
+        margin: 0 2px 0 -2px;
     }
   }
 }
@@ -418,7 +442,7 @@
     &[data-type="fieldset"] {
       .normal > span {
         display: block !important;
-        padding: 7px 0;
+        padding: 0;
       }
       .input-append.date {
         display: block !important;
