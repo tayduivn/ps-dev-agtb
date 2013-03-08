@@ -33,7 +33,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
         <!-- CSS -->
         <link rel="stylesheet" href="{$css_url}"/>
-        <link rel="stylesheet" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
     </head>
     <body>
     	<div id="sugarcrm">
