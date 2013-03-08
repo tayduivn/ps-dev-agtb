@@ -124,7 +124,7 @@ class SugarSearchEngineMetadataHelper
 
         foreach($obj->field_defs as $field => $def)
         {
-            if (isset($def['full_text_search']) && is_array($def['full_text_search'])) {
+            if (isset($def['full_text_search']) && is_array($def['full_text_search']) && !empty($def['full_text_search']['enabled'])) {
                 $results[$field] = $def;
             }
         }
