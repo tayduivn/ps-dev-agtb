@@ -44,11 +44,18 @@ class SidecarView extends SugarView
             ConcatenateFiles(".");
         }
 
+        // TODO: come up with a better way to deal with the various JS files
+        // littered in sidecar.tpl.
+        $voodooFile = 'custom/include/javascript/voodoo.js';
+        if (SugarAutoLoader::fileExists($voodooFile)) {
+            $this->ss->assign('voodooFile', $voodooFile);
+        }
+
         //Load sidecar theme css
         $theme = new SidecarTheme();
         $this->ss->assign("css_url", $theme->getCSSURL());
         $this->ss->assign("developerMode", inDeveloperMode());
-        
+
         //Loading label
         $this->ss->assign('LBL_LOADING', $app_strings['LBL_ALERT_TITLE_LOADING']);
 
