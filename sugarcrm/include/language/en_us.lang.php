@@ -3569,6 +3569,7 @@ $app_strings = array (
     'LBL_ASSOC_EXISTING' => 'Associate Existing {{{this}}}',
     'LBL_SEARCH_ALL' => 'Search all {{{this}}}',
     'LBL_SEARCH_ALL_RECORDS' => 'Search all records',
+    'LBL_SEARCH_ALL_MODULES' => 'Search all',
     'LBL_OK' => 'OK',
     'LBL_YES' => 'Yes',
     'LBL_NO' => 'No',
