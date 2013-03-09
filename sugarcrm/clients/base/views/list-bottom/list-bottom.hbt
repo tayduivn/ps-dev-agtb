@@ -28,11 +28,7 @@
 }}
 {{#if collection.length}}
     {{#notEq collection.next_offset "-1"}}
-    <div class="">
-        {{#each meta.buttons}}
-        {{field ../this ../model "list-header"}}
-        {{/each}}
-    </div>
+    <button data-action="show-more" class="btn btn-link more padded">{{showMoreLabel}}</button>
     {{/notEq}}
 {{else}}
     <div class="block-footer">
