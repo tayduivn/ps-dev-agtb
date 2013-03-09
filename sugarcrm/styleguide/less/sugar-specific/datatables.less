@@ -8,124 +8,28 @@
 }
 
 table.dataTable {
+  margin: 0;
 
-  th:first-child,
-  td:first-child {
-    padding-left: 20px;
-    padding-right: 0;
-    width: 30px;
+  input[type="text"] {
+    position: relative;
+    width: 100%;
+    min-height: 32px;
+    .box-sizing(border-box);
   }
 
-  th:last-child,
-  td:last-child {
-    width: 60px;
-  }
-
-  th {
-    border-color: darken(@grayLighter,5%);
-    margin-top: 0px !important;
-    font-weight:normal;
-    .rtl(@direction,ltr);
-    a {
-      color:@gray;
-      text-decoration:none;
-    }
-    &.sorting {
-      color:@gray;
-    }
-    &.sorting_asc,
-    &.sorting_desc {
-      font-weight: bold;
-      .box-shadow(none);
-    }
-    &.header-quota {
-      min-width: 70px;
-    }
-  }
-
-  td {
-    .rtl(@direction,ltr);
-    &.details {
-      padding: 0px;
-      .extend {
-        background-color: @grayLight;
-        text-shadow: none;
-        margin: 5px -5px -5px;
-        text-align: left;
-        .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.2)");
-        article {
-          color: @grayDark;
-          date {
-            color:  @gray;
-          }
-        }
-        article:first-child {
-          .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.2)");
-        }
-        article:nth-child(even), article:nth-child(odd) {
-          border-top: 1px solid @grayLighter;
-          border-bottom-color: @gray;
-        }
-      }
-    }
-    .actions {
-      //position: absolute;
-      //right: 8px;
-      display:inline-block;
-      //top: 0;
-      span {
-        width: 13px;
-      }
-      a {
-        &:hover:not(.disabled) {
-          color: @grayDark;
-        }
-      }
-      &.open a .icon-eye-open {
-        color: @gray !important;
-      }
-      ul.dropdown-menu {
-        padding: 10px 0 0;
-        li:first-child a {
-          border-top:none;
-        }
-        .ext {
-          background: @white;
-          display: inline-block;
-          width: 10px;
-          height: 10px;
-          position: absolute;
-          right: 6px;
-          top: -6px;
-          .rotate(45deg);
-          border-left:1px solid rgba(0, 0, 0, 0.2);
-          border-top:1px solid rgba(0, 0, 0, 0.2);
-        }
-      }
-    }
-    span.longtext {
-      display: inline-block;
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
-  td.number,
-  tfoot th.number {
-    text-align: right;
-    .rtlTextAlign(@direction,left);
-    white-space: nowrap;
-    span.edit {
-      div.controls {
-        position: relative;
-        right: 5px;
-      }
-    }
-  }
-
+  /* ---------
+  TABLE BODY*/
   tbody {
     tr {
+      //from tables.less?
+      &:last-child {
+        td:last-child,
+        td:first-child,
+        td:last-child,
+        td:first-child {
+          .border-radius(0 0 4px 4px)
+        }
+      }
       &.active {
         td {
           background-image: url('@{textureSecondary}');
@@ -134,18 +38,99 @@ table.dataTable {
           }
         }
       }
-      &.tr-inline-edit {
+      div.sugareditable {
         td {
           overflow: visible;
+          &> *:not(.overflow-visible) {
+            overflow: visible;
+          }
         }
+      }
+      &.tr-inline-edit {
+        td {
+          &> span {
+            width: 100%;
+          }
+          overflow: visible;
+          background: #e5f1fc;
+          padding-bottom: 0;
+          vertical-align: top;
+          &:first-child {
+            padding-top: 10px;
+            .btn {
+              margin-left: 0;
+            }
+          }
+          &:first-child {
+            padding-top: 10px;
+            .btn {
+              float: right;
+            }
+          }
+          &> *:not(.overflow-visible) {
+            overflow: visible;
+            vertical-align: top;
+          }
+          .input-append.date {
+            margin-bottom: 0;
+            font-size: 12px;
+            td {
+              background-color: @white;
+            }
+            input.datepicker {
+              width: 100px;
+              margin-top: 0;
+            }
+            // reset datepicker since it is table inside table
+            span.year.active:hover,
+            span.year.active,
+            span.month.active:hover,
+            span.month.active,
+            td.active,
+            td.active:hover {
+              background-color: @gray;
+            }
+          }
+        }
+
+// from Wes, I think I already fixed these by ajusting padding
+/*+    input {
++      margin: -5px 0 -5px -7px;
++      position: relative;
++      width: 99%;
++    }
++    .select2-container {
++      margin: -5px 0 -5px -7px;
++    }
++    .select2-container .select2-choice {
++      position: relative;
++      height: 26px;
++      margin: 0;
++    }
++    .inline-cancel {
++      margin: -5px 0 0 -10px;
++    }*/
+
+
       }
     }
     td {
+      overflow-x: hidden;
+      text-overflow: ellipsis;
       max-width: 100px;
+      white-space: nowrap;
+      word-break: break-word;
+      position: relative;
+      vertical-align: middle;
       &> *:not(.overflow-visible) {
-        overflow: hidden;
+        overflow-x: hidden;
         text-overflow: ellipsis;
+        max-width: 100%;
+        display: inline-block;
         white-space: nowrap;
+        word-break: break-word;
+        position: relative;
+        vertical-align: middle;
       }
       &>span.dropdown {
         width: auto;
@@ -154,14 +139,13 @@ table.dataTable {
     }
   }
 
+  /* ---------
+  TABLE ROW*/
   tr:last-child td {
-    border-bottom: 1px solid @grayLight !important;
-  }
-  .tr-inline-edit.single td {
-    background: #E5F4FB !important;
-    padding-bottom: 0;
+    border-bottom-size: 2px;
   }
 
+  //for preview
   tr.highlighted {
     &.above th,
     &.above td {
@@ -189,10 +173,173 @@ table.dataTable {
     }
   }
 
+  /* ---------
+  TABLE CELL AND HEADER*/
+  td,
+  th {
+    white-space: nowrap;
+    word-break: break-word;
+    position: relative;
+    vertical-align: middle;
+  }
+
+  /* ---------
+  TABLE HEADER*/
+  th {
+    line-height: 26px !important;
+    min-width: 20px;
+    margin-top: 0px !important;
+    font-weight:normal;
+    font-size: @fontSizeSmall;
+    color: @tableHeader;
+    border-right: 1px solid darken(@grayLighter,5%);
+    .rtl(@direction,ltr);
+    a {
+      color:@grayLight;
+      text-decoration:none;
+    }
+    &.sorting {
+      color:@gray;
+    }
+    &.sorting_asc,
+    &.sorting_desc {
+      font-weight: bold;
+    }
+    &.header-quota {
+      min-width: 70px;
+    }
+    .btn-group {
+      margin: 0 0 0 -8px;
+      width: 60px;
+    }
+    .btn input {
+      margin: -2px 0 0 0;
+    }
+    .toggle-all {
+      margin: 10px;
+    }
+    &.nosort.select-all {
+      padding: 0;
+      .btn-group {
+        position: absolute;
+        top: 0;
+        //centering checkbox in btn-group
+        > .btn:first-child {
+          padding-top: 7px;
+          padding-bottom: 1px;
+        }
+      }
+    }
+  }
+
+  /* ---------
+  TABLE CELL*/
+  td {
+    border-top: 1px solid darken(@grayLighter, 5%);
+    border-bottom: 1px solid darken(@grayLighter, 5%);
+    background-color: @white;
+    .rtl(@direction,ltr);
+    &.details {
+      padding: 0px;
+      .extend {
+        background-color: @grayLight;
+        text-shadow: none;
+        margin: 5px -5px -5px;
+        text-align: left;
+        .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.2)");
+        article {
+          color: @grayDark;
+          date {
+            color:  @gray;
+          }
+        }
+        article:first-child {
+          .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.2)");
+        }
+        article:nth-child(even), article:nth-child(odd) {
+          border-top: 1px solid @grayLighter;
+          border-bottom-color: @gray;
+        }
+      }
+    }
+    .actions {
+      display:inline-block;
+      white-space: nowrap;
+      margin: 0;
+      float: right;
+      span {
+        width: 13px;
+      }
+      a {
+        &:hover:not(.disabled) {
+          color: @grayDark;
+        }
+      }
+      &.open a .icon-eye-open {
+        color: @gray !important;
+      }
+      .dropdown-menu {
+        padding: 0;
+        li:first-child a {
+          border-top:none;
+        }
+        .ext {
+          background: @white;
+          display: inline-block;
+          width: 10px;
+          height: 10px;
+          position: absolute;
+          right: 6px;
+          top: -6px;
+          .rotate(45deg);
+          border-left:1px solid rgba(0, 0, 0, 0.2);
+          border-top:1px solid rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+    .btn-toolbar {
+      margin: -5px 0 -10px;
+    }
+    span.longtext {
+      display: inline-block;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  td.number,
+  tfoot th.number {
+    text-align: right;
+    .rtlTextAlign(@direction,left);
+    white-space: nowrap;
+    span.edit {
+      div.controls {
+        position: relative;
+        //right: 5px;
+        //padding-right: 14px;
+      }
+    }
+  }
+
+  /* ---------
+  TABLE FOOTER*/
+  tfoot {
+    th {
+      white-space: normal;
+      word-break: break-word;
+    }
+    td {
+      font-weight: bold;
+      border-top: 2px solid @grayLight !important;
+    }
+  }
   tfoot tr.overall th {
     font-weight: bold;
   }
 
+  /* ---------
+  MISC*/
   label.original {
     margin-bottom: 0px;
     display: inline-block;
@@ -204,6 +351,39 @@ table.dataTable {
     display: inline-block;
     margin-left: 16px;
     .rtlMargin(@direction,0 16px 0 0);
+  }
+  [class^="icon-favorite"] {
+    margin-left: 14px;
+    vertical-align: middle;
+  }
+  //nutmeg ?legacy?
+  [class^="icon-star"] {
+    margin: 0 16px
+  }
+  .icon-star {
+    color: @grayLight;
+  }
+  .active .icon-star {
+    color: @orange;
+  }
+
+  th:first-child,
+  td:first-child {
+    overflow-x: visible;
+    padding-left: 15px;
+    padding-right: 0;
+    width: 30px;
+  }
+
+  th:last-child,
+  td:last-child {
+    max-width: 60px;
+    min-width: 60px;
+    padding: 0 8px 0 5px;
+    width: 60px;
+    vertical-align: middle;
+    overflow-x: visible;
+    border-right: 0;
   }
 }
 
@@ -229,8 +409,26 @@ table.dataTable {
 
 .morecol {
   text-align: center !important;
-  padding: 8px 23px !important;
+  font-weight: bold;
+  color: @gray;
   .dropdown-menu {
     text-align: left !important;
+    font-size: @baseFontSize;
+    font-weight: normal;
+    color: @grayLight;
+    a {
+      padding-left: 22px;
+    }
+    .active {
+      color: @gray;
+      font-weight: bold;
+      padding-left: 0;
+      margin-left: 0;
+    }
+    .active .icon-ok {
+      color: @gray;
+      font-weight: normal;
+      margin-right: 5px;
+    }
   }
 }
