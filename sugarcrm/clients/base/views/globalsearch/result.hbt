@@ -26,10 +26,16 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#each data.records}}
+{{#if data.records}}
+    {{#each data.records}}
     <li>
         <a href="#{{link}}">
             <strong>{{str "LBL_MODULE_NAME" module}}</strong> {{name}}{{#if field_name}}, <strong>{{field_name}}</strong> {{{field_value}}}{{/if}}
         </a>
     </li>
-{{/each}}
+    {{/each}}
+{{else}}
+    <li>
+    {{str "LNK_SEARCH_NO_RESULTS"}}
+    </li>
+{{/if}}
