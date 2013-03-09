@@ -23,12 +23,15 @@
         }, this);
     },
     addClicked: function(evt) {
-        this.layout.addRow(1);
+        this.addRow(1);
     },
     layoutClicked: function(evt) {
         var columns = $(evt.currentTarget).data('value');
-        this.layout.addRow(columns);
+        this.addRow(columns);
     },
+    addRow: _.debounce(function(columns) {
+        this.layout.addRow(columns);
+    }, 0),
     setMode: function(model) {
         if(model === 'edit') {
             this.template = this.originalTemplate;
