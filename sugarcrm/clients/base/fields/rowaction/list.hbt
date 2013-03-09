@@ -9,4 +9,10 @@
    data-original-title="{{str def.tooltip}}"
 {{/if}}
    name="{{name}}">
-{{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{str label}}</a>
+    {{#if def.tooltip}}
+        {{#if def.icon}}
+            <i class="{{def.icon}}"></i>
+        {{/if}}
+    {{/if}}
+    {{str label}}
+</a>
