@@ -32,7 +32,7 @@
             this.model.parentModel.get('full_name'),
             limit = parseInt(this.model.get("limit") || 20, 10),
             self = this;
-        limit += 2;
+
         this.screen_name = this.model.get('twitter') || false;
         if (!twitter || this.viewName === 'config') {
             return false;
@@ -41,7 +41,7 @@
         twitter = twitter.replace(" ", "");
         this.twitter = twitter;
         $.ajax({
-            url: "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + twitter + "&count=" + limit + "&callback=?",
+            url: "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + twitter + "&include_rts=true&count=" + limit + "&callback=?",
             dataType: "jsonp",
             context: this,
             success: function(data) {
@@ -77,7 +77,7 @@
         });
     },
     _dispose: function() {
-        this.model.parentModel.on("change", this.loadData, this);
+        this.model.parentModel.off("change", null, this);
         app.view.View.prototype._dispose.call(this);
     }
 })
