@@ -30,11 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * This is the base object for building SugarQueries
  *
- * ************ WARNING**********************************************
- * THIS CLASS AND ALL RELATED CLASSES WILL BE FUNDAMENTALLY CHANGING
- * DO NOT USE THIS TO BUILD YOUR QUERIES.
- * ******************************************************************
- *
  */
 
 require_once('include/SugarQuery/Compiler.php');
@@ -109,6 +104,8 @@ class SugarQuery
      * @var DBManager
      */
     protected $db;
+
+    protected $links = array();
 
     /**
      * Build the select object
@@ -240,8 +237,13 @@ class SugarQuery
             $options['alias'] = $link_name;
         }
 
+        if(!empty($this->links[$link_name])) {
+            return $this->links[$link_name];
+        }
+
 		$this->loadBeans($link_name, $options);
 		$this->join[$options['alias']]->addLinkName($link_name);
+		$this->links[$link_name] = $this->join[$options['alias']];
 		return $this->join[$options['alias']];
 	}
 
@@ -391,9 +393,8 @@ class SugarQuery
      * @param Linkname $join
      * @param $alias
      */
-    protected function loadBeans($join, $options) {
-		require_once('data/Link2.php');
-
+    protected function loadBeans($join, $options)
+    {
         $alias = (!empty($options['alias'])) ? $options['alias'] : $join;
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
         $team_security = (!empty($options['team_security'])) ? $options['team_security'] : true;

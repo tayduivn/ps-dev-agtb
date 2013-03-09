@@ -68,10 +68,15 @@ class SugarQuery_Builder_Select
         if(!is_array($columns)) {
             $columns = array_slice(func_get_args(), 1);
         }
-        foreach($columns as $field)
-        {
-            $this->addFieldToQuery($this->query, $field);
+        if(!empty($this->select)) {
+            $this->select = array_unique($this->select, $columns);
+        } else {
+            $this->select = $columns;
         }
+//         foreach($columns as $field)
+//         {
+//             $this->addFieldToQuery($this->query, $field);
+//         }
 		return $this;
 	}
 
@@ -98,15 +103,21 @@ class SugarQuery_Builder_Select
     /**
      * Should be called when the from Bean is added/changed from the related query.
      */
-    public function updateFrom(){
-        $oldSelect = $this->select;
-        $this->selectReset();
-        foreach($oldSelect as $field)
-        {
-            $this->addFieldToQuery($this->query, $field);
-        }
+    public function updateFrom()
+    {
+//         $oldSelect = $this->select;
+//         $this->selectReset();
+//         foreach($oldSelect as $field)
+//         {
+//             $this->addFieldToQuery($this->query, $field);
+//         }
     }
 
+    /**
+     * Add bean field to the query
+     * @param SugarQuery $query
+     * @param string $field
+     */
     protected function addFieldToQuery(SugarQuery $query, $field)
     {
         if (in_array($field, $this->select))
@@ -118,7 +129,6 @@ class SugarQuery_Builder_Select
         $seed = !empty($query->from) && is_array($query->from) ? $query->from[0] : $query->from;
         if (!empty($seed))
         {
-
             if (isset($seed->field_defs[$fieldName]))
             {
                 $def = $seed->field_defs[$fieldName];

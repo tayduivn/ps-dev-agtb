@@ -77,7 +77,7 @@ array (
 			'rname' => 'id',
 			'id_name' => 'account_id',
 			'vname' => 'LBL_ACCOUNT_ID',
-			'type' => 'id',
+			'type' => 'relate',
 			'table' => 'accounts',
 			'isnull' => 'true',
 			'module' => 'Accounts',

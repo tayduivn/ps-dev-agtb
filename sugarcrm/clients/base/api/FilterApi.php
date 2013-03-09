@@ -220,6 +220,7 @@ class FilterApi extends SugarApi
         }
         $fields = array();
         foreach($options['select'] as $field) {
+            // fields that aren't in field defs are removed, since we don't know what to do with them
             if(!empty($seed->field_defs[$field])) {
                 $fields[] = $field;
             }

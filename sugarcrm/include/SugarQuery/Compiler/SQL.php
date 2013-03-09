@@ -31,10 +31,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 /**
  * This is the base object for compiling SugarQueries
- * ************ WARNING**********************************************
- * THIS CLASS AND ALL RELATED CLASSES WILL BE FUNDAMENTALLY CHANGING
- * DO NOT USE THIS TO BUILD YOUR QUERIES.
- * ******************************************************************
  * TODO:
  * Move all bean/vardef functionality out of here and into sugarquery
  * This will allow compilers to be strictly object->desired output without
@@ -71,6 +67,9 @@ class SugarQuery_Compiler_SQL
      * @var dbManager
      */
     protected $db;
+
+    protected $jtcount = 0;
+    protected $joined_tables = array();
 
     // TODO EXPAND THE TYPE MAP
     /**
@@ -150,11 +149,6 @@ class SugarQuery_Compiler_SQL
         $order_by_part = '';
         $having_part = '';
 
-        $select = $this->sugar_query->select;
-        $from = $this->sugar_query->from;
-        $join = $this->sugar_query->join;
-        $where = $this->sugar_query->where;
-
         $group_by = $this->sugar_query->group_by;
         $having = $this->sugar_query->having;
         $order_by = $this->sugar_query->order_by;
@@ -163,18 +157,17 @@ class SugarQuery_Compiler_SQL
 
         $union = $this->sugar_query->union;
 
-
-        if ($from !== null) {
-            $from_part = trim($this->compileFrom($from));
+        if (!empty($this->sugar_query->from)) {
+            $from_part = trim($this->compileFrom($this->sugar_query->from));
         }
-        if ($select !== null) {
-            $select_part = trim($this->compileSelect($select));
+        if (!empty($this->sugar_query->select)) {
+        	$select_part = trim($this->compileSelect($this->sugar_query->select));
         }
-        if ($join !== null) {
-            $join_part = trim($this->compileJoin($join));
+        if (!empty($this->sugar_query->join) ) {
+            $join_part = trim($this->compileJoin($this->sugar_query->join));
         }
-        if ($where !== null) {
-            $where_part = trim($this->compileWhere($where));
+        if (!empty($this->sugar_query->where)) {
+            $where_part = trim($this->compileWhere($this->sugar_query->where));
         }
 
         if ($this->sugar_query->distinct) {
@@ -277,6 +270,11 @@ class SugarQuery_Compiler_SQL
         return implode(',', $return);
     }
 
+    protected function resolveField($field)
+    {
+
+    }
+
     /**
      * @param $field
      * @return string
@@ -292,23 +290,64 @@ class SugarQuery_Compiler_SQL
          * taken care of automatically when M2M relationships are joined.
          */
         if (strstr($field, '.')) {
-            list($table, $field) = explode('.', $field);
-            if ($table != $bean->getTableName()) {
-                $link_name = $this->sugar_query->join[$table]->linkName;
+            list($table_name, $field) = explode('.', $field);
+            if ($table_name != $bean->getTableName()) {
+                $link_name = $this->sugar_query->join[$table_name]->linkName;
                 if (!empty($link_name)) {
                     $bean->load_relationship($link_name);
 
                     $module = $bean->$link_name->getRelatedModuleName();
                     $bean = BeanFactory::newBean($module);
                 } else {
-                    return "{$table}.{$field}";
+                    return "{$table_name}.{$field}";
                 }
             }
+        } else {
+            $table_name = $bean->getTableName();
         }
-        if (isset($bean->field_defs[$field]['source']) && $bean->field_defs[$field]['source'] == 'custom') {
-            return $bean->get_custom_table_name() . ".{$field}";
+        if(!isset($bean->field_defs[$field])) {
+            // FIXME: we don't know about if - how it even ended up here?
+            return false;
         }
-        return $bean->getTableName() . ".{$field}";
+        $data = $bean->field_defs[$field];
+
+        if(!isset($data['source']) || $data['source'] == 'db') {
+            return "{$table_name}.{$field}";
+        }
+
+        if (isset($data['source']) && $data['source'] == 'custom') {
+            // FIXME: if we're given table.field with custom field, we should use custom alias
+            $table_name = $bean->get_custom_table_name();
+        }
+
+        if($data['type'] == 'relate') {
+            // this is a link field
+            $bean->load_relationship($data['link']);
+            if(empty($bean->$data['link'])) {
+                // failed to load link - bail out
+                return false;
+            }
+            $this->jtcount++;
+            $params = array('joinType' => 'LEFT', 'alias' => 'jt' . $this->jtcount);
+            if(isset($data['join_name'])) {
+            	$params['alias'] = $data['join_name'];
+            }
+
+            $join = $this->sugar_query->join($data['link'], $params);
+            $alias = $join->joinName();
+            return $this->canonicalizeField("$alias.{$data['rname']}");
+        }
+
+        if(!empty($data['fields'])) {
+        	// this is a compound field
+        	$sub_fields = array();
+        	foreach($data['fields'] as $field) {
+        		$sub_fields[] = "{$table_name}.{$field}";
+        	}
+        	return $sub_fields;
+        }
+
+        return false;
     }
 
     /**
@@ -330,8 +369,23 @@ class SugarQuery_Compiler_SQL
             if ($field instanceof SugarQuery) {
                 $return[] = '(' . $field->compileSql() . ')' . $alias;
             } else {
-                $field = $this->canonicalizeField($field);
-                $return[] = $field . $alias;
+                $resolvedField = $this->canonicalizeField($field);
+                if(empty($resolvedField)) {
+                    // FIXME: can be dangerous to put $field here
+                    $return[] = "NULL $alias /* $field */";
+                    continue;
+                }
+                if(is_array($resolvedField)) {
+                    if(!empty($alias)) {
+                        throw new Exception("Can not alias compound field $field");
+                    }
+                    $return = array_merge($return, $resolvedField);
+                } else {
+                    if(empty($alias)) {
+                        $alias = " AS {$field}";
+                    }
+                    $return[] = $resolvedField . $alias;
+                }
             }
 
         }

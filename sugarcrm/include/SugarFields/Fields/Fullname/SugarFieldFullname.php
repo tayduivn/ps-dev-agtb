@@ -6,12 +6,37 @@ require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldFullname extends SugarFieldBase
 {
-	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) 
+    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
+        global $locale, $app_list_strings;
+
+        $nameparts = array();
+        foreach(array('first_name', 'last_name', 'salutation', 'title') as $field) {
+            if(!empty($bean->$field)) {
+                $nameparts[$field] = $bean->$field;
+            } else {
+                $nameparts[$field] = '';
+            }
+        }
+        $bean->ACLFilterFieldList($nameparts, array(), array("blank_value" => true));
+
+        if(!empty($nameparts['salutation']) && isset($this->field_defs['salutation']['options'])
+        		&& isset($app_list_strings[$this->field_defs['salutation']['options']])
+        		&& isset($app_list_strings[$this->field_defs['salutation']['options']][$nameparts['salutation']]) ) {
+
+        	$nameparts['salutation'] = $app_list_strings[$this->field_defs['salutation']['options']][$nameparts['salutation']];
+        } else {
+            $nameparts['salutation'] = '';
+        }
+
+         $data[$fieldName] = $locale->getLocaleFormattedName($nameparts['first_name'], $nameparts['last_name'], $nameparts['salutation'], $nameparts['title']);
+    }
+
+    function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)
 	{
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         return $this->fetch($this->findTemplate('DetailView'));
     }
-    
+
     /**
      * @see SugarFieldBase::importSanitize()
      */
@@ -24,7 +49,7 @@ class SugarFieldFullname extends SugarFieldBase
     {
         if ( property_exists($focus,'first_name') && property_exists($focus,'last_name') ) {
             $name_arr = preg_split('/\s+/',$value);
-    
+
             if ( count($name_arr) == 1) {
                 $focus->last_name = $value;
             }
