@@ -16,6 +16,15 @@
                 route: "logout"
             },
             {
+                name: "activities",
+                route: "activities",
+                callback: function(){
+                    app.controller.loadView({
+                        layout: "activities",
+                        module: "Home"
+                    });
+                }
+            },            {
                 name: "bwc",
                 route: "bwc/*url",
                 callback: function(url) {
