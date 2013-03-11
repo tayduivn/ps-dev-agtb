@@ -7,6 +7,7 @@
         _.bindAll(this);
 
         this.layout.on("filter:change:module", this.handleChange);
+        this.layout.on("filter:render:module", this._render, this);
     },
 
     _render: function() {
@@ -15,7 +16,12 @@
         this.filterNode = this.$(".related-filter");
         this.filterList = [];
 
-        this[(this.layout.layoutType === "record")? "getModuleListForSubpanels" : "getModuleListForRecords"]();
+        if (this.layout.showingActivities) {
+            this.getModuleListForActivities();
+        } else {
+            this[(this.layout.layoutType === "record")? "getModuleListForSubpanels" : "getModuleListForRecords"]();
+        }
+
         this.filterNode.select2({
             data: this.filterList,
             multiple: false,
@@ -70,6 +76,10 @@
 
     getModuleListForRecords: function() {
         this.filterList.push({id: this.module, text: app.lang.get('LBL_MODULE_NAME', this.module)});
+    },
+
+    getModuleListForActivities: function() {
+        this.filterList.push({id: 'Activities', text: app.lang.get('LBL_ACTIVITIES')});
     },
 
     pullSubpanelRelationships: function() {
