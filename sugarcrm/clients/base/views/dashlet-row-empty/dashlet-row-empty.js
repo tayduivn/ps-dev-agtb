@@ -23,15 +23,22 @@
         }, this);
     },
     addClicked: function(evt) {
-        this.addRow(1);
+        var self = this;
+        this._addRowTimer = setTimeout(function() {
+            self.addRow(1);
+        }, 100);
     },
     layoutClicked: function(evt) {
         var columns = $(evt.currentTarget).data('value');
-        this.addRow(columns);
+        var addRow = _.bind(this.addRow, this);
+        _.delay(addRow, 0, columns);
     },
-    addRow: _.debounce(function(columns) {
+    addRow: function(columns) {
         this.layout.addRow(columns);
-    }, 0),
+        if(this._addRowTimer) {
+            clearTimeout(this._addRowTimer);
+        }
+    },
     setMode: function(model) {
         if(model === 'edit') {
             this.template = this.originalTemplate;
