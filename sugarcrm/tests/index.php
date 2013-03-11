@@ -7,6 +7,9 @@
     <script type="text/javascript" src="../sidecar/lib/handlebars/handlebars-1.0.rc.1.js"></script>
     <script type="text/javascript" src='../sidecar/lib/sugarapi/sugarapi.js'></script>
     <script type="text/javascript" src='../sidecar/minified/sidecar.min.js'></script>
+    <!-- For sugar7 the plan is to generate a sugar.min.js .. in the meantime load each file -->
+    <script type="text/javascript" src='../include/javascript/sugar7/field.js'></script>
+    <script type="text/javascript" src='../include/javascript/sugar7/plugins/error-decoration.js'></script>
 <?php
 // For sugar7 the plan is to generate a /sugarcrm/config.js .. in the meantime fallback to sidecar config.js
 if (file_exists('../config.js')) {

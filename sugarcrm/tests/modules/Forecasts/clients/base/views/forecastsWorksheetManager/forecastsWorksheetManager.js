@@ -375,4 +375,18 @@ describe("forecasts_view_forecastsWorksheetManager", function() {
             expect(view.context.on).toHaveBeenCalledWith("change:selectedRanges");
         });
     });
+
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(view, 'render');
+
+            view.collection.trigger('reset');
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            view.disposed = true;
+            view.collection.trigger('reset');
+            expect(renderStub).not.toHaveBeenCalled();
+        });
+    });
 });

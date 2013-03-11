@@ -78,9 +78,6 @@
 
     _render: function() {
         app.view.views.RecordView.prototype._render.call(this);
-        // RecordView starts with action as detail; once this.editableFields has been set (e.g.
-        // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
-        this.toggleFields(this.editableFields, true);
 
         // Note if fieldset w/date created | modified is NOT set as readonly, this still removes from page
         // We decided that's fine, and better than alternative of looping fields, find date_created_by,

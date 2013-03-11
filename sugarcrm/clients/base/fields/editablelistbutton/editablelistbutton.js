@@ -22,20 +22,24 @@
         }
     },
     saveModel: function() {
-        if(!this.changed) {
-            this.cancelEdit();
-        } else {
-            var self = this;
-            app.alert.dismiss('record-saved');
-            app.alert.show('save_list_record', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
-            this.model.save({}, {
-                fieldsToValidate: this.view.getFields(this.module),
-                success: function(model) {
-                    this.changed = false;
-                    app.alert.dismiss('save_list_record');
-                    self.view.toggleRow(model.id, false);
-                }
-            });
+        var fieldsToValidate = this.view.getFields(this.module);
+        this.view.clearValidationErrors();
+        if (this.model.isValid(fieldsToValidate)) {
+            if (!this.changed) {
+                this.cancelEdit();
+            }
+            else {
+                var self = this;
+                app.alert.dismiss('record-saved');
+                app.alert.show('save_list_record', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
+                this.model.save({}, {
+                    success: function(model) {
+                        this.changed = false;
+                        app.alert.dismiss('save_list_record');
+                        self.view.toggleRow(model.id, false);
+                    }
+                });
+            }
         }
     },
     cancelEdit: function() {

@@ -1,5 +1,11 @@
 <?php
 /**
+ * SUGARCRM MAR 8 2013 Modified base class to protect against empty args problems. See ln 196.
+ *
+ */
+
+
+/**
  * JShrink
  *
  * Copyright (c) 2009-2012, Robert Hafner <tedivm@tedivm.com>.
@@ -193,7 +199,7 @@ class Minifier
                 case "\n":
                     // if the next line is something that can't stand alone
                     // preserve the newline
-                    if(strpos('(-+{[@', $this->b) !== false)
+                    if(!empty($this->b) && strpos('(-+{[@', $this->b) !== false)
                     {
                         echo $this->a;
                         $this->saveString();

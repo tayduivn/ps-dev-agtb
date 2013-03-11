@@ -78,4 +78,18 @@ describe("forecasts_view_forecastsTitle", function () {
         });
 
     });
+
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(view, 'render');
+
+            view.context.set({selectedUser: {id: 'newId'}});
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            view.disposed = true;
+            view.context.set({selectedUser: {id: 'newId2'}});
+            expect(renderStub).not.toHaveBeenCalled();
+        });
+    });
 });

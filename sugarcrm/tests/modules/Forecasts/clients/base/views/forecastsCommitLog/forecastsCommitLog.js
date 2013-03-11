@@ -189,4 +189,18 @@ describe("forecasts_view_forecastsCommitLog", function(){
             expect(view.previousDateEntered).toEqual("");
         });
     });
+
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(view, 'render');
+
+            view.buildForecastsCommitted();
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            view.disposed = true;
+            view.buildForecastsCommitted();
+            expect(renderStub).not.toHaveBeenCalled();
+        });
+    });
 });

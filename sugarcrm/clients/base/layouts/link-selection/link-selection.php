@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,33 +25,14 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-{{#each value}}
-    <div class="control-group email span12" data-emailaddress="{{email_address}}">
-        <div class="span6">
-            <div class="input-append">
-                <div class="row-fluid">
-                    <input type="text" class="span12 existingAddress" data-id="{{email_address}}" value="{{email_address}}" disabled>
-                    <p class="help-block"></p>
-                </div>
-            </div>
-        </div>
-        <div class="span6 btn-toolbar">
-            <div class="btn-group" data-parentEmail="{{email_address}}">
-                <button type="button" class="{{#eq primary_address "1"}}active {{/eq}}is_primary btn" disabled><i class="icon-star"></i></button>
-                <button type="button" class="{{#eq opt_out "1"}}active {{/eq}}btn" disabled><i class="icon-ban-circle"></i></button>
-                <button type="button" class="{{#eq invalid_email "1"}}active {{/eq}}btn" disabled><i class="icon-exclamation-sign"></i></button>
-            </div>
-        </div>
-    </div>
-{{/each}}
-<div class="control-group email span12">
-    <div class="span6 pull-left">
-        <div class="input-append">
-            <div class="row-fluid">
-                <input type="text" class="span12 newEmail input-append" placeholder="{{str "LBL_EMAIL_ADD"}}" disabled>
-                <p class="help-block"></p>
-            </div>
-        </div>
-    </div>
-</div>
+
+
+$layout = MetaDataManager::getLayout('SideBarLayout');
+$layout->push('main', array('view'=>'selection-headerpane'));
+
+$listLayout = MetaDataManager::getLayout("FilterPanelLayout", array("default" => "list"));
+$listLayout->push(array('view'=>'selection-list'));
+$listLayout->push(array('view'=>'list-bottom'));
+$layout->push('side', array('layout'=>'link-sidebar'));
+$layout->push('main', array('layout' => $listLayout->getLayout(true)));
+$viewdefs['base']['layout']['link-selection'] = $layout->getLayout();

@@ -1,5 +1,5 @@
 <?php
 
 $viewdefs['Accounts']['base']['filter']['default'] = array(
-    'default_filter' => 'favorites'
+    'default_filter' => 'assigned_to_me'
 );

@@ -59,4 +59,19 @@ describe("forecasts_field_editableDate", function () {
         });
     });
 
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(field, 'render'),
+                mockEvent = jQuery.Event('click');
+
+            field.onClick(mockEvent);
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            field.disposed = true;
+            field.onClick(mockEvent);
+            expect(renderStub).not.toHaveBeenCalled();
+
+        });
+    });
 });

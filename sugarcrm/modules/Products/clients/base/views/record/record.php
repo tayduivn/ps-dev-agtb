@@ -76,20 +76,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'event' => 'button:create_related_button:click',
-                    'name' => 'create_related_button',
-                    'label' => 'LBL_CREATE_RELATED_RECORD',
-                    'acl_action' => 'create',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:link_related_button:click',
-                    'name' => 'link_related_button',
-                    'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'acl_action' => 'edit',
-                ),
-                array(
-                    'type' => 'rowaction',
                     'event' => 'button:convert_to_quote:click',
                     'name' => 'convert_to_quote_button',
                     'label' => 'LBL_CONVERT_TO_QUOTE',

@@ -25,16 +25,16 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-/**
- * View that displays a list of models pulled from the context's collection.
- * @class View.Views.ListViewBottom
- * @alias SUGAR.App.layout.ListViewBottom
- * @extends View.View
- */
+    /**
+     * View that displays a list of models pulled from the context's collection.
+     * @class View.Views.ListViewBottom
+     * @alias SUGAR.App.layout.ListViewBottom
+     * @extends View.View
+     */
     // We listen to event and keep track if search filter is toggled open/close
     filterOpened: false,
     events: {
-        'click [name=show_more_button]': 'showMoreRecords'
+        'click [data-action="show-more"]': 'showMoreRecords'
     },
 
     initialize: function(opts) {
@@ -44,8 +44,10 @@
     },
 
     _renderHtml: function() {
-
-        // Dashboard layout injects shared context with limit: 5. 
+        this.showMoreLabel = app.lang.get('LBL_SHOW_MORE_MODULE', this.module, {
+            module: app.lang.get('LBL_MODULE_NAME', this.module)
+        });
+        // Dashboard layout injects shared context with limit: 5.
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.get('limit') ? this.context.get('limit') : null;
 

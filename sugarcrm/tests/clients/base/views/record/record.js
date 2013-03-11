@@ -192,41 +192,14 @@ describe("Record View", function() {
             expect(_.size(view.editableFields)).toBe(7);
         });
 
-        it("should call decorateError on error fields during 'error:validation' events", function(){
+        it("should call clearValidationErrors when Cancel is clicked", function(){
             view.render();
             view.model.set({
                 name: 'Name',
                 case_number: 123,
                 description: 'Description'
             });
-            var descriptionField = _.find(view.fields, function(field){
-                return field.name === 'description';
-            });
-            descriptionField.decorateError = function() {};//sugar7.js now injects this
-            var stub = sinon.stub(descriptionField, 'decorateError', $.noop());
-            //Simulate a 'required' error on description field
-            view.model.trigger('error:validation', {description: {required : true}});
-            //Defer expectations since decoration is deferred
-            _.defer(function(stub){
-                expect(stub.calledWithExactly({required: true})).toBe(true);
-                stub.restore();
-            }, stub);
-
-        });
-
-        it("should call clearErrorDecoration on fields when Cancel is clicked", function(){
-            view.render();
-            view.model.set({
-                name: 'Name',
-                case_number: 123,
-                description: 'Description'
-            });
-            var descriptionField = _.find(view.fields, function(field){
-                return field.name === 'description';
-            });
-            descriptionField.clearErrorDecoration = function() {};//sugar7.js now injects this
-            var stub = sinon.stub(descriptionField, 'clearErrorDecoration', $.noop());
-            view.model.trigger('error:validation', {description: {required : true}});
+            var stub = sinon.stub(view, "clearValidationErrors");
             view.cancelClicked();
             //Defer expectations since decoration is deferred
             _.defer(function(stub){

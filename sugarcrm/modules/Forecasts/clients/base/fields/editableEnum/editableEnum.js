@@ -53,14 +53,23 @@
      */
     initialize: function(options){
         app.view.fields.EnumField.prototype.initialize.call(this, options);
-        var self = this;
-        
-        self.currentView = "default";
+        this.currentView = "default";
         //Check to see if the field is editable
-        self.isEditable();
-        self.createCTEIconHTML();  
+        this.isEditable();
+        this.createCTEIconHTML();
     },
-    
+
+    /**
+     * override _dispose and make sure custom added select2 and window listeners are off
+     * @private
+     */
+    _dispose: function() {
+        this.$("select").off();
+        this.$el.find(".select2-input").off();
+        $(window).off("click." + this.cid);
+        app.view.Component.prototype._dispose.call(this);
+    },
+
     /**
      * Click handler to render the select2 box.
      * 
@@ -68,35 +77,35 @@
      * renders the edit view, opens the dropdown and sets up the close and window.click events.
      */
     clickToEdit: function(e){
-        var self = this,
-            select = null;
-        if(!self.disabled){
+        var select = null;
+        if(!this.disabled){
             //prevent this click from filtering up to the window.click
             e.preventDefault();
-            self.currentView = "edit";
-            self.$el.off("click");
-            self.def.view = "edit";
-            self.render();
-            select = self.$("select");
-            self.currentVal = select.select2("val");
+            this.currentView = "edit";
+            this.$el.off("click");
+            this.def.view = "edit";
+            if (!this.disposed) {
+                this.render();
+            }
+            select = this.$("select");
+            this.currentVal = select.select2("val");
             select.select2("open");
-            select.on("close", function(){
-                if(_.isEqual(self.currentVal, select.select2("val"))){
-                    self.resetField();
+            select.on("close", _.bind(function(){
+                if(_.isEqual(this.currentVal, select.select2("val"))){
+                    this.resetField();
                 }
-            });            
-            self.$(".select2-input").keydown(function(e){
-                self.onKeyDown(e);
-            });
-            
-           
+            }, this));
+            this.$el.find(".select2-input").on('keydown', _.bind(function(e){
+                this.onKeyDown(e);
+            }, this));
+
             //custom namespaced window click event to destroy the chosen dropdown on "blur".
             //this is removed in this.resetField
-            $(window).on("click." + self.cid, function(e){
-                if(!_.isEqual(self.cid, $(e.target).attr("cid"))){
-                    self.resetField();
+            $(window).on("click." + this.cid, _.bind(function(e){
+                if(!_.isEqual(this.cid, $(e.target).attr("cid"))){
+                    this.resetField();
                 }
-            });
+            }, this));
         }
     },
     
@@ -104,8 +113,7 @@
      * Change handler
      */
     changed: function(){
-        var self = this;
-        self.resetField();
+        this.resetField();
     },
     
     /**
@@ -114,11 +122,10 @@
      * @param evt
      */
     onKeyDown: function(evt) {
-        var self = this;
         if(evt.which == 9) {
             evt.preventDefault();
             // tab key pressed, trigger event from context
-            self.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, self);
+            this.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, this);
         }
     },
     
@@ -128,15 +135,15 @@
      * This resets the field to the detail view, in addition to cleaning up the namespaced window.click handler.
      */
     resetField: function(){
-        var self = this;
-        
-        $(window).off("click." + self.cid);
-        self.def.view = "default";
-        self.currentView = "default";
-        self.render();
-        self.$el.on("click", function(e){
-            self.clickToEdit(e);
-        });
+        $(window).off("click." + this.cid);
+        this.def.view = "default";
+        this.currentView = "default";
+        if (!this.disposed) {
+            this.render();
+        }
+        this.$el.on("click", _.bind(function(e){
+            this.clickToEdit(e);
+        }, this));
     },
 
     /**
@@ -145,9 +152,8 @@
      * If the HTML hasn't been set up yet, create it and store it on the DOM.  If it has, simply use it
      */
     createCTEIconHTML: function(){
-        var self = this,
-            cteIcon = $.data(document.body, "cteIcon"),
-            events = self.events || {}
+        var cteIcon = $.data(document.body, "cteIcon"),
+            events = this.events || {}
         
         if(_.isUndefined(cteIcon)){
             cteIcon = '<span class="edit-icon"><i class="icon-pencil icon-sm"></i></span>';
@@ -156,20 +162,20 @@
         
         //Events
         // if it's not editable, we don't want to try to add the pencil
-        self.showCteIcon = function() {
-            if((self.currentView != "edit") && (!self.disabled)){
-                self.$el.find("span").before($(cteIcon));
+        this.showCteIcon = _.bind(function() {
+            if((this.currentView != "edit") && (!this.disabled)){
+                this.$el.find("span").before($(cteIcon));
             }
-        };
+        }, this);
         
         // if it's not editable, we don't want to try to remove the pencil
-        self.hideCteIcon = function() {
-            if((self.currentView != "edit") && (!self.disabled)){
-                self.$el.parent().find(".edit-icon").detach();
+        this.hideCteIcon = _.bind(function() {
+            if((this.currentView != "edit") && (!this.disabled)){
+                this.$el.parent().find(".edit-icon").detach();
             }
-        };
-        
-        self.events = _.extend(events, {
+        }, this);
+
+        this.events = _.extend(events, {
             'mouseenter': 'showCteIcon',
             'mouseleave': 'hideCteIcon',
             'click'     : 'clickToEdit'
@@ -180,12 +186,11 @@
      * Utility Method to check if the field is editable
      */
     isEditable: function() {
-        var self = this;        
-        self.disabled = false;
+        this.disabled = false;
         
         //Check to see if you're a manager on someone else's sheet, disable changes
-        if(self.context.get("selectedUser")["id"] != app.user.id){
-            self.disabled = true; 
+        if(this.context.get("selectedUser")["id"] != app.user.id){
+            this.disabled = true;
         }
-    },
+    }
 })

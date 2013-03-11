@@ -23,11 +23,71 @@
  ********************************************************************************/
 
 require_once 'include/SugarTheme/SidecarTheme.php';
+require_once 'tests/SugarTestReflection.php';
 
 class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $platformTest = 'platform_TEST_123456789E_1234';
     private $themeTest = 'theme_TEST_123456789E_1234';
+
+    public function tearDown()
+    {
+        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $themePaths = $theme->getPaths();
+
+        // Clear out the path
+        rmdir_recursive($themePaths['cache']);
+        
+    }
+
+    public function testGetThemeCacheFile()
+    {
+        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $themePaths = $theme->getPaths();
+
+        // Clear out the path
+        rmdir_recursive($themePaths['cache']);
+        sugar_mkdir($themePaths['cache'], null, true);
+        
+        $testEmpty = SugarTestReflection::callProtectedMethod($theme, 'getThemeCacheFile');
+        $this->assertFalse($testEmpty, "Should not have found any file");
+        
+        $testCacheFile = $themePaths['cache'].'theme_unittest.css';
+        file_put_contents($testCacheFile,"This is a unit test CSS file.");
+
+        $testFound = SugarTestReflection::callProtectedMethod($theme, 'getThemeCacheFile');
+        $this->assertEquals($testCacheFile, $testFound, "Should have found the file that was placed.");
+    }
+
+    public function testDeleteStaleThemeCacheFiles()
+    {
+        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $themePaths = $theme->getPaths();
+
+        // Clear out the path
+        rmdir_recursive($themePaths['cache']);
+        sugar_mkdir($themePaths['cache'], null, true);
+        
+        $testCacheFile = $themePaths['cache'].'theme_unittest.css';
+        file_put_contents($testCacheFile,"This is a unit test CSS file.");
+
+        $testBadCacheFile1 = $themePaths['cache'].'theme_badtest1.css';
+        file_put_contents($testBadCacheFile1,"This is a bad unit test CSS file.");
+
+        $testBadCacheFile2 = $themePaths['cache'].'theme_badtest2.css';
+        file_put_contents($testBadCacheFile2,"This is a bad 2 unit test CSS file.");
+
+        $theme->deleteStaleThemeCacheFiles($testCacheFile);
+        $this->assertFileExists($testCacheFile, "Should have left the original cache file");
+        $this->assertFileNotExists($testBadCacheFile1, "Should have removed the bad cache file #1");
+        $this->assertFileNotExists($testBadCacheFile2, "Should have removed the bad cache file #2");
+
+        $theme->deleteStaleThemeCacheFiles($testCacheFile);
+        $this->assertFileExists($testCacheFile, "Should have left the original cache file (part2)");
+
+        $theme->deleteStaleThemeCacheFiles();
+        $this->assertFileNotExists($testCacheFile, "Should have removed the original cache file");
+    }    
 
     public function testGetCSSURL()
     {

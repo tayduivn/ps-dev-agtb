@@ -203,6 +203,8 @@ $mod_strings = array (
 	'LBL_LIST_TIME'				=> 'Time Sent',
 	'LBL_LIST_TO_ADDR'			=> 'To',
 	'LBL_LIST_TYPE'				=> 'Type',
+    "LBL_SELECTED_RECIPIENTS"   => "Selected Recipients",
+    "LBL_COMPOSE_ADDRESSBOOK"   => "Address Book",
 
 	'NTC_REMOVE_INVITEE'		=> 'Are you sure you want to remove this recipient from the email?',
 	'WARNING_SETTINGS_NOT_CONF'	=> 'Warning: Your email settings are not configured to send email.',

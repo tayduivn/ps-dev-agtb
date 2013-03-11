@@ -58,6 +58,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'title',
                 'phone_mobile',
                 'department',
                 'phone_work',
@@ -73,6 +74,72 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                         'primary_address_state',
                         'primary_address_postalcode',
                         'primary_address_country',
+                    ),
+                ),
+                'email',
+            ),
+        ),
+        array(
+            'columns' => 2,
+            'name' => 'panel_hidden',
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
+                'report_to_name',
+                'sync_contact',
+                'lead_source',
+                'do_not_call',
+                array(
+                    'name' => 'campaign_name',
+                    'span' => 12,
+                ),
+                'portal_name',
+                'portal_active',
+                array(
+                    'name' => 'preferred_language',
+                    'span' => 12,
+                ),
+                'assigned_user_name',
+                array(
+                    'name' => 'date_modified_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_MODIFIED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'modified_by_name',
+                        ),
+                    ),
+                ),
+                'team_name',
+                array(
+                    'name' => 'date_entered_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_entered',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'created_by_name',
+                        ),
                     ),
                 ),
                 array(
@@ -95,66 +162,6 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                                 'primary_address_postalcode' => 'alt_address_postalcode',
                                 'primary_address_country' => 'alt_address_country',
                             ),
-                        ),
-                    ),
-                ),
-                'email',
-            ),
-        ),
-        array(
-            'columns' => 2,
-            'name' => 'panel_hidden',
-            'hide' => true,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'fields' => array(
-                'description',
-                'report_to_name',
-                'sync_contact',
-                'lead_source',
-                'do_not_call',
-                array(
-                    'name' => 'campaign_name',
-                    'span' => 12
-                ),
-                'portal_name',
-                'portal_active',
-                'preferred_language',
-                'assigned_user_name',
-                'team_name',
-                array(
-                    'name' => 'date_modified_by',
-                    'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_MODIFIED',
-                    'fields' => array(
-                        array(
-                            'name' => 'date_modified',
-                        ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY'
-                        ),
-                        array(
-                            'name' => 'modified_by_name',
-                        ),
-                    ),
-                ),
-                array(
-                    'name' => 'date_entered_by',
-                    'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'fields' => array(
-                        array(
-                            'name' => 'date_entered',
-                        ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY'
-                        ),
-                        array(
-                            'name' => 'created_by_name',
                         ),
                     ),
                 ),
