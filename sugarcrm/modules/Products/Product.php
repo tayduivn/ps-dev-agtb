@@ -624,6 +624,7 @@ class Product extends SugarBean
         $this->handleSalesStatus();
         $this->convertDateClosedToTimestamp();
 
+        $this->mapFieldsFromProductTemplate();
         $id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
@@ -818,6 +819,30 @@ class Product extends SugarBean
         if (empty($this->id) || $this->new_with_id == true) {
             // we have a new record set the sales_status to new;
             $this->sales_status = Opportunity::STATUS_NEW;
+        }
+    }
+
+    /**
+     * Handle the mapping of the fields from the product template to the product
+     */
+    protected function mapFieldsFromProductTemplate()
+    {
+        if (!empty($this->product_template_id)
+            && $this->fetched_row['product_template_id'] != $this->product_template_id
+        ) {
+            /* @var $pt ProductTemplate */
+            $pt = BeanFactory::getBean('ProductTemplates', $this->product_template_id);
+
+            $this->category_id = $pt->category_id;
+            $this->mft_part_num = $pt->mft_part_num;
+            $this->list_price = $pt->list_price;
+            $this->cost_price = $pt->cost_price;
+            $this->discount_price = $pt->discount_price;
+            $this->list_usdollar = $pt->list_usdollar;
+            $this->cost_usdollar = $pt->cost_usdollar;
+            $this->discount_usdollar = $pt->discount_usdollar;
+            $this->tax_class = $pt->tax_class;
+            $this->weight = $pt->weight;
         }
     }
 
