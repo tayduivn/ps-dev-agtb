@@ -64,7 +64,7 @@
      * @param model New value for teamset
      */
     setValue: function(model) {
-        var index = _.isUndefined(this.currentIndex) ? this.$(".chzn-container-active").prev().data('index') : this.currentIndex,
+        var index = this.currentIndex,
             team = this.value;
         team[index || 0].id = model.id;
         team[index || 0].name = model.value;
