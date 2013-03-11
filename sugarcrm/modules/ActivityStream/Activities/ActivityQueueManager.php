@@ -244,6 +244,7 @@ class ActivityQueueManager
         $job->target = "class::SugarJobAddActivitySubscriptions";
 
         if (count($user_partials) < 5) {
+            $job->execute_time = TimeDate::getInstance()->nowDb();
             $job->runJob();
         } else {
             $queue = new SugarJobQueue();
