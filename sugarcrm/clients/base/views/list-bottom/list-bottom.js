@@ -39,7 +39,13 @@
     _dataFetched : false,
 
     initialize: function(opts) {
+        opts.meta.showMoreLabel = opts.meta.showMoreLabel || "LBL_SHOW_MORE_MODULE";
+
         app.view.View.prototype.initialize.call(this, opts);
+
+        this.showMoreLabel = app.lang.get(this.options.meta.showMoreLabel, this.module, {
+            module: app.lang.get('LBL_MODULE_NAME', this.module)
+        });
 
         this.layout.bind("hide", this.toggleVisibility, this);
         this.context.get("collection").once("reset", function(){
@@ -48,9 +54,6 @@
     },
 
     _renderHtml: function() {
-        this.showMoreLabel = app.lang.get('LBL_SHOW_MORE_MODULE', this.module, {
-            module: app.lang.get('LBL_MODULE_NAME', this.module)
-        });
         // Dashboard layout injects shared context with limit: 5.
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.get('limit') ? this.context.get('limit') : null;
