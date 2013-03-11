@@ -158,8 +158,5 @@
         if(this.setPrimary(index)){
             this.$(".btn[name=primary][data-index=" + index + "]").addClass("active");
         }
-    }, 0),
-    getFieldElement: function() {
-        return this.$el;
-    }
+    }, 0)
 })
