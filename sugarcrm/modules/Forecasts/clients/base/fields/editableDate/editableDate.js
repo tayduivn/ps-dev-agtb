@@ -25,6 +25,14 @@
      * Utility Method to check if we can edit again.
      */
     checkIfCanEdit: function() {
+        var salesStage = this.model.get('sales_stage'),
+            disableIfSalesStageIs = _.union(
+                app.metadata.getModule('Forecasts', 'config').sales_stage_won,
+                app.metadata.getModule('Forecasts', 'config').sales_stage_lost
+            );
+        if(salesStage && _.indexOf(disableIfSalesStageIs, salesStage) != -1) {
+            this._canEdit = false;
+        }
     },
 
     /**

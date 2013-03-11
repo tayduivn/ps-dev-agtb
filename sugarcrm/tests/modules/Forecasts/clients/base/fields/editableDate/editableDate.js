@@ -19,13 +19,18 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecast editableCurrency field", function () {
-    var field, fieldDef, context, model, app;
+describe("forecast editableDate field", function () {
+    var field, fieldDef, context, model, app, getModuleStub;
 
     beforeEach(function () {
         app = SugarTest.app;
         context = app.context.getContext();
-
+        getModuleStub = sinon.stub(app.metadata, "getModule", function() {
+            return {
+                sales_stage_won: ["Closed Won"],
+                sales_stage_lost: ["Closed Lost"]
+            };
+        });
         fieldDef = {
             "name": "editableDate",
             "type": "editableDate",
@@ -36,6 +41,7 @@ describe("forecast editableCurrency field", function () {
     });
 
     afterEach(function() {
+        getModuleStub.restore();
         delete field;
         delete context;
         delete model;
@@ -73,5 +79,18 @@ describe("forecast editableCurrency field", function () {
             expect(renderStub).not.toHaveBeenCalled();
 
         });
+    });
+    describe("checkIfCanEdit", function() {
+        it("should not be able to edit", function() {
+            field.model.set({sales_stage : "Closed Won"});
+            field.checkIfCanEdit();
+            expect(field._canEdit).toBeFalsy();
+        });
+
+        it("should be able to edit", function() {
+            field.model.set({sales_stage : "asdf"});
+            field.checkIfCanEdit();
+            expect(field._canEdit).toBeTruthy();
+        })
     });
 });
