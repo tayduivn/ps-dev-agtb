@@ -33,11 +33,11 @@ class MaxRelatedDateExpression extends DateExpression
      * Returns the opreation name that this Expression should be
      * called by.
      */
-    static function getOperationName() {
+    public static function getOperationName() {
         return array("maxRelatedDate");
     }
     
-	function evaluate() {
+    public function evaluate() {
         $params = $this->getParameters();
         //This should be of relate type, which means an array of SugarBean objects
         $linkField = $params[0]->evaluate();
@@ -74,7 +74,7 @@ class MaxRelatedDateExpression extends DateExpression
         
         //return the timestamp if the field started off that way
         if ($isTimestamp) {
-        	return $ret;
+            return $ret;
         } 
         
         //convert the timestamp to a date and return
@@ -88,7 +88,7 @@ class MaxRelatedDateExpression extends DateExpression
     /**
      * Returns the JS Equivalent of the evaluate function.
      */
-    static function getJSEvaluate() 
+    public static function getJSEvaluate() 
     {
         return "";
     }

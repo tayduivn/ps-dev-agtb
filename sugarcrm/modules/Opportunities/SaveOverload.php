@@ -98,7 +98,9 @@ function perform_save($focus)
         $product = BeanFactory::getBean('Products');
         
         //We still need to update the associated product with changes
-        $product->retrieve_by_string_fields(array('opportunity_id' => $focus->id));
+        if ($focus->new_with_id == false) {
+            $product->retrieve_by_string_fields(array('opportunity_id' => $focus->id));
+        }
         
         //If $product is set then we need to copy values into it from the opportunity
         if (isset($product)) {

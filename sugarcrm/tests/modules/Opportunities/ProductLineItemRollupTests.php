@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -28,6 +29,7 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp("app_strings");
         SugarTestHelper::setUp("beanFiles");
@@ -39,32 +41,27 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
     }
 
     public function tearDown()
-    {
-        
-        //BEGIN SUGARCRM flav=ent ONLY        
+    {   
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        SugarTestProductUtilities::removeAllCreatedProducts();
-        //END SUGARCRM flav=ent ONLY
-                
+        SugarTestProductUtilities::removeAllCreatedProducts();                
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
-        
     }
 
     public static function tearDownAfterClass()
     {
         $admin = BeanFactory::getBean("Administration");
-        $admin->saveSetting("Forecasts", "is_setup", self::$isSetup, "base");
-        SugarTestHelper::tearDown();
+        $admin->saveSetting("Forecasts", "is_setup", self::$isSetup, "base");       
+        parent::tearDownAfterClass();
     }
 
-    //BEGIN SUGARCRM flav=ent ONLY
+    
    /**
     * @group forecasts
     */
-   public function testOpportunitiesWithOneProduct()
-   {
+    public function testOpportunitiesWithOneProduct()
+    {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $oppId = $opp->id;
         
@@ -80,13 +77,13 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1000, $opp->amount, "Amount not equal.");
         $this->assertEquals(1000, $opp->best_case, "Best_case not equal");
         $this->assertEquals(1000, $opp->worst_case, "Worst_case not equal");
-   }
+    }
    
    /**
     * @group forecasts
     */
-   public function testOpportunitiesWithOneProductSavedTwice()
-   {
+    public function testOpportunitiesWithOneProductSavedTwice()
+    {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $oppId = $opp->id;
         
@@ -112,13 +109,13 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(5000, $opp->amount, "Amount not equal.");
         $this->assertEquals(5000, $opp->best_case, "Best_case not equal");
         $this->assertEquals(5000, $opp->worst_case, "Worst_case not equal");
-   }
+    }
    
    /**
     * @group forecasts
     */
-   public function testOpportunitiesWithTwoProducts()
-   {
+    public function testOpportunitiesWithTwoProducts()
+    {
         $products = 2;
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $oppId = $opp->id;
@@ -137,13 +134,13 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(20000, $opp->amount, "Amount not equal.");
         $this->assertEquals(20000, $opp->best_case, "Best_case not equal");
         $this->assertEquals(20000, $opp->worst_case, "Worst_case not equal");
-   }
+    }
    
    /**
     * @group forecasts
     */
-   public function testOpportunitiesWithTwoProductsSavedTwice()
-   {
+    public function testOpportunitiesWithTwoProductsSavedTwice()
+    {
         $products = 2;
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $oppId = $opp->id;
@@ -172,13 +169,13 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(50000, $opp->amount, "Amount not equal.");
         $this->assertEquals(50000, $opp->best_case, "Best_case not equal");
         $this->assertEquals(50000, $opp->worst_case, "Worst_case not equal");
-   }
+    }
    
    /**
     * @group forecasts
     */
-   public function testOpportunitiesWithThreeProducts()
-   { 
+    public function testOpportunitiesWithThreeProducts()
+    { 
         $products = 3;
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $oppId = $opp->id;
@@ -197,13 +194,13 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(30000, $opp->amount, "Amount not equal.");
         $this->assertEquals(30000, $opp->best_case, "Best_case not equal");
         $this->assertEquals(30000, $opp->worst_case, "Worst_case not equal");
-   }
+    }
    
    /**
     * @group forecasts
     */
-   public function testOpportunitiesWithThreeProductsSavedTwice()
-   {
+    public function testOpportunitiesWithThreeProductsSavedTwice()
+    {
         $products = 3;
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $oppId = $opp->id;
@@ -234,13 +231,13 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(60000, $opp->amount, "Amount not equal.");
         $this->assertEquals(60000, $opp->best_case, "Best_case not equal");
         $this->assertEquals(60000, $opp->worst_case, "Worst_case not equal");
-   }
+    }
    
    /**
     * @group forecasts
     */
-   public function testOpportunitiesWithTwoProducts_dateClosed()
-   {
+    public function testOpportunitiesWithTwoProducts_dateClosed()
+    {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $oppId = $opp->id;
         
@@ -266,13 +263,13 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
                        
         $this->assertEquals($product->date_closed, $opp->date_closed, "Dates not equal.");
         $this->assertEquals($product->date_closed, $opp->date_closed, "Timestamps not equal");
-   }   
+    }   
    
    /**
     * @group forecasts
     */
-   public function testOpportunitiesWithNoProductsDefaultDateClosed()
-   {    
+    public function testOpportunitiesWithNoProductsDefaultDateClosed()
+    {    
         $timedate = TimeDate::getInstance();
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $oppId = $opp->id;
@@ -281,8 +278,6 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
                        
         //check to make sure the date was unchanged by sugarlogic               
         $this->assertEquals($now, $opp->date_closed, "Date not blank.");
-   }  
-   
-    //END SUGARCRM flav=ent ONLY    
+    }  
 }
 
