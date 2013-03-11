@@ -55,12 +55,12 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         parent::tearDown();
     }
 
     public static function tearDownAfterClass()
     {
-        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
@@ -453,12 +453,13 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     public static function dataProviderTestHandleOppStalesStatus()
     {
         return array(
-            array(Opportunity::STATUS_NEW,Opportunity::STATUS_NEW, false),
-            array(Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_IN_PROGRESS, false),
-            array(Opportunity::STAGE_CLOSED_WON, Opportunity::STAGE_CLOSED_WON, true),
-            array(Opportunity::STAGE_CLOSED_LOST, Opportunity::STAGE_CLOSED_LOST, true),
-            array(Opportunity::STAGE_CLOSED_WON, Opportunity::STATUS_NEW, false),
-            array(Opportunity::STAGE_CLOSED_LOST, Opportunity::STATUS_NEW, false),
+            array(Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW, false),
+            array(Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS, false),
+            array(Opportunity::STAGE_CLOSED_WON, Opportunity::STATUS_NEW,Opportunity::STAGE_CLOSED_WON, true),
+            array(Opportunity::STAGE_CLOSED_LOST, Opportunity::STATUS_NEW,Opportunity::STAGE_CLOSED_LOST, true),
+            array(Opportunity::STAGE_CLOSED_WON, Opportunity::STATUS_NEW,Opportunity::STATUS_NEW, false),
+            array(Opportunity::STAGE_CLOSED_LOST, Opportunity::STATUS_NEW,Opportunity::STATUS_NEW, false),
+            array(Opportunity::STATUS_IN_PROGRESS, Opportunity::STAGE_CLOSED_WON,Opportunity::STATUS_IN_PROGRESS, false),
         );
     }
 
@@ -468,13 +469,18 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
      * @group opportunities
      *
      * @param $productLineItemStatus status to set product line item(s) to
+     * @param $startingOppSalesStatus status to start the Opportunity at
      * @param $expectedOppSalesStatus status expected to see on opportunity
      * @param $updateAllProducts flag to determine if one product should update or all associated products
+     *
+     * @outputBuffering disabled
      */
-    public function testProductHandleOppSalesStatus($productLineItemStatus, $expectedOppSalesStatus, $updateAllProducts)
+    public function testProductHandleOppSalesStatus($productLineItemStatus, $startingOppSalesStatus, $expectedOppSalesStatus, $updateAllProducts)
     {
         $db = DBManagerFactory::getInstance();
         $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->sales_status = $startingOppSalesStatus;
+        $opp->save();
         $opp->load_relationship('products');
 
         //create mock product and add it to the opportunity

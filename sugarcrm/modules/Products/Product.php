@@ -790,63 +790,55 @@ class Product extends SugarBean
     }
 
     /**
+     * helper function to update the opportunity sales status based on parameters
+     * @param $opportunity
+     * @param $productSalesStatusToCheck
+     * @param $checkAllPLI
+     */
+    protected function changeOppSalesStatus(Opportunity $opportunity, $productSalesStatusToCheck, $checkAllPLI)
+    {
+        if ($opportunity->sales_status != $productSalesStatusToCheck) {
+            $salesStatusLineItems = $opportunity->products->query(array(
+                                               'where'=>array(
+                                                   // query adds the prefix so we don't need contact.id
+                                                   'lhs_field'=>'sales_status',
+                                                   'operator'=>'=',
+                                                   'rhs_value'=>$this->db->quote($productSalesStatusToCheck),
+                                                   ),
+                                                'deleted'=>'0'));
+            $requiredRowCount = 1;
+            if ($checkAllPLI) {
+                $requiredRowCount = count($opportunity->products->rows);
+            }
+            //if productLineItems found with passed Sales Status and the Opp sales status is not that current sales status
+            if (count($salesStatusLineItems['rows']) >= $requiredRowCount) {
+                $opportunity->sales_status = $productSalesStatusToCheck;
+                $opportunity->save();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Code to make sure that the Sales Status field of the associated opportunity
      */
     protected function handleOppSalesStatus()
     {
         if (!empty($this->opportunity_id)) {
             $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
-            if($opp->load_relationship('products')) {
+            if ($opp->load_relationship('products')) {
                 //No need to do anything if there were no products associated to this opportunity
-                if(count($opp->products->rows) == 0) {
+                if (count($opp->products->rows) == 0) {
                     return;
                 }
-                $inProgressLineItems = $opp->products->query(array(
-                                                   'where'=>array(
-                                                       // query adds the prefix so we don't need contact.id
-                                                       'lhs_field'=>'sales_status',
-                                                       'operator'=>'=',
-                                                       'rhs_value'=>$this->db->quote(Opportunity::STATUS_IN_PROGRESS),
-                                                       ),
-                                                    'deleted'=>'0'));
-                //if productLineItems found with In Progress Sales Status and the Opp sales stage is New, bump to In Progress
-                if(count($inProgressLineItems['rows']) > 0 && $opp->sales_status == Opportunity::STATUS_NEW) {
-                    $opp->sales_status = Opportunity::STATUS_IN_PROGRESS;
-                    $opp->save();
+                if ($this->changeOppSalesStatus($opp, Opportunity::STATUS_IN_PROGRESS,false)) {
                     return;
                 }
-
-                //find all product line items with a Closed Won Sales Status
-                $closedWonLineItems = $opp->products->query(array(
-                                                   'where'=>array(
-                                                       // query adds the prefix so we don't need contact.id
-                                                       'lhs_field'=>'sales_status',
-                                                       'operator'=>'=',
-                                                       'rhs_value'=>$this->db->quote(Opportunity::STAGE_CLOSED_WON),
-                                                       ),
-                                                    'deleted'=>'0'));
-                //if the amount of Closed Won Products found matches the number of products for the Opportunity
-                //then update the Opportunity Sales Status to Closed Won
-                if(count($closedWonLineItems['rows']) == count($opp->products->rows) && $opp->sales_status != Opportunity::STAGE_CLOSED_WON) {
-                    $opp->sales_status = Opportunity::STAGE_CLOSED_WON;
-                    $opp->save();
+                if ($this->changeOppSalesStatus($opp, Opportunity::STAGE_CLOSED_WON,true)) {
                     return;
                 }
-
-                //find all product line items with a Closed Lost Sales Status
-                $closedLostLineItems = $opp->products->query(array(
-                                                   'where'=>array(
-                                                       // query adds the prefix so we don't need contact.id
-                                                       'lhs_field'=>'sales_status',
-                                                       'operator'=>'=',
-                                                       'rhs_value'=>$this->db->quote(Opportunity::STAGE_CLOSED_LOST),
-                                                       ),
-                                                    'deleted'=>'0'));
-                //if the amount of Closed Lost Products found matches the number of products for the Opportunity
-                //then update the Opportunity Sales Status to Closed Lost
-                if(count($closedLostLineItems['rows']) == count($opp->products->rows) && $opp->sales_status != Opportunity::STAGE_CLOSED_LOST) {
-                    $opp->sales_status = Opportunity::STAGE_CLOSED_LOST;
-                    $opp->save();
+                if ($this->changeOppSalesStatus($opp, Opportunity::STAGE_CLOSED_LOST,true)) {
                     return;
                 }
             }
