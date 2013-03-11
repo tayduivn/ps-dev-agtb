@@ -59,6 +59,18 @@ class RestEnumTest extends RestTestBase {
     /**
      * @group rest
      */
+    public function testETagHeaders() {
+        $restReply = $this->_restCall('Products/enum/commit_stage');
+        $this->assertNotEmpty($restReply['headers']['ETag']);
+        $this->assertEquals($restReply['info']['http_code'], 200);
+        $restReply = $this->_restCall('Products/enum/commit_stage', '', '', array(), array('If-None-Match: ' . $restReply['headers']['ETag']));
+        $this->assertNotEmpty($restReply['headers']['ETag']);
+        $this->assertEquals($restReply['info']['http_code'], 304);
+
+    }
+    /**
+     * @group rest
+     */
     public function testHtmlDropDown() {
         $restReply = $this->_restCall('Products/enum/type_id');
         $this->assertEquals('fatal_error',$restReply['reply']['error'], "Did not return a fatal error");

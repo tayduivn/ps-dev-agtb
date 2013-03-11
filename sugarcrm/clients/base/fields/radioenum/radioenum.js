@@ -28,6 +28,14 @@
     // On list-edit template,
     // we want the radio buttons to be replaced by a select so each method must call the EnumField method instead.
     extendsFrom: 'ListeditableField',
+    _render: function(){
+        app.view.fields.EnumField.prototype.loadEnumOptions.call(this, false, function(){
+            if(!this.disposed){
+                this.render();
+            }
+        });
+        return app.view.Field.prototype._render.call(this);
+    },
     bindDomChange: function() {
         if (this.tplName === 'list-edit') {
             app.view.fields.EnumField.prototype.bindDomChange.call(this);
