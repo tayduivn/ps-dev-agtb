@@ -548,7 +548,7 @@
         }
     },
     _dispose: function(){
-        app.view.Component.prototype._dispose.call(this);
+        app.view.views.EditableView.prototype._dispose.call(this);
         if(this.context){
             this.context.off(null, null, this);
             this.context = null;
