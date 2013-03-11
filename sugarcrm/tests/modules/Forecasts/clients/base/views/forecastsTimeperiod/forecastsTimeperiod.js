@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts timeperiod view", function () {
+describe("forecasts_view_forecastsTimeperiod", function () {
 
     var app, view;
 

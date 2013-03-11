@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecast editableCurrency field", function() {
+describe("forecasts_field_editableCurrency", function() {
     var field, fieldDef, context, model, app, getModuleStub;
 
     beforeEach(function() {
@@ -36,7 +36,7 @@ describe("forecast editableCurrency field", function() {
         });
 
         context.set({"selectedUser": {'id': app.user.get('id')}});
-        getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+        getModuleStub = sinon.stub(app.metadata, "getModule", function() {
             return {
                 sales_stage_won: ["Closed Won"],
                 sales_stage_lost: ["Closed Lost"]
@@ -55,9 +55,9 @@ describe("forecast editableCurrency field", function() {
 
     afterEach(function() {
         getModuleStub.restore();
-        delete field;
-        delete context;
-        delete model;
+        field = null;
+        context = null;
+        model = null;
     });
 
     describe("event should fire", function() {
@@ -83,7 +83,7 @@ describe("forecast editableCurrency field", function() {
         it("should be false with same user and configured excluded sales stage", function() {
             // restore for this one test
             getModuleStub.restore();
-            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+            getModuleStub = sinon.stub(app.metadata, "getModule", function() {
                 return {
                     sales_stage_won: ["test_sales_stage"],
                     sales_stage_lost: ["Closed Lost"]

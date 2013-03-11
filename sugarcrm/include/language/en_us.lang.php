@@ -2613,7 +2613,7 @@ $app_strings = array (
     'LBL_LAST_VIEWED' => 'Recently Viewed',
     'LBL_SHOW_LESS' => 'Show Less',
     'LBL_SHOW_MORE' => 'Show More',
-    'LBL_SHOW_MORE_MODULE' => 'More {{str \'LBL_MODULE_NAME\' attributes.module}}...',
+    'LBL_SHOW_MORE_MODULE' => 'More {{module}}...',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
     'LBL_LEADS'=>'Leads',
     'LBL_LESS' => 'less',
@@ -3431,7 +3431,7 @@ $app_strings = array (
     'LBL_SELECT_THIS_ROW_TITLE' => 'Select this row',
     'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
     'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
-    'LBL_SEARCH_AND_SELECT' => 'Search and select {{module}}',
+    'LBL_SEARCH_AND_SELECT' => 'Search and Select {{module}}',
 
     //for upload errors
     'UPLOAD_ERROR_TEXT'          => 'ERROR: There was an error during upload. Error code: {0} - {1}',
@@ -3569,6 +3569,7 @@ $app_strings = array (
     'LBL_ASSOC_EXISTING' => 'Associate Existing {{{this}}}',
     'LBL_SEARCH_ALL' => 'Search all {{{this}}}',
     'LBL_SEARCH_ALL_RECORDS' => 'Search all records',
+    'LBL_SEARCH_ALL_MODULES' => 'Search all',
     'LBL_OK' => 'OK',
     'LBL_YES' => 'Yes',
     'LBL_NO' => 'No',

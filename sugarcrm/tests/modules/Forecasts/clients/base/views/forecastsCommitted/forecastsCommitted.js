@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts committed view", function() {
+describe("forecasts_view_forecastsCommitted", function() {
     var app, view, context, totals,
         formatAmountLocaleStub, createHistoryLogStub, forecastsSetStub,
         stubs = [];
@@ -27,7 +27,7 @@ describe("The forecasts committed view", function() {
     beforeEach(function() {
         app = SugarTest.app;
 
-        stubs.push(sinon.stub(app.metadata, "getModule", function(module, type) {
+        stubs.push(sinon.stub(app.metadata, "getModule", function() {
             return {
                 show_worksheet_likely: 1,
                 show_worksheet_best: 1,
@@ -68,7 +68,7 @@ describe("The forecasts committed view", function() {
 
         stubs.push(formatAmountLocaleStub);
 
-        createHistoryLogStub = sinon.stub(app.utils, "createHistoryLog", function(model, previousModel) {
+        createHistoryLogStub = sinon.stub(app.utils, "createHistoryLog", function() {
             return "createHistoryLog";
         });
 
@@ -85,7 +85,7 @@ describe("The forecasts committed view", function() {
             stub.restore();
         });
 
-        delete totals;
+        totals = null;
         delete view.selectedUser;
         delete view.totals;
         delete view.context;

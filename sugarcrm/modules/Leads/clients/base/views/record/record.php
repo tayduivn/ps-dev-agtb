@@ -96,7 +96,8 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'showOn' => 'view',
                     'value'  => 'edit',
                 ),
-                array(
+                //TODO: Commented out for SugarCon.  Will add back once actions are ready
+               /* array(
                     'type'  => 'rowaction',
                     'event' => 'button:create_related_button:click',
                     'name'  => 'create_related_button',
@@ -109,7 +110,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'name'  => 'link_related_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
                     'value' => 'edit',
-                ),
+                ),*/
                 array(
                     'type'   => 'rowaction',
                     'event'  => 'button:manage_subscriptions:click',

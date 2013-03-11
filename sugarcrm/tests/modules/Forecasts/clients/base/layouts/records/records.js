@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts records layout controller", function(){
+describe("forecasts_layout_records", function(){
 
     var app, layout, stubs;
 
@@ -46,7 +46,7 @@ describe("The forecasts records layout controller", function(){
             selectedUser: {}
         };
 
-        stubs.push(sinon.stub(app.metadata, "getLayout", function(layout){
+        stubs.push(sinon.stub(app.metadata, "getLayout", function(){
             return {
                 forecasts: {
                     meta: {
@@ -56,14 +56,14 @@ describe("The forecasts records layout controller", function(){
                 componentsMeta: {}
             };
         }));
-        stubs.push(sinon.stub(app.metadata, "getModule", function(module){
+        stubs.push(sinon.stub(app.metadata, "getModule", function(){
             return {
                 config : {
                     hello : 'world'
                 }
             };
         }));
-        stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
+        stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function () {}));
 
         stubs.push(sinon.stub(app.api, "call"));
 

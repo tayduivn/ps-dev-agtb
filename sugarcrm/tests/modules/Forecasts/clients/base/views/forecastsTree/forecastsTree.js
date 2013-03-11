@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts tree view", function(){
+describe("forecasts_view_forecastsTree", function(){
 
     var app, view, data, replaceHTMLChars;
 
@@ -82,5 +82,27 @@ describe("The forecasts tree view", function(){
            expect(children[0].data === "Sarah O'Reilly").toBeTruthy("Correctly encoded Sarah's name");
         });
 
+    });
+
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(view, 'render'),
+                ctx = {},
+                selectedUser = {
+                    showOpps: false,
+                    isManager: true,
+                    id: 'testA'
+                };
+            view.currentRootId = 'testB';
+
+            view.checkRender(ctx, selectedUser);
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            view.disposed = true;
+            view.checkRender(ctx, selectedUser);
+            expect(renderStub).not.toHaveBeenCalled();
+
+        });
     });
 });

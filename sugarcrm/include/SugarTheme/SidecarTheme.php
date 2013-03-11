@@ -78,6 +78,42 @@ class SidecarTheme
     }
 
     /**
+     * Checks the filesystem for a generated css file
+     * This is useful on systems without a php memory cache
+     * or if the memory cache is filled
+     *
+     * @return css cache filename
+     */
+    protected function getThemeCacheFile()
+    {
+        $files = glob($this->paths['cache'].'theme_*.css');
+        if ( isset($files[0]) ) {
+            // Looks like we found something
+            return $files[0];
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Deletes old CSS cache files, skipping the one we want to keep
+     *
+     * @param string $currCacheFile The full path of the current cache file
+     */
+    public function deleteStaleThemeCacheFiles($currCacheFile = '')
+    {
+        $files = glob($this->paths['cache'].'theme_*.css');
+        if ( !is_array($files) ) {
+            return;
+        }
+        foreach ( $files as $fileName ) {
+            if ( $fileName != $currCacheFile ) {
+                unlink($fileName);
+            }
+        }
+    }
+
+    /**
      * Returns the bootstrap.css URL of a theme
      * If not found in the cached folder, will generate it from /themes/ and /custom/themes/
      *
@@ -90,26 +126,29 @@ class SidecarTheme
         $hash = sugar_cache_retrieve($hashKey);
 
         //If it was, check if the client has the same version cached
-        $cacheCSS = $this->paths['cache'].$hash.".css";
+        $cacheCSS = $this->paths['cache'].'theme_'.$hash.".css";
         // Check if file exists on the system
+        if (empty($hash) || !file_exists($cacheCSS)) {
+            $cacheCSS = $this->getThemeCacheFile();
+            if (!empty($cacheCSS)) {
+                // Let's store the theme's hash into the cache so we can grab it next time
+                $hash = str_replace($this->paths['cache'].'theme_','',$cacheCSS);
+                $hash = substr($hash,0,-4);
+                sugar_cache_put($hashKey,$hash);
+            }
+        }
         // otherwise we have to generate the corresponding bootstrap.css with custom theme, default theme and base theme
-        if (!file_exists($cacheCSS)) {
+        if (empty($cacheCSS)) {
             // We compile it if a we have the custom theme in the file system in /custom/themes or /themes
             $customThemeVars = $this->paths['custom'] . 'variables.less';
             $baseThemeVars = $this->paths['base'] . 'variables.less';
-            if ( SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars) ) {
+            if ( $this->myTheme == 'default' || SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars) ) {
                 $hash = $this->compileTheme();
-                $cacheCSS = $this->paths['cache'].$hash.".css";
-            }
-            else {
-                // Otherwise we compile the default theme if it exists
+                $cacheCSS = $this->paths['cache'].'theme_'.$hash.".css";
+            } else {
+                // Otherwise we grab the default theme
                 $clientDefaultTheme = new SidecarTheme($this->myClient, 'default');
-                $hash = sugar_cache_retrieve($clientDefaultTheme->paths['hashKey']);
-                $cacheCSS = $clientDefaultTheme->paths['cache'].$hash.".css";
-                if (!file_exists($cacheCSS)) {
-                    $hash = $clientDefaultTheme->compileTheme();
-                    $cacheCSS = $clientDefaultTheme->paths['cache'].$hash.".css";
-                }
+                $cacheCSS = $clientDefaultTheme->getCSSURL();
             }
         }
         return $cacheCSS;
@@ -185,10 +224,16 @@ class SidecarTheme
         // Write bootstrap.css on the file system
         sugar_mkdir($this->paths['cache'], null, true);
 
+        
         $hash = md5($myCss);
-        sugar_file_put_contents($this->paths['cache'].$hash.".css", $myCss);
+        $cacheFileName = $this->paths['cache'].'theme_'.$hash.'.css';
+        sugar_file_put_contents($cacheFileName, $myCss);
         //Cache the hash in sugar_cache so we don't have to hit the filesystem for etag comparisons
         sugar_cache_put($this->paths['hashKey'], $hash);
+
+        // Delete old css cache files
+        $this->deleteStaleThemeCacheFiles($cacheFileName);
+
         return $hash;
     }
 

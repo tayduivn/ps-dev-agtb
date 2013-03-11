@@ -51,7 +51,7 @@ class SugarTestReflection
         return self::$supported;
     }
     
-    public static function callProtectedMethod($object, $method, $args)
+    public static function callProtectedMethod($object, $method, $args = array())
     {
         $rc = new ReflectionClass($object);
         $rm = $rc->getMethod($method);

@@ -1,4 +1,4 @@
-describe("Forecasts.Layout.Inspector", function() {
+describe("forecasts_layout_inspector", function() {
     var app, view, context, layout, parent, actual;
 
     beforeEach(function() {

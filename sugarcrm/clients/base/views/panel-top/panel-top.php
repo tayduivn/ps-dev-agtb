@@ -1,5 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -26,13 +27,34 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$viewdefs['base']['view']['list-bottom'] = array(
+
+$viewdefs['base']['view']['panel-top'] = array(
     'buttons' => array(
         array(
-            'name' => 'show_more_button',
             'type' => 'button',
-            'label' => 'LBL_SHOW_MORE_MODULE',
-            'css_class' => 'more padded',
+            'css_class' => 'btn-invisible',
+            'icon' => 'icon-chevron-down'
         ),
-    )
+        array(
+            'type' => 'actiondropdown',
+            'name' => 'panel_dropdown',
+            'css_class' => 'pull-right',
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-plus',
+                    'name' => 'create_button',
+                    'label' => ' ',
+                    'acl_action' => 'create',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'select_button',
+                    'label' => 'LBL_ASSOC_RELATED_RECORD',
+                    'icon' => 'icon-pencil',
+                    'acl_action' => 'view',
+                ),
+            ),
+        ),
+    ),
 );

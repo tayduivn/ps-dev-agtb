@@ -19,8 +19,8 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecast historyLog field", function() {
-    var field, fieldDef, context, model, e;
+describe("forecasts_field_historyLog", function() {
+    var field, fieldDef, context, model;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -42,8 +42,8 @@ describe("forecast historyLog field", function() {
     });
     afterEach(function() {
         context.unset("selectedUser");
-        delete field;
-        delete fieldDef;
+        field = null;
+        fieldDef = null;
     });
 
     it("field.uid should be the user_id from the model", function() {

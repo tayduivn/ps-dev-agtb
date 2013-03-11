@@ -19,34 +19,42 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecast editableEnum field", function() {
-    var field, fieldDef, context, model, e;
+describe("forecasts_field_editableEnum", function() {
+    var field, fieldDef, context, e, getModuleStub;
     
     beforeEach(function() {
-        fieldDef = {
-                "name": "sales_stage",
-                "type": "editableEnum",
-                "options": "sales_stage_dom",
-                "view": "default"
-            };
-        
         app = SugarTest.app;
         app.user.id = "tester";
-                
+
+        fieldDef = {
+            "name": "sales_stage",
+            "type": "editableEnum",
+            "options": "sales_stage_dom",
+            "view": "default"
+        };
+
+        getModuleStub = sinon.stub(app.metadata, "getModule", function() {
+            return {
+                sales_stage_won: ["Closed Won"],
+                sales_stage_lost: ["Closed Lost"]
+            };
+        });
+
         context = app.context.getContext();
         SugarTest.loadComponent('base', 'field', 'enum');
     });
     
     afterEach(function(){
+        getModuleStub.restore();
         app.user.id = null;
         delete app;
     });
                  
     describe("when it is your sheet", function(){
         beforeEach(function(){
-            context.get = function(key){
+            context.get = function() {
                 return {id:"tester"};                    
-            }
+            };
             
             field = SugarTest.createField("../modules/Forecasts/clients/base", "editableEnum", "editableEnum", "detail", fieldDef, "Forecasts", null, context);                
         });
@@ -136,7 +144,7 @@ describe("forecast editableEnum field", function() {
     
     describe("when it is not your sheet", function(){
         beforeEach(function(){
-            context.get = function(key){
+            context.get = function() {
                 return {id:"tester2"};                    
             };            
             field = SugarTest.createField("../modules/Forecasts/clients/base", "editableEnum", "editableEnum", "detail", fieldDef, "Forecasts", null, context); 
@@ -237,5 +245,32 @@ describe("forecast editableEnum field", function() {
             expect(renderStub).not.toHaveBeenCalled();
 
         });
+    });
+
+    describe("isEditable with sales_stage set", function() {
+        beforeEach(function() {
+            context.get = function(key){
+                return {id:"tester"};
+            }
+
+            field = SugarTest.createField("../modules/Forecasts/clients/base", "editableEnum", "editableEnum", "detail", fieldDef, "Forecasts", null, context);
+        });
+
+        afterEach(function() {
+            field.model.unset('sales_stage');
+            context.unset('get');
+        });
+
+        it("should not be able to edit", function() {
+            field.model.set({sales_stage : "Closed Won"});
+            field.isEditable();
+            expect(field.disabled).toBeTruthy();
+        });
+
+        it("should be able to edit", function() {
+            field.model.set({sales_stage : "asdf"});
+            field.isEditable();
+            expect(field.disabled).toBeFalsy();
+        })
     });
 });
