@@ -31,7 +31,7 @@
                 {{/if}}
             {{/each}}
             {{#if enableHeaderButtons}}
-            <div class="btn-toolbar pull-right dropdown">
+            <div class="btn-toolbar pull-right">
                 {{#unless createMode}}
                 <div class="btn-group btn-group-previous-next">
                       <a href="{{#if collection.previous}}#{{modelRoute collection.previous def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible previous-row{{#unless collection.previous}} disabled{{/unless}}"><i class="icon-chevron-left"></i></a>
