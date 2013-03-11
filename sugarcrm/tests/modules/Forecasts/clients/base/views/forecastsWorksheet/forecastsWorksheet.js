@@ -345,4 +345,18 @@ describe("The forecasts worksheet", function() {
         });
 
     });
+
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(view, 'render');
+
+            view.collection.trigger('reset');
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            view.disposed = true;
+            view.collection.trigger('reset');
+            expect(renderStub).not.toHaveBeenCalled();
+        });
+    });
 });
