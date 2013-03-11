@@ -361,6 +361,7 @@
         params.contentEl = 'chart';
         params.minColumnWidth = 120;
         params.chartId = chartId;
+        params.type = app.metadata.getModule('Forecasts', 'config').forecast_by;
 
         chart = new loadSugarChart(chartId, this.buildChartUrl(params), css, chartConfig, params, _.bind(function(chart){
             this.chart = chart;
