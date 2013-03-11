@@ -50,7 +50,8 @@ $mod_strings = array (
     'LBL_FORECAST_ID' => 'Forecast ID',
     'LBL_FORECAST_TIME_ID' => 'Time Period ID',
     'LBL_FORECAST_TYPE' => 'Forecast Type',
-    'LBL_FORECAST_OPP_COUNT' => 'Opportunities',
+    'LBL_FORECAST_OPP_COUNT' => 'Total Opportunity Count',
+    'LBL_FORECAST_PIPELINE_OPP_COUNT' => 'Pipeline Opportunity Count',
     'LBL_FORECAST_OPP_WEIGH'=> 'Weighted Amount',
     'LBL_FORECAST_OPP_COMMIT' => 'Likely Case',
     'LBL_FORECAST_OPP_BEST_CASE'=>'Best Case',
@@ -217,7 +218,7 @@ $mod_strings = array (
     'LBL_GRAPH_COMMIT_LEGEND'=>'Committed Forecast',
     'LBL_GRAPH_OPPS_LEGEND'=>'Closed Opportunities',
     'LBL_TP_QUOTA'=>'Quota:',
-    'LBL_CHART_FOOTER'=>'Forecast History<br/>Quota vs Forecasted Amount vs Closed Opportunity Value',
+    'LBL_CHART_FOOTER'=>'Forecast History<br>Quota vs Forecasted Amount vs Closed Opportunity Value',
     'LBL_TOTAL_VALUE'=>'Totals:',
     'LBL_COPY_AMOUNT'=>'Total amount',
     'LBL_COPY_WEIGH_AMOUNT'=>'Total weighted amount',
@@ -271,7 +272,7 @@ $mod_strings = array (
     'LBL_TOTAL' => 'Total',
     'LBL_EDITABLE_INVALID' => 'Invalid Value for {0}',
     'LBL_EDITABLE_INVALID_RANGE' => 'Value must be between {0} and {1}',
-    'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue, or Cancel to discard these changes continue.',
+    'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue or Cancel to discard these changes and continue.',
     'LBL_WORKSHEET_COMMIT_CONFIRM' => 'You have saved changes that have not been committed in the rep view. The saved changes will not be visible in the Manager view until you commit.<br>Press OK to commit the changes and continue, or Cancel to not commit the changes and continue.',
     'LBL_WORKSHEET_COMMIT_ALERT' => 'You have committed your Rep view, but not your Manager view; the team\'s forecast will not be committed until your Manager view is committed.',
     'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD' => 'You have unsaved changes in your Worksheet.',
@@ -329,8 +330,8 @@ $mod_strings = array (
 
     // config panels strings
     // splash screens
-    'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Setting',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the Forecasts Setting!',
+    'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Setup',
+    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the Forecasts Setup!',
     'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'This wizard will guide you through the step-by-step setup of the Forecasts module. Default values are provided for each section, so you\'ll be on your way in no time!',
     'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_3' => 'You can also do manual setup by clicking ',
     'LNK_FORECASTS_CONFIG_ADMIN_SPLASH_HERE' => 'here.',
@@ -345,14 +346,14 @@ $mod_strings = array (
 
     // timeperiod config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-    'LBL_FORECASTS_CONFIG_TIMEPERIOD_SETUP_NOTICE' => 'Please note that Time Period page will be read only after the first commit or save draft; for this reason the time period should be set up carefully.',
-    'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the timeperiods users can forecast over.',
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD_SETUP_NOTICE' => 'Time Period settings cannot be changed after initial setup.',
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the Time Periods used for forecasting.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE' => 'Select the type of year your organization uses for accounting.',
-    'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the time periods you want to forecast over:',
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the type of Time Period',
     'LBL_FORECASTS_CONFIG_LEAFPERIOD' => 'Choose the sub period that you want to view your time period over:',
-    'LBL_FORECASTS_CONFIG_START_DATE' => 'Choose the date that you would like your time periods to start with each year:',
-    'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose how many future time periods you want users to see:',
-    'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose how many past time periods you want users to see:',
+    'LBL_FORECASTS_CONFIG_START_DATE' => 'Choose fiscal year start date',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose the number of future Time Periods to view in the worksheet.<br><i>This number applies to the base Time Period selected. For example, choosing 2 with Yearly Time Period will show 8 future Quarters</i>',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose the number of past Time Periods to view in the worksheet.<br><i>This number applies to the base Time Period selected. For example, choosing 2 with Monthly Time Period will show 6 past Months</i>',
 
     // worksheet layout config
     'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_TEXT' => 'Select how to populate the forecasting worksheet:',
@@ -362,18 +363,18 @@ $mod_strings = array (
 
     // ranges config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-    'LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE' => 'Please note that Ranges page will be read only after the first commit or save draft; for this reason the Forecast Ranges should be set up carefully.',
+    'LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE' => 'Range settings cannot be changed after first save draft or commit in the Forecasts module. For an upgraded instance however, Range settings cannot be changed after the initial setup as the Forecasts data is already available through the upgrade.',
     'LBL_FORECASTS_CONFIG_RANGES' => 'Forecast Range Options:',
     'LBL_FORECASTS_CONFIG_RANGES_OPTIONS' => 'Select the way you would like to categorize opportunities.',
-    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to be included or excluded from a forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to specify opportunities that will be included or excluded from a forecast.',
     'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be excluded from the forecast.',
     'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_RANGES_DESCRIPTION' => 'Custom Ranges: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed range, excluded range and any others that you setup.',
     'LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO' => 'The Exclude Range is from 0% to the minimum of the previous Forecast Range by default.',
 
     // scenarios config
     //TODO-sfa refactors the code references for scenarios to be scenarios (SFA-337).
-    'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS' => 'Select the column you would like the user to fill out for their forecast for each opportunity.',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS' => 'Choose the Scenarios to include on the forecasting worksheet.',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Likely is based on the amount entered in the Opportunities module.',
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_LIKELY' => 'Likely',
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_BEST' => 'Best',
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_WORST' => 'Worst',

@@ -613,13 +613,15 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 		var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 		var dcmenuSugarCubeWidth = dcmenuSugarCube.get('offsetWidth');
 		var dcboxbodyWidth = dcboxbody.get('offsetWidth');
-		overlay.set('x',(dcmenuSugarCubeX + dcmenuSugarCubeWidth) - dcboxbodyWidth);
+        if(isRTL) {
+            overlay.set('x',(dcmenuSugarCubeX));
+        } else {
+            overlay.set('x',(dcmenuSugarCubeX + dcmenuSugarCubeWidth) - dcboxbodyWidth);
+        }
         $('#dcmenuSugarCube').addClass("focused");
 		
 		
-		if(isRTL) {
-			overlay.set('x',(dcmenuSugarCubeX + dcmenuSugarCubeWidth) - dcboxbodyWidth);
-		}
+
 
 	}
 	DCMenu.viewMiniNotification = function(id) {

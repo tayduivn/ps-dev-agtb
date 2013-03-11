@@ -37,32 +37,34 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
      *
      * @var array
      */
-    protected $defaultData = array("amount" => 0,
-                              "quota" => 0,
-                              "quota_id" => '',
-                              "best_case" => 0,
-                              "likely_case" => 0,
-                              "worst_case" => 0,
-                              "best_adjusted" => 0,
-                              "likely_adjusted" => 0,
-                              "worst_adjusted" => 0,
-                              "forecast" => 0,
-                              "forecast_id" => '',
-                              "worksheet_id" => '',
-                              "currency_id" => '-99',
-                              "base_rate" => 1.0,
-                              "show_opps" => false,
-                              "timeperiod_id" => '',
-                              "id" => '',
-                              "user_id" => '',
-                              "version" => 1,
-                              "name" => '',
-                              "date_modified" => ''
-                            );
+    protected $defaultData = array(
+        "amount" => 0,
+        "quota" => 0,
+        "quota_id" => '',
+        "best_case" => 0,
+        "likely_case" => 0,
+        "worst_case" => 0,
+        "best_adjusted" => 0,
+        "likely_adjusted" => 0,
+        "worst_adjusted" => 0,
+        "forecast" => 0,
+        "forecast_id" => '',
+        "worksheet_id" => '',
+        "currency_id" => '-99',
+        "base_rate" => 1.0,
+        "show_opps" => false,
+        "timeperiod_id" => '',
+        "id" => '',
+        "user_id" => '',
+        "version" => 1,
+        "name" => '',
+        "date_modified" => ''
+    );
 
 
     /**
      * Class Constructor
+     *
      * @param array $args       Service Arguments
      */
     public function __construct($args)
@@ -132,20 +134,17 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         // @see Bug #58397 : Comma in opportunity name is exported as #039;
         $encode_to_html = !isset($this->args['encode_to_html']) || $this->args['encode_to_html'] != false;
 
-        foreach($reportees as $reportee_id=>$reportee_username) {
+        foreach ($reportees as $reportee_id => $reportee_username) {
             /** @var $reportee User */
             $reportee = BeanFactory::getBean('Users', $reportee_id, array('encode' => $encode_to_html));
             $default_data = $this->defaultData;
             $default_data['id'] = $reportee_id;
-
             $default_data['label'] = $locale->getLocaleFormattedName($reportee->first_name, $reportee->last_name);
+            $default_data['name'] = $default_data['label'];
 
             if ($reportee_id == $user_id) {
-                // we have the owner
-                $default_data['name'] = string_format($mod_strings['LBL_MY_OPPORTUNITIES'], array($default_data['label']));
                 $default_data['show_opps'] = true;
             } else {
-                $default_data['name'] = $default_data['label'];
                 $default_data['show_opps'] = User::isManager($reportee_id) ? false : true;
             }
 
@@ -163,7 +162,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
     {
         $amounts = $this->getUserAmounts();
 
-        foreach($amounts as $user => $amount) {
+        foreach ($amounts as $user => $amount) {
             $this->dataArray[$user]['amount'] = $amount['amount'];
         }
     }
@@ -175,18 +174,19 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
     {
         //getting quotas from quotas table
         $db = DBManagerFactory::getInstance();
-        $quota_query = "SELECT u.user_name user_name, q.amount quota, q.id quota_id " .
-                       "FROM quotas q " .
-                       "INNER JOIN users u " .
-                       "ON q.user_id = u.id " .
-                       "WHERE u.deleted = 0 AND q.timeperiod_id = '{$this->getArg('timeperiod_id')}' " .
-                       "AND ((u.id = '{$this->getArg('user_id')}' and q.quota_type = 'Direct') " .
-                            "OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup')) and q.deleted = 0";
+        $quota_query = "SELECT u.user_name user_name, q.amount quota, q.id quota_id 
+                        FROM quotas q 
+                        INNER JOIN users u 
+                        ON q.user_id = u.id 
+                        WHERE u.deleted = 0 AND u.status = 'Active'
+                            AND q.timeperiod_id = '{$this->getArg('timeperiod_id')}'
+                            AND ((u.id = '{$this->getArg('user_id')}' and q.quota_type = 'Direct')
+                            OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup'))
+                            AND q.deleted = 0";
 
         $result = $db->query($quota_query);
 
-        while(($row=$db->fetchByAssoc($result))!=null)
-        {
+        while (($row = $db->fetchByAssoc($result)) != null) {
             $this->dataArray[$row['user_name']]['quota_id'] = $row['quota_id'];
             $this->dataArray[$row['user_name']]['quota'] = $row['quota'];
         }
@@ -201,47 +201,45 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 
         global $current_user;
         //getting data from worksheet table for reportees
-        $reportees_query = "SELECT u2.user_name, " .
-                           "w.id worksheet_id, " .
-                           "w.best_case best_adjusted, " .
-                           "w.likely_case likely_adjusted, " .
-                           "w.worst_case worst_adjusted, " .
-                           "w.forecast_type, " .
-                           "w.related_id, " .
-                           "w.version, " .
-                           "w.quota, " .
-                           "w.currency_id, " .
-                           "w.base_rate " .
-                           "from users u " .
-                           "inner join users u2 " .
-                                   "on u.id = u2.reports_to_id " .
-                                   "or u.id = u2.id " .
-                           "inner join worksheet w " .
-                                   "on w.user_id = u.id " .
-                                   "and w.timeperiod_id = '" . $args['timeperiod_id'] . "'" .
-                                   "and ((w.related_id = u.id and u2.id = u.id) " .
-                                        "or (w.related_id = u2.id)) " .
-                           "where u.deleted = 0 AND u2.deleted = 0 AND u.id = '" . $args['user_id'] . "' " .
-                                   "and w.deleted = 0 ";
+        $reportees_query = "SELECT u2.user_name, 
+                            w.id worksheet_id,
+                            w.best_case best_adjusted,
+                            w.likely_case likely_adjusted,
+                            w.worst_case worst_adjusted,
+                            w.forecast_type,
+                            w.related_id,
+                            w.version,
+                            w.quota,
+                            w.currency_id,
+                            w.base_rate
+                            FROM users u
+                            INNER JOIN users u2
+                                on u.id = u2.reports_to_id or u.id = u2.id
+                            INNER JOIN worksheet w
+                                on w.user_id = u.id  and w.timeperiod_id = '" . $args['timeperiod_id'] . "'
+                                    AND ((w.related_id = u.id and u2.id = u.id) OR (w.related_id = u2.id))
+                            WHERE u.deleted = 0 AND
+                                u.status = 'Active' AND
+                                u2.deleted = 0 AND
+                                u2.status = 'Active' AND
+                                u.id = '" . $args['user_id'] . "'
+                                and w.deleted = 0 ";
 
 
-        if ($args['user_id'] == $current_user->id)
-        {
-            $reportees_query .=    "and w.revision = (select max(revision) from worksheet " .
-                                                           "where user_id = u.id and related_id = u2.id " .
-                                                                   "and timeperiod_id = '" . $args['timeperiod_id'] . "')";
-        }
-        else
-        {
+        if ($args['user_id'] == $current_user->id) {
+            $reportees_query .= "and w.revision = (select max(revision) from worksheet
+                                    where user_id = u.id
+                                        and related_id = u2.id
+                                        and timeperiod_id = '" . $args['timeperiod_id'] . "')";
+        } else {
             $reportees_query .= "and w.version = 1";
         }
 
         $db = DBManagerFactory::getInstance();
 
         $result = $db->query($reportees_query);
-        
-        while(($row=$db->fetchByAssoc($result))!=null)
-        {
+
+        while (($row = $db->fetchByAssoc($result)) != null) {
             $this->dataArray[$row['user_name']]['worksheet_id'] = $row['worksheet_id'];
             $this->dataArray[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
             $this->dataArray[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
@@ -249,8 +247,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
             $this->dataArray[$row['user_name']]['currency_id'] = $row['currency_id'];
             $this->dataArray[$row['user_name']]['base_rate'] = $row['base_rate'];
             $this->dataArray[$row['user_name']]['version'] = $row['version'];
-            if ($row['version'] == 0)
-            {
+            if ($row['version'] == 0) {
                 $this->dataArray[$row['user_name']]['quota'] = $row['quota'];
             }
 
@@ -293,13 +290,16 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 
         $args = $this->getArgs();
 
-        $query = "SELECT id, user_name FROM users WHERE reports_to_id = '" . $args['user_id'] . "' AND deleted = 0";
+        $query = "SELECT id, user_name
+                    FROM users
+                    WHERE reports_to_id = '" . $args['user_id'] . "'
+                        AND deleted = 0
+                        AND status = 'Active'";
         $db = DBManagerFactory::getInstance();
         $result = $db->query($query);
 
         $ids = array();
-        while($row=$db->fetchByAssoc($result))
-        {
+        while ($row = $db->fetchByAssoc($result)) {
             $ids[$row['id']] = $row['user_name'];
         }
 
@@ -308,23 +308,26 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         $user = BeanFactory::getBean('Users', $args['user_id']);
         $ids[$args['user_id']] = $user->user_name;
 
-        foreach($ids as $id=>$user_name)
-        {
+        foreach ($ids as $id => $user_name) {
             // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
             $forecast_type = (User::isManager($id) && $id != $args['user_id']) ? 'ROLLUP' : 'DIRECT';
-            $forecast_query = sprintf("SELECT id, best_case, likely_case, worst_case, date_modified, currency_id, base_rate, opp_count, pipeline_opp_count, pipeline_amount FROM forecasts " .
-                                      "WHERE timeperiod_id = '%s' " .
-                                          "AND forecast_type = '%s' " .
-                                          "AND user_id = '%s' " .
-                                          "AND deleted = 0 " .
-                                      "ORDER BY forecasts.date_modified DESC",
-                                    $args['timeperiod_id'],
-                                    $forecast_type,
-                                    $id);
+            $forecast_query = sprintf(
+                "SELECT id, best_case, likely_case, worst_case, date_modified, currency_id, base_rate,
+                        opp_count, pipeline_opp_count, pipeline_amount
+                    FROM forecasts
+                    WHERE timeperiod_id = '%s'
+                        AND forecast_type = '%s'
+                        AND user_id = '%s'
+                        AND deleted = 0
+                    ORDER BY forecasts.date_modified DESC",
+                $args['timeperiod_id'],
+                $forecast_type,
+                $id
+            );
 
             $result = $db->limitQuery($forecast_query, 0, 1);
 
-            while($row=$db->fetchByAssoc($result)) {
+            while ($row = $db->fetchByAssoc($result)) {
                 $this->dataArray[$user_name]['best_case'] = $row['best_case'];
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
                 $this->dataArray[$user_name]['best_adjusted'] = $row['best_case'];
@@ -335,13 +338,15 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
                 $this->dataArray[$user_name]['worst_adjusted'] = $row['worst_case'];
                 $this->dataArray[$user_name]['forecast_id'] = $row['id'];
-                $this->dataArray[$user_name]['date_modified'] = $this->convertDateTimeToISO($db->fromConvert($row['date_modified'], 'datetime'));
+                $this->dataArray[$user_name]['date_modified'] = $this->convertDateTimeToISO(
+                    $db->fromConvert($row['date_modified'], 'datetime')
+                );
                 $this->dataArray[$user_name]['currency_id'] = $row['currency_id'];
                 $this->dataArray[$user_name]['base_rate'] = $row['base_rate'];
                 $this->dataArray[$user_name]['opp_count'] = $row['opp_count'];
                 $this->dataArray[$user_name]['pipeline_opp_count'] = $row['pipeline_opp_count'];
                 $this->dataArray[$user_name]['pipeline_amount'] = $row['pipeline_amount'];
-                
+
             }
         }
     }
@@ -353,21 +358,26 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
     protected function loadManagerAmounts()
     {
         $user_id = $this->getArg('user_id');
-        foreach($this->dataArray as $rep => $val) {
+        foreach ($this->dataArray as $rep => $val) {
             if (empty($val['forecast_id'])) {
                 $this->dataArray[$rep]['amount'] = 0;
-            } else if ($val['user_id'] != $user_id && $val['show_opps'] == false) {
-                // this is for a a manager only row
-                // we need to get their total amount including sales reps.
-                // first get the reportees that have a forecast submitted for this time period
-                $manager_reportees_forecast = $this->getUserReporteesWithForecasts($val['user_id'], $this->getArg('timeperiod_id'));
-                // second, we need to get the data all the reporting users
-                $manager_data = $this->getUserAmounts($val['user_id']);
-                // third we only process the users that actually have a committed forecast;
-                foreach($manager_data as $name => $m_data) {
-                    if (in_array($name, $manager_reportees_forecast)) {
-                        // add it to the managers amount
-                        $this->dataArray[$rep]['amount'] += $m_data['amount'];
+            } else {
+                if ($val['user_id'] != $user_id && $val['show_opps'] == false) {
+                    // this is for a a manager only row
+                    // we need to get their total amount including sales reps.
+                    // first get the reportees that have a forecast submitted for this time period
+                    $manager_reportees_forecast = $this->getUserReporteesWithForecasts(
+                        $val['user_id'],
+                        $this->getArg('timeperiod_id')
+                    );
+                    // second, we need to get the data all the reporting users
+                    $manager_data = $this->getUserAmounts($val['user_id']);
+                    // third we only process the users that actually have a committed forecast;
+                    foreach ($manager_data as $name => $m_data) {
+                        if (in_array($name, $manager_reportees_forecast)) {
+                            // add it to the managers amount
+                            $this->dataArray[$rep]['amount'] += $m_data['amount'];
+                        }
                     }
                 }
             }
@@ -386,23 +396,26 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
             $user_id = $this->getArg('user_id');
         }
 
-        $sql = "select u.user_name, sum(amount) as amount from opportunities o " .
-               "left join timeperiods t " .
-                   "on t.start_date_timestamp <= o.date_closed_timestamp " .
-                       "and t.end_date_timestamp >= o.date_closed_timestamp " .
-               "INNER JOIN users u " .
-                   "ON o.assigned_user_id = u.id " .
-                       "and (u.reports_to_id = '{$user_id}' " .
-                       "OR u.id = '{$user_id}') " .
-               "where u.deleted=0 AND t.id = '{$this->getArg('timeperiod_id')}' " .
-               "GROUP BY u.user_name";
+        $sql = "SELECT u.user_name, sum(amount) as amount
+                FROM opportunities o
+                INNER JOIN timeperiods t
+                    on t.start_date_timestamp <= o.date_closed_timestamp
+                    and t.end_date_timestamp >= o.date_closed_timestamp
+                INNER JOIN users u
+                    ON o.assigned_user_id = u.id
+                    and (u.reports_to_id = '{$user_id}'
+                        OR u.id = '{$user_id}')
+                WHERE u.deleted=0
+                    AND u.status = 'Active'
+                    AND t.id = '{$this->getArg('timeperiod_id')}'
+                GROUP BY u.user_name";
 
         $db = DBManagerFactory::getInstance();
 
         $results = $db->query($sql);
 
         $return = array();
-        while($row = $db->fetchByAssoc($results)) {
+        while ($row = $db->fetchByAssoc($results)) {
             $return[$row['user_name']] = array('amount' => $row['amount']);
         }
 
@@ -423,8 +436,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         $seed->loadFromRow($this->getArgs());
         $sfh = new SugarFieldHandler();
 
-        foreach ($seed->field_defs as $properties)
-        {
+        foreach ($seed->field_defs as $properties) {
             $fieldName = $properties['name'];
 
             if (!isset($args[$fieldName])) {

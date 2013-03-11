@@ -2186,47 +2186,61 @@ EOQ;
      */
     public static function isManager($user_id, $include_deleted=false)
     {
-        $query = 'SELECT count(id) as total FROM users WHERE reports_to_id = ' .  $GLOBALS['db']->quoted(clean_string($user_id));
-        if(!$include_deleted)
-        {
+        $db = DBManagerFactory::getInstance();
+        $query = 'SELECT count(id) as total FROM users
+                WHERE reports_to_id = ' .  $db->quoted(clean_string($user_id)) . ' AND status = ' . $db->quoted(clean_string('Active'));
+        if (!$include_deleted) {
             $query .= " AND deleted=0";
         }
-        $count = $GLOBALS['db']->getOne($query);
+        $count = $db->getOne($query);
         return $count > 0;
     }
     
     /**
      * @static
-     * This function returns an array of reportees and their corresponding reportee count
+     * This function returns an array of reportees and their corresponding reportee count, if additional_fields are
+     * passed in, the return will contain the whole row vs just the key => total value pair that is returned when no
+     * additional_fields are defined
      * 
-     * @param String user_id The id of the user to check
-     * @param boolean included_deleted Boolean Value indicating whether or not to include deleted records (defaults to false)
+     * @param String $user_id The id of the user to check
+     * @param boolean $include_deleted Boolean Value indicating whether or not to include deleted records (defaults to false)
+     * @param array $additional_fields      Additional Fields you want returned
      * @return array Array of reportee IDs and their leaf count
      */
-     public static function getReporteesWithLeafCount($user_id, $include_deleted = false)
-     {
+    public static function getReporteesWithLeafCount($user_id, $include_deleted = false, $additional_fields = array())
+    {
         $db = DBManagerFactory::getInstance();
-        $deleted = ($include_deleted? 1:0);
+        $deleted = ($include_deleted ? 1 : 0);
         $returnArray = array();
-        $query      = "SELECT u.id, count(u2.id) as total FROM users u " .
-                          "LEFT JOIN users u2 " .
-                              "ON u.id = u2.reports_to_id ";
-        if(!$include_deleted){
-            $query .=         "AND u2.deleted = 0 ";
-        }        
-        $query     .=   "WHERE u.reports_to_id = {$db->quoted(clean_string($user_id))} ";
-        if(!$include_deleted){
-            $query .=       "AND u.deleted = {$deleted} ";
+
+        $_fields = join(',u.', $additional_fields);
+        if (!empty($_fields)) {
+            $_fields = ", u." . $_fields;
         }
-        $query     .=   "GROUP BY u.id";
-        
+
+        $query = "SELECT u.id, count(u2.id) as total{$_fields} FROM users u " .
+            "LEFT JOIN users u2 " .
+            "ON u.id = u2.reports_to_id AND u2.status = 'Active' ";
+        if (!$include_deleted) {
+            $query .= "AND u2.deleted = 0 ";
+        }
+        $query .= "WHERE u.reports_to_id = {$db->quoted(clean_string($user_id))} ";
+        if (!$include_deleted) {
+            $query .= "AND u.deleted = {$deleted} AND u.status = 'Active' ";
+        }
+        $query .= "GROUP BY u.id". $_fields;
+
         $result = $db->query($query);
-        while($row = $db->fetchByAssoc($result)){
-            $returnArray[$row["id"]] = $row["total"]; 
+        while ($row = $db->fetchByAssoc($result)) {
+            if (!empty($additional_fields)) {
+                $returnArray[$row["id"]] = $row;
+            } else {
+                $returnArray[$row["id"]] = $row["total"];
+            }
         }
-        
+
         return $returnArray;
-     }
+    }
      
      /**
       * @static

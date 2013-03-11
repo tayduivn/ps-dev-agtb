@@ -105,6 +105,13 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      */
     public function getChartLabels($chartData)
     {
+        if(!empty($_SESSION['authenticated_user_language'])) {
+            $list_strings = return_mod_list_strings_language($_SESSION['authenticated_user_language'], 'Calendar');
+        } else {
+            global $current_language;
+            $list_strings = return_mod_list_strings_language($current_language, 'Calendar');
+        }
+
         $timedate = TimeDate::getInstance();
         $months = array();
         $startDate = $timedate->fromDbDate($this->start_date);
@@ -131,7 +138,12 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
             }
 
             if($isFirst) {
-                $val['label'] = $startDate->format($this->chart_label);
+                $month = $startDate->format('n');
+                if(isset($list_strings['dom_cal_month_long'][$month])) {
+                    $val['label'] = $list_strings['dom_cal_month_long'][$month] . ' ' . $startDate->format('Y');
+                } else {
+                    $val['label'] = $startDate->format($this->chart_label);
+                }
             } else if ($count == 2) {
                 $val['label'] = $startDate->format('n/j') . '-' . $timedate->fromDbDate($this->end_date)->format('n/j');
             } else {

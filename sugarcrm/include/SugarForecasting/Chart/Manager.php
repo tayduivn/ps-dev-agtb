@@ -75,13 +75,10 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
      */
     protected function formatDataForChart()
     {
-        global $current_language;
         // since we are converting everything to base currency, we need to get the base currency id for the formatting
         $currency_id = '-99';
 
-        // get the language strings for the modules that we need
-        $forecast_strings = return_module_language($current_language, 'Forecasts');
-        $opp_strings = return_module_language($current_language, 'Opportunities');
+        $forecast_strings = $this->getModuleLanguage('Forecasts');
 
         // get the quota from the data
         $quota = $this->getRollupQuota();
@@ -148,6 +145,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         // fix the properties
         $properties = $this->defaultPropertiesArray;
         // remove the pareto lines
+        $properties['goal_marker_label'][0] = $forecast_strings['LBL_QUOTA'];
         unset($properties['goal_marker_label'][1]);
         $properties['value_name'] = $forecast_strings['LBL_CHART_AMOUNT'];
         $properties['label_name'] = $forecast_strings['LBL_CHART_TYPE'];

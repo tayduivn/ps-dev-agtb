@@ -56,7 +56,11 @@
             if(_.isUndefined(options)) {
                 return this;
             }
-            var template = this.getAlertTemplate(options.level, options.messages, options.title);
+            if(_.isUndefined(options.showCancel)) {
+                // show cancel by default if it isn't explicitly stated
+                options.showCancel = true;
+            }
+            var template = this.getAlertTemplate(options.level, options.messages, options.title, options.showCancel);
             this.$el.html(template);
             this.show(options.level);
         },
@@ -89,9 +93,9 @@
          */
         getAlertTemplate: function(level, messages, title) {
             var template,
-                alertClasses = this.getAlertClasses(level);
-
-            title = title ? title : this.getDefaultTitle(level);
+                alertClasses = this.getAlertClasses(level),
+                title = title ? title : this.getDefaultTitle(level),
+                showCancel = showCancel ? showCancel : true;
 
             switch (level) {
                 case this.LEVEL.PROCESS:
@@ -107,7 +111,7 @@
                 case this.LEVEL.INFO:
                 case this.LEVEL.ERROR:
                     template = '<div class="alert {{alertClass}} alert-block">' +
-                        '<a class="close">x</a>' +
+                        '{{#if showCancel}}<a class="close">x</a>{{/if}}' +
                         '{{#if title}}<strong>{{title}}</strong>{{/if}}' +
                         ' {{#each messages}}{{{this}}}{{/each}}' +
                         '</div>';
@@ -128,7 +132,8 @@
             return Handlebars.compile(template)({
                 alertClass: alertClasses,
                 title: this.getTranslatedLabels(title),
-                messages: this.getTranslatedLabels(messages)
+                messages: this.getTranslatedLabels(messages),
+                showCancel: showCancel
             });
         },
 

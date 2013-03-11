@@ -261,6 +261,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $now = $timedate->getNow(true);
         $now->modify("+$monthDelta month");
         // random day from now to end of month
+        $now->setTime(0,0,0);
         $day = mt_rand($now->day, $now->days_in_month);
         return $timedate->asDbDate($now->get_day_begin($day));
     }
@@ -287,6 +288,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
             // random day from start of month to now
             $day =  mt_rand(1, $now->day);
         }
+        $now->setTime(0,0,0); // always default it to midnight
         return $timedate->asDbDate($now->get_day_begin($day));
     }
 }

@@ -29,10 +29,17 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
      * @var Call our call object
      */
     private $callid;
+    public $contact = null;
 
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+
+        $contact = BeanFactory::newBean('Contacts');
+        $contact->first_name = 'MeetingTest';
+        $contact->last_name = 'Contact';
+        $contact->save();
+        $this->contact = $contact;        
     }
 
     public function tearDown()
@@ -44,6 +51,9 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset( $GLOBALS['current_user']);
         unset( $GLOBALS['mod_strings']);
+
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
+        unset($this->contact);        
     }
 
     /**
@@ -130,5 +140,20 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
         $r = $db->query($q);
         $a = $db->fetchByAssoc($r);
         $this->assertEquals('accept', $a['accept_status'], "Call wasn't accepted by the User");         
+    }
+
+    public function testCallContactIdSet()
+    {
+        global $db;
+        $call = BeanFactory::newBean('Calls');
+        $call->name = 'Super Awesome Call Ville USA';
+        $call->contact_id = $this->contact->id;
+        $call->save();
+
+        $q = "SELECT mu.contact_id FROM calls_contacts mu WHERE mu.call_id = '{$call->id}'";
+        $r = $db->query($q);
+        $a = $db->fetchByAssoc($r);
+        $this->assertEquals($this->contact->id, $a['contact_id'], "Contact wasn't set as an invitee");
+
     }
 }

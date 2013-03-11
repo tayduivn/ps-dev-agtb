@@ -73,7 +73,7 @@
                         </td>
                     </tr>
                      <tr>
-                        <td colspan="2" white-space="wrap" style="font-style: italic;"><span>{sugar_translate label='LBL_WIRELESS_MODULES_ENABLE_DESC'}</span></td>
+                        <td colspan="2" white-space="wrap" style="font-style: italic;"><span>{sugar_translate label='LBL_WIRELESS_MODULES_ENABLE_DESC2'}</span></td>
                     </tr>
                 </td>
             </tr>
@@ -90,10 +90,10 @@
 	
 	<table border="0" cellspacing="1" cellpadding="1">
 	   <tr>
-	       <td colspan="2">{sugar_translate module='Configurator' label='LBL_MOBILE_MOD_REPORTS_RESTRICTION'}</td>
+	       <td colspan="2">{sugar_translate module='Configurator' label='LBL_MOBILE_MOD_REPORTS_RESTRICTION2'}</td>
        </tr>
         <tr>
-           <td colspan="2">{sugar_translate label='LBL_WIRELESS_SUPPORTED_MODULES'}</td>
+           <td colspan="2">{sugar_translate label='LBL_WIRELESS_SUPPORTED_MODULES2'}</td>
        </tr>
 		<tr>
 			<td>

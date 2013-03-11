@@ -1769,12 +1769,12 @@ EOQ;
 		}
 		else {
 			$whereClause = ltrim($whereClause);
-			if (strtoupper(substr($whereClause, 1, 5)) == 'WHERE' ) {   // remove WHERE
-				$whereClause = substr($whereClause, 6);
+			preg_replace('/^WHERE\s/i', '', $whereClause);  //remove WHERE if it exists
+
+            if(!preg_match('/^\s*?AND\s/i', $whereClause)) {  // Add AND
+                $whereClause = "AND {$whereClause}";
             }
-            if (strtoupper(substr($whereClause, 1, 4)) != 'AND ' ) {  // Add AND
-                $whereClause = "AND $whereClause";
-            }
+
             $whereClause .= ' ';  // make sure there is a trailing blank
 		}
 		

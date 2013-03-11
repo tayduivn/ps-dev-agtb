@@ -182,7 +182,6 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testReportees()
     {
-        $db = DBManagerFactory::getInstance();
 
         $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id);
         $this->assertEquals($restReply['reply']['metadata']['id'], self::$currentUser->id, "currentUser's id was not found in the Expected place in the rest reply" );

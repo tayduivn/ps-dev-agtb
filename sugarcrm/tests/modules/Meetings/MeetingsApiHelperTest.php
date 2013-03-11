@@ -28,13 +28,14 @@
      ********************************************************************************/
 
 
-require_once('modules/Reports/ReportsApiHelper.php');
+require_once('modules/Meetings/MeetingsApiHelper.php');
 require_once('include/api/RestService.php');
 
-class ReportsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
+class MeetingsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     protected $bean =null;
+    protected $contact = null;
 
     public function setUp()
     {
@@ -50,31 +51,35 @@ class ReportsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
 
-        $this->bean = BeanFactory::newBean('Reports');
-        $this->bean->fetched_row['report_type'] = 'Matrix';
-        $this->bean->report_type = 'summary';
+        $this->bean = BeanFactory::newBean('Meetings');
         $this->bean->id = create_guid();
-        $this->bean->name = 'Super Awesome Report Time';
+        $this->bean->name = 'Super Awesome Meetings Time';
+
+        // gotta unfortunately create a contact for this
+        $this->contact = SugarTestContactUtilities::createContact();
+        $this->bean->contact_id = $this->contact->id;
 
     }
 
     public function tearDown()
     {
         unset($this->bean);
+        unset($this->contact);
         SugarTestHelper::tearDown();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         parent::tearDown();
     }
 
     public function testFormatForApi() 
     {
-        $helper = new ReportsApiHelper(new ReportsServiceMockup());
+        $helper = new MeetingsApiHelper(new MeetingsServiceMockup());
         $data = $helper->formatForApi($this->bean);
-        $this->assertEquals($data['report_type'], $this->bean->fetched_row['report_type'], "Report Type Does not match");
+        $this->assertEquals($data['contact_name'], $this->contact->full_name, "Calls name does not match");
     }
 
 }
 
-class ReportsServiceMockup extends ServiceBase
+class MeetingsServiceMockup extends ServiceBase
 {
     public function execute() {}
     protected function handleException(Exception $exception) {}

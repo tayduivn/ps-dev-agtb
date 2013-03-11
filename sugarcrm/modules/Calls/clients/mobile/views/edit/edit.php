@@ -55,11 +55,13 @@ $viewdefs['Calls']['mobile']['view']['edit'] = array(
                     'fields' => array(
                         array(
                             'name' => 'duration_hours',
+                            'displayParams' => array('required' => true),
                         ),
                         array(
                             'name' => 'duration_minutes',
                             'type' => 'enum',
-                            'options' => 'duration_intervals'
+                            'options' => 'duration_intervals',
+                            'displayParams' => array('required' => true),  
                         ),
                     ),
                 ),

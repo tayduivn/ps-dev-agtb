@@ -27,17 +27,36 @@ require_once('modules/TimePeriods/TimePeriod.php');
 
 class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private $preTestIds = array();
+
     public function setUp()
     {
         SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        $this->preTestIds = TimePeriod::get_timeperiods_dom();
+
+        $db = DBManagerFactory::getInstance();
+
+        $db->query('UPDATE timeperiods set deleted = 1');
     }
 
     public function tearDown()
     {
+        $db = DBManagerFactory::getInstance();
+
+        $db->query("UPDATE timeperiods set deleted = 1");
+
+        //Clean up anything else left in timeperiods table that was not deleted
+        $db->query("UPDATE timeperiods SET deleted = 0 WHERE id IN ('" . implode("', '", array_keys($this->preTestIds))  . "')");
+
         SugarTestHelper::tearDown();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
 
+    /**
+     * @group timeperiods
+     */
     public function testGetTimePeriodFromDbDateWithValidDate()
     {
         // get time period within 2009-02-15
@@ -56,6 +75,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * check that the timestamps are generated correctly
+     * @group timeperiods
      */
     public function testTimePeriodTimeStamps()
     {
@@ -73,6 +93,27 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($start_date_timestamp, $tp->start_date_timestamp, "start time stamps do not match");
         $this->assertEquals($end_date_timestamp, $tp->end_date_timestamp, "end time stamps do not match");
+    }
 
+    /**
+     * @group timeperiods
+     */
+    public function testUpgradeLegacyTimePeriodsUpgradesTimePeriodsWithOutDateStamps()
+    {
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2009-04-01', '2009-06-30');
+
+        // create a third just to make sure that only two are really updated
+        SugarTestTimePeriodUtilities::createTimePeriod('2009-07-01', '2009-09-30');
+
+        $sql = "UPDATE timeperiods
+                SET start_date_timestamp = null, end_date_timestamp = null
+                WHERE id in ('".$tp1->id."','".$tp2->id."')";
+        $db = DBManagerFactory::getInstance();
+        $db->query($sql);
+
+        $updated = $tp1->upgradeLegacyTimePeriods();
+
+        $this->assertEquals(2, $updated);
     }
 }

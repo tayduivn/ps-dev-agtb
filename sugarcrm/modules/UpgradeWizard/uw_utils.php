@@ -395,7 +395,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 // to use this function to empty a directory, write:
 // recursive_remove_directory('path/to/full_directory');
 
-function recursive_empty_or_remove_directory($directory, $exclude_dirs=null,$exclude_files=null,$empty=TRUE)
+function recursive_empty_or_remove_directory($directory, $exclude_dirs=null,$exclude_files=null,$empty=true)
 {
 	// if the path has a slash at the end we remove it here
 	if(substr($directory,-1) == '/')
@@ -407,13 +407,13 @@ function recursive_empty_or_remove_directory($directory, $exclude_dirs=null,$exc
 	if(!file_exists($directory) || !is_dir($directory))
 	{
 		// ... we return false and exit the function
-		return FALSE;
+		return false;
 
 	// ... if the path is not readable
 	}elseif(!is_readable($directory))
 	{
 		// ... we return false and exit the function
-		return FALSE;
+		return false;
 
 	// ... else if the path is readable
 	}else{
@@ -422,7 +422,7 @@ function recursive_empty_or_remove_directory($directory, $exclude_dirs=null,$exc
 		$handle = opendir($directory);
 
 		// and scan through the items inside
-		while (FALSE !== ($item = readdir($handle)))
+		while (false !== ($item = readdir($handle)))
 		{
 			// if the filepointer is not the current directory
 			// or the parent directory
@@ -457,17 +457,17 @@ function recursive_empty_or_remove_directory($directory, $exclude_dirs=null,$exc
 		closedir($handle);
 
 		// if the option to empty is not set to true
-		if($empty == FALSE)
+		if($empty == false)
 		{
 			// try to delete the now empty directory
 			if(!rmdir($directory))
 			{
 				// return false if not possible
-				return FALSE;
+				return false;
 			}
 		}
 		// return success
-		return TRUE;
+		return true;
 	}
 }
 // ------------------------------------------------------------
@@ -2396,7 +2396,7 @@ function set_upgrade_vars(){
     	$upgrade_config[1]['upgrade_vars'] = array();
     }
 
-	if(!isset($upgrade_vars) || $upgrade_vars == NULL){
+	if(!isset($upgrade_vars) || $upgrade_vars == null){
 		$upgrade_vars = array();
 	}
 	if(isset($_SESSION['unzip_dir']) && !empty($_SESSION['unzip_dir']) && file_exists($_SESSION['unzip_dir'])){
@@ -4493,23 +4493,66 @@ function addPdfManagerTemplate() {
 
 /**
  *
+ *
  * This function creates a job for to run the SugarJobUpdateOpportunities class
  *
  */
-function updateOpportunitiesForForecasting()
+function updateOpportunitiesForForecasting($perJob = 100)
+{
+    /* @var $db DBManager */
+    $db = DBManagerFactory::getInstance();
+    // get all the opps to break into groups of 100 and go newest to oldest
+    $sql = "select id from opportunities where deleted = 0 ORDER By date_closed DESC;";
+    $results = $db->query($sql);
+
+    $jobs = array();
+
+    $toProcess = array();
+    while ($row = $db->fetchRow($results)) {
+        $toProcess[] = $row['id'];
+
+        if (count($toProcess) == $perJob) {
+            $jobs[] = createUpgradeOpportunitiesJob($toProcess);
+            $toProcess = array();
+        }
+    }
+
+    if (!empty($toProcess)) {
+        $jobs[] = createUpgradeOpportunitiesJob($toProcess);
+    }
+
+    // if only one job was created, just return that id
+    if (count($jobs) == 1) {
+        return array_shift($jobs);
+    }
+
+    return $jobs;
+}
+
+function createUpgradeOpportunitiesJob(array $data)
 {
     global $current_user;
-    $timedate = TimeDate::getInstance();
+
     //Create an entry in the job queue to run UpdateOppsJob which handles updating all opportunities
+    /* @var $job SchedulersJob */
     $job = BeanFactory::getBean('SchedulersJobs');
-    $job->execute_time = $timedate->nowDb();
     $job->name = "Update Old Opportunities";
-    $job->status = SchedulersJob::JOB_STATUS_QUEUED;
     $job->target = "class::SugarJobUpdateOpportunities";
-    $job->data = '';
+    $job->data = json_encode($data);
     $job->retry_count = 0;
     $job->assigned_user_id = $current_user->id;
-    $job->save();
-    return $job->id;
+    require_once('include/SugarQueue/SugarJobQueue.php');
+    $job_queue = new SugarJobQueue();
+    return $job_queue->submitJob($job);
+}
+
+/**
+ * Add the platform to the portal config settings
+ */
+function updatePortalConfigToContainPlatform()
+{
+    $db = DBManagerFactory::getInstance();
+    $sql = "UPDATE config SET platform = 'support' where category = 'portal'";
+    $db->query($sql);
 }
 //END SUGARCRM flav=pro ONLY

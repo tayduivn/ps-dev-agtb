@@ -129,6 +129,15 @@ class ChartDisplay
             $sugarChart->setData($this->chartRows);
             $sugarChart->setProperties($this->chartTitle, '', $this->chartType);
 
+            if (isset($this->reporter->report_def['group_defs'])) {
+                $groupByNames = array();
+                foreach ($this->reporter->report_def['group_defs'] as $group_def)
+                {
+                    $groupByNames[] = $group_def['name'];
+                }
+                $sugarChart->group_by = $groupByNames;
+            }
+
             return $sugarChart;
         } else {
             global $current_language;
