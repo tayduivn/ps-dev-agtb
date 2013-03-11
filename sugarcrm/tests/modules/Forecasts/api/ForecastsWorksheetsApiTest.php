@@ -82,6 +82,8 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
+        
         SugarTestHelper::setUp("app_strings");
         SugarTestHelper::setUp("app_list_strings");
         SugarTestHelper::setUp("beanFiles");
@@ -155,10 +157,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => self::$reportee["user"]->first_name . " " . self::$reportee["user"]->last_name,
             "user_id" => self::$reportee["user"]->id,
             "timeperiod_id" => self::$timeperiod->id
-        );
-
-
-        parent::setUpBeforeClass();
+        );       
     }
 
     public function setUp()

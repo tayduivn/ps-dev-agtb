@@ -55,6 +55,7 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
@@ -64,7 +65,6 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();    
 
         self::$commit_stage = 'include';
-        parent::setUpBeforeClass();
     }
     
     public function setUp()
