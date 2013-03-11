@@ -20,12 +20,17 @@
  ********************************************************************************/
 
 describe("forecasts_field_editableDate", function () {
-    var field, fieldDef, context, model, app;
+    var field, fieldDef, context, model, app, getModuleStub;
 
     beforeEach(function () {
         app = SugarTest.app;
         context = app.context.getContext();
-
+        getModuleStub = sinon.stub(app.metadata, "getModule", function() {
+            return {
+                sales_stage_won: ["Closed Won"],
+                sales_stage_lost: ["Closed Lost"]
+            };
+        });
         fieldDef = {
             "name": "editableDate",
             "type": "editableDate",
@@ -36,6 +41,7 @@ describe("forecasts_field_editableDate", function () {
     });
 
     afterEach(function() {
+        getModuleStub.restore();
         field = null;
         context = null;
         model = null;
@@ -73,5 +79,18 @@ describe("forecasts_field_editableDate", function () {
             expect(renderStub).not.toHaveBeenCalled();
 
         });
+    });
+    describe("checkIfCanEdit", function() {
+        it("should not be able to edit", function() {
+            field.model.set({sales_stage : "Closed Won"});
+            field.checkIfCanEdit();
+            expect(field._canEdit).toBeFalsy();
+        });
+
+        it("should be able to edit", function() {
+            field.model.set({sales_stage : "asdf"});
+            field.checkIfCanEdit();
+            expect(field._canEdit).toBeTruthy();
+        })
     });
 });

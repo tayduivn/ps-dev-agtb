@@ -192,5 +192,14 @@
         if(this.context.get("selectedUser")["id"] != app.user.id){
             this.disabled = true;
         }
+
+        var salesStage = this.model.get('sales_stage'),
+            disableIfSalesStageIs = _.union(
+                app.metadata.getModule('Forecasts', 'config').sales_stage_won,
+                app.metadata.getModule('Forecasts', 'config').sales_stage_lost
+            );
+        if(salesStage && _.indexOf(disableIfSalesStageIs, salesStage) != -1) {
+            this.disabled = true;
+        }
     }
 })
