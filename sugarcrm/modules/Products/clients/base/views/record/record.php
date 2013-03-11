@@ -116,6 +116,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'account_name',
                 'sales_stage',
                 'probability',
+                'commit_stage',
                 'sales_status',
                 'date_closed',
                 'product_template_name',

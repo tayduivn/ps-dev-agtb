@@ -497,7 +497,7 @@ $dictionary['Product'] = array(
             'name' => 'commit_stage',
             'vname' => 'LBL_COMMIT_STAGE_FORECAST',
             'type' => 'enum',
-            'options' => 'commit_stage_dom',
+            'options' => 'commit_stage_binary_dom',
             'len' => '20',
             'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
         ),
