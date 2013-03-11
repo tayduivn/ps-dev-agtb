@@ -60,6 +60,7 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
 
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 

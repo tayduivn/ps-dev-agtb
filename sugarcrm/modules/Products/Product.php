@@ -129,9 +129,9 @@ class Product extends SugarBean
     public $experts;
 
     // This is used to retrieve related fields from form posts.
-    public $additional_column_fields = Array('quote_id', 'quote_name', 'related_product_id');
+    public $additional_column_fields = array('quote_id', 'quote_name', 'related_product_id');
 
-    public $relationship_fields = Array('related_product_id' => 'related_products');
+    public $relationship_fields = array('related_product_id' => 'related_products', 'opportunity_id' => 'opportunities');
 
 
     // This is the list of fields that are copied over from product template.
@@ -545,7 +545,7 @@ class Product extends SugarBean
      */
     public function build_generic_where_clause($the_query_string)
     {
-        $where_clauses = Array();
+        $where_clauses = array();
         $the_query_string = $GLOBALS['db']->quote($the_query_string);
         array_push($where_clauses, "name like '$the_query_string%'");
         if (is_numeric($the_query_string)) {
