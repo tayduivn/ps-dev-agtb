@@ -11,195 +11,238 @@ table.dataTable {
   margin: 0;
 
   input[type="text"] {
-    position: relative;
+    //position: relative;
     width: 100%;
-    min-height: 32px;
+    min-height: 28px;
     .box-sizing(border-box);
   }
 
   /* ---------
+  TABLE HEADER*/
+  & > thead {
+    th {
+      line-height: 26px !important;
+      min-width: 20px;
+      max-width: 100px;
+      margin-top: 0px !important;
+      font-weight: normal;
+      font-size: @fontSizeSmall;
+      color: @tableHeader;
+      border-right: 1px solid darken(@grayLighter,5%);
+      .rtl(@direction,ltr);
+
+      white-space: nowrap;
+      word-break: break-word;
+      position: relative;
+      vertical-align: middle;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+
+      &:first-child {
+        overflow-x: visible;
+        padding-left: 15px;
+        padding-right: 0;
+        width: 30px;
+      }
+      &:last-child {
+        max-width: 60px;
+        min-width: 60px;
+        width: 60px;
+        padding: 0 8px 0 5px;
+        //vertical-align: middle;
+        overflow-x: visible;
+        border-right: 0;
+      }
+      a {
+        color: @grayLight;
+        text-decoration: none;
+      }
+    }
+  }
+
+  /* ---------
   TABLE BODY*/
-  tbody {
-    tr {
+  & > tbody {
+    & > tr {
       //from tables.less?
       &:last-child {
-        td:last-child,
-        td:first-child,
+        td {
+          border-bottom-size: 2px;
+        }
         td:last-child,
         td:first-child {
           .border-radius(0 0 4px 4px)
         }
       }
-      &.active {
-        td {
-          background-image: url('@{textureSecondary}');
-          .icon-eye-open {
-            color:@black !important;
-          }
-        }
-      }
-      div.sugareditable {
-        td {
-          overflow: visible;
-          &> *:not(.overflow-visible) {
-            overflow: visible;
-          }
-        }
-      }
-      &.tr-inline-edit {
-        td {
-          &> span {
-            width: 100%;
-          }
-          overflow: visible;
-          background: #e5f1fc;
-          padding-bottom: 0;
-          vertical-align: top;
-          &:first-child {
-            padding-top: 10px;
-            .btn {
-              margin-left: 0;
-            }
-          }
-          &:first-child {
-            padding-top: 10px;
-            .btn {
-              float: right;
-            }
-          }
-          &> *:not(.overflow-visible) {
-            overflow: visible;
-            vertical-align: top;
-          }
-          .input-append.date {
-            margin-bottom: 0;
-            font-size: 12px;
-            td {
-              background-color: @white;
-            }
-            input.datepicker {
-              width: 100px;
-              margin-top: 0;
-            }
-            // reset datepicker since it is table inside table
-            span.year.active:hover,
-            span.year.active,
-            span.month.active:hover,
-            span.month.active,
-            td.active,
-            td.active:hover {
-              background-color: @gray;
-            }
-          }
-        }
-
-// from Wes, I think I already fixed these by ajusting padding
-/*+    input {
-+      margin: -5px 0 -5px -7px;
-+      position: relative;
-+      width: 99%;
-+    }
-+    .select2-container {
-+      margin: -5px 0 -5px -7px;
-+    }
-+    .select2-container .select2-choice {
-+      position: relative;
-+      height: 26px;
-+      margin: 0;
-+    }
-+    .inline-cancel {
-+      margin: -5px 0 0 -10px;
-+    }*/
-
-
-      }
-    }
-    td {
-      overflow-x: hidden;
-      text-overflow: ellipsis;
-      max-width: 100px;
-      white-space: nowrap;
-      word-break: break-word;
-      position: relative;
-      vertical-align: middle;
-      &> *:not(.overflow-visible) {
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-        display: inline-block;
+      & > td {
         white-space: nowrap;
         word-break: break-word;
         position: relative;
         vertical-align: middle;
-      }
-      &>span.dropdown {
-        width: auto;
-        overflow: visible;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+
+        border-top: 1px solid darken(@grayLighter, 5%);
+        border-bottom: 1px solid darken(@grayLighter, 5%);
+        background-color: @white;
+        .rtl(@direction,ltr);
+
+        &> *:not(.overflow-visible) {
+          overflow-x: hidden;
+          text-overflow: ellipsis;
+          max-width: 100%;
+          display: inline-block;
+          white-space: nowrap;
+          word-break: break-word;
+          position: relative;
+          vertical-align: middle;
+        }
+
+        &:first-child {
+          overflow-x: visible;
+          padding-left: 15px;
+          padding-right: 0;
+          width: 30px;
+        }
+        &:last-child {
+          max-width: 60px;
+          min-width: 60px;
+          padding: 0 8px 0 5px;
+          width: 60px;
+          //vertical-align: middle;
+          overflow-x: visible;
+          border-right: 0;
+        }
       }
     }
   }
 
   /* ---------
-  TABLE ROW*/
-  tr:last-child td {
-    border-bottom-size: 2px;
-  }
-
-  //for preview
-  tr.highlighted {
-    &.above th,
-    &.above td {
-      .box-shadow(~"inset 0px -6px 3px -5px rgba(0, 0, 0, 0.25)");
+  TABLE FOOTER */
+  & > tfoot {
+    th {
+      white-space: normal;
+      word-break: break-word;
     }
-    &.current td {
-      background-image: url('@{textureSecondary}');
-      &:last-child {
-        z-index: 2;
-      }
-      .icon-eye-open {
-        color: @gray !important;
-      }
+    td {
+      font-weight: bold;
+      border-top: 2px solid @grayLight !important;
     }
-    &.below td {
-      .box-shadow(~"inset 0px 5px 6px -5px rgba(0, 0, 0, 0.25)");
+    tr.overall th {
+      font-weight: bold;
     }
   }
 
-  &.inline-edit-active {
-    tr {
+  /* ---------
+  TABLE ROW (specific)*/
+  tr {
+    //for preview
+    &.highlighted {
+      &.above th,
+      &.above td {
+        .box-shadow(~"inset 0px -6px 3px -5px rgba(0, 0, 0, 0.25)");
+      }
+      &.current td {
+        background-image: url('@{textureSecondary}');
+        &:last-child {
+          z-index: 2;
+        }
+        .icon-eye-open {
+          color: @gray !important;
+        }
+      }
+      &.below td {
+        .box-shadow(~"inset 0px 5px 6px -5px rgba(0, 0, 0, 0.25)");
+      }
+    }
+    //also for preview??legacy?
+    &.active {
       td {
-        overflow-x: visible !important;
+        background-image: url('@{textureSecondary}');
+        .icon-eye-open {
+          color:@black !important;
+        }
+      }
+    }
+    //forecasts
+    div.sugareditable {
+      td {
+        overflow: visible;
+        &> *:not(.overflow-visible) {
+          overflow: visible;
+        }
+      }
+    }
+    &.tr-inline-edit {
+      &> td {
+        &> span {
+          width: 100%;
+        }
+        overflow: visible;
+        background: #e5f1fc;
+        //padding-bottom: 0;
+        padding: 4px;
+        //vertical-align: top;
+        &:first-child {
+          //padding-top: 10px;
+          .btn {
+            margin-left: 0;
+          }
+        }
+        &:last-child {
+          //padding-top: 10px;
+          padding: 4px 8px 4px 4px;
+          .btn {
+            float: right;
+          }
+        }
+        &> *:not(.overflow-visible) {
+          overflow: visible;
+          //vertical-align: top;
+        }
+        .select2-container .select2-choice {
+          line-height: 26px;
+          height: 26px;
+          abbr {
+            top: 6px;
+          }
+          div {
+            top: 0;
+          }
+        }
+        .input-append.date {
+          margin-bottom: 0;
+          font-size: 12px;
+          td {
+            background-color: @white;
+          }
+          input.datepicker {
+            width: 100px;
+            margin-top: 0;
+          }
+          // reset datepicker since it is table inside table
+          span.year.active:hover,
+          span.year.active,
+          span.month.active:hover,
+          span.month.active,
+          td.active,
+          td.active:hover {
+            background-color: @gray;
+          }
+        }
+        .help-block {
+          display: none;
+        }
       }
     }
   }
 
   /* ---------
-  TABLE CELL AND HEADER*/
-  td,
+  TABLE HEADER CELL (specific)*/
   th {
-    white-space: nowrap;
-    word-break: break-word;
-    position: relative;
-    vertical-align: middle;
-  }
-
-  /* ---------
-  TABLE HEADER*/
-  th {
-    line-height: 26px !important;
-    min-width: 20px;
-    margin-top: 0px !important;
-    font-weight:normal;
-    font-size: @fontSizeSmall;
-    color: @tableHeader;
-    border-right: 1px solid darken(@grayLighter,5%);
-    .rtl(@direction,ltr);
-    a {
-      color:@grayLight;
-      text-decoration:none;
-    }
     &.sorting {
-      color:@gray;
+      color: @gray;
     }
     &.sorting_asc,
     &.sorting_desc {
@@ -233,12 +276,9 @@ table.dataTable {
   }
 
   /* ---------
-  TABLE CELL*/
+  TABLE CELL (specific)*/
   td {
-    border-top: 1px solid darken(@grayLighter, 5%);
-    border-bottom: 1px solid darken(@grayLighter, 5%);
-    background-color: @white;
-    .rtl(@direction,ltr);
+    //?legacy??
     &.details {
       padding: 0px;
       .extend {
@@ -250,7 +290,7 @@ table.dataTable {
         article {
           color: @grayDark;
           date {
-            color:  @gray;
+            color: @gray;
           }
         }
         article:first-child {
@@ -306,8 +346,22 @@ table.dataTable {
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    &>span.dropdown {
+      width: auto;
+      overflow: visible;
+    }
   }
 
+  &.inline-edit-active {
+    tr {
+      td {
+        overflow-x: visible !important;
+      }
+    }
+  }
+
+  /* ---------
+  MISC*/
   td.number,
   tfoot th.number {
     text-align: right;
@@ -321,25 +375,6 @@ table.dataTable {
       }
     }
   }
-
-  /* ---------
-  TABLE FOOTER*/
-  tfoot {
-    th {
-      white-space: normal;
-      word-break: break-word;
-    }
-    td {
-      font-weight: bold;
-      border-top: 2px solid @grayLight !important;
-    }
-  }
-  tfoot tr.overall th {
-    font-weight: bold;
-  }
-
-  /* ---------
-  MISC*/
   label.original {
     margin-bottom: 0px;
     display: inline-block;
@@ -366,27 +401,9 @@ table.dataTable {
   .active .icon-star {
     color: @orange;
   }
-
-  th:first-child,
-  td:first-child {
-    overflow-x: visible;
-    padding-left: 15px;
-    padding-right: 0;
-    width: 30px;
-  }
-
-  th:last-child,
-  td:last-child {
-    max-width: 60px;
-    min-width: 60px;
-    padding: 0 8px 0 5px;
-    width: 60px;
-    vertical-align: middle;
-    overflow-x: visible;
-    border-right: 0;
-  }
 }
 
+//?legacy?
 .dataTables_filter {
   position: relative;
   margin: -1px 1px 0 0;
