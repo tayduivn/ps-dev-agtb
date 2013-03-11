@@ -25,7 +25,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#Campaigns/create',
         'label' =>'LNK_NEW_CAMPAIGN',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>'Campaigns',
         'icon' => 'icon-plus',
     ),
@@ -39,7 +39,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#ProspectLists/create',
         'label' =>'LNK_NEW_PROSPECT_LIST',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>'ProspectLists',
         'icon' => 'icon-plus',
     ),
@@ -53,7 +53,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#Prospects/create',
         'label' =>'LNK_NEW_PROSPECT',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>'Prospects',
         'icon' => 'icon-plus',
     ),

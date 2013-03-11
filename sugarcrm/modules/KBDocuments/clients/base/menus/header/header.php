@@ -25,7 +25,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#bwc/index.php?module=KBDocuments&action=EditView&return_module=KBDocuments&return_action=DetailView',
         'label' =>'LNK_NEW_ARTICLE',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),
