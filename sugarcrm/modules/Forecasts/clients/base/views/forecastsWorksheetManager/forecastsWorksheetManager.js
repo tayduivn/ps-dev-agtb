@@ -155,6 +155,15 @@
     },
 
     /**
+     * override dispose function to remove custom listener off the window
+     * @private
+     */
+    _dispose: function() {
+        $(window).off();
+        app.view.Component.prototype._dispose.call(this);
+    },
+
+    /**
      * Method to handle the success of a collection call to make sure that all reportee's show up in the table
      * even if they don't have data for the user that is asking for it.
      * @param resp
@@ -259,7 +268,9 @@
             this.collection.on("reset", function() {
                 this.cleanUpDirtyModels();
                 this.cleanUpDraftModels();
-                this.render();
+                if (!this.disposed) {
+                    this.render();
+                }
             }, this);
 
             this.collection.on("change", function(model) {
@@ -430,7 +441,6 @@
      */
     _worksheetSaveHelper: function(saveObj) {
         saveObj.model.set({
-            draft: (saveObj.isDraft == true) ? 1 : 0,
             timeperiod_id: saveObj.timeperiod || this.timePeriod,
             current_user: saveObj.userId || this.selectedUser.id
         }, {silent: true});

@@ -19,29 +19,6 @@
             app.events.trigger($currentTarget.data('event'), module, evt);
         }
     },
-    handleCreateLink:function (module, eventObj) {
-        app.router.navigate(
-            app.router.buildRoute(module, false, false),
-            {
-                trigger:true
-            }
-        );
-
-        app.drawer.open({
-            layout:'create',
-            context:{
-                create:true
-            }
-        }, _.bind(function (refresh) {
-            if (refresh) {
-                var collection = app.controller.context.get('collection');
-                if (collection) {
-                    collection.fetch();
-                }
-            }
-        }, this));
-
-    },
     hideMenu: function(event) {
         this.$(event.target).dropdown('toggle').closest('li.dropdown.open').removeClass('open');
     },
@@ -52,12 +29,11 @@
         this.$('.more-drop-container').hide();
     },
     initialize: function(options) {
+        this.activeModule = this._setActiveModule(this);
         app.events.on("app:sync:complete", this.render, this);
         app.events.on("app:view:change", this.handleViewChange, this);
         app.user.on("change:module_list", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
-        app.events.register("megamenu:create:click", this);
-        app.events.on("megamenu:create:click", this.handleCreateLink, this);
         if (this.layout) {
             this.layout.on("view:resize", this.resize, this);
         }
@@ -88,20 +64,36 @@
             self.delegateEvents();
 
             $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
-        });
+        }), module = $currentTarget.parent().parent().data('module'), moduleMeta = app.metadata.getModule(module);
+
+        if (moduleMeta && moduleMeta.menu && moduleMeta.menu.header && moduleMeta.menu.header.meta) {
+            var accessCount = 0;
+            _.each(moduleMeta.menu.header.meta, function (menu) {
+                var aclAction = menu.acl_action || '';
+                var aclModule = menu.acl_module || module;
+
+                if (app.acl.hasAccess(aclAction, aclModule)) {
+                    accessCount++;
+                }
+
+            });
+
+            numberMenuItems = accessCount;
+        }
+
         if (numberMenuItems < 1) {
             showCallback= toggleCallback;
         }
+
         if ($currentTarget.next('.dropdown-menu').is(":visible")) {
             $currentTarget.next('.dropdown-menu').dropdown('toggle');
             $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
             return false;
         }
+
         if (!$currentTarget.parent().parent().hasClass('more-drop-container') && !$currentTarget.hasClass('actionLink')) {
             // clear any open dropdown styling
             this.$('.open').toggleClass('open');
-            var module = $currentTarget.parent().parent().data('module');
-            var moduleMeta = app.metadata.getModule(module);
             if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
                 this.populateFavorites(module, showCallback);
                 this.populateRecents(module, showCallback);
@@ -357,83 +349,103 @@
         }
     },
 
-    activeModule: {
-        _class: 'active', //class to indicate the active module
-        _next: null, //the module next to the active module
-        _moduleList: this,
+    _setActiveModule:function (parent) {
+        return {
+            _class:'active', //class to indicate the active module
+            _next:null, //the module next to the active module
+            _moduleList:parent,
 
-        /**
-         * Set the specified module as the active module
-         * @param module
-         */
-        set: function(module) {
-            var $modules, $module, $next;
-            if (module) {
-                this.reset();
+            /**
+             * Set the specified module as the active module
+             * @param module
+             */
+            set:function (module) {
+                var $modules, $module, $next;
+                if (module) {
+                    this.reset();
 
-                $modules = this._moduleList.$('#module_list');
-                $module = $modules.find("[data-module='" + module+"']");
-                $module.addClass(this._class);
+                    $modules = this._moduleList.$('#module_list');
+                    $module = $modules.find("[data-module='" + module + "']");
+                    // this module doesn't have a menu so create it and add it
+                    if ($module.length < 1) {
+                        var moduleList = {};
+                        moduleList[module] = app.metadata.getFullModuleList()[module];
 
-                // remember which module is supposed to be next to the active module so that
-                // ordering can be preserved while modules are removed and added to the list
-                if (!this._next) {
-                    $next = $module.next();
-                    if ($next.hasClass('more')) {
-                        $next = $modules.find('.more-drop-container li:first');
+                        var meta = this._moduleList.completeMenuMeta(moduleList);
+                        if (!_.isUndefined(meta[0])) {
+                            meta[0].menuIndex = -1;
+                            var singleMenuTemplate = app.template.get(this._moduleList.name + '.singlemenuPartial');
+                            this._moduleList.$el.find('.dropdown.more').before(singleMenuTemplate(meta[0]));
+                            $module = $modules.find("[data-module='" + module + "']");
+                        }
                     }
-                    this._next = $next.attr('class');
+                    $module.addClass(this._class);
+
+                    // remember which module is supposed to be next to the active module so that
+                    // ordering can be preserved while modules are removed and added to the list
+                    if (!this._next) {
+                        $next = $module.next();
+                        if ($next.hasClass('more')) {
+                            $next = $modules.find('.more-drop-container li:first');
+                        }
+                        this._next = $next.attr('class');
+                    }
+                }
+            },
+
+            /**
+             * Is this module the active module?
+             * @param $module
+             * @return {Boolean}
+             */
+            isActive:function ($module) {
+                return $module.hasClass(this._class);
+            },
+
+            /**
+             * Is this module supposed to be next to the the active module?
+             * @param $module
+             * @return {Boolean}
+             */
+            isNext:function ($module) {
+                return (this._next === $module.attr('class'));
+            },
+
+            /**
+             * Clear active modules and move anything out of order back to where it belongs
+             */
+            reset:function () {
+                this.resetActive();
+                this._next = null;
+                this._moduleList.$('.dropdown.' + this._class).removeClass(this._class);
+            },
+            /**
+             * This function returns active module nodes in the wrong place back to where they belong
+             * and deactivates them
+             */
+            resetActive:function () {
+                var $activeNode = this._moduleList.$('.dropdown.' + this._class);
+                // no point in moving
+                if ($activeNode.length < 1) return;
+                var beforeIndex = $activeNode.prev().data('menuindex');
+                var activeIndex = $activeNode.data('menuindex');
+                var $afterNode = this._moduleList.$('[data-menuindex=' + (activeIndex + 1) + ']');
+
+                if (activeIndex == -1) {
+                    // this doesn't belong in the list at all normally so remove it
+                    $activeNode.remove();
+                }
+                if (beforeIndex != activeIndex - 1 && activeIndex !== 1) {
+                    $afterNode.before($activeNode);
+                    // this node needs to go into the more so toggle its styles
+                    if ($activeNode.parent().parent().hasClass('more')) {
+                        // hide the drop down toggle and show the more link
+                        $activeNode.find('.btn-group').hide();
+                        $activeNode.find('.moreLink').show();
+                        $activeNode.find('.moreLink').css('display', 'block');
+                    }
                 }
             }
-        },
-
-        /**
-         * Is this module the active module?
-         * @param $module
-         * @return {Boolean}
-         */
-        isActive: function($module) {
-            return $module.hasClass(this._class);
-        },
-
-        /**
-         * Is this module supposed to be next to the the active module?
-         * @param $module
-         * @return {Boolean}
-         */
-        isNext: function($module) {
-            return (this._next === $module.attr('class'));
-        },
-
-        /**
-         * Clear active modules and move anything out of order back to where it belongs
-         */
-        reset: function() {
-            this.resetActive();
-            this._next = null;
-            this._moduleList.$('.dropdown.'+this._class).removeClass(this._class);
-        },
-        /**
-         * This function returns active module nodes in the wrong place back to where they belong
-         * and deactivates them
-         */
-        resetActive: function() {
-            var $activeNode = this._moduleList.$('.dropdown.'+this._class);
-            // no point in moving
-            if ($activeNode.length < 1) return;
-            var beforeIndex = $activeNode.prev().data('menuindex');
-            var activeIndex = $activeNode.data('menuindex');
-            var $afterNode = this._moduleList.$('[data-menuindex='+(activeIndex + 1)+']');
-            if (beforeIndex != activeIndex - 1  && activeIndex !== 1) {
-                $afterNode.before($activeNode);
-                // this node needs to go into the more so toggle its styles
-                if ($activeNode.parent().parent().hasClass('more')) {
-                    // hide the drop down toggle and show the more link
-                    $activeNode.find('.btn-group').hide();
-                    $activeNode.find('.moreLink').show();
-                    $activeNode.find('.moreLink').css('display','block');
-                }
-            }
-        }
+        };
     }
 })

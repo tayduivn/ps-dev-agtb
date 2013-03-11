@@ -57,9 +57,12 @@
 
         _.each(fields, function(field){
             if(((field.name && field.name==='assigned_user_id') || (field.id_name && field.id_name==='assigned_user_id')) &&
-               (field.type && field.type==='relate')) {
+                (field.type && field.type==='relate')) {
                     this.model.set('assigned_user_id', app.user.id);
                     this.model.set('assigned_user_name', app.user.attributes.full_name);
+                    this.model._defaults = this.model._defaults || {};
+                    this.model._defaults['assigned_user_id'] = app.user.id;
+                    this.model._defaults['assigned_user_name'] = app.user.attributes.full_name;
             }
         }, this);
 
@@ -75,6 +78,13 @@
 
     _render: function() {
         app.view.views.RecordView.prototype._render.call(this);
+
+        // Note if fieldset w/date created | modified is NOT set as readonly, this still removes from page
+        // We decided that's fine, and better than alternative of looping fields, find date_created_by,
+        // check readonly field, hide only if readonly, etc., etc.
+        this.$('[data-fieldname="date_entered_by"]').hide();
+        this.$('[data-fieldname="date_modified_by"]').hide();
+
         this.setButtonStates(this.STATE.CREATE);
 
         this.renderDupeCheckList();
@@ -154,11 +164,15 @@
      */
     initiateSave: function(callback) {
         this.$('.inline-error').removeClass('inline-error');
+        this.alerts.showSaving();
+        this.disableVisibleButtons();
         async.waterfall([
             _.bind(this.validateModelWaterfall, this),
             _.bind(this.dupeCheckWaterfall, this),
             _.bind(this.createRecordWaterfall, this)
         ], _.bind(function(error) {
+            this.alerts.dismissSaving();
+            this.enableVisibleButtons();
             if (!error) {
                 this.alerts.showSuccess();
                 if (!this.disposed) {
@@ -277,13 +291,12 @@
         var self = this,
             options;
         success = _.wrap(success, function (func) {
-            app.file.checkFileFieldsAndProcessUpload(self.model, {
+            app.file.checkFileFieldsAndProcessUpload(self, {
                     success:function () {
                         func();
                     }
                 },
-                {deleteIfFails:true},
-                self
+                {deleteIfFails:true}
             );
         });
 
@@ -291,7 +304,8 @@
             fieldsToValidate: self.getFields(self.module),
             success: success,
             error: error,
-            viewed: true
+            viewed: true,
+            relate: (self.model.link) ? true : null
         };
 
         options = _.extend({}, options, self.getCustomSaveOptions());
@@ -437,28 +451,68 @@
         }
     },
 
+    /**
+     * Disable all visible buttons
+     */
+    disableVisibleButtons: function() {
+        var buttons = [
+            this.cancelButtonName,
+            this.saveButtonName,
+            this.restoreButtonName
+        ];
+
+        _.each(buttons, function(name) {
+            this.buttons[name].getFieldElement().addClass('disabled');
+        }, this);
+
+        this.buttons['main_dropdown'].$('a.dropdown-toggle').addClass('disabled');
+    },
+
+    /**
+     * Enable all visible buttons
+     */
+    enableVisibleButtons: function() {
+        var buttons = [
+            this.cancelButtonName,
+            this.saveButtonName,
+            this.restoreButtonName
+        ];
+
+        _.each(buttons, function(name) {
+            this.buttons[name].getFieldElement().removeClass('disabled');
+        }, this);
+
+        this.buttons['main_dropdown'].$('a.dropdown-toggle').removeClass('disabled');
+    },
+
     alerts: {
+        showSaving: function() {
+            app.alert.show('saving', {
+                level: 'process',
+                title: 'LBL_SAVING'
+            })
+        },
+        dismissSaving: function() {
+            app.alert.dismiss('saving');
+        },
         showSuccess: function() {
-            //TODO: Need correct error message
             app.alert.show('record-saved', {
                 level: 'success',
-                messages: app.lang.get('LBL_SAVED', this.module),
+                messages: 'LBL_RECORD_SAVED',
                 autoClose: true
             });
         },
         showInvalidModel: function() {
-            //TODO: Need correct error message
             app.alert.show('invalid-data', {
                 level: 'error',
-                messages: 'Please resolve invalid field values before saving.',
+                messages: 'ERR_RESOLVE_ERRORS',
                 autoClose: true
             });
         },
         showServerError: function() {
-            //TODO: Need correct error message
             app.alert.show('server-error', {
                 level: 'error',
-                messages: 'Error occurred while connecting to the server. Please try again.',
+                messages: 'ERR_GENERIC_SERVER_ERROR',
                 autoClose: false
             });
         }

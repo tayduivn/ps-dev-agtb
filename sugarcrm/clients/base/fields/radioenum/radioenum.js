@@ -63,6 +63,40 @@
         } else {
             this.fieldTag = 'input';
         }
-    }
+    },
+    decorateError: function(errors) {
+        if (this.tplName === 'list-edit') {
+            return app.view.fields.EnumField.prototype.decorateError.call(this, errors);
+        } else {
 
+            var errorMessages = [],
+                $tooltip;
+
+            // Add error styling
+            this.$el.closest('.record-cell').addClass('error');
+            this.$el.addClass('error');
+            // For each error add to error help block
+            _.each(errors, function(errorContext, errorName) {
+                errorMessages.push(app.error.getErrorString(errorName, errorContext));
+            });
+            this.$(this.fieldTag).last().closest('p').append(this.exclamationMarkTemplate(errorMessages));
+            $tooltip = this.$('.error-tooltip');
+            if (_.isFunction($tooltip.tooltip)) {
+                var tooltipOpts = { container: 'body', placement: 'top', trigger: 'click' };
+                $tooltip.tooltip(tooltipOpts);
+            }
+        }
+    },
+    clearErrorDecoration: function() {
+        if (this.tplName === 'list-edit') {
+            return app.view.fields.EnumField.prototype.clearErrorDecoration.call(this);
+        } else {
+            var ftag = this.fieldTag || '';
+            // Remove previous exclamation then add back.
+            this.$('.add-on').remove();
+            this.$el.removeClass(ftag);
+            this.$el.removeClass("error");
+            this.$el.closest('.record-cell').removeClass("error");
+        }
+    }
 })

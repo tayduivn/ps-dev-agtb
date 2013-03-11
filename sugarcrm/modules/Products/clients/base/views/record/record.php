@@ -76,20 +76,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'event' => 'button:create_related_button:click',
-                    'name' => 'create_related_button',
-                    'label' => 'LBL_CREATE_RELATED_RECORD',
-                    'acl_action' => 'create',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:link_related_button:click',
-                    'name' => 'link_related_button',
-                    'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'acl_action' => 'edit',
-                ),
-                array(
-                    'type' => 'rowaction',
                     'event' => 'button:convert_to_quote:click',
                     'name' => 'convert_to_quote_button',
                     'label' => 'LBL_CONVERT_TO_QUOTE',
@@ -130,6 +116,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'account_name',
                 'sales_stage',
                 'probability',
+                'commit_stage',
                 'sales_status',
                 'date_closed',
                 'product_template_name',
@@ -137,7 +124,14 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'discount_price',
                 array(
                     'name' => 'discount_amount',
-                    'type' => 'currency'
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'discount_amount',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
                 
                 array(
@@ -147,8 +141,16 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'readonly' => true
                 ),
                 array(
-                    'name' => 'likely_case',    
-                    'required' => true
+                    'name' => 'likely_case',
+                    'required' => true,
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'likely_case',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 )
             ),
         ),
@@ -159,8 +161,30 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'worst_case',
-                'best_case',  
+                array(
+                    'name' => 'best_case',
+                    'required' => true,
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'best_case',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                ),
+                array(
+                    'name' => 'worst_case',
+                    'required' => true,
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'worst_case',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                ),
                 array(
                     'name' => 'quote_name',
                     'label' => 'LBL_ASSOCIATED_QUOTE',

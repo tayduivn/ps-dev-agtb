@@ -201,6 +201,8 @@ describe("Emails.Views.Compose", function() {
             alertDismissStub = sinon.stub(app.alert, 'dismiss');
             disableButtonStub = sinon.stub(view, 'setMainButtonsDisabled');
 
+            app.drawer = {close: function() {}};
+
             view.model.off('change');
         });
 
@@ -209,13 +211,17 @@ describe("Emails.Views.Compose", function() {
             alertShowStub.restore();
             alertDismissStub.restore();
             disableButtonStub.restore();
+
+            delete app.drawer;
         });
 
         it('should call mail api with correctly formatted model', function() {
             var actualModel,
+                recipient      = new Backbone.Model({email: "foo@bar.com"}),
                 expectedStatus = 'ready';
 
-            view.model.set('to_addresses', 'foo@bar.com');
+            view.model.set('to_addresses', recipient.get("email"));
+            view.model.set('to_addresses_collection', [recipient]);
             view.model.set('foo', 'bar');
             view.saveModel(expectedStatus, 'pending message', 'success message');
 
@@ -224,7 +230,7 @@ describe("Emails.Views.Compose", function() {
 
             actualModel = apiCallStub.lastCall.args[2];
             expect(actualModel.get('status')).toEqual(expectedStatus); //status set on model
-            expect(actualModel.get('to_addresses')).toEqual([{email: 'foo@bar.com'}]); //email formatted correctly
+            expect(actualModel.get('to_addresses')).toEqual(view.model.get("to_addresses_collection")); //email formatted correctly
             expect(actualModel.get('foo')).toEqual('bar'); //any other model attributes passed to api
         });
 

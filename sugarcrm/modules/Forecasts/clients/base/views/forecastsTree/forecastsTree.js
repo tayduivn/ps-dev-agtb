@@ -52,6 +52,15 @@
     },
 
     /**
+     * overriding _dispose to make sure custom added jsTree listener is removed
+     * @private
+     */
+    _dispose: function() {
+        this.jsTree.off();
+        app.view.Component.prototype._dispose.call(this);
+    },
+
+    /**
      * Only run the render if the user is a manager as that is the only time we want the tree to display.
      */
     render:function () {
@@ -105,7 +114,9 @@
                 this.currentRootId = selectedUser.id;
                 this.currentTreeUrl = this.reporteesEndpoint + selectedUser.id;
                 this.rendered = false;
-                this.render();
+                if (!this.disposed) {
+                    this.render();
+                }
             } else {
                 // user is not a manager but if this event is coming from the worksheets
                 // we need to "select" the user on the tree to show they're selected
@@ -140,11 +151,11 @@
      * the replaceHTMLChars function.  This function supports n-levels of the tree hierarchy.
      *
      * @param data The data structure returned from the REST API Forecasts/reportees endpoint
-     * @param self A reference to the view's context so that we may recursively call _recursiveReplaceHTMLChars
+     * @param ctx A reference to the view's context so that we may recursively call _recursiveReplaceHTMLChars
      * @return The modified data structure after all the parent and children nodes have been stepped through
      * @private
      */
-    _recursiveReplaceHTMLChars:function (data, self) {
+    _recursiveReplaceHTMLChars:function (data, ctx) {
         _.each(data, function (entry, index) {
 
             //Scan for the nodes with the data attribute.  These are the nodes we are interested in
@@ -157,7 +168,7 @@
                     //For each children found (if any) then call _recursiveReplaceHTMLChars again.  Notice setting
                     //childEntry to an Array.  This is crucial so that the beginning _.each loop runs correctly.
                     _.each(entry.children, function (childEntry, index2) {
-                        entry.children[index2] = self._recursiveReplaceHTMLChars([childEntry]);
+                        entry.children[index2] = ctx._recursiveReplaceHTMLChars([childEntry]);
                     });
                 }
             }
@@ -175,94 +186,94 @@
     _renderHtml:function (ctx, options) {
         app.view.View.prototype._renderHtml.call(this, ctx, options);
 
-        var self = this;
-        var treeData;
+        var treeData,
+            options = {};
 
-        app.api.call('read', self.currentTreeUrl, null, {
-            success:function (data) {
-                // make sure we're using an array
-                // if the data coming from the endpoint is an array with one element
-                // it gets converted to a JS object in the process of getting here
-                if (!jQuery.isArray(data)) {
-                    data = [ data ];
-                }
+        // breaking out options as a proper object to allow for bind
+        options.success = _.bind(function (data) {
+            // make sure we're using an array
+            // if the data coming from the endpoint is an array with one element
+            // it gets converted to a JS object in the process of getting here
+            if (!jQuery.isArray(data)) {
+                data = [ data ];
+            }
 
-                treeData = self._recursiveReplaceHTMLChars(data, self);
+            treeData = this._recursiveReplaceHTMLChars(data, this);
+            treeData.ctx = this.context;
 
-                self.jsTree = $(".jstree-sugar").jstree({
-                    "plugins":["json_data", "ui", "crrm", "types", "themes"],
-                    "json_data":{
-                        "data":treeData
-                    },
-                    "ui":{
-                        // when the tree re-renders, initially select the root node
-                        "initially_select":[ 'jstree_node_' + self.context.get('selectedUser').user_name ]
-                    },
+            this.jsTree = $(".jstree-sugar").jstree({
+                "plugins":["json_data", "ui", "crrm", "types", "themes"],
+                "json_data":{
+                    "data":treeData
+                },
+                "ui":{
+                    // when the tree re-renders, initially select the root node
+                    "initially_select":[ 'jstree_node_' + this.context.get('selectedUser').user_name ]
+                },
+                "types":{
                     "types":{
                         "types":{
-                            "types":{
-                                "parent_link":{},
-                                "manager":{},
-                                "my_opportunities":{},
-                                "rep":{},
-                                "root":{}
-                            }
+                            "parent_link":{},
+                            "manager":{},
+                            "my_opportunities":{},
+                            "rep":{},
+                            "root":{}
                         }
                     }
-                }).on("select_node.jstree", function (event, data) {
-                        var jsData = data.inst.get_json();
-                        var nodeType = jsData[0].attr.rel;
-                        var userData = jsData[0].metadata;
-                        var contextUser = self.context.get("selectedUser");
+                }
+            }).on("select_node.jstree", function (event, data) {
+                    var jsData = data.inst.get_json(),
+                        nodeType = jsData[0].attr.rel,
+                        userData = jsData[0].metadata,
+                        showOpps = false;
 
-                        var showOpps = false;
-
-                        // if user clicked on a "My Opportunities" node
-                        // set this flag true
-                        if (nodeType == "my_opportunities" || nodeType == "rep") {
-                            showOpps = true
-                        }
-
-                        var selectedUser = {
-                            'id':userData.id,
-                            'user_name':userData.user_name,
-                            'full_name':userData.full_name,
-                            'first_name':userData.first_name,
-                            'last_name':userData.last_name,
-                            'isManager':(nodeType != 'rep'),
-                            'showOpps':showOpps,
-                            'reportees':[]
-                        };
-
-                        app.utils.getSelectedUsersReportees(selectedUser, self.context);
-                    });
-
-                if (treeData) {
-                    var showTree = false;
-                    var rootId = -1;
-
-                    if (treeData.length == 1) {
-                        // this case appears when "Parent" is not present
-
-                        rootId = treeData[0].metadata.id;
-
-                        if (treeData[0].children.length > 0) {
-                            showTree = true;
-                        }
-                    }
-                    else if (treeData.length == 2) {
-                        // this case appears with a "Parent" link label in the return set
-
-                        // treeData[0] is the Parent link, treeData[1] is our root user node
-                        rootId = treeData[1].metadata.id;
+                    // if user clicked on a "My Opportunities" node
+                    // set this flag true
+                    if (nodeType == "my_opportunities" || nodeType == "rep") {
+                        showOpps = true
                     }
 
-                    self.currentRootId = rootId;
+                    var selectedUser = {
+                        'id':userData.id,
+                        'user_name':userData.user_name,
+                        'full_name':userData.full_name,
+                        'first_name':userData.first_name,
+                        'last_name':userData.last_name,
+                        'isManager':(nodeType != 'rep'),
+                        'showOpps':showOpps,
+                        'reportees':[]
+                    };
+
+                    app.utils.getSelectedUsersReportees(selectedUser, treeData.ctx);
+                });
+
+            if (treeData) {
+                var showTree = false;
+                var rootId = -1;
+
+                if (treeData.length == 1) {
+                    // this case appears when "Parent" is not present
+
+                    rootId = treeData[0].metadata.id;
+
+                    if (treeData[0].children.length > 0) {
+                        showTree = true;
+                    }
+                }
+                else if (treeData.length == 2) {
+                    // this case appears with a "Parent" link label in the return set
+
+                    // treeData[0] is the Parent link, treeData[1] is our root user node
+                    rootId = treeData[1].metadata.id;
                 }
 
-                // add proper class onto the tree
-                $("#people").addClass("jstree-sugar");
+                this.currentRootId = rootId;
             }
-        });
+
+            // add proper class onto the tree
+            $("#people").addClass("jstree-sugar");
+        }, this);
+
+        app.api.call('read', this.currentTreeUrl, null, options);
     }
 })

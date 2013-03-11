@@ -1012,6 +1012,33 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'vname' => 'LBL_FS_USER_ID',
             'type' => 'id',
         ),
+        'opp_count' =>
+        array(
+            'name' => 'opp_count',
+            'vname' => 'LBL_FORECAST_OPP_COUNT',
+            'type' => 'int',
+            'len' => '5',
+            'comment' => 'Number of opportunities represented by this forecast',
+        ),
+        'pipeline_opp_count' =>
+        array(
+            'name' => 'pipeline_opp_count',
+            'vname' => 'LBL_FORECAST_OPP_COUNT',
+            'type' => 'int',
+            'len' => '5',
+            'studio' => false,
+            'default' => '0',
+            'comment' => 'Number of opportunities minus closed won/closed lost represented by this forecast',
+        ),
+        'pipeline_amount' =>
+        array(
+            'name' => 'pipeline_amount',
+            'vname' => 'LBL_PIPELINE_REVENUE',
+            'type' => 'currency',
+            'studio' => false,
+            'default' => '0',
+            'comment' => 'Total of opportunities minus closed won/closed lost represented by this forecast',
+        ),
         'show_history_log' =>
         array(
             'name' => 'show_history_log',

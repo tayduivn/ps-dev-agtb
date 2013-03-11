@@ -168,6 +168,17 @@ class MetaDataManager {
     }
 
     /**
+     * This method collects all filter data for a module
+     *
+     * @param string $moduleName    The name of the sugar module to collect info about.
+     *
+     * @return Array A hash of all of the filter data.
+     */
+    public function getModuleFilters($moduleName) {
+        return $this->getModuleClientData('filter', $moduleName);
+    }
+
+    /**
      * The collector method for modules.  Gets metadata for all of the module specific data
      *
      * @param $moduleName The name of the module to collect metadata about.
@@ -192,6 +203,7 @@ class MetaDataManager {
         $data['subpanels'] = $this->getSubpanelDefs($moduleName);
         $data['menu'] = $this->getModuleMenu($moduleName);
         $data['config'] = $this->getModuleConfig($moduleName);
+        $data['filters'] = $this->getModuleFilters($moduleName);
 
         // Indicate whether Module Has duplicate checking enabled --- Rules must exist and Enabled flag must be set
         $data['dupCheckEnabled'] = isset($vardefs['duplicate_check']) && isset($vardefs['duplicate_check']['enabled']) && ($vardefs['duplicate_check']['enabled']===true);
@@ -199,6 +211,9 @@ class MetaDataManager {
         //BEGIN SUGARCRM flav=pro ONLY
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
         //END SUGARCRM flav=pro ONLY
+
+        // TODO we need to have this kind of information on the module itself not hacked around on globals
+        $data['isBwcEnabled'] = in_array($moduleName, $GLOBALS['bwcModules']);
 
         $seed = BeanFactory::newBean($moduleName);
 

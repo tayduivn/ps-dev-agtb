@@ -31,27 +31,12 @@
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
-
-        <!-- App Scripts -->
-        {if !empty($developerMode)}
-            <script src='sidecar/minified/sidecar.js'></script>
-        {else}
-            <script src='sidecar/minified/sidecar.min.js'></script>
-        {/if}
-        <script src='{$sugarSidecarPath}'></script>
-        <script src='{$SLFunctionsPath}'></script>
-        <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
-        <script src='{$configFile}'></script>
-        <script src="include/javascript/jquery/jquery.dataTables.min.js"></script>
-
         <!-- CSS -->
-        <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
         <link rel="stylesheet" href="{$css_url}"/>
-        <link rel="stylesheet" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
     </head>
     <body>
-    	<div id="sugarcrm">
-			<div id="sidecar">
+        <div id="sugarcrm">
+            <div id="sidecar">
                 <div id="alerts" class="alert-top"></div>
                 <div id="header"></div>
                 <div id="content">
@@ -65,18 +50,27 @@
                 <div id="drawers"></div>
                 <div id="footer"></div>
                 <div id="tourguide"></div>
-			</div>
-		</div>
+            </div>
+        </div>
+        <!-- App Scripts -->
+        {if !empty($developerMode)}
+            <script src='sidecar/minified/sidecar.js'></script>
+        {else}
+            <script src='sidecar/minified/sidecar.min.js'></script>
+        {/if}
+        <script src='{$sugarSidecarPath}'></script>
+        <script src='{$SLFunctionsPath}'></script>
+        <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
+        <script src='{$configFile}'></script>
+        <script src="include/javascript/jquery/jquery.dataTables.min.js"></script>
+
         {literal}
         <script language="javascript" src="include/javascript/sugar7.js"></script>
         <script language="javascript" src="include/javascript/sugar7/utils.js"></script>
         <script language="javascript" src="include/javascript/sugar7/field.js"></script>
         <script language="javascript" src="include/javascript/sugar7/hacks.js"></script>
-        <script language="javascript" src="include/javascript/sugar7/plugins/ellipsis_inline.js"></script>
-        <script language="javascript" src="include/javascript/sugar7/plugins/list-column-ellipsis.js"></script>
-        <script language="javascript" src="include/javascript/sugar7/plugins/timeago.js"></script>
-		<script language="javascript">
-			var App;
+        <script language="javascript">
+            var App;
 
             App = SUGAR.App.init({
                 el: "#sidecar",
@@ -85,7 +79,11 @@
                 }
             });
             App.api.debug = App.config.debugSugarApi;
-		</script>
+        </script>
         {/literal}
+
+        {if !empty($voodooFile)}
+            <script src="{$voodooFile}"></script>
+        {/if}
     </body>
 </html>

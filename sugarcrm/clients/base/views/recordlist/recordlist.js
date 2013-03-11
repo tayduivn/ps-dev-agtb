@@ -31,9 +31,9 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['ellipsis_inline', 'list-column-ellipsis'],
+    plugins: ['ellipsis_inline', 'list-column-ellipsis', 'error-decoration'],
+
     rowFields: {},
-    previousModelStates: {},
 
     contextEvents: {
         "list:editall:fire": "toggleEdit",
@@ -112,6 +112,7 @@
                     success: function() {
                         app.alert.dismiss('delete_list_record');
                         self.collection.remove(model);
+                        app.events.trigger("preview:close");
                         if(!self.disposed) self.render();
                     }
                 });
@@ -124,14 +125,6 @@
     },
 
     toggleRow: function(modelId, isEdit) {
-        var model = this.collection.get(modelId);
-        if(isEdit) {
-            model.on("error:validation", this.handleValidationError, this.rowFields[modelId]);
-            this.previousModelStates[modelId] = model.previousAttributes();
-        } else {
-            model.off("error:validation", this.handleValidationError, this.rowFields[modelId]);
-            delete this.previousModelStates[modelId];
-        }
         this.$("tr[name=" + this.module + "_" + modelId + "]").toggleClass("tr-inline-edit", isEdit);
         this.toggleFields(this.rowFields[modelId], isEdit);
     },
@@ -145,31 +138,6 @@
                 self.toggleRow(modelId, isEdit);
             }, modelId);
         }, this);
-    },
-
-    handleValidationError:function (errors) {
-        var rowField = this;
-        _.each(errors, function (fieldErrors, fieldName) {
-            var field = _.find(rowField, function(field) {
-                return field.name === fieldName;
-            });
-
-            var message = '',
-                $fieldEl = field.getFieldElement();
-            if ($fieldEl.length > 0) {
-                $fieldEl.addClass("local-error");
-                var tooltipEl = field.$(".error-tooltip[rel=tooltip]");
-                if (tooltipEl.length === 0) {
-                    tooltipEl = $('<span class="add-on local error-tooltip" rel="tooltip"><i class="icon-exclamation-sign"></i></span>');
-                    $fieldEl.after(tooltipEl);
-                }
-                _.each(fieldErrors, function (errorContext, errorName) {
-                    message += app.error.getErrorString(errorName, errorContext);
-                }, rowField);
-                tooltipEl.attr("data-original-title", message);
-                tooltipEl.tooltip({placement:"top", container:"#content"});
-            }
-        });
     },
 
     /**

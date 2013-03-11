@@ -2613,7 +2613,7 @@ $app_strings = array (
     'LBL_LAST_VIEWED' => 'Recently Viewed',
     'LBL_SHOW_LESS' => 'Show Less',
     'LBL_SHOW_MORE' => 'Show More',
-    'LBL_SHOW_MORE_MODULE' => 'More {{str \'LBL_MODULE_NAME\' attributes.module}}...',
+    'LBL_SHOW_MORE_MODULE' => 'More {{module}}...',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
     'LBL_LEADS'=>'Leads',
     'LBL_LESS' => 'less',
@@ -3019,6 +3019,9 @@ $app_strings = array (
     'LBL_MANAGE_SUBSCRIPTIONS_FOR'=>'Manage Subscriptions for ',
     'LBL_SUBSCRIBE'=>'Subscribe',
     'LBL_UNSUBSCRIBE'=>'Unsubscribe',
+    'LBL_CREATE_LINK_RECORD' => 'Create and Link Record',
+    'LBL_CREATE_LINK_BUTTON_LABEL' => 'Create and Link Record',
+    'ERROR_EMPTY_LINK_MODULE' => 'Please select a module first.',
     // Ajax status strings
     'LBL_LOADING' => 'Loading...',
     'LBL_SEARCHING' => 'Searching...',
@@ -3165,6 +3168,7 @@ $app_strings = array (
     'LBL_NO_IMAGE' => 'No Image',
 
     'LBL_MODULE' => 'Module',
+    'LBL_RELATIONSHIP' => 'Relationship',
 
     //adding a label for address copy from left
     'LBL_COPY_ADDRESS_FROM_LEFT' => 'Copy address from left:',
@@ -3427,7 +3431,7 @@ $app_strings = array (
     'LBL_SELECT_THIS_ROW_TITLE' => 'Select this row',
     'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
     'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
-    'LBL_SEARCH_AND_SELECT' => 'Search and select {{module}}',
+    'LBL_SEARCH_AND_SELECT' => 'Search and Select {{module}}',
 
     //for upload errors
     'UPLOAD_ERROR_TEXT'          => 'ERROR: There was an error during upload. Error code: {0} - {1}',
@@ -3565,6 +3569,7 @@ $app_strings = array (
     'LBL_ASSOC_EXISTING' => 'Associate Existing {{{this}}}',
     'LBL_SEARCH_ALL' => 'Search all {{{this}}}',
     'LBL_SEARCH_ALL_RECORDS' => 'Search all records',
+    'LBL_SEARCH_ALL_MODULES' => 'Search all',
     'LBL_OK' => 'OK',
     'LBL_YES' => 'Yes',
     'LBL_NO' => 'No',
@@ -3811,6 +3816,9 @@ $app_strings = array (
     'NTC_RECORD_DELETE_CONFIRMATION' => 'Are you sure you want to delete the {{module}} {{name}}?',
     'NTC_RECORD_DELETE_SUCCESS' => 'You deleted the {{module}} {{name}}.',
 
+    //record save
+    'LBL_RECORD_SAVED' => 'Record saved.',
+
     //for sidecar alert view
     'LBL_ALERT_TITLE_SUCCESS' => 'Success:',
     'LBL_ALERT_TITLE_WARNING' => 'Warning:',
@@ -3820,6 +3828,10 @@ $app_strings = array (
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
+
+    //application error messages
+    'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',
+    'ERR_RESOLVE_ERRORS' => 'Please resolve any errors before proceeding.',
 );
 
 

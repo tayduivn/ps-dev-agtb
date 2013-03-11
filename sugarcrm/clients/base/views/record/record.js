@@ -1,9 +1,8 @@
 ({
     inlineEditMode: false,
     createMode: false,
-    previousModelState: null,
     extendsFrom: 'EditableView',
-    plugins: ['SugarLogic', 'ellipsis_inline'],
+    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration'],
     enableHeaderButtons: true,
     enableHeaderPane: true,
     events: {
@@ -30,11 +29,12 @@
         app.view.views.EditableView.prototype.initialize.call(this, options);
 
         this.buttons = {};
-
         this.createMode = this.context.get("create") ? true : false;
-        this.action = this.createMode ? 'edit' : 'detail';
 
-        this.model.on("error:validation", this.handleValidationError, this);
+        // Even in createMode we want it to start in detail so that we, later, respect
+        // this.editableFields (the list after pruning out readonly fields, etc.)
+        this.action = 'detail';
+
         this.context.on("change:record_label", this.setLabel, this);
         this.context.set("viewed", true);
         this.model.on("duplicate:before", this.setupDuplicateFields, this);
@@ -60,29 +60,6 @@
 
     setLabel: function(context, value) {
         this.$(".record-label[data-name=" + value.field + "]").text(value.label);
-    },
-
-    /**
-     * Handle validation errors on save of Record.
-     * Makes the fields editable and decorates the fields that have errors.
-     * Fields decorate themselves because they may have customized HTML/CSS
-     *
-     * @param errors Validation errors
-     */
-    handleValidationError: function(errors){
-        var errorFields = _.filter(this.editableFields,function(field){
-            return errors[field.name];
-        });
-        this.toggleFields(errorFields, true);  // Set field to edit mode before decorating it
-        _.defer(function(errorFields, self){ // Must defer decorating because field toggling is deferred
-            _.each(errorFields, function(field){
-                field.$el.parents('.record-cell').addClass("inline-error");
-                if(field.decorateError){
-                    field.decorateError(errors[field.name]);
-                }
-            });
-        }, errorFields, this);
-
     },
 
     delegateButtonEvents: function() {
@@ -253,6 +230,12 @@
         this.initButtons();
         this.setButtonStates(this.STATE.VIEW);
         this.setEditableFields();
+
+        if (this.createMode) {
+            // RecordView starts with action as detail; once this.editableFields has been set (e.g.
+            // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
+            this.toggleFields(this.editableFields, true);
+        }
     },
 
     setEditableFields: function() {
@@ -363,15 +346,12 @@
     },
 
     editClicked: function() {
-        if (_.isEmpty(this.previousModelState)) {
-            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
-        }
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
 
     saveClicked: function() {
-        this.$('.inline-error').removeClass('inline-error');
+        this.clearValidationErrors();
         if(this.model.isValid(this.getFields(this.module))){
             this.setButtonStates(this.STATE.VIEW);
             this.handleSave();
@@ -382,22 +362,6 @@
         this.handleCancel();
         this.setButtonStates(this.STATE.VIEW);
         this.clearValidationErrors(this.editableFields);
-    },
-    /**
-     * Remove validation error decoration from fields
-     *
-     * @param fields Fields to remove error from
-     */
-    clearValidationErrors: function(fields){
-        _.defer(function(){
-            _.each(fields, function(field){
-                field.$el.parents('.record-cell').removeClass("inline-error");
-                if(field.clearErrorDecoration){
-                    field.clearErrorDecoration();
-                }
-            });
-        }, fields);
-
     },
 
     deleteClicked: function() {
@@ -439,10 +403,6 @@
         // Set Editing mode to on.
         this.inlineEditMode = true;
 
-        if (_.isEmpty(this.previousModelState)) {
-            this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
-        }
-
         this.setButtonStates(this.STATE.EDIT);
 
         // TODO: Refactor this for fields to support their own focus handling in future.
@@ -450,13 +410,12 @@
         switch (field.type) {
             case "image":
                 var self = this;
-                app.file.checkFileFieldsAndProcessUpload(self.model, {
+                app.file.checkFileFieldsAndProcessUpload(self, {
                         success:function () {
                             self.toggleField(field);
                         }
                     },
-                    { deleteIfFails:false},
-                    self
+                    { deleteIfFails:false}
                 );
                 break;
             default:
@@ -493,9 +452,6 @@
         self.inlineEditMode = false;
 
         var finalSuccess = function () {
-            if (!_.isEmpty(self.previousModelState)) {
-                self.previousModelState = {};
-            }
 
             if (self.createMode) {
                 app.navigate(self.context, self.model);
@@ -503,7 +459,7 @@
                 self.render();
             }
         };
-        app.file.checkFileFieldsAndProcessUpload(self.model, {
+        app.file.checkFileFieldsAndProcessUpload(self, {
                 success:function () {
                     self.model.save({}, {
                         success:finalSuccess,
@@ -511,17 +467,14 @@
                     });
                 }
             },
-            { deleteIfFails:false}, self);
+            { deleteIfFails:false});
 
         self.$(".record-save-prompt").hide();
         if (!self.disposed) self.render();
     },
 
     handleCancel: function() {
-        if (!_.isEmpty(this.previousModelState)) {
-            this.model.set(JSON.parse(JSON.stringify(this.previousModelState)),{silent: !this.inlineEditMode});
-            this.previousModelState = {};
-        }
+        this.model.revertAttributes({silent: !this.inlineEditMode});
         this.toggleEdit(false);
         this.inlineEditMode = false;
     },

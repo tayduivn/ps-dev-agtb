@@ -46,6 +46,7 @@ describe("Module List", function() {
         });
 
         afterEach(function() {
+            view.dispose();
             modStrings.restore();
             isAuthenticatedStub.restore();
             getModuleNamesStub.restore();
@@ -214,31 +215,6 @@ describe("Module List", function() {
             expect(cbspy).toHaveBeenCalled();
             expect(cbspy).toHaveBeenCalledWith("testModule", event);
             SugarTest.app.events.unregister(view,"sugar:app:testEvent");
-        });
-        it("should route and open create drawer on app view open", function() {
-            // sinon stub .restore will return a error here if router or drawer is undefined like it is below
-            // so workaround by storing old values
-            var oRouter = SugarTest.app.router;
-            var oDrawer = SugarTest.app.drawer;
-            SugarTest.app.router = sinon.stub({
-                navigate: function(){
-
-                },
-                buildRoute: function(){
-
-                }
-            });
-            SugarTest.app.drawer = sinon.stub({
-                open: function(){
-
-                }
-            });
-            view.handleCreateLink('testModule',{});
-            expect(SugarTest.app.router.navigate).toHaveBeenCalled();
-            expect(SugarTest.app.router.buildRoute).toHaveBeenCalled();
-
-            SugarTest.app.router = oRouter;
-            SugarTest.app.router = oDrawer;
         });
     });
 });

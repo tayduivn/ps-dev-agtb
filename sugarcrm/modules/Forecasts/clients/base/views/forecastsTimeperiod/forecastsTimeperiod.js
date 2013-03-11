@@ -39,6 +39,9 @@
     timeperiod: {},
 
     initialize : function(options) {
+        // initialize an empty backbone model to send down to the fields
+        options.model = new Backbone.Model();
+
         app.view.View.prototype.initialize.call(this, options);
 
         _.each(this.meta.panels, function(panel) {

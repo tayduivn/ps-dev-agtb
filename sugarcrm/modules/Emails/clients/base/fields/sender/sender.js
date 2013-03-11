@@ -10,19 +10,23 @@
     _render: function() {
         var result = app.view.Field.prototype._render.call(this);
 
-        if(this.tplName === 'edit') {
+        if (this.tplName === 'edit') {
             var action = (this.endpoint.action) ? this.endpoint.action : null,
                 attributes = (this.endpoint.attributes) ? this.endpoint.attributes : null,
                 params = (this.endpoint.params) ? this.endpoint.params : null,
                 myURL = app.api.buildURL(this.endpoint.module, action, attributes, params);
 
-            app.api.call('GET', myURL, null,{
-                    success: this.populateValues,
-                    error: function(e) {
-                        app.logger.error('Failed to retrieve the outbound configs: ' + e);
-                    }
+            app.api.call('GET', myURL, null, {
+                success: this.populateValues,
+                error:   function(error) {
+                    app.alert.show("server-error", {
+                        level: "error",
+                        messages: "ERR_GENERIC_SERVER_ERROR",
+                        autoClose: false
+                    });
+                    app.error.handleHttpError(error);
                 }
-            );
+            });
         }
 
         return result;
@@ -33,7 +37,9 @@
             defaultResult,
             defaultValue = {};
 
-        if (this.disposed === true) return; //if field is already disposed, bail out
+        if (this.disposed === true) {
+            return; //if field is already disposed, bail out
+        }
 
         //sets the default value
         if (!_.isEmpty(results)) {
@@ -43,7 +49,7 @@
 
             defaultValue = (defaultResult) ? defaultResult : results[0];
 
-            if (!this.model.has(this.name) || this.model.get(this.name) !== defaultValue.id) {
+            if (!this.model.has(this.name)) {
                 this.model.set(this.name, defaultValue.id);
             }
         }
@@ -70,7 +76,6 @@
         });
 
         this.$(".select2-container").addClass("tleft");
-
     },
 
     /**

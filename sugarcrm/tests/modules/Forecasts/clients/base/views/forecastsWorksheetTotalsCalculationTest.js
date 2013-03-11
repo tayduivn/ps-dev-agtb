@@ -30,6 +30,10 @@ describe("The forecasts worksheet totals calculation test", function() {
                 sales_stage_lost: ["Closed Lost"],
             };
         });
+        // stub out app.user.getPreference('decimal_precision') and make it return 2
+        sinon.stub(app.user, "getPreference", function(name) {
+            return 2
+        });
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) {
             return eval(d);
         });
@@ -50,6 +54,7 @@ describe("The forecasts worksheet totals calculation test", function() {
     afterEach(function() {
         getModuleStub.restore();
         formatWithRateStub.restore();
+        app.user.getPreference.restore();
     });
 
     /*

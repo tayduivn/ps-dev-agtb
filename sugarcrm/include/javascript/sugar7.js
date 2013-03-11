@@ -16,6 +16,15 @@
                 route: "logout"
             },
             {
+                name: "activities",
+                route: "activities",
+                callback: function(){
+                    app.controller.loadView({
+                        layout: "activities",
+                        module: "Home"
+                    });
+                }
+            },            {
                 name: "bwc",
                 route: "bwc/*url",
                 callback: function(url) {
@@ -59,8 +68,28 @@
                 route: ":module"
             },
             {
-                name: "record",
-                route: ":module/create"
+                name: "create",
+                route: ":module/create",
+                callback: function(module){
+                    app.controller.loadView({
+                        module: module,
+                        layout: "records"
+                    });
+
+                    app.drawer.open({
+                        layout:'create',
+                        context:{
+                            create:true
+                        }
+                    }, _.bind(function (refresh) {
+                        if (refresh) {
+                            var collection = app.controller.context.get('collection');
+                            if (collection) {
+                                collection.fetch();
+                            }
+                        }
+                    }, this));
+                }
             },
             {
                 name: "vcardImport",
@@ -73,6 +102,19 @@
 
                     app.drawer.open({
                         layout:'vcard-import'
+                    });
+                }
+            },
+           {
+                name: "emailCompose",
+                route: "Emails/compose",
+                callback: function(){
+                    app.drawer.open({
+                        layout : 'compose',
+                        context: {
+                            create: 'true',
+                            module: "Emails"
+                        }
                     });
                 }
             },

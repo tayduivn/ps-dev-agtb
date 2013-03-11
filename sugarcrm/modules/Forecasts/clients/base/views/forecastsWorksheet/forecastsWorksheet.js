@@ -179,6 +179,15 @@
     },
 
     /**
+     * override dispose function to remove custom listener off the window
+     * @private
+     */
+    _dispose: function() {
+        $(window).off();
+        app.view.Component.prototype._dispose.call(this);
+    },
+
+    /**
      * Overwrite Load Data for now
      */
     loadData: function() {
@@ -332,7 +341,7 @@
 
                     // set the correct module on the model since sidecar doesn't support sub-beans yet
                     model.module = "ForecastWorksheets";
-                    model.save({}, {success: function() {
+                    model.save({}, {success: _.bind(function() {
                         saveCount++;
                         //if this is the last save, go ahead and trigger the callback;
                         if(totalToSave === saveCount) {
@@ -347,7 +356,7 @@
                             }
                             this.context.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
                         }
-                    }, silent: true});
+                    }, this), silent: true});
                 }, this);
 
                 this.cleanUpDirtyModels();
@@ -386,7 +395,9 @@
         if(this.collection) {
             this.collection.on("reset", function() {
                 this.cleanUpDirtyModels();
-                this.render();
+                if (!this.disposed) {
+                    this.render();
+                }
             }, this);
 
             this.collection.on("change", function(model) {

@@ -38,6 +38,9 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
     private $tp;
     private $user;
     private $opp;
+    /**
+     * @var Product
+     */
     private $prod;
 
     /**
@@ -71,6 +74,14 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
         $this->opp->date_closed ='2008-02-01';      // set the dat closed to the middle of the TP
         $this->opp->assigned_user_id = $this->user->id;
         $this->opp->save();
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        $this->prod = SugarTestProductUtilities::createProduct();
+        $this->prod->opportunity_id = $this->opp->id;
+        $this->prod->date_closed = $this->opp->date_closed;
+        $this->prod->assigned_user_id = $this->user->id;
+        $this->prod->save();
+        //END SUGARCRM flav=ent ONLY
     }
 
     public function tearDown()
@@ -80,6 +91,7 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
         $db->query("DELETE FROM job_queue where name = ".$db->quoted("Update ForecastWorksheets"));
         $db->query("DELETE FROM forecast_worksheets WHERE parent_id = '{$this->opp->id}'");
         $db->query("DELETE FROM forecast_worksheets WHERE parent_id = '{$this->prod->id}'");
+        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         //Clean up other entries using test utilities
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
@@ -92,9 +104,16 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
     /**
      * @group forecasts
      */
-    public function testUpdateForecastWorksheets()
+    public function testUpdateForecastWorksheetsWhenForecastingByOpportunity()
     {
         global $current_user;
+
+        /* @var $admin Administration */
+        // get the current settings and set is_setup to 1
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        $admin->saveSetting('Forecasts', 'forecast_by', 'opportunities', 'base');
+
 
         $data = array(
             'user_id' => $this->user->id,
@@ -107,6 +126,8 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
             json_encode($data),
             $current_user);
 
+        $admin->saveSetting('Forecasts', 'forecast_by', $settings['forecast_by'], 'base');
+
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
 
@@ -117,7 +138,6 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
         $db = DBManagerFactory::getInstance();
 
         foreach($products as $product) {
-            $this->prod = $product;
             SugarTestProductUtilities::setCreatedProduct(array($product->id));
             $this->assertEquals($this->opp->id, $product->opportunity_id);
             // make sure that we have a committed version of the product and opportunity
@@ -126,6 +146,71 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
             $result = $db->getOne("SELECT count(id) as total FROM forecast_worksheets WHERE parent_id = '{$this->opp->id}' and draft = 0");
             $this->assertEquals(1, $result['total']);
         }
+
+
+    }
+
+    /**
+     * @group forecasts
+     */
+    public function testUpdateForecastWorksheetsWhenForecastingByProduct()
+    {
+        global $current_user;
+
+        /* @var $admin Administration */
+        // get the current settings and set is_setup to 1
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        $admin->saveSetting('Forecasts', 'forecast_by', 'products', 'base');
+
+        $data = array(
+            'user_id' => $this->user->id,
+            'timeperiod_id' => $this->tp->id
+        );
+
+        $job = SugarTestJobQueueUtilities::createAndRunJob(
+            'SugarJobUpdateForecastWorksheets',
+            'class::SugarJobUpdateForecastWorksheets',
+            json_encode($data),
+            $current_user);
+
+        $admin->saveSetting('Forecasts', 'forecast_by', $settings['forecast_by'], 'base');
+
+        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
+        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+
+        // make sure the product got committed but the worksheet didn't
+
+        /* @var $worksheet ForecastWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $worksheet->retrieve_by_string_fields(
+            array(
+                'parent_type' => $this->prod->module_name,
+                'parent_id' => $this->prod->id,
+                'draft' => 0,
+                'deleted' => 0
+            )
+        );
+
+        $this->assertNotEmpty($worksheet->id);
+
+        SugarTestWorksheetUtilities::setCreatedWorksheet(array($worksheet->id));
+
+        $this->assertEquals($this->prod->id, $worksheet->parent_id);
+
+        // make sure that there is no opportunity committed record.
+        /* @var $worksheet ForecastWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $worksheet->retrieve_by_string_fields(
+            array(
+                'parent_type' => $this->opp->module_name,
+                'parent_id' => $this->opp->id,
+                'draft' => 0,
+                'deleted' => 0
+            )
+        );
+
+        $this->assertEmpty($worksheet->parent_id);
     }
 
 }

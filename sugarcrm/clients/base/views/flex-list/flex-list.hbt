@@ -51,9 +51,9 @@
                     <ul class="dropdown-menu left carettop">
                     {{#each ../../fields}}
                         <li data-fieldname="{{name}}">
-                        <a class="rowaction" href="javascript:void(0);">{{str label ../../../../module}}
-                        {{#has name ../../../../_fields.visible}} <i class="icon icon-ok"></i>{{/has}}
-                        </a>
+                            <a class="rowaction{{#has name ../../../../_fields.visible}} active{{/has}}" href="javascript:void(0);">
+                                {{#has name ../../../../_fields.visible}}<i class="icon icon-ok"></i> {{/has}}{{str label ../../../../module}}
+                            </a>
                         </li>
                     {{/each}}
                     </ul>

@@ -46,16 +46,19 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
-        if(this.context) this.context.off(null, null, this);
+        if(this.context) {
+            this.context.off(null, null, this);
+        }
         app.view.View.prototype.unbindData.call(this);
     },
 
     bindDataChange:function () {
-        var self = this;
         //app.view.View.prototype.bindDataChange.call(this);
         this.context.on('change:selectedUser', function (context, selectedUser) {
             this.setFullNameFromUser(selectedUser);
-            this.render();
+            if (!this.disposed) {
+                this.render();
+            }
         }, this);
     }
 })

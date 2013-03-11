@@ -27,6 +27,11 @@
 ({
     extendsFrom: 'RecordView',
 
+    initialize: function(options) {
+        this._setupCommitStageField(options.meta.panels);
+        app.view.views.RecordView.prototype.initialize.call(this, options);
+    },
+
     initButtons: function() {
         app.view.views.RecordView.prototype.initButtons.call(this);
 
@@ -71,5 +76,27 @@
             }, this)
         };
         app.api.call("create", url, null, callbacks);
+    },
+
+    /**
+     * Set up the commit_stage field based on forecast settings - if forecasts is set up, adds the correct dropdown
+     * elements, if forecasts is not set up, it removes the field.
+     * @param panels
+     * @private
+     */
+    _setupCommitStageField: function(panels) {
+        _.each(panels, function(panel) {
+            if(!app.metadata.getModule("Forecasts", "config").is_setup) {
+                panel.fields = _.filter(panel.fields, function (field) {
+                    return field.name != "commit_stage";
+                })
+            } else {
+                _.each(panel.fields, function(field) {
+                    if (field.name == "commit_stage") {
+                        field.options = app.metadata.getModule("Forecasts", "config").buckets_dom;
+                    }
+                })
+            }
+        });
     }
 })

@@ -123,6 +123,9 @@
                 .css('top','');
             this._removeTabAndBackdrop($main);
         }
+
+        $('body').removeClass('noscroll');
+        app.$contentEl.removeClass('noscroll');
     },
 
     /**
@@ -140,7 +143,7 @@
         if (this._isMainAppContent(drawers.$top)) {
             //make sure that the main application content is set as a drawer
             drawers.$top.addClass('drawer');
-            app.$rootEl.addClass('noscroll');
+            $('body').addClass('noscroll');
             app.$contentEl.addClass('noscroll');
         }
 
@@ -195,7 +198,7 @@
             this._removeTabAndBackdrop(drawers.$bottom);
             if (this._isMainAppContent(drawers.$bottom)) {
                 drawers.$bottom.removeClass('drawer transition');
-                app.$rootEl.removeClass('noscroll');
+                $('body').removeClass('noscroll');
                 app.$contentEl.removeClass('noscroll');
             } else {
                 //refresh drawer position and height for collapsed or resized drawers

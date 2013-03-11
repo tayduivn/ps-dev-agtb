@@ -1,5 +1,6 @@
 <div data-tour="tour-{{module}}-businesscard">
     {{#if model.isNotEmpty}}
+        {{#if enableHeaderPane}}
         <div class="headerpane">
             {{#each meta.panels}}
                 {{#if header}}
@@ -43,6 +44,7 @@
             </div>
             {{/if}}
         </div>
+        {{/if}}
         <div class="record">
             {{#each meta.panels}}
                 {{#unless header}}
@@ -55,7 +57,7 @@
 
                                 <div class="span{{this.span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                                     {{#if ../../../this.labels}}
-                                        <div class="record-label" data-name="{{../../this.name}}">{{#unless ../../this.dismiss_label}}{{str ../../this.label ../../../../../../../this.model.module}}{{/unless}}</div>
+                                        <div class="record-label" data-name="{{../this.name}}">{{#unless ../../this.dismiss_label}}{{str ../../this.label ../../../../../../../this.model.module}}{{/unless}}</div>
                                     {{/if}}
                                     {{#if name}}
                                         <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../../../this.module}}-{{name}}">

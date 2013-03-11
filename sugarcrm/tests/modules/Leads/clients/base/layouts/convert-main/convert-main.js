@@ -297,13 +297,13 @@ describe("ConvertLeadLayout", function() {
 
         it("clicking on the opportunity panel header does nothing (disabled until first two are complete)", function() {
             expect($opportunityHeader.hasClass('disabled')).toBeTruthy(); //disabled before
-            $opportunityHeader.click()
+            $opportunityHeader.click();
             expect($opportunityHeader.hasClass('disabled')).toBeTruthy(); //disabled after
         });
 
         it("clicking on the account panel header with success validation on contact panel moves activate status to account panel", function() {
             expect($accountHeader.hasClass('active')).toBeFalsy(); //not active before
-            $accountHeader.click()
+            $accountHeader.click();
             expect($contactHeader.hasClass('active')).toBeFalsy(); //not active after
             expect($accountHeader.hasClass('active')).toBeTruthy(); //active after
         });
@@ -311,7 +311,7 @@ describe("ConvertLeadLayout", function() {
         it("clicking on the account panel header with validation error on contact panel keeps active status on contact panel", function() {
             mockValidationResult = false;
             expect($accountHeader.hasClass('active')).toBeFalsy(); //not active before
-            $accountHeader.click()
+            $accountHeader.click();
             expect($contactHeader.hasClass('active')).toBeTruthy(); //still active after
             expect($accountHeader.hasClass('active')).toBeFalsy(); //not active after
         });
@@ -431,7 +431,7 @@ describe("ConvertLeadLayout", function() {
             convertCompleteStub = sinon.stub(layout, 'convertComplete');
             uploadSuccessCount = 0;
             uploadErrorCount = 0;
-            uploadFileFieldStub = sinon.stub(app.file, 'checkFileFieldsAndProcessUpload', function (model, callbacks, options, view, showAlert) {
+            uploadFileFieldStub = sinon.stub(app.file, 'checkFileFieldsAndProcessUpload', function (view, callbacks, options, showAlert) {
                 if (isUploadSuccess) {
                     uploadSuccessCount++;
                     callbacks.success();
@@ -547,7 +547,9 @@ describe("ConvertLeadLayout", function() {
                         }
                     }
                 );
-            }
+            },
+
+            clearValidationErrors: function() {}
         };
     };
 });
