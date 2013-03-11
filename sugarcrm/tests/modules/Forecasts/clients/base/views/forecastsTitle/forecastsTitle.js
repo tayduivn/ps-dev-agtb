@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts title view", function () {
+describe("forecasts_view_forecastsTitle", function () {
 
     var app, view, testMethodStub, context, viewController, stubs = [];
 
@@ -77,5 +77,19 @@ describe("The forecasts title view", function () {
             delete localUserStub;
         });
 
+    });
+
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(view, 'render');
+
+            view.context.set({selectedUser: {id: 'newId'}});
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            view.disposed = true;
+            view.context.set({selectedUser: {id: 'newId2'}});
+            expect(renderStub).not.toHaveBeenCalled();
+        });
     });
 });

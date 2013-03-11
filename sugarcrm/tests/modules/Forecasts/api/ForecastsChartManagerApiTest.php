@@ -66,10 +66,12 @@ class ForecastsChartManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
 
 
         self::$manager = SugarTestForecastUtilities::createForecastUser();
@@ -77,7 +79,7 @@ class ForecastsChartManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 
-        parent::setUpBeforeClass();
+        
     }
 
     /**

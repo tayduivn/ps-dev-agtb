@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("Forecasts Commit Buttons Component", function(){
+describe("forecasts_view_forecastsCommitButtons", function(){
 
     var app, view, metaStub;
 
@@ -43,7 +43,7 @@ describe("Forecasts Commit Buttons Component", function(){
 
     describe("test showCommitButton", function() {
         beforeEach(function() {
-            testMethodStub = sinon.stub(app.user, "get", function(id) {
+            testMethodStub = sinon.stub(app.user, "get", function() {
                 return 'a_user_id';
             });
         });
@@ -143,12 +143,12 @@ describe("Forecasts Commit Buttons Component", function(){
     describe("Forecasts commitButtons bindings ", function(){
         beforeEach(function(){
             view.context = {
-                on: function(event, fcn){}
+                on: function(){}
             };
 
             // we need the view.layout to be defined since we listen for an event from there now
             view.layout = {
-                on : function(evt, fct) {}
+                on : function() {}
             };
 
             sinon.spy(view.context, "on");

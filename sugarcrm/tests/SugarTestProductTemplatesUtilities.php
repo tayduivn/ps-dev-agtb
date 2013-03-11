@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,13 +28,57 @@
  ********************************************************************************/
 
 
-$layout = MetaDataManager::getLayout('SideBarLayout');
-$layout->push('main', array('view'=>'selection-headerpane'));
+class SugarTestProductTemplatesUtilities
+{
+    protected static $createdProductTemplates = array();
 
-$listLayout = MetaDataManager::getLayout("FilterPanelLayout", array("default" => "list"));
-$listLayout->push(array('view'=>'selection-list'));
-$listLayout->push(array('view'=>'list-bottom'));
-$layout->push('side', array('layout'=>'selection-sidebar'));
-$layout->push('main', array('layout' => $listLayout->getLayout(true)));
-$layout->push('preview', array('layout' => 'preview'));
-$viewdefs['base']['layout']['selection-list'] = $layout->getLayout();
+    /**
+     * @param string $id
+     * @param array $fields         A key value pair to set field values on the created product template
+     * @return ProductTemplate
+     */
+    public static function createProductTemplate($id = '', $fields = array())
+    {
+        $time = mt_rand();
+        $name = 'SugarProductTemplate';
+        /* @var $product_template ProductTemplate */
+        $product_template = BeanFactory::getBean('ProductTemplates');
+        $product_template->name = $name . $time;
+        if (!empty($id)) {
+            $product_template->new_with_id = true;
+            $product_template->id = $id;
+        }
+        foreach ($fields as $key => $value) {
+            $product_template->$key = $value;
+        }
+        $product_template->save();
+        self::$createdProductTemplates[] = $product_template->id;
+        return $product_template;
+    }
+
+    public static function setCreatedProductTemplate($ids)
+    {
+        if (!is_array($ids)) {
+            $ids = array($ids);
+        }
+        foreach ($ids as $id) {
+            self::$createdProductTemplates[] = $id;
+        }
+    }
+
+    public static function removeAllCreatedProductTemplate()
+    {
+        $db = DBManagerFactory::getInstance();
+        $db->query(
+            'DELETE FROM product_categories WHERE id IN ("' . implode(
+                "', '",
+                self::getCreatedProductTemplateIds()
+            ) . '")'
+        );
+    }
+
+    public static function getCreatedProductTemplateIds()
+    {
+        return self::$createdProductTemplates;
+    }
+}

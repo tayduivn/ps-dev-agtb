@@ -58,7 +58,6 @@ class ProductToQuoteConvertApi extends SugarApi
         $total = SugarMath::init()->exp("?*?", array($product->quantity, $product->likely_case))->result();
         $total_base = SugarCurrency::convertWithRate($total, $product->base_rate);
 
-        $product_bundle->name = 'Bundle 1';
         $product_bundle->bundle_stage = 'Draft';
         $product_bundle->total = $total;
         $product_bundle->total_usdollar = $total_base;

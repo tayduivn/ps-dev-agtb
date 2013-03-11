@@ -24,6 +24,7 @@ describe("Editable View", function() {
     });
 
     afterEach(function() {
+        view.dispose();
         SugarTest.app.view.reset();
         sinonSandbox.restore();
         SugarTest.testMetadata.dispose();
@@ -58,9 +59,7 @@ describe("Editable View", function() {
             description: 'Description'
         });
         app.drawer = {
-            isActive: function() {
-                return false;
-            }
+            _components: []
         };
 
         var keys = _.keys(view.fields),

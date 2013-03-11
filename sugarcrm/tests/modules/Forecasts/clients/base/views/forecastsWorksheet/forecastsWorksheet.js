@@ -19,13 +19,13 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts worksheet", function() {
+describe("forecasts_view_forecastsWorksheet", function() {
 
     var app, view, testMethodStub, collection, apiCallStub, getModuleStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+        getModuleStub = sinon.stub(app.metadata, "getModule", function() {
             return {
                 sales_stage_won: ["Closed Won"],
                 sales_stage_lost: ["Closed Lost"],
@@ -90,7 +90,7 @@ describe("The forecasts worksheet", function() {
         it('should return opportunities in url', function() {
             // reset getModuleStub for just this test
             getModuleStub.restore();
-            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+            getModuleStub = sinon.stub(app.metadata, "getModule", function() {
                 return {
                     sales_stage_won: ["Closed Won"],
                     sales_stage_lost: ["Closed Lost"],
@@ -104,7 +104,7 @@ describe("The forecasts worksheet", function() {
 
     describe("isMyWorksheet method", function() {
         beforeEach(function() {
-            testMethodStub = sinon.stub(app.user, "get", function(id) {
+            testMethodStub = sinon.stub(app.user, "get", function() {
                 return 'a_user_id';
             });
         });
@@ -263,7 +263,7 @@ describe("The forecasts worksheet", function() {
     });
 
     describe("Forecasts worksheet save dirty models with correct user_id after selected_user changes", function() {
-        var m, saveStub, safeFetchStub, viewStub;
+        var m, saveStub, safeFetchStub;
         beforeEach(function() {
             m = new Backbone.Model({'hello': 'world'});
             saveStub = sinon.stub(m, 'save', function() {
@@ -344,5 +344,19 @@ describe("The forecasts worksheet", function() {
             expect(view.context.on).toHaveBeenCalledWith("change:expectedOpportunities");
         });
 
+    });
+
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(view, 'render');
+
+            view.collection.trigger('reset');
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            view.disposed = true;
+            view.collection.trigger('reset');
+            expect(renderStub).not.toHaveBeenCalled();
+        });
     });
 });

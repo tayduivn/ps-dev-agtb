@@ -128,6 +128,7 @@ require_once 'SugarTestForecastUtilities.php';
 require_once 'SugarTestProductUtilities.php';
 require_once 'SugarTestProductCategoryUtilities.php';
 require_once 'SugarTestProductTypeUtilities.php';
+require_once 'SugarTestProductTemplatesUtilities.php';
 require_once 'SugarTestProductBundleUtilities.php';
 require_once 'SugarTestQuotaUtilities.php';
 require_once 'SugarTestQuoteUtilities.php';
@@ -156,7 +157,7 @@ if(function_exists("shadow_get_config") && ($sc = shadow_get_config()) != false 
 }
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {
-    protected $backupGlobals = FALSE;
+    protected $backupGlobals = false;
 
     protected $useOutputBuffering = true;
 
@@ -271,7 +272,7 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 // define output testcase subclass
 class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTestCase
 {
-    protected $backupGlobals = FALSE;
+    protected $backupGlobals = false;
 
     protected $_notRegex;
     protected $_outputCheck;
@@ -367,7 +368,6 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
     		$this->assertEquals($this->file_map, $newfiles);
     	}
     }
-
 }
 
 // define a mock logger interface; used for capturing logging messages emited

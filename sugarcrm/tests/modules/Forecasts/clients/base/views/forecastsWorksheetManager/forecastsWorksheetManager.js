@@ -19,12 +19,12 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts manager worksheet", function() {
+describe("forecasts_view_forecastsWorksheetManager", function() {
     var view, apiClassStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        sinon.stub(app.metadata, "getModule", function(module, type) {
+        sinon.stub(app.metadata, "getModule", function() {
             return {
                 show_worksheet_likely: 1,
                 show_worksheet_best: 1,
@@ -337,7 +337,7 @@ describe("The forecasts manager worksheet", function() {
     describe("Forecasts manager worksheet bindings ", function() {
         beforeEach(function() {
             view.context = {
-                on: function(event, fcn) {
+                on: function() {
                 }
             };
             view.collection.on = function() {
@@ -373,6 +373,20 @@ describe("The forecasts manager worksheet", function() {
 
         it("context.on should have been called with selectedRanges", function() {
             expect(view.context.on).toHaveBeenCalledWith("change:selectedRanges");
+        });
+    });
+
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(view, 'render');
+
+            view.collection.trigger('reset');
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            view.disposed = true;
+            view.collection.trigger('reset');
+            expect(renderStub).not.toHaveBeenCalled();
         });
     });
 });
