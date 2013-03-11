@@ -214,7 +214,8 @@ describe("forecasts_view_forecastsChart", function () {
         it("should return properly formatted url", function(){
             var params = {
                     timeperiod_id: 'a',
-                    user_id: 'b'
+                    user_id: 'b',
+                    display_manager: false
                 },
                 result = view.buildChartUrl(params);
 
@@ -230,7 +231,8 @@ describe("forecasts_view_forecastsChart", function () {
         it("should return properly formatted url", function(){
             var params = {
                     timeperiod_id: 'a',
-                    user_id: 'b'
+                    user_id: 'b',
+                    display_manager: true
                 },
                 result = view.buildChartUrl(params);
 
