@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("Forecasts Utils", function() {
+describe("forecasts_lib_forecastsUtils", function() {
 
     var app, getModuleStub;
 

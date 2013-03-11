@@ -19,19 +19,19 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts worksheet totals calculation test", function() {
+describe("forecasts_view_forecastsWorksheetTotalsCalculationTest", function() {
     var app, view, context, formatWithRateStub, getModuleStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+        getModuleStub = sinon.stub(app.metadata, "getModule", function() {
             return {
                 sales_stage_won: ["Closed Won"],
-                sales_stage_lost: ["Closed Lost"],
+                sales_stage_lost: ["Closed Lost"]
             };
         });
         // stub out app.user.getPreference('decimal_precision') and make it return 2
-        sinon.stub(app.user, "getPreference", function(name) {
+        sinon.stub(app.user, "getPreference", function() {
             return 2
         });
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) {
@@ -147,18 +147,18 @@ describe("The forecasts worksheet totals calculation test", function() {
                     expect(updatedTotals.lost_amount).toEqual(100);
                     expect(updatedTotals.total_opp_count).toEqual(5);
                 },
-                unset: function(test) {
+                unset: function() {
                 }
             });
             view.calculateTotals();
         });
-    })
+    });
 
     describe("calculate custom won and lost stages correctly", function() {
         it("should calculate the correct values for custom sales stages", function() {
             // restore stub for custom test
             getModuleStub.restore();
-            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+            getModuleStub = sinon.stub(app.metadata, "getModule", function() {
                 return {
                     sales_stage_won: ['Won Custom'],
                     sales_stage_lost: ["Lost Custom"]
@@ -177,18 +177,18 @@ describe("The forecasts worksheet totals calculation test", function() {
                     expect(updatedTotals.included_opp_count).toEqual(1);
                     expect(updatedTotals.total_opp_count).toEqual(5);
                 },
-                unset: function(test) {
+                unset: function() {
                 }
             });
             view.calculateTotals();
         });
-    })
+    });
 
     describe("calculate multiple custom won and lost stages correctly", function() {
         it("should calculate the correct values for multiple custom sales stages", function() {
             // restore stub for custom test
             getModuleStub.restore();
-            getModuleStub = sinon.stub(app.metadata, "getModule", function(module, type) {
+            getModuleStub = sinon.stub(app.metadata, "getModule", function() {
                 return {
                     sales_stage_won: ['Won Custom', 'Closed Won'],
                     sales_stage_lost: ['Lost Custom', 'Closed Lost']
@@ -208,7 +208,7 @@ describe("The forecasts worksheet totals calculation test", function() {
                     expect(updatedTotals.included_opp_count).toEqual(1);
                     expect(updatedTotals.total_opp_count).toEqual(5);
                 },
-                unset: function(test) {
+                unset: function() {
                 }
             });
             view.calculateTotals();

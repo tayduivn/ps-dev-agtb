@@ -19,9 +19,9 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The Forecasts Progress Calculations display", function() {
+describe("forecasts_view_forecastsProgress", function() {
 
-    var app, view, context;
+    var app, view;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -280,7 +280,7 @@ describe("The Forecasts Progress Calculations display", function() {
             spyOn(app.api, 'call');
             view.likelyTotal = 60000;
             view.bestTotal = 66000;
-            view.worstTotal = 35000,
+            view.worstTotal = 35000;
             view.model.set({
                 closed_amount: 60000,
                 opportunities: 2,

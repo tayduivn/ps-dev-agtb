@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecast editableDate field", function () {
+describe("forecasts_field_editableDate", function () {
     var field, fieldDef, context, model, app, getModuleStub;
 
     beforeEach(function () {
@@ -42,9 +42,9 @@ describe("forecast editableDate field", function () {
 
     afterEach(function() {
         getModuleStub.restore();
-        delete field;
-        delete context;
-        delete model;
+        field = null;
+        context = null;
+        model = null;
     });
 
     describe("event should fire", function() {

@@ -19,8 +19,8 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecast editableEnum field", function() {
-    var field, fieldDef, context, model, e, getModuleStub;
+describe("forecasts_field_editableEnum", function() {
+    var field, fieldDef, context, e, getModuleStub;
     
     beforeEach(function() {
         app = SugarTest.app;
@@ -52,9 +52,9 @@ describe("forecast editableEnum field", function() {
                  
     describe("when it is your sheet", function(){
         beforeEach(function(){
-            context.get = function(key){
+            context.get = function() {
                 return {id:"tester"};                    
-            }
+            };
             
             field = SugarTest.createField("../modules/Forecasts/clients/base", "editableEnum", "editableEnum", "detail", fieldDef, "Forecasts", null, context);                
         });
@@ -144,7 +144,7 @@ describe("forecast editableEnum field", function() {
     
     describe("when it is not your sheet", function(){
         beforeEach(function(){
-            context.get = function(key){
+            context.get = function() {
                 return {id:"tester2"};                    
             };            
             field = SugarTest.createField("../modules/Forecasts/clients/base", "editableEnum", "editableEnum", "detail", fieldDef, "Forecasts", null, context); 

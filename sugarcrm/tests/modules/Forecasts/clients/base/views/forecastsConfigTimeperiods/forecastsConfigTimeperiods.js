@@ -19,17 +19,13 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecastsConfigTimeperiods view", function(){
+describe("forecasts_view_forecastsConfigTimeperiods", function(){
 
     var app,
         view,
         field,
-        dayField,
-        monthField,
         intervalField,
         _renderFieldStub,
-        testMonthMethodStub,
-        testDayMethodStub,
         testIntervalMethodStub,
         testValue,
         testIntervalValue,
@@ -43,8 +39,8 @@ describe("The forecastsConfigTimeperiods view", function(){
 
     afterEach(function() {
         _renderFieldStub.restore();
-        delete view;
-        delete app;
+        view = null;
+        app = null;
     });
 
     describe("timeperiod selects setup method", function() {
@@ -52,7 +48,7 @@ describe("The forecastsConfigTimeperiods view", function(){
             testIntervalMethodStub = sinon.stub(view, "_setUpTimeperiodIntervalBind", function() {return field;});
             testShowFWBWMethodStub = sinon.stub(view, "_setUpTimeperiodShowField", function() {return field;});
             field = {
-            }
+            };
             view.model = {
                 get: function(key) {
                     return (key == 'is_setup')?false:key;
@@ -64,7 +60,7 @@ describe("The forecastsConfigTimeperiods view", function(){
             delete view.model;
             testIntervalMethodStub.restore();
             testShowFWBWMethodStub.restore();
-            delete field;
+            field = null;
         });
 
 
@@ -110,27 +106,27 @@ describe("The forecastsConfigTimeperiods view", function(){
             view.model = new Backbone.Model({
                 timeperiod_interval: '',
                 timeperiod_leaf_interval: '',
-                get: function(param) {
+                get: function() {
                     return {};
                 },
-                set: function(key, value) {}
+                set: function() {}
                 });
             intervalField = {
                 name: 'timeperiod_interval',
                 def: {
                     options: {}
                 }
-            }
+            };
             intervalField = view._setUpTimeperiodIntervalBind(intervalField);
             intervalField.model = view.model;
 
         });
 
         afterEach(function() {
-            delete intervalField;
-            delete testValue;
-            delete testIntervalValue;
-            delete testLeafIntervalValue;
+            intervalField = null;
+            testValue = null;
+            testIntervalValue = null;
+            testLeafIntervalValue = null;
         });
 
         it("should add the event handlers to update the selections for the field", function() {
@@ -143,7 +139,7 @@ describe("The forecastsConfigTimeperiods view", function(){
         it("should check that the method to select the interval and default the leaf was called", function() {
             var testIntervalMethodStub = sinon.stub(intervalField, "_updateIntervals", function() {return '';});
             intervalField._updateIntervals({}, {selected: testIntervalValue});
-            expect(testIntervalMethodStub).toHaveBeenCalled;
+            expect(testIntervalMethodStub).toHaveBeenCalled();
         });
 
         it("should check that the method to select the interval and default the leaf set the model correctly", function() {

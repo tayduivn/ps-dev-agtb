@@ -19,9 +19,9 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts chart view", function () {
+describe("forecasts_view_forecastsChart", function () {
 
-    var app, view, config, testMethodStub, context, viewController, stubs = [];
+    var app, view, context, stubs = [];
 
     beforeEach(function () {
         app = SugarTest.app;
@@ -209,7 +209,7 @@ describe("The forecasts chart view", function () {
                 expect(renderChartStub).toHaveBeenCalled();
             });
         })
-    })
+    });
 
     describe("tests buildChartUrl function", function(){
         it("should return properly formatted url", function(){
@@ -227,7 +227,7 @@ describe("The forecasts chart view", function () {
             expect(result[2]).toBe('a');
             expect(result[3]).toBe('b');
         });
-    })
+    });
 
     describe("tests buildChartUrl function for manager", function(){
         it("should return properly formatted url", function(){

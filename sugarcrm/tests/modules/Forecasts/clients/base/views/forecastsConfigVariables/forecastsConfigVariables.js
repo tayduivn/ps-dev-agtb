@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecastsConfigVariables view", function(){
+describe("forecasts_view_forecastsConfigVariables", function(){
 
     var app, view, field, _renderFieldStub, testMethodStub, testValue;
 
@@ -31,8 +31,8 @@ describe("The forecastsConfigVariables view", function(){
 
     afterEach(function() {
         _renderFieldStub.restore();
-        delete view;
-        delete app;
+        view = null;
+        app = null;
     });
 
     describe("multiselect setup method", function() {
@@ -48,7 +48,7 @@ describe("The forecastsConfigVariables view", function(){
 
         afterEach(function() {
             testMethodStub.restore();
-            delete field;
+            field = null;
         });
 
         it("should set up multiselect fields", function() {
@@ -64,41 +64,41 @@ describe("The forecastsConfigVariables view", function(){
             expect(_renderFieldStub).toHaveBeenCalledWith(field);
             expect(testMethodStub).not.toHaveBeenCalled();
         });
-    })
+    });
 
     describe("multiselect field setup", function() {
 
         beforeEach(function() {
             testValue = 'testValue';
             view.model = {
-                get: function(param) {
+                get: function() {
                     return {};
                 }
             };
             field = {
                 model: {
-                    get: function(param) {
+                    get: function() {
                         return {};
                     },
-                    set: function(key, value) {}
+                    set: function() {}
                 },
                 name: 'testField',
                 def: {
                     multi: true,
                     value: []
                 }
-            }
+            };
             field = view._setUpMultiselectField(field);
         });
 
         afterEach(function() {
             testMethodStub.restore();
-            delete field;
-            delete testValue;
+            field = null;
+            testValue = null;
         });
 
         it("should add the event handlers to update the selections for the field", function() {
-            expect(field.events["change select"]).toBeDefined;
+            expect(field.events["change select"]).toBeDefined();
             expect(field.events["change select"]).toEqual("_updateSelections");
             expect(field._updateSelections).toBeDefined();
         });
@@ -112,7 +112,7 @@ describe("The forecastsConfigVariables view", function(){
             });
 
             it("should properly remove a value when a user removes one", function() {
-                field.model.get = function(param) {return [testValue]};
+                field.model.get = function() {return [testValue]};
                 field.def.value = field.model.get('test');
                 expect(field.def.value).toContain(testValue);
                 field._updateSelections({}, {deselected: testValue});

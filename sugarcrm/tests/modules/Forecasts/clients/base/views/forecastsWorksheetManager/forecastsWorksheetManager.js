@@ -19,12 +19,12 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts manager worksheet", function() {
+describe("forecasts_view_forecastsWorksheetManager", function() {
     var view, apiClassStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        sinon.stub(app.metadata, "getModule", function(module, type) {
+        sinon.stub(app.metadata, "getModule", function() {
             return {
                 show_worksheet_likely: 1,
                 show_worksheet_best: 1,
@@ -337,7 +337,7 @@ describe("The forecasts manager worksheet", function() {
     describe("Forecasts manager worksheet bindings ", function() {
         beforeEach(function() {
             view.context = {
-                on: function(event, fcn) {
+                on: function() {
                 }
             };
             view.collection.on = function() {
