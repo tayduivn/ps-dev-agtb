@@ -40,6 +40,7 @@
                     relate: true,
                     success: function(model) {
                         self.context.resetLoadFlag();
+                        self.context.set('skipFetch', false);
                         self.context.loadData();
                     },
                     error: function(error) {
@@ -79,6 +80,7 @@
             }
 
             self.context.resetLoadFlag();
+            self.context.set('skipFetch', false);
             self.context.loadData();
         });
     },
