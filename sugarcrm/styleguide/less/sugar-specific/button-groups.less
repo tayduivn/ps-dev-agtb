@@ -10,7 +10,7 @@
     float: left;
     margin-left: -1px;
     font-size: @fontSize;
-    .border-radius(0px) !important;
+    .border-radius(0px);
     .rtlFloat(@direction,none);
     // Give the line between buttons some depth
     .dropdown-toggle {
@@ -24,10 +24,13 @@
     }
   }
   // Set corners individual because sometimes a single button can be in a .btn-group and we need :first-child and :last-child to both match
-  .btn:first-child {
+  span:first-child .btn,
+  & > .btn:first-child {
     margin-left: 0;
-    .border-top-left-radius(3px) !important;
-    .border-bottom-left-radius(3px) !important;
+    .border-top-left-radius(3px);
+    .border-bottom-left-radius(3px);
+    .border-top-right-radius(0);
+    .border-bottom-right-radius(0);
     .rtlBorderRadiusTopLeft(@direction,0);
     .rtlBorderRadiusBottomLeft(@direction,0);
     .rtlBorderRadiusTopRight(@direction,3px);
@@ -35,13 +38,15 @@
     .rtlMargin(@direction,0 0 0 -4px);
   }
   // Need .dropdown-toggle since :last-child doesn't apply given a .dropdown-menu immediately after it
-  .btn:last-child,
-  .dropdown-toggle {
-    .border-top-right-radius(3px) !important;
-    .border-bottom-right-radius(3px) !important;
+  span:last-child .btn,
+  & > .btn:last-child,
+  & > .dropdown-toggle {
+    .border-top-right-radius(3px);
+    .border-bottom-right-radius(3px);
     .rtlBorderRadiusTopLeft(@direction,3px);
     .rtlBorderRadiusBottomLeft(@direction,3px);
   }
+
   // Reset corners for large buttons
   .btn.large:first-child {
     margin-left: 0;
@@ -126,10 +131,3 @@
   font-size: @baseFontSize; // redeclare as part 2 of font-size inline-block hack
 }
 
-.btn-group span:first-child .btn {
-  border-radius: 3px 0px 0px 3px !important;
-  margin-left: 0;
-}
-.btn-group span:last-child .btn {
-  border-radius: 0px 3px 3px 0px !important;
-}
