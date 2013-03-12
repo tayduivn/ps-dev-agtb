@@ -68,7 +68,6 @@
             this.layout.on("list:paginate:success", function() {
                 //When fetching more records, we need to update the preview collection
                 app.events.trigger("preview:collection:change", this.collection);
-                this.render();
                 // If we have a model in preview, redecorate the row as previewed
                 if(this._previewed){
                     this.decorateRow(this._previewed);
