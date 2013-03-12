@@ -15,6 +15,9 @@
                                         <div class="record-label" data-name="{{name}}">{{str label ../../../../../this.model.module}}</div>
                                     {{/unless}}
                                 {{/if}}
+                                <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
+                                    {{field ../../../this ../../../this.model ../../../this.action}}
+                                </span>
                                 {{#unless ../../../createMode}}
                                     {{#unless readonly}}
                                         <span class="record-edit-link-wrapper" data-name="{{name}}">
@@ -22,9 +25,6 @@
                                         </span>
                                     {{/unless}}
                                 {{/unless}}
-                                <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
-                                    {{field ../../../this ../../../this.model ../../../this.action}}
-                                </span>
                             </span>
                         {{/each}}
                     </h1>
