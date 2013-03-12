@@ -12,9 +12,9 @@ describe("Create Actions Dropdown", function() {
             return true;
         });
         testModules = {
-            Accounts: {visible:true, acl:'edit'},
-            Contacts: {visible:true, acl:'edit'},
-            Opportunities: {visible:true, acl:'edit'}
+            Accounts: {visible:true, acl:'create'},
+            Contacts: {visible:true, acl:'create'},
+            Opportunities: {visible:true, acl:'create'}
         };
         getModuleNamesStub = sinon.stub(SugarTest.app.metadata, 'getModuleNames', function(visible, acl) {
             var modules = {};
@@ -54,7 +54,7 @@ describe("Create Actions Dropdown", function() {
     });
 
     it("Should display create actions for all modules", function() {
-        var expectedModules = SugarTest.app.metadata.getModuleNames(true, 'edit');
+        var expectedModules = SugarTest.app.metadata.getModuleNames(true, 'create');
         view.render();
 
         _.each(expectedModules, function(module) {
@@ -74,7 +74,7 @@ describe("Create Actions Dropdown", function() {
 
     it("Should not display modules that don't have createaction meta", function() {
         var expectedModules = ['Accounts', 'Contacts', 'Opportunities'];
-        testModules['Foo'] = {visible:true, acl:'edit'};
+        testModules['Foo'] = {visible:true, acl:'create'};
         view.render();
 
         _.each(expectedModules, function(module) {
@@ -94,7 +94,7 @@ describe("Create Actions Dropdown", function() {
         expect(view.$("[data-module='Opportunities']").length).toBe(0);
     });
 
-    it("Should not display create action for modules user does not have edit access to", function() {
+    it("Should not display create action for modules user does not have create access to", function() {
         var expectedModules = ['Contacts', 'Opportunities'];
         testModules.Accounts.acl = 'view';
         view.render();
