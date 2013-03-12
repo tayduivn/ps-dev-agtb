@@ -36,7 +36,7 @@
 
         // loadAdditionalComponents fires render before the private metadata is ready, check for this
         if( !(_.isEmpty(app.metadata.getStrings("mod_strings"))) ) {
-            var moduleList = app.metadata.getModuleNames(true, "edit");
+            var moduleList = app.metadata.getModuleNames(true, "create");
             this.createMenuItems = this._getMenuMeta(moduleList);
             app.view.View.prototype._renderHtml.call(this);
         }
