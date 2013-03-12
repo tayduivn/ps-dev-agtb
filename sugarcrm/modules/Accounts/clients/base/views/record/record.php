@@ -64,31 +64,72 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'fieldset_address',
-                    'type'   => 'addressfieldset',
+                    'type'   => 'fieldset',
                     'css_class' => 'address',
                     'label' => 'Billing Address',
                     'fields' => array(
-                        'billing_address_street',
-                        'billing_address_city',
-                        'billing_address_state',
-                        'billing_address_postalcode',
-                        'billing_address_country',
+                        array(
+                            'name' => 'billing_address_street',
+                            'css_class' => 'address_street',
+                            'placeholder' => 'LBL_STREET',
+                        ),
+                        array(
+                            'name' => 'billing_address_city',
+                            'css_class' => 'address_city',
+                            'placeholder' => 'LBL_CITY',
+                        ),
+                        array(
+                            'name' => 'billing_address_state',
+                            'css_class' => 'address_state',
+                            'placeholder' => 'LBL_STATE',
+                        ),
+                        array(
+                            'name' => 'billing_address_postalcode',
+                            'css_class' => 'address_zip',
+                            'placeholder' => 'LBL_POSTAL_CODE',
+                        ),
+                        array(
+                            'name' => 'billing_address_country',
+                            'css_class' => 'address_country',
+                            'placeholder' => 'LBL_COUNTRY',
+                        ),
                     ),
                 ),
                 array(
                     'name' => 'fieldset_shipping_address',
-                    'type'   => 'addressfieldset',
+                    'type'   => 'fieldset',
                     'css_class' => 'address',
                     'label' => 'Shipping Address',
                     'fields' => array(
-                        'shipping_address_street',
-                        'shipping_address_city',
-                        'shipping_address_state',
-                        'shipping_address_postalcode',
-                        'shipping_address_country',
                         array(
-                            'name' => 'copy',
-                            'type' => 'copy',
+                            'name' => 'shipping_address_street',
+                            'css_class' => 'address_street',
+                            'placeholder' => 'LBL_STREET',
+                        ),
+                        array(
+                            'name' => 'shipping_address_city',
+                            'css_class' => 'address_city',
+                            'placeholder' => 'LBL_CITY',
+                        ),
+                        array(
+                            'name' => 'shipping_address_state',
+                            'css_class' => 'address_state',
+                            'placeholder' => 'LBL_STATE',
+                        ),
+                        array(
+                            'name' => 'shipping_address_postalcode',
+                            'css_class' => 'address_zip',
+                            'placeholder' => 'LBL_POSTAL_CODE',
+                        ),
+                        array(
+                            'name' => 'shipping_address_country',
+                            'css_class' => 'address_country',
+                            'placeholder' => 'LBL_COUNTRY',
+                        ),
+                        array(
+                            'name'    => 'copy',
+                            'label'   => 'NTC_COPY_BILLING_ADDRESS',
+                            'type'    => 'copy',
                             'mapping' => array(
                                 'billing_address_street' => 'shipping_address_street',
                                 'billing_address_city' => 'shipping_address_city',

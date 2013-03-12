@@ -67,13 +67,34 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 array(
                     'name' => 'fieldset_address',
                     'type' => 'fieldset',
+                    'css_class' => 'address',
                     'label' => 'LBL_PRIMARY_ADDRESS',
                     'fields' => array(
-                        'primary_address_street',
-                        'primary_address_city',
-                        'primary_address_state',
-                        'primary_address_postalcode',
-                        'primary_address_country',
+                        array(
+                            'name' => 'primary_address_street',
+                            'css_class' => 'address_street',
+                            'placeholder' => 'LBL_STREET',
+                        ),
+                        array(
+                            'name' => 'primary_address_city',
+                            'css_class' => 'address_city',
+                            'placeholder' => 'LBL_CITY',
+                        ),
+                        array(
+                            'name' => 'primary_address_state',
+                            'css_class' => 'address_state',
+                            'placeholder' => 'LBL_STATE',
+                        ),
+                        array(
+                            'name' => 'primary_address_postalcode',
+                            'css_class' => 'address_zip',
+                            'placeholder' => 'LBL_POSTAL_CODE',
+                        ),
+                        array(
+                            'name' => 'primary_address_country',
+                            'css_class' => 'address_country',
+                            'placeholder' => 'LBL_COUNTRY',
+                        ),
                     ),
                 ),
                 'email',
@@ -145,16 +166,38 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 array(
                     'name' => 'fieldset_alt_address',
                     'type' => 'fieldset',
+                    'css_class' => 'address',
                     'label' => 'LBL_ALT_ADDRESS',
                     'fields' => array(
-                        'alt_address_street',
-                        'alt_address_city',
-                        'alt_address_state',
-                        'alt_address_postalcode',
-                        'alt_address_country',
                         array(
-                            'name' => 'copy',
-                            'type' => 'copy',
+                            'name' => 'alt_address_street',
+                            'css_class' => 'address_street',
+                            'placeholder' => 'LBL_STREET',
+                        ),
+                        array(
+                            'name' => 'alt_address_city',
+                            'css_class' => 'address_city',
+                            'placeholder' => 'LBL_CITY',
+                        ),
+                        array(
+                            'name' => 'alt_address_state',
+                            'css_class' => 'address_state',
+                            'placeholder' => 'LBL_STATE',
+                        ),
+                        array(
+                            'name' => 'alt_address_postalcode',
+                            'css_class' => 'address_zip',
+                            'placeholder' => 'LBL_POSTAL_CODE',
+                        ),
+                        array(
+                            'name' => 'alt_address_country',
+                            'css_class' => 'address_country',
+                            'placeholder' => 'LBL_COUNTRY',
+                        ),
+                        array(
+                            'name'    => 'copy',
+                            'label'   => 'NTC_COPY_PRIMARY_ADDRESS',
+                            'type'    => 'copy',
                             'mapping' => array(
                                 'primary_address_street' => 'alt_address_street',
                                 'primary_address_city' => 'alt_address_city',

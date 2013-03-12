@@ -198,22 +198,27 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'fields' => array(
                         array(
                             'name'        => 'primary_address_street',
+                            'css_class' => 'address_street',
                             'placeholder' => 'LBL_STREET',
                         ),
                         array(
                             'name'        => 'primary_address_city',
+                            'css_class' => 'address_city',
                             'placeholder' => 'LBL_CITY',
                         ),
                         array(
                             'name'        => 'primary_address_state',
+                            'css_class' => 'address_state',
                             'placeholder' => 'LBL_STATE',
                         ),
                         array(
                             'name'        => 'primary_address_postalcode',
+                            'css_class' => 'address_zip',
                             'placeholder' => 'LBL_POSTAL_CODE',
                         ),
                         array(
                             'name'        => 'primary_address_country',
+                            'css_class' => 'address_country',
                             'placeholder' => 'LBL_COUNTRY',
                         ),
                     ),
@@ -251,22 +256,27 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'fields' => array(
                         array(
                             'name'        => 'alt_address_street',
+                            'css_class' => 'address_street',
                             'placeholder' => 'LBL_STREET',
                         ),
                         array(
                             'name'        => 'alt_address_city',
+                            'css_class' => 'address_city',
                             'placeholder' => 'LBL_CITY',
                         ),
                         array(
                             'name'        => 'alt_address_state',
+                            'css_class' => 'address_state',
                             'placeholder' => 'LBL_STATE',
                         ),
                         array(
                             'name'        => 'alt_address_postalcode',
+                            'css_class' => 'address_zip',
                             'placeholder' => 'LBL_POSTAL_CODE',
                         ),
                         array(
                             'name'        => 'alt_address_country',
+                            'css_class' => 'address_country',
                             'placeholder' => 'LBL_COUNTRY',
                         ),
                         array(
