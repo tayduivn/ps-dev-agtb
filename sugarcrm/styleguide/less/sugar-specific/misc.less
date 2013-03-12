@@ -325,3 +325,74 @@ hr.soften {
 .bwc.layout {
   height: 100%;
 }
+
+
+/* twitter widget */
+.twitter-widget {
+  p {
+    margin: 0;
+    padding: 0;
+  }
+  .news-article {
+    &.news-article {
+      .row-fluid {
+        &.header {
+          h5 {
+            margin: 0;
+            padding: 0;
+            &> a {
+              color: darken(@grayLight, 10%);
+              font-weight: 200;
+            }
+            &> img {
+              float: left;
+              height: 40px;
+              padding: 0 6px 0 0;
+            }
+          }
+          .follow-button {
+            padding-top: 8px;
+          }
+        }
+        &.body {
+          margin: 10px 0 6px;
+        }
+        &.footer {
+          timestamp {
+            font-size: 10px;
+            display: inline-block;
+          }
+          timestamp,
+          a {
+            color: darken(@grayLight, 10%);
+            &:hover, &:active {
+              color: darken(@grayLight, 20%) !important;
+              text-decoration: none;
+            }
+          }
+          .btn-mini {
+            margin-left: 0;
+            padding-right: 0;
+            margin-top: -3px;
+          }
+        }
+      }
+    }
+
+    &:first-child {
+      margin-top: 0px;
+    }
+  }
+  aside {
+    margin: 0;
+    padding-top:6px;
+    height: 30px;
+    input {
+      width: auto;
+      margin-left: 10px;
+    }
+    iframe {
+      padding: 2px 0 0 2px;
+    }
+  }
+}
