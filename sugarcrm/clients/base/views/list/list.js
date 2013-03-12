@@ -66,14 +66,13 @@
         options.meta = _.extend({}, listViewMeta, JSON.parse(JSON.stringify(options.meta || {})));
         options.meta.type = options.meta.type || 'list';
 
+        options.meta.action = 'list';
+
         app.view.View.prototype.initialize.call(this, options);
 
         this.fallbackFieldTemplate = 'list-header';
-        this.action = 'list';
 
         this.attachEvents();
-        
-        app.events.on("list:filter:fire", this.filterList, this);
 
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
@@ -176,17 +175,14 @@
     fireSearch:function (term) {
         var options = {
             limit:this.limit || null,
-            params:{},
-            fields:this.collection.fields || {}
+            params:{}
         };
         if(term) {
             options.params.q = term;
         }
-        //TODO: This should be handled automagically by the collection by checking its own tie to the context
-        if (this.context.get('link')) {
-            options.relate = true;
-        }
-        this.collection.fetch(options);
+        this.context.resetLoadFlag(false);
+        this.context.set('skipFetch', false);
+        this.context.loadData(options);
     },
 
     /**
@@ -257,15 +253,14 @@
             self.layout.trigger("list:sort:fire", collection, self);
             if(!self.disposed) self.render();
         };
-        if (this.context.get('link')) {
-            options.relate = true;
-        }
 
         // Display Loading message
         app.alert.show('loading_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_LOADING')});
 
         // refetch the collection
-        collection.fetch(options);
+        self.context.resetLoadFlag(false);
+        self.context.set('skipFetch', false);
+        self.context.loadData(options);
     },
     getSearchOptions:function () {
         var collection, options, previousTerms, term = '';

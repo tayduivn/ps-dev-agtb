@@ -2613,7 +2613,7 @@ $app_strings = array (
     'LBL_LAST_VIEWED' => 'Recently Viewed',
     'LBL_SHOW_LESS' => 'Show Less',
     'LBL_SHOW_MORE' => 'Show More',
-    'LBL_SHOW_MORE_MODULE' => 'More {{str \'LBL_MODULE_NAME\' attributes.module}}...',
+    'LBL_SHOW_MORE_MODULE' => 'More {{module}}...',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
     'LBL_LEADS'=>'Leads',
     'LBL_LESS' => 'less',
@@ -3019,6 +3019,9 @@ $app_strings = array (
     'LBL_MANAGE_SUBSCRIPTIONS_FOR'=>'Manage Subscriptions for ',
     'LBL_SUBSCRIBE'=>'Subscribe',
     'LBL_UNSUBSCRIBE'=>'Unsubscribe',
+    'LBL_CREATE_LINK_RECORD' => 'Create and Link Record',
+    'LBL_CREATE_LINK_BUTTON_LABEL' => 'Create and Link Record',
+    'ERROR_EMPTY_LINK_MODULE' => 'Please select a module first.',
     // Ajax status strings
     'LBL_LOADING' => 'Loading...',
     'LBL_SEARCHING' => 'Searching...',
@@ -3132,6 +3135,24 @@ $app_strings = array (
     'LBL_REMOVING_DASHLET' => 'Removing Sugar Dashlet ...',
     'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
 
+    /* Sugar7 Dashboard */
+    'LBL_COLLAPSE_ALL' => 'Collapse All',
+    'LBL_EXPAND_ALL' => 'Expand All',
+    'LBL_DASHLET_CONFIG_EDIT' => 'Edit',
+    'LBL_DASHLET_REFRESH' => 'Refresh',
+    'LBL_DASHLET_REMOVE' => 'Remove',
+    'LBL_DASHLET_DROP_HERE' => 'Drop here',
+
+
+    'LBL_DASHLET_LISTVIEW_NAME' => 'My List View',
+    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing records assigned to you',
+
+    'LBL_DASHLET_NEWS_NAME' => 'News',
+    'LBL_DASHLET_NEWS_DESCRIPTION' => 'Google News feed for Related Account',
+
+    'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
+    'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account',
+
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
     'LBL_DELETE_PAGE' => 'Delete Page',
@@ -3165,6 +3186,7 @@ $app_strings = array (
     'LBL_NO_IMAGE' => 'No Image',
 
     'LBL_MODULE' => 'Module',
+    'LBL_RELATIONSHIP' => 'Relationship',
 
     //adding a label for address copy from left
     'LBL_COPY_ADDRESS_FROM_LEFT' => 'Copy address from left:',
@@ -3427,7 +3449,7 @@ $app_strings = array (
     'LBL_SELECT_THIS_ROW_TITLE' => 'Select this row',
     'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
     'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
-    'LBL_SEARCH_AND_SELECT' => 'Search and select {{module}}',
+    'LBL_SEARCH_AND_SELECT' => 'Search and Select {{module}}',
 
     //for upload errors
     'UPLOAD_ERROR_TEXT'          => 'ERROR: There was an error during upload. Error code: {0} - {1}',
@@ -3528,21 +3550,21 @@ $app_strings = array (
 
   	//BEGIN SUGARCRM flav=PRO ONLY
     //in app tour
-    'LBL_TOUR_SCREEN_1_TITLE' => 'New Forecasting module allows you',
-    'LBL_TOUR_SCREEN_1_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Set up your forecasting parameters</li><li class="icon-ok">Keep track of your pipeline and the distance from quota</li><li class="icon-ok">Forecast your sales teams\' pipeline</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen1-thumb.png" width="220" id="thumbnail_1" class="thumb"></div></div><div class="clear"></div>',
-    'LBL_TOUR_SCREEN_2_TITLE' => 'Setup your Forecasting Parameters',
-    'LBL_TOUR_SCREEN_2_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select Fiscal Year start date</li><li class="icon-ok">Choose Yearly or Quarterly time periods</li><li class="icon-ok">Select number of Time Periods to Forecast over</li><li class="icon-ok">Select Probability Ranges to include in Forecast</li><li class="icon-ok">Select the scenario to forecast, such as likely, best or worst</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="220" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
-    'LBL_TOUR_SCREEN_3_TITLE' => 'Manage your pipeline',
-    'LBL_TOUR_SCREEN_3_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period for your Forecast</li><li class="icon-ok">Review and Edit Amounts and Probabilities for your Opportunities</li><li class="icon-ok">Save your Forecast Worksheet without committing or;</li><li class="icon-ok">Commit Forecast to Manager, and view History of previous Commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen5-thumb.png" width="220" id="thumbnail_5" class="thumb"></div></div><div class="clear"></div>',
-    'LBL_TOUR_SCREEN_4_TITLE' => 'Manage your pipeline',
-    'LBL_TOUR_SCREEN_4_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">View Charts and Tables of projected sales amounts for your own Opportunities</li><li class="icon-ok">Edit settings to view by Sales Stage and Probability</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen6-thumb.png" width="220" id="thumbnail_6" class="thumb"></div></div><div class="clear"></div>',
-    'LBL_TOUR_SCREEN_5_TITLE' => 'Manage your sales teams pipeline',
-    'LBL_TOUR_SCREEN_5_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period to view</li><li class="icon-ok">See your sales team\'s committed worksheets and adjust their forecasts</li><li class="icon-ok">See Alerts when your sales team members commit new forecasts</li><li class="icon-ok">Save your Worksheet without committing or;</li><li class="icon-ok">Commit Forecast to Manager and view History of previous Commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen3-thumb.png" width="220" id="thumbnail_3" class="thumb"></div></div><div class="clear"></div>',
-    'LBL_TOUR_SCREEN_6_TITLE' => 'Manage your sales teams pipeline',
-    'LBL_TOUR_SCREEN_6_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">View Charts or Tables with the projected sales numbers for the entire sales team or by individual team member</li><li class="icon-ok">Change the Chart to visualize projected sales by Likely, Best or Worst case values</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen4-thumb.png" width="220" id="thumbnail_4" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_1_TITLE_670' => 'Enhanced forecasting functionality in Sugar',
+    'LBL_TOUR_SCREEN_1_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Setup your forecasting parameters</li><li class="icon-ok">Easily track projected sales and pipeline health</li><li class="icon-ok">Forecast based on projected sales from your sales team</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen1-thumb.png" width="220" id="thumbnail_1" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_2_TITLE_670' => 'Setup your forecasting parameters',
+    'LBL_TOUR_SCREEN_2_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Choose fiscal year start date</li><li class="icon-ok">Setup Time Periods to be either yearly or quarterly</li><li class="icon-ok">Decide how many past and future Time Periods need to be visible in the worksheet</li><li class="icon-ok">Select forecast ranges to tag Opportunities as Include, Exclude or Upside</li><li class="icon-ok">Select forecast scenarios to identify Likely, Best and Worst forecast</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="220" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_3_TITLE_670' => 'Manage your Sales Team\'s Projected Sales',
+    'LBL_TOUR_SCREEN_3_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period to review forecast</li><li class="icon-ok">View your sales team members’ worksheets and provide adjusted forecasts</li><li class="icon-ok">See alert on worksheet when a sales team member commits a new forecast</li><li class="icon-ok">Save forecast worksheet as a draft version or commit forecast to your manager</li><li class="icon-ok">View history of previous commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen3-thumb.png" width="220" id="thumbnail_3" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_4_TITLE_670' => 'Manage your Sales Team\'s Projected Sales',
+    'LBL_TOUR_SCREEN_4_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">View Pareto chart for pipeline analysis across all your sales team members\' forecasts</li><li class="icon-ok">Choose to visualize projected sales by Likely, Best or Worst forecast</li><li class="icon-ok">View projected sales and how close you are to make your team quota</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen4-thumb.png" width="220" id="thumbnail_4" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_5_TITLE_670' => 'Manage your own Projected Sales',
+    'LBL_TOUR_SCREEN_5_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period for your forecast</li><li class="icon-ok">Review and in-line edit amounts and Win Probability for a quick what-if analysis</li><li class="icon-ok">Save forecast worksheet as a draft version or commit forecast to your manager</li><li class="icon-ok">View history of previous commits</li><li class="icon-ok">Commit Forecast to Manager and view History of previous Commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen5-thumb.png" width="220" id="thumbnail_5" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_6_TITLE_670' => 'Manage your own Projected Sales',
+    'LBL_TOUR_SCREEN_6_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">View Pareto chart for pipeline analysis over time for your Opportunities</li><li class="icon-ok">Choose to visualize pipeline distribution by Sales Stage or Win Probability</li><li class="icon-ok">View projected sales and how close you are to make your assigned quota</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen6-thumb.png" width="220" id="thumbnail_6" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_WELCOME' => 'What\'s New in Sugar',
     'LBL_TOUR_WATCH' => 'Watch What\'s New in Sugar',
-    'LBL_TOUR_FEATURES' => '<ul style=""><li class="icon-ok">Sweeter look and feel– now with a new modern theme!</li><li class="icon-ok">Forecasting Module has been given an overhaul - now with better functionality and new visuals.</li></ul>',
+    'LBL_TOUR_FEATURES_670' => '<ul style=""><li class="icon-ok">Improved look and feel – now with a new modern theme.</li><li class="icon-ok">Enhanced Forecasts module – now with intuitive user interface and new data visualization</li></ul>',
     'LBL_TOUR_VISIT' => 'For more information please visit our application',
     'LBL_TOUR_DONE' => 'You\'re Done!',
     'LBL_TOUR_REFERENCE_1' => 'You can always reference our',
@@ -3565,6 +3587,7 @@ $app_strings = array (
     'LBL_ASSOC_EXISTING' => 'Associate Existing {{{this}}}',
     'LBL_SEARCH_ALL' => 'Search all {{{this}}}',
     'LBL_SEARCH_ALL_RECORDS' => 'Search all records',
+    'LBL_SEARCH_ALL_MODULES' => 'Search all',
     'LBL_OK' => 'OK',
     'LBL_YES' => 'Yes',
     'LBL_NO' => 'No',

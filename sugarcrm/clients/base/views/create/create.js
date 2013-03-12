@@ -57,9 +57,12 @@
 
         _.each(fields, function(field){
             if(((field.name && field.name==='assigned_user_id') || (field.id_name && field.id_name==='assigned_user_id')) &&
-               (field.type && field.type==='relate')) {
+                (field.type && field.type==='relate')) {
                     this.model.set('assigned_user_id', app.user.id);
                     this.model.set('assigned_user_name', app.user.attributes.full_name);
+                    this.model._defaults = this.model._defaults || {};
+                    this.model._defaults['assigned_user_id'] = app.user.id;
+                    this.model._defaults['assigned_user_name'] = app.user.attributes.full_name;
             }
         }, this);
 
@@ -75,9 +78,6 @@
 
     _render: function() {
         app.view.views.RecordView.prototype._render.call(this);
-        // RecordView starts with action as detail; once this.editableFields has been set (e.g.
-        // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
-        this.toggleFields(this.editableFields, true);
 
         // Note if fieldset w/date created | modified is NOT set as readonly, this still removes from page
         // We decided that's fine, and better than alternative of looping fields, find date_created_by,
@@ -304,7 +304,8 @@
             fieldsToValidate: self.getFields(self.module),
             success: success,
             error: error,
-            viewed: true
+            viewed: true,
+            relate: (self.model.link) ? true : null
         };
 
         options = _.extend({}, options, self.getCustomSaveOptions());

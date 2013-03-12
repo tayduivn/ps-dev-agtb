@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecast commitStage field", function() {
+describe("forecasts_field_commitStage", function() {
     var field, fieldDef, context, model;
 
     beforeEach(function() {
@@ -39,12 +39,12 @@ describe("forecast commitStage field", function() {
     afterEach(function() {
         app.lang.getAppListStrings.restore();
         app.user.id = null;
-        delete app;
+        app = null;
     });
 
     describe("when buckets are set to show_binary", function() {
         beforeEach(function() {
-            sinon.stub(app.metadata, "getModule", function(module, type) {
+            sinon.stub(app.metadata, "getModule", function() {
                 return {
                     sales_stage_won: ["Closed Won"],
                     sales_stage_lost: ["Closed Lost"],
@@ -60,7 +60,7 @@ describe("forecast commitStage field", function() {
 
         describe("when it is your sheet and the sales_stage is open", function() {
             beforeEach(function() {
-                context.get = function(key) {
+                context.get = function() {
                     return {id: "tester"};
                 };
                 model = new Backbone.Model({sales_stage: "Open"});
@@ -86,7 +86,7 @@ describe("forecast commitStage field", function() {
 
         describe("when it is your sheet and the sales_stage is closed", function() {
             beforeEach(function() {
-                context.get = function(key) {
+                context.get = function() {
                     return {id: "tester"};
                 };
 
@@ -114,7 +114,7 @@ describe("forecast commitStage field", function() {
 
         describe("when it is not your sheet and sales_stage is open", function() {
             beforeEach(function() {
-                context.get = function(key) {
+                context.get = function() {
                     return {id: "tester2"};
                 };
 
@@ -140,7 +140,7 @@ describe("forecast commitStage field", function() {
 
         describe("when it is not your sheet and sales stage is closed", function() {
             beforeEach(function() {
-                context.get = function(key) {
+                context.get = function() {
                     return {id: "tester2"};
                 };
 
@@ -166,9 +166,8 @@ describe("forecast commitStage field", function() {
     });
 
     describe("when buckets are set to show_buckets", function() {
-        var orgValue;
         beforeEach(function() {
-            sinon.stub(app.metadata, "getModule", function(module, type) {
+            sinon.stub(app.metadata, "getModule", function() {
                 return {
                     sales_stage_won: ["Closed Won"],
                     sales_stage_lost: ["Closed Lost"],
@@ -183,7 +182,7 @@ describe("forecast commitStage field", function() {
 
         describe("when it is your sheet and sales_stage is Open", function() {
             beforeEach(function() {
-                context.get = function(key) {
+                context.get = function() {
                     return {id: "tester"};
                 };
 
@@ -224,7 +223,7 @@ describe("forecast commitStage field", function() {
 
         describe("when it is your sheet and sales_stage is closed", function() {
             beforeEach(function() {
-                context.get = function(key) {
+                context.get = function() {
                     return {id: "tester"};
                 };
 
@@ -253,7 +252,7 @@ describe("forecast commitStage field", function() {
 
         describe("when it is not your sheet and sales_stage is open", function() {
             beforeEach(function() {
-                context.get = function(key) {
+                context.get = function() {
                     return {id: "tester2"};
                 };
 
@@ -282,7 +281,7 @@ describe("forecast commitStage field", function() {
 
         describe("when it is not your sheet and sales_stage is closed", function() {
             beforeEach(function() {
-                context.get = function(key) {
+                context.get = function() {
                     return {id: "tester2"};
                 };
 
@@ -311,7 +310,7 @@ describe("forecast commitStage field", function() {
 
         describe("dispose safe", function() {
             beforeEach(function() {
-                context.get = function(key) {
+                context.get = function() {
                     return {id: "tester"};
                 };
 

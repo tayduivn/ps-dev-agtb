@@ -77,7 +77,7 @@
         self.preview = true;
 
         //Remove error message
-        self.clearError();
+        self.clearErrorDecoration();
 
         // Upload a temporary file for preview
         self.model.uploadFile(
@@ -103,11 +103,12 @@
                      self.model.trigger("change", "image");
                  },
                  error: function(error) {
-                     var errors = {};
-                     errors[error.responseText] = {};
-                     self.model.trigger('error:validation:' + this.field, errors);
+                     var fieldError = {},
+                         errors = {};
+                     fieldError[error.responseText] = {};
+                     errors[self.name] = fieldError;
+                     self.model.trigger('error:validation:' + this.field, fieldError);
                      self.model.trigger('error:validation', errors);
-                     self.displayError();
                  }
               },
              { temp: true }); //for File API to understand we upload a temporary file
@@ -117,8 +118,8 @@
         //If we are previewing a file and want to cancel
         if (this.preview === true) {
             self.preview = false;
-            self.clearError();
-            if(!self.disposed) self.render();
+            self.clearErrorDecoration();
+            self.render();
         } else {
             var confirmMessage = app.lang.get('LBL_IMAGE_DELETE_CONFIRM', self.module);
             if (confirm(confirmMessage)) {
@@ -241,26 +242,33 @@
      * @param errors
      */
     handleValidationError: function(errors) {
-        if (_.keys(errors).length > 0) {
-            this.$el.closest('.control-group').addClass("error");
-            this.$('.image_field').addClass('error');
-        }
+        var errorMessages = [],
+            $tooltip;
 
-        // For each error add to error help block
-        _.each(errors, function(errorContext, errorName) {
-            this.$('.help-block')
-            this.$('.help-block').append(app.error.getErrorString(errorName, errorContext));
-        }, this);
-    },
-    displayError: function() {
+        //Change the preview of the image widget
         this.$('.image_preview').html('<i class="icon-remove"></i>');
-        this.$('.delete').remove();
+        //Put the cancel icon
         this.$('label').after('<span class="image_btn delete icon-remove" />');
+
+        this.$el.closest('.record-cell').addClass("error");
+        this.$el.addClass('input-append error');
+
+        _.each(errors, function (errorContext, errorName) {
+            errorMessages.push(app.error.getErrorString(errorName, errorContext));
+        });
+        this.$('.image_field').append(this.exclamationMarkTemplate(errorMessages));
+        $tooltip = this.$('.error-tooltip');
+        if (_.isFunction($tooltip.tooltip)) {
+            var tooltipOpts = { container:'body', placement:'top', trigger: 'click' };
+            $tooltip.tooltip(tooltipOpts);
+        }
     },
-    clearError: function() {
+    clearErrorDecoration: function() {
+        //Remove the current icon
+        this.$('.delete').remove();
         //Remove error message
-        this.$('.help-block').html('');
-        this.$el.closest('.control-group').removeClass('error');
-        this.$('.image_field').removeClass('error');
+        this.$('.error-tooltip').remove();
+        this.$el.closest('.record-cell').removeClass('error');
+        this.$el.removeClass('input-append error');
     }
 })

@@ -109,12 +109,9 @@ class ModuleApi extends SugarApi {
         }
 
         $vardef = $bean->field_defs[$args['field']];
-        
-        $api->setHeader('Cache-Control', 'max-age=3600, private');
 
-        if(isset($vardef['cache_setting'])) {
-            $api->setHeader('Cache-Control', "max-age={$vardef['cache_setting']}, private");
-        }
+        $value = null;
+        $cache_age = 0;
     
         if(isset($vardef['function'])) {
             if ( isset($vardef['function']['returns']) && $vardef['function']['returns'] == 'html' ) {
@@ -130,15 +127,23 @@ class ModuleApi extends SugarApi {
             if(!empty($includeFile)) {
                 require_once($includeFile);
             }
-
-            return $funcName();
+            $value = $funcName();
+            $cache_age = 60;
         }
         else {
             if(!isset($GLOBALS['app_list_strings'][$vardef['options']])) {
                 throw new SugarApiExceptionNotFound('options not found');
             }
-            return $GLOBALS['app_list_strings'][$vardef['options']];
+            $value =  $GLOBALS['app_list_strings'][$vardef['options']];
+            $cache_age = 3600;
         }
+        // If a particular field has an option list that is expensive to calculate and/or rarely changes,
+        // set the cache_setting property on the vardef to the age in seconds you want browsers to wait before refreshing
+        if(isset($vardef['cache_setting'])) {
+            $cache_age = $vardef['cache_setting'];
+        }
+        generateEtagHeader(md5(serialize($value)), $cache_age);
+        return $value;
     }
 
     public function createRecord($api, $args) {

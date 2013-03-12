@@ -147,6 +147,7 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
     'merge_filter' => 'enabled',
     'importable' => 'required',
     'required' => true,
+    'default' => '',
     ),
 'forecast_schedules' =>
     array (

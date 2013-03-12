@@ -2,7 +2,8 @@
     className: "subpanel-header",
     events: {
         "click .btn-invisible": "hidePanel",
-        "click a[name=create_button]": "openCreateDrawer"
+        "click a[name=create_button]": "openCreateDrawer",
+        "click a[name=select_button]": "openSelectDrawer"
     },
 
     initialize: function(opts) {
@@ -19,7 +20,40 @@
         this.layout.trigger("hide", data.visible);
         target.data("visible", !data.visible);
     },
+    openSelectDrawer: function() {
+        var parentModel = this.context.parent.get("model"),
+            linkModule = this.context.get("module"),
+            link = this.context.get("link"),
+            self = this;
 
+        app.drawer.open({
+            layout: 'link-selection',
+            context: {
+                module: linkModule
+            }
+        }, function(model) {
+            if(!model) {
+                return;
+            }
+            var relatedModel = app.data.createRelatedBean(parentModel, model.id, link),
+                options = {
+                    relate: true,
+                    success: function(model) {
+                        self.context.resetLoadFlag();
+                        self.context.set('skipFetch', false);
+                        self.context.loadData();
+                    },
+                    error: function(error) {
+                        app.alert.show('server-error', {
+                            level: 'error',
+                            messages: 'ERR_GENERIC_SERVER_ERROR',
+                            autoClose: false
+                        });
+                    }
+                };
+            relatedModel.save(null, options);
+        });
+    },
     openCreateDrawer: function() {
         var parentModel = this.context.parent.get("model"),
             link = this.context.get("link"),
@@ -32,7 +66,7 @@
                 model.set(field.id_name, parentModel.get("id"));
             }, this);
         }
-
+        var self = this;
         app.drawer.open({
             layout: 'create',
             context: {
@@ -40,13 +74,15 @@
                 module: model.module,
                 model: model
             }
-        });
+        }, function(model) {
+            if(!model) {
+                return;
+            }
 
-        model.on("sync", function(model) {
-            this.collection.add(model);
-            this.collection.trigger("reset");
-            model.off("sync");
-        }, this);
+            self.context.resetLoadFlag();
+            self.context.set('skipFetch', false);
+            self.context.loadData();
+        });
     },
 
     bindDataChange: function() {

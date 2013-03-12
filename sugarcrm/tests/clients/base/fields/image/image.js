@@ -115,5 +115,13 @@ describe("image field", function() {
             confirmStub.restore()
         });
 
+        it("should not render on input change because we cannot set value of an input type file", function() {
+            var renderSpy = sinon.spy(field, "render");
+            $('<input type="text">').appendTo(field.$el);
+
+            field.$("input").val("test");
+            expect(renderSpy).not.toHaveBeenCalled();
+            renderSpy.restore();
+        });
     });
 });

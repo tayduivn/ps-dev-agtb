@@ -2,7 +2,8 @@
 
 require_once 'include/api/SugarListApi.php';
 
-class ActivitiesApi extends SugarListApi {
+class ActivitiesApi extends SugarListApi
+{
 
     public function registerApiRest()
     {
@@ -29,6 +30,30 @@ class ActivitiesApi extends SugarListApi {
                 'pathVars' => array(''),
                 'method' => 'getHomeActivities',
                 'shortHelp' => 'This method gets homepage activities for a user',
+                'longHelp' => 'modules/ActivityStream/clients/base/api/help/homeActivities.html',
+            ),
+            'record_activities_filter' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>','?', 'Activities', 'filter'),
+                'pathVars' => array('module','record', ''),
+                'method' => 'getRecordActivities',
+                'shortHelp' => 'This method retrieves a filtered list of a record\'s activities',
+                'longHelp' => 'modules/ActivityStream/clients/base/api/help/recordActivities.html',
+            ),
+            'module_activities_filter' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>', 'Activities', 'filter'),
+                'pathVars' => array('module', ''),
+                'method' => 'getModuleActivities',
+                'shortHelp' => 'This method retrieves a filtered list of a module\'s activities',
+                'longHelp' => 'modules/ActivityStream/clients/base/api/help/moduleActivities.html',
+            ),
+            'home_activities_filter' => array(
+                'reqType' => 'GET',
+                'path' => array('Activities', 'filter'),
+                'pathVars' => array(''),
+                'method' => 'getHomeActivities',
+                'shortHelp' => 'This method gets a filtered list of homepage activities for a user',
                 'longHelp' => 'modules/ActivityStream/clients/base/api/help/homeActivities.html',
             ),
         );
@@ -67,6 +92,15 @@ class ActivitiesApi extends SugarListApi {
         $params = $this->parseArguments($api, $args);
         $query = self::getQueryObject($api, $params);
         return $this->formatResult($api, $args, $query);
+    }
+
+    public function parseArguments(ServiceBase $api, array $args)
+    {
+        $params = parent::parseArguments($api, $args);
+        if (isset($args['filter'])) {
+            $params['filter'] = $args['filter'];
+        }
+        return $params;
     }
 
     protected function formatResult(ServiceBase $api, array $args, SugarQuery $query)
@@ -151,10 +185,19 @@ class ActivitiesApi extends SugarListApi {
 
         // If we have a relevant bean, we add our where condition.
         if ($record) {
-            $query->where()->equals('parent_type', $record->module_name);
+            $query->where()->equals('activities_users.parent_type', $record->module_name);
             if ($record->id) {
-                $query->where()->equals('parent_id', $record->id);
+                $query->where()->equals('activities_users.parent_id', $record->id);
             }
+        }
+
+        // We only support filtering on activity_type.
+        if (!empty($params['filter'][0]['activity_type'])) {
+            $filter = $params['filter'][0]['activity_type'];
+            if (is_array($filter)) {
+                $filter = $filter['$equals'];
+            }
+            $query->where()->equals('activity_type', $filter);
         }
 
         $query->where()->equals('deleted', 0);

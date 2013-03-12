@@ -145,12 +145,13 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
   array (
     'name' => 'duration_minutes',
     'vname' => 'LBL_DURATION_MINUTES',
-    'type' => 'int',
+    'type' => 'enum',
+    'options' => 'duration_intervals',    
     'group'=>'duration',
     'len' => '2',
     'comment' => 'Duration (minutes)',
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
-
+    'required' => true,
   ),
   'date_start' =>
   array (
@@ -342,7 +343,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'dbType' => 'varchar',
     'source'=>'non-db',
     'len' => 36,
-  	'studio' => 'false',
+    'studio' => array('required' => false, 'listview'=>true, 'visible' => false),
 	),
 
   'contacts' =>

@@ -29,6 +29,8 @@
 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
 require_once 'modules/ModuleBuilder/parsers/constants.php';
 require_once 'include/Expressions/DependencyManager.php';
+require_once 'jssource/jsmin.php';
+
 class MetaDataFiles
 {
     /**
@@ -784,7 +786,12 @@ class MetaDataFiles
                     if ( isset($results[$fileInfo['subPath']]['controller'][$fileInfo['platform']]) ) {
                         continue;
                     }
-                    $results[$fileInfo['subPath']]['controller'][$fileInfo['platform']] = file_get_contents($fileInfo['path']);
+
+                    $controller = file_get_contents($fileInfo['path']);
+                    if (!inDeveloperMode()) {
+                        $controller = SugarMin::minify($controller);
+                    }
+                    $results[$fileInfo['subPath']]['controller'][$fileInfo['platform']] = $controller;
                     break;
                 case 'hbt':
                     $layoutName = substr($fileInfo['file'],0,-4);

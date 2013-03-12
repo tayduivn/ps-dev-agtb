@@ -58,6 +58,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'title',
                 'phone_mobile',
                 'department',
                 'phone_work',
@@ -66,36 +67,13 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 array(
                     'name' => 'fieldset_address',
                     'type' => 'fieldset',
-                    'label' => 'Primary Address',
+                    'label' => 'LBL_PRIMARY_ADDRESS',
                     'fields' => array(
                         'primary_address_street',
                         'primary_address_city',
                         'primary_address_state',
                         'primary_address_postalcode',
                         'primary_address_country',
-                    ),
-                ),
-                array(
-                    'name' => 'fieldset_alt_address',
-                    'type' => 'fieldset',
-                    'label' => 'Alternate Address',
-                    'fields' => array(
-                        'alt_address_street',
-                        'alt_address_city',
-                        'alt_address_state',
-                        'alt_address_postalcode',
-                        'alt_address_country',
-                        array(
-                            'name' => 'copy',
-                            'type' => 'copy',
-                            'mapping' => array(
-                                'primary_address_street' => 'alt_address_street',
-                                'primary_address_city' => 'alt_address_city',
-                                'primary_address_state' => 'alt_address_state',
-                                'primary_address_postalcode' => 'alt_address_postalcode',
-                                'primary_address_country' => 'alt_address_country',
-                            ),
-                        ),
                     ),
                 ),
                 'email',
@@ -108,20 +86,25 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'description',
+                array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
                 'report_to_name',
                 'sync_contact',
                 'lead_source',
                 'do_not_call',
                 array(
                     'name' => 'campaign_name',
-                    'span' => 12
+                    'span' => 12,
                 ),
                 'portal_name',
                 'portal_active',
-                'preferred_language',
+                array(
+                    'name' => 'preferred_language',
+                    'span' => 12,
+                ),
                 'assigned_user_name',
-                'team_name',
                 array(
                     'name' => 'date_modified_by',
                     'readonly' => true,
@@ -140,6 +123,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
+                'team_name',
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,
@@ -155,6 +139,29 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                         ),
                         array(
                             'name' => 'created_by_name',
+                        ),
+                    ),
+                ),
+                array(
+                    'name' => 'fieldset_alt_address',
+                    'type' => 'fieldset',
+                    'label' => 'LBL_ALT_ADDRESS',
+                    'fields' => array(
+                        'alt_address_street',
+                        'alt_address_city',
+                        'alt_address_state',
+                        'alt_address_postalcode',
+                        'alt_address_country',
+                        array(
+                            'name' => 'copy',
+                            'type' => 'copy',
+                            'mapping' => array(
+                                'primary_address_street' => 'alt_address_street',
+                                'primary_address_city' => 'alt_address_city',
+                                'primary_address_state' => 'alt_address_state',
+                                'primary_address_postalcode' => 'alt_address_postalcode',
+                                'primary_address_country' => 'alt_address_country',
+                            ),
                         ),
                     ),
                 ),

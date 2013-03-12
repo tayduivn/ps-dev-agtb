@@ -459,6 +459,7 @@ class SugarController
 	 * Do some processing before saving the bean to the database.
 	 */
 	public function pre_save(){
+		// This code is replicated for the API's in SugarApi::updateBean()
 		if(!empty($_POST['assigned_user_id']) && $_POST['assigned_user_id'] != $this->bean->assigned_user_id && $_POST['assigned_user_id'] != $GLOBALS['current_user']->id && empty($GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir])){
 			$this->bean->notify_on_save = true;
 		}

@@ -38,8 +38,5 @@
     format:function(value){
         value = (value=="1") ? true : false;
         return value
-    },
-    getFieldElement: function() {
-        return this.$el;
     }
 })

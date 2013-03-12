@@ -38,24 +38,44 @@ class ReportsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('moduleList');
+
+        // ACL's are junked need to have an admin user
+        $GLOBALS['current_user']->is_admin = 1;
+        $GLOBALS['current_user']->save();
+
         $this->bean = BeanFactory::newBean('Reports');
         $this->bean->fetched_row['report_type'] = 'Matrix';
         $this->bean->report_type = 'summary';
         $this->bean->id = create_guid();
         $this->bean->name = 'Super Awesome Report Time';
+
     }
 
     public function tearDown()
     {
         unset($this->bean);
+        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
     public function testFormatForApi() 
     {
-        $helper = new ReportsApiHelper(new RestService);
+        $helper = new ReportsApiHelper(new ReportsServiceMockup());
         $data = $helper->formatForApi($this->bean);
         $this->assertEquals($data['report_type'], $this->bean->fetched_row['report_type'], "Report Type Does not match");
-
     }
 
+}
+
+class ReportsServiceMockup extends ServiceBase
+{
+    public function execute() {}
+    protected function handleException(Exception $exception) {}
 }

@@ -62,33 +62,39 @@ function tearDown()
     }
 }
 
-    /**
-     * @group opportunities
-     */
-    public function testCreatePastDate()
+    public static function dataProviderMonthDelta()
     {
-        $now = new DateTime();
-        for ($m = 0; $m < 24; $m++ )
-        {
-            $date = OpportunitiesSeedData::createPastDate($m);
-            $objDate = new DateTime($date);
-            $this->assertLessThan($now, $objDate);
+        $return = array();
+        for ($m = 0; $m < 24; $m++) {
+            $return[] = array($m);
         }
+
+        return $return;
     }
 
     /**
+     * @dataProvider dataProviderMonthDelta
      * @group opportunities
      */
-    public function testCreateDate()
+    public function testCreatePastDate($monthDelta)
+    {
+        $now = new DateTime();
+        $date = OpportunitiesSeedData::createPastDate($monthDelta);
+        $objDate = new DateTime($date);
+        $this->assertLessThan($now->format('U'), $objDate->format('U'));
+    }
+
+    /**
+     * @dataProvider dataProviderMonthDelta
+     * @group opportunities
+     */
+    public function testCreateDate($monthDelta)
     {
         $now = new DateTime();
         $now->setTime(0, 0, 0);
-        for ($m = 0; $m < 24; $m++ )
-        {
-            $date = OpportunitiesSeedData::createDate($m);
-            $objDate = new DateTime($date);
-            $this->assertGreaterThanOrEqual($now, $objDate);
-        }
+        $date = OpportunitiesSeedData::createDate($monthDelta);
+        $objDate = new DateTime($date);
+        $this->assertGreaterThanOrEqual($now->format('U'), $objDate->format('U'));
     }
 
 /**

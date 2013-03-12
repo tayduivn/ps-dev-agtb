@@ -33,6 +33,10 @@ class ConnectorFactory{
 			require_once('include/connectors/sources/SourceFactory.php');
 			require_once('include/connectors/component.php');
 			$source = SourceFactory::getSource($source_name);
+			if(empty($source)) {
+			    $GLOBALS['log']->fatal("Failed to load source $source_name");
+			    return false;
+			}
 			$component = new component();
 			$component->setSource($source);
 			$component->init();

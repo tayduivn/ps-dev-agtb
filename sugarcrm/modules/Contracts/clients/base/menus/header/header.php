@@ -25,13 +25,13 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route' => '#bwc/index.php?module=Contracts&action=EditView&return_module=Contracts&return_action=DetailView',
         'label' =>'LNK_NEW_CONTRACT',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#'.$module_name,
-        'label' =>'LNK_CONTACT_LIST',
+        'route'=>'#index.php?module=Contracts&action=index',
+        'label' =>'LNK_CONTRACT_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
         'icon' => 'icon-reorder',

@@ -31,6 +31,15 @@
     bindDataChange: function() {
         if (this.collection) {
             this.collection.on('add', this.renderPost, this);
+            this.collection.on('reset', function() {
+                _.each(this.renderedActivities, function(view) {
+                    view._dispose();
+                });
+                this.renderedActivities = {};
+                this.collection.each(function(post) {
+                    this.renderPost(post);
+                }, this);
+            }, this);
         }
     },
 

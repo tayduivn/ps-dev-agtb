@@ -16,6 +16,15 @@
                 route: "logout"
             },
             {
+                name: "activities",
+                route: "activities",
+                callback: function(){
+                    app.controller.loadView({
+                        layout: "activities",
+                        module: "Home"
+                    });
+                }
+            },            {
                 name: "bwc",
                 route: "bwc/*url",
                 callback: function(url) {
@@ -62,6 +71,15 @@
                 name: "create",
                 route: ":module/create",
                 callback: function(module){
+                    if(module === "Home") {
+                        app.controller.loadView({
+                            module: module,
+                            layout: "record"
+                        });
+
+                        return;
+                    }
+
                     app.controller.loadView({
                         module: module,
                         layout: "records"
@@ -93,6 +111,19 @@
 
                     app.drawer.open({
                         layout:'vcard-import'
+                    });
+                }
+            },
+           {
+                name: "emailCompose",
+                route: "Emails/compose",
+                callback: function(){
+                    app.drawer.open({
+                        layout : 'compose',
+                        context: {
+                            create: 'true',
+                            module: "Emails"
+                        }
                     });
                 }
             },

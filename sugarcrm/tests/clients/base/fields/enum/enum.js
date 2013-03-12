@@ -29,7 +29,7 @@ describe("enum field", function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
-        field = null,
+        field = null;
         multiEnumField = null;
         stub_appListStrings.restore();
     });
@@ -53,6 +53,31 @@ describe("enum field", function() {
         field.render();
         var actual = field.$el.text().replace(/(\r\n|\n|\r)/gm,"");
         expect($.trim(actual)).toEqual(expected);
+    });
+
+    it("should call loadEnumOptions and set enumOptions during render", function() {
+        var field = SugarTest.createField("base", fieldName, "enum", "edit", {options: "bugs_type_dom"});
+        var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
+        field.render();
+        expect(loadEnumSpy.called).toBe(true);
+        expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
+        loadEnumSpy.restore();
+    });
+
+    it("should load options from enum API if options is undefined", function(){
+        var callStub = sinon.stub(app.api,"enum", function(module, field, callbacks){
+            expect(field).toEqual("test_enum");
+            //Call success callback
+            callbacks.success(app.lang.getAppListStrings());
+        });
+        field = SugarTest.createField("base", fieldName, "enum", "detail", {/* no options */});
+        var renderSpy = sinon.spy(field, "_render");
+        field.render();
+        expect(callStub).toHaveBeenCalled();
+        expect(renderSpy.calledTwice).toBe(true);
+        expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
+        callStub.restore();
+        renderSpy.restore();
     });
 
     describe("multi select enum", function() {

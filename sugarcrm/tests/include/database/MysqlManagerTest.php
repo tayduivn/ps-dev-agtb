@@ -212,4 +212,23 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
              $this->_db->fromConvert($parameters[0],$parameters[1]),
              $result);
     }
+
+
+    /**
+     * This is the data provider for testSupports
+     */
+    public function supportsProvider() {
+        return array(
+            array('recursive_query', false),
+            array('fix:report_as_condition', true)
+        );
+    }
+
+    /**
+     * This is a test for known supported features
+     * @dataProvider supportsProvider
+     */
+    public function testSupports($feature, $expectedSupport) {
+        $this->assertEquals($expectedSupport, $this->_db->supports($feature));
+    }
 }

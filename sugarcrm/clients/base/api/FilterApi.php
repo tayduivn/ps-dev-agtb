@@ -295,6 +295,8 @@ class FilterApi extends SugarApi
                     $this->addFavoriteFilter($q, $where, $filter);
                 } else if ($field == '$owner') {
                     $this->addOwnerFilter($q, $where, $filter);
+                } else if ($field == '$creator') {
+                    $this->addCreatorFilter($q, $where, $filter);
                 } else if ($field == '$tracker') {
                     $this->addTrackerFilter($q, $where, $filter);
                 } else {
@@ -384,6 +386,24 @@ class FilterApi extends SugarApi
         }
 
         $where->equals($linkPart.'assigned_user_id', $this->current_user->id);
+    }
+
+    /**
+     * This function adds a creator filter to the sugar query
+     * @param SugarQuery $q The whole SugarQuery object
+     * @param SugarQuery_Builder_Where $where The Where part of the SugarQuery object
+     * @param string $link Which module are you adding the owner filter to.
+     */
+    protected function addCreatorFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $link)
+    {
+        if ($link == '' || $link == '_this') {
+            $linkPart = '';
+        } else {
+            $q->join($link, array('joinType'=>'LEFT'));
+            $linkPart = $link.'.';
+        }
+
+        $where->equals($linkPart.'created_by', $this->current_user->id);
     }
 
     /**

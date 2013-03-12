@@ -3,8 +3,7 @@
         'click .reply': 'showAddComment',
         'click .reply-btn': 'addComment',
         'click .deleteRecord': 'deleteRecord',
-        'click [name=show_more_button]': 'showMoreRecords',
-        'click .preview-stream': 'previewRecord',
+        'click .preview': 'previewRecord',
         'click .comment': 'toggleReplyBar',
         'click .more': 'fetchComments',
         'mouseenter [rel="tooltip"]': 'showTooltip',
@@ -16,8 +15,6 @@
     plugins: ['timeago'],
 
     initialize: function(options) {
-        var self = this;
-
         _.bindAll(this);
         this.opts = {params: {}};
 
@@ -72,27 +69,6 @@
             self.model.set("remaining_comments", 0);
             self.render();
         }});
-    },
-
-    showMoreRecords: function() {
-        var self = this, options = {};
-
-        app.alert.show('show_more_records', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
-
-        options.params = this.opts.params;
-        options.params.offset = this.streamCollection.next_offset;
-        options.params.limit = ""; // use default
-        options.add = true; // Indicates records will be added to those already loaded in to view
-
-        options.success = function() {
-            app.alert.dismiss('show_more_records');
-            self.layout.trigger("list:paginate:success");
-            self.layout.trigger("stream:more:fire", self.streamCollection, self);
-            self.render();
-            window.scrollTo(0, document.body.scrollHeight);
-        };
-
-        this.streamCollection.paginate(options);
     },
 
     showAllComments: function(event) {
@@ -168,27 +144,22 @@
             el = this.$(event.currentTarget),
             data = el.data(),
             module = data.module,
-            id = data.id,
-            postId = data.postid;
+            id = data.id;
 
         // If module/id data attributes don't exist, this user
         // doesn't have access to that record due to team security.
-        if (module.length && id.length) {
-            var model = app.data.createBean(module);
+        if (module && id) {
+            var model = app.data.createBean(module),
+                collection = this.context.get("collection");
 
             model.set("id", id);
-            model.set("postId", postId);
-            model.fetch({
-                success: function(model) {
-                    model.set("_module", module);
-                    app.events.trigger("preview:open");
-                    app.events.trigger("preview:render", model, self.streamCollection);
-                }
-            });
+            app.events.trigger("preview:render", model, collection, true, this.cid);
         } else {
             app.alert.show("no_access", {level: "error", title: "Permission Denied",
                 messages: "Sorry, you do not have access to preview this specific record.", autoClose: true});
         }
+
+        event.preventDefault();
     },
 
     _renderHtml: function(model) {

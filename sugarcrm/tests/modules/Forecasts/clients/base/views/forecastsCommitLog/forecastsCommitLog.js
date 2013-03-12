@@ -18,7 +18,7 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-describe("The forecastCommitLog view", function(){
+describe("forecasts_view_forecastsCommitLog", function(){
     var app, view, formatAmountLocaleStub, createHistoryLogStub;
 
     beforeEach(function() {
@@ -61,7 +61,7 @@ describe("The forecastCommitLog view", function(){
                 return value;
             });
 
-            createHistoryLogStub = sinon.stub(app.utils, "createHistoryLog", function(model, previousModel) {
+            createHistoryLogStub = sinon.stub(app.utils, "createHistoryLog", function() {
                 return "createHistoryLog";
             });
         });
@@ -147,9 +147,9 @@ describe("The forecastCommitLog view", function(){
         beforeEach(function(){
             view.context = {
                 forecasts:{
-                    on: function(event, fcn){},
+                    on: function(){},
                     committed:{
-                        on:  function(event, fcn){}
+                        on:  function(){}
                     }
                 }
             };
@@ -187,6 +187,20 @@ describe("The forecastCommitLog view", function(){
         });
         it("previousDateEntered should equal ''", function(){
             expect(view.previousDateEntered).toEqual("");
+        });
+    });
+
+    describe("dispose safe", function() {
+        it("should not render if disposed", function() {
+            var renderStub = sinon.stub(view, 'render');
+
+            view.buildForecastsCommitted();
+            expect(renderStub).toHaveBeenCalled();
+            renderStub.reset();
+
+            view.disposed = true;
+            view.buildForecastsCommitted();
+            expect(renderStub).not.toHaveBeenCalled();
         });
     });
 });

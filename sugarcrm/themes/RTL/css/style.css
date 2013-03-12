@@ -271,10 +271,16 @@ ul.megamenu .megacolumn,
 }
 ul.megamenu .megawrapper ul li.groupLabel,
 #moduleList .sf-menu ul .megawrapper ul li.groupLabel {
-	padding-left: 10px;
-	padding-right: 0px;
+	padding-left: 0px;
+	padding-right: 10px;
     display:block;
     float:right;
+    text-align: right;
+}
+
+#moduleList .sf-menu ul div.megacolumn-content ul li a,
+ul.megamenu div.megacolumn-content ul li a {
+    text-align: right;
 }
 
 #arrow {
@@ -378,6 +384,10 @@ direction: rtl;
 width: 320px;
 }
 
+#dcboxbody.dcmenuSugarCube .dashletPanel.dc .hd #dctitle {
+    float: right;
+}
+
 #dcboxbody  .hd span {
 float: right;
 direction: rtl;
@@ -390,7 +400,7 @@ float: left;
 #close_spot_search { left:50px;}
 #glblSearchBtn {
 float: left;
- left: 5px;
+ left: 20px;
 }
 #dcmenuSugarCube {
 float: left;

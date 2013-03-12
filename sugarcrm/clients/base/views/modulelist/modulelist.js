@@ -64,23 +64,44 @@
             self.delegateEvents();
 
             $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
-        });
+        }), module = $currentTarget.parent().parent().data('module'), moduleMeta = app.metadata.getModule(module);
+
+        if (moduleMeta && moduleMeta.menu && moduleMeta.menu.header && moduleMeta.menu.header.meta) {
+            var accessCount = 0;
+            _.each(moduleMeta.menu.header.meta, function (menu) {
+                var aclAction = menu.acl_action || '';
+                var aclModule = menu.acl_module || module;
+
+                if (app.acl.hasAccess(aclAction, aclModule)) {
+                    accessCount++;
+                }
+
+            });
+
+            numberMenuItems = accessCount;
+        }
+
         if (numberMenuItems < 1) {
             showCallback= toggleCallback;
         }
+
         if ($currentTarget.next('.dropdown-menu').is(":visible")) {
             $currentTarget.next('.dropdown-menu').dropdown('toggle');
             $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
             return false;
         }
+
         if (!$currentTarget.parent().parent().hasClass('more-drop-container') && !$currentTarget.hasClass('actionLink')) {
             // clear any open dropdown styling
             this.$('.open').toggleClass('open');
             var module = $currentTarget.parent().parent().data('module');
             var moduleMeta = app.metadata.getModule(module);
-            if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
-                this.populateFavorites(module, showCallback);
-                this.populateRecents(module, showCallback);
+            if (module == 'Home') {
+                this.populateDashboards();
+            }
+            else if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
+                this.populateFavorites(module);
+                this.populateRecents(module);
             }
             if (numberMenuItems >= 1) {
                 toggleCallback();
@@ -140,6 +161,35 @@
                 }
 
             }});
+    }, 
+    /**
+     * Populates recently created dashboards on open menu
+     */
+    
+    populateDashboards:function () {
+        var self = this,
+            sync = function(method, model, options) {
+                options       = app.data.parseOptionsForSync(method, model, options);
+                var callbacks = app.data.getSyncCallbacks(method, model, options);
+                app.api.records(method, this.apiModule, model.attributes, options.params, callbacks);
+            },
+            Dashboard = app.Bean.extend({
+                sync: sync,
+                apiModule: 'Dashboards',
+                module: 'Home'
+            }),
+            DashboardCollection = app.BeanCollection.extend({
+                sync: sync,
+                apiModule: 'Dashboards',
+                module: 'Home',
+                model: Dashboard
+            });
+        var dashCollection = new DashboardCollection();
+        dashCollection.fetch({
+            success: function(data) {
+                self.$('[data-module=Home] .dashboardContainer').html(self.recentRowTemplate(dashCollection));
+            }
+        });
     },
     /**
      * Render list of modules

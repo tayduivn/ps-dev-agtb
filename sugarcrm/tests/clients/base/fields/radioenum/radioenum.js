@@ -36,9 +36,18 @@ describe("radioenum field", function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
-        field = null,
+        field = null;
         fields = {};
         stub_appListStrings.restore();
+    });
+
+    it("should call loadEnumOptions and set enumOptions during render", function() {
+        var loadEnumSpy = sinon.spy(app.view.fields.EnumField.prototype, "loadEnumOptions");
+        var field = SugarTest.createField("base", fieldName, fieldType, "edit", {options: "bugs_type_dom"});
+        field.render();
+        expect(loadEnumSpy.called).toBe(true);
+        expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
+        loadEnumSpy.restore();
     });
 
     it("format a list of radio buttons and have one selected on edit template", function() {
@@ -47,7 +56,7 @@ describe("radioenum field", function() {
         //Fake extendsFrom listeditable
         field._loadTemplate = fields.listeditable._loadTemplate;
 
-        original = 'Defect',
+        original = 'Defect';
         expected = ' ' + 'DefectValue';
         field.model.set(fieldName, original);
         field.render();
@@ -63,7 +72,7 @@ describe("radioenum field", function() {
 
         field.view.action = 'list';
 
-        original = 'Defect',
+        original = 'Defect';
         expected = 'DefectValue';
         field.model.set(fieldName, original);
         field.render();

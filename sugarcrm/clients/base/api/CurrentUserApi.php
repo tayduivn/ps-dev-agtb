@@ -163,8 +163,10 @@ class CurrentUserApi extends SugarApi
         $user_data['preferences']['default_teams'] = $defaultTeams;
 
         //END SUGARCRM flav=pro ONLY
+
         return array('current_user' => $user_data);
     }
+
 
     /**
      * Updates current user info
@@ -564,10 +566,6 @@ class CurrentUserApi extends SugarApi
         require_once 'modules/MySettings/TabController.php';
         $controller = new TabController();
         $moduleList = $this->list2Array($controller->get_user_tabs($current_user));
-        // always add back in employees see Bug58563
-        if (!in_array('Employees',$moduleList)) {
-            $moduleList[] = 'Employees';
-        }
 
         return $moduleList;
     }

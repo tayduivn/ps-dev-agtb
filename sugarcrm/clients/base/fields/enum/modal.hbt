@@ -30,7 +30,7 @@
     {{#if hasBlank}}
         <option value=""{{#has "" value}}selected{{/has}}></option>
     {{/if}}
-    {{#eachOptions def.options}}
+    {{#eachOptions items}}
         <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
     {{/eachOptions}}
 </select>

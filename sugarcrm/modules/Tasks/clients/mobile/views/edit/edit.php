@@ -48,6 +48,7 @@ $viewdefs['Tasks']['mobile']['view']['edit'] = array(
                 'date_start',
                 'date_due',
                 'description',
+                'contact_name',
                 'parent_name',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY

@@ -596,8 +596,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             //This data set simulates upgrades using variable TimePeriods so that we are not bound to the TimePeriods created in the setUp method
             array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->fromDbDate('2013-01-01'), 2, TimeDate::getInstance()->fromDbDate('2013-01-02'), 15, TimeDate::getInstance()->fromDbDate('2013-10-01'), TimeDate::getInstance()->fromDbDate('2013-12-31'),
                 array("INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc1', 'Q4 2013', '2013-10-01', '2013-12-31', 'abc5', 0)",
-                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc2', 'Q3 2013', '2013-07-01', '2013-09-31', 'abc5', 0)",
-                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc3', 'Q2 2013', '2013-04-01', '2013-06-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc2', 'Q3 2013', '2013-07-01', '2013-09-30', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc3', 'Q2 2013', '2013-04-01', '2013-06-30', 'abc5', 0)",
                       "INSERT into timeperiods (id, name, start_date, end_date, deleted) values ('abc5', 'Year 2013', '2013-10-01', '2013-12-31', 0)",
                       "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc4', 'Q1 2013', '2013-01-01', '2013-03-31', 'abc5', 0)"
                 )
@@ -605,8 +605,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
             array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->fromDbDate('2013-01-01'), 2, TimeDate::getInstance()->fromDbDate('2013-01-02'), 10, TimeDate::getInstance()->fromDbDate('2013-01-01'), TimeDate::getInstance()->fromDbDate('2013-03-31'),
                 array("INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc1', 'Q4 2013', '2013-10-01', '2013-12-31', 'abc5', 0)",
-                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc2', 'Q3 2013', '2013-07-01', '2013-09-31', 'abc5', 0)",
-                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc3', 'Q2 2013', '2013-04-01', '2013-06-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc2', 'Q3 2013', '2013-07-01', '2013-09-30', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc3', 'Q2 2013', '2013-04-01', '2013-06-30', 'abc5', 0)",
                       "INSERT into timeperiods (id, name, start_date, end_date, deleted) values ('abc5', 'Year 2013', '2013-10-01', '2013-12-31', 0)",
                       "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc4', 'Q1 2013', '2013-01-01', '2013-03-31', 'abc5', 0)"
                 )
@@ -691,12 +691,17 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $endDateFirstCreated,
         $overrideEntries = array())
     {
+        $this->markTestSkipped(
+                      'This test skipped due to upgrade issues found around bugs 61489 and 60606'
+                    );
+
         if(!empty($overrideEntries)) {
+            /* @var $db DbManager */
             $db = DBManagerFactory::getInstance();
             //Get rid of all non-deleted timeperiods
             $db->query("DELETE FROM timeperiods WHERE deleted = 0");
             foreach($overrideEntries as $entry) {
-                $db->query($entry);
+                $db->query($entry, false, '', true);
             }
         }
 
@@ -1033,7 +1038,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             if($timeZoneBDay != $timeZoneADay)
             {
                 //check if they are in reverse order, we want A to come before B
-                if($timeZoneBDay < $timeZoneADay && $timeZoneBMonth == $timeZoneAMonth)
+                if ( strcmp($timeZoneBNow->format('Y-m-d H:i:s'), $timeZoneANow->format('Y-m-d H:i:s')) < 0 )
                 {
                     $timeZoneB = new DateTimeZone($timeZones[0]);
                     $timeZoneA = new DateTimeZone($tz);
@@ -1198,15 +1203,15 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
                   )
             ),
             array(TimePeriod::ANNUAL_TYPE,
-                  TimePeriod::QUARTER_TYPE,
-                  ($currentYear-1).'-02-'.($febEndDate),
-                  ($currentYear).'-02-'.($febEndDate-1),
-                  array(
-                      array('expectedStartDate' => ($currentYear-1).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear-1).'-05-27'),
-                      array('expectedStartDate' => ($currentYear-1).'-05-28', 'expectedEndDate' => ($currentYear-1).'-08-27'),
-                      array('expectedStartDate' => ($currentYear-1).'-08-28', 'expectedEndDate' => ($currentYear-1).'-11-27'),
-                      array('expectedStartDate' => ($currentYear-1).'-11-28', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate-1)),
-                  )
+                TimePeriod::QUARTER_TYPE,
+                ($currentYear).'-02-'.($febEndDate),
+                ($currentYear+1).'-02-'.($febEndDate-1),
+                array(
+                    array('expectedStartDate' => ($currentYear).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear).'-05-30'),
+                    array('expectedStartDate' => ($currentYear).'-05-31', 'expectedEndDate' => ($currentYear).'-08-30'),
+                    array('expectedStartDate' => ($currentYear).'-08-31', 'expectedEndDate' => ($currentYear).'-11-29'),
+                    array('expectedStartDate' => ($currentYear).'-11-30', 'expectedEndDate' => ($currentYear+1).'-02-'.($febEndDate-1)),
+                )
             ),
             array(TimePeriod::ANNUAL_TYPE,
                   TimePeriod::QUARTER_TYPE,

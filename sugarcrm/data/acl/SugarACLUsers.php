@@ -46,7 +46,7 @@ class SugarACLUsers extends SugarACLStrategy
             'external_auth_only' => true,
             'sugar_login' => true,
             'authenticate_id' => true,
-            'pwd_last_changed' => true,        
+            'pwd_last_changed' => true,  
         );
 
     public $view_checks = array(
@@ -68,7 +68,8 @@ class SugarACLUsers extends SugarACLStrategy
      * @param array $context
      * @return bool|void
      */
-    public function checkAccess($module, $view, $context) {
+    public function checkAccess($module, $view, $context)
+    {
         if($module != 'Users' && $module != 'Employees') {
             // how'd you get here...
             return false;
@@ -82,7 +83,9 @@ class SugarACLUsers extends SugarACLStrategy
         $current_user = $this->getCurrentUser($context);
 
         $bean = self::loadBean($module, $context);
-        $myself = !empty($bean->id) && $bean->id == $current_user->id;
+        
+        $myself = $this->myselfCheck($bean, $current_user);
+
 
         // Let's make it a little easier on ourselves and fix up the actions nice and quickly
         $view = SugarACLStrategy::fixUpActionName($view);
@@ -146,13 +149,116 @@ class SugarACLUsers extends SugarACLStrategy
      * @param array $context
      * @return SugarBean
      */
-    protected static function loadBean($module, $context = array()) {
+    protected static function loadBean($module, $context = array())
+    {
+        $bean = false;
+
         if(isset($context['bean']) && $context['bean'] instanceof SugarBean && $context['bean']->module_dir == $module) {
             $bean = $context['bean'];
-        } else {
-            $bean = BeanFactory::newBean($module);
         }
         return $bean;
     }
 
+
+    /**
+     * Check access for the list of fields
+     * @param string $module
+     * @param array $field_list key=>value list of fields
+     * @param string $action Action to check
+     * @param array $context
+     * @return array[boolean] Access for each field, array() means all allowed
+     */
+    public function checkFieldList($module, $field_list, $action, $context)
+    {
+        // we need the user
+        $current_user = $this->getCurrentUser($context);
+        $is_admin = false;
+        if(!empty($current_user) && $current_user->isAdminForModule($module)) {
+            $is_admin = true;
+        }
+        $bean = self::loadBean($module, $context);
+        
+        $myself = $this->myselfCheck($bean, $current_user);        
+        $result = array();
+        foreach($field_list as $key => $field) {
+            // you can't set your own status
+            if($myself == true && ($field == 'status' || $field == 'employee_status') && ($action == 'edit' || $action == 'massupdate' || $action == 'delete')) {
+                $result[$key] = false;
+                // admins can have access to every field
+            } elseif($is_admin) {
+                $result[$key] = true;
+                // everything else should go through checks
+            } else {
+                if($action == 'field' && ($field == 'user_hash' || $field == 'password')) {
+                    $result[$key] = false;
+                } elseif(!$myself && !empty($this->no_access_fields[$field])) {
+                    $result[$key] = false;
+                } elseif(($action == 'edit' || $action == 'massupdate' || $action == 'delete') && !empty($this->no_edit_fields[$field])) {
+                    $result[$key] = false;
+                } else {
+                    $result[$key] = $this->checkAccess($module, "field", $context + array("field" => $field, "action" => $action));
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Get access for the list of fields
+     * @param string $module
+     * @param array $field_list key=>value list of fields
+     * @param array $context
+     * @return array[int] Access for each field, array() means all allowed
+     */
+    public function getFieldListAccess($module, $field_list, $context)
+    {
+        // we need the user
+        $current_user = $this->getCurrentUser($context);
+        $is_admin = false;
+        if(!empty($current_user) && $current_user->isAdminForModule($module)) {
+            $is_admin = true;
+        }
+        $bean = self::loadBean($module, $context);
+        
+        $myself = $this->myselfCheck($bean, $current_user);
+
+        $result = array();
+        foreach($field_list as $key => $field) {
+            if($myself == true) {
+                if($field == 'status' || $field == 'employee_status') {
+                    $result[$key] = SugarACL::ACL_READ_ONLY;
+                }
+            }
+
+            if($is_admin === true) {
+                $result[$key] = SugarACL::ACL_READ_WRITE;
+            } else {
+                if($field == 'user_hash' || $field == 'password') {
+                    $result[$key] = SugarACL::ACL_NO_ACCESS;
+                } elseif(!empty($this->no_edit_fields[$field])) {
+                    $result[$key] = SugarACL::ACL_READ_ONLY;
+                } elseif(!empty($this->no_access_fields[$field])) {
+                    $result[$key] = SugarACL::ACL_NO_ACCESS;
+                } else {
+                    $result[$key] = SugarACL::ACL_READ_WRITE;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Check if the User and the Bean are the same
+     * @param object|bool $bean
+     * @param object $current_user 
+     * @return type
+     */
+    public function myselfCheck($bean, $current_user)
+    {
+        $myself = false;
+        if($bean !== false) {
+            $myself = !empty($bean->id) && $bean->id == $current_user->id;
+        }
+        return $myself;   
+    }
 }

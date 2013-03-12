@@ -1,0 +1,81 @@
+describe("Plugins.ErrorDecoration", function() {
+    var moduleName = 'Cases',
+        app,
+        viewName = 'record',
+        view;
+
+
+    beforeEach(function() {
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
+        SugarTest.loadComponent('base', 'field', 'base');
+        SugarTest.loadComponent('base', 'view', 'editable');
+        SugarTest.loadComponent('base', 'view', viewName);
+        SugarTest.testMetadata.addViewDefinition(viewName, {
+            "panels": [{
+                "name": "panel_body",
+                "label": "LBL_PANEL_2",
+                "columns": 1,
+                "labels": true,
+                "labelsOnTop": false,
+                "placeholders":true,
+                "fields": ["description","case_number","type"]
+            }]
+        }, moduleName);
+        SugarTest.testMetadata.set();
+        SugarTest.app.data.declareModels();
+        app = SugarTest.app;
+
+        view = SugarTest.createView("base", moduleName, "record", null, null);
+    });
+
+    afterEach(function() {
+        SugarTest.testMetadata.dispose();
+        SugarTest.app.view.reset();
+        view = null;
+    });
+    describe('decorating fields', function() {
+        it("should call decorateError on field during 'error:validation:field' event", function(){
+            view.render();
+            view.model.set({
+                case_number: 123,
+                description: 'Description'
+            });
+            var descriptionField = _.find(view.fields, function(field){
+                return field.name === 'description';
+            });
+            var stub = sinon.stub(descriptionField, 'decorateError');
+
+            //Simulate a 'required' error on description field
+            view.model.trigger('error:validation:description', {required : true});
+
+            //Defer expectations since decoration is deferred
+            _.defer(function(stub){
+                expect(stub.calledWithExactly({required: true})).toBe(true);
+                stub.restore();
+            }, stub);
+        });
+
+        it("should call clearErrorDecoration on each field", function(){
+            //Prepare test
+            view.render();
+            view.model.set({
+                case_number: 123,
+                description: 'Description'
+            });
+            var descriptionField = _.find(view.fields, function(field){
+                return field.name === 'description';
+            });
+            var stub = sinon.stub(descriptionField, 'clearErrorDecoration');
+
+            //Unit test
+            view.clearValidationErrors(_.toArray(view.fields));
+
+            //Defer expectations since decoration is deferred
+            _.defer(function(stub){
+                expect(stub.calledOnce).toBe(true);
+                stub.restore();
+            }, stub);
+        });
+    });
+});

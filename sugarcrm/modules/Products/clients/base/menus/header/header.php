@@ -23,9 +23,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Products';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'event' => 'megamenu:create:click',
+        'route'=>'#'.$module_name.'/create',
         'label' =>'LNK_NEW_PRODUCT',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),

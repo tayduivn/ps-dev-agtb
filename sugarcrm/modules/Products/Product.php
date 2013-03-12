@@ -129,9 +129,9 @@ class Product extends SugarBean
     public $experts;
 
     // This is used to retrieve related fields from form posts.
-    public $additional_column_fields = Array('quote_id', 'quote_name', 'related_product_id');
+    public $additional_column_fields = array('quote_id', 'quote_name', 'related_product_id');
 
-    public $relationship_fields = Array('related_product_id' => 'related_products');
+    public $relationship_fields = array('related_product_id' => 'related_products', 'opportunity_id' => 'opportunities');
 
 
     // This is the list of fields that are copied over from product template.
@@ -453,7 +453,7 @@ class Product extends SugarBean
     public function get_list_view_data()
     {
         global $current_language, $app_strings, $app_list_strings, $current_user, $timedate, $locale;
-        $product_mod_strings = return_module_language($current_language, "Products");
+        $product_mod_strings = return_module_language($current_language,"Products");
         require_once('modules/Products/config.php');
         //$this->format_all_fields();
 
@@ -545,7 +545,7 @@ class Product extends SugarBean
      */
     public function build_generic_where_clause($the_query_string)
     {
-        $where_clauses = Array();
+        $where_clauses = array();
         $the_query_string = $GLOBALS['db']->quote($the_query_string);
         array_push($where_clauses, "name like '$the_query_string%'");
         if (is_numeric($the_query_string)) {
@@ -624,11 +624,14 @@ class Product extends SugarBean
         $this->handleSalesStatus();
         $this->convertDateClosedToTimestamp();
 
+        $this->mapFieldsFromProductTemplate();
         $id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
         $this->saveProductWorksheet();
         //END SUGARCRM flav=ent ONLY
+
+        $this->handleOppSalesStatus();
 
         // We need to update the associated product bundle and quote totals that might be impacted by this product.
         if (isset($id)) {
@@ -788,6 +791,62 @@ class Product extends SugarBean
     }
 
     /**
+     * helper function to update the opportunity sales status based on parameters
+     * @param $opportunity
+     * @param $productSalesStatusToCheck
+     * @param $checkAllPLI
+     */
+    protected function changeOppSalesStatus(Opportunity $opportunity, $productSalesStatusToCheck, $checkAllPLI)
+    {
+        if ($opportunity->sales_status != $productSalesStatusToCheck) {
+            $salesStatusLineItems = $opportunity->products->query(array(
+                                               'where'=>array(
+                                                   // query adds the prefix so we don't need contact.id
+                                                   'lhs_field'=>'sales_status',
+                                                   'operator'=>'=',
+                                                   'rhs_value'=>$this->db->quote($productSalesStatusToCheck),
+                                                   ),
+                                                'deleted'=>'0'));
+            $requiredRowCount = 1;
+            if ($checkAllPLI) {
+                $requiredRowCount = count($opportunity->products->rows);
+            }
+            //if productLineItems found with passed Sales Status and the Opp sales status is not that current sales status
+            if (count($salesStatusLineItems['rows']) >= $requiredRowCount) {
+                $opportunity->sales_status = $productSalesStatusToCheck;
+                $opportunity->save();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Code to make sure that the Sales Status field of the associated opportunity
+     */
+    protected function handleOppSalesStatus()
+    {
+        if (!empty($this->opportunity_id)) {
+            $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
+            if ($opp->load_relationship('products')) {
+                //No need to do anything if there were no products associated to this opportunity
+                if (count($opp->products->rows) == 0) {
+                    return;
+                }
+                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_IN_PROGRESS,false)) {
+                    return;
+                }
+                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_WON,true)) {
+                    return;
+                }
+                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_LOST,true)) {
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
      * Code to make sure that the Sales Status field is mapped correctly with the Sales Stage field
      */
     protected function handleSalesStatus()
@@ -818,6 +877,30 @@ class Product extends SugarBean
         if (empty($this->id) || $this->new_with_id == true) {
             // we have a new record set the sales_status to new;
             $this->sales_status = Opportunity::STATUS_NEW;
+        }
+    }
+
+    /**
+     * Handle the mapping of the fields from the product template to the product
+     */
+    protected function mapFieldsFromProductTemplate()
+    {
+        if (!empty($this->product_template_id)
+            && $this->fetched_row['product_template_id'] != $this->product_template_id
+        ) {
+            /* @var $pt ProductTemplate */
+            $pt = BeanFactory::getBean('ProductTemplates', $this->product_template_id);
+
+            $this->category_id = $pt->category_id;
+            $this->mft_part_num = $pt->mft_part_num;
+            $this->list_price = $pt->list_price;
+            $this->cost_price = $pt->cost_price;
+            $this->discount_price = $pt->discount_price;
+            $this->list_usdollar = $pt->list_usdollar;
+            $this->cost_usdollar = $pt->cost_usdollar;
+            $this->discount_usdollar = $pt->discount_usdollar;
+            $this->tax_class = $pt->tax_class;
+            $this->weight = $pt->weight;
         }
     }
 

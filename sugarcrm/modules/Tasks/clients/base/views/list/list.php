@@ -36,15 +36,6 @@ $viewdefs['Tasks']['base']['view']['list'] = array(
             'fields' =>
             array(
                 array(
-                    'name' => 'set_complete',
-                    'width' => '1',
-                    'label' => 'LBL_LIST_CLOSE',
-                    'link' => true,
-                    'sortable' => false,
-                    'default' => true,
-                    'related_fields' => array('status'),
-                ),
-                array(
                     'name' => 'name',
                     'width' =>  40,
                     'link' => true,

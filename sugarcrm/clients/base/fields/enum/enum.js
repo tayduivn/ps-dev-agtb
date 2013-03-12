@@ -27,26 +27,70 @@
 ({
     fieldTag: "select",
     _render: function() {
-        var optionsKeys = [], val;
-        var options = this.items = this.items || this.def.options;
-
-        if(_.isString(options)) {
-            optionsKeys = _.keys(app.lang.getAppListStrings(options));
-        } else if(_.isObject(options)) {
-            optionsKeys = _.keys(options);
+        var val;
+        var options = this.items = this.items || this.enumOptions;
+        if(_.isUndefined(options)){
+            options = this.items = this.loadEnumOptions(false, function(){
+                //Re-render widget since we have fresh options list
+                if(!this.disposed){
+                    this.render();
+                }
+            });
         }
+        var optionsKeys = _.isObject(options) ? _.keys(options) : [];
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
-        //The chosen plugin displays it correctly, but the value is not set to the select and the model.
-        //Below the workaround to save this option to the model manually.
         if (_.isUndefined(this.model.get(this.name))) {
             var defaultValue = _.first(optionsKeys);
             if (defaultValue) {
-                this.$(this.fieldTag).val(defaultValue);
                 this.model.set(this.name, defaultValue);
             }
         }
-
+        app.view.Field.prototype._render.call(this);
+        if(this.tplName === 'edit') {
+            var select2Options = this.getSelect2Options(optionsKeys);
+            this.$(this.fieldTag).select2(select2Options);
+            this.$(".select2-container").addClass("tleft");
+            val = this.$(this.fieldTag).select2('val');
+            if (val) {
+                this.model.set(this.name, val);
+            }
+        } else if(this.tplName === 'disabled') {
+            this.$(this.fieldTag).attr("disabled", "disabled").select2();
+        } else if(_.isEmpty(optionsKeys)){
+            // Set loading message in place of empty DIV while options are loaded via API
+            this.$el.html(app.lang.get("LBL_LOADING"));
+        }
+        return this;
+    },
+    /**
+     * Load the options for this field and pass them to callback function.  May be asynchronous.
+     * @param {Boolean} fetch (optional) Force use of Enum API to load options
+     * @param {Function} callback (optional) Called when enum options are available
+     */
+    loadEnumOptions: function(fetch, callback){
+        var self = this;
+        var items = self.def.options;
+        fetch = fetch || false;
+        if(fetch || _.isUndefined(items)){
+            app.api.enum(self.module, self.name, {
+                success: function(o){
+                    if(self.enumOptions !== o){
+                        self.enumOptions = o;
+                        callback.call(self);
+                    }
+                }
+                // Use Sugar7's default error handler
+            });
+        } else {
+            if(_.isString(items)) {
+                items = app.lang.getAppListStrings(items);
+            }
+            self.enumOptions = items;
+        }
+        return items;
+    },
+    getSelect2Options: function(optionsKeys){
         var select2Options = {};
         var emptyIdx = _.indexOf(optionsKeys, "");
         if (emptyIdx !== -1) {
@@ -55,6 +99,11 @@
             if (emptyIdx > 1) {
                 this.hasBlank = true;
             }
+        }
+
+        // Options are being loaded via app.api.enum
+        if(_.isEmpty(optionsKeys)){
+            select2Options.placeholder = app.lang.get("LBL_LOADING");
         }
 
         /* From http://ivaynberg.github.com/select2/#documentation:
@@ -78,18 +127,7 @@
          * this adds the ability to specify that threshold in metadata.
          */
         select2Options.minimumResultsForSearch = this.def.searchBarThreshold ? this.def.searchBarThreshold : 7;
-        app.view.Field.prototype._render.call(this);
-        if(this.tplName === 'edit') {
-            this.$(this.fieldTag).select2(select2Options);
-            this.$(".select2-container").addClass("tleft");
-            val = this.$(this.fieldTag).select2('val');
-            if (val) {
-                this.model.set(this.name, val);
-            }
-        } else if(this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled").select2();
-        }
-        return this;
+        return select2Options;
     },
     /**
      *  Convert select2 value into model appropriate value for sync

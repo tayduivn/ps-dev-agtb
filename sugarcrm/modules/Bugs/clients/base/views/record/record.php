@@ -32,46 +32,46 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['Bugs']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type'      => 'button',
-            'name'      => 'cancel_button',
-            'label'     => 'LBL_CANCEL_BUTTON_LABEL',
+            'type' => 'button',
+            'name' => 'cancel_button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
-            'showOn'    => 'edit',
+            'showOn' => 'edit',
         ),
         array(
-            'type'      => 'rowaction',
-            'event'     => 'button:save_button:click',
-            'name'      => 'save_button',
-            'label'     => 'LBL_SAVE_BUTTON_LABEL',
+            'type' => 'rowaction',
+            'event' => 'button:save_button:click',
+            'name' => 'save_button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'btn btn-primary',
-            'showOn'    => 'edit',
+            'showOn' => 'edit',
             'acl_action' => 'edit',
         ),
         array(
-            'type'    => 'actiondropdown',
-            'name'    => 'main_dropdown',
+            'type' => 'actiondropdown',
+            'name' => 'main_dropdown',
             'primary' => true,
-            'showOn'  => 'view',
+            'showOn' => 'view',
             'buttons' => array(
                 array(
-                    'type'  => 'rowaction',
+                    'type' => 'rowaction',
                     'event' => 'button:edit_button:click',
-                    'name'  => 'edit_button',
+                    'name' => 'edit_button',
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
                     'acl_action' => 'edit',
                 ),
                 array(
-                    'type'  => 'rowaction',
+                    'type' => 'rowaction',
                     'event' => 'button:delete_button:click',
-                    'name'  => 'delete_button',
+                    'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
                     'acl_action' => 'delete',
                 ),
                 array(
-                    'type'  => 'rowaction',
+                    'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
-                    'name'  => 'duplicate_button',
+                    'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_action' => 'create',
                 ),
@@ -100,18 +100,18 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                 */
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
-                    'type'  => 'rowaction',
+                    'type' => 'rowaction',
                     'route' => '#bwc/index.php?module=KBDocuments&action=EditView&return_module=KBDocuments&return_action=DetailView',
-                    'name'  => 'create_kbdocument_button',
+                    'name' => 'create_kbdocument_button',
                     'label' => 'LBL_CREATE_KB_DOCUMENT',
                     'acl_module' => 'KBDocuments',
                     'acl_action' => 'create',
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
-                    'type'  => 'rowaction',
+                    'type' => 'rowaction',
                     'event' => 'button:change_log_button:click',
-                    'name'  => 'change_log_button',
+                    'name' => 'change_log_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
                     'acl_action' => 'view'
                 ),
@@ -127,11 +127,6 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                array(
-                    'name' => 'bug_number',
-                    'readonly' => true,
-                    'dismiss_label' => true,
-                ),
                 'name',
                 array(
                     'type' => 'favorite',
@@ -140,50 +135,100 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
-            //'label' => 'LBL_PANEL_2',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                array(
+                    'name' => 'bug_number',
+                    'readonly' => true,
+                ),
                 'priority',
                 'status',
                 'type',
-                'product_category',
                 'source',
+                'product_category',
                 'resolution',
-
+                //BEGIN SUGARCRM flav=ent ONLY
+                'assigned_user_name',
+                //END SUGARCRM flav=ent ONLY
+                array(
+                    'name' => 'description',
+                    'nl2br' => true,
+                    'span' => 12,
+                ),
             ),
         ),
         array(
             'name' => 'panel_hidden',
             'columns' => 2,
-            //'span'=>12,
             'hide' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 'found_in_release',
                 'fixed_in_release',
-                array ('name' => 'work_log', 'nl2br' => true,),
-                array('type' => 'html', 'default_value' => ''),
-                /***
-                * TODO: Did we want this? In the biz card it looked like we didn't have this
-                */
+                /**
+                 * TODO: Did we want this? In the biz card it looked like we didn't have this
+                 */
                 // array('name'=>'portal_viewable', 'label' => 'LBL_SHOW_IN_PORTAL', 'hideIf' => 'empty($PORTAL_ENABLED)'),
-
-                //BEGIN SUGARCRM flav=ent ONLY
-                'assigned_user_name',
-                //END SUGARCRM flav=ent ONLY
 
                 //BEGIN SUGARCRM flav=pro ONLY
                 // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
                 // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar
                 // perhaps create an hbt helper that can leverage app.cofig.on
-                array('name'=>'team_name', 'displayParams'=>array('required'=>true)),
+                array(
+                    'name' => 'team_name',
+                    'required' => true,
+                ),
+                array(
+                    'type' => 'html',
+                    'default_value' => '',
+                    'readonly' => true,
+                ),
                 //END SUGARCRM flav=pro ONLY
-                array ('name' => 'description', 'nl2br' => true,),
-                array('type' => 'html', 'default_value' => ''),
-            )
-        )
+                array(
+                    'name' => 'date_entered_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_entered',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'created_by_name',
+                        ),
+                    ),
+                ),
+                array(
+                    'name' => 'date_modified_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_MODIFIED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'modified_by_name',
+                        ),
+                    ),
+                ),
+                array(
+                    'name' => 'work_log',
+                    'nl2br' => true,
+                    'span' => 12,
+                ),
+            ),
+        ),
     ),
 );

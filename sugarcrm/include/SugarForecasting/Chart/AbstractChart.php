@@ -158,4 +158,21 @@ abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_Abs
     {
         return $this->dataArray;
     }
+
+
+    /**
+     * Returns the module language strings based on whether or not a language is set in the $_SESSION.  If not, it
+     * defaults to the global $current_language variable
+     *
+     * @param $module String value of the module language to load
+     */
+    public function getModuleLanguage($module) {
+        // If the session has a language set, use that
+        if(!empty($_SESSION['authenticated_user_language'])) {
+            return return_module_language($_SESSION['authenticated_user_language'], $module);
+        }
+
+        global $current_language;
+        return return_module_language($current_language, $module);
+    }
 }

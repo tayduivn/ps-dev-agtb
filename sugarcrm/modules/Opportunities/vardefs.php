@@ -137,8 +137,11 @@ $dictionary['Opportunity'] = array(
             'required' => true,
             'options' => 'numeric_range_search_dom',
             'enable_range_search' => true,
-            //'calculated' => true,
-            //'formula' => 'rollupSum($products, "list_price")',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'calculated' => true,
+            'formula' => 'rollupSum($products, "likely_case")',
+            'enforced' => true,
+            //END SUGARCRM flav=ent ONLY
             'validation' => array('type' => 'range', 'min' => 0)
         ),
         'base_rate' => array(
@@ -217,12 +220,22 @@ $dictionary['Opportunity'] = array(
             'required' => true,
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'calculated' => true,
+            'formula' => 'maxRelatedDate($products, "date_closed")',
+            'enforced' => true
+            //END SUGARCRM flav=ent ONLY
         ),
         'date_closed_timestamp' => array(
             'name' => 'date_closed_timestamp',
             'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
             'type' => 'int',
-            'studio' => false
+            'studio' => false,
+            //BEGIN SUGARCRM flav=ent ONLY
+            'calculated' => true,
+            'formula' => 'maxRelatedDate($products, "date_closed_timestamp")',
+            'enforced' => true
+            //END SUGARCRM flav=ent ONLY
         ),
         'next_step' => array(
             'name' => 'next_step',
@@ -270,6 +283,11 @@ $dictionary['Opportunity'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
+            //BEGIN SUGARCRM flav=ent ONLY
+            'formula' => 'rollupSum($products, "best_case")',
+            'calculated' => true,
+            'enforced' => true,
+            //END SUGARCRM flav=ent ONLY
             'audited' => true,
         ),
         'worst_case' => array(
@@ -279,6 +297,11 @@ $dictionary['Opportunity'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
+            //BEGIN SUGARCRM flav=ent ONLY
+            'formula' => 'rollupSum($products, "worst_case")',
+            'calculated' => true,
+            'enforced' => true,
+            //END SUGARCRM flav=ent ONLY
             'audited' => true,
         ),
         'commit_stage' => array(

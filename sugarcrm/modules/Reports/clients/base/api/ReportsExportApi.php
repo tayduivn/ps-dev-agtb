@@ -55,8 +55,8 @@ class ReportsExportApi extends SugarApi {
 
         $this->requireArgs($args,array('record', 'export_type'));
         $args['module'] = 'Reports';
-        $GLOBALS['disable_date_format'] = FALSE;
 
+        $GLOBALS['disable_date_format'] = FALSE;
 
         $method = 'export' . ucwords($args['export_type']);
 
@@ -66,6 +66,10 @@ class ReportsExportApi extends SugarApi {
 
         $saved_report = $this->loadBean($api, $args, 'view');
         
+        if(!$saved_report->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: Reports');
+        }
+
         return $this->$method($saved_report);
 
     }

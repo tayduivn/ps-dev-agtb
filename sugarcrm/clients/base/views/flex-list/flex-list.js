@@ -201,5 +201,19 @@
     },
     hideTooltip: function(e) {
         this.$(e.currentTarget).tooltip("hide");
+    },
+    _renderHtml: function(ctx, options) {
+
+        this.colSpan = this._fields.visible.length || 0;
+        if(this.leftColumns.length) {
+            this.colSpan++;
+        }
+        if(this.rightColumns.length) {
+            this.colSpan++;
+        }
+        if (this.colSpan < 2) {
+            this.colSpan = null;
+        }
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
     }
 })

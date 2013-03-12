@@ -4,14 +4,14 @@ $dictionary['Activity'] = array(
     'table' => 'activities',
     'fields' => array(
         // Set unnecessary fields from Basic to non-required/non-db.
-        'name' => array (
+        'name' => array(
             'name' => 'name',
             'type' => 'varchar',
             'required' => false,
             'source' => 'non-db',
         ),
 
-        'description' => array (
+        'description' => array(
             'name' => 'description',
             'type' => 'varchar',
             'required' => false,
@@ -29,7 +29,7 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
         ),
 
-        'attachments' => array (
+        'attachments' => array(
             'name' => 'attachments',
             'type' => 'link',
             'relationship' => 'activity_attachments',
@@ -39,7 +39,7 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
         ),
 
-        'activities_users' => array (
+        'activities_users' => array(
             'name' => 'activities_users',
             'type' => 'link',
             'relationship' => 'activities_users',
@@ -47,6 +47,115 @@ $dictionary['Activity'] = array(
             'module' => 'Users',
             'bean_name' => 'User',
             'source' => 'non-db',
+        ),
+
+        // Relationships for M2M related beans.
+        'contacts' => array(
+            'name' => 'contacts',
+            'type' => 'link',
+            'relationship' => 'contact_activities',
+            'vname' => 'LBL_LIST_CONTACT_NAME',
+            'source' => 'non-db',
+        ),
+        'cases' => array(
+            'name' => 'cases',
+            'type' => 'link',
+            'relationship' => 'case_activities',
+            'vname' => 'LBL_CASES',
+            'source' => 'non-db',
+        ),
+        'accounts' => array(
+            'name' => 'accounts',
+            'type' => 'link',
+            'relationship' => 'account_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_ACCOUNTS',
+        ),
+        'opportunities' => array(
+            'name' => 'opportunities',
+            'type' => 'link',
+            'relationship' => 'opportunity_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_OPPORTUNITIES',
+        ),
+        'leads' => array(
+            'name' => 'leads',
+            'type' => 'link',
+            'relationship' => 'lead_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_LEADS',
+        ),
+        //BEGIN SUGARCRM flav=pro ONLY
+        'products' => array(
+            'name' => 'products',
+            'type' => 'link',
+            'relationship' => 'product_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_PRODUCTS',
+        ),
+        'quotes' => array(
+            'name' => 'quotes',
+            'type' => 'link',
+            'relationship' => 'quote_activities',
+            'vname' => 'LBL_QUOTES',
+            'source' => 'non-db',
+        ),
+        'contracts' => array(
+            'name' => 'contracts',
+            'type' => 'link',
+            'relationship' => 'contract_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_CONTRACTS',
+        ),
+        //END SUGARCRM flav=pro ONLY
+        'bugs' => array(
+            'name' => 'bugs',
+            'type' => 'link',
+            'relationship' => 'bug_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_BUGS',
+        ),
+        'emails' => array(
+            'name'=> 'emails',
+            'vname'=> 'LBL_EMAILS',
+            'type'=> 'link',
+            'relationship'=> 'emails_activities',
+            'source'=> 'non-db',
+        ),
+        'projects' => array(
+            'name' => 'projects',
+            'type' => 'link',
+            'relationship' => 'projects_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_PROJECTS',
+        ),
+        'project_tasks' => array(
+            'name' => 'project_tasks',
+            'type' => 'link',
+            'relationship' => 'project_tasks_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_PROJECT_TASKS',
+        ),
+        'meetings' => array(
+            'name' => 'meetings',
+            'type' => 'link',
+            'relationship' => 'meetings_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_MEETINGS',
+        ),
+        'calls' => array(
+            'name' => 'calls',
+            'type' => 'link',
+            'relationship' => 'calls_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_CALLS',
+        ),
+        'tasks' => array(
+            'name' => 'tasks',
+            'type' => 'link',
+            'relationship' => 'tasks_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_TASKS',
         ),
 
         // Add table columns.
@@ -122,7 +231,7 @@ $dictionary['Activity'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Activities',
-        )
+        ),
     ),
 );
 

@@ -54,7 +54,6 @@ $mod_strings = array (
     'LBL_ALT_ADDRESS_STREET_3' => 'Alternate Address Street 3:',
     'LBL_ALT_ADDRESS_STREET' => 'Alternate Address Street:',
     'LBL_ALTERNATE_ADDRESS' => 'Other Address:',
-    'LBL_ALT_ADDRESS' => 'Other Address:',
     'LBL_ANY_ADDRESS' => 'Any Address:',
     'LBL_ANY_EMAIL' => 'Any Email:',
     'LBL_ANY_PHONE' => 'Any Phone:',
@@ -251,5 +250,9 @@ $mod_strings = array (
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
     'LBL_USER_SYNC' => 'User Sync',
     'LBL_FILENAME' => 'Attachment',
+
+    //Dashlet
+    'LBL_DASHLET_LISTVIEW_NAME' => 'My Contacts',
+    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing of your contacts',
 )
 ?>

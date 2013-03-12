@@ -951,12 +951,12 @@ class Email extends SugarBean {
                 //BEGIN SUGARCRM flav=pro ONLY
                 $emailAddress = '';
                 // If has access to primary mail, use it
-                if (ACLField::hasAccess('email1', $module, $GLOBALS['current_user']->id, $bean->isOwner($GLOBALS['current_user']->id)))
+                if ($bean->ACLFieldAccess('email1', 'read'))
                 {
                     $emailAddress = $bean->email1;
                 }
                 // Otherwise, try to use secondary
-                else if (ACLField::hasAccess('email2', $module, $GLOBALS['current_user']->id, $bean->isOwner($GLOBALS['current_user']->id)))
+                else if ($bean->ACLFieldAccess('email2', 'read'))
                 {
                     $emailAddress = $bean->email2;
                 }

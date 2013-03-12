@@ -67,7 +67,7 @@
         {{/each}}
     </tr>
     <tr class="alert alert-warning hide">
-        <td colspan="{{fields.length}}" class="container"></td>
+        <td class="container"{{#if ../this.colSpan}} colspan="{{../../this.colSpan}}"{{/if}}></td>
     </tr>
     </thead>
     <tbody>

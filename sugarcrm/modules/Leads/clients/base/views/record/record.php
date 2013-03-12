@@ -96,7 +96,8 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'showOn' => 'view',
                     'value'  => 'edit',
                 ),
-                array(
+                //TODO: Commented out for SugarCon.  Will add back once actions are ready
+               /* array(
                     'type'  => 'rowaction',
                     'event' => 'button:create_related_button:click',
                     'name'  => 'create_related_button',
@@ -109,7 +110,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'name'  => 'link_related_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
                     'value' => 'edit',
-                ),
+                ),*/
                 array(
                     'type'   => 'rowaction',
                     'event'  => 'button:manage_subscriptions:click',
@@ -192,7 +193,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 array(
                     'name'   => 'fieldset_primaryaddress',
                     'type'   => 'fieldset',
-                    'label'  => 'Primary Address',
+                    'label'  => 'LBL_PRIMARY_ADDRESS',
                     'fields' => array(
                         array(
                             'name'        => 'primary_address_street',
@@ -243,7 +244,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 array(
                     'name'   => 'fieldset_altaddress',
                     'type'   => 'fieldset',
-                    'label'  => 'Other Address',
+                    'label'  => 'LBL_ALT_ADDRESS',
                     'span'   => 12,
                     'fields' => array(
                         array(

@@ -44,8 +44,8 @@
 
     _placeComponent: function(component, def) {
         // Specifically target the filter view to render on the toolbar.
-        if (def.view == "filter") {
-            this.$(".filter-view").append(component.el);
+        if (def.layout == "filter") {
+            this.$(".filter").prepend(component.el);
             return;
         } else if(def.view == "filter-create") {
             this.$(".form-search-related").append(component.el);
@@ -59,6 +59,10 @@
                 }
             }
             this.$el.append(component.el);
+
+            if (component.name == "activitystream") {
+                this.activityContext = component.context;
+            }
         }
     },
 
@@ -76,5 +80,10 @@
                 comp.hide();
             }
         }, this);
+        this.trigger('filterpanel:change', name);
+    },
+
+    getActivityContext: function() {
+        return this.activityContext;
     }
 })

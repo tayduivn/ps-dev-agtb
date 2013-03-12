@@ -99,7 +99,20 @@
      * Manipulations of the emails object
      */
     _addNewAddress: function(email) {
+        var dupeAddress = false;
         var existingAddresses = _.clone(this.model.get(this.name)) || [];
+        var oldAddresses = this.model.get(this.name) || [];
+        dupeAddress = _.find(oldAddresses, function(address){
+            if (address.email_address == email) {
+                return true;
+            }
+        });
+
+        if (dupeAddress) {
+            this.render();
+            return false;
+        }
+
         var newObj = {email_address:email};
         //If no address exists, set this one as the primary
         if (existingAddresses.length < 1) {
@@ -182,7 +195,7 @@
     decorateError: function(errors){
         var emails;
 
-        this._removeErrorDecoration();
+        this.$el.closest('.record-cell').addClass("error");
 
         //Select all existing emails
         emails = this.$('input:not(.newEmail)');
@@ -209,20 +222,18 @@
             }
         }, this);
     },
-    _removeErrorDecoration: function() {
-        //Remove existing error classes
-        this.$el.find('.control-group.email').removeClass("inline-error");
-        //Remove error message
-        this.$('.help-block').html('');
-        // Remove previous exclamation marks.
-        this.$('.add-on').remove();
-    },
     _addErrorDecoration: function($input, errorName, errorContext) {
-        $input.closest('.control-group.email').addClass("inline-error");
-        var $addon = $('<span class="add-on" data-placement="bottom"><i class="icon-exclamation-sign"></i></span>');
-        $addon.data("title", app.error.getErrorString(errorName, errorContext)).insertAfter($input);
-        if (_.isFunction($addon.tooltip)) {
-            $addon.tooltip();
+        var isWrapped = $input.parent().hasClass('input-append');
+        if (!isWrapped)
+            $input.wrap('<div class="input-append error '+this.fieldTag+'">');
+        $input.next('.error-tooltip').remove();
+        $input.after(this.exclamationMarkTemplate([app.error.getErrorString(errorName, errorContext)]));
+        var $tooltip = $input.next('.error-tooltip');
+        if (_.isFunction($tooltip.tooltip)) {
+            $tooltip.tooltip({
+                container:'body',
+                placement:'top'
+            });
         }
     },
     /**
@@ -352,9 +363,6 @@
     },
     focus: function() {
         this.$('input').first().focus();
-    },
-    getFieldElement: function() {
-        return this.$(this.fieldTag);
     },
     composeEmail: function(evt) {
         evt.stopPropagation();

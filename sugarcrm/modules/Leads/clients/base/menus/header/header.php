@@ -25,14 +25,14 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#'.$module_name.'/create',
         'label' =>'LNK_NEW_LEAD',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#'.$module_name.'/vcard-import',
         'label' =>'LNK_IMPORT_VCARD',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),

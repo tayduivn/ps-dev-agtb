@@ -53,6 +53,7 @@ describe('Base.Field.Actiondropdown', function() {
         context.prepare();
 
         view = SugarTest.createView("base", moduleName, 'record', null, context);
+        view.createMode = false;
         view.render();
         field = view.getField('dropdown');
     });

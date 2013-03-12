@@ -39,7 +39,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     private $_db;
     protected $created = array();
 
-    protected $backupGlobals = FALSE;
+    protected $backupGlobals = false;
 
     static public function setUpBeforeClass()
     {
@@ -2441,6 +2441,45 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->deleteTableArray( $tableName, $tableDataArray );
 
     }
+
+    /**
+     * @group dbmanager
+     * @group db
+     * @ticket 61597
+     */
+    public function testMessageValueReturnIsNotEmptyStringWhenEnumFieldIsRequiredAndDefaultIsEmptyAndValIsNull()
+    {
+        $fieldDef = array(
+            'name' => 'test_field',
+            'type' => 'enum',
+            'required' => true,
+            'default' => ''
+        );
+
+        $return = $this->_db->massageValue(null, $fieldDef);
+
+        $this->assertEquals("''", $return);
+    }
+
+    /**
+     * @group dbmanager
+     * @group db
+     * @ticket 61597
+     */
+    public function testMessageValueReturnIsNullWhenEnumFieldIsNotRequiredAndDefaultIsEmptyAndValIsNull()
+    {
+        $fieldDef = array(
+            'name' => 'test_field',
+            'type' => 'enum',
+            'required' => false,
+            'default' => ''
+        );
+
+        $return = $this->_db->massageValue(null, $fieldDef);
+
+        $this->assertEquals('NULL', $return);
+    }
+
 
 
 }
