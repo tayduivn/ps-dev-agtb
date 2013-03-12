@@ -596,6 +596,12 @@ class Product extends SugarBean
         if ($this->deal_calc == '') {
             $this->deal_calc = '0';
         }
+        if (empty($this->best_case)) {
+            $this->best_case = $this->likely_case;
+        }
+        if (empty($this->worst_case)) {
+            $this->worst_case = $this->likely_case;
+        }
 
         //US DOLLAR
         if (isset($this->discount_price) && (!empty($this->discount_price) || $this->discount_price == '0')) {
