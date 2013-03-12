@@ -123,7 +123,7 @@
             component.index = this.index + '' + index;
         }, this);
 
-        this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
+        this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});
         this.model.trigger("change:layout");
         this.$el.children(".dashlet-row").children("li:eq(" + index + ")").remove();
     },
@@ -187,7 +187,7 @@
             component.index = this.index + '' + index;
         }, this);
 
-        this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
+        this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});
         this.model.trigger("change:layout");
     },
     _dispose: function() {

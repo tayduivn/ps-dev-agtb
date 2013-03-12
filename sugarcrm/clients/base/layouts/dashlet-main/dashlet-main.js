@@ -21,7 +21,7 @@
         this._components = [];
         this.$("#dashlets").remove();
 
-        var components = JSON.parse(JSON.stringify(this.model.get("metadata"))).components;
+        var components = app.utils.deepCopy(this.model.get("metadata")).components;
         _.each(components, function(component, index) {
             this._addComponentsFromDef([{
                 layout: {
@@ -121,7 +121,7 @@
                 delete sourceComponent.metadata[key];
             }
         }, this);
-        this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
+        this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});
         this.model.trigger("change:layout");
         if(this.model._previousMode === 'view') {
             //Autosave for view mode
