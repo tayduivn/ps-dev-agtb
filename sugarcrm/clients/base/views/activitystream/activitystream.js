@@ -111,8 +111,9 @@
                 }
         };
 
-        var bean = app.data.createBean('Comments');
+        var bean = app.data.createRelatedBean(this.model, null, 'comments');
         bean.save(payload, {
+            relate: true,
             success: function(model) {
                 $input.val('');
                 self.layout.prependPost(self.model);
