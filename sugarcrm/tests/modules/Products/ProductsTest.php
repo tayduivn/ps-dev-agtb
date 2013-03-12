@@ -336,19 +336,24 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSetAccountForOpportunity()
     {
-        $opp = new Opportunity();
+        //creating Opportunities with BeanFactory because the test helper for Opportunities
+        // creates accounts automatically.
+        $opp = BeanFactory::newBean("Opportunities");
         $opp->name = "opp1";
         $opp->save();
         $opp->load_relationship('accounts');
+        SugarTestOpportunityUtilities::setCreatedOpportunity(array($opp->id));
         $account = SugarTestAccountUtilities::createAccount();
         $opp->accounts->add($account);
         $product = new MockProduct();
         $this->assertTrue($product->setAccountIdForOpportunity($opp->id));
 
-        $opp2 = new Opportunity();
+        //creating Opportunities with BeanFactory because the test helper for Opportunities
+        // creates accounts automatically.
+        $opp2 = BeanFactory::newBean("Opportunities");
         $opp2->name = "opp2";
         $opp2->save();
-        SugarTestOpportunityUtilities::setCreatedOpportunity(array($opp->id, $opp2->id));
+        SugarTestOpportunityUtilities::setCreatedOpportunity(array($opp2->id));
         $product2 = new MockProduct();
         $this->assertFalse($product2->setAccountIdForOpportunity($opp2->id));
     }
