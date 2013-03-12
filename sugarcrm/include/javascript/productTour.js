@@ -28,33 +28,33 @@
 var rtl = rtl == "undefined" ? false : rtl;
 var modals=new Array();
 modals[0] = {
-    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_1_TITLE_670'),
-    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_1_DESCRIPTION_670'),
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_1_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_1_DESCRIPTION'),
     screenShotUrl: 'themes/default/images/pt-screen1-full.png'
 };
 modals[1] = {
-    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_2_TITLE_670'),
-    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_2_DESCRIPTION_670'),
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_2_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_2_DESCRIPTION'),
     screenShotUrl: 'themes/default/images/pt-screen2-full.png'
 };
 modals[2] = {
-    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_3_TITLE_670'),
-    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_3_DESCRIPTION_670'),
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_3_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_3_DESCRIPTION'),
     screenShotUrl: 'themes/default/images/pt-screen3-full.png'
 };
 modals[3] = {
-    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_4_TITLE_670'),
-    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_4_DESCRIPTION_670'),
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_4_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_4_DESCRIPTION'),
     screenShotUrl: 'themes/default/images/pt-screen4-full.png'
 };
 modals[4] = {
-    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_5_TITLE_670'),
-    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_5_DESCRIPTION_670'),
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_5_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_5_DESCRIPTION'),
     screenShotUrl: 'themes/default/images/pt-screen5-full.png'
 };
 modals[5] = {
-    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_6_TITLE_670'),
-    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_6_DESCRIPTION_670'),
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_6_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_6_DESCRIPTION'),
     screenShotUrl: 'themes/default/images/pt-screen6-full.png'
 };
 
