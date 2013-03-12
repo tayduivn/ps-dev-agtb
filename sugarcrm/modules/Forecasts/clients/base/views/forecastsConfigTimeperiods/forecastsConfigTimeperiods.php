@@ -38,7 +38,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'searchBarThreshold' => 5,
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'forecastsTimeperiod'
+                    'view' => 'edit'
                 ),
                 //END SUGARCRM flav=int ONLY
                 array(
@@ -49,7 +49,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'forecastsTimeperiod'
+                    'view' => 'edit'
                 ),
                 array(
                     'name' => 'timeperiod_start_date',
@@ -73,7 +73,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'forecastsTimeperiod'
+                    'view' => 'edit'
                 ),
                 array(
                     'name' => 'timeperiod_shown_backward',
@@ -89,7 +89,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'forecastsTimeperiod'
+                    'view' => 'edit'
                 ),
             ),
         ),
