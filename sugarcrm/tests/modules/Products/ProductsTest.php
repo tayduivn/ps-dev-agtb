@@ -37,12 +37,12 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('Products'));
-        parent::setUpBeforeClass();
+        SugarTestHelper::setUp('mod_strings', array('Products'));        
     }
 
     public function setUp()
@@ -464,6 +464,22 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
     }
+    /**
+     * @group products
+     */
+    public function testNullorEmptyQuantityDefaulted()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        
+        $product->quantity = null;
+        $product->save();
+        $this->assertEquals(1, $product->quantity, "Null not converted to 1");
+        
+        $product->quantity = "";
+        $product->save();
+        $this->assertEquals(1, $product->quantity, "Empty string not converted to 1");
+    }
+    
 }
 class MockProduct extends Product
 {
