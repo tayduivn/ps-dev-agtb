@@ -33,12 +33,21 @@
                 var $li = this.$(event.currentTarget).closest('li'),
                     column = $li.data('fieldname');
 
-                if (_.indexOf(this._fields.visible, column) !== -1) {
-                    this._fields.visible = _.without(this._fields.visible, column);
-                }
-                else {
-                    this._fields.visible.push(column);
-                }
+                this._fields.visible = [];
+                this._fields.available = [];
+
+                _.each(this._fields.options, function(fieldMeta){
+                    if(fieldMeta.name === column) {
+                        fieldMeta.selected = !fieldMeta.selected;
+                    }
+                    if(fieldMeta.selected) {
+
+                        this._fields.visible.push(fieldMeta);
+                    } else {
+                        this._fields.available.push(fieldMeta);
+                    }
+                }, this);
+
                 this.render();
                 this.toggleDropdown();
             },

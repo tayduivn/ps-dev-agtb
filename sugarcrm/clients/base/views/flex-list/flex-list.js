@@ -84,18 +84,22 @@
         var catalog = {
             'default': [], //Fields visible by default
             'available': [], //Fields hidden by default
-            'visible': []//Fields user wants to see
+            'visible': [], //Fields user wants to see,
+            'options' : []
         };
         // TODO: load field prefs and store names in this._fields.available.visible
         // no prefs so use viewMeta as default and assign hidden fields
         _.each(this.meta.panels, function(panel){
             _.each(panel.fields, function(fieldMeta, i) {
                 if (fieldMeta['default'] === false) {
-                    catalog.available.push(fieldMeta.name);
+                    catalog.available.push(fieldMeta);
                 } else {
-                    catalog['default'].push(fieldMeta.name);
-                    catalog.visible.push(fieldMeta.name);
+                    catalog['default'].push(fieldMeta);
+                    catalog.visible.push(fieldMeta);
                 }
+                catalog.options.push(_.extend({
+                    selected: (fieldMeta['default'] !== false)
+                }, fieldMeta))
             }, this);
         }, this);
         return catalog;
