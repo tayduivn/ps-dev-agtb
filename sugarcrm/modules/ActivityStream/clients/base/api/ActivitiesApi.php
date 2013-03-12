@@ -185,9 +185,9 @@ class ActivitiesApi extends SugarListApi
 
         // If we have a relevant bean, we add our where condition.
         if ($record) {
-            $query->where()->equals('parent_type', $record->module_name);
+            $query->where()->equals('activities_users.parent_type', $record->module_name);
             if ($record->id) {
-                $query->where()->equals('parent_id', $record->id);
+                $query->where()->equals('activities_users.parent_id', $record->id);
             }
         }
 
