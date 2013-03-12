@@ -46,18 +46,16 @@
 
     loadData: function(options) {
         //We want to ensure the data related to this activity loads before the stream for UX purposes.
-        this.loadOpts = options;
         var parentCol = this.context.parent.get("collection");
         if (parentCol.isEmpty()) {
-            parentCol.once("sync", this._load, this);
+            parentCol.once("sync", function(){this._load(options)}, this);
         } else {
-            this._load();
+            this._load(options);
         }
     },
 
-    _load: function() {
+    _load: function(options) {
         var self = this,
-            options = this.loadOpts,
             endpoint = function(method, model, options, callbacks) {
                 var real_module = self.opts.context.parent.get('module'),
                     modelId = self.opts.context.parent.get('modelId'), url;
@@ -68,8 +66,6 @@
                 }
                 return app.api.call("read", url, null, callbacks);
             };
-        delete this.loadOpts;
-
         options = _.extend({
             endpoint: endpoint,
             success: function(collection) {
