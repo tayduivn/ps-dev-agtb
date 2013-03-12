@@ -115,16 +115,6 @@ describe("image field", function() {
             confirmStub.restore()
         });
 
-        it("should render on model change", function() {
-            var renderSpy = sinon.spy(field, "render");
-            $('<input name="testimage" type="text">').appendTo(field.$el);
-            field.bindDataChange();
-
-            field.model.set("testimage", "test");
-            expect(renderSpy).toHaveBeenCalled();
-            renderSpy.restore();
-        });
-
         it("should not render on input change because we cannot set value of an input type file", function() {
             var renderSpy = sinon.spy(field, "render");
             $('<input type="text">').appendTo(field.$el);
