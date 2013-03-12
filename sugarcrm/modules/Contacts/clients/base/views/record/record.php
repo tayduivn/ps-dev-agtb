@@ -67,7 +67,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 array(
                     'name' => 'fieldset_address',
                     'type' => 'fieldset',
-                    'label' => 'Primary Address',
+                    'label' => 'LBL_PRIMARY_ADDRESS',
                     'fields' => array(
                         'primary_address_street',
                         'primary_address_city',
@@ -145,7 +145,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 array(
                     'name' => 'fieldset_alt_address',
                     'type' => 'fieldset',
-                    'label' => 'Alternate Address',
+                    'label' => 'LBL_ALT_ADDRESS',
                     'fields' => array(
                         'alt_address_street',
                         'alt_address_city',
