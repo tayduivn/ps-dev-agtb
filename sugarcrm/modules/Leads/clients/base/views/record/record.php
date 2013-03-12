@@ -173,6 +173,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'favorite',
+                    'readonly' => true,
                 ),
             ),
         ),

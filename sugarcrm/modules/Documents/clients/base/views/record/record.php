@@ -48,6 +48,7 @@ $viewdefs['Documents']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'favorite',
+                    'readonly' => true,
                 ),
             )
         ),

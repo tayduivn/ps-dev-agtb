@@ -19,7 +19,10 @@
      * @private
      */
     _render: function() {
-
+        // can't favorite something without an id
+        if (!this.model.get('id')) {
+            return null;
+        }
         if (!app.metadata.getModule(this.model.module).favoritesEnabled) {
             app.logger.error("Trying to use favorite field on a module that doesn't support it: '" + this.model.module + "'.");
             return null;
