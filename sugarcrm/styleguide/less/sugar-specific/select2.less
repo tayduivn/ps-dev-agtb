@@ -93,9 +93,8 @@
   &.select2-container-multi.select2-choices-pills-close .select2-search-choice {
     div {
       .border-radius(10px);
-      background: @dropdownLinkBackgroundHover;
       color: @dropdownLinkColorHover;
-      padding: 2px 18px 2px 6px;
+      padding: 2px 18px 2px 0px;
     }
     a.select2-search-choice-close {
       top: 2px;
@@ -107,12 +106,19 @@
       text-decoration: none;
       color: darken(@dropdownLinkBackgroundHover,10%);
       background: none;
+      display: block !important;
     }
     a.select2-search-choice-close:hover {
       color: lighten(@dropdownLinkColorHover,10%);
     }
     a.select2-search-choice-close::before {
       content: "\f057";
+    }
+  }
+  &.select2-container-multi.select2-choices-pills-close.attachments .select2-search-choice {
+    div {
+      background: @dropdownLinkBackgroundHover;
+      padding: 2px 18px 2px 6px;
     }
   }
 
