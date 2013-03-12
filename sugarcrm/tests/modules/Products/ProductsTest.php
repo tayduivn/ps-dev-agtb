@@ -37,12 +37,12 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('Products'));
-        parent::setUpBeforeClass();
     }
 
     public function setUp()
