@@ -117,7 +117,9 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 'account_name',
                 array(
                     'name' => 'date_closed',
+                    //BEGIN SUGARCRM flav=ent ONLY
                     'readonly' => true,
+                    //END SUGARCRM flav=ent ONLY
                 ),
                 'sales_status',
                 array(
@@ -129,7 +131,9 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         'currency_id',
                         'base_rate',
                     ),
+                    //BEGIN SUGARCRM flav=ent ONLY
                     'readonly' => true,
+                    //END SUGARCRM flav=ent ONLY
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
