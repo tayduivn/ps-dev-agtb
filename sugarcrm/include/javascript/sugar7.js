@@ -71,6 +71,15 @@
                 name: "create",
                 route: ":module/create",
                 callback: function(module){
+                    if(module === "Home") {
+                        app.controller.loadView({
+                            module: module,
+                            layout: "record"
+                        });
+
+                        return;
+                    }
+
                     app.controller.loadView({
                         module: module,
                         layout: "records"

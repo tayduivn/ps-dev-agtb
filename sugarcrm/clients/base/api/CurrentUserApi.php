@@ -163,8 +163,10 @@ class CurrentUserApi extends SugarApi
         $user_data['preferences']['default_teams'] = $defaultTeams;
 
         //END SUGARCRM flav=pro ONLY
+
         return array('current_user' => $user_data);
     }
+
 
     /**
      * Updates current user info

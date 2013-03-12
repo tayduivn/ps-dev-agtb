@@ -1,0 +1,7 @@
+<a data-toggle="dropdown" class="btn btn-invisible btn-link hide"><i class="icon-cog"></i></a>
+<ul class="dropdown-menu left carettop">
+    <div>
+        <li><a class="remove-row">Remove</a></li>
+    </div>
+</ul>
+<a class="move btn btn-invisible btn-link hide"><i class="icon-resize-vertical"></i></a>

@@ -1,0 +1,8 @@
+{{#eq this.length 0}}
+    <li><a href="javascript:void(0);" data-id="create">{{str "LBL_DASHBOARD_Add" this.module}}</a></li>
+{{/eq}}
+{{#notEq this.length 0}}
+    {{#each this.models}}
+        <li><a href="javascript:void(0);" data-id="{{getFieldValue this "id"}}">{{getFieldValue this "name"}}</a></li>
+    {{/each}}
+{{/notEq}}
