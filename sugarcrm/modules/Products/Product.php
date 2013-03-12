@@ -453,7 +453,7 @@ class Product extends SugarBean
     public function get_list_view_data()
     {
         global $current_language, $app_strings, $app_list_strings, $current_user, $timedate, $locale;
-        $product_mod_strings = return_module_language($current_language, "Products");
+        $product_mod_strings = return_module_language($current_language,"Products");
         require_once('modules/Products/config.php');
         //$this->format_all_fields();
 
@@ -833,13 +833,13 @@ class Product extends SugarBean
                 if (count($opp->products->rows) == 0) {
                     return;
                 }
-                if ($this->changeOppSalesStatus($opp, Opportunity::STATUS_IN_PROGRESS,false)) {
+                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_IN_PROGRESS,false)) {
                     return;
                 }
-                if ($this->changeOppSalesStatus($opp, Opportunity::STAGE_CLOSED_WON,true)) {
+                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_WON,true)) {
                     return;
                 }
-                if ($this->changeOppSalesStatus($opp, Opportunity::STAGE_CLOSED_LOST,true)) {
+                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_LOST,true)) {
                     return;
                 }
             }
