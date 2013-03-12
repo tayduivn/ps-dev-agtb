@@ -69,52 +69,11 @@ class SugarQuery_Compiler_SQL
     protected $db;
 
     protected $jtcount = 0;
-    protected $joined_tables = array();
-
-    // TODO EXPAND THE TYPE MAP
     /**
+     * Bean templates for used tables
      * @var array
      */
-    protected $type_map = array(
-        'module' => 'string',
-        'parent_type' => 'string',
-        'parent_id' => 'string',
-        'name' => 'string',
-        'int' => 'number',
-        'double' => 'number',
-        'float' => 'number',
-        'uint' => 'number',
-        'ulong' => 'number',
-        'long' => 'number',
-        'short' => 'number',
-        'varchar' => 'string',
-        'text' => 'string',
-        'longtext' => 'string',
-        'date' => 'date',
-        'enum' => 'string',
-        'relate' => 'string',
-        'multienum' => 'string',
-        'html' => 'string',
-        'longhtml' => 'string',
-        'datetime' => 'datetime',
-        'datetimecombo' => 'datetime',
-        'time' => 'time',
-        'bool' => 'bool',
-        'tinyint' => 'number',
-        'char' => 'string',
-        'blob' => 'binary',
-        'longblob' => 'binary',
-        'currency' => 'number',
-        'decimal' => 'number',
-        'decimal2' => 'number',
-        'id' => 'string',
-        'url' => 'string',
-        'encrypt' => 'string',
-        'file' => 'string',
-        'decimal_tpl' => 'number',
-        'phone' => 'string',
-        'assigned_user_name' => 'string',
-    );
+    protected $table_beans = array();
 
     public function __construct($db)
     {
@@ -276,6 +235,41 @@ class SugarQuery_Compiler_SQL
     }
 
     /**
+     * Get bean that corresponds to this table name
+     * @param string $table_name
+     * @return SugarBean
+     */
+    protected function getTableBean($table_name)
+    {
+        if(!isset($this->table_beans[$table_name])) {
+            $link_name = $this->sugar_query->join[$table_name]->linkName;
+            if (empty($link_name)) {
+                $this->table_beans[$table_name] = null;
+                return null;
+            }
+            //BEGIN SUGARCRM flav=pro ONLY
+            if($link_name == 'favorites') {
+                // FIXME: special case, should eliminate it
+                $module = 'SugarFavorites';
+            }
+            //END SUGARCRM flav=pro ONLY
+            if(empty($module)) {
+                $this->from_bean->load_relationship($link_name);
+                if(!empty($this->from_bean->$link_name)) {
+                    $module = $this->from_bean->$link_name->getRelatedModuleName();
+                }
+            }
+            if(empty($module)) {
+                $this->table_beans[$table_name] = null;
+                return null;
+            }
+            $bean = BeanFactory::newBean($module);
+            $this->table_beans[$table_name] = $bean;
+        }
+        return $this->table_beans[$table_name];
+    }
+
+    /**
      * @param $field
      * @return string
      */
@@ -292,19 +286,19 @@ class SugarQuery_Compiler_SQL
         if (strstr($field, '.')) {
             list($table_name, $field) = explode('.', $field);
             if ($table_name != $bean->getTableName()) {
-                $link_name = $this->sugar_query->join[$table_name]->linkName;
-                if (!empty($link_name)) {
-                    $bean->load_relationship($link_name);
-
-                    $module = $bean->$link_name->getRelatedModuleName();
-                    $bean = BeanFactory::newBean($module);
-                } else {
+                $bean = $this->getTableBean($table_name);
+                if(empty($bean)) {
                     return "{$table_name}.{$field}";
                 }
             }
         } else {
             $table_name = $bean->getTableName();
         }
+
+        if($field == 'my_favorite') {
+
+        }
+
         if(!isset($bean->field_defs[$field])) {
             // FIXME: we don't know about if - how it even ended up here?
             return false;
@@ -581,56 +575,44 @@ class SugarQuery_Compiler_SQL
         if (stristr($field, '.')) {
             list($table, $field) = explode('.', $field);
             if ($table != $bean->getTableName()) {
-                $link_name = $this->sugar_query->join[$table]->linkName;
-                if (!empty($link_name)) {
-                    // currently we only go one level deep on links,
-                    // so we know that the link has to be in the from beans relationships
-                    $bean->load_relationship($link_name);
-                    // we have to get the module name and then override the $bean var with the new bean
-                    $module = $bean->$link_name->getRelatedModuleName();
-                    $bean = BeanFactory::newBean($module);
+                $bean = $this->getTableBean($table);
+                if(empty($bean)) {
+                    // quote the value by default
+                    return $this->db->quoted($value);
                 }
             }
         }
 
 
         if (isset($bean->field_defs[$field])) {
-            switch ($this->type_map[$bean->field_defs[$field]['type']]) {
-                case 'number':
-                    return $value;
-                    break;
+            $dbtype = $this->db->getFieldType($bean->field_defs[$field]);
+
+            if(empty($value)) {
+                return $this->db->emptyValue($dbtype);
+            }
+
+            switch ($dbtype) {
                 case 'date':
                 case 'datetime':
                 case 'time':
-                    $db = DBManagerFactory::getInstance();
                     if ($value == 'NOW()') {
-                        return $db->now();
+                        return $this->db->now();
                     }
-                    return $db->quote($value);
-                    break;
-                case 'bool':
-                    return $value;
-                    break;
-                case 'binary':
-                    return $value;
-                    break;
-                case 'string':
-                default:
-                    if ($operator == 'STARTS') {
-                        $value = $value . '%';
-                    }
-                    if ($operator == 'CONTAINS') {
-                        $value = '%' . $value . '%';
-                    }
-                    if ($operator == 'ENDS') {
-                        $value = '%' . $value;
-                    }
-                    return "'{$value}'";
-                    break;
             }
-        } else {
-            return "'$value'";
+
+            if($this->db->getTypeClass($dbtype) == 'string') {
+                if ($operator == 'STARTS') {
+                    $value = $value . '%';
+                }
+                if ($operator == 'CONTAINS') {
+                    $value = '%' . $value . '%';
+                }
+                if ($operator == 'ENDS') {
+                    $value = '%' . $value;
+                }
+            }
         }
+        return $this->db->quoteType($dbtype, $value);
     }
 
     /**

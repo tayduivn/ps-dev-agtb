@@ -129,8 +129,10 @@ class FilterApi extends SugarApi
 
         //Set the list of fields to be used in the select.
         $options['select'] = !empty($args['fields']) ? explode(",", $args['fields']) : array();
-        //Force id into the select
+        //Force id and date_modified into the select
         $options['select'][] = "id";
+        $options['select'][] = "date_modified";
+        $options['select'] = array_unique($options['select']);
 
         return $options;
     }
@@ -218,8 +220,18 @@ class FilterApi extends SugarApi
         if(empty($options['select'])) {
             $options['select'] = array('id', 'date_modified');
         }
+
         $fields = array();
         foreach($options['select'] as $field) {
+            // FIXME: convert this to vardefs too?
+            //BEGIN SUGARCRM flav=pro ONLY
+            if($field == 'my_favorite') {
+                $fjoin = $q->join("favorites");
+                $fields[] = array($fjoin->joinName().".id", 'my_favorite');
+                continue;
+            }
+            //END SUGARCRM flav=pro ONLY
+
             // fields that aren't in field defs are removed, since we don't know what to do with them
             if(!empty($seed->field_defs[$field])) {
                 $fields[] = $field;
@@ -259,7 +271,7 @@ class FilterApi extends SugarApi
                 $bean = BeanFactory::getBean($options['module'], $row['id']);
             } else {
                 $bean = clone $seed;
-                $seed->populateFromRow($seed->convertRow($row));
+                $bean->populateFromRow($bean->convertRow($row));
             }
             if ($bean && !empty($bean->id)) {
                 $beans[] = $bean;
@@ -378,7 +390,7 @@ class FilterApi extends SugarApi
      * This function adds a favorite filter to the sugar query
      * @param SugarQuery $q The whole SugarQuery object
      * @param SugarQuery_Builder_Where $where The Where part of the SugarQuery object
-     * @param string $link Which module are you adding the owner filter to.
+     * @param string $link Which module are you adding the favorite filter to.
      */
     protected function addFavoriteFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $link)
     {
@@ -388,11 +400,9 @@ class FilterApi extends SugarApi
             $q->join($link, array('joinType'=>'LEFT'));
             $sfOptions['joinTo'] = $link;
         }
+        $fjoin = $q->join("favorites");
 
-        $sf = new SugarFavorites();
-        $sfAlias = $sf->addToSugarQuery($q, $sfOptions);
-
-        $where->notNull($sfAlias . '.id');
+        $where->notNull($fjoin->joinName() . '.id');
     }
 
     protected function addTrackerFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $interval)

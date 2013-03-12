@@ -100,6 +100,7 @@ class SugarQuery
      */
     public $join = array();
 
+    protected $joined_tables = array();
     /**
      * @var DBManager
      */
@@ -241,7 +242,16 @@ class SugarQuery
             return $this->links[$link_name];
         }
 
-		$this->loadBeans($link_name, $options);
+        //BEGIN SUGARCRM flav=pro ONLY
+        if($link_name == 'favorites') {
+            $sfOptions = array('joinType'=>'LEFT');
+            $sf = new SugarFavorites();
+            $options['alias'] = $sf->addToSugarQuery($this, $sfOptions);
+        } else
+        //END SUGARCRM flav=pro ONLY
+        {
+    		$this->loadBeans($link_name, $options);
+        }
 		$this->join[$options['alias']]->addLinkName($link_name);
 		$this->links[$link_name] = $this->join[$options['alias']];
 		return $this->join[$options['alias']];
