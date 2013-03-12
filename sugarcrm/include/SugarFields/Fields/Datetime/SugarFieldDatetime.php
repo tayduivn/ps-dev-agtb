@@ -28,7 +28,7 @@ class SugarFieldDatetime extends SugarFieldBase {
         if(!isset($displayParams['hiddeCalendar'])) {
            $displayParams['hiddeCalendar'] = false;
         }
-        
+
         // jpereira@dri - #Bug49552 - Datetime field unable to follow parent class methods
         //jchi , bug #24557 , 10/31/2008
         if(isset($vardef['name']) && ($vardef['name'] == 'date_entered' || $vardef['name'] == 'date_modified')){
@@ -230,6 +230,11 @@ class SugarFieldDatetime extends SugarFieldBase {
     public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
     {
         global $timedate;
+
+        if(empty($bean->$fieldName)) {
+            $data[$fieldName] = '';
+            return;
+        }
 
         $date = $timedate->fromUserType($bean->$fieldName,$properties['type']);
         if ( $date == null ) {

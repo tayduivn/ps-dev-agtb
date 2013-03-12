@@ -232,6 +232,12 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
     {
         global $timedate;
 
+        if(empty($bean->$fieldName)) {
+            $data[$fieldName] = '';
+            return;
+        }
+
+
         $date = $timedate->fromDb($bean->$fieldName);
         if ( $date == null ) {
             // The bean's date is not in db format, let's try user format
