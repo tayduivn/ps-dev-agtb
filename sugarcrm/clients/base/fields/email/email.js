@@ -364,9 +364,6 @@
     focus: function() {
         this.$('input').first().focus();
     },
-    getFieldElement: function() {
-        return this.$(this.fieldTag);
-    },
     composeEmail: function(evt) {
         evt.stopPropagation();
         evt.preventDefault();
