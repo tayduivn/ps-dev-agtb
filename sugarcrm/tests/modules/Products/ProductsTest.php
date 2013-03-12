@@ -446,7 +446,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
 
-        $this->assertEquals(Opportunity::STATUS_NEW,$opp->sales_status);
+        $this->assertEquals(Opportunity::STATUS_NEW, $opp->sales_status);
 
     }
 
