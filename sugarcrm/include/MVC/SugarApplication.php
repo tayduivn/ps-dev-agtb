@@ -46,7 +46,7 @@ class SugarApplication
         // make sidecar view load faster
         // TODO the rest of the code will be removed as soon as we migrate all modules to sidecar
         if ($this->controller->action === 'sidecar' ||
-            ($this->controller->action === 'index' && $this->controller->module === 'Home') ||
+            ($this->controller->action === 'index' && $this->controller->module === 'Home' && empty($_REQUEST['entryPoint'])) ||
             empty($_REQUEST)
         ) {
             $this->controller->action = 'sidecar';
