@@ -53,7 +53,7 @@
                 transform += 'translate(' + -bbox.tl_x*scale_factor + ',' + -bbox.tl_y*scale_factor + ') ';
                 transform += 'scale(' + scale_factor + ') ';
                 svg.attr('transform', transform);
-                self.$el.find("div.loading").hide();
+                self.$(".loading").hide();
             });
         }
     },
@@ -71,7 +71,7 @@
     _load: function(options) {
         options = options || {};
         var self = this,
-             url = app.api.buildURL('Accounts/by_country');
+            url = app.api.buildURL('Accounts/by_country');
 
         app.api.call('GET', url, null, {
             success: function(o) {
