@@ -3,8 +3,8 @@
 $viewdefs['base']['view']['dashablelist'] = array(
     'dashlets' => array(
         array(
-            'name' => 'My Accounts',
-            'description' => 'Listing of your accounts',
+            'name' => 'LBL_DASHLET_LISTVIEW_NAME',
+            'description' => 'LBL_DASHLET_LISTVIEW_DESCRIPTION',
             'config' => array(
                 'module' => 'Accounts',
                 'display_columns' => array(
@@ -21,8 +21,8 @@ $viewdefs['base']['view']['dashablelist'] = array(
             )
         ),
         array(
-            'name' => 'My Assigned Bugs',
-            'description' => 'Bugs assigned to you',
+            'name' => 'LBL_DASHLET_LISTVIEW_NAME',
+            'description' => 'LBL_DASHLET_LISTVIEW_DESCRIPTION',
             'config' => array(
                 'module' => 'Bugs',
                 'display_columns' => array(
@@ -39,8 +39,8 @@ $viewdefs['base']['view']['dashablelist'] = array(
             )
         ),
         array(
-            'name' => 'My Closed Opportunies',
-            'description' => 'Opportunies that you have closed',
+            'name' => 'LBL_DASHLET_LISTVIEW_NAME',
+            'description' => 'LBL_DASHLET_LISTVIEW_DESCRIPTION',
             'config' => array(
                 'module' => 'Opportunities',
                 'display_columns' => array(
@@ -57,8 +57,8 @@ $viewdefs['base']['view']['dashablelist'] = array(
             ),
         ),
         array(
-            'name' => 'My Contacts',
-            'description' => 'Listing of your contacts',
+            'name' => 'LBL_DASHLET_LISTVIEW_NAME',
+            'description' => 'LBL_DASHLET_LISTVIEW_DESCRIPTION',
             'config' => array(
                 'module' => 'Contacts',
                 'display_columns' => array(
@@ -75,8 +75,8 @@ $viewdefs['base']['view']['dashablelist'] = array(
             ),
         ),
         array(
-            'name' => 'My Leads',
-            'description' => 'Listing of your leads',
+            'name' => 'LBL_DASHLET_LISTVIEW_NAME',
+            'description' => 'LBL_DASHLET_LISTVIEW_DESCRIPTION',
             'config' => array(
                 'module' => 'Leads',
                 'display_columns' => array(

@@ -172,4 +172,7 @@ $mod_strings = array(
     'LBL_PRODUCT_LINES_SUBPANEL_TITLE' => 'Product Line Items',
     //END SUGARCRM flav=ent ONLY
 
+    //Dashlet
+    'LBL_DASHLET_LISTVIEW_NAME' => 'My Closed Opportunies',
+    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Opportunies that you have closed',
 );

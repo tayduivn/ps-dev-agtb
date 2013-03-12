@@ -114,5 +114,8 @@ $mod_strings = array (
     'LBL_EXPORT_CREATED_BY' => 'Created By ID',
 
 
+    //Dashlet
+    'LBL_DASHLET_LISTVIEW_NAME' => 'My Assigned Bugs',
+    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Bugs assigned to you',
   );
 ?>

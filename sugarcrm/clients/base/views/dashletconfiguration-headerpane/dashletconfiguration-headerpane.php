@@ -1,7 +1,6 @@
 <?php
 $viewdefs["base"]["view"]["dashletconfiguration-headerpane"] = array(
     "type"    => "headerpane",
-    "title"   => "Dashlet Configuration",
     "buttons" => array(
         array(
             "name"      => "cancel_button",

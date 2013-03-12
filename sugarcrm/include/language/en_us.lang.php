@@ -3135,8 +3135,23 @@ $app_strings = array (
     'LBL_REMOVING_DASHLET' => 'Removing Sugar Dashlet ...',
     'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
 
+    /* Sugar7 Dashboard */
     'LBL_COLLAPSE_ALL' => 'Collapse All',
     'LBL_EXPAND_ALL' => 'Expand All',
+    'LBL_DASHLET_CONFIG_EDIT' => 'Edit',
+    'LBL_DASHLET_REFRESH' => 'Refresh',
+    'LBL_DASHLET_REMOVE' => 'Remove',
+    'LBL_DASHLET_DROP_HERE' => 'Drop here',
+
+
+    'LBL_DASHLET_LISTVIEW_NAME' => 'My List View',
+    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing records assigned to you',
+
+    'LBL_DASHLET_NEWS_NAME' => 'News',
+    'LBL_DASHLET_NEWS_DESCRIPTION' => 'Google News feed for Related Account',
+
+    'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
+    'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account',
 
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
