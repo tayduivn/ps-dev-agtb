@@ -131,7 +131,7 @@
             multiple:true,
             placeholder: app.lang.get("LBL_MODULE_FILTER"),
             dropdownCss: {width:"auto"},
-            containerCssClass: "select2-choices-pills",
+            containerCssClass: "select2-choices-pills-close",
             containerCss: "border: none",
             formatSelection: this.formatCustomSelection,
             dropdownCssClass: "search-filter-dropdown"
