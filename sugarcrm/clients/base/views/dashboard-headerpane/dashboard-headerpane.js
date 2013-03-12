@@ -109,7 +109,6 @@
                         self.setButtonStates('view');
                         self.model.trigger("setMode", "view");
                         self.toggleEdit(false);
-                        app.alert.show('dashboard_notice', {level: 'success', title: app.lang.getAppString('LBL_SAVED'), autoClose: true});
                     }
                 },
                 error: function() {
@@ -140,7 +139,6 @@
 
                 self.model.destroy({
                     success: function() {
-                        app.alert.show('dashboard_notice', {level: 'success', title: message, autoClose: true});
                         if(self.context.parent) {
                             self.model.dashboardLayout.navigateLayout('list');
                         } else {
@@ -150,6 +148,11 @@
                     },
                     error: function() {
                         app.alert.show('error_while_save', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
+                    },
+                    alerts: {
+                        success: {
+                            title: message
+                        }
                     }
                 });
             }

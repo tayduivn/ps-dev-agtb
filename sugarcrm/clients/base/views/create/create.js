@@ -164,17 +164,14 @@
      */
     initiateSave: function(callback) {
         this.clearValidationErrors();
-        this.alerts.showSaving();
         this.disableVisibleButtons();
         async.waterfall([
             _.bind(this.validateModelWaterfall, this),
             _.bind(this.dupeCheckWaterfall, this),
             _.bind(this.createRecordWaterfall, this)
         ], _.bind(function(error) {
-            this.alerts.dismissSaving();
             this.enableVisibleButtons();
             if (!error) {
-                this.alerts.showSuccess();
                 if (!this.disposed) {
                     this.context.lastSaveAction = null;
                     callback();
@@ -305,7 +302,12 @@
             success: success,
             error: error,
             viewed: true,
-            relate: (self.model.link) ? true : null
+            relate: (self.model.link) ? true : null,
+            alerts: {
+               'success' : {
+                   messages: app.lang.getAppString('LBL_RECORD_SAVED')
+               }
+            }
         };
 
         options = _.extend({}, options, self.getCustomSaveOptions());
@@ -486,22 +488,6 @@
     },
 
     alerts: {
-        showSaving: function() {
-            app.alert.show('saving', {
-                level: 'process',
-                title: 'LBL_SAVING'
-            })
-        },
-        dismissSaving: function() {
-            app.alert.dismiss('saving');
-        },
-        showSuccess: function() {
-            app.alert.show('record-saved', {
-                level: 'success',
-                messages: 'LBL_RECORD_SAVED',
-                autoClose: true
-            });
-        },
         showInvalidModel: function() {
             app.alert.show('invalid-data', {
                 level: 'error',

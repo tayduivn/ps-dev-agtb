@@ -44,12 +44,11 @@
         var self = this;
         if (this.model.isValid()) {
             app.$contentEl.hide();
-            app.alert.show('login', {level: 'process', title: 'Loading', autoClose: false});
             var args = {password: this.model.get("password"), username: this.model.get("username")};
 
+            app.alert.show('login', {level: 'process', title: app.lang.getAppString('LBL_LOADING'), autoClose: false});
             app.login(args, null, {
                 error: function() {
-                    app.alert.dismiss('login');
                     app.$contentEl.show();
                     app.logger.debug("login failed!");
                 },
@@ -58,9 +57,11 @@
                     app.events.on('app:sync:complete', function() {
                         app.logger.debug("sync in successfully!");
                         self.refreshAddtionalComponents();
-                        app.alert.dismiss('login');
                         app.$contentEl.show();
                     });
+                },
+                complete: function() {
+                    app.alert.dismiss('login');
                 }
             });
         }

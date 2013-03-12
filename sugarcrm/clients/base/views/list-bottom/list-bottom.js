@@ -69,9 +69,6 @@
             model.old = true;
         });
 
-        // Display loading message
-        app.alert.show('show_more_records_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
-
         // save current screen position
         var screenPosition = $('html').offset().top;
 
@@ -82,8 +79,6 @@
         options.add = true;
 
         options.success = function() {
-            // Hide loading message
-            app.alert.dismiss('show_more_records_' + self.cid);
             self.layout.trigger("list:paginate:success");
             if(!self.disposed){
                 self.render();
