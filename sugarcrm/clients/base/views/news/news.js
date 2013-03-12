@@ -19,6 +19,9 @@
     },
 
     loadData: function(options) {
+        if(_.isUndefined(this.model.parentModel)){
+            return;
+        }
         var name = this.model.parentModel.get("account_name") || this.model.parentModel.get('name') || this.model.parentModel.get('full_name'),
             limit = parseInt(this.model.get("limit") || 20, 10);
 
