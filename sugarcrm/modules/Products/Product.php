@@ -453,7 +453,7 @@ class Product extends SugarBean
     public function get_list_view_data()
     {
         global $current_language, $app_strings, $app_list_strings, $current_user, $timedate, $locale;
-        $product_mod_strings = return_module_language($current_language, "Products");
+        $product_mod_strings = return_module_language($current_language,"Products");
         require_once('modules/Products/config.php');
         //$this->format_all_fields();
 
@@ -631,6 +631,8 @@ class Product extends SugarBean
         $this->saveProductWorksheet();
         //END SUGARCRM flav=ent ONLY
 
+        $this->handleOppSalesStatus();
+
         // We need to update the associated product bundle and quote totals that might be impacted by this product.
         if (isset($id)) {
             $tax_rate = 0.00;
@@ -786,6 +788,62 @@ class Product extends SugarBean
             }
         }
         return false;
+    }
+
+    /**
+     * helper function to update the opportunity sales status based on parameters
+     * @param $opportunity
+     * @param $productSalesStatusToCheck
+     * @param $checkAllPLI
+     */
+    protected function changeOppSalesStatus(Opportunity $opportunity, $productSalesStatusToCheck, $checkAllPLI)
+    {
+        if ($opportunity->sales_status != $productSalesStatusToCheck) {
+            $salesStatusLineItems = $opportunity->products->query(array(
+                                               'where'=>array(
+                                                   // query adds the prefix so we don't need contact.id
+                                                   'lhs_field'=>'sales_status',
+                                                   'operator'=>'=',
+                                                   'rhs_value'=>$this->db->quote($productSalesStatusToCheck),
+                                                   ),
+                                                'deleted'=>'0'));
+            $requiredRowCount = 1;
+            if ($checkAllPLI) {
+                $requiredRowCount = count($opportunity->products->rows);
+            }
+            //if productLineItems found with passed Sales Status and the Opp sales status is not that current sales status
+            if (count($salesStatusLineItems['rows']) >= $requiredRowCount) {
+                $opportunity->sales_status = $productSalesStatusToCheck;
+                $opportunity->save();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Code to make sure that the Sales Status field of the associated opportunity
+     */
+    protected function handleOppSalesStatus()
+    {
+        if (!empty($this->opportunity_id)) {
+            $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
+            if ($opp->load_relationship('products')) {
+                //No need to do anything if there were no products associated to this opportunity
+                if (count($opp->products->rows) == 0) {
+                    return;
+                }
+                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_IN_PROGRESS,false)) {
+                    return;
+                }
+                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_WON,true)) {
+                    return;
+                }
+                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_LOST,true)) {
+                    return;
+                }
+            }
+        }
     }
 
     /**
