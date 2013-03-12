@@ -1,3 +1,4 @@
+{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -24,19 +25,13 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-({
-    _render: function() {
-        app.view.Field.prototype._render.call(this);
-        if(this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled");
-        }
-    },
-    unformat:function(value){
-        value = this.$el.find(".checkbox").prop("checked") ? "1" : "0";
-        return value
-    },
-    format:function(value){
-        value = (value=="1") ? true : false;
-        return value
-    }
-})
+}}
+{{#with def}}
+    {{#each fields}}
+        <span class="record-cell" data-name="{{name}}" data-type="{{type}}">
+            <span data-fieldname="{{name}}" data-tour="tour-{{../../module}}-{{name}}">
+                {{field ../../view ../../model ../../options.viewName}}
+            </span>
+        </span>
+    {{/each}}
+{{/with}}

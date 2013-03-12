@@ -25,7 +25,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#bwc/index.php?module='.$module_name.'&action=EditView&return_module='.$module_name.'&return_action=DetailView',
         'label' =>'LNK_NEW_MEETING',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),

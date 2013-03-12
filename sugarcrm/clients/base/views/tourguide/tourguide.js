@@ -7,6 +7,10 @@
         var self = this;
         app.view.View.prototype.initialize.call(this, options);
         app.events.on("app:view:change", function(viewType, obj) {
+            if (_.isEmpty(obj) || _.isEmpty(obj.module)) {
+                // no module, no tour
+                return;
+            }
             self.module = obj.module;
             self.viewType = viewType;
 

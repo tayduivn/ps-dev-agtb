@@ -25,7 +25,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#'.$module_name.'/create',
         'label' =>'LNK_NEW_PRODUCT',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),

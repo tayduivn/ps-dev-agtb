@@ -24,7 +24,7 @@ $module_name = 'Accounts';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'label' =>'LNK_NEW_ACCOUNT',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
         'route'=>'#'.$module_name.'/create',

@@ -52,7 +52,6 @@ $mod_strings = array (
     'LBL_ALT_ADDRESS_STREET_3' => 'Alt Address Street 3',
     'LBL_ALT_ADDRESS_STREET' => 'Alt Address Street',
     'LBL_ALTERNATE_ADDRESS' => 'Other Address:',
-    'LBL_ALT_ADDRESS' => 'Other Address:',
     'LBL_ANY_ADDRESS' => 'Any Address:',
     'LBL_ANY_EMAIL' => 'Any Email:',
     'LBL_ANY_PHONE' => 'Any Phone:',

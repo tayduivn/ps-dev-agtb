@@ -28,6 +28,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class ActivityQueueManager
 {
     public static $linkBlacklist = array('user_sync');
+    public static $linkModuleBlacklist = array('ActivityStream/Activities');
+    public static $linkDupeCheck = array();
 
     /**
      * Logic hook arbiter for activity streams.
@@ -48,9 +50,9 @@ class ActivityQueueManager
                 $this->delete($bean, $activity);
             } elseif ($event == 'after_restore') {
                 $this->undelete($bean, $args, $activity);
-            } elseif ($event == 'after_relationship_add' && !in_array($args['link'], self::$linkBlacklist)) {
+            } elseif ($event == 'after_relationship_add' && $this->isValidLink($args)) {
                 $this->link($args, $activity);
-            } elseif ($event == 'after_relationship_delete' && !in_array($args['link'], self::$linkBlacklist)) {
+            } elseif ($event == 'after_relationship_delete' && $this->isValidLink($args)) {
                 $this->unlink($args, $activity);
             }
 
@@ -58,6 +60,43 @@ class ActivityQueueManager
             // move this process to the job queue.
             $this->processSubscriptions($bean, $activity, $args);
         }
+    }
+
+    /**
+     * Helper to determine whether an activity can be created for a link.
+     * @param array $args
+     */
+    protected function isValidLink(array $args)
+    {
+        $blacklist = in_array($args['link'], self::$linkBlacklist);
+        $lhs_module = in_array($args['module'], self::$linkModuleBlacklist);
+        $rhs_module = in_array($args['related_module'], self::$linkModuleBlacklist);
+        if ($blacklist || $lhs_module || $rhs_module) {
+            return false;
+        } else {
+            foreach (self::$linkDupeCheck as $dupe_args) {
+                if ($dupe_args['relationship'] == $args['relationship']) {
+                    if (self::isLinkDupe($args, $dupe_args)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Helper to check if a link or unlink activity is a duplicate.
+     * @param  array $args1
+     * @param  array $args2
+     * @return bool
+     */
+    protected static function isLinkDupe($args1, $args2)
+    {
+        if ($args1['module'] == $args2['related_module'] && $args1['id'] == $args2['related_id']) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -94,6 +133,7 @@ class ActivityQueueManager
         $act->parent_type = $bean->module_name;
         $act->data = $data;
         $act->save();
+        $this->processRecord($bean, $act);
     }
 
     /**
@@ -112,6 +152,7 @@ class ActivityQueueManager
         $act->parent_type = $bean->module_name;
         $act->data = $data;
         $act->save();
+        $this->processRecord($bean, $act);
     }
 
     /**
@@ -130,6 +171,7 @@ class ActivityQueueManager
         $act->parent_type = $bean->module_name;
         $act->data = $data;
         $act->save();
+        $this->processRecord($bean, $act);
     }
 
     /**
@@ -152,6 +194,9 @@ class ActivityQueueManager
         $act->parent_type = $lhs->module_name;
         $act->data = $data;
         $act->save();
+        self::$linkDupeCheck[] = $args;
+        $this->processRecord($lhs, $act);
+        $this->processRecord($rhs, $act);
     }
 
     /**
@@ -174,6 +219,9 @@ class ActivityQueueManager
         $act->parent_type = $lhs->module_name;
         $act->data = $data;
         $act->save();
+        self::$linkDupeCheck[] = $args;
+        $this->processRecord($lhs, $act);
+        $this->processRecord($rhs, $act);
     }
 
     /**
@@ -192,16 +240,29 @@ class ActivityQueueManager
     }
 
     /**
+     * Helper for processing record activities.
+     */
+    protected function processRecord(SugarBean $bean, Activity $act)
+    {
+        if ($bean->load_relationship('activities')) {
+            $bean->activities->add($act);
+        }
+    }
+
+    /**
      * Helper for processing subscriptions on a post activity.
      * @param  Activity $act
      */
     protected function processPostSubscription(Activity $act)
     {
+        if (isset($act->parent_type) && isset($act->parent_id)) {
+            $bean = BeanFactory::getBean($act->parent_type, $act->parent_id);
+            $this->processRecord($bean, $act);
+        }
         $db = DBManagerFactory::getInstance();
         $sql = 'INSERT INTO activities_users VALUES (';
         $values = array(
             '"' . create_guid() . '"',
-            'NULL',
             '"' . $act->id . '"',
             '"' . $act->parent_type . '"',
             '"' . $act->parent_id . '"',
