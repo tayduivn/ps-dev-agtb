@@ -134,24 +134,24 @@ describe("Base.View.FlexList", function () {
                     {
                         fields: [
                             {
-                                name: 'test1',
-                                default: false
+                                'name': 'test1',
+                                'default': false
                             },
                             {
-                                name: 'test2',
-                                default: false
+                                'name': 'test2',
+                                'default': false
                             }
                         ]
                     },
                     {
                         fields: [
                             {
-                                name: 'test3',
-                                default: true
+                                'name': 'test3',
+                                'default': true
                             },
                             {
-                                name: 'test4',
-                                default: false
+                                'name': 'test4',
+                                'default': false
                             }
                         ]
                     }
@@ -159,9 +159,54 @@ describe("Base.View.FlexList", function () {
             };
             view._fields = view.parseFields();
 
-            expect(view._fields['default']).toEqual(['test3']);
-            expect(view._fields['available']).toEqual(['test1','test2','test4']);
-            expect(view._fields['visible']).toEqual(['test3']);
+            expect(view._fields['default']).toEqual([
+                {
+                    'name': 'test3',
+                    'default': true
+                }
+            ]);
+            expect(view._fields['available']).toEqual([
+                {
+                    'name': 'test1',
+                    'default': false
+                },
+                {
+                    'name': 'test2',
+                    'default': false
+                },
+                {
+                    'name': 'test4',
+                    'default': false
+                }
+            ]);
+            expect(view._fields['visible']).toEqual([
+                {
+                    'name': 'test3',
+                    'default': true
+                }
+            ]);
+            expect(view._fields['options']).toEqual([
+                {
+                    'name': 'test1',
+                    'default': false,
+                    'selected' : false
+                },
+                {
+                    'name': 'test2',
+                    'default': false,
+                    'selected' : false
+                },
+                {
+                    'name': 'test3',
+                    'default': true,
+                    'selected' : true
+                },
+                {
+                    'name': 'test4',
+                    'default': false,
+                    'selected' : false
+                }
+            ]);
         });
     });
 });
