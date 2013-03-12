@@ -32,7 +32,7 @@
     {{/notEq}}
 {{else}}
     <div class="block-footer">
-        {{#if context._dataFetched}}
+        {{#if _dataFetched}}
             {{#if context.attributes.isCreateEnabled}}
                 <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="{{str "LNK_CREATE" module}}">
                     {{str "LBL_LISTVIEW_NO_RECORDS"}} {{str "LNK_CREATE_WHEN_EMPTY" module}}
