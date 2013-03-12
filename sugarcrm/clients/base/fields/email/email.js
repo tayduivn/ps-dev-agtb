@@ -99,7 +99,20 @@
      * Manipulations of the emails object
      */
     _addNewAddress: function(email) {
+        var dupeAddress = false;
         var existingAddresses = _.clone(this.model.get(this.name)) || [];
+        var oldAddresses = this.model.get(this.name) || [];
+        dupeAddress = _.find(oldAddresses, function(address){
+            if (address.email_address == email) {
+                return true;
+            }
+        });
+
+        if (dupeAddress) {
+            this.render();
+            return false;
+        }
+
         var newObj = {email_address:email};
         //If no address exists, set this one as the primary
         if (existingAddresses.length < 1) {

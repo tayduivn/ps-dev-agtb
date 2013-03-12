@@ -46,6 +46,10 @@ describe("Email field", function() {
             field.$('.newEmail').change();
             expect(model.get('email')[2].email_address).toEqual("newEmail@test.com");
         });
+        it("should not allow duplicates", function(){
+            field._addNewAddress('test2@test.com');
+            expect(model.get('email').length).toEqual(2);
+        });
     });
 
     describe("updating an email address", function() {
