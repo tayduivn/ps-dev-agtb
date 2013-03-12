@@ -252,6 +252,18 @@
       });
     }
 
+    $('div[contenteditable="true"]').on('focus', function(){
+      var $this = $(this);
+      if ($this.text()===$this.data('placeholder')){
+        $this.empty();
+        $this.click();
+      }
+    }).on('blur', function(){
+      var $this = $(this);
+      if ($this.text()===''){
+        $this.html('<span class="placeholder">'+$this.data('placeholder')+'</span>');
+      }
+    })
     // Select widget
     // if ($('.select2').length !== 0) {
     //   $(".select2").select2({ disable_search_threshold: 5 });

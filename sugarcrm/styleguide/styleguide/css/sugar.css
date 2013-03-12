@@ -1049,6 +1049,10 @@ footer {
   width: auto !important;
   min-width: auto !important;
 }
+#content,
+.list-view {
+  -webkit-overflow-scrolling: touch;
+}
 .container-fluid {
   margin-top: 20px;
 }
@@ -3364,6 +3368,9 @@ hr.soften {
 .subpanel .more {
   height: 32px;
 }
+.subpanel .list-view {
+  overflow: visible;
+}
 .bwc-frame {
   height: 100%;
   width: 100%;
@@ -3793,9 +3800,8 @@ article .actions,
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  background: #e5f1fc;
   color: #4398ec;
-  padding: 2px 18px 2px 6px;
+  padding: 2px 18px 2px 0px;
 }
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice a.select2-search-choice-close {
   top: 2px;
@@ -3807,12 +3813,17 @@ article .actions,
   text-decoration: none;
   color: #b7d7f8;
   background: none;
+  display: block !important;
 }
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice a.select2-search-choice-close:hover {
   color: #71b1f1;
 }
 .select2-container.select2-container-multi.select2-choices-pills-close .select2-search-choice a.select2-search-choice-close::before {
   content: "\f057";
+}
+.select2-container.select2-container-multi.select2-choices-pills-close.attachments .select2-search-choice div {
+  background: #e5f1fc;
+  padding: 2px 18px 2px 6px;
 }
 .select2-container .select2-select-legend .icon-plus {
   margin-top: 3px;
@@ -4617,10 +4628,16 @@ input[type=radio] {
 #header .control-group label.hide {
   display: none;
 }
+.acomment div.reply,
 .acomment input.reply {
   margin: 0;
   padding: 6px 8px;
   border: 1px solid #e8e8e8;
+  background-color: #fff;
+}
+.acomment div.reply .placeholder,
+.acomment input.reply .placeholder {
+  color: #bbb;
 }
 .input-append {
   position: relative;
