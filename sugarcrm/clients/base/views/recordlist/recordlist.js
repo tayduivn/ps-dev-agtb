@@ -50,6 +50,7 @@
     },
 
     addActions:function () {
+        if (this.actionsAdded) return;
         app.view.views.FlexListView.prototype.addActions.call(this);
 
         //Add Favorite to left
@@ -79,6 +80,7 @@
             });
         }
         this.rightColumns[0] = firstRightColumn;
+        this.actionsAdded = true;
     },
 
     addFavorite: function() {

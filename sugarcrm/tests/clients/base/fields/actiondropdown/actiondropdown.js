@@ -1,8 +1,10 @@
 describe('Base.Field.Actiondropdown', function() {
 
-    var app, field, $element, moduleName = 'Contacts';
+    var app, field, view, moduleName = 'Contacts';
 
     beforeEach(function() {
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         app = SugarTest.app;
 
         SugarTest.testMetadata.init();
@@ -44,6 +46,7 @@ describe('Base.Field.Actiondropdown', function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
+        field = null;
     });
 
     it('should render button html nested on the buttons', function() {
@@ -55,7 +58,9 @@ describe('Base.Field.Actiondropdown', function() {
     });
 
     it('should populate proper dropdown list when a nested button is hidden', function() {
+
         expect(field.fields.length).toBeGreaterThan(1);
+
 
         var button = field.fields[1];
         var actualPlaceholderCount = field.$(".dropdown-menu").find("span[sfuuid='" + button.sfId + "']").length;

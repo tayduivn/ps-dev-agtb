@@ -27,6 +27,11 @@
 ({
     extendsFrom: 'FieldsetField',
     fields: null,
+    initialize: function(options) {
+        app.view.fields.FieldsetField.prototype.initialize.call(this, options);
+        //Throttle the setPlaceholder function per instance of this field.
+        this.setPlaceholder = _.throttle(app.view.fields.ActiondropdownField.prototype.setPlaceholder, 100);
+    },
     getPlaceholder: function() {
         var placeholder = app.view.Field.prototype.getPlaceholder.call(this);
         var $container = $(placeholder.toString()),
