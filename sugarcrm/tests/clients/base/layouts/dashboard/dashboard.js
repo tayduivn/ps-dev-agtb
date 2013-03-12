@@ -92,37 +92,39 @@ describe("Base.Layout.Dashboard", function(){
                 expectedApiUrl;
             expect(model.apiModule).toBe("Dashboards");
             expect(model.dashboardModule).toBe(parentModule);
-            var syncStuff = sinon.stub(app.api, 'records');
+            layout.context.parent._dataFetched = true;
+            var syncStub = sinon.stub(app.api, 'records');
             layout.loadData();
 
             expectedApiUrl = "Dashboards/" + parentModule;
-            expect(syncStuff).toHaveBeenCalledWith("read", expectedApiUrl);
-            syncStuff.restore();
+            expect(syncStub).toHaveBeenCalledWith("read", expectedApiUrl);
+            syncStub.restore();
 
-            syncStuff = sinon.stub(app.api, 'records');
+            syncStub = sinon.stub(app.api, 'records');
             model.set("foo", "Blah");
             expectedApiUrl = "Dashboards/" + parentModule;
             model.save();
-            expect(syncStuff).toHaveBeenCalledWith("create", expectedApiUrl, {view: "records", foo: "Blah"});
-            syncStuff.restore();
+            expect(syncStub).toHaveBeenCalledWith("create", expectedApiUrl, {view: "records", foo: "Blah"});
+            syncStub.restore();
 
-            syncStuff = sinon.stub(app.api, 'records');
+            syncStub = sinon.stub(app.api, 'records');
             model.set("id", "fake-id-value");
             expectedApiUrl = "Dashboards";
             model.save();
-            expect(syncStuff).toHaveBeenCalledWith("update", expectedApiUrl);
-            syncStuff.restore();
+            expect(syncStub).toHaveBeenCalledWith("update", expectedApiUrl);
+            syncStub.restore();
         });
 
         it("should navigate RHS panel without replacing document URL", function() {
 
             var syncStuff, expectedApiUrl;
-            syncStuff = sinon.stub(app.api, 'records');
+            layout.context.parent._dataFetched = true;
+            syncStub = sinon.stub(app.api, 'records');
             layout.navigateLayout('new-fake-id-value');
             expectedApiUrl = "Dashboards";
-            expect(syncStuff).toHaveBeenCalledWith("read", expectedApiUrl, {view: 'records', id: 'new-fake-id-value'});
+            expect(syncStub).toHaveBeenCalledWith("read", expectedApiUrl, {view: 'records', id: 'new-fake-id-value'});
 
-            syncStuff.restore();
+            syncStub.restore();
         });
 
         afterEach(function() {
