@@ -67,9 +67,14 @@
                         this.model.parentModel = this.context.get("model");
                         this.model.parentCollection = this.context.get("collection");
                     }
-                    var dashlet_context = this.context.get("dashlet"),
+                    var dashlet_context = this.context.get("dashlet");
+                    var viewName;
+                    if(dashlet_context){
                         viewName = dashlet_context.viewName;
-                    delete dashlet_context.viewName;
+                        delete dashlet_context.viewName;
+                    } else {
+                        dashlet_context = {};
+                    }
                     this.model.set(_.extend({
                         name: dashlet_context.name,
                         type: dashlet_context.type
@@ -91,7 +96,7 @@
                                         this.template;
                     }
 
-                    if(this.initDashlet && _.isFunction(this.initDashlet)) {
+                    if(viewName && this.initDashlet && _.isFunction(this.initDashlet)) {
                         this.initDashlet(viewName);
                     }
                 });
