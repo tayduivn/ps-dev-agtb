@@ -51,6 +51,35 @@
 
 }
 
+#dcmenuSugarCube.focused {
+    background-color: #0e3e68;
+}
+
+.dashletPanel.dc {
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.dashletPanel.dc .hd {
+    background-color:#1971bd;
+    background-image:-moz-linear-gradient(top,#1d81d8,#145995);
+    background-image:-ms-linear-gradient(top,#1d81d8,#145995);
+    background-image:-webkit-gradient(linear,0 0,0 100%,from(#1d81d8),to(#145995));
+    background-image:-webkit-linear-gradient(top,#1d81d8,#145995);
+    background-image:-o-linear-gradient(top,#1d81d8,#145995);
+    background-image:linear-gradient(top,#1d81d8,#145995);
+    background-repeat:repeat-x;
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#1d81d8', endColorstr='#145995', GradientType=0);
+}
+
+#dcboxbody .hd .close a {
+     color: #1d81d8;
+}
+
+.dashletPanel .sugarFeedDashlet {
+    position:inherit;
+}
+
 #ie8GradientFix{
     position: absolute;
     z-index: -1;

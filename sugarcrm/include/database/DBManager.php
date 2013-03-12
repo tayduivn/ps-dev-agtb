@@ -2192,7 +2192,7 @@ protected function checkQuery($sql, $object_name = false)
 
 		if ( is_null($val) ) {
 			if(!empty($fieldDef['required'])) {
-				if (isset($fieldDef['default'])){
+				if (isset($fieldDef['default']) && !empty($fieldDef['default'])){
 					return $fieldDef['default'];
 				}
 				return $this->emptyValue($type);

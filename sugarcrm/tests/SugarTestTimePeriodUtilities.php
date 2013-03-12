@@ -49,7 +49,7 @@ class SugarTestTimePeriodUtilities
      * @param $end_date String value of a db date default end date
      * @return TimePeriod Mixed TimePeriod test instance
      */
-    public static function createTimePeriod($start_date='', $end_date='')
+    public static function createTimePeriod($start_date='', $end_date='', $name='', $parent_id='')
     {
         global $timedate;
         $timedate = TimeDate::getInstance();
@@ -68,7 +68,9 @@ class SugarTestTimePeriodUtilities
 
         $year = $timedate->getNow()->format('Y');
         $time = mt_rand();
-        $name = 'SugarTimePeriod' . $time;
+        if ($name == '') {
+            $name = 'SugarTimePeriod' . $time;
+        }
         $timeperiod = new TimePeriod();
 
         if(empty($start_date))
@@ -85,6 +87,9 @@ class SugarTestTimePeriodUtilities
         $timeperiod->end_date = $end_date;
         $timeperiod->name = $name;
         $timeperiod->is_fiscal_year = 0;
+        if (!empty($parent_id)) {
+            $timeperiod->parent_id = $parent_id;
+        }
         $timeperiod->save();
         self::$_createdTimePeriods[] = $timeperiod;
         return $timeperiod;
@@ -141,6 +146,16 @@ class SugarTestTimePeriodUtilities
     {
         $timeperiod_ids = self::getCreatedTimePeriodIds();
         $GLOBALS['db']->query('DELETE FROM timeperiods WHERE id IN (\'' . implode("', '", $timeperiod_ids) . '\')');
+    }
+
+    /**
+     * @static
+     * this is a staitc function to append another timeperiod to the static timeperiods array
+     *
+     * @param $timeperiod
+     */
+    public static function addCreatedTimePeriod($timeperiod) {
+        self::$_createdTimePeriods[] = $timeperiod;
     }
 
     /**

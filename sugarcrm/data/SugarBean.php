@@ -5147,7 +5147,7 @@ class SugarBean
         $result = $this->db->query($query, true);
 
         $list = Array();
-        while($row = $db->fetchByAssoc($result))
+        while($row = $this->db->fetchByAssoc($result))
         {
         	$record = $template->getCopy();
             foreach($field_list as $field)

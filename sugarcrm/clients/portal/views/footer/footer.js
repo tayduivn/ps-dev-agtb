@@ -33,7 +33,6 @@
     },
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
-//        app.events.on("app:sync:complete", this.systemTour, this);
         app.events.on("app:login:success", this.render, this);
         app.events.on("app:logout", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
@@ -238,6 +237,13 @@
         var $li = this.$(e.currentTarget),
             langKey = $li.data("lang-key");
         app.alert.show('language', {level: 'warning', title: app.lang.getAppString('LBL_LOADING_LANGUAGE'), autoclose: false});
-        app.lang.setLanguage(langKey, function() { app.alert.dismiss('language'); });
+        app.lang.setLanguage(langKey, function() {
+            app.alert.dismiss('language');
+            if(!app.api.isAuthenticated()){
+                // Trigger sync:complete to force a rerender
+                app.events.trigger("app:sync:complete");
+            }
+        });
+
     }
 })

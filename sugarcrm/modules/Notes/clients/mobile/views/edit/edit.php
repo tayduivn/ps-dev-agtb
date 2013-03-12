@@ -44,6 +44,7 @@ $viewdefs['Notes']['mobile']['view']['edit'] = array(
                         'required' => true,
                         'wireless_edit_only' => true,)),
                 'description',
+                'contact_name',
                 'parent_name',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY

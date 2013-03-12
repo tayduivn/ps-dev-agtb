@@ -65,12 +65,12 @@ if (typeof(ModuleBuilder) == 'undefined') {
 	    init: function(){
             // FIXME check if we need to go to parent frame to send to old bwc url
             //Check if we shoudln't be in studio and need to load the normal ajaxUI
-//            var aRegex = /#.*ajaxUILoc=([^&]*)/.exec(window.location);
-//            var ajaxLoc = aRegex ? aRegex[1] : false;
-//            if (ajaxLoc) {
-//                window.location = "index.php?action=ajaxui#ajaxUILoc=" + ajaxLoc;
-//                return;
-//            }
+            //var aRegex = /#.*ajaxUILoc=([^&]*)/.exec(window.location.href);
+            //var ajaxLoc = aRegex ? aRegex[1] : false;
+            //if (ajaxLoc) {
+            //    window.location = "index.php?action=ajaxui#ajaxUILoc=" + ajaxLoc;
+            //    return;
+            //}
 			//Setup the basic ajax request settings
 			Connect.extraParams = {
 				to_pdf: true

@@ -47,6 +47,8 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $admin->saveSetting('Forecasts', 'forecast_by', 'opportunities', 'base');
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 1");
+
+        parent::setUpBeforeClass();
     }
 
     public static function tearDownAfterClass()
@@ -55,10 +57,20 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $admin->saveSetting('Forecasts', 'is_setup', self::$isSetup, 'base');
         $admin->saveSetting('Forecasts', 'forecast_ranges', self::$forecastRanges, 'base');
         $admin->saveSetting('Forecasts', 'forecast_by', 'products', 'base');
-        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 0");
         SugarTestHelper::tearDown();
+
+        parent::tearDown();
+        parent::tearDownAfterClass();
+    }
+
+    public function tearDown()
+    {
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestJobQueueUtilities::removeAllCreatedJobs();
     }
 
 
@@ -66,9 +78,9 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
      * Check that for every old opportunity related products are created via job queue
      *
      * @global type $current_user
-	 * @group forecasts
+     * @group forecasts
      */
-    function testSugarJobUpdateOpportunities()
+    public function testSugarJobUpdateOpportunities()
     {
         global $db, $current_user;
 
@@ -133,5 +145,27 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $this->assertEquals($exp_product, $act_product, "Product info doesn't equal to related opp's one");
         // END SUGARCRM flav=pro && flav!=ent ONLY
     }
+
+    /**
+     * @group opportunities
+     * @group forecasts
+     */
+    public function testMultipleJobsCreatedForUpgradeOpportunities()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        // create 5 opportunities
+        for ($x=0; $x<= 5; $x++) {
+            $opp = SugarTestOpportunityUtilities::createOpportunity();
+            $opp->assigned_user_id = $GLOBALS['current_user']->id;
+            $opp->probability = '';
+            $opp->commit_stage = '';
+            $opp->save();
+        }
+
+        $jobs = updateOpportunitiesForForecasting(3);
+
+        SugarTestJobQueueUtilities::setCreatedJobs($jobs);
+
+        $this->assertEquals(2, count($jobs));
+    }
 }
-?>

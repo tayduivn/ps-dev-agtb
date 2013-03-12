@@ -320,6 +320,9 @@ if(version_compare($_SESSION['current_db_version'], '6.7.0', '<'))
     require_once('modules/Forecasts/ForecastsDefaults.php');
     ForecastsDefaults::setupForecastSettings(true,$_SESSION['current_db_version'],$_SESSION['target_db_version']);
     ForecastsDefaults::upgradeColumns();
+
+    // do the config update to add the 'support' platform to any config with the category of 'portal'
+    updatePortalConfigToContainPlatform();
 }
 //END SUGARCRM flav=PRO ONLY
 

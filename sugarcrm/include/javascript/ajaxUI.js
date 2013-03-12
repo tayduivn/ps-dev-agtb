@@ -113,13 +113,12 @@ SUGAR.ajaxUI = {
 
     go : function(url)
     {
-
         if(YAHOO.lang.trim(url) != "")
         {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;
             if (ui.lastURL == url)
                 return;
-            var inAjaxUI = /action=ajaxui/.exec(window.location);
+            var inAjaxUI = /action=ajaxui/.exec(window.location.href);
             if (typeof (window.onbeforeunload) == "function" && window.onbeforeunload())
             {
                 //If there is an unload function, we need to check it ourselves
@@ -166,10 +165,12 @@ SUGAR.ajaxUI = {
                 }
             }
             else {
+                SUGAR_callsInProgress++;
                 SUGAR.ajaxUI.showLoadingPanel();
                 ui.lastCall = YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1' + loadLanguageJS, {
                     success: SUGAR.ajaxUI.callback,
                     failure: function(){
+                        SUGAR_callsInProgress--;
                         SUGAR.ajaxUI.hideLoadingPanel();
                         SUGAR.ajaxUI.showErrorMessage(SUGAR.language.get('app_strings','ERR_AJAX_LOAD_FAILURE'));
                     }
@@ -192,7 +193,7 @@ SUGAR.ajaxUI = {
             //Do not try to submit a form that contains a file input via ajax.
             && typeof(YAHOO.util.Selector.query("input[type=file]", form)[0]) == "undefined"
             //Do not try to ajax submit a form if the ajaxUI is not initialized
-            && /action=ajaxui/.exec(window.location))
+            && /action=ajaxui/.exec(window.location.href))
         {
             var string = con.setForm(form);
             var baseUrl = "index.php?action=ajaxui#ajaxUILoc=";

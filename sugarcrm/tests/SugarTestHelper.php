@@ -150,7 +150,7 @@ define('CHECK_FILE_MAPS', false);
 if(function_exists("shadow_get_config") && ($sc = shadow_get_config()) != false && !empty($sc['template'])) {
     // shadow is enabled
     define('SHADOW_ENABLED', true);
-    define('SHADOW_CHECK', true); // disable for faster tests
+    define('SHADOW_CHECK', false); // disable for faster tests
 } else {
     define('SHADOW_ENABLED', false);
     define('SHADOW_CHECK', false);

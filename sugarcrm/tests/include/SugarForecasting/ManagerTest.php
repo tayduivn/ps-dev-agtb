@@ -56,7 +56,9 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestForecastUtilities::setTimePeriod($timeperiod);
 
 
-        $this->users['manager'] = SugarTestForecastUtilities::createForecastUser(array('timeperiod_id' => $timeperiod->id));
+        $this->users['manager'] = SugarTestForecastUtilities::createForecastUser(
+            array('timeperiod_id' => $timeperiod->id)
+        );
 
         global $current_user;
         $current_user = $this->users['manager']['user'];
@@ -75,7 +77,10 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $this->users['reportee_reportee'] = SugarTestForecastUtilities::createForecastUser($config);
 
-        $this->users['reportee']['forecast'] = SugarTestForecastUtilities::createManagerRollupForecast($this->users['reportee'], $this->users['reportee_reportee']);
+        $this->users['reportee']['forecast'] = SugarTestForecastUtilities::createManagerRollupForecast(
+            $this->users['reportee'],
+            $this->users['reportee_reportee']
+        );
 
     }
 
@@ -90,13 +95,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadUsersThrowExceptionWhenUserIsNotManager()
     {
-        $db = DBManagerFactory::getInstance();
-        if ( !$db->supports('recursive_query') )
-        {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $testUser = SugarTestUserUtilities::createAnonymousUser();
 
         $args = $this->args;
@@ -118,13 +116,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadUsersReturnsTwoUsersForCurrentUser()
     {
-        $db = DBManagerFactory::getInstance();
-        if ( !$db->supports('recursive_query') )
-        {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
 
@@ -138,20 +129,16 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadUserAmount($user)
     {
-        $db = DBManagerFactory::getInstance();
-        if ( !$db->supports('recursive_query') )
-        {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
         $obj->loadUsersAmount();
 
         $dataArray = $obj->getDataArray();
 
-        $this->assertEquals($this->users[$user]['opportunities_total'], $dataArray[$this->users[$user]['user']->user_name]['amount']);
+        $this->assertEquals(
+            $this->users[$user]['opportunities_total'],
+            $dataArray[$this->users[$user]['user']->user_name]['amount']
+        );
     }
 
     public function dataProviderUserTypes()
@@ -163,7 +150,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
-
     /**
      * @depends testLoadUsersReturnsTwoUsersForCurrentUser
      * @dataProvider dataProviderUserTypes
@@ -171,13 +157,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadUsersQuota($user)
     {
-        $db = DBManagerFactory::getInstance();
-        if ( !$db->supports('recursive_query') )
-        {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
         $obj->loadUsersQuota();
@@ -195,20 +174,16 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadForecastValuesForUser($user, $dataKey)
     {
-        $db = DBManagerFactory::getInstance();
-        if ( !$db->supports('recursive_query') )
-        {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
         $obj->loadForecastValues();
 
         $dataArray = $obj->getDataArray();
 
-        $this->assertEquals($this->users[$user]['forecast']->$dataKey, $dataArray[$this->users[$user]['user']->user_name][$dataKey]);
+        $this->assertEquals(
+            $this->users[$user]['forecast']->$dataKey,
+            $dataArray[$this->users[$user]['user']->user_name][$dataKey]
+        );
     }
 
     public function dataProviderLoadForecastValues()
@@ -230,13 +205,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadWorksheetAdjustedValuesForUser($user, $dataKey, $worksheetKey)
     {
-        $this->markTestSkipped('Test is out of date as class does not need to fetch own data with new worksheets modules');
-        $db = DBManagerFactory::getInstance();
-        if ( !$db->supports('recursive_query') )
-        {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
 
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
@@ -244,7 +212,10 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $dataArray = $obj->getDataArray();
 
-        $this->assertEquals($this->users[$user]['worksheet']->$worksheetKey, $dataArray[$this->users[$user]['user']->user_name][$dataKey]);
+        $this->assertEquals(
+            $this->users[$user]['worksheet']->$worksheetKey,
+            $dataArray[$this->users[$user]['user']->user_name][$dataKey]
+        );
     }
 
     public function dataProviderLoadWorksheetAdjustedValues()
@@ -265,13 +236,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadManagerAmountsForReporteeIsTotalOfReporteeAndHisReportee()
     {
-        $db = DBManagerFactory::getInstance();
-        if ( !$db->supports('recursive_query') )
-        {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
         $obj->loadUsersAmount();
@@ -292,27 +256,45 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMakeSureAdjustedNumberAreNotEmpty($user, $dataKey, $worksheetKey)
     {
-        $this->markTestSkipped('Test is out of date as class does not need to fetch own data with new worksheets modules');
-        $db = DBManagerFactory::getInstance();
-        if ( !$db->supports('recursive_query') )
-        {
-            // @see SugarForecasting_Manager::process() -> loadUsers()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
-
         $obj = new MockSugarForecasting_Manager($this->args);
         $obj->loadUsers();
         $obj->loadWorksheetAdjustedValues();
 
         $dataArray = $obj->getDataArray();
 
-        $this->assertEquals($this->users[$user]['worksheet']->$worksheetKey, $dataArray[$this->users[$user]['user']->user_name][$dataKey]);
+        $this->assertEquals(
+            $this->users[$user]['worksheet']->$worksheetKey,
+            $dataArray[$this->users[$user]['user']->user_name][$dataKey]
+        );
     }
 
     public function testForecastsHaveCurrencyValues()
     {
         $this->assertEquals('-99', $this->users['reportee']['forecast']->currency_id);
         $this->assertEquals('1', $this->users['reportee']['forecast']->base_rate);
+    }
+
+    /**
+     * @group forecasts
+     *
+     */
+    public function testDataDoesNotContainInActiveUsers()
+    {
+        $config = array(
+            'user' => array('reports_to' => $this->users['manager']['user']->id)
+        );
+        $user = SugarTestForecastUtilities::createForecastUser($config);
+
+        $user['user']->status = 'Inactive';
+        $user['user']->save();
+
+        $obj = new MockSugarForecasting_Manager($this->args);
+
+        $return = $obj->process();
+
+        $this->assertEquals(2, count($return));
+
+
     }
 }
 

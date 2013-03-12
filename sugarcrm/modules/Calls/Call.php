@@ -196,11 +196,12 @@ class Call extends SugarBean {
         $check_notify = $this->send_invites;
 
 		if($this->send_invites == false) {
+			$old_assigned_user_id = '';
 			if(!empty($this->id)) {
 				$old_record = BeanFactory::getBean('Calls', $this->id);
 				$old_assigned_user_id = $old_record->assigned_user_id;
 			}
-			if((empty($this->id) && isset($_REQUEST['assigned_user_id']) && !empty($_REQUEST['assigned_user_id']) && $GLOBALS['current_user']->id != $_REQUEST['assigned_user_id']) || (isset($old_assigned_user_id) && !empty($old_assigned_user_id) && isset($_REQUEST['assigned_user_id']) && !empty($_REQUEST['assigned_user_id']) && $old_assigned_user_id != $_REQUEST['assigned_user_id']) ){
+			if((!isset($GLOBALS['installing']) || $GLOBALS['installing'] != true) && (empty($this->id) && isset($this->assigned_user_id) && !empty($this->assigned_user_id) && $GLOBALS['current_user']->id != $this->assigned_user_id) || (isset($old_assigned_user_id) && !empty($old_assigned_user_id) && isset($this->assigned_user_id) && !empty($this->assigned_user_id) && $old_assigned_user_id != $this->assigned_user_id) ){
 				$this->special_notification = true;
 				if(!isset($GLOBALS['resavingRelatedBeans']) || $GLOBALS['resavingRelatedBeans'] == false) {
 					$check_notify = true;
@@ -245,6 +246,13 @@ class Call extends SugarBean {
 	        if ( !$this->leads->relationship_exists('leads',array('id'=>$this->parent_id)) ) {
 	            $this->leads->add($this->parent_id);
             }
+	    }
+
+	    if(!empty($this->contact_id)) {
+	    	$this->load_relationship('contacts');
+	    	if(!$this->contacts->relationship_exists('contacts', array('id' => $this->contact_id))) {
+	    		$this->contacts->add($this->contact_id);
+	    	}
 	    }
 
         $this->setUserInvitees($this->users_arr);
