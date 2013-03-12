@@ -1,0 +1,12 @@
+<div class="record">
+        {{#each meta.config.fields}}
+        <div class="row-fluid panel_body">
+            <div class="record-cell">
+                <div class="record-label">
+                {{str label}}
+                </div>
+                {{field ../this ../this.model ../this.action}}
+            </div>
+        </div>
+        {{/each}}
+</div>

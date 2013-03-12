@@ -1,4 +1,3 @@
-<h4 data-tour="tour-opportunity-metrics">{{str "LBL_OPPORTUNITY_METRICS"}}</h4>
 <div class="opportunity-metrics-wrapper">
     {{#eachOptions metricsCollection}}
         <div class="opportunity-metric">

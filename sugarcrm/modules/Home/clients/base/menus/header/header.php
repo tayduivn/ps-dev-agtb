@@ -23,17 +23,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Home';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#',
-        'label' =>'LBL_MODULE_NAME',
-        'acl_action'=>'',
-        'acl_module'=>'',
-        'icon' => '',
-    ),
-    array(
-        'route'=>'#bwc/index.php?module=Home&action=index&activeTab=AddTab',
-        'label' =>'LBL_ADD_PAGE',
-        'acl_action'=>'',
-        'acl_module'=>'',
-        'icon' => '',
+        'route'=>'#'.$module_name.'/create',
+        'label' =>'LBL_DASHBOARD_Add',
+        'acl_action'=>'edit',
+        'acl_module'=>$module_name,
+        'icon' => 'icon-plus',
     ),
 );

@@ -1,0 +1,28 @@
+{{#if tweets}}
+    <div class="twitter-widget">
+        <ul>
+            {{#each tweets}}
+                <div class="news-article">
+                    <!--<h5><a target='twitter' href="https://twitter.com/intent/user?screen_name={{screen_name}}" class="googledoc-fancybox">{{name}}</a></h5>-->
+                    <p>
+                        {{{text}}}<br>
+                    </p>
+                    <div class="row-fluid">
+                        <small class="span8"><time datetime="timeago date}}">{{timeago date}}</time></small>
+                        <aside class="span4 tright">
+                            <div class="btn-group">
+                                <a class="btn btn-mini icon-external-link" title='retweet' target='twitter' href="http://twitter.com/sugarcrm/status/{{id}}" ></a>
+                                <a class="btn btn-mini icon-retweet" title='retweet' target='twitter' href="https://twitter.com/intent/retweet?tweet_id={{id}}" ></a>
+                                <a class="btn btn-mini icon-share-alt" target='twitter' href="https://twitter.com/intent/tweet?in_reply_to={{id}}" title='reply' ></a>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            {{/each}}
+        </ul>
+    </div>
+    <div class='news-article'>
+        <input name='tweet' class='tweet-box' id='tweet-box' >
+        <a target='twitter' onclick='window.open("https://twitter.com/intent/tweet?{{#if screen_name}}screen_name={{twitter}}{{else}}hashtags={{twitter}}{{/if}}&text=" + encodeURIComponent(document.getElementById("tweet-box").value), "twitter");' class="btn twitter-mention-button" data-lang="en">Tweet {{#if screen_name}}@{{else}}#{{/if}}{{twitter}}</a>
+    </div>
+{{/if}}

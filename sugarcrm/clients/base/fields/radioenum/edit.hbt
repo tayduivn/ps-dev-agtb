@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-        {{#eachOptions def.options}}
+        {{#eachOptions enumOptions}}
         <p><label><input type="radio" name="{{../name}}" value="{{{key}}}" {{#eq key ../value}}checked{{/eq}}> {{value}}</label></p>
         {{/eachOptions}}
         <p class="help-block"></p>

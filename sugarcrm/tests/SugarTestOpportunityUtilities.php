@@ -70,6 +70,7 @@ class SugarTestOpportunityUtilities
     private function _createOpportunity($id)
     {
         $timedate = TimeDate::getInstance();
+        $db = DBManagerFactory::getInstance();
         $name = 'SugarOpportunity';
 
         $opportunity = new Opportunity();
@@ -92,7 +93,7 @@ class SugarTestOpportunityUtilities
         $opportunity->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
         $opportunity->save();
 
-        $GLOBALS['db']->commit();
+        $db->commit();
 
         self::$_createdOpportunities[] = $opportunity;
         return $opportunity;
@@ -110,34 +111,20 @@ class SugarTestOpportunityUtilities
 
     public static function removeAllCreatedOpportunities()
     {
-        $opportunity_ids = self::getCreatedOpportunityIds();
-
-        if (!empty($opportunity_ids)) {
-            $GLOBALS['db']->query(
-                'DELETE FROM products_audit WHERE parent_id IN (SELECT id FROM products WHERE opportunity_id IN (\'' . implode(
-                    "', '",
-                    $opportunity_ids
-                ) . '\'))'
-            );
-            $GLOBALS['db']->query(
-                'DELETE FROM products WHERE opportunity_id IN (\'' . implode("', '", $opportunity_ids) . '\')'
-            );
-            $GLOBALS['db']->query(
-                'DELETE FROM opportunities WHERE id IN (\'' . implode("', '", $opportunity_ids) . '\')'
-            );
-            $GLOBALS['db']->query(
-                'DELETE FROM opportunities_audit WHERE parent_id IN (\'' . implode("', '", $opportunity_ids) . '\')'
-            );
-            $GLOBALS['db']->query(
-                'DELETE FROM opportunities_contacts WHERE opportunity_id IN (\'' . implode(
-                    "', '",
-                    $opportunity_ids
-                ) . '\')'
-            );
+        $opp_ids = self::getCreatedOpportunityIds();
+        $db = DBManagerFactory::getInstance();
+        
+        if (!empty($opp_ids)) {            
+            $db->query("DELETE FROM products_audit WHERE parent_id IN (SELECT id FROM products WHERE opportunity_id IN ('" . implode("', '", $opp_ids) . "'))");
+            $db->query("DELETE FROM products WHERE opportunity_id IN ('" . implode("', '", $opp_ids) . "')");
+            $db->query("DELETE FROM opportunities WHERE id IN ('" . implode("', '", $opp_ids) . "')");
+            $db->query("DELETE FROM opportunities_audit WHERE parent_id IN ('" . implode("', '", $opp_ids) . "')");
+            $db->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN ('" . implode("', '", $opp_ids) . "')");
+            $db->query("DELETE FROM forecast_worksheets WHERE parent_type = 'Opportunities' and parent_id IN ('" . implode("', '", $opp_ids) . "')");
         }
 
         if (self::$_createdAccount !== null && self::$_createdAccount->id) {
-            $GLOBALS['db']->query('DELETE FROM accounts WHERE id = \'' . self::$_createdAccount->id . '\'');
+            $db->query("DELETE FROM accounts WHERE id = '" . self::$_createdAccount->id . "'");
         }
         self::$_createdOpportunities = array();
     }

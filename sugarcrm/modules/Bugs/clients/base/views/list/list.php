@@ -52,7 +52,7 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
                     'default'=>true,
                 ),
                 array(
-                    'name'=>  'fixed_in_release_name',
+                    'name'=>  'fixed_in_release',
                     'default'=>true,
                 ),
                 array(
@@ -61,7 +61,7 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
                     'sortable' => false,
                 ),
                 array(
-                    'name'=>  'release_name',
+                    'name'=>  'found_in_release',
                     'default'=>false,
                 ),
                 array(

@@ -129,9 +129,9 @@ class Product extends SugarBean
     public $experts;
 
     // This is used to retrieve related fields from form posts.
-    public $additional_column_fields = Array('quote_id', 'quote_name', 'related_product_id');
+    public $additional_column_fields = array('quote_id', 'quote_name', 'related_product_id');
 
-    public $relationship_fields = Array('related_product_id' => 'related_products');
+    public $relationship_fields = array('related_product_id' => 'related_products', 'opportunity_id' => 'opportunities');
 
 
     // This is the list of fields that are copied over from product template.
@@ -545,7 +545,7 @@ class Product extends SugarBean
      */
     public function build_generic_where_clause($the_query_string)
     {
-        $where_clauses = Array();
+        $where_clauses = array();
         $the_query_string = $GLOBALS['db']->quote($the_query_string);
         array_push($where_clauses, "name like '$the_query_string%'");
         if (is_numeric($the_query_string)) {
@@ -624,6 +624,7 @@ class Product extends SugarBean
         $this->handleSalesStatus();
         $this->convertDateClosedToTimestamp();
 
+        $this->mapFieldsFromProductTemplate();
         $id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
@@ -876,6 +877,30 @@ class Product extends SugarBean
         if (empty($this->id) || $this->new_with_id == true) {
             // we have a new record set the sales_status to new;
             $this->sales_status = Opportunity::STATUS_NEW;
+        }
+    }
+
+    /**
+     * Handle the mapping of the fields from the product template to the product
+     */
+    protected function mapFieldsFromProductTemplate()
+    {
+        if (!empty($this->product_template_id)
+            && $this->fetched_row['product_template_id'] != $this->product_template_id
+        ) {
+            /* @var $pt ProductTemplate */
+            $pt = BeanFactory::getBean('ProductTemplates', $this->product_template_id);
+
+            $this->category_id = $pt->category_id;
+            $this->mft_part_num = $pt->mft_part_num;
+            $this->list_price = $pt->list_price;
+            $this->cost_price = $pt->cost_price;
+            $this->discount_price = $pt->discount_price;
+            $this->list_usdollar = $pt->list_usdollar;
+            $this->cost_usdollar = $pt->cost_usdollar;
+            $this->discount_usdollar = $pt->discount_usdollar;
+            $this->tax_class = $pt->tax_class;
+            $this->weight = $pt->weight;
         }
     }
 

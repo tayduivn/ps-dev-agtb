@@ -32,26 +32,24 @@
             var self = this,
                 ctxList = this.getRelevantContextList();
 
-            if(this.module === 'Home') {
-                return;
-            }
             _.each(ctxList, function(ctx) {
                 var ctxCollection = ctx.get('collection'),
                     origfilterDef = ctxCollection.filterDef || [],
-                    filterDef = self.getFilterDef(origfilterDef, query, ctx);
+                    filterDef = self.getFilterDef(origfilterDef, query, ctx),
+                    options = {
+                        // Double bang for boolean coercion.
+                        relate: !!ctx.get('link'),
+                        fields: ctx.get("fields") ? ctx.get("fields") : [],
+                        success: function() {
+                            // Close the preview pane to ensure that the preview
+                            // collection is in sync with the list collection.
+                            app.events.trigger('preview:close');
+                        }
+                    };
 
+                options = _.extend(options, ctx.get('collectionOptions') || {});
                 ctxCollection.filterDef = filterDef;
-
-                ctxCollection.fetch({
-                    // Double bang for boolean coercion.
-                    relate: !!ctx.get('link'),
-                    fields: ctx.get("fields") ? ctx.get("fields") : [],
-                    success: function() {
-                        // Close the preview pane to ensure that the preview
-                        // collection is in sync with the list collection.
-                        app.events.trigger('preview:close');
-                    }
-                });
+                ctxCollection.fetch(options);
                 ctxCollection.filterDef = origfilterDef;
             });
         }, this);
@@ -78,18 +76,31 @@
             });
             this.trigger('filter:clear:quicksearch');
         }, this);
+
+        this.layout.on('filterpanel:change', function(name) {
+            this.showingActivities = name === 'activitystream';
+            this.trigger("filter:render:module");
+            this.trigger("filter:change:module", this.showingActivities ? "Activities" : this.module);
+        }, this);
     },
 
     getRelevantContextList: function() {
-        var contextList = [];
-        if (this.layoutType === 'records') {
-            contextList.push(this.context);
+        var contextList = [], context;
+        if (this.showingActivities) {
+            context = this.layout.getActivityContext();
+            if (context) {
+                contextList.push(context);
+            }
         } else {
-            _.each(this.context.children, function(childCtx) {
-                if (childCtx.get('link') && !childCtx.get('hidden')) {
-                    contextList.push(childCtx);
-                }
-            });
+            if (this.layoutType === 'records' && this.module !== "Home") {
+                contextList.push(this.context);
+            } else {
+                _.each(this.context.children, function(childCtx) {
+                    if (childCtx.get('link') && !childCtx.get('hidden')) {
+                        contextList.push(childCtx);
+                    }
+                });
+            }
         }
         return contextList;
     },

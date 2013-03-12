@@ -546,8 +546,39 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue($product->handleOppSalesStatusCalled());
     }
-}
 
+    /**
+     * @group products
+     */
+    public function testProductTemplateSetsProductFields()
+    {
+
+        $pt_values = array(
+            'mft_part_num' => 'unittest',
+            'list_price' => '800',
+            'cost_price' => '400',
+            'discount_price' => '700',
+            'list_usdollar' => '800',
+            'cost_usdollar' => '400',
+            'discount_usdollar' => '700',
+            'tax_class' => 'Taxable',
+            'weight' => '100'
+        );
+
+        $pt = SugarTestProductTemplatesUtilities::createProductTemplate('', $pt_values);
+
+        $product = SugarTestProductUtilities::createProduct();
+        $product->product_template_id = $pt->id;
+
+        SugarTestReflection::callProtectedMethod($product, 'mapFieldsFromProductTemplate');
+
+        foreach ($pt_values as $field => $value) {
+            $this->assertEquals($value, $product->$field);
+        }
+
+        SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
+    }
+}
 class MockProduct extends Product
 {
     private $handleOppSalesStatusCalled = false;

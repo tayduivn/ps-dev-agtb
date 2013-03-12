@@ -1,7 +1,10 @@
 ({
+    plugins: ['Dashlet'],
     initialize: function(o) {
         app.view.View.prototype.initialize.call(this, o);
-        this.getData();
+        if(this.model.parentModel && this.model.get("requiredModel")) {
+            this.model.parentModel.on("change", this.loadData, this);
+        }
     },
 
     _render: function() {
@@ -15,26 +18,27 @@
         app.view.View.prototype._render.call(this);
     },
 
-    getData: function() {
-        var name = this.model.get("account_name") || this.model.get('name') || this.model.get('full_name');
+    loadData: function(options) {
+        var name = this.model.parentModel.get("account_name") || this.model.parentModel.get('name') || this.model.parentModel.get('full_name'),
+            limit = parseInt(this.model.get("limit") || 20, 10);
 
         if (name) {
             $.ajax({
                 url: "https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=" + name.toLowerCase(),
                 dataType: "jsonp",
                 success: function(data) {
-                    data.responseData.results = _.first(data.responseData.results, 3);
+                    data.responseData.results = _.first(data.responseData.results, limit);
                     _.extend(this, data);
                     this.render();
                 },
-                context: this
+                context: this,
+                complete: (options) ? options.complete : null
             });
         }
     },
 
-    bindDataChange: function() {
-        if (this.model) {
-            this.model.on("change", this.getData, this);
-        }
+    _dispose: function() {
+        this.model.parentModel.on("change", this.loadData, this);
+        app.view.View.prototype._dispose.call(this);
     }
 })

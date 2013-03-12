@@ -1,12 +1,13 @@
 ({
-    className: 'block thumbnail widget opportunity-metrics-widget',
+    plugins: ['Dashlet'],
+    className: 'opportunity-metrics-widget',
 
     metricsCollection: {},
 
-    loadData: function() {
+    loadData: function(options) {
         var self = this;
 
-        app.api.call('read', app.api.buildURL(this.module, 'opportunity_stats', {id: this.context.get('model').id}), null, {
+        app.api.call('read', app.api.buildURL(this.model.parentModel.module, 'opportunity_stats', {id: this.model.parentModel.get('id')}), null, {
             success: function(data) {
                 _.each(data, function(value, key) {
                     // parse currencies and attach the correct delimiters/symbols etc
@@ -24,7 +25,8 @@
 
                 self.metricsCollection = data;
                 self.render();
-            }
+            },
+            complete: (options) ? options.complete : null
         });
     }
 })

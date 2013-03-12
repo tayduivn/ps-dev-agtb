@@ -1,0 +1,4 @@
+<div class="widget empty" data-action="droppable">
+    <p>Drop here</p>
+    <div class="add-dashlet"><strong><i class="icon-download-alt"></i></strong></div>
+</div>

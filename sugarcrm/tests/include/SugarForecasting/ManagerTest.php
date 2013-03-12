@@ -32,11 +32,13 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setup('mod_strings', array('Forecasts'));
+        SugarTestHelper::setUp('current_user');
     }
 
     public static function tearDownAfterClass()

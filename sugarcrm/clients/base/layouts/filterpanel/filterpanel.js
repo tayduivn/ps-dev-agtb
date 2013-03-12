@@ -59,6 +59,10 @@
                 }
             }
             this.$el.append(component.el);
+
+            if (component.name == "activitystream") {
+                this.activityContext = component.context;
+            }
         }
     },
 
@@ -76,5 +80,10 @@
                 comp.hide();
             }
         }, this);
+        this.trigger('filterpanel:change', name);
+    },
+
+    getActivityContext: function() {
+        return this.activityContext;
     }
 })

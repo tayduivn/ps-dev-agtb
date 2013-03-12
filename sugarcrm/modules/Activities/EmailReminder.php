@@ -106,9 +106,9 @@ class EmailReminder
      * @return boolean
      */
     protected function sendReminders(SugarBean $bean, Administration $admin, $recipients) {
-        $currentLanguage = $_SESSION["authenticated_user_language"];
-
-        if (empty($_SESSION["authenticated_user_language"])) {
+        if (!empty($_SESSION["authenticated_user_language"])) {
+            $currentLanguage = $_SESSION["authenticated_user_language"];
+        } else {
             $currentLanguage = $GLOBALS["sugar_config"]["default_language"];
         }
 

@@ -1,9 +1,5 @@
 <?php
-$viewdefs['Home']['base']['layout']['list'] = array(
-    'type' => 'simple',
-    'components' => array(
-        array(
-            'view' => 'dashboard',
-        ),
-    ),
-);
+$layout = MetaDataManager::getLayout("GenericLayout");
+$layout->push(array("view" => "dashboard-headerpane"));
+$viewdefs['Home']['base']['layout']['list'] = $layout->getLayout();
+$viewdefs['Home']['base']['layout']['list']['type'] = 'dashboard';
