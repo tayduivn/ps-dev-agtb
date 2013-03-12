@@ -32,7 +32,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#bwc/index.php?module=EmailTemplates&action=EditView&return_module=EmailTemplates&return_action=DetailView',
         'label' =>'LNK_NEW_EMAIL_TEMPLATE',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>'EmailTemplates',
         'icon' => 'icon-plus',
     ),

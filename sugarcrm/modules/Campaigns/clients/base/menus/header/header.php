@@ -25,14 +25,14 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#bwc/index.php?module=Campaigns&action=WizardHome&return_module=Campaigns&return_action=index',
         'label' =>'LNL_NEW_CAMPAIGN_WIZARD',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-magic',
     ),
     array(
         'route'=>'#bwc/index.php?module=Campaigns&action=EditView&return_module=Campaigns&return_action=index',
         'label' =>'LNK_NEW_CAMPAIGN',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),
@@ -53,7 +53,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#bwc/index.php?module=EmailTemplates&action=EditView&return_module=EmailTemplates&return_action=DetailView',
         'label' =>'LNK_NEW_EMAIL_TEMPLATE',
-        'acl_action'=>'edit',
+        'acl_action'=>'create',
         'acl_module'=>'EmailTemplates',
         'icon' => 'icon-plus',
     ),
