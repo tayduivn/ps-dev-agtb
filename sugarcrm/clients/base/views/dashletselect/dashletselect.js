@@ -63,14 +63,14 @@
                 {
                     layout: {
                         type: 'dashlet',
-                        label: metadata.name,
+                        label: app.lang.get(metadata.name, metadata.config.module),
                         preview : true,
                         components: [{
                             view: metadata.type,
                             context: _.extend({
                                 forceNew: true,
                                 dashlet: _.extend({
-                                    name: metadata.name,
+                                    name: app.lang.get(metadata.name, metadata.config.module),
                                     type: metadata.type,
                                     viewName: 'preview'
                                 },metadata.preview)
@@ -104,7 +104,7 @@
                         context: {
                             model: new app.Bean(),
                             dashlet: _.extend({
-                                name: metadata.name,
+                                name: app.lang.get(metadata.name, metadata.module),
                                 type: metadata.type,
                                 viewName: 'config'
                             },{
@@ -177,6 +177,9 @@
                     var metadata = app.metadata.getView(component.module, component.name);
                     if(!parentDashlet && metadata.dashlets) {
                         _.each(metadata.dashlets, function(dashlet) {
+                            if(!dashlet.config) {
+                                return;
+                            }
                             var index = dashlet_collection.length;
                             dashlet_collection.push({
                                 type: component.name,
@@ -187,8 +190,8 @@
                                     type: component.name
                                 }, dashlet),
                                 table: [
-                                    dashlet.name,
-                                    dashlet.description,
+                                    app.lang.get(dashlet.name, dashlet.config.module),
+                                    app.lang.get(dashlet.description, dashlet.config.module),
                                     index,
                                     index
                                 ]
