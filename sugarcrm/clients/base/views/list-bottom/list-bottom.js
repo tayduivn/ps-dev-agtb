@@ -39,7 +39,7 @@
     _dataFetched : false,
 
     initialize: function(opts) {
-        opts.meta.showMoreLabel = opts.meta.showMoreLabel || "LBL_SHOW_MORE_MODULE";
+        opts.meta = _.extend({}, {showMoreLabel: "LBL_SHOW_MORE_MODULE"}, opts.meta || {});
 
         app.view.View.prototype.initialize.call(this, opts);
 
