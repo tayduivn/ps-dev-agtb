@@ -34,14 +34,6 @@ class LeadsApi extends ModuleApi {
                 'shortHelp' => 'This method creates a new Lead record with option to add Target & Email relationships',
                 'longHelp' => 'modules/Leads/api/help/LeadsApi.html',
             ),
-            'interactions' => array(
-                'reqType' => 'GET',
-                'path' => array('Leads','?', 'interactions'),
-                'pathVars' => array('module', 'record'),
-                'method' => 'interactions',
-                'shortHelp' => '',
-                'longHelp' => '',
-            ),
         );
     }
 
@@ -119,35 +111,6 @@ class LeadsApi extends ModuleApi {
 
         $email->load_relationship('leads');
         $email->leads->add($leadId);
-    }
-
-    public function interactions($api, $args)
-    {
-        $record = $this->getBean($api, $args);
-        $account = $this->getAccountBean($api, $args, $record);
-        $data = array('calls' => array(),'meetings' => array(),'emails' => array());
-
-        // Limit here so that we still get the full count for interactions.
-        $limit = 5;
-
-        $calls = $this->getAccountRelationship($api, $args, $account, 'calls', null);
-        $meetings = $this->getAccountRelationship($api, $args, $account, 'meetings', null);
-
-        $data['calls'] = array('count' => count($calls), 'data' => array());
-        $i = 0;
-        while($i < $limit && isset($calls[$i])) {
-            $data['calls']['data'][] = $calls[$i];
-            $i++;
-        }
-
-        $data['meetings'] = array('count' => count($meetings), 'data' => array());
-        $i = 0;
-        while($i < $limit && isset($meetings[$i])) {
-            $data['meetings']['data'][] = $meetings[$i];
-            $i++;
-        }
-
-        return $data;
     }
 
     protected function getAccountBean($api, $args, $record)
