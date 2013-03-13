@@ -1865,6 +1865,7 @@ $app_list_strings = array (
 );
 
 $app_strings = array (
+  'LBL_ACTIVITIES' => 'Activities',
   'LBL_TOUR_NEXT' => 'Next',
   'LBL_TOUR_SKIP' => 'Skip',
   'LBL_TOUR_BACK' => 'Back',

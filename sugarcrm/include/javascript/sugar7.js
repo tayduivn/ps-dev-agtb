@@ -21,7 +21,7 @@
                 callback: function(){
                     app.controller.loadView({
                         layout: "activities",
-                        module: "Home"
+                        module: "Activities"
                     });
                 }
             },            {
