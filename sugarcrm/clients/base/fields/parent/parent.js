@@ -4,9 +4,23 @@
     fieldTag: 'input.select2[name=parent_name]',
     typeFieldTag: 'select.select2[name=parent_type]',
 
+    _buildRoute: function() {
+        if (!this.hiddenValue) {
+            app.view.fields.RelateField.prototype._buildRoute.call(this);
+        }
+    },
+    //Overriden methods to get related module and id
+    _getRelateModule: function() {
+        return this.model.get("parent_type");
+    },
+    _getRelateId: function() {
+        return this.model.get("parent_id");
+    },
     _render: function() {
-        var result = app.view.fields.RelateField.prototype._render.call(this),
-            self = this;
+        var result, self = this;
+
+        result = app.view.fields.RelateField.prototype._render.call(this, true);
+
         if(this.tplName === 'edit') {
             this.checkAcl('access', this.model.get('parent_type'));
             this.$(this.typeFieldTag).select2({

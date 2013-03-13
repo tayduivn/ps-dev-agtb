@@ -70,7 +70,7 @@ describe("Base.Field.Relate", function() {
             });
             field.bwcLink = true;
             field._render();
-            expect(bwcBuildRouteStub.called).toBe(true);
+            expect(bwcBuildRouteStub).toHaveBeenCalled();
             getModuleStub.restore();
         });
         it("should fallback to checking isBwcEnabled if the bwcLink property is unset", function() {
@@ -79,7 +79,7 @@ describe("Base.Field.Relate", function() {
             });
             field.bwcLink = false;
             field._render();
-            expect(bwcBuildRouteStub.called).toBe(true);
+            expect(bwcBuildRouteStub).toHaveBeenCalled();
             getModuleStub.restore();
         });
         it("should NOT build bwc route if bwcLink explictly set to false (even if isBwcEnabled is true)", function() {
@@ -88,8 +88,8 @@ describe("Base.Field.Relate", function() {
             });
             field.def.bwcLink = false;
             field._render();
-            expect(bwcBuildRouteStub.called).toBe(false);
-            expect(buildRouteStub.called).toBe(true);
+            expect(bwcBuildRouteStub).not.toHaveBeenCalled();
+            expect(buildRouteStub).toHaveBeenCalled();
             getModuleStub.restore();
         });
     });
