@@ -316,6 +316,12 @@ class SugarBean
     static protected $field_key;
 
     /**
+     * Beans corresponding to various links on the bean
+     * @var array
+     */
+    public $related_beans = array();
+
+    /**
      * Create Bean
      * @deprecated
      * @param string $beanName
@@ -478,7 +484,7 @@ class SugarBean
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
-        if(!$this->disable_row_level_security && !empty($current_user->id) && !isset($this->disable_team_security) 
+        if(!$this->disable_row_level_security && !empty($current_user->id) && !isset($this->disable_team_security)
 			&& !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
         	// We can disable team security for this module
         	$this->disable_row_level_security =true;
@@ -578,8 +584,8 @@ class SugarBean
     }
     /**
      * Add visibility to a SugarQuery Object
-     * @param SugarQuery $query 
-     * @param array $options 
+     * @param SugarQuery $query
+     * @param array $options
      * @return SugarQuery
      */
     public function addVisibilityQuery($query, $options = null)
@@ -702,7 +708,7 @@ class SugarBean
             return false;
         }
     }
-    
+
     /**
      * Returns a list of fields with their definitions that have the activity_enabled property set to true.
      * Before calling this function, check whether activity has been enabled for the table/module or not.
@@ -730,17 +736,17 @@ class SugarBean
                         $field_type=$properties['data_type'];
                     else
                         $field_type=$properties['dbtype'];
-                }                
+                }
                 if ($field != 'modified_user_id' && !empty($field_type) && $field_type != 'datetime') // other date types? exceptions?
                 {
                     $this->activity_enabled_fields[$field]=$properties;
                 }
             }
-    
+
         }
         return $this->activity_enabled_fields;
     }
-    
+
     /**
      * Returns the name of the custom table.
      * Custom table's name is based on implementing class' table name.
@@ -2797,9 +2803,7 @@ class SugarBean
         }
 
         //make copy of the fetched row for construction of audit record and for business logic/workflow
-        $row = $this->convertRow($row);
-        $this->fetched_row=$row;
-        $this->populateFromRow($row);
+        $this->fetched_row=$this->populateFromRow($row, true);
 
         global $module, $action;
         //Just to get optimistic locking working for this release
@@ -2865,24 +2869,26 @@ class SugarBean
      * Sets value from fetched row into the bean.
      *
      * @param array $row Fetched row
-     * @todo loop through vardefs instead
+     * @param bool $convert Apply convertField to fields
      *
      * Internal function, do not override.
      */
-    function populateFromRow($row)
+    function populateFromRow($row, $convert = false)
     {
-        $nullvalue='';
         foreach($this->field_defs as $field=>$field_value)
         {
             if(isset($row[$field]))
             {
+                if($convert) {
+                    $row[$field] = $this->convertField($row[$field], $field_value);
+                }
                 $this->$field = $row[$field];
                 $owner = $field . '_owner';
                 if(!empty($row[$owner])){
                     $this->$owner = $row[$owner];
                 }
             } else {
-                $this->$field = $nullvalue;
+                $this->$field = '';
             }
         }
         // TODO: add a vardef for my_favorite
@@ -2890,7 +2896,7 @@ class SugarBean
         if(!empty($row['my_favorite'])) {
             $this->my_favorite = true;
         }
-
+        return $row;
     }
 
 
@@ -3770,11 +3776,11 @@ class SugarBean
 
                     $join = $this->$data['link']->getJoin($params, true);
                     $used_join_key[] = $join['rel_key'];
-                    $rel_module = $this->$data['link']->getRelatedModuleName();
                     $table_joined = !empty($joined_tables[$params['join_table_alias']]) || (!empty($joined_tables[$params['join_table_link_alias']]) && isset($data['link_type']) && $data['link_type'] == 'relationship_info');
 
 					//if rname is set to 'name', and bean files exist, then check if field should be a concatenated name
-					$rel_mod = BeanFactory::getBean($rel_module);
+					$rel_mod = $this->getRelatedBean($data['link']);
+					$rel_module = $rel_mod->module_name;
 					if($data['rname'] && !empty($rel_mod)) {
 						//if bean has first and last name fields, then name should be concatenated
 						if(isset($rel_mod->field_name_map['first_name']) && isset($rel_mod->field_name_map['last_name'])){
@@ -3788,7 +3794,6 @@ class SugarBean
     					if(empty($ret_array['secondary_select']))
     					{
     						$ret_array['secondary_select'] = " SELECT $this->table_name.id ref_id  ";
-    						$rel_mod = BeanFactory::getBean($rel_module);
                             if(!empty($rel_mod) && $join_primary)
                             {
                                 if(isset($rel_mod->field_defs['assigned_user_id']))
@@ -4954,7 +4959,7 @@ class SugarBean
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
         $searchEngine = SugarSearchEngineFactory::getInstance();
         $searchEngine->delete($this);
-        //END SUGARCRM flav=pro ONLY        
+        //END SUGARCRM flav=pro ONLY
     }
 
     /**
@@ -6141,9 +6146,9 @@ class SugarBean
      *
      * Internal function do not override.
      */
-    function loadFromRow($arr)
+    function loadFromRow($arr, $convert = false)
     {
-        $this->populateFromRow($arr);
+        $this->populateFromRow($arr, $convert);
         $this->processed_dates_times = array();
         $this->check_date_relationships_load();
 
@@ -6613,4 +6618,24 @@ class SugarBean
         }
         return $result;
     }
+
+    /**
+     * Get bean for certain link
+     * @api
+     * @param string $link
+     */
+    public function getRelatedBean($link)
+    {
+       if(!isset($this->related_beans[$link])) {
+           $this->load_relationship($link);
+           if(empty($this->$link)) {
+               $this->related_beans[$link] = false;
+           } else {
+               $this->related_beans[$link] = BeanFactory::getBean($this->$link->getRelatedModuleName());
+           }
+       }
+       return $this->related_beans[$link];
+    }
+
+
 }
