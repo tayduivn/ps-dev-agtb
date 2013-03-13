@@ -586,6 +586,84 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group products
      */
+    public function testBestCaseAutofillEmpty()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->best_case = '';
+        $product->save();
+        
+        $this->assertEquals($product->likely_case, $product->best_case);
+    }
+    
+    /**
+     * @group products
+     */
+    public function testBestCaseAutofillNull()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->best_case = null;
+        $product->save();
+        
+        $this->assertEquals($product->likely_case, $product->best_case);
+    }
+    
+    /**
+     * @group products
+     */
+    public function testBestCaseAutoRegression()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->best_case = 42;
+        $product->save();
+        
+        $this->assertEquals(42, $product->best_case);
+    }
+    
+    /**
+     * @group products
+     */
+    public function testWorstCaseAutofillEmpty()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->worst_case = '';
+        $product->save();
+        
+        $this->assertEquals($product->likely_case, $product->worst_case);
+    }
+    
+    /**
+     * @group products
+     */
+    public function testWorstCaseAutofillNull()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->worst_case = null;
+        $product->save();
+        
+        $this->assertEquals($product->likely_case, $product->worst_case);
+    }
+    
+    /**
+     * @group products
+     */
+    public function testWorstCaseAutofillRegression()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->worst_case = 42;
+        $product->save();
+        
+        $this->assertEquals(42, $product->worst_case);
+    }
+    
+    /**
+     * @group products
+     */
     public function testEmptyQuantityDefaulted()
     {
         $product = SugarTestProductUtilities::createProduct();
