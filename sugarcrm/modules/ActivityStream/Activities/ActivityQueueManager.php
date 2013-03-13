@@ -39,7 +39,7 @@ class ActivityQueueManager
      */
     public function eventDispatcher(SugarBean $bean, $event, $args)
     {
-        if ($bean instanceof Activity && $bean->activity_type == 'post') {
+        if ($bean instanceof Activity && ($bean->activity_type == 'post' || $bean->activity_type == 'attach')) {
             // Posts.
             $this->processPostSubscription($bean);
         } else if ($bean->is_AuditEnabled() && Activity::isEnabled()) {
@@ -263,6 +263,7 @@ class ActivityQueueManager
         $sql = 'INSERT INTO activities_users VALUES (';
         $values = array(
             '"' . create_guid() . '"',
+            'NULL',
             '"' . $act->id . '"',
             '"' . $act->parent_type . '"',
             '"' . $act->parent_id . '"',
