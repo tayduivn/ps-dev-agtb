@@ -79,6 +79,7 @@ $mod_strings = array (
   'LBL_HOME_PHONE' => 'Home:',
   'LBL_OTHER_PHONE' => 'Other Phone:',
   'LBL_FAX_PHONE' => 'Fax:',
+  'LBL_STREET' => 'Street',
   'LBL_PRIMARY_ADDRESS_STREET' => 'Primary Address Street:',
   'LBL_PRIMARY_ADDRESS_CITY' => 'Primary Address City:',
   'LBL_PRIMARY_ADDRESS_COUNTRY' => 'Primary Address Country:',
