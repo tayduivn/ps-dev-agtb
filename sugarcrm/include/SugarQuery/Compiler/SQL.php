@@ -374,7 +374,7 @@ class SugarQuery_Compiler_SQL
         	// this is a compound field
         	$sub_fields = array();
         	foreach($data['fields'] as $field) {
-        		$sub_fields[] = array("{$table_name}.{$field}", !empty($alias)?"{$alias}__{$field}":null);
+        		$sub_fields[] = array("{$table_name}.{$field}", !empty($alias)?"{$alias}__{$field}":$field);
         	}
         	if(!empty($data['id_name'])) {
         	    $sub_fields[] = array("{$table_name}.id", !empty($alias)?"{$alias}__{$data['id_name']}":$data['id_name']);
