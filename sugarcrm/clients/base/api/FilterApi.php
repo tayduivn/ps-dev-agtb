@@ -148,6 +148,8 @@ class FilterApi extends SugarApi
         }
         $this->addFilters($args['filter'], $q->where(), $q);
 
+        $api->action = 'list';
+
         return $this->runQuery($api, $args, $q, $options);
     }
 
@@ -202,6 +204,9 @@ class FilterApi extends SugarApi
         }
         $args['filter'][][$tableName . '.' . $column] = array('$equals' => $record->id);
         $this->addFilters($args['filter'], $q->where(), $q);
+
+        $api->action = 'list';
+
         return $this->runQuery($api, $args, $q, $options);
     }
 
