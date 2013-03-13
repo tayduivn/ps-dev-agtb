@@ -130,6 +130,7 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                 'name',
                 array(
                     'type' => 'favorite',
+                    'readonly' => true,
                 ),
             )
         ),
