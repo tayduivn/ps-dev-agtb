@@ -237,6 +237,19 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
             array('currency', '-500.01', '-500.01'),
         );
     }
+
+    /**
+     * @group sugarbean
+     */
+    public function testGetNotificationRecipientsReturnsEmptyArray()
+    {
+        $mock = new SugarBean();
+        unset($mock->assigned_user_id);
+
+        $ret = $mock->get_notification_recipients();
+
+        $this->assertEmpty($ret);
+    }
 }
 
 // Using Mssql here because mysql needs real connection for quoting

@@ -41,15 +41,45 @@ $viewdefs['ProductTemplates']['base']['view']['list'] = array(
             'name' => 'panel_header',
             'fields' => array(
                 array(
-                    'name' => 'name', 
+                    'name' => 'name',
                     'link' => true),
                 'type_name',
                 'category_name',
                 'status',
                 'qty_in_stock',
-                'cost_usdollar',
-                'list_usdollar',
-                'discount_usdollar',
+                array(
+                    'name' => 'cost_price',
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'cost_usdollar',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                ),
+                array(
+                    'name' => 'list_price',
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'list_usdollar',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                ),
+                array(
+                    'name' => 'discount_price',
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'discount_usdollar',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                )
             ),
         ),
     ),
