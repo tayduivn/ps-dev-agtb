@@ -793,12 +793,14 @@ class Product extends SugarBean
     /**
      * helper function to update the opportunity sales status based on parameters
      * @param $opportunity
+     * @param $opportunitySalesStatusToCheck
      * @param $productSalesStatusToCheck
+     * @param $opportunitySalesStatusToUse
      * @param $checkAllPLI
      */
-    protected function changeOppSalesStatus(Opportunity $opportunity, $productSalesStatusToCheck, $checkAllPLI)
+    protected function changeOppSalesStatus(Opportunity $opportunity, $opportunitySalesStatusToCheck, $productSalesStatusToCheck, $opportunitySalesStatusToUse, $checkAllPLI)
     {
-        if ($opportunity->sales_status != $productSalesStatusToCheck) {
+        if ($opportunity->sales_status != $opportunitySalesStatusToCheck && $opportunity->sales_status != $opportunitySalesStatusToUse) {
             $salesStatusLineItems = $opportunity->products->query(array(
                                                'where'=>array(
                                                    // query adds the prefix so we don't need contact.id
@@ -813,7 +815,7 @@ class Product extends SugarBean
             }
             //if productLineItems found with passed Sales Status and the Opp sales status is not that current sales status
             if (count($salesStatusLineItems['rows']) >= $requiredRowCount) {
-                $opportunity->sales_status = $productSalesStatusToCheck;
+                $opportunity->sales_status = $opportunitySalesStatusToUse;
                 $opportunity->save();
                 return true;
             }
@@ -833,13 +835,20 @@ class Product extends SugarBean
                 if (count($opp->products->rows) == 0) {
                     return;
                 }
-                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_IN_PROGRESS,false)) {
+                //opp currently isn't in status new, but a PLI gets added as status new, so this is assuming it's not just a new opp and new PLI
+                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false)) {
                     return;
                 }
-                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_WON,true)) {
+                //opp currently isn't in progress, but a PLI gets added as in progress
+                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_IN_PROGRESS,false)) {
                     return;
                 }
-                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_LOST,true)) {
+                //opp currently isn't Won, but all PLIs are closed won
+                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_WON,Opportunity::STAGE_CLOSED_WON,Opportunity::STAGE_CLOSED_WON,true)) {
+                    return;
+                }
+                //opp currently isn't Lost, but all PLIs are closed lost
+                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_LOST,Opportunity::STAGE_CLOSED_LOST,Opportunity::STAGE_CLOSED_LOST,true)) {
                     return;
                 }
             }
