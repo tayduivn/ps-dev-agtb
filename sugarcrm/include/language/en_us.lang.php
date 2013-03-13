@@ -3133,6 +3133,17 @@ $app_strings = array (
     'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
     'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account',
 
+    /* Twitter Dashlet */
+    'LBL_TWITTER_REPLY' => 'Reply',
+    'LBL_TWITTER_RETWEET' => 'Retweet',
+    'LBL_TWITTER_FAVORITE' => 'Favorite',
+    'LBL_TWITTER_FOLLOW' => 'Follow',
+    'LBL_TWITTER_DESCRIPTION' => 'See matching twitter user\'s bio and tweets, retweet, and reply to tweets',
+    'LBL_TWITTER_ID' =>  'Twitter ID',
+    'LBL_TWITTER_DISPLAY_ROWS' => 'Display Rows',
+    'LBL_TWITTER_MY_ACCOUNT' => 'My Account',
+    'LBL_TWITTER_NAME' => 'Twitter',
+        
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
     'LBL_DELETE_PAGE' => 'Delete Page',
