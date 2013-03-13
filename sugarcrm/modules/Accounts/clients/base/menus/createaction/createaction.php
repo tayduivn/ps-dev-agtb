@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $module_name = 'Accounts';
 $viewdefs[$module_name]['base']['menu']['createaction'] = array(
-    'route' => '#'.$module_name.'/create',
+    'layout' => 'create',
     'label' => 'LNK_NEW_ACCOUNT',
     'visible' => true
 );
