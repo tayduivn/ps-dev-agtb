@@ -29,4 +29,9 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),
+    array(
+        'route' => '#activities',
+        'label' => 'LBL_ACTIVITIES',
+        'icon' => 'icon-th-list',
+    ),
 );
