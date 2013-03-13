@@ -96,7 +96,7 @@
                                         this.template;
                     }
 
-                    if(viewName && this.initDashlet && _.isFunction(this.initDashlet)) {
+                    if(this.initDashlet && _.isFunction(this.initDashlet)) {
                         this.initDashlet(viewName);
                     }
                 });
