@@ -1,0 +1,67 @@
+{{!
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+}}
+
+<div class="dashlet-options">
+    <div class="row-fluid">
+        <div class="span12 pull-right">
+            {{#each this.meta.buttons}}
+                {{field ../this ../this.model}}
+            {{/each}}
+        </div>
+    </div>
+</div>
+<ul class="unstyled listed">
+{{#if _dataFetched}}
+    {{#if this.collection.length}}
+        {{#each this.collection.models}}
+            <li>
+                <span class="filetype-thumbnail pull-left"></span>
+                <div class="actions pull-right">
+                    <a class="btn btn-invisible btn-dark preview-attachment" data-model-id="{{getFieldValue this "id"}}"><i class="icon-eye-open"></i></a>
+                </div>
+                <p style="padding-right:40px;"><a href="#{{modelRoute this}}">{{getFieldValue this "name"}}</a><br>
+                <date class="date">{{timeago this.attributes.date_entered}}</date>
+            </li>
+        {{/each}}
+        {{#notEq this.collection.next_offset "-1"}}
+            <li>
+                <a name="show_more_button" class="more">{{str "LBL_SHOW_MORE_MODULE" this.module}}<i class="icon-caret-down"></i></a>
+            </li>
+        {{/notEq}}
+    {{else}}
+        <li>{{str "LBL_NO_ATTACHMENTS_FOUND"}}</li>
+    {{/if}}
+    <div class="modal hide">
+        <div class="modal-header"><a class="close" data-dismiss="modal"><i class="icon-remove"></i></a><h3></h3></div>
+        <div class="modal-body"><img class="attachment-image" /><p class="attachment-description"></p></div>
+    </div>
+{{else}}
+    <li>{{str "LBL_LOADING"}}</li>
+{{/if}}
+</ul>

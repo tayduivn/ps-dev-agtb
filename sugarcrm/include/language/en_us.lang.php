@@ -3860,6 +3860,15 @@ $app_strings = array (
     //application error messages
     'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',
     'ERR_RESOLVE_ERRORS' => 'Please resolve any errors before proceeding.',
+
+    //attachments dashlet
+    'LBL_MODULE_ATTACHMENTS_TITLE' => '{{module}} attachments',
+    'LBL_NO_ATTACHMENTS_FOUND' => 'No attachments found',
+    'LBL_CREATE_ATTACHMENT' => 'Create attachment',
+    'LBL_DASHLET_REFRESH' => 'Refresh',
+    'LBL_DASHLET_MOVE' => 'Move',
+    'LBL_DASHLET_CLOSE' => 'Close',
+
 );
 
 $app_list_strings['interactions_options'] = array (
