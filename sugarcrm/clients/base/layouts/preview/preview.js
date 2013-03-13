@@ -20,6 +20,7 @@
         if(_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)){
             var layout = this.$el.parents(".sidebar-content");
             layout.find(".side-pane").removeClass("active");
+            layout.find(".dashboard-pane").hide();
             layout.find(".preview-pane").addClass("active");
         }
     },
@@ -32,6 +33,7 @@
         if(_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)){
             var layout = this.$el.parents(".sidebar-content");
             layout.find(".side-pane").addClass("active");
+            layout.find(".dashboard-pane").show();
             layout.find(".preview-pane").removeClass("active");
         }
     }
