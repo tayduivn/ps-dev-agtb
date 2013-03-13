@@ -367,6 +367,9 @@ class SugarQuery_Compiler_SQL
             if($data['id_name'] != $field && !in_array($data['id_name'], $this->sugar_query->select->select)) {
                 $fields[] = $this->resolveField($data['id_name'], $data['id_name']);
             }
+            if(isset($data['custom_type']) && $data['custom_type'] == 'teamset') {
+                $fields[] = $this->resolveField('team_set_id', 'team_set_id');
+            }
             return $fields;
         }
 
@@ -700,6 +703,6 @@ class SugarQuery_Compiler_SQL
             $return[] = $sql;
         }
 
-        return implode(' ', $return);
+        return implode("\n ", $return);
     }
 }

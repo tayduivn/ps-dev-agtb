@@ -317,7 +317,7 @@ class FilterApi extends SugarApi
         $data = array();
         $data['next_offset'] = -1;
 
-        $beans = array();
+        $beans = $bean_ids = array();
         foreach ($idRows as $i => $row) {
             if ($i == $options['limit']) {
                 $data['next_offset'] = (int)($options['limit']+$options['offset']);
@@ -334,6 +334,7 @@ class FilterApi extends SugarApi
             }
             if ($bean && !empty($bean->id)) {
                 $beans[] = $bean;
+                $bean_ids[] = $bean->id;
             }
         }
 
