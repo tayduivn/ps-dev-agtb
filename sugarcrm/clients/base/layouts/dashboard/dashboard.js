@@ -75,6 +75,15 @@
                     } else {
                         dashlet_context = {};
                     }
+
+                    if(viewName !== "config" && dashlet_context.link) {
+                        this.context.set("parentModel", this.model.parentModel);
+                        this.context.set("parentModule", this.model.parentModel.module);
+                        this.context.set("link", dashlet_context.link);
+                        this.context.set(this.context._prepareRelated(dashlet_context.link, this.model.parentModel.get("id")));
+                        this.collection = this.context.get("collection");
+                    }
+
                     this.model.set(_.extend({
                         name: dashlet_context.name,
                         type: dashlet_context.type
