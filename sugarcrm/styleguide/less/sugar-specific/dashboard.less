@@ -3,6 +3,18 @@
   position: absolute;
   width: 100%;
   height: auto;
+  .headerpane {
+    .record-cell {
+      h1 {
+        input[placeholder] {
+          line-height: 22px;
+        }
+        .ellipsis_inline {
+          padding-top: 3px;
+        }
+      }
+    }
+  }
   ul {
     list-style: none;
     margin: 0;
@@ -44,7 +56,7 @@
             &.thumbnail {
               margin-bottom: 0 !important;
               &:not(.collapsed) {
-                min-height: 126px;
+                min-height: 140px;
               }
               p {
                 padding: 0;
@@ -155,18 +167,57 @@
 /* Dashboard inside right hand side panel */
 .sidebar-content {
   .dashboard {
-    width: 90%;
-    overflow: visible;
     .preview-headerbar {
-      border-bottom: 0;
+      border-bottom-color: transparent;
+      .btn-toolbar.pull-right {
+        margin-right: 5%;
+      }
+      .record-cell:first-child h1 {
+        margin-left: 5%;
+      }
       h1 {
         margin-left: 0;
+        div.dropdown {
+          &> a {
+            font-size: 20px;
+            color: inherit;
+            padding-let: 0;
+            margin-left: 0;
+            &:hover {
+              color: inherit !important;
+              text-decoration: none;
+            }
+          }
+          ul.dropdown-menu {
+            min-width: 160px;
+            &> li {
+              font-size: 12px;
+              .alert-process {
+                padding: 8px 10px;
+              }
+            }
+          }
+        }
       }
       .dropdown-menu {
         min-width: auto;
       }
       input[type=text] {
         width: 150px;
+      }
+    }
+    &.edit {
+      .preview-headerbar {
+        border-bottom-color: #CCC;
+      }
+      #dashlets {
+        margin-top: 5%;
+      }
+    }
+    .cols {
+      #dashlets {
+        width: 90%;
+        margin-left: 5%;
       }
     }
     .well {

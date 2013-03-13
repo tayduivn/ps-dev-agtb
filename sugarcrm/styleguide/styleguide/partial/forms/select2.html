@@ -489,8 +489,8 @@
     <div class="span12 padded">
 
       <div class="control-group error">
-        <label style="display:block">Single Select Error</h3>
-        <div class="input-append select">
+        <label style="display:block">Single Select Error</label>
+        <div class="input-append select error">
           <select id="priority3" class="select2" data-placeholder="Choose a priority...">
             <option></option>
             <option value="Urgent">Urgent</option>
@@ -498,8 +498,7 @@
             <option value="Medium">Medium</option>
             <option value="Low">Low</option>
           </select>
-          <span class="add-on"><i class="icon-exclamation-sign"></i></span>
-          <p class="help-block">Error. This field is required.</p></span>
+          <span class="error-tooltip  add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span>
         </div>
       </div>
       <script>
@@ -561,15 +560,14 @@
       </script>
 
       <div class="control-group error padded">
-        <label style="display:block">Label</h3>
-        <div class="input-append select">
+        <label style="display:block">Label</label>
+        <div class="input-append select error">
           <select id="multi2" size="3" multiple="multiple" class="select2">
               <option value="2">Option 2</option>
               <option value="3">Option 3</option>
               <option value="4">Option 4</option>
           </select>
-          <span class="add-on"><i class="icon-exclamation-sign"></i></span>
-          <p class="help-block">Error. This field is required.</p></span>
+            <span class="error-tooltip  add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span>
         </div>
       </div>
       <script>
@@ -724,5 +722,9 @@
   });
 
 
+  $('.error .select .error-tooltip').tooltip({
+            trigger: 'click',
+            container: 'body'
+  });
 
 </script>

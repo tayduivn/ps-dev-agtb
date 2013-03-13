@@ -106,11 +106,6 @@ input[type="hidden"] {
 :-ms-input-placeholder { color:@grayLight; font-weight: normal; } /* ie */
 input:-moz-placeholder { color:@grayLight; font-weight: normal; }
 
-.error .input-append > .add-on {
-  position:absolute;
-  right:40px;
-}
-
 .control-group.error > .input-append > input {
  .border-radius(@inputBorderRadius);
 }
@@ -154,21 +149,31 @@ input[type=radio] {
   display: none;
 }
 
+.acomment div.reply,
 .acomment input.reply,  {
   margin: 0;
   padding: 6px 8px;
   border: 1px solid darken(@grayLighter, 5%);
+  background-color: @white;
+  .placeholder {
+    color: @grayLight;
+  }
 }
 
 .input-append {
   position:relative;
   display:inline-block;
+  vertical-align:top;
+  width:100%;
+  margin-bottom: 0px;
   .add-on {
     border:none;
     background:transparent !important;
     margin-left:-26px;
     position:relative;
     font-size: @baseFontSize;
+    right: 2px;
+    top: 5px;
   }
   span {
     font-size: @baseFontSize;
@@ -179,8 +184,7 @@ input[type=radio] {
   &.radio {
     padding-left:0;
     .add-on {
-      top: 1px;
-      right: 0;
+      top: 5px;
       background:transparent !important;
       border: none;
     }
@@ -206,13 +210,12 @@ input[type=radio] {
       right: 0;
     }
   }
-  &.textarea {
-    display:inline;
-  }
   &.select .add-on {
   }
   input{
     .border-radius(@inputBorderRadius);
+    width: 100%;
+    padding-right: 0;
   }
   .ui-timepicker-list {
     font-size: 12px;
@@ -280,50 +283,6 @@ input[type=radio] {
   &.email .controls.pull-left {
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  /* To maintain same size of input boxes, substructing 27px for .add-on exclamation */
-  &.error {
-    /* from twitter-bootstrap/forms.less
-      input.input-mini       { width: 33px; }
-      input.input-small      { width: 63px; }
-      input.input-medium     { width: 127px; }
-      input.input-large      { width: 183px; }
-      input.input-xlarge     { width: 243px; }
-      input.input-xxlarge    { width: 503px; }
-    */
-    &>div:first-child,
-    &>div:first-child label,
-    &> label {
-      font-weight:500;
-      color:@errorText;
-    }
-    .input-append label {
-      color:@errorText;
-    }
-    .select2-choice,
-    .select2-choices,
-    .upload-field-custom.btn.avatar {
-      border-color:@errorText;
-    }
-    .select2-choice > div {
-      margin-right: 18px;
-    }
-    .help-block {
-      font-weight:normal;
-    }
-    .preview > span > .icon-plus {
-      border-color:@errorText;
-      color:@errorText;
-    }
-    label.file-upload {
-      background:@errorText;
-    }
-    .urleditable-wrap {
-      .editable-trigger > i,
-      .urleditable-field a {
-        color:@errorText !important;
-      }
-    }
   }
 }
 
@@ -563,9 +522,10 @@ input[type=radio] {
 }
 //Place the button in top right corner and make it big enough so that it takes the whole widget size
 .image_input input {
+  position: absolute;
   top: 0;
   right: 0;
-  float: right;
+  float:right;
   height: 100%;
   font-size: 600px;
   border: none;
@@ -644,13 +604,21 @@ input[type=radio] {
   display:block;
 }
 
-.control-group.error .image_field, .error.image_field {
+.error .image_field {
   border: 3px dashed @errorText;
+  .image_preview > i {
+    color: @errorText !important;
+  }
+  & > .add-on.error-tooltip {
+    position:absolute;
+    bottom:0;
+    top:auto;
+    left:auto;
+    right:-20px;
+    padding: 0;
+    margin: 0;
+  }
 }
-.error .image_preview {
-  color: @errorText;
-}
-
 .datepicker {
   span.year.active:hover,
   span.year.active,
@@ -686,7 +654,7 @@ input[type="search"],
 input[type="tel"],
 input[type="color"],
 .uneditable-input {
-  &.local-error {
+  &.error {
     border-color: @errorText;
     color: @errorText;
   }
@@ -722,60 +690,10 @@ input[type="color"],
   }
 }
 
-.add-on.local {
-  line-height: 10px;
-  display: inline-block;
-  height: 10px;
-  width: 10px;
-  margin-left: -18px;
-  position: relative;
-  color: @errorText;
-/*
-  border: 1px solid @errorText;
-*/
-  box-shadow: 0 0 0 5px @white;
-  -webkit-box-shadow: 0 0 0 5px @white;
-  -moz-box-shadow: 0 0 0 5px @white;
-  .border-radius(10px);
-  background: @white;
-  top: 1px;
-/*
-  [class^="icon-"],
-  [class*=" icon-"] {
-    font-size: 12px;
-    line-height: 11px;
-  }
-*/
-
-}
-
-.error-tooltip.add-on,
-.error .add-on {
-  [class^="icon-"],
-  [class*=" icon-"] {
-    color: @errorText;
-  }
-}
-
-.headerpane, .preview-headerbar {
-  h1 .add-on.local {
-    .box-shadow(none);
-    line-height: 36px;
-    height: 26px;
-    right: 8px;
-    background: none;
-  }
-}
-
 //54580: use media queries to also position symbol properly
 //43d1a253e5dae2f5d02b9273f527f9e43ff2dd6c
 
 @media (max-width: 480px) {
-  .error .input-append > .add-on {
-    position: relative !important;
-    margin-right: -28px;
-    right: 27px !important;
-  }
   .row > .empty,
   .row-fluid > .empty {
     display:none !important;
@@ -783,11 +701,6 @@ input[type="color"],
 }
 
 @media (max-width: 768px) {
-  .error .input-append > .add-on {
-    position: relative !important;
-    margin-right: -28px;
-    right: 27px !important;
-  }
   .card2 {margin: 10px 0;}
   .card2 .row-fluid .span2, .card2 .row-fluid .span10 {
     text-align: left;

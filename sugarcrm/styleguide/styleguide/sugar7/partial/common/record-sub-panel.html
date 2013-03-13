@@ -56,7 +56,7 @@
     $('.comment').toggle(
       function () {
         $(this).parent().parent().parent().find('.acomment').remove();
-        $(this).parent().parent().find('ul').append('<li class="acomment"><div class="control-group form-horizontal"><input placeholder="Add your comment..." class="reply span11"> <input type="submit" class="btn btn-primary" value="Reply"></div></li>');
+        $(this).parent().parent().find('ul').append('<li class="acomment"><div class="control-group form-horizontal"><div class="controls controls-two btn-fit"><div data-placeholder="Add your comment&hellip;" class="reply" contenteditable="true"><span class="placeholder">Add your comment&hellip;</span></div><input type="submit" class="btn btn-primary" value="Reply"></div></div></li>');
         $(this).addClass('active');
         return false;
       },
