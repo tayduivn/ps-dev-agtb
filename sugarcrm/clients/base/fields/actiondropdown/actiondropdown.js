@@ -107,6 +107,5 @@
         } else {
             this.$('.dropdown-toggle').removeClass('disabled');
         }
-        this.setPlaceholder();
     }
 })
