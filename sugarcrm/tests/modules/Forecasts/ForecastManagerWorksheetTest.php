@@ -134,7 +134,6 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @depends testSaveManagerDraft
-     * @dataProvider caseFieldsDataProvider
      * @group forecasts
      */
     public function testSaveManagerDraftDoesNotCreateCommittedVersion()
@@ -238,6 +237,30 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      * @depends testCommitManagerHasCommittedUserRow
      * @group forecasts
      */
+    public function testCommitReCalculatesManagerDirectQuota()
+    {
+        // get the direct quota for the manager
+        /* @var $quota Quota */
+        $quota = BeanFactory::getBean('Quotas');
+        $quota->retrieve_by_string_fields(
+            array(
+                'timeperiod_id' => self::$timeperiod->id,
+                'user_id' => $GLOBALS['current_user']->id,
+                'committed' => 1,
+                'quota_type' => 'Direct',
+                'deleted' => 0
+            )
+        );
+
+        $this->assertNotEmpty($quota->amount);
+        $this->assertEquals('400.00', $quota->amount, null, 2);
+    }
+
+
+    /**
+     * @depends testCommitManagerHasCommittedUserRow
+     * @group forecasts
+     */
     public function testUserCommitsUpdatesMangerDraftAndUpdatesCommittedVersion()
     {
         /* @var $worksheet ForecastManagerWorksheet */
@@ -281,20 +304,17 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // from the data created when the class was started, the manager had a quota of 1000
         // and the user had a quota of 600, so, it should return 400 as that is the difference
-        $worksheet = new MockForecastManagerWorksheet();
-        $worksheet->timeperiod_id = self::$timeperiod->id;
+        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
 
-        $new_mgr_quota = $worksheet->recalcUserQuota($GLOBALS['current_user']->id);
+        $new_mgr_quota = SugarTestReflection::callProtectedMethod(
+            $worksheet,
+            'recalcUserQuota',
+            array(
+                $GLOBALS['current_user']->id,
+                self::$timeperiod->id
+            )
+        );
 
         $this->assertEquals(400, $new_mgr_quota, '', 2);
-    }
-}
-
-
-class MockForecastManagerWorksheet extends ForecastManagerWorksheet
-{
-    public function recalcUserQuota($user_id)
-    {
-        return parent::recalcUserQuota($user_id);
     }
 }
