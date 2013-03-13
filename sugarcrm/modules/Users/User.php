@@ -544,7 +544,7 @@ class User extends Person {
 		{
             $this->default_team = $this->team_id;
         }
-        
+
 		//END SUGARCRM flav=pro ONLY
 
 		parent::save($check_notify);
@@ -995,7 +995,7 @@ EOQ;
 		}
 
         //BEGIN SUGARCRM flav=pro ONLY
-        
+
         // Must set team_id for team widget purposes (default_team is primary team id)
         if (empty($this->team_id))
         {
@@ -1013,7 +1013,7 @@ EOQ;
             $this->default_team_name = '';
             $this->team_set_id = '';
         }
-        
+
         //END SUGARCRM flav=pro ONLY
 
 		$this->_create_proper_name_field();
@@ -2195,13 +2195,13 @@ EOQ;
         $count = $db->getOne($query);
         return $count > 0;
     }
-    
+
     /**
      * @static
      * This function returns an array of reportees and their corresponding reportee count, if additional_fields are
      * passed in, the return will contain the whole row vs just the key => total value pair that is returned when no
      * additional_fields are defined
-     * 
+     *
      * @param String $user_id The id of the user to check
      * @param boolean $include_deleted Boolean Value indicating whether or not to include deleted records (defaults to false)
      * @param array $additional_fields      Additional Fields you want returned
@@ -2241,14 +2241,14 @@ EOQ;
 
         return $returnArray;
     }
-     
+
      /**
       * @static
       * This function returns an array of reportee IDs that are managers
-      * 
+      *
       * @param String user_id The id of the user to check
       * @param boolean included_deleted Boolean Value indicating whether or not to include deleted records (defaults to false)
-      * @return array Array of manager reportee IDs 
+      * @return array Array of manager reportee IDs
       */
      public static function getReporteeManagers($user_id, $include_deleted = false)
      {
@@ -2261,14 +2261,14 @@ EOQ;
         }
         return $returnArray;
      }
-     
+
      /**
       * @static
       * This function returns an array of reportee IDs that are sales reps
-      * 
+      *
       * @param String user_id The id of the user to check
       * @param boolean included_deleted Boolean Value indicating whether or not to include deleted records (defaults to false)
-      * @return array Array of rep reportee IDs 
+      * @return array Array of rep reportee IDs
       */
      public static function getReporteeReps($user_id, $include_deleted = false)
      {
@@ -2280,7 +2280,7 @@ EOQ;
             }
         }
         return $returnArray;
-     } 
+     }
 
     /**
      * @static
@@ -2313,31 +2313,10 @@ EOQ;
      * @internal runs into an issue when populating from field_defs for users - corrupts user prefs
      *
      */
-    function populateFromRow($row)
+    function populateFromRow($row, $convert = false)
     {
-        $nullvalue='';
-        foreach($this->field_defs as $field=>$field_value)
-        {
-            if($field == 'user_preferences') {
-                continue;
-            }
-
-            if(isset($row[$field]))
-            {
-                $this->$field = $row[$field];
-                $owner = $field . '_owner';
-                if(!empty($row[$owner])){
-                    $this->$owner = $row[$owner];
-                }
-            } else {
-                $this->$field = $nullvalue;
-            }
-        }
-        // TODO: add a vardef for my_favorite
-        $this->my_favorite = false;
-        if(!empty($row['my_favorite'])) {
-            $this->my_favorite = true;
-        }
+        unset($row['user_preferences']);
+        return parent::populateFromRow($row, $convert);
     }
 
     //BEGIN SUGARCRM flav=int ONLY
