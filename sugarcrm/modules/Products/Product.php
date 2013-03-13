@@ -631,9 +631,9 @@ class Product extends SugarBean
             }
         }
 
+        $this->mapProbabilityFromSalesStage();
         $this->handleSalesStatus();
         $this->convertDateClosedToTimestamp();
-
         $this->mapFieldsFromProductTemplate();
         $id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=ent ONLY
@@ -754,6 +754,20 @@ class Product extends SugarBean
         if (!empty($date_close_db)) {
             $date_close_datetime = $timedate->fromDbDate($date_close_db);
             $this->date_closed_timestamp = $date_close_datetime->getTimestamp();
+        }
+    }
+
+    /**
+     * Handling mapping the probability from the sales stage.
+     */
+    protected function mapProbabilityFromSalesStage()
+    {
+        global $app_list_strings;
+        if (!empty($this->sales_stage)) {
+            $prob_arr = $app_list_strings['sales_probability_dom'];
+            if (isset($prob_arr[$this->sales_stage])) {
+                $this->probability = $prob_arr[$this->sales_stage];
+            }
         }
     }
 

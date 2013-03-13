@@ -745,6 +745,36 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
     // END SUGARCRM flav=ent ONLY
+    
+    /**
+     * @dataProvider dataProviderMapProbabilityFromSalesStage
+     * @group products
+     */
+    public function testMapProbabilityFromSalesStage($sales_stage, $probability)
+    {
+        $product = new MockProduct();
+        $product->sales_stage = $sales_stage;
+        // use the Reflection Helper to call the Protected Method
+        SugarTestReflection::callProtectedMethod($product, 'mapProbabilityFromSalesStage');
+
+        $this->assertEquals($probability, $product->probability);
+    }
+
+    public static function dataProviderMapProbabilityFromSalesStage()
+    {
+        return array(
+            array('Prospecting', '10'),
+            array('Qualification', '20'),
+            array('Needs Analysis', '25'),
+            array('Value Proposition', '30'),
+            array('Id. Decision Makers', '40'),
+            array('Perception Analysis', '50'),
+            array('Proposal/Price Quote', '65'),
+            array('Negotiation/Review', '80'),
+            array('Closed Won', '100'),
+            array('Closed Lost', '0')
+        );
+    }
 }
 class MockProduct extends Product
 {
