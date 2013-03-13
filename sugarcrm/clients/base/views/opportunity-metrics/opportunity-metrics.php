@@ -3,8 +3,8 @@
 $viewdefs['base']['view']['opportunity-metrics'] = array(
     'dashlets' => array(
         array(
-            'name' => 'Opportunity Metrics',
-            'description' => 'Opportunity Metrics for Related Account',
+            'name' => 'LBL_DASHLET_OPPORTUNITY_NAME',
+            'description' => 'LBL_DASHLET_OPPORTUNITY_DESCRIPTION',
             'filter' => array(
                 'module' => array(
                     'Accounts'

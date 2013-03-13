@@ -660,6 +660,43 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertEquals(42, $product->worst_case);
     }
+    
+    /**
+     * @group products
+     */
+    public function testEmptyQuantityDefaulted()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        
+        $product->quantity = "";
+        $product->save();
+        $this->assertEquals(1, $product->quantity, "Empty string not converted to 1");
+    }
+    
+    /**
+     * @group products
+     */
+    public function testNullQuantityDefaulted()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        
+        $product->quantity = null;
+        $product->save();
+        $this->assertEquals(1, $product->quantity, "Null not converted to 1");        
+    }
+    
+    /**
+     * @group products
+     */
+    public function testQuantityNotDefaulted()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        
+        $product->quantity = 42;
+        $product->save();
+        $this->assertEquals(42, $product->quantity, "Null not converted to 1");        
+    }
+    
 }
 class MockProduct extends Product
 {

@@ -102,6 +102,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
+                    'required' => true
                 ),
             )
         ),

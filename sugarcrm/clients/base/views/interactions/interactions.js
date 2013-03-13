@@ -1,69 +1,112 @@
 ({
+    plugins: ['Dashlet'],
     events: {
-        'click .interactions-link': 'contentSwitcher'
+        'click ul.nav-tabs > li > a' : 'contentSwitcher',
+        'click button.interactions-list' : 'listSwitcher',
+        'click a.more' : 'showMore'
     },
 
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this,options);
+
         this.collections = {
-            "calls": {
-                "count": 0,
-                "data": []
-            },
-            "meetings": {
-                "count": 0,
-                "data": []
-            },
-            "emails": {
-                "count": 0,
-                "data": []
-            }
+            'calls' : app.data.createBeanCollection('Calls'),
+            'meetings' : app.data.createBeanCollection('Meetings'),
+            'emailsSent' : app.data.createBeanCollection('Emails'),
+            'emailsRecv' : app.data.createBeanCollection('Emails')
         };
-        this.callsActive = false;
-        this.emailsActive = false;
-        this.meetingsActive = false;
+
+        this.limit = 5;
+        this.params = {
+            'list' : 'all',
+            'filter' : '7',
+            'limit' : this.limit,
+            'view' : 'calls'
+        };
+        this.model.on("change:filter_duration", this.filterSwitcher, this);
+        if(this.model.parentModel) {
+            this.model.parentModel.on("change", this.loadData, this);
+        }
     },
 
-    loadData: function() {
-        var self = this,
-            url = app.api.buildURL(this.module, "interactions", {"id": app.controller.context.get("model").id});
+    initDashlet: function(view) {
+        var dashlet = JSON.parse(JSON.stringify(this.context.get("dashlet")));
 
-        app.api.call("read", url, null, { success: function(data) {
-            self.collections = data;
-            self.callsActive = true;
-            self.emailsActive = false;
-            self.meetingsActive = false;
-            self.render();
-        }});
+        if(view === 'config') {
+            app.view.views.RecordView.prototype._renderPanels.call(this, this.meta.panels);
+        }
+    },
+    loadData: function(params) {
+        if(this.disposed || !this.model.parentModel || !this.model.parentModel.get("id")) {
+            return;
+        }
+
+        var self = this,
+            url = app.api.buildURL(this.model.parentModel.module, "interactions", {"id": this.model.parentModel.get("id")}, null);
+
+        var querystring = $.param(this.params);
+        if (querystring.length > 0) {
+            url += "?" + querystring;
+        }
+
+        app.api.call("read", url, null, {
+            success: function(data) {
+                if(self.disposed){
+                    return;
+                }
+                _.each(data, function(el, name) {
+                    self.collections[name].count = el.count;
+                    self.collections[name].update(el.data);
+                });
+                self.collection = self.collections[self.params.view];
+                self.render();
+            },
+            complete: params ? params.complete : null
+        });
+    },
+
+    listSwitcher: function(e) {
+        var $sender = this.$(e.currentTarget);
+        this.params.list = $sender.val();
+        this.params.limit = this.limit;
+        this.layout.loadData();
+    },
+
+    filterSwitcher: function() {
+        this.params.filter = this.model.get("filter_duration");
+        this.params.limit = this.limit;
+        this.layout.loadData();
+    },
+
+    showMore: function(e) {
+        var $sender = this.$(e.currentTarget);
+        e.preventDefault();
+        this.params.limit += this.limit;
+        this.layout.loadData();
     },
 
     contentSwitcher: function(e) {
-        var $target = this.$(e.target);
-        if( !($target.parents(".interactions-link").is(".active")) ) {
-            // remove active class from the active 'a' element
-            this.$(".interactions-link.active").removeClass("active");
-
-            // add the active class to the clicked 'a' element
-            $target.parents(".interactions-link").addClass("active");
-
-            switch($target.parents("article").attr("class")) {
-                case "interactions-calls":
-                    this.callsActive = true;
-                    this.emailsActive = false;
-                    this.meetingsActive = false;
-                    break;
-                case "interactions-emails":
-                    this.callsActive = false;
-                    this.emailsActive = true;
-                    this.meetingsActive = false;
-                    break;
-                case "interactions-meetings":
-                    this.callsActive = false;
-                    this.emailsActive = false;
-                    this.meetingsActive = true;
-                    break;
+        var $sender = this.$(e.currentTarget), self = this;
+        _.each(this.collections, function(item, key) {
+            if (key == $sender.attr('class')) {
+                self.collection = item;
+                self.params.view = key;
+                self.params.limit = item.length;
             }
-            this.render();
+        });
+        this.render();
+    },
+    _render: function() {
+        app.view.View.prototype._render.call(this);
+        this.$(".select2").select2({
+            width: '100%'
+        });
+    },
+    _dispose: function() {
+        if(this.model.parentModel) {
+            this.model.parentModel.off("change", null, this);
         }
+        this.model.off("change", null, this);
+        app.view.View.prototype._dispose.call(this);
     }
 })

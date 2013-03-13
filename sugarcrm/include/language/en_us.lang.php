@@ -3135,8 +3135,23 @@ $app_strings = array (
     'LBL_REMOVING_DASHLET' => 'Removing Sugar Dashlet ...',
     'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
 
+    /* Sugar7 Dashboard */
     'LBL_COLLAPSE_ALL' => 'Collapse All',
     'LBL_EXPAND_ALL' => 'Expand All',
+    'LBL_DASHLET_CONFIG_EDIT' => 'Edit',
+    'LBL_DASHLET_REFRESH' => 'Refresh',
+    'LBL_DASHLET_REMOVE' => 'Remove',
+    'LBL_DASHLET_DROP_HERE' => 'Drop here',
+
+
+    'LBL_DASHLET_LISTVIEW_NAME' => 'My List View',
+    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing records assigned to you',
+
+    'LBL_DASHLET_NEWS_NAME' => 'News',
+    'LBL_DASHLET_NEWS_DESCRIPTION' => 'Google News feed for Related Account',
+
+    'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
+    'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account',
 
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
@@ -3815,9 +3830,16 @@ $app_strings = array (
     'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
 
-    // record delete
-    'NTC_RECORD_DELETE_CONFIRMATION' => 'Are you sure you want to delete the {{module}} {{name}}?',
-    'NTC_RECORD_DELETE_SUCCESS' => 'You deleted the {{module}} {{name}}.',
+    //interactions dashlet
+    'LBL_DASHLET_SETTINGS' => 'Settings',
+    'LBL_MODULE_INTERACTIONS_TITLE' => '{{str \'LBL_MODULE_NAME\' attributes.module}} interactions',
+    'LBL_MODULE_NO_INTERACTIONS_FOUND' => 'No {{str \'LBL_MODULE_NAME\' attributes.module}} found',
+    'LBL_FOR_DURATION_MINUTES' => 'for {{this.attributes.duration_minutes}} min.',
+
+    'LBL_EMAIL_SENT' => 'sent',
+    'LBL_EMAIL_RECV' => 'rec',
+    'LBL_EMAIL_ADDED_TO_THE' => 'added email to the',
+    'LBL_CALLED' => 'called',
 
     //record save
     'LBL_RECORD_SAVED' => 'Record saved.',
@@ -3837,6 +3859,13 @@ $app_strings = array (
     'ERR_RESOLVE_ERRORS' => 'Please resolve any errors before proceeding.',
 );
 
+$app_list_strings['interactions_options'] = array (
+    '7' => 'Last 7 Days',
+    '30' => 'Last 30 Days',
+    '90' => 'Last Quarter',
+    'favorites' => 'Favorites',
+    'custom' => 'My Custom Filter',
+);
 
 $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');

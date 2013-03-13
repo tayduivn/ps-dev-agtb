@@ -103,6 +103,17 @@
             }
         });
     },
+    loadData: function(options, setFields) {
+        if(this.context.parent && !this.context.parent._dataFetched) {
+            var parent = this.context.parent.get("modelId") ? this.context.parent.get("model") : this.context.parent.get("collection");
+
+            parent.once("sync", function() {
+                app.view.Layout.prototype.loadData.call(this, options, setFields);
+            }, this);
+        } else {
+            app.view.Layout.prototype.loadData.call(this, options, setFields);
+        }
+    },
     toggleSidebar: function() {
         if(!this.toggled) {
             app.controller.context.trigger('toggleSidebar');

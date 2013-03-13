@@ -276,5 +276,9 @@ $mod_strings = array (
 	'LBL_EDIT_INLINE' => 'Edit' /*for 508 compliance fix*/,
     'LBL_CONVERT_FAILED_VALIDATION_TITLE' => 'Failed Validation',
     'LBL_CONVERT_FAILED_VALIDATION_MESSAGE' => 'Failed Validation',
+
+    //Dashlet
+    'LBL_DASHLET_LISTVIEW_NAME' => 'My Leads',
+    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing of your leads',
 );
 ?>

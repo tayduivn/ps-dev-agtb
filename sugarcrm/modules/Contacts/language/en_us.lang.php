@@ -250,5 +250,9 @@ $mod_strings = array (
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
     'LBL_USER_SYNC' => 'User Sync',
     'LBL_FILENAME' => 'Attachment',
+
+    //Dashlet
+    'LBL_DASHLET_LISTVIEW_NAME' => 'My Contacts',
+    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing of your contacts',
 )
 ?>

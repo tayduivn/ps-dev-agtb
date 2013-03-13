@@ -2,8 +2,8 @@
 $viewdefs['base']['view']['news'] = array(
     'dashlets' => array(
         array(
-            'name' => 'News',
-            'description' => 'Google News feed for Related Account',
+            'name' => 'LBL_DASHLET_NEWS_NAME',
+            'description' => 'LBL_DASHLET_NEWS_DESCRIPTION',
             'config' => array(
                 'limit' => '3',
             ),

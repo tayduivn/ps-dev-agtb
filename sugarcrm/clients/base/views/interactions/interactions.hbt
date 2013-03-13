@@ -1,55 +1,80 @@
-<div class="block thumbnail widget">
-    <div class="interactions-widget">
-        <h4 class="interactions-header" data-tour="tour-interactions">Interactions</h4>
-        <div class="interactions-links-container">
-            <a class="interactions-link {{#if this.callsActive}}active{{/if}}"><article class="interactions-calls">
-                <span class="interactions-count">{{this.collections.calls.count}}</span>
-                <span class="interactions-type">{{#eq this.collections.calls.count "1"}}{{str "LBL_CALL"}}{{else}}{{str "LBL_CALLS"}}{{/eq}}</span>
-            </article></a><a class="interactions-link {{#if this.emailsActive}}active{{/if}}"><article class="interactions-emails">
-                <span class="interactions-count">{{this.collections.emails.count}}</span>
-                <span class="interactions-type">{{#eq this.collections.emails.count "1"}}{{str "LBL_EMAIL"}}{{else}}{{str "LBL_EMAILS"}}{{/eq}}</span>
-            </article></a><a class="interactions-link {{#if this.meetingsActive}}active{{/if}}"><article class="interactions-meetings">
-                <span class="interactions-count">{{this.collections.meetings.count}}</span>
-                <span class="interactions-type">{{#eq this.collections.meetings.count "1"}}{{str "LBL_MEETING"}}{{else}}{{str "LBL_MEETINGS"}}{{/eq}}</span></article></a>
+<div class="dashlet-options">
+    <div class="row-fluid">
+        <div class="span8">
+            {{#each this.meta.filter_duration}}
+                {{field ../this ../this.model "edit"}}
+            {{/each}}
         </div>
-        <div class="interactions-list-container">
-            <ul class="interactions-list">
-                {{#if callsActive}}
-                    {{#if this.collections.calls.data.length}}
-                        {{#each this.collections.calls.data}}
-                            <li class="interactions-item">
-                                <p><a href="#Users/{{this.assigned_user_id}}">{{this.assigned_user_name}}</a> called <a href="#{{this.parent_type}}/{{this.parent_id}}">{{this.parent_name}}</a> for {{this.duration_minutes}} mins</p>
-                                <date class="date">{{timeago this.date_end}}</date>
-                            </li>
-                        {{/each}}
-                    {{else}}
-                        <li class="interactions-item"><em>No calls found.</em></li>
-                    {{/if}}
-                {{else}}
-                    {{#if emailsActive}}
-                        {{#if this.collections.emails.data.length}}
-                            {{#each this.collections.emails.data}}
-                                <li class="interactions-item">
-                                    <p><a href="#Users/{{this.assigned_user_id}}">{{this.assigned_user_name}}</a> emailed <a href="#{{this.parent_type}}/{{this.parent_id}}">{{this.parent_name}}</a> regarding "{{this.subject}}"</p>
-                                    <date class="date">{{timeago this.date_end}}</date>
-                                </li>
-                            {{/each}}
-                        {{else}}
-                            <li class="interactions-item"><em>No emails found.</em></li>
-                        {{/if}}
-                    {{else}}
-                        {{#if this.collections.meetings.data.length}}
-                            {{#each this.collections.meetings.data}}
-                                <li class="interactions-item">
-                                    <p><a href="#Users/{{this.assigned_user_id}}">{{this.assigned_user_name}}</a> met with <a href="#{{this.parent_type}}/{{this.parent_id}}">{{this.parent_name}}</a></p>
-                                    <date class="date">{{timeago this.date_end}}</date>
-                                </li>
-                            {{/each}}
-                        {{else}}
-                            <li class="interactions-item"><em>No meetings found.</em></li>
-                        {{/if}}
-                    {{/if}}
+        <div class="span4">
+            <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
+                <button class="btn interactions-list {{#eq this.params.list "my"}}active{{/eq}}" value="my"><i class="icon-user"></i></button>
+                <button class="btn interactions-list {{#eq this.params.list "all"}}active{{/eq}}" value="all"><i class="icon-group"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<div class="tabbable tabs-full tabs-four widget-content">
+    <ul class="nav nav-tabs">
+        <li class="{{#eq this.params.view "calls"}}active{{/eq}}">
+            <a class="calls" data-toggle="tab">
+                <span class="count">{{this.collections.calls.count}}</span> 
+                {{#eq this.collections.calls.length "1"}}{{str "LBL_CALL"}}{{else}}{{str "LBL_CALLS"}}{{/eq}}
+            </a>
+        </li>
+        <li class="{{#eq this.params.view "emailsSent"}}active{{/eq}}">
+            <a class="emailsSent" data-toggle="tab">
+                <span class="count">{{this.collections.emailsSent.count}}</span>
+                {{#eq this.collections.emailsSent.length "1"}}{{str "LBL_EMAIL"}}{{else}}{{str "LBL_EMAILS"}}{{/eq}} ({{str "LBL_EMAIL_SENT"}})
+            </a>
+        </li>
+        <li class="{{#eq this.params.view "emailsRecv"}}active{{/eq}}">
+            <a class="emailsRecv" data-toggle="tab">
+                <span class="count">{{this.collections.emailsRecv.count}}</span>
+                {{#eq this.collections.emailsRecv.length "1"}}{{str "LBL_EMAIL"}}{{else}}{{str "LBL_EMAILS"}}{{/eq}} ({{str "LBL_EMAIL_RECV"}}.)
+            </a>
+        </li>
+        <li class="{{#eq this.params.view "meetings"}}active{{/eq}}">
+            <a class="meetings" data-toggle="tab">
+                <span class="count">{{this.collections.meetings.count}}</span>
+                {{#eq this.collections.meetings.length "1"}}{{str "LBL_MEETING"}}{{else}}{{str "LBL_MEETINGS"}}{{/eq}}
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active {{this.collection.module}}">
+            <ul class="listed">
+                {{#if this.collection.count}}
+                    {{#each this.collection.models}}
+                        <li>
+                        {{#eq this.module "Calls"}}
+                            <a href="#{{modelRoute this}}">{{this.attributes.assigned_user_name}}</a> {{str "LBL_CALLED"}} 
+                            <a href="#{{modelRoute this}}">{{this.attributes.parent_name}}</a> 
+                            {{str "LBL_FOR_DURATION_MINUTES" null this}} 
+                            <br>
+                            <date class="date"><i class="icon-plus-sign icon-added"></i>{{timeago this.attributes.date_end}}</date>
+                        {{/eq}}
+                        {{#eq this.module "Emails"}}
+                            <a href="#{{modelRoute this}}">{{this.attributes.assigned_user_name}}</a> {{str "LBL_EMAIL_ADDED_TO_THE"}} 
+                            <a href="#{{modelRoute this}}">{{this.attributes.parent_name}}</a> {{str "LBL_OPPORTUNITY"}}.
+                            <br>
+                            <date class="date"><i class="icon-plus-sign icon-added"></i> {{timeago this.attributes.date_entered}}</date>
+                        {{/eq}}
+                        {{#eq this.module "Meetings"}}
+                            <a href="#{{modelRoute this}}">{{this.attributes.assigned_user_name}}</a> {{str "LBL_EMAIL_ADDED_TO_THE"}} 
+                            <a href="#{{modelRoute this}}">{{this.attributes.parent_name}}</a> {{str "LBL_OPPORTUNITY"}}.
+                            <br>
+                            <date class="date"><i class="icon-plus-sign icon-added"></i> {{timeago this.attributes.date_entered}}</date>
+                        {{/eq}}
+                    </li>
+                    {{/each}}
+                    {{#notEq this.collection.next_offset -1}}
+                    <li>
+                        <a name="show_more_button" class="more">{{str "LBL_SHOW_MORE_MODULE" this}}<i class="icon-caret-down"></i></a>
+                    </li>
+                    {{/notEq}}
+                {{else}}
+                    <li class="interactions-item"><em>{{str "LBL_MODULE_NO_INTERACTIONS_FOUND" null this}}</em></li>
                 {{/if}}
             </ul>
         </div>

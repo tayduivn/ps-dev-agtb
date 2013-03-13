@@ -1,0 +1,144 @@
+<div class="longHelpTitle">Get interactions for current contact record</div>
+<div class="summary">
+    <h2>Summary:</h2>
+     This endpoint is used to return the json Data for the Contact interactions widget.
+</div>
+<div class="params">
+    <h2>Query Parameters:</h2>
+    <table>
+        <tr>
+            <td><strong>Param</strong></td>
+            <td><strong>Description</strong></td>
+            <td><strong>Optional</strong></td>
+        </tr>
+        <tr>
+            <td>view</td>
+            <td>Name of view which uses with limit. Allowed values: emailsRecv, emailsSent, meetings, calls</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>limit</td>
+            <td>A maximum number of records to return for selected view</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>filter</td>
+            <td>Special filter for filtering data. Value "favorites" - only fetch favorite records. If uses numerical value then this value uses for fetching records by last days</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>list</td>
+            <td>Filter for filtering records with assigned user criteria. Allowed values: my, all.  "my" - records which assigned to current user. "all" - all records</td>
+            <td>true</td>
+        </tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Input Example:</h2>
+    <code class="codesample">
+        {
+            "list":"all",
+            "filter": 30,
+            "limit": 5,
+            "view": "emailsSent"
+        }
+    </code>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <code class="codesample">
+    {  
+        "calls":{"count":0,"data":[]},
+        "meetings":{"count":1,"data":[
+            {
+                "id":"99b5710f-aee5-94cc-df98-5113a9324ede",
+                "name":"Follow-up on proposal",
+                "date_entered":"2013-02-07T13:16:00+00:00",
+                "date_modified":"2013-02-07T13:16:00+00:00",
+                "modified_user_id":"1",
+                "modified_by_name":"Administrator",
+                "created_by":"1",
+                "created_by_name":"Administrator",
+                "description":"Meeting to discuss project plan and hash out the details of implementation",
+                "img":"",
+                "deleted":"0",
+                "assigned_user_id":"seed_will_id",
+                "assigned_user_name":"Will Westin",
+                "team_name":[{"id":"East","name":"East","name_2":"","primary":true}],
+                "accept_status":"",
+                "set_accept_links":"",
+                "location":"",
+                "password":"",
+                "join_url":"",
+                "host_url":"",
+                "displayed_url":"",
+                "creator":"",
+                "external_id":"",
+                "duration_hours":"3",
+                "duration_minutes":"30",
+                "date_start":"2013-03-15T14:30:00+00:00",
+                "date_end":"2013-03-15T18:00:00+00:00",
+                "parent_type":"Accounts",
+                "status":"Held",
+                "type":"Sugar","direction":"",
+                "parent_id":"c824ae15-4831-2a89-238f-5113a93f502d",
+                "reminder_checked":false,
+                "reminder_time":"-1",
+                "email_reminder_checked":false,
+                "email_reminder_time":"-1",
+                "email_reminder_sent":"0",
+                "outlook_id":"",
+                "sequence":0,"contact_name":"",
+                "parent_name":"Sandeon Consolidation Corp",
+                "contact_id":"",
+                "repeat_type":"",
+                "repeat_interval":"1",
+                "repeat_dow":"",
+                "repeat_count":null,
+                "repeat_parent_id":"",
+                "recurring_source":"",
+                "duration":"",
+                "send_invites":"",
+                "my_favorite":false,
+                "_acl":{"fields":{}}      
+            }
+        ]},
+        "emailsRecv":{"count":0,"data":[]},
+        "emailsSent:":{"count":1,"data":[
+            {
+                "team_name":[{"id":"East","name":"East","name_2":"","primary":true}],
+                "id":"9f5347dc-f792-d238-1858-5113a9901141",
+                "date_entered":"2013-02-07T13:16:00+00:00",
+                "date_modified":"2013-02-07T13:16:00+00:00",
+                "assigned_user_id":"seed_will_id",
+                "assigned_user_name":"Will Westin",
+                "modified_user_id":"1",
+                "modified_by_name":"Administrator",
+                "created_by":"1",
+                "created_by_name":"Administrator",
+                "deleted":"0",
+                "from_addr_name":"chris@example.com",
+                "reply_to_addr":"",
+                "to_addrs_names":"section46@example.co.jp",
+                "cc_addrs_names":"",
+                "bcc_addrs_names":"",
+                "description":"Meeting to discuss project plan and hash out the details of implementation",
+                "message_id":"",
+                "message_uid":"",
+                "name":"Review needs",
+                "type":"out",
+                "status":"sent",
+                "flagged":"",
+                "reply_to_status":"",
+                "intent":"pick",
+                "mailbox_id":"",
+                "parent_name":"Sandeon Consolidation Corp",
+                "parent_type":"Accounts",
+                "parent_id":"c824ae15-4831-2a89-238f-5113a93f502d",
+                "my_favorite":false,
+                "_acl":{"fields":{}}
+            }
+        ]}
+    }
+    </code>
+</div>
