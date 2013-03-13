@@ -68,14 +68,14 @@ describe("Base.Field.Parent", function() {
         expect(actual_name).toEqual(expected_name);
         expect(actual_module).toEqual(expected_module);
     });
-    it("should deal with bwc", function() {
+    it("should deal get related module for parent", function() {
         var actual_id = field.model.get('parent_id'),
             actual_name = field.model.get('parent_name'),
             actual_module = field.model.get('parent_type'),
             _relatedModuleSpy = sinon.spy(field, "_getRelateModule");
             _relateIdSpy = sinon.spy(field, "_getRelateId");
 
-        field._render();
+        field.format();
         expect(_relatedModuleSpy).toHaveBeenCalled();
         expect(_relateIdSpy).toHaveBeenCalled();
         expect(field.href).toEqual("#"+actual_module+"/"+actual_id);

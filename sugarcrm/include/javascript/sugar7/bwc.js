@@ -29,14 +29,22 @@
              * app.bwc.buildRoute is for internal use and we control its callers, so we're
              * assuming callers will provide the module param which is marked required!
              */
-            var route = "#bwc/index.php?module=" + module;
-            if (action) {
-                route += "&action=" + action;
+            var href = "#bwc/index.php?";
+            var params = { module: module };
+            if (!action && !id || action==='DetailView' && !id) {
+                params.action = 'index';
+            } else {
+                if (action) {
+                    params.action = action;
+                } else {
+                    //no action but we do have id
+                    params.action = 'DetailView';
+                }
+                if (id) {
+                    params.record = id;
+                }
             }
-            if (id) {
-                route += "&record=" + id;
-            }
-            return route;
+            return href + $.param(params);
          }
     };
     app.augment('bwc', bwcMethods, false);

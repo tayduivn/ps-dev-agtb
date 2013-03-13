@@ -148,7 +148,7 @@
                         formattedRecord.link = app.bwc.buildRoute(record._module, record.id, 'DetailView');
                     }
                     else {
-                        formattedRecord.link = app.router.buildRoute(record._module, record.id);
+                        formattedRecord.link = '#' + app.router.buildRoute(record._module, record.id);
                     }
                     if ((record._search.highlighted)) { // full text search
                         _.each(record._search.highlighted, function(val, key) {

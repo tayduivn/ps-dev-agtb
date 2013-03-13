@@ -69,7 +69,7 @@ describe("Base.Field.Relate", function() {
                 return {isBwcEnabled: false};
             });
             field.bwcLink = true;
-            field._render();
+            field.format();
             expect(bwcBuildRouteStub).toHaveBeenCalled();
             getModuleStub.restore();
         });
@@ -78,7 +78,7 @@ describe("Base.Field.Relate", function() {
                 return {isBwcEnabled: true};
             });
             field.bwcLink = false;
-            field._render();
+            field.format();
             expect(bwcBuildRouteStub).toHaveBeenCalled();
             getModuleStub.restore();
         });
@@ -87,7 +87,7 @@ describe("Base.Field.Relate", function() {
                 return {isBwcEnabled: true};
             });
             field.def.bwcLink = false;
-            field._render();
+            field.format();
             expect(bwcBuildRouteStub).not.toHaveBeenCalled();
             expect(buildRouteStub).toHaveBeenCalled();
             getModuleStub.restore();

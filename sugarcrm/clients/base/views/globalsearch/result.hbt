@@ -29,7 +29,7 @@
 {{#if data.records}}
     {{#each data.records}}
     <li>
-        <a href="#{{link}}">
+        <a href="{{link}}">
             <strong>{{str "LBL_MODULE_NAME" module}}</strong> {{name}}{{#if field_name}}, <strong>{{field_name}}</strong> {{{field_value}}}{{/if}}
         </a>
     </li>

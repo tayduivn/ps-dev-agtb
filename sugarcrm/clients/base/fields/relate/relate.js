@@ -39,38 +39,11 @@
         app.view.Field.prototype.initialize.call(this, options);
     },
 
-    //First checks if there's a bwcLink on the field (the bwcLink property allows overriding which module will be used;
-    //e.g. we can point an assigned_user_name (Users) to an Employees detail view). If no bwcLink exists, we "fallback"
-    //checking top level of the related module's meta for isBwcEnabled. For either of these cases, we create bwc route.
-    //If, for some reason, the meta value for bwcLink is explicitly set to false, isBwcEnabled will be ignored.
-    _buildRoute: function() {
-        var module, idName, moduleMeta;
-
-        module = this._getRelateModule();
-        idName = this._getRelateId();
-        moduleMeta = app.metadata.getModule(module) || {};//fallback so we don't clutter tests with stubs ;)
-
-        if (this.bwcLink || (this.def.bwcLink !== false && moduleMeta.isBwcEnabled)) {
-            this.href = app.bwc.buildRoute(module, idName, 'DetailView');
-        } else {
-            //Normal Sidecar route
-            this.href = '#' + app.router.buildRoute(module, idName);
-        }
-    },
-    //Derived controllers can override these if related module and id in another place
-    _getRelateModule: function() {
-        return this.def.module;
-    },
-    _getRelateId: function() {
-        return this.model.get(this.def.id_name);
-    },
     /**
      * Renders relate field
      */
     _render: function() {
         var self = this;
-
-        this._buildRoute();
 
         var result = app.view.Field.prototype._render.call(this);
 
@@ -127,6 +100,37 @@
             this.$(this.fieldTag).attr("disabled", "disabled").select2();
         }
         return result;
+    },
+
+    //First checks if there's a bwcLink on the field (the bwcLink property allows overriding which module will be used;
+    //e.g. we can point an assigned_user_name (Users) to an Employees detail view). If no bwcLink exists, we "fallback"
+    //checking top level of the related module's meta for isBwcEnabled. For either of these cases, we create bwc route.
+    //If, for some reason, the meta value for bwcLink is explicitly set to false, isBwcEnabled will be ignored.
+    buildRoute: function(module, idName) {
+        var moduleMeta = app.metadata.getModule(module) || {};//fallback so we don't clutter tests with stubs ;)
+        if (this.bwcLink || (this.def.bwcLink !== false && moduleMeta.isBwcEnabled)) {
+            this.href = app.bwc.buildRoute(module, idName, 'DetailView');
+        } else {
+            //Normal Sidecar route
+            this.href = '#' + app.router.buildRoute(module, idName);
+        }
+    },
+    //Derived controllers can override these if related module and id in another place
+    _buildRoute: function() {
+        var module, idName;
+        module = this._getRelateModule();
+        idName = this._getRelateId();
+        this.buildRoute(module, idName);
+    },
+    _getRelateModule: function() {
+        return this.def.module;
+    },
+    _getRelateId: function() {
+        return this.model.get(this.def.id_name);
+    },
+    format: function(value) {
+        this._buildRoute();
+        return value;
     },
     setValue: function(model) {
         if (model) {
