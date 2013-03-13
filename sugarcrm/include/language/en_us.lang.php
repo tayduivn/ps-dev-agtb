@@ -3851,6 +3851,9 @@ $app_strings = array (
     'LBL_ALERT_TITLE_ERROR' => 'Error:',
     'LBL_ALERT_TITLE_LOADING' => 'Loading',
 
+    //interaction chart
+    'LBL_CHART_NO_DATA' => 'No Data Available.',
+
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
 

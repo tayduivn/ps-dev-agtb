@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div class="tabbable tabs-full tabs-four widget-content">
+<div class="tabbable tabs-full tabs-four">
     <ul class="nav nav-tabs">
         <li class="{{#eq this.params.view "calls"}}active{{/eq}}">
             <a class="calls" data-toggle="tab">
