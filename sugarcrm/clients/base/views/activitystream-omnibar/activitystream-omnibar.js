@@ -5,7 +5,7 @@
 
     className: "row omnibar activitystream-post",
 
-    plugins: ['dragdrop_attachments'],
+    plugins: ['dragdrop_attachments', 'taggable'],
 
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
@@ -32,10 +32,13 @@
                 activity_type: "post",
                 parent_id: parentId || null,
                 parent_type: parentType || null,
-                data: {
-                    value: this.layout._processTags(this.$('div.sayit'))
-                }
+                data: {}
             };
+
+        payload.data.value = this.getText(this.$('div.sayit'));
+        if (this.getTags) {
+            payload.data.tags = this.getTags(this.$('div.sayit'));
+        }
 
         if (payload.data.value) {
             var bean = app.data.createBean('Activities');
@@ -47,5 +50,9 @@
             });
         }
         this.trigger("attachments:process");
+    },
+
+    getText: function($el) {
+        return $el.contents().html();
     }
 })

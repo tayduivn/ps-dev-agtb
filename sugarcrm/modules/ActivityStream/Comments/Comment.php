@@ -80,4 +80,17 @@ class Comment extends Basic
         parent::retrieve($id, $encode, $deleted);
         return $this;
     }
+
+    /**
+     * Overwrite the notifications handler.
+     */
+    public function _sendNotifications()
+    {
+        return false;
+    }
+
+    public function get_notification_recipients()
+    {
+        return array();
+    }
 }

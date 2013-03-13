@@ -1,7 +1,7 @@
 <a href="#Users/{{user_id}}" class="avatar avatar42 pull-left">
     <img src="{{picture_url}}" alt="{{full_name}}">
 </a>
-<div contenteditable="true" class="span10 offset2 sayit attachable" data-tour="tour-stream-post" />
+<div contenteditable="true" class="span10 offset2 sayit attachable taggable" data-tour="tour-stream-post" />
 <div class="inputactions span10">
     <input type="submit" class="pull-right btn btn-primary addPost" value="Submit" />
 </div>
