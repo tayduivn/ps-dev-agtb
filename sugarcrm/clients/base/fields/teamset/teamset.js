@@ -125,11 +125,15 @@
         this._updateAndTriggerChange(this.value);
     },
     setPrimary: function(index) {
+        var previousPrimary = null;
         _.each(this.value, function(team, i) {
+            if(team.primary) {
+                previousPrimary = i;
+            }
             team.primary = false;
         });
         //If this team is set, then allow it to turn primary
-        if(this.value[index].name){
+        if(previousPrimary !== index && this.value[index].name){
             this.value[index].primary = true;
         }
         this._updateAndTriggerChange(this.value);

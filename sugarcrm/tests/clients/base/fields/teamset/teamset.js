@@ -112,6 +112,24 @@ describe("Base.Field.Teamset", function() {
 
     });
 
+
+    it("should toggle out the primary option when it sets the existing primary index as primary once again", function() {
+        field.model.set('team_name', [{id:'111-222', name: 'blahblah', primary:false}, {id:'abc-eee', name: 'poo boo', primary:true}]);
+        field.render();
+        expect(field.value[0].primary).toBe(false);
+        expect(field.value[1].primary).toBe(true);
+
+        field.setPrimary(1);
+        expect(field.value[0].primary).toBe(false);
+        expect(field.value[1].primary).toBe(false);
+
+
+        field.setPrimary(1);
+        expect(field.value[0].primary).toBe(false);
+        expect(field.value[1].primary).toBe(true);
+
+    });
+
     it("should not let you remove last team when there is only one team left", function(){
         field.model.set('team_name', [{id:'111-222', name: 'blahblah', primary:true}]);
         field.render();
