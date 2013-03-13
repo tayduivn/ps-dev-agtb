@@ -69,7 +69,7 @@ class SugarQuery_Builder_Select
             $columns = array_slice(func_get_args(), 1);
         }
         if(!empty($this->select)) {
-            $this->select = array_unique($this->select, $columns);
+            $this->select = array_unique(array_merge($this->select, $columns));
         } else {
             $this->select = $columns;
         }

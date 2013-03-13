@@ -116,6 +116,17 @@ class SugarQuery_Compiler_SQL
 
         $union = $this->sugar_query->union;
 
+        /* order by clauses should be in SELECT, ensure they are there */
+        if (!empty($order_by)) {
+            $order_fields = array();
+            foreach($order_by as $order) {
+                $order_fields[] = $order[0];
+            }
+            if(!empty($order_fields)) {
+                $this->sugar_query->select->field($order_fields);
+            }
+        }
+
         if (!empty($this->sugar_query->from)) {
             $from_part = trim($this->compileFrom($this->sugar_query->from));
         }
@@ -222,16 +233,11 @@ class SugarQuery_Compiler_SQL
         $return = array();
         foreach ($order_by AS $order) {
             list($field, $direction) = $order;
-            $field = $this->canonicalizeField($field);
+            $field = $this->canonicalizeFieldName($field);
             $return[] = "{$field} {$direction}";
         }
 
         return implode(',', $return);
-    }
-
-    protected function resolveField($field)
-    {
-
     }
 
     /**
@@ -269,13 +275,41 @@ class SugarQuery_Compiler_SQL
         return $this->table_beans[$table_name];
     }
 
+    protected function canonicalizeFieldName($field)
+    {
+        /**
+         * We need to figure out if the field is prefixed with an alias.  If it is and the alias is not the from beans table,
+         * we must load the relationship that the alias is referencing so that we can determine if they are using the correct alias
+         * and change it around if necessary
+         * An exception must be made for link tables because there could be multiple joins to different link tables and these aliases are
+         * taken care of automatically when M2M relationships are joined.
+         */
+        $bean = $this->from_bean;
+        if (strstr($field, '.')) {
+        	list($table_name, $field) = explode('.', $field);
+        	if ($table_name != $bean->getTableName()) {
+        		$bean = $this->getTableBean($table_name);
+        		if(empty($bean)) {
+        			return "{$table_name}.{$field}";
+        			}
+        		}
+        		} else {
+        		$table_name = $bean->getTableName();
+        }
+
+       	return "{$table_name}.{$field}";
+    }
+
+
+
     /**
      * @param $field
      * @return string
      */
-    protected function canonicalizeField($field)
+    protected function resolveField($field, $alias = null)
     {
         $bean = $this->from_bean;
+
         /**
          * We need to figure out if the field is prefixed with an alias.  If it is and the alias is not the from beans table,
          * we must load the relationship that the alias is referencing so that we can determine if they are using the correct alias
@@ -288,15 +322,11 @@ class SugarQuery_Compiler_SQL
             if ($table_name != $bean->getTableName()) {
                 $bean = $this->getTableBean($table_name);
                 if(empty($bean)) {
-                    return "{$table_name}.{$field}";
+                    return array("{$table_name}.{$field}", $alias);
                 }
             }
         } else {
             $table_name = $bean->getTableName();
-        }
-
-        if($field == 'my_favorite') {
-
         }
 
         if(!isset($bean->field_defs[$field])) {
@@ -306,12 +336,13 @@ class SugarQuery_Compiler_SQL
         $data = $bean->field_defs[$field];
 
         if(!isset($data['source']) || $data['source'] == 'db') {
-            return "{$table_name}.{$field}";
+            return array("{$table_name}.{$field}", $alias);
         }
 
         if (isset($data['source']) && $data['source'] == 'custom') {
             // FIXME: if we're given table.field with custom field, we should use custom alias
             $table_name = $bean->get_custom_table_name();
+            return array("{$table_name}.{$field}", $alias);
         }
 
         if($data['type'] == 'relate') {
@@ -328,16 +359,27 @@ class SugarQuery_Compiler_SQL
             }
 
             $join = $this->sugar_query->join($data['link'], $params);
-            $alias = $join->joinName();
-            return $this->canonicalizeField("$alias.{$data['rname']}");
+            $jalias = $join->joinName();
+            $fields = $this->resolveField("$jalias.{$data['rname']}", $field);
+            if(!is_array($fields[0])) {
+                $fields = array($fields);
+            }
+            if($data['id_name'] != $field && !in_array($data['id_name'], $this->sugar_query->select->select)) {
+                $fields[] = $this->resolveField($data['id_name'], $data['id_name']);
+            }
+            return $fields;
         }
 
         if(!empty($data['fields'])) {
         	// this is a compound field
         	$sub_fields = array();
         	foreach($data['fields'] as $field) {
-        		$sub_fields[] = "{$table_name}.{$field}";
+        		$sub_fields[] = array("{$table_name}.{$field}", !empty($alias)?"{$alias}__{$field}":null);
         	}
+        	if(!empty($data['id_name'])) {
+        	    $sub_fields[] = array("{$table_name}.id", !empty($alias)?"{$alias}__{$data['id_name']}":$data['id_name']);
+            }
+
         	return $sub_fields;
         }
 
@@ -354,34 +396,35 @@ class SugarQuery_Compiler_SQL
     {
         $return = array();
         foreach ($selectObj->select AS $field) {
-            $alias = false;
+            $alias = null;
+            $s_alias = '';
             if (is_array($field)) {
                 list($field, $alias) = $field;
-                $alias = " AS {$alias}";
+                $s_alias = " AS {$alias}";
             }
 
             if ($field instanceof SugarQuery) {
-                $return[] = '(' . $field->compileSql() . ')' . $alias;
+                $return[] = '(' . $field->compileSql() . ')' . $s_alias;
             } else {
-                $resolvedField = $this->canonicalizeField($field);
-                if(empty($resolvedField)) {
+                $resolvedFields = $this->resolveField($field, $alias);
+                if(empty($resolvedFields)) {
                     // FIXME: can be dangerous to put $field here
-                    $return[] = "NULL $alias /* $field */";
+                    $return[] = "NULL $s_alias /* $field */";
                     continue;
                 }
-                if(is_array($resolvedField)) {
-                    if(!empty($alias)) {
-                        throw new Exception("Can not alias compound field $field");
-                    }
-                    $return = array_merge($return, $resolvedField);
-                } else {
-                    if(empty($alias)) {
-                        $alias = " AS {$field}";
-                    }
-                    $return[] = $resolvedField . $alias;
+                if(!is_array($resolvedFields[0])) {
+                    $resolvedFields = array($resolvedFields);
+                }
+                foreach($resolvedFields as $resolvedField) {
+                        $alias = $resolvedField[1];
+                        if(empty($alias)) {
+                            $s_alias = " AS {$field}";
+                        } else {
+                            $s_alias = " AS $alias";
+                        }
+                        $return[] = $resolvedField[0] . $s_alias;
                 }
             }
-
         }
 
         return implode(", ", $return);
@@ -491,7 +534,7 @@ class SugarQuery_Compiler_SQL
         if (!empty($sql) && substr($sql, -1) != '(') {
             $sql .= $operator;
         }
-        $field = $this->canonicalizeField($condition->field);
+        $field = $this->canonicalizeFieldName($condition->field);
 
         if ($condition->isNull) {
             $sql .= "{$field} IS NULL";
@@ -611,8 +654,9 @@ class SugarQuery_Compiler_SQL
                     $value = '%' . $value;
                 }
             }
+            return $this->db->quoteType($dbtype, $value);
         }
-        return $this->db->quoteType($dbtype, $value);
+        return $this->db->quoted($value);
     }
 
     /**

@@ -64,23 +64,28 @@ class SugarBeanApiHelper
                     continue;
                 }
 
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ( !$bean->ACLFieldAccess($fieldName,'read') ) {
+                    // No read access to the field, eh?  Unset the field from the array of data returned
+                    unset($data[$fieldName]);
+                    continue;
+                }
+                //END SUGARCRM flav=pro ONLY
+
                 $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
                 if ($type == 'link') {
                     // There is a different API to fetch linked records, don't try to encode all of the related data.
                     continue;
                 }
+
                 $field = $sfh->getSugarField($type);
 
-                if ( $field != null && isset($bean->$fieldName) ) {
+                if(empty($field)) continue;
+
+                if (isset($bean->$fieldName)  || $type == 'relate') {
                      $field->apiFormatField($data, $bean, $options, $fieldName, $properties);
                 }
 
-                //BEGIN SUGARCRM flav=pro ONLY
-                if ( !$bean->ACLFieldAccess($fieldName,'read') ) {
-                    // No read access to the field, eh?  Unset the field from the array of data returned
-                    unset($data[$fieldName]);
-                }
-                //END SUGARCRM flav=pro ONLY
             }
 
             if (isset($bean->field_defs['email']) &&

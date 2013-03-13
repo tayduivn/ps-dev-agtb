@@ -251,6 +251,63 @@ class FilterApi extends SugarApi
         return $q;
     }
 
+
+    /**
+     * Populate related beans from data array
+     * @param SugarBean $bean
+     * @param array $data
+     */
+    protected function populateRelatedFields($bean, $data)
+    {
+        $relates = array();
+        // fill in related rows data by field
+        foreach($data as $key => $value) {
+            if(($split = strpos($key, "__")) > 0) {
+                $relates[substr($key, 0, $split)][] = substr($key, $split+2);
+            }
+        }
+
+        foreach($bean->field_defs as $field => $fieldDef) {
+            if($fieldDef['type'] == 'relate' && !empty($fieldDef['link'])) {
+                if(empty($data[$field]) && empty($relates[$field])) continue;
+
+                $rbean = $bean->getRelatedBean($fieldDef['link']);
+                if(empty($rbean)) continue;
+
+                if(!empty($data[$field])) {
+                    // we have direct data - populate it
+                    $rbean->populateFromRow(array($fieldDef['rname'] => $data[$field]), true);
+                } else {
+                    if(empty($relates[$field])) {
+                        continue;
+                    }
+
+                    $reldata = array();
+                    foreach($relates[$field] as $relfield) {
+                        $reldata[$relfield] = $data["{$field}__{$relfield}"];
+                    }
+                    if(!empty($reldata)) {
+                        $rbean->populateFromRow($reldata, true);
+                    }
+                }
+
+                if(empty($rbean->id) && !empty($fieldDef['id_name'])) {
+                	$rbean->id = $data[$fieldDef['id_name']];
+                }
+
+            }
+        }
+        // Call some data fillings for the bean
+        foreach($bean->related_beans as $rbean) {
+            if(empty($rbean->id)) continue;
+
+            $rbean->check_date_relationships_load();
+            // $rbean->fill_in_additional_list_fields();
+            if($rbean->hasCustomFields()) $rbean->custom_fields->fill_relationships();
+            $rbean->call_custom_logic("process_record");
+        }
+    }
+
     protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed)
     {
         $GLOBALS['log']->info("Filter SQL: ".$q->compileSql());
@@ -271,7 +328,9 @@ class FilterApi extends SugarApi
                 $bean = BeanFactory::getBean($options['module'], $row['id']);
             } else {
                 $bean = clone $seed;
-                $bean->populateFromRow($bean->convertRow($row));
+                // convert will happen inside populateFromRow
+                $bean->loadFromRow($row, true);
+                $this->populateRelatedFields($bean, $row);
             }
             if ($bean && !empty($bean->id)) {
                 $beans[] = $bean;
