@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class ActivityQueueManager
 {
-    public static $linkBlacklist = array('user_sync');
+    public static $linkBlacklist = array('user_sync', 'activities');
     public static $linkModuleBlacklist = array('ActivityStream/Activities');
     public static $linkDupeCheck = array();
 
@@ -39,9 +39,10 @@ class ActivityQueueManager
      */
     public function eventDispatcher(SugarBean $bean, $event, $args)
     {
-        if ($bean instanceof Activity && ($bean->activity_type == 'post' || $bean->activity_type == 'attach')) {
+        if ($bean instanceof Activity && $event == 'after_save' && ($bean->activity_type == 'post' || $bean->activity_type == 'attach')) {
             // Posts.
             $this->processPostSubscription($bean);
+            $this->processTags($bean);
         } else if ($bean->is_AuditEnabled() && Activity::isEnabled()) {
             $activity = BeanFactory::getBean('Activities');
             if ($event == 'after_save') {
@@ -246,6 +247,15 @@ class ActivityQueueManager
     {
         if ($bean->load_relationship('activities')) {
             $bean->activities->add($act);
+        }
+    }
+
+    protected function processTags(Activity $act)
+    {
+        $data = json_decode($act->data, true);
+        foreach ($data['tags'] as $tag) {
+            $bean = BeanFactory::retrieveBean($tag['module'], $tag['id']);
+            $this->processRecord($bean, $act);
         }
     }
 

@@ -12,7 +12,7 @@
 
     tagName: "li",
     className: "activitystream-posts-comments-container",
-    plugins: ['timeago', 'file_dragoff'],
+    plugins: ['timeago', 'file_dragoff', 'taggable'],
 
     initialize: function(options) {
         _.bindAll(this);
