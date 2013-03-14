@@ -29,6 +29,13 @@
                 }, this);
             }, this);
         }
+
+        if (this.context.parent) {
+            var model = this.context.parent.get("model");
+            model.on("sync", function() {
+                this.fetch();
+            }, this.collection);
+        }
     },
 
     prependPost: function(model) {
