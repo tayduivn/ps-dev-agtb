@@ -163,7 +163,7 @@
      * @param callback
      */
     initiateSave: function(callback) {
-        this.$('.inline-error').removeClass('inline-error');
+        this.clearValidationErrors();
         this.alerts.showSaving();
         this.disableVisibleButtons();
         async.waterfall([
