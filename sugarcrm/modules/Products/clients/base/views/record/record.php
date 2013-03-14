@@ -81,13 +81,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'label' => 'LBL_CONVERT_TO_QUOTE',
                     'acl_action' => 'view'
                 ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:change_log_button:click',
-                    'name' => 'change_log_button',
-                    'label' => 'LNK_VIEW_CHANGE_LOG',
-                    'acl_action' => 'view'
-                ),
             ),
         ),
         array(
