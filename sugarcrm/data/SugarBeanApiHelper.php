@@ -120,6 +120,15 @@ class SugarBeanApiHelper
 
             //END SUGARCRM flav=pro ONLY
 
+            // Mark if it's a subscribed bean (for activity streams).
+            if ( empty($fieldList) || !in_array('following', $fieldList) ) {
+                if (!isset($bean->following)) {
+                    $sub = Subscription::checkSubscription($this->api->user, $bean);
+                    $bean->following = !empty($sub);
+                }
+                $data['following'] = $bean->following;
+            }
+
             // set ACL
             // if not an admin and the hashes differ, send back bean specific acl's
             $data['_acl'] = self::getBeanAcl($bean, $fieldList);
