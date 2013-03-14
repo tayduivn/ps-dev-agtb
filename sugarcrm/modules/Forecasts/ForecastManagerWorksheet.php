@@ -475,7 +475,14 @@ class ForecastManagerWorksheet extends SugarBean
             $this->updateManagerWorksheetQuota($current_user->id, $timeperiodId, $mgr_quota, false);
         }
         //Calculate reportee direct
-        $this->recalcUserQuota($user_id, $timeperiodId);
+        $rep_quota = $this->recalcUserQuota($user_id, $timeperiodId);
+
+        // update the quota for the managers if the reportee's have changed.
+        $this->updateManagerWorksheetQuota($user_id, $timeperiodId, $rep_quota, true);
+        if ($fromCommit == true) {
+            // when it's from a commit, we need to update the committed record as well.
+            $this->updateManagerWorksheetQuota($user_id, $timeperiodId, $rep_quota, false);
+        }
     }
 
     /**
