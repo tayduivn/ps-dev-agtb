@@ -126,21 +126,22 @@ describe("Preview View", function() {
 
         beforeEach(function() {
             createListCollection = function(nbModels, offsetSelectedModel) {
-                     preview.collection = new Backbone.Collection();
+                     var collection = new Backbone.Collection();
 
                      var modelIds = [];
                      for (var i=0;i<=nbModels;i++) {
                          var model = new Backbone.Model(),
                              id = i + '__' + Math.random().toString(36).substr(2,16);
 
-                         model.set({id: id});
+                         model.set({id: id, index: i});
                          if (i === offsetSelectedModel) {
                              preview.model.set(model.toJSON());
-                             preview.collection.add(model);
+                             collection.add(model);
                          }
-                         preview.collection.add(model);
+                         collection.add(model);
                          modelIds.push(id);
                      }
+                     preview.collection.reset(collection.models);
                      return modelIds;
                  };
         });
@@ -185,6 +186,37 @@ describe("Preview View", function() {
             expect(preview.layout.previous).not.toBeDefined();
             expect(preview.layout.next).not.toBeDefined();
             expect(preview.layout.hideNextPrevious).toBe(true);
+        });
+
+        it("should filter out the collection sets that only has access for view", function() {
+
+            var accessIds, aclModelStub;
+
+            accessIds = [
+                false,
+                true,
+                true,
+                false,
+                true
+            ];
+            aclModelStub = sinon.stub(app.acl, "hasAccessToModel", function(method, model){
+                return accessIds[model.get("index")];
+            });
+
+            var modelIds = createListCollection(accessIds.length - 1, 0);
+            expect(modelIds.length).toBe(_.keys(accessIds).length);
+
+            _.each(modelIds, function(modelId, index){
+                var model = preview.collection.where({id: modelId});
+                if(accessIds[index]) {
+                    expect(_.isEmpty(model)).toBe(false);
+                    expect(model.length).toBe(1);
+                    expect(accessIds[_.first(model).get("index")]).toBeTruthy();
+                } else {
+                    expect(model.length).toBe(0);
+                }
+            }, this);
+            aclModelStub.restore();
         });
     });
 });

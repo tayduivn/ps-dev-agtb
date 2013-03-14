@@ -56,12 +56,19 @@
             this.layout.off("preview:pagination:fire", null, this);
             this.layout.on("preview:pagination:fire", this.switchPreview, this);
         }
+        this.collection = app.data.createBeanCollection(this.module);
     },
     updateCollection: function(collection) {
         if( this.collection ) {
-            this.collection = collection;
+            this.collection.reset(collection.models);
             this.showPreviousNextBtnGroup();
        }
+    },
+
+    filterCollection: function() {
+        this.collection.remove(_.filter(this.collection.models, function(model){
+            return !app.acl.hasAccessToModel("view", model);
+        }, this));
     },
 
     _renderHtml: function(){
@@ -130,10 +137,13 @@
      * @param model Model for the object to preview
      * @param collection Collection of related objects to the current model
      */
-    renderPreview: function(model, collection) {
-        if (model && collection) {
+    renderPreview: function(model, newCollection) {
+        if(newCollection) {
+            this.collection.reset(newCollection.models);
+        }
+
+        if (model) {
             this.model = app.data.createBean(model.module, model.toJSON());
-            this.collection = app.data.createBeanCollection(model.module, collection.models);
 
             // Get the corresponding detail view meta for said module
             this.meta = app.metadata.getView(this.model.module, 'record') || {};
@@ -232,13 +242,12 @@
                         this.model.set("postId", this.collection.models[currIndex].get("id"));
                         this.model.set("id", this.collection.models[currIndex].get("target_id"));
                     }
-
                     this.model.fetch({
                         success: function(model) {
                             model.set("_module", targetModule);
                             self.model = null;
                             //Reset the preview
-                            app.events.trigger("preview:render", model, self.collection, false);
+                            app.events.trigger("preview:render", model, null, false);
                             self.switching = false;
                         }
                     });
@@ -256,8 +265,13 @@
         if(_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)){
             this.switching = false;
             delete this.model;
-            delete this.collection;
+            this.collection.reset();
             this.$el.empty();
+        }
+    },
+    bindDataChange: function() {
+        if(this.collection) {
+            this.collection.on("reset", this.filterCollection, this);
         }
     }
 })
