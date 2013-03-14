@@ -129,7 +129,7 @@ nv.models.tree = function() {
       };
 
       chart.orientation = function(orientation) {
-        horizontal = (orientation === 'horizontal' || !horizontal ? true : false);
+        horizontal = (orientation === 'horizontal' ? true : false);
         chart.reset();
         chart.update();
       };
@@ -200,6 +200,7 @@ nv.models.tree = function() {
         }
 
         var nodes = tree.nodes(_data);
+             //.sort(function(a, b) { return (a.x+((6-a.depth)*10000)) - (b.x+((6-b.depth)*10000)); });
 
         var availableSize = { // the size of the svg container minus padding
             'width': svgSize.width - padding.left - padding.right
@@ -233,6 +234,11 @@ nv.models.tree = function() {
           , 'left': (horizontal ? nodeSize.width : padding.left/2)
         };
 
+        // console.log('chartSize',chartSize);
+        // console.log('scale',scale);
+        // console.log('center',center);
+        // console.log('offset',offset);
+
         backg
           .attr('width', availableSize.width)
           .attr('height', availableSize.height);
@@ -255,6 +261,13 @@ nv.models.tree = function() {
               .attr('class', 'nv-card')
               .attr('id', function(d) { return 'nv-card-'+ d.id; })
               .attr("transform", function(d) {
+                // console.log('source',[source.x,source.y]);
+                // console.log('source.0',[source.x0,source.y0]);
+                // console.log('root',[root.x,root.y]);
+                // console.log('root.0',[root.x0,root.y0]);
+                // console.log('d.parent',[d.parent.x,d.parent.y]);
+                // console.log('d.parent.0',[d.parent.x0,d.parent.y0]);
+                // console.log('==============');
                 if (getX0(source) === 0) {
                   return "translate(" + getX(root) + "," + getY(root) + ")";
                 } else if (d.parent) {
@@ -309,12 +322,9 @@ nv.models.tree = function() {
         var nodeExit = node.exit().transition()
               .duration(duration)
               .attr('transform', function(d) {
-                if (d.parent) {
-                  return 'translate('+ getX(d.parent) +','+ getY(d.parent) +')';
-                } else {
-                  return 'translate('+ source.x +','+ source.y +')';
-                }
-              })
+                console.log('d.parent',[d.parent.x,d.parent.y]);
+                console.log('==============');
+                return 'translate('+ getX(d.parent) +','+ getY(d.parent) +')'; })
               .remove();
             nodeExit.selectAll('.nv-expcoll')
               .style('stroke-opacity', 1e-6);
@@ -333,11 +343,10 @@ nv.models.tree = function() {
             link.enter().insert('svg:path', 'g')
               .attr('class', 'link')
               .attr('d', function(d) {
-                var o = { x: 0, y: 0 };
                 if (d.source.x0) {
-                  o = { x: getX0(d.source), y: getY0(d.source) };
+                  var o = { x: getX0(d.source), y: getY0(d.source) };
                  } else {
-                  o = { x: source.x, y: source.y };
+                  var o = { x: source.x, y: source.y };
                 }
                 return diagonal({ source: o, target: o });
               });
@@ -398,6 +407,12 @@ nv.models.tree = function() {
   chart.useClass = function(_) {
     if (!arguments.length) return useClass;
     useClass = _;
+    return chart;
+  };
+
+  chart.margin = function(_) {
+    if (!arguments.length) return margin;
+    margin = _;
     return chart;
   };
 

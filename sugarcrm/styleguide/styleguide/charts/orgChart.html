@@ -26,10 +26,11 @@
     }
 
     var chart = nv.models.tree()
-          .duration(300)
+          .duration(500)
           .nodeSize({ 'width': 124, 'height': 56 })
           .nodeRenderer(nodeRenderer)
-          .zoomExtents({ 'min': 0.25, 'max': 4 });
+          .zoomExtents({ 'min': 0.25, 'max': 4 })
+          .horizontal(true);
 
     d3.select("#org svg")
         .datum(tree_data)
