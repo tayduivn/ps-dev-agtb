@@ -66,7 +66,7 @@ class SugarSearchEngineElasticMapping
             }
             catch (\Elastica\Exception\ResponseException $e)
             {
-                $GLOBALS['log']->error("elastic response exception when creating mapping, message= " . $e->getMessage());
+                $GLOBALS['log']->fatal("elastic response exception when creating mapping, message= " . $e->getMessage());
                 return false;
             }
         }
@@ -127,6 +127,7 @@ class SugarSearchEngineElasticMapping
         }
         if (isset($properties['user_favorites']) == false) {
             $properties['user_favorites'] = array(
+                'boost' => 1,
                 'type' => 'string',
                 'index' => 'not_analyzed'
             );
