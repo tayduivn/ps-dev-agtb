@@ -71,6 +71,7 @@
             var fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
             if(field.isHidden) {
                 fieldPlaceholder.toggleClass('hide', true);
+                //Drop this field out of the dropdown
                 this.$el.append(fieldPlaceholder);
             } else {
                 fieldPlaceholder.toggleClass('hide', false);
@@ -79,10 +80,12 @@
                     if(this.def.primary) {
                         field.getFieldElement().addClass("btn-primary");
                     }
+                    //The first field needs to be out of the dropdown
                     this.$el.prepend(fieldPlaceholder);
                 } else {
                     field.getFieldElement().removeClass("btn btn-primary");
-                    this.$(".dropdown-menu").prepend($('<li>').append(fieldPlaceholder));
+                    //Append field into the dropdown
+                    this.$(".dropdown-menu").append($('<li>').html(fieldPlaceholder));
                 }
                 index++;
             }
