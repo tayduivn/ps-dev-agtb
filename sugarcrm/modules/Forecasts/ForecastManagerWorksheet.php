@@ -103,7 +103,7 @@ class ForecastManagerWorksheet extends SugarBean
 
             // commit the quota from the worksheet values
             $this->commitQuota($worksheet->quota, $worksheet->user_id, $worksheet->timeperiod_id);
-            // recalculate the quotes now
+            // recalculate the quotas now
             $this->recalcQuotas($worksheet->user_id, $worksheet->timeperiod_id, true);
         }
 
@@ -113,7 +113,7 @@ class ForecastManagerWorksheet extends SugarBean
     /**
      * Commit a quota to the quotas table
      *
-     * @param number $quota_amount
+     * @param string $quota_amount
      * @param string $user_id
      * @param string $timeperiod_id
      */
@@ -400,7 +400,7 @@ class ForecastManagerWorksheet extends SugarBean
         $amount = 0;
 
         $result = $this->db->query($sql);
-        while (($row = $this->db->fetchByAssoc($result)) != null) {
+        while ($row = $this->db->fetchByAssoc($result)) {
             $amount = $row['amount'];
         }
 
@@ -446,7 +446,7 @@ class ForecastManagerWorksheet extends SugarBean
         $quota = array();
 
         $result = $this->db->query($sql);
-        while (($row = $this->db->fetchByAssoc($result)) != null) {
+        while ($row = $this->db->fetchByAssoc($result)) {
             $quota["amount"] = $row["amount"];
             $quota["id"] = $row["id"];
         }
@@ -456,6 +456,10 @@ class ForecastManagerWorksheet extends SugarBean
 
     /**
      * Recalculates quotas based on committed values and reportees' quota values
+     *
+     * @param string $user_id
+     * @param string $timeperiodId
+     * @param bool $fromCommit
      */
     protected function recalcQuotas($user_id, $timeperiodId, $fromCommit = false)
     {
@@ -529,10 +533,10 @@ class ForecastManagerWorksheet extends SugarBean
     {
         $reporteeTotal = $this->getQuotaSum($userId, $timeperiodId);
         $managerQuota = $this->getManagerQuota($userId, $timeperiodId);
-        $managerAmount = (isset($managerQuota["amount"])) ? $managerQuota["amount"] : 0;
+        $managerAmount = (isset($managerQuota['amount'])) ? $managerQuota['amount'] : '0';
         $newTotal = SugarMath::init($managerAmount)->sub($reporteeTotal)->result();
         if ($newTotal < 0) {
-            $newTotal = 0;
+            $newTotal = '0';
         }
 
         //save Manager quota
@@ -540,7 +544,7 @@ class ForecastManagerWorksheet extends SugarBean
         $quota = BeanFactory::getBean('Quotas', isset($managerQuota['id']) ? $managerQuota['id'] : null);
         $quota->user_id = $userId;
         $quota->timeperiod_id = $timeperiodId;
-        $quota->quota_type = "Direct";
+        $quota->quota_type = 'Direct';
         $quota->amount = $newTotal;
         $quota->save();
 
@@ -550,14 +554,14 @@ class ForecastManagerWorksheet extends SugarBean
     /**
      * This method emulates the Forecast Manager Worksheet calculateTotals method.
      *
-     * @param $timperiod_id
-     * @param $user_id
-     * @return array
+     * @param string $userId
+     * @param string $timeperiodId
+     * @return array|bool            Return calculated totals or boolean false if timeperiod is not valid
      */
-    public function worksheetTotals($timeperiod_id, $user_id)
+    public function worksheetTotals($userId, $timeperiodId)
     {
         /* @var $tp TimePeriod */
-        $tp = BeanFactory::getBean('TimePeriods', $timeperiod_id);
+        $tp = BeanFactory::getBean('TimePeriods', $timeperiodId);
         if (empty($tp->id)) {
             // timeperiod not found
             return false;
@@ -581,7 +585,7 @@ class ForecastManagerWorksheet extends SugarBean
         $sq->select(array('*'));
         $sq->from(BeanFactory::getBean($this->module_name))->where()
             ->equals('timeperiod_id', $tp->id)
-            ->equals('assigned_user_id', $user_id)
+            ->equals('assigned_user_id', $userId)
             ->equals('draft', 1)
             ->equals('deleted', 0);
         $results = $sq->execute();

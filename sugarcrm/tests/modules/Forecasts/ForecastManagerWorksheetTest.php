@@ -237,7 +237,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      * @depends testCommitManagerHasCommittedUserRow
      * @group forecasts
      */
-    public function testCommitReCalculatesManagerDirectQuota()
+    public function testCommitRecalculatesManagerDirectQuota()
     {
         // get the direct quota for the manager
         /* @var $quota Quota */
