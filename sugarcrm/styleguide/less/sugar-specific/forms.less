@@ -690,6 +690,28 @@ input[type="color"],
   }
 }
 
+/* Special treatment for dual input box in one container, eg. first and last name in list view */
+
+
+.tr-inline-edit {
+  td {
+    span.contact-name {
+      input.inherit-width {
+        width: 49%;
+        &:not(:first-child) {
+          float: left;
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
 //54580: use media queries to also position symbol properly
 //43d1a253e5dae2f5d02b9273f527f9e43ff2dd6c
 
