@@ -7,7 +7,7 @@ $mod_strings = array(
     'TPL_ACTIVITY_UPDATE_FIELD' => '<a rel="tooltip" title="Changed: {{before}} To: {{after}}">{{field_label}}</a>',
     'TPL_ACTIVITY_LINK' => 'Related {{{subject.name}}} to {{{object.name}}}.',
     'TPL_ACTIVITY_UNLINK' => 'Unrelated {{{subject.name}}} to {{{object.name}}}.',
-    'TPL_ACTIVITY_UPLOAD' => 'Added file {{{object.name}}}.',
+    'TPL_ACTIVITY_ATTACH' => 'Added file <a class="dragoff" target="sugar_attach" href="{{{url}}}">{{{filename}}}</a>.',
     'TPL_ACTIVITY_DELETE' => 'Deleted {{{object.name}}} {{object.type}}.',
     'TPL_ACTIVITY_UNDELETE' => 'Restored {{{object.name}}} {{object.type}}.',
     'TPL_COMMENT' => 'commented "{{value}}".',

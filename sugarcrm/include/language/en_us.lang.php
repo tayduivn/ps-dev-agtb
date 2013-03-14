@@ -1865,6 +1865,7 @@ $app_list_strings = array (
 );
 
 $app_strings = array (
+  'LBL_ACTIVITIES' => 'Activities',
   'LBL_TOUR_NEXT' => 'Next',
   'LBL_TOUR_SKIP' => 'Skip',
   'LBL_TOUR_BACK' => 'Back',
@@ -3834,6 +3835,17 @@ $app_strings = array (
     'NTC_RECORD_DELETE_CONFIRMATION' => 'Are you sure you want to delete the {{module}} {{name}}?',
     'NTC_RECORD_DELETE_SUCCESS' => 'You deleted the {{module}} {{name}}.',
 
+    //interactions dashlet
+    'LBL_DASHLET_SETTINGS' => 'Settings',
+    'LBL_MODULE_INTERACTIONS_TITLE' => '{{str \'LBL_MODULE_NAME\' attributes.module}} interactions',
+    'LBL_MODULE_NO_INTERACTIONS_FOUND' => 'No {{str \'LBL_MODULE_NAME\' attributes.module}} found',
+    'LBL_FOR_DURATION_MINUTES' => 'for {{this.attributes.duration_minutes}} min.',
+
+    'LBL_EMAIL_SENT' => 'sent',
+    'LBL_EMAIL_RECV' => 'rec',
+    'LBL_EMAIL_ADDED_TO_THE' => 'added email to the',
+    'LBL_CALLED' => 'called',
+
     //record save
     'LBL_RECORD_SAVED' => 'Record saved.',
 
@@ -3844,14 +3856,33 @@ $app_strings = array (
     'LBL_ALERT_TITLE_ERROR' => 'Error:',
     'LBL_ALERT_TITLE_LOADING' => 'Loading',
 
+    //interaction chart
+    'LBL_CHART_NO_DATA' => 'No Data Available.',
+
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
 
     //application error messages
     'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',
     'ERR_RESOLVE_ERRORS' => 'Please resolve any errors before proceeding.',
+
+    //attachments dashlet
+    'LBL_MODULE_ATTACHMENTS_TITLE' => '{{module}} attachments',
+    'LBL_NO_ATTACHMENTS_FOUND' => 'No attachments found',
+    'LBL_CREATE_ATTACHMENT' => 'Create attachment',
+    'LBL_DASHLET_REFRESH' => 'Refresh',
+    'LBL_DASHLET_MOVE' => 'Move',
+    'LBL_DASHLET_CLOSE' => 'Close',
+
 );
 
+$app_list_strings['interactions_options'] = array (
+    '7' => 'Last 7 Days',
+    '30' => 'Last 30 Days',
+    '90' => 'Last Quarter',
+    'favorites' => 'Favorites',
+    'custom' => 'My Custom Filter',
+);
 
 $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');

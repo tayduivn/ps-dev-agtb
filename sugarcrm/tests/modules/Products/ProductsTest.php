@@ -582,6 +582,151 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
     }
+    
+    /**
+     * @group products
+     */
+    public function testBestCaseAutofillEmpty()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->best_case = '';
+        $product->save();
+        
+        $this->assertEquals($product->likely_case, $product->best_case);
+    }
+    
+    /**
+     * @group products
+     */
+    public function testBestCaseAutofillNull()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->best_case = null;
+        $product->save();
+        
+        $this->assertEquals($product->likely_case, $product->best_case);
+    }
+    
+    /**
+     * @group products
+     */
+    public function testBestCaseAutoRegression()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->best_case = 42;
+        $product->save();
+        
+        $this->assertEquals(42, $product->best_case);
+    }
+    
+    /**
+     * @group products
+     */
+    public function testWorstCaseAutofillEmpty()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->worst_case = '';
+        $product->save();
+        
+        $this->assertEquals($product->likely_case, $product->worst_case);
+    }
+    
+    /**
+     * @group products
+     */
+    public function testWorstCaseAutofillNull()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->worst_case = null;
+        $product->save();
+        
+        $this->assertEquals($product->likely_case, $product->worst_case);
+    }
+    
+    /**
+     * @group products
+     */
+    public function testWorstCaseAutofillRegression()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->likely_case = 10000;
+        $product->worst_case = 42;
+        $product->save();
+        
+        $this->assertEquals(42, $product->worst_case);
+    }
+    
+    /**
+     * @group products
+     */
+    public function testEmptyQuantityDefaulted()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        
+        $product->quantity = "";
+        $product->save();
+        $this->assertEquals(1, $product->quantity, "Empty string not converted to 1");
+    }
+    
+    /**
+     * @group products
+     */
+    public function testNullQuantityDefaulted()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        
+        $product->quantity = null;
+        $product->save();
+        $this->assertEquals(1, $product->quantity, "Null not converted to 1");        
+    }
+    
+    /**
+     * @group products
+     */
+    public function testQuantityNotDefaulted()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        
+        $product->quantity = 42;
+        $product->save();
+        $this->assertEquals(42, $product->quantity, "Null not converted to 1");        
+    }
+    
+    /**
+     * @dataProvider dataProviderMapProbabilityFromSalesStage
+     * @group products
+     */
+    public function testMapProbabilityFromSalesStage($sales_stage, $probability)
+    {
+        $product = new MockProduct();
+        $product->sales_stage = $sales_stage;
+        // use the Reflection Helper to call the Protected Method
+        SugarTestReflection::callProtectedMethod($product, 'mapProbabilityFromSalesStage');
+
+        $this->assertEquals($probability, $product->probability);
+    }
+
+    public static function dataProviderMapProbabilityFromSalesStage()
+    {
+        return array(
+            array('Prospecting', '10'),
+            array('Qualification', '20'),
+            array('Needs Analysis', '25'),
+            array('Value Proposition', '30'),
+            array('Id. Decision Makers', '40'),
+            array('Perception Analysis', '50'),
+            array('Proposal/Price Quote', '65'),
+            array('Negotiation/Review', '80'),
+            array('Closed Won', '100'),
+            array('Closed Lost', '0')
+        );
+    }
+    
 }
 class MockProduct extends Product
 {

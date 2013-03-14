@@ -75,6 +75,15 @@
                     } else {
                         dashlet_context = {};
                     }
+
+                    if(viewName !== "config" && dashlet_context.link) {
+                        this.context.set("parentModel", this.model.parentModel);
+                        this.context.set("parentModule", this.model.parentModel.module);
+                        this.context.set("link", dashlet_context.link);
+                        this.context.set(this.context._prepareRelated(dashlet_context.link, this.model.parentModel.get("id")));
+                        this.collection = this.context.get("collection");
+                    }
+
                     this.model.set(_.extend({
                         name: dashlet_context.name,
                         type: dashlet_context.type
@@ -96,12 +105,23 @@
                                         this.template;
                     }
 
-                    if(viewName && this.initDashlet && _.isFunction(this.initDashlet)) {
+                    if(this.initDashlet && _.isFunction(this.initDashlet)) {
                         this.initDashlet(viewName);
                     }
                 });
             }
         });
+    },
+    loadData: function(options, setFields) {
+        if(this.context.parent && !this.context.parent._dataFetched) {
+            var parent = this.context.parent.get("modelId") ? this.context.parent.get("model") : this.context.parent.get("collection");
+
+            parent.once("sync", function() {
+                app.view.Layout.prototype.loadData.call(this, options, setFields);
+            }, this);
+        } else {
+            app.view.Layout.prototype.loadData.call(this, options, setFields);
+        }
     },
     toggleSidebar: function() {
         if(!this.toggled) {

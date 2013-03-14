@@ -37,6 +37,14 @@ class FilterApi extends SugarApi
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
             ),
+            'filterModuleAll' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>'),
+                'pathVars' => array('module'),
+                'method' => 'filterList',
+                'shortHelp' => 'List of all records in this module',
+                'longHelp' => 'include/api/help/module_filter_get_help.html',
+            ),
             'filterModulePost' => array(
                 'reqType' => 'POST',
                 'path' => array('<module>','filter'),

@@ -341,7 +341,8 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_QUANTITY',
             'type' => 'int',
             'len' => 5,
-            'comment' => 'Quantity in use'
+            'comment' => 'Quantity in use',
+            'default' => 1
         ),
         'support_name' =>  array(
             'name' => 'support_name',

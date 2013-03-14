@@ -134,7 +134,9 @@ $dictionary['Opportunity'] = array(
             'comment' => 'Unconverted amount of the opportunity',
             'importable' => 'required',
             'duplicate_merge' => '1',
+            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'required' => true,
+            //END SUGARCRM flav=pro && flav!=ent ONLY
             'options' => 'numeric_range_search_dom',
             'enable_range_search' => true,
             //BEGIN SUGARCRM flav=ent ONLY
@@ -217,7 +219,9 @@ $dictionary['Opportunity'] = array(
             'audited' => true,
             'comment' => 'Expected or actual date the oppportunity will close',
             'importable' => 'required',
+            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'required' => true,
+            //END SUGARCRM flav=pro && flav!=ent ONLY
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
             //BEGIN SUGARCRM flav=ent ONLY

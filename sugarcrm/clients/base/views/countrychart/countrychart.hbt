@@ -1,9 +1,14 @@
-<div class="block thumbnail">
-  <h4 data-tour="tour-countrychart">Sales by Country</h4>
-  <div><svg></svg></div>
+<div class="block">
+  <div><div class="loading">{{str "LBL_LOADING"}}</div><svg id="{{cid}}"></svg></div>
 </div>
 <style>
     .block path {
         stroke: #fff;
+    }
+    .dashboard-pane .block {
+        margin:0px;
+    }
+    .dashboard-pane .block svg {
+        height:200px;
     }
 </style>

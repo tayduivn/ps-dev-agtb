@@ -596,6 +596,16 @@ class Product extends SugarBean
         if ($this->deal_calc == '') {
             $this->deal_calc = '0';
         }
+        if (empty($this->best_case)) {
+            $this->best_case = $this->likely_case;
+        }
+        if (empty($this->worst_case)) {
+            $this->worst_case = $this->likely_case;
+        }
+        
+        if ($this->quantity == '') {
+        	$this->quantity = 1;
+        }
 
         //US DOLLAR
         if (isset($this->discount_price) && (!empty($this->discount_price) || $this->discount_price == '0')) {
@@ -621,9 +631,9 @@ class Product extends SugarBean
             }
         }
 
+        $this->mapProbabilityFromSalesStage();
         $this->handleSalesStatus();
         $this->convertDateClosedToTimestamp();
-
         $this->mapFieldsFromProductTemplate();
         $id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=ent ONLY
@@ -744,6 +754,20 @@ class Product extends SugarBean
         if (!empty($date_close_db)) {
             $date_close_datetime = $timedate->fromDbDate($date_close_db);
             $this->date_closed_timestamp = $date_close_datetime->getTimestamp();
+        }
+    }
+
+    /**
+     * Handling mapping the probability from the sales stage.
+     */
+    protected function mapProbabilityFromSalesStage()
+    {
+        global $app_list_strings;
+        if (!empty($this->sales_stage)) {
+            $prob_arr = $app_list_strings['sales_probability_dom'];
+            if (isset($prob_arr[$this->sales_stage])) {
+                $this->probability = $prob_arr[$this->sales_stage];
+            }
         }
     }
 

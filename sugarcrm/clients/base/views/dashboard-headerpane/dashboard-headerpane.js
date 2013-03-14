@@ -38,7 +38,7 @@
         this.buttons = {};
     },
     editClicked: function(evt) {
-        this.previousModelState = JSON.parse(JSON.stringify(this.model.attributes));
+        this.previousModelState = app.utils.deepCopy(this.model.attributes);
         this.inlineEditMode = true;
         this.setButtonStates('edit');
         this.toggleEdit(true);

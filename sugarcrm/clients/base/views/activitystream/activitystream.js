@@ -12,7 +12,7 @@
 
     tagName: "li",
     className: "activitystream-posts-comments-container",
-    plugins: ['timeago'],
+    plugins: ['timeago', 'file_dragoff'],
 
     initialize: function(options) {
         _.bindAll(this);
@@ -43,12 +43,13 @@
         }
 
         this.tpl = "TPL_ACTIVITY_" + this.model.get('activity_type').toUpperCase();
-
+        var data;
         if(this.model.get('activity_type') === "update") {
             var updateTpl = Handlebars.compile(app.lang.get('TPL_ACTIVITY_UPDATE_FIELD', 'Activities')),
                 parentType = this.model.get("parent_type"),
-                fields = app.metadata.getModule(parentType).fields,
-                data = this.model.get('data');
+                fields = app.metadata.getModule(parentType).fields;
+
+            data = this.model.get('data');
 
             data.updateStr = _.reduce(data.changes, function(memo, changeObj) {
                 changeObj.field_label = app.lang.get(fields[changeObj.field_name].vname, parentType);
@@ -60,6 +61,17 @@
             }, '');
 
             this.model.set('data', data);
+        } else if (this.model.get('activity_type') === 'attach') {
+            data = this.model.get('data');
+            var url = app.api.buildFileURL({
+                module: 'Notes',
+                id: data.noteId,
+                field: 'filename'
+            });
+            data.url = url;
+            this.$el.data(data);
+            this.model.set('data', data);
+            this.model.set('parent_type', 'Files');
         }
     },
 
@@ -111,8 +123,9 @@
                 }
         };
 
-        var bean = app.data.createBean('Comments');
+        var bean = app.data.createRelatedBean(this.model, null, 'comments');
         bean.save(payload, {
+            relate: true,
             success: function(model) {
                 $input.val('');
                 self.layout.prependPost(self.model);

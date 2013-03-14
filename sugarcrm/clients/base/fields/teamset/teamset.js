@@ -93,11 +93,17 @@
                 delete team.add_button;
             });
             value[value.length - 1].add_button = true;
-            if(value.length > 1){
-                _.each(value, function(team){
+            // Count the number of valid teams
+            var numTeams = 0;
+            _.each(value, function(team){
+                if(!_.isUndefined(team.id)) numTeams++;
+            });
+            // Show remove button for all unset combos and only set combos if there are more than one
+            _.each(value, function(team){
+                if(_.isUndefined(team.id) || numTeams > 1){
                     team.remove_button = true;
-                });
-            }
+                }
+            });
         }
         return value;
     },

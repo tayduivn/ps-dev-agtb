@@ -2022,12 +2022,15 @@ class SugarBean
     * Determines which users receive a notification
     */
     function get_notification_recipients() {
-        $notify_user = BeanFactory::getBean('Users', $this->assigned_user_id);
-        $this->new_assigned_user_name = $notify_user->full_name;
+        $user_list = array();
+        if(isset($this->assigned_user_id) && !empty($this->assigned_user_id)) {
+            $notify_user = BeanFactory::getBean('Users', $this->assigned_user_id);
+            $this->new_assigned_user_name = $notify_user->full_name;
 
-        $GLOBALS['log']->info("Notifications: recipient is $this->new_assigned_user_name");
+            $GLOBALS['log']->info("Notifications: recipient is $this->new_assigned_user_name");
 
-        $user_list = array($notify_user);
+            $user_list = $notify_user;
+        }
         return $user_list;
     }
 

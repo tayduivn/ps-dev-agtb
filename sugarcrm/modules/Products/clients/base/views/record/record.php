@@ -102,6 +102,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
+                    'required' => true
                 ),
             )
         ),
@@ -163,7 +164,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'best_case',
-                    'required' => true,
                     'type' => 'currency',
                     'related_fields' => array(
                         'best_case',
@@ -175,7 +175,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'worst_case',
-                    'required' => true,
                     'type' => 'currency',
                     'related_fields' => array(
                         'worst_case',
