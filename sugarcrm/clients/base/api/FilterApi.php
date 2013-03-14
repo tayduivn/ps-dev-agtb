@@ -333,8 +333,21 @@ class FilterApi extends SugarApi
                 $this->populateRelatedFields($bean, $row);
             }
             if ($bean && !empty($bean->id)) {
-                $beans[] = $bean;
+                $beans[$bean->id] = $bean;
                 $bean_ids[] = $bean->id;
+            }
+        }
+        /* FIXME: this is a hack for emails, think about how to fix it */
+        if (isset($seed->field_defs['email']) && in_array('email',$options['select'])) {
+            $email = BeanFactory::getBean('EmailAddresses');
+            $q = $email->getEmailsQuery($seed->module_name);
+            $q->where()->in("ear.bean_id", $bean_ids);
+            $q->select->field("ear.bean_id");
+            $email_rows = $q->execute();
+            foreach($email_rows as $email) {
+                $id = $email['bean_id'];
+                unset($email['bean_id']);
+                $beans[$id]->emailData[] = $email;
             }
         }
 

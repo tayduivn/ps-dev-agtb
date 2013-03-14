@@ -234,6 +234,9 @@ class SugarQuery_Compiler_SQL
         foreach ($order_by AS $order) {
             list($field, $direction) = $order;
             $field = $this->canonicalizeFieldName($field);
+            if(strcasecmp($direction, "ASC") !== 0) {
+                $direction = "DESC";
+            }
             $return[] = "{$field} {$direction}";
         }
 
@@ -421,7 +424,7 @@ class SugarQuery_Compiler_SQL
                 foreach($resolvedFields as $resolvedField) {
                         $alias = $resolvedField[1];
                         if(empty($alias)) {
-                            $s_alias = " AS {$field}";
+                            $s_alias = "";
                         } else {
                             $s_alias = " AS $alias";
                         }
