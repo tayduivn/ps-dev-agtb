@@ -101,9 +101,9 @@ class ForecastManagerWorksheet extends SugarBean
             $worksheet->draft = 0; // make sure this is always 0!
             $worksheet->save();
 
-            # commit the quota from the worksheet values
+            // commit the quota from the worksheet values
             $this->commitQuota($worksheet->quota, $worksheet->user_id, $worksheet->timeperiod_id);
-            # recaculate the quotes now
+            // recalculate the quotes now
             $this->recalcQuotas($worksheet->user_id, $worksheet->timeperiod_id, true);
         }
 
