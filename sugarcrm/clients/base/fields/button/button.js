@@ -32,7 +32,7 @@
             'click .disabled' : 'preventClick'
         });
         app.view.Field.prototype.initialize.call(this, options);
-        this._render = _.throttle(app.view.fields.ButtonField.prototype._render, 100);
+        this._render = _.throttle(this._render, 100);
         this.model.on('data:sync:end', this.render, this);
     },
     _render:function(){
