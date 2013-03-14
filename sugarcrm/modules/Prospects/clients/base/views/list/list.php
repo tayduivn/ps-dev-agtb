@@ -33,7 +33,19 @@ $viewdefs['Prospects']['base']['view']['list'] = array(
 		array(
 			'fields' => array(
 				array(
-					'name'    => 'name',
+					'name' => 'full_name',
+					'type' => 'fieldset',
+					'fields' => array(
+						array(
+							'name' => 'first_name',
+							'link' => true,
+						),
+						array(
+							'name' => 'last_name',
+							'link' => true,
+						)
+					),
+					'css_class' => 'full-name',
 					'label'   => 'LBL_LIST_NAME',
 					'orderBy' => 'last_name',
 				),
