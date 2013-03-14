@@ -114,7 +114,10 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 'opportunity_name',
-                'account_name',
+                array(
+                    'name' => 'account_name',
+                    'readonly' => true,
+                ),
                 'sales_stage',
                 'probability',
                 'commit_stage',
