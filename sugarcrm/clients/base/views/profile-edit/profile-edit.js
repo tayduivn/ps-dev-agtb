@@ -54,10 +54,8 @@
     },
     saveModel: function() {
         var self = this, options;
-        app.alert.show('save_profile_edit_view', {level:'process', title:app.lang.getAppString('LBL_SAVING')});
         options = {
             success: function() {
-                app.alert.dismiss('save_profile_edit_view');
                 app.file.checkFileFieldsAndProcessUpload(self, {
                     success: function () {
                         var langKey = self.model.get('preferred_language');
@@ -68,10 +66,6 @@
                     }
                 },
                 {deleteIfFails: false});
-            },
-            error: function(error) {
-                app.alert.dismiss('save_profile_edit_view');
-                app.error.handleHttpError(error);
             },
             fieldsToValidate: self.getFields(this.model.module)
         };
