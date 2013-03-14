@@ -111,6 +111,7 @@
     inspector: function(evt) {
         var nTr = $(evt.target).parents('tr'),
             uid = $(evt.target).data('uid'),
+            moduleType = $(evt.target).date('type'),
             totalRows = $(evt.target).parents('table').find('tr.odd, tr.even'),
             selIndex = -1;
         _.each(totalRows, function(element, index) {
@@ -125,9 +126,9 @@
             dataset: totalRows,
             title: 'Preview',
             context: {
-                module: "Opportunities",
-                model: app.data.createBean('Opportunities', {id: uid}),
-                meta: app.metadata.getModule('Opportunities').views.forecastInspector.meta
+                module: moduleType,
+                model: app.data.createBean(moduleType, {id: uid}),
+                meta: app.metadata.getModule(moduleType).views.forecastInspector.meta
             },
             components: [
                 { view: 'forecastInspector' }
