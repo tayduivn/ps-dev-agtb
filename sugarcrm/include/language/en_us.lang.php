@@ -3861,6 +3861,8 @@ $app_strings = array (
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
+    'LBL_ACTIVITY_STREAM' => 'Activity Stream',
+    'LBL_DATA_VIEW' => 'Data View',
 
     //application error messages
     'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',
