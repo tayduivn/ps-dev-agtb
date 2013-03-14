@@ -51,7 +51,7 @@
           <h3>Org Chart</h3>
           <p>This is a new NVD3 tree chart type created for SugarCRM. <a href="charts/orgChart.html">Full Screen</a></p>
           <div>
-<div id="tree1" class="thumbnail nv-tree nv-chart">
+<div id="org" class="thumbnail nv-tree nv-chart">
   <svg></svg>
 </div>
           </div>
@@ -144,10 +144,17 @@
   // Tree org chart
   nv.addGraph(function() {
 
-    var chart = nv.models.tree()
-          .nodeImgPath('img/');
+    var nodeRenderer = function(d){
+      return '<img src="img/'+ d.image +'" class="rep-avatar" width="32" height="32"><div class="rep-name">'+ d.name +'</div><div class="rep-title">'+ d.title + '</div>';
+    }
 
-    d3.select("#tree1 svg")
+    var chart = nv.models.tree()
+          .duration(300)
+          .nodeSize({ 'width': 124, 'height': 56 })
+          .nodeRenderer(nodeRenderer)
+          .zoomExtents({ 'min': 0.25, 'max': 4 });
+
+    d3.select("#org svg")
         .datum(tree_data)
       .transition().duration(700)
         .call(chart);

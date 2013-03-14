@@ -10,7 +10,8 @@ nv.addGraph(function() {
         .duration(300)
         .nodeSize({ 'width': 124, 'height': 56 })
         .nodeRenderer(nodeRenderer)
-        .zoomExtents(zoomExtents);
+        .zoomExtents(zoomExtents)
+        .horizontal(false);
 
   d3.json("../js/nvd3/data/tree_data.json", function(json) {
     var tree_data = json;
@@ -30,6 +31,10 @@ nv.addGraph(function() {
   attachToggleExpand("#org svg", chart);
 
   // toggle buttons
+  $('.dashlet-group a[href="#orientation"]').click(function(){
+    chart.orientation();
+    $(this).find('i').toggleClass('icon-arrow-right icon-arrow-down');
+  });
   $('.dashlet-group a[href="#show-all-nodes"]').click(function(){
     chart.showall();
   });
@@ -117,6 +122,7 @@ nv.addGraph(function() {
       // do stuff when a node is selected
       // console.log("load data for id: " + jQuery.data(data.rslt.obj[0], "id"));
       chart.filter(jQuery.data(data.rslt.obj[0], "id"));
+      $("#org-jstree").find('.dropdown-toggle span:first-child').text(data.inst.get_text());
       data.inst.toggle_node(data.rslt.obj);
   })
   .bind("click", function(e){
