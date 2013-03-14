@@ -87,7 +87,7 @@
                     this.$el.prepend(fieldPlaceholder);
                 } else {
                     field.getFieldElement().removeClass("btn btn-primary");
-                    this.$(".dropdown-menu").append($('<li>').append(fieldPlaceholder));
+                    this.$(".dropdown-menu").prepend($('<li>').append(fieldPlaceholder));
                 }
                 index++;
             }

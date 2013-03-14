@@ -9,8 +9,8 @@
 </div>
 {{/eq}}
 <p>
-    {{{str ../tpl "Activities" data}}}
-    <br>
+    <span class="tagged">{{{str ../tpl "Activities" data}}}</span>
+    <br />
     <date class="date">
         <a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
     </date>
@@ -24,7 +24,8 @@
             <img src="{{picture_url}}" alt="{{created_by_name}} avatar">
         </a>
         <p>
-            {{str "TPL_COMMENT" "Activities" data}}<br>
+            <span class="tagged">{{str "TPL_COMMENT" "Activities" data}}</span>
+            <br />
             <date class="date"><a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}</date>
         </p>
     </li>

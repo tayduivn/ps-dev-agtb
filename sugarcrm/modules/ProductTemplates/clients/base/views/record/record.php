@@ -42,7 +42,8 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
-                    'name' => 'name'                                        
+                    'name' => 'name',
+                    'required' => true                                        
                 )
             )
         ),
@@ -53,7 +54,6 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'name',
                 'status',
                 array(
                     'name' => 'website',
@@ -61,10 +61,31 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
                 'date_available',
                 'tax_class',
                 'qty_in_stock',
-                'manufacturer_id',
-                'weight',
+                'category_name',
+                'manufacturer_name',
                 'mft_part_num',
-                'category_name'
+                'vendor_part_num',
+                'weight',
+                'type_name',
+                'cost_price',
+                'cost_usdollar',
+                'date_cost_price',
+                'discount_price',
+                'discount_usdollar',
+                'list_price',
+                'list_usdollar',
+                'pricing_formula',
+                'pricing_factor',
+                array(
+                    'name' => 'description',
+                    'span' => 12
+                ),
+                'support_name',
+                'support_description',
+                'support_contact',
+                'support_term',
+                
+               
             )
         )
     ),
