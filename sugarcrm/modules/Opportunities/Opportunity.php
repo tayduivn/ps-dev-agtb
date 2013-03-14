@@ -462,7 +462,7 @@ class Opportunity extends SugarBean
         }
 
         //if the id is set (previously saved bean) and sales_status is still New, update to inprogress
-        if(isset($this->id) && is_guid($this->id) && $this->sales_status == Opportunity::STATUS_NEW) {
+        if(isset($this->id) && !$this->new_with_id && $this->sales_status == Opportunity::STATUS_NEW) {
             $this->sales_status = Opportunity::STATUS_IN_PROGRESS;
         }
 
