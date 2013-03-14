@@ -91,13 +91,11 @@
                         context:{
                             create:true
                         }
-                    }, _.bind(function (refresh) {
-                        if (refresh) {
-                            var collection = app.controller.context.get('collection');
-                            if (collection) {
-                                collection.fetch();
-                            }
-                        }
+                    }, _.bind(function (context, model) {
+                        var module = context.get("module") || model.module,
+                            route  = app.router.buildRoute(module);
+
+                        app.router.navigate(route, {trigger: true});
                     }, this));
                 }
             },
