@@ -88,9 +88,25 @@ class SugarBeanApiHelper
 
             }
 
-            if (isset($bean->field_defs['email']) &&
-                (empty($fieldList) || in_array('email',$fieldList)) && !empty($bean->emailData)) {
-                $data['email'] = $bean->emailData;
+            if (isset($bean->field_defs['email']) && (empty($fieldList) || in_array('email',$fieldList))) {
+                if(!empty($bean->emailData)) {
+                    $rawEmails = $bean->emailData;
+                } else if(!empty($bean->emailAddress->addresses)) {
+                    $rawEmails = $bean->emailAddress->addresses;
+                }
+                if(!empty($rawEmails)) {
+                        $data['email'] = array();
+                        $emailProps = array('email_address','opt_out','invalid_email','primary_address');
+                        foreach ($rawEmails as $rawEmail) {
+                            $formattedEmail = array();
+                            foreach ($emailProps as $property) {
+                                if (isset($rawEmail[$property])) {
+                                    $formattedEmail[$property] = $rawEmail[$property];
+                                }
+                            }
+                            $data['email'][] = $formattedEmail;
+                        }
+                }
             }
 
 

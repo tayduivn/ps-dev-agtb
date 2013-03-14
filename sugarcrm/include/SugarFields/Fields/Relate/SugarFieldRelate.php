@@ -223,6 +223,10 @@ class SugarFieldRelate extends SugarFieldBase {
          */
         if(!empty($properties['link']) && !empty($bean->related_beans[$properties['link']])) {
             $rbean = $bean->related_beans[$properties['link']];
+            if(empty($rbean->field_defs[$properties['rname']])) {
+                $data[$fieldName] = '';
+                return;
+            }
             $rdefs = $rbean->field_defs[$properties['rname']];
             if(!empty($rdefs) && !empty($rdefs['type'])) {
                 $sfh = new SugarFieldHandler();
@@ -230,7 +234,9 @@ class SugarFieldRelate extends SugarFieldBase {
                 $rdata = array();
                 $field->apiFormatField($rdata, $rbean, $args, $properties['rname'], $rdefs);
                 $data[$fieldName] = $rdata[$properties['rname']];
-                return;
+                if(!empty($data[$fieldName])) {
+                    return;
+                }
             }
         }
         if(empty($bean->$fieldName)) {
