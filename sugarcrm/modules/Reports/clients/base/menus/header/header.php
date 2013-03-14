@@ -30,6 +30,13 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-plus',
     ),
     array(
+        'route'=>'#bwc/index.php?module=Reports&favorite=1&action=index',
+        'label' =>'LBL_FAVORITE_REPORTS',
+        'acl_action'=>'list',
+        'acl_module'=>$module_name,
+        'icon' => 'icon-favorite',
+    ),
+    array(
         'route'=>'#bwc/index.php?module=Reports&action=index',
         'label' =>'LBL_ALL_REPORTS',
         'acl_action'=>'list',
