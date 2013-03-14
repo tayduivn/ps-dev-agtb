@@ -251,6 +251,9 @@ class SugarQuery_Compiler_SQL
     protected function getTableBean($table_name)
     {
         if(!isset($this->table_beans[$table_name])) {
+            if(empty($this->sugar_query->join[$table_name])) {
+                return null;
+            }
             $link_name = $this->sugar_query->join[$table_name]->linkName;
             if (empty($link_name)) {
                 $this->table_beans[$table_name] = null;
@@ -348,6 +351,12 @@ class SugarQuery_Compiler_SQL
             return array("{$table_name}.{$field}", $alias);
         }
 
+        if($data['type'] == 'parent') {
+            // special hack to handle parent rels
+            $this->sugar_query->hasParent($field);
+            return array($this->resolveField('parent_type'), $this->resolveField('parent_id'));
+        }
+
         if($data['type'] == 'relate') {
             // this is a link field
             $bean->load_relationship($data['link']);
@@ -367,8 +376,11 @@ class SugarQuery_Compiler_SQL
             if(!is_array($fields[0])) {
                 $fields = array($fields);
             }
-            if($data['id_name'] != $field && !in_array($data['id_name'], $this->sugar_query->select->select)) {
-                $fields[] = $this->resolveField($data['id_name'], $data['id_name']);
+            if(!empty($data['id_name']) && $data['id_name'] != $field && !in_array($data['id_name'], $this->sugar_query->select->select)) {
+                $id_field = $this->resolveField($data['id_name'], $data['id_name']);
+                if(!empty($id_field)) {
+                    $fields[] = $id_field;
+                }
             }
             if(isset($data['custom_type']) && $data['custom_type'] == 'teamset') {
                 $fields[] = $this->resolveField('team_set_id', 'team_set_id');
@@ -422,6 +434,7 @@ class SugarQuery_Compiler_SQL
                     $resolvedFields = array($resolvedFields);
                 }
                 foreach($resolvedFields as $resolvedField) {
+                        if(empty($resolvedField)) continue;
                         $alias = $resolvedField[1];
                         if(empty($alias)) {
                             $s_alias = "";

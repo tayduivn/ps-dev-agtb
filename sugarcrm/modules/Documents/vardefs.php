@@ -213,7 +213,7 @@ $dictionary['Document'] = array('table' => 'documents',
         'last_rev_create_date' =>
         array(
             'name' => 'last_rev_create_date',
-            'type' => 'date',
+            'type' => 'relate',
             'table' => 'document_revisions',
             'link' => 'revisions',
             'join_name' => 'document_revisions',
@@ -312,7 +312,9 @@ $dictionary['Document'] = array('table' => 'documents',
             'vname' => 'LBL_DET_RELATED_DOCUMENT',
             'type' => 'relate',
             'table' => 'documents',
+            'link' => 'related_docs',
             'id_name' => 'related_doc_id',
+            'rname' => 'document_name',
             'module' => 'Documents',
             'source' => 'non-db',
             'comment' => 'The related document name for Meta-Data framework',
@@ -321,6 +323,10 @@ $dictionary['Document'] = array('table' => 'documents',
         'related_doc_rev_id' =>
         array(
             'name' => 'related_doc_rev_id',
+            'type' => 'relate',
+            'link' => 'related_docs',
+            'rname' => 'document_revision_id',
+            'id_name' => 'related_doc_id',
             'vname' => 'LBL_RELATED_DOCUMENT_REVISION_ID',
             'reportable' => false,
             'dbType' => 'id',
@@ -331,8 +337,11 @@ $dictionary['Document'] = array('table' => 'documents',
         'related_doc_rev_number' =>
         array(
             'name' => 'related_doc_rev_number',
+            'type' => 'relate',
+            'link' => 'related_docs',
+            'rname' => 'latest_revision',
+            'id_name' => 'related_doc_id',
             'vname' => 'LBL_DET_RELATED_DOCUMENT_VERSION',
-            'type' => 'varchar',
             'source' => 'non-db',
             'comment' => 'The related document version number for Meta-Data framework',
         ),
@@ -420,6 +429,13 @@ $dictionary['Document'] = array('table' => 'documents',
             'reportable' => false,
             'source' => 'non-db'
         ),
+        'related_docs' => array(
+            'name' => 'related_docs',
+            'type' => 'link',
+            'relationship' => 'related_documents',
+            'source' => 'non-db',
+            'vname' => 'LBL_DET_RELATED_DOCUMENT',
+        ),
 //END fields used for contract documents subpanel.
 
     ),
@@ -427,7 +443,10 @@ $dictionary['Document'] = array('table' => 'documents',
         array('name' => 'idx_doc_cat', 'type' => 'index', 'fields' => array('category_id', 'subcategory_id')),
     ),
     'relationships' => array(
-        'document_revisions' => array('lhs_module' => 'Documents', 'lhs_table' => 'documents', 'lhs_key' => 'id',
+        'related_documents' => array('lhs_module' => 'Documents', 'lhs_table' => 'documents', 'lhs_key' => 'id',
+            'rhs_module' => 'Documents', 'rhs_table' => 'documents', 'rhs_key' => 'related_doc_id',
+            'relationship_type' => 'one-to-many')
+    ,  'document_revisions' => array('lhs_module' => 'Documents', 'lhs_table' => 'documents', 'lhs_key' => 'id',
             'rhs_module' => 'DocumentRevisions', 'rhs_table' => 'document_revisions', 'rhs_key' => 'document_id',
             'relationship_type' => 'one-to-many')
 

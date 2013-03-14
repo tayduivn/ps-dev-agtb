@@ -314,6 +314,7 @@ class FilterApi extends SugarApi
             if($rbean->hasCustomFields()) $rbean->custom_fields->fill_relationships();
             $rbean->call_custom_logic("process_record");
         }
+        //
     }
 
     protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed)
@@ -339,6 +340,10 @@ class FilterApi extends SugarApi
                 // convert will happen inside populateFromRow
                 $bean->loadFromRow($row, true);
                 $this->populateRelatedFields($bean, $row);
+                if(!empty($bean->id) && !empty($row['parent_type']) && $q->hasParent()) {
+                    $child_info[$row['parent_type']][] = array('child_id'=>$bean->id, 'parent_id'=> $bean->parent_id,
+                        'parent_type'=>$bean->parent_type, 'type'=>'parent');
+                }
             }
             if ($bean && !empty($bean->id)) {
                 $beans[$bean->id] = $bean;
@@ -354,6 +359,16 @@ class FilterApi extends SugarApi
             $email_rows = $q->execute();
             foreach($email_rows as $email) {
                 $beans[$email['bean_id']]->emailData[] = $email;
+            }
+        }
+        // Load parent records
+        if(!empty($child_info)) {
+            $parent_beans = $seed->retrieve_parent_fields($child_info);
+            foreach($parent_beans as $id => $parent_data) {
+                unset($parent_data['id']);
+                foreach($parent_data as $field => $value) {
+                    $beans[$id]->$field = $value;
+                }
             }
         }
 

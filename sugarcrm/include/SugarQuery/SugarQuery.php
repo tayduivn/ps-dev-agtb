@@ -106,7 +106,17 @@ class SugarQuery
      */
     protected $db;
 
+    /**
+     * Stores joins corresponding to links
+     * @var array
+     */
     protected $links = array();
+
+    /**
+     * Stores parent field for this query
+     * @var array
+     */
+    protected $has_parent;
 
     /**
      * Build the select object
@@ -435,5 +445,13 @@ class SugarQuery
             $joined->addVisibilityQuery($this);
         }
 
+	}
+
+	public function hasParent($has = null)
+	{
+	    if($has !== null) {
+	        $this->has_parent = $has;
+	    }
+	    return $this->has_parent;
 	}
 }
