@@ -1656,7 +1656,7 @@ class ModuleInstaller{
             $cache_path = 'custom/application/' . $ext_path;
         } else {
             $paths = array($module_path . '/' . $ext_path);
-            $cache_path = 'custom/modules/' . $module_path . '/' . $ext_path;
+            $cache_path = 'custom/' . $module_path . '/' . $ext_path;
         }
         $paths[] = 'custom/Extension' . '/' . $module_path . '/' . $ext_path;
 
@@ -1682,12 +1682,14 @@ class ModuleInstaller{
                     $file = file_get_contents($path . '/' . $entry);
                     $extension .= "\n". str_replace($php_tags, '', $file);
                 }
+                _ppl($extension);
             }
         }
         if ($shouldSave) {
             if (!file_exists($cache_path)) {
                 mkdir_recursive($cache_path, true);
             }
+            _ppl("$cache_path/$name");
             SugarAutoLoader::put("$cache_path/$name", $extension, true);
         } else {
             if (file_exists("$cache_path/$name")) {
