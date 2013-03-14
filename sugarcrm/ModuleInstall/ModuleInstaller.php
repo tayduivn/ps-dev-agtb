@@ -1682,14 +1682,12 @@ class ModuleInstaller{
                     $file = file_get_contents($path . '/' . $entry);
                     $extension .= "\n". str_replace($php_tags, '', $file);
                 }
-                _ppl($extension);
             }
         }
         if ($shouldSave) {
             if (!file_exists($cache_path)) {
                 mkdir_recursive($cache_path, true);
             }
-            _ppl("$cache_path/$name");
             SugarAutoLoader::put("$cache_path/$name", $extension, true);
         } else {
             if (file_exists("$cache_path/$name")) {
