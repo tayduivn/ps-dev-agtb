@@ -43,7 +43,11 @@ class SugarOAuth2Server extends OAuth2
 
             SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Server.php');
             $oauthServerName = SugarAutoLoader::customClass('SugarOAuth2Server');
-            $currentOAuth2Server = new $oauthServerName($oauthStorage);
+            $config = array();
+            if(!empty($GLOBALS['sugar_config']['oauth2'])) {
+                $config = $GLOBALS['sugar_config']['oauth2'];
+            }
+            $currentOAuth2Server = new $oauthServerName($oauthStorage, $config);
         }
 
         return $currentOAuth2Server;
