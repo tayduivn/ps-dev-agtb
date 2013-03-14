@@ -112,7 +112,7 @@ class Subscription extends Basic
     {
         $sub = self::getSubscription($user, $record);
         if ($sub) {
-            $sub->mark_deleted($sub->id);
+            $sub->mark_deleted();
             return true;
         }
         return false;
@@ -129,5 +129,14 @@ class Subscription extends Basic
         $query->from($seed);
         $query->where()->equals('deleted', '0');
         return $query;
+    }
+
+    /**
+     * Override mark_deleted().
+     */
+    public function mark_deleted()
+    {
+        $this->deleted = 1;
+        $this->save();
     }
 }
