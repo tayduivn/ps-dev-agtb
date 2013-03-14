@@ -111,7 +111,7 @@
         }, function (refresh) {
             if (refresh) {
                 var collection = app.controller.context.get('collection');
-                if (collection) {
+                if (collection && collection.module === module) {
                     collection.fetch();
                 }
             }
