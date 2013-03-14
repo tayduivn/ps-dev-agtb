@@ -119,7 +119,10 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'probability',
                 'commit_stage',
                 'sales_status',
-                'date_closed',
+                array(
+                    'name' => 'date_closed',
+                    'required' => true
+                ),
                 'product_template_name',
                 'quantity',
                 'discount_price',
