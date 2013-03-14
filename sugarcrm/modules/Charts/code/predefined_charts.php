@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$chartsStrings = return_module_language($current_language, 'Charts');
+$chartsStrings = return_module_language($GLOBALS['current_language'], 'Charts');
 
 $predefined_charts = array(
 	'Chart_pipeline_by_sales_stage'=>
