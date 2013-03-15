@@ -95,6 +95,6 @@
      */
     setMode: function(name) {
         this.tplName = name;
-        app.view.Field.prototype.setMode.call(this, name);
+        app.view.fields.FieldsetField.prototype.setMode.call(this, name);
     }
 })

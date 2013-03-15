@@ -3578,6 +3578,7 @@ $app_strings = array (
     'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.',
     //END SUGARCRM flav=PRO ONLY
 
+    'LBL_REQUIRED_FIELD' => 'Required',
     // for nomad mobile
     'LBL_OPTIONAL' => 'Optional',
     'LBL_RELATED_MODULE' => 'Related {{{this}}}',
