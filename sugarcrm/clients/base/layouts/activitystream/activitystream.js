@@ -4,10 +4,6 @@
     initialize: function(opts) {
         var self = this;
         this.opts = opts;
-
-        // The layout needs to keep track of the collection of activities so it can feed each
-        // model for rendering via the activitystream view.
-        this.collection = opts.context.get('collection');
         this.renderedActivities = {};
 
         app.view.Layout.prototype.initialize.call(this, opts);
@@ -47,7 +43,7 @@
         var self = this, endpoint = function(method, model, options, callbacks) {
             var real_module = self.opts.context.parent.get('module'),
                 modelId = self.opts.context.parent.get('modelId'), url;
-            if (real_module !== "Home") {
+            if (real_module !== "Activities") {
                 url = app.api.buildURL(real_module, model.module, {id: modelId}, options.params);
             } else {
                 url = app.api.buildURL(model.module, null, {}, options.params);
