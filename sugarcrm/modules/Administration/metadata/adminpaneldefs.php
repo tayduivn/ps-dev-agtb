@@ -270,6 +270,13 @@ foreach ($admin_group_header as $key=>$values) {
                 //END SUGARCRM PRO ONLY
                 //////////////////
 
+                // Special case for Forecasts admin links where user has Developer role so they
+                // can see the Administration Forecasts link, but they have to actually be an admin
+                // to access Forecasts config in Forecasts module
+                if($mod_key == 'Forecasts' && !$current_user->isAdmin() && isset($values[3]['Forecasts'])) {
+                    unset($admin_group_header[$key][3][$mod_val]);
+                }
+
         } else {
         	//hide the link
         	unset($admin_group_header[$key][3][$mod_val]);
