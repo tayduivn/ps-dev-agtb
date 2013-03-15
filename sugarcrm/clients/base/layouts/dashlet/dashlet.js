@@ -43,11 +43,7 @@
         this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
         this.model.trigger("change:layout");
         if(this.model.mode === 'view') {
-            this.model.save({},{
-                success: function() {
-                    app.alert.show('dashboard_notice', {level: 'success', title: app.lang.getAppString('LBL_SAVED'), autoClose: true});
-                }
-            });
+            this.model.save();
         }
 
         return component;
@@ -92,11 +88,7 @@
         this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
         this.model.trigger("change:layout");
         if(this.model.mode === 'view') {
-            this.model.save({},{
-                success: function() {
-                    app.alert.show('dashboard_notice', {level: 'success', title: app.lang.getAppString('LBL_SAVED'), autoClose: true});
-                }
-            });
+            this.model.save();
         }
         this.meta.empty = true;
         this._components[0].dispose();

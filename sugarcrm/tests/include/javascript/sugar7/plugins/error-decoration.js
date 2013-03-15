@@ -26,7 +26,7 @@ describe("Plugins.ErrorDecoration", function() {
         SugarTest.app.data.declareModels();
         app = SugarTest.app;
 
-        view = SugarTest.createView("base", moduleName, "record", null, null);
+        view = SugarTest.createView("base", moduleName, viewName, null, null);
     });
 
     afterEach(function() {

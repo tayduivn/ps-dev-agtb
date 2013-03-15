@@ -5,7 +5,7 @@
      */
     initialize: function(options) {
         app.view.Layout.prototype.initialize.call(this, options);
-
+        this.on("header:update:route", this.resize, this);
         app.events.on("app:sync:complete", this.resize, this);
         app.events.on("app:view:change", this.resize, this);
 

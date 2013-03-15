@@ -105,6 +105,14 @@
     },
 
     /**
+     * Retrieves the number of drawers in the stack
+     * @returns {Number}
+     */
+    count: function() {
+        return this._components.length;
+    },
+
+    /**
      * Remove all drawers and reset
      */
     reset: function() {

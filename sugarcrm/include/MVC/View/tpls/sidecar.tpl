@@ -37,9 +37,7 @@
     <body>
         <div id="sugarcrm">
             <div id="sidecar">
-                <div id="alerts" class="alert-top"></div>
-                <div id="header"></div>
-                <div id="content">
+                <div id="alerts" class="alert-top">
                     <div class="alert alert-process">
                         <strong>{$LBL_LOADING}</strong>
                         <div class="loading">
@@ -47,6 +45,8 @@
                         </div>
                     </div>
                 </div>
+                <div id="header"></div>
+                <div id="content"></div>
                 <div id="drawers"></div>
                 <div id="footer"></div>
                 <div id="tourguide"></div>
@@ -69,12 +69,14 @@
         <script language="javascript" src="include/javascript/sugar7/utils.js"></script>
         <script language="javascript" src="include/javascript/sugar7/field.js"></script>
         <script language="javascript" src="include/javascript/sugar7/hacks.js"></script>
+        <script language="javascript" src="include/javascript/sugar7/alert.js"></script>
         <script language="javascript">
             var App;
 
             App = SUGAR.App.init({
                 el: "#sidecar",
                 callback: function(app){
+                    $('#alerts').empty();
                     app.start();
                 }
             });

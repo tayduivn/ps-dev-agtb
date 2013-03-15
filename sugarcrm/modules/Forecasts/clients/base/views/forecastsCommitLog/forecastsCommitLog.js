@@ -53,12 +53,6 @@
      */
     worstCase: 0,
 
-
-    /**
-     * Used to query for the timeperiod_id value in Forecasts
-     */
-    timePeriod: '',
-
     /**
      * Used to query for the forecast_type value in Forecasts
      */
@@ -98,7 +92,6 @@
         if(_.isUndefined(this.layout.getComponent('forecastsCommitted'))) {
             this.layoutHasForecastCommitted = false;
             this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
-            this.timePeriod = app.defaultSelections.timeperiod_id.id;
             this.selectedUser = {id: app.user.get('id'), "isManager": app.user.get('isManager'), "showOpps": false};
 
             this.bestCase = "";
@@ -123,9 +116,10 @@
      */
     createURL: function() {
         // we need to default the type to products
-        var args_filter = [];
-        if(this.timePeriod) {
-            args_filter.push({"timeperiod_id": this.timePeriod});
+        var args_filter = [],
+            timePeriodId = this.context.get('selectedTimePeriod');
+        if(timePeriodId) {
+            args_filter.push({"timeperiod_id": timePeriodId});
         }
 
         if(this.selectedUser) {
@@ -176,7 +170,6 @@
                 this.loadData();
             }, this);
             this.context.on("change:selectedTimePeriod", function(context, timePeriod) {
-                this.timePeriod = timePeriod.id;
                 this.context.resetLoadFlag();
                 this.loadData();
             }, this);
