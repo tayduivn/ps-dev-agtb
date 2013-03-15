@@ -452,7 +452,7 @@ class FilterApi extends SugarApi
                                 break;
                             case '$fromDays':
                                 // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
-                                $where->addRaw("{$field} >= DATE_ADD(NOW(), INTERVAL {$value} DAY)");
+                                $where->gte($field, TimeDate::getInstance()->getNow()->get("-7 days")->asDb());
                                 break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: ".$op);
