@@ -45,7 +45,7 @@
     handleViewChange: function() {
         this.closeOpenDrops();
         this.activeModule.set(app.controller.context.get("module"));
-        $(window).trigger('resize');
+        this.layout.trigger("header:update:route");
     },
     /**
      * toggles dropdowns on mouseover
