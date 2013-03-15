@@ -150,8 +150,8 @@
         this.model.trigger("change");
     },
     addItem: _.debounce(function(evt) {
-        var index = $(evt.currentTarget).parent().find('input[data-index]').data('index');
-        //Only allow adding a Team when ones been selected
+        var index = $(evt.currentTarget).data('index');
+        //Only allow adding a Team when ones been selected (SP-534)
         if (!index || this.value[index].id) {
             this.addTeam();
         }

@@ -138,8 +138,6 @@ describe("Base.Field.Teamset", function() {
         var addTeamStub = sinonSandbox.stub(field, "addTeam");
         field.model.set('team_name', [{id:1, "name":"Global", "primary":true}, {"add_button":true, primary:false, id: 2}]);
         field.render();
-        var parentStub = sinonSandbox.stub(jQuery.fn, 'parent', function() { return { find: findStub }; });
-        var findStub = sinonSandbox.stub(jQuery.fn, 'find', function() { return { data: dataStub }; });
         var dataStub = sinonSandbox.stub(jQuery.fn, "data", function() { return  1;});
         field.addItem({});
         waits(50);
@@ -151,8 +149,6 @@ describe("Base.Field.Teamset", function() {
         var addTeamStub = sinonSandbox.stub(field, "addTeam");
         field.model.set('team_name', [{id:1, "name":"Global", "primary":true}, {"add_button":true, primary:false}]);
         field.render();
-        var parentStub = sinonSandbox.stub(jQuery.fn, 'parent', function() { return { find: findStub }; });
-        var findStub = sinonSandbox.stub(jQuery.fn, 'find', function() { return { data: dataStub }; });
         var dataStub = sinonSandbox.stub(jQuery.fn, "data", function() { return  1;});
         field.addItem({});
         waits(50);
