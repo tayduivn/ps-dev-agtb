@@ -5210,11 +5210,14 @@ input[type="color"].error,
   display: inline !important;
   overflow: visible;
 }
-.tr-inline-edit td span.contact-name input.inherit-width {
+td span.full-name input.inherit-width {
   width: 49%;
 }
-.tr-inline-edit td span.contact-name input.inherit-width:not(:first-child) {
+td span.full-name input.inherit-width:not(:first-child) {
   float: left;
+}
+td span.full-name div.ellipsis_inline {
+  display: inline !important;
 }
 @media (max-width: 480px) {
   .row > .empty,
