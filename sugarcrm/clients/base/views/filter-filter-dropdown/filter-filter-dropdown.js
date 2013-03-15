@@ -77,13 +77,14 @@
     },
 
     initSelection: function(el, callback) {
-        var obj, data;
+        var obj, data, model, allRecordsText;
         if (el.val() !== "create") {
+            model = this.layout.filters.get(el.val());
             if (el.val() !== "all_records") {
-                model = this.layout.filters.get(el.val());
                 data = {id: model.id, text: model.get("name")};
             } else {
-                data = {id: "all_records", text: app.lang.get("LBL_FILTER_ALL_RECORDS")};
+                allRecordsText = model.get("name") || app.lang.get("LBL_FILTER_ALL_RECORDS");
+                data = {id: "all_records", text: allRecordsText};
             }
 
             callback(data);
