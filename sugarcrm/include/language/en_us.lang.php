@@ -3864,6 +3864,7 @@ $app_strings = array (
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
+    'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
     'LBL_DATA_VIEW' => 'Data View',
 
