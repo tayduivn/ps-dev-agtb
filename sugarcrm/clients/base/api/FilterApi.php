@@ -322,6 +322,7 @@ class FilterApi extends SugarApi
 
     protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed)
     {
+        $seed->call_custom_logic("before_filter", array($q, $options));
         $GLOBALS['log']->info("Filter SQL: ".$q->compileSql());
         $idRows = $q->execute();
         // return $idRows;
