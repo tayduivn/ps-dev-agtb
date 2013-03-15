@@ -94,7 +94,8 @@
      * Render Field
      */
     _render: function() {
-        var select = null;
+        var select = null,
+            self = this;
         app.view.Field.prototype._render.call(this);
 
         /* If we are on our own sheet, and need to show the dropdown, init things
@@ -119,8 +120,8 @@
             this.select.select2("val", this.value);
             this.select.select2("open");
             this.select.on("close", function() {
-                if(_.isEqual(this.currentVal, this.select.select2("val"))) {
-                    this.resetBucket();
+                if(_.isEqual(self.currentVal, self.select.select2("val"))) {
+                    self.resetBucket();
                 }
             });
             this.$(".select2-input").keydown(function(e) {
