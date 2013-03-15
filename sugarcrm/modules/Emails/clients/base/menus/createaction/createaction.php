@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $module_name = 'Emails';
 $viewdefs[$module_name]['base']['menu']['createaction'] = array(
-    'route' => '#'.$module_name.'/compose',
+    'layout' => 'compose',
     'label' => 'LBL_COMPOSE_MODULE_NAME_SINGULAR',
     'visible' => true
 );

@@ -1656,7 +1656,7 @@ class ModuleInstaller{
             $cache_path = 'custom/application/' . $ext_path;
         } else {
             $paths = array($module_path . '/' . $ext_path);
-            $cache_path = 'custom/modules/' . $module_path . '/' . $ext_path;
+            $cache_path = 'custom/' . $module_path . '/' . $ext_path;
         }
         $paths[] = 'custom/Extension' . '/' . $module_path . '/' . $ext_path;
 

@@ -224,15 +224,9 @@
         // amount. Also, add true will make it append to already loaded records.
         options.limit = self.limit || null;
         options.success = function () {
-            // Hide loading message
-            app.alert.dismiss('loading_' + self.cid);
-
             self.layout.trigger("list:sort:fire", collection, self);
             if(!self.disposed) self.render();
         };
-
-        // Display Loading message
-        app.alert.show('loading_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_LOADING')});
 
         // refetch the collection
         self.context.resetLoadFlag(false);

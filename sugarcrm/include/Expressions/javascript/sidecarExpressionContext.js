@@ -72,6 +72,9 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
             d.evaluate = function(){return this.value};
             d.value = value;
             result =  d;
+        } else if (typeof(value) == "number") {
+            //Cast to a string before send to toConstant.
+            result =  SEC.parser.toConstant("" + value);
         } else {
             result = SEC.parser.toConstant('""');
         }
@@ -166,9 +169,16 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         var model = this.view.context.get("model");
         for (var link in fields)
         {
-            var value = _.extend(model.get(link) || {}, fields[link]);
-            model.set(link, value);
+            var currValue = model.get(link),
+                forceChangeEvent = !!currValue, //Force the change event if the model already had an object for the link
+                value = currValue || {};
+            _.each(fields[link], function(values, type) {
+                value[type] = _.extend(value[type] || {}, values);
+            });
         }
+        model.set(link, value);
+        if (forceChangeEvent)
+            model.trigger("change:" + link);
     },
     getRelatedFieldValues : function(fields, module, record)
     {
@@ -267,7 +277,9 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         return ret;
     },
     fireOnLoad : function(dep) {
-        this.view.model.once("change", SUGAR.forms.Trigger.fire, dep.trigger);
+        //Disable fire on load for now as we no longer have edit vs detail views and
+        //this is just costing us performance.
+        //this.view.model.once("change", SUGAR.forms.Trigger.fire, dep.trigger);
     }
 });
 

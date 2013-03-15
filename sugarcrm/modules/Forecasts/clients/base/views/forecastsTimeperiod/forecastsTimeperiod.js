@@ -81,23 +81,9 @@
         }, this));
 
         /**
-         * Populates the dropdown from the endpoint with the timeperiods that were created by the admin when they set up
-         * forecasts module
-         */
-        app.api.call("read", app.api.buildURL("Forecasts", "timeperiod"), '', {
-            success: function(results) {
-                this.field.def.options = results;
-                if(!this.field.disposed) {
-                    this.field.render();
-                }
-            }
-        }, {field: field, view: this});
-
-        /**
          * Set the initial selection value from app defaults, eventually, this should probably come from a user pref.
          */
         field.model.set({'selectedTimePeriod': app.defaultSelections.timeperiod_id.id});
         return field;
     }
-
 })

@@ -30,13 +30,15 @@
             }
             else {
                 var self = this;
-                app.alert.dismiss('record-saved');
-                app.alert.show('save_list_record', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
                 this.model.save({}, {
                     success: function(model) {
                         this.changed = false;
-                        app.alert.dismiss('save_list_record');
                         self.view.toggleRow(model.id, false);
+                    },
+                    alerts: {
+                        'success': {
+                            messages: app.lang.getAppString('LBL_RECORD_SAVED')
+                        }
                     }
                 });
             }

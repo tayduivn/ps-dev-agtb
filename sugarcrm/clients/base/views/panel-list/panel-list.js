@@ -14,17 +14,17 @@
     },
 
     unlinkClicked: function(model) {
-        console.log("Unlinkined", model);
         var self = this;
         app.alert.show('unlink_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('NTC_UNLINK_CONFIRMATION'),
             onConfirm: function() {
-                app.alert.show('unlink_list_record', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_DELETING')});
                 model.destroy({
                     relate: true,
                     success: function() {
-                        app.alert.dismiss('unlink_list_record');
+                        // We trigger reset after removing the model so that
+                        // panel-top will re-render and update the count.
+                        self.collection.remove(model).trigger('reset');
                         self.render();
                     }
                 });
@@ -33,6 +33,6 @@
     },
 
     toggleList: function(e) {
-        (e) ? this.$el.show() : this.$el.hide();
+        this.$el[e ? 'show' : 'hide']();
     }
 })

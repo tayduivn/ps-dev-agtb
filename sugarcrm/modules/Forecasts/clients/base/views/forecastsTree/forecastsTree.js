@@ -60,7 +60,9 @@
      * @private
      */
     _dispose: function() {
-        this.jsTree.off();
+        if(app.user.get('isManager')) {
+            this.jsTree.off();
+        }
         app.view.Component.prototype._dispose.call(this);
     },
 

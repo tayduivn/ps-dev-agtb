@@ -232,7 +232,8 @@
         if (_.isFunction($tooltip.tooltip)) {
             $tooltip.tooltip({
                 container:'body',
-                placement:'top'
+                placement:'top',
+                trigger:'click'
             });
         }
     },

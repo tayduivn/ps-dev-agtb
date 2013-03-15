@@ -1865,6 +1865,7 @@ $app_list_strings = array (
 );
 
 $app_strings = array (
+  'LBL_ACTIVITIES' => 'Activities',
   'LBL_TOUR_NEXT' => 'Next',
   'LBL_TOUR_SKIP' => 'Skip',
   'LBL_TOUR_BACK' => 'Back',
@@ -2583,6 +2584,9 @@ $app_strings = array (
     'LBL_FILTER_CREATE_NEW' => 'Create New',
     'LBL_FILTER_ALL_RECORDS' => 'All Records',
     'LBL_FILTER_SAVE' => 'You successfully created the filter',
+    'LBL_FOLLOW' => 'Follow',
+    'LBL_FOLLOWING' => 'Following',
+    'LBL_UNFOLLOW' => 'Unfollow',
     'LBL_VCARD' => 'vCard',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
     'LBL_IMAGE' => 'Image',
@@ -3829,6 +3833,10 @@ $app_strings = array (
     'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and create new',
     'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
+
+    // record delete
+    'NTC_RECORD_DELETE_CONFIRMATION' => 'Are you sure you want to delete the {{module}} {{name}}?',
+    'NTC_RECORD_DELETE_SUCCESS' => 'You deleted the {{module}} {{name}}.',
 
     //interactions dashlet
     'LBL_DASHLET_SETTINGS' => 'Settings',

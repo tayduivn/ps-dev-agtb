@@ -34,14 +34,13 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe('Render', function() {
-        var setTitleStub, hideFieldStub, toggleSenderOptionsStub, populateToRecipientsStub, initMainButtonStatusStub;
+        var setTitleStub, hideFieldStub, toggleSenderOptionsStub, populateToRecipientsStub;
 
         beforeEach(function() {
             setTitleStub = sinon.stub(view, 'setTitle'),
             hideFieldStub = sinon.stub(view, 'hideField'),
             toggleSenderOptionsStub = sinon.stub(view, 'toggleSenderOptions'),
             populateToRecipientsStub = sinon.stub(view, 'populateToRecipients');
-            initMainButtonStatusStub = sinon.stub(view, 'initMainButtonStatus');
         });
 
         afterEach(function() {
@@ -49,7 +48,6 @@ describe("Emails.Views.Compose", function() {
             hideFieldStub.restore();
             toggleSenderOptionsStub.restore();
             populateToRecipientsStub.restore();
-            initMainButtonStatusStub.restore();
         });
 
         it("No recipients on context - title should be set no recipients populated", function() {
@@ -426,6 +424,10 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe("Signatures", function() {
+        beforeEach(function() {
+            view.model.off('change');
+        });
+
         it("should retrieve a signature from the SignaturesApi when the signature ID is present", function() {
             var apiStub   = sinon.stub(app.api, "call"),
                 id        = "abcd", // the actual ID doesn't matter

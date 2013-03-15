@@ -79,5 +79,13 @@ describe("Alert View", function() {
             var result = view.getAlertTemplate(view.LEVEL.SUCCESS, 'BAR');
             expect(result.indexOf('foo bar')).not.toBe(-1);
         });
+
+        it("Should truncate ellipsis of processing labels", function() {
+            var result;
+            result = view.getAlertTemplate(view.LEVEL.PROCESS, null, 'Loading...');
+            expect($('<div></div>').append(result).find('strong').text()).toBe('Loading');
+            result = view.getAlertTemplate(view.LEVEL.PROCESS, null, 'Deleting...');
+            expect($('<div></div>').append(result).find('strong').text()).toBe('Deleting');
+        });
     });
 });

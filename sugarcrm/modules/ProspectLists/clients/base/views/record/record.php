@@ -38,6 +38,11 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                 'name',
                 array(
                     'type' => 'favorite',
+                    'readonly' => true,
+                ),
+                array(
+                    'type' => 'follow',
+                    'readonly' => true,
                 ),
             )
         ),
