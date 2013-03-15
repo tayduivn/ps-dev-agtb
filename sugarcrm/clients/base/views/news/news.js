@@ -23,15 +23,18 @@
         if(_.isUndefined(this.targetModel)){
             return;
         }
+
         var name = this.targetModel.get("account_name") || this.targetModel.get('name') || this.targetModel.get('full_name'),
             limit = parseInt(this.model.get("limit") || 20, 10);
 
         if (name) {
+            if (limit < 1 || limit > 8) { // up to 8
+                limit = 8;
+            }
             $.ajax({
-                url: "https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=" + name.toLowerCase(),
+                url: "https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=" + name.toLowerCase() + "&rsz=" + limit,
                 dataType: "jsonp",
                 success: function(data) {
-                    data.responseData.results = _.first(data.responseData.results, limit);
                     _.extend(this, data);
                     this.render();
                 },

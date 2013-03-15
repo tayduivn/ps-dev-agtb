@@ -20,4 +20,23 @@ $viewdefs['base']['view']['news'] = array(
             )
         ),
     ),
+    'config' => array(
+        'fields' => array(
+            array(
+                'name' => 'limit',
+                'label' => 'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS',
+                'type' => 'enum',
+                'options' => array(
+                    1 => 1,
+                    2 => 2,
+                    3 => 3,
+                    4 => 4,
+                    5 => 5,
+                    6 => 6,
+                    7 => 7,
+                    8 => 8,
+                ),
+            ),
+        ),
+    ),
 );
