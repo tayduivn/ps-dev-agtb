@@ -13,6 +13,8 @@
     },
 
     bindDataChange: function() {
+        var self = this;
+
         if (this.collection) {
             this.collection.on('add', this.renderPost, this);
             this.collection.on('reset', function() {
@@ -29,7 +31,8 @@
         if (this.context.parent) {
             var model = this.context.parent.get("model");
             model.on("sync", function() {
-                this.fetch();
+                var options = self.collection.get("collectionOptions");
+                this.fetch(options);
             }, this.collection);
         }
     },
