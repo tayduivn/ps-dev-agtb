@@ -7,9 +7,7 @@ footer {
 	padding: 0;
 	height: inherit;
 	position: fixed;
-  /*Bug#55849: Language selector is broken in IE9;
-	remove z-index attribute*/
-	/*z-index: @zindexFixedNavbar;*/
+  z-index: @zindexFixedNavbar;
   .row-fluid {
     .span5:first-child {
       .rtlFloat(@direction,right);
