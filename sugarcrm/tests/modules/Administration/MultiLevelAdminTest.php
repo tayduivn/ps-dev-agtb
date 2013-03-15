@@ -369,4 +369,42 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertTrue($check);
     }
+
+    /**
+     * Tests that Forecasts admin link does not show up when a user has a Developer role
+     * but is not an admin
+     */
+    public function testHideForecastsAdminLinkIfDeveloperRole()
+    {
+        $this->mlaResetSession();
+        global $sugar_config, $current_language, $current_user;
+        $mlaRoles = array(
+            'test8'=>array(
+                'Forecasts'=>array('admin'=>1),
+                'ForecastSchedule'=>array('admin'=>ACL_ALLOW_DEV),
+            )
+        );
+        addDefaultRoles($mlaRoles);
+
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user->is_admin = 0;
+
+        $current_user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test8'");
+        $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$current_user->id."','".$current_user->role_id."')");
+        $this->_role_id = $current_user->role_id;
+
+        // needed for adminpaneldefs.php
+        $app_list_strings = return_app_list_strings_language($sugar_config['default_language']);
+        $sugar_flavor = 'ent';
+        $server_unique_key = 'test';
+        $admin_group_header = array();
+        require 'modules/Administration/metadata/adminpaneldefs.php';
+
+        foreach($admin_group_header as $key => $val ) {
+            if($val[0] == 'LBL_FORECAST_TITLE') {
+                $GLOBALS['log']->fatal('keyval: ' ,  $key, $val);
+                $this->assertEmpty($val[3]);
+            }
+        }
+    }
 }
