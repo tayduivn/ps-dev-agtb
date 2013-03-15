@@ -30,10 +30,12 @@
 
         if (this.context.parent) {
             var model = this.context.parent.get("model");
-            model.on("sync", function() {
-                var options = self.collection.get("collectionOptions");
-                this.fetch(options);
-            }, this.collection);
+            model.on("change", _.once(function() {
+                model.on("sync", function() {
+                    var options = self.collection.get("collectionOptions");
+                    this.fetch(options);
+                }, this.collection);
+            }));
         }
     },
 

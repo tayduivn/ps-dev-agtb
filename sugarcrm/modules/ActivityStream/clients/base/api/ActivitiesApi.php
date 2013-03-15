@@ -72,7 +72,7 @@ class ActivitiesApi extends SugarListApi
         }
 
         $query = self::getQueryObject($api, $params, $record);
-        return $this->formatResult($api, $args, $query);
+        return $this->formatResult($api, $args, $query, $record);
     }
 
     public function getModuleActivities(ServiceBase $api, array $args)
@@ -84,7 +84,7 @@ class ActivitiesApi extends SugarListApi
         }
 
         $query = self::getQueryObject($api, $params, $record);
-        return $this->formatResult($api, $args, $query);
+        return $this->formatResult($api, $args, $query, $record);
     }
 
     public function getHomeActivities(ServiceBase $api, array $args)
@@ -103,7 +103,7 @@ class ActivitiesApi extends SugarListApi
         return $params;
     }
 
-    protected function formatResult(ServiceBase $api, array $args, SugarQuery $query)
+    protected function formatResult(ServiceBase $api, array $args, SugarQuery $query, SugarBean $bean = null)
     {
         $response = array();
         $response['records'] = $query->execute('array', false);
@@ -129,15 +129,22 @@ class ActivitiesApi extends SugarListApi
             $date_entered = $timedate->fromDbType($record['date_entered'], 'datetime');
             $record['date_entered'] = $timedate->asIso($date_entered);
 
-            $record['fields'] = json_decode($record['fields'], true);
-            if ($record['activity_type'] == 'update' && !empty($record['fields'])) {
-                foreach ($record['data']['changes'] as &$change) {
-                    if (!in_array($change['field_name'], $record['fields'])) {
-                        unset($record['data']['changes'][$change['field_name']]);
+            if ($record['activity_type'] == 'update') {
+                if (is_null($bean) || empty($bean->id)) {
+                    $record['fields'] = json_decode($record['fields'], true);
+                    if (!empty($record['fields'])) {
+                        foreach ($record['data']['changes'] as &$change) {
+                            if (!in_array($change['field_name'], $record['fields'])) {
+                                unset($record['data']['changes'][$change['field_name']]);
+                            }
+                        }
+                        unset($record['fields']);
                     }
+                } else {
+                    $context = array('user' => $api->user);
+                    $bean->ACLFilterFieldList($record['data']['changes'], $context);
                 }
             }
-            unset($record['fields']);
 
             // Format the name of the user.
             $name = array($record['first_name'], $record['last_name']);
@@ -167,27 +174,31 @@ class ActivitiesApi extends SugarListApi
         // +1 used to determine if we have more records to show.
         $query->limit($params['limit'] + 1)->offset($params['offset']);
 
-        $columns = array('activities.*', 'activities_users.fields', 'users.first_name', 'users.last_name');
-        $query->select($columns);
+        $columns = array('activities.*', 'users.first_name', 'users.last_name');
+
 
         // Join with user names.
         $query->joinTable('users', array('joinType' => 'INNER'))
             ->on()->equalsField('activities.created_by', 'users.id');
 
-        // Join with cached list of activities to show.
-        $query->joinTable('activities_users', array('joinType' => 'INNER', 'linkName' => 'activities_users'))
-            ->on()->equalsField("activities_users.activity_id", 'activities.id')
-            ->equals("activities_users.deleted", 0)
-            ->queryOr()->equals('activities_users.user_id', $api->user->id)
-            ->queryOr()->isNull('activities_users.user_id');
-        // The comment below shows the equivalent of the join above in SQL.
-        // INNER JOIN activities_users ON (activities_users.activity_id = activities.id AND activities_users.deleted = 0 AND  (activities_users.user_id = 'seed_sally_id' OR  (activities_users.user_id IS NULL)))
+        if (!$record || !$record->id) {
+            // Join with cached list of activities to show.
+            $columns[] = 'activities_users.fields';
+            $query->joinTable('activities_users', array('joinType' => 'INNER', 'linkName' => 'activities_users'))
+                ->on()->equalsField("activities_users.activity_id", 'activities.id')
+                ->equals("activities_users.deleted", 0)
+                ->queryOr()->equals('activities_users.user_id', $api->user->id)
+                ->queryAnd()->equals('activities.activity_type', 'post')
+                ->queryAnd()->isNull('activities_users.user_id');
+            // The comment below shows the equivalent of the join above in SQL.
+            //  INNER JOIN activities_users ON (activities_users.activity_id = activities.id AND activities_users.deleted = 0 AND  (activities_users.user_id = 'seed_max_id' OR  (activities.activity_type = 'post' AND  (activities_users.user_id IS NULL))))
+        }
 
         // If we have a relevant bean, we add our where condition.
         if ($record) {
-            $query->where()->equals('activities_users.parent_type', $record->module_name);
+            $query->where()->equals('activities.parent_type', $record->module_name);
             if ($record->id) {
-                $query->where()->equals('activities_users.parent_id', $record->id);
+                $query->where()->equals('activities.parent_id', $record->id);
             }
         }
 
@@ -201,6 +212,7 @@ class ActivitiesApi extends SugarListApi
         }
 
         $query->where()->equals('deleted', 0);
+        $query->select($columns);
 
         return $query;
     }
