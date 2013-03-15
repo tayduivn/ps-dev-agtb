@@ -234,7 +234,7 @@ class UnifiedSearchApi extends SugarListApi {
         //END SUGARCRM flav=!pro ONLY
 
         foreach($recordSet['records'] as &$record) {
-            $bean = BeanFactory::retrieveBean($args['module_list'], $record['id']);
+            $bean = BeanFactory::retrieveBean($record['_module'], $record['id']);
             $sub = Subscription::checkSubscription($api->user, $bean);
             $record['following'] = !empty($sub);
         }
