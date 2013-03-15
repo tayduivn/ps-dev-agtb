@@ -136,7 +136,7 @@ class SugarFavorites extends Basic
 	}
 
 	/**
-	 * Use a direct DB Query to retreive only the assigned user id's for a module/record. 
+	 * Use a direct DB Query to retreive only the assigned user id's for a module/record.
 	 * @param string $module - module name
 	 * @param string $id - guid
 	 * @return array $assigned_user_ids - array of assigned user ids
@@ -252,7 +252,8 @@ class SugarFavorites extends Basic
         $sugar_query->joinTable(self::getTableName(), array('alias'=>$sfAlias, 'joinType'=>$joinType))
                     ->on()->equals("{$sfAlias}.module", $bean->module_name, $this)
                         ->equalsField("{$sfAlias}.record_id","{$alias}.id", $this)
-                    ->equals("{$sfAlias}.assigned_user_id", $user_id);
+                    ->equals("{$sfAlias}.assigned_user_id", $user_id)
+                    ->equals("{$sfAlias}.deleted", 0);
 
         return $sfAlias;
     }
