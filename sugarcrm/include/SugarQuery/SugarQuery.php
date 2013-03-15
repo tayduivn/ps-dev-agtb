@@ -39,7 +39,7 @@ require_once('include/SugarQuery/Builder/Orwhere.php');
 require_once('include/SugarQuery/Builder/Join.php');
 require_once('include/SugarQuery/Builder/Select.php');
 require_once('include/SugarQuery/Builder/Condition.php');
-
+require_once('include/SugarQuery/Builder/Literal.php');
 
 class SugarQuery
 {

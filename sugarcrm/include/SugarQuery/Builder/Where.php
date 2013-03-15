@@ -30,11 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /**
  * This is the base object for building SugarQueries Where's
- * ************ WARNING**********************************************
- * THIS CLASS AND ALL RELATED CLASSES WILL BE FUNDAMENTALLY CHANGING
- * DO NOT USE THIS TO BUILD YOUR QUERIES.  
- * ******************************************************************
- * 
  */
 abstract class SugarQuery_Builder_Where
 {
@@ -70,8 +65,8 @@ abstract class SugarQuery_Builder_Where
     /**
      * Creates a condition for two fields to check equality
      * @param string $field1
-     * @param string $field2 
-     * @param bool|object $bean 
+     * @param string $field2
+     * @param bool|object $bean
      * @return object
      */
     public function equalsField($field1, $field2, $bean = false) {
@@ -86,9 +81,9 @@ abstract class SugarQuery_Builder_Where
 
     /**
      * Creates a condition to check not equals
-     * @param string $field 
-     * @param string $value 
-     * @param bool|object $bean 
+     * @param string $field
+     * @param string $value
+     * @param bool|object $bean
      * @return object
      */
     public function notEquals($field, $value, $bean=false) {
@@ -103,9 +98,9 @@ abstract class SugarQuery_Builder_Where
 
     /**
      * Creates a condition for two fields to check non-equality
-     * @param string $field1 
-     * @param string $field2 
-     * @param bool|object $bean 
+     * @param string $field1
+     * @param string $field2
+     * @param bool|object $bean
      * @return object
      */
     public function notEqualsField($field1, $field2, $bean=false) {
@@ -129,7 +124,7 @@ abstract class SugarQuery_Builder_Where
         if($bean instanceof SugarBean) {
             $condition->setBean($bean);
         }
-		$this->conditions[] = $condition;	
+		$this->conditions[] = $condition;
 		return $this;
 	}
 
@@ -182,9 +177,9 @@ abstract class SugarQuery_Builder_Where
 
     /**
      * Creates a condition like field LIKE '%value';
-     * @param string $field 
-     * @param string $value 
-     * @param bool|object $bean 
+     * @param string $field
+     * @param string $value
+     * @param bool|object $bean
      * @return object
      */
     public function ends($field, $value, $bean = false) {
@@ -242,7 +237,7 @@ abstract class SugarQuery_Builder_Where
         if($bean instanceof SugarBean) {
             $condition->setBean($bean);
         }
-		$this->conditions[] = $condition;		
+		$this->conditions[] = $condition;
 		return $this;
 	}
 
@@ -258,7 +253,7 @@ abstract class SugarQuery_Builder_Where
         if($bean instanceof SugarBean) {
             $condition->setBean($bean);
         }
-		$this->conditions[] = $condition;		
+		$this->conditions[] = $condition;
 		return $this;
 	}
 
@@ -274,7 +269,7 @@ abstract class SugarQuery_Builder_Where
         if($bean instanceof SugarBean) {
             $condition->setBean($bean);
         }
-		$this->conditions[] = $condition;		
+		$this->conditions[] = $condition;
 		return $this;
 	}
 
@@ -290,7 +285,7 @@ abstract class SugarQuery_Builder_Where
         if($bean instanceof SugarBean) {
             $condition->setBean($bean);
         }
-		$this->conditions[] = $condition;		
+		$this->conditions[] = $condition;
 		return $this;
 	}
 

@@ -331,6 +331,10 @@ class SugarQuery_Compiler_SQL
                     return array("{$table_name}.{$field}", $alias);
                 }
             }
+            if($field == "*") {
+                // don't do anything with * for now
+                return array("{$table_name}.{$field}", null);
+            }
         } else {
             $table_name = $bean->getTableName();
         }
@@ -613,8 +617,6 @@ class SugarQuery_Compiler_SQL
         return $sql;
     }
 
-    // TODO: FIX THIS SO THAT WE USE MORE DBMANAGER STUFF
-    // FIGURE OUT WHY db->quotes() DOESN'T RETURN QUOTED STRING FOR US TO USE
     /**
      * @param $field
      * @param $value
@@ -624,6 +626,9 @@ class SugarQuery_Compiler_SQL
      */
     protected function quoteValue($field, $value, $bean = false, $operator = false)
     {
+        if($value instanceof SugarQuery_Builder_Literal) {
+            return (string)$value;
+        }
 
         if ($bean === false) {
             $bean = $this->from_bean;
