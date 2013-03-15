@@ -47,7 +47,34 @@
             },
 
             /**
+             * Remove the old view's css class (e.g. detail, edit)
+             * currently maps the action directly to the css class name
+             * but may be overridden in the future.
+             *
+             * @param {String} action the name of the action to remove
+             * @protected
+             */
+            _removeViewClass: function(action) {
+                // in case our getFieldElement has been overridden, use this.$el directly
+                this.$el.removeClass(action);
+            },
+
+            /**
+             * Add the new view's css class (e.g. detail, edit)
+             * currently maps the action directly to the css class name
+             * but may be overridden in the future.
+             *
+             * @param {String} action the name of the action to remove
+             * @protected
+             */
+            _addViewClass: function(action) {
+                // in case our getFieldElement has been overridden, use this.$el directly
+                this.$el.addClass(action);
+            },
+
+            /**
              * Override _render to redecorate fields if field is on error state
+             * and to add view action CSS class.
              */
             _render: function() {
                 // This is hacky but tooltips are appended to body and when the field rerenders we lose control of
@@ -57,6 +84,7 @@
 
                 _fieldProto._render.call(this);
 
+                this._addViewClass(this.action);
                 if (isErrorState) {
                     this.decorateError(this._errors);
                 }
@@ -118,6 +146,17 @@
                 $label.remove();
             },
 
+            /**
+             * {@inheritdoc}
+             *
+             * Override setMode to remove any stale view action CSS classes.
+             * @override
+             */
+            setMode: function(name) {
+                this._removeViewClass(this.action);
+
+                _fieldProto.setMode.call(this,name);
+            },
             /**
              * Decorate error gets called when this Field has a validation error.  This function applies custom error
              * styling appropriate for this field.

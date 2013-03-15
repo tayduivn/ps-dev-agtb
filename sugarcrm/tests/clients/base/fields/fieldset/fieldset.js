@@ -72,4 +72,43 @@ describe('fieldset field', function() {
 
         addClass.restore();
     });
+
+    describe('Edit mode css class', function() {
+        var editClass = 'edit';
+        var viewClass = 'view';
+
+        it('should update the CSS classes of the itself and its child fields', function() {
+            var addViewClassSpy = sinon.spy(field,'_addViewClass'),
+                removeViewClassSpy = sinon.spy(field,'_removeViewClass');
+
+            _.each(field.fields, function(childField) {
+                sinon.spy(childField, '_addViewClass');
+                sinon.spy(childField, '_removeViewClass');
+            });
+
+            field.render();
+            expect(addViewClassSpy.calledWith(editClass)).toBeTruthy();
+            expect(addViewClassSpy.calledWith(viewClass)).toBeFalsy();
+            _.each(field.fields, function(childField) {
+               expect(childField._addViewClass.calledWith(editClass)).toBeTruthy();
+               expect(childField._addViewClass.calledWith(viewClass)).toBeFalsy();
+            });
+
+            field.setMode('view');
+            expect(removeViewClassSpy.calledWith(editClass)).toBeTruthy();
+            expect(addViewClassSpy.calledWith(viewClass)).toBeTruthy();
+            _.each(field.fields, function(childField) {
+                expect(childField._removeViewClass.calledWith(editClass)).toBeTruthy();
+                expect(childField._addViewClass.calledWith(viewClass)).toBeTruthy();
+            });
+
+            addViewClassSpy.restore();
+            removeViewClassSpy.restore();
+
+            _.each(field.fields, function(childField) {
+                childField._addViewClass.restore();
+                childField._removeViewClass.restore();
+            });
+        });
+    });
 });

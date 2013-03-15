@@ -52,5 +52,41 @@ describe('Sugar7 field extensions', function() {
             reqSpy.restore();
         });
     });
+    
+    describe('Edit mode css class', function() {
+        var editClass = 'edit';
+        var detailClass = 'detail';
 
+        it('should render in detail mode without the edit class', function() {
+            field = SugarTest.createField("base", "description", "base", "detail");
+            field.render();
+            expect(field.getFieldElement().hasClass(editClass)).toBeFalsy();
+            expect(field.getFieldElement().hasClass(detailClass)).toBeTruthy();
+        });
+
+        it('should render in edit mode with edit class', function() {
+            field = SugarTest.createField("base", "description", "base", "edit");
+            field.render();
+            expect(field.getFieldElement().hasClass(editClass)).toBeTruthy();
+            expect(field.getFieldElement().hasClass(detailClass)).toBeFalsy();
+        });
+
+        it('should add the edit class when toggled to edit mode', function() {
+            field = SugarTest.createField("base", "description", "base", "detail");
+            field.render();
+
+            field.setMode('edit');
+            expect(field.getFieldElement().hasClass(editClass)).toBeTruthy();
+            expect(field.getFieldElement().hasClass(detailClass)).toBeFalsy();
+        });
+
+        it('should remove the edit class when toggled from edit to detail mode', function() {
+            field = SugarTest.createField("base", "description", "base", "edit");
+            field.render();
+
+            field.setMode('detail');
+            expect(field.getFieldElement().hasClass(editClass)).toBeFalsy();
+            expect(field.getFieldElement().hasClass(detailClass)).toBeTruthy();
+        });
+    });
 });

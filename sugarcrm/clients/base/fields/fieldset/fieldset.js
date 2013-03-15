@@ -82,6 +82,9 @@
             this.getFieldElement().addClass(this.def.css_class);
         }
         this.focusIndex = 0;
+
+        this._addViewClass(this.action);
+
         return this;
     },
     focus: function() {
@@ -127,6 +130,12 @@
         }, this);
     },
 
+    /**
+     * {@inheritdoc}
+     *
+     * Set action name of child fields of this field set.
+     * @override
+     */
     setMode: function(name) {
         app.view.Field.prototype.setMode.call(this, name);
         _.each(this.fields, function(field){
