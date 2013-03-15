@@ -14,7 +14,6 @@
     },
 
     unlinkClicked: function(model) {
-        console.log("Unlinkined", model);
         var self = this;
         app.alert.show('unlink_confirmation', {
             level: 'confirmation',
@@ -23,6 +22,9 @@
                 model.destroy({
                     relate: true,
                     success: function() {
+                        // We trigger reset after removing the model so that
+                        // panel-top will re-render and update the count.
+                        self.collection.remove(model).trigger('reset');
                         self.render();
                     }
                 });
@@ -31,6 +33,6 @@
     },
 
     toggleList: function(e) {
-        (e) ? this.$el.show() : this.$el.hide();
+        this.$el[e ? 'show' : 'hide']();
     }
 })
