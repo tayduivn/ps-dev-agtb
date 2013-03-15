@@ -26,6 +26,9 @@
  ********************************************************************************/
 ({
     fieldTag: "select",
+    bindKeyDown: function(callback) {
+        this.$('input').on("keydown.record", {field: this}, callback);
+    },
     _render: function() {
         var val;
         var options = this.items = this.items || this.enumOptions;
@@ -62,6 +65,9 @@
             this.$el.html(app.lang.get("LBL_LOADING"));
         }
         return this;
+    },
+    focus: function () {
+        this.$(this.fieldTag).select2('open');
     },
     /**
      * Load the options for this field and pass them to callback function.  May be asynchronous.

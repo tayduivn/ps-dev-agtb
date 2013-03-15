@@ -508,10 +508,31 @@
 
         if (e.which == 9) { // If tab
             e.preventDefault();
-            field.$(field.fieldTag).trigger("change");
-            if(field.nextField) {
-                this.toggleField(field, false);
-                this.toggleField(field.nextField, true);
+            // field isnt done being focused yet so focus some more
+            if (_.isFunction(field.focus) && field.focus()) {
+                return true;
+            } else {
+                field.$(field.fieldTag).trigger("change");
+                if(field.nextField) {
+                    if (field.nextField.$el.closest('.panel_hidden').hasClass('hide')) {
+                        this.toggleMoreLess();
+                    }
+                    this.toggleField(field, false);
+                    this.toggleField(field.nextField, true);
+                    // the field we need to toggle until we reach one that's not
+                    if (field.isDisabled() && field.nextField) {
+                        var curField = field;
+                        while (curField.isDisabled) {
+                            if (curField.nextField) {
+                                this.toggleField(curField.nextField, true);
+                                curField = curField.nextField;
+                            } else {
+                                break;
+                            }
+
+                        }
+                    }
+                }
             }
         }
     },
