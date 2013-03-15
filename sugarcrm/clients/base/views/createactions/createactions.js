@@ -25,10 +25,15 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    events : {
-        'click .actionLink' : '_handleActionLink'
+    plugins: ['dropdown'],
+    events: {
+      'click .dropdown-toggle':'toggleDropdown',
+      'click .actionLink' : '_handleActionLink'
     },
-
+    toggleDropdown: function(event) {
+        var $currentTarget = this.$(event.currentTarget);
+        this.toggleDropdownHTML($currentTarget);
+    },
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
         app.user.on("change:module_list", this.render, this);
