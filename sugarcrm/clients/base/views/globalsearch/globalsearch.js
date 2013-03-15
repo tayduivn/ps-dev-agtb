@@ -145,7 +145,7 @@
                         meta = app.metadata.getModule(record._module);
 
                     if (meta && meta.isBwcEnabled) {
-                        formattedRecord.link = app.bwc.buildRoute(record._module, record.id, 'DetailView');
+                        formattedRecord.link = '#' + app.bwc.buildRoute(record._module, record.id, 'DetailView');
                     }
                     else {
                         formattedRecord.link = '#' + app.router.buildRoute(record._module, record.id);

@@ -109,7 +109,7 @@
     buildRoute: function(module, idName) {
         var moduleMeta = app.metadata.getModule(module) || {};//fallback so we don't clutter tests with stubs ;)
         if (this.bwcLink || (this.def.bwcLink !== false && moduleMeta.isBwcEnabled)) {
-            this.href = app.bwc.buildRoute(module, idName, 'DetailView');
+            this.href = '#' + app.bwc.buildRoute(module, idName, 'DetailView');
         } else {
             //Normal Sidecar route
             this.href = '#' + app.router.buildRoute(module, idName);

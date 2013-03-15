@@ -16,7 +16,7 @@
         },
         /**
           * Builds a backwards compatible route. For example:
-          * #bwc/index.php?module=MyModule&action=DetailView&record12345
+          * bwc/index.php?module=MyModule&action=DetailView&record12345
           *
           * @param {String} module(required) The name of the module.
           * @param {String} id(optional) The model's ID.
@@ -29,7 +29,7 @@
              * app.bwc.buildRoute is for internal use and we control its callers, so we're
              * assuming callers will provide the module param which is marked required!
              */
-            var href = "#bwc/index.php?";
+            var href = "bwc/index.php?";
             var params = { module: module };
             if (!action && !id || action==='DetailView' && !id) {
                 params.action = 'index';
