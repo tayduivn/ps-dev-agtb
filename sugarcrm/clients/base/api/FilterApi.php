@@ -140,6 +140,9 @@ class FilterApi extends SugarApi
         //Force id and date_modified into the select
         $options['select'][] = "id";
         $options['select'][] = "date_modified";
+        $options['select'][] = "assigned_user_id";
+        $options['select'][] = "created_by";
+        $options['select'][] = "date_modified";
         $options['select'] = array_unique($options['select']);
 
         return $options;

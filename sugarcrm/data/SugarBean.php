@@ -590,8 +590,8 @@ class SugarBean
      */
     public function addVisibilityQuery($query, $options = null)
     {
-        $query = $this->loadVisibility()->addVisibilityFromQuery($query);
-        $query = $this->loadVisibility()->addVisibilityWhereQuery($query);
+        $query = $this->loadVisibility()->addVisibilityFromQuery($query, $options);
+        $query = $this->loadVisibility()->addVisibilityWhereQuery($query, $options);
         return $query;
     }
 
@@ -6151,7 +6151,7 @@ class SugarBean
      */
     function loadFromRow($arr, $convert = false)
     {
-        $this->populateFromRow($arr, $convert);
+        $this->fetched_row = $this->populateFromRow($arr, $convert);
         $this->processed_dates_times = array();
         $this->check_date_relationships_load();
 

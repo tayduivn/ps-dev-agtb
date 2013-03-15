@@ -79,11 +79,28 @@ class TeamSecurity extends SugarVisibility
      * @param array $options
      * @return string|SugarQuery
      */
-    public function addVisibilityFromQuery(SugarQuery $sugarQuery, $options = array()) {
-        $join = false;
-        $this->addVisibilityFrom($join, $options);
-        if(!empty($join)) {
-            $sugarQuery->joinRaw($join);
+    public function addVisibilityFromQuery(SugarQuery $sugarQuery, $options = array())
+    {
+        if($this->getOption('as_condition')) {
+            $table_alias = $this->getOption('table_alias');
+            if(empty($sugarQuery->join[$table_alias])) {
+                return;
+            }
+            $join = $sugarQuery->join[$table_alias];
+            $add_join = '';
+            $this->addVisibilityFrom($add_join, $options);
+            if(!empty($add_join)) {
+                if(substr($add_join, 0, 5) == " AND ") {
+                    $add_join = substr($add_join, 5);
+                }
+                $join->on()->queryAnd()->addRaw($add_join);
+            }
+        } else {
+            $join = '';
+            $this->addVisibilityFrom($join, $options);
+            if(!empty($join)) {
+                $sugarQuery->joinRaw($join);
+            }
         }
         return $sugarQuery;
     }

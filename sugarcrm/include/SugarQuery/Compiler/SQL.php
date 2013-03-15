@@ -377,8 +377,10 @@ class SugarQuery_Compiler_SQL
             $join = $this->sugar_query->join($data['link'], $params);
             $jalias = $join->joinName();
             $fields = $this->resolveField("$jalias.{$data['rname']}", $field);
-            if(!is_array($fields[0])) {
-                $fields = array($fields);
+            if(!empty($fields)) {
+                if(!is_array($fields[0])) {
+                    $fields = array($fields);
+                }
             }
             if(!empty($data['id_name']) && $data['id_name'] != $field && !in_array($data['id_name'], $this->sugar_query->select->select)) {
                 $id_field = $this->resolveField($data['id_name'], $data['id_name']);
@@ -535,11 +537,10 @@ class SugarQuery_Compiler_SQL
                     $sql = $this->compileCondition($condition, $sql, $operator);
                 } else {
                     if (is_array($condition)) {
-                        $sql .= explode(' ', $condition);
+                        $sql .= join(' ', $condition);
                     }
                 }
             }
-            $prev_operator = $operator;
         }
         return $sql;
     }

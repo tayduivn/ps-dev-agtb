@@ -428,8 +428,11 @@ class SugarQuery
 
 
 		$bean->$join->buildJoinSugarQuery($this, array('joinTableAlias'=>$bean->module_name, 'myAlias'=>$alias, 'joinType' => $joinType));
-
 		$joined = BeanFactory::newBean($bean->$join->getRelatedModuleName());
+		if($team_security === true) {
+			$joined->addVisibilityQuery($this, array("table_alias" => $alias, 'as_condition' => true));
+		}
+
 
 		if($joined->hasCustomFields())
 		{
@@ -441,9 +444,6 @@ class SugarQuery
 				$this->joinRaw($sql);
 			}
 		}
-        if($team_security === true) {
-            $joined->addVisibilityQuery($this);
-        }
 
 	}
 
