@@ -164,7 +164,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 'employees',
                 'sic_code',
                 'ticker_symbol',
-                'member_of',
+                'parent_name',
                 'ownership',
                 'campaign_name',
                 'rating',
