@@ -665,6 +665,20 @@ class SugarBean
     }
 
     /**
+     * Get SugarSeachEngine visibility definitions
+     * @param string $engine SugarSearchEngine name
+     */
+    public function getSseVisibilityDefs($engine)
+    {
+    	return $this->loadVisibility()->getSseVisibilityDefs($engine);
+    }
+
+    public function getSseVisibilityData($engine)
+    {
+    	return $this->loadVisibility()->getSseVisibilityData($engine);
+    }
+    
+    /**
      * Returns the object name. If object_name is not set, table_name is returned.
      *
      * All implementing classes must set a value for the object_name variable.

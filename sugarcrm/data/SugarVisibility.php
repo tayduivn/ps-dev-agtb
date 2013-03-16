@@ -120,4 +120,19 @@ abstract class SugarVisibility
         $this->options = $options;
         return $this;
     }
+
+    /**
+     * Get sugar search engine definitions
+     * @param string $engine search engine name
+     * @return array
+     */
+    public function getSseVisibilityDefs($engine, $defs)
+    {
+    	return $defs;
+    }
+    
+    public function getSseVisibilityData($engine, $data)
+    {
+    	return $data;
+    }
 }

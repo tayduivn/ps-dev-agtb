@@ -74,7 +74,19 @@ class SugarSearchEngineMappingHelper
             */
            'type' => array(
                 'datetimecombo'  =>  'date',
+    			'relate' => 'string',
             ),
+        ),
+    );
+
+    /**
+     *
+     * Default field type to analyzer map
+     * @var array
+     */
+    protected static $analyzerMap = array(
+        'Elastic' => array(
+            'string' => 'standard',
         ),
     );
 
@@ -82,7 +94,7 @@ class SugarSearchEngineMappingHelper
      * this defines the field types that can be enabled for full text search
      * @var array
      */
-    protected static $ftsEnabledFieldTypes = array('name', 'user_name', 'varchar', 'decimal', 'float', 'int', 'phone', 'text', 'url');
+    protected static $ftsEnabledFieldTypes = array('name', 'user_name', 'varchar', 'decimal', 'float', 'int', 'phone', 'text', 'url', 'relate');
 
     /**
      *
@@ -180,4 +192,24 @@ class SugarSearchEngineMappingHelper
         return $searchEngineType;
     }
 
+    /**
+     * 
+     * Return analyzer based on the field type
+     * @param string $name   search engine name
+     * @param string $params elastic field parameters
+     */
+    public static function getAnalyzerFromType($name, $params)
+    {
+    	// dont return analyzer if not index or analyzed
+    	if (isset($params['index']) && ($params['index'] == 'not_analyzed' || $params['index'] == 'no')) {
+    		return false;
+    	}
+
+    	// return from analyzer map or default
+    	$type = $params['type'];
+        if (isset(self::$analyzerMap[$name][$type])) {
+            return self::$analyzerMap[$name][$type];
+        }
+        return 'standard';
+    }
 }

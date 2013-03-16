@@ -54,6 +54,13 @@ class SugarSearchEngineElasticMapping
     {
         $properties = $this->constructMappingProperties($fieldDefs);
 
+        // Add visibility
+        $bean = BeanFactory::getBean($module);
+        $visibility = $bean->getSseVisibilityDefs('Elastic');
+        if (is_array($visibility)) {
+        	$properties = array_merge($properties, $visibility);
+        }
+        
         if (is_array($properties) && count($properties) > 0)
         {
             $index = new \Elastica\Index($this->sse->getClient(), $this->sse->getIndexName());
@@ -74,6 +81,10 @@ class SugarSearchEngineElasticMapping
         return true;
     }
 
+    public function addVisibility ($properties)
+    {
+    	
+    }
     /**
      *
      * This function returns an array of properties given a field definition array.
@@ -115,6 +126,28 @@ class SugarSearchEngineElasticMapping
                     $tmpArray['type'] = SugarSearchEngineMappingHelper::getTypeFromSugarType('Elastic', $fieldDef);
                 }
 
+                // set field analyzer
+                if (empty($tmpArray['analyzer'])
+                    && $analyzer = SugarSearchEngineMappingHelper::getAnalyzerFromType('Elastic', $tmpArray))
+                {
+                    $tmpArray['analyzer'] = $analyzer;
+                }
+                
+                // fix up related fields to include raw value for facet search
+                if ($fieldDef['type'] == 'relate') {
+                	$tmpArray = array(
+                		'type' => 'multi_field',
+                		'fields' => array(
+                			$fieldName => $tmpArray,
+                			'raw' => array(
+                				'type' => 'string',
+                				'index' => 'not_analyzed',
+                				'include_in_all' => false,
+                			),
+                		),
+                	);
+                }
+
                 $properties[$fieldName] = $tmpArray;
             }
         }
@@ -132,9 +165,10 @@ class SugarSearchEngineElasticMapping
                 'index' => 'not_analyzed'
             );
         }        
+
         return $properties;
     }
-
+    
     /**
      *
      * This function creates a full mapping for all modules.

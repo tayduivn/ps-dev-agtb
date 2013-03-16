@@ -133,5 +133,33 @@ class BeanVisibility
     {
         return isset($this->loadedStrategies[$name]);
     }
+
+    /**
+     * Get SugarSearchEngine visibility definitions
+     * @param string $engine search engine name
+     * @return array
+     */    
+    public function getSseVisibilityDefs($engine)
+    {
+    	$defs = array();
+    	foreach($this->strategies as $strategy) {
+    		$defs = $strategy->getSseVisibilityDefs($engine, $defs);
+    	}
+    	return $defs;
+    }
+
+    /**
+     * Get SugarSearchEngine visibility (denormalized) data
+     * @param string $engine search engine name
+     * @return array
+     */        
+    public function getSseVisibilityData($engine)
+    {
+    	$data = array();
+    	foreach($this->strategies as $strategy) {
+    		$data = $strategy->getSseVisibilityData($engine, $data);
+    	}
+    	return $data;
+    } 
 }
 

@@ -218,9 +218,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $keyValues['doc_owner'] = $this->formatGuidFields($ownerField);
         }
 
-        if (empty($keyValues)) {
+        if( empty($keyValues) ) {
             return null;
         } else {
+        	
+        	// Add visibility denormalized data
+        	// @shouldIndexViaBean, bean is not necesarily a full bean
+        	$keyValues = array_merge($keyValues, $bean->getSseVisibilityData('Elastic'));
+        	xxx_dump("data", $keyValues);
             return new \Elastica\Document($bean->id, $keyValues, $this->getIndexType($bean));
         }
     }

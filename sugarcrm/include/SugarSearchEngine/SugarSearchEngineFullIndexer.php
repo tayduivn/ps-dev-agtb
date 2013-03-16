@@ -242,7 +242,9 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
             {
                 $beanID = $row['id'];
                 $row['module_dir'] = $module;
-                $bean = (object) $row;
+                //$bean = (object) $row; ????
+                $bean = BeanFactory::getBean($module);
+                $bean->fromArray($row);
             }
 
             if($bean !== FALSE)
@@ -298,7 +300,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
      */
     protected function shouldIndexViaBean($module)
     {
-        return FALSE;
+        return true;
     }
     /**
      * Main function that handles the indexing of a bean and is called by the job queue system.
