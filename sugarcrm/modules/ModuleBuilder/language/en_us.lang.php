@@ -185,6 +185,7 @@ $mod_strings = array(
 		'appBtn' 	=> 'Application mode is where you can customize various properties of the program, such as how many TPS reports are displayed on the homepage',
 		'backBtn'	=> 'Return to the previous step.',
 		'studioHelp'=> 'Use <b>Studio</b> to determine what and how information is displayed in the modules.',
+        'studioBCHelp' => ' indicates the module is a backward compatible module',
 		'moduleBtn'	=> 'Click to edit this module.',
 		'moduleHelp'=> 'The components that you can customize for the module appear here.<br><br>Click an icon to select the component to edit.',
 		'fieldsBtn'	=> 'Create and customize <b>Fields</b> to store information in the module.',

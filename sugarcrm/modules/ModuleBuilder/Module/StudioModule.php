@@ -38,6 +38,22 @@ class StudioModule
     public $fields ;
     public $seed;
 
+    /**
+     * Backwards compatibility check, set here in the event that a bean is not
+     * found for the requested module
+     * 
+     * @var bool
+     */
+    public $bwc = false;
+    
+    /**
+     * The indicator to use in the tree and menus to indicate a backward compatible
+     * module
+     * 
+     * @var string
+     */
+    protected static $bwcIndicator = '*'; 
+
     function __construct ($module)
     {
 	   	//Sources can be used to override the file name mapping for a specific view or the parser for a view.
@@ -57,8 +73,10 @@ class StudioModule
         $this->seed = BeanFactory::getBean($this->module);
         if($this->seed) {
             $this->fields = $this->seed->field_defs;
+            
+            // Set BWC
+            $this->bwc = $this->seed->isBWC();
         }
-        //$GLOBALS['log']->debug ( get_class($this)."->__construct($module): ".print_r($this->fields,true) ) ;
     }
 
      /*
@@ -140,7 +158,8 @@ class StudioModule
 
     function getNodes ()
     {
-        return array ( 'name' => $this->name , 'module' => $this->module , 'type' => 'StudioModule' , 'action' => "module=ModuleBuilder&action=wizard&view_module={$this->module}" , 'children' => $this->getModule() ) ;
+        $bwc = $this->bwc ? ' ' . self::$bwcIndicator : '';
+        return array ( 'name' => $this->name . $bwc, 'module' => $this->module , 'type' => 'StudioModule' , 'action' => "module=ModuleBuilder&action=wizard&view_module={$this->module}" , 'children' => $this->getModule(), 'bwc' => $this->bwc ) ;
     }
 
     function getModule ()
@@ -197,7 +216,6 @@ class StudioModule
 
     function getLayouts()
     {
-        global $bwcModules;
         $views = $this->getViews();
 
         $layouts = array ( ) ;
@@ -234,7 +252,7 @@ class StudioModule
         );
 
         $nodes = $this->getSearch () ;
-        if ( !empty ( $nodes ) && in_array($this->module, $bwcModules))
+        if ( !empty ( $nodes ) && $this->bwc)
         {
         	$layouts [ translate('LBL_SEARCH') ] = array (
                 'name' => translate('LBL_SEARCH') ,
@@ -531,5 +549,25 @@ class StudioModule
         );
     }
     //END SUGARCRM flav=ent ONLY
+
+    /**
+     * Sets the backward compatibility indicator
+     * 
+     * @param string $indicator
+     */
+    public static function setBWCIndicator($indicator)
+    {
+        self::$bwcIndicator = $indicator;
+    }
+
+    /**
+     * Gets the backward compatibility indicator
+     * 
+     * @return string
+     */
+    public static function getBWCIndicator()
+    {
+        return self::$bwcIndicator;
+    }
 }
 ?>

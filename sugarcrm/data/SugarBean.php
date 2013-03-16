@@ -329,6 +329,14 @@ class SugarBean
     public $related_beans = array();
 
     /**
+     * Flag that indicates whether this bean represents a backward compatible
+     * module.
+     *  
+     * @var boolean
+     */
+    protected $bwc;
+
+    /**
      * Create Bean
      * @deprecated
      * @param string $beanName
@@ -419,11 +427,14 @@ class SugarBean
         // FIXME: this will be removed, needed for ensuring BeanFactory is always used
         //$this->checkBacktrace();
 
-        global  $dictionary, $current_user;
+        global  $dictionary, $current_user,$bwcModules;
         static $loaded_defs = array();
         $this->db = DBManagerFactory::getInstance();
         if (empty($this->module_name))
             $this->module_name = $this->module_dir;
+        
+        // Set the backward compatibility indicator
+        $this->bwc = in_array($this->module_name, $bwcModules);
 
         //BEGIN SUGARCRM flav=pro ONLY
         if(isset($this->disable_team_security)){
@@ -6676,6 +6687,16 @@ class SugarBean
             $result = $this->custom_fields->getJOIN($expandedList, $includeRelates, $where);
         }
         return $result;
+    }
+
+    /**
+     * Gets the backward compatibility indicator for this bean
+     * 
+     * @return bool
+     */
+    public function isBWC()
+    {
+        return $this->bwc;
     }
 
     /**

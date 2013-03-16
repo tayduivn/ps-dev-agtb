@@ -63,10 +63,16 @@ EOQ;
     }
     
     function createModuleStringsCache($moduleDir, $lang = 'en_us', $return = false) {
+        global $mod_strings;
         $json = getJSONobj();
 
         // cn: bug 8242 - non-US langpack chokes
-        $mod_strings = return_module_language($lang, $moduleDir);
+        // Allows for modification of mod_strings by individual modules prior to 
+        // sending down to JS
+        if (empty($mod_strings)) {
+            $mod_strings = return_module_language($lang, $moduleDir);
+        }
+
         $mod_strings_encoded = $json->encode($mod_strings);
         $str = "SUGAR.language.setLanguage('" . $moduleDir . "', " . $mod_strings_encoded . ");";
         

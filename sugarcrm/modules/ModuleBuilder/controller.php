@@ -129,6 +129,10 @@ class ModuleBuilderController extends SugarController
     {
         $GLOBALS ['log']->info(get_class($this) . ":");
         global $current_user;
+        
+        // Handle BC for studio help
+        $this->normalizeModStrings();
+        
         $access = $current_user->getDeveloperModules();
             if ($current_user->isAdmin() || ($current_user->isDeveloperForAnyModule() && !isset($_REQUEST['view_module']) && (isset($_REQUEST['action']) && $_REQUEST['action'] != 'package')) ||
                 (isset($_REQUEST['view_module']) && (in_array($_REQUEST['view_module'], $access) || empty($_REQUEST['view_module']))) ||
@@ -1069,6 +1073,16 @@ class ModuleBuilderController extends SugarController
 
             // Used to prevent duplication of this process
             $this->metadataApiCacheCleared = true;
+        }
+    }
+    
+    protected function normalizeModStrings()
+    {
+        global $mod_strings;
+        
+        // Handle BC for studio help
+        if (isset($mod_strings['help']['studioWizard']['studioHelp']) && isset($mod_strings['help']['studioWizard']['studioBCHelp'])) {
+            $mod_strings['help']['studioWizard']['studioHelp'] .= '<br><br><b>' . StudioModule::getBWCIndicator() . '</b>' . $mod_strings['help']['studioWizard']['studioBCHelp'];
         }
     }
 }

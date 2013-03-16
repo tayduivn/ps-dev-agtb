@@ -49,6 +49,12 @@ class MBPackageTree{
 			$yn->set_property('href', 'javascript:void(0);');
 			$yn->id = $parent->id . '/' . $node['name'];
 			if(!empty($node['children']))$this->populateTree($node['children'], $yn);
+            
+            // Sets backward compatibility flag into the node defs for use on the
+            // client if needed
+            if (!empty($node['bwc'])) {
+                $yn->set_property('bwc', $node['bwc']);
+            }
 			$parent->add_node($yn);
 		}
 	}
