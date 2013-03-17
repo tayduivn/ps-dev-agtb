@@ -112,7 +112,7 @@ class SugarBeanApiHelper
 
             //BEGIN SUGARCRM flav=pro ONLY
             // mark if its a favorite
-            if ( !isset($data['my_favorite']) && in_array('my_favorite', $fieldList)) {
+            if ( !isset($data['my_favorite'])) { //&& in_array('my_favorite', $fieldList)) {
                 $data['my_favorite'] = $bean->my_favorite;
             }
             //END SUGARCRM flav=pro ONLY
