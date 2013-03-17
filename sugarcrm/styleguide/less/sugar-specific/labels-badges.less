@@ -1,114 +1,130 @@
-/*sugar mods*/
-
 .label,
 .badge {
-  font-weight: normal;
+  font-weight: 600;
   text-shadow: none;
-  color: @black;
-  height:12px;
+  color: darken(@white, 5%);
   display:inline-block;
-}
-
-//from nutmeg sugar-forecasts.less
-.label, .badge {
-  font-size: 10.152px;
-  line-height: 12px;
-  color: #000;
-  vertical-align: baseline;
-  white-space: nowrap;
-  background-color: #cdcccb;
-  height: 12px;
-  display: inline-block;
 }
 .label {
   padding: 1px 4px 2px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  .border-radius(@baseBorderRadius);
 }
 .badge {
   padding: 1px 9px 2px;
-  -webkit-border-radius: 9px;
-  -moz-border-radius: 9px;
-  border-radius: 9px;
+  .border-radius(10px);
 }
 a.label:hover, a.badge:hover {
-  color: #fff;
+  color: @white;
   text-decoration: none;
   cursor: pointer;
 }
 
-// Sugar Custom Colors
-/* mobile
-.label,
-.badge {
-  // Important (red)
-  &-important         { background-color: @btnDangerBackground; }
-  &-important[href]   { background-color: darken(@btnDangerBackground, 10%); }
-  &-warning           { background-color: @orange; }
-  &-warning[href]     { background-color: darken(@orange, 10%); }
-  // Success (green)
-  &-success           { background-color: @btnSuccessBackground; }
-  &-success[href]     { background-color: darken(@btnSuccessBackground, 10%); }
-  // Info (turquoise)
-  &-info              { background-color: @btnInfoBackground; }
-  &-info[href]        { background-color: darken(@btnInfoBackground, 10%); }
-  &-inverse           { background-color: @grayDark; }
-  &-inverse[href]     { background-color: darken(@grayDark, 10%); }
-  &-log           { background-color: @gray; }
-  &-log[href]     { background-color: darken(@gray, 10%); }
-  &-document           { background-color: @purple; }
-  &-document[href]     { background-color: darken(@purple, 10%); }
-  &-file           { background-color: @orange; }
-  &-file[href]     { background-color: darken(@orange, 10%); }
-  &-contact           { background-color: @blue; }
-  &-contact[href]     { background-color: darken(@blue, 10%); }
-  &-lead           { background-color: @green; }
-  &-lead[href]     { background-color: darken(@green, 10%); }
-  &-note           { background-color: @warningText; }
-  &-note[href]     { background-color: darken(@warningText, 10%); }
-}
-*/
-
 .label-module {
-  height: 38px !important;
-  width: 38px !important;
-  font-size: 16px !important;
-  line-height: 16px !important;
-  padding: 4px 0 0 4px !important;
-  margin: 0 !important;
-  border-radius: @baseBorderRadius !important;
-  border: none !important;
+  height: 38px;
+  width: 38px;
+  font-size: 16px;
+  line-height: 16px;
+  padding: 4px 0 0 4px;
+  margin: 0;
+  border: none;
+}
+
+.label-module-sm {
+  height: 26px;
+  width: 26px;
+  font-size: 11px;
+  line-height: 11px;
+  margin: 0;
+  border: none;
+  padding: 2px 0 0 2px;
+  
 }
 
 .label,
 .badge {
   &-important,
-  &-important[href]     { background-color: @btnDangerBackground; color:@white;}
+  &-important[href]     {background-color: @btnDangerBackground;}
   &-warning,
-  &-warning[href]       { background-color: @orange; color:@white;}
+  &-warning[href]       {background-color: @orange;}
   &-success,
-  &-success[href]       { background-color: @btnSuccessBackground; color:@white;}
+  &-success[href]       {background-color: @btnSuccessBackground;}
   &-info,
-  &-info[href]          { background-color: @btnInfoBackground; color:@white;}
+  &-info[href]          {background-color: @btnInfoBackground;}
   &-inverse,
-  &-inverse[href]       { background-color: @grayDark; color:@white;}
+  &-inverse[href]       {background-color: @grayDark;}
   &-log,
-  &-log[href]           { background-color: darken(@gray, 10%); color:@white;}
-  &-Opportunities       { background-color: @purple; color:@white; text-shadow: 0 -1px 1px darken(@purple, 10%); box-shadow: inset 0 -2px 0 darken(@purple, 10%), inset 0 0 1px darken(@purple, 10%);}
-  &-Opportunities[href] { background-color: @purple; color:@white; text-shadow: 0 -1px 1px darken(@purple, 10%); box-shadow: inset 0 -2px 0 darken(@purple, 10%), inset 0 0 1px darken(@purple, 10%);}
-  &-Files,
-  &-Files[href]         { background-color: @orange; color:@white; text-shadow: 0 -1px 1px darken(@orange, 10%); box-shadow: inset 0 -2px 0 darken(@orange, 10%), inset 0 0 1px darken(@orange, 10%);}
-  &-Contacts,
-  &-Contacts[href]      { background-color: @blue; color:@white; text-shadow: 0 -1px 1px darken(@blue, 10%); box-shadow: inset 0 -2px 0 darken(@blue, 10%), inset 0 0 1px darken(@blue, 10%);}
+  &-log[href]           {background-color: darken(@gray,10%);}
+
+/* Modules */
   &-Accounts,
-  &-Accounts[href]      { background-color: @green; color:@white; text-shadow: 0 -1px 1px darken(@green, 10%); box-shadow: inset 0 -2px 0 darken(@green, 10%), inset 0 0 1px darken(@green, 10%);}
-  &-Notes,
-  &-Notes[href]         { background-color: @warningText; color:@white; text-shadow: 0 -1px 1px darken(@green, 10%); box-shadow: inset 0 -2px 0 darken(@green, 10%), inset 0 0 1px darken(@green, 10%);}
-  &-Cases,
-  &-Cases[href]         { background-color: darken(@blueLight,10%); color:@white; text-shadow: 0 -1px 1px darken(@green, 10%); box-shadow: inset 0 -2px 0 darken(@green, 10%), inset 0 0 1px darken(@green, 10%);}
+  &-Accounts[href]      {background-color: @green;}
   &-Bugs,
-  &-Bugs[href]          { background-color: @red; color:@white; text-shadow: 0 -1px 1px darken(@red, 10%); box-shadow: inset 0 -2px 0 darken(@red, 10%), inset 0 0 1px darken(@red, 10%);}
+  &-Bugs[href]          {background-color: @red;}
+  &-Calendar,
+  &-Calendar[href]      {background-color: darken(@blue,10%);}  
+  &-Campaigns,
+  &-Campaigns[href]     {background-color: @purple;}
+  &-Cases,
+  &-Cases[href]         {background-color: darken(@red,10%);}
+  &-Contacts,
+  &-Contacts[href]      {background-color: darken(@green,10%);}
+  &-Documents,
+  &-Documents[href]     {background-color: darken(@orange,30%);}  
+  &-Emails,
+  &-Emails[href]        {background-color: darken(@purple,10%);}
+  &-Files,
+  &-Files[href]         {background-color: darken(@orange,10%);}  
+  &-Forecasts,
+  &-Forecasts[href]     {background-color: @orange;}  
   &-KBDocuments,
-  &-KBDocuments[href]   { background-color: lighten(@purple,20%); color:@white; text-shadow: 0 -1px 1px darken(@purple,30%); box-shadow: inset 0 -2px 0 darken(@purple,30%), inset 0 0 1px darken(@purple,30%);}
+  &-KBDocuments[href]   {background-color: darken(@orange,20%);}  
+  &-Leads,
+  &-Leads[href]         {background-color: darken(@green,20%);}
+  &-Meetings,
+  &-Meetings[href]      {background-color: darken(@blue,30%);}    
+  &-Notes,
+  &-Notes[href]         {background-color: darken(@purple,10%);}
+  &-Opportunities,
+  &-Opportunities[href] {background-color: @purple;}  
+  &-Reports,
+  &-Reports[href]       {background-color:darken(@orange,10%);}
+  &-Quotes,
+  &-Quotes[href]        {background-color: darken(@purple,30%);}  
+}
+
+.label-module.label, .label-module-sm.label {
+  &-Accounts,
+  &-Accounts[href]      {.box-shadow(0 2px 0 darken(@green,5%));}
+  &-Bugs,
+  &-Bugs[href]          {.box-shadow(0 2px 0 darken(@red,5%));}
+  &-Calendar,
+  &-Calendar[href]      {.box-shadow(0 2px 0 darken(@blue,35%));}  
+  &-Campaigns,
+  &-Campaigns[href]     {.box-shadow(0 2px 0 darken(@purple,5%));}
+  &-Cases,
+  &-Cases[href]         {.box-shadow(0 2px 0 darken(@red,25%));}
+  &-Contacts,
+  &-Contacts[href]      {.box-shadow(0 2px 0 darken(@green,25%));}
+  &-Documents,
+  &-Documents[href]     {.box-shadow(0 2px 0 darken(@orange,45%));}  
+  &-Emails,
+  &-Emails[href]        {.box-shadow(0 2px 0 darken(@purple,25%));}
+  &-Files,
+  &-Files[href]         {.box-shadow(0 2px 0 darken(@orange,15%));}  
+  &-Forecasts,
+  &-Forecasts[href]     {.box-shadow(0 2px 0 darken(@orange,5%));}  
+  &-KBDocuments,
+  &-KBDocuments[href]   {.box-shadow(0 2px 0 darken(@orange,25%));}  
+  &-Leads,
+  &-Leads[href]         {.box-shadow(0 2px 0 darken(@green,25%));} 
+  &-Meetings,
+  &-Meetings[href]      {.box-shadow(0 2px 0 darken(@blue,25%));}   
+  &-Notes,
+  &-Notes[href]         {.box-shadow(0 2px 0 darken(@purple,35%));}  
+  &-Opportunities,
+  &-Opportunities[href] {.box-shadow(0 2px 0 darken(@purple,5%));}
+  &-Reports,
+  &-Reports[href]       {.box-shadow(0 2px 0 darken(@orange,15%));}
+  &-Quotes,
+  &-Quotes[href]        {.box-shadow(0 2px 0 darken(@purple,15%));}
 }
