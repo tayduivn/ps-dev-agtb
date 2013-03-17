@@ -120,8 +120,8 @@ class DependencyManagerTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertFalse(empty($def['actions']));
         $aDef = $def['actions'][0];
         $this->assertEquals("SetValue", $aDef['action']);
-        $this->assertEquals($this->cf_test_field['name'], $aDef['target']);
-        $this->assertEquals($this->cf_test_field['formula'], $aDef['value']);
+        $this->assertEquals($this->cf_test_field['name'], $aDef['params']['target']);
+        $this->assertEquals($this->cf_test_field['formula'], $aDef['params']['value']);
 
     }
 
