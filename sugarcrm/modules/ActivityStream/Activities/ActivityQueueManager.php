@@ -39,6 +39,10 @@ class ActivityQueueManager
      */
     public function eventDispatcher(SugarBean $bean, $event, $args)
     {
+        if(defined('SUGAR_PHPUNIT_RUNNER')) {
+            return;
+        }
+
         if ($bean instanceof Activity && $event == 'after_save' && ($bean->activity_type == 'post' || $bean->activity_type == 'attach')) {
             // Posts.
             $this->processPostSubscription($bean);
