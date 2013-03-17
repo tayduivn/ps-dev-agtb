@@ -5,6 +5,15 @@
   color: darken(@white, 5%);
   display:inline-block;
 }
+.label,
+.label a,
+.badge,
+.badge a {
+  font-weight: 600;
+  text-shadow: none;
+  color: darken(@white, 5%);
+}
+
 .label {
   padding: 1px 4px 2px;
   .border-radius(@baseBorderRadius);
@@ -13,7 +22,7 @@
   padding: 1px 9px 2px;
   .border-radius(10px);
 }
-a.label:hover, a.badge:hover {
+.label:hover, .badge:hover {
   color: @white;
   text-decoration: none;
   cursor: pointer;
