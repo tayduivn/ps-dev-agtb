@@ -49,7 +49,7 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
             $bean->mark_deleted($bean->id);
         }
 	}
-	
+
 
     /**
      * Create a new account and bug, then link them.
@@ -60,7 +60,7 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $module = "Accounts";
         global $beanList, $beanFiles;
         require('include/modules.php');
-	    
+
         $account = BeanFactory::newBean($module);
         $account->name = "LinkTestAccount";
         $account->save();
@@ -149,7 +149,7 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($related);
         $this->assertTrue(empty($related[$account->id]));
         $this->assertNotEmpty($related[$account2->id]);
-    
+
     }
 
     public function testParentRelationships()
@@ -225,7 +225,10 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         ksort($result);
         ksort($expected);
 
-        $this->assertEquals($expected, $result);
+        $this->assertEquals(array_keys($expected), array_keys($result));
+        foreach($expected as $key => $val) {
+            $this->assertEquals($expected[$key]->id, $actual[$key]->id, "Wrong data in key $key");
+        }
 
         //Test a limited set
         $result = $accountsLink->getBeans(array("limit" => 2));
