@@ -53,13 +53,14 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 'website',
+                'phone_office',
+                'employees',
                 array(
-                    "name" => "phone_office",
-                    "label" => "Work Phone"
+                    'name' => 'phone_alternate',
+                    'label' => 'LBL_OTHER_PHONE',
                 ),
                 'email',
                 'phone_fax',
-                'assigned_user_name',
             ),
         ),
         array(
@@ -69,7 +70,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'fieldset_address',
-                    'type'   => 'fieldset',
+                    'type' => 'fieldset',
                     'css_class' => 'address',
                     'label' => 'Billing Address',
                     'fields' => array(
@@ -102,7 +103,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'fieldset_shipping_address',
-                    'type'   => 'fieldset',
+                    'type' => 'fieldset',
                     'css_class' => 'address',
                     'label' => 'Shipping Address',
                     'fields' => array(
@@ -133,7 +134,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                         ),
                         array(
                             'name' => 'copy',
-                            'label'   => 'NTC_COPY_BILLING_ADDRESS',
+                            'label' => 'NTC_COPY_BILLING_ADDRESS',
                             'type' => 'copy',
                             'mapping' => array(
                                 'billing_address_street' => 'shipping_address_street',
@@ -156,18 +157,17 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'description',
-                    'span' => 12
+                    'span' => 12,
                 ),
                 'account_type',
                 'industry',
                 'annual_revenue',
-                'employees',
-                'sic_code',
                 'ticker_symbol',
-                'parent_name',
+                'sic_code',
                 'ownership',
-                'campaign_name',
+                'parent_name',
                 'rating',
+                'campaign_name',
                 array(
                     'name' => 'date_modified_by',
                     'readonly' => true,
@@ -179,14 +179,14 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                         ),
                         array(
                             'type' => 'label',
-                            'default_value' => 'LBL_BY'
+                            'default_value' => 'LBL_BY',
                         ),
                         array(
                             'name' => 'modified_by_name',
                         ),
                     ),
                 ),
-                'team_name',
+                'assigned_user_name',
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,
@@ -198,14 +198,15 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                         ),
                         array(
                             'type' => 'label',
-                            'default_value' => 'LBL_BY'
+                            'default_value' => 'LBL_BY',
                         ),
                         array(
                             'name' => 'created_by_name',
                         ),
                     ),
-                )
-            )
-        )
+                ),
+                'team_name',
+            ),
+        ),
     ),
 );
