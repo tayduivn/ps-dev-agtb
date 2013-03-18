@@ -111,6 +111,7 @@
   &> .navbar-inner {
     &> .container-fluid {
       padding-left: 0;
+      width: 100%;
     }
   }
   .cube:hover {
@@ -372,6 +373,14 @@
             border-right-color: @black;
             .dropdown-toggle {
               background: none;
+              border-color: transparent;
+              .box-shadow(none)
+              &> i {
+                color: @white;
+              }
+            }
+            &> #notificationDrop {
+                .box-shadow(none);
             }
           }
         }
@@ -388,6 +397,73 @@
           }
         }
       }
+
+
+
+
+      // Secondary (floated right) nav in topbar
+      &.pull-right { // xxx
+        //margin-left: 10px;
+        &> li {
+          border-left: 1px solid darken(@white, 75%) !important;
+          border-right-color: transparent !important;
+          &:not(#createList) {
+            margin-right: -3px;
+          }
+          &> div {
+            border-left: 1px solid @black !important;
+            &> a {
+              margin-left: 4px;
+              margin-right: 4px;
+              padding-left: 0;
+              padding-right: 0;
+              line-height: 19px;
+              &:active {
+                .box-shadow(none) !important;
+                border-color: transparent;
+                background: none;
+              }
+            }
+          }
+          &#createList {
+            width: 40px;
+            &> div {
+              width: 100%;
+              &> a {
+                //margin-left: 10px;
+                margin-bottom: 2px;
+                width: 26px;
+                &:hover {
+                  i {
+                    color: @white !important;
+                  }
+                }
+              }
+            }
+          }
+          #notificationDrop {
+            .border-radius(3px);
+            text-align: center;
+            min-width: 20px;
+            line-height: 19px;
+            &:active {
+              background: none;
+            }
+          }
+          #userActions {
+            a {
+
+            }
+          }
+        }
+      }
+
+
+
+
+
+
+
     }
 
     // Dropdown toggle caret
@@ -435,18 +511,17 @@
       }
     }
 
-    // Secondary (floated right) nav in topbar
-    &.pull-right {
-      margin-left: 10px;
-    }
+
+
+
+
   }
   .avatar {
-    margin-right: 10px;
-    margin-top: -3px;
+    margin: 4px 4px 4px 0;
     float: left;
     .border-radius(3px);
-    height: 24px;
-    width: 24px;
+    height: 26px;
+    width: 26px;
     @shadow: 1px 1px 0 rgba(0,0,0,.6), -1px -1px 0 rgba(0,0,0,.6);
     .box-shadow(@shadow);
   }
