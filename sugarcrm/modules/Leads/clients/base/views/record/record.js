@@ -32,6 +32,7 @@
         this.context.on('button:manage_subscriptions:click', this.manageSubscriptionsClicked, this);
         app.view.views.RecordView.prototype.delegateButtonEvents.call(this);
     },
+
     /**
      * Set the save button to show if the model has been edited.
      */
@@ -44,11 +45,11 @@
      * Change the behavior of buttons depending on the state that they should be in
      */
     setLeadButtonStates: function() {
-        var convertButton = this.$('[name=lead_convert_button]'),
-            convertedState = this.model.get('converted') == '1' ? true : false;
+        var convertButton = this.getField('lead_convert_button'),
+            convertedState = this.model.get('converted');
 
         if(convertedState) {
-            convertButton.closest('li').hide();
+            convertButton.hide();
         }
     },
 
