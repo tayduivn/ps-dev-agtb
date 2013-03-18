@@ -248,13 +248,39 @@ nv.utils.windowSize = function()
 
 // Easy way to bind multiple functions to window.onresize
 // TODO: give a way to remove a function after its bound, other than removing alkl of them
+// nv.utils.windowResize = function(fun)
+// {
+//   var oldresize = window.onresize;
+
+//   window.onresize = function(e) {
+//     if (typeof oldresize == 'function') oldresize(e);
+//     fun(e);
+//   }
+// }
+
 nv.utils.windowResize = function(fun)
 {
-  var oldresize = window.onresize;
+  if(window.attachEvent) {
+      window.attachEvent('onresize', fun);
+  }
+  else if(window.addEventListener) {
+      window.addEventListener('resize', fun, true);
+  }
+  else {
+      //The browser does not support Javascript event binding
+  }
+}
 
-  window.onresize = function(e) {
-    if (typeof oldresize == 'function') oldresize(e);
-    fun(e);
+nv.utils.windowUnResize = function(fun)
+{
+  if(window.detachEvent) {
+      window.detachEvent('onresize', fun);
+  }
+  else if(window.removeEventListener) {
+      window.removeEventListener('resize', fun, true);
+  }
+  else {
+      //The browser does not support Javascript event binding
   }
 }
 
@@ -9860,6 +9886,8 @@ nv.models.treemapChart = function() {
 nv.models.tree = function() {
 
   // issues: 1. zoom slider doesn't zoom on chart center
+  // orientation
+  // bottom circles
 
   // all hail, stepheneb
   // https://gist.github.com/1182434
@@ -9878,7 +9906,7 @@ nv.models.tree = function() {
     , zoomExtents = { 'min': 0.25, 'max': 2 }
     , nodeSize = { 'width': 100, 'height': 50 }
     , nodeImgPath = '../img/'
-    , nodeRenderer = function(d){ return '<div class="nv-tree-node"></div>'; }
+    , nodeRenderer = function(d) { return '<div class="nv-tree-node"></div>'; }
     , horizontal = false
   ;
 
@@ -9889,13 +9917,15 @@ nv.models.tree = function() {
 
     , setX = function(d,v) { d.x = v; }
     , setY = function(d,v) { d.y = v; }
-    , setX0 = function(d,v) { d.x0 = v; }
-    , setY0 = function(d,v) { d.y0 = v; }
+    , setX0 = function(d,v) { if (horizontal) { d.y0 = v; } else { d.x0 = v; } }
+    , setY0 = function(d,v) { if (horizontal) { d.x0 = v; } else { d.y0 = v; } }
 
     , getX = function(d) { return (horizontal?d.y:d.x); }
     , getY = function(d) { return (horizontal?d.x:d.y); }
     , getX0 = function(d) { return (horizontal?d.y0:d.x0); }
     , getY0 = function(d) { return (horizontal?d.x0:d.y0); }
+
+    , getId = function(d) { return d.id; }
 
     , fillGradient = function(d,i) {
         return nv.utils.colorRadialGradient( d, i, 0, 0, '35%', '35%', color(d,i), wrap.select('defs') );
@@ -9910,9 +9940,7 @@ nv.models.tree = function() {
 
   function chart(selection)
   {
-    selection.each(
-
-    function(data) {
+    selection.each(function(data) {
 
       var diagonal = d3.svg.diagonal()
             .projection(function(d) {
@@ -9920,9 +9948,7 @@ nv.models.tree = function() {
             });
       var zoom = d3.behavior.zoom().scaleExtent([zoomExtents.min, zoomExtents.max])
             .on('zoom', function() {
-              gEnter.attr('transform',
-                'translate('+ d3.event.translate +')scale('+ d3.event.scale +')'
-              );
+              gEnter.attr('transform', 'translate('+ d3.event.translate +')scale('+ d3.event.scale +')' );
             });
       //------------------------------------------------------------
       // Setup svgs and skeleton of chart
@@ -9958,13 +9984,15 @@ nv.models.tree = function() {
         , 'height': parseInt(svg.style('height'), 10)
       };
 
-      var _data = data;
+      data.x0 = data.x0 || 0;
+      data.y0 = data.y0 || 0;
 
+      var _data = data;
 
       chart.showall = function() {
         function expandAll(d) {
-          if (d.children || d._children) {
-            if (d._children) {
+          if ( (d.children && d.children.length) || (d._children && d._children.length) ) {
+            if (d._children && d._children.length) {
               d.children = d._children;
               d._children = null;
             }
@@ -9983,13 +10011,13 @@ nv.models.tree = function() {
           , 'height': parseInt(svg.style('height'), 10 )
         };
         chart.reset();
-        chart.update();
+        chart.update(_data);
       };
 
       chart.orientation = function(orientation) {
         horizontal = (orientation === 'horizontal' || !horizontal ? true : false);
         chart.reset();
-        chart.update();
+        chart.update(_data);
       };
 
       chart.reset = function() {
@@ -10019,7 +10047,7 @@ nv.models.tree = function() {
           , found = false;
 
         function findNode(d) {
-          if (d.id === node) {
+          if (getId(d) === node) {
             __data = d;
             found = true;
           } else if (!found && d.children) {
@@ -10058,6 +10086,7 @@ nv.models.tree = function() {
         }
 
         var nodes = tree.nodes(_data);
+        var root = nodes[0];
 
         var availableSize = { // the size of the svg container minus padding
             'width': svgSize.width - padding.left - padding.right
@@ -10105,18 +10134,16 @@ nv.models.tree = function() {
         });
 
         // Update the nodes…
-        var node = treeChart.selectAll('g.nv-card').data(nodes, function(d) { return d.id; });
-        var root = nodes[0];
+        var node = treeChart.selectAll('g.nv-card')
+              .data(nodes, getId);
 
         // Enter any new nodes at the parent's previous position.
         var nodeEnter = node.enter().append('svg:g')
               .attr('class', 'nv-card')
-              .attr('id', function(d) { return 'nv-card-'+ d.id; })
+              .attr('id', function(d) { return 'nv-card-'+ getId(d); })
               .attr("transform", function(d) {
-                if (getX0(source) === 0) {
+                if (getY(source) === 0) {
                   return "translate(" + getX(root) + "," + getY(root) + ")";
-                } else if (d.parent) {
-                  return "translate(" + d.parent.x0 + "," + d.parent.y0 + ")";
                 } else {
                   return "translate(" + getX0(source) + "," + getY0(source) + ")";
                 }
@@ -10151,11 +10178,11 @@ nv.models.tree = function() {
               .attr('transform', function(d) { return 'translate('+ getX(d) +','+ getY(d) +')'; });
 
             nodeUpdate.select('.nv-expcoll')
-              .style('opacity', function(d) { return d.children || d._children ? 1 : 0; });
+              .style('opacity', function(d) { return ( (d.children && d.children.length) || (d._children && d._children.length) ) ? 1 : 0; });
             nodeUpdate.select('.nv-circ-back')
-              .style('fill', function(d) { return d._children ? '#777' : (d.children?'#bbb':'none'); });
+              .style('fill', function(d) { return (d._children && d._children.length) ? '#777' : (d.children?'#bbb':'none'); });
             nodeUpdate.select('.nv-line-vert')
-              .style('stroke', function(d) { return d._children ? '#fff' : '#bbb'; });
+              .style('stroke', function(d) { return (d._children && d._children.length) ? '#fff' : '#bbb'; });
 
             nodeUpdate.selectAll('.nv-foreign-object')
               .attr("width", nodeSize.width)
@@ -10166,13 +10193,7 @@ nv.models.tree = function() {
         // Transition exiting nodes to the parent's new position.
         var nodeExit = node.exit().transition()
               .duration(duration)
-              .attr('transform', function(d) {
-                if (d.parent) {
-                  return 'translate('+ getX(d.parent) +','+ getY(d.parent) +')';
-                } else {
-                  return 'translate('+ source.x +','+ source.y +')';
-                }
-              })
+              .attr('transform', function(d) { return "translate(" + getX(source) + "," + getY(source) + ")"; })
               .remove();
             nodeExit.selectAll('.nv-expcoll')
               .style('stroke-opacity', 1e-6);
@@ -10191,12 +10212,7 @@ nv.models.tree = function() {
             link.enter().insert('svg:path', 'g')
               .attr('class', 'link')
               .attr('d', function(d) {
-                var o = { x: 0, y: 0 };
-                if (d.source.x0) {
-                  o = { x: getX0(d.source), y: getY0(d.source) };
-                 } else {
-                  o = { x: source.x, y: source.y };
-                }
+                var o = ( getY(source) === 0 ) ? { x: source.x, y: source.y } : { x: source.x0, y: source.y0 };
                 return diagonal({ source: o, target: o });
               });
 
@@ -10209,7 +10225,7 @@ nv.models.tree = function() {
             link.exit().transition()
               .duration(duration)
               .attr('d', function(d) {
-                var o = { x: getX0(source), y: getY0(source) };
+                var o = { x: source.x, y: source.y };
                 return diagonal({ source: o, target: o });
               })
               .remove();
@@ -10360,6 +10376,12 @@ nv.models.tree = function() {
   chart.horizontal = function(_) {
     if (!arguments.length) return horizontal;
     horizontal = _;
+    return chart;
+  };
+
+  chart.getId = function(_) {
+    if (!arguments.length) return getId;
+    getId = _;
     return chart;
   };
   //============================================================

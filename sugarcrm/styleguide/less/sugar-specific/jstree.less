@@ -51,15 +51,28 @@
 }
 
 
-.jstree-rtl li { margin-left:0; margin-right:18px; }
-.jstree-rtl > ul > li { margin-right:0px; }
-.jstree-rtl li > a > .jstree-icon { margin-left:3px; margin-right:0; }
+.jstree-rtl li {
+  margin-left:0; margin-right:18px;
+}
+.jstree-rtl > ul > li {
+  margin-right:0px;
+}
+.jstree-rtl li > a > .jstree-icon {
+  margin-left:3px; margin-right:0;
+}
 
-li.jstree-open > ul { display:block; }
-li.jstree-closed > ul { display:none; }
+li.jstree-open > ul {
+  display:block;
+}
+li.jstree-closed > ul {
+  display:none;
+}
 
 
-.jstree-sugar ins:before {
+.jstree-sugar {
+  padding: 10px;
+
+  ins:before {
     font-family: FontAwesome;
     font-weight: normal;
     font-style: normal;
@@ -67,58 +80,113 @@ li.jstree-closed > ul { display:none; }
     text-decoration: inherit;
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
+  }
+
+  li.jstree-last {
+    background:transparent;
+  }
+  li.jstree-open > a > ins,
+  li.jstree-closed > a > ins,
+  li.jstree-leaf > ins {
+    display: none;
+  }
+  .jstree-open > ins:before {
+    content: "\f07c";
+  }
+  .jstree-closed > ins:before {
+    content: "\f07b";
+  }
+  .jstree-leaf > ins:before {}
+  .jstree-closed > ins:hover,
+  .jstree-open > ins:hover {
+    cursor: pointer;
+  }
+  ins {
+    margin-right: 5px !important;
+  }
+  .jstree-open > ins,
+  .jstree-leaf > ins { }
+
+  .jstree-hovered {
+    background-color: transparent !important;
+  }
+  .jstree-clicked {
+    color: @gray !important;
+  }
+  li, a  {
+    color: @blueDark !important;
+  }
+  a .jstree-icon:before {
+    content: "\f007";
+  }
+  .jstree-leaf.parent a .jstree-icon:before {
+    content: "\f062";
+  }
+  a.jstree-loading .jstree-icon {
+    background:url("@{baseUrl}/img/throbber.gif") center center no-repeat !important;
+  }
+
+  &.jstree-focused {  }
+
+  a.jstree-search {
+    color:aqua;
+  }
+  .jstree-search {
+    font-style:italic;
+  }
+  .jstree-no-dots {
+    li,
+    .jstree-leaf > ins {
+      background:transparent;
+    }
+    .jstree-open > ins {
+      background-position:-18px 0;
+    }
+    .jstree-closed > ins {
+      background-position:0 0;
+    }
+  }
+  .jstree-no-icons {
+    a .jstree-icon {
+      display:none;
+    }
+    .jstree-checkbox {
+      display:inline-block;
+    }
+  }
+  .jstree-no-checkboxes .jstree-checkbox {
+    display:none !important;
+  }
+  .jstree-checked > a > .jstree-checkbox {
+    background-position:-38px -19px;
+  }
+  .jstree-checked > a > .jstree-checkbox:hover {
+    background-position:-38px -37px;
+  }
+  .jstree-unchecked > a > .jstree-checkbox {
+    background-position:-2px -19px;
+  }
+  .jstree-unchecked > a > .jstree-checkbox:hover {
+    background-position:-2px -37px;
+  }
+  .jstree-undetermined > a > .jstree-checkbox {
+    background-position:-20px -19px;
+  }
+  .jstree-undetermined > a > .jstree-checkbox:hover {
+    background-position:-20px -37px;
+  }
+
+  .jstree-locked a {
+    color:silver; cursor:default;
+  }
 }
-.jstree-sugar {
-    padding: 10px;
-}
-.jstree-sugar li.jstree-last { background:transparent; }
-.jstree-sugar li.jstree-open > a > ins,
-.jstree-sugar li.jstree-closed > a > ins,
-.jstree-sugar li.jstree-leaf > ins {display: none;}
-.jstree-sugar .jstree-open > ins:before { content: "\f07c"; }
-.jstree-sugar .jstree-closed > ins:before { content: "\f07b"; }
-.jstree-sugar .jstree-leaf > ins:before {}
-.jstree-sugar .jstree-closed > ins:hover,
-.jstree-sugar .jstree-open > ins:hover {cursor: pointer;}
-.jstree-sugar ins {margin-right: 5px !important;}
-.jstree-sugar .jstree-open > ins,
-.jstree-sugar .jstree-leaf > ins { }
 
-.jstree-sugar .jstree-hovered { background-color: transparent !important; }
-.jstree-sugar .jstree-clicked { color: @gray !important; }
-.jstree-sugar li, .jstree-sugar a  {color: @blueDark !important;}
-.jstree-sugar a .jstree-icon:before { content: "\f007"; }
-.jstree-sugar .jstree-leaf.parent a .jstree-icon:before {content: "\f062";}
-.jstree-sugar a.jstree-loading .jstree-icon { background:url("@{baseUrl}/img/throbber.gif") center center no-repeat !important; }
 
-.jstree-sugar.jstree-focused {  }
-
-.jstree-sugar .jstree-no-dots li,
-.jstree-sugar .jstree-no-dots .jstree-leaf > ins { background:transparent; }
-.jstree-sugar .jstree-no-dots .jstree-open > ins { background-position:-18px 0; }
-.jstree-sugar .jstree-no-dots .jstree-closed > ins { background-position:0 0; }
-
-.jstree-sugar .jstree-no-icons a .jstree-icon { display:none; }
-
-.jstree-sugar .jstree-search { font-style:italic; }
-
-.jstree-sugar .jstree-no-icons .jstree-checkbox { display:inline-block; }
-.jstree-sugar .jstree-no-checkboxes .jstree-checkbox { display:none !important; }
-.jstree-sugar .jstree-checked > a > .jstree-checkbox { background-position:-38px -19px; }
-.jstree-sugar .jstree-unchecked > a > .jstree-checkbox { background-position:-2px -19px; }
-.jstree-sugar .jstree-undetermined > a > .jstree-checkbox { background-position:-20px -19px; }
-.jstree-sugar .jstree-checked > a > .jstree-checkbox:hover { background-position:-38px -37px; }
-.jstree-sugar .jstree-unchecked > a > .jstree-checkbox:hover { background-position:-2px -37px; }
-.jstree-sugar .jstree-undetermined > a > .jstree-checkbox:hover { background-position:-20px -37px; }
+#jstree-marker.jstree-sugar { background:url("@{baseUrl}/img/.png") -41px -57px no-repeat !important; text-indent:-100px; }
 
 #vakata-dragged.jstree-sugar ins { background:transparent !important; }
 #vakata-dragged.jstree-sugar .jstree-ok { background:url("@{baseUrl}/img/.png") -2px -53px no-repeat !important; }
 #vakata-dragged.jstree-sugar .jstree-invalid { background:url("@{baseUrl}/img/.png") -18px -53px no-repeat !important; }
-#jstree-marker.jstree-sugar { background:url("@{baseUrl}/img/.png") -41px -57px no-repeat !important; text-indent:-100px; }
-
-.jstree-sugar a.jstree-search { color:aqua; }
-.jstree-sugar .jstree-locked a { color:silver; cursor:default; }
-
 #vakata-contextmenu.jstree-sugar-context,
 #vakata-contextmenu.jstree-sugar-context li ul { background:#f0f0f0; border:1px solid #979797; -moz-box-shadow: 1px 1px 2px #999; -webkit-box-shadow: 1px 1px 2px #999; box-shadow: 1px 1px 2px #999; }
 #vakata-contextmenu.jstree-sugar-context li { }

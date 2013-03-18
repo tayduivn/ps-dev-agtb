@@ -30,13 +30,39 @@ nv.utils.windowSize = function()
 
 // Easy way to bind multiple functions to window.onresize
 // TODO: give a way to remove a function after its bound, other than removing alkl of them
+// nv.utils.windowResize = function(fun)
+// {
+//   var oldresize = window.onresize;
+
+//   window.onresize = function(e) {
+//     if (typeof oldresize == 'function') oldresize(e);
+//     fun(e);
+//   }
+// }
+
 nv.utils.windowResize = function(fun)
 {
-  var oldresize = window.onresize;
+  if(window.attachEvent) {
+      window.attachEvent('onresize', fun);
+  }
+  else if(window.addEventListener) {
+      window.addEventListener('resize', fun, true);
+  }
+  else {
+      //The browser does not support Javascript event binding
+  }
+}
 
-  window.onresize = function(e) {
-    if (typeof oldresize == 'function') oldresize(e);
-    fun(e);
+nv.utils.windowUnResize = function(fun)
+{
+  if(window.detachEvent) {
+      window.detachEvent('onresize', fun);
+  }
+  else if(window.removeEventListener) {
+      window.removeEventListener('resize', fun, true);
+  }
+  else {
+      //The browser does not support Javascript event binding
   }
 }
 

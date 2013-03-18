@@ -2,7 +2,7 @@
 nv.models.tree = function() {
 
   // issues: 1. zoom slider doesn't zoom on chart center
-  
+
   // all hail, stepheneb
   // https://gist.github.com/1182434
   // http://mbostock.github.com/d3/talk/20111018/tree.html
@@ -40,9 +40,7 @@ nv.models.tree = function() {
 
   function chart(selection)
   {
-    selection.each(
-
-    function(data) {
+    selection.each( function(data) {
 
       var diagonal = d3.svg.diagonal();
       var zoom = d3.behavior.zoom().scaleExtent([zoomExtents.min, zoomExtents.max])
@@ -210,7 +208,7 @@ nv.models.tree = function() {
               .attr('d', function(d) {
                 var o = { x: 0, y: 0 };
                 if (source.x0===0) {
-                  o.x = root.x; 
+                  o.x = root.x;
                   o.y = root.y;
                 } else if (d.parent) {
                   o.x = d.parent.x0;
