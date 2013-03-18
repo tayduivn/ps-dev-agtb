@@ -69,7 +69,6 @@ class ForecastWorksheet extends SugarBean
         $bean->sales_stage = $this->sales_stage;
         $bean->commit_stage = $this->commit_stage;
         $bean->worst_case = $this->worst_case;
-        $bean->commit_stage = $this->commit_stage;
         $bean->save($check_notify);
     }
 
