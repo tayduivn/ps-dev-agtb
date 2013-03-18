@@ -3858,6 +3858,8 @@ $app_strings = array (
     'LBL_ALERT_TITLE_NOTICE' => 'Notice:',
     'LBL_ALERT_TITLE_ERROR' => 'Error:',
     'LBL_ALERT_TITLE_LOADING' => 'Loading',
+    'LBL_ALERT_BROWSER_NOT_SUPPORTED' => 'Your browser version is no longer supported or you are using an unsupported browser.',
+    'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 10</li><li>Firefox 18</li><li>Safari 6</li><li>Chrome 24</li></ul>',
 
     //interaction chart
     'LBL_CHART_NO_DATA' => 'No Data Available.',
