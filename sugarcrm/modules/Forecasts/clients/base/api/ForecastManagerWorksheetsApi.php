@@ -22,7 +22,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/api/SugarApi.php');
 
-class ForecastsManagerWorksheetsApi extends SugarApi
+class ForecastManagerWorksheetsApi extends SugarApi
 {
     public function registerApiRest()
     {
@@ -53,7 +53,9 @@ class ForecastsManagerWorksheetsApi extends SugarApi
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: Forecasts');
         }
         $obj = $this->getClass($args);
-        return $obj->save();
+        $obj->save();
+
+        return array();
     }
 
     /**

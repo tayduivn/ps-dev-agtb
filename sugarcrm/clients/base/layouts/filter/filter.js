@@ -79,8 +79,10 @@
 
         this.layout.on('filterpanel:change', function(name) {
             this.showingActivities = name === 'activitystream';
+            var module = this.showingActivities ? "Activities" : this.module;
+            var link = (this.layoutType === 'record' && !this.showingActivities) ? 'all_modules' : null;
             this.trigger("filter:render:module");
-            this.trigger("filter:change:module", this.showingActivities ? "Activities" : this.module);
+            this.trigger("filter:change:module", module, link);
         }, this);
     },
 
@@ -162,7 +164,7 @@
      */
     getPreviouslyUsedFilter: function(moduleName, callback) {
         // TODO: This is temporary. We need to hook this up to the PreviouslyUsed API.
-        if (this.layoutType === 'record') {
+        if (this.layoutType === 'record' && !this.showingActivities) {
             callback({
                 link: 'all_modules',
                 filter: 'all_records'
@@ -220,8 +222,30 @@
         return !this.layout.$(".filter-options").hasClass("hide");
     },
 
+    /**
+     * Determines whether a user can create a filter for the current module.
+     * @return {[type]} [description]
+     */
     canCreateFilter: function() {
-        return this.getRelevantContextList().length === 1;
+        // Check for create in meta and make sure that we're only showing one
+        // module, then return false if any is false.
+        var contexts = this.getRelevantContextList(),
+            creatable = app.acl.hasAccess("create", "Filters"),
+            meta;
+
+        // Short circuit if we don't have the ACLs to create Filter beans.
+        if (creatable && contexts.length === 1) {
+            meta = app.metadata.getModule(contexts[0].get("module"));
+            if (_.isObject(meta.filters)) {
+                _.each(meta.filters, function(value) {
+                    if (_.isObject(value)) {
+                        creatable = creatable && value.meta.create !== false;
+                    }
+                });
+            }
+        }
+
+        return creatable;
     },
 
     getModuleFilterMeta: function(moduleName) {

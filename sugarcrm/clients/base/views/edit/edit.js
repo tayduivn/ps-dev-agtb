@@ -45,8 +45,6 @@
         var self = this,
             deleteIfFails = _.isUndefined(self.model.id);
 
-        // TODO we need to dismiss this in global error handler
-        app.alert.show('save_edit_view', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
         this.model.save(null, {
             success:function () {
                 app.alert.dismiss('save_edit_view');

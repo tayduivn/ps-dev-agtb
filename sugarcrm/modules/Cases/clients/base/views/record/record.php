@@ -130,6 +130,11 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 'name',
                 array(
                     'type' => 'favorite',
+                    'readonly' => true,
+                ),
+                array(
+                    'type' => 'follow',
+                    'readonly' => true,
                 ),
             )
         ),
@@ -159,7 +164,7 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 ),
 //BEGIN SUGARCRM flav=ent ONLY
                 // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
-                // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar 
+                // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar
                 // perhaps create an hbt helper that can leverage app.cofig.on
                 // Commented out since the PM instruction said nothing about this
                 //array('name'=>'portal_viewable', 'label' => 'LBL_SHOW_IN_PORTAL', 'hideIf' => 'empty($PORTAL_ENABLED)'),

@@ -1,0 +1,1 @@
+<a href="javascript:void(0);" class="rowaction" data-event="{{def.event}}" name="{{def.name}}">{{#if model.attributes.following}}{{str "LBL_UNFOLLOW"}}{{else}}{{str "LBL_FOLLOW"}}{{/if}}</a>

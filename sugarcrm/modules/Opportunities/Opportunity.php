@@ -461,6 +461,11 @@ class Opportunity extends SugarBean
             }
         }
 
+        //if the id is set (previously saved bean) and sales_status is still New, update to inprogress
+        if(isset($this->id) && !$this->new_with_id && $this->sales_status == Opportunity::STATUS_NEW) {
+            $this->sales_status = Opportunity::STATUS_IN_PROGRESS;
+        }
+
         SugarAutoLoader::requireWithCustom('modules/Opportunities/SaveOverload.php');
         perform_save($this);
 

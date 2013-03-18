@@ -21,7 +21,7 @@
                 callback: function(){
                     app.controller.loadView({
                         layout: "activities",
-                        module: "Home"
+                        module: "Activities"
                     });
                 }
             },            {
@@ -111,19 +111,6 @@
 
                     app.drawer.open({
                         layout:'vcard-import'
-                    });
-                }
-            },
-           {
-                name: "emailCompose",
-                route: "Emails/compose",
-                callback: function(){
-                    app.drawer.open({
-                        layout : 'compose',
-                        context: {
-                            create: 'true',
-                            module: "Emails"
-                        }
                     });
                 }
             },

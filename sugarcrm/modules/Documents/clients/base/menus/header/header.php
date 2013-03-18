@@ -37,11 +37,11 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-reorder',
     ),
     //TODO look at old file and deal with this
-    array(
+    /*array(
         'route'=>'#bwc/index.php?module=MailMerge&action=index&reset=true',
         'label' =>'LNK_NEW_MAIL_MERGE',
         'acl_action'=>'',
         'acl_module'=>'',
         'icon' => '',
-    ),
+    ),*/
 );

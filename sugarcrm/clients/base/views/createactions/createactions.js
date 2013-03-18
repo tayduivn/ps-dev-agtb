@@ -25,6 +25,15 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    plugins: ['dropdown'],
+    events: {
+      'click .dropdown-toggle':'toggleDropdown',
+      'click .actionLink' : '_handleActionLink'
+    },
+    toggleDropdown: function(event) {
+        var $currentTarget = this.$(event.currentTarget);
+        this.toggleDropdownHTML($currentTarget);
+    },
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
         app.user.on("change:module_list", this.render, this);
@@ -62,6 +71,56 @@
             }
         }, this);
         return returnList;
+    },
+
+    /**
+     * When menu item is clicked, warn if open drawers, reset drawers and open create
+     * @param evt
+     * @private
+     */
+    _handleActionLink: function(evt) {
+        var $actionLink = $(evt.currentTarget),
+            module = $actionLink.data('module'),
+            layout = $actionLink.data('layout');
+
+        if (app.drawer.count() > 0) {
+            app.alert.show('send_confirmation', {
+                level: 'confirmation',
+                messages: 'WARN_UNSAVED_CHANGES',
+                onConfirm: _.bind(function() {
+                    app.drawer.reset();
+                    this._openCreate(module, layout);
+                }, this)
+            });
+        } else {
+            this._openCreate(module, layout);
+        }
+    },
+
+    /**
+     * Open the appropriate quick create layout in a drawer
+     *
+     * @param module
+     * @param [layout='create'] layout to open in the drawer
+     * @private
+     */
+    _openCreate: function(module, layout) {
+        layout = layout || 'create';
+
+        app.drawer.open({
+            layout: layout,
+            context: {
+                create: true,
+                module: module
+            }
+        }, function (refresh) {
+            if (refresh) {
+                var collection = app.controller.context.get('collection');
+                if (collection && collection.module === module) {
+                    collection.fetch();
+                }
+            }
+        });
     },
 
     _dispose: function(){

@@ -1,5 +1,6 @@
 ({
     results: {},
+    plugins: ['Dashlet'],
 
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
@@ -12,7 +13,7 @@
         app.view.View.prototype._renderHtml.call(this);
 
         if (!_.isEmpty(this.results)) {
-            node = $('div svg');
+            node = this.$('svg');
             width = parseInt(node.width(), 10);
             height = parseInt(node.css('max-height'), 10);
             max = _.max(_(this.results).values());
@@ -20,7 +21,7 @@
             xy = d3.geo.equirectangular()
                    .scale(height)
                    .translate([width / 2 - 0.5, height / 2]);
-            svg = d3.select("div svg").append('g');
+            svg = d3.select("svg#" + this.cid).append('g');
             path = d3.geo.path().projection(xy);
 
             d3.json(app.config.siteUrl + "/clients/base/views/countrychart/world-countries.json", function(collection) {
@@ -56,7 +57,7 @@
         }
     },
 
-    loadData: function() {
+    loadData: function(options) {
         var self = this,
             url = app.api.buildURL('Accounts/by_country');
 
@@ -68,14 +69,9 @@
                     self.results[country] = parseInt(amount, 10);
                 });
                 if (!self.disposed) self.render();
-            }
+            },
+            complete: options ? options.complete : null
         });
-    },
-
-    bindDataChange: function() {
-        if (this.collection) {
-            this.collection.on("change", this.loadData, this);
-        }
     },
 
     _checkCountry: function(country) {

@@ -46,25 +46,6 @@
                 this._updateEditorWithSignature(this._lastSelectedSignature);
             }
         }
-
-        this.initMainButtonStatus();
-    },
-
-    /**
-     * Set enabled/disabled status on the page action dropdown menu based on whether email is sendable
-     * And listen for changes to the relevant field to enable the action dropdown when it becomes sendable
-     */
-    initMainButtonStatus: function() {
-        //If email is considered valid, enable the dropdown menu.  If not, disable
-        var toggleMainButtons = _.bind(function() {
-            this.setMainButtonsDisabled(!(this.isEmailSendable()));
-        }, this);
-
-        //Call toggle immediately to initialize the buttons appropriately
-        toggleMainButtons();
-
-        //Then set up listeners
-        this.getField('to_addresses').getFieldElement().keyup(toggleMainButtons);
     },
 
     /**
@@ -268,7 +249,12 @@
             );
         }, this);
 
-        if (!this.isFieldPopulated('subject') && !this.isFieldPopulated('html_body')) {
+        if (!this.isFieldPopulated('to_addresses') && !this.isFieldPopulated('cc_addresses') && !this.isFieldPopulated('bcc_addresses')) {
+            app.alert.show('send_error', {
+                level: 'error',
+                messages: 'LBL_EMAIL_COMPOSE_ERR_NO_RECIPIENTS'
+            });
+        } else if (!this.isFieldPopulated('subject') && !this.isFieldPopulated('html_body')) {
             app.alert.show('send_confirmation', {
                 level: 'confirmation',
                 messages: app.lang.get('LBL_NO_SUBJECT_NO_BODY_SEND_ANYWAYS', this.module),
@@ -328,14 +314,6 @@
                 }
             }, this)
         });
-    },
-
-    /**
-     * Can this email be sent?
-     * @return {*}
-     */
-    isEmailSendable: function() {
-        return this.isFieldPopulated('to_addresses');
     },
 
     /**

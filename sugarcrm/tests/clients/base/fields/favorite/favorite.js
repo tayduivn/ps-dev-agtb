@@ -31,6 +31,7 @@ describe('favorite field', function() {
         app.data.declareModel(moduleName, metadata);
 
         model = app.data.createBean(moduleName, {
+            id:'123test',
             name: 'Lórem ipsum dolor sit àmêt, ut úsu ómnés tatión imperdiet.'
         });
 
@@ -69,6 +70,23 @@ describe('favorite field', function() {
         expect(error.calledOnce).toBeTruthy();
 
         error.restore();
+        loadTemplate.restore();
+    });
+
+    it("should not render doesnt not have id", function() {
+
+        var loadTemplate = sinon.stub(field, '_loadTemplate', function() {
+            this.template = function() {
+                return '<i class="icon-favorite"></i>';
+            };
+        });
+
+        app.data.declareModel(moduleName, metadata);
+        delete model.attributes.id;
+        field.model = model;
+        field.render();
+        expect(loadTemplate.called).toBeFalsy();
+
         loadTemplate.restore();
     });
 

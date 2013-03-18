@@ -109,11 +109,8 @@
      */
     showMoreResults: function() {
         var self = this, options = {};
-        app.alert.show('show_more_search_results', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
         options.add = true;
         options.success = function() {
-            app.alert.dismiss('show_more_search_results');
-            console.log(self.collection);
             app.view.View.prototype._render.call(self);
             window.scrollTo(0, document.body.scrollHeight);
         };

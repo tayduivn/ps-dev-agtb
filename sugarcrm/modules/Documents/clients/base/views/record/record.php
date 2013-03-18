@@ -33,21 +33,26 @@ $viewdefs['Documents']['base']['view']['record'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
-            'header' => true,                                
+            'header' => true,
             'fields' => array(
                 array (
                     'name' => 'filename',
-                    'displayParams' => 
+                    'displayParams' =>
                     array (
                       'link' => 'filename',
                       'id' => 'document_revision_id',
                     ),
                     'readonly' => true,
-                    'span' => 12, 
-                    'label' => '',                        
+                    'span' => 12,
+                    'label' => '',
                 ),
                 array(
                     'type' => 'favorite',
+                    'readonly' => true,
+                ),
+                array(
+                    'type' => 'follow',
+                    'readonly' => true,
                 ),
             )
         ),
@@ -58,7 +63,7 @@ $viewdefs['Documents']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 'document_name',
-                'status',                    
+                'status',
                 'revision',
                 'template_type',
                 'is_template',
@@ -74,12 +79,12 @@ $viewdefs['Documents']['base']['view']['record'] = array(
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY                    
+                //END SUGARCRM flav=pro ONLY
             ),
         ),
         array(
             'name' => 'panel_hidden',
-            'columns' => 2, 
+            'columns' => 2,
             'hide' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
@@ -87,6 +92,6 @@ $viewdefs['Documents']['base']['view']['record'] = array(
                 'last_rev_created_name',
                 'last_rev_create_date',
             )
-        )                
+        )
     ),
 );

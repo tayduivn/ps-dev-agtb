@@ -1,8 +1,9 @@
 describe("Create Actions Dropdown", function() {
     var viewName = 'createactions',
-        view, isAuthenticatedStub, getModuleNamesStub, getStringsStub, getModuleStub, testModules, testMeta;
+        app, view, isAuthenticatedStub, getModuleNamesStub, getStringsStub, getModuleStub, testModules, testMeta;
 
     beforeEach(function() {
+        app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadComponent('base', 'view', viewName);
@@ -114,6 +115,67 @@ describe("Create Actions Dropdown", function() {
             expect(view.$("[data-module='" + module+"']").length).not.toBe(0);
         });
         expect(view.$("[data-module='Contacts']").length).toBe(0);
+    });
+
+    describe("handleActionLink", function () {
+        var drawerBefore, event, alertShowStub, alertConfirm, mockDrawerCount;
+
+        beforeEach(function () {
+            alertConfirm = false;
+            mockDrawerCount = 0;
+
+            alertShowStub = sinon.stub(app.alert, 'show', function(name, options) {
+                if (alertConfirm) options.onConfirm();
+            });
+
+            drawerBefore = app.drawer;
+            app.drawer = {
+                count: function() {
+                    return mockDrawerCount;
+                },
+                reset: sinon.stub(),
+                open: sinon.stub()
+            };
+
+            event = {
+                currentTarget: '<a data-module="Foo" data-layout="Bar"></a>'
+            };
+        });
+
+        afterEach(function () {
+            alertShowStub.restore();
+            app.drawer = drawerBefore;
+        });
+
+        it('should open the drawer without confirm if no drawers open', function() {
+            var drawerOptions;
+            view._handleActionLink(event);
+            drawerOptions = _.first(app.drawer.open.lastCall.args);
+
+            expect(alertShowStub.callCount).toBe(0);
+            expect(drawerOptions.context.module).toEqual('Foo');
+            expect(drawerOptions.layout).toEqual('Bar');
+        });
+
+        it('should show confirmation when drawers are open and not open drawer if not confirmed', function() {
+            alertConfirm = false;
+            mockDrawerCount = 1;
+            view._handleActionLink(event);
+
+            expect(alertShowStub.callCount).toBe(1);
+            expect(app.drawer.reset.callCount).toBe(0);
+            expect(app.drawer.open.callCount).toBe(0);
+        });
+
+        it('should reset drawers and open new drawer if confirmed', function() {
+            alertConfirm = true;
+            mockDrawerCount = 2;
+            view._handleActionLink(event);
+
+            expect(alertShowStub.callCount).toBe(1);
+            expect(app.drawer.reset.callCount).toBe(1);
+            expect(app.drawer.open.callCount).toBe(1);
+        });
     });
 
 });

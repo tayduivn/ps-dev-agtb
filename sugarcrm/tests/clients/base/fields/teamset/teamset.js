@@ -131,6 +131,18 @@ describe("Base.Field.Teamset", function() {
         expect(field.value[1].primary).toBe(false);
         field.setPrimary(1);
         expect(field.value[1].primary).toBe(false);
+    });
 
+    it("cannot make an unselected team (that has no ID) the primary team", function(){
+        var jQueryDataStub = sinonSandbox.stub(jQuery, "data", function() {
+            // Mocks current target's data attribute index to return index to second item
+            return 1;
+        });
+        var setPrimaryStub = sinonSandbox.stub(field, "setPrimary");
+        field.model.set('team_name', [{id:1, "name":"Global", "primary":true}, {"add_button":true,"remove_button":true, primary:false}]);
+        field.render();
+        field.setPrimaryItem({});
+        expect(field.value[1].primary).toBe(false);
+        expect(setPrimaryStub).not.toHaveBeenCalled();
     });
 });

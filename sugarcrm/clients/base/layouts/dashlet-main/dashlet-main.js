@@ -125,11 +125,7 @@
         this.model.trigger("change:layout");
         if(this.model._previousMode === 'view') {
             //Autosave for view mode
-            this.model.save({}, {
-                success: function() {
-                    app.alert.show('dashboard_notice', {level: 'success', title: app.lang.getAppString('LBL_SAVED'), autoClose: true});
-                }
-            });
+            this.model.save();
         }
 
         //Swap the view components

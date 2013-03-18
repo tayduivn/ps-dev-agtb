@@ -116,6 +116,8 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                 ),
 //END SUGARCRM flav=pro ONLY
                 array (
+                    'bwcLink' => true,
+                    'module' => 'Employees',
                     'name' => 'assigned_user_name',
                     'width' => 5,
                     'label' => 'LBL_LIST_ASSIGNED_USER',

@@ -1,10 +1,7 @@
 <a href="#Users/{{user_id}}" class="avatar avatar42 pull-left">
     <img src="{{picture_url}}" alt="{{full_name}}">
 </a>
-<div contenteditable="true" class="span10 offset2 sayit" dropzone="copy" data-tour="tour-stream-post" />
+<div contenteditable="true" class="span10 offset2 sayit attachable taggable" data-tour="tour-stream-post" data-placeholder="{{str "LBL_ACTIVITYSTREAM_POST_PLACEHOLDER"}}" />
 <div class="inputactions span10">
-    <a href=""><i class="icon-tag"></i></a>
-    <a href=""><i class="icon-paper-clip"></i></a>
     <input type="submit" class="pull-right btn btn-primary addPost" value="Submit" />
-    <span class="pull-right"><a href="" class="btn btn-invisible btn-link">Send to Everyone</a></span>
 </div>

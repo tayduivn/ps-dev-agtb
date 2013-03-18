@@ -196,7 +196,7 @@
             }, (id === "create") ? {create: true} : (id !== "list") ? {modelId: id} : {})
         }]);
         layout.removeComponent(0);
-        layout.loadData();
+        layout.loadData({}, false);
         layout.render();
     },
     _dispose: function() {
