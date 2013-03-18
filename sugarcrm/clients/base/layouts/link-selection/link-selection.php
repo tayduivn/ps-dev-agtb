@@ -30,7 +30,8 @@
 $layout = MetaDataManager::getLayout('SideBarLayout');
 $layout->push('main', array('view'=>'selection-headerpane'));
 
-$listLayout = MetaDataManager::getLayout("FilterPanelLayout", array("default" => "list"));
+$listLayout = MetaDataManager::getLayout("FilterPanelLayout", array("default" => "list", 'toggles' => array(), "layoutName" => 'link-selection'
+));
 $listLayout->push(array('view'=>'selection-list'));
 $listLayout->push(array('view'=>'list-bottom'));
 $layout->push('side', array('layout'=>'link-sidebar'));
