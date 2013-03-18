@@ -76,7 +76,6 @@ function blowfishGetKey($type)
  * @return string
  */
 function blowfishEncode($key, $data){
-    $GLOBALS['log']->fatal("ENCODE!");
    	$bf = new Crypt_Blowfish($key);
 	$encrypted = $bf->encrypt($data);
 	return base64_encode($encrypted);
@@ -89,7 +88,6 @@ function blowfishEncode($key, $data){
  * @return string
  */
 function blowfishDecode($key, $encoded){
-    $GLOBALS['log']->fatal("DECODE!");
     $data = base64_decode($encoded);
 	$bf = new Crypt_Blowfish($key);
 	return trim($bf->decrypt($data));
