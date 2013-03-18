@@ -51,7 +51,7 @@
                 $container.append(field.getPlaceholder().toString());
             } else {
                 if(index == 1) {
-                    $container.addClass('actions dropdown btn-group')
+                    $container.addClass('actions btn-group')
                         .append($caret)
                         .append($dropdown);
                 }
@@ -93,8 +93,10 @@
 
         if(index <= 1) {
             this.$(".dropdown-toggle").hide();
+            this.$el.removeClass('btn-group');
         } else {
             this.$(".dropdown-toggle").show();
+            this.$el.addClass('btn-group');
         }
         this.$(".dropdown-menu").children("li").each(function(index, el){
             if($(el).html() === '') {
