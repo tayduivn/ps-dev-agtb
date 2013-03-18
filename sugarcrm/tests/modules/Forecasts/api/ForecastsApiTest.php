@@ -107,6 +107,34 @@ class ForecastsApiTest extends RestTestBase
     }
 
     /**
+     * This test is to make sure Forecasts/ returns an empty set
+     * @group forecastapi
+     * @group forecasts
+     */
+    public function testCheckFavorites()
+    {
+
+        $restReply = $this->_restCall("Forecasts");
+        $this->assertEquals(count($restReply['reply']['records']),0);
+    }
+
+    /**
+     * This test is to make sure forecast filter requests with tracker return an empty set
+     * @group forecastapi
+     * @group forecasts
+     */
+    public function testCheckTrackFilter()
+    {
+        $body = json_encode(array(
+            'filter' => array(
+                '$tracker' => '-7 DAY'
+            )
+        ));
+        $restReply = $this->_restCall("Forecasts/filter", $body, 'POST');
+        $this->assertEquals(count($restReply['reply']['records']),0);
+    }
+
+    /**
      * This test is to make sure Forecasts/init endpoint returns an first_name property
      * @group forecastapi
      * @group forecasts
