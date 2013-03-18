@@ -42,6 +42,8 @@ class SugarMin {
     }
 
     protected function jsParser() {
+        if(!empty($GLOBALS['sugar_config']['skip_minify'])) return $this->text;
+
         require_once('jssource/Minifier.php');
         return JShrink\Minifier::minify($this->text);
 	}
