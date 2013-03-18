@@ -243,7 +243,7 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
             )
         ));
         $this->assertEquals(1, sizeof($result));
-        $this->assertEquals($bug3, $result[$bug3->id]);
+        $this->assertEquals($bug3->id, $result[$bug3->id]->id);
 
         //Test offset/pagination
         $allIds = array_keys($accountsLink->getBeans());
@@ -337,7 +337,10 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
             $bug3->id => $bug3,
         );
 
-        $this->assertEquals($expected, $result);
+        $this->assertEquals(array_keys($expected), array_keys($result));
+        foreach($expected as $key => $val) {
+            $this->assertEquals($expected[$key]->id, $result[$key]->id, "Wrong data in key $key");
+        }
 
         //test order DESC and ASC
         $result = $accountsLink->getBeans(array(
@@ -349,7 +352,10 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
             $bug->id => $bug,
         );
 
-        $this->assertEquals($expected, $result);
+        $this->assertEquals(array_keys($expected), array_keys($result));
+        foreach($expected as $key => $val) {
+            $this->assertEquals($expected[$key]->id, $result[$key]->id, "Wrong data in key $key");
+        }
 
         $result = $accountsLink->getBeans(array(
             "order_by" => "description DESC"
@@ -360,7 +366,10 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
             $bug3->id => $bug3,
         );
 
-        $this->assertEquals($expected, $result);
+        $this->assertEquals(array_keys($expected), array_keys($result));
+        foreach($expected as $key => $val) {
+            $this->assertEquals($expected[$key]->id, $result[$key]->id, "Wrong data in key $key");
+        }
 
     }
 
