@@ -3851,7 +3851,8 @@ $app_strings = array (
     'LBL_CALLED' => 'called',
 
     //record save
-    'LBL_RECORD_SAVED' => 'Record saved.',
+    'LBL_RECORD_SAVED' => 'Record saved.', // use when there is no information about the record
+    'LBL_RECORD_SAVED_SUCCESS' => 'Record {{name}} was created.', // use when a model is available
 
     //for sidecar alert view
     'LBL_ALERT_TITLE_SUCCESS' => 'Success:',

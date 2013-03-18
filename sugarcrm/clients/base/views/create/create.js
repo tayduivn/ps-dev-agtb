@@ -296,7 +296,6 @@
                 {deleteIfFails:true}
             );
         });
-
         options = {
             fieldsToValidate: self.getFields(self.module),
             success: success,
@@ -305,7 +304,7 @@
             relate: (self.model.link) ? true : null,
             alerts: {
                'success' : {
-                   messages: app.lang.getAppString('LBL_RECORD_SAVED')
+                   messages: app.lang.get('LBL_RECORD_SAVED_SUCCESS',self.module,self.model.attributes)
                }
             }
         };
