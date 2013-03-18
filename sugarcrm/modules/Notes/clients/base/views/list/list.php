@@ -90,7 +90,9 @@ $viewdefs['Notes']['base']['view']['list'] = array(
                     ),
                 ),
                 array (
+                    'bwcLink' => true,
                     'name' => 'created_by_name',
+                    'module' => 'Employees',//TODO: Remove once Users not black listed in bwc
                     'type' => 'relate',
                     'label' => 'LBL_CREATED_BY',
                     'width' => '10%',

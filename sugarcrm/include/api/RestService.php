@@ -135,7 +135,8 @@ class RestService extends ServiceBase {
                 if ( !empty($route['jsonParams']) ) {
                     foreach ( $route['jsonParams'] as $fieldName ) {
                         if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName]) 
-                             &&  ( $_GET[$fieldName]{0} == '{'
+                             &&  isset($_GET[$fieldName]{0}) 
+                             && ( $_GET[$fieldName]{0} == '{'
                                    || $_GET[$fieldName]{0} == '[' )) {
                             // This may be JSON data
                             $rawValue = $GLOBALS['RAW_REQUEST'][$fieldName];

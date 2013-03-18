@@ -1,11 +1,6 @@
-<?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
+ * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -19,7 +14,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
+ *  (i) the ""Powered by SugarCRM"" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -29,46 +24,33 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+({
+    extendsFrom: 'CreateView',
 
-$viewdefs['Prospects']['base']['view']['list'] = array(
-    'panels' => array(
-        array(
-            'fields' => array(
-                array(
-                    'name' => 'full_name',
-                    'type' => 'fieldset',
-                    'fields' => array(
-                        array(
-                            'name' => 'first_name',
-                            'link' => true,
-                        ),
-                        array(
-                            'name' => 'last_name',
-                            'link' => true,
-                        )
-                    ),
-                    'css_class' => 'full-name',
-                    'label' => 'LBL_LIST_NAME',
-                    'orderBy' => 'last_name',
-                ),
-                array(
-                    'name' => 'title',
-                    'label' => 'LBL_LIST_TITLE',
-                ),
-                array(
-                    'name' => 'email',
-                    'label' => 'LBL_LIST_EMAIL_ADDRESS',
-                    'sortable' => false,
-                ),
-                array(
-                    'name' => 'phone_work',
-                    'label' => 'LBL_LIST_PHONE',
-                ),
-                array(
-                    'name' => 'date_entered',
-                    'label' => 'LBL_DATE_ENTERED',
-                ),
-            ),
-        ),
-    ),
-);
+    initialize: function(options) {
+        this._setupCommitStageField(options.meta.panels);
+        app.view.views.CreateView.prototype.initialize.call(this, options);
+    },
+
+    /**
+     * Set up the commit_stage field based on forecast settings - if forecasts is set up, adds the correct dropdown
+     * elements, if forecasts is not set up, it removes the field.
+     * @param panels
+     * @private
+     */
+    _setupCommitStageField: function(panels) {
+        _.each(panels, function(panel) {
+            if(!app.metadata.getModule("Forecasts", "config").is_setup) {
+                panel.fields = _.filter(panel.fields, function (field) {
+                    return field.name != "commit_stage";
+                })
+            } else {
+                _.each(panel.fields, function(field) {
+                    if (field.name == "commit_stage") {
+                        field.options = app.metadata.getModule("Forecasts", "config").buckets_dom;
+                    }
+                })
+            }
+        });
+    }
+})
