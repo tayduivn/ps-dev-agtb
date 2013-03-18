@@ -174,7 +174,7 @@ class ActivitiesApi extends SugarListApi
         // +1 used to determine if we have more records to show.
         $query->limit($params['limit'] + 1)->offset($params['offset']);
 
-        $columns = array('activities.*', 'users.first_name', 'users.last_name');
+        $columns = array('activities.*', 'users.first_name', 'users.last_name', 'users.picture');
 
 
         // Join with user names.
