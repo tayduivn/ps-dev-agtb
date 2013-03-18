@@ -21,6 +21,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
+require_once 'include/SugarQueue/SugarJobQueue.php';
+
 /**
  * Queue class for activity stream events.
  * @api
