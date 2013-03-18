@@ -279,7 +279,11 @@ $dictionary['Campaign'] = array ('audited'=>true,
                  'rhs_module'=> 'Contacts', 'rhs_table'=> 'contacts', 'rhs_key' => 'campaign_id',
                  'relationship_type'=>'one-to-many'),
 
-        'campaign_leads' => array('lhs_module'=> 'Campaigns', 'lhs_table'=> 'campaigns', 'lhs_key' => 'id',
+        'campaign_products' => array('lhs_module'=> 'Campaigns', 'lhs_table'=> 'campaigns', 'lhs_key' => 'id',
+                 'rhs_module'=> 'Products', 'rhs_table'=> 'products', 'rhs_key' => 'campaign_id',
+                 'relationship_type'=>'one-to-many'),
+
+	    'campaign_leads' => array('lhs_module'=> 'Campaigns', 'lhs_table'=> 'campaigns', 'lhs_key' => 'id',
                  'rhs_module'=> 'Leads', 'rhs_table'=> 'leads', 'rhs_key' => 'campaign_id',
                  'relationship_type'=>'one-to-many'),
 

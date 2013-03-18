@@ -101,6 +101,10 @@ class VarDefHandler {
 				 $label_name = '';
                  if($value_array['type'] == 'link' && !$use_field_label){
                  	$this->module_object->load_relationship($value_array['name']);
+                 	if(empty($this->module_object->$value_array['name'])) {
+                 	    $GLOBALS['log']->fatal("Failed to load relationship {$value_array['name']}");
+                 	    continue;
+                 	}
                     if(!empty($app_list_strings['moduleList'][$this->module_object->$value_array['name']->getRelatedModuleName()])){
                     	$label_name = $app_list_strings['moduleList'][$this->module_object->$value_array['name']->getRelatedModuleName()];
                     }else{
