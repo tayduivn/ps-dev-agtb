@@ -135,70 +135,70 @@ describe("forecasts_layout_inspector", function() {
 
         it("should highlight first row with below highlight", function() {
             layout.highlight(0);
-            expect($(trs[0]).hasClass("highlighted")).toBeTruthy();
-            expect($(trs[1]).hasClass("highlighted-below")).toBeTruthy();
+            expect($(trs[0]).hasClass("current highlighted")).toBeTruthy();
+            expect($(trs[1]).hasClass("highlighted below")).toBeTruthy();
         });
 
         it("should highlight second row with above and below highlights", function() {
             layout.highlight(1);
-            expect($(trs[0]).hasClass("highlighted-above")).toBeTruthy();
-            expect($(trs[1]).hasClass("highlighted")).toBeTruthy();
-            expect($(trs[2]).hasClass("highlighted-below")).toBeTruthy();
+            expect($(trs[0]).hasClass("highlighted above")).toBeTruthy();
+            expect($(trs[1]).hasClass("current highlighted")).toBeTruthy();
+            expect($(trs[2]).hasClass("highlighted below")).toBeTruthy();
         });
         it("should highlight last row with above highlights", function() {
             var index = trs.length-1;
             layout.highlight(index);
-            expect($(trs[index-1]).hasClass("highlighted-above")).toBeTruthy();
-            expect($(trs[index]).hasClass("highlighted")).toBeTruthy();
+            expect($(trs[index-1]).hasClass("highlighted above")).toBeTruthy();
+            expect($(trs[index]).hasClass("current highlighted")).toBeTruthy();
         });
 
         it("should move highlight to next row", function() {
             layout.highlight(0);
             layout.moveHighlightedRow('next');
-            expect($(trs[0]).hasClass("highlighted")).toBeFalsy();
-            expect($(trs[1]).hasClass("highlighted")).toBeTruthy();
+            expect($(trs[0]).hasClass("current highlighted")).toBeFalsy();
+            expect($(trs[1]).hasClass("current highlighted")).toBeTruthy();
         });
 
         it("should move highlight to previous row", function() {
             layout.highlight(1);
             layout.moveHighlightedRow('previous');
-            expect($(trs[1]).hasClass("highlighted")).toBeFalsy();
-            expect($(trs[0]).hasClass("highlighted")).toBeTruthy();
+            expect($(trs[1]).hasClass("current highlighted")).toBeFalsy();
+            expect($(trs[0]).hasClass("current highlighted")).toBeTruthy();
         });
 
         it("should not move highlight to previous row", function() {
             layout.highlight(0);
             layout.moveHighlightedRow('previous');
-            expect($(trs[0]).hasClass("highlighted")).toBeTruthy();
+            expect($(trs[0]).hasClass("current highlighted")).toBeTruthy();
         });
 
         it("should not move highlight to next row", function() {
             var index = trs.length-1;
             layout.highlight(index);
             layout.moveHighlightedRow('next');
-            expect($(trs[trs.length-1]).hasClass("highlighted")).toBeTruthy();
+            expect($(trs[trs.length-1]).hasClass("current highlighted")).toBeTruthy();
         });
 
         it("should remove highlight from first row and below highlight", function() {
             layout.highlight(0);
             layout.removeHighlight(0);
-            expect($(trs[0]).hasClass("highlighted")).toBeFalsy();
-            expect($(trs[1]).hasClass("highlighted-below")).toBeFalsy();
+            expect($(trs[0]).hasClass("current highlighted")).toBeFalsy();
+            expect($(trs[1]).hasClass("highlighted below")).toBeFalsy();
         });
 
         it("should remove highlight from second row and above and below highlights", function() {
             layout.highlight(1);
             layout.removeHighlight(1);
-            expect($(trs[0]).hasClass("highlighted-above")).toBeFalsy();
-            expect($(trs[1]).hasClass("highlighted")).toBeFalsy();
-            expect($(trs[2]).hasClass("highlighted-below")).toBeFalsy();
+            expect($(trs[0]).hasClass("highlighted above")).toBeFalsy();
+            expect($(trs[1]).hasClass("current highlighted")).toBeFalsy();
+            expect($(trs[2]).hasClass("highlighted below")).toBeFalsy();
         });
         it("should remove highlight from last row and above highlights", function() {
             var index = trs.length-1;
             layout.highlight(index);
             layout.removeHighlight(index);
-            expect($(trs[index-1]).hasClass("highlighted-above")).toBeFalsy();
-            expect($(trs[index]).hasClass("highlighted")).toBeFalsy();
+            expect($(trs[index-1]).hasClass("highlighted above")).toBeFalsy();
+            expect($(trs[index]).hasClass("current highlighted")).toBeFalsy();
         });
 
         it("should not find highlighted record", function() {
