@@ -388,9 +388,9 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
 
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user->is_admin = 0;
-
+        $db = DBFactoryManager::getInstance();
         $current_user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test8'");
-        $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$current_user->id."','".$current_user->role_id."')");
+        $db->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$current_user->id."','".$current_user->role_id."')");
         $this->_role_id = $current_user->role_id;
 
         // needed for adminpaneldefs.php
@@ -402,7 +402,6 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
 
         foreach($admin_group_header as $key => $val ) {
             if($val[0] == 'LBL_FORECAST_TITLE') {
-                $GLOBALS['log']->fatal('keyval: ' ,  $key, $val);
                 $this->assertEmpty($val[3]);
             }
         }
