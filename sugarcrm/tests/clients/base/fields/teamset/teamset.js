@@ -1,6 +1,6 @@
 describe("Base.Field.Teamset", function() {
 
-    var app, field, sinonSandbox;
+    var app, field, sinonSandbox, oRouter, buildRouteStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -37,13 +37,21 @@ describe("Base.Field.Teamset", function() {
                 return obj;
             };
         }
-    });
 
+        // Workaround because router not defined yet
+        oRouter = SugarTest.app.router;
+        SugarTest.app.router = {buildRoute: function(){}};
+        buildRouteStub = sinon.stub(SugarTest.app.router, 'buildRoute', function(module, id, action, params) {
+            return module+'/'+id;
+        });
+    });
 
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
         sinonSandbox.restore();
+        buildRouteStub.restore();
+        SugarTest.app.router = oRouter;
         delete Handlebars.templates;
         field.model = null;
         field = null;

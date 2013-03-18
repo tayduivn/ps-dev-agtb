@@ -1,6 +1,6 @@
 describe("Base.Field.Relate", function() {
 
-    var app, field;
+    var app, field, oRouter, buildRouteStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -23,12 +23,21 @@ describe("Base.Field.Relate", function() {
         };
         field = SugarTest.createField("base","account_name", "relate", "edit", fieldDef);
         field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
+
+        // Workaround because router not defined yet
+        oRouter = SugarTest.app.router;
+        SugarTest.app.router = {buildRoute: function(){}};
+        buildRouteStub = sinon.stub(SugarTest.app.router, 'buildRoute', function(module, id, action, params) {
+            return module+'/'+id;
+        });
     });
 
 
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
+        buildRouteStub.restore();
+        SugarTest.app.router = oRouter;
         delete Handlebars.templates;
         field.model = null;
         field = null;
@@ -43,5 +52,45 @@ describe("Base.Field.Relate", function() {
             actual_name = field.model.get(field.def.name);
         expect(actual_id).toEqual(expected_id);
         expect(actual_name).toEqual(expected_name);
+    });
+
+    describe("bwc _render", function() {
+        var fieldRenderStu, getModuleStub, bwcBuildRouteStub;
+        beforeEach(function() {
+            fieldRenderStub = sinon.stub(app.view.Field.prototype, '_render');
+            bwcBuildRouteStub = sinon.stub(app.bwc, 'buildRoute');
+        });
+        afterEach(function() {
+            fieldRenderStub.restore();
+            bwcBuildRouteStub.restore();
+        });
+        it("should build bwc route if bwcLink true", function() {
+            var getModuleStub = sinon.stub(app.metadata, 'getModule', function() {
+                return {isBwcEnabled: false};
+            });
+            field.bwcLink = true;
+            field.format();
+            expect(bwcBuildRouteStub).toHaveBeenCalled();
+            getModuleStub.restore();
+        });
+        it("should fallback to checking isBwcEnabled if the bwcLink property is unset", function() {
+            var getModuleStub = sinon.stub(app.metadata, 'getModule', function() {
+                return {isBwcEnabled: true};
+            });
+            field.bwcLink = false;
+            field.format();
+            expect(bwcBuildRouteStub).toHaveBeenCalled();
+            getModuleStub.restore();
+        });
+        it("should NOT build bwc route if bwcLink explictly set to false (even if isBwcEnabled is true)", function() {
+            var getModuleStub = sinon.stub(app.metadata, 'getModule', function() {
+                return {isBwcEnabled: true};
+            });
+            field.def.bwcLink = false;
+            field.format();
+            expect(bwcBuildRouteStub).not.toHaveBeenCalled();
+            expect(buildRouteStub).toHaveBeenCalled();
+            getModuleStub.restore();
+        });
     });
 });

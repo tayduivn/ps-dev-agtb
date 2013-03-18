@@ -101,15 +101,18 @@ describe("Global Search", function() {
         var buildRouteStub = sinon.stub(SugarTest.app.router, 'buildRoute', function(module, id, action, params) {
             return module+'/'+id;
         });
+        var bwcBuildRouteStub = sinon.stub(SugarTest.app.bwc, 'buildRoute', function(module, id, action) {
+            return "#bwc/index.php?module=" + module + '&action=' + action + '&record=' + id;
+        });
         var plugin = {provide: function(data) {return data}};
         var pluginSpy = sinon.spy(plugin, 'provide');
         view.fireSearchRequest('test', plugin);
-        var formattedRecords = pluginSpy.getCall(0).args[0].records;
-        expect(formattedRecords[0].link).toBe('Accounts/test1');
-        expect(formattedRecords[1].link).toBe('bwc/index.php?module=bwcModule&action=DetailView&record=test2');
+        expect(buildRouteStub.calledWith("Accounts", "test1")).toBe(true);
+        expect(bwcBuildRouteStub.calledWith("bwcModule", "test2", "DetailView")).toBe(true);
         getModuleStub.restore();
         apiSearchStub.restore();
         buildRouteStub.restore();
+        bwcBuildRouteStub.restore();
         SugarTest.app.router = oRouter;
     });
 
