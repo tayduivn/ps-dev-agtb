@@ -103,17 +103,21 @@
             values[this.def.name] = this.value;
         }
         else if(this.currentView == "enum") {
-            debugger;
             select = this.$("select");
             this.value = select.select2("val");
             values[this.def.name] = this.value;
         }
 
-        this.model.set(values);
+        //set to silent so that resetBucket has values, but the app doesn't know yet
+        this.model.set(values, {silent:true});
 
-        if(this.currentView == "enum") {
+        if (this.currentView == "enum") {
             this.resetBucket();
         }
+        
+        //trigger change event after everything is set up
+        this.model.trigger("change", this.model);
+        
     },
 
     /**
