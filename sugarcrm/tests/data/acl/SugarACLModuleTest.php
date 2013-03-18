@@ -58,6 +58,7 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             // Normal users will have full access to the Accounts module, so this is just checking we didn't mess that up.
+            array('module'=>'Administration', 'view' => 'admin', 'edit' => 'admin', 'delete' => 'admin', 'acl_module' => 'Accounts'),
             array('module'=>'Accounts',         'view'=>'any'  ,'edit'=>'any'  ,'delete'=>'any'  ),
             array('module'=>'ACLActions',       'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
             array('module'=>'ACLFields',        'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
@@ -204,4 +205,9 @@ class SugarBeanAclModuleUserMock extends User
             return false;
         }
     }
+
+    public function getAdminModules() {
+        return array_keys($this->adminForModules);
+    }
+
 }
