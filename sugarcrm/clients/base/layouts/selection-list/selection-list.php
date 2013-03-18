@@ -37,3 +37,4 @@ $layout->push('side', array('layout'=>'selection-sidebar'));
 $layout->push('main', array('layout' => $listLayout->getLayout(true)));
 $layout->push('preview', array('layout' => 'preview'));
 $viewdefs['base']['layout']['selection-list'] = $layout->getLayout();
+$viewdefs['base']['layout']['selection-list']['type'] = 'selection-list';

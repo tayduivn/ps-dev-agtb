@@ -17,7 +17,16 @@
     _selectModel: function() {
         var model = this.context.get("selection_model");
         if (model) {
-            app.drawer.close({id: model.id, value: model.get('name')});
+            var attributes = {
+                id: model.id,
+                value: model.get('name')
+            };
+            _.each(model.attributes, function(value, field) {
+                if(app.acl.hasAccessToModel('view', model, field)) {
+                    attributes[field] = attributes[field] || model.get(field);
+                }
+            }, this);
+            app.drawer.close(attributes);
             this.context.unset("selection_model", {silent: true});
         }
     }

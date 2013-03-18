@@ -37,6 +37,16 @@
         this.minChars = options.def.minChars || this.minChars;
         this.bwcLink = options.def.bwcLink;//false is a perfectly valid value for this boolean metadata property!
         app.view.Field.prototype.initialize.call(this, options);
+        var populateMetadata = app.metadata.getModule(this.getSearchModule());
+
+        if(_.isEmpty(populateMetadata)) {
+            return;
+        }
+        _.each(this.def.populate_list, function(target, source){
+            if(_.isUndefined(populateMetadata.fields[source])) {
+                app.logger.error('Fail to populate the related attributes: attempt to access undefined key - ' + this.getSearchModule() + '::' + source);
+            }
+        }, this);
     },
     bindKeyDown: function(callback) {
         this.$('input').on("keydown.record", {field: this}, callback);
@@ -92,14 +102,27 @@
                     app.drawer.open({
                         layout : 'selection-list',
                         context: {
-                            module: self.getSearchModule()
+                            module: self.getSearchModule(),
+                            fields: _.keys(self.def.populate_list || {})
                         }
                     }, self.setValue);
                 }).on("change", function(e) {
                     var id = e.val,
                         plugin = $(this).data('select2'),
-                        value = (id) ? plugin.selection.find("span").text() : '';
-                    self.setValue({id: e.val, value: value});
+                        value = (id) ? plugin.selection.find("span").text() : '',
+                        collection = plugin.context,
+                        model = collection.get(id),
+                        attributes = {
+                            id: model.id,
+                            value: model.get('name')
+                        };
+
+                    _.each(model.attributes, function(value, field) {
+                        if(app.acl.hasAccessToModel('view', model, field)) {
+                            attributes[field] = attributes[field] || model.get(field);
+                        }
+                    });
+                    self.setValue(attributes);
                 });
         } else if(this.tplName === 'disabled') {
             this.$(this.fieldTag).attr("disabled", "disabled").select2();
@@ -142,6 +165,33 @@
             var silent = model.silent || false;
             this.model.set(this.def.id_name, model.id, {silent: silent});
             this.model.set(this.def.name, model.value, {silent: silent});
+
+            var newData = {},
+                self = this;
+            _.each(this.def.populate_list, function(target, source) {
+                source = _.isNumber(source) ? target : source;
+                if(!_.isUndefined(model[source]) && app.acl.hasAccessToModel('edit', this.model, target)) {
+                    newData[target] = model[source];
+                }
+            }, this);
+
+            if(!_.isEmpty(newData)) {
+                var message = app.lang.get(self.def.populate_confirm || 'NTC_OVERWRITE_POPULATED_DATA_CONFIRM', this.getSearchModule()) +
+                    '<br/><br/>';
+                _.each(newData, function(value, field){
+                    var def = this.model.fields[field];
+                    message += app.lang.get(def.label || def.vname || field, this.module) + ': ' + value + '<br/>';
+                }, this);
+                message += '<br/>';
+
+                app.alert.show('overwrite_confirmation', {
+                    level: 'confirmation',
+                    messages: message,
+                    onConfirm: function() {
+                        self.model.set(newData);
+                    }
+                });
+            }
         }
     },
     /**
@@ -188,9 +238,14 @@
         var search_collection = query.context || app.data.createBeanCollection(searchModule);
 
         if(query.context) {
-            params.offset = search_collection.next_offset
+            params.offset = search_collection.next_offset;
         }
         search_collection.fetch({
+            update: true,
+            remove: _.isUndefined(params.offset),
+            fields: _.union([
+                'id', 'name'
+            ], _.keys(this.def.populate_list || {})),
             context: self,
             params: params,
             limit: limit,
@@ -205,7 +260,10 @@
                 } else {
 
                 }
-                _.each(data.models, function(model){
+                _.each(data.models, function(model, index){
+                    if(params.offset && index < params.offset) {
+                        return;
+                    }
                     fetch.results.push({
                         id: model.id,
                         text: model.get('name')
