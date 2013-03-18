@@ -2,7 +2,7 @@
 
 $mod_strings = array(
     'TPL_ACTIVITY_CREATE' => 'Added {{str "TPL_ACTIVITY_RECORD" "Activities" object}} {{object.type}}.',
-    'TPL_ACTIVITY_POST' => 'Posted {{value}}{{#if object}} on {{str "TPL_ACTIVITY_RECORD" "Activities" object}}{{/if}}.',
+    'TPL_ACTIVITY_POST' => '{{value}}{{#if object}} on {{str "TPL_ACTIVITY_RECORD" "Activities" object}}{{/if}}',
     'TPL_ACTIVITY_UPDATE' => 'Updated {{#if updateStr}}{{{updateStr}}} on {{/if}}{{str "TPL_ACTIVITY_RECORD" "Activities" object}}.',
     'TPL_ACTIVITY_UPDATE_FIELD' => '<a rel="tooltip" title="Changed: {{before}} To: {{after}}">{{field_label}}</a>',
     'TPL_ACTIVITY_LINK' => 'Related {{str "TPL_ACTIVITY_RECORD" "Activities" subject}} to {{str "TPL_ACTIVITY_RECORD" "Activities" object}}.',
@@ -11,7 +11,7 @@ $mod_strings = array(
     'TPL_ACTIVITY_DELETE' => 'Deleted {{str "TPL_ACTIVITY_RECORD" "Activities" object}} {{object.type}}.',
     'TPL_ACTIVITY_UNDELETE' => 'Restored {{str "TPL_ACTIVITY_RECORD" "Activities" object}} {{object.type}}.',
     'TPL_ACTIVITY_RECORD' => '<a href="#{{module}}/{{id}}">{{name}}</a>',
-    'TPL_COMMENT' => 'commented "{{value}}".',
+    'TPL_COMMENT' => '{{value}}',
     'TPL_MORE_COMMENT' => '{{this}} more comment&hellip;',
     'TPL_MORE_COMMENTS' => '{{this}} more comments&hellip;',
 );
