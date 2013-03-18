@@ -34,6 +34,10 @@
     className: '', //override default class
 
     initialize: function(options) {
+        this.resizeCallback = _.debounce(_.bind(function(){
+            this.highlightItem(this.index);
+        }, this), 400);
+        $(window).on('resize', this.resizeCallback);
         this.keyupCallback = _.bind(this.processKeyCode, this);
         $(document).on('keyup', this.keyupCallback);
         app.view.TutorialView.prototype.initialize.call(this, options);
@@ -56,7 +60,8 @@
         }
         e.preventDefault();
     },
-    remove: function() {
+    remove: function () {
+        $(window).off('resize', this.resizeCallback);
         $(document).off('keyup', this.keyupCallback);
         app.view.TutorialView.prototype.remove.call(this);
     }
