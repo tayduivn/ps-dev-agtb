@@ -583,7 +583,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
     }
-    
+
     /**
      * @group products
      */
@@ -593,10 +593,10 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $product->likely_case = 10000;
         $product->best_case = '';
         $product->save();
-        
+
         $this->assertEquals($product->likely_case, $product->best_case);
     }
-    
+
     /**
      * @group products
      */
@@ -606,10 +606,10 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $product->likely_case = 10000;
         $product->best_case = null;
         $product->save();
-        
+
         $this->assertEquals($product->likely_case, $product->best_case);
     }
-    
+
     /**
      * @group products
      */
@@ -619,10 +619,10 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $product->likely_case = 10000;
         $product->best_case = 42;
         $product->save();
-        
+
         $this->assertEquals(42, $product->best_case);
     }
-    
+
     /**
      * @group products
      */
@@ -632,10 +632,10 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $product->likely_case = 10000;
         $product->worst_case = '';
         $product->save();
-        
+
         $this->assertEquals($product->likely_case, $product->worst_case);
     }
-    
+
     /**
      * @group products
      */
@@ -645,10 +645,10 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $product->likely_case = 10000;
         $product->worst_case = null;
         $product->save();
-        
+
         $this->assertEquals($product->likely_case, $product->worst_case);
     }
-    
+
     /**
      * @group products
      */
@@ -658,45 +658,94 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $product->likely_case = 10000;
         $product->worst_case = 42;
         $product->save();
-        
+
         $this->assertEquals(42, $product->worst_case);
     }
-    
+
     /**
      * @group products
      */
     public function testEmptyQuantityDefaulted()
     {
         $product = SugarTestProductUtilities::createProduct();
-        
+
         $product->quantity = "";
         $product->save();
         $this->assertEquals(1, $product->quantity, "Empty string not converted to 1");
     }
-    
+
     /**
      * @group products
      */
     public function testNullQuantityDefaulted()
     {
         $product = SugarTestProductUtilities::createProduct();
-        
+
         $product->quantity = null;
         $product->save();
-        $this->assertEquals(1, $product->quantity, "Null not converted to 1");        
+        $this->assertEquals(1, $product->quantity, "Null not converted to 1");
     }
-    
+
     /**
      * @group products
      */
     public function testQuantityNotDefaulted()
     {
         $product = SugarTestProductUtilities::createProduct();
-        
+
         $product->quantity = 42;
         $product->save();
-        $this->assertEquals(42, $product->quantity, "Null not converted to 1");        
+        $this->assertEquals(42, $product->quantity, "Null not converted to 1");
     }
+
+    // BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @group products
+     * @group forecasts
+     * @ticket SFA-716
+     * @dataProvider dataProviderCreateProductWithSalesStageCreatesForecastWorksheetWithSameSalesStage
+     */
+    public function testCreateProductWithSalesStageCreatesForecastWorksheetWithSameSalesStage($sales_stage)
+    {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
+
+
+        $product = SugarTestProductUtilities::createProduct();
+        $product->sales_stage = $sales_stage;
+        $product->save();
+
+        // reset the flag before we run any assertions just to make sure it gets set back if we have a fatal error
+        $admin->saveSetting('Forecasts', 'is_setup', $settings['is_setup'], 'base');
+        // load up the draft worksheet
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($product);
+
+        $this->assertEquals($sales_stage, $product->sales_stage);
+        $this->assertInstanceOf('ForecastWorksheet', $worksheet);
+        $this->assertEquals($sales_stage, $worksheet->sales_stage);
+    }
+
+    /**
+     * Data Provider
+     *
+     * @return array
+     */
+    public function dataProviderCreateProductWithSalesStageCreatesForecastWorksheetWithSameSalesStage()
+    {
+        return array(
+            array('Prospecting'),
+            array('Qualification'),
+            array('Needs Analysis'),
+            array('Value Proposition'),
+            array('Id. Decision Makers'),
+            array('Perception Analysis'),
+            array('Proposal/Price Quote'),
+            array('Negotiation/Review'),
+        );
+    }
+    // END SUGARCRM flav=ent ONLY
     
     /**
      * @dataProvider dataProviderMapProbabilityFromSalesStage
@@ -746,7 +795,6 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
-    
 }
 class MockProduct extends Product
 {

@@ -88,4 +88,33 @@ class SugarTestWorksheetUtilities
         }
         return $worksheet_ids;
     }
+
+    /**
+     * Utility method to find a specific worksheet for a passed in bean
+     *
+     * @param SugarBean $bean
+     * @param bool $isCommit
+     * @return ForecastWorksheet|boolean        Return the worksheet if found, otherwise return false
+     */
+    public static function loadWorksheetForBean($bean, $isCommit = false)
+    {
+        /* @var $worksheet ForecastWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $worksheet->retrieve_by_string_fields(
+            array(
+                'parent_type' => $bean->module_name,
+                'parent_id' => $bean->id,
+                'draft' => ($isCommit === false) ? 1 : 0,
+                'deleted' => 0,
+            )
+        );
+
+        if (empty($worksheet->id)) {
+            return false;
+        }
+
+        self::$_createdWorksheets[] = $worksheet;
+
+        return $worksheet;
+    }
 }
