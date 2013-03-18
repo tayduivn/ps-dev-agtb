@@ -19,22 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: TeamMembership.php 51719 2009-10-22 17:18:00Z mitani $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 //FILE SUGARCRM flav=pro ONLY
-
-
-
-
-
-
-
 class TeamMembership extends SugarBean {
     // Stored fields
     var $id;
@@ -47,7 +33,7 @@ class TeamMembership extends SugarBean {
 
     var $table_name = "team_memberships";
     var $object_name = "TeamMembership";
-    var $module_name = 'TeamMembership';
+    var $module_name = 'TeamMemberships';
     var $module_dir = 'Teams';
     var $disable_custom_fields = true;
 
