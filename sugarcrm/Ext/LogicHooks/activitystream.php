@@ -8,6 +8,7 @@ $activitystream = array(
     'ActivityQueueManager',
     'eventDispatcher',
 );
+$hook_array['before_save'][] = $activitystream;
 $hook_array['after_save'][] = $activitystream;
 $hook_array['after_delete'][] = $activitystream;
 $hook_array['after_undelete'][] = $activitystream;
