@@ -40,14 +40,18 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'full' => true,
             ),
             array(
-                'name' => '.btn-danger',
+                'name' => '#notificationDrop',
                 'text' => 'Notifications go here in records',
                 'full' => true,
+                "vertAdj" => -10,
+                "horizAdj" => -14
             ),
             array(
                 'name' => '#tour',
                 'text' => 'LBL_WELCOMEBAR',
                 'full' => true,
+                "horizAdj" => -5,
+                "vertAdj" => -12,
             ),
         )
     ),
