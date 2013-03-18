@@ -492,12 +492,10 @@
             messages: app.lang.get('NTC_RECORD_DELETE_CONFIRMATION', null, moduleContext),
             onConfirm: function() {
                 self.model.destroy({
-                    success: function(model, response, options) {
-                        app.alert.show('delete_success', {
-                           level: 'success',
-                           autoClose: true,
-                           messages: app.lang.get('NTC_RECORD_DELETE_SUCCESS', null, moduleContext)
-                        });
+                    alerts: {
+                        'success' : {
+                            messages: app.lang.get('NTC_RECORD_DELETE_SUCCESS', null, moduleContext)
+                        }
                     }
                 });
                 app.router.navigate("#" + self.module, {trigger: true});

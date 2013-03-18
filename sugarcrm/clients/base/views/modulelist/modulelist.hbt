@@ -4,13 +4,15 @@
         <li class="dropdown" data-module="Home">
             <div class="btn-group">
                 <a class="cube btn btn-invisible btn-link" href="#Home" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a>
-                <a id="{{name}}Drop" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="{{name}}Drop">
-                    {{#each menu}}
-                        <li><a tabindex="-1" href="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
-                    {{/each}}
-                    <div class="dashboardContainer "></div>
-                </ul>
+                <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
+                <div class="dropdown-menu scroll">
+                    <ul role="menu">
+                        {{#each menu}}
+                            <li><a tabindex="-1" href="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
+                        {{/each}}
+                        <div class="dashboardContainer "></div>
+                    </ul>
+                </div>
             </div>
         </li>        
         {{/eq}}
@@ -19,24 +21,29 @@
             <a  class="moreLink hide" href="#{{name}}">{{label}}</a>
             <div class="btn-group">
                 <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}">{{label}}</a>
-                <a id="{{name}}Drop" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
-                <ul class="dropdown-menu scroll" role="menu" aria-labelledby="{{name}}Drop">
-                    {{#if menu}}
-                    {{#each menu}}
-                        <li><a class="actionLink" tabindex="-1" {{#if event}}data-event='{{event}}' href='javascript: void(0)'{{else}}href="{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
-                    {{/each}}
-                    {{/if}}
-                    <div class="recentContainer hide"></div>
-                    <div class="favoritesContainer hide"></div>
-                </ul>
-
+                <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
+                <div class="dropdown-menu scroll">
+                    <ul role="menu">
+                        {{#if menu}}
+                            {{#each menu}}
+                                <li><a class="actionLink" tabindex="-1" {{#if event}}data-event='{{event}}' href='javascript: void(0)'{{else}}href="{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
+                            {{/each}}
+                        {{/if}}
+                        <div class="recentContainer hide"></div>
+                        <div class="favoritesContainer hide"></div>
+                    </ul>
+                </div>
             </div>
         </li>
         {{/notEq}}
     {{/each}}
     <li class="dropdown more">
-        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><b title="{{str "LBL_LINK_MORE"}}" class="icon-chevron-down"></b></a>
-        <ul class="dropdown-menu more-drop-container">
-        </ul>
+        <div class="btn-group">
+            <a href="javascript:void(0)" role="button" data-toggle="dropdown" class="btn btn-invisible btn-link dropdown-toggle" id="moreDrop"><b title="{{str "LBL_LINK_MORE"}}" class="icon-chevron-down"></b></a>
+            <div class="dropdown-menu scroll"role="menu">
+            <ul class="more-drop-container">
+            </ul>
+            </div>
+        </div>
     </li>
 </ul>

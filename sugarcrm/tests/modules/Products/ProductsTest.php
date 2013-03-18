@@ -458,13 +458,14 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     public static function dataProviderTestHandleOppStalesStatus()
     {
         return array(
-            array(Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,false),
+            array(Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false),
             array(Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false),
             array(Opportunity::STAGE_CLOSED_WON,Opportunity::STATUS_NEW,Opportunity::STAGE_CLOSED_WON,true),
             array(Opportunity::STAGE_CLOSED_LOST,Opportunity::STATUS_NEW,Opportunity::STAGE_CLOSED_LOST,true),
-            array(Opportunity::STAGE_CLOSED_WON,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,false),
-            array(Opportunity::STAGE_CLOSED_LOST,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,false),
+            array(Opportunity::STAGE_CLOSED_WON,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false),
+            array(Opportunity::STAGE_CLOSED_LOST,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false),
             array(Opportunity::STATUS_IN_PROGRESS,Opportunity::STAGE_CLOSED_WON,Opportunity::STATUS_IN_PROGRESS,false),
+            array(Opportunity::STATUS_NEW,Opportunity::STAGE_CLOSED_WON,Opportunity::STATUS_IN_PROGRESS,false),
         );
     }
 
@@ -725,6 +726,25 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
             array('Closed Won', '100'),
             array('Closed Lost', '0')
         );
+    }
+
+    /**
+     * @group products
+     * @group currency
+     * @ticket SFA-745
+     */
+    public function testProductSaveSetsCurrencyBaseRate()
+    {
+        $currency = SugarTestCurrencyUtilities::createCurrency('Philippines', '₱', 'PHP', 41.82982, 'currency-php');
+
+        $product = SugarTestProductUtilities::createProduct();
+        $product->currency_id = $currency->id;
+        $product->save();
+
+        $this->assertEquals($currency->id, $product->currency_id);
+        $this->assertEquals($currency->conversion_rate, $product->base_rate);
+
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
     
 }

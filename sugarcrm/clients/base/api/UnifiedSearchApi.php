@@ -65,7 +65,7 @@ class UnifiedSearchApi extends SugarListApi {
             $seed = null;
         }
         $options = parent::parseArguments($api, $args, $seed);
-        
+
         $options['query'] = '';
         if ( isset($args['q']) ) {
             $options['query'] = trim($args['q']);
@@ -188,13 +188,13 @@ class UnifiedSearchApi extends SugarListApi {
                 }
             }
         }
-        
+
         $options['fieldFilters'] = $fieldFilters;
-     
+
 
         return $options;
     }
-    
+
     /**
      * This function is the global search
      * @param $api ServiceBase The API class of the request
@@ -233,11 +233,15 @@ class UnifiedSearchApi extends SugarListApi {
         $sortByDateModified = true;
         //END SUGARCRM flav=!pro ONLY
 
+        foreach($recordSet['records'] as &$record) {
+            $bean = BeanFactory::retrieveBean($record['_module'], $record['id']);
+            $sub = Subscription::checkSubscription($api->user, $bean);
+            $record['following'] = !empty($sub);
+        }
 
         return $recordSet;
-
     }
-    
+
     //BEGIN SUGARCRM flav=pro ONLY
     /**
      * This function is used to determine the search engine to use
@@ -317,14 +321,14 @@ class UnifiedSearchApi extends SugarListApi {
 
         $options['moduleFilter'] = $options['moduleList'];
 
-        $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);        
+        $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);
 
         $returnedRecords = array();
 
         $total = 0;
-        
-        $api->action = 'list';        
-        
+
+        $api->action = 'list';
+
         if(is_object($results)) {
             foreach ( $results as $result ) {
                 $record = BeanFactory::getBean($result->getModule(), $result->getId());
@@ -354,7 +358,7 @@ class UnifiedSearchApi extends SugarListApi {
 
                 $returnedRecords[] = $formattedRecord;
             }
-            
+
             $total = $results->getTotalHits();
 
         }
@@ -368,10 +372,10 @@ class UnifiedSearchApi extends SugarListApi {
         {
             $nextOffset = -1;
         }
-        
 
- 
-        return array('next_offset'=>$nextOffset,'records'=>$returnedRecords);        
+
+
+        return array('next_offset'=>$nextOffset,'records'=>$returnedRecords);
     }
 
     /**
@@ -405,13 +409,13 @@ class UnifiedSearchApi extends SugarListApi {
         if ( empty($options['moduleList']) || count($options['moduleList']) == 0 || count($options['moduleList']) > 1 ) {
             $multiModule = true;
         }
-        
+
         if(empty($options['moduleList']))
         {
             require_once('modules/ACL/ACLController.php');
             $usa = new UnifiedSearchAdvanced();
             $moduleList = $usa->getUnifiedSearchModules();
-            
+
             // get the module names [array keys]
             $moduleList = array_keys($moduleList);
             // filter based on User Access if Blank
@@ -420,7 +424,7 @@ class UnifiedSearchApi extends SugarListApi {
             $ACL->filterModuleList($moduleList);
             $searchOptions['modules'] = $options['moduleList'] = $moduleList;
         }
-        
+
         $offset = $options['offset'];
         // One for luck.
         // Well, actually it's so that we know that there are additional results
@@ -502,7 +506,7 @@ class UnifiedSearchApi extends SugarListApi {
             }
             $returnedRecords = array_slice($returnedRecords,0,$options['limit']);
         }
-        
+
         if ( $options['offset'] === 'end' ) {
             $nextOffset = -1;
         }
@@ -531,7 +535,7 @@ class UnifiedSearchApi extends SugarListApi {
             } else {
                 $greaterThan = ($left[$key]>$right[$key]?1:-1);
             }
-            
+
             // Figured out if the left is greater than the right, now time to act
             if ( $greaterThan != 0 ) {
                 if ( $isAscending ) {

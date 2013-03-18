@@ -4,10 +4,6 @@
     initialize: function(opts) {
         var self = this;
         this.opts = opts;
-
-        // The layout needs to keep track of the collection of activities so it can feed each
-        // model for rendering via the activitystream view.
-        this.collection = opts.context.get('collection');
         this.renderedActivities = {};
 
         app.view.Layout.prototype.initialize.call(this, opts);
@@ -17,6 +13,8 @@
     },
 
     bindDataChange: function() {
+        var self = this;
+
         if (this.collection) {
             this.collection.on('add', this.renderPost, this);
             this.collection.on('reset', function() {
@@ -29,6 +27,16 @@
                 }, this);
             }, this);
         }
+
+        if (this.context.parent) {
+            var model = this.context.parent.get("model");
+            model.on("change", _.once(function() {
+                model.on("sync", function() {
+                    var options = self.collection.get("collectionOptions");
+                    this.fetch(options);
+                }, this.collection);
+            }));
+        }
     },
 
     prependPost: function(model) {
@@ -40,7 +48,7 @@
         var self = this, endpoint = function(method, model, options, callbacks) {
             var real_module = self.opts.context.parent.get('module'),
                 modelId = self.opts.context.parent.get('modelId'), url;
-            if (real_module !== "Home") {
+            if (real_module !== "Activities") {
                 url = app.api.buildURL(real_module, model.module, {id: modelId}, options.params);
             } else {
                 url = app.api.buildURL(model.module, null, {}, options.params);
@@ -86,55 +94,5 @@
         } else {
             this.$el.prepend(component.el);
         }
-    },
-
-    /**
-     * Helper method for adding a post or a comment. Handles attachments too.
-     * @param {string} url         Endpoint for posting message
-     * @param {string} contents    Some type of message (may have HTML due to tags)
-     * @param {array}  attachments Attachments to save to the post.
-     */
-    _addPostComment: function(url, contents, attachments) {
-        var self = this,
-            callback = _.after(1 + attachments.length, function() {
-                //self.streamCollection.fetch(self.opts);
-            });
-
-        app.api.call('create', url, {'value': contents}, {success: function(post_id) {
-            // TODO: Fix this to be less hacky. Perhaps a flag in arguments?
-            var parent_type = (url.indexOf("ActivityStream/ActivityStream") === -1)? 'ActivityStream' : 'ActivityComments';
-
-            attachments.each(function(index, el) {
-                var id = $(el).attr('id'),
-                    seed = app.data.createBean('Notes', {
-                        'parent_id': post_id,
-                        'parent_type': parent_type,
-                        'team_id': 1
-                    });
-
-                seed.save({}, {
-                    success: function(model) {
-                        var data = new FormData(),
-                            url = app.api.buildURL("Notes/" + model.get("id") + "/file/filename");
-
-                        data.append("filename", app.drag_drop[id]);
-                        url += "?oauth_token=" + app.api.getOAuthToken();
-
-                        $.ajax({
-                            url: url,
-                            type: "POST",
-                            data: data,
-                            processData: false,
-                            contentType: false,
-                            success: function() {
-                                delete app.drag_drop[id];
-                                callback();
-                            }
-                        });
-                    }
-                });
-            });
-            callback();
-        }});
     }
 })

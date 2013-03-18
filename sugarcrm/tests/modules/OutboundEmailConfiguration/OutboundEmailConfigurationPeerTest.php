@@ -233,6 +233,89 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         self::assertFalse($actual, "There should be a system-override configuration but the host should be empty");
     }
 
+    public function testValidSystemMailConfigurationExists_AuthRequired_NoUserPassword_ReturnsFalse()
+    {
+        OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
+
+        $configuration = array(
+            "name"              => "System Override",
+            "type"              => "system-override",
+            "user_id"           => $GLOBALS["current_user"]->id,
+            "from_email"        => "foo@bar.com",
+            "from_name"         => "Foo Bar",
+            "mail_sendtype"     => "SMTP",
+            "mail_smtptype"     => "other",
+            "mail_smtpserver"   => "smtp.example.com",
+            "mail_smtpport"     => "25",
+            "mail_smtpuser"     => "",
+            "mail_smtppass"     => "",
+            "mail_smtpauth_req" => "1",
+            "mail_smtpssl"      => "0",
+        );
+        OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
+
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+
+        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        self::assertFalse($actual, "There should be a system-override configuration but the host should be empty");
+    }
+
+
+    public function testValidSystemMailConfigurationExists_AuthNotRequired_NoUserOrPassword_ReturnsTrue()
+    {
+        OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
+
+        $configuration = array(
+            "name"              => "System Override",
+            "type"              => "system-override",
+            "user_id"           => $GLOBALS["current_user"]->id,
+            "from_email"        => "foo@bar.com",
+            "from_name"         => "Foo Bar",
+            "mail_sendtype"     => "SMTP",
+            "mail_smtptype"     => "other",
+            "mail_smtpserver"   => "smtp.example.com",
+            "mail_smtpport"     => "25",
+            "mail_smtpuser"     => "",
+            "mail_smtppass"     => "",
+            "mail_smtpauth_req" => "0",
+            "mail_smtpssl"      => "0",
+        );
+        OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
+
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+
+        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        self::assertTrue($actual, "Configuration should be Valid - Auth Not Required - No Name or Password exists");
+    }
+
+
+    public function testValidSystemMailConfigurationExists_AuthRequired_UserPasswordExist_ReturnsTrue()
+    {
+        OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
+
+        $configuration = array(
+            "name"              => "System Override",
+            "type"              => "system-override",
+            "user_id"           => $GLOBALS["current_user"]->id,
+            "from_email"        => "foo@bar.com",
+            "from_name"         => "Foo Bar",
+            "mail_sendtype"     => "SMTP",
+            "mail_smtptype"     => "other",
+            "mail_smtpserver"   => "smtp.example.com",
+            "mail_smtpport"     => "25",
+            "mail_smtpuser"     => "mickey",
+            "mail_smtppass"     => "mouse",
+            "mail_smtpauth_req" => "1",
+            "mail_smtpssl"      => "0",
+        );
+        OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
+
+        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+
+        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        self::assertTrue($actual, "Configuration should be Valid - Auth Required -  Name and Password exist");
+    }
+
     private function getMockOutboundEmailConfigurationPeer($isAllowUserAccessToSystemDefaultOutbound = false)
     {
         $mockOutboundEmail = $this->getMock("OutboundEmail", array("isAllowUserAccessToSystemDefaultOutbound"));

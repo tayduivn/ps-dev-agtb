@@ -109,7 +109,6 @@
                         self.setButtonStates('view');
                         self.model.trigger("setMode", "view");
                         self.toggleEdit(false);
-                        app.alert.show('dashboard_notice', {level: 'success', title: app.lang.getAppString('LBL_SAVED'), autoClose: true});
                     }
                 },
                 error: function() {
@@ -140,7 +139,6 @@
 
                 self.model.destroy({
                     success: function() {
-                        app.alert.show('dashboard_notice', {level: 'success', title: message, autoClose: true});
                         if(self.context.parent) {
                             self.model.dashboardLayout.navigateLayout('list');
                         } else {
@@ -150,6 +148,11 @@
                     },
                     error: function() {
                         app.alert.show('error_while_save', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
+                    },
+                    alerts: {
+                        success: {
+                            title: message
+                        }
                     }
                 });
             }
@@ -169,36 +172,6 @@
     },
     setEditableFields: function() {
         app.view.views.RecordView.prototype.setEditableFields.call(this);
-    },
-    handleValidationError: function(errors) {
-        _.each(errors, function (fieldErrors, fieldName) {
-            //TODO: Layout UI will change later
-            if(fieldName === 'metadata') {
-                fieldName = 'layout';
-            }
-
-            var field = _.find(this.fields, function(field) {
-                return field.name === fieldName;
-            });
-
-            if(field) {
-                var message = '',
-                    $fieldEl = field.getFieldElement();
-                if($fieldEl.length > 0) {
-                    $fieldEl.addClass("local-error");
-                    var tooltipEl = field.$(".error-tooltip[rel=tooltip]");
-                    if(tooltipEl.length === 0) {
-                        tooltipEl = $('<span class="add-on local error-tooltip" rel="tooltip"><i class="icon-exclamation-sign"></i></span>');
-                        $fieldEl.after(tooltipEl);
-                    }
-                    _.each(fieldErrors, function (errorContext, errorName) {
-                        message += app.error.getErrorString(errorName, errorContext);
-                    });
-                    tooltipEl.attr("data-original-title", message);
-                    tooltipEl.tooltip({placement:"bottom", container: "body"});
-                }
-            }
-        }, this);
     },
     _dispose: function() {
         this.model.off("error:validation", null, this);

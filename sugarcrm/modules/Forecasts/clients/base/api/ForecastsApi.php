@@ -45,8 +45,8 @@ class ForecastsApi extends SugarApi
             ),
             'timeperiod' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts', 'timeperiod'),
-                'pathVars' => array('', ''),
+                'path' => array('Forecasts', 'enum', 'selectedTimePeriod'),
+                'pathVars' => array('', '', ''),
                 'method' => 'timeperiod',
                 'shortHelp' => 'forecast timeperiod',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastApiTimePeriodGet.html',

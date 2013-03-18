@@ -1,15 +1,16 @@
 <?php
 
 $mod_strings = array(
-    'TPL_ACTIVITY_CREATE' => 'Added {{{object.name}}} {{object.type}}.',
-    'TPL_ACTIVITY_POST' => 'Posted {{value}}{{#if object}} on {{{object.name}}}{{/if}}.',
-    'TPL_ACTIVITY_UPDATE' => 'Updated {{{updateStr}}} on {{{object.name}}}.',
+    'TPL_ACTIVITY_CREATE' => 'Added {{str "TPL_ACTIVITY_RECORD" "Activities" object}} {{object.type}}.',
+    'TPL_ACTIVITY_POST' => 'Posted {{value}}{{#if object}} on {{str "TPL_ACTIVITY_RECORD" "Activities" object}}{{/if}}.',
+    'TPL_ACTIVITY_UPDATE' => 'Updated {{#if updateStr}}{{{updateStr}}} on {{/if}}{{str "TPL_ACTIVITY_RECORD" "Activities" object}}.',
     'TPL_ACTIVITY_UPDATE_FIELD' => '<a rel="tooltip" title="Changed: {{before}} To: {{after}}">{{field_label}}</a>',
-    'TPL_ACTIVITY_LINK' => 'Related {{{subject.name}}} to {{{object.name}}}.',
-    'TPL_ACTIVITY_UNLINK' => 'Unrelated {{{subject.name}}} to {{{object.name}}}.',
+    'TPL_ACTIVITY_LINK' => 'Related {{str "TPL_ACTIVITY_RECORD" "Activities" subject}} to {{str "TPL_ACTIVITY_RECORD" "Activities" object}}.',
+    'TPL_ACTIVITY_UNLINK' => 'Unrelated {{str "TPL_ACTIVITY_RECORD" "Activities" subject}} to {{str "TPL_ACTIVITY_RECORD" "Activities" object}}.',
     'TPL_ACTIVITY_ATTACH' => 'Added file <a class="dragoff" target="sugar_attach" href="{{{url}}}">{{{filename}}}</a>.',
-    'TPL_ACTIVITY_DELETE' => 'Deleted {{{object.name}}} {{object.type}}.',
-    'TPL_ACTIVITY_UNDELETE' => 'Restored {{{object.name}}} {{object.type}}.',
+    'TPL_ACTIVITY_DELETE' => 'Deleted {{str "TPL_ACTIVITY_RECORD" "Activities" object}} {{object.type}}.',
+    'TPL_ACTIVITY_UNDELETE' => 'Restored {{str "TPL_ACTIVITY_RECORD" "Activities" object}} {{object.type}}.',
+    'TPL_ACTIVITY_RECORD' => '<a href="#{{module}}/{{id}}">{{name}}</a>',
     'TPL_COMMENT' => 'commented "{{value}}".',
     'TPL_MORE_COMMENT' => '{{this}} more comment&hellip;',
     'TPL_MORE_COMMENTS' => '{{this}} more comments&hellip;',

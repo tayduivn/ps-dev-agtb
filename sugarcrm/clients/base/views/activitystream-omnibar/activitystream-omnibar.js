@@ -1,6 +1,10 @@
 ({
     events: {
-        'click .addPost': 'addPost'
+        'click .addPost': 'addPost',
+        'change div[data-placeholder]': 'checkPlaceholder',
+        'keydown div[data-placeholder]': 'checkPlaceholder',
+        'keypress div[data-placeholder]': 'checkPlaceholder',
+        'input div[data-placeholder]': 'checkPlaceholder'
     },
 
     className: "row omnibar activitystream-post",
@@ -54,5 +58,14 @@
 
     getText: function($el) {
         return $el.contents().html();
+    },
+
+    checkPlaceholder: function(e) {
+        var el = e.currentTarget;
+        if (el.textContent) {
+            el.dataset.hidePlaceholder = true;
+        } else {
+            delete el.dataset.hidePlaceholder;
+        }
     }
 })

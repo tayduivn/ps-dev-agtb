@@ -160,6 +160,11 @@
     }, 0),
     setPrimaryItem: _.debounce(function(evt) {
         var index = $(evt.currentTarget).data('index');
+
+        //Don't allow setting to primary until user's selected an actual team (SP-530)
+        if (! this.value[index].id ) {
+            return;
+        }
         this.$(".btn[name=primary]").removeClass("active");
         if(this.setPrimary(index)){
             this.$(".btn[name=primary][data-index=" + index + "]").addClass("active");

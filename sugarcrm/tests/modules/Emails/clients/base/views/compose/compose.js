@@ -34,14 +34,13 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe('Render', function() {
-        var setTitleStub, hideFieldStub, toggleSenderOptionsStub, populateToRecipientsStub, initMainButtonStatusStub;
+        var setTitleStub, hideFieldStub, toggleSenderOptionsStub, populateToRecipientsStub;
 
         beforeEach(function() {
             setTitleStub = sinon.stub(view, 'setTitle'),
             hideFieldStub = sinon.stub(view, 'hideField'),
             toggleSenderOptionsStub = sinon.stub(view, 'toggleSenderOptions'),
             populateToRecipientsStub = sinon.stub(view, 'populateToRecipients');
-            initMainButtonStatusStub = sinon.stub(view, 'initMainButtonStatus');
         });
 
         afterEach(function() {
@@ -49,7 +48,6 @@ describe("Emails.Views.Compose", function() {
             hideFieldStub.restore();
             toggleSenderOptionsStub.restore();
             populateToRecipientsStub.restore();
-            initMainButtonStatusStub.restore();
         });
 
         it("No recipients on context - title should be set no recipients populated", function() {
@@ -246,28 +244,6 @@ describe("Emails.Views.Compose", function() {
         })
     });
 
-    describe('Send button', function() {
-        beforeEach(function() {
-            view.model.off('change');
-        });
-
-        it('should be disabled when to_addresses field is empty', function() {
-            view.model.unset('to_addresses');
-            view.model.set('subject', 'foo');
-            view.model.set('html_body', 'bar');
-
-            expect(view.isEmailSendable()).toBe(false);
-        });
-
-        it('should be enabled when to_addresses is populated', function() {
-            view.model.set('to_addresses', 'foo@bar.com');
-            view.model.unset('subject');
-            view.model.unset('html_body');
-
-            expect(view.isEmailSendable()).toBe(true);
-        });
-    });
-
     describe('Send', function() {
         var saveModelStub, alertShowStub;
 
@@ -283,7 +259,8 @@ describe("Emails.Views.Compose", function() {
             alertShowStub.restore();
         });
 
-        it('should send email when subject and html_body fields are populated', function() {
+        it('should send email when to, subject and html_body fields are populated', function() {
+            view.model.set('to_addresses', 'foo@bar.com');
             view.model.set('subject', 'foo');
             view.model.set('html_body', 'bar');
 
@@ -291,6 +268,38 @@ describe("Emails.Views.Compose", function() {
 
             expect(saveModelStub.calledOnce).toBe(true);
             expect(alertShowStub.called).toBe(false);
+        });
+
+        it('should send email when cc, subject and html_body fields are populated', function() {
+            view.model.set('cc_addresses', 'foo@bar.com');
+            view.model.set('subject', 'foo');
+            view.model.set('html_body', 'bar');
+
+            view.send();
+
+            expect(saveModelStub.calledOnce).toBe(true);
+            expect(alertShowStub.called).toBe(false);
+        });
+
+        it('should send email when bcc, subject and html_body fields are populated', function() {
+            view.model.set('bcc_addresses', 'foo@bar.com');
+            view.model.set('subject', 'foo');
+            view.model.set('html_body', 'bar');
+
+            view.send();
+
+            expect(saveModelStub.calledOnce).toBe(true);
+            expect(alertShowStub.called).toBe(false);
+        });
+
+        it('should show error alert when address fields are empty', function() {
+            view.model.set('subject', 'foo');
+            view.model.set('html_body', 'bar');
+
+            view.send();
+
+            expect(saveModelStub.calledOnce).toBe(false);
+            expect(alertShowStub.called).toBe(true);
         });
 
         it('should show confirmation alert message when subject field is empty', function() {
@@ -426,6 +435,10 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe("Signatures", function() {
+        beforeEach(function() {
+            view.model.off('change');
+        });
+
         it("should retrieve a signature from the SignaturesApi when the signature ID is present", function() {
             var apiStub   = sinon.stub(app.api, "call"),
                 id        = "abcd", // the actual ID doesn't matter
