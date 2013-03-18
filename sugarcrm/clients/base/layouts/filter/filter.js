@@ -11,7 +11,8 @@
     initialize: function(opts) {
         app.view.Layout.prototype.initialize.call(this, opts);
 
-        this.layoutType = this.context.get('layout') || app.controller.context.get('layout');
+        this.layoutType = this.context.get('layout') || this.context.get('layoutName') || app.controller.context.get('layout');
+
         this.aclToCheck = (this.layoutType === 'record')? 'view' : 'list';
         this.filters = app.data.createBeanCollection('Filters');
 
@@ -20,6 +21,9 @@
         if (this.layoutType === 'records' && this.module !== 'Home') {
             this.context.set('skipFetch', true);
         } else {
+            if(this.context.parent) {
+                this.context.parent.set('skipFetch', true);
+            }
             this.context.on('context:child:add', function(childCtx) {
                 if (childCtx.get('link')) {
                     // We're in a subpanel.
@@ -97,11 +101,15 @@
             if (this.layoutType === 'records' && this.module !== "Home") {
                 contextList.push(this.context);
             } else {
-                _.each(this.context.children, function(childCtx) {
-                    if (childCtx.get('link') && !childCtx.get('hidden')) {
-                        contextList.push(childCtx);
-                    }
-                });
+                if (this.context.children.length) {
+                    _.each(this.context.children, function(childCtx) {
+                        if (childCtx.get('link') && !childCtx.get('hidden')) {
+                            contextList.push(childCtx);
+                        }
+                    });
+                } else {
+                    contextList.push(this.context.parent);
+                }
             }
         }
         return contextList;
