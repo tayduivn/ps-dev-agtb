@@ -91,6 +91,46 @@
     },
 
     /**
+     * Render Field
+     */
+    _render: function() {
+        var select = null;
+        app.view.Field.prototype._render.call(this);
+
+        /* If we are on our own sheet, and need to show the dropdown, init things
+         * and disable events
+         */
+        if(!this.disabled && this.currentView == "enum") {
+            this.$el.off("click");
+
+            //custom namespaced window click event to destroy the chosen dropdown on "blur".
+            //this is removed in this.resetBuckets
+            $(window).on("click." + this.cid, _.bind(function(e) {
+                if(!_.isEqual(this.cid, $(e.target).attr("cid"))) {
+                    this.resetBucket();
+                }
+            }, this));
+
+            this.$el.off("mouseenter");
+            this.$el.off("mouseleave");
+            this.select = this.$el.find("select");
+            this.select.select2({minimumResultsForSearch: !_.isUndefined(this.def.searchBarThreshold) ? this.def.searchBarThreshold : 0});
+            this.currentVal = this.value;
+            this.select.select2("val", this.value);
+            this.select.select2("open");
+            // use jquery proxy() to pass "this" context to closure
+            this.select.on("close", _.bind(function() {
+                if(_.isEqual(this.currentVal, this.select.select2("val"))) {
+                    this.resetBucket();
+                }
+            }, this));
+            this.$(".select2-input").keydown(_.bind(function(e) {
+                this.onKeyDown(e);
+            }, this));
+        }
+    },
+
+    /**
      * Change handler for the buckets field
      */
     bucketsChanged: function() {
@@ -104,13 +144,10 @@
         else if(this.currentView == "enum") {
             this.value = this.select.select2("val");
             values[this.def.name] = this.value;
+            this.resetBucket();
         }
 
         this.model.set(values);
-
-        if(this.currentView == "enum") {
-            this.resetBucket();
-        }
     },
 
     /**
@@ -206,40 +243,10 @@
         var sales_stage = this.model.get("sales_stage");
         if(!this.disabled) {
             $(e.target).attr("cid", this.cid);
-            //define the view
             this.def.view = "enum";
             this.currentView = "enum";
-            //prevent this click from filtering up to the window.click
             e.preventDefault();
-            this.$el.off("click");
-            if (!this.disposed) {
-                this.render();
-            }
-
-            //custom namespaced window click event to destroy the chosen dropdown on "blur".
-            //this is removed in this.resetBuckets
-            $(window).on("click." + this.cid, _.bind(function(e) {
-                if(!_.isEqual(this.cid, $(e.target).attr("cid"))) {
-                    this.resetBucket();
-                }
-            }, this));
-
-            this.$el.off("mouseenter");
-            this.$el.off("mouseleave");
-            this.select = this.$el.find("select");
-            this.select.select2({minimumResultsForSearch: !_.isUndefined(this.def.searchBarThreshold) ? this.def.searchBarThreshold : 0});
-            this.currentVal = this.value;
-            this.select.select2("val", this.value);
-            this.select.select2("open");
-            // use jquery proxy() to pass "this" context to closure
-            this.select.on("close", _.bind(function() {
-                if(_.isEqual(this.currentVal, this.select.select2("val"))) {
-                    this.resetBucket();
-                }
-            }, this));
-            this.$(".select2-input").keydown(_.bind(function(e) {
-                this.onKeyDown(e);
-            }, this));
+            this.render();
         }
     },
 
@@ -254,9 +261,6 @@
         this.currentView = "default";
         this.getLanguageValue();
         this.delegateEvents();
-        if (!this.disposed) {
-            this.render();
-        }
     },
 
     /**
