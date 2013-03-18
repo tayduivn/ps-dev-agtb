@@ -1,0 +1,5 @@
+<img src="{{img}}" class="rep-avatar" width="32" height="32">
+<div class="rep-name">
+    <a href="{{url}}">{{full_name}}</a>
+</div>
+<div class="rep-title">{{title}}</div>

@@ -105,7 +105,7 @@ abstract class SugarForecasting_AbstractForecast extends SugarForecasting_Abstra
         */
         //END SUGARCRM flav=int ONLY
 
-        $sql = sprintf("SELECT id, user_name, first_name, last_name, reports_to_id FROM users WHERE (reports_to_id = '%s' OR id = '%s') AND " . User::getLicensedUsersWhere(), $user_id, $user_id);
+        $sql = sprintf("SELECT id, user_name, first_name, last_name, title, reports_to_id FROM users WHERE (reports_to_id = '%s' OR id = '%s') AND " . User::getLicensedUsersWhere(), $user_id, $user_id);
 
         $result = $db->query($sql);
         $reportees = array();
