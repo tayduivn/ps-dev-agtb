@@ -127,6 +127,7 @@ describe("ConvertLeadLayout", function() {
         app.view.reset();
         delete Handlebars.templates;
         SugarTest.testMetadata.dispose();
+        delete leadModel;
     });
 
     var initializeLayout = function() {
@@ -168,6 +169,9 @@ describe("ConvertLeadLayout", function() {
         };
         var layout = SugarTest.createLayout('base', 'Leads', 'convert-main', meta, null, true);
         leadModel = new Backbone.Model();
+        sinon.stub(leadModel, 'fetch', function(callbacks) {
+            callbacks.success(leadModel);
+        });
         layout.context.set("leadsModel", leadModel);
 
         return layout;
