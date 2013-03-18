@@ -111,7 +111,7 @@
     inspector: function(evt) {
         var nTr = $(evt.target).parents('tr'),
             uid = $(evt.target).data('uid'),
-            moduleType = $(evt.target).date('type'),
+            moduleType = $(evt.target).data('type'),
             totalRows = $(evt.target).parents('table').find('tr.odd, tr.even'),
             selIndex = -1;
         _.each(totalRows, function(element, index) {
