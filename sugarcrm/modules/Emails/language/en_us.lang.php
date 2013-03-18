@@ -155,7 +155,8 @@ $mod_strings = array (
 	'LBL_SENT_MODULE_NAME'		=> 'Sent Emails',
 	'LBL_SENT_MODULE_NAME_SINGULAR' => 'Sent Email',
 	'LBL_SHOW_ALT_TEXT'			=> 'Show Plain Text',
-    "LBL_SELECT_SIGNATURE_TITLE" => "Choose Signature",
+    'LBL_SELECT_FROM_SENDER'    => 'Choose From Email Account',
+    'LBL_SELECT_SIGNATURE_TITLE' => 'Choose Signature',
 	'LBL_SIGNATURE'				=> 'Signature',
     "LBL_DEFAULT_SIGNATURE_TITLE" => "Default Signature",
     "LBL_SHOW_MORE_SIGNATURES"  => "Show More Signatures",
@@ -207,7 +208,7 @@ $mod_strings = array (
     "LBL_COMPOSE_ADDRESSBOOK"   => "Address Book",
 
 	'NTC_REMOVE_INVITEE'		=> 'Are you sure you want to remove this recipient from the email?',
-	'WARNING_SETTINGS_NOT_CONF'	=> 'Warning: Your email settings are not configured to send email.',
+	'WARNING_SETTINGS_NOT_CONF'	=> 'Warning: Your email settings are not correctly configured to send email.',
 	'WARNING_NO_UPLOAD_DIR'		=> 'Attachments may fail: No value for "upload_tmp_dir" was detected.  Please correct this in your php.ini file.',
 	'WARNING_UPLOAD_DIR_NOT_WRITABLE'	=> 'Attachments may fail: An incorrect or unusable value for "upload_tmp_dir" was detected.  Please correct this in your php.ini file.',
 

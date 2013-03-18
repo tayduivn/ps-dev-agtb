@@ -52,6 +52,13 @@
             if (!this.model.has(this.name)) {
                 this.model.set(this.name, defaultValue.id);
             }
+        } else {
+            app.drawer.close();
+            app.alert.show("no-email-configurations", {
+                level: "warning",
+                messages: app.lang.get('WARNING_SETTINGS_NOT_CONF', this.module),
+                autoClose: false
+            });
         }
 
         var format = function(item) {

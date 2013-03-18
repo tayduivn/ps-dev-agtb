@@ -183,6 +183,9 @@ class MailApi extends ModuleApi
         $mailRecord->text_body    = $args["text_body"];
 
         if ($args["status"] == "ready") {
+            if (empty($args["email_config"])) {
+                throw new SugarApiExceptionRequestMethodFailure("No mail configuration specified.");
+            }
             $result = $mailRecord->send();
         }
         else if ($args["status"] == "draft") {
