@@ -4,6 +4,8 @@
     initDashlet: function(view) {
         var dashlet = JSON.parse(JSON.stringify(this.context.get("dashlet")));
 
+        this.model.set("auto_refresh", dashlet['auto_refresh'] || 0);
+
         if(view === 'config') {
 
             var metadata = app.metadata.getView(dashlet.module, 'list');
