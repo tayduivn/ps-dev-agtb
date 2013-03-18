@@ -227,7 +227,7 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(array_keys($expected), array_keys($result));
         foreach($expected as $key => $val) {
-            $this->assertEquals($expected[$key]->id, $actual[$key]->id, "Wrong data in key $key");
+            $this->assertEquals($expected[$key]->id, $result[$key]->id, "Wrong data in key $key");
         }
 
         //Test a limited set
