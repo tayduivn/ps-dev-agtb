@@ -57,6 +57,8 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
                 ),
                 array(
                     'name'=>  'assigned_user_name',
+                    'bwcLink' => true,
+                    'module' => 'Employees',//TODO: Remove once Users not black listed in bwc
                     'default'=>true,
                     'sortable' => false,
                 ),

@@ -112,11 +112,16 @@ $xtpl->assign("APP", $app_strings);
 $xtpl->assign("LBL_ACCOUNT",$app_list_strings['moduleList']['Accounts']);
 $xtpl->parse("main.variable_option");
 
+$returnModule='';
+if(isset($_REQUEST['return_module'])) {
+    $returnModule=$_REQUEST['return_module'];
+    $xtpl->assign("RETURN_MODULE", $returnModule);
+}
+
 $returnAction = 'index';
-if(isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
 if(isset($_REQUEST['return_action'])){
-	$xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
-	$returnAction = $_REQUEST['return_action'];
+    $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
+    $returnAction = $_REQUEST['return_action'];
 }
 if(isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
 // handle Create $module then Cancel
@@ -127,10 +132,10 @@ if(empty($_REQUEST['return_id'])) {
 if ($has_campaign || $inboundEmail ) {
     $cancel_script="window.close();";
 }else {
-    $cancel_script="this.form.action.value='{$returnAction}'; this.form.module.value='{$_REQUEST['return_module']}';
+    $cancel_script="this.form.action.value='{$returnAction}'; this.form.module.value='{$returnModule}';
     this.form.record.value=";
     if(empty($_REQUEST['return_id'])) {
-        $cancel_script="this.form.action.value='index'; this.form.module.value='{$_REQUEST['return_module']}';this.form.name.value='';this.form.description.value=''";
+        $cancel_script="this.form.action.value='index'; this.form.module.value='{$returnModule}';this.form.name.value='';this.form.description.value=''";
     } else {
         $cancel_script.="'{$_REQUEST['return_id']}'";
     }

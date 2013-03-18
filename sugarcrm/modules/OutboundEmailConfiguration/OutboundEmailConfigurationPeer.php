@@ -149,9 +149,16 @@ class OutboundEmailConfigurationPeer
 
         if ($configuration instanceof OutboundSmtpEmailConfiguration) {
             $host = $configuration->getHost();
-
             if (!empty($host)) {
-                $configExists = true;
+                if ($configuration->isAuthenticationRequired()) {
+                    $userName = $configuration->getUsername();
+                    $userPass = $configuration->getPassword();
+                    if (!empty($userName) && !empty($userPass)) {
+                        $configExists = true;
+                    }
+                } else {
+                    $configExists = true;
+                }
             }
         }
 

@@ -458,13 +458,14 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     public static function dataProviderTestHandleOppStalesStatus()
     {
         return array(
-            array(Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,false),
+            array(Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false),
             array(Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false),
             array(Opportunity::STAGE_CLOSED_WON,Opportunity::STATUS_NEW,Opportunity::STAGE_CLOSED_WON,true),
             array(Opportunity::STAGE_CLOSED_LOST,Opportunity::STATUS_NEW,Opportunity::STAGE_CLOSED_LOST,true),
-            array(Opportunity::STAGE_CLOSED_WON,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,false),
-            array(Opportunity::STAGE_CLOSED_LOST,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,false),
+            array(Opportunity::STAGE_CLOSED_WON,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false),
+            array(Opportunity::STAGE_CLOSED_LOST,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false),
             array(Opportunity::STATUS_IN_PROGRESS,Opportunity::STAGE_CLOSED_WON,Opportunity::STATUS_IN_PROGRESS,false),
+            array(Opportunity::STATUS_NEW,Opportunity::STAGE_CLOSED_WON,Opportunity::STATUS_IN_PROGRESS,false),
         );
     }
 
