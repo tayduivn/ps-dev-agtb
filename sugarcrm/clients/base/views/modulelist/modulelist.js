@@ -209,7 +209,7 @@
             this.module_list = {};
             if (app.metadata.getModuleNames(true, "read")) {
                 _.each(app.metadata.getModuleNames(true, "read"), function(val) {
-                    self.module_list[val] = app.lang.get('LBL_MODULE_NAME', val);
+                    self.module_list[val] = val;
                 });
             }
             this.module_list = this.completeMenuMeta(this.module_list);
@@ -223,7 +223,7 @@
         var actions, meta, returnList = [], self = this, listLength;
         _.each(module_list, function(value, key) {
             actions = {
-                label: value,
+                label: app.lang.get('LBL_MODULE_NAME', value),
                 name: key
             };
             meta = app.metadata.getModule(key);
