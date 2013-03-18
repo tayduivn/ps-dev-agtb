@@ -573,6 +573,7 @@ class Product extends SugarBean
             $this->setAccountIdForOpportunity($this->opportunity_id);
         }
 
+        /* @var $currency Currency */
         $currency = BeanFactory::getBean('Currencies', $this->currency_id);
         // RPS - begin - decimals cant be null in sql server
         if ($this->cost_price == '') {
@@ -604,8 +605,11 @@ class Product extends SugarBean
         }
         
         if ($this->quantity == '') {
-        	$this->quantity = 1;
+            $this->quantity = 1;
         }
+
+        // always set the base rate to what the conversion_rate is in the currency
+        $this->base_rate = $currency->conversion_rate;
 
         //US DOLLAR
         if (isset($this->discount_price) && (!empty($this->discount_price) || $this->discount_price == '0')) {

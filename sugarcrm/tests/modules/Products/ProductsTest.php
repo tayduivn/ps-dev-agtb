@@ -726,6 +726,25 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
             array('Closed Lost', '0')
         );
     }
+
+    /**
+     * @group products
+     * @group currency
+     * @ticket SFA-745
+     */
+    public function testProductSaveSetsCurrencyBaseRate()
+    {
+        $currency = SugarTestCurrencyUtilities::createCurrency('Philippines', '₱', 'PHP', 41.82982, 'currency-php');
+
+        $product = SugarTestProductUtilities::createProduct();
+        $product->currency_id = $currency->id;
+        $product->save();
+
+        $this->assertEquals($currency->id, $product->currency_id);
+        $this->assertEquals($currency->conversion_rate, $product->base_rate);
+
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+    }
     
 }
 class MockProduct extends Product
