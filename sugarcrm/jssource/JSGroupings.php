@@ -379,6 +379,7 @@
                     // Plugins for Sugar 7.
                     'include/javascript/sugar7/plugins/dragdrop_attachments.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/file_dragoff.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/dropdown.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ellipsis_inline.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/list-column-ellipsis.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/taggable.js'  => 'include/javascript/sugar_sidecar.min.js',

@@ -29,8 +29,12 @@
     className: 'bwc-frame',
     // TODO check if we need to support multiple bwc views
     id: 'bwc-frame',
+    // Precompiled regex (note-regex literal causes errors but RegExp doesn't)
+    moduleRegex: new RegExp("module=([^&]*)"),
+    idRegex: new RegExp("record=([^&]*)"),
+    actionRegex: new RegExp("action=([^&]*)"),
 
-    initialize: function(options) {
+    initialize: function (options) {
         this.$el.attr('src', options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index');
         app.view.View.prototype.initialize.call(this, options);
     },
@@ -46,13 +50,13 @@
      *
      * @private
      */
-    _renderHtml: function() {
+    _renderHtml: function () {
         var self = this;
 
         app.view.View.prototype._renderHtml.call(this);
 
-        this.$el.load(function() {
-            var module = /module=([^&]*)/.exec(this.contentWindow.location.search);
+        this.$el.load(function () {
+            var module = self.moduleRegex.exec(this.contentWindow.location.search);
             module = (_.isArray(module)) ? module[1] : null;
             if (module) {
                 // update bwc context
@@ -78,10 +82,10 @@
      * @param {String} href the bwc hyperlink.
      * @return {String} the new sidecar hyperlink (empty string if unable to convert).
      */
-    convertToSidecarUrl: function(href) {
-        var module = /module=([^&]*)/.exec(href),
-            id = /record=([^&]*)/.exec(href),
-            action = /action=([^&]*)/.exec(href);
+    convertToSidecarUrl: function (href) {
+        var module = this.moduleRegex.exec(href),
+            id = this.idRegex.exec(href),
+            action = this.actionRegex.exec(href);
 
         module = (_.isArray(module)) ? module[1] : null;
         if (!module) {
@@ -112,18 +116,18 @@
      * @param {Window} frame the contentWindow of the frame to rewrite links on.
      * @private
      */
-    _rewriteLinksForSidecar: function(frame) {
+    _rewriteLinksForSidecar: function (frame) {
         var self = this;
 
         var notSidecar = self._getBlackList();
-        frame.$('a[href*="module="]').each(function(i, elem) {
+        frame.$('a[href*="module="]').each(function (i, elem) {
             var $elem = $(elem),
                 href = $elem.attr('href'),
-                module = /module=([^&]*)/.exec(href);
+                module = self.moduleRegex.exec(href);
 
             if (!_.isArray(module) || _.isEmpty(module[1]) ||
                 _.indexOf(notSidecar, module[1]) !== -1
-            ) {
+                ) {
                 return;
             }
 
@@ -135,7 +139,7 @@
                 return;
             }
 
-            $elem.click(function(e) {
+            $elem.click(function (e) {
                 if (e.button !== 0 || e.ctrlKey || e.metaKey) {
                     return;
                 }
@@ -157,9 +161,9 @@
      * @param {Window} frame the contentWindow of the frame to rewrite links on.
      * @private
      */
-    _rewriteNewWindowLinks: function(frame) {
+    _rewriteNewWindowLinks: function (frame) {
 
-        frame.$('a[target="_blank"]').not('[href^="http"]').each(function(i, elem) {
+        frame.$('a[target="_blank"]').not('[href^="http"]').each(function (i, elem) {
             var $elem = $(elem);
             if ($elem.data('sidecarProcessed')) {
                 return;
@@ -173,7 +177,7 @@
      * @see https://docs.google.com/a/sugarcrm.com/spreadsheet/ccc?key=0AhZMJewalakadERxWlA3UnByT0dLTC04Q2Z5eGJHbFE#gid=6
      * @private
      */
-    _getBlackList: function() {
+    _getBlackList: function () {
         return [
             'ACLFields',
             'ACLRoles',

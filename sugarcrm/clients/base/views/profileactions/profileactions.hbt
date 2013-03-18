@@ -1,14 +1,18 @@
 <ul class="nav pull-right megamenu" id="userList">
     <li class="divider-vertical"></li>
     <li class="dropdown" id="userActions">
-        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-            <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar"><b class="caret"></b></a>
-        <ul class="dropdown-menu">
-            {{#if showAdmin}}
-            <li class="administration"><a href="#Administration">{{str "LBL_ADMIN"}}</a></li>
-            {{/if}}
-            <li class="profileactions-about"><a href="#bwc/index.php?module=Home&action=About">{{str "LNK_ABOUT"}}</a></li>
-            <li class="profileactions-logout"><a href="#logout/?clear=1">{{str "LBL_LOGOUT"}}</a></li>
-        </ul>
+        <div class="btn-group">
+            <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="btn btn-invisible btn-link dropdown-toggle dtoggle">
+                <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar"><b class="caret"></b></a>
+            <div class="dropdown-menu scroll pull-right">
+                <ul role="menu">
+                    {{#if showAdmin}}
+                    <li class="administration"><a href="#Administration">{{str "LBL_ADMIN"}}</a></li>
+                    {{/if}}
+                    <li class="profileactions-about"><a href="#bwc/index.php?module=Home&action=About">{{str "LNK_ABOUT"}}</a></li>
+                    <li class="profileactions-logout"><a href="#logout/?clear=1">{{str "LBL_LOGOUT"}}</a></li>
+                </ul>
+            </div>
+        </div>
     </li>
 </ul>
