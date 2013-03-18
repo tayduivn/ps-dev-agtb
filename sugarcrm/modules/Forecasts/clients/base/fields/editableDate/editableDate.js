@@ -25,8 +25,9 @@
         app.view.Field.prototype.render.call(this);
         // need to add this class to the parent td cell and we dont
         // have access to that from the field level
-        if(!this.$el.parent('td').hasClass('td-inline-edit')) {
-            this.$el.parent('td').addClass('td-inline-edit');
+        var tdEl = this.$el.parent('td');
+        if(!tdEl.hasClass('td-inline-edit')) {
+            tdEl.addClass('td-inline-edit');
         }
     },
 
