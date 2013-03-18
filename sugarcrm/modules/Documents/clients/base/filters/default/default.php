@@ -1,7 +1,7 @@
 <?php
 
 $viewdefs['Documents']['base']['filter']['default'] = array(
-    'default_filter' => 'my_documents',
+    'default_filter' => 'all_records',
     'filters' => array(
         array(
             'id' => 'my_documents',
