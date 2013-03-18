@@ -25,41 +25,39 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'RecordView',
+    extendsFrom: 'RecordlistView',
 
-    delegateButtonEvents: function() {
-        this.context.on('button:lead_convert_button:click', this.initiateDrawer, this);
-        this.context.on('button:manage_subscriptions:click', this.manageSubscriptionsClicked, this);
-        app.view.views.RecordView.prototype.delegateButtonEvents.call(this);
+    initialize: function(options) {
+        app.view.views.RecordlistView.prototype.initialize.call(this, options);
+        this.context.on('list:convertrow:fire', this.initiateDrawer, this);
     },
 
     /**
      * Set the save button to show if the model has been edited.
      */
     bindDataChange: function() {
-        app.view.views.RecordView.prototype.bindDataChange.call(this);
-        this.model.on('change', this.setLeadButtonStates, this);
+        app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+        this.collection.on('reset', this.setLeadButtonStates, this);
     },
 
-     /**
-     * Change the behavior of buttons depending on the state that they should be in
+    /**
+     * Hide any convert row actions for leads that are already converted
      */
     setLeadButtonStates: function() {
-        var convertButton = this.getField('lead_convert_button'),
-            convertedState = this.model.get('converted');
-
-        if(convertedState) {
-            convertButton.hide();
-        }
+        _.each(this.fields, function(field) {
+            if (field.name === 'lead_convert_button' && (field.model.get('converted') === true)) {
+                field.hide();
+            }
+        });
     },
 
     /**
      * Event to trigger the convert lead process for the lead
      */
-    initiateDrawer: function() {
+    initiateDrawer: function(selectedModel) {
         var model = app.data.createBean(this.model.module);
-        model.copy(this.model);
-        model.set('id', this.model.id);
+        model.copy(selectedModel);
+        model.set('id', selectedModel.id);
 
         app.drawer.open({
             layout : "convert",
@@ -69,20 +67,5 @@
                 leadsModel: model
             }
         });
-    },
-
-    /**
-     * Event to trigger the Manage Subscriptions for the lead
-     */
-    manageSubscriptionsClicked: function() {
-        var params = [
-            {'name': 'return_module', value: this.module},
-            {'name': 'return_id', value: this.model.id},
-            {'name': 'action', value: 'Subscriptions'},
-            {'name': 'module', value: 'Campaigns'}
-        ];
-
-        var route = '#bwc/index.php?' + $.param(params);
-        app.router.navigate(route, {trigger: true});
     }
 })
