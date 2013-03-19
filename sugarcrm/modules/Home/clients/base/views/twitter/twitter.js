@@ -27,6 +27,7 @@
         if(this.disposed) return;
 
         var twitter = this.model.get('twitter') ||
+            this.model.parentModel.get('twitter') ||
             this.model.parentModel.get('name') ||
             this.model.parentModel.get('account_name') ||
             this.model.parentModel.get('full_name'),
