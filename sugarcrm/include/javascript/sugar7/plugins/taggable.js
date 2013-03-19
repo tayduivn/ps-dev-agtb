@@ -13,7 +13,7 @@
                     leader,
                     leaderIndex,
                     el = this.$(event.currentTarget),
-                    word = event.currentTarget.innerText;
+                    word = el.text();
 
                 el.parent().find("ul.typeahead.activitystream-tag-dropdown").remove();
 
@@ -266,8 +266,8 @@
                 var self = this;
                 component.on('render', function() {
                     component.$(".tagged").each(function() {
-                        var x = this.innerText;
-                        $(this).html(self._parseTags(x, self.model.get('data').tags));
+                        var $el = $(this);
+                        $el.html(self._parseTags($el.text(), self.model.get('data').tags));
                     });
                 });
             }
