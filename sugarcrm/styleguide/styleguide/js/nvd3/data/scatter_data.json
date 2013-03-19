@@ -1,0 +1,895 @@
+{
+    "next_offset": 20,
+    "records": [{
+            "id": "2bb2ef2b-0911-bc99-687c-514724e97705",
+            "name": "Q3 ARVRO III PR - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "",
+            "account_name": "Q3 ARVRO III PR",
+            "account_id": "819836b7-8dc0-4fa4-87a8-514724ee1c17",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Direct Mail",
+            "amount": "219478",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-02-01",
+            "next_step": "",
+            "sales_stage": "Closed Won",
+            "sales_status": "New",
+            "probability": "70",
+            "commit_stage": "include",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "f33eb969-441c-751a-33db-514724050b05",
+            "name": "Overhead & Underfoot Ltd. - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "",
+            "account_name": "Overhead & Underfoot Ltd.",
+            "account_id": "1fdc0b6e-2fc1-8f7e-ff02-514724fde0b1",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Campaign",
+            "amount": "191202",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-04-24",
+            "next_step": "",
+            "sales_stage": "Prospecting",
+            "sales_status": "New",
+            "probability": "70",
+            "commit_stage": "include",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "1c5d278c-79f2-95bf-f0c9-514724d6c186",
+            "name": "RR. Talker Co - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "Existing Business",
+            "account_name": "RR. Talker Co",
+            "account_id": "f1952aa8-9f09-eb78-88af-51472417aacc",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Web Site",
+            "amount": "225889",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2014-01-29",
+            "next_step": "",
+            "sales_stage": "Id. Decision Makers",
+            "sales_status": "New",
+            "probability": "10",
+            "commit_stage": "exclude",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "a616a448-09d5-1661-6cfa-514724d45a02",
+            "name": "Airline Maintenance Co - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "",
+            "account_name": "Airline Maintenance Co",
+            "account_id": "118f4ced-2fb1-c2fb-4e3f-514724fbc5e8",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Existing Customer",
+            "amount": "247677",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-03-21",
+            "next_step": "",
+            "sales_stage": "Prospecting",
+            "sales_status": "New",
+            "probability": "70",
+            "commit_stage": "include",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "683aa518-da46-eb69-6597-514724029086",
+            "name": "Income Free Investing LP - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "",
+            "account_name": "Income Free Investing LP",
+            "account_id": "4bb348d8-bd1c-e951-9cdd-5147243c24c2",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Web Site",
+            "amount": "158862",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-12-20",
+            "next_step": "",
+            "sales_stage": "Closed Lost",
+            "sales_status": "New",
+            "probability": "90",
+            "commit_stage": "include",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "60072eda-1fc7-f08c-85e3-5147244b6100",
+            "name": "5D Investments - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": 1,
+                    "name": "Global",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "New Business",
+            "account_name": "5D Investments",
+            "account_id": "5ab9d03a-3228-9d76-79e2-514724af1136",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Self Generated",
+            "amount": "457825",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-07-24",
+            "next_step": "",
+            "sales_stage": "Closed Lost",
+            "sales_status": "New",
+            "probability": "40",
+            "commit_stage": "exclude",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "cc230a0a-2cec-dcc1-df44-514724effa8a",
+            "name": "Q3 ARVRO III PR - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "New Business",
+            "account_name": "Q3 ARVRO III PR",
+            "account_id": "819836b7-8dc0-4fa4-87a8-514724ee1c17",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Web Site",
+            "amount": "98898",
+            "currency_id": "ea2797d2-d275-3d8c-a252-5147246e8def",
+            "currency_name": "Euro",
+            "currency_symbol": "\u20ac",
+            "date_closed": "2013-05-27",
+            "next_step": "",
+            "sales_stage": "Prospecting",
+            "sales_status": "New",
+            "probability": "90",
+            "commit_stage": "include",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "158cfe06-f910-1695-dd89-5147247dee3b",
+            "name": "Tri-State Medical Corp - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "Existing Business",
+            "account_name": "Tri-State Medical Corp",
+            "account_id": "a3b16405-7309-907a-2392-5147242e6053",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Employee",
+            "amount": "362062",
+            "currency_id": "ea2797d2-d275-3d8c-a252-5147246e8def",
+            "currency_name": "Euro",
+            "currency_symbol": "\u20ac",
+            "date_closed": "2013-09-25",
+            "next_step": "",
+            "sales_stage": "Id. Decision Makers",
+            "sales_status": "New",
+            "probability": "40",
+            "commit_stage": "exclude",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "e06acafc-5c5b-ae7c-9ade-514724c0d424",
+            "name": "Max Holdings Ltd - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": 1,
+                    "name": "Global",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "New Business",
+            "account_name": "Max Holdings Ltd",
+            "account_id": "2ab62fe6-a1b2-a0b5-4121-51472431bd32",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Self Generated",
+            "amount": "316737",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-05-24",
+            "next_step": "",
+            "sales_stage": "Negotiation\/Review",
+            "sales_status": "New",
+            "probability": "10",
+            "commit_stage": "exclude",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "13fc2987-a332-ec0f-0e3e-5147244f4be4",
+            "name": "A.D. Importing Company Inc - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "",
+            "account_name": "A.D. Importing Company Inc",
+            "account_id": "4f45aca0-caff-b7d3-2bf7-51472460de94",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Support Portal User Registration",
+            "amount": "549101",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-05-23",
+            "next_step": "",
+            "sales_stage": "Proposal\/Price Quote",
+            "sales_status": "New",
+            "probability": "90",
+            "commit_stage": "include",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "4e1a7110-7e39-662d-4413-5147246030d0",
+            "name": "Airline Maintenance Co - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "",
+            "account_name": "Airline Maintenance Co",
+            "account_id": "6d12c605-6468-2c3c-681d-5147243c7ce0",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "",
+            "amount": "434306",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-07-30",
+            "next_step": "",
+            "sales_stage": "Closed Lost",
+            "sales_status": "New",
+            "probability": "10",
+            "commit_stage": "exclude",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "2fafb3d7-04a8-7363-c2f4-514724db1074",
+            "name": "Q3 ARVRO III PR - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": 1,
+                    "name": "Global",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "New Business",
+            "account_name": "Q3 ARVRO III PR",
+            "account_id": "57b3712c-04f6-2deb-659d-514724832450",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Conference",
+            "amount": "300400",
+            "currency_id": "ea2797d2-d275-3d8c-a252-5147246e8def",
+            "currency_name": "Euro",
+            "currency_symbol": "\u20ac",
+            "date_closed": "2013-04-22",
+            "next_step": "",
+            "sales_stage": "Negotiation\/Review",
+            "sales_status": "New",
+            "probability": "90",
+            "commit_stage": "include",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "90ae50cf-f85c-6617-53e1-514724b01b81",
+            "name": "RR. Talker Co - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "",
+            "account_name": "RR. Talker Co",
+            "account_id": "f1952aa8-9f09-eb78-88af-51472417aacc",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Other",
+            "amount": "211588",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-04-19",
+            "next_step": "",
+            "sales_stage": "Prospecting",
+            "sales_status": "New",
+            "probability": "40",
+            "commit_stage": "exclude",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "c8447f78-80d0-ad73-b389-514724d51a27",
+            "name": "Airline Maintenance Co - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "New Business",
+            "account_name": "Airline Maintenance Co",
+            "account_id": "6d12c605-6468-2c3c-681d-5147243c7ce0",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Conference",
+            "amount": "230611",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-05-29",
+            "next_step": "",
+            "sales_stage": "Qualification",
+            "sales_status": "New",
+            "probability": "90",
+            "commit_stage": "include",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "c52c4bfb-e97c-eed1-693c-51472493d6c5",
+            "name": "Max Holdings Ltd - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": 1,
+                    "name": "Global",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "Existing Business",
+            "account_name": "Max Holdings Ltd",
+            "account_id": "2ab62fe6-a1b2-a0b5-4121-51472431bd32",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Partner",
+            "amount": "269774",
+            "currency_id": "ea2797d2-d275-3d8c-a252-5147246e8def",
+            "currency_name": "Euro",
+            "currency_symbol": "\u20ac",
+            "date_closed": "2013-04-18",
+            "next_step": "",
+            "sales_stage": "Id. Decision Makers",
+            "sales_status": "New",
+            "probability": "10",
+            "commit_stage": "exclude",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "b301b539-ae74-5972-6b78-514724c52913",
+            "name": "RR. Talker Co - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "Existing Business",
+            "account_name": "RR. Talker Co",
+            "account_id": "f1952aa8-9f09-eb78-88af-51472417aacc",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Self Generated",
+            "amount": "122482",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-03-25",
+            "next_step": "",
+            "sales_stage": "Perception Analysis",
+            "sales_status": "New",
+            "probability": "70",
+            "commit_stage": "include",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "915aea12-ec0d-9ee5-0481-5147245f7aa6",
+            "name": "Tri-State Medical Corp - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "Existing Business",
+            "account_name": "Tri-State Medical Corp",
+            "account_id": "a3b16405-7309-907a-2392-5147242e6053",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Self Generated",
+            "amount": "205079",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-05-29",
+            "next_step": "",
+            "sales_stage": "Perception Analysis",
+            "sales_status": "New",
+            "probability": "90",
+            "commit_stage": "include",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "d0d3a5e9-588a-a3da-8eb8-514724435309",
+            "name": "Max Holdings Ltd - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": 1,
+                    "name": "Global",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "",
+            "account_name": "Max Holdings Ltd",
+            "account_id": "2ab62fe6-a1b2-a0b5-4121-51472431bd32",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Cold Call",
+            "amount": "389711",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-03-22",
+            "next_step": "",
+            "sales_stage": "Proposal\/Price Quote",
+            "sales_status": "New",
+            "probability": "40",
+            "commit_stage": "exclude",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "b8faf147-8931-215e-710d-514724945870",
+            "name": "Q3 ARVRO III PR - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "East",
+                    "name": "East",
+                    "name_2": "",
+                    "primary": false
+                }, {
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "New Business",
+            "account_name": "Q3 ARVRO III PR",
+            "account_id": "819836b7-8dc0-4fa4-87a8-514724ee1c17",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "",
+            "amount": "249722",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-03-18",
+            "next_step": "",
+            "sales_stage": "Needs Analysis",
+            "sales_status": "New",
+            "probability": "10",
+            "commit_stage": "exclude",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }, {
+            "id": "6925c872-58f8-4439-1761-514724f70309",
+            "name": "Tri-State Medical Corp - 1000 units",
+            "date_entered": "2013-03-18T14:27:00+00:00",
+            "date_modified": "2013-03-18T14:27:00+00:00",
+            "modified_user_id": "1",
+            "modified_by_name": "Administrator",
+            "created_by": "1",
+            "created_by_name": "Administrator",
+            "assigned_user_id": "seed_max_id",
+            "assigned_user_name": "Max Jensen",
+            "team_name": [{
+                    "id": "West",
+                    "name": "West",
+                    "name_2": "",
+                    "primary": true
+                }
+            ],
+            "opportunity_type": "",
+            "account_name": "Tri-State Medical Corp",
+            "account_id": "a3b16405-7309-907a-2392-5147242e6053",
+            "campaign_id": "",
+            "campaign_name": "",
+            "lead_source": "Public Relations",
+            "amount": "290950",
+            "currency_id": "-99",
+            "currency_name": "",
+            "currency_symbol": "",
+            "date_closed": "2013-04-30",
+            "next_step": "",
+            "sales_stage": "Negotiation\/Review",
+            "sales_status": "New",
+            "probability": "90",
+            "commit_stage": "include",
+            "my_favorite": false,
+            "following": false,
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Opportunities"
+        }
+    ]
+}
