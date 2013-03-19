@@ -76,20 +76,30 @@
         app.view.View.prototype._renderHtml.call(this);
     },
 
-    showPreviousNextBtnGroup:function() {
-        var collection = this.collection;
-        if(this.layout){
-            if(collection){
-                var recordIndex = collection.indexOf(collection.get(this.model.id));
-                this.layout.previous = collection.models[recordIndex-1] ? collection.models[recordIndex-1] : undefined;
-                this.layout.next = collection.models[recordIndex+1] ? collection.models[recordIndex+1] : undefined;
-                this.layout.hideNextPrevious = _.isUndefined(this.layout.previous) && _.isUndefined(this.layout.next);
-            } else {
-                this.layout.hideNextPrevious = true;
-            }
-            // Need to rerender the preview header
-            this.layout.trigger("preview:pagination:update");
+    /**
+     * Show previous and next buttons groups on the view.
+     *
+     * This gets called everytime the collection gets updated. It also depends
+     * if we have a current model or layout.
+     *
+     * TODO we should check if we have the preview open instead of doing a bunch
+     * of if statements.
+     */
+    showPreviousNextBtnGroup: function () {
+        if (!this.model || !this.layout || !this.collection) {
+            return;
         }
+        var collection = this.collection;
+        if (!collection.size()) {
+            this.layout.hideNextPrevious = true;
+        }
+        var recordIndex = collection.indexOf(collection.get(this.model.id));
+        this.layout.previous = collection.models[recordIndex-1] ? collection.models[recordIndex-1] : undefined;
+        this.layout.next = collection.models[recordIndex+1] ? collection.models[recordIndex+1] : undefined;
+        this.layout.hideNextPrevious = _.isUndefined(this.layout.previous) && _.isUndefined(this.layout.next);
+
+        // Need to rerender the preview header
+        this.layout.trigger("preview:pagination:update");
     },
 
     /**
