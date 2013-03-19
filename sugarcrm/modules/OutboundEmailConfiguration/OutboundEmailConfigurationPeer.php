@@ -231,7 +231,7 @@ class OutboundEmailConfigurationPeer
             }
         } catch (MailerException $me) {
             $GLOBALS["log"]->warn(
-                "An error occurred while retrieving valid system mail configurations" .
+                "An error occurred while retrieving valid system mail configurations " .
                     $me->getMessage()
             );
         }
