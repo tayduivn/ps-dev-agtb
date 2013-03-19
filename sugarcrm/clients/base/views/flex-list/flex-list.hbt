@@ -35,13 +35,11 @@
             {{field ../../this null "list-header"}}
         </th>
         {{/each}}
-        {{#each fields}}
-            {{#has name ../../_fields.visible}}
-            <th class="{{#isSortable ../../../module this}}sorting{{#eq ../../../../collection.orderBy.columnName name}}{{{../../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
+        {{#each ../_fields.visible}}
+            <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.columnName name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
                 data-fieldname="{{name}}" data-orderby="{{orderBy}}">
-                {{str label ../../../module}}
+                {{str label ../../module}}
             </th>
-            {{/has}}
         {{/each}}
         {{#each ../rightColumns}}
             {{#if isColumnDropdown}}
@@ -49,10 +47,10 @@
                 <div class="dropdown">
                     <a href="javascript:void(0);" class="rowaction">. . .</a>
                     <ul class="dropdown-menu left carettop">
-                    {{#each ../../fields}}
+                    {{#each ../../../_fields.options}}
                         <li data-fieldname="{{name}}">
-                            <a class="rowaction{{#has name ../../../../_fields.visible}} active{{/has}}" href="javascript:void(0);">
-                                {{#has name ../../../../_fields.visible}}<i class="icon icon-ok"></i> {{/has}}{{str label ../../../../module}}
+                            <a class="rowaction{{#if selected}} active{{/if}}" href="javascript:void(0);">
+                                {{#if selected}}<i class="icon icon-ok"></i> {{/if}}{{str label ../../../../module}}
                             </a>
                         </li>
                     {{/each}}
@@ -78,12 +76,10 @@
              {{field ../../../this ../this ../../../this.viewName}}
         </td>
         {{/each}}
-        {{#each ../fields}}
-            {{#has name ../../../_fields.visible}}
+        {{#each ../../_fields.visible}}
             <td>
-              {{field ../../../../this ../../this ../../../../this.viewName}}</div>
+              {{field ../../../this ../this ../../../this.viewName}}
             </td>
-            {{/has}}
         {{/each}}
         {{#each ../../rightColumns}}
         <td>

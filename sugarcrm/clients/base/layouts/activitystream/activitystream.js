@@ -45,17 +45,27 @@
     },
 
     loadData: function(options) {
-        var self = this, endpoint = function(method, model, options, callbacks) {
-            var real_module = self.opts.context.parent.get('module'),
-                modelId = self.opts.context.parent.get('modelId'), url;
-            if (real_module !== "Activities") {
-                url = app.api.buildURL(real_module, model.module, {id: modelId}, options.params);
-            } else {
-                url = app.api.buildURL(model.module, null, {}, options.params);
-            }
-            return app.api.call("read", url, null, callbacks);
-        };
+        //We want to ensure the data related to this activity loads before the stream for UX purposes.
+        var parentCol = this.context.parent.get("collection");
+        if (parentCol.isEmpty()) {
+            parentCol.once("sync", function(){this._load(options)}, this);
+        } else {
+            this._load(options);
+        }
+    },
 
+    _load: function(options) {
+        var self = this,
+            endpoint = function(method, model, options, callbacks) {
+                var real_module = self.opts.context.parent.get('module'),
+                    modelId = self.opts.context.parent.get('modelId'), url;
+                if (real_module !== "Activities") {
+                    url = app.api.buildURL(real_module, model.module, {id: modelId}, options.params);
+                } else {
+                    url = app.api.buildURL(model.module, null, {}, options.params);
+                }
+                return app.api.call("read", url, null, callbacks);
+            };
         options = _.extend({
             endpoint: endpoint,
             success: function(collection) {

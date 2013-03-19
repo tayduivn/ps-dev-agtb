@@ -33,6 +33,7 @@ if (file_exists('../config.js')) {
     <script type="text/javascript" src='../sidecar/lib/jasmine-jquery/jasmine-jquery.js'></script>
     <script type="text/javascript" src="../sidecar/lib/jasmine-ci/jasmine-reporters/jasmine.phantomjs-reporter.js"></script>
     <script type="text/javascript" src='../sidecar/tests/spec-helper.js'></script>
+    <script type="text/javascript" src='jshelpers/spec-helper.js'></script>
     <script type="text/javascript" src='jshelpers/component-helper.js'></script>
     <link rel="stylesheet" href="../sidecar/lib/jasmine/jasmine.css"/>
 
