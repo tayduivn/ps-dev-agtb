@@ -149,8 +149,13 @@
         }
         dashboardEl.append(component.el);
     },
+    dashboardLayouts: {
+        'record': 'record-dashboard',
+        'records': 'list-dashboard'
+    },
     bindDataChange: function() {
-        var modelId = this.context.get("modelId");
+        var modelId = this.context.get("modelId"),
+            self = this;
         if(!(modelId && this.context.get("create")) && this.collection) {
             this.collection.on("reset", function() {
                 if(this.disposed) return;
@@ -164,11 +169,35 @@
                         app.navigate(this.context, model);
                     }
                 } else {
-                    if(!this.context.parent) {
-                        var route = app.router.buildRoute(this.module, null, 'create');
-                        app.router.navigate(route, {trigger: true});
+                    var layoutName = this.dashboardLayouts[this.context.parent ? this.context.parent.get("layout") : 'record'],
+                        _initDashboard = app.metadata.getLayout(this.model.dashboardModule, layoutName),
+                        params = {
+                            silent: true
+                        };
+
+                    if(this.context.parent) {
+                        params.success = function(model) {
+                            self.navigateLayout(model.id);
+                        };
+                        params.error = function() {
+                            self.navigateLayout("create");
+                        };
                     } else {
-                        this.navigateLayout("create");
+                        params.success = function(model) {
+                            app.navigate(self.context, model);
+                        };
+                        params.error = function() {
+                            var route = app.router.buildRoute(self.module, null, 'create');
+                            app.router.navigate(route, {trigger: true});
+                        };
+                    }
+
+                    if(!_.isEmpty(_initDashboard) && !_.isEmpty(_initDashboard.metadata)) {
+                        this.model._hideAlertsOn = ['create'];
+                        this.model.set(_initDashboard);
+                        this.model.save({}, params);
+                    } else {
+                        params.error();
                     }
                 }
             }, this);
