@@ -121,7 +121,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
                 
                 array(
                     'name' => 'product_line_item_amount',
-                    'type' => 'text', // change to currency with sugarlogic
+                    'type' => 'currency',
                     'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
                     'readonly' => true
                 ),
