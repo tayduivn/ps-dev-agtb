@@ -46,6 +46,7 @@ class ForecastManagerWorksheet extends SugarBean
     public $worst_case_adjusted;
     public $show_history_log = 0;
     public $draft = 0;
+    public $date_modified;
     public $object_name = 'ForecastManagerWorksheet';
     public $module_name = 'ForecastManagerWorksheets';
     public $module_dir = 'Forecasts';
