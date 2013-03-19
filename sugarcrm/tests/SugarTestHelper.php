@@ -257,6 +257,8 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 
     public function runBare()
     {
+        // Prevent the activity stream from creating messages.
+        Activity::disable();
         if(SHADOW_CHECK && empty($this->file_map)) {
         	$this->file_map = self::getFiles();
         }
@@ -279,6 +281,8 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
 
     protected function assertPreConditions()
     {
+        $GLOBALS['runningTest'] = $this->getName(false);
+        $GLOBALS['runningTestClass'] = get_class($this);
         if(isset($GLOBALS['log'])) {
             $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
         }
@@ -359,7 +363,9 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
 
     public function runBare()
     {
-    	if(SHADOW_CHECK && empty($this->file_map)) {
+        // Prevent the activity stream from creating messages.
+        Activity::disable();
+        if(SHADOW_CHECK && empty($this->file_map)) {
     		$this->file_map = Sugar_PHPUnit_Framework_TestCase::getFiles();
     	}
     	parent::runBare();
@@ -540,9 +546,6 @@ class SugarTestHelper
 
         // backup of SugarThemeRegistry
         self::$systemVars['SugarThemeRegistry'] = SugarThemeRegistry::current();
-
-        // Disable the activity stream from creating messages.
-        Activity::disable();
 
         self::$isInited = true;
     }
