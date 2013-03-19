@@ -900,7 +900,6 @@ $dictionary['Product'] = array(
             'rhs_key' => 'created_by',
             'relationship_type' => 'one-to-many'
         ),
-
         //BEGIN SUGARCRM flav=pro ONLY
         'products_worksheet' =>  array(
             'lhs_module' => 'Products',

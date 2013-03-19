@@ -98,15 +98,33 @@ $viewdefs['Products']['base']['view']['create'] = array(
                 ),
                 'sales_stage',
                 'probability',
-                'commit_stage',
                 'sales_status',
                 array(
                     'name' => 'date_closed',
                     'required' => true
                 ),
+                array(
+                    'name' => 'commit_stage',
+                    'span' => 12
+                ),
                 'product_template_name',
+                array(
+                    'name' => 'category_name',
+                    'label' => 'LBL_CATEGORY'
+                ),
                 'quantity',
+                array(
+                    'name' => 'cost_price',
+                    'readonly' => true
+                ),
                 'discount_price',
+                array(
+                    'name' => 'product_line_item_amount',
+                    'type' => 'text', // change to currency with sugarlogic
+                    'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
+                    'readonly' => true
+                ),
+                /*
                 array(
                     'name' => 'discount_amount',
                     'type' => 'currency',
@@ -118,13 +136,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
-                
-                array(
-                    'name' => 'product_line_item_amount',
-                    'type' => 'text', // change to currency with sugarlogic
-                    'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
-                    'readonly' => true
-                ),
+                */
                 array(
                     'name' => 'likely_case',
                     'required' => true,
@@ -147,17 +159,6 @@ $viewdefs['Products']['base']['view']['create'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'best_case',
-                    'type' => 'currency',
-                    'related_fields' => array(
-                        'best_case',
-                        'currency_id',
-                        'base_rate',
-                    ),
-                    'currency_field' => 'currency_id',
-                    'base_rate_field' => 'base_rate',
-                ),
-                array(
                     'name' => 'worst_case',
                     'type' => 'currency',
                     'related_fields' => array(
@@ -169,13 +170,17 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'base_rate_field' => 'base_rate',
                 ),
                 array(
-                    'name' => 'quote_name',
-                    'label' => 'LBL_ASSOCIATED_QUOTE',
-                    'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
-                    'readonly' => true,
-                    'bwcLink' => true
+                    'name' => 'best_case',
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'best_case',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
-                'product_type',
+                'next_step',
                 'lead_source',
                 'campaign_name',
                 'assigned_user_name',
@@ -185,7 +190,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'name' => 'team_name',
                 ),
                 //END SUGARCRM flav=pro ONLY
-                'next_step',
+                'product_type',
                 array(
                     'name' => 'description',
                     'span' => 12
@@ -194,15 +199,19 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'name' => 'list_price',
                     'readonly' => true
                 ),
-                array(
-                    'name' => 'tax_class',
-                    'readonly' => true
-                ),
+                /*
                 array(
                     'name' => 'cost_price',
                     'readonly' => true
                 ),
-                
+                */
+                array(
+                    'name' => 'quote_name',
+                    'label' => 'LBL_ASSOCIATED_QUOTE',
+                    'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
+                    'readonly' => true,
+                    'bwcLink' => true
+                ),
             )
         )
     ),
