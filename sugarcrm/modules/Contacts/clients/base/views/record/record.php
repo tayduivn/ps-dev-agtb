@@ -213,6 +213,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
+                'twitter'
             )
         )
     ),
