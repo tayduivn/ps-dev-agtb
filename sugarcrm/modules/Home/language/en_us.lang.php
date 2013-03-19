@@ -160,7 +160,7 @@ $mod_strings = array (
   'LBL_NEW_PAGE_FEEDBACK' => 'You have created a new page. You can add new content with the Add Sugar Dashlets option.',
   'LBL_DELETE_PAGE_CONFIRM' => 'Are you sure you want to delete this page?',
   'LBL_DELETE_DASHBOARD_CONFIRM' => 'Are you sure you want to delete this dashboard?',
-  'LBL_DELETE_DASHBOARD_SUCCSS' => 'The dashboard "{{name}}" has been deleted.',
+  'LBL_DELETE_DASHBOARD_SUCCESS' => 'The dashboard "{{name}}" has been deleted.',
   'LBL_SAVING_PAGE_TITLE' => 'Saving Page Title...',
   'LBL_RETRIEVING_PAGE' => 'Retrieving Page...',
 
