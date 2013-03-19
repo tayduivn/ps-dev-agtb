@@ -69,10 +69,10 @@
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
         this.context.on('button:find_duplicates_button:click', this.findDuplicatesClicked, this);
     },
-
+    noEditFields: null,
     _renderPanels: function(panels) {
         var totalFieldCount = 0;
-
+        this.noEditFields = [];
         _.each(panels, function(panel) {
             var columns    = (panel.columns) || 1,
                 rows       = [],
@@ -111,8 +111,8 @@
                 }
 
                 //Disable the pencil icon if the user doesn't have ACLs
-                if (!app.acl.hasAccessToModel('edit', this.model, field.name)) {
-                    field.readonly = true;
+                if(field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                    this.noEditFields.push(field.name);
                 }
 
                 //labels: visibility for the label
@@ -245,7 +245,7 @@
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
             //Exclude read only fields
-            if (field.def.readonly || field.parent || (field.name && this.buttons[field.name])) {
+            if (field.def.readonly || _.indexOf(this.noEditFields, field.def.name) >= 0 || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {

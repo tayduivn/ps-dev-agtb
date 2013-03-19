@@ -121,6 +121,30 @@ describe("Record View", function() {
             expect(actual_button_length).toBe(6);
         });
 
+        it("Should inactive the edit icon for readonly fields and acl fail fields", function() {
+            var readonlyFields = ["created_by","date_entered","date_modified"],
+                aclFailFields = ["case_number"];
+            var aclStub = sinon.stub(app.acl, 'hasAccessToModel', function(method, model, field){
+                return _.indexOf(aclFailFields, field) < 0;
+            });
+            _.each(view.meta.panels, function(panel){
+                _.each(panel.fields, function(field) {
+                    if(_.indexOf(readonlyFields, field.name) >= 0) {
+                        field.readonly = true;
+                    }
+                }, this);
+            }, this);
+            view.render();
+
+            var actual = view.noEditFields,
+                expected = _.union(readonlyFields, aclFailFields);
+            expect(actual.length).toBe(expected.length);
+            _.each(actual, function(noEditField){
+                expect(_.indexOf(expected, noEditField) >= 0).toBeTruthy();
+            });
+            aclStub.restore();
+        });
+
         it("Should hide 4 editable fields", function() {
             var hiddenFields = 0;
 
