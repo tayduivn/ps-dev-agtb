@@ -210,19 +210,28 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testReportees()
     {
-
-        $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id);
+        $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id."?level=-1");
         $this->assertEquals($restReply['reply']['metadata']['id'], self::$currentUser->id, "currentUser's id was not found in the Expected place in the rest reply" );
 
-        // get the user ids from first level
+        // get the user ids from first, second, and third levels
         $firstLevel = array();
-        foreach($restReply['reply']['children'] as $children ) {
-            array_push($firstLevel, $children['metadata']['id']);
+        $secondLevel = array();
+        $thirdLevel = array();
+        foreach($restReply['reply']['children'] as $level1Child ) {
+            array_push($firstLevel, $level1Child['metadata']['id']);
+            foreach($level1Child['children'] as $level2Child) {
+                $secondLevel[] = $level2Child['metadata']['id'];
+                foreach($level2Child['children'] as $level3Child) {
+                    $thirdLevel[] = $level3Child['metadata']['id'];
+                }
+            }
         }
 
         // assertContains in case the order is ever jumbled
         $this->assertContains(self::$employee1->id, $firstLevel, "employee1's id was not found in the Expected place in the rest reply" );
         $this->assertContains(self::$employee2->id, $firstLevel, "employee2's id was not found in the Expected place in the rest reply" );
+        $this->assertContains(self::$employee3->id, $secondLevel, "employee3's id was not found in the Expected place in the rest reply" );
+        $this->assertContains(self::$employee4->id, $thirdLevel, "employee4's id was not found in the Expected place in the rest reply" );
     }
 
     /**
