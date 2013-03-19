@@ -48,7 +48,7 @@
             var bean = app.data.createBean('Activities');
             bean.save(payload, {
                 success: function(model) {
-                    self.$('div.sayit').html('');
+                    self.$('div.sayit').html('').trigger('change').focus();
                     self.layout.prependPost(model);
                 }
             });
