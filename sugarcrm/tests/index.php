@@ -10,6 +10,7 @@
     <!-- For sugar7 the plan is to generate a sugar.min.js .. in the meantime load each file -->
     <script type="text/javascript" src='../include/javascript/sugar7/field.js'></script>
     <script type="text/javascript" src='../include/javascript/sugar7/alert.js'></script>
+    <script type="text/javascript" src='../include/javascript/sugar7/bwc.js'></script>
     <script type="text/javascript" src='../include/javascript/sugar7/plugins/error-decoration.js'></script>
 <?php
 // For sugar7 the plan is to generate a /sugarcrm/config.js .. in the meantime fallback to sidecar config.js
@@ -32,6 +33,7 @@ if (file_exists('../config.js')) {
     <script type="text/javascript" src='../sidecar/lib/jasmine-jquery/jasmine-jquery.js'></script>
     <script type="text/javascript" src="../sidecar/lib/jasmine-ci/jasmine-reporters/jasmine.phantomjs-reporter.js"></script>
     <script type="text/javascript" src='../sidecar/tests/spec-helper.js'></script>
+    <script type="text/javascript" src='jshelpers/spec-helper.js'></script>
     <script type="text/javascript" src='jshelpers/component-helper.js'></script>
     <link rel="stylesheet" href="../sidecar/lib/jasmine/jasmine.css"/>
 

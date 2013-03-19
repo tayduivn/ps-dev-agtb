@@ -125,6 +125,10 @@ class ForecastsFilterApi extends FilterApi
             $args['filter'] = array();
         }
 
+        if (isset($args['filter'][0]['$tracker'])) {
+            return array('next_offset' => -1, 'records' => array());
+        }
+
         // if there are filters set, process through them
         if (!empty($args['filter'])) {
             // todo-sfa: clean this up as it currently doesn't handle much in the way of nested arrays

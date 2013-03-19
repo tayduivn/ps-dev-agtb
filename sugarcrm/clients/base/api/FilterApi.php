@@ -37,6 +37,14 @@ class FilterApi extends SugarApi
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
             ),
+            'filterModuleAll' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>'),
+                'pathVars' => array('module'),
+                'method' => 'filterList',
+                'shortHelp' => 'List of all records in this module',
+                'longHelp' => 'include/api/help/module_filter_get_help.html',
+            ),
             'filterModulePost' => array(
                 'reqType' => 'POST',
                 'path' => array('<module>','filter'),
@@ -148,6 +156,8 @@ class FilterApi extends SugarApi
         }
         $this->addFilters($args['filter'], $q->where(), $q);
 
+        $api->action = 'list';
+
         return $this->runQuery($api, $args, $q, $options);
     }
 
@@ -202,6 +212,9 @@ class FilterApi extends SugarApi
         }
         $args['filter'][][$tableName . '.' . $column] = array('$equals' => $record->id);
         $this->addFilters($args['filter'], $q->where(), $q);
+
+        $api->action = 'list';
+
         return $this->runQuery($api, $args, $q, $options);
     }
 

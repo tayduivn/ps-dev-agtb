@@ -1,5 +1,4 @@
 <ul class="nav pull-right megamenu">
-    <li class="divider-vertical"></li>
     <li class="dropdown" id="notificationList">
         <div class="btn-group">
             <a data-toggle="dropdown" id="notificationDrop" href="javascript:void(0);" role="button" class="btn btn-danger dropdown-toggle dtoggle">0</a>

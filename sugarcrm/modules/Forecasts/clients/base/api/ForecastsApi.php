@@ -58,11 +58,28 @@ class ForecastsApi extends SugarApi
                 'method' => 'getReportees',
                 'shortHelp' => 'Gets reportees to a user by id',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastApiReporteesGet.html',
-            )
+            ),
+            'list' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts',),
+                'pathVars' => array('module'),
+                'method' => 'returnEmptySet',
+                'shortHelp' => 'Forecast list endpoint returns an empty set',
+                'longHelp' => 'include/api/help/module_record_favorite_put_help.html',
+            ),
         );
         return $parentApi;
     }
 
+    /**
+     * Returns an empty set for favorites and filter because those operations on forecasts are impossible
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function returnEmptySet($api, $args) {
+        return array('next_offset' => -1, 'records' => array());
+    }
     /**
      * Returns the initialization data for the module including currently logged-in user data,
      * timeperiods, and admin config settings

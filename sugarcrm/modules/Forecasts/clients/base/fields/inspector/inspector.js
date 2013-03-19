@@ -5,6 +5,11 @@
     uid : '',
 
     /**
+     * This type of record we are displaying
+     */
+    parentType : '',
+
+    /**
      * Events to watch for
      */
     events : {
@@ -28,6 +33,7 @@
      */
     _render:function () {
         this.uid = this.model.get(this.def.uid_field);
+        this.parentType = this.model.get(this.def.type_field);
 
         app.view.Field.prototype._render.call(this);
 

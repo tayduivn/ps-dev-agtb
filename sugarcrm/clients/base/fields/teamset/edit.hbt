@@ -35,7 +35,7 @@
             <a href="javascript:void(0);" class="btn second" name="remove" data-index="{{@index}}" rel="tooltip" data-original-title="{{str "LBL_REMOVE"}}"><i class="icon-minus"></i></a>
         {{/if}}
         {{#if add_button}}
-            <a href="javascript:void(0);" class="btn first" name="add" rel="tooltip" data-original-title="{{str "LBL_TEAM_ADD"}}"><i class="icon-plus"></i></a>
+            <a href="javascript:void(0);" class="btn first" name="add" data-index="{{@index}}" rel="tooltip" data-original-title="{{str "LBL_TEAM_ADD"}}"><i class="icon-plus"></i></a>
         {{/if}}
         </div>
     </div>

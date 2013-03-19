@@ -1,5 +1,4 @@
 <ul class="nav pull-right megamenu" id="userList">
-    <li class="divider-vertical"></li>
     <li class="dropdown" id="userActions">
         <div class="btn-group">
             <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="btn btn-invisible btn-link dropdown-toggle dtoggle">

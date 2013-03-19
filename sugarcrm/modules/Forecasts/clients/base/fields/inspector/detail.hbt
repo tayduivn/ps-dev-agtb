@@ -1,1 +1,1 @@
-<a href="#inspect/{{uid}}" rel="inspector"><i class="icon-eye-open" data-uid="{{uid}}"></i></a>
+<a href="#inspect/{{uid}}" rel="inspector"><i class="icon-eye-open" data-uid="{{uid}}" data-type="{{parentType}}"></i></a>

@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,21 +24,48 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-{{#if collection.length}}
-    {{#notEq collection.next_offset "-1"}}
-    <button data-action="show-more" class="btn btn-link more padded">{{showMoreLabel}}</button>
-    {{/notEq}}
-{{else}}
-    <div class="block-footer">
-        {{#if _dataFetched}}
-            {{#if context.attributes.isCreateEnabled}}
-                <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="{{str "LNK_CREATE" module}}">
-                    {{str "LBL_LISTVIEW_NO_RECORDS"}} {{str "LNK_CREATE_WHEN_EMPTY" module}}
-                </a>
-            {{else}}
-                {{str "LBL_LISTVIEW_NO_RECORDS"}}
-            {{/if}}
-        {{/if}}
-    </div>
-{{/if}}
+({
+    extendsFrom: 'RecordlistView',
+
+    initialize: function(options) {
+        app.view.views.RecordlistView.prototype.initialize.call(this, options);
+        this.context.on('list:convertrow:fire', this.initiateDrawer, this);
+    },
+
+    /**
+     * Set the save button to show if the model has been edited.
+     */
+    bindDataChange: function() {
+        app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+        this.collection.on('reset', this.setLeadButtonStates, this);
+    },
+
+    /**
+     * Hide any convert row actions for leads that are already converted
+     */
+    setLeadButtonStates: function() {
+        _.each(this.fields, function(field) {
+            if (field.name === 'lead_convert_button' && (field.model.get('converted') === true)) {
+                field.hide();
+            }
+        });
+    },
+
+    /**
+     * Event to trigger the convert lead process for the lead
+     */
+    initiateDrawer: function(selectedModel) {
+        var model = app.data.createBean(this.model.module);
+        model.copy(selectedModel);
+        model.set('id', selectedModel.id);
+
+        app.drawer.open({
+            layout : "convert",
+            context: {
+                forceNew: true,
+                module: 'Leads',
+                leadsModel: model
+            }
+        });
+    }
+})

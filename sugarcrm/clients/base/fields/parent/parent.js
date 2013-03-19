@@ -4,9 +4,11 @@
     fieldTag: 'input.select2[name=parent_name]',
     typeFieldTag: 'select.select2[name=parent_type]',
 
+
     _render: function() {
-        var result = app.view.fields.RelateField.prototype._render.call(this),
-            self = this;
+        var result, self = this;
+        result = app.view.fields.RelateField.prototype._render.call(this);
+
         if(this.tplName === 'edit') {
             this.checkAcl('access', this.model.get('parent_type'));
             this.$(this.typeFieldTag).select2({
@@ -37,6 +39,32 @@
         }
         return result;
     },
+    //Overriden methods to get related module and id and anything specific to parent.js
+    _buildRoute: function() {
+        var module, idName;
+        if (!this.value || this.value !== this.hiddenValue) {
+            module = this._getRelateModule();
+            idName = this._getRelateId();
+            app.view.fields.RelateField.prototype.buildRoute.call(this, module, idName);
+        }
+    },
+    _getRelateModule: function() {
+        return this.model.get("parent_type");
+    },
+    _getRelateId: function() {
+        return this.model.get("parent_id");
+    },
+    format: function(value) {
+        this.def.module = this.model.get('parent_type');
+
+        this.context.set("record_label", {
+            field: this.name,
+            label: (this.tplName === 'detail') ? this.def.module : app.lang.get(this.def.label, this.module)
+        });
+        this._buildRoute();
+
+        return value;
+    },
     checkAcl: function(action, module) {
         if(app.acl.hasAccess(action, module) === false) {
             this.$(this.fieldTag).attr("disabled", "disabled");
@@ -61,15 +89,6 @@
     },
     getPlaceHolder: function() {
         return  app.lang.get('LBL_SEARCH_SELECT', this.module);
-    },
-    format: function(value) {
-        this.def.module = this.model.get('parent_type');
-
-        this.context.set("record_label", {
-            field: this.name,
-            label: (this.tplName === 'detail') ? this.def.module : app.lang.get(this.def.label, this.module)
-        });
-
-        return value;
     }
+
 })

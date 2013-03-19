@@ -54,7 +54,7 @@ class Expression extends SugarBean {
 	var $created_by_name;
 	var $modified_by_name;
 
-	//construction                     
+	//construction
 	var $name;
 
 
@@ -134,16 +134,16 @@ class Expression extends SugarBean {
 		,"rhs_field"
 		,"rhs_module"
 		,"rhs_value"
-	
+
 		,"parent_id"
 		,"exp_type"
 		,"exp_order"
 
 		,"parent_exp_id"
 		,"parent_exp_side"
-		
+
 		,"parent_type"
-	
+
 		,"ext1"
 		,"ext2"
 		,"ext3"
@@ -176,7 +176,7 @@ class Expression extends SugarBean {
 
 	}
 
-	
+
 
 	function get_summary_text()
 	{
@@ -217,34 +217,34 @@ class Expression extends SugarBean {
 	{
 
 	}
-	
+
 
 
 	function get_list_view_data()
     {
 	}
-	
+
 
 	function clear_deleted($id)
     {
 	}
-	
 
-	
-	
-	
+
+
+
+
 	function get_selector_array($type, $value, $dom_name, $text_only_array=false, $meta_filter_name="", $only_related_modules = false, $trigger_type="", $only_plural = false){
 		global $app_list_strings;
 		global $current_language;
 
 		if($type=='assigned_user_id' || $type=='assigned_user_name'){
-			
+
 			$select_array = get_user_array(TRUE, "Active", "", true, null, ' AND is_group=0 ');
-		}	
+		}
 		if($type=='team_list'){
-			
+
 			$select_array = get_team_array();
-		}		
+		}
 		if($type=='role'){
 			$select_array = get_bean_select_array(true, 'ACLRole','name');
 
@@ -255,20 +255,22 @@ class Expression extends SugarBean {
 			}
 				ksort($select_array);
 		}
-	
+
 		if($type=='field'){
 		    $temp_module = BeanFactory::getBean($dom_name);
 		    if ( !is_object($temp_module) ) {
-		        var_dump($dom_name);
-		        display_stack_trace(true);
+		        //var_dump($dom_name);
+		        //display_stack_trace(true);
+		        $GLOBALS['log']->fatal("get_selector_array: Unknown module: $dom_name");
+		        return null;
 		    }
 		    if(isset($trigger_type) && !empty($trigger_type)){
-		    	global $process_dictionary;	
+		    	global $process_dictionary;
 		    	include_once('modules/WorkFlowTriggerShells/MetaArray.php');
 		    	if(array_key_exists("trigger_type_override", $process_dictionary['TriggersCreateStep1']['elements'][$trigger_type])){
 		    		//we have found an override
 		    		$meta_filter_name = $process_dictionary['TriggersCreateStep1']['elements'][$trigger_type]['trigger_type_override'];
-		    	}	
+		    	}
 		    }
             $temp_module->call_vardef_handler($meta_filter_name);
             if($_GET['opener_id']=='rel_module')
@@ -282,10 +284,10 @@ class Expression extends SugarBean {
                 $select_array = array_unique($select_array);
                 asort($select_array);
             }
-	
+
 		//end if type is field
-		}	
-		
+		}
+
 		if($type=='module_list'){
 			if($only_related_modules){
 					global $beanList;
@@ -297,30 +299,30 @@ class Expression extends SugarBean {
 			else if($meta_filter_name == "singular"){
 				$select_array = convert_module_to_singular(get_module_map(false));
 			} else {
-				$select_array = get_module_map();		
-			}		
-		
+				$select_array = get_module_map();
+			}
+
 			unset($select_array["Forecasts"]);
 			unset($select_array["Products"]);
 			unset($select_array["Documents"]);
 			asort($select_array);
-		//end if type is module_list	
-		}	
-		
+		//end if type is module_list
+		}
+
 		if(!empty($select_array)){
-			if($text_only_array==true){		
+			if($text_only_array==true){
 				return $select_array;
 			} else {
-				return get_select_options_with_id($select_array, $value);	
+				return get_select_options_with_id($select_array, $value);
 			}
 		} else {
 			return null;
-		}		
+		}
 	//end get_selector_array
-	}	
-	
-	
-	
+	}
+
+
+
 	function build_field_filter($base_module, $target_field, $enum_multi=false){
 
 			////Begin - New Code call to workflow_utils
@@ -333,64 +335,64 @@ class Expression extends SugarBean {
 							'field' => $target_field,
 							'target_field' => $this->lhs_field,
 							);
-		
+
 		$meta_array = array(
 							'parent_type' => $this->parent_type,
 							'enum_multi' => $enum_multi,
 							);
-		
-		
+
+
 		$output_array = get_field_output($temp_module, $selector_array, $meta_array);
 		return $output_array;
-			
-		
-	//end function build_field_filter	
+
+
+	//end function build_field_filter
 	}
-	
-	
+
+
 ///////////////////////////////////Display label functions///////////////
 
 
 	function get_display_array_using_name($target_module=""){
 	//use this if you don't have the module name.
 	//you can either build using lhs_module or override with your own
-	
+
 		if($target_module==""){
 			$target_bean = BeanFactory::getBean($this->lhs_module);
 		} else {
 			$target_bean = BeanFactory::getBean($target_module);
-		}	
-			
+		}
+
 		return $this->get_display_array($target_bean);
-		
+
 	//end function get_display_array_using_name
-	}	
+	}
 
 	function get_display_array(& $target_bean){
 	    global $app_strings;
 		$this->target_bean = $target_bean;
 		$this->display_array = array();
-		
+
 		//Grab label for lhs_field
 		$this->display_array['lhs_field'] = translate_label_from_bean($target_bean, $this->lhs_field);
-		
-		
+
+
 		//Grab label for operator
 		$this->display_array['operator'] = $this->get_display_operator($this->operator);
-		
-		
-		
+
+
+
 		//check for enum multi
 		if($this->operator=="in" || $this->operator=="not_in"){
-			
+
 			//foreach loop on the in values
 			$selected_array = unencodeMultienum($this->rhs_value);
 			$multi_text = "";
 			$selected_count = count($selected_array);
 			$the_counter = 1;
 			foreach($selected_array as $key => $value){
-				
-				
+
+
 				if($multi_text!=""){
 					if($the_counter != $selected_count){
 					$multi_text .=", ";
@@ -398,47 +400,47 @@ class Expression extends SugarBean {
 						if($selected_count > 2){
 							$multi_text	.= ", {$app_strings['LBL_LOWER_OR']} ";
 						} else {
-							$multi_text .= " {$app_strings['LBL_LOWER_OR']} ";	
-						}	
-					}	
+							$multi_text .= " {$app_strings['LBL_LOWER_OR']} ";
+						}
+					}
 				//end if multi is not blank
 				}
-				
-				$multi_text .= $this->get_display_rhs_value($value);	
-			++$the_counter;	
-			}	
-			
+
+				$multi_text .= $this->get_display_rhs_value($value);
+			++$the_counter;
+			}
+
 			$this->display_array['rhs_value'] = $multi_text;
-		//end if enum multi	
+		//end if enum multi
 		} else {
-					
+
 			//Grab lable for rhs_value
 			$this->display_array['rhs_value'] = $this->get_display_rhs_value($this->rhs_value);
 		//end if not enum multi value
 		}
-		
+
 		//if blank value then set to "NONE"
 		//if($this->display_array['rhs_value']==""){
 		//	$this->display_array['rhs_value'] = "none";
-		//}	
-		
+		//}
+
 		return $this->display_array;
-	
+
 	//end function get_display_array
 	}
-	
-	
+
+
 	function get_display_rhs_value($rhs_value){
-		
+
 			if( $this->exp_type == "assigned_user_name" || $this->exp_type == "team_list"){
-		
+
 				$text_array = $this->get_selector_array($this->exp_type, $rhs_value, "", true);
-				
+
 				return $text_array[$rhs_value];
-				
+
 			//end if team or assigned_user
-			}	
-			
+			}
+
 			if($this->exp_type == "bool"){
 	            global $app_list_strings;
 				if($rhs_value=="bool_true"){
@@ -448,22 +450,22 @@ class Expression extends SugarBean {
 					return isset($app_list_strings['bselect_type_dom']['bool_false']) ? $app_list_strings['bselect_type_dom']['bool_false'] : 'No';
 				}
 				return "";
-			//end if target_type is bool	
-			}	
+			//end if target_type is bool
+			}
 			//if enum and reaching here
 			if($this->exp_type == "enum" || $this->exp_type == "multienum"){
 				return translate_option_name_from_bean($this->target_bean, $this->lhs_field, $rhs_value);
 			//end if enum
 			}
-			
-				
+
+
 				return $rhs_value;
-			
+
 	//end function get_display_rhs_value
-	}	
-	
-	
-	
+	}
+
+
+
 	function get_display_operator(){
 		global $app_list_strings, $app_strings, $mod_strings;
 		if($this->operator=="in"){
@@ -475,38 +477,38 @@ class Expression extends SugarBean {
         }
         else {
 			$operator_text = $this->operator;
-		}		
-		
+		}
+
 		return $operator_text;
-		
-	//end function get_display_operator	
-	}	
-	
-	
+
+	//end function get_display_operator
+	}
+
+
 	function handleSave($prefix, $parent_type, $exp_id=""){
 
 		if($exp_id!=""){
 			$this->retrieve($exp_id);
-		}	
-		
-		
+		}
+
+
 		foreach($this->column_fields as $field){
 			if(isset($_POST[$prefix."".$field])){
-			$this->$field = $_POST[$prefix."".$field];	
+			$this->$field = $_POST[$prefix."".$field];
 			}
 		}
-	
+
 		if(!empty($_POST[$prefix.'time_int'])){
 			$this->ext1 = $_POST[$prefix.'time_int'];
 		}
-	
+
 
 		$this->parent_type = $parent_type;
 		$this->save();
 
 	//end function handleSave
 	}
-    
+
     /**
      * This function will determine whether the given input string is plural
      *

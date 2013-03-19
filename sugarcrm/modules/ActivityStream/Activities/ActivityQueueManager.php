@@ -21,6 +21,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
+require_once 'include/SugarQueue/SugarJobQueue.php';
+
 /**
  * Queue class for activity stream events.
  * @api
@@ -39,11 +41,26 @@ class ActivityQueueManager
      */
     public function eventDispatcher(SugarBean $bean, $event, $args)
     {
-        if ($bean instanceof Activity && $event == 'after_save' && ($bean->activity_type == 'post' || $bean->activity_type == 'attach')) {
+        if ($bean instanceof Activity && ($bean->activity_type == 'post' || $bean->activity_type == 'attach')) {
             // Posts.
-            $this->processPostSubscription($bean);
-            $this->processTags($bean);
-        } else if ($bean->is_AuditEnabled() && Activity::isEnabled()) {
+            if ($event == 'after_save') {
+                $this->processPostSubscription($bean);
+                $this->processTags($bean);
+            } elseif ($event == 'before_save') {
+                $bean->data = json_decode($bean->data, true);
+
+                if (!isset($bean->data['object'])) {
+                    $parent = BeanFactory::retrieveBean($bean->parent_type, $bean->parent_id);
+                    if ($parent && !is_null($parent->id)) {
+                        $bean->data['object'] = self::getBeanAttributes($parent);
+                    } else {
+                        $bean->data['object_type'] = $parent->module_name;
+                    }
+                }
+
+                $bean->data = json_encode($bean->data);
+            }
+        } elseif ($bean->is_AuditEnabled() && Activity::isEnabled()) {
             $activity = BeanFactory::getBean('Activities');
             if ($event == 'after_save') {
                 $this->createOrUpdate($bean, $args, $activity);
@@ -57,8 +74,9 @@ class ActivityQueueManager
                 $this->unlink($args, $activity);
             }
 
-            // Add rows to the activities_users join table. We may potentially
-            // move this process to the job queue.
+            // Add the job queue process to add rows to the activities_users
+            // join table. This has been moved to the job queue as it's a
+            // potentially slow operation.
             $this->processSubscriptions($bean, $activity, $args);
         }
     }

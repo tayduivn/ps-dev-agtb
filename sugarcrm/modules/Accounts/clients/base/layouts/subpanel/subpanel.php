@@ -10,7 +10,7 @@ $subpanels = array(
     'LBL_CASES_SUBPANEL_TITLE' => 'cases',
     'LBL_BUGS_SUBPANEL_TITLE' => 'bugs',
     'LBL_PRODUCTS_SUBPANEL_TITLE' => 'products',
-    'Notes' => 'notes',
+    'LBL_NOTES_SUBPANEL_TITLE' => 'notes',
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'documents',
 );
 $layout = MetaDataManager::getLayout("SubPanelLayout", $subpanels);

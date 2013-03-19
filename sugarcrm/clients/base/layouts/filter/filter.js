@@ -11,7 +11,8 @@
     initialize: function(opts) {
         app.view.Layout.prototype.initialize.call(this, opts);
 
-        this.layoutType = this.context.get('layout') || app.controller.context.get('layout');
+        this.layoutType = this.context.get('layout') || this.context.get('layoutName') || app.controller.context.get('layout');
+
         this.aclToCheck = (this.layoutType === 'record')? 'view' : 'list';
         this.filters = app.data.createBeanCollection('Filters');
 
@@ -20,6 +21,9 @@
         if (this.layoutType === 'records' && this.module !== 'Home') {
             this.context.set('skipFetch', true);
         } else {
+            if(this.context.parent) {
+                this.context.parent.set('skipFetch', true);
+            }
             this.context.on('context:child:add', function(childCtx) {
                 if (childCtx.get('link')) {
                     // We're in a subpanel.
@@ -35,21 +39,18 @@
             _.each(ctxList, function(ctx) {
                 var ctxCollection = ctx.get('collection'),
                     origfilterDef = ctxCollection.filterDef || [],
-                    filterDef = self.getFilterDef(origfilterDef, query, ctx),
-                    options = {
-                        // Double bang for boolean coercion.
-                        relate: !!ctx.get('link'),
-                        fields: ctx.get("fields") ? ctx.get("fields") : [],
-                        success: function() {
-                            // Close the preview pane to ensure that the preview
-                            // collection is in sync with the list collection.
-                            app.events.trigger('preview:close');
-                        }
-                    };
+                    filterDef = self.getFilterDef(origfilterDef, query, ctx);
 
-                options = _.extend(options, ctx.get('collectionOptions') || {});
                 ctxCollection.filterDef = filterDef;
-                ctxCollection.fetch(options);
+
+                ctx.resetLoadFlag(false);
+                ctx.set('skipFetch', false);
+                ctx.loadData({
+                    success: function() {
+                        // Close the preview pane to ensure that the preview
+                        // collection is in sync with the list collection.
+                        app.events.trigger('preview:close');
+                }});
                 ctxCollection.filterDef = origfilterDef;
             });
         }, this);
@@ -97,11 +98,15 @@
             if (this.layoutType === 'records' && this.module !== "Home") {
                 contextList.push(this.context);
             } else {
-                _.each(this.context.children, function(childCtx) {
-                    if (childCtx.get('link') && !childCtx.get('hidden')) {
-                        contextList.push(childCtx);
-                    }
-                });
+                if (this.context.children.length) {
+                    _.each(this.context.children, function(childCtx) {
+                        if (childCtx.get('link') && !childCtx.get('hidden')) {
+                            contextList.push(childCtx);
+                        }
+                    });
+                } else {
+                    contextList.push(this.context.parent);
+                }
             }
         }
         return contextList;
