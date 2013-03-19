@@ -359,9 +359,8 @@ class ForecastManagerWorksheet extends SugarBean
         } else {
             $bean = $beans[0];
             $committed_date = $this->db->fromConvert($bean["date_modified"], "datetime");
-            $timedate = TimeDate::getInstance();
             $this->show_history_log = intval(
-                strtotime($committed_date) < strtotime($timedate->to_db($this->date_modified))
+                strtotime($committed_date) < strtotime($this->date_modified)
             );
         }
     }
@@ -628,7 +627,4 @@ class ForecastManagerWorksheet extends SugarBean
 
         return $return;
     }
-
-
 }
-
