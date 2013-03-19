@@ -45,10 +45,13 @@
     },
 
     loadData: function(options) {
-        //We want to ensure the data related to this activity loads before the stream for UX purposes.
+        // We want to ensure the data related to this activity loads before the
+        // stream for a better user experience.
         var parentCol = this.context.parent.get("collection");
         if (parentCol.isEmpty()) {
-            parentCol.once("sync", function(){this._load(options)}, this);
+            parentCol.once("sync", function(){
+                this._load(options);
+            }, this);
         } else {
             this._load(options);
         }
@@ -57,12 +60,21 @@
     _load: function(options) {
         var self = this,
             endpoint = function(method, model, options, callbacks) {
-                var real_module = self.opts.context.parent.get('module'),
-                    modelId = self.opts.context.parent.get('modelId'), url;
-                if (real_module !== "Activities") {
-                    url = app.api.buildURL(real_module, model.module, {id: modelId}, options.params);
-                } else {
-                    url = app.api.buildURL(model.module, null, {}, options.params);
+                var real_module = self.context.parent.get('module'),
+                    layoutType = self.context.parent.get('layout'),
+                    modelId = self.context.parent.get('modelId'),
+                    action = model.module, // equal to 'Activities'
+                    url;
+                switch (layoutType) {
+                    case "activities":
+                        url = app.api.buildURL(real_module, null, {}, options.params);
+                        break;
+                    case "records":
+                        url = app.api.buildURL(real_module, action, {}, options.params);
+                        break;
+                    case "record":
+                        url = app.api.buildURL(real_module, "activities", {id: modelId, link: true}, options.params);
+                        break;
                 }
                 return app.api.call("read", url, null, callbacks);
             };

@@ -39,18 +39,21 @@
             _.each(ctxList, function(ctx) {
                 var ctxCollection = ctx.get('collection'),
                     origfilterDef = ctxCollection.filterDef || [],
-                    filterDef = self.getFilterDef(origfilterDef, query, ctx);
+                    filterDef = self.getFilterDef(origfilterDef, query, ctx),
+                    options = {
+                        success: function() {
+                            // Close the preview pane to ensure that the preview
+                            // collection is in sync with the list collection.
+                            app.events.trigger('preview:close');
+                    }};
 
                 ctxCollection.filterDef = filterDef;
 
+                options = _.extend(options, ctx.get('collectionOptions'));
+
                 ctx.resetLoadFlag(false);
                 ctx.set('skipFetch', false);
-                ctx.loadData({
-                    success: function() {
-                        // Close the preview pane to ensure that the preview
-                        // collection is in sync with the list collection.
-                        app.events.trigger('preview:close');
-                }});
+                ctx.loadData(options);
                 ctxCollection.filterDef = origfilterDef;
             });
         }, this);
