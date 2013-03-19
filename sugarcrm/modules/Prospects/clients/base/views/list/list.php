@@ -1,5 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
@@ -29,32 +31,44 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $viewdefs['Prospects']['base']['view']['list'] = array(
-	'panels' => array(
-		array(
-			'fields' => array(
-				array(
-					'name'    => 'name',
-					'label'   => 'LBL_LIST_NAME',
-					'orderBy' => 'last_name',
-				),
-				array(
-					'name'  => 'title',
-					'label' => 'LBL_LIST_TITLE',
-				),
-				array(
-					'name'     => 'email',
-					'label'    => 'LBL_LIST_EMAIL_ADDRESS',
-					'sortable' => false,
-				),
-				array(
-					'name'  => 'phone_work',
-					'label' => 'LBL_LIST_PHONE',
-				),
-				array(
-					'name'  => 'date_entered',
-					'label' => 'LBL_DATE_ENTERED',
-				),
-			),
-		),
-	),
+    'panels' => array(
+        array(
+            'fields' => array(
+                array(
+                    'name' => 'full_name',
+                    'type' => 'fieldset',
+                    'fields' => array(
+                        array(
+                            'name' => 'first_name',
+                            'link' => true,
+                        ),
+                        array(
+                            'name' => 'last_name',
+                            'link' => true,
+                        )
+                    ),
+                    'css_class' => 'full-name',
+                    'label' => 'LBL_LIST_NAME',
+                    'orderBy' => 'last_name',
+                ),
+                array(
+                    'name' => 'title',
+                    'label' => 'LBL_LIST_TITLE',
+                ),
+                array(
+                    'name' => 'email',
+                    'label' => 'LBL_LIST_EMAIL_ADDRESS',
+                    'sortable' => false,
+                ),
+                array(
+                    'name' => 'phone_work',
+                    'label' => 'LBL_LIST_PHONE',
+                ),
+                array(
+                    'name' => 'date_entered',
+                    'label' => 'LBL_DATE_ENTERED',
+                ),
+            ),
+        ),
+    ),
 );

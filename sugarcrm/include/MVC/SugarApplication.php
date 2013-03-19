@@ -54,7 +54,7 @@ class SugarApplication
             return;
         } elseif ($this->controller->action === 'Login' && $this->controller->module === 'Users') {
             // TODO remove this when we are "iFrame free"
-            echo '<script>parent.SUGAR.App.bwcLogin("' . $this->getLoginRedirect() . '");</script>';
+            echo '<script>parent.SUGAR.App.bwc.login("' . $this->getLoginRedirect() . '");</script>';
             return;
         }
         // If the entry point is defined to not need auth, then don't authenticate.

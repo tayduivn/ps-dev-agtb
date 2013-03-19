@@ -43,7 +43,7 @@
     },
 
     _render: function () {
-        var firstModule;
+        var firstModule, leadsModel;
         app.view.Layout.prototype._render.call(this);
 
         //This is because backbone injects a wrapper element.
@@ -54,7 +54,12 @@
         this.$(".collapse").collapse({toggle:false, parent:'#convert-accordion'});
 
         //copy lead data down to each module when we get the lead data
-        this.context.trigger("lead:convert:populate", this.context.get('leadsModel'));
+        leadsModel = this.context.get('leadsModel');
+        leadsModel.fetch({
+            success: _.bind(function(model) {
+                this.context.trigger("lead:convert:populate", model);
+            }, this)
+        });
 
         //show first panel
         firstModule = _.first(this.meta.modules).module;

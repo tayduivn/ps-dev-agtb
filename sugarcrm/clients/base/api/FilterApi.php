@@ -166,6 +166,8 @@ class FilterApi extends SugarApi
         }
         $this->addFilters($args['filter'], $q->where(), $q);
 
+		$api->action = 'list';
+
         return $this->runQuery($api, $args, $q, $options, $seed);
     }
 
@@ -220,6 +222,9 @@ class FilterApi extends SugarApi
         }
         $args['filter'][][$tableName . '.' . $column] = array('$equals' => $record->id);
         $this->addFilters($args['filter'], $q->where(), $q);
+
+		$api->action = 'list';
+
         return $this->runQuery($api, $args, $q, $options, $linkSeed);
     }
 
@@ -384,6 +389,9 @@ class FilterApi extends SugarApi
     protected function addFilters(array $filterDefs, SugarQuery_Builder_Where $where, SugarQuery $q)
     {
         foreach ($filterDefs as $filterDef) {
+            if(!is_array($filterDef)) {
+                throw new SugarApiExceptionInvalidParameter("Did not recognize the definition: " . print_r($filterDef, true));
+            }
             foreach ($filterDef as $field => $filter) {
                 if ($field == '$or') {
                     $this->addFilters($filter, $where->queryOr(), $q);
@@ -463,7 +471,6 @@ class FilterApi extends SugarApi
                         }
                     }
                 }
-
             }
         }
     }

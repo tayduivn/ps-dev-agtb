@@ -142,12 +142,13 @@
                 var formattedRecords = [];
                 _.each(data.records, function(record) {
                     var formattedRecord = {id:record.id,name:record.name,module:record._module},
-                        meta = app.metadata.getModule(record._module);                    
+                        meta = app.metadata.getModule(record._module);
+
                     if (meta && meta.isBwcEnabled) {
-                        formattedRecord.link = 'bwc/index.php?module='+record._module+'&action=DetailView&record='+record.id;
+                        formattedRecord.link = '#' + app.bwc.buildRoute(record._module, record.id, 'DetailView');
                     }
                     else {
-                        formattedRecord.link = app.router.buildRoute(record._module, record.id);
+                        formattedRecord.link = '#' + app.router.buildRoute(record._module, record.id);
                     }
                     if ((record._search.highlighted)) { // full text search
                         _.each(record._search.highlighted, function(val, key) {

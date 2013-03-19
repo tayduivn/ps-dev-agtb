@@ -4,10 +4,10 @@
     },
 
     availableToggles: {
-        "activitystream" : "icon-th-list",
-        "timeline" : "icon-time",
-        "subpanel" : "icon-table",
-        "list" : "icon-table"
+        "activitystream": {icon: "icon-th-list", label: "LBL_ACTIVITY_STREAM"},
+        "timeline": {icon: "icon-time"},
+        "subpanel": {icon: "icon-table", label: "LBL_DATA_VIEW"},
+        "list": {icon: "icon-table"},
     },
 
     initialize: function(opts) {
@@ -37,7 +37,7 @@
             }
 
             if (toggle && this.availableToggles[toggle]) {
-                this.toggles.push({toggle: toggle, class: this.availableToggles[toggle]});
+                this.toggles.push({toggle: toggle, title: this.availableToggles[toggle].label, class: this.availableToggles[toggle].icon });
             }
         }, this);
     },

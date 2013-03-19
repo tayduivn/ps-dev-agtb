@@ -5,11 +5,11 @@
     recentRowTemplate: Handlebars.compile(
         '{{#each models}}<li><a tabindex="-1" class="recentLink actionLink" href="#{{modelRoute this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
+    plugins: ['dropdown'],
     events: {
         'click .dtoggle': 'toggleDropdown',
         'click .more': 'showMore',
         'mouseleave .more-drop-container' : 'hideMore',
-        'mouseleave .dropdown-menu': 'hideMenu',
         'click .actionLink' : 'handleMenuEvent'
     },
     handleMenuEvent:function (evt) {
@@ -19,10 +19,12 @@
             app.events.trigger($currentTarget.data('event'), module, evt);
         }
     },
-    hideMenu: function(event) {
-        this.$(event.target).dropdown('toggle').closest('li.dropdown.open').removeClass('open');
-    },
+
     showMore: function(event) {
+        event.stopPropagation();
+        this.hideMenu();
+        var $currentTarget = this.$('.more').find('.dropdown-toggle:first');
+        this.toggleDropdownHTML($currentTarget);
         this.$('.more-drop-container').show();
     },
     hideMore: function(event) {
@@ -37,15 +39,23 @@
         if (this.layout) {
             this.layout.on("view:resize", this.resize, this);
         }
+        $('.navbar').on('mouseleave', _.bind(function(){
+            this.hideMenu();
+            this.hideMore();
+        }, this));
     },
     _dispose: function(){
         app.user.off("change:module_list", this.render);
+        $('.navbar').off('mouseleave', _.bind(function(){
+                this.hideMenu();
+                this.hideMore();
+        }        , this));
         app.view.View.prototype._dispose.call(this);
     },
     handleViewChange: function() {
         this.closeOpenDrops();
         this.activeModule.set(app.controller.context.get("module"));
-        $(window).trigger('resize');
+        this.layout.trigger("header:update:route");
     },
     /**
      * toggles dropdowns on mouseover
@@ -53,17 +63,12 @@
      */
     toggleDropdown:function (event) {
         event.stopPropagation();
+        this.hideMore();
         var self = this;
         var $currentTarget = $(event.currentTarget), showCallback = false,
-            numberMenuItems = $currentTarget.siblings('ul').find('li').length,
+            numberMenuItems = $currentTarget.siblings('.dropdown-menu').find('ul').find('li').length,
         toggleCallback = _.once(function() {
-            // NOTE: this is a workaround for bootstrap dropdowns lack of support for events
-            // we manually turn this into a dropdown and get rid of its events and reapply our own
-            $currentTarget.attr("data-toggle", "dropdown").dropdown('toggle');
-            $currentTarget.off();
-            self.delegateEvents();
-
-            $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
+                self.toggleDropdownHTML($currentTarget);
         }), module = $currentTarget.parent().parent().data('module'), moduleMeta = app.metadata.getModule(module);
 
         if (moduleMeta && moduleMeta.menu && moduleMeta.menu.header && moduleMeta.menu.header.meta) {
@@ -204,7 +209,7 @@
             this.module_list = {};
             if (app.metadata.getModuleNames(true, "read")) {
                 _.each(app.metadata.getModuleNames(true, "read"), function(val) {
-                    self.module_list[val] = app.lang.get('LBL_MODULE_NAME', val);
+                    self.module_list[val] = val;
                 });
             }
             this.module_list = this.completeMenuMeta(this.module_list);
@@ -218,7 +223,7 @@
         var actions, meta, returnList = [], self = this, listLength;
         _.each(module_list, function(value, key) {
             actions = {
-                label: value,
+                label: app.lang.get('LBL_MODULE_NAME', value),
                 name: key
             };
             meta = app.metadata.getModule(key);
@@ -472,7 +477,7 @@
                 if (beforeIndex != activeIndex - 1 && activeIndex !== 1) {
                     $afterNode.before($activeNode);
                     // this node needs to go into the more so toggle its styles
-                    if ($activeNode.parent().parent().hasClass('more')) {
+                    if ($activeNode.parents().hasClass('more')) {
                         // hide the drop down toggle and show the more link
                         $activeNode.find('.btn-group').hide();
                         $activeNode.find('.moreLink').show();

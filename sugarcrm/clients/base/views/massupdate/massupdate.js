@@ -196,7 +196,6 @@
             onConfirm: function() {
                 var massUpdate = self.getMassUpdateModel(self.module);
                 if(massUpdate) {
-                    app.alert.show('load_list_view', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
                     massUpdate.fetch({
                         method: 'delete',
                         error: function() {
@@ -207,14 +206,12 @@
                                 //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                                 //TODO: Need trigger for fetching new record list
                                 app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_DELETED'), autoClose: true});
-                                self.layout.collection.fetch();
+                                self.layout.collection.fetch({alerts: false});
                             } else if(response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
                             }
                         },
-                        complete: function(data) {
-                            app.alert.dismiss('load_list_view');
-                        }
+                        alerts: false
                     });
 
                 }
@@ -258,7 +255,6 @@
             confirmMessage += '<br>[' + emptyValues.join(',') + ']<br>' + app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_CONFIRM') + '<br>';
             if(massUpdate) {
                 var fetchMassupdate = function() {
-                    app.alert.show('load_massupdate', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
 
                     massUpdate.fetch({
                         attributes: attributes,
@@ -278,9 +274,6 @@
                             } else if(response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
                             }
-                        },
-                        complete: function(data) {
-                            app.alert.dismiss('load_massupdate');
                         }
                     });
                 };

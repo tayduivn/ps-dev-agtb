@@ -50,8 +50,8 @@ describe("Emails.fields.compose-actionbar", function() {
             $result = $(field.getPlaceholder().toString());
             expect(field.fields.length).toBe(1);
             expect(field.fields[0].type).toBe('actiondropdown');
-            expect($result.find('.dropdown').length).toBe(1); //action dropdown
-            expect($result.find('.dropdown>span').length).toBe(1); //foo button placeholder
+            expect($result.find('.actions').length).toBe(1); //action dropdown
+            expect($result.find('.actions>span').length).toBe(1); //foo button placeholder
             expect($result.find('.dropdown-menu>li').length).toBe(1); //bar button placeholder
         });
 

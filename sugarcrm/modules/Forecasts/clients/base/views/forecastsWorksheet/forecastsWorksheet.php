@@ -122,7 +122,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'sortable' => false,
                     'default' => true,
                     'enabled' => true,
-                    'uid_field' => 'parent_id'
+                    'uid_field' => 'parent_id',
+                    'type_field' => 'parent_type'
                 ),
             ),
         ),

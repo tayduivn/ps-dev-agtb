@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $module_name = 'Tasks';
 $viewdefs[$module_name]['base']['menu']['createaction'] = array(
-    'route' => '#'.$module_name.'/create',
+    'layout' => 'create',
     'label' => 'LNK_NEW_TASK',
     'visible' => true
 );

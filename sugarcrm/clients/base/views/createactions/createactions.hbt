@@ -28,11 +28,15 @@
 }}
 <ul class="nav pull-right megamenu" >
     <li class="dropdown" id="createList">
-        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i></a>
-        <ul class="dropdown-menu">
-            {{#each createMenuItems}}
-            <li><a class="actionLink" data-module="{{module}}" href="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label module}}</a></li>
-            {{/each}}
-        </ul>
+        <div class="btn-group">
+            <a data-toggle="dropdown" href="javascript:void(0);" role="button" class="btn btn-invisible btn-link dropdown-toggle dtoggle"><i class="icon-plus icon-md"></i></a>
+            <div class="dropdown-menu scroll pull-right">
+                <ul role="menu">
+                    {{#each createMenuItems}}
+                        <li><a class="actionLink" data-module="{{module}}" data-layout="{{layout}}" href="javascript:void(0);">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label module}}</a></li>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
     </li>
 </ul>

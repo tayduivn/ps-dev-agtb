@@ -16,56 +16,39 @@ describe('Base.Field.Actiondropdown', function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         app = SugarTest.app;
-        SugarTest.testMetadata.addViewDefinition('record', {
-            "type": "record",
-            "panels":[
-                {
-                    "name":"panel_header",
-                    "placeholders":true,
-                    "header":true,
-                    "labels":false,
-                    fields: [
-                        {
-                            "name" : "dropdown",
-                            "type":"actiondropdown",
-                            "label":"",
-                            "buttons": [
-                                {
-                                    "type" : "button",
-                                    "name" : "test1"
-                                },
-                                {
-                                    "type" : "button",
-                                    "name" : "test2"
-                                }
-                            ]
-                        }
-                    ]
 
-                }
-            ]
-        }, moduleName);
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
+        SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
+        SugarTest.loadComponent('base', 'field', 'button');
+        SugarTest.loadComponent('base', 'field', 'rowaction');
+        SugarTest.loadComponent('base', 'field', 'fieldset');
+        SugarTest.loadComponent('base', 'field', 'actiondropdown');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
 
-        SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
-        SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
-        SugarTest.loadComponent('base', 'field', 'button');
-        SugarTest.loadComponent('base', 'field', 'fieldset');
-        SugarTest.loadComponent('base', 'field', 'actiondropdown');
-        SugarTest.loadComponent('base', 'view', 'editable');
-        SugarTest.loadComponent('base', 'view', 'record');
-        var context = SugarTest.app.context.getContext();
-        context.set({
-            module: moduleName,
-            create: true
-        });
-        context.prepare();
+        field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', {
+            "name": "main_dropdown",
+            "type": "actiondropdown",
+            "buttons": [
+                {
+                    "type" : "rowaction",
+                    "name" : "test1"
+                },
+                {
+                    "type" : "rowaction",
+                    "name" : "test2"
+                }
+            ]
+        }, moduleName);
+        $element = $(field.getPlaceholder().toString());
+        field.setElement($element);
+        field.render();
 
-        view = SugarTest.createView("base", moduleName, 'record', null, context);
-        view.createMode = false;
-        view.render();
-        field = view.getField('dropdown');
+        _.each(field.fields, function(rowaction) {
+            rowaction.setElement(field.$("span[sfuuid='" + rowaction.sfId + "']"));
+            rowaction.render();
+        });
     });
 
     afterEach(function() {
@@ -79,6 +62,7 @@ describe('Base.Field.Actiondropdown', function() {
     });
 
     it('should render button html nested on the buttons', function() {
+        expect(field.fields.length).toBe(2);
         _.each(field.fields, function(button){
             var actualPlaceholderCount = field.$el.find("span[sfuuid='" + button.sfId + "']").length;
             expect(actualPlaceholderCount).toBe(1);
@@ -105,5 +89,14 @@ describe('Base.Field.Actiondropdown', function() {
         clock.tick(100);
         actualPlaceholderCount = field.$(".dropdown-menu").find("span[sfuuid='" + button.sfId + "']").length;
         expect(actualPlaceholderCount).toBe(1);
+    });
+
+    it('should have btn-group class when more than one button is visible', function() {
+        expect(field.$el.hasClass('btn-group')).toBe(true);
+    });
+
+    it('should not have btn-group class when only one button is visible', function() {
+        field.fields[0].hide();
+        expect(field.$el.hasClass('btn-group')).toBe(false);
     });
 });

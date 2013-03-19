@@ -29,12 +29,18 @@
     // we want the radio buttons to be replaced by a select so each method must call the EnumField method instead.
     extendsFrom: 'ListeditableField',
     _render: function(){
-        app.view.fields.EnumField.prototype.loadEnumOptions.call(this, false, function(){
+        var options = app.view.fields.EnumField.prototype.loadEnumOptions.call(this, false, function(){
             if(!this.disposed){
                 this.render();
             }
         });
-        return app.view.Field.prototype._render.call(this);
+        app.view.Field.prototype._render.call(this);
+        if(this.tplName === 'list-edit') {
+            var optionsKeys = _.isObject(options) ? _.keys(options) : [];
+            var select2Options = app.view.fields.EnumField.prototype.getSelect2Options.call(this, optionsKeys);
+            this.$(this.fieldTag).select2(select2Options);
+            this.$(".select2-container").addClass("tleft");
+        }
     },
     bindDomChange: function() {
         if (this.tplName === 'list-edit') {

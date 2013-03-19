@@ -302,5 +302,18 @@ class Administration extends SugarBean {
         $admin->retrieveSettings($category, $clean);
         return $admin;
     }
+
+    /**
+     * Check if the Bean Implements anything special
+     * @param $interface 
+     * @return bool
+     */
+    public function bean_implements($interface)
+    {
+        switch($interface){
+            case 'ACL':return true;
+        }
+        return false;
+    }    
 }
 

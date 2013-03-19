@@ -95,6 +95,8 @@
 
             switch (level) {
                 case this.LEVEL.PROCESS:
+                    //Cut ellipsis at the end of the string
+                    title = title.substr(-3)==='...' ? title.substr(0, title.length-3) : title;
                     template = '<div class="alert {{alertClass}}">' +
                         '<strong>{{title}}</strong>' +
                         '<div class="loading">' +

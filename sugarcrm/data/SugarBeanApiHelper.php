@@ -117,6 +117,15 @@ class SugarBeanApiHelper
             }
             //END SUGARCRM flav=pro ONLY
 
+            // Mark if it's a subscribed bean (for activity streams).
+            if ( empty($fieldList) || !in_array('following', $fieldList) ) {
+                if (!isset($bean->following)) {
+                    $sub = Subscription::checkSubscription($this->api->user, $bean);
+                    $bean->following = !empty($sub);
+                }
+                $data['following'] = $bean->following;
+            }
+
             // set ACL
             // if not an admin and the hashes differ, send back bean specific acl's
             $data['_acl'] = self::getBeanAcl($bean, $fieldList);
@@ -139,10 +148,10 @@ class SugarBeanApiHelper
     {
         $acl = array('fields' => (object) array());
         if (SugarACL::moduleSupportsACL($bean->module_dir)) {
-            $mm = new MetaDataManager($GLOBALS['current_user']);
-            $moduleAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user']);
+            $mm = new MetaDataManager($this->api->user);
+            $moduleAcl = $mm->getAclForModule($bean->module_dir, $this->api->user);
 
-            $beanAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user'], $bean);
+            $beanAcl = $mm->getAclForModule($bean->module_dir, $this->api->user, $bean);
             if ($beanAcl['_hash'] != $moduleAcl['_hash'] || !empty($fieldList)) {
 
                 // diff the fields separately, they are usually empty anyway so we won't diff these often.
@@ -237,7 +246,7 @@ class SugarBeanApiHelper
          * Therefore we need to set the owner_override before we start manipulating the bean fields
          * so that the ACL returns correctly for owner
          */
-        if (!empty($bean->assigned_user_id) && $bean->assigned_user_id == $GLOBALS['current_user']->id) {
+        if (!empty($bean->assigned_user_id) && $bean->assigned_user_id == $this->api->user->id) {
             $context['owner_override'] = true;
         }
 

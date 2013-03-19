@@ -40,9 +40,6 @@
             {{else}}
                 {{str "LBL_LISTVIEW_NO_RECORDS"}}
             {{/if}}
-        {{else}}
-            {{str "LBL_LOADING"}}
         {{/if}}
     </div>
 {{/if}}
-</div>

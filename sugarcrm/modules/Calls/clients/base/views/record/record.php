@@ -40,6 +40,10 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'type' => 'favorite',
                     'readonly' => true,
                 ),
+                array(
+                    'type' => 'follow',
+                    'readonly' => true,
+                ),
             )
         ),
         array(

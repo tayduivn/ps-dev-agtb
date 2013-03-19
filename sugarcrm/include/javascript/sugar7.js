@@ -24,7 +24,8 @@
                         module: "Activities"
                     });
                 }
-            },            {
+            },
+            {
                 name: "bwc",
                 route: "bwc/*url",
                 callback: function(url) {
@@ -114,19 +115,6 @@
                     });
                 }
             },
-           {
-                name: "emailCompose",
-                route: "Emails/compose",
-                callback: function(){
-                    app.drawer.open({
-                        layout : 'compose',
-                        context: {
-                            create: 'true',
-                            module: "Emails"
-                        }
-                    });
-                }
-            },
             {
                 name: "layout",
                 route: ":module/layout/:view"
@@ -143,19 +131,4 @@
 
         app.routing.setRoutes(routes);
     });
-
-    /**
-     * Performs backward compatibility login.
-     *
-     * The OAuth token is passed and we do automatic in bwc mode by
-     * getting a cookie with the PHPSESSIONID.
-     */
-    app.bwcLogin = function(redirectUrl) {
-        var url = app.api.buildURL('oauth2', 'bwc/login');
-        return app.api.call('create', url, {}, {
-            success: function() {
-                app.router.navigate('#bwc/' + redirectUrl, {trigger: true});
-            }
-        });
-    };
 })(SUGAR.App);

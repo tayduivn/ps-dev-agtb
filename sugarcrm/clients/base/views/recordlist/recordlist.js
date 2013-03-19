@@ -109,10 +109,8 @@
             level: 'confirmation',
             messages: app.lang.get('NTC_DELETE_CONFIRMATION'),
             onConfirm: function() {
-                app.alert.show('delete_list_record', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_DELETING')});
                 model.destroy({
                     success: function() {
-                        app.alert.dismiss('delete_list_record');
                         self.collection.remove(model);
                         app.events.trigger("preview:close");
                         if(!self.disposed) self.render();

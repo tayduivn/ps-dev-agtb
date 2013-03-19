@@ -197,7 +197,7 @@
     findHighlighted: function () {
         var foundIndex = -1;
         _.each(this.rows, function (element, index) {
-            if ($(element).hasClass('highlighted')) {
+            if ($(element).hasClass('current highlighted')) {
                 foundIndex = index;
             }
         }, this);
@@ -215,12 +215,12 @@
      * @return {*}
      */
     highlight: function (index) {
-        $(this.rows[index]).addClass('highlighted');
+        $(this.rows[index]).addClass('current highlighted');
         if (index != 0) {
-            $(this.rows[index - 1]).addClass('highlighted-above');
+            $(this.rows[index - 1]).addClass('highlighted above');
         }
         if (index != this.maxIndex) {
-            $(this.rows[index + 1]).addClass('highlighted-below');
+            $(this.rows[index + 1]).addClass('highlighted below');
         }
 
         // save which row is selected
@@ -236,12 +236,12 @@
      * @return {*}
      */
     removeHighlight: function (index) {
-        $(this.rows[index]).removeClass('highlighted');
+        $(this.rows[index]).removeClass('current highlighted');
         if (index != 0) {
-            $(this.rows[index - 1]).removeClass('highlighted-above');
+            $(this.rows[index - 1]).removeClass('highlighted above');
         }
         if (index != this.maxIndex) {
-            $(this.rows[index + 1]).removeClass('highlighted-below');
+            $(this.rows[index + 1]).removeClass('highlighted below');
         }
 
         return this.rows[index];

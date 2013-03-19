@@ -36,7 +36,7 @@
         var placeholder = app.view.Field.prototype.getPlaceholder.call(this);
         var $container = $(placeholder.toString()),
             $caret = $('<a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"><span class="icon-caret-down"></span></a>'),
-            $dropdown = $('<ul class="dropdown-menu"><span class="ext"></span></ul>');
+            $dropdown = $('<ul class="dropdown-menu"></ul>');
 
         if(this.def.primary) {
             $caret.addClass('btn-primary');
@@ -56,7 +56,7 @@
                 $container.append(field.getPlaceholder().toString());
             } else {
                 if(index == 1) {
-                    $container.addClass('actions dropdown btn-group')
+                    $container.addClass('actions btn-group')
                         .append($caret)
                         .append($dropdown);
                 }
@@ -76,6 +76,7 @@
             var fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
             if(field.isHidden) {
                 fieldPlaceholder.toggleClass('hide', true);
+                //Drop this field out of the dropdown
                 this.$el.append(fieldPlaceholder);
             } else {
                 fieldPlaceholder.toggleClass('hide', false);
@@ -84,10 +85,12 @@
                     if(this.def.primary) {
                         field.getFieldElement().addClass("btn-primary");
                     }
+                    //The first field needs to be out of the dropdown
                     this.$el.prepend(fieldPlaceholder);
                 } else {
                     field.getFieldElement().removeClass("btn btn-primary");
-                    this.$(".dropdown-menu").prepend($('<li>').append(fieldPlaceholder));
+                    //Append field into the dropdown
+                    this.$(".dropdown-menu").append($('<li>').html(fieldPlaceholder));
                 }
                 index++;
             }
@@ -95,8 +98,10 @@
 
         if(index <= 1) {
             this.$(".dropdown-toggle").hide();
+            this.$el.removeClass('btn-group');
         } else {
             this.$(".dropdown-toggle").show();
+            this.$el.addClass('btn-group');
         }
         this.$(".dropdown-menu").children("li").each(function(index, el){
             if($(el).html() === '') {
@@ -112,6 +117,5 @@
         } else {
             this.$('.dropdown-toggle').removeClass('disabled');
         }
-        this.setPlaceholder();
     }
 })
