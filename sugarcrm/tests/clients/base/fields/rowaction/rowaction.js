@@ -38,7 +38,7 @@ describe('Base.Field.Rowaction', function() {
     it('should hide action if the user doesn\'t have acls', function() {
         field.model = app.data.createBean(moduleName);
         field.model._acl = { "view": "no" };
-        field._render();
+        field.render();
         expect(field.isHidden).toBeTruthy();
     });
 });

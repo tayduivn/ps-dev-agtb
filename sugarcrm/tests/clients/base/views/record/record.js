@@ -39,7 +39,8 @@ describe("Record View", function () {
                             "name": "edit_button",
                             "label": "LBL_EDIT_BUTTON_LABEL",
                             "primary": true,
-                            "showOn": "view"
+                            "showOn": "view",
+                            "acl_action":"edit"
                         },
                         {
                             "type": "rowaction",
@@ -47,19 +48,22 @@ describe("Record View", function () {
                             "name": "save_button",
                             "label": "LBL_SAVE_BUTTON_LABEL",
                             "primary": true,
-                            "showOn": "edit"
+                            "showOn": "edit",
+                            "acl_action":"edit"
                         },
                         {
                             "type": "rowaction",
                             "name": "delete_button",
                             "label": "LBL_DELETE_BUTTON_LABEL",
-                            "showOn": "view"
+                            "showOn": "view",
+                            "acl_action":"delete"
                         },
                         {
                             "type": "rowaction",
                             "name": "duplicate_button",
                             "label": "LBL_DUPLICATE_BUTTON_LABEL",
-                            "showOn": "view"
+                            "showOn": "view",
+                            "acl_action":"create"
                         }
                     ]
                 }
@@ -1035,5 +1039,33 @@ describe("Record View", function () {
 
             expect(view.$('.record-label[data-name=name]').css('display')).not.toBe('none');
         });
+    });
+
+    describe('Set Button States', function () {
+        it('should show buttons where the showOn states match', function() {
+            // we need our buttons to be initialized before we can test them
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+
+            // load up with our spies to detect nefarious activity
+            _.each(view.buttons,function(button) {
+                sinonSandbox.spy(button,'hide');
+                sinonSandbox.spy(button,'show');
+            });
+
+            view.setButtonStates(view.STATE.EDIT);
+
+            // with access, assume the show/hide are based solely on showOn
+            _.each(view.buttons,function(button) {
+                var shouldHide = !!button.def.showOn && (button.def.showOn !== view.STATE.EDIT);
+                expect(button.hide.called).toEqual(shouldHide);
+                expect(button.show.called).toEqual(!shouldHide);
+            });
+        });
+
     });
 });

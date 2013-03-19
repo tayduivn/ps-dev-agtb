@@ -38,6 +38,16 @@ describe("Tasks CloseButton", function() {
         expect(field.isHidden).toBeTruthy();
     });
 
+    it('should not show if acl denies access', function() {
+        var accessSpy = sinon.stub(field,'hasAccess').returns(false);
+
+        field.model.set('status', 'Not Started');
+        field._render();
+        expect(field.isHidden).toBeTruthy();
+
+        accessSpy.restore();
+    });
+
     it('should set module to completed if success', function() {
         field.model.set('status','Not Started');
         var saveSpy = sinon.stub(field.model,'save', function(dummy, callbacks) {callbacks.success();});

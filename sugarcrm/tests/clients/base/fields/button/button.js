@@ -97,15 +97,16 @@ describe("Base.Field.Button", function() {
             'acl_action' : 'edit'
         };
         field = SugarTest.createField("base","button", "button", "edit", def);
-        var stub_hasAccess = sinon.stub(app.acl, "hasAccess");
-        var stub_hasAccessToModel = sinon.stub(app.acl, "hasAccessToModel");
-        var stub_render = sinon.stub(app.view.Field.prototype, "_render");
-        field._render();
+        var stub_hasAccess = sinon.stub(app.acl, "hasAccess").returns(true);
+        var stub_hasAccessToModel = sinon.stub(app.acl, "hasAccessToModel").returns(false);
+
+        var access = field.triggerBefore('render');
         expect(stub_hasAccess).not.toHaveBeenCalled();
         expect(stub_hasAccessToModel).toHaveBeenCalled();
+        expect(access).toBeFalsy();
+
         stub_hasAccess.restore();
         stub_hasAccessToModel.restore();
-        stub_render.restore();
     });
 
     it('should call app.acl.hasAccess if acl_module is specified', function() {
@@ -114,15 +115,17 @@ describe("Base.Field.Button", function() {
             'acl_action' : 'edit'
         };
         field = SugarTest.createField("base","button", "button", "edit", def);
-        var stub_hasAccess = sinon.stub(app.acl, "hasAccess");
-        var stub_hasAccessToModel = sinon.stub(app.acl, "hasAccessToModel");
-        var stub_render = sinon.stub(app.view.Field.prototype, "_render");
-        field._render();
+        var stub_hasAccess = sinon.stub(app.acl, "hasAccess").returns(true);
+        var stub_hasAccessToModel = sinon.stub(app.acl, "hasAccessToModel").returns(false);
+
+        var access = field.triggerBefore('render');
         expect(stub_hasAccess).toHaveBeenCalled();
         expect(stub_hasAccessToModel).not.toHaveBeenCalled();
+        expect(access).toBeTruthy();
+
         stub_hasAccess.restore();
         stub_hasAccessToModel.restore();
-        stub_render.restore();
+
     });
 
     it("should differenciate string routes from sidecar route object", function() {
