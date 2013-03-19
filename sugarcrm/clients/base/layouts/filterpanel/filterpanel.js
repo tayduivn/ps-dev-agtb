@@ -1,13 +1,14 @@
 ({
     events: {
-        "click .toggle-actions button": "toggleView"
+        "click .toggle-actions button": "toggleView",
+        'mouseenter [rel="tooltip"]': 'showTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
 
     availableToggles: {
         "activitystream": {icon: "icon-th-list", label: "LBL_ACTIVITY_STREAM"},
-        "timeline": {icon: "icon-time"},
         "subpanel": {icon: "icon-table", label: "LBL_DATA_VIEW"},
-        "list": {icon: "icon-table"},
+        "list": {icon: "icon-table", label: "LBL_LISTVIEW"}
     },
 
     initialize: function(opts) {
@@ -16,6 +17,10 @@
         this.toggleComponents = [];
         this.processMeta();
         this.renderHtml();
+
+        this.on("init", function() {
+            this.showComponent(this.options.meta['default']);
+        }, this);
 
         app.view.Layout.prototype.initialize.call(this, opts);
     },
@@ -53,10 +58,6 @@
             // Check if hidden or not.
             if (this.availableToggles[component.name]) {
                 this.toggleComponents.push(component);
-
-                if (component.name !== this.options.meta.default) {
-                    component.hide();
-                }
             }
             this.$el.append(component.el);
 
@@ -85,5 +86,13 @@
 
     getActivityContext: function() {
         return this.activityContext;
+    },
+
+    showTooltip: function(e) {
+        this.$(e.currentTarget).tooltip("show");
+    },
+
+    hideTooltip: function(e) {
+        this.$(e.currentTarget).tooltip("hide");
     }
 })
