@@ -148,10 +148,10 @@
     initializeFilterState: function(moduleName, linkName) {
         var self = this,
             callback = function(data) {
-                var module = moduleName || self.module,
+                var module = moduleName || (self.showingActivities? "Activities" : self.module),
                     link = linkName || data.link;
 
-                if (!moduleName && self.layoutType === 'record' && link !== 'all_modules') {
+                if (!moduleName && self.layoutType === 'record' && link !== 'all_modules' && !self.showingActivities) {
                     module = app.data.getRelatedModule(module, data.link);
                 }
 
