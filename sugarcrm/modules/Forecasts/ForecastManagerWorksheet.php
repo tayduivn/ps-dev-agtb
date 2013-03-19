@@ -288,6 +288,8 @@ class ForecastManagerWorksheet extends SugarBean
 
         $this->copyValues($copyMap, $worksheet->toArray(), $committed_worksheet);
 
+        $committed_worksheet->update_date_modified = false;
+        
         $committed_worksheet->save();
 
         return true;
