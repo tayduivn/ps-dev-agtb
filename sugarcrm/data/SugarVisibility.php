@@ -131,9 +131,9 @@ abstract class SugarVisibility
     	return $defs;
     }
     
-    public function getSseVisibilityData($engine, $data)
+    public function addSseVisibilityData($engine, $document)
     {
-    	return $data;
+    	return $document;
     }
     
     public function addSseVisibilityFilter($engine, $filter)

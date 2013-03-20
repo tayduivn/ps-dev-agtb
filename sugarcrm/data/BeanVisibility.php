@@ -153,13 +153,12 @@ class BeanVisibility
      * @param string $engine search engine name
      * @return array
      */        
-    public function getSseVisibilityData($engine)
+    public function addSseVisibilityData($engine, $document)
     {
-    	$data = array();
     	foreach($this->strategies as $strategy) {
-    		$data = $strategy->getSseVisibilityData($engine, $data);
+    		$document = $strategy->addSseVisibilityData($engine, $document);
     	}
-    	return $data;
+    	return $document;
     }
 
     /**

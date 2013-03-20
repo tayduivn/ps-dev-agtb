@@ -673,9 +673,9 @@ class SugarBean
     	return $this->loadVisibility()->getSseVisibilityDefs($engine);
     }
 
-    public function getSseVisibilityData($engine)
+    public function addSseVisibilityData($engine, $document)
     {
-    	return $this->loadVisibility()->getSseVisibilityData($engine);
+    	return $this->loadVisibility()->addSseVisibilityData($engine, $document);
     }
 
     public function addSseVisibilityFilter($engine, $filter)
@@ -4035,7 +4035,6 @@ class SugarBean
                         $params['join_table_link_alias'] = 'jtl' . $jtcount;
                     }
                     $join_primary = !isset($data['join_primary']) || $data['join_primary'];
-
                     $join = $this->$data['link']->getJoin($params, true);
                     $used_join_key[] = $join['rel_key'];
                     $table_joined = !empty($joined_tables[$params['join_table_alias']]) || (!empty($joined_tables[$params['join_table_link_alias']]) && isset($data['link_type']) && $data['link_type'] == 'relationship_info');
@@ -4049,7 +4048,6 @@ class SugarBean
 								$data['db_concat_fields'] = array(0=>'first_name', 1=>'last_name');
 						}
 					}
-
 
     				if($join['type'] == 'many-to-many')
     				{
