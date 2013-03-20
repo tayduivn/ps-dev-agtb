@@ -65,14 +65,14 @@
             div.widget-content {
               overflow: auto;
               width: 100%;
-			  .news-article {
-			    img.avatar {
-				  float: left;
-				  height: 40px;
-				  width: auto;
-				  margin-right: 8px;
-				}
-			  }
+      			  .news-article {
+      			    img.avatar {
+        				  float: left;
+        				  height: 40px;
+        				  width: auto;
+        				  margin-right: 8px;
+        				}
+      			  }
             }
             h4 {
               cursor: move;
@@ -238,14 +238,21 @@
         }
       }
       .widget.thumbnail:not(.collapsed) {
-        max-height: 252px;
+        max-height: 400px;
         overflow: hidden;
         .widget-content {
-          max-height: 218px;
+          max-height: 367px;
         }
       }
       [class*="-container"] {
         padding: 2px;
+      }
+      //above changes select2-container in dashlet options
+      .select2-container {
+        padding: 0;
+      }
+      svg {
+        max-height: 314px;
       }
     }
     .dashlet-row {
