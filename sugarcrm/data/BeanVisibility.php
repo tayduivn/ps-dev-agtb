@@ -160,6 +160,20 @@ class BeanVisibility
     		$data = $strategy->getSseVisibilityData($engine, $data);
     	}
     	return $data;
+    }
+
+    /**
+     * Get SugarSearchEngine visibility filter
+     * @param string $engine search engine name
+     * @return mixed
+     */        
+    public function addSseVisibilityFilter($engine, $filter)
+    {
+    	foreach($this->strategies as $strategy) {
+    		$filter = $strategy->addSseVisibilityFilter($engine, $filter);
+    	}
+    	return $filter;
     } 
+
 }
 

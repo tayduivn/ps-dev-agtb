@@ -677,6 +677,11 @@ class SugarBean
     {
     	return $this->loadVisibility()->getSseVisibilityData($engine);
     }
+
+    public function addSseVisibilityFilter($engine, $filter)
+    {
+    	return $this->loadVisibility()->addSseVisibilityFilter($engine, $filter);
+    }
     
     /**
      * Returns the object name. If object_name is not set, table_name is returned.

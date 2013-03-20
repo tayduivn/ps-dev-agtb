@@ -135,4 +135,10 @@ abstract class SugarVisibility
     {
     	return $data;
     }
+    
+    public function addSseVisibilityFilter($engine, $filter)
+    {
+    	return $filter;
+    }
+
 }

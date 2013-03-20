@@ -225,7 +225,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         	// Add visibility denormalized data
         	// @shouldIndexViaBean, bean is not necesarily a full bean
         	$keyValues = array_merge($keyValues, $bean->getSseVisibilityData('Elastic'));
-        	xxx_dump("data", $keyValues);
             return new \Elastica\Document($bean->id, $keyValues, $this->getIndexType($bean));
         }
     }
@@ -573,16 +572,16 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         $hasAdminAccess = $GLOBALS['current_user']->isAdminForModule($seed->getACLCategory());
 
-        $moduleFilter = new \Elastica\Filter\BoolAnd();
+        $moduleFilter = new \Elastica\Filter\Bool();
 
         if ($hasAdminAccess) {
             $typeTermFilter = $this->getTypeTermFilter($module);
-            $moduleFilter->addFilter($typeTermFilter);
+            $moduleFilter->addMust($typeTermFilter);
             // user has admin access for this module, skip team filter
             if ($requireOwner) {
                 // owner term filter
                 $ownerTermFilter = $this->getOwnerTermFilter();
-                $moduleFilter->addFilter($ownerTermFilter);
+                $moduleFilter->addMust($ownerTermFilter);
             }
         } else {
 
@@ -594,14 +593,18 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
             // type term filter
             $typeTermFilter = $this->getTypeTermFilter($module);
-            $moduleFilter->addFilter($typeTermFilter);
+            $moduleFilter->addMust($typeTermFilter);
 
             if ($requireOwner) {
                 // need to be document owner to view, owner term filter
                 $ownerTermFilter = $this->getOwnerTermFilter();
-                $moduleFilter->addFilter($ownerTermFilter);
+                $moduleFilter->addMust($ownerTermFilter);
             }
         }
+        
+        // add visibility
+        $moduleFilter = $seed->addSseVisibilityFilter('Elastic', $moduleFilter);
+        
         return $moduleFilter;
     }
 
@@ -612,7 +615,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function constructMainFilter($finalTypes, $options = array())
     {
-        $mainFilter = new \Elastica\Filter\BoolOr();
+        $mainFilter = new \Elastica\Filter\Bool();
         foreach ($finalTypes as $module) {
             $moduleFilter = $this->constructModuleLevelFilter($module);
             // if we want myitems add more to the module filter
@@ -633,7 +636,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             }
             //END SUGARCRM flav=pro ONLY
 
-            $mainFilter->addFilter($moduleFilter);
+            $mainFilter->addShould($moduleFilter);
 
         }
 
