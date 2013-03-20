@@ -129,4 +129,16 @@ abstract class ServiceBase {
     {
         return false;
     }
+
+	/**
+	 * Release current session
+	 */
+    protected function releaseSession()
+    {
+        if(session_status() == PHP_SESSION_ACTIVE) {
+            $session_data = $_SESSION; // keep session values
+            session_write_close();
+            $_SESSION = $session_data;
+        }
+    }
 }
