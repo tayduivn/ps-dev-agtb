@@ -59,6 +59,7 @@
         this.filterNode.select2("val", linkName || linkModuleName);
         if (!silent) {
             this.layout.trigger("filter:get", linkModuleName, linkName);
+            this.layout.layout.trigger("filter:change", linkModuleName, linkName);
         }
     },
 

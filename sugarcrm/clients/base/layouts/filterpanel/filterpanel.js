@@ -22,6 +22,11 @@
             this.showComponent(this.options.meta['default']);
         }, this);
 
+        this.on("filter:change", function(module, link) {
+            this.currentModule = module;
+            this.currentLink = link;
+        }, this);
+
         app.view.Layout.prototype.initialize.call(this, opts);
     },
 
