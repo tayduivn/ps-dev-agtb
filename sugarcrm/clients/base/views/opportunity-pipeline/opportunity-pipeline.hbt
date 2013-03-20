@@ -1,0 +1,14 @@
+<div class="block">
+  <div class="nv-chart"><svg id="{{cid}}"></svg></div>
+</div>
+<style>
+    .block path {
+        stroke: #fff;
+    }
+    .dashboard-pane .block {
+        margin:0px;
+    }
+    .dashboard-pane .block svg {
+        height:200px;
+    }
+</style>
