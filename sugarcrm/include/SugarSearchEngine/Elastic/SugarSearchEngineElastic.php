@@ -221,11 +221,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         if( empty($keyValues) ) {
             return null;
         } else {
-        	
-        	// Add visibility denormalized data
-        	// @shouldIndexViaBean, bean is not necesarily a full bean
-        	$keyValues = array_merge($keyValues, $bean->getSseVisibilityData('Elastic'));
-            return new \Elastica\Document($bean->id, $keyValues, $this->getIndexType($bean));
+            
+            //base document
+            $document = new \Elastica\Document($bean->id, $keyValues, $this->getIndexType($bean));
+            
+            // Add visibility denormalized data
+            // @shouldIndexViaBean, bean is not necesarily a full bean
+            $document = $bean->addSseVisibilityData('Elastic', $document);
+            
+            return $document;
         }
     }
 
@@ -602,7 +606,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             }
             
             // add visibility
-        	$moduleFilter = $seed->addSseVisibilityFilter('Elastic', $moduleFilter);
+            $moduleFilter = $seed->addSseVisibilityFilter('Elastic', $moduleFilter);
         }
         
         return $moduleFilter;

@@ -300,7 +300,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
      */
     protected function shouldIndexViaBean($module)
     {
-        return true;
+        return false;
     }
     /**
      * Main function that handles the indexing of a bean and is called by the job queue system.

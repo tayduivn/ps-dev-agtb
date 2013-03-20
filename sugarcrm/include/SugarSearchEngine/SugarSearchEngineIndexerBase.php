@@ -113,6 +113,50 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
         $this->schedulerJob = $job;
     }
 
+    protected function generateFTSQuery($module, $fieldDefs)
+    {
+        $queuTableName = self::QUEUE_TABLE;
+        $bean = BeanFactory::getBean($module);
+
+        // fields filter (team fields taken from old method, needs to get abstracted out)
+        $fieldsFilter = array(
+            'team_id' => true,
+            'team_set_id' => true,
+        );
+        
+        // add fts enabled fields to the filter
+        $addEmailJoin = false;
+        foreach ($fieldDefs as $value) {
+            
+            // filter email1 field and toggle flag for lv query
+            if ($value['name'] == 'email1') {
+                $addEmailJoin = true;
+            }
+
+            $fieldsFilter[$value['name']] = true;
+        }
+
+        // generate list view query based on selected fields
+        xxx_dump("indexer", $addEmailJoin);
+        $ftsQuery = $bean->create_new_list_query(
+            "",         // order_by 
+            "",         // where 
+            $fieldsFilter, 
+            array(),    // params 
+            0,            // show_deleted 
+            "",         // join_type 
+            true,       // return_array
+            null,       // parent_bean 
+            true,       // single_select
+            $addEmailJoin
+        );
+        
+        // add join for queue table
+        $ftsQuery['from'] .= " INNER JOIN {$queuTableName} on {$queuTableName}.bean_id = {$bean->table_name}.id AND {$queuTableName}.processed = 0 ";
+
+        return $ftsQuery['select'] . $ftsQuery['from'] . $ftsQuery['where'];
+    }
+    
 
     /**
      * Generate the query necessary to retrieve FTS enabled fields for a bean.
@@ -121,7 +165,7 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
      * @param $fieldDefinitions
      * @return string
      */
-    protected function generateFTSQuery($module, $fieldDefinitions)
+    protected function generateFTSQueryOld($module, $fieldDefinitions)
     {
         $queuTableName = self::QUEUE_TABLE;
         $bean = BeanFactory::getBean($module, null);

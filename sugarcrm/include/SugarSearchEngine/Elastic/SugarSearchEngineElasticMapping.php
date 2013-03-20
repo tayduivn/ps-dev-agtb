@@ -58,7 +58,7 @@ class SugarSearchEngineElasticMapping
         $bean = BeanFactory::getBean($module);
         $visibility = $bean->getSseVisibilityDefs('Elastic');
         if (is_array($visibility)) {
-        	$properties = array_merge($properties, $visibility);
+            $properties = array_merge($properties, $visibility);
         }
         
         if (is_array($properties) && count($properties) > 0)
@@ -83,7 +83,7 @@ class SugarSearchEngineElasticMapping
 
     public function addVisibility ($properties)
     {
-    	
+        
     }
     /**
      *
@@ -134,18 +134,19 @@ class SugarSearchEngineElasticMapping
                 }
                 
                 // fix up related fields to include raw value for facet search
+                // (just a test to add a raw field too, working on facets - @mikea)
                 if ($fieldDef['type'] == 'relate') {
-                	$tmpArray = array(
-                		'type' => 'multi_field',
-                		'fields' => array(
-                			$fieldName => $tmpArray,
-                			'raw' => array(
-                				'type' => 'string',
-                				'index' => 'not_analyzed',
-                				'include_in_all' => false,
-                			),
-                		),
-                	);
+                    $tmpArray = array(
+                        'type' => 'multi_field',
+                        'fields' => array(
+                            $fieldName => $tmpArray,
+                            'raw' => array(
+                                'type' => 'string',
+                                'index' => 'not_analyzed',
+                                'include_in_all' => false,
+                            ),
+                        ),
+                    );
                 }
 
                 $properties[$fieldName] = $tmpArray;
