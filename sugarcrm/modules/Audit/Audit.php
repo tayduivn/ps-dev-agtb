@@ -34,6 +34,8 @@ class Audit extends SugarBean {
 	var $module_dir = "Audit";
 	var $object_name = "Audit";
 
+    public $disable_vardefs = true;
+
 
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array();
@@ -238,4 +240,3 @@ class Audit extends SugarBean {
         }
     }
 }
-?>
