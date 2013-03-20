@@ -696,7 +696,7 @@
         this.collection.forEach(function(model) {
             var base_rate = parseFloat(model.get('base_rate')),
                 mPipeline_opp_count = model.get("pipeline_opp_count"),
-                mPipeline_amount = model.get("pipeline_amount");
+                mPipeline_amount = model.get("pipeline_amount"),
                 mOpp_count = model.get("opp_count");
 
             quota += app.currency.convertWithRate(model.get('quota'), base_rate);
@@ -708,7 +708,9 @@
             worst_case_adjusted += app.currency.convertWithRate(model.get('worst_case_adjusted'), base_rate);
             included_opp_count += (_.isUndefined(mOpp_count))? 0 : parseInt(mOpp_count);
             pipeline_opp_count += (_.isUndefined(mPipeline_opp_count))? 0 : parseInt(mPipeline_opp_count);
-            pipeline_amount = (_.isUndefined(mPipeline_amount))? 0 : app.math.add(pipeline_amount, model.get("pipeline_amount"));
+            if(!_.isUndefined(mPipeline_amount)) {
+                pipeline_amount = app.math.add(pipeline_amount, mPipeline_amount);
+            }
 
         });
 
