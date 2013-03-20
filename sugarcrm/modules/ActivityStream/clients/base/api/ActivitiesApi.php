@@ -8,9 +8,11 @@ class ActivitiesApi extends SugarListApi
     public function registerApiRest()
     {
         return array(
+            // TODO: Look into removing this method. We shouldn't need this, but
+            // it's here to prevent breaking stuff before SugarCon 2013.
             'record_activities' => array(
                 'reqType' => 'GET',
-                'path' => array('<module>','?', 'Activities'),
+                'path' => array('<module>','?', 'link', 'activities'),
                 'pathVars' => array('module','record', ''),
                 'method' => 'getRecordActivities',
                 'shortHelp' => 'This method retrieves a record\'s activities',
@@ -181,24 +183,26 @@ class ActivitiesApi extends SugarListApi
         $query->joinTable('users', array('joinType' => 'INNER'))
             ->on()->equalsField('activities.created_by', 'users.id');
 
+        $join = $query->joinTable('activities_users', array('joinType' => 'INNER', 'linkName' => 'activities_users'))
+            ->on()->equalsField("activities_users.activity_id", 'activities.id')
+            ->equals("activities_users.deleted", 0);
+
         if (!$record || !$record->id) {
             // Join with cached list of activities to show.
             $columns[] = 'activities_users.fields';
-            $query->joinTable('activities_users', array('joinType' => 'INNER', 'linkName' => 'activities_users'))
-                ->on()->equalsField("activities_users.activity_id", 'activities.id')
-                ->equals("activities_users.deleted", 0)
-                ->queryOr()->equals('activities_users.user_id', $api->user->id)
-                ->queryAnd()->equals('activities.activity_type', 'post')
-                ->queryAnd()->isNull('activities_users.user_id');
-            // The comment below shows the equivalent of the join above in SQL.
-            //  INNER JOIN activities_users ON (activities_users.activity_id = activities.id AND activities_users.deleted = 0 AND  (activities_users.user_id = 'seed_max_id' OR  (activities.activity_type = 'post' AND  (activities_users.user_id IS NULL))))
-        }
-
-        // If we have a relevant bean, we add our where condition.
-        if ($record) {
-            $query->where()->equals('activities.parent_type', $record->module_name);
+            $join = $join->queryOr();
+            $join->queryAnd()->equals('activities_users.parent_type', 'Teams')
+                ->equals('activities_users.parent_id', 1);
+            $join->queryAnd()->equals('activities_users.parent_type', 'Users')
+                ->equals('activities_users.parent_id', $api->user->id);
+            if ($record) {
+                $query->where()->equals('activities.parent_type', $record->module_name);
+            }
+        } else {
+            // If we have a relevant bean, we add our where condition.
+            $query->where()->equals('activities_users.parent_type', $record->module_name);
             if ($record->id) {
-                $query->where()->equals('activities.parent_id', $record->id);
+                $query->where()->equals('activities_users.parent_id', $record->id);
             }
         }
 

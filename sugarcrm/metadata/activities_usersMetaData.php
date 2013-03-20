@@ -10,13 +10,6 @@ $dictionary['activities_users'] = array(
             'required' => true,
         ),
 
-        'user_id' => array(
-            'name' => 'user_id',
-            'type' => 'id',
-            'len' => 36,
-            'required' => false,
-        ),
-
         'activity_id' => array(
             'name' => 'activity_id',
             'type' => 'id',
@@ -43,11 +36,6 @@ $dictionary['activities_users'] = array(
             'required' => true,
         ),
 
-        'activity_date' => array(
-            'name' => 'activity_date',
-            'type' => 'datetime',
-        ),
-
         'deleted' => array (
             'name' => 'deleted',
             'vname' => 'LBL_DELETED',
@@ -65,11 +53,6 @@ $dictionary['activities_users'] = array(
             'name' => 'activities_records',
             'type' => 'index',
             'fields' => array('parent_type', 'parent_id'),
-        ),
-        array(
-            'name' => 'activities_users',
-            'type' => 'index',
-            'fields' => array('user_id'),
         ),
     ),
 
