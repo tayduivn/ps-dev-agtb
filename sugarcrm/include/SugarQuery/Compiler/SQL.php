@@ -234,6 +234,17 @@ class SugarQuery_Compiler_SQL
         foreach ($order_by AS $order) {
             list($field, $direction) = $order;
             $field = $this->canonicalizeFieldName($field);
+            $defs = $this->getFieldVardef($field);
+            if(empty($defs)) {
+                $GLOBALS['log']->error("Could not find definition for field $field, skipping ORDER BY");
+                continue;
+            } else {
+                if(!empty($defs['sort_on'])) {
+                    $field = $this->canonicalizeFieldName($defs['sort_on']);
+                } else if(!empty($defs['source']) && $defs['source'] == 'non-db') {
+                    $GLOBALS['log']->error("Could not sort on non-db field $field, skipping ORDER BY");
+                }
+            }
             if(strcasecmp($direction, "ASC") !== 0) {
                 $direction = "DESC";
             }
@@ -281,6 +292,11 @@ class SugarQuery_Compiler_SQL
         return $this->table_beans[$table_name];
     }
 
+    /**
+     * Bring field name to canonical form of table_name.field_name
+     * @param string $field
+     * @return string
+     */
     protected function canonicalizeFieldName($field)
     {
         /**
@@ -306,7 +322,26 @@ class SugarQuery_Compiler_SQL
        	return "{$table_name}.{$field}";
     }
 
+    /**
+     * Get vardef for the field in the query
+     * @param string $field
+     * @return array|null
+     */
+    protected function getFieldVardef($field)
+    {
+        $bean = $this->from_bean;
+        if (strstr($field, '.')) {
+        	list($table_name, $field) = explode('.', $field);
+        	if ($table_name != $bean->getTableName()) {
+        		$bean = $this->getTableBean($table_name);
+        	}
+        }
 
+        if(!empty($bean) && !empty($bean->field_defs[$field])) {
+            return $bean->field_defs[$field];
+        }
+        return null;
+    }
 
     /**
      * @param $field
