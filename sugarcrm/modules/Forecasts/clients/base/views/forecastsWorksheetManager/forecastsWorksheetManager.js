@@ -696,7 +696,7 @@
         this.collection.forEach(function(model) {
             var base_rate = parseFloat(model.get('base_rate')),
                 mPipeline_opp_count = model.get("pipeline_opp_count"),
-                mPipeline_amount = model.get("pipeline_amount");
+                mPipeline_amount = model.get("pipeline_amount"),
                 mOpp_count = model.get("opp_count");
 
             quota += app.currency.convertWithRate(model.get('quota'), base_rate);
