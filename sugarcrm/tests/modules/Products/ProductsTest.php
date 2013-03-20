@@ -838,7 +838,3 @@ class MockProduct extends Product
         return parent::setAccountIdForOpportunity($oppId);
     }
 }
-
-class MockOpportunity extends Opportunity {
-
-}

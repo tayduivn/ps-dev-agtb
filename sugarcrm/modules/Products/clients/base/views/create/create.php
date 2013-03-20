@@ -94,7 +94,6 @@ $viewdefs['Products']['base']['view']['create'] = array(
                 'opportunity_name',
                 array(
                     'name' => 'account_name',
-                    'readonly' => true,
                 ),
                 'sales_stage',
                 'probability',
@@ -105,7 +104,10 @@ $viewdefs['Products']['base']['view']['create'] = array(
                 ),
                 array(
                     'name' => 'commit_stage',
-                    'span' => 12
+                    'span' => 6
+                ),
+                array(
+                    'span' => 6
                 ),
                 'product_template_name',
                 array(
@@ -114,10 +116,10 @@ $viewdefs['Products']['base']['view']['create'] = array(
                 ),
                 'quantity',
                 array(
-                    'name' => 'cost_price',
+                    'name' => 'discount_price',
                     'readonly' => true
                 ),
-                'discount_price',
+                'discount_amount',
                 array(
                     'name' => 'product_line_item_amount',
                     'type' => 'currency',
@@ -168,6 +170,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'base_rate_field' => 'base_rate',
                 ),
                 'next_step',
+                'product_type',
                 'lead_source',
                 'campaign_name',
                 'assigned_user_name',
@@ -177,7 +180,6 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'name' => 'team_name',
                 ),
                 //END SUGARCRM flav=pro ONLY
-                'product_type',
                 array(
                     'name' => 'description',
                     'span' => 12
@@ -186,12 +188,10 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'name' => 'list_price',
                     'readonly' => true
                 ),
-                /*
                 array(
                     'name' => 'cost_price',
                     'readonly' => true
                 ),
-                */
                 array(
                     'name' => 'quote_name',
                     'label' => 'LBL_ASSOCIATED_QUOTE',
