@@ -52,6 +52,8 @@ RedirectMatch 403 {$ignoreCase}/+files\.md5\$
 //BEGIN SUGARCRM flav=ent ONLY
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
 //END SUGARCRM flav=ent ONLY
+    RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public\.json$ api/rest.php/v10/lang/public/$1?platform=$2 [L,QSA]
+    RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)\.json$ api/rest.php/v10/lang/$1?platform=$2 [L,QSA]
 </IfModule>
 # END SUGARCRM RESTRICTIONS
 EOQ;

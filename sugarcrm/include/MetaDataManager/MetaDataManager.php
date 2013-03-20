@@ -502,7 +502,7 @@ class MetaDataManager {
     public function getModuleStrings( $moduleName, $language = 'en_us' ) {
         // Bug 58174 - Escaped labels are sent to the client escaped
         // TODO: SC-751, fix the way languages merge
-        $strings = return_module_language($language,$moduleName,true);
+        $strings = return_module_language($language,$moduleName);
         if (is_array($strings)) {
             foreach ($strings as $k => $v) {
                 $strings[$k] = $this->decodeStrings($v);
@@ -681,7 +681,6 @@ class MetaDataManager {
     public function getServerInfo() {
         global $sugar_flavor;
         global $sugar_version;
-        global $timedate;
 
         $data['flavor'] = $sugar_flavor;
         $data['version'] = $sugar_version;
@@ -699,11 +698,6 @@ class MetaDataManager {
             );
         }
         //END SUGARCRM flav=pro ONLY
-
-        //Always return dates in ISO-8601
-        $date = new SugarDateTime();
-        $data['server_time'] = $timedate->asIso($date, $GLOBALS['current_user']);
-        $data['gmt_time'] = gmdate('Y-m-d\TH:i:s') . '+0000';
 
         return $data;
     }
