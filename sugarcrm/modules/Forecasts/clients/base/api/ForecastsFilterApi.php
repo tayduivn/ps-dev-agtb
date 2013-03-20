@@ -50,6 +50,34 @@ class ForecastsFilterApi extends FilterApi
     }
 
     /**
+     * forecastsCommitted -- only left in for testing purposes
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function forecastsCommitted($api, $args)
+    {
+
+        // if no timeperiod is set, just set it to false, and the current time period will be set
+        if (!isset($args['timeperiod_id'])) {
+            $args['timeperiod_id'] = false;
+        }
+        // if no user id is set, just set it to false so it will use the default user
+        if (!isset($args['user_id'])) {
+            $args['user_id'] = false;
+        }
+        // make sure the type arg is set to prevent notices
+        if (!isset($args['forecast_type'])) {
+            $args['forecast_type'] = false;
+        }
+
+        $args['filter'] = $this->createFilter($api, $args['user_id'], $args['timeperiod_id'], $args['forecast_type']);
+
+        return parent::filterList($api, $args);
+    }
+
+    /**
      * Forecast Worksheet Filter API Handler
      *
      * @param ServiceBase $api
