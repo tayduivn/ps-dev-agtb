@@ -31,6 +31,12 @@
         this.events = _.extend({}, this.events, options.def.events, {
             'click .disabled' : 'preventClick'
         });
+        var origRender = this._render;
+        this._render = _.debounce(function(){
+            //Because of throttle, calls to render may come in after dispose has been called.
+            if (this.disposed) return;
+            return origRender.call(this);
+        }, 100);
         app.view.Field.prototype.initialize.call(this, options);
     },
     _render:function(){

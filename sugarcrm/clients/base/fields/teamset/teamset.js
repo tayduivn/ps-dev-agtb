@@ -171,7 +171,7 @@
         var index = $(evt.currentTarget).data('index');
 
         //Don't allow setting to primary until user's selected an actual team (SP-530)
-        if (!this.value[index].id) {
+        if (!this.value[index] || !this.value[index].id) {
             return;
         }
         this.$(".btn[name=primary]").removeClass("active");
