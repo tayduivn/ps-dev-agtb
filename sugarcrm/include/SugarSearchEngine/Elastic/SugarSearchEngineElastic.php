@@ -600,10 +600,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $ownerTermFilter = $this->getOwnerTermFilter();
                 $moduleFilter->addMust($ownerTermFilter);
             }
+            
+            // add visibility
+        	$moduleFilter = $seed->addSseVisibilityFilter('Elastic', $moduleFilter);
         }
-        
-        // add visibility
-        $moduleFilter = $seed->addSseVisibilityFilter('Elastic', $moduleFilter);
         
         return $moduleFilter;
     }
