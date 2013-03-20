@@ -26,4 +26,4 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#if def.link}}<a href="#{{buildRoute context model def.route.action def.route.options}}">{{value}}</a>{{else}}{{value}}{{/if}}
+{{#if def.link}}<a href="#{{href}}">{{value}}</a>{{else}}{{value}}{{/if}}

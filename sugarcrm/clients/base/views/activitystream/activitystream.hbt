@@ -54,11 +54,5 @@
     <a class="btn btn-mini preview" rel="tooltip" data-title="Preview" data-original-title="" data-module="{{parent_type}}" data-id="{{parent_id}}">
         <i class="icon-eye-open"></i>
     </a>
-    <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
-        <i class="icon-caret-down"></i>
-    </a>
-    <ul class="dropdown-menu pull-right">
-        <li><a>Delete</a></li>
-    </ul>
 </div>
 {{/with}}

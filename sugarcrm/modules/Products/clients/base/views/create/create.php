@@ -120,23 +120,10 @@ $viewdefs['Products']['base']['view']['create'] = array(
                 'discount_price',
                 array(
                     'name' => 'product_line_item_amount',
-                    'type' => 'text', // change to currency with sugarlogic
+                    'type' => 'currency',
                     'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
                     'readonly' => true
                 ),
-                /*
-                array(
-                    'name' => 'discount_amount',
-                    'type' => 'currency',
-                    'related_fields' => array(
-                        'discount_amount',
-                        'currency_id',
-                        'base_rate',
-                    ),
-                    'currency_field' => 'currency_id',
-                    'base_rate_field' => 'base_rate',
-                ),
-                */
                 array(
                     'name' => 'likely_case',
                     'required' => true,

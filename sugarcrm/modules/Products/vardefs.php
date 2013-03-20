@@ -68,6 +68,16 @@ $dictionary['Product'] = array(
             'audited' => true,
             'comment' => 'Contact this product is associated with'
         ),
+        'product_line_item_amount' => array(
+            'name' => 'product_line_item_amount',
+            'source' => 'non-db',
+            'formula' => 'subtract(multiply(ifElse(isNumeric($discount_price), $discount_price, 0), ifElse(isNumeric($quantity), $quantity, 1)), ifElse(isNumeric($discount_amount), $discount_amount, 0))',
+            'calculated' => true,
+            'enforced' => true,
+            'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
+            'reportable' => false,
+            'type' => 'currency'
+        ),
         'contact_name' =>  array(
             'name' => 'contact_name',
             'rname' => 'last_name',

@@ -210,14 +210,13 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @depends testSaveManagerDraft
      * @group forecasts
+     * @return ForecastManagerWorksheet
      */
     public function testCommitManagerHasCommittedUserRow()
     {
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $worksheet->commitManagerForecast($GLOBALS['current_user'], self::$timeperiod->id);
-
-
         $ret = $worksheet->retrieve_by_string_fields(
             array(
                 'assigned_user_id' => $GLOBALS['current_user']->id,
@@ -231,13 +230,15 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(self::$user->id, $worksheet->user_id);
         $this->assertEquals($GLOBALS['current_user']->id, $worksheet->assigned_user_id);
         $this->assertEquals(0, $worksheet->draft);
+
+        return $worksheet;
     }
 
     /**
      * @depends testCommitManagerHasCommittedUserRow
      * @group forecasts
      */
-    public function testCommitRecalculatesManagerDirectQuota()
+    public function testCommitRecalculatesManagerDirectQuota(ForecastManagerWorksheet $worksheet)
     {
         // get the direct quota for the manager
         /* @var $quota Quota */
@@ -261,8 +262,9 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      * @depends testCommitManagerHasCommittedUserRow
      * @group forecasts
      */
-    public function testUserCommitsUpdatesMangerDraftAndUpdatesCommittedVersion()
+    public function testUserCommitsUpdatesMangerDraftAndUpdatesCommittedVersion(ForecastManagerWorksheet $mgr_worksheet)
     {
+        sleep(2); // we need to wait 2 seconds to get the off set that we need.
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $forecast = self::$forecast->toArray();
@@ -283,6 +285,31 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
         // just make sure that the best case on the committed version still equals the original value
         $this->assertEquals($forecast['best_case'], $worksheet->best_case);
+
+        // make sure that the date_modified didn't get updated since a rep commited and not a manager
+        // see ticket SFA-787
+        $this->assertEquals($mgr_worksheet->date_modified, $worksheet->date_modified);
+    }
+
+    /**
+     * @depends testCommitManagerHasCommittedUserRow
+     * @group forecasts
+     */
+    public function testManagerShowHistoryLogIsTrue()
+    {
+        // load up the draft record for the manager
+        /* @var $worksheet ForecastManagerWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet->retrieve_by_string_fields(
+            array(
+                'assigned_user_id' => $GLOBALS['current_user']->id,
+                'user_id' => self::$user->id,
+                'draft' => 1,
+                'deleted' => 0
+            )
+        );
+
+        $this->assertEquals(1, $worksheet->show_history_log);
     }
 
     /**

@@ -46,6 +46,7 @@ class ForecastManagerWorksheet extends SugarBean
     public $worst_case_adjusted;
     public $show_history_log = 0;
     public $draft = 0;
+    public $date_modified;
     public $object_name = 'ForecastManagerWorksheet';
     public $module_name = 'ForecastManagerWorksheets';
     public $module_dir = 'Forecasts';
@@ -288,6 +289,8 @@ class ForecastManagerWorksheet extends SugarBean
 
         $this->copyValues($copyMap, $worksheet->toArray(), $committed_worksheet);
 
+        $committed_worksheet->update_date_modified = false;
+        
         $committed_worksheet->save();
 
         return true;
@@ -359,9 +362,8 @@ class ForecastManagerWorksheet extends SugarBean
         } else {
             $bean = $beans[0];
             $committed_date = $this->db->fromConvert($bean["date_modified"], "datetime");
-            $timedate = TimeDate::getInstance();
             $this->show_history_log = intval(
-                strtotime($committed_date) < strtotime($timedate->to_db($this->date_modified))
+                strtotime($committed_date) < strtotime($this->date_modified)
             );
         }
     }
@@ -628,7 +630,4 @@ class ForecastManagerWorksheet extends SugarBean
 
         return $return;
     }
-
-
 }
-

@@ -59,8 +59,6 @@
     //Store default and available(+visible) field names
     _fields: {},
 
-    _dataLoaded: false,
-
     initialize: function(options) {
         //Grab the list of fields to display from the main list view (assuming initialize is being called from a subclass)
         var listViewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {}));
@@ -76,12 +74,9 @@
 
         this.attachEvents();
 
-        // Dashboard layout injects shared context with limit: 5. 
+        // Dashboard layout injects shared context with limit: 5.
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.has('limit') ? this.context.get('limit') : null;
-        this.context.get("collection").once("reset", function(){
-            this._dataLoaded = true;
-        }, this);
     },
 
     /**

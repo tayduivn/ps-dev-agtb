@@ -945,7 +945,7 @@ class Product extends SugarBean
             $this->mft_part_num = $pt->mft_part_num;
             $this->list_price = $pt->list_price;
             $this->cost_price = $pt->cost_price;
-            $this->discount_price = $pt->discount_price;
+            $this->discount_price = $pt->discount_price; // discount_price = unit price on the front end...
             $this->list_usdollar = $pt->list_usdollar;
             $this->cost_usdollar = $pt->cost_usdollar;
             $this->discount_usdollar = $pt->discount_usdollar;

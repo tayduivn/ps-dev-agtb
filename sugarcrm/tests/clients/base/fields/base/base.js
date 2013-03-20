@@ -1,19 +1,28 @@
 describe("Base.Field.Base", function() {
-    var app, field, Address;
+    var app, field, Address, sinonSandbox, buildRouteStub, oRouter;
 
     beforeEach(function() {
         app = SugarTest.app;
         app.view.Field.prototype._renderHtml = function() {};
+        sinonSandbox = sinon.sandbox.create();
+        // Workaround because router not defined yet
+        oRouter = SugarTest.app.router;
+        SugarTest.app.router = {buildRoute: function(){}};
+        buildRouteStub = sinonSandbox.stub(SugarTest.app.router, 'buildRoute', function(module, id, action, params) {
+            return module+'/'+id;
+        });
     });
 
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
+        SugarTest.app.router = oRouter;
         delete Handlebars.templates;
         field.model = null;
         field._loadTemplate = null;
         field = null;
         Address = null;
+        sinonSandbox.restore();
     });
 
     it('should bind custom event handlers', function() {
@@ -49,5 +58,34 @@ describe("Base.Field.Base", function() {
         expect(field.unformat(" abc   ")).toEqual("abc");
         expect(field.unformat(123)).toEqual(123);
         expect(field.unformat({})).toEqual({});
+    });
+    it('should create bwc if defined on module', function() {
+        var getModuleStub = sinonSandbox.stub(app.metadata, 'getModule', function() {
+            return {isBwcEnabled: true};
+        });
+        var def = { link: true };
+        field = SugarTest.createField("base","text", "base", "list", def);
+        field.model = new Backbone.Model({id: '12345', _module:"Quotes"});
+        field._render();
+        expect(getModuleStub).toHaveBeenCalled();
+        expect(field.href).toEqual("#bwc/index.php?module=Quotes&action=DetailView&record=12345");
+    });
+    it('should create normal sidecar if no bwc', function() {
+        var getModuleStub = sinonSandbox.stub(app.metadata, 'getModule', function() {
+            return {isBwcEnabled: false};
+        });
+        var bwcBuildRouteStub = sinonSandbox.stub(app.bwc, 'buildRoute');
+        var def = {
+            link: true,
+            route: {
+                action: 'myaction',
+                options: {foo:'foo',bar:'bar'}
+            }
+        };
+        field = SugarTest.createField("base","text", "base", "list", def);
+        field.model = new Backbone.Model({id: '12345', _module:"Quotes"});
+        field._render();
+        expect(buildRouteStub).toHaveBeenCalledWith('Quotes', '12345', def.route.action, def.route.options);
+        expect(bwcBuildRouteStub).not.toHaveBeenCalled();
     });
 });
