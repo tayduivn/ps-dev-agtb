@@ -43,7 +43,10 @@ $viewdefs['Products']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true
                 ),
-                'account_name',
+                array(
+                    'name' => 'account_name',
+                    'readonly' => true
+                ),
                 'status',
                 'sales_stage',
                 'sales_status',
