@@ -3890,6 +3890,12 @@ $app_list_strings['interactions_options'] = array (
     'custom' => 'My Custom Filter',
 );
 
+$app_list_strings['activity_user_options'] = array (
+    '7' => 'Last 7 Days',
+    '30' => 'Last 30 Days',
+    '90' => 'Last Quarter',
+);
+
 $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
 $app_list_strings['moduleList']['EmailAddresses'] = 'Email Address';
