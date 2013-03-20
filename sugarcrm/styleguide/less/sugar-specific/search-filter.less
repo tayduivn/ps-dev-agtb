@@ -24,11 +24,15 @@
     div.choice-filter {
       .border-radius(0 10px 10px 0);
       padding: 4px 6px 4px 4px;
-      display: inline;
+      display: inline-block;
+      height: 13px;
       white-space: nowrap;
+      margin-top: 4px;
       margin-left: -6px;
       font-size: @fontSizeSmall;
       font-weight: bold;
+      line-height: 14px;
+      vertical-align: top;
     }
     div.choice-related {
       background: darken(@grayLighter, 5%);
@@ -38,7 +42,6 @@
     div.choice-filter {
       background: @dropdownLinkBackgroundHover;
       color: @dropdownLinkColorHover;
-      line-height: 30px;
     }
 
     // select2 filter pills
