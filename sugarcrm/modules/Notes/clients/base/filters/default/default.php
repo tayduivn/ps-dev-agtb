@@ -1,7 +1,7 @@
 <?php
 
 $viewdefs['Notes']['base']['filter']['default'] = array(
-    'default_filter' => 'my_notes',
+    'default_filter' => 'all_records',
     'filters' => array(
         array(
             'id' => 'my_notes',

@@ -167,9 +167,6 @@
 
             model.set("id", id);
             app.events.trigger("preview:render", model, collection, true, this.cid);
-        } else {
-            app.alert.show("no_access", {level: "error", title: "Permission Denied",
-                messages: "Sorry, you do not have access to preview this specific record.", autoClose: true});
         }
 
         event.preventDefault();
@@ -195,8 +192,12 @@
         var comments = this.model.get("comments");
 
         if(this.model.get("activity_type") === "post") {
-            // TODO: Figure out a way to fall back to generic avatar if the user hasn't uploaded an avatar
-            this.model.set("picture_url" , app.config.siteUrl + "/styleguide/assets/img/profile.png");
+            var picture = (this.model.get("picture")) ? app.api.buildFileURL({
+                module: "Users",
+                id: this.model.get("created_by"),
+                field: "picture"
+            }) : app.config.siteUrl + "/styleguide/assets/img/profile.png";
+            this.model.set("picture_url", picture);
         }
 
         if(comments) {

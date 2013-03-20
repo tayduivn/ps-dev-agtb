@@ -37,20 +37,25 @@
             vcardFile = $('[name=vcard_import]');
 
         if (_.isEmpty(vcardFile.val())) {
-            app.alert.show('error_validation_vcard', {level:'error', title: app.lang.getAppString('LBL_EMPTY_VCARD'), messages: app.lang.getAppString('LBL_EMPTY_VCARD'), autoClose: true});
+            app.alert.show('error_validation_vcard', {
+                level:'error',
+                messages: 'LBL_EMPTY_VCARD',
+                autoClose: false
+            });
+        } else {
+            app.file.checkFileFieldsAndProcessUpload(self, {
+                    success: function (data) {
+                        var route = app.router.buildRoute(self.module, data.vcard_import);
+                        app.router.navigate(route, {trigger: true});
+                        app.alert.show('vcard-import-saved', {
+                            level: 'success',
+                            messages: app.lang.get('LBL_IMPORT_VCARD_SUCCESS', self.module),
+                            autoClose: true
+                        });
+                    }
+                },
+                {deleteIfFails: true, htmlJsonFormat: false}
+            );
         }
-
-        app.file.checkFileFieldsAndProcessUpload(self, {
-            success: function (data) {
-                var route = app.router.buildRoute(self.module, data.vcard_import, 'record');
-                app.router.navigate(route, {trigger: true});
-                app.alert.show('vcard-import-saved', {
-                    level: 'success',
-                    messages: app.lang.get('LBL_IMPORT_VCARD_SUCCESS', self.module),
-                    autoClose: true
-                });
-            }
-        },
-        {deleteIfFails: true, htmlJsonFormat: false});
     }
 })

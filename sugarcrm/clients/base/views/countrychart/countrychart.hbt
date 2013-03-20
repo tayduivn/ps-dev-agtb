@@ -1,5 +1,5 @@
 <div class="block">
-  <div><svg id="{{cid}}"></svg></div>
+  <div><div class="loading">{{str "LBL_LOADING"}}</div><svg id="{{cid}}"></svg></div>
 </div>
 <style>
     .block path {

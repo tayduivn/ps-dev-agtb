@@ -112,7 +112,11 @@
 
                     app.drawer.open({
                         layout:'vcard-import'
-                    });
+                    }, _.bind(function () {
+                        //if drawer is closed (cancel), just put the URL back to default view for module
+                        var route = app.router.buildRoute(module);
+                        app.router.navigate(route, {replace: true});
+                    }, this));
                 }
             },
             {

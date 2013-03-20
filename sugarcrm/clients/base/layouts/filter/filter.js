@@ -9,9 +9,11 @@
     }),
 
     initialize: function(opts) {
+        app.view.layouts.FilterLayout.loadedModules = app.view.layouts.FilterLayout.loadedModules || {};
         app.view.Layout.prototype.initialize.call(this, opts);
 
-        this.layoutType = this.context.get('layout') || app.controller.context.get('layout');
+        this.layoutType = this.context.get('layout') || this.context.get('layoutName') || app.controller.context.get('layout');
+
         this.aclToCheck = (this.layoutType === 'record')? 'view' : 'list';
         this.filters = app.data.createBeanCollection('Filters');
 
@@ -20,6 +22,9 @@
         if (this.layoutType === 'records' && this.module !== 'Home') {
             this.context.set('skipFetch', true);
         } else {
+            if(this.context.parent) {
+                this.context.parent.set('skipFetch', true);
+            }
             this.context.on('context:child:add', function(childCtx) {
                 if (childCtx.get('link')) {
                     // We're in a subpanel.
@@ -37,19 +42,19 @@
                     origfilterDef = ctxCollection.filterDef || [],
                     filterDef = self.getFilterDef(origfilterDef, query, ctx),
                     options = {
-                        // Double bang for boolean coercion.
-                        relate: !!ctx.get('link'),
-                        fields: ctx.get("fields") ? ctx.get("fields") : [],
                         success: function() {
                             // Close the preview pane to ensure that the preview
                             // collection is in sync with the list collection.
                             app.events.trigger('preview:close');
-                        }
-                    };
+                    }};
 
-                options = _.extend(options, ctx.get('collectionOptions') || {});
                 ctxCollection.filterDef = filterDef;
-                ctxCollection.fetch(options);
+
+                options = _.extend(options, ctx.get('collectionOptions'));
+
+                ctx.resetLoadFlag(false);
+                ctx.set('skipFetch', false);
+                ctx.loadData(options);
                 ctxCollection.filterDef = origfilterDef;
             });
         }, this);
@@ -69,8 +74,13 @@
         this.on('filter:get', this.initializeFilterState, this);
 
         this.on('filter:change:filter', function(id) {
+            if (id && id != 'create') {
+                app.cache.set("filters:last:" + this.module + ":" + this.layoutType, id);
+            }
             var filter = this.filters.get(id) || this.emptyFilter,
                 ctxList = this.getRelevantContextList();
+
+
             _.each(ctxList, function(ctx) {
                 ctx.get('collection').filterDef = filter.get('filter_definition');
             });
@@ -83,6 +93,14 @@
             var link = (this.layoutType === 'record' && !this.showingActivities) ? 'all_modules' : null;
             this.trigger("filter:render:module");
             this.trigger("filter:change:module", module, link);
+        }, this);
+
+        //When a filter is saved, update the cache and set the filter to be the currently used filter
+        this.layout.on('filter:add', function(model){
+            this.filters.add(model);
+            app.cache.set("filters:" + this.module, this.filters.toJSON());
+            app.cache.set("filters:last:" + this.module + ":" + this.layoutType, model.get("id"));
+            this.initializeFilterState();
         }, this);
     },
 
@@ -97,11 +115,15 @@
             if (this.layoutType === 'records' && this.module !== "Home") {
                 contextList.push(this.context);
             } else {
-                _.each(this.context.children, function(childCtx) {
-                    if (childCtx.get('link') && !childCtx.get('hidden')) {
-                        contextList.push(childCtx);
-                    }
-                });
+                if (this.context.children.length) {
+                    _.each(this.context.children, function(childCtx) {
+                        if (childCtx.get('link') && !childCtx.get('hidden')) {
+                            contextList.push(childCtx);
+                        }
+                    });
+                } else {
+                    contextList.push(this.context.parent);
+                }
             }
         }
         return contextList;
@@ -143,10 +165,10 @@
     initializeFilterState: function(moduleName, linkName) {
         var self = this,
             callback = function(data) {
-                var module = moduleName || self.module,
+                var module = moduleName || (self.showingActivities? "Activities" : self.module),
                     link = linkName || data.link;
 
-                if (!moduleName && self.layoutType === 'record' && link !== 'all_modules') {
+                if (!moduleName && self.layoutType === 'record' && link !== 'all_modules' && !self.showingActivities) {
                     module = app.data.getRelatedModule(module, data.link);
                 }
 
@@ -163,15 +185,18 @@
      * @param  {Function} callback
      */
     getPreviouslyUsedFilter: function(moduleName, callback) {
+        var lastFilter = app.cache.get("filters:last:" + moduleName + ":" + this.layoutType);
+        if (!(this.filters.get(lastFilter)))
+            lastFilter = null;
         // TODO: This is temporary. We need to hook this up to the PreviouslyUsed API.
         if (this.layoutType === 'record' && !this.showingActivities) {
             callback({
-                link: 'all_modules',
-                filter: 'all_records'
+                link: lastFilter || 'all_modules',
+                filter: lastFilter || 'all_records'
             });
         } else {
             callback({
-                filter: null
+                filter: lastFilter || null
             });
         }
     },
@@ -182,16 +207,12 @@
      * @param  {string} defaultId
      */
     getFilters: function(moduleName, defaultId) {
+        var lastFilter = app.cache.get("filters:last:" + moduleName + ":" + this.layoutType);
         var filter = [
             {'created_by': app.user.id},
             {'module_name': moduleName}
-        ], self = this;
-
-        // TODO: Add filtering on subpanel vs. non-subpanel filters here.
-
-        this.filters.fetch({
-            filter: filter,
-            success: function() {
+        ], self = this,
+            callback = function() {
                 var defaultFilterFromMeta,
                     possibleFilters = [],
                     filterMeta = self.getModuleFilterMeta(moduleName);
@@ -212,10 +233,32 @@
                     possibleFilters = _.filter(possibleFilters, self.filters.get, self.filters);
                 }
 
+                if (lastFilter && !(self.filters.get(lastFilter))){
+                    app.cache.cut("filters:last:" + moduleName + ":" + self.layoutType);
+                }
                 self.trigger('filter:render:filter');
-                self.trigger('filter:change:filter', _.first(possibleFilters) || 'all_records');
-            }
-        });
+                self.trigger('filter:change:filter', app.cache.get("filters:last:" + self.module + ":" + self.layoutType) ||  _.first(possibleFilters) || 'all_records');
+            };
+
+        // TODO: Add filtering on subpanel vs. non-subpanel filters here.
+        if (app.view.layouts.FilterLayout.loadedModules[moduleName] && _.isArray(app.cache.get("filters:" + moduleName)))
+        {
+            var filters = app.cache.get("filters:" + moduleName);
+            _.each(filters, function(f){
+                self.filters.add(app.data.createBean("Filters", f));
+            });
+            callback();
+        }
+        else {
+            this.filters.fetch({
+                filter: filter,
+                success:function(){
+                    app.view.layouts.FilterLayout.loadedModules[moduleName] = true;
+                    app.cache.set("filters:" + moduleName, self.filters.toJSON());
+                    callback();
+                }
+            });
+        }
     },
 
     createPanelIsOpen: function() {

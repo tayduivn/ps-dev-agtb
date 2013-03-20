@@ -57,24 +57,9 @@ $viewdefs['Leads']['base']['view']['recordlist'] = array(
             ),
             array(
                 'type' => 'rowaction',
+                'name' => 'lead_convert_button',
                 'icon' => 'icon-edit',
-                'events' => array(
-                    'click' => 'function(e){
-                                    var model = app.data.createBean(this.model.module);
-                                    model.copy(this.model);
-                                    model.set("id", this.model.id);
-
-                                    app.drawer.open({
-                                        layout : "convert",
-                                        context: {
-                                            create: "true",
-                                            module: "Leads",
-                                            leadsModel: model
-                                        }
-                                    });
-
-                                }'
-                ),
+                'event' => 'list:convertrow:fire',
                 'label' => 'LBL_CONVERT_BUTTON_LABEL',
                 'acl_action' => 'edit',
             ),

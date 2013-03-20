@@ -83,7 +83,7 @@ class SmtpMailer extends BaseMailer
 
         } catch (Exception $e) {
             // eat the phpmailerException but use it's message to provide context for the failure
-            $me = new MailerException("Failed to send the email: " . $e->getMessage(), MailerException::FailedToSend);
+            $me = new MailerException($e->getMessage(), MailerException::FailedToSend);
             $GLOBALS["log"]->error($me->getLogMessage());
             $GLOBALS["log"]->info($me->getTraceMessage());
             $GLOBALS["log"]->info(print_r($this->config->toArray(),true));

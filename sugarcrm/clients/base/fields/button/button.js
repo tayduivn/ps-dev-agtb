@@ -32,7 +32,6 @@
             'click .disabled' : 'preventClick'
         });
         app.view.Field.prototype.initialize.call(this, options);
-        this.model.on('data:sync:end', this.render, this);
     },
     _render:function(){
         // buttons use the acl_action and acl_module properties in metadata to denote their action for acls

@@ -74,7 +74,7 @@
 
         this.attachEvents();
 
-        // Dashboard layout injects shared context with limit: 5. 
+        // Dashboard layout injects shared context with limit: 5.
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.has('limit') ? this.context.get('limit') : null;
     },

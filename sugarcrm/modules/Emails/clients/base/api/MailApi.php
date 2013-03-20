@@ -28,19 +28,19 @@ require_once('modules/Emails/MailRecord.php');
 class MailApi extends ModuleApi
 {
     public static $fields = array (
-        "email_config"      => null,
-        "to_addresses"      => null,
-        "cc_addresses"      => null,
-        "bcc_addresses"     => null,
+        "email_config"      => '',
+        "to_addresses"      => array(),
+        "cc_addresses"      => array(),
+        "bcc_addresses"     => array(),
 
-        "attachments"       => null,
-        "documents"         => null,
-        "teams"             => null,
-        "related"           => null,
+        "attachments"       => array(),
+        "documents"         => array(),
+        "teams"             => array(),
+        "related"           => array(),
 
-        "subject"           => null,
-        "html_body"         => null,
-        "text_body"         => null,
+        "subject"           => '',
+        "html_body"         => '',
+        "text_body"         => '',
 
         "status"            => "",
     );
@@ -183,6 +183,9 @@ class MailApi extends ModuleApi
         $mailRecord->text_body    = $args["text_body"];
 
         if ($args["status"] == "ready") {
+            if (empty($args["email_config"])) {
+                throw new SugarApiExceptionRequestMethodFailure("No mail configuration specified.");
+            }
             $result = $mailRecord->send();
         }
         else if ($args["status"] == "draft") {

@@ -1,0 +1,24 @@
+<div class="dashlet-options">
+    <div class="row-fluid">
+        <div class="span6">
+            {{#each this.meta.buttons}}
+                {{field ../this ../this.model "edit"}}
+            {{/each}}
+        </div>
+    </div>
+</div>
+<div class="twitter-widget">
+    {{#each this.collection.models}}
+    <div class="news-article">
+        <div class="row-fluid header">
+            <div class="span12">
+                <img src="{{getFieldValue this "pictureUrl"}}" class="avatar">
+                <a href="#Users/{{getFieldValue this "user_id"}}">{{getFieldValue this "name"}}</a>
+                <h5>
+                    <icon class="{{getFieldValue this "icon"}} icon-large"></icon> {{getFieldValue this "label"}}
+                </h5>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>

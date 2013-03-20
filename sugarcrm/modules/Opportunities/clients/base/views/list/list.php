@@ -65,12 +65,21 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                     'default' => true,
                 ),
                 'sales_status',
-                array (
+                array(
                     'name' => 'amount',
-                    'width' => 10,
+                    'type' => 'currency',
                     'label' => 'LBL_LIST_AMOUNT',
-                    'enabled' => true,
-                    'default' => true,
+                    'related_fields' => array(
+                        'amount',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    'readonly' => true,
+                    //END SUGARCRM flav=ent ONLY
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                    'width' => 10
                 ),
                 array(
                     'name' => 'opportunity_type',

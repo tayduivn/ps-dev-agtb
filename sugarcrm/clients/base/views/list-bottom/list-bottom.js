@@ -36,11 +36,15 @@
     events: {
         'click [data-action="show-more"]': 'showMoreRecords'
     },
+    _dataFetched : false,
 
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
 
         this.layout.bind("hide", this.toggleVisibility, this);
+        this.context.get("collection").once("reset", function(){
+            this._dataFetched = true;
+        }, this);
     },
 
     _renderHtml: function() {

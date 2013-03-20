@@ -56,15 +56,14 @@ describe("Tasks CloseButton", function() {
         field.model.isDirty = function() {return true;};
         field.model.revertAttributes = function() {};
         var saveSpy = sinon.stub(field.model,'save', function(dummy, callbacks) {callbacks.error();});
-        var dirtySpy = sinon.spy(field.model,'isDirty');
         var revertSpy = sinon.spy(field.model,'revertAttributes');
 
         field._close(false);
 
         expect(saveSpy).toHaveBeenCalled();
-        expect(dirtySpy).toHaveBeenCalled();
         expect(revertSpy).toHaveBeenCalled();
 
-        field.model.save.restore();
+        saveSpy.restore();
+        revertSpy.restore();
     });
 });

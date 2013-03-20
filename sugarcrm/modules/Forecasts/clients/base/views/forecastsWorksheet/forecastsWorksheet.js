@@ -184,7 +184,7 @@
      * @private
      */
     _dispose: function() {
-        $(window).off();
+        $(window).off("beforeUnload");
         app.view.Component.prototype._dispose.call(this);
     },
 

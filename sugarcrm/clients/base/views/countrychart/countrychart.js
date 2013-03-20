@@ -53,11 +53,12 @@
                 transform += 'translate(' + -bbox.tl_x*scale_factor + ',' + -bbox.tl_y*scale_factor + ') ';
                 transform += 'scale(' + scale_factor + ') ';
                 svg.attr('transform', transform);
+                self.$(".loading").hide();
             });
         }
     },
-
     loadData: function(options) {
+        options = options || {};
         var self = this,
             url = app.api.buildURL('Accounts/by_country');
 
@@ -73,7 +74,6 @@
             complete: options ? options.complete : null
         });
     },
-
     _checkCountry: function(country) {
         if (country == "USA") {
             country = "United States of America";
