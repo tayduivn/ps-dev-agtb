@@ -137,7 +137,6 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
         }
 
         // generate list view query based on selected fields
-        xxx_dump("indexer", $addEmailJoin);
         $ftsQuery = $bean->create_new_list_query(
             "",         // order_by 
             "",         // where 
