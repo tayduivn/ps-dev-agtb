@@ -264,6 +264,13 @@ $mod_strings = array (
 	'LBL_BASIC_SEARCH' => 'Basic Search' /*for 508 compliance fix*/,
 	'LBL_ADVANCED_SEARCH' => 'Advanced Search' /*for 508 compliance fix*/,
 
+  'LBL_MOST_ACTIVE_COLLEAGUES' => 'Most Active Colleagues',
+  'LBL_MOST_ACTIVE_COLLEAGUES_DESC' => 'It displays internal users who are most active',
+  'LBL_MOST_CALLS_MADE' => '{{count}} calls made',
+  'LBL_MOST_EMAILS_SENT' => '{{count}} emails sent',
+  'LBL_MOST_EMAILS_RECEIVED' => '{{count}} emails received',
+  'LBL_MOST_MEETING_HELD' => '{{count}} meetings held',
+
 );
 
 
