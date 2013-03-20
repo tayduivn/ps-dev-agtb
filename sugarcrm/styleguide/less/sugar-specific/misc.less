@@ -47,10 +47,6 @@
   }
 }
 
-.commented .avatar {
-  margin-right: 10px !important;
-}
-
 //from nutmeg. to be removed??
 .content {
   //padding-left: 72px;
@@ -128,10 +124,6 @@ img.pull-left {
 
 .browser-support {
   max-width: 100%;
-}
-
-.commented .more {
-  text-decoration: none !important;
 }
 
 /* Make tables spaced out a bit more */
@@ -266,7 +258,14 @@ hr.soften {
 }
 
 .filter.controls {margin-left: 0 !important;}
-
+.subpanel {
+    #gradient > .vertical(@white, @grayLighter);
+    border-top: 1px solid @white;
+    border-bottom: 1px solid @grayLighter;
+}
+.subpanel.out {
+  background: @white;
+}
 .subpanel.out .subpanel-list {
   display: none;
 }
@@ -287,9 +286,9 @@ hr.soften {
 }
 
 .subpanel-header .label-module-sm {
-  width: 21px;
+  width: 26px;
   height: 26px;
-  margin: 7px 10px 7px 20px;
+  margin: 7px 10px;
 }
 
 .subpanel-header a.btn {
@@ -297,14 +296,9 @@ hr.soften {
   .box-sizing(border-box);
 }
 
-.results .subpanel .actions {
-  right: 0 !important;
-  margin: -4px 0 -4px 0;
-}
-
 .subpanel-header .btn-toolbar > .btn-group {
-  margin-left: 16px !important;
-  margin-right: 10px !important;
+  margin-left: 16px;
+  margin-right: 10px;
 }
 
 .subpanel tbody {
@@ -316,6 +310,10 @@ hr.soften {
 
 .subpanel .list-view {
   overflow: visible;
+}
+
+.subpanel-controls {
+    margin-top: 7px;
 }
 
 /* BWC layout and views */
@@ -484,4 +482,12 @@ hr.soften {
 
     }
   }
+}
+
+.modal .brand, .thumbnail .brand {
+  background: url('@{baseUrl}/img/sugar-red.png') 50% 50% no-repeat;
+  text-indent: -7000px;
+  margin: 0 auto;
+  width: 220px;
+  height: 42px;
 }
