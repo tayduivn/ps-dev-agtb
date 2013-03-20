@@ -20,7 +20,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM arec Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
+ * $Id: utils.php 56927 2010-06-11 23:19:26Z smalyshev $
  * Description:  Includes generic helper functions used throughout the application.
+ * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
+ * All Rights Reserved.
+ * Contributor(s): ______________________________________..
  ********************************************************************************/
 require_once('include/SugarObjects/SugarConfig.php');
 require_once('include/utils/security_utils.php');
@@ -955,6 +959,7 @@ function safe_map_named($request_var, & $focus, $member_var, $always_copy)
  */
 function return_app_list_strings_language($language)
 {
+	global $app_list_strings;
 	global $sugar_config;
 
 	$cache_key = 'app_list_strings.'.$language;
@@ -966,48 +971,65 @@ function return_app_list_strings_language($language)
 		return $cache_entry;
 	}
 
-    $default_language = $sugar_config['default_language'];
-	if (!empty($default_language) && $language != $default_language) {
-	    $app_list_strings_parent = return_application_language($default_language);
-	} else 	if($language != 'en_us') {
-        $app_list_strings_parent = return_application_language('en_us');
-    }
+	$default_language = $sugar_config['default_language'];
+	$temp_app_list_strings = $app_list_strings;
 
-	foreach(SugarAutoLoader::existing(
-   	        "include/language/$language.lang.php",
-   	        "include/language/$language.lang.override.php",
-   	        "include/language/$language.lang.php.override"
-   	) as $file) {
-        include $file;
-        $GLOBALS['log']->info("Found language file: $file");
-    }
+	$langs = array();
+	if ($language != 'en_us') {
+	    $langs[] = 'en_us';
+	}
+	if ($default_language != 'en_us' && $language != $default_language) {
+	    $langs[] = $default_language;
+	}
+	$langs[] = $language;
 
-    if(!empty($app_list_strings_parent)) {
-        $app_list_strings = sugarArrayIntersectMerge($app_list_strings_parent, $app_list_strings);
-        //In case a custom file doesn't exist for the expected language, we want the custom lists from the default language
-        //(if there are key additions/deletions) but we want strings in our expected language (as much as possible).
-    }
+    $app_list_strings_array = array();
 
-    foreach(SugarAutoLoader::existing(
-           "custom/application/Ext/Language/$language.lang.ext.php",
-           "custom/include/language/$language.lang.php"
-    ) as $file) {
+    //Merge language files together
+   	foreach ( $langs as $key => $lang ) {
+
+        $app_list_strings_state = $app_list_strings;
+   	    foreach(SugarAutoLoader::existing(
+   	        "include/language/$lang.lang.php",
+   	        "include/language/$lang.lang.override.php",
+   	        "include/language/$lang.lang.php.override"
+   	    ) as $file) {
+               include $file;
+               $GLOBALS['log']->info("Found language file: $file");
+   	    }
+
+       $app_list_strings_array[$lang] = $app_list_strings;
+       //Return to previous state unless we are on first iteration and do an intersect merge
+       if ($key > 0) {
+           $app_list_strings = $app_list_strings_state;
+           //In case a custom file doesn't exist for the expected language, we want the custom lists from the default language
+           //(if there are key additions/deletions) but we want strings in our expected language (as much as possible).
+           $app_list_strings = sugarArrayIntersectMerge($app_list_strings, $app_list_strings_array[$lang]);
+       }
+       foreach(SugarAutoLoader::existing(
+           "custom/application/Ext/Language/$lang.lang.ext.php",
+           "custom/include/language/$lang.lang.php"
+       ) as $file) {
            $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
            $GLOBALS['log']->info("Found extended language file: $file");
+       }
     }
 
-    if(empty($app_list_strings)) {
+    if(!isset($app_list_strings)) {
 		$GLOBALS['log']->fatal("Unable to load the application language file for the selected language ($language) or the default language ($default_language) or the en_us language");
 		return null;
 	}
 
+	$return_value = $app_list_strings;
+	$app_list_strings = $temp_app_list_strings;
+
     //Add to the app_list_strings the list of language available in the application.
-    $app_list_strings['available_language_dom'][""] = "";
-    $app_list_strings['available_language_dom'] = array_merge($app_list_strings['available_language_dom'], get_languages());
+    $return_value['available_language_dom'][""] = "";
+    $return_value['available_language_dom'] = array_merge($return_value['available_language_dom'], get_languages());
 
-	sugar_cache_put($cache_key, $app_list_strings);
+	sugar_cache_put($cache_key, $return_value);
 
-	return $app_list_strings;
+	return $return_value;
 }
 
 /**
@@ -1064,9 +1086,10 @@ function _mergeCustomAppListStrings($file , $appListStrings)
  */
 function return_application_language($language)
 {
-    global $sugar_config;
+	global $app_strings, $sugar_config;
 
 	$cache_key = 'app_strings.'.$language;
+
 	// Check for cached value
 	$cache_entry = sugar_cache_retrieve($cache_key);
 	if(!empty($cache_entry))
@@ -1074,33 +1097,43 @@ function return_application_language($language)
 		return $cache_entry;
 	}
 
+	$temp_app_strings = $app_strings;
 	$default_language = $sugar_config['default_language'];
 
-	if (!empty($default_language) && $language != $default_language) {
-	    $app_strings_parent = return_application_language($default_language);
-	} else 	if($language != 'en_us') {
-        $app_strings_parent = return_application_language('en_us');
-    }
+	$langs = array();
+	if ($language != 'en_us') {
+	    $langs[] = 'en_us';
+	}
+	if ($default_language != 'en_us' && $language != $default_language) {
+	    $langs[] = $default_language;
+	}
 
+	$langs[] = $language;
 
-	$app_strings = array();
-	foreach(SugarAutoLoader::existing(
-			"include/language/$language.lang.php",
-			"include/language/$language.lang.override.php",
-			"include/language/$language.lang.php.override",
-	        "custom/application/Ext/Language/$language.lang.ext.php",
-	        "custom/include/language/$language.lang.php"
-	) as $file) {
+	$app_strings_array = array();
+	foreach ( $langs as $lang ) {
+		$app_list_strings = array();
+		foreach(SugarAutoLoader::existing(
+				"include/language/$lang.lang.php",
+				"include/language/$lang.lang.override.php",
+				"include/language/$lang.lang.php.override",
+		        "custom/application/Ext/Language/$lang.lang.ext.php",
+		        "custom/include/language/$lang.lang.php"
+		) as $file) {
 			include $file;
 			$GLOBALS['log']->info("Found language file: $file");
+		}
+
+        $app_strings_array[] = $app_strings;
 	}
 
-	if(!empty($app_strings_parent)) {
-        $app_strings = sugarLangArrayMerge($app_strings_parent, $app_strings);
-	}
+	$app_strings = array();
+    foreach ( $app_strings_array as $app_strings_item ) {
+        $app_strings = sugarLangArrayMerge($app_strings, $app_strings_item);
+    }
 
-	if(empty($app_strings)) {
-		$GLOBALS['log']->fatal("Unable to load the application language strings for language: $language");
+	if(!isset($app_strings)) {
+		$GLOBALS['log']->fatal("Unable to load the application language strings");
 		return null;
 	}
 
@@ -1111,12 +1144,21 @@ function return_application_language($language)
 			$app_strings[$entry_key] = $language.' '.$entry_value;
 		}
 	}
+	if(isset($_SESSION['show_deleted'])) {
+		$app_strings['LBL_DELETE_BUTTON'] = $app_strings['LBL_UNDELETE_BUTTON'];
+		$app_strings['LBL_DELETE_BUTTON_LABEL'] = $app_strings['LBL_UNDELETE_BUTTON_LABEL'];
+		$app_strings['LBL_DELETE_BUTTON_TITLE'] = $app_strings['LBL_UNDELETE_BUTTON_TITLE'];
+		$app_strings['LBL_DELETE'] = $app_strings['LBL_UNDELETE'];
+	}
 
 	$app_strings['LBL_ALT_HOT_KEY'] = get_alt_hot_key();
 
-	sugar_cache_put($cache_key, $app_strings);
+	$return_value = $app_strings;
+	$app_strings = $temp_app_strings;
 
-	return $app_strings;
+	sugar_cache_put($cache_key, $return_value);
+
+	return $return_value;
 }
 
 /**
