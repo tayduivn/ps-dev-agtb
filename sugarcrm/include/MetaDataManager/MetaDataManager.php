@@ -361,7 +361,7 @@ class MetaDataManager {
             if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
                 $context['owner_override'] = true;
             }
-
+            
             $moduleAcls = SugarACL::getUserAccess($module, array(), $context);
 
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
@@ -399,8 +399,8 @@ class MetaDataManager {
                     $fieldsAcl = $GLOBALS['dictionary'][$module]['fields'];
                     if(isset($GLOBALS['dictionary'][$module]['acl_fields']) && $GLOBALS['dictionary'][$module]=== false){
                         $fieldsAcl = array();
-                    }
-                }
+                    }   
+                }  
                 // get the field names
 
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
@@ -495,7 +495,8 @@ class MetaDataManager {
      */
     public function getModuleStrings( $moduleName, $language = 'en_us' ) {
         // Bug 58174 - Escaped labels are sent to the client escaped
-        $strings = return_module_language($language,$moduleName);
+        // TODO: SC-751, fix the way languages merge
+        $strings = return_module_language($language,$moduleName,true);
         if (is_array($strings)) {
             foreach ($strings as $k => $v) {
                 $strings[$k] = $this->decodeStrings($v);
