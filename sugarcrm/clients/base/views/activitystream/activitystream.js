@@ -191,7 +191,7 @@
     processAvatars: function() {
         var comments = this.model.get("comments");
 
-        if(this.model.get("activity_type") === "post") {
+        if(this.model.get("activity_type") === "post" && !this.model.get("picture_url")) {
             var picture = (this.model.get("picture")) ? app.api.buildFileURL({
                 module: "Users",
                 id: this.model.get("created_by"),
