@@ -13,7 +13,6 @@
   text-shadow: none;
   color: darken(@white, 5%);
 }
-
 .label {
   padding: 1px 4px 2px;
   .border-radius(@baseBorderRadius);
@@ -31,16 +30,17 @@
 .label-module {
   height: 38px;
   width: 38px;
+  font-weight: 300;
   font-size: 16px;
   line-height: 16px;
   padding: 4px 0 0 4px;
   margin: 0;
   border: none;
 }
-
 .label-module-sm {
   height: 26px;
   width: 26px;
+  font-weight: 400;
   font-size: 11px;
   line-height: 11px;
   margin: 0;
@@ -48,7 +48,6 @@
   padding: 2px 0 0 2px;
   
 }
-
 .label,
 .badge {
   &-important,
@@ -68,19 +67,19 @@
   &-Accounts,
   &-Accounts[href]      {background-color: @green;}
   &-Bugs,
-  &-Bugs[href]          {background-color: @red;}
+  &-Bugs[href]          {background-color: darken(@red,10%);}
   &-Calendar,
   &-Calendar[href]      {background-color: darken(@blue,10%);}  
   &-Campaigns,
-  &-Campaigns[href]     {background-color: @purple;}
+  &-Campaigns[href]     {background-color: darken(@blue,20%);}
   &-Cases,
-  &-Cases[href]         {background-color: darken(@red,10%);}
+  &-Cases[href]         {background-color: darken(@red,25%);}
   &-Contacts,
   &-Contacts[href]      {background-color: darken(@green,10%);}
   &-Documents,
   &-Documents[href]     {background-color: darken(@orange,30%);}  
   &-Emails,
-  &-Emails[href]        {background-color: darken(@purple,10%);}
+  &-Emails[href]        {background-color: darken(@blue,40%);}
   &-Files,
   &-Files[href]         {background-color: darken(@orange,10%);}  
   &-Forecasts,
@@ -90,34 +89,34 @@
   &-Leads,
   &-Leads[href]         {background-color: darken(@green,20%);}
   &-Meetings,
-  &-Meetings[href]      {background-color: darken(@blue,30%);}    
+  &-Meetings[href]      {background-color: darken(@yellow,10%);}    
   &-Notes,
-  &-Notes[href]         {background-color: darken(@purple,10%);}
+  &-Notes[href]         {background-color: @blue;}
   &-Opportunities,
   &-Opportunities[href] {background-color: @purple;}  
   &-Reports,
-  &-Reports[href]       {background-color:darken(@orange,10%);}
+  &-Reports[href]       {background-color: darken(@orange,10%);}
   &-Quotes,
-  &-Quotes[href]        {background-color: darken(@purple,30%);}  
+  &-Quotes[href]        {background-color: darken(@purple,20%);}  
 }
 
 .label-module.label, .label-module-sm.label {
   &-Accounts,
   &-Accounts[href]      {.box-shadow(0 2px 0 darken(@green,5%));}
   &-Bugs,
-  &-Bugs[href]          {.box-shadow(0 2px 0 darken(@red,5%));}
+  &-Bugs[href]          {.box-shadow(0 2px 0 darken(@red,15%));}
   &-Calendar,
   &-Calendar[href]      {.box-shadow(0 2px 0 darken(@blue,35%));}  
   &-Campaigns,
-  &-Campaigns[href]     {.box-shadow(0 2px 0 darken(@purple,5%));}
+  &-Campaigns[href]     {.box-shadow(0 2px 0 darken(@blue,25%));}
   &-Cases,
-  &-Cases[href]         {.box-shadow(0 2px 0 darken(@red,25%));}
+  &-Cases[href]         {.box-shadow(0 2px 0 darken(@red,30%));}
   &-Contacts,
-  &-Contacts[href]      {.box-shadow(0 2px 0 darken(@green,25%));}
+  &-Contacts[href]      {.box-shadow(0 2px 0 darken(@green,15%));}
   &-Documents,
-  &-Documents[href]     {.box-shadow(0 2px 0 darken(@orange,45%));}  
+  &-Documents[href]     {.box-shadow(0 2px 0 darken(@orange,35%));}  
   &-Emails,
-  &-Emails[href]        {.box-shadow(0 2px 0 darken(@purple,25%));}
+  &-Emails[href]        {.box-shadow(0 2px 0 darken(@blue,45%));}
   &-Files,
   &-Files[href]         {.box-shadow(0 2px 0 darken(@orange,15%));}  
   &-Forecasts,
@@ -127,13 +126,13 @@
   &-Leads,
   &-Leads[href]         {.box-shadow(0 2px 0 darken(@green,25%));} 
   &-Meetings,
-  &-Meetings[href]      {.box-shadow(0 2px 0 darken(@blue,25%));}   
+  &-Meetings[href]      {.box-shadow(0 2px 0 darken(@yellow,15%));}   
   &-Notes,
-  &-Notes[href]         {.box-shadow(0 2px 0 darken(@purple,35%));}  
+  &-Notes[href]         {.box-shadow(0 2px 0 darken(@blue,10%));}  
   &-Opportunities,
   &-Opportunities[href] {.box-shadow(0 2px 0 darken(@purple,5%));}
   &-Reports,
   &-Reports[href]       {.box-shadow(0 2px 0 darken(@orange,15%));}
   &-Quotes,
-  &-Quotes[href]        {.box-shadow(0 2px 0 darken(@purple,15%));}
+  &-Quotes[href]        {.box-shadow(0 2px 0 darken(@purple,25%));}
 }
