@@ -112,6 +112,7 @@ class SugarBeanApiHelper
 
             //BEGIN SUGARCRM flav=pro ONLY
             // mark if its a favorite
+            // FIXME: this should not always send the favorite, but because of the bug #62096 we always send it
             if ( !isset($data['my_favorite'])) { //&& in_array('my_favorite', $fieldList)) {
                 $data['my_favorite'] = $bean->my_favorite;
             }

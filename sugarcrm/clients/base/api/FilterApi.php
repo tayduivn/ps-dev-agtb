@@ -77,6 +77,10 @@ class FilterApi extends SugarApi
 
     protected $current_user;
 
+    // id and date_modified should always be in the response
+    // user fields are needed for ACLs since they check owners
+    protected $mandatory_fields = array('id', 'date_modified', 'assigned_user_id', 'created_by');
+
     public function __construct()
     {
         global $current_user;
@@ -137,13 +141,9 @@ class FilterApi extends SugarApi
 
         //Set the list of fields to be used in the select.
         $options['select'] = !empty($args['fields']) ? explode(",", $args['fields']) : array();
+
         //Force id and date_modified into the select
-        $options['select'][] = "id";
-        $options['select'][] = "date_modified";
-        // these are needed for ACLs since they check owners
-        $options['select'][] = "assigned_user_id";
-        $options['select'][] = "created_by";
-        $options['select'] = array_unique($options['select']);
+        $options['select'] = array_unique(array_merge($options['select'], $this->mandatory_fields));
 
         return $options;
     }
@@ -234,7 +234,7 @@ class FilterApi extends SugarApi
         // Just need ID, we need to fetch beans so we can format them later.
         $q->from($seed);
         if(empty($options['select'])) {
-            $options['select'] = array('id', 'date_modified');
+            $options['select'] = $this->mandatory_fields;
         }
 
         $fields = array();
