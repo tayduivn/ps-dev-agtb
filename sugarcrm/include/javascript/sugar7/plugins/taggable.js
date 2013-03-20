@@ -10,20 +10,25 @@
 
             _getEntities: _.debounce(function(event) {
                 var list,
+                    leader,
+                    leaderIndex,
                     el = this.$(event.currentTarget),
                     word = event.currentTarget.innerText;
 
                 el.parent().find("ul.typeahead.activitystream-tag-dropdown").remove();
 
-                if (word.indexOf("@") === -1) {
-                    // If there's no @, don't do anything.
+                leaderIndex = _.max([word.lastIndexOf('@'), word.lastIndexOf('#')]);
+                leader = leaderIndex === -1 ? null : word.charAt(leaderIndex);
+
+                if (!leader) {
+                    // If there are no leaders, don't do anything.
                     return;
-                } else if (word.indexOf("@") === 0) {
-                    word = _.last(word.split('@'));
+                } else if (word.indexOf(leader) === 0) {
+                    word = _.last(word.split(leader));
                 } else {
                     // Prevent email addresses from being caught, even though emails
                     // can have spaces in them according to the RFCs (3696/5322/6351).
-                    word = _.last(word.split(' @'));
+                    word = _.last(word.split(' ' + leader));
                 }
 
                 if (word.length < 3) {
@@ -31,37 +36,40 @@
                     return;
                 }
 
-                app.api.search({q: word}, {success: function(response) {
+                var callback = function(collection) {
                     // Do initial list filtering.
-                    list = _.filter(response.records, function(entity) {
-                        return entity.name.toLowerCase().indexOf(word.toLowerCase()) !== -1;
+                    list = collection.filter(function(entity) {
+                        return entity.get('name').toLowerCase().indexOf(word.toLowerCase()) !== -1;
                     });
 
                     // Rank the list and trim it to no more than 8 entries.
-                    list = (function(list, query) {
-                        var begin = [], caseSensitive = [], caseInsensitive = [], item = list.shift(), i;
-                        for (i = 0; i < 8 && item; i++) {
-                            if (item.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-                                begin.push(item);
-                            } else if (item.name.indexOf(query) !== -1) {
-                                caseSensitive.push(item);
-                            } else {
-                                caseInsensitive.push(item);
-                            }
-                            item = list.shift();
+                    var begin = [], caseSensitive = [], caseInsensitive = [];
+
+                    _.each(list, function(item) {
+                        var name = item.get('name');
+                        if (name.toLowerCase().indexOf(word.toLowerCase()) === 0) {
+                            begin.push(item);
+                        } else if (name.indexOf(word) !== -1) {
+                            caseSensitive.push(item);
+                        } else {
+                            caseInsensitive.push(item);
                         }
-                        return begin.concat(caseSensitive, caseInsensitive);
-                    })(list, word);
+                    });
+                    list = _(begin.concat(caseSensitive, caseInsensitive)).first(8);
 
                     var ul = $("<ul/>").addClass('typeahead dropdown-menu activitystream-tag-dropdown');
                     var blank_item = '<li><a></a></li>';
                     if (list.length) {
                         items = _.map(list, function(item) {
-                            var data = {module: item._module, id: item.id, name: item.name};
+                            var data = {
+                                module: item.get('_module'),
+                                id: item.get('id'),
+                                name: item.get('name')
+                            };
                             var i = $(blank_item).data(data);
                             var query = word.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
                             i.find('a').html(function() {
-                                return item.name.replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
+                                return item.get('name').replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
                                     return '<strong>' + match + '</strong>';
                                 });
                             });
@@ -78,7 +86,31 @@
 
                         ul.html(items).appendTo(el.parent()).show();
                     }
-                }});
+                };
+
+                switch (leader) {
+                    case '#':
+                        app.api.search({q: word, limit: 8}, {success: function(response) {
+                            var coll = app.data.createMixedBeanCollection(response.records);
+                            callback(coll);
+                        }});
+                        break;
+                    case '@':
+                        var coll = app.data.createBeanCollection('Users');
+                        coll.filterDef = [
+                            {
+                                '$or':
+                                [{
+                                   'first_name': {'$starts': word}
+                                }, {
+                                   'last_name': {'$starts': word}
+                                }]
+                            }
+                        ];
+                        coll.fetch({limit: 8, success: callback});
+                        break;
+                }
+
 
 
             }, 250),
