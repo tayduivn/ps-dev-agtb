@@ -144,29 +144,6 @@
 
     },
 
-    filterList: function(filterDef, isNewFilter, scope) {
-        var self = this;
-        this.context.set("skipFetch", false);
-        //Don't reset any childen, its only our context we need to reload.
-        this.context.resetLoadFlag(false);
-        this.context.loadData({
-            filter: filterDef,
-            success: function() {
-                if(isNewFilter) {
-                    var method = "update";
-                    if(scope.currentFilter === "all_records") {
-                        method = "delete";
-                    }
-                    // We're dealing with a new collection that may not have the current preview record in the collection.
-                    // Closing the preview will keep it from getting out of sync
-                    app.events.trigger("preview:close");
-                    var url = app.api.buildURL('Filters/' + self.options.module + '/used');
-                    app.api.call(method, url, {filters: [scope.currentFilter]}, {});
-                }
-            }
-        });
-    },
-
     showAlert: function(message) {
         this.$(".alert .container").html(message);
         this.$(".alert").removeClass("hide");

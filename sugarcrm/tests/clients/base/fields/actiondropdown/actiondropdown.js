@@ -1,18 +1,8 @@
 describe('Base.Field.Actiondropdown', function() {
 
-    var app, field, view, clock, moduleName = 'Contacts';
+    var app, field, view, moduleName = 'Contacts';
 
     beforeEach(function() {
-        clock = sinon.useFakeTimers();
-        //Mock throttle to prevent the need to actually wait.
-        //(underscore throttle uses dates to enforce waits outside of the normal setTimeout function
-        sinon.stub(_, "throttle", function(f, t) {
-            return function(){
-                var self = this,
-                    args = arguments;
-                setTimeout(function(){f.apply(self, args)}, t);
-            };
-        });
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         app = SugarTest.app;
@@ -57,8 +47,6 @@ describe('Base.Field.Actiondropdown', function() {
         app.view.reset();
         delete Handlebars.templates;
         field = null;
-        clock.restore();
-        _.throttle.restore();
     });
 
     it('should render button html nested on the buttons', function() {
@@ -71,22 +59,21 @@ describe('Base.Field.Actiondropdown', function() {
 
     it('should populate proper dropdown list when a nested button is hidden', function() {
 
-
         expect(field.fields.length).toBeGreaterThan(1);
+
+
         var button = field.fields[1];
         var actualPlaceholderCount = field.$(".dropdown-menu").find("span[sfuuid='" + button.sfId + "']").length;
         expect(actualPlaceholderCount).toBe(1);
 
         //second button should be at the primary position when the first one is hidden
         field.fields[0].hide();
-        clock.tick(100);
         expect(field.fields[0].$el.is(":hidden")).toBe(true);
         actualPlaceholderCount = field.$(".dropdown-menu").find("span[sfuuid='" + button.sfId + "']").length;
         expect(actualPlaceholderCount).toBe(0);
 
         //the button position should be restored when the first one is shown once again
         field.fields[0].show();
-        clock.tick(100);
         actualPlaceholderCount = field.$(".dropdown-menu").find("span[sfuuid='" + button.sfId + "']").length;
         expect(actualPlaceholderCount).toBe(1);
     });
