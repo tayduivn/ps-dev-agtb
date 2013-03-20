@@ -33,9 +33,25 @@
         if (!app.acl.hasAccessToModel(action, this.model)) {
             this.def.link = false;
         }
+        if (this.def.link) {
+            this.href = this.buildHref();
+        }
         app.view.Field.prototype._render.call(this);
     },
+    // Takes care of building href for when there's a def.link and also if is bwc enabled
+    buildHref: function() {
+        var module, moduleMeta, href = '', defRoute;
+        module = this.context.get('module') || this.model.get("_module");
+        moduleMeta = app.metadata.getModule(module) || {};
+        defRoute = this.def.route ? this.def.route : {};
 
+        // Starts as sidecar href unless we encounter bwc enabled
+        href = '#' + app.router.buildRoute(module, this.model.id, defRoute.action, defRoute.options);
+        if (moduleMeta && moduleMeta.isBwcEnabled) {
+            href = '#' + app.bwc.buildRoute(module, this.model.id, 'DetailView');
+        }
+        return href;
+    },
     /**
      * Trim whitespace from value if it is a String
      * @param value

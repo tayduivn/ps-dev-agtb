@@ -3,7 +3,9 @@ describe("Record View", function() {
         app,
         viewName = 'record',
         sinonSandbox, view,
-        createListCollection;
+        createListCollection,
+        buildRouteStub,
+        oRouter;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -78,6 +80,12 @@ describe("Record View", function() {
         app = SugarTest.app;
         sinonSandbox = sinon.sandbox.create();
 
+        oRouter = SugarTest.app.router;
+        SugarTest.app.router = {buildRoute: function(){}};
+        buildRouteStub = sinonSandbox.stub(SugarTest.app.router, 'buildRoute', function(module, id, action, params) {
+            return module+'/'+id;
+        });
+
         view = SugarTest.createView("base", moduleName, "record", null, null);
     });
 
@@ -85,6 +93,7 @@ describe("Record View", function() {
         view.dispose();
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
+        SugarTest.app.router = oRouter;
         sinonSandbox.restore();
         view = null;
     });
