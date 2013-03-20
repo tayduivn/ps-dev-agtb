@@ -1,7 +1,7 @@
 <ul class="nav megamenu" id="module_list">
     {{#each module_list}}
         {{#eq name 'Home'}}
-        <li class="dropdown" data-module="Home">
+        <li class="dropdown home" data-module="Home">
             <div class="btn-group">
                 <a class="cube btn btn-invisible btn-link" href="#Home" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a>
                 <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
