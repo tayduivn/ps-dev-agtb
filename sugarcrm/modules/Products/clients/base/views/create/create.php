@@ -94,6 +94,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
                 'opportunity_name',
                 array(
                     'name' => 'account_name',
+                    'readonly' => true
                 ),
                 'sales_stage',
                 'probability',
