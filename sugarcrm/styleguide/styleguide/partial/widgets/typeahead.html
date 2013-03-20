@@ -15,8 +15,41 @@
           <h2>Example</h2>
           <p>Start typing in the field below to show the typeahead results.</p>
           <div class="well">
-            <input type="text" class="span3" style="margin: 0 auto;" data-provide="typeahead" data-items="4" data-source='["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Dakota","North Carolina","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]'>
+            <input id="demo000ta" type="text" class="span3" style="margin: 0 auto;" data-provide="typeahead" data-items="4" data-source='["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Dakota","North Carolina","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]'>
           </div>
+
+
+
+          <h2>Typeahead dropdown (custom by sugarcrm team)</h2>
+          <p>Using class "custom" on ul, allows us to combine anchrors with plain text on one line. Out of the box twitter bootstrap typeahead doesn't provide this.</p>
+          <div class="well">
+            <input id="demo001ta" type="text" class="span3" style="margin: 0 auto;" data-provide="typeahead" data-items="4" data-source='["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Dakota","North Carolina","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]'>
+          </div>
+          <script>
+            $('#demo001ta')
+              .on('mouseover', function(){
+                $.fn.typeahead.defaults = {
+                    source: []
+                  , items: 8
+                  , menu: '<ul class="typeahead dropdown-menu custom"></ul>'
+                  , item: '<li>Bugs, <a href="#"></a>, xyz</li>'
+                };
+              }).on('mouseout', function(){
+                  $.fn.typeahead.defaults = {
+                    source: []
+                  , items: 8
+                  , menu: '<ul class="typeahead dropdown-menu custom"></ul>'
+                  , item: '<li><a href="#"></a></li>'
+                };
+            });
+          </script>
+
+
+
+
+
+
+
           <hr>
           <h2>Using bootstrap-typeahead.js</h2>
           <p>Call the typeahead via javascript:</p>
@@ -73,5 +106,14 @@
           <h3>Methods</h3>
           <h4>.typeahead(options)</h4>
           <p>Initializes an input with a typahead.</p>
+
+
+
+
+
+
+
+
+
         </div>
       </div>

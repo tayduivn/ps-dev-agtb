@@ -105,7 +105,12 @@ table.dataTable {
           position: relative;
           vertical-align: middle;
         }
-
+        &.td-inline-edit {
+          overflow: visible;
+          span {
+            overflow: visible;
+          }
+        }
         &:first-child {
           overflow-x: visible;
           padding-left: 15px;
@@ -173,14 +178,14 @@ table.dataTable {
       }
     }
     //forecasts
-    div.sugareditable {
+/*    div.sugareditable {
       td {
         overflow: visible;
         &> *:not(.overflow-visible) {
           overflow: visible;
         }
       }
-    }
+    }*/
     &.tr-inline-edit {
       &> td {
         &> span {
@@ -478,12 +483,12 @@ table.dataTable th:active {
     font-weight: normal;
     color: @grayLight;
     a {
-      padding-left: 22px;
+      padding-left: 32px;
     }
     .active {
       color: @gray;
       font-weight: bold;
-      padding-left: 0;
+      padding-left: 10px;
       margin-left: 0;
     }
     .active .icon-ok {

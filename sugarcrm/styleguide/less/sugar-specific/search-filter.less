@@ -3,7 +3,7 @@
 
   // outer wrapper
   .control-group {
-    padding: 5px 10px;
+    padding: 5px;
   }
 
   // search filter inputs
@@ -16,7 +16,7 @@
     overflow: hidden;
     height: 28px;
     .box-shadow(~"inset 0 1px 1px rgba(0,0,0,0.075)");
-    .border-radius(2px);
+    .border-radius(@baseBorderRadius);
     .user-select(none);
 
     // non-select2 filter pills
@@ -24,19 +24,24 @@
     div.choice-filter {
       .border-radius(0 10px 10px 0);
       padding: 4px 6px 4px 4px;
-      display: inline;
+      display: inline-block;
+      height: 13px;
       white-space: nowrap;
+      margin-top: 4px;
       margin-left: -6px;
+      font-size: @fontSizeSmall;
+      font-weight: bold;
+      line-height: 14px;
+      vertical-align: top;
     }
     div.choice-related {
-      background: #c0f0ca;
-      color: #407648;
+      background: darken(@grayLighter, 5%);
+      color: @gray;
       cursor: text;
     }
     div.choice-filter {
       background: @dropdownLinkBackgroundHover;
       color: @dropdownLinkColorHover;
-      line-height: 30px;
     }
 
     // select2 filter pills
@@ -80,7 +85,7 @@
         }
         span.select2-choice-type {
           .border-radius(10px 0 0 10px);
-          color: #777;
+          color: @gray;
           padding: 4px 4px 4px 6px;
           margin-right: 2px;
           background: @grayLighter;
@@ -154,9 +159,8 @@
 .form-search  {
   margin: -1px 0 0 0;
   background: @grayLighter;
-  border-top: 1px solid darken(@grayLighter, 5%);
-  border-bottom: 1px solid darken(@grayLighter, 5%);
-
+  border-top: 1px solid darken(@grayLighter, 2%);
+  border-bottom: 1px solid darken(@grayLighter, 2%);
   .mu.extend,
   .inset-form.extend {
     margin-top:-1px;

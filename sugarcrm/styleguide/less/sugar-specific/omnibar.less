@@ -1,6 +1,5 @@
-
 .omnibar {
-  padding: 15px 0 10px 20px;
+  padding: 10px 0 10px 20px;
   margin: 0;
   border-bottom: 1px solid darken(@grayLighter, 5%);
   &.row {
@@ -10,17 +9,17 @@
     padding: 6px 8px; position: relative; z-index: 1;
     border: dashed 1px @grayLight;
     min-height: 30px !important;
-    margin: 0 20px 0 56px;
+    margin: 0;
     color: @gray;
   }
-  :focused .sayit {
+  .sayit:focused  {
     border: solid 1px @grayLight;
     color: @gray;
   }
   .inputactions {
     background: @grayLighter;
     padding: 8px;
-    margin: 0 20px 0 56px;
+    margin: 0;
     z-index: 0;
     position: relative;
     .border-radius(0 0 3px 3px);
@@ -33,26 +32,3 @@
     margin: 0 8px;
   }
 }
-
-
-//from nutmeg sugar-specific/icons.less
-/*
-.omnibar input.sayit  {
-  position: relative;
-  z-index: 1;
-  min-height: 42px !important;
-}
-.omnibar.active input.sayit {
-  border: solid 1px @grayLight;
-  min-height: 42px !important;
-}
-.omnibar .inputactions {
-  margin: -14px 0 0 52px;
-  padding: 10px 4px 4px 4px;
-  border: solid 1px @grayLight;
-  .border-radius(3px);
-}
-.omnibar .inputactions a i {
-  padding: 4px 8px 0;
-}
-*/

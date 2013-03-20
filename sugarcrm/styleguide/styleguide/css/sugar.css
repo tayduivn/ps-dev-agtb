@@ -2041,9 +2041,14 @@ div.sugareditable.focus {
 }
 .dataTables_wrapper {
   overflow-x: auto;
+  position: relative;
+  clear: both;
+  *zoom: 1;
 }
 table.dataTable {
-  margin: 0;
+  margin: 0 auto;
+  clear: both;
+  width: 100%;
 }
 table.dataTable input[type="text"] {
   width: 100%;
@@ -2373,6 +2378,38 @@ table.dataTable .icon-star {
 table.dataTable .active .icon-star {
   color: #E57417;
 }
+.sorting {
+  background: url('../../assets/img/sort_both.png') no-repeat 98% 50%;
+  padding-right: 25px !important;
+  cursor: pointer;
+  *cursor: hand;
+}
+.sorting_asc,
+.sorting_desc {
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  padding-right: 25px !important;
+}
+.sorting_asc {
+  background: #f5f5f5 url('../../assets/img/sort_asc.png') no-repeat center right;
+}
+.sorting_desc {
+  background: #f5f5f5 url('../../assets/img/sort_desc.png') no-repeat center right;
+}
+.sorting_asc_disabled {
+  background: url('../../assets/img/sort_asc_disabled.png') no-repeat center right;
+}
+.sorting_desc_disabled {
+  background: url('../../assets/img/sort_desc_disabled.png') no-repeat center right;
+}
+table th.nosort {
+  background: none;
+  box-shadow: none;
+}
+table.dataTable th:active {
+  outline: none;
+}
 .dataTables_filter {
   position: relative;
   margin: -1px 1px 0 0;
@@ -2398,11 +2435,13 @@ table.dataTable .active .icon-star {
 }
 .dataTables_filter input {
   width: 100%;
+  margin: 0;
 }
 .morecol {
   text-align: center !important;
   font-weight: bold;
   color: #58595B;
+  cursor: pointer;
 }
 .morecol .dropdown-menu {
   text-align: left !important;
@@ -5151,6 +5190,35 @@ input[type="color"].error,
   border-color: #b60000;
   color: #b60000;
 }
+.record-cell [class*='address_'] {
+  display: inline-block;
+}
+.record-cell .address_street,
+.record-cell .address_country,
+.record-cell .address_misc_block {
+  width: 100%;
+  clear: both;
+}
+.record-cell .address_city:after,
+.record-cell .address_state:after {
+  content: ",";
+  margin-left: -2px;
+}
+.record-cell .address_city> div.ellipsis_inline,
+.record-cell .address_state> div.ellipsis_inline,
+.record-cell .address_zip> div.ellipsis_inline {
+  display: inline !important;
+  overflow: visible;
+}
+td span.full-name input.inherit-width {
+  width: 49%;
+}
+td span.full-name input.inherit-width:not(:first-child) {
+  float: left;
+}
+td span.full-name div.ellipsis_inline {
+  display: inline !important;
+}
 @media (max-width: 480px) {
   .row > .empty,
   .row-fluid > .empty {
@@ -5685,6 +5753,7 @@ input[type="color"].error,
   display: block;
   padding: 6px 8px 8px;
   text-indent: 32px;
+  position: relative;
 }
 .navbar .dropdown-menu li,
 .navbar .dropdown-menu li.divider {
@@ -5839,9 +5908,29 @@ input[type="color"].error,
   left: 10px;
   z-index: 1000;
 }
-.navbar .nav.megamenu > li.dropdown.open ul.dropdown-menu:before,
-.navbar .nav.megamenu > li.dropdown.open ul.dropdown-menu:after {
+.navbar .nav.megamenu > li.dropdown.open .dropdown-menu {
+  background: none;
+  border: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  top: 42px;
+  padding-top: 8px;
+  overflow: hidden;
+}
+.navbar .nav.megamenu > li.dropdown.open .dropdown-menu:before,
+.navbar .nav.megamenu > li.dropdown.open .dropdown-menu:after {
   display: none;
+}
+.navbar .nav.megamenu > li.dropdown.open .dropdown-menu> ul {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.2);
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  max-height: 330px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .navbar .nav.megamenu > li.dropdown.active {
   border-right-color: #404040;
@@ -7109,6 +7198,9 @@ body.full-screen .nv-chart {
 .view-forecastsChart .nv-chart {
   border: none;
 }
+.thumbnail.viz svg {
+  max-height: 350px;
+}
 .thumbnail.viz.expanded {
   position: fixed;
   top: 48px;
@@ -8237,6 +8329,12 @@ h4.merge-interface-header .preview {
   width: 100%;
   height: auto;
 }
+.dashboard .headerpane .record-cell h1 input[placeholder] {
+  line-height: 22px;
+}
+.dashboard .headerpane .record-cell h1 .ellipsis_inline {
+  padding-top: 3px;
+}
 .dashboard ul {
   list-style: none;
   margin: 0;
@@ -9055,6 +9153,12 @@ h3.popover-title {
 #contentflex #headerbar span[data-type="image"] .image_field.image_edit,
 .headerpane span[data-type="image"] .image_field.image_edit {
   top: -2px;
+}
+#contentflex #headerbar span[data-type="image"] .image_field.image_edit .image_input input,
+.headerpane span[data-type="image"] .image_field.image_edit .image_input input {
+  float: none;
+  position: static;
+  width: 100%;
 }
 #contentflex #headerbar span[data-type="text"],
 #contentflex #headerbar span[data-type="int"],
