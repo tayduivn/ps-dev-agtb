@@ -708,7 +708,9 @@
             worst_case_adjusted += app.currency.convertWithRate(model.get('worst_case_adjusted'), base_rate);
             included_opp_count += (_.isUndefined(mOpp_count))? 0 : parseInt(mOpp_count);
             pipeline_opp_count += (_.isUndefined(mPipeline_opp_count))? 0 : parseInt(mPipeline_opp_count);
-            pipeline_amount = app.math.add(pipeline_amount, (_.isUndefined(mPipeline_amount))? 0 : mPipeline_amount);
+            if(!_.isUndefined(mPipeline_amount)) {
+                pipeline_amount = app.math.add(pipeline_amount, mPipeline_amount);
+            }
 
         });
 
