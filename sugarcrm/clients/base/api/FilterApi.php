@@ -166,7 +166,7 @@ class FilterApi extends SugarApi
         }
         $this->addFilters($args['filter'], $q->where(), $q);
 
-		$api->action = 'list';
+        $api->action = 'list';
 
         return $this->runQuery($api, $args, $q, $options, $seed);
     }
@@ -464,7 +464,7 @@ class FilterApi extends SugarApi
                                 break;
                             case '$fromDays':
                                 // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
-                                $where->gte($field, TimeDate::getInstance()->getNow()->get("-7 days")->asDb());
+                                $where->gte($field, TimeDate::getInstance()->getNow()->get("-{$value} days")->asDb());
                                 break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: ".$op);

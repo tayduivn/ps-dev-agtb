@@ -233,7 +233,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         global $timedate;
 
         if(empty($bean->$fieldName)) {
-            $data[$fieldName] = '';
+            $data[$fieldName] = null;
             return;
         }
 
