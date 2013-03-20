@@ -4,7 +4,8 @@ describe("Record View", function() {
         viewName = 'record',
         sinonSandbox, view,
         createListCollection,
-        buildRouteStub;
+        buildRouteStub,
+        oRouter;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();

@@ -1,5 +1,5 @@
 describe("Base.Field.Base", function() {
-    var app, field, Address, sinonSandbox, buildRouteStub;
+    var app, field, Address, sinonSandbox, buildRouteStub, oRouter;
 
     beforeEach(function() {
         app = SugarTest.app;
