@@ -72,12 +72,11 @@
     },
     loadData: function(options) {
         var self = this,
-            url = app.api.buildURL('Opportunities/pipeline');
+            url = app.api.buildURL('Accounts/by_country');
         app.api.call('GET', url, null, {
             success: function(o) {
                 self.results = {};
                 self.results = o;
-                console.log(self.results)
                 if (!self.disposed) self.render();
             },
             complete: options ? options.complete : null
