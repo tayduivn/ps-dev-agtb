@@ -1,40 +1,40 @@
 ({
     events: {
-        'click [name="record-close"]' : 'closeClicked',
-        'click [name="record-close-new"]' : 'closeNewClicked'
+        'click [name="record-close"]': 'closeClicked',
+        'click [name="record-close-new"]': 'closeNewClicked'
     },
     extendsFrom: 'ButtonField',
-    initialize: function(options) {
+    initialize: function (options) {
         app.view.fields.ButtonField.prototype.initialize.call(this, options);
         this.type = 'button';
     },
-    closeClicked: function() {
+    closeClicked: function () {
         this._close(false);
     },
-    closeNewClicked: function() {
+    closeNewClicked: function () {
         this._close(true);
     },
-    _render:function(){
-        if(this.model.get('status') == 'Completed') {
+    _render: function () {
+        if (this.model.get('status') === 'Completed') {
             this.hide();
         } else {
             app.view.fields.ButtonField.prototype._render.call(this);
             this.show();
         }
     },
-    _close: function(createNew) {
+    _close: function (createNew) {
         var self = this;
 
         this.model.set('status', 'Completed');
         this.model.save({}, {
-            success: function() {
+            success: function () {
                 app.alert.show('close_task_success', {level: 'success', autoClose: true, title: app.lang.get('LBL_TASK_CLOSE_SUCCESS', self.module)});
                 if (createNew) {
                     var module = app.metadata.getModule(self.model.module);
                     var prefill = app.data.createBean(self.model.module);
                     prefill.copy(self.model);
 
-                    if(module.fields.status && module.fields.status.default) {
+                    if (module.fields.status && module.fields.status.default) {
                         prefill.set('status', module.fields.status.default);
                     } else {
                         prefill.unset('status');
@@ -44,10 +44,10 @@
                         layout: 'create',
                         context: {
                             create: true,
-                            model : prefill
+                            model: prefill
                         }
-                    }, function() {
-                        if(self.parent) {
+                    }, function () {
+                        if (self.parent) {
                             self.parent.render();
                         } else {
                             self.render();
@@ -55,18 +55,16 @@
                     });
                 }
             },
-            error:function(error) {
+            error: function (error) {
                 app.alert.show('close_task_error', {level: 'error', autoClose: true, title: app.lang.getAppString('ERR_AJAX_LOAD')});
                 app.logger.error('Failed to close a task. ' + error);
 
                 // we didn't save, revert!
-                if (self.model.isDirty()) {
-                    self.model.revertAttributes();
-                }
+                self.model.revertAttributes();
             }
         });
     },
-    bindDataChange: function() {
+    bindDataChange: function () {
         if (this.model) {
             this.model.on("change:status", this.render, this);
         }

@@ -193,6 +193,7 @@ class ForecastsApi extends SugarApi
     public function getReportees($api, $args)
     {
         $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
+        $args['level'] = isset($args['level']) ? (int) $args['level'] : 1;
 
         // base file and class name
         $file = 'include/SugarForecasting/ReportingUsers.php';
@@ -205,6 +206,25 @@ class ForecastsApi extends SugarApi
 
         /* @var $obj SugarForecasting_AbstractForecast */
         $obj = new $klass($args);
-        return $obj->process();
+        $reportees = $obj->process();
+        
+        if (($args['level'] < 0 || $args['level'] > 1)) {
+            // may contain parent
+            $children = isset($reportees['children']) ? $reportees['children'] : $reportees[1]['children'];
+            
+            foreach ($children as &$child) {
+                if ($child['metadata']['id'] != $args['user_id']) {
+                    $childArgs = $args;
+                    $childArgs['user_id'] = $child['metadata']['id'];
+                    $childArgs['level'] = $args['level'] - 1;
+                    $childReportees = $this->getReportees($api, $childArgs);
+                    $child['children'] = isset($childReportees['children']) ? $childReportees['children'] : $childReportees[1]['children'];
+                }
+            }
+            
+            isset($reportees['children']) ? $reportees['children'] = $children : $reportees[1]['children'] = $children;
+        }
+
+        return $reportees;
     }
 }

@@ -167,9 +167,6 @@
 
             model.set("id", id);
             app.events.trigger("preview:render", model, collection, true, this.cid);
-        } else {
-            app.alert.show("no_access", {level: "error", title: "Permission Denied",
-                messages: "Sorry, you do not have access to preview this specific record.", autoClose: true});
         }
 
         event.preventDefault();

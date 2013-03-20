@@ -254,5 +254,6 @@ $mod_strings = array (
     //Dashlet
     'LBL_DASHLET_LISTVIEW_NAME' => 'My Contacts',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing of your contacts',
+    'LBL_TWITTER' => 'Twitter ID',
 )
 ?>

@@ -29,6 +29,7 @@ $viewdefs['base']['view']['dashablelist'] = array(
                     'bug_number', 'name', 'status', 'priority'
                 ),
                 'my_items' => '1',
+                'status' => 'Assigned',
             ),
             'preview' => array(
                 'module' => 'Bugs',
@@ -36,6 +37,7 @@ $viewdefs['base']['view']['dashablelist'] = array(
                     'bug_number', 'name', 'status', 'priority'
                 ),
                 'my_items' => '1',
+                'status' => 'Assigned',
             )
         ),
         array(

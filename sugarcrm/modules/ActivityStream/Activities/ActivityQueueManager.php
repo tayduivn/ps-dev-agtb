@@ -286,27 +286,21 @@ class ActivityQueueManager
         if (isset($act->parent_type) && isset($act->parent_id)) {
             $bean = BeanFactory::getBean($act->parent_type, $act->parent_id);
             $this->processRecord($bean, $act);
+            $this->processSubscriptions($bean, $act, array());
+        } else {
+            $db = DBManagerFactory::getInstance();
+            $sql = 'INSERT INTO activities_users VALUES (';
+            $values = array(
+                '"' . create_guid() . '"',
+                '"' . $act->id . '"',
+                '"Teams"',
+                '"1"',
+                '"[]"',
+                '0',
+            );
+            $sql .= implode(', ', $values) . ')';
+            $db->query($sql);
         }
-        $db = DBManagerFactory::getInstance();
-        $sql = 'INSERT INTO activities_users VALUES (';
-        $values = array(
-            '"' . create_guid() . '"',
-            'NULL',
-            '"' . $act->id . '"',
-            '"' . $act->parent_type . '"',
-            '"' . $act->parent_id . '"',
-            '"[]"',
-            '"' . $act->date_modified . '"',
-            '0',
-        );
-        $sql .= implode(', ', $values) . ')';
-        $db->query($sql);
-        // First argument of next block cannot be null.
-        // $act->subscribed_users->add(null, array(
-        //     'parent_type' => $act->parent_type,
-        //     'parent_id' => $act->parent_id,
-        //     'fields' => '[]'
-        // ));
     }
 
     /**
