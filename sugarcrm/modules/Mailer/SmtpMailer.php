@@ -150,7 +150,7 @@ class SmtpMailer extends BaseMailer
 //                $this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
 //            }
             throw new MailerException(
-                "Failed to connect to the remote server",
+                "Failed to connect to outbound SMTP Mail Server",
                 MailerException::FailedToConnectToRemoteServer
             );
         }
