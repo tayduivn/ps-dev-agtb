@@ -26,24 +26,25 @@
         <p>
             <span class="tagged">{{str "TPL_COMMENT" "Activities" data}}</span>
             <br />
-            <date class="date"><a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}</date>
+            <date class="date"><a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_modified "LBL_TIME_RELATIVE_ACTIVITIES"}}</date>
         </p>
     </li>
     {{/with}}
     {{/each}}
     {{#if remaining_comments}}
     <li>
-        <a class="more" style="text-decoration: initial;">
+        <a class="more">
             {{str ../../../more_tpl "Activities" remaining_comments}}
-            <i class="icon-caret-down"></i>
         </a>
     </li>
     {{/if}}
 {{/if}}
     <li class="acomment hide">
         <div class="control-group form-horizontal">
-            <input class="reply span11" placeholder="Add your comment">
-            <input class="btn btn-primary span1 reply-btn" type="submit" value="Reply">
+            <div class="controls controls-two btn-fit">
+                <div data-placeholder="{{str "LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER"}}" class="reply taggable" contenteditable="true"></div>
+                <input type="submit" class="btn btn-primary reply-btn" value="{{str "LBL_EMAIL_REPLY"}}">
+            </div>
         </div>
     </li>
 </ul>
