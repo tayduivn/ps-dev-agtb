@@ -28,6 +28,8 @@ JS_FILES = \
 	src/models/treemap.js \
 	src/models/treemapChart.js \
 	src/models/tree.js \
+	src/models/bubble.js \
+	src/models/bubbleChart.js \
 	src/outro.js
 
 JS_COMPILER = \

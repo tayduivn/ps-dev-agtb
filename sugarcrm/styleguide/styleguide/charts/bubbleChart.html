@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=320" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Bubble Chart</title>
+  <link href="../css/bootstrap.css" rel="stylesheet" type="text/css">
+  <link href="../css/sugar.css" rel="stylesheet" type="text/css">
+  <style>
+    #bubble {
+      width: 500px;
+      height: 500px;
+    }
+  </style>
+</head>
+<body class="full-screen">
+
+<div id="bubble" class="nv-chart">
+  <svg></svg>
+</div>
+
+<script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
+<script src="../../assets/js/nvd3/nv.d3.min.js"></script>
+<script src="../js/nvd3/data/line_data.js"></script>
+<script src="../js/nvd3/src/models/scatter.js"></script>
+<script src="../js/nvd3/src/models/bubble.js"></script>
+<script src="../js/nvd3/src/models/bubbleChart.js"></script>
+
+<script>
+
+  // Wrapping in nv.addGraph allows for '0 timeout render', stors rendered charts in nv.graphs, and may do more in the future... it's NOT required
+  nv.addGraph(function() {
+    var format = d3.time.format("%Y-%m-%d");
+
+    var chart = nv.models.bubbleChart()
+          .x(function(d) { return format.parse(d.x) })
+          .y(function(d) { return d.y })
+          .tooltip( function(key, x, y, e, graph) {
+              return '<p>Industry: <b>' + key + '</b></p>' +
+                     '<p>Amount: <b>$' +  d3.format(',.02d')(e.point.opportunity) + '</b></p>' +
+                     '<p>Date: <b>' +  x + '</b></p>'
+            })
+          .showTitle(true)
+          .tooltips(true)
+          .showLegend(true)
+          //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
+          //.colorData( 'class' )
+          //.colorData( 'default' )
+          //.colorFill( 'gradient' )
+          //.colorFill( 'default' )
+        ;
+
+    d3.json("../js/nvd3/data/top10_opportunities.json", function(json) {
+      var bubble_data = json;
+
+      //chart.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: bubble_data.data.length} );
+
+      d3.select('#bubble svg')
+          .datum(bubble_data)
+        .transition().duration(500)
+          .call(chart);
+    });
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+// http://localhost:8888/builds/sugar7/ent/sugarcrm/rest/v10/Opportunities/filter?fields=assigned_user_name%2Cteam_name%2Copportunity_type%2Caccount_name%2Ccampaign_name%2Clead_source%2Ccurrency_name%2Ccurrency_symbol%2Cdate_closed%2Csales_stage%2Csales_status%2Ccommit_stage%2Cassigned_user_id%2Caccount_id%2Ccampaign_id%2Ccurrency_id%2Cname%2Camount%2Cnext_step%2Cprobability%2Ccreated_by_name%2Cmodified_by_name%2Cdate_entered%2Ccreated_by%2Cmodified_user_id&max_num=20&filter%5B0%5D%5B%24owner%5D=
+</script>
+</body>
+</html>
+
+
