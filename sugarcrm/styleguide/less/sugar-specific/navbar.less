@@ -281,6 +281,22 @@
       > li.dropdown {
         border-left: 1px solid transparent;
         border-right: 1px solid transparent;
+        &.home {
+          width: 64px;
+          &.active {
+            .cube {
+              background-position: 17px 11px;
+            }
+            &.open {
+              .cube {
+                background-position: 16px 11px;
+              }
+            }
+          }
+          &> .btn-group {
+            width: 100%;
+          }
+        }
         &.open {
           &.active {
             .cube {
