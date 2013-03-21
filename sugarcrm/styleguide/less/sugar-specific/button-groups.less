@@ -1,5 +1,3 @@
-/*sugar mods*/
-
 .btn-group {
   position: relative;
   .clearfix(); // clears the floated buttons
@@ -10,7 +8,7 @@
     //float: left;
     display: inline-block !important;
     margin-left: -1px;
-    font-size: @fontSize;
+    font-size: @baseFontSize;
     .border-radius(0px);
     .rtlFloat(@direction,none);
     // Give the line between buttons some depth
@@ -131,4 +129,3 @@
 .btn-toolbar > .dropdown-menu {
   font-size: @baseFontSize; // redeclare as part 2 of font-size inline-block hack
 }
-
