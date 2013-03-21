@@ -4,7 +4,7 @@ nv.models.bubble = function() {
   //============================================================
   // Public Variables with Default Settings
   //------------------------------------------------------------
-var format = d3.time.format("%Y-%m-%d");
+
   var margin = {top: 0, right: 0, bottom: 0, left: 0}
     , scatter = nv.models.scatter()
     , width = 960
@@ -24,6 +24,7 @@ var format = d3.time.format("%Y-%m-%d");
     , gradient = function (d,i) { return color(d,i); }
     , useClass = false
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
+    , format = d3.time.format("%Y-%m-%d")
   ;
 
 
@@ -49,39 +50,46 @@ var format = d3.time.format("%Y-%m-%d");
 
       chart.gradient( fillGradient );
 
-      //add series index to each data point for reference
-      data = data.map(function(series, i) {
-        series.total = 0;
-        series.values = series.values.map(function(point) {
-          point.series = i;
-          series.total += point.y;
-          return point;
-        });
-        return series;
-      });
-
 
       //------------------------------------------------------------
       // Setup Scales
       // remap and flatten the data for use in calculating the scales' domains
-      var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
-            data.map(function(d) {
-              return d.values.map(function(d,i) {
-                return { x: getX(d,i), y: getY(d,i), y0: d.y0 }
+
+      var timeExtent =
+            d3.extent(
+              d3.merge(
+                data.map(function(d) {
+                  return d.values.map(function(d,i) {
+                    return format.parse(d.x);
+                  });
+                })
+              )
+            );
+      var xD = [
+            d3.time.month.floor(timeExtent[0]),
+            d3.time.day.offset(d3.time.month.ceil(timeExtent[1]),-1)
+          ];
+
+      var yD = d3.extent(
+            d3.merge(
+              data.map(function(d) {
+                return d.values.map(function(d,i) {
+                  return getY(d,i);
+                })
               })
-            });
+            ).concat(forceY)
+          );
 
       scatter
         .id(id)
-        .size(function(d){ return d.y; }) // default size
+        .size(function(d){ return d.opportunity; }) // default size
         //.sizeDomain([16,256]) //set to speed up calculation, needs to be unset if there is a custom size accessor
         .sizeRange([256,2048])
         .singlePoint(true)
         .xScale(x)
-        //.xDomain(d3.extent(d3.merge(seriesData).map(function(d) { return d.x })))
-        .xDomain([format.parse('2013-01-01'),format.parse('2013-03-31')])
+        .xDomain(xD)
         .yScale(y)
-        .yDomain(d3.extent(d3.merge(seriesData).map(function(d) { return d.y }).concat(forceY)))
+        .yDomain(yD)
         .width(availableWidth)
         .height(availableHeight)
         //.margin(margin)

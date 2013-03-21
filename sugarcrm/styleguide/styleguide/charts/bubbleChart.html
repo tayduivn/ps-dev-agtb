@@ -24,7 +24,7 @@
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
 <script src="../js/nvd3/data/line_data.js"></script>
 <script src="../js/nvd3/src/models/scatter.js"></script>
-<script src="../js/nvd3/src/models/bubble_opportunity.js"></script>
+<script src="../js/nvd3/src/models/bubble.js"></script>
 <script src="../js/nvd3/src/models/bubbleChart.js"></script>
 
 <script>
@@ -37,30 +37,25 @@
           .x(function(d) { return format.parse(d.x) })
           .y(function(d) { return d.y })
           .tooltip( function(key, x, y, e, graph) {
-              return '<p>Category: <b>' + key + '</b></p>' +
-                     '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
+              return '<p>Industry: <b>' + key + '</b></p>' +
+                     '<p>Amount: <b>$' +  d3.format(',.02d')(e.point.opportunity) + '</b></p>' +
                      '<p>Date: <b>' +  x + '</b></p>'
             })
-          .showTitle(false)
+          .showTitle(true)
           .tooltips(true)
-          .showControls(true)
+          .showControls(false)
+          .showLegend(true)
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
           //.colorData( 'class' )
           //.colorData( 'default' )
           //.colorFill( 'gradient' )
           //.colorFill( 'default' )
-          //.forceY([0,400]).forceX([0,6]);
         ;
-
-    chart.xAxis
-
-
-    chart.yAxis
-        .axisLabel('Opportunity ($)')
-        .tickFormat(d3.format(',.f'));
 
     d3.json("../js/nvd3/data/top10_opportunities.json", function(json) {
       var bubble_data = json;
+
+      //chart.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: bubble_data.data.length} );
 
       d3.select('#bubble svg')
           .datum(bubble_data)

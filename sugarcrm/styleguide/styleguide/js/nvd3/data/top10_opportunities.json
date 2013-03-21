@@ -5,7 +5,7 @@
   },
   "data": [
       {
-        "key": "Industry A",
+        "key": "Education",
         "values": [
           {
             "x": "2013-01-15",
@@ -28,57 +28,57 @@
         ]
       },
       {
-        "key": "Industry B",
+        "key": "Government",
         "values": [
           {
             "x": "2013-02-10",
-            "y": 40245,
+            "y": 80245,
             "size": 40,
             "shape": "circle"
           },
           {
             "x": "2013-03-20",
-            "y": 40500,
+            "y": 80500,
             "size": 40,
             "shape": "circle"
           }
         ]
       },
       {
-        "key": "Industry C",
+        "key": "Automotive",
         "values": [
           {
             "x": "2013-01-25",
-            "y": 34367,
+            "y": 54367,
             "size": 30,
             "shape": "circle"
           }
         ]
       },
       {
-        "key": "Industry D",
+        "key": "Small Business",
         "values": [
           {
             "x": "2013-01-15",
-            "y": 20123,
+            "y": 15123,
             "size": 20,
             "shape": "circle"
           },
           {
             "x": "2013-02-05",
-            "y": 22567,
+            "y": 17567,
             "size": 20,
             "shape": "circle"
           },
           {
             "x": "2013-02-20",
-            "y": 21009,
+            "y": 14009,
             "size": 20,
             "shape": "circle"
           },
           {
             "x": "2013-03-05",
-            "y": 24742,
+            "y": 17742,
             "size": 20,
             "shape": "circle"
           }

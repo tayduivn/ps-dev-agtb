@@ -6,11 +6,11 @@ nv.models.bubbleChart = function() {
   //------------------------------------------------------------
 var format = d3.time.format("%Y-%m-%d");
 
-  var margin = {top: 90, right: 20, bottom: 50, left: 60}
+  var margin = {top: 70, right: 20, bottom: 50, left: 90}
     , width = null
     , height = null
-    , getX = function(d) { return d.x }
-    , getY = function(d) { return d.y }
+    , getX = function(d) { return d.x; }
+    , getY = function(d) { return d.y; }
     , color = nv.utils.defaultColor()
     , showControls = true
     , showLegend = true
@@ -21,7 +21,7 @@ var format = d3.time.format("%Y-%m-%d");
     , tooltips = true
     , tooltip = function(key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
-               '<p>' +  y + ' on ' + x + '</p>'
+               '<p>' +  y + ' on ' + x + '</p>';
       }
     , noData = "No Data Available."
     ;
@@ -43,21 +43,21 @@ var format = d3.time.format("%Y-%m-%d");
         .showMaxMin(false)
     , yAxis = nv.models.axis()
         .orient('left')
-
+        .highlightZero(false)
+        .showMaxMin(false)
     , legend = nv.models.legend()
     , controls = nv.models.legend()
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
-    ;
+  ;
 
   var showTooltip = function(e, offsetElement) {
-
     // New addition to calculate position if SVG is scaled with viewBox, may move TODO: consider implementing everywhere else
     if (offsetElement) {
       var svg = d3.select(offsetElement).select('svg');
       var viewBox = svg.attr('viewBox');
       if (viewBox) {
         viewBox = viewBox.split(' ');
-        var ratio = parseInt(svg.style('width')) / viewBox[2];
+        var ratio = parseInt(svg.style('width'),10) / viewBox[2];
         e.pos[0] = e.pos[0] * ratio;
         e.pos[1] = e.pos[1] * ratio;
       }
@@ -66,7 +66,7 @@ var format = d3.time.format("%Y-%m-%d");
     var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
         top = e.pos[1] + ( offsetElement.offsetTop || 0),
         x = xAxis.tickFormat()(bubbles.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(bubbles.y()(e.point, e.pointIndex)),
+        y = yAxis.tickFormat()(e.point, e.pointIndex),
         content = tooltip(e.series.key, x, y, e, chart);
 
     nv.tooltip.show([left, top], content, null, null, offsetElement);
@@ -85,9 +85,9 @@ var format = d3.time.format("%Y-%m-%d");
       var container = d3.select(this),
           that = this;
 
-      var availableWidth = (width  || parseInt(container.style('width')) || 960)
+      var availableWidth = (width  || parseInt(container.style('width'),10) || 960)
                              - margin.left - margin.right,
-          availableHeight = (height || parseInt(container.style('height')) || 400)
+          availableHeight = (height || parseInt(container.style('height'),10) || 400)
                              - margin.top - margin.bottom;
 
       function getTimeTicks(data) {
@@ -99,7 +99,7 @@ var format = d3.time.format("%Y-%m-%d");
                   data.map(function(d) {
                     return d.values.map(function(d,i) {
                       return format.parse(getX(d));
-                    })
+                    });
                   })
                 )
               );
@@ -115,10 +115,62 @@ var format = d3.time.format("%Y-%m-%d");
         return timeTicks;
       }
 
+      function getGroupTicks(data) {
+        var yValues = data.map(function(s){
+            return d3.min( s.values.map(function(p){ return p.y; } ) );
+          });
+        return yValues;
+      }
+
+      var gHeight = availableHeight/data.length
+        , gOffset = gHeight*0.25
+        , gDomain = [0,1]
+        , gRange = [0,1]
+        , gScale = d3.scale.linear().domain(gDomain).range(gRange);
+
+      var total = 0
+
+      //add series index to each data point for reference
+      data = data.map(function(s, i) {
+          s.total = 0;
+
+          s.values = s.values.sort(function(a, b) {
+              return b.y < a.y ? -1 : b.y > a.y ? 1 : 0;
+            })
+            .map(function(p) {
+              p.series = i;
+              s.total += p.y;
+              return p;
+            });
+
+          return s;
+        })
+        .sort(function(a, b) {
+          return a.total < b.total ? -1 : a.total > b.total ? 1 : 0;
+        })
+        .map(function(s, i) {
+          total += s.total;
+
+          gDomain = d3.extent( s.values.map(function(p){ return p.y; }) );
+          gRange = [gHeight*i+gOffset, gHeight*(i+1)-gOffset];
+          gScale.domain(gDomain).range(gRange);
+
+          s.values = s.values
+            .map(function(p) {
+              p.opportunity = p.y;
+              p.y = gScale(p.opportunity);
+              return p;
+            });
+
+          return s;
+        });
+
+      properties.title = 'Total = $' + d3.format(',.02d')(total);
+
       //------------------------------------------------------------
       // Display noData message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function(d) { return d.values.length }).length) {
+      if (!data || !data.length || !data.filter(function(d) { return d.values.length; }).length) {
         container.append('text')
           .attr('class', 'nvd3 nv-noData')
           .attr('x', availableWidth / 2)
@@ -143,7 +195,6 @@ var format = d3.time.format("%Y-%m-%d");
       gEnter.append('g').attr('class', 'nv-y nv-axis');
       gEnter.append('g').attr('class', 'nv-bubblesWrap');
 
-
       //------------------------------------------------------------
       // Title & Legend
 
@@ -154,7 +205,7 @@ var format = d3.time.format("%Y-%m-%d");
       {
         gEnter.append('g').attr('class', 'nv-legendWrap');
 
-        legend.width(availableWidth*(showControls?0.7:1));
+        legend.width(availableWidth*(showControls||showTitle?0.7:1));
 
         g.select('.nv-legendWrap')
           .datum(data)
@@ -162,14 +213,15 @@ var format = d3.time.format("%Y-%m-%d");
 
         legendHeight = legend.height();
 
-        if ( margin.top < legendHeight + titleHeight ) {
-          margin.top = legendHeight + titleHeight;
-          availableHeight = (height || parseInt(container.style('height')) || 400)
+        if ( margin.top < Math.max(legendHeight, titleHeight) ) {
+          margin.top = Math.max(legendHeight, titleHeight);
+          availableHeight = (height || parseInt(container.style('height'),10) || 400)
                              - margin.top - margin.bottom;
         }
+console.log(legend.height())
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate('+(availableWidth*(showControls?0.3:0))+',' + (-margin.top) +')');
+            .attr('transform', 'translate('+(availableWidth*(showControls?0.3:.3))+',' + (-margin.top) +')');
       }
 
       if (showTitle && properties.title )
@@ -189,19 +241,19 @@ var format = d3.time.format("%Y-%m-%d");
             .attr('fill', 'black')
           ;
 
-        titleHeight = parseInt( g.select('.nv-title').node().getBBox().height ) +
-          parseInt( g.select('.nv-title').style('margin-top') ) +
-          parseInt( g.select('.nv-title').style('margin-bottom') );
+        titleHeight = parseInt( g.select('.nv-title').node().getBBox().height, 10 ) +
+          parseInt( g.select('.nv-title').style('margin-top'), 10 ) +
+          parseInt( g.select('.nv-title').style('margin-bottom'), 10 );
 
-        if ( margin.top !== titleHeight + legendHeight )
+        if ( margin.top < Math.max(legendHeight, titleHeight) )
         {
-          margin.top = titleHeight + legendHeight;
-          availableHeight = (height || parseInt(container.style('height')) || 400)
+          margin.top = Math.max(legendHeight, titleHeight);
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
                              - margin.top - margin.bottom;
         }
 
         g.select('.nv-titleWrap')
-            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').node().getBBox().height )) +')');
+            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').node().getBBox().height, 10 ) ) +')');
       }
 
       //------------------------------------------------------------
@@ -229,16 +281,15 @@ var format = d3.time.format("%Y-%m-%d");
         //.margin(margin)
         .color(data.map(function(d,i) {
           return d.color || color(d, i);
-        }).filter(function(d,i) { return !data[i].disabled }));
-
+        }).filter(function(d,i) { return !data[i].disabled; }));
 
       var bubblesWrap = g.select('.nv-bubblesWrap')
-          .datum(data.filter(function(d) { return !d.disabled }))
+          .datum(data.filter(function(d) { return !d.disabled; }));
 
       d3.transition(bubblesWrap).call(bubbles);
 
 
-
+      // x Axis
 
       xAxis
         .scale(x)
@@ -247,40 +298,24 @@ var format = d3.time.format("%Y-%m-%d");
         .tickValues(getTimeTicks(data))
         .showMaxMin(false)
         .tickFormat(function(d) {
-          return d3.time.format('%x')(new Date(d))
-        });;
+          return d3.time.format('%x')(new Date(d));
+        });
 
       g.select('.nv-x.nv-axis')
           .attr('transform', 'translate(0,' + y.range()[0] + ')');
+
       d3.transition(g.select('.nv-x.nv-axis'))
           .call(xAxis);
 
 
-        // var groupExtents =
-        //       d3.merge(
-        //         data.map(function(d) {
-        //           return d.values.map(function(d,i) {
-        //             return format.parse(getX(y));
-        //           })
-        //         })
-        //       );
-        // var timeRange =
-        //       d3.time.month.range(
-        //         d3.time.month.floor(timeExtent[0]),
-        //         d3.time.month.ceil(timeExtent[1])
-        //       );
-        // var timeTicks =
-        //       timeRange.map(function(d) {
-        //         return d3.time.day.offset( d3.time.month.floor(d), -1+daysInMonth(d)/2 );
-        //       });
-
-
-
+      // y Axis
 
       yAxis
         .scale(y)
-        .ticks( availableHeight / 36)
-        .tickSize(-availableWidth, 0);
+        .ticks( data.length )
+        .tickValues( getGroupTicks(data) )
+        .tickSize(-availableWidth, 0)
+        .tickFormat(function(d,i){ return data[i].key});
 
       d3.transition(g.select('.nv-y.nv-axis'))
           .call(yAxis);
@@ -295,7 +330,7 @@ var format = d3.time.format("%Y-%m-%d");
       legend.dispatch.on('legendClick', function(d,i) {
         d.disabled = !d.disabled;
 
-        if (!data.filter(function(d) { return !d.disabled }).length) {
+        if (!data.filter(function(d) { return !d.disabled; }).length) {
           data.map(function(d) {
             d.disabled = false;
             wrap.selectAll('.nv-series').classed('disabled', false);
@@ -318,38 +353,38 @@ var format = d3.time.format("%Y-%m-%d");
       });
 */
 
-      controls.dispatch.on('legendClick', function(d,i) {
-        if (!d.disabled) return;
+      // controls.dispatch.on('legendClick', function(d,i) {
+      //   if (!d.disabled) return;
 
-        controlsData = controlsData.map(function(s) {
-          s.disabled = true;
-          return s;
-        });
-        d.disabled = false;
+      //   controlsData = controlsData.map(function(s) {
+      //     s.disabled = true;
+      //     return s;
+      //   });
+      //   d.disabled = false;
 
-        switch (d.key) {
-          case 'Basis':
-            bubbles.interpolate('basis');
-            break;
-          case 'Linear':
-            bubbles.interpolate('linear');
-            break;
-          case 'Monotone':
-            bubbles.interpolate('monotone');
-            break;
-          case 'Cardinal':
-            bubbles.interpolate('cardinal');
-            break;
-          case 'Line':
-            bubbles.isArea(false);
-            break;
-          case 'Area':
-            bubbles.isArea(true);
-            break;
-        }
+      //   switch (d.key) {
+      //     case 'Basis':
+      //       bubbles.interpolate('basis');
+      //       break;
+      //     case 'Linear':
+      //       bubbles.interpolate('linear');
+      //       break;
+      //     case 'Monotone':
+      //       bubbles.interpolate('monotone');
+      //       break;
+      //     case 'Cardinal':
+      //       bubbles.interpolate('cardinal');
+      //       break;
+      //     case 'Line':
+      //       bubbles.isArea(false);
+      //       break;
+      //     case 'Area':
+      //       bubbles.isArea(true);
+      //       break;
+      //   }
 
-        selection.transition().call(chart);
-      });
+      //   selection.transition().call(chart);
+      // });
 
       dispatch.on('tooltipShow', function(e) {
         if (tooltips) showTooltip(e, that.parentNode);
@@ -358,7 +393,7 @@ var format = d3.time.format("%Y-%m-%d");
       //============================================================
 
 
-      chart.update = function() { chart(selection) };
+      chart.update = function() { chart(selection); };
       chart.container = this;
 
     });
@@ -406,13 +441,13 @@ var format = d3.time.format("%Y-%m-%d");
       var c1 = arguments[1].c1
         , c2 = arguments[1].c2
         , l = arguments[1].l;
-      var color = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(i/l) };
+      var color = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(i/l); };
     }
     else if (_ === 'class')
     {
       chart.useClass(true);
       legend.useClass(true);
-      var color = function (d,i) { return 'inherit' };
+      var color = function (d,i) { return 'inherit'; };
     }
     else
     {
@@ -428,7 +463,7 @@ var format = d3.time.format("%Y-%m-%d");
   chart.colorFill = function(_) {
     if (_ === 'gradient')
     {
-      var fill = function (d,i) { return chart.gradient()(d,i) };
+      var fill = function (d,i) { return chart.gradient()(d,i); };
     }
     else
     {
