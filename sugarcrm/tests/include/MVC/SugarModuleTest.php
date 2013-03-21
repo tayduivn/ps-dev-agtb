@@ -38,7 +38,7 @@ class SugarModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $beanList = array('Accounts'=>'Account');
         $beanFiles = array('Account'=>'modules/Accounts/Account.php');
         $bean = SugarModule::get('Accounts')->loadBean($beanList,$beanFiles,false);
-        $this->assertTrue(($bean instanceof Account), "Expecting an Account bean");
+        $this->assertInstanceOf('Account', $bean, "Expecting Account bean");
     }
     
     public function testLoadBeanInvalidBean()
