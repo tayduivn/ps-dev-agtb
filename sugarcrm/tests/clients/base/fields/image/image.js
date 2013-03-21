@@ -69,6 +69,39 @@ describe("image field", function() {
             expect(field.$(".image_field").css('width')).toEqual('200px');
         });
 
+        it("should only bind data change when not in edit or create", function() {
+            var stub = sinon.stub(app.view.Field.prototype, 'bindDataChange');
+            field.view = {};
+            field.view.name = 'edit';
+            field.bindDataChange();
+            expect(stub).not.toHaveBeenCalled();
+            stub.reset();
+
+            field.view.name = 'create';
+            field.bindDataChange();
+            expect(stub).not.toHaveBeenCalled();
+            stub.reset();
+
+            field.view.name = 'detail';
+            field.view.options = {viewName: 'edit'};
+            field.bindDataChange();
+            expect(stub).toHaveBeenCalled();
+            stub.reset();
+
+            field.view.name = 'detail';
+            field.view.options = {viewName: 'detail'};
+            field.bindDataChange();
+            expect(stub).toHaveBeenCalled();
+            stub.reset();
+
+            field.view.name = 'detail';
+            field.view.options = {viewName: 'detail'};
+            field.view.action = 'edit';
+            field.bindDataChange();
+            expect(stub).not.toHaveBeenCalled();
+
+            stub.restore();
+        });
 
         it("should trigger change with a param for the record view", function() {
             var triggerSpy = sinon.spy(model, "trigger");

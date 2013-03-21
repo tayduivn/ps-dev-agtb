@@ -62,7 +62,8 @@
     },
     bindDataChange: function() {
         //Keep empty for edit because you cannot set a value of an input type `file`
-        if (this.view.name != "edit" && this.view.fallbackFieldTemplate != "edit" && this.options.viewName != "edit") {
+        var viewType = this.view.name || this.options.viewName;
+        if (viewType !== "edit" && viewType !== "create" && this.view.action !== "edit") {
             app.view.Field.prototype.bindDataChange.call(this);
         }
     },
