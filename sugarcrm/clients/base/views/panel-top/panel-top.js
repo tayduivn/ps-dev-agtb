@@ -37,6 +37,8 @@
             }
             var relatedModel = app.data.createRelatedBean(parentModel, model.id, link),
                 options = {
+                    //Show alerts for this request
+                    showAlerts: true,
                     relate: true,
                     success: function(model) {
                         self.context.resetLoadFlag();

@@ -3,7 +3,10 @@
         app.view.View.prototype.initialize.call(this, options);
 
         this.funnelCollection = app.data.createBeanCollection(this.module);
-        this.funnelCollection.fetch();
+        this.funnelCollection.fetch({
+            //Don't show alerts for this request
+            showAlerts: false
+        });
         this.guid = _.uniqueId("funnel");
     },
 

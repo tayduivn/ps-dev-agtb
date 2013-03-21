@@ -110,6 +110,8 @@
             messages: app.lang.get('NTC_DELETE_CONFIRMATION'),
             onConfirm: function() {
                 model.destroy({
+                    //Show alerts for this request
+                    showAlerts: true,
                     success: function() {
                         self.collection.remove(model);
                         app.events.trigger("preview:close");

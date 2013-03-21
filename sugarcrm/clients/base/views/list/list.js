@@ -220,6 +220,9 @@
         // Treat as a "sorted search" if the filter is toggled open
         options = self.filterOpened ? self.getSearchOptions() : {};
 
+        //Show alerts for this request
+        options.showAlerts = true;
+
         // If injected context with a limit (dashboard) then fetch only that
         // amount. Also, add true will make it append to already loaded records.
         options.limit = self.limit || null;

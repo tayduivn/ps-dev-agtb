@@ -35,7 +35,9 @@
                         this.changed = false;
                         self.view.toggleRow(model.id, false);
                     },
-                    alerts: {
+                    //Show alerts for this request
+                    showAlerts: {
+                        'process' : true,
                         'success': {
                             messages: app.lang.getAppString('LBL_RECORD_SAVED')
                         }

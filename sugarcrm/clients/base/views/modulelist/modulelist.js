@@ -139,6 +139,8 @@
         var self = this;
         var rowCollection = app.data.createBeanCollection(module);
         rowCollection.fetch({
+            //Don't show alerts for this request
+            showAlerts: false,
             favorites:true,
             limit:3,
             success:function (collection) {
@@ -208,6 +210,8 @@
             });
         var dashCollection = new DashboardCollection();
         dashCollection.fetch({
+            //Don't show alerts for this request
+            showAlerts: false,
             success: function(data) {
                 self.$('[data-module=Home] .dashboardContainer').html(self.recentRowTemplate(dashCollection));
             }

@@ -130,6 +130,8 @@
 
         if(fetch){
             model.fetch({
+                //Show alerts for this request
+                showAlerts: true,
                 success: function(model) {
                     self.renderPreview(model, collection);
                 },
@@ -253,6 +255,8 @@
                         this.model.set("id", this.collection.models[currIndex].get("target_id"));
                     }
                     this.model.fetch({
+                        //Show alerts for this request
+                        showAlerts: true,
                         success: function(model) {
                             model.set("_module", targetModule);
                             self.model = null;

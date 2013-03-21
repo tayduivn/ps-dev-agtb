@@ -28,7 +28,14 @@
     togglePreviewList: function(model) {
         if (model) {
             this.model = model;
-            this.streamCollection.fetch({ params: { module: this.module, id: this.model.id }});
+            this.streamCollection.fetch({
+                //Don't show alerts for this request
+                showAlerts: false,
+                params: {
+                    module: this.module,
+                    id: this.model.id
+                }
+            });
         }
     },
 

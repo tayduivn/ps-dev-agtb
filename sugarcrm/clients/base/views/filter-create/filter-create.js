@@ -311,7 +311,9 @@
                     self.layout.trigger("filter:add", model);
                     self.$(".filter-header").data("model", model);
                 },
-                alerts: {
+                //Show alerts for this request
+                showAlerts: {
+                    'process': true,
                     'success': {
                         title: app.lang.get("LBL_EMAIL_SUCCESS") + ":",
                         messages: app.lang.get("LBL_FILTER_SAVE") + " " + val
@@ -327,6 +329,8 @@
         var self = this;
         if(this.$(".filter-header").data("model")) {
             this.$(".filter-header").data("model").destroy({
+                //Show alerts for this request
+                showAlerts: true,
                 success: function() {
                     self.$(".filter-header").data("model", null);
                     self.layout.trigger("filter:set", "all_records");

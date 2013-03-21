@@ -184,7 +184,9 @@
                     var layoutName = this.dashboardLayouts[this.context.parent ? this.context.parent.get("layout") : 'record'],
                         _initDashboard = app.metadata.getLayout(this.model.dashboardModule, layoutName),
                         params = {
-                            silent: true
+                            silent: true,
+                            //Show alerts for this request
+                            showAlerts: true
                         };
 
                     if (this.context.parent) {
@@ -205,7 +207,6 @@
                     }
 
                     if (!_.isEmpty(_initDashboard) && !_.isEmpty(_initDashboard.metadata)) {
-                        this.model._hideAlertsOn = ['create'];
                         this.model.set(_initDashboard);
                         this.model.save({}, params);
                     } else {

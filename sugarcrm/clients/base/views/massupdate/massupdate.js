@@ -197,6 +197,8 @@
                 var massUpdate = self.getMassUpdateModel(self.module);
                 if(massUpdate) {
                     massUpdate.fetch({
+                        //Don't show alerts for this request
+                        showAlerts: false,
                         method: 'delete',
                         error: function() {
                             app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
@@ -206,12 +208,14 @@
                                 //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                                 //TODO: Need trigger for fetching new record list
                                 app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_DELETED'), autoClose: true});
-                                self.layout.collection.fetch({alerts: false});
+                                self.layout.collection.fetch({
+                                    //Don't show alerts for this request
+                                    showAlerts: false
+                                });
                             } else if(response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
                             }
-                        },
-                        alerts: false
+                        }
                     });
 
                 }
@@ -257,6 +261,8 @@
                 var fetchMassupdate = function() {
 
                     massUpdate.fetch({
+                        //Show alerts for this request
+                        showAlerts: true,
                         attributes: attributes,
                         error: function() {
                             app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
@@ -268,6 +274,8 @@
                                 //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                                 //TODO: Need trigger for fetching new record list
                                 self.layout.collection.fetch({
+                                    //Don't show alerts for this request
+                                    showAlerts: false,
                                     // Boolean coercion.
                                     relate: !!self.layout.collection.link
                                 });

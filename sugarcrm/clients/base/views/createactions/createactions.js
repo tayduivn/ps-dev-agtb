@@ -117,7 +117,10 @@
             if (refresh) {
                 var collection = app.controller.context.get('collection');
                 if (collection && collection.module === module) {
-                    collection.fetch();
+                    collection.fetch({
+                        //Don't show alerts for this request
+                        showAlerts: false
+                    });
                 }
             }
         });

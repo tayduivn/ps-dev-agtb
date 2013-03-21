@@ -82,6 +82,9 @@
         // If in "search mode" (the search filter is toggled open) set q:term param
         options = this.context.get('filterOpened') ? self.getSearchOptions() : {};
 
+        //Show alerts for this request
+        options.showAlerts = true;
+
         // Indicates records will be added to those already loaded in to view
         options.add = true;
 
