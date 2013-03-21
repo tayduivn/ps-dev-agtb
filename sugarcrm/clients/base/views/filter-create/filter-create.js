@@ -283,7 +283,7 @@
                 filter_definition: this._getJSON(),
                 name: val,
                 default_filter: false,
-                module_name: this.module
+                module_name: this.layout.currentModule
             };
 
             var filter = this.$(".filter-header").data("model");
