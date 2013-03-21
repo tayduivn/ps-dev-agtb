@@ -590,16 +590,7 @@
             }
         );
 
-        //see if anything in the model is a draft version
-        var enableCommit = this.collection.find(function(model) {
-            if(model.get("version") == 0) {
-                this.draftModels.add(model, {merge: true});
-                return true;
-            }
-
-            return false;
-        }, this);
-        if(_.isObject(enableCommit)) {
+        if (this.getDraftModels().length > 0) {
             this.context.trigger("forecasts:commitButtons:enabled");
         }
 
@@ -607,7 +598,17 @@
         this.context.trigger('forecasts:worksheetmanager:rendered');
 
         return this;
-
+    },
+    
+    getDraftModels: function(){
+      //see if anything in the model is a draft version
+        return this.collection.filter(function(model) {
+            if (model.get("version") == "0") {
+                this.draftModels.add(model, {merge: true});
+                return true;
+            }            
+            return false;            
+        }, this);
     },
 
     /**
