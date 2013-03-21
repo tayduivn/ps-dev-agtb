@@ -58,6 +58,17 @@
         </div>
         <div class="span6">
         </div>
+        <div class="span6">
+          <h3>Bubble Chart</h3>
+          <p>This is a new NVD3 tree chart type created for SugarCRM. <a href="charts/bubbleChart.html">Full Screen</a></p>
+          <div>
+<div id="bubble" class="thumbnail nv-bubble nv-chart">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+        <div class="span6">
+        </div>
       </div>
     </section>
 
@@ -163,6 +174,40 @@
 
     return chart;
   });
+
+  // Bubble chart
+  nv.addGraph(function() {
+    var format = d3.time.format("%Y-%m-%d");
+
+    var chart = nv.models.bubbleChart()
+          .x(function(d) { return format.parse(d.x) })
+          .y(function(d) { return d.y })
+          .tooltip( function(key, x, y, e, graph) {
+              return '<p>Industry: <b>' + key + '</b></p>' +
+                     '<p>Amount: <b>$' +  d3.format(',.02d')(e.point.opportunity) + '</b></p>' +
+                     '<p>Date: <b>' +  x + '</b></p>'
+            })
+          .showTitle(true)
+          .tooltips(true)
+          .showLegend(true)
+        ;
+
+    d3.json("js/nvd3/data/top10_opportunities.json", function(json) {
+      var bubble_data = json;
+
+      //chart.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: bubble_data.data.length} );
+
+      d3.select('#bubble svg')
+          .datum(bubble_data)
+        .transition().duration(500)
+          .call(chart);
+    });
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
 
   // Treemap opportunities chart
   nv.addGraph(function() {

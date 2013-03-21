@@ -6,13 +6,12 @@ nv.models.bubbleChart = function() {
   //------------------------------------------------------------
 var format = d3.time.format("%Y-%m-%d");
 
-  var margin = {top: 70, right: 20, bottom: 50, left: 90}
+  var margin = {top: 70, right: 20, bottom: 30, left: 90}
     , width = null
     , height = null
     , getX = function(d) { return d.x; }
     , getY = function(d) { return d.y; }
     , color = nv.utils.defaultColor()
-    , showControls = true
     , showLegend = true
     , showTitle = false
     , reduceXTicks = true // if false a tick will show for every data point
@@ -46,7 +45,6 @@ var format = d3.time.format("%Y-%m-%d");
         .highlightZero(false)
         .showMaxMin(false)
     , legend = nv.models.legend()
-    , controls = nv.models.legend()
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
   ;
 
@@ -205,7 +203,7 @@ var format = d3.time.format("%Y-%m-%d");
       {
         gEnter.append('g').attr('class', 'nv-legendWrap');
 
-        legend.width(availableWidth*(showControls||showTitle?0.7:1));
+        legend.width(availableWidth*(showTitle?0.7:1));
 
         g.select('.nv-legendWrap')
           .datum(data)
@@ -218,10 +216,9 @@ var format = d3.time.format("%Y-%m-%d");
           availableHeight = (height || parseInt(container.style('height'),10) || 400)
                              - margin.top - margin.bottom;
         }
-console.log(legend.height())
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate('+(availableWidth*(showControls?0.3:.3))+',' + (-margin.top) +')');
+            .attr('transform', 'translate('+(availableWidth*(showTitle?0.3:0))+',' + (-margin.top) +')');
       }
 
       if (showTitle && properties.title )
@@ -257,17 +254,6 @@ console.log(legend.height())
       }
 
       //------------------------------------------------------------
-      // Controls
-
-      // if (showControls) {
-      //   controls.width(180).color(['#444']);
-      //   g.select('.nv-controlsWrap')
-      //       .datum(controlsData)
-      //       .attr('transform', 'translate(0,' + (-margin.top) +')')
-      //       .call(controls);
-      // }
-
-      //------------------------------------------------------------
 
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -298,7 +284,7 @@ console.log(legend.height())
         .tickValues(getTimeTicks(data))
         .showMaxMin(false)
         .tickFormat(function(d) {
-          return d3.time.format('%x')(new Date(d));
+          return d3.time.format('%b')(new Date(d));
         });
 
       g.select('.nv-x.nv-axis')
@@ -352,39 +338,6 @@ console.log(legend.height())
         selection.transition().call(chart)
       });
 */
-
-      // controls.dispatch.on('legendClick', function(d,i) {
-      //   if (!d.disabled) return;
-
-      //   controlsData = controlsData.map(function(s) {
-      //     s.disabled = true;
-      //     return s;
-      //   });
-      //   d.disabled = false;
-
-      //   switch (d.key) {
-      //     case 'Basis':
-      //       bubbles.interpolate('basis');
-      //       break;
-      //     case 'Linear':
-      //       bubbles.interpolate('linear');
-      //       break;
-      //     case 'Monotone':
-      //       bubbles.interpolate('monotone');
-      //       break;
-      //     case 'Cardinal':
-      //       bubbles.interpolate('cardinal');
-      //       break;
-      //     case 'Line':
-      //       bubbles.isArea(false);
-      //       break;
-      //     case 'Area':
-      //       bubbles.isArea(true);
-      //       break;
-      //   }
-
-      //   selection.transition().call(chart);
-      // });
 
       dispatch.on('tooltipShow', function(e) {
         if (tooltips) showTooltip(e, that.parentNode);
@@ -490,12 +443,6 @@ console.log(legend.height())
   chart.height = function(_) {
     if (!arguments.length) return height;
     height = _;
-    return chart;
-  };
-
-  chart.showControls = function(_) {
-    if (!arguments.length) return showControls;
-    showControls = _;
     return chart;
   };
 
