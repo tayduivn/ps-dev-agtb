@@ -36,6 +36,11 @@ $dictionary['activities_users'] = array(
             'required' => true,
         ),
 
+        'date_modified' => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+
         'deleted' => array (
             'name' => 'deleted',
             'vname' => 'LBL_DELETED',
