@@ -261,10 +261,6 @@
         this.$('.more').before(this.$('#module_list .more-drop-container').children());
         this.closeOpenDrops();
     },
-
-    closeOpenDrops: function() {
-        this.$('.dropdown.open').removeClass('open');
-    },
     /**
      * Resize the module list to the specified width and move the extra module names to the dropdown.
      * We first clone the module list, make adjustments, and then replace.
