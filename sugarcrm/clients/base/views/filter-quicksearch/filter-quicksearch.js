@@ -26,7 +26,6 @@
         }
     }, 400),
 
-
     clearInput: function() {
         this.$el.val("");
         this.currentSearch = "";
