@@ -82,7 +82,7 @@ class ForecastManagerWorksheet extends SugarBean
         $results = $db->query($sql);
 
         if (empty($manager->reports_to_id)) {
-            $sqlQuota = 'SELECT sum(quota) as quota
+            $sqlQuota = 'SELECT sum(quota * base_rate) as quota
                             FROM ' . $this->table_name . ' WHERE assigned_user_id = "' . $manager->id . '"
                             AND timeperiod_id = "' . $db->quote($timeperiod) . '" and draft = 1 and deleted = 0';
             $quota = $db->fetchOne($sqlQuota);
