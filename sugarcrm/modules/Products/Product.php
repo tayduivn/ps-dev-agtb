@@ -996,4 +996,15 @@ class Product extends SugarBean
 
         return $array_assign;
     }
+    
+    public function mark_deleted($id)
+    {
+        $oppId = $this->opportunity_id;
+        parent::mark_deleted($id);
+        //save to trigger related field recalculations for deleted item
+        if (!empty($oppId)) {
+            $opp = BeanFactory::getBean('Opportunities', $oppId);
+            $opp->save();
+        }        
+    }
 }
