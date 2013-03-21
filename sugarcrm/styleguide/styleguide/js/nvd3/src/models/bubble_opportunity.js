@@ -49,23 +49,32 @@ var format = d3.time.format("%Y-%m-%d");
 
       chart.gradient( fillGradient );
 
+var groupHeight = availableHeight/data.length;
+var groupDomain = [0,1];
+var groupRange = [0,1];
+var groupScale = d3.scale.linear().domain(groupDomain).range(groupRange);
+
       //add series index to each data point for reference
-      data = data.map(function(series, i) {
-          series.total = 0;
-          series.values = series.values.map(function(point) {
-            point.series = i;
-            point.y0 = 0;
-            series.total += point.y;
-            return point;
+      data = data.map(function(s, i) {
+          s.total = 0;
+
+          groupDomain = d3.extent( s.values.map(function(p){return p.y}) );
+          groupRange =
+
+          s.values = s.values.map(function(p) {
+            p.series = i;
+            p.y0 = groupScale(p.y);
+            s.total += p.y;
+            return p;
           });
-          return series;
+          return s;
         })
         .sort(function(a, b) {
           return a.total < b.total ? -1 : a.total > b.total ? 1 : 0;
         })
-        .map(function(series, i) {
-          series.y0 = series.total + (i!==0?data[i-1].total:0);
-          return series;
+        .map(function(s, i) {
+          s.y0 = s.total + (i!==0?data[i-1].total:0);
+          return s;
         });
 
       console.log(data)
