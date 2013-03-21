@@ -9,8 +9,8 @@
   <link href="../css/sugar.css" rel="stylesheet" type="text/css">
   <style>
     #bubble {
-      width: 400px;
-      height: 400px;
+      width: 500px;
+      height: 500px;
     }
   </style>
 </head>
@@ -23,7 +23,8 @@
 <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
 <script src="../js/nvd3/data/line_data.js"></script>
-<script src="../js/nvd3/src/models/bubble.js"></script>
+<script src="../js/nvd3/src/models/scatter.js"></script>
+<script src="../js/nvd3/src/models/bubble_opportunity.js"></script>
 <script src="../js/nvd3/src/models/bubbleChart.js"></script>
 
 <script>
@@ -52,15 +53,13 @@
         ;
 
     chart.xAxis
-        .tickFormat(function(d) {
-          return d3.time.format('%b')(new Date(d))
-        });
+
 
     chart.yAxis
         .axisLabel('Opportunity ($)')
         .tickFormat(d3.format(',.f'));
 
-    d3.json("../js/nvd3/data/line_scatter_data_nvd3.json", function(json) {
+    d3.json("../js/nvd3/data/top10_opportunities.json", function(json) {
       var bubble_data = json;
 
       d3.select('#bubble svg')

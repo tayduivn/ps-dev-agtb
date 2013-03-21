@@ -51,15 +51,24 @@ var format = d3.time.format("%Y-%m-%d");
 
       //add series index to each data point for reference
       data = data.map(function(series, i) {
-        series.total = 0;
-        series.values = series.values.map(function(point) {
-          point.series = i;
-          series.total += point.y;
-          return point;
+          series.total = 0;
+          series.values = series.values.map(function(point) {
+            point.series = i;
+            point.y0 = 0;
+            series.total += point.y;
+            return point;
+          });
+          return series;
+        })
+        .sort(function(a, b) {
+          return a.total < b.total ? -1 : a.total > b.total ? 1 : 0;
+        })
+        .map(function(series, i) {
+          series.y0 = series.total + (i!==0?data[i-1].total:0);
+          return series;
         });
-        return series;
-      });
 
+      console.log(data)
 
       //------------------------------------------------------------
       // Setup Scales

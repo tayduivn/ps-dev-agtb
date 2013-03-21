@@ -4,8 +4,9 @@ nv.models.bubbleChart = function() {
   //============================================================
   // Public Variables with Default Settings
   //------------------------------------------------------------
+var format = d3.time.format("%Y-%m-%d");
 
-  var margin = {top: 30, right: 20, bottom: 50, left: 60}
+  var margin = {top: 90, right: 20, bottom: 50, left: 60}
     , width = null
     , height = null
     , getX = function(d) { return d.x }
@@ -89,6 +90,31 @@ nv.models.bubbleChart = function() {
           availableHeight = (height || parseInt(container.style('height')) || 400)
                              - margin.top - margin.bottom;
 
+      function getTimeTicks(data) {
+        function daysInMonth(date) {
+          return 32 - new Date(date.getFullYear(), date.getMonth(), 32).getDate();
+        }
+        var timeExtent =
+              d3.extent(d3.merge(
+                  data.map(function(d) {
+                    return d.values.map(function(d,i) {
+                      return format.parse(getX(d));
+                    })
+                  })
+                )
+              );
+        var timeRange =
+              d3.time.month.range(
+                d3.time.month.floor(timeExtent[0]),
+                d3.time.month.ceil(timeExtent[1])
+              );
+        var timeTicks =
+              timeRange.map(function(d) {
+                return d3.time.day.offset( d3.time.month.floor(d), -1+daysInMonth(d)/2 );
+              });
+        return timeTicks;
+      }
+
       //------------------------------------------------------------
       // Display noData message if there's nothing to show.
 
@@ -136,7 +162,7 @@ nv.models.bubbleChart = function() {
 
         legendHeight = legend.height();
 
-        if ( margin.top !== legendHeight + titleHeight ) {
+        if ( margin.top < legendHeight + titleHeight ) {
           margin.top = legendHeight + titleHeight;
           availableHeight = (height || parseInt(container.style('height')) || 400)
                              - margin.top - margin.bottom;
@@ -191,7 +217,6 @@ nv.models.bubbleChart = function() {
 
       //------------------------------------------------------------
 
-
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 
@@ -201,6 +226,7 @@ nv.models.bubbleChart = function() {
       bubbles
         .width(availableWidth)
         .height(availableHeight)
+        //.margin(margin)
         .color(data.map(function(d,i) {
           return d.color || color(d, i);
         }).filter(function(d,i) { return !data[i].disabled }));
@@ -212,18 +238,44 @@ nv.models.bubbleChart = function() {
       d3.transition(bubblesWrap).call(bubbles);
 
 
-      //------------------------------------------------------------
-      // Setup Axes
+
 
       xAxis
         .scale(x)
-        .ticks( 3 )
-        .tickSize(0);
+        .ticks( d3.time.months, 1 )
+        .tickSize(0)
+        .tickValues(getTimeTicks(data))
+        .showMaxMin(false)
+        .tickFormat(function(d) {
+          return d3.time.format('%x')(new Date(d))
+        });;
 
       g.select('.nv-x.nv-axis')
           .attr('transform', 'translate(0,' + y.range()[0] + ')');
       d3.transition(g.select('.nv-x.nv-axis'))
           .call(xAxis);
+
+
+        // var groupExtents =
+        //       d3.merge(
+        //         data.map(function(d) {
+        //           return d.values.map(function(d,i) {
+        //             return format.parse(getX(y));
+        //           })
+        //         })
+        //       );
+        // var timeRange =
+        //       d3.time.month.range(
+        //         d3.time.month.floor(timeExtent[0]),
+        //         d3.time.month.ceil(timeExtent[1])
+        //       );
+        // var timeTicks =
+        //       timeRange.map(function(d) {
+        //         return d3.time.day.offset( d3.time.month.floor(d), -1+daysInMonth(d)/2 );
+        //       });
+
+
+
 
       yAxis
         .scale(y)
