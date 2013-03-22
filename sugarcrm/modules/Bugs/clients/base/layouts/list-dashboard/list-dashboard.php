@@ -14,6 +14,7 @@ $layout->push(
             'view' => 'twitter',
             'context' => array(
                 'dashlet' => array(
+                    'name' => 'Twitter Dashlet',
                     'type' => 'twitter',
                     'twitter' => 'sugarcrm',
                     'limit' => '5',

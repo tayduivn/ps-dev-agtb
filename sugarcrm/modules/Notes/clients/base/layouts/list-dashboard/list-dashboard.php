@@ -10,11 +10,12 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'My Account',
+            'name' => 'My Accounts',
             'view' => 'dashablelist',
             'context' => array(
                 'module' => 'Accounts',
                 'dashlet' => array(
+                    'name' => 'My Accounts',
                     'type' => 'dashablelist',
                     'module' => 'Accounts',
                     'display_columns' => array(
@@ -39,6 +40,7 @@ $layout->push(
             'context' => array(
                 'module' => 'Contacts',
                 'dashlet' => array(
+                    'name' => 'My Contacts',
                     'type' => 'dashablelist',
                     'module' => 'Contacts',
                     'display_columns' => array(
