@@ -27,6 +27,7 @@
  ********************************************************************************/
 }}
 {{#each meta.panels}}
+<div class="flex-list{{#if ../leftColumns.length}} left-actions{{/if}}{{#if ../rightColumns.length}} right-actions{{/if}}">
 <table class="table table-striped dataTable">
     <thead>
     <tr>
@@ -90,4 +91,5 @@
     {{/each}}
     </tbody>
 </table>
+</div>
 {{/each}}
