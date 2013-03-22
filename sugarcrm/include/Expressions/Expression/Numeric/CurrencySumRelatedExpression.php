@@ -20,17 +20,17 @@
  ********************************************************************************/
 require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 /**
- * <b>rollupSum(Relate <i>link</i>, String <i>field</i>)</b><br>
+ * <b>rollupCurrencySum(Relate <i>link</i>, String <i>field</i>)</b><br>
  * Returns the sum of the values of <i>field</i> in records related by <i>link</i><br/>
- * ex: <i>rollupSum($opportunities, "amount")</i> in Accounts would return the <br/>
- * sum of the amount of all the Opportunities related to this Account.
+ * ex: <i>rollupCurrencySum($products, "likely_case")</i> in Opportunities would return the <br/>
+ * sum of the likely_case field converted to base currency for all the products related to this Opportunity
  */
 class CurrencySumRelatedExpression extends NumericExpression
 {
 	/**
 	 * Returns the entire enumeration bare.
 	 */
-	function evaluate() {
+	public function evaluate() {
 		$params = $this->getParameters();
 		//This should be of relate type, which means an array of SugarBean objects
         $linkField = $params[0]->evaluate();
@@ -44,8 +44,6 @@ class CurrencySumRelatedExpression extends NumericExpression
         foreach($linkField as $bean)
         {
             if (!empty($bean->$relfield)) {
-                var_dump($bean->$relfield);
-                var_dump($bean->base_rate);
                 $ret = SugarMath::init($ret)->add(SugarCurrency::convertWithRate($bean->$relfield, $bean->base_rate))->result();
             }
         }
@@ -56,7 +54,7 @@ class CurrencySumRelatedExpression extends NumericExpression
 	/**
 	 * Returns the JS Equivalent of the evaluate function.
 	 */
-	static function getJSEvaluate() {
+	public static function getJSEvaluate() {
 		return <<<EOQ
 		    var params = this.getParameters();
 			var linkField = params[0].evaluate();
@@ -80,28 +78,22 @@ EOQ;
 	 * Returns the opreation name that this Expression should be
 	 * called by.
 	 */
-	static function getOperationName() {
+	public static function getOperationName() {
 		return array("rollupCurrencySum");
 	}
 
 	/**
 	 * The first parameter is a number and the second is the list.
 	 */
-    static function getParameterTypes() {
+    public static function getParameterTypes() {
 		return array(AbstractExpression::$RELATE_TYPE, AbstractExpression::$STRING_TYPE);
 	}
 
 	/**
 	 * Returns the maximum number of parameters needed.
 	 */
-	static function getParamCount() {
+	public static function getParamCount() {
 		return 2;
-	}
-
-	/**
-	 * Returns the String representation of this Expression.
-	 */
-	function toString() {
 	}
 }
 
