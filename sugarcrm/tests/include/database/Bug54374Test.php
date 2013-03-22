@@ -66,7 +66,7 @@ class Bug54374Test extends Sugar_PHPUnit_Framework_TestCase
                     'len' => 150,
                     'comment' => 'Name of the Company',
                     'unified_search' => true,
-                    'full_text_search' => array('boost' => 3),
+                    'full_text_search' => array('enabled' => true, 'boost' => 3),
                     'audited' => true,
                     'required'=>true,
                     'importable' => 'required',

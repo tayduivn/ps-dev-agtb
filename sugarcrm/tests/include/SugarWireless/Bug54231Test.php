@@ -156,7 +156,7 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
 						'unified_search' => true,
 						'full_text_search' => 
 							array(
-								'boost' => 3,
+								'enabled' => true, 'boost' => 3,
 							),
 						'comment' => 'Name of the opportunity',
 						'merge_filter' => 'selected',
@@ -219,7 +219,7 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	  							'unified_search' => true,
 	  							'full_text_search' => 
 	  								array(
-	  									'boost' => 3,
+	  									'enabled' => true, 'boost' => 3,
 	  								),
 	  							'comment' => 'Name of the opportunity',
 	  							'merge_filter' => 'selected',

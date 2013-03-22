@@ -31,7 +31,7 @@ $vardefs= array (
     'len' => 150,
     'comment' => 'Name of the Company',
     'unified_search' => true,
-    'full_text_search' => array('boost' => 3),
+    'full_text_search' => array('enabled' => true, 'boost' => 3),
     'audited' => true,
 	'required'=>true,
     'importable' => 'required',
@@ -105,8 +105,8 @@ $vardefs= array (
     'dbType' => 'varchar',
     'len' => 100,
     'unified_search' => true,
-    'full_text_search' => array('boost' => 1),
     'duplicate_on_record_copy' => 'always',
+    'full_text_search' => array('enabled' => true, 'boost' => 1),
     'comment' => 'The fax phone number of this company',
   ), 
   
@@ -209,8 +209,8 @@ $vardefs= array (
     'len' => 100,
     'audited'=>true,         
     'unified_search' => true,  
-    'full_text_search' => array('boost' => 1),
     'duplicate_on_record_copy' => 'always',
+    'full_text_search' => array('enabled' => true, 'boost' => 1),
     'comment' => 'The office phone number',
     'merge_filter' => 'enabled',
   ),
@@ -223,8 +223,8 @@ $vardefs= array (
     'dbType' => 'varchar',
     'len' => 100,
     'unified_search' => true,
-    'full_text_search' => array('boost' => 1),
     'duplicate_on_record_copy' => 'always',
+    'full_text_search' => array('enabled' => true, 'boost' => 1),
     'comment' => 'An alternate phone number',
     'merge_filter' => 'enabled',
   ),
@@ -377,7 +377,7 @@ $vardefs= array (
     'group'=>'email1',
     'merge_filter' => 'enabled',
     'studio' => array('editview' => true, 'editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859
-    'full_text_search' => array('boost' => 3, 'analyzer' => 'whitespace'), //bug 54567
+    'full_text_search' => array('enabled' => true, 'boost' => 3, 'index' => 'not_analyzed'), //bug 54567
     'duplicate_on_record_copy' => 'always',
 ),
 

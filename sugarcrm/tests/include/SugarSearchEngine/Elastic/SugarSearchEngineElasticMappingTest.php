@@ -44,14 +44,14 @@ class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCa
             'field1' => array (
                 'name'=>'first_name',
                 'full_text_search' => array (
-                    'boost' => 3,
+                    'enabled' => true, 'boost' => 3,
                     'type' => 'string',
                 ),
             ),
         );
         $expected = array(
             'first_name' => array (
-                'boost' => 3,
+                'enabled' => true, 'boost' => 3,
                 'type' => 'string',
             ),
         );

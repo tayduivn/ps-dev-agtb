@@ -51,7 +51,8 @@ $dictionary['Campaign'] = array (
             'required' => true,
             'unified_search' => true,
             'full_text_search' => array (
-                'boost' => 3
+                'enabled' => true,
+                'boost' => 3,
             ),
             
         ),

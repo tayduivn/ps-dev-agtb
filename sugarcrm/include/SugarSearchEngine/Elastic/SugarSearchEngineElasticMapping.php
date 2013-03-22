@@ -155,13 +155,14 @@ class SugarSearchEngineElasticMapping
         if (isset($properties['doc_owner']) == false)
         {
             $properties['doc_owner'] = array(
+                'enabled' => true,
                 'type' => 'string',
                 'index' => 'not_analyzed'
             );
         }
         if (isset($properties['user_favorites']) == false) {
             $properties['user_favorites'] = array(
-                'boost' => 1,
+                'enabled' => true,
                 'type' => 'string',
                 'index' => 'not_analyzed'
             );
