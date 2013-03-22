@@ -125,6 +125,72 @@
     },
 
     /**
+     * overridden from date.js -- Forecasts must validate date before setting the model
+     * whereas the base date.js field sets the model, then does validation when you save
+     *
+     * @param ev
+     */
+    hideDatepicker: function(ev) {
+        var hrsMins = {
+            hours: '00',
+            minutes: '00'
+        };
+
+        this.datepickerVisible = false;
+
+        // sets this.dateValue
+        this._getDatepickerValue();
+
+        if(this._verifyDateString(this.dateValue)) {
+            // sidecar field validation stuff we dont use, but setting to maintain compatibility
+            this.leaveDirty = false;
+
+            // set the field model with the new valid dateValue
+            this.model.set(this.name, this._buildUnformatted(this.dateValue, hrsMins.hours, hrsMins.minutes));
+
+            // trigger the onBlur function to set the field back to detail view and render
+            this.onBlur(ev);
+        } else {
+            var hb = Handlebars.compile("{{str_format key module args}}"),
+                args = [app.lang.get(this.def.label, 'Forecasts')];
+
+            // sidecar field validation stuff we dont use, but setting to maintain compatibility
+            this.leaveDirty = true;
+
+            // set the proper error message
+            this.errorMessage = hb({'key': 'LBL_EDITABLE_INVALID', 'module': 'Forecasts', 'args': args});
+
+            // display rad error tooltipz!
+            this.showErrors();
+        }
+    },
+
+    /**
+     * overridden from date.js -- Forecasts must validate date before setting the model
+     * whereas the base date.js field sets the model, then does validation when you save
+     *
+     * @param value
+     * @return {Boolean}
+     * @private
+     */
+    _verifyDateString: function(value) {
+        var dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy',
+            isValid = true;
+
+        //First try generic date parse (since we might have an ISO). This should generally work with the
+        //ISO date strings we get from server.
+        if(_.isNaN(Date.parse(value))) {
+            isValid = false;
+            //Safari chokes on '.', '-', so retry replacing with '/'
+            if(_.isNaN(value.replace(/[\.\-]/g, '/'))) {
+                //Use datepicker plugin to verify datepicker format
+                isValid = $.prototype.DateVerifier(value, dateFormat);
+            }
+        }
+        return isValid;
+    },
+
+    /**
      * Blur event handler
      *
      * This forces the field to re-render as the DetailView
@@ -133,7 +199,12 @@
      */
     onBlur : function(evt) {
         evt.preventDefault();
+        // switch back to the field's detail view
         this.options.def.view = 'detail';
+        // sidecar field validation stuff we dont use, but setting to maintain compatibility
+        this.leaveDirty = false;
+        // hide any error stuff that still may be visible
+        this.hideErrors();
         if (!this.disposed) {
             this.render();
         }
@@ -163,7 +234,19 @@
      * Method to show the error message
      */
     showErrors : function() {
-        // attach error styles
+        this.$el.find('.error-tooltip').addClass('add-on local').removeClass('hide').css('display','inline-block');
+        // we want to show the tooltip message, but hide the add-on (exclamation)
+        this.$el.find("[rel=tooltip]").tooltip('destroy'); // so the title is not cached
+        this.$el.find("[rel=tooltip]").tooltip({container: 'body', placement: 'top', title: this.errorMessage}).tooltip('show').hide();
+    },
+
+    /**
+     * Undo everything that showErrors does to the dom, otherwise you can enter an invalid date,
+     * leave the field which displays the previous date like normal, then when you come back you would
+     * see error styles even though you just clicked in the field
+     */
+    hideErrors: function() {
+        this.$el.find('.error-tooltip').removeClass('add-on local').addClass('hide');
     },
 
     _setDateIfDefaultValue: function() {
