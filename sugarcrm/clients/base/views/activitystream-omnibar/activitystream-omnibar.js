@@ -35,7 +35,7 @@
             payload = {
                 activity_type: "post",
                 parent_id: parentId || null,
-                parent_type: parentType || null,
+                parent_type: parentType !== "Activities" ? parentType : null,
                 data: {}
             };
 
