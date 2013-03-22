@@ -149,9 +149,6 @@ class SugarQuery
             $bean->addVisibilityQuery($this);
         }
 
-        if ($this->select)
-            $this->select->updateFrom();
-
         return $this;
 	}
 

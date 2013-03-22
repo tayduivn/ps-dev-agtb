@@ -73,10 +73,6 @@ class SugarQuery_Builder_Select
         } else {
             $this->select = $columns;
         }
-//         foreach($columns as $field)
-//         {
-//             $this->addFieldToQuery($this->query, $field);
-//         }
 		return $this;
 	}
 
@@ -99,19 +95,6 @@ class SugarQuery_Builder_Select
 	{
 		return $this->$name;
 	}
-
-    /**
-     * Should be called when the from Bean is added/changed from the related query.
-     */
-    public function updateFrom()
-    {
-//         $oldSelect = $this->select;
-//         $this->selectReset();
-//         foreach($oldSelect as $field)
-//         {
-//             $this->addFieldToQuery($this->query, $field);
-//         }
-    }
 
     /**
      * Add bean field to the query
