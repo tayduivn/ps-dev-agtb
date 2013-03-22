@@ -62,9 +62,8 @@
      */
     format: function(value) {
         if (_.isNull(value) || _.isUndefined(value) || _.isNaN(value)){
-            return "";
+            value = "";
         }
-
 
         if (this.tplName === 'edit') {
             this.currencySfId = this.getCurrencyField().sfId;
