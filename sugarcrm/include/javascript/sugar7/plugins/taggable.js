@@ -8,6 +8,15 @@
                 'click ul.typeahead.activitystream-tag-dropdown li': 'addTag'
             },
 
+            _possibleLeaders: ['@', '#'],
+
+            _lastLeaderPosition: function(text) {
+                var indices = _.map(this._possibleLeaders, function(leader) {
+                    return text.lastIndexOf(leader);
+                });
+                return _.max(indices);
+            },
+
             _getEntities: _.debounce(function(event) {
                 var list,
                     leader,
@@ -17,7 +26,7 @@
 
                 el.parent().find("ul.typeahead.activitystream-tag-dropdown").remove();
 
-                leaderIndex = _.max([word.lastIndexOf('@'), word.lastIndexOf('#')]);
+                leaderIndex = this._lastLeaderPosition(word);
                 leader = leaderIndex === -1 ? null : word.charAt(leaderIndex);
 
                 if (!leader) {
@@ -57,36 +66,49 @@
                     });
                     list = _(begin.concat(caseSensitive, caseInsensitive)).first(8);
 
-                    var ul = $("<ul/>").addClass('typeahead dropdown-menu activitystream-tag-dropdown');
-                    var blank_item = '<li><a></a></li>';
+                    var ulParent = ul.parent();
+                    ul.remove().empty();
+
                     if (list.length) {
-                        items = _.map(list, function(item) {
+                        _.each(list, function(el, index) {
                             var data = {
-                                module: item.get('_module'),
-                                id: item.get('id'),
-                                name: item.get('name')
+                                module: el.get('_module'),
+                                id: el.get('id'),
+                                name: el.get('name')
                             };
-                            var i = $(blank_item).data(data);
+                            var i = $(blankItem).data(data);
                             var query = word.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
                             i.find('a').html(function() {
-                                return item.get('name').replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
+                                return el.get('name').replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
                                     return '<strong>' + match + '</strong>';
                                 });
                             });
 
-                            return i[0];
+                            if (index === 0) {
+                                i.addClass('active');
+                            }
+
+                            ul.append(i);
                         });
-
-                        items[0] = ($(items[0]).addClass('active'))[0];
-
-                        ul.css({
-                            top: el.position().top + el.height(),
-                            left: el.position().left
-                        });
-
-                        ul.html(items).appendTo(el.parent()).show();
+                    } else {
+                        var noResults = app.lang.get('LBL_SEARCH_NO_RESULTS');
+                        var i = $(blankItem).addClass('placeholder active').find('a').html(noResults + word).wrap('emph');
+                        ul.append(i);
                     }
+
+                    ulParent.append(ul);
                 };
+
+                var ul = $("<ul/>").addClass('typeahead dropdown-menu activitystream-tag-dropdown');
+                var blankItem = '<li><a></a></li>';
+                var defaultItem = $(blankItem).addClass('placeholder active').find('a').html(word + '&hellip;').wrap('emph');
+
+                ul.css({
+                    top: el.position().top + el.height(),
+                    left: el.position().left
+                });
+
+                ul.html(defaultItem).appendTo(el.parent()).show();
 
                 switch (leader) {
                     case '#':
@@ -110,9 +132,6 @@
                         coll.fetch({limit: 8, success: callback});
                         break;
                 }
-
-
-
             }, 250),
 
             getEntities: function(event) {
@@ -178,17 +197,19 @@
                 var el = this.$(event.currentTarget),
                     body = this.$('.sayit'),
                     originalChildren = body.clone(true).children(),
-                    lastIndex = body.html().lastIndexOf("@"),
+                    lastIndex = this._lastLeaderPosition(body.html()),
                     data = el.data();
+
+                if (el.hasClass('placeholder')) return;
 
                 var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name);
                 tag.data("id", data.id).data("module", data.module).data("name", data.name);
                 var substring = body.html().substring(0, lastIndex);
-                $(body).html(substring).append(tag).append("&nbsp;");
+                body.html(substring).append(tag).append("&nbsp;");
 
-                if($(body).children().length == 1) {
+                if(body.children().length == 1) {
                     // Fixes issue where a random font tag appears. ABE-128.
-                    $(body).prepend("&nbsp;");
+                    body.prepend("&nbsp;");
                 }
 
                 // Since the data is stored as an object, it's not preserved when we add the tag.
@@ -235,7 +256,7 @@
                 var contents = '';
                 $el.contents().each(function() {
                     if (this.nodeName == "#text") {
-                        contents += this.data;
+                        contents += this.data.replace('&nbsp;', ' ');
                     } else if (this.nodeName == "SPAN") {
                         var el = $(this);
                         var data = el.data();
@@ -248,7 +269,7 @@
                         }
                     }
                 }).html();
-                return contents;
+                return $.trim(contents);
             },
 
             getTags: function($el) {
