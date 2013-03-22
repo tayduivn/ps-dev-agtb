@@ -47,8 +47,8 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->product = SugarTestProductUtilities::createProduct();
         parent::setUp();
+        $this->product = SugarTestProductUtilities::createProduct();
     }
 
     public function tearDown()
@@ -795,7 +795,24 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
+
+    /**
+     * @group products
+     * @ticket SFA-511
+     */
+    public function testMapFieldsFromOpportunity()
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $product->opportunity_id = $opp->id;
+        $opp->opportunity_type = 'new';
+        $product->save();
+        $this->assertEquals('new', $product->product_type);
+    }
+
+
 }
+
 class MockProduct extends Product
 {
     private $handleOppSalesStatusCalled = false;
