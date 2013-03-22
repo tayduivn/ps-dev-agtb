@@ -49,23 +49,36 @@
         'base': []
     },
 
+    filterFields: [],
+
     initialize: function(opts) {
         // Remove the next line later:
         this.isSaved = false;
 
         app.view.View.prototype.initialize.call(this, opts);
-        this.filterFields = [];
 
-        _.each(app.metadata.getModule(this.module).fields, function(value, key) {
-            this.filterFields.push({
-                id: key,
-                text: app.lang.get(value.vname, this.module),
-                type: value.type
-            });
-        }, this);
-        this.filterFields = _.filter(this.filterFields, function(el) {
-            // Double-bang intended. Coerces values like 'undefined' to a bool.
-            return !!this.filterOperatorMap[el.type] && !_.isUndefined(el.text);
+
+        this.layout.on("filter:change", function(moduleName) {
+            var moduleMeta = app.metadata.getModule(moduleName);
+            this.filterFields = [];
+
+            if (moduleMeta) {
+                this.moduleName = moduleName;
+
+                _.each(moduleMeta.fields, function(value, key) {
+                    this.filterFields.push({
+                        id: key,
+                        text: app.lang.get(value.vname, moduleName),
+                        type: value.type
+                    });
+                }, this);
+                this.filterFields = _.filter(this.filterFields, function(el) {
+                    // Double-bang intended. Coerces values like 'undefined' to a bool.
+                    return !!this.filterOperatorMap[el.type] && !_.isUndefined(el.text);
+                }, this);
+            }
+
+            this.removeAll();
         }, this);
 
         this.layout.off("filter:create:open");
@@ -150,7 +163,7 @@
             $el = this.$(e.currentTarget),
             $parent = $el.parents('.filter-body'),
             fieldName = $el.val(),
-            fieldType = app.metadata.getModule(this.module).fields[fieldName || 'name'].type,
+            fieldType = app.metadata.getModule(this.moduleName).fields[fieldName || 'name'].type,
             payload = [],
             types = this.filterOperatorMap[fieldType] || this.filterOperatorMap['base'],
             filterStrings = app.lang.getAppListStrings('filter_operators_dom');
@@ -187,15 +200,16 @@
 
     chooseOperator: function(e) {
         var self = this,
+            module = this.moduleName,
             $el = this.$(e.currentTarget),
             $parent = $el.parents('.filter-body'),
             operation = $el.val(),
             fieldName = $parent.find('input.field_name').val(),
-            fieldType = app.metadata.getModule(this.module).fields[fieldName].type;
+            fieldType = app.metadata.getModule(module).fields[fieldName].type;
 
         // Patching metadata
-        var fields = app.metadata._patchFields(this.module, app.metadata.getModule(this.module),
-                        JSON.parse(JSON.stringify(app.metadata.getModule(this.module).fields)));
+        var fields = app.metadata._patchFields(module, app.metadata.getModule(module),
+                        JSON.parse(JSON.stringify(app.metadata.getModule(module).fields)));
 
         if(fieldType === 'bool') {
             fields[fieldName].type = 'enum';
@@ -205,7 +219,7 @@
         this._disposeField($parent);
 
         if(operation !== '') {
-            var model = app.data.createBean(this.module);
+            var model = app.data.createBean(module);
             model.set(fieldName, $parent.data('value') || '');
             var obj = {
                 meta: {
@@ -283,7 +297,7 @@
                 filter_definition: this._getJSON(),
                 name: val,
                 default_filter: false,
-                module_name: this.layout.currentModule
+                module_name: this.moduleName
             };
 
             var filter = this.$(".filter-header").data("model");
