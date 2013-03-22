@@ -7,7 +7,7 @@ $subpanels = array(
     'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE' => 'campaign_contacts',
     'LBL_CASES_SUBPANEL_TITLE' => 'cases',
     'LBL_BUGS_SUBPANEL_TITLE' => 'bugs',
-    'LBL_DIRECT_REPORTS_SUBPANEL_TITLE' => 'reports_to_link',
+    'LBL_DIRECT_REPORTS_SUBPANEL_TITLE' => 'direct_reports',
     'LBL_NOTES_SUBPANEL_TITLE' => 'notes',
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'documents',
 );

@@ -324,7 +324,7 @@
                 create: true,
                 model : prefill
             }
-        }, function(newModel) {
+        }, function(context, newModel) {
             if(newModel && newModel.id) {
                 app.router.navigate("#" + self.model.module + "/" + newModel.id, {trigger: true});
             }

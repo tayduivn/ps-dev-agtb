@@ -1,4 +1,22 @@
 (function (app) {
+
+    /**
+     * Field widgets to use Required labels with because they don't use select or input fields
+     * @private
+     */
+    var _useRequiredLabels = {
+        /**
+         * It's nonsensical to make a bool field required since it is always has a value (TRUE or FALSE),
+         * but it's possible to define it as required in vardefs.
+         */
+        "bool": true,
+        /**
+         * Only really needed on edit template where we use radio buttons.
+         * For list-edit template, we don't use radio buttons but select2 widget.
+         */
+        "radioenum": 'edit'
+    };
+
     app.events.on("app:init", function() {
 
         var _fieldProto = _.clone(app.view.Field.prototype);
@@ -42,6 +60,62 @@
                 if (isErrorState) {
                     this.decorateError(this._errors);
                 }
+                if(this.def.required){
+                    this.clearRequiredLabel();
+                    if(this.action === "edit"){
+                        this.decorateRequired();
+                    }
+                }
+            },
+            /**
+             * Default implementation of Required decoration
+             */
+            decorateRequired: function(){
+                var useLabels = _useRequiredLabels[this.type];
+                useLabels = _.isString(useLabels) ? (useLabels === this.tplName) : useLabels;
+                if(useLabels){
+                    this.setRequiredLabel();
+                } else {
+                    // Most fields use Placeholder
+                    this.setRequiredPlaceholder();
+                }
+
+            },
+
+            /**
+             * Add Required placeholder for input, select kinds of fields
+             * @param element (Optional) element to attach placeholder
+             */
+            setRequiredPlaceholder: function(element){
+                var el = element || this.$(this.fieldTag).first();
+                var old = el.attr("placeholder");
+                var requiredPlaceholder = app.lang.get("LBL_REQUIRED_FIELD", this.module);
+                var newPlaceholder = requiredPlaceholder;
+                if(old){
+                    // If there is an existing placeholder then add required label after it
+                    newPlaceholder =  old + " (" + requiredPlaceholder + ")";
+                }
+                el.attr("placeholder", newPlaceholder);
+            },
+
+            /**
+             * Add Required label to field's label for fields that don't support placeholders
+             * @param element (Optional) any element that is enclosed by field's record-cell
+             */
+            setRequiredLabel: function(element){
+                var ele = element || this.$el;
+                var $label = ele.closest('.record-cell').find(".record-label");
+                $label.append(' <span data-required="required">('+app.lang.get("LBL_REQUIRED_FIELD", this.module)+')</span>');
+            },
+
+            /**
+             * Remove default Required label from field labels
+             * @param element (Optional) any element that is enclosed by field's record-cell
+             */
+            clearRequiredLabel: function(element){
+                var ele = element || this.$el;
+                var $label = ele.closest('.record-cell').find('span[data-required]');
+                $label.remove();
             },
 
             /**

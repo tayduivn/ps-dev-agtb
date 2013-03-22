@@ -1,16 +1,33 @@
 ({
     favRowTemplate: Handlebars.compile(
-      '{{#each models}}<li><a tabindex="-1" class="favoriteLink actionLink" href="#{{modelRoute this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
+      '{{#each models}}<li><a tabindex="-1" class="favoriteLink actionLink" href="#{{modelRoute this}}" data-route="#{{modelRoute this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
     recentRowTemplate: Handlebars.compile(
-        '{{#each models}}<li><a tabindex="-1" class="recentLink actionLink" href="#{{modelRoute this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
+        '{{#each models}}<li><a tabindex="-1" class="recentLink actionLink" href="#{{modelRoute this}}" data-route="#{{modelRoute this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
     plugins: ['dropdown'],
     events: {
         'click .dtoggle': 'toggleDropdown',
         'click .more': 'showMore',
         'mouseleave .more-drop-container' : 'hideMore',
-        'click .actionLink' : 'handleMenuEvent'
+        'click .actionLink' : 'handleMenuEvent',
+        "click a[data-route]": "handleRouteEvent"
+    },
+    handleRouteEvent: function (event) {
+        var currentTarget = this.$(event.currentTarget),
+            route         = currentTarget.data("route");
+
+        if (route) {
+            event.preventDefault();
+
+            var currentFragment = Backbone.history.getFragment();
+
+            if (("#" + currentFragment) === route) {
+                Backbone.history.loadUrl(currentFragment);
+            } else {
+                app.router.navigate(route, {trigger: true});
+            }
+        }
     },
     handleMenuEvent:function (evt) {
         var $currentTarget = this.$(evt.currentTarget);

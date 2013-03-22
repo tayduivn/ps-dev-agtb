@@ -169,6 +169,9 @@
      */
     _setupTimepicker: function() {
         this.$(".ui-timepicker-input").attr('placeholder', this.userTimePrefs);
+        if(_.isFunction(this.setRequiredPlaceholder)){
+            this.setRequiredPlaceholder(this.$(".ui-timepicker-input"));
+        }
         this.$(".ui-timepicker-input").timepicker({
             // TODO: 'lang' is only used on time "durations" (e.g. 3 horas, etc.) We can later pull
             // this from meta, but, this only makes sense if we implement durations. To my mind, this

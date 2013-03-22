@@ -49,6 +49,7 @@
             bean.save(payload, {
                 success: function(model) {
                     self.$('div.sayit').html('').trigger('change').focus();
+                    model.set('picture_url', self.picture_url);
                     self.layout.prependPost(model);
                 }
             });

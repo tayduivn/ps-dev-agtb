@@ -43,7 +43,7 @@ class ActivityQueueManager
     {
         if ($bean instanceof Activity && ($bean->activity_type == 'post' || $bean->activity_type == 'attach')) {
             // Posts.
-            if ($event == 'after_save') {
+            if ($event == 'after_save' && !$args['isUpdate']) {
                 $this->processPostSubscription($bean);
                 $this->processTags($bean);
             } elseif ($event == 'before_save') {
