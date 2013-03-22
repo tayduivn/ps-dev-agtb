@@ -504,6 +504,20 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'bean_name'=>'User',
     'source'=>'non-db',
   ),
+  'includedClosedAmount' =>
+     array (
+        'name' => 'includedClosedAmount',
+        'type' => 'currency',
+        'source' => 'non-db',
+        'comment' => 'This is used by the commit code to determine how much the closed opps amounts are for the pipeline revenue calc'
+     ),
+   'includedClosedCount' =>
+      array (
+         'name' => 'includedClosedCount',
+         'type' => 'int',
+         'source' => 'non-db',
+         'comment' => 'This is used by the commit code to determine how many closed opps exist for the pipeline calc'
+      ),
 
   ),
 
