@@ -49,12 +49,12 @@ class ActivityQueueManager
             } elseif ($event == 'before_save') {
                 $bean->data = json_decode($bean->data, true);
 
-                if (!isset($bean->data['object'])) {
+                if (!isset($bean->data['object']) && !empty($bean->parent_type)) {
                     $parent = BeanFactory::retrieveBean($bean->parent_type, $bean->parent_id);
                     if ($parent && !is_null($parent->id)) {
                         $bean->data['object'] = self::getBeanAttributes($parent);
                     } else {
-                        $bean->data['object_type'] = $parent->module_name;
+                        $bean->data['object_type'] = $bean->parent_type;
                     }
                 }
 
@@ -296,6 +296,7 @@ class ActivityQueueManager
                 '"Teams"',
                 '"1"',
                 '"[]"',
+                '"' . $act->date_modified . '"',
                 '0',
             );
             $sql .= implode(', ', $values) . ')';
