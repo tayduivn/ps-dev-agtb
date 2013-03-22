@@ -117,7 +117,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					unset ( $loaded [ GridLayoutMetaDataParser::$variableMap [ MB_EDITVIEW ] ] ) ;
 					$loaded [ GridLayoutMetaDataParser::$variableMap [ MB_QUICKCREATE ] ] = $temp ;
 					// finally, save out our new definition so that we have a base record for the history to work from
-					$this->_sourceFilename = self::getFileName ( MB_QUICKCREATE, $this->_moduleName, MB_CUSTOMMETADATALOCATION ) ;
+					$this->_sourceFilename = $this->getFileName ( MB_QUICKCREATE, $this->_moduleName, MB_CUSTOMMETADATALOCATION ) ;
 					$this->_saveToFile ( $this->_sourceFilename, $loaded ) ;
 					$this->_mergeFielddefs ( $fielddefs , $loaded ) ;
 					break;
@@ -148,7 +148,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					// If we're missing a wireless view, we can create it easily from a template, sourced from SugarObjects
 					// First, need to identify which SugarObject template would be the best to use
 					$type = $module->getType () ;
-					$this->_sourceFilename = self::getFileName ( $view, $moduleName, MB_CUSTOMMETADATALOCATION ) ;
+					$this->_sourceFilename = $this->getFileName ( $view, $moduleName, MB_CUSTOMMETADATALOCATION ) ;
 
 					// Now we can copy the wireless view from the template
 					$loaded = $this->_loadFromFile ( "include/SugarObjects/templates/$type/clients/$_viewtype/views/".basename ( $this->_sourceFilename, '.php' ) . '/' . basename ( $this->_sourceFilename ) ) ;
@@ -164,7 +164,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 				case MB_DASHLETSEARCH:
         		case MB_DASHLET:
 	        		$type = $module->getType () ;
-	        		$this->_sourceFilename = self::getFileName ( $view, $moduleName, MB_CUSTOMMETADATALOCATION ) ;
+	        		$this->_sourceFilename = $this->getFileName ( $view, $moduleName, MB_CUSTOMMETADATALOCATION ) ;
 	        		$needSave = false;
 	        		if(file_exists( "custom/modules/{$moduleName}/metadata/".basename ( $this->_sourceFilename))){
 	        			$loaded = $this->_loadFromFile ( "custom/modules/{$moduleName}/metadata/".basename ( $this->_sourceFilename) )  ;	  
@@ -192,7 +192,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 				case MB_POPUPLIST:
         		case MB_POPUPSEARCH:
         			$type = $module->getType () ;
-					$this->_sourceFilename = self::getFileName ( $view, $moduleName, MB_CUSTOMMETADATALOCATION ) ;
+					$this->_sourceFilename = $this->getFileName ( $view, $moduleName, MB_CUSTOMMETADATALOCATION ) ;
 
 					global $current_language;
 					$mod = return_module_language($current_language , $moduleName);
