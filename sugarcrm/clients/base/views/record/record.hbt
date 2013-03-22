@@ -19,11 +19,11 @@
                                     {{field ../../../this ../../../this.model ../../../this.action}}
                                 </span>
                                 {{#unless ../../../createMode}}
-                                    {{#unless readonly}}
+                                    {{#notHas name ../../../../noEditFields}}
                                         <span class="record-edit-link-wrapper" data-name="{{name}}">
                                             <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="icon-pencil"></i></a>
                                         </span>
-                                    {{/unless}}
+                                    {{/notHas}}
                                 {{/unless}}
                             </span>
                         {{/each}}
@@ -65,11 +65,11 @@
                                         </span>
                                     {{/if}}
                                     {{#unless ../../../../../../createMode}}
-                                        {{#unless readonly}}
+                                        {{#notHas name ../../../../../../../noEditFields}}
                                             <span class="record-edit-link-wrapper" data-name="{{../name}}">
                                                 <a class="record-edit-link btn btn-invisible" data-type="{{../type}}" data-name="{{../name}}"><i class="icon-pencil"></i></a>
                                             </span>
-                                        {{/unless}}
+                                        {{/notHas}}
                                     {{/unless}}
                                 </div>
                             {{/each}}
@@ -103,11 +103,11 @@
                                         </span>
                                     {{/if}}
                                     {{#unless ../../../../../../createMode}}
-                                        {{#unless readonly}}
+                                        {{#notHas name ../../../../../../../noEditFields}}
                                             <span class="record-edit-link-wrapper" data-name="{{../../name}}">
                                                 <a class="record-edit-link btn btn-invisible" data-type="{{../../type}}" data-name="{{../../name}}"><i class="icon-pencil"></i></a>
                                             </span>
-                                        {{/unless}}
+                                        {{/notHas}}
                                     {{/unless}}
                                 </div>
                             {{/each}}
