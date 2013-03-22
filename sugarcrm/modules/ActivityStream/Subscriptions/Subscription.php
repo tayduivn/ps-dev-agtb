@@ -69,6 +69,34 @@ class Subscription extends Basic
     }
 
     /**
+     * Checks which of the given records the specified user is subscribed to.
+     * @param  User  $user
+     * @param  array $records An array of associative arrays (not SugarBeans).
+     * @return array Associative array where keys are IDs of the record a user
+     * is subscribed to.
+     */
+    public static function checkSubscriptionList(User $user, array $records)
+    {
+        // Plucks IDs of records passed in.
+        $ids = array_map(
+            function ($record) {
+                return $record['id'];
+            },
+            $records
+        );
+        $query = self::getQueryObject();
+        $query->select(array('parent_id'));
+        $query->where()->in('parent_id', $ids);
+        $query->where()->equals('created_by', $user->id);
+        $result = $query->execute();
+        $return = array();
+        foreach ($result as $row) {
+            $return[$row['parent_id']] = true;
+        }
+        return $return;
+    }
+
+    /**
      * Retrieve the subscription bean for a user-record relationship.
      * @param  User      $user
      * @param  SugarBean $record
