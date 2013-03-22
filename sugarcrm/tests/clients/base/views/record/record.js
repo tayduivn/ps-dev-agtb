@@ -1,13 +1,14 @@
-describe("Record View", function() {
+describe("Record View", function () {
     var moduleName = 'Cases',
         app,
         viewName = 'record',
-        sinonSandbox, view,
+        sinonSandbox,
+        view,
         createListCollection,
         buildRouteStub,
         oRouter;
 
-    beforeEach(function() {
+    beforeEach(function () {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
@@ -20,60 +21,72 @@ describe("Record View", function() {
         SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
-            "buttons": [{
-                "type":"button",
-                "name":"cancel_button",
-                "label":"LBL_CANCEL_BUTTON_LABEL",
-                "css_class":"btn-invisible btn-link",
-                "showOn":"edit"
-            }, {
-                "type":"actiondropdown",
-                "name":"main_dropdown",
-                "buttons":[{
-                    "type":"rowaction",
-                    "event":"button:edit_button:click",
-                    "name":"edit_button",
-                    "label":"LBL_EDIT_BUTTON_LABEL",
-                    "primary":true,
-                    "showOn":"view"
-                }, {
-                    "type":"rowaction",
-                    "event":"button:save_button:click",
-                    "name":"save_button",
-                    "label":"LBL_SAVE_BUTTON_LABEL",
-                    "primary":true,
-                    "showOn":"edit"
-                }, {
-                    "type":"rowaction",
-                    "name":"delete_button",
-                    "label":"LBL_DELETE_BUTTON_LABEL",
-                    "showOn":"view"
-                }, {
-                    "type":"rowaction",
-                    "name":"duplicate_button",
-                    "label":"LBL_DUPLICATE_BUTTON_LABEL",
-                    "showOn":"view"
-                }]
-            }],
-            "panels": [{
-                "name": "panel_header",
-                "header": true,
-                "fields": ["name"]
-            }, {
-                "name": "panel_body",
-                "label": "LBL_PANEL_2",
-                "columns": 1,
-                "labels": true,
-                "labelsOnTop": false,
-                "placeholders":true,
-                "fields": ["description","case_number","type"]
-            }, {
-                "name": "panel_hidden",
-                "hide": true,
-                "labelsOnTop": false,
-                "placeholders": true,
-                "fields": ["created_by","date_entered","date_modified","modified_user_id"]
-            }]
+            "buttons": [
+                {
+                    "type": "button",
+                    "name": "cancel_button",
+                    "label": "LBL_CANCEL_BUTTON_LABEL",
+                    "css_class": "btn-invisible btn-link",
+                    "showOn": "edit"
+                },
+                {
+                    "type": "actiondropdown",
+                    "name": "main_dropdown",
+                    "buttons": [
+                        {
+                            "type": "rowaction",
+                            "event": "button:edit_button:click",
+                            "name": "edit_button",
+                            "label": "LBL_EDIT_BUTTON_LABEL",
+                            "primary": true,
+                            "showOn": "view"
+                        },
+                        {
+                            "type": "rowaction",
+                            "event": "button:save_button:click",
+                            "name": "save_button",
+                            "label": "LBL_SAVE_BUTTON_LABEL",
+                            "primary": true,
+                            "showOn": "edit"
+                        },
+                        {
+                            "type": "rowaction",
+                            "name": "delete_button",
+                            "label": "LBL_DELETE_BUTTON_LABEL",
+                            "showOn": "view"
+                        },
+                        {
+                            "type": "rowaction",
+                            "name": "duplicate_button",
+                            "label": "LBL_DUPLICATE_BUTTON_LABEL",
+                            "showOn": "view"
+                        }
+                    ]
+                }
+            ],
+            "panels": [
+                {
+                    "name": "panel_header",
+                    "header": true,
+                    "fields": ["name"]
+                },
+                {
+                    "name": "panel_body",
+                    "label": "LBL_PANEL_2",
+                    "columns": 1,
+                    "labels": true,
+                    "labelsOnTop": false,
+                    "placeholders": true,
+                    "fields": ["description", "case_number", "type"]
+                },
+                {
+                    "name": "panel_hidden",
+                    "hide": true,
+                    "labelsOnTop": false,
+                    "placeholders": true,
+                    "fields": ["created_by", "date_entered", "date_modified", "modified_user_id"]
+                }
+            ]
         }, moduleName);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
@@ -81,15 +94,16 @@ describe("Record View", function() {
         sinonSandbox = sinon.sandbox.create();
 
         oRouter = SugarTest.app.router;
-        SugarTest.app.router = {buildRoute: function(){}};
-        buildRouteStub = sinonSandbox.stub(SugarTest.app.router, 'buildRoute', function(module, id, action, params) {
-            return module+'/'+id;
+        SugarTest.app.router = {buildRoute: function () {
+        }};
+        buildRouteStub = sinonSandbox.stub(SugarTest.app.router, 'buildRoute', function (module, id, action, params) {
+            return module + '/' + id;
         });
 
         view = SugarTest.createView("base", moduleName, "record", null, null);
     });
 
-    afterEach(function() {
+    afterEach(function () {
         view.dispose();
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
@@ -98,15 +112,15 @@ describe("Record View", function() {
         view = null;
     });
 
-    describe('Render', function() {
-        it("Should not render any fields if model is empty", function() {
+    describe('Render', function () {
+        it("Should not render any fields if model is empty", function () {
             view.render();
 
             expect(_.size(view.fields)).toBe(0);
         });
 
 
-        it("Should render 8 editable fields and 6 buttons", function() {
+        it("Should render 8 editable fields and 6 buttons", function () {
 
             view.render();
             view.model.set({
@@ -121,15 +135,15 @@ describe("Record View", function() {
             expect(actual_button_length).toBe(6);
         });
 
-        it("Should inactive the edit icon for readonly fields and acl fail fields", function() {
-            var readonlyFields = ["created_by","date_entered","date_modified"],
+        it("Should inactive the edit icon for readonly fields and acl fail fields", function () {
+            var readonlyFields = ["created_by", "date_entered", "date_modified"],
                 aclFailFields = ["case_number"];
-            var aclStub = sinon.stub(app.acl, 'hasAccessToModel', function(method, model, field){
+            var aclStub = sinon.stub(app.acl, 'hasAccessToModel', function (method, model, field) {
                 return _.indexOf(aclFailFields, field) < 0;
             });
-            _.each(view.meta.panels, function(panel){
-                _.each(panel.fields, function(field) {
-                    if(_.indexOf(readonlyFields, field.name) >= 0) {
+            _.each(view.meta.panels, function (panel) {
+                _.each(panel.fields, function (field) {
+                    if (_.indexOf(readonlyFields, field.name) >= 0) {
                         field.readonly = true;
                     }
                 }, this);
@@ -139,13 +153,13 @@ describe("Record View", function() {
             var actual = view.noEditFields,
                 expected = _.union(readonlyFields, aclFailFields);
             expect(actual.length).toBe(expected.length);
-            _.each(actual, function(noEditField){
+            _.each(actual, function (noEditField) {
                 expect(_.indexOf(expected, noEditField) >= 0).toBeTruthy();
             });
             aclStub.restore();
         });
 
-        it("Should hide 4 editable fields", function() {
+        it("Should hide 4 editable fields", function () {
             var hiddenFields = 0;
 
             view.render();
@@ -154,7 +168,7 @@ describe("Record View", function() {
                 case_number: 123,
                 description: 'Description'
             });
-            _.each(view.editableFields, function(field) {
+            _.each(view.editableFields, function (field) {
                 if ((field.$el.closest('.hide').length === 1)) {
                     hiddenFields++;
                 }
@@ -163,7 +177,7 @@ describe("Record View", function() {
             expect(hiddenFields).toBe(4);
         });
 
-        it("Should place name field in the header", function() {
+        it("Should place name field in the header", function () {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -174,8 +188,8 @@ describe("Record View", function() {
             expect(view.getField('name').$el.closest('.headerpane').length === 1).toBe(true);
         });
 
-        it("Should not render any fields when a user doesn't have access to the data", function() {
-            sinonSandbox.stub(SugarTest.app.acl, 'hasAccessToModel', function() {
+        it("Should not render any fields when a user doesn't have access to the data", function () {
+            sinonSandbox.stub(SugarTest.app.acl, 'hasAccessToModel', function () {
                 return false;
             });
             sinonSandbox.stub(SugarTest.app.error, 'handleRenderError', $.noop());
@@ -190,11 +204,11 @@ describe("Record View", function() {
             expect(_.size(view.fields)).toBe(0);
         });
 
-        it("Should not be editable when a user doesn't have write access on this field", function() {
-            sinonSandbox.stub(SugarTest.app.acl, '_hasAccessToField', function(action, acls, field) {
+        it("Should not be editable when a user doesn't have write access on this field", function () {
+            sinonSandbox.stub(SugarTest.app.acl, '_hasAccessToField', function (action, acls, field) {
                 return field !== 'name';
             });
-            sinonSandbox.stub(SugarTest.app.user, 'getAcls', function() {
+            sinonSandbox.stub(SugarTest.app.user, 'getAcls', function () {
                 var acls = {};
                 acls[moduleName] = {
                     edit: 'yes',
@@ -216,7 +230,7 @@ describe("Record View", function() {
 
             view.$('.more').click();
             var editableFields = 0;
-            _.each(view.editableFields, function(field) {
+            _.each(view.editableFields, function (field) {
                 if (field.$el.closest('.record-cell').find('.record-edit-link-wrapper').length === 1) {
                     editableFields++;
                 }
@@ -226,7 +240,7 @@ describe("Record View", function() {
             expect(_.size(view.editableFields)).toBe(7);
         });
 
-        it("should call clearValidationErrors when Cancel is clicked", function(){
+        it("should call clearValidationErrors when Cancel is clicked", function () {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -236,13 +250,13 @@ describe("Record View", function() {
             var stub = sinon.stub(view, "clearValidationErrors");
             view.cancelClicked();
             //Defer expectations since decoration is deferred
-            _.defer(function(stub){
+            _.defer(function (stub) {
                 expect(stub.calledOnce).toBe(true);
                 stub.restore();
             }, stub);
         });
 
-        it("Should display all 8 editable fields when more link is clicked", function() {
+        it("Should display all 8 editable fields when more link is clicked", function () {
             var hiddenFields = 0,
                 visibleFields = 0;
 
@@ -254,7 +268,7 @@ describe("Record View", function() {
             });
 
             view.$('.more').click();
-            _.each(view.editableFields, function(field) {
+            _.each(view.editableFields, function (field) {
                 if (field.$el.closest('.hide').length === 1) {
                     hiddenFields++;
                 } else {
@@ -268,8 +282,8 @@ describe("Record View", function() {
         });
     });
 
-    describe('Edit', function() {
-        it("Should toggle to an edit mode when a user clicks on the inline edit icon", function() {
+    describe('Edit', function () {
+        it("Should toggle to an edit mode when a user clicks on the inline edit icon", function () {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -284,7 +298,7 @@ describe("Record View", function() {
             expect(view.getField('name').options.viewName).toBe('edit');
         });
 
-        it("Should toggle all editable fields to edit modes when a user clicks on the edit button", function() {
+        it("Should toggle all editable fields to edit modes when a user clicks on the edit button", function () {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -292,26 +306,27 @@ describe("Record View", function() {
                 description: 'Description'
             });
 
-            _.each(view.editableFields, function(field) {
+            _.each(view.editableFields, function (field) {
                 expect(field.options.viewName).toBe(view.action);
             });
 
             view.context.trigger('button:edit_button:click');
 
-            waitsFor(function() {
-                return (_.last(view.editableFields)).options.viewName == 'edit';
+            waitsFor(function () {
+                return (_.last(view.editableFields)).options.viewName === 'edit';
             }, 'it took too long to wait switching view', 1000);
 
-            runs(function() {
-                _.each(view.editableFields, function(field) {
+            runs(function () {
+                _.each(view.editableFields, function (field) {
                     expect(field.options.viewName).toBe('edit');
                 });
             });
         });
 
-        it("Should ask the model to revert if cancel clicked", function() {
+        it("Should ask the model to revert if cancel clicked", function () {
             view.render();
-            view.model.revertAttributes = function(){};
+            view.model.revertAttributes = function () {
+            };
             var revertSpy = sinon.spy(view.model, 'revertAttributes');
             view.context.trigger('button:edit_button:click');
             view.model.set({
@@ -323,11 +338,11 @@ describe("Record View", function() {
         });
     });
 
-    describe("render panels", function() {
-        describe("labels are on top", function() {
-            it("Should create a one-column panel grid", function() {
+    describe("render panels", function () {
+        describe("labels are on top", function () {
+            it("Should create a one-column panel grid", function () {
                 var results,
-                    fields    = [
+                    fields = [
                         // case: field is a string, thus field.span is undefined
                         // result: should be converted to an object and field.span should be 12
                         "foo1",
@@ -353,12 +368,14 @@ describe("Record View", function() {
                             span: 6
                         }
                     ],
-                    panelDefs = [{
-                        columns:     1,
-                        labels:      true,
-                        labelsOnTop: true,
-                        fields:      fields
-                    }];
+                    panelDefs = [
+                        {
+                            columns: 1,
+                            labels: true,
+                            labelsOnTop: true,
+                            fields: fields
+                        }
+                    ];
 
                 view._renderPanels(panelDefs);
                 results = panelDefs[0].grid;
@@ -380,9 +397,9 @@ describe("Record View", function() {
                 expect(results[3][0].span).toBe(6);
             });
 
-            it("Should create a two-column panel grid", function() {
+            it("Should create a two-column panel grid", function () {
                 var results,
-                    fields    = [
+                    fields = [
                         // case: the third field should be on its own row with an empty column
                         // result: the first two fields are one the first row and the third field is on its own row
                         "foo1",
@@ -404,12 +421,14 @@ describe("Record View", function() {
                             span: 20
                         }
                     ],
-                    panelDefs = [{
-                        columns:     2,
-                        labels:      true,
-                        labelsOnTop: true,
-                        fields:      fields
-                    }];
+                    panelDefs = [
+                        {
+                            columns: 2,
+                            labels: true,
+                            labelsOnTop: true,
+                            fields: fields
+                        }
+                    ];
 
                 view._renderPanels(panelDefs);
                 results = panelDefs[0].grid;
@@ -432,9 +451,9 @@ describe("Record View", function() {
                 expect(results[3][0].span).toBe(12);
             });
 
-            it("Should create a three-column panel grid", function() {
+            it("Should create a three-column panel grid", function () {
                 var results,
-                    fields    = [
+                    fields = [
                         // case: field.span is calculated for three fields such that they fit on one row
                         // result: three fields are on the same row
                         "foo1",
@@ -473,12 +492,14 @@ describe("Record View", function() {
                         },
                         "foo9"
                     ],
-                    panelDefs = [{
-                        columns:     3,
-                        labels:      true,
-                        labelsOnTop: true,
-                        fields:      fields
-                    }];
+                    panelDefs = [
+                        {
+                            columns: 3,
+                            labels: true,
+                            labelsOnTop: true,
+                            fields: fields
+                        }
+                    ];
 
                 view._renderPanels(panelDefs);
                 results = panelDefs[0].grid;
@@ -512,10 +533,10 @@ describe("Record View", function() {
             });
         });
 
-        describe("labels are inline", function() {
-            it("Should create a one-column panel grid", function() {
+        describe("labels are inline", function () {
+            it("Should create a one-column panel grid", function () {
                 var results,
-                    fields    = [
+                    fields = [
                         // case: field.span and field.labelSpan are undefined
                         // result: field.span should be 8 and field.labelSpan should be 4
                         "foo1",
@@ -585,12 +606,14 @@ describe("Record View", function() {
                             dismiss_label: true
                         }
                     ],
-                    panelDefs = [{
-                        columns:     1,
-                        labels:      true,
-                        labelsOnTop: false,
-                        fields:      fields
-                    }];
+                    panelDefs = [
+                        {
+                            columns: 1,
+                            labels: true,
+                            labelsOnTop: false,
+                            fields: fields
+                        }
+                    ];
 
                 view._renderPanels(panelDefs);
                 results = panelDefs[0].grid;
@@ -635,9 +658,9 @@ describe("Record View", function() {
                 expect(results[8][0].labelSpan).toBe(0);
             });
 
-            it("Should create a two-column panel grid", function() {
+            it("Should create a two-column panel grid", function () {
                 var results,
-                    fields    = [
+                    fields = [
                         // case: If the field span is defined to be 12 and the label span is defined to be 0, 1 or 2
                         // (or it is undefined and gets calculated to be 1 or 2), then there is no guarantee that the
                         // field will be on its own row. If the field that follows has a field span defined to be 1 and
@@ -696,12 +719,14 @@ describe("Record View", function() {
                             dismiss_label: true
                         }
                     ],
-                    panelDefs = [{
-                        columns:     2,
-                        labels:      true,
-                        labelsOnTop: false,
-                        fields:      fields
-                    }];
+                    panelDefs = [
+                        {
+                            columns: 2,
+                            labels: true,
+                            labelsOnTop: false,
+                            fields: fields
+                        }
+                    ];
 
                 view._renderPanels(panelDefs);
                 results = panelDefs[0].grid;
@@ -747,9 +772,9 @@ describe("Record View", function() {
                 expect(results[4][1].labelSpan).toBe(0);
             });
 
-            it("Should create a five-column panel grid with no field.span's or label.span's less than 1", function() {
+            it("Should create a five-column panel grid with no field.span's or label.span's less than 1", function () {
                 var results,
-                    fields    = [
+                    fields = [
                         // case:
                         // result: field.span should be 8 and field.labelSpan should be 4; field overflows the row and
                         // its span dictates that the field be on its own row
@@ -759,12 +784,14 @@ describe("Record View", function() {
                         "foo4",
                         "foo5"
                     ],
-                    panelDefs = [{
-                        columns:     5,
-                        labels:      true,
-                        labelsOnTop: false,
-                        fields:      fields
-                    }];
+                    panelDefs = [
+                        {
+                            columns: 5,
+                            labels: true,
+                            labelsOnTop: false,
+                            fields: fields
+                        }
+                    ];
 
                 view._renderPanels(panelDefs);
                 results = panelDefs[0].grid;
@@ -779,72 +806,76 @@ describe("Record View", function() {
                 // value of 1 if they are calculated to be less than 1.
                 expect(results[0].length).toBe(5);
 
-                _.each(results[0], function(field) {
+                _.each(results[0], function (field) {
                     expect(field.span).toBe(1);
                     expect(field.labelSpan).toBe(1);
                 }, this);
             });
         });
 
-        describe('Header panel', function() {
-            it('Should set isAvatar to false if the header doesn\'t the picture field', function() {
+        describe('Header panel', function () {
+            it('Should set isAvatar to false if the header doesn\'t the picture field', function () {
                 view._renderPanels(view.meta.panels);
                 expect(view.meta.panels[0].isAvatar).toBeFalsy();
             });
 
-            it('Should set isAvatar to true if the header contains the picture field', function() {
+            it('Should set isAvatar to true if the header contains the picture field', function () {
                 var meta = {
-                            "panels": [{
-                                "name": "panel_header",
-                                "header": true,
-                                "fields": ["picture","name"]
-                            }, {
-                                "name": "panel_body",
-                                "label": "LBL_PANEL_2",
-                                "columns": 1,
-                                "labels": true,
-                                "labelsOnTop": false,
-                                "placeholders":true,
-                                "fields": ["description","case_number","type"]
-                            }, {
-                                "name": "panel_hidden",
-                                "hide": true,
-                                "labelsOnTop": false,
-                                "placeholders": true,
-                                "fields": ["created_by","date_entered","date_modified","modified_user_id"]
-                            }]
-                        };
+                    "panels": [
+                        {
+                            "name": "panel_header",
+                            "header": true,
+                            "fields": ["picture", "name"]
+                        },
+                        {
+                            "name": "panel_body",
+                            "label": "LBL_PANEL_2",
+                            "columns": 1,
+                            "labels": true,
+                            "labelsOnTop": false,
+                            "placeholders": true,
+                            "fields": ["description", "case_number", "type"]
+                        },
+                        {
+                            "name": "panel_hidden",
+                            "hide": true,
+                            "labelsOnTop": false,
+                            "placeholders": true,
+                            "fields": ["created_by", "date_entered", "date_modified", "modified_user_id"]
+                        }
+                    ]
+                };
                 view._renderPanels(meta.panels);
                 expect(meta.panels[0].isAvatar).toBeTruthy();
             });
         });
     });
 
-    describe('Switching to next and previous record', function() {
+    describe('Switching to next and previous record', function () {
 
-        beforeEach(function() {
-            createListCollection = function(nbModels, offsetSelectedModel) {
-                     view.context.set('listCollection', new Backbone.Collection());
-                     view.collection = new Backbone.Collection();
+        beforeEach(function () {
+            createListCollection = function (nbModels, offsetSelectedModel) {
+                view.context.set('listCollection', new Backbone.Collection());
+                view.collection = new Backbone.Collection();
 
-                     var modelIds = [];
-                     for (var i=0;i<=nbModels;i++) {
-                         var model = new Backbone.Model(),
-                             id = i + '__' + Math.random().toString(36).substr(2,16);
+                var modelIds = [];
+                for (var i = 0; i <= nbModels; i++) {
+                    var model = new Backbone.Model(),
+                        id = i + '__' + Math.random().toString(36).substr(2, 16);
 
-                         model.set({id: id});
-                         if (i === offsetSelectedModel) {
-                             view.model.set(model.toJSON());
-                             view.collection.add(model);
-                         }
-                         view.context.get('listCollection').add(model);
-                         modelIds.push(id);
-                     }
-                     return modelIds;
-                 };
+                    model.set({id: id});
+                    if (i === offsetSelectedModel) {
+                        view.model.set(model.toJSON());
+                        view.collection.add(model);
+                    }
+                    view.context.get('listCollection').add(model);
+                    modelIds.push(id);
+                }
+                return modelIds;
+            };
         });
 
-        it("Should find previous and next model from list collection", function() {
+        it("Should find previous and next model from list collection", function () {
             var modelIds = createListCollection(5, 3);
             view.showPreviousNextBtnGroup();
             expect(view.collection.previous).toBeDefined();
@@ -853,7 +884,7 @@ describe("Record View", function() {
             expect(view.collection.next.get('id')).toEqual(modelIds[4]);
         });
 
-        it("Should find previous model from list collection", function() {
+        it("Should find previous model from list collection", function () {
             var modelIds = createListCollection(5, 5);
             view.showPreviousNextBtnGroup();
             expect(view.collection.previous).toBeDefined();
@@ -861,7 +892,7 @@ describe("Record View", function() {
             expect(view.collection.previous.get('id')).toEqual(modelIds[4]);
         });
 
-        it("Should find next model from list collection", function() {
+        it("Should find next model from list collection", function () {
             var modelIds = createListCollection(5, 0);
             view.showPreviousNextBtnGroup();
             expect(view.collection.previous).not.toBeDefined();
@@ -870,40 +901,44 @@ describe("Record View", function() {
         });
     });
 
-    describe('duplicateClicked', function(){
-        var triggerStub, openStub, closeStub, expectedModel = {id:'abcd12345'};
+    describe('duplicateClicked', function () {
+        var triggerStub, openStub, closeStub, expectedModel = {id: 'abcd12345'};
 
-        beforeEach(function(){
+        beforeEach(function () {
             closeStub = sinon.stub();
-            triggerStub = sinon.stub(Backbone.Model.prototype, 'trigger', function(event, model){
-                if(event == "duplicate:before"){
+            triggerStub = sinon.stub(Backbone.Model.prototype, 'trigger', function (event, model) {
+                if (event === "duplicate:before") {
                     expect(model.get("name")).toEqual(view.model.get("name"));
                     expect(model.get("description")).toEqual(view.model.get("description"));
                     expect(model).toNotBe(view.model);
                 }
             });
             SugarTest.app.drawer = {
-                open: function(){},
-                close: function(){}
+                open: function () {
+                },
+                close: function () {
+                }
             };
-            openStub = sinon.stub(SugarTest.app.drawer, "open", function(opts, closeCallback){
+            openStub = sinon.stub(SugarTest.app.drawer, "open", function (opts, closeCallback) {
                 expect(opts.context.model).toBeDefined();
                 expect(opts.layout).toEqual("create");
                 expect(opts.context.model.get("name")).toEqual(view.model.get("name"));
                 expect(opts.context.model.get("description")).toEqual(view.model.get("description"));
                 expect(opts.context.model).toNotBe(view.model);
-                if (closeCallback) closeStub(expectedModel);
+                if (closeCallback) {
+                    closeStub(expectedModel);
+                }
             });
         });
-        afterEach(function(){
-            if(triggerStub){
+        afterEach(function () {
+            if (triggerStub) {
                 triggerStub.restore();
             }
-            if(openStub){
+            if (openStub) {
                 openStub.restore();
             }
         });
-        it("should trigger 'duplicate:before' on model prior to opening create drawer", function(){
+        it("should trigger 'duplicate:before' on model prior to opening create drawer", function () {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -920,7 +955,7 @@ describe("Record View", function() {
             expect(triggerStub.calledBefore(openStub)).toBe(true);
         });
 
-        it(" should pass model to mutate with 'duplicate:before' event", function(){
+        it(" should pass model to mutate with 'duplicate:before' event", function () {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -936,7 +971,7 @@ describe("Record View", function() {
             //Further expectations in stub
         });
 
-        it("should fire 'drawer:create:fire' event with copied model set on context", function(){
+        it("should fire 'drawer:create:fire' event with copied model set on context", function () {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -950,7 +985,7 @@ describe("Record View", function() {
             expect(openStub.lastCall.args[0].context.model.get("name")).toEqual(view.model.get("name"));
         });
 
-        it("should call close callback", function(){
+        it("should call close callback", function () {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -965,8 +1000,8 @@ describe("Record View", function() {
         });
     });
 
-    describe('Field labels', function(){
-        it("should be hidden on view for headerpane fields", function(){
+    describe('Field labels', function () {
+        it("should be hidden on view for headerpane fields", function () {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -977,7 +1012,7 @@ describe("Record View", function() {
             expect(view.$('.record-label[data-name=name]').css('display')).toBe('none');
         });
 
-        it("should be shown on view for non-headerpane fields", function(){
+        it("should be shown on view for non-headerpane fields", function () {
             view.render();
             view.model.set({
                 name: 'Name',
@@ -988,7 +1023,7 @@ describe("Record View", function() {
             expect(view.$('.record-label[data-name=description]').css('display')).not.toBe('none');
         });
 
-        it("should be shown on edit for headerpane fields", function(){
+        it("should be shown on edit for headerpane fields", function () {
             view.render();
             view.model.set({
                 name: 'Name',
