@@ -211,18 +211,26 @@
      *
      * @return {object}
      */
-    createURL: function() {
-        // we need to default the type to products
-        var args_filter = [];
+    createURL: function(isCommitLog, userId, showOpps) {
+        isCommitLog = isCommitLog || false;
+
+        var args_filter = [],
+            beanName = 'ForecastManagerWorksheets',
+            url;
+
         if(this.timePeriod) {
             args_filter.push({"timeperiod_id": this.timePeriod});
         }
 
-        if(this.selectedUser) {
+        if(isCommitLog && this.selectedUser) {
+            args_filter.push({"user_id": userId});
+            beanName = 'Forecasts';
+            args_filter.push({"forecast_type": (showOpps) ? 'Direct' : 'Rollup'});
+        } else if(this.selectedUser) {
             args_filter.push({"assigned_user_id": this.selectedUser.id});
         }
 
-        var url = app.api.buildURL('ForecastManagerWorksheets', 'filter');
+        url = app.api.buildURL(beanName, 'filter');
 
         return {"url": url, "filters": {"filter": args_filter}};
     },
@@ -643,17 +651,14 @@
     fetchUserCommitHistory: function(event, nTr) {
         var jTarget = $(event.target),
             dataCommitDate = jTarget.data('commitdate'),
-            options = {
-                timeperiod_id: this.timePeriod,
-                user_id: jTarget.data('uid'),
-                forecast_type: (jTarget.data('showopps')) ? 'Direct' : 'Rollup'
-            };
+            url = this.createURL(true, jTarget.data('uid'), jTarget.data('showopps'));
 
         return app.api.call('read',
-            app.api.buildURL('Forecasts', 'committed', null, options),
-            null,
+            url.url,
+            url.filters,
             {
                 success: function(data) {
+                    data = data.records;
                     var commitDate = new Date(dataCommitDate),
                         newestModel = new Backbone.Model(_.first(data)),
                     // get everything that is left but the first item.
