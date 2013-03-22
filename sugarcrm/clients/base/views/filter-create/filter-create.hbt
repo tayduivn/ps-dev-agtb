@@ -18,7 +18,7 @@
         <input type="text" value="Module" disabled="disabled" class="disabled inherit-width">
     </div>
     <div class="filter-operator controls span3">
-        <input type="text" value="{{title}}" disabled="disabled" class="disabled inherit-width">
+        <input type="text" value="{{moduleName}}" disabled="disabled" class="disabled inherit-width">
     </div>
     <div class="filter-value controls span4">
     </div>
