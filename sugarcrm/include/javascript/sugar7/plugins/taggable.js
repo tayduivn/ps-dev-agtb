@@ -195,7 +195,7 @@
 
             addTag: function(event) {
                 var el = this.$(event.currentTarget),
-                    body = this.$('.sayit'),
+                    body = this.$('.taggable'),
                     originalChildren = body.clone(true).children(),
                     lastIndex = this._lastLeaderPosition(body.html()),
                     data = el.data();
@@ -287,8 +287,10 @@
                 var self = this;
                 component.on('render', function() {
                     component.$(".tagged").each(function() {
-                        var $el = $(this);
-                        $el.html(self._parseTags($el.text(), self.model.get('data').tags));
+                        var $el = $(this),
+                            tagList = _.isFunction(component.getTagList)? component.getTagList() : [];
+
+                        $el.html(self._parseTags($el.text(), tagList));
                     });
                 });
             }
