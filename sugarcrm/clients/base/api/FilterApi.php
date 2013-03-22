@@ -198,21 +198,12 @@ class FilterApi extends SugarApi
         $rf = SugarRelationshipFactory::getInstance();
         $relObj = $record->$linkName->getRelationshipObject();
         $relDef = $rf->getRelationshipDef($relObj->name);
-        $tableName = $linkName;
-        foreach ($linkSeed->field_defs as $def) {
-            if ($def['type'] !== 'link') {
-                continue;
-            }
-            if ($def['relationship'] === $relObj->name) {
-                $tableName = $def['name'];
-                break;
-            }
-        }
+        $tableName = $record->$linkName->getRelatedModuleLinkName();
 
         if ($record->$linkName->getSide() == REL_LHS) {
-            $column = $relDef['rhs_key'];
-        } else {
             $column = $relDef['lhs_key'];
+        } else {
+            $column = $relDef['rhs_key'];
         }
 
         $options = $this->parseOptions($api, $args, $linkSeed);

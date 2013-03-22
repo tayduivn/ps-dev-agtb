@@ -326,6 +326,7 @@ abstract class SugarRelationship
     {
         $ignore_role_filter = $ignore_role_filter || $this->ignore_role_filter;
         $roleCheck = array();
+        
         if (empty ($table))
             $table = $this->getRelationshipTable();
         
@@ -339,10 +340,18 @@ abstract class SugarRelationship
             if(!empty($table)) {
                 if (empty($this->def['relationship_role_column_value']))
                 {
-                    $sugar_query->join[$table]->on()->isNull($field);
+                    if(isset($sugar_query->join[$table])) {
+                        $sugar_query->join[$table]->on()->isNull($field);
+                    } else {
+                        $sugar_query->where()->isNull($field);
+                    }
                 }
                 else {
-                    $sugar_query->join[$table]->on()->equals($field,$this->relationship_role_column_value);
+                    if(isset($sugar_query->join[$table])) { // i.e. Accounts joining Notes
+                        $sugar_query->join[$table]->on()->equals($field,$this->relationship_role_column_value);
+                    } else { // i.e. Notes joining Accounts
+                        $sugar_query->where()->equals($field, $this->relationship_role_column_value);
+                    }
                 }
             }
         }
