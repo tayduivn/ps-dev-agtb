@@ -361,7 +361,7 @@ class MetaDataManager {
             if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
                 $context['owner_override'] = true;
             }
-            
+
             $moduleAcls = SugarACL::getUserAccess($module, array(), $context);
 
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
@@ -399,8 +399,8 @@ class MetaDataManager {
                     $fieldsAcl = $GLOBALS['dictionary'][$module]['fields'];
                     if(isset($GLOBALS['dictionary'][$module]['acl_fields']) && $GLOBALS['dictionary'][$module]=== false){
                         $fieldsAcl = array();
-                    }   
-                }  
+                    }
+                }
                 // get the field names
 
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
@@ -425,6 +425,12 @@ class MetaDataManager {
                             break;
                     }
                 }
+            }
+        }
+        // for brevity, filter out 'yes' fields since UI assumes 'yes'
+        foreach($outputAcl as $k => $v) {
+            if($v == 'yes') {
+                unset($outputAcl[$k]);
             }
         }
         $outputAcl['_hash'] = md5(serialize($outputAcl));

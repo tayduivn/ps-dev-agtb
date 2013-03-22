@@ -18,16 +18,13 @@
         this.processMeta();
         this.renderHtml();
 
-        this.on("init", function() {
-            this.showComponent(this.options.meta['default']);
-        }, this);
-
         this.on("filter:change", function(module, link) {
             this.currentModule = module;
             this.currentLink = link;
         }, this);
 
         app.view.Layout.prototype.initialize.call(this, opts);
+        this.showComponent(this.options.meta['default']);
     },
 
     processMeta: function() {
@@ -64,7 +61,8 @@
             if (this.availableToggles[component.name]) {
                 this.toggleComponents.push(component);
             }
-            this.$el.append(component.el);
+
+            this.$(".main-content").append(component.el);
 
             if (component.name == "activitystream") {
                 this.activityContext = component.context;
@@ -73,9 +71,14 @@
     },
 
     toggleView: function(e) {
-        var data = this.$(e.currentTarget).data();
-        this.showComponent(data.view);
-        e.preventDefault();
+        var $el = this.$(e.currentTarget);
+
+        // Only toggle if we click on an inactive button.
+        if (!$el.hasClass("active")) {
+            var data = $el.data();
+            this.showComponent(data.view);
+            e.preventDefault();
+        }
     },
 
     showComponent: function(name) {
