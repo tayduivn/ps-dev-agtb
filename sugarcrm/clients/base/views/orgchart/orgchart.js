@@ -40,6 +40,7 @@
     sliderZoomIn: {},
     sliderZoomOut: {},
     chart: {},
+    viewName: '',
 
     /**
      * Initialize the View
