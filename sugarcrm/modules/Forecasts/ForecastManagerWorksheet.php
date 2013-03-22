@@ -63,6 +63,8 @@ class ForecastManagerWorksheet extends SugarBean
      */
     public function commitManagerForecast(User $manager, $timeperiod)
     {
+        global $current_user;
+
         // make sure that the User passed in is actually a manager
         if (!User::isManager($manager->id)) {
             return false;
@@ -78,6 +80,19 @@ class ForecastManagerWorksheet extends SugarBean
                 AND timeperiod_id = "' . $db->quote($timeperiod) . '" and draft = 1 and deleted = 0';
 
         $results = $db->query($sql);
+
+        if (empty($manager->reports_to_id)) {
+            $sqlQuota = 'SELECT sum(quota * base_rate) as quota
+                            FROM ' . $this->table_name . ' WHERE assigned_user_id = "' . $manager->id . '"
+                            AND timeperiod_id = "' . $db->quote($timeperiod) . '" and draft = 1 and deleted = 0';
+            $quota = $db->fetchOne($sqlQuota);
+            $this->commitQuota(
+                $quota['quota'],
+                $manager->id,
+                $timeperiod,
+                'Rollup'
+            );
+        }
 
         while ($row = $db->fetchByAssoc($results)) {
             /* @var $worksheet ForecastManagerWorksheet */
@@ -103,9 +118,16 @@ class ForecastManagerWorksheet extends SugarBean
             $worksheet->save();
 
             // commit the quota from the worksheet values
-            $this->commitQuota($worksheet->quota, $worksheet->user_id, $worksheet->timeperiod_id);
+            $this->commitQuota(
+                $worksheet->quota,
+                $worksheet->user_id,
+                $worksheet->timeperiod_id,
+                ($worksheet->user_id == $current_user->id) ? 'Direct' : 'Rollup'
+            );
+
             // recalculate the quotas now
             $this->recalcQuotas($worksheet->user_id, $worksheet->timeperiod_id, true);
+
         }
 
         return true;
@@ -118,10 +140,8 @@ class ForecastManagerWorksheet extends SugarBean
      * @param string $user_id
      * @param string $timeperiod_id
      */
-    protected function commitQuota($quota_amount, $user_id, $timeperiod_id)
+    protected function commitQuota($quota_amount, $user_id, $timeperiod_id, $quota_type)
     {
-        global $current_user;
-        $quota_type = ($user_id == $current_user->id) ? 'Direct' : 'Rollup';
         /* @var $quota Quota */
         $quota = BeanFactory::getBean('Quotas');
         $quota->retrieve_by_string_fields(
