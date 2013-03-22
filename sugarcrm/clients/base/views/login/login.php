@@ -1,6 +1,9 @@
+<?php
+
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -14,7 +17,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -24,45 +27,37 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-({
-    /**
-     * Do we show this field alert
-     */
-    showFieldAlert: false,
 
-    /**
-     * The User Id
-     */
-    uid: '',
-
-    /**
-     * Show Opportunities - this param gets set on the model as a way to flag the data:
-     * TRUE - rep worksheet link or manager's Opportunities link (forecast_type: direct)
-     * FALSE - link to manager worksheet (forecast_type: rollup)
-     */
-    showOpps: '',
-
-    /**
-     * Commit Date
-     */
-    commitDate: '',
-
-    initialize : function(options) {
-        app.view.Field.prototype.initialize.call(this, options);
-
-        this.showFieldAlert = (this.model.get('show_history_log') == "1");
-
-        // if we're not showing the field, no need to do anything else
-        if(this.showFieldAlert) {
-            if(this.model.get('date_modified')) {
-                this.commitDate = new Date(this.model.get('date_modified'));
-            }
-
-
-            this.uid = this.model.get('user_id');
-
-            // Have to make it 1 or 0 for handlebars to parse properly
-            this.showOpps = (this.context.get('selectedUser').id == this.uid) ? 1 : 0;
-        }
-    }
-})
+$viewdefs['base']['view']['login'] = array(
+    'buttons' =>
+        array(
+            array(
+                'name' => 'login_button',
+                'type' => 'button',
+                'label' => 'LBL_LOGIN_BUTTON_LABEL',
+                'css_class' => 'login-submit',
+                'primary' => true
+            ),
+        ),
+    'panels' =>
+        array(
+            array(
+                'label' => 'LBL_PANEL_DEFAULT',
+                'fields' =>
+                array(
+                    array(
+                        'name' => 'username',
+                        'type' => 'password',
+                        'label' => "LBL_LOGIN_USERNAME",
+                        'required' => true,
+                    ),
+                    array(
+                        'name' => 'password',
+                        'type' => 'password',
+                        'label' => "LBL_LOGIN_PASSWORD",
+                        'required' => true,
+                    ),
+                ),
+            ),
+        ),
+);

@@ -61,6 +61,10 @@
      * @return {String} the formatted value based on view name.
      */
     format: function(value) {
+        if (_.isNull(value) || _.isUndefined(value) || _.isNaN(value)){
+            return "";
+        }
+
 
         if (this.tplName === 'edit') {
             this.currencySfId = this.getCurrencyField().sfId;
