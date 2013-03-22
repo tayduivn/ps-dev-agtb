@@ -32,11 +32,11 @@
         }
     },
     unformat:function(value){
-        value = (value!='' && value!='http://') ? value.trim() : "";
+        value = (value !== '' && value != 'http://') ? value.trim() : "";
         return value;
     },
     format:function(value){
-        value = value || this.def.default || "";
+        value = value || this.def['default'] || "";
         if (value && !value.match(/^(http|https):\/\//)) {
             value = "http://" + value.trim();
         }

@@ -44,7 +44,7 @@
             }
 
             if (toggle && this.availableToggles[toggle]) {
-                this.toggles.push({toggle: toggle, title: this.availableToggles[toggle].label, class: this.availableToggles[toggle].icon });
+                this.toggles.push({toggle: toggle, title: this.availableToggles[toggle].label, 'class': this.availableToggles[toggle].icon });
             }
         }, this);
     },

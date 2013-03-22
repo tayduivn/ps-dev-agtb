@@ -43,7 +43,7 @@
         single: {handles: 1, connect: false},
         upper: {handles: 1, connect: 'upper'},
         lower: {handles: 1, connect: 'lower'},
-        double: {handles: 2, connect: false},
+        'double': {handles: 2, connect: false},
         connected: {handles: 2, connect: true}
     },
 
