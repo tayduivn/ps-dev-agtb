@@ -81,10 +81,37 @@
         if(this.def && this.def.css_class) {
             this.getFieldElement().addClass(this.def.css_class);
         }
-
+        this.focusIndex = 0;
         return this;
     },
+    focus: function() {
+        // this should be zero but lets make sure
+        if (this.focusIndex < 0 || !this.focusIndex) {
+            this.focusIndex = 0;
+        }
 
+        if (this.focusIndex >= this.fields.length) {
+            // done focusing our inputs return false
+            this.focusIndex = -1
+            return false;
+        } else {
+            // this field is disabled skip ahead
+            if (this.fields[this.focusIndex] && this.fields[this.focusIndex].isDisabled()) {
+                this.focusIndex++;
+                return this.focus();
+            }
+            // if the next field returns true its not done focusing so don't
+            // increment to the next field
+            if (_.isFunction(this.fields[this.focusIndex].focus) && this.fields[this.focusIndex].focus()) {
+            } else {
+                var field = this.fields[this.focusIndex]
+                var $el = field.$(field.fieldTag + ":first");
+                $el.focus().val($el.val());
+                this.focusIndex++;
+            }
+            return true;
+        }
+    },
     setDisabled: function(disable) {
         disable = _.isUndefined(disable) ? true : disable;
         app.view.Field.prototype.setDisabled.call(this, disable);
@@ -105,17 +132,6 @@
         _.each(this.fields, function(field){
             field.setMode(name);
         }, this);
-    },
-
-    focus: function() {
-        var firstField = _.first(this.fields);
-        if(_.isFunction(firstField)) {
-            firstField.focus();
-        } else {
-            var $el = firstField.$(firstField.fieldTag + ":first");
-            $el.focus().val($el.val());
-        }
-
     },
 
 

@@ -38,7 +38,12 @@
         this.bwcLink = options.def.bwcLink;//false is a perfectly valid value for this boolean metadata property!
         app.view.Field.prototype.initialize.call(this, options);
     },
-
+    bindKeyDown: function(callback) {
+        this.$('input').on("keydown.record", {field: this}, callback);
+    },
+    focus: function () {
+        this.$(this.fieldTag).select2('open');
+    },
     /**
      * Renders relate field
      */
