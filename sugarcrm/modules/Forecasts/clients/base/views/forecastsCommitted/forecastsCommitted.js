@@ -54,7 +54,7 @@
     /**
      * The url for the REST endpoint
      */
-    url: 'rest/v10/Forecasts/committed',
+    url: 'rest/v10/Forecasts',
 
     /**
      * The class selector representing the element which contains the view output
@@ -360,7 +360,6 @@
             return;
         }
 
-
         var forecast = new this.collection.model();
         forecast.url = this.url;
 
@@ -376,8 +375,8 @@
             forecastData.worst_case = this.totals.worst_case;
         }
 
-        forecastData.currency_id = -99; //Always default to the base currency
-        forecastData.base_rate = 1; //Base rate is always 1
+        // we need a commit_type so we know what to do on the back end.
+        forecastData.commit_type = (this.context.get('currentWorksheet') == "worksheetmanager") ? 'manager' : 'sales_rep';
         forecastData.timeperiod_id = this.timePeriod;
         forecastData.forecast_type = this.forecastType;
         forecastData.amount = this.totals.amount;
@@ -388,8 +387,7 @@
         forecastData.pipeline_opp_count = this.totals.pipeline_opp_count;
 
         // apply data to model then save
-        forecast.set(forecastData);
-        forecast.save({}, { success: _.bind(function() {
+        forecast.save(forecastData, { success: _.bind(function() {
             this.context.trigger("forecasts:committed:saved");
         }, this), silent: true});
 

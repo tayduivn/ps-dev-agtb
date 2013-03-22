@@ -317,6 +317,14 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
 	'comment' => 'ID of the associated time period for this forecast',
    ),
 
+  'commit_type' =>
+  array (
+    'name' => 'commit_type',
+    'type' => 'string',
+    'source' => 'non-db',
+    'comment' => 'This is used by the commit code to figure out what type of worksheet we are committing'
+  ),
+
   'forecast_type' =>
   array (
     'name' => 'forecast_type',
