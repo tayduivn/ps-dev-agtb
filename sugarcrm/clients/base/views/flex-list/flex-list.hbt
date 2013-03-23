@@ -32,13 +32,17 @@
     <tr>
         {{#each ../leftColumns}}
         <th data-fieldname="{{name}}">
-            {{field ../../this null "list-header"}}
+            <span>
+                {{field ../../this null "list-header"}}
+            </span>
         </th>
         {{/each}}
         {{#each ../_fields.visible}}
             <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.columnName name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
                 data-fieldname="{{name}}" data-orderby="{{orderBy}}">
-                {{str label ../../module}}
+                <span>
+                    {{str label ../../module}}
+                </span>
             </th>
         {{/each}}
         {{#each ../rightColumns}}
@@ -59,7 +63,9 @@
             </th>
             {{else}}
             <th data-fieldname="{{name}}">
-                {{field ../../../this null "list-header"}}
+                <span>
+                    {{field ../../../this null "list-header"}}
+                </span>
             </th>
             {{/if}}
         {{/each}}
