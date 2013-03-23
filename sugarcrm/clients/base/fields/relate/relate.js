@@ -102,7 +102,7 @@
                         layout : 'selection-list',
                         context: {
                             module: self.getSearchModule(),
-                            fields: _.keys(self.def.populate_list || {})
+                            fields: _.union(['id', 'name'], _.keys(self.def.populate_list || {}))
                         }
                     }, self.setValue);
                 }).on("change", function(e) {
