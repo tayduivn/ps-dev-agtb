@@ -4,7 +4,7 @@
         <li class="dropdown home" data-module="Home">
             <div class="btn-group">
                 <a class="cube btn btn-invisible btn-link" href="#Home" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}" data-route="#Home"></a>
-                <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
+                <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle"><b class="caret"></b></a>
                 <div class="dropdown-menu scroll">
                     <ul role="menu">
                         {{#each menu}}
@@ -14,14 +14,14 @@
                     </ul>
                 </div>
             </div>
-        </li>        
+        </li>
         {{/eq}}
         {{#notEq name 'Home'}}
         <li class="dropdown" data-module="{{name}}" data-menuindex="{{menuIndex}}">
             <a  class="moreLink hide" href="#{{name}}" data-route="#{{name}}">{{label}}</a>
             <div class="btn-group">
                 <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}" data-route="#{{name}}">{{label}}</a>
-                <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
+                <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle"><b class="caret"></b></a>
                 <div class="dropdown-menu scroll">
                     <ul role="menu">
                         {{#if menu}}
