@@ -3865,6 +3865,10 @@ $app_strings = array (
     //interaction chart
     'LBL_CHART_NO_DATA' => 'No Data Available.',
 
+    //organization chart
+    'LBL_ORG_CHART' => 'Organization Chart',
+    'LBL_ORG_CHART_DESC' => 'Displays the employee structure of your organization.',
+
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
     'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment',

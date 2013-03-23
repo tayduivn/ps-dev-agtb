@@ -46,6 +46,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
             'last_name' => $userBean->last_name,
             'user_name' => $userBean->user_name,
             'reports_to_id' => $userBean->reports_to_id,
+            'title' => $userBean->title,
             'children' => array()
         );
 
@@ -81,7 +82,8 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
             'user_name',
             'first_name',
             'last_name',
-            'reports_to_id'
+            'reports_to_id',
+            'title'
         );
 
         return User::getReporteesWithLeafCount($this->getArg('user_id'), false, $additional_fields);
@@ -101,6 +103,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
             $data['last_name'],
             $data['user_name'],
             $data['reports_to_id'],
+            $data['title'],
             'root'
         );
 
@@ -113,6 +116,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
                 $data['last_name'],
                 $data['user_name'],
                 $data['reports_to_id'],
+                $data['title'],
                 'my_opportunities'
             );
 
@@ -122,7 +126,8 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
                     $child['first_name'],
                     $child['last_name'],
                     $child['user_name'],
-                    $child['reports_to_id']
+                    $child['reports_to_id'],
+                    $data['title']
                 );
             }
 
@@ -148,6 +153,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
             $parentBean->last_name,
             $parentBean->user_name,
             $parentBean->reports_to_id,
+            $parentBean->title,
             'parent_link'
         );
 
@@ -177,7 +183,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
      * @param string $rel
      * @return array
      */
-    protected function getTreeArray($id, $first_name, $last_name, $user_name, $reports_to_id, $rel = 'rep')
+    protected function getTreeArray($id, $first_name, $last_name, $user_name, $reports_to_id, $title, $rel = 'rep')
     {
         global $locale;
         $fullName = $locale->getLocaleFormattedName($first_name, $last_name);
@@ -205,6 +211,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
                 'first_name' => $first_name,
                 'last_name' => $last_name,
                 'reports_to_id' => $reports_to_id,
+                'title' => $title,
             ),
             'state' => $state,
             'attr' => array(
