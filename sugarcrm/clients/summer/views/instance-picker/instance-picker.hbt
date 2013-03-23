@@ -1,5 +1,5 @@
 {{#if isAuthenticated}}
-<div class="btn-group dropup instance-picker" data-tour="tour-instances">
+<div class="btn-group dropup instance-picker">
     <a class="btn btn-invisible dropdown-toggle instance-footer-button" data-toggle="dropdown">
         <i class="icon-share"></i> {{str "LBL_INSTANCES"}} <b class="caret"></b>
     </a>
