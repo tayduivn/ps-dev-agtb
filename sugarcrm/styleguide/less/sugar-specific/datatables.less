@@ -48,26 +48,60 @@ table.dataTable {
         vertical-align: middle;
         text-overflow: ellipsis;
       }
-        &:first-child {
-          overflow-x: visible;
-          padding-left: 15px;
-          padding-right: 0;
-          width: 30px;
-        }
+      &:first-child {
+        overflow-x: visible;
+        padding-left: 15px;
+        padding-right: 0;
+        width: 30px;
+      }
 
-        &:last-child {
-          max-width: 60px;
-          min-width: 60px;
-          width: 60px;
-          padding: 0 8px 0 5px;
-          //vertical-align: middle;
-          overflow-x: visible;
-          border-right: 0;
-        }
-        a {
-          color: @grayLight;
-          text-decoration: none;
-        }
+      &:last-child {
+        max-width: 60px;
+        min-width: 60px;
+        width: 60px;
+        padding: 0 8px 0 5px;
+        //vertical-align: middle;
+        overflow-x: visible;
+        border-right: 0;
+      }
+
+      &:first-child {
+        overflow-x: visible;
+        padding-left: 15px;
+        padding-right: 0;
+        width: 50px;
+        height: 26px;
+        z-index: 1;
+        background: @white;
+        position: absolute;
+        left: 0;
+        border-right: 0;
+      }
+      &:nth-child(2) {
+        padding-left: 75px;
+      }
+      &:nth-last-child(2) {
+        padding-right: 75px;
+      }
+      &:last-child {
+        max-width: 60px;
+        min-width: 60px;
+        width: 60px;
+        padding: 0 8px 0 5px;
+        //vertical-align: middle;
+        overflow-x: visible;
+        border-right: 0;
+        height: 42px;
+        line-height: 42px !important;
+        background: @white;
+        position: absolute;
+        right: 0;
+      }
+
+      a {
+        color: @grayLight;
+        text-decoration: none;
+      }
     }
   }
 
@@ -417,6 +451,92 @@ table.dataTable {
     color: @orange;
   }
 }
+
+
+/**
+ * The flex list allows you to add left actions and right actions to the traditional list view.
+ * The code below aims to fix the first action column and the last action column
+ */
+.flex-list {
+  // .flex-list.left-actions to fix the first column
+  &.left-actions {
+    table.dataTable {
+      & > thead th {
+        &:first-child {
+          overflow-x: visible;
+          padding-left: 15px;
+          padding-right: 0;
+          width: 50px;
+          height: 26px;
+          z-index: 1;
+          background: @white;
+          position: absolute;
+          left: 0;
+          border-right: 0;
+        }
+        &:nth-child(2) {
+          padding-left: 75px;
+        }
+      }
+      & > tbody td {
+        &:first-child {
+          overflow-x: visible;
+          padding-left: 15px;
+          padding-right: 0;
+          width: 48px;
+
+          position: absolute;
+          left: 0;
+          z-index: 10;
+        }
+        &:nth-child(2) {
+          padding-left: 75px;
+        }
+      }
+    }
+  }
+
+  // .flex-list.right-actions to fix the last column
+  &.right-actions {
+    table.dataTable {
+      & > thead th {
+        &:nth-last-child(2) {
+          padding-right: 75px;
+        }
+        &:last-child {
+          max-width: 60px;
+          min-width: 60px;
+          width: 60px;
+          padding: 4px 8px 0 5px; //vertical-align: middle;
+          overflow-x: visible;
+          border-right: 0;
+          height: 31px;
+          line-height: 42px !important;
+          background: @white;
+          position: absolute;
+          right: 0;
+        }
+      }
+      & > tbody td {
+        &:nth-last-child(2) {
+          padding-right: 75px;
+        }
+        &:last-child {
+          max-width: 60px;
+          min-width: 60px;
+          padding: 4px 8px 0 5px;
+          width: 60px; //vertical-align: middle;
+          overflow-x: visible;
+          border-right: 0;
+          height: 31px;
+          position: absolute;
+          right: 0;
+        }
+      }
+    }
+  }
+}
+
 
 //from twitter-bootstrap/datatables.less
 .sorting {
