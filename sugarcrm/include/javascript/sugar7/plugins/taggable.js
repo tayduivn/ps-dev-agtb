@@ -118,18 +118,13 @@
                         }});
                         break;
                     case '@':
-                        var coll = app.data.createBeanCollection('Users');
-                        coll.filterDef = [
-                            {
-                                '$or':
-                                [{
-                                   'first_name': {'$starts': word}
-                                }, {
-                                   'last_name': {'$starts': word}
-                                }]
-                            }
-                        ];
-                        coll.fetch({limit: 8, success: callback});
+                        // We cannot use the filter API here as we need to
+                        // support users typing in full names, which are not
+                        // stored in the database as fields.
+                        app.api.search({q: word, module_list: "Users", limit: 8}, {success: function(response) {
+                            var coll = app.data.createBeanCollection("Users", response.records);
+                            callback(coll);
+                        }});
                         break;
                 }
             }, 250),
