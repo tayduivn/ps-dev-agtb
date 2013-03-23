@@ -31,6 +31,8 @@
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
+        <title>SugarCRM</title>
+        <link rel="icon" href="themes/default/images/sugar_icon.ico">
         <!-- CSS -->
         <link rel="stylesheet" href="{$css_url}"/>
     </head>
