@@ -32,7 +32,7 @@
             {{#unless ../dismiss_label}}
                 <div class="record-label" data-name="{{name}}">{{str label ../../../module}}</div>
             {{/unless}}
-            <span data-fieldname="{{name}}" data-tour="tour-{{../../module}}-{{name}}">
+            <span data-fieldname="{{name}}">
                 {{field ../../view ../../model ../../options.viewName}}
             </span>
         </span>
