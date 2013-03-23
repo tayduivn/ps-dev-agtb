@@ -20,7 +20,7 @@
      * Initialize the view and prepare the model with default button metadata
      * for the current layout.
      */
-    initialize: function(options) {
+    initialize: function (options) {
         var createViewEvents = {};
         createViewEvents['click a[name=' + this.saveButtonName + ']'] = 'save';
         createViewEvents['click a[name=' + this.cancelButtonName + ']'] = 'cancel';
@@ -55,28 +55,28 @@
 
         var fields = (moduleMetadata && moduleMetadata.fields) ? moduleMetadata.fields : [];
 
-        _.each(fields, function(field){
-            if(((field.name && field.name==='assigned_user_id') || (field.id_name && field.id_name==='assigned_user_id')) &&
-                (field.type && field.type==='relate')) {
-                    this.model.set('assigned_user_id', app.user.id);
-                    this.model.set('assigned_user_name', app.user.attributes.full_name);
-                    this.model._defaults = this.model._defaults || {};
-                    this.model._defaults['assigned_user_id'] = app.user.id;
-                    this.model._defaults['assigned_user_name'] = app.user.attributes.full_name;
+        _.each(fields, function (field) {
+            if (((field.name && field.name === 'assigned_user_id') || (field.id_name && field.id_name === 'assigned_user_id')) &&
+                (field.type && field.type === 'relate')) {
+                this.model.set('assigned_user_id', app.user.id);
+                this.model.set('assigned_user_name', app.user.attributes.full_name);
+                this.model._defaults = this.model._defaults || {};
+                this.model._defaults.assigned_user_id = app.user.id;
+                this.model._defaults.assigned_user_name = app.user.attributes.full_name;
             }
         }, this);
 
     },
 
-    handleSync: function() {
+    handleSync: function () {
         //override handleSync since there is no need to save the previous model state
     },
 
-    delegateButtonEvents: function() {
+    delegateButtonEvents: function () {
         //override record view's button delegation
     },
 
-    _render: function() {
+    _render: function () {
         app.view.views.RecordView.prototype._render.call(this);
 
         // Note if fieldset w/date created | modified is NOT set as readonly, this still removes from page
@@ -94,8 +94,8 @@
      * Determine appropriate save action and execute it
      * Default to saveAndClose
      */
-    save: function() {
-        switch(this.context.lastSaveAction) {
+    save: function () {
+        switch (this.context.lastSaveAction) {
             case this.SAVEACTIONS.SAVE_AND_CREATE:
                 this.saveAndCreate();
                 break;
@@ -110,8 +110,8 @@
     /**
      * Save and close drawer
      */
-    saveAndClose: function() {
-        this.initiateSave(_.bind(function() {
+    saveAndClose: function () {
+        this.initiateSave(_.bind(function () {
             app.drawer.close(this.context, this.model);
         }, this));
     },
@@ -119,16 +119,16 @@
     /**
      * Handle click on the cancel link
      */
-    cancel: function() {
+    cancel: function () {
         app.drawer.close(this.context);
     },
 
     /**
      * Handle click on save and create another link
      */
-    saveAndCreate: function() {
+    saveAndCreate: function () {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_CREATE;
-        this.initiateSave(_.bind(function() {
+        this.initiateSave(_.bind(function () {
             this.clear();
             this.resetDuplicateState();
         }, this));
@@ -137,9 +137,9 @@
     /**
      * Handle click on save and view link
      */
-    saveAndView: function() {
+    saveAndView: function () {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_VIEW;
-        this.initiateSave(_.bind(function() {
+        this.initiateSave(_.bind(function () {
             app.navigate(this.context, this.model);
         }, this));
     },
@@ -147,10 +147,12 @@
     /**
      * Handle click on restore to original link
      */
-    restoreModel: function() {
+    restoreModel: function () {
         this.model.clear();
         this.createMode = true;
-        if (!this.disposed) this.render();
+        if (!this.disposed) {
+            this.render();
+        }
         this.setButtonStates(this.STATE.CREATE);
 
         if (this._origAttributes) {
@@ -162,20 +164,18 @@
      * Check for possible duplicates before creating a new record
      * @param callback
      */
-    initiateSave: function(callback) {
+    initiateSave: function (callback) {
         this.clearValidationErrors();
         this.disableVisibleButtons();
         async.waterfall([
             _.bind(this.validateModelWaterfall, this),
             _.bind(this.dupeCheckWaterfall, this),
             _.bind(this.createRecordWaterfall, this)
-        ], _.bind(function(error) {
+        ], _.bind(function (error) {
             this.enableVisibleButtons();
-            if (!error) {
-                if (!this.disposed) {
-                    this.context.lastSaveAction = null;
-                    callback();
-                }
+            if (!error && !this.disposed) {
+                this.context.lastSaveAction = null;
+                callback();
             }
         }, this));
     },
@@ -184,7 +184,7 @@
      * Check to see if all fields are valid
      * @param callback
      */
-    validateModelWaterfall: function(callback) {
+    validateModelWaterfall: function (callback) {
         if (this.model.isValid(this.getFields(this.module))) {
             callback(false);
         } else {
@@ -197,9 +197,11 @@
      * Check for possible duplicate records
      * @param callback
      */
-    dupeCheckWaterfall: function(callback) {
-        var success = _.bind(function(collection) {
-                if (this.disposed === true) callback(true); //if view is already disposed, bail out
+    dupeCheckWaterfall: function (callback) {
+        var success = _.bind(function (collection) {
+                if (this.disposed) {
+                    callback(true);
+                }
                 if (collection.models.length > 0) {
                     this.handleDuplicateFound(collection);
                     callback(true);
@@ -208,7 +210,7 @@
                     callback(false);
                 }
             }, this),
-            error = _.bind(function() {
+            error = _.bind(function () {
                 this.alerts.showServerError();
                 callback(true);
             }, this);
@@ -223,16 +225,16 @@
      * Create new record
      * @param callback
      */
-    createRecordWaterfall: function(callback) {
-        var success = function() {
+    createRecordWaterfall: function (callback) {
+        var success = function () {
                 callback(false);
             },
-            error = _.bind(function() {
+            error = _.bind(function () {
                 this.alerts.showServerError();
                 callback(true);
             }, this);
 
-        this.saveModel(success,error);
+        this.saveModel(success, error);
     },
 
     /**
@@ -240,7 +242,7 @@
      * @param success
      * @param error
      */
-    checkForDuplicate: function(success, error) {
+    checkForDuplicate: function (success, error) {
         var options = {
             success: success,
             error: error
@@ -251,10 +253,8 @@
 
     /**
      * Duplicate found: display duplicates and change buttons
-     * @param {object} Collection of sugar beans
-     * @param {array} List of user key fields
      */
-    handleDuplicateFound: function(collection) {
+    handleDuplicateFound: function () {
         this.setButtonStates(this.STATE.DUPLICATE);
         this.dupecheckList.show();
         this.skipDupeCheck(true);
@@ -263,7 +263,7 @@
     /**
      * Clear out all things related to duplicate checks
      */
-    resetDuplicateState: function() {
+    resetDuplicateState: function () {
         this.setButtonStates(this.STATE.CREATE);
         this.hideDuplicates();
         this.skipDupeCheck(false);
@@ -275,7 +275,7 @@
      *
      * Override to return set of custom options
      */
-    getCustomSaveOptions: function(){
+    getCustomSaveOptions: function () {
         return {};
     },
 
@@ -284,16 +284,16 @@
      * @param success
      * @param error
      */
-    saveModel: function(success, error) {
+    saveModel: function (success, error) {
         var self = this,
             options;
         success = _.wrap(success, function (func) {
             app.file.checkFileFieldsAndProcessUpload(self, {
-                    success:function () {
+                    success: function () {
                         func();
                     }
                 },
-                {deleteIfFails:true}
+                {deleteIfFails: true}
             );
         });
         options = {
@@ -303,9 +303,9 @@
             viewed: true,
             relate: (self.model.link) ? true : null,
             alerts: {
-               'success' : {
-                   messages: app.lang.get('LBL_RECORD_SAVED_SUCCESS',self.module,self.model.attributes)
-               }
+                'success': {
+                    messages: app.lang.get('LBL_RECORD_SAVED_SUCCESS', self.module, self.model.attributes)
+                }
             }
         };
 
@@ -314,12 +314,12 @@
     },
 
     /**
-     * Check to see if we should skip duplicate check. If param specified, set duplicate check
-     * to either true or false.
-     * @param skip (boolean)
+     * Check to see if we should skip duplicate check.
+     * @param {Boolean} skip (optional) If specified, sets duplicate check to
+     *  either true or false.
      * @return {*}
      */
-    skipDupeCheck: function(skip) {
+    skipDupeCheck: function (skip) {
         var skipDupeCheck,
             saveButton = this.buttons[this.saveButtonName].getFieldElement();
 
@@ -341,17 +341,19 @@
     /**
      * Clears out field values
      */
-    clear: function() {
+    clear: function () {
         this.model.clear();
         this.model.set(this.model._defaults);
-        if (!this.disposed) this.render();
+        if (!this.disposed) {
+            this.render();
+        }
     },
 
     /**
      * Make the specified record as the data to be edited, and merge the existing data.
      * @param model
      */
-    editExisting: function(model) {
+    editExisting: function (model) {
         var origAttributes = this.saveFormData(),
             skipDupeCheck = this.skipDupeCheck();
 
@@ -359,7 +361,9 @@
         this.model.set(this.extendModel(model, origAttributes));
 
         this.createMode = false;
-        if (!this.disposed) this.render();
+        if (!this.disposed) {
+            this.render();
+        }
         this.toggleEdit(true);
 
         this.hideDuplicates();
@@ -373,11 +377,11 @@
      * @param origAttributes
      * @return {*}
      */
-    extendModel: function(newModel, origAttributes) {
+    extendModel: function (newModel, origAttributes) {
         var modelAttributes = _.clone(newModel.attributes);
 
-        _.each(modelAttributes, function(value, key, list) {
-            if ( _.isUndefined(value)|| _.isEmpty(value)) {
+        _.each(modelAttributes, function (value, key) {
+            if (_.isUndefined(value) || _.isEmpty(value)) {
                 delete modelAttributes[key];
             }
         });
@@ -389,7 +393,7 @@
      * Save the data entered in the form
      * @return {*}
      */
-    saveFormData: function() {
+    saveFormData: function () {
         this._origAttributes = _.clone(this.model.attributes);
         return this._origAttributes;
     },
@@ -397,7 +401,7 @@
     /**
      * Render duplicate check list table
      */
-    renderDupeCheckList: function() {
+    renderDupeCheckList: function () {
         this.context.set('dupelisttype', 'dupecheck-list-edit');
 
         if (_.isNull(this.dupecheckList)) {
@@ -406,7 +410,7 @@
                 name: 'dupecheck',
                 module: this.module
             });
-           this.addToLayoutComponents(this.dupecheckList);
+            this.addToLayoutComponents(this.dupecheckList);
         }
 
         this.$('.headerpane').after(this.dupecheckList.$el);
@@ -419,14 +423,14 @@
      *
      * @param component
      */
-    addToLayoutComponents: function(component) {
+    addToLayoutComponents: function (component) {
         this.layout._components.push(component);
     },
 
     /**
      * Clear out duplicate list
      */
-    hideDuplicates: function() {
+    hideDuplicates: function () {
         this.dupecheckList.hide();
     },
 
@@ -434,7 +438,7 @@
      * Change the behavior of buttons depending on the state that they are in
      * @param state
      */
-    setButtonStates: function(state) {
+    setButtonStates: function (state) {
         app.view.views.RecordView.prototype.setButtonStates.call(this, state);
 
         var $saveButtonEl = this.buttons[this.saveButtonName];
@@ -455,46 +459,46 @@
     /**
      * Disable all visible buttons
      */
-    disableVisibleButtons: function() {
+    disableVisibleButtons: function () {
         var buttons = [
             this.cancelButtonName,
             this.saveButtonName,
             this.restoreButtonName
         ];
 
-        _.each(buttons, function(name) {
+        _.each(buttons, function (name) {
             this.buttons[name].getFieldElement().addClass('disabled');
         }, this);
 
-        this.buttons['main_dropdown'].$('a.dropdown-toggle').addClass('disabled');
+        this.buttons.main_dropdown.$('a.dropdown-toggle').addClass('disabled');
     },
 
     /**
      * Enable all visible buttons
      */
-    enableVisibleButtons: function() {
+    enableVisibleButtons: function () {
         var buttons = [
             this.cancelButtonName,
             this.saveButtonName,
             this.restoreButtonName
         ];
 
-        _.each(buttons, function(name) {
+        _.each(buttons, function (name) {
             this.buttons[name].getFieldElement().removeClass('disabled');
         }, this);
 
-        this.buttons['main_dropdown'].$('a.dropdown-toggle').removeClass('disabled');
+        this.buttons.main_dropdown.$('a.dropdown-toggle').removeClass('disabled');
     },
 
     alerts: {
-        showInvalidModel: function() {
+        showInvalidModel: function () {
             app.alert.show('invalid-data', {
                 level: 'error',
                 messages: 'ERR_RESOLVE_ERRORS',
                 autoClose: true
             });
         },
-        showServerError: function() {
+        showServerError: function () {
             app.alert.show('server-error', {
                 level: 'error',
                 messages: 'ERR_GENERIC_SERVER_ERROR',
