@@ -1,0 +1,185 @@
+{
+  "next_offset": 10,
+  "records": [
+    {
+      "id": "764d403d-7e85-a9a7-01e0-514a896e46ef",
+      "name": "Super Star Holdings Inc - 1000 units",
+      "date_modified": "2013-03-21T04:14:00+00:00",
+      "assigned_user_name": "Sarah Smith",
+      "account_name": "Super Star Holdings Inc",
+      "account_id": "ee88242e-9b09-b35e-ceac-514a898755c7",
+      "amount": "567619",
+      "base_rate": "1",
+      "currency_id": "-99",
+      "date_closed": "2013-03-22",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "bf3ea114-aa86-d4b4-967a-514a89ca16fa",
+      "name": "Q3 ARVRO III PR - 1000 units",
+      "date_modified": "2013-03-21T04:14:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "Q3 ARVRO III PR",
+      "account_id": "ab69212c-04f6-2deb-659d-514a89832450",
+      "amount": "549563",
+      "base_rate": "1",
+      "currency_id": "-99",
+      "date_closed": "2013-03-26",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "b9fa05eb-33e9-0189-b1cc-514a891255f5",
+      "name": "T-Cat Media Group Inc - 1000 units",
+      "date_modified": "2013-03-21T04:14:00+00:00",
+      "assigned_user_name": "Sarah Smith",
+      "account_name": "T-Cat Media Group Inc",
+      "account_id": "77fabb4d-ee40-b706-9709-514a892b95dc",
+      "amount": "523850",
+      "base_rate": "1",
+      "currency_id": "-99",
+      "date_closed": "2013-03-31",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "eb329731-9b2e-29f0-a6f3-514a893ca03d",
+      "name": "B.H. Edwards Inc - 1000 units",
+      "date_modified": "2013-03-21T04:14:00+00:00",
+      "assigned_user_name": "Sarah Smith",
+      "account_name": "B.H. Edwards Inc",
+      "account_id": "e013bd37-6986-46ee-bbd0-514a89f4540c",
+      "amount": "469703",
+      "base_rate": "1",
+      "currency_id": "-99",
+      "date_closed": "2013-04-22",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "81aab47a-19bd-ca26-46a1-514a890bab4d",
+      "name": "Coolview Net Ltd - 1000 units",
+      "date_modified": "2013-03-21T04:14:00+00:00",
+      "assigned_user_name": "Jim Brennan",
+      "account_name": "Coolview Net Ltd",
+      "account_id": "4ef73254-60bc-aab2-e53e-514a893db6f2",
+      "amount": "465199",
+      "base_rate": "1",
+      "currency_id": "-99",
+      "date_closed": "2013-03-21",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "69234cf6-df07-9de7-69a7-514a89ecefd9",
+      "name": "Arts & Crafts Inc - 1000 units",
+      "date_modified": "2013-03-21T04:14:00+00:00",
+      "assigned_user_name": "Will Westin",
+      "account_name": "Arts & Crafts Inc",
+      "account_id": "bc353eb0-1fc9-66c2-4798-514a8959fbaf",
+      "amount": "461654",
+      "base_rate": "1",
+      "currency_id": "-99",
+      "date_closed": "2013-05-26",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "1fda72c1-b1fc-ba3d-2a52-514a89770202",
+      "name": "Kings Royalty Trust - 1000 units",
+      "date_modified": "2013-03-21T04:14:00+00:00",
+      "assigned_user_name": "Will Westin",
+      "account_name": "Kings Royalty Trust",
+      "account_id": "e61d2773-99d8-a6eb-c40e-514a8978438c",
+      "amount": "454098",
+      "base_rate": "1",
+      "currency_id": "-99",
+      "date_closed": "2013-05-21",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "dcfe875f-7ed7-79c6-10eb-514a89ba1964",
+      "name": "Airline Maintenance Co - 1000 units",
+      "date_modified": "2013-03-21T04:14:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "Airline Maintenance Co",
+      "account_id": "b40b0605-6468-2c3c-681d-514a893c7ce0",
+      "amount": "453668",
+      "base_rate": "0.9",
+      "currency_id": "9f180c5b-3a5f-60ce-8caf-514a892d1619",
+      "date_closed": "2013-02-12",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "e02e21d0-a407-0fb7-908b-514a89599e0c",
+      "name": "24/7 Couriers - 1000 units",
+      "date_modified": "2013-03-21T04:14:00+00:00",
+      "assigned_user_name": "Sarah Smith",
+      "account_name": "24/7 Couriers",
+      "account_id": "51cb235a-b085-97d8-891c-514a89b7f8d3",
+      "amount": "425520",
+      "base_rate": "0.9",
+      "currency_id": "9f180c5b-3a5f-60ce-8caf-514a892d1619",
+      "date_closed": "2013-08-30",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "d7986d54-4393-0fa2-da12-514a89842b60",
+      "name": "Smith & Sons - 1000 units",
+      "date_modified": "2013-03-21T04:14:00+00:00",
+      "assigned_user_name": "Will Westin",
+      "account_name": "Smith & Sons",
+      "account_id": "81888045-fb70-33ea-25f5-514a8949a4b3",
+      "amount": "419846",
+      "base_rate": "1",
+      "currency_id": "-99",
+      "date_closed": "2013-04-28",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    }
+  ]
+}
