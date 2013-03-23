@@ -98,7 +98,6 @@
                     }
                 }).on("searchmore", function() {
                     $(this).select2("close");
-                    self.setValue({id: '', value: ''});
                     app.drawer.open({
                         layout : 'selection-list',
                         context: {
