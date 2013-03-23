@@ -47,7 +47,7 @@
     _placeComponent: function(comp, def) {
         this.$el.attr({
             id : 'dashlets',
-            class: 'row-fluid'
+            'class': 'row-fluid'
         }).append(comp.el);
     },
     applyDragAndDrop: function() {

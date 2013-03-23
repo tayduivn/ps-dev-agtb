@@ -79,7 +79,7 @@
         var items = self.def.options;
         fetch = fetch || false;
         if(fetch || _.isUndefined(items)){
-            app.api.enum(self.module, self.name, {
+            app.api['enum'](self.module, self.name, {
                 success: function(o){
                     if(self.enumOptions !== o){
                         self.enumOptions = o;
