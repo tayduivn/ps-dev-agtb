@@ -11,7 +11,6 @@
   *zoom: 1;
   //
 }
-
 table.dataTable {
   margin: 0 auto;
   clear: both;
@@ -24,8 +23,9 @@ table.dataTable {
     .box-sizing(border-box);
   }
 
-  /* ---------
-  TABLE HEADER*/
+
+//  TABLE HEADER
+
   & > thead {
     th {
       line-height: 26px !important;
@@ -38,13 +38,83 @@ table.dataTable {
       border-right: 1px solid darken(@grayLighter,5%);
       .rtl(@direction,ltr);
 
+      & > * {
+        display: inline-block;
+        width: 100%;
+        overflow-x: hidden;
+        white-space: nowrap;
+        word-break: break-word;
+        position: relative;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+      }
+        &:first-child {
+          overflow-x: visible;
+          padding-left: 15px;
+          padding-right: 0;
+          width: 30px;
+        }
+
+        &:last-child {
+          max-width: 60px;
+          min-width: 60px;
+          width: 60px;
+          padding: 0 8px 0 5px;
+          //vertical-align: middle;
+          overflow-x: visible;
+          border-right: 0;
+        }
+        a {
+          color: @grayLight;
+          text-decoration: none;
+        }
+    }
+  }
+
+
+
+//  TABLE BODY
+& > tbody {
+  & > tr {
+    //from tables.less?
+    &:last-child {
+      td {
+        border-bottom-size: 2px;
+      }
+      td:last-child,
+      td:first-child {
+        .border-radius(0 0 4px 4px)
+      }
+    }
+    & > td {
       white-space: nowrap;
       word-break: break-word;
       position: relative;
       vertical-align: middle;
-      overflow-x: hidden;
       text-overflow: ellipsis;
+      max-width: 100px;
 
+      border-top: 1px solid darken(@grayLighter, 5%);
+      border-bottom: 1px solid darken(@grayLighter, 5%);
+      background-color: @white;
+      .rtl(@direction,ltr);
+
+      &> *:not(.overflow-visible) {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: inline-block;
+        white-space: nowrap;
+        word-break: break-word;
+        position: relative;
+        vertical-align: middle;
+      }
+      &.td-inline-edit {
+        overflow: visible;
+        span {
+          overflow: visible;
+        }
+      }
       &:first-child {
         overflow-x: visible;
         padding-left: 15px;
@@ -54,82 +124,15 @@ table.dataTable {
       &:last-child {
         max-width: 60px;
         min-width: 60px;
-        width: 60px;
         padding: 0 8px 0 5px;
+        width: 60px;
         //vertical-align: middle;
         overflow-x: visible;
         border-right: 0;
       }
-      a {
-        color: @grayLight;
-        text-decoration: none;
-      }
     }
   }
-
-  /* ---------
-  TABLE BODY*/
-  & > tbody {
-    & > tr {
-      //from tables.less?
-      &:last-child {
-        td {
-          border-bottom-size: 2px;
-        }
-        td:last-child,
-        td:first-child {
-          .border-radius(0 0 4px 4px)
-        }
-      }
-      & > td {
-        white-space: nowrap;
-        word-break: break-word;
-        position: relative;
-        vertical-align: middle;
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-        max-width: 100px;
-
-        border-top: 1px solid darken(@grayLighter, 5%);
-        border-bottom: 1px solid darken(@grayLighter, 5%);
-        background-color: @white;
-        .rtl(@direction,ltr);
-
-        &> *:not(.overflow-visible) {
-          overflow-x: hidden;
-          text-overflow: ellipsis;
-          max-width: 100%;
-          display: inline-block;
-          white-space: nowrap;
-          word-break: break-word;
-          position: relative;
-          vertical-align: middle;
-        }
-        &.td-inline-edit {
-          overflow: visible;
-          span {
-            overflow: visible;
-          }
-        }
-        &:first-child {
-          overflow-x: visible;
-          padding-left: 15px;
-          padding-right: 0;
-          width: 30px;
-        }
-        &:last-child {
-          max-width: 60px;
-          min-width: 60px;
-          padding: 0 8px 0 5px;
-          width: 60px;
-          //vertical-align: middle;
-          overflow-x: visible;
-          border-right: 0;
-        }
-      }
-    }
-  }
-
+}
   /* ---------
   TABLE FOOTER */
   & > tfoot {
