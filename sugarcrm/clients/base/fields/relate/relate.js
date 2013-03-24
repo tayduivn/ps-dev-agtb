@@ -236,7 +236,9 @@
             success: function (data) {
                 var fetch = {results: [], more: data.next_offset > 0, context: search_collection};
                 if (fetch.more) {
-                    var plugin = self.$(self.fieldTag).data("select2"),
+                    var fieldEl = self.$(self.fieldTag),
+                        //For teamset widget, we should specify which index element to be filled in
+                        plugin = (fieldEl.length > 1) ? $(fieldEl.get(self.currentIndex)).data("select2") : fieldEl.data("select2"),
                         height = plugin.searchmore.children("li:first").children(":first").outerHeight(),
                     //0.2 makes scroll not to touch the bottom line which avoid fetching next record set
                         maxHeight = height * (limit - .2);
