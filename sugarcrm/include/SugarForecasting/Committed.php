@@ -50,10 +50,6 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
 
         $args = $this->getArgs();
         $db = DBManagerFactory::getInstance();
-
-        error_log("committed save");
-
-        error_log(print_r($args,1));
         
         $args['opp_count'] = !isset($args['opp_count']) ? 0 : $args['opp_count'];
         $args['includedClosedAmount'] = !isset($args['includedClosedAmount']) ? 0 : $args['includedClosedAmount'];
