@@ -658,9 +658,10 @@ $app_list_strings = array (
   'product_status_quote_key' => 'Quotes',
   'product_status_dom' =>
   array (
-    'Quotes' => 'Quoted',
-    'Orders' => 'Ordered',
-    'Ship' => 'Shipped',
+      '' => '',
+      'Quotes' => 'Quoted',
+      'Orders' => 'Ordered',
+      'Ship' => 'Shipped',
   ),
 
 

@@ -309,6 +309,7 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_STATUS',
             'type' => 'enum',
             'options' => 'product_status_dom',
+            'default' => '',
             'len' => 100,
             'audited' => true,
             'comment' => 'Product status (ex: Quoted, Ordered, Shipped)'
