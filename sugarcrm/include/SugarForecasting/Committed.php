@@ -67,8 +67,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->worst_case = $args['worst_case'];
         $forecast->forecast_type = $args['forecast_type'];
         $forecast->opp_count = $args['opp_count'];
-        $forecast->currency_id = $args['currency_id'];
-        $forecast->base_rate = $args['base_rate'];
+        $forecast->currency_id = '-99';
+        $forecast->base_rate = '1';
         
         //If we are committing a rep forecast, calculate things.  Otherwise, for a manager, just use what is passed in.
         if ($args['pipeline_opp_count'] == 0 && $args['pipeline_amount'] == 0) {
@@ -88,25 +88,13 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $mgr_worksheet->reporteeForecastRollUp($current_user, $args);
 
-        // ForecastWorksheets Table Commit Version
-        $data = array(
-            'user_id' => $current_user->id,
-            'timeperiod_id' => $args['timeperiod_id']
-        );
-
-        /* @var $job SchedulersJob */
-        $job = BeanFactory::getBean('SchedulersJobs');
-        $job->name = "Update ForecastWorksheets";
-        $job->target = "class::SugarJobUpdateForecastWorksheets";
-        $job->data = json_encode($data);
-        $job->retry_count = 0;
-        $job->assigned_user_id = $current_user->id;
-
-        require_once('include/SugarQueue/SugarJobQueue.php');
-        $jq = new SugarJobQueue();
-        $jq->submitJob($job);
-
-        $mgr_worksheet->commitManagerForecast($current_user, $args['timeperiod_id']);
+        if ($this->getArg('commit_type') == "sales_rep") {
+            /* @var $worksheet ForecastWorksheet */
+            $worksheet = BeanFactory::getBean('ForecastWorksheets');
+            $worksheet->commitWorksheet($current_user->id, $args['timeperiod_id']);
+        } else if($this->getArg('commit_type') == "manager") {
+            $mgr_worksheet->commitManagerForecast($current_user, $args['timeperiod_id']);
+        }
 
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         $admin = BeanFactory::getBean('Administration');

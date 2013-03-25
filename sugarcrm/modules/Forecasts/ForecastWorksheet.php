@@ -40,6 +40,8 @@ class ForecastWorksheet extends SugarBean
     public $product_id;
     public $assigned_user_id;
     public $timeperiod_id;
+    public $date_closed;
+    public $date_closed_timestamp;
     public $draft = 0; // default to 0, it will be set to 1 by the args that get passed in;
     public $parent_type;
     public $parent_id;
@@ -63,8 +65,12 @@ class ForecastWorksheet extends SugarBean
         $bean->best_case = $this->best_case;
         if ($bean instanceof Product) {
             $bean->likely_case = $this->likely_case;
+            $bean->date_closed = $this->date_closed;
         } else {
             $bean->amount = $this->likely_case;
+            // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            $bean->date_closed = $this->date_closed;
+            // END SUGARCRM flav=pro && flav!=ent ONLY
         }
         $bean->sales_stage = $this->sales_stage;
         $bean->commit_stage = $this->commit_stage;
@@ -232,6 +238,105 @@ class ForecastWorksheet extends SugarBean
                 $this->$key = $seed->$field;
             }
         }
+    }
+
+    /**
+     * Start the Commit Process for a Sales Rep
+     *
+     * @param string $user_id
+     * @param string $timeperiod
+     * @param int $chunk_size            How big to make the chunks of data
+     * @return bool
+     */
+    public function commitWorksheet($user_id, $timeperiod, $chunk_size = 50)
+    {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        if ($settings['is_setup'] == false) {
+            $GLOBALS['log']->fatal("Forecast Module is not setup. " . __CLASS__ . " should not be running");
+            return false;
+        }
+        /* @var $tp TimePeriod */
+        $tp = BeanFactory::getBean('TimePeriods', $timeperiod);
+
+        if (empty($tp->id)) {
+            $GLOBALS['log']->fatal("Unable to load TimePeriod for id: " . $timeperiod);
+            return false;
+        }
+
+        $type = ucfirst(strtolower($settings['forecast_by']));
+
+        $sq = new SugarQuery();
+        $sq->from(BeanFactory::getBean($type))->where()
+            ->equals('assigned_user_id', $user_id)
+            ->queryAnd()
+                ->gte('date_closed_timestamp', $tp->start_date_timestamp)
+                ->lte('date_closed_timestamp', $tp->end_date_timestamp);
+        $beans = $sq->execute();
+
+        $bean_chunks = array_chunk($beans, $chunk_size);
+
+        // process the first chunk
+        self::processWorksheetDataChunk($type, $bean_chunks[0]);
+
+        // process any remaining in the background
+        for($x=1; $x < count($bean_chunks); $x++) {
+            $this->createUpdateForecastWorksheetJob($type, $bean_chunks[$x], $user_id);
+        }
+
+        return true;
+    }
+
+    /**
+     * Process Data Chunks of worksheet data
+     *
+     * @param string $forecast_by
+     * @param array $data
+     */
+    public static function processWorksheetDataChunk($forecast_by, array $data)
+    {
+        foreach ($data as $bean) {
+            /* @var $obj Opportunity|Product */
+            $obj = BeanFactory::getBean($forecast_by);
+            $obj->loadFromRow($bean);
+
+            /* @var $worksheet ForecastWorksheet */
+            $worksheet = BeanFactory::getBean('ForecastWorksheets');
+            if ($forecast_by == 'Opportunities') {
+                $worksheet->saveRelatedOpportunity($obj, true);
+                //BEGIN SUGARCRM flav=ent ONLY
+                // for opps we need to commit any products attached to them
+                $worksheet->saveOpportunityProducts($obj, true);
+                //END SUGARCRM flav=ent ONLY
+
+            } elseif ($forecast_by == 'Products') {
+                $worksheet->saveRelatedProduct($obj, true);
+            }
+        }
+    }
+
+    /**
+     * Create a job for the backend to process records on.
+     *
+     * @param string $forecast_by
+     * @param array $data
+     * @param string $user_id
+     */
+    protected function createUpdateForecastWorksheetJob($forecast_by, array $data, $user_id)
+    {
+        /* @var $job SchedulersJob */
+        $job = BeanFactory::getBean('SchedulersJobs');
+        $job->name = "Update ForecastWorksheets";
+        $job->target = "class::SugarJobUpdateForecastWorksheets";
+        $job->data = json_encode(array('forecast_by' => $forecast_by, 'data' => $data));
+        $job->retry_count = 0;
+        $job->assigned_user_id = $user_id;
+
+        require_once('include/SugarQueue/SugarJobQueue.php');
+        $jq = new SugarJobQueue();
+        $jq->submitJob($job);
     }
 
     public static function reassignForecast($fromUserId, $toUserId)
