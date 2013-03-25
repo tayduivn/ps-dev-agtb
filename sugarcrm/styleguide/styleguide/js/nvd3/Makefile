@@ -19,8 +19,7 @@ JS_FILES = \
 	src/models/multiBarHorizontalChart_sugar.js \
 	src/models/pie.js \
 	src/models/pieChart.js \
-	src/models/scatter.js \
-	src/models/scatterChart.js \
+	src/models/scatter_sugar.js \
 	src/models/sparkline.js \
 	src/models/sparklinePlus.js \
 	src/models/stackedArea.js \

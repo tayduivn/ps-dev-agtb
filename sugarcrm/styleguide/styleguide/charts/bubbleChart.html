@@ -9,7 +9,7 @@
   <link href="../css/sugar.css" rel="stylesheet" type="text/css">
   <style>
     #bubble {
-      width: 300px;
+      width: 700px;
       height: 500px;
     }
   </style>
@@ -24,7 +24,7 @@
 <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
 <script src="../js/nvd3/data/line_data.js"></script>
-<script src="../js/nvd3/src/models/scatter.js"></script>
+<script src="../js/nvd3/src/models/scatter_sugar.js"></script>
 <script src="../js/nvd3/src/models/bubble.js"></script>
 <script src="../js/nvd3/src/models/legend.js"></script>
 <script src="../js/nvd3/src/models/bubbleChart.js"></script>
@@ -35,7 +35,29 @@
   nv.addGraph(function() {
     var format = d3.time.format("%Y-%m-%d");
 
-    var chart = nv.models.bubbleChart()
+    d3.json("../js/nvd3/data/top10_opportunities_preprocessed.json", function(json) {
+      // console.log(json)
+      var bubble_data = {
+            data: d3.nest()
+                    .key(function(d){ return d.assigned_user_name;})
+                    .entries(
+                      json.records
+                        .map(function(d){
+                          return {
+                            x: d.date_closed,
+                            y: parseInt(d.amount,10),
+                            shape: 'circle',
+                            assigned_user_name: d.assigned_user_name };
+                        })
+                    ),
+            properties: { title: "Top 10 Opportunities", value: json.records.length }
+      };
+
+      // console.log(bubble_data)
+      // console.log(JSON.stringify(bubble_data, null, '  '))
+      //chart.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: bubble_data.data.length} );
+
+      var chart = nv.models.bubbleChart()
           .x(function(d) { return format.parse(d.x) })
           .y(function(d) { return d.y })
           .tooltip( function(key, x, y, e, graph) {
@@ -46,38 +68,24 @@
           .showTitle(false)
           .tooltips(true)
           .showLegend(true)
-          //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
+          .colorData( 'graduated', {c1: '#d9edf7', c2: '#134158', l: bubble_data.data.length} )
           //.colorData( 'class' )
           //.colorData( 'default' )
           //.colorFill( 'gradient' )
-          //.colorFill( 'default' )
+          .colorFill( 'default' )
         ;
 
-
-    d3.json("../js/nvd3/data/top10_opportunities_preprocessed.json", function(json) {
-      // console.log(json)
-      var bubble_data = {};
-          bubble_data.properties = { title: "Top 10 Opportunities", value: json.records.length };
-          bubble_data.data = d3.nest()
-                        .key(function(d){ return d.assigned_user_name;})
-                        .entries(
-                          json.records.map(function(d){
-                            return {x:d.date_closed, y: parseInt(d.amount,10), shape:'circle', assigned_user_name:d.assigned_user_name };
-                          })
-                        );
-      // console.log(bubble_data)
-      // console.log(JSON.stringify(bubble_data, null, '  '))
-      //chart.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: bubble_data.data.length} );
 
       d3.select('#bubble svg')
           .datum(bubble_data)
         .transition().duration(500)
           .call(chart);
+
+      nv.utils.windowResize(chart.update);
+
+      return chart;
     });
 
-    nv.utils.windowResize(chart.update);
-
-    return chart;
   });
 
 // http://localhost:8888/builds/sugar7/ent/sugarcrm/rest/v10/Opportunities/filter?fields=assigned_user_name%2Cteam_name%2Copportunity_type%2Caccount_name%2Ccampaign_name%2Clead_source%2Ccurrency_name%2Ccurrency_symbol%2Cdate_closed%2Csales_stage%2Csales_status%2Ccommit_stage%2Cassigned_user_id%2Caccount_id%2Ccampaign_id%2Ccurrency_id%2Cname%2Camount%2Cnext_step%2Cprobability%2Ccreated_by_name%2Cmodified_by_name%2Cdate_entered%2Ccreated_by%2Cmodified_user_id&max_num=20&filter%5B0%5D%5B%24owner%5D=

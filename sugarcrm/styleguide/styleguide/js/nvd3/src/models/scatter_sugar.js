@@ -8,7 +8,6 @@ nv.models.scatter = function() {
   var margin      = {top: 0, right: 0, bottom: 0, left: 0}
     , width       = 960
     , height      = 500
-    , color       = nv.utils.defaultColor() // chooses color
     , id          = Math.floor(Math.random() * 100000) //Create semi-unique ID incase user doesn't selet one
     , x           = d3.scale.linear()
     , y           = d3.scale.linear()
@@ -32,6 +31,11 @@ nv.models.scatter = function() {
     , singlePoint = false
     , dispatch    = d3.dispatch('elementClick', 'elementMouseover', 'elementMouseout')
     , useVoronoi  = true
+    , color = nv.utils.defaultColor()
+    , fill = function (d,i) { return color(d,i); }
+    , gradient = function (d,i) { return color(d,i); }
+    , useClass = false
+    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
     ;
 
   //============================================================
@@ -256,11 +260,20 @@ nv.models.scatter = function() {
           .style('fill-opacity', 1e-6)
           .remove();
       groups
-          .attr('class', function(d,i) { return 'nv-group nv-series-' + i })
+          //.attr('class', function(d,i) { return 'nv-group nv-series-' + i })
+          .attr('class', function(d,i) {
+              return this.getAttribute('class') || (
+                'nv-group nv-series-' + i + (
+                  useClass
+                    ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
+                    : ''
+                )
+              );
+          } )
+          .attr('fill', function(d,i) { return this.getAttribute('fill') || fill(d, i) })
+          .attr('stroke', function(d,i) { return this.getAttribute('stroke') || fill(d, i) })
           .classed('hover', function(d) { return d.hover });
       d3.transition(groups)
-          .attr('fill', function(d,i) { return this.getAttribute('fill') || color(d, i) })
-          .attr('stroke', function(d,i) { return this.getAttribute('stroke') || color(d, i) })
           .style('stroke-opacity', 1)
           .style('fill-opacity', .5);
 
@@ -333,6 +346,27 @@ nv.models.scatter = function() {
   //------------------------------------------------------------
 
   chart.dispatch = dispatch;
+
+  chart.color = function(_) {
+    if (!arguments.length) return color;
+    color = _;
+    return chart;
+  };
+  chart.fill = function(_) {
+    if (!arguments.length) return fill;
+    fill = _;
+    return chart;
+  };
+  chart.gradient = function(_) {
+    if (!arguments.length) return gradient;
+    gradient = _;
+    return chart;
+  };
+  chart.useClass = function(_) {
+    if (!arguments.length) return useClass;
+    useClass = _;
+    return chart;
+  };
 
   chart.x = function(_) {
     if (!arguments.length) return getX;
@@ -466,12 +500,6 @@ nv.models.scatter = function() {
   chart.clipRadius = function(_) {
     if (!arguments.length) return clipRadius;
     clipRadius = _;
-    return chart;
-  };
-
-  chart.color = function(_) {
-    if (!arguments.length) return color;
-    color = nv.utils.getColor(_);
     return chart;
   };
 

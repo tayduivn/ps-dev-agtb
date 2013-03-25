@@ -125,16 +125,22 @@ nv.models.bubble = function() {
   chart.dispatch = scatter.dispatch;
   chart.scatter = scatter;
 
-  d3.rebind(chart, scatter, 'interactive', 'size', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceX', 'forceY', 'forceSize', 'clipVoronoi', 'clipRadius');
+  d3.rebind(chart, scatter, 'interactive', 'size', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceX', 'forceY', 'forceSize', 'clipVoronoi', 'clipRadius', 'color', 'gradient', 'useClass');
 
   chart.color = function(_) {
     if (!arguments.length) return color;
     color = _;
+
+    scatter.color(color);
+
     return chart;
   };
   chart.fill = function(_) {
     if (!arguments.length) return fill;
     fill = _;
+
+    scatter.fill(fill);
+
     return chart;
   };
   chart.gradient = function(_) {
