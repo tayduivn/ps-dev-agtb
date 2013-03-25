@@ -58,6 +58,9 @@
     },
 
     _load: function(options) {
+        if(_.isUndefined(this.context.parent.get('layout'))) {
+            return;
+        }
         var self = this,
             endpoint = function(method, model, options, callbacks) {
                 var real_module = self.context.parent.get('module'),
