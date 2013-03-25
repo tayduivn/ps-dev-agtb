@@ -141,7 +141,7 @@ var format = d3.time.format("%Y-%m-%d");
         , gRange = [0,1]
         , gScale = d3.scale.linear().domain(gDomain).range(gRange);
 
-      var total = 0
+      var total = 0;
 
       //add series index to each data point for reference
       data = data.map(function(s, i) {
@@ -151,11 +151,11 @@ var format = d3.time.format("%Y-%m-%d");
               return b.y < a.y ? -1 : b.y > a.y ? 1 : 0;
             })
             .map(function(p) {
-              p.series = i;
               s.total += p.y;
               return p;
             });
 
+          s.group = i;
           return s;
         })
         .sort(function(a, b) {
@@ -170,6 +170,8 @@ var format = d3.time.format("%Y-%m-%d");
 
           s.values = s.values
             .map(function(p) {
+              //p.series = p.probability;
+              p.group = s.group;
               p.opportunity = p.y;
               p.y = gScale(p.opportunity);
               return p;
@@ -177,6 +179,7 @@ var format = d3.time.format("%Y-%m-%d");
 
           return s;
         });
+
 
       properties.title = 'Total = $' + d3.format(',.02d')(total);
 
@@ -316,7 +319,7 @@ var format = d3.time.format("%Y-%m-%d");
         .ticks( data.length )
         .tickValues( getGroupTicks(data) )
         .tickSize(-availableWidth, 0)
-        .tickFormat(function(d,i){ return data[i].key});
+        .tickFormat(function(d,i){ return data[i].key; });
 
       d3.transition(g.select('.nv-y.nv-axis'))
           .call(yAxis);

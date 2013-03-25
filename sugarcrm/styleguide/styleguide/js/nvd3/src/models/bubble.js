@@ -13,8 +13,8 @@ nv.models.bubble = function() {
     , x = d3.time.scale()
     , y = scatter.yScale()
     , id = Math.floor(Math.random() * 10000) //Create semi-unique ID incase user doesn't select one
-    , getX = function(d) { return d.x } // accessor to get the x value from a data point
-    , getY = function(d) { return d.y } // accessor to get the y value from a data point
+    , getX = function(d) { return d.x; } // accessor to get the x value from a data point
+    , getY = function(d) { return d.y; } // accessor to get the y value from a data point
     , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
     , clipEdge = false // if true, masks lines within x and y scale
     , xDomain
@@ -75,7 +75,7 @@ nv.models.bubble = function() {
               data.map(function(d) {
                 return d.values.map(function(d,i) {
                   return getY(d,i);
-                })
+                });
               })
             ).concat(forceY)
           );
@@ -102,7 +102,7 @@ nv.models.bubble = function() {
       var wrap = container.selectAll('g.nv-wrap.nv-bubble').data([data]);
       var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-bubble');
       var gEnter = wrapEnter.append('g');
-      var g = wrap.select('g')
+      var g = wrap.select('g');
 
       gEnter.append('g').attr('class', 'nv-bubbleWrap');
 
