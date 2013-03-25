@@ -55,6 +55,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     "type"           => "recipients",
                     "label"          => "LBL_TO_ADDRS",
                     'cell_css_class' => 'controls-one btn-fit',
+                    'required'       => true,
                 ),
                 array(
                     "name"           => "cc_addresses",

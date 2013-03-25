@@ -43,7 +43,22 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @var User
      */
+    protected static $manager;
+
+    /**
+     * @var Quota
+     */
+    protected static $topLevelManager_quota;
+
+    /**
+     * @var User
+     */
     protected static $user;
+
+    /**
+     * @var User
+     */
+    protected static $topLevelManager;
 
     /**
      * @var Quota
@@ -57,13 +72,45 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
 
+        self::$topLevelManager = SugarTestUserUtilities::createAnonymousUser();
+
+        self::$topLevelManager_quota = SugarTestQuotaUtilities::createQuota(1000);
+        self::$topLevelManager_quota->user_id = self::$topLevelManager->id;
+        self::$topLevelManager_quota->quota_type = 'Direct';
+        self::$topLevelManager_quota->timeperiod_id = self::$timeperiod->id;
+        self::$topLevelManager_quota->save();
+
+        $rollup_quota_manager = SugarTestQuotaUtilities::createQuota(1000);
+        $rollup_quota_manager->user_id = self::$topLevelManager->id;
+        $rollup_quota_manager->quota_type = 'Rollup';
+        $rollup_quota_manager->timeperiod_id = self::$timeperiod->id;
+        $rollup_quota_manager->save();
+
+        self::$manager = SugarTestUserUtilities::createAnonymousUser(false);
+        self::$manager->reports_to_id = self::$topLevelManager->id;
+        self::$manager->save();
+
+        self::$manager_quota = SugarTestQuotaUtilities::createQuota(1000);
+        self::$manager_quota->user_id = self::$manager->id;
+        self::$manager_quota->quota_type = 'Direct';
+        self::$manager_quota->timeperiod_id = self::$timeperiod->id;
+        self::$manager_quota->save();
+
+        $rollup_quota = SugarTestQuotaUtilities::createQuota(1000);
+        $rollup_quota->user_id = self::$manager->id;
+        $rollup_quota->quota_type = 'Rollup';
+        $rollup_quota->timeperiod_id = self::$timeperiod->id;
+        $rollup_quota->save();
+
+
         self::$user = SugarTestUserUtilities::createAnonymousUser(false);
-        self::$user->reports_to_id = $GLOBALS['current_user']->id;
+        self::$user->reports_to_id = self::$manager->id;
         self::$user->save();
 
         self::$user_quota = SugarTestQuotaUtilities::createQuota(600);
@@ -78,19 +125,9 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         $rollup_quota_user->timeperiod_id = self::$timeperiod->id;
         $rollup_quota_user->save();
 
-        self::$manager_quota = SugarTestQuotaUtilities::createQuota(1000);
-        self::$manager_quota->user_id = $GLOBALS['current_user']->id;
-        self::$manager_quota->quota_type = 'Direct';
-        self::$manager_quota->timeperiod_id = self::$timeperiod->id;
-        self::$manager_quota->save();
-
-        $rollup_quota = SugarTestQuotaUtilities::createQuota(1000);
-        $rollup_quota->user_id = $GLOBALS['current_user']->id;
-        $rollup_quota->quota_type = 'Rollup';
-        $rollup_quota->timeperiod_id = self::$timeperiod->id;
-        $rollup_quota->save();
-
         self::$forecast = SugarTestForecastUtilities::createForecast(self::$timeperiod, self::$user);
+
+        $GLOBALS['current_user'] = self::$manager;
     }
 
     public static function tearDownAfterClass()
@@ -119,7 +156,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
         $ret = $worksheet->retrieve_by_string_fields(
             array(
-                'assigned_user_id' => $GLOBALS['current_user']->id,
+                'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 1,
                 'deleted' => 0
@@ -128,7 +165,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNotNull($ret, 'User Draft Forecast Manager Worksheet Not Found');
         $this->assertEquals(self::$user->id, $worksheet->user_id);
-        $this->assertEquals($GLOBALS['current_user']->id, $worksheet->assigned_user_id);
+        $this->assertEquals(self::$manager->id, $worksheet->assigned_user_id);
         $this->assertEquals(1, $worksheet->draft);
     }
 
@@ -147,7 +184,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
         $ret = $worksheet->retrieve_by_string_fields(
             array(
-                'assigned_user_id' => $GLOBALS['current_user']->id,
+                'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 0,
                 'deleted' => 0
@@ -168,7 +205,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
             array(
-                'assigned_user_id' => $GLOBALS['current_user']->id,
+                'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 1,
                 'deleted' => 0
@@ -197,7 +234,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
             array(
-                'assigned_user_id' => $GLOBALS['current_user']->id,
+                'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 1,
                 'deleted' => 0
@@ -216,10 +253,12 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
-        $worksheet->commitManagerForecast($GLOBALS['current_user'], self::$timeperiod->id);
+        $worksheet->commitManagerForecast(self::$manager, self::$timeperiod->id);
+
+
         $ret = $worksheet->retrieve_by_string_fields(
             array(
-                'assigned_user_id' => $GLOBALS['current_user']->id,
+                'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 0,
                 'deleted' => 0
@@ -228,7 +267,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNotNull($ret, 'User Committed Forecast Manager Worksheet Not Found');
         $this->assertEquals(self::$user->id, $worksheet->user_id);
-        $this->assertEquals($GLOBALS['current_user']->id, $worksheet->assigned_user_id);
+        $this->assertEquals(self::$manager->id, $worksheet->assigned_user_id);
         $this->assertEquals(0, $worksheet->draft);
 
         return $worksheet;
@@ -246,7 +285,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         $quota->retrieve_by_string_fields(
             array(
                 'timeperiod_id' => self::$timeperiod->id,
-                'user_id' => $GLOBALS['current_user']->id,
+                'user_id' => self::$manager->id,
                 'committed' => 1,
                 'quota_type' => 'Direct',
                 'deleted' => 0
@@ -276,7 +315,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
         $worksheet->retrieve_by_string_fields(
             array(
-                'assigned_user_id' => $GLOBALS['current_user']->id,
+                'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 0,
                 'deleted' => 0
@@ -337,7 +376,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             $worksheet,
             'recalcUserQuota',
             array(
-                $GLOBALS['current_user']->id,
+                self::$manager->id,
                 self::$timeperiod->id
             )
         );

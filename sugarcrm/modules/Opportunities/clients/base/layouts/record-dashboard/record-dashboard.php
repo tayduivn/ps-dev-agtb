@@ -15,6 +15,7 @@ $layout->push(
             'context' => array(
                 'module' => 'Opportunities',
                 'dashlet' => array(
+                    'name' => 'Interactions Chart',
                     'type' => 'interactionschart',
                     'filter_duration' => '7',
                 ),
@@ -31,6 +32,7 @@ $layout->push(
             'context' => array(
                 'module' => 'Opportunities',
                 'dashlet' => array(
+                    'name' => 'Interactions',
                     'type' => 'interactions',
                     'filter_duration' => '7',
                 ),
@@ -49,6 +51,7 @@ $layout->push(
                 'model' => '',
                 'modelId' => '',
                 'dashlet' => array(
+                    'name' => 'Attachments',
                     'type' => 'attachments',
                     'module' => 'Notes',
                     'link' => 'notes',

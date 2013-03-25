@@ -250,6 +250,7 @@
         }, this);
 
         if (!this.isFieldPopulated('to_addresses') && !this.isFieldPopulated('cc_addresses') && !this.isFieldPopulated('bcc_addresses')) {
+            this.model.trigger('error:validation:to_addresses');
             app.alert.show('send_error', {
                 level: 'error',
                 messages: 'LBL_EMAIL_COMPOSE_ERR_NO_RECIPIENTS'

@@ -468,7 +468,7 @@
                 }
                 this.context.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', saveObj.isDraft);
             }
-        }, this), silent: true});
+        }, this), silent: true, alerts: { 'success': false }});
     },
 
     /**

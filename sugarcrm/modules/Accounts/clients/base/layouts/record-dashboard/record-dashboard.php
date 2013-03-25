@@ -15,6 +15,7 @@ $layout->push(
             'context' => array(
                 'module' => 'Accounts',
                 'dashlet' => array(
+                    'name' => 'Opportunitity Metrics',
                     'type' => 'opportunity-metrics',
                 ),
             ),
@@ -29,6 +30,7 @@ $layout->push(
             'view' => 'news',
             'context' => array(
                 'dashlet' => array(
+                    'name' => 'News Feed',
                     'type' => 'news',
                     'limit' => '5'
                 ),
@@ -44,6 +46,7 @@ $layout->push(
             'view' => 'interactions',
             'context' => array(
                 'dashlet' => array(
+                    'name' => 'Interactions',
                     'type' => 'interactions',
                     'filter_duration' => '7',
                 ),

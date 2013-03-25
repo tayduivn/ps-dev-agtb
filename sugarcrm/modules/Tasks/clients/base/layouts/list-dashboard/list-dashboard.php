@@ -15,6 +15,7 @@ $layout->push(
             'context' => array(
                 'module' => 'Leads',
                 'dashlet' => array(
+                    'name' => 'My Leads',
                     'type' => 'dashablelist',
                     'module' => 'Leads',
                     'display_columns' => array(
@@ -39,6 +40,7 @@ $layout->push(
             'context' => array(
                 'module' => 'Bugs',
                 'dashlet' => array(
+                    'name' => 'My Assigned Bugs',
                     'type' => 'dashablelist',
                     'module' => 'Bugs',
                     'display_columns' => array(

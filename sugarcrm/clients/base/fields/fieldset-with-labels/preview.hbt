@@ -29,7 +29,7 @@
 {{#with def}}
     {{#each fields}}
         <span class="record-cell" data-name="{{name}}" data-type="{{type}}">
-            <span data-fieldname="{{name}}" data-tour="tour-{{../../module}}-{{name}}">
+            <span data-fieldname="{{name}}">
                 {{field ../../view ../../model ../../options.viewName}}
             </span>
         </span>

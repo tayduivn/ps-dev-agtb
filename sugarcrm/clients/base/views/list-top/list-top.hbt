@@ -27,7 +27,7 @@
  ********************************************************************************/
 }}
 <div class="headerpane">
-    <h1><a href='#{{module}}' data-tour="tour-{{module}}-records-view">{{str "LBL_MODULE_NAME" module}}</a></h1>
+    <h1><a href='#{{module}}'>{{str "LBL_MODULE_NAME" module}}</a></h1>
     <div class="btn-toolbar pull-right dropdown">
         {{#if context.attributes.isCreateEnabled}}
         <a href="#{{buildRoute context model "create" route.options}}" title="{{str "LNK_CREATE" module}}" class="btn btn-primary">Create</a>

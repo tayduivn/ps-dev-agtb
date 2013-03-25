@@ -119,7 +119,7 @@ else {
 		$_REQUEST['subpanel_id'] = $uids;
  	}
 
- 	if($bean_name == 'Team'){
+ 	if(isset($bean_name) && $bean_name == 'Team'){
  		$subpanel_id = $_REQUEST['subpanel_id'];
  		if(is_array($subpanel_id)){
  			foreach($subpanel_id as $id){

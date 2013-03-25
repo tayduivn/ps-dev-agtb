@@ -2,7 +2,7 @@
     <a  class="moreLink hide" href="#{{name}}">{{label}}</a>
     <div class="btn-group">
         <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}">{{label}}</a>
-        <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
+        <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle"><b class="caret"></b></a>
         {{#if menu}}
             <ul class="dropdown-menu scroll" role="menu">
                 {{#each menu}}

@@ -188,44 +188,6 @@ function get_unset_tabs($user){
 
 }
 
-function get_old_user_tabs($user){
-	$system_tabs = $this->get_system_tabs();
-
-	$tabs = $user->getPreference('tabs');
-
-	if(!empty($tabs))
-	{
-		$tabs = $this->get_key_array($tabs);
-		$tabs['Home'] =  'Home';
-		foreach($tabs as $tab)
-		{
-			if(!isset($system_tabs[$tab]))
-			{
-				unset($tabs[$tab]);
-			}
-		}
-		return $tabs;
-	}
-	else
-	{
-		return $system_tabs;
-	}
-
-
-}
-
-function get_old_tabs($user)
-{
-	$tabs = $this->get_old_user_tabs($user);
-	$system_tabs = $this->get_system_tabs();
-	foreach($tabs as $tab)
-	{
-		unset($system_tabs[$tab]);
-	}
-
-	return array($tabs,$system_tabs);
-}
-
 function get_tabs($user)
 {
 	$display_tabs = $this->get_user_tabs($user, 'display');

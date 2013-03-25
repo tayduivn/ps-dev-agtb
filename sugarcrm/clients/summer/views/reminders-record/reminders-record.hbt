@@ -5,7 +5,7 @@
         <li class="reminders-pills {{#if upcomingPillActive}}active{{/if}}"><a href="#reminders-upcoming" onclick="return false;"><span class="badge reminders-badge{{#eq this.collection.modelList.upcoming.length 0}} empty{{/eq}}">{{this.collection.modelList.upcoming.length}}</span><span class="reminders-pill-text"> {{str "LBL_REMINDERS_UPCOMING"}}</span></a></li>
         <li class="reminders-pills {{#if allPillActive}}active{{/if}}"><a href="#reminders-all" onclick="return false;"><span class="badge reminders-badge{{#eq this.collection.models.length 0}} empty{{/eq}}">{{this.collection.models.length}}</span><span class="reminders-pill-text"> {{str "LBL_TABGROUP_ALL"}}</span></a></li>
     </ul>
-    <h4 class="reminders-list-header" data-tour="tour-{{module}}-reminders-record">{{str "LBL_REMINDERS"}}</h4>
+    <h4 class="reminders-list-header">{{str "LBL_REMINDERS"}}</h4>
     <div class="tabbable reminders-list-view">
         <div class="reminders-header">
             <div class="input-prepend">

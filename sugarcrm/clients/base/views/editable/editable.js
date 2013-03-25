@@ -54,7 +54,12 @@
             }
 
             if (field.type !== 'image') {
-                field.$(field.fieldTag).on("keydown.record", {field: field}, this.keyDowned);
+                if (_.isFunction(field.bindKeyDown)) {
+                    field.bindKeyDown(this.keyDowned);
+                } else {
+                    field.$(field.fieldTag).on("keydown.record", {field: field}, this.keyDowned);
+                }
+
                 $(document).on("mousedown.record" + field.name, {field: field}, this.mouseClicked);
             }
         } else {
