@@ -179,6 +179,10 @@
         // put the selected user on top
         users.unshift({id: this.selectedUser.id, name: this.selectedUser.full_name});
 
+        // get the base currency
+        var currency_id = app.currency.getBaseCurrencyId();
+        var currency_base_rate = app.metadata.getCurrency(app.currency.getBaseCurrencyId()).conversion_rate;
+
         _.each(users, function(user) {
             var row = _.find(resp.records, function(rec) {
                 return (rec.user_id == this.id)
@@ -188,7 +192,11 @@
                 row.name = user.name;
             } else {
                 row = _.clone(this.defaultValues);
+                row.currency_id = currency_id;
+                row.base_rate = currency_base_rate;
                 row.user_id = user.id;
+                row.assigned_user_id = this.selectedUser.id;
+                row.draft = (this.selectedUser.id == app.user.id) ? 1 : 0;
                 row.name = user.name;
             }
             records.push(row);
