@@ -135,20 +135,26 @@ class SugarSearchEngineElasticMapping
                 
                 // fix up related fields to include raw value for facet search
                 // (just a test to add a raw field too, working on facets - @mikea)
-                if ($fieldDef['type'] == 'relate') {
-                    $tmpArray = array(
-                        'type' => 'multi_field',
-                        'fields' => array(
-                            $fieldName => $tmpArray,
-                            'raw' => array(
-                                'type' => 'string',
-                                'index' => 'not_analyzed',
-                                'include_in_all' => false,
-                            ),
-                        ),
-                    );
+                if(isset($fieldDef['type'])) {
+                    switch($fieldDef['type']) {
+                        case 'relate':
+                            $tmpArray = array(
+                                'type' => 'multi_field',
+                                'fields' => array(
+                                    $fieldName => $tmpArray,
+                                    'raw' => array(
+                                        'type' => 'string',
+                                        'index' => 'not_analyzed',
+                                        'include_in_all' => false,
+                                    ),
+                                ),
+                            ); break;
+                        case 'date':
+                            break;
+                    }
                 }
 
+                unset($tmpArray['boost']);
                 $properties[$fieldName] = $tmpArray;
             }
         }
