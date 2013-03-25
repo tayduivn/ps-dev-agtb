@@ -47,7 +47,7 @@ $viewdefs['base']['view']['login'] = array(
                 array(
                     array(
                         'name' => 'username',
-                        'type' => 'password',
+                        'type' => 'text',
                         'label' => "LBL_LOGIN_USERNAME",
                         'required' => true,
                     ),
