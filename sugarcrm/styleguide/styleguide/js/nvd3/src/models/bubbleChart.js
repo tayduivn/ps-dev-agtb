@@ -60,13 +60,29 @@ var format = d3.time.format("%Y-%m-%d");
         e.pos[1] = e.pos[1] * ratio;
       }
     }
-    var left = e.pos[0] + ( $(offsetElement).offset().left || 0 ),
-        top = e.pos[1] + ( $(offsetElement).offset().top || 0),
-        x = e.point.x,
-        y = e.point.y,
+
+    var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
+        top = e.pos[1] + ( offsetElement.offsetTop || 0),
+        x = xAxis.tickFormat()(bubbles.x()(e.point, e.pointIndex)),
+        y = yAxis.tickFormat()(e.point, e.pointIndex),
         content = tooltip(e.series.key, x, y, e, chart);
 
     nv.tooltip.show([left, top], content, null, null, offsetElement);
+  };
+
+  var bubbleClick = function(e) {
+    return;
+  };
+
+  var getAbsoluteXY = function (element) {
+    var viewportElement = document.documentElement
+      , box = element.getBoundingClientRect()
+      , scrollLeft = viewportElement.scrollLeft + document.body.scrollLeft
+      , scrollTop = viewportElement.scrollTop + document.body.scrollTop
+      , x = box.left + scrollLeft
+      , y = box.top + scrollTop;
+
+    return {"x": x, "y": y};
   };
 
   //============================================================
@@ -82,11 +98,10 @@ var format = d3.time.format("%Y-%m-%d");
       var container = d3.select(this),
           that = this;
 
-      var width = width  || parseInt(container.style('width'),10)
-        , height = height || parseInt(container.style('height'),10);
-
-      var availableWidth = (width || 960) - margin.left - margin.right,
-          availableHeight = (height || 400) - margin.top - margin.bottom;
+      var availableWidth = (width  || parseInt(container.style('width'),10) || 960)
+                             - margin.left - margin.right,
+          availableHeight = (height || parseInt(container.style('height'),10) || 400)
+                             - margin.top - margin.bottom;
 
       function getTimeTicks(data) {
         function daysInMonth(date) {
@@ -126,7 +141,7 @@ var format = d3.time.format("%Y-%m-%d");
         , gRange = [0,1]
         , gScale = d3.scale.linear().domain(gDomain).range(gRange);
 
-      var total = 0
+      var total = 0;
 
       //add series index to each data point for reference
       data = data.map(function(s, i) {
@@ -136,11 +151,11 @@ var format = d3.time.format("%Y-%m-%d");
               return b.y < a.y ? -1 : b.y > a.y ? 1 : 0;
             })
             .map(function(p) {
-              p.series = i;
               s.total += p.y;
               return p;
             });
 
+          s.group = i;
           return s;
         })
         .sort(function(a, b) {
@@ -155,6 +170,8 @@ var format = d3.time.format("%Y-%m-%d");
 
           s.values = s.values
             .map(function(p) {
+              //p.series = p.probability;
+              p.group = s.group;
               p.opportunity = p.y;
               p.y = gScale(p.opportunity);
               return p;
@@ -162,6 +179,7 @@ var format = d3.time.format("%Y-%m-%d");
 
           return s;
         });
+
 
       properties.title = 'Total = $' + d3.format(',.02d')(total);
 
@@ -203,7 +221,7 @@ var format = d3.time.format("%Y-%m-%d");
       {
         gEnter.append('g').attr('class', 'nv-legendWrap');
 
-        legend.width(width*(showTitle?0.7:1)-10);
+        legend.width(availableWidth*(showTitle?0.7:1));
 
         g.select('.nv-legendWrap')
           .datum(data)
@@ -218,7 +236,7 @@ var format = d3.time.format("%Y-%m-%d");
         }
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate('+ ((width*(showTitle?0.3:0))-margin.left+10) +',' + (-margin.top) +')');
+            .attr('transform', 'translate('+(availableWidth*(showTitle?0.3:0))+',' + (-margin.top) +')');
       }
 
       if (showTitle && properties.title )
@@ -301,7 +319,7 @@ var format = d3.time.format("%Y-%m-%d");
         .ticks( data.length )
         .tickValues( getGroupTicks(data) )
         .tickSize(-availableWidth, 0)
-        .tickFormat(function(d,i){ return data[i].key});
+        .tickFormat(function(d,i){ return data[i].key; });
 
       d3.transition(g.select('.nv-y.nv-axis'))
           .call(yAxis);
@@ -360,7 +378,7 @@ var format = d3.time.format("%Y-%m-%d");
   //------------------------------------------------------------
 
   bubbles.dispatch.on('elementMouseover.tooltip', function(e) {
-    e.pos = [e.pos[0] + margin.left, e.pos[1] + margin.top];
+    e.pos = [e.pos[0], e.pos[1]];
     dispatch.tooltipShow(e);
   });
 
@@ -370,6 +388,10 @@ var format = d3.time.format("%Y-%m-%d");
 
   dispatch.on('tooltipHide', function() {
     if (tooltips) nv.tooltip.cleanup();
+  });
+
+  bubbles.dispatch.on('elementClick', function(e) {
+    bubbleClick(e);
   });
 
   //============================================================
@@ -476,8 +498,13 @@ var format = d3.time.format("%Y-%m-%d");
     return chart;
   };
 
+  chart.bubbleClick = function(_) {
+    if (!arguments.length) return bubbleClick;
+    bubbleClick = _;
+    return chart;
+  };
   //============================================================
 
 
   return chart;
-}
+};
