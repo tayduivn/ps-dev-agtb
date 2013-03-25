@@ -350,6 +350,10 @@ class SugarQuery_Compiler_SQL
     protected function resolveField($field, $alias = null)
     {
         $bean = $this->from_bean;
+        if($field == '*') {
+            // Not really a good idea, but let's support it for now
+            return array($field, null);
+        }
 
         /**
          * We need to figure out if the field is prefixed with an alias.  If it is and the alias is not the from beans table,
