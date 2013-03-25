@@ -70,6 +70,21 @@ var format = d3.time.format("%Y-%m-%d");
     nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
 
+  var bubbleClick = function(e) {
+    return;
+  };
+
+  var getAbsoluteXY = function (element) {
+    var viewportElement = document.documentElement
+      , box = element.getBoundingClientRect()
+      , scrollLeft = viewportElement.scrollLeft + document.body.scrollLeft
+      , scrollTop = viewportElement.scrollTop + document.body.scrollTop
+      , x = box.left + scrollLeft
+      , y = box.top + scrollTop;
+
+    return {"x": x, "y": y};
+  };
+
   //============================================================
 
 
@@ -360,7 +375,7 @@ var format = d3.time.format("%Y-%m-%d");
   //------------------------------------------------------------
 
   bubbles.dispatch.on('elementMouseover.tooltip', function(e) {
-    e.pos = [e.pos[0] + margin.left, e.pos[1] + margin.top];
+    e.pos = [e.pos[0], e.pos[1]];
     dispatch.tooltipShow(e);
   });
 
@@ -370,6 +385,10 @@ var format = d3.time.format("%Y-%m-%d");
 
   dispatch.on('tooltipHide', function() {
     if (tooltips) nv.tooltip.cleanup();
+  });
+
+  bubbles.dispatch.on('elementClick', function(e) {
+    bubbleClick(e);
   });
 
   //============================================================
@@ -476,8 +495,13 @@ var format = d3.time.format("%Y-%m-%d");
     return chart;
   };
 
+  chart.bubbleClick = function(_) {
+    if (!arguments.length) return bubbleClick;
+    bubbleClick = _;
+    return chart;
+  };
   //============================================================
 
 
   return chart;
-}
+};
