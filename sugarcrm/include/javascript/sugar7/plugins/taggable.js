@@ -285,7 +285,7 @@
                         var $el = $(this),
                             tagList = _.isFunction(component.getTagList)? component.getTagList() : [];
 
-                        $el.html(self._parseTags($el.text(), tagList));
+                        $el.html(self._parseTags($el.html(), tagList));
                     });
                 });
             }
