@@ -1,5 +1,7 @@
-{{#if model.attributes.following}}
-<a data-event="list:follow:fire"><span class="label label-success">{{str "LBL_FOLLOWING"}}</span></a>
-{{else}}
-<a data-event="list:follow:fire"><span class="label label">{{str "LBL_FOLLOW"}}</span></a>
+{{#if model.id}}
+    {{#if model.attributes.following}}
+    <a data-event="list:follow:fire"><span class="label label-success">{{str "LBL_FOLLOWING"}}</span></a>
+    {{else}}
+    <a data-event="list:follow:fire"><span class="label label">{{str "LBL_FOLLOW"}}</span></a>
+    {{/if}}
 {{/if}}
