@@ -100,7 +100,48 @@ describe("forecasts_layout_inspector", function() {
 
             expect(layout.onBeforeHide).toHaveBeenCalled();
             expect(layout.onHide).toHaveBeenCalled();
-        })
+        });
+
+        it("calling showInspector with the same selectedIndex should call hide not show", function() {
+            layout.unbind();
+
+            layout.onHide = function() {
+                sinon.stub();
+            };
+
+            layout.onBeforeHide = function() {
+                sinon.stub();
+            };
+
+            sinon.spy(layout, "onHide");
+            sinon.spy(layout, "onBeforeHide");
+
+            layout.onShow = function() {
+                sinon.stub();
+            };
+
+            layout.onBeforeShow = function() {
+                sinon.stub();
+            };
+
+            sinon.spy(layout, "onShow");
+            sinon.spy(layout, "onBeforeShow");
+
+            layout.bind();
+
+            _stubs.push(sinon.stub(layout, 'isVisible', function(){
+                return true;
+            }));
+
+            layout.selectedIndex = 1;
+            layout.showInspector({selectedIndex: 1});
+
+            expect(layout.onBeforeHide).toHaveBeenCalled();
+            expect(layout.onHide).toHaveBeenCalled();
+
+            expect(layout.onBeforeShow).not.toHaveBeenCalled();
+            expect(layout.onShow).not.toHaveBeenCalled();
+        });
     });
 
     describe("Highlight Rows", function() {

@@ -135,9 +135,13 @@
      */
     showInspector: function (params) {
         this.setRows(params.dataset || []);
-        this.selectedIndex = params.selectedIndex;
-
-        this.display(params);
+        if(this.selectedIndex == params.selectedIndex) {
+            this.selectedIndex = -1;
+            this.hide()
+        } else {
+            this.selectedIndex = params.selectedIndex;
+            this.display(params);
+        }
     },
 
     /**
