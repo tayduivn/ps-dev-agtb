@@ -57,18 +57,7 @@
             });
         }
     },
-
     loadData: function(options) {
-        //This view can take quite a while to load so ensure we load the main content before loading
-        var parentCol = this.context.parent ? this.context.parent.get("collection") : false;
-        if (parentCol && parentCol.isEmpty()) {
-            parentCol.once("sync", function(){this._load(options)}, this);
-        } else {
-            this._load();
-        }
-    },
-
-    _load: function(options) {
         options = options || {};
         var self = this,
             url = app.api.buildURL('Accounts/by_country');
@@ -85,7 +74,6 @@
             complete: options ? options.complete : null
         });
     },
-
     _checkCountry: function(country) {
         if (country == "USA") {
             country = "United States of America";

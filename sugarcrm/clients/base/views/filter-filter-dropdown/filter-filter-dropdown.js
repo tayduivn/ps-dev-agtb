@@ -58,12 +58,12 @@
     handleChange: function(id) {
         var filter = this.layout.filters.get(id) || this.layout.emptyFilter;
         if (id === "create") {
-            this.$('.choice-filter').css("cursor", "text");
+            this.$('.choice-filter').css("cursor", "not-allowed");
             this.layout.trigger("filter:create:open");
         } else {
             if (filter.get("editable") === false) {
                 this.layout.trigger("filter:create:close");
-                this.$('.choice-filter').css("cursor", "text");
+                this.$('.choice-filter').css("cursor", "not-allowed");
             } else {
                 this.$('.choice-filter').css("cursor", "pointer");
             }
@@ -77,14 +77,21 @@
     },
 
     initSelection: function(el, callback) {
-        var obj, data, model, allRecordsText;
-        if (el.val() !== "create") {
-            model = this.layout.filters.get(el.val());
-            if (el.val() !== "all_records") {
-                data = {id: model.id, text: model.get("name")};
+        var data,
+            model,
+            val = el.val();
+
+        if (val !== "create") {
+            model = this.layout.filters.get(val);
+
+            if (model) {
+                if (val !== "all_records") {
+                    data = {id: model.id, text: model.get("name")};
+                } else {
+                    data = {id: "all_records", text: model.get("name")};
+                }
             } else {
-                allRecordsText = model.get("name") || app.lang.get("LBL_FILTER_ALL_RECORDS");
-                data = {id: "all_records", text: allRecordsText};
+                data = {id: "all_records", text: app.lang.get("LBL_FILTER_ALL_RECORDS")};
             }
 
             callback(data);

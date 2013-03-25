@@ -79,7 +79,7 @@
             });
         }
     },
-    // Since we don't have a true Bean/meta driven validation for matching two temp fields 
+    // Since we don't have a true Bean/meta driven validation for matching two temp fields
     // (password and confirmation password), etc., we manually add validation errors here
     handleCustomValidationError: function(field, errorMsg) {
         field = field.parents('.control-group')
@@ -97,7 +97,7 @@
         var self = this, currentPassword, password, confirmPassword, confirmPasswordField, isError=false,
             passwordField, maxLen, currentPasswordField;
         self.setLoading();
-        
+
         currentPasswordField = this.$('[name=current_password]');
         currentPassword = currentPasswordField.val();
         // TODO: Here we will call a password verification endpoint which does not yet exist
@@ -106,7 +106,7 @@
         password = passwordField.val();
         confirmPasswordField = this.$('[name=confirm_password]');
         confirmPassword = confirmPasswordField.val();
-        
+
         if(!currentPassword) {
             self.handleCustomValidationError(currentPasswordField,app.lang.get('ERR_ENTER_OLD_PASSWORD', self.module));
             isError=true;
@@ -142,7 +142,7 @@
         }
     },
     saveModel: function() {
-        var self = this, 
+        var self = this,
             oldPass = self.model.get('current_password'),
             newPass = self.model.get('new_password');
 
@@ -174,9 +174,9 @@
     },
     checkUpdatePassWorked: function(data) {
         if(!data || !data.valid) {
+            app.logger.error("Failed to update password.");
             return false;
-            app.logger.error("Failed to update password. "); 
-        } 
+        }
         return true;
     },
     saveComplete: function() {
@@ -192,7 +192,7 @@
         self.resetButton();
         //"Your password has been successfully updated."
         app.alert.show('pass_successfully_changes', {
-            level: 'success', 
+            level: 'success',
             title: app.lang.get('LBL_PASSWORD', self.module),
             messages: app.lang.get('LBL_NEW_USER_PASSWORD_1', self.module),
             autoClose: true});

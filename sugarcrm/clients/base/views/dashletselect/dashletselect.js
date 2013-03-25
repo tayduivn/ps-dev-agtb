@@ -104,7 +104,7 @@
                         context: {
                             model: new app.Bean(),
                             dashlet: _.extend({
-                                name: app.lang.get(metadata.name, metadata.module),
+                                name: app.lang.get(metadata.name, metadata.config.module),
                                 type: metadata.type,
                                 viewName: 'config'
                             },{

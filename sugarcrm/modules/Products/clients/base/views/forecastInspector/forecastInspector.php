@@ -47,16 +47,19 @@ $viewdefs['Products']['base']['view']['forecastInspector'] = array(
                     'name' => 'likely_case',
                     'type' => 'currency',
                     'convertToBase'=> true,
+                    'showTransactionalAmount'=>true,
                     ),
                 array(
                     'name' => 'best_case',
                     'type' => 'currency',
                     'convertToBase'=> true,
+                    'showTransactionalAmount'=>true,
                     ),
                 array(
                     'name' => 'worst_case',
                     'type' => 'currency',
                     'convertToBase'=> true,
+                    'showTransactionalAmount'=>true,
                     ),
                 array(
                     'name' => 'account_name',

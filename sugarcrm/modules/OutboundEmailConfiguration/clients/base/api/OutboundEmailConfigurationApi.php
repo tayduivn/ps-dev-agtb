@@ -50,7 +50,7 @@ class OutboundEmailConfigurationApi extends ModuleApi
     public function listConfigurations($api, $args) {
         $list = array();
 
-        $configs = OutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
+        $configs = OutboundEmailConfigurationPeer::listValidMailConfigurations($GLOBALS["current_user"]);
 
         foreach ($configs as $config) {
             $inboxId    = $config->getInboxId();

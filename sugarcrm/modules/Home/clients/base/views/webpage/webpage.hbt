@@ -1,0 +1,3 @@
+{{#each this.meta.view_panel}}
+    {{field ../this ../this.model}}
+{{/each}}

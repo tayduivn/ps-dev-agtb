@@ -46,6 +46,7 @@ class ForecastManagerWorksheet extends SugarBean
     public $worst_case_adjusted;
     public $show_history_log = 0;
     public $draft = 0;
+    public $date_modified;
     public $object_name = 'ForecastManagerWorksheet';
     public $module_name = 'ForecastManagerWorksheets';
     public $module_dir = 'Forecasts';
@@ -62,6 +63,8 @@ class ForecastManagerWorksheet extends SugarBean
      */
     public function commitManagerForecast(User $manager, $timeperiod)
     {
+        global $current_user;
+
         // make sure that the User passed in is actually a manager
         if (!User::isManager($manager->id)) {
             return false;
@@ -77,6 +80,19 @@ class ForecastManagerWorksheet extends SugarBean
                 AND timeperiod_id = "' . $db->quote($timeperiod) . '" and draft = 1 and deleted = 0';
 
         $results = $db->query($sql);
+
+        if (empty($manager->reports_to_id)) {
+            $sqlQuota = 'SELECT sum(quota * base_rate) as quota
+                            FROM ' . $this->table_name . ' WHERE assigned_user_id = "' . $manager->id . '"
+                            AND timeperiod_id = "' . $db->quote($timeperiod) . '" and draft = 1 and deleted = 0';
+            $quota = $db->fetchOne($sqlQuota);
+            $this->commitQuota(
+                $quota['quota'],
+                $manager->id,
+                $timeperiod,
+                'Rollup'
+            );
+        }
 
         while ($row = $db->fetchByAssoc($results)) {
             /* @var $worksheet ForecastManagerWorksheet */
@@ -102,9 +118,16 @@ class ForecastManagerWorksheet extends SugarBean
             $worksheet->save();
 
             // commit the quota from the worksheet values
-            $this->commitQuota($worksheet->quota, $worksheet->user_id, $worksheet->timeperiod_id);
+            $this->commitQuota(
+                $worksheet->quota,
+                $worksheet->user_id,
+                $worksheet->timeperiod_id,
+                ($worksheet->user_id == $current_user->id) ? 'Direct' : 'Rollup'
+            );
+
             // recalculate the quotas now
             $this->recalcQuotas($worksheet->user_id, $worksheet->timeperiod_id, true);
+
         }
 
         return true;
@@ -117,10 +140,8 @@ class ForecastManagerWorksheet extends SugarBean
      * @param string $user_id
      * @param string $timeperiod_id
      */
-    protected function commitQuota($quota_amount, $user_id, $timeperiod_id)
+    protected function commitQuota($quota_amount, $user_id, $timeperiod_id, $quota_type)
     {
-        global $current_user;
-        $quota_type = ($user_id == $current_user->id) ? 'Direct' : 'Rollup';
         /* @var $quota Quota */
         $quota = BeanFactory::getBean('Quotas');
         $quota->retrieve_by_string_fields(
@@ -288,6 +309,8 @@ class ForecastManagerWorksheet extends SugarBean
 
         $this->copyValues($copyMap, $worksheet->toArray(), $committed_worksheet);
 
+        $committed_worksheet->update_date_modified = false;
+        
         $committed_worksheet->save();
 
         return true;
@@ -359,9 +382,8 @@ class ForecastManagerWorksheet extends SugarBean
         } else {
             $bean = $beans[0];
             $committed_date = $this->db->fromConvert($bean["date_modified"], "datetime");
-            $timedate = TimeDate::getInstance();
             $this->show_history_log = intval(
-                strtotime($committed_date) < strtotime($timedate->to_db($this->date_modified))
+                strtotime($committed_date) < strtotime($this->date_modified)
             );
         }
     }
@@ -628,7 +650,4 @@ class ForecastManagerWorksheet extends SugarBean
 
         return $return;
     }
-
-
 }
-

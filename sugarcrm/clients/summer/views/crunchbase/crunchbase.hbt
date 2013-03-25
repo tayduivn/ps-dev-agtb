@@ -1,5 +1,5 @@
 <div class="block thumbnail widget">
-    <h4 data-tour="tour-{{module}}-crunchbase-overview">Overview</h4>
+    <h4>Overview</h4>
     <div class="crunchbase-widget">
         {{#if image}}
             <img src="http://crunchbase.com/{{image}}" style="float: left;"/>

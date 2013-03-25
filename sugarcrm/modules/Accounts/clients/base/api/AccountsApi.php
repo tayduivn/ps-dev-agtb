@@ -29,36 +29,49 @@ class AccountsApi extends ListApi
         );
     }
 
-    public function salesByCountry($api, $args) {
+    public function salesByCountry($api, $args)
+    {
         $data = array();
+
+        // TODO: Fix information leakage if user cannot list or view records not
+        // belonging to them. It's hard to tell if the user has access if we
+        // never get the bean.
+
+        // Check for permissions on both Accounts and opportunities.
         $seed = BeanFactory::newBean('Accounts');
-        $accounts = $seed->get_full_list();
-        foreach($accounts as $account) {
-            if (!$account->ACLAccess('view')) {
-                continue;
-            }
-            // Load up the relationship
-            if (!$account->load_relationship('opportunities')) {
-                // The relationship did not load, I'm guessing it doesn't exist
-                continue;
-            }
-            // Figure out what is on the other side of this relationship, check permissions
-            $linkModuleName = $account->opportunities->getRelatedModuleName();
-            $linkSeed = BeanFactory::newBean($linkModuleName);
-            if (!$linkSeed->ACLAccess('view')) {
-                continue;
-            }
-            $opportunities = $account->opportunities->query(array());
-            foreach ($opportunities['rows'] as $opportunityId => $value) {
-                $opportunity = BeanFactory::getBean('Opportunities', $opportunityId);
-                if(empty($data[$account->billing_address_country])) {
-                    $data[$account->billing_address_country] = 0;
-                }
-                if($opportunity->sales_stage == "Closed Won") {
-                    $data[$account->billing_address_country] += $opportunity->amount_usdollar;
-                }
-            }
+        if (!$seed->ACLAccess('view')) {
+            return;
         }
+
+        // Load up the relationship
+        if (!$seed->load_relationship('opportunities')) {
+            // The relationship did not load, I'm guessing it doesn't exist
+            return;
+        }
+
+        // Figure out what is on the other side of this relationship, check permissions
+        $linkModuleName = $seed->opportunities->getRelatedModuleName();
+        $linkSeed = BeanFactory::newBean($linkModuleName);
+        if (!$linkSeed->ACLAccess('view')) {
+            return;
+        }
+
+        $q = new SugarQuery();
+        $q->select(array('accounts.billing_address_country', 'amount_usdollar'));
+        $q->from($linkSeed);
+        $q->where()->equals('sales_stage', 'Closed Won');
+        $q->join('accounts');
+        // TODO: When we can sum on the database side through SugarQuery, we can
+        // use the group by statement.
+
+        $results = $q->execute();
+        foreach ($results as $row) {
+            if (empty($data[$row['billing_address_country']])) {
+                $data[$row['billing_address_country']] = 0;
+            }
+            $data[$row['billing_address_country']] += $row['amount_usdollar'];
+        }
+
         return $data;
     }
 

@@ -35,7 +35,7 @@
             payload = {
                 activity_type: "post",
                 parent_id: parentId || null,
-                parent_type: parentType || null,
+                parent_type: parentType !== "Activities" ? parentType : null,
                 data: {}
             };
 
@@ -48,7 +48,8 @@
             var bean = app.data.createBean('Activities');
             bean.save(payload, {
                 success: function(model) {
-                    self.$('div.sayit').html('');
+                    self.$('div.sayit').html('').trigger('change').focus();
+                    model.set('picture_url', self.picture_url);
                     self.layout.prependPost(model);
                 }
             });

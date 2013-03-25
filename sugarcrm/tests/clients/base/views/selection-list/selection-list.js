@@ -48,4 +48,37 @@ describe("Base.View.SelectionList", function () {
         expect(view.leftColumns.length).toBe(1);
         expect('selection').toBe(view.leftColumns[0].type);
     });
+
+
+    it("Should pass only the model's attributes that the user has the ACL view control", function () {
+        var exptected_billing_phone = "111-000-9321",
+            model = new Backbone.Model({
+            id: "1234",
+            name: "bob",
+            billing_address: "should be undefined",
+            billing_phone: exptected_billing_phone});
+        var aclMapping = {
+                billing_address: false,
+                billing_phone: true
+            },
+            aclStub = sinon.stub(app.acl, 'hasAccessToModel', function(action, model, field) {
+                return aclMapping[field];
+            });
+        var actualAttributes = {
+
+        };
+        app.drawer = {
+            close: function(attributes) {
+                actualAttributes = attributes;
+            }
+        };
+        view.context.set("selection_model", model);
+
+        expect(actualAttributes['id']).toBe("1234");
+        expect(actualAttributes['value']).toBe("bob");
+        expect(actualAttributes['billing_address']).toBeUndefined();
+        expect(actualAttributes['billing_phone']).toBe(exptected_billing_phone);
+        aclStub.restore();
+        delete app.drawer;
+    });
 });

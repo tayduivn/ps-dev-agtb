@@ -87,6 +87,7 @@ class Product extends SugarBean
     public $date_closed_timestamp;
     public $commit_stage;
     public $opportunity_id;
+    public $product_type;
 
     /**
      * @public String      The Current Sales Stage
@@ -639,6 +640,7 @@ class Product extends SugarBean
         $this->handleSalesStatus();
         $this->convertDateClosedToTimestamp();
         $this->mapFieldsFromProductTemplate();
+        $this->mapFieldsFromOpportunity();
         $id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
@@ -741,6 +743,17 @@ class Product extends SugarBean
             }
         }
         return $id;
+    }
+
+    /*
+     * map fields if opportunity id is set
+     */
+    protected function mapFieldsFromOpportunity()
+    {
+        if(!empty($this->opportunity_id) && empty($this->product_type)) {
+            $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
+            $this->product_type = $opp->opportunity_type;
+        }
     }
 
     /**
@@ -932,7 +945,7 @@ class Product extends SugarBean
             $this->mft_part_num = $pt->mft_part_num;
             $this->list_price = $pt->list_price;
             $this->cost_price = $pt->cost_price;
-            $this->discount_price = $pt->discount_price;
+            $this->discount_price = $pt->discount_price; // discount_price = unit price on the front end...
             $this->list_usdollar = $pt->list_usdollar;
             $this->cost_usdollar = $pt->cost_usdollar;
             $this->discount_usdollar = $pt->discount_usdollar;

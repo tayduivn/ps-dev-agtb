@@ -2071,7 +2071,8 @@ class SugarBean
     * @param string $admin the admin user that sends out the notification
     */
     function send_assignment_notifications($notify_user, $admin) {
-        if (($this->object_name == 'Meeting' || $this->object_name == 'Call') || $notify_user->receive_notifications) {
+        if ( ($this->object_name == 'Meeting' || $this->object_name == 'Call')
+            || (isset($notify_user->receive_notifications) && $notify_user->receive_notifications) ) {
             $this->current_notify_user = $notify_user;
 
             $templateName = $this->getTemplateNameForNotificationEmail();

@@ -354,13 +354,13 @@ class MailRecord {
     protected function getErrorMessage($exception) {
         global $mod_string;
         if (isset(self::$errorMessageMappings[$exception->getCode()])) {
-            $message = self::$errorMessageMappings[$exception->getCode()];
+            $exception_code = self::$errorMessageMappings[$exception->getCode()];
         }
 
-        if (empty($message)) {
-            $message = $exception->getMessage(); //use the exception message if a user-friendly version is not available
+        if (!empty($exception_code) && !empty($mod_string[$exception_code])) {
+            $message = $mod_string[$exception_code]; //get the translated version
         } else {
-            $message = $mod_string[$message]; //get the translated version
+            $message = $exception->getMessage(); //use the exception message if a user-friendly version is not available
         }
 
         return $message;

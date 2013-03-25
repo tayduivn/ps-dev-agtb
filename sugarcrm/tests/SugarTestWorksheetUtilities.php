@@ -89,6 +89,44 @@ class SugarTestWorksheetUtilities
         return $worksheet_ids;
     }
 
+    public static function removeAllWorksheetsForParentIds(array $ids)
+    {
+        $db = DBManagerFactory::getInstance();
+        $query = "delete from forecast_worksheets where parent_id in('" . implode("', '", $ids) . "')";
+        $db->query($query);
+        $db->commit();
+    }
+
+    public static function loadWorksheetForBeans($bean, array $ids, $isCommit = false)
+    {
+        if($bean instanceof SugarBean) {
+            $bean = $bean->module_name;
+        }
+
+        $worksheets = array();
+
+        /* @var $worksheet ForecastWorksheet */
+        foreach($ids as $id) {
+            $worksheet = BeanFactory::getBean('ForecastWorksheets');
+            $worksheet->retrieve_by_string_fields(
+                array(
+                    'parent_type' => $bean,
+                    'parent_id' => $id,
+                    'draft' => ($isCommit === false) ? 1 : 0,
+                    'deleted' => 0,
+                )
+            );
+
+            if (empty($worksheet->id)) {
+                continue;
+            }
+
+            $worksheets[] = $worksheet;
+        }
+
+        return $worksheets;
+    }
+
     /**
      * Utility method to find a specific worksheet for a passed in bean
      *

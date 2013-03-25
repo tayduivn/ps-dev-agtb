@@ -34,7 +34,7 @@
         });
 
         // Disable the module filter dropdown.
-        if(this.layout.layoutType !== "record") {
+        if(this.layout.layoutType !== "record" || this.layout.showingActivities) {
             this.filterNode.select2("disable");
         }
 
@@ -59,6 +59,7 @@
         this.filterNode.select2("val", linkName || linkModuleName);
         if (!silent) {
             this.layout.trigger("filter:get", linkModuleName, linkName);
+            this.layout.layout.trigger("filter:change", linkModuleName, linkName);
         }
     },
 
@@ -103,7 +104,7 @@
     formatSelection: function(item) {
         var selectionLabel = app.lang.get("LBL_RELATED") + '<i class="icon-caret-down"></i>';
 
-        if(this.layout.layoutType !== "record") {
+        if(this.layout.layoutType !== "record" || this.layout.showingActivities) {
             selectionLabel = app.lang.get("LBL_MODULE");
         }
 

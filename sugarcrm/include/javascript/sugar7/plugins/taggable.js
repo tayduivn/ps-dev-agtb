@@ -8,22 +8,36 @@
                 'click ul.typeahead.activitystream-tag-dropdown li': 'addTag'
             },
 
+            _possibleLeaders: ['@', '#'],
+
+            _lastLeaderPosition: function(text) {
+                var indices = _.map(this._possibleLeaders, function(leader) {
+                    return text.lastIndexOf(leader);
+                });
+                return _.max(indices);
+            },
+
             _getEntities: _.debounce(function(event) {
                 var list,
+                    leader,
+                    leaderIndex,
                     el = this.$(event.currentTarget),
-                    word = event.currentTarget.innerText;
+                    word = el.text();
 
                 el.parent().find("ul.typeahead.activitystream-tag-dropdown").remove();
 
-                if (word.indexOf("@") === -1) {
-                    // If there's no @, don't do anything.
+                leaderIndex = this._lastLeaderPosition(word);
+                leader = leaderIndex === -1 ? null : word.charAt(leaderIndex);
+
+                if (!leader) {
+                    // If there are no leaders, don't do anything.
                     return;
-                } else if (word.indexOf("@") === 0) {
-                    word = _.last(word.split('@'));
+                } else if (word.indexOf(leader) === 0) {
+                    word = _.last(word.split(leader));
                 } else {
                     // Prevent email addresses from being caught, even though emails
                     // can have spaces in them according to the RFCs (3696/5322/6351).
-                    word = _.last(word.split(' @'));
+                    word = _.last(word.split(' ' + leader));
                 }
 
                 if (word.length < 3) {
@@ -31,56 +45,88 @@
                     return;
                 }
 
-                app.api.search({q: word}, {success: function(response) {
+                var callback = function(collection) {
                     // Do initial list filtering.
-                    list = _.filter(response.records, function(entity) {
-                        return entity.name.toLowerCase().indexOf(word.toLowerCase()) !== -1;
+                    list = collection.filter(function(entity) {
+                        return entity.get('name').toLowerCase().indexOf(word.toLowerCase()) !== -1;
                     });
 
                     // Rank the list and trim it to no more than 8 entries.
-                    list = (function(list, query) {
-                        var begin = [], caseSensitive = [], caseInsensitive = [], item = list.shift(), i;
-                        for (i = 0; i < 8 && item; i++) {
-                            if (item.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-                                begin.push(item);
-                            } else if (item.name.indexOf(query) !== -1) {
-                                caseSensitive.push(item);
-                            } else {
-                                caseInsensitive.push(item);
-                            }
-                            item = list.shift();
-                        }
-                        return begin.concat(caseSensitive, caseInsensitive);
-                    })(list, word);
+                    var begin = [], caseSensitive = [], caseInsensitive = [];
 
-                    var ul = $("<ul/>").addClass('typeahead dropdown-menu activitystream-tag-dropdown');
-                    var blank_item = '<li><a></a></li>';
+                    _.each(list, function(item) {
+                        var name = item.get('name');
+                        if (name.toLowerCase().indexOf(word.toLowerCase()) === 0) {
+                            begin.push(item);
+                        } else if (name.indexOf(word) !== -1) {
+                            caseSensitive.push(item);
+                        } else {
+                            caseInsensitive.push(item);
+                        }
+                    });
+                    list = _(begin.concat(caseSensitive, caseInsensitive)).first(8);
+
+                    var ulParent = ul.parent();
+                    ul.remove().empty();
+
                     if (list.length) {
-                        items = _.map(list, function(item) {
-                            var data = {module: item._module, id: item.id, name: item.name};
-                            var i = $(blank_item).data(data);
+                        _.each(list, function(el, index) {
+                            var data = {
+                                module: el.get('_module'),
+                                id: el.get('id'),
+                                name: el.get('name')
+                            };
+                            var i = $(blankItem).data(data);
                             var query = word.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
                             i.find('a').html(function() {
-                                return item.name.replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
+                                return el.get('name').replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
                                     return '<strong>' + match + '</strong>';
                                 });
                             });
 
-                            return i[0];
+                            if (index === 0) {
+                                i.addClass('active');
+                            }
+
+                            ul.append(i);
                         });
-
-                        items[0] = ($(items[0]).addClass('active'))[0];
-
-                        ul.css({
-                            top: el.position().top + el.height(),
-                            left: el.position().left
-                        });
-
-                        ul.html(items).appendTo(el.parent()).show();
+                    } else {
+                        var noResults = app.lang.get('LBL_SEARCH_NO_RESULTS');
+                        var i = $(blankItem).addClass('placeholder active').find('a').html(noResults + word).wrap('emph');
+                        ul.append(i);
                     }
-                }});
 
+                    ulParent.append(ul);
+                };
 
+                var ul = $("<ul/>").addClass('typeahead dropdown-menu activitystream-tag-dropdown');
+                var blankItem = '<li><a></a></li>';
+                var defaultItem = $(blankItem).addClass('placeholder active').find('a').html(word + '&hellip;').wrap('emph');
+
+                ul.css({
+                    top: el.position().top + el.height(),
+                    left: el.position().left
+                });
+
+                ul.html(defaultItem).appendTo(el.parent()).show();
+
+                switch (leader) {
+                    case '#':
+                        app.api.search({q: word, limit: 8}, {success: function(response) {
+                            var coll = app.data.createMixedBeanCollection(response.records);
+                            callback(coll);
+                        }});
+                        break;
+                    case '@':
+                        // We cannot use the filter API here as we need to
+                        // support users typing in full names, which are not
+                        // stored in the database as fields.
+                        app.api.search({q: word, module_list: "Users", limit: 8}, {success: function(response) {
+                            var coll = app.data.createBeanCollection("Users", response.records);
+                            callback(coll);
+                        }});
+                        break;
+                }
             }, 250),
 
             getEntities: function(event) {
@@ -144,19 +190,21 @@
 
             addTag: function(event) {
                 var el = this.$(event.currentTarget),
-                    body = this.$('.sayit'),
+                    body = this.$('.taggable'),
                     originalChildren = body.clone(true).children(),
-                    lastIndex = body.html().lastIndexOf("@"),
+                    lastIndex = this._lastLeaderPosition(body.html()),
                     data = el.data();
+
+                if (el.hasClass('placeholder')) return;
 
                 var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name);
                 tag.data("id", data.id).data("module", data.module).data("name", data.name);
                 var substring = body.html().substring(0, lastIndex);
-                $(body).html(substring).append(tag).append("&nbsp;");
+                body.html(substring).append(tag).append("&nbsp;");
 
-                if($(body).children().length == 1) {
+                if(body.children().length == 1) {
                     // Fixes issue where a random font tag appears. ABE-128.
-                    $(body).prepend("&nbsp;");
+                    body.prepend("&nbsp;");
                 }
 
                 // Since the data is stored as an object, it's not preserved when we add the tag.
@@ -203,7 +251,7 @@
                 var contents = '';
                 $el.contents().each(function() {
                     if (this.nodeName == "#text") {
-                        contents += this.data;
+                        contents += this.data.replace('&nbsp;', ' ');
                     } else if (this.nodeName == "SPAN") {
                         var el = $(this);
                         var data = el.data();
@@ -216,7 +264,7 @@
                         }
                     }
                 }).html();
-                return contents;
+                return $.trim(contents);
             },
 
             getTags: function($el) {
@@ -234,8 +282,10 @@
                 var self = this;
                 component.on('render', function() {
                     component.$(".tagged").each(function() {
-                        var x = this.innerText;
-                        $(this).html(self._parseTags(x, self.model.get('data').tags));
+                        var $el = $(this),
+                            tagList = _.isFunction(component.getTagList)? component.getTagList() : [];
+
+                        $el.html(self._parseTags($el.text(), tagList));
                     });
                 });
             }

@@ -219,6 +219,33 @@ class OutboundEmailConfigurationPeer
      * @return array MailConfigurations
      * @throws MailerException
      */
+    public static function listValidMailConfigurations(User $user, Localization $locale = null, $charset = null)
+    {
+        $configs = array();
+        try {
+            $mailConfigurations = self::listMailConfigurations($user, $locale, $charset);
+            foreach ($mailConfigurations AS $mailConfiguration) {
+                if (self::isMailConfigurationValid($mailConfiguration)) {
+                    $configs[] = $mailConfiguration;
+                }
+            }
+        } catch (MailerException $me) {
+            $GLOBALS["log"]->warn(
+                "An error occurred while retrieving valid system mail configurations " .
+                    $me->getMessage()
+            );
+        }
+        return $configs;
+    }
+
+    /**
+     * @access public
+     * @param User         $user    required
+     * @param Localization $locale
+     * @param string       $charset
+     * @return array MailConfigurations
+     * @throws MailerException
+     */
     public static function listMailConfigurations(User $user, Localization $locale = null, $charset = null)
     {
         global $app_strings;

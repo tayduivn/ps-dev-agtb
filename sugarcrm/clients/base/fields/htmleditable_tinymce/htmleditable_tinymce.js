@@ -113,7 +113,7 @@
             theme_advanced_buttons2 : "cut,copy,paste,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,|,forecolor,backcolor,tablecontrols,|,",
             theme_advanced_toolbar_location : "top",
             theme_advanced_toolbar_align : "left",
-            theme_advanced_statusbar_location : "bottom",
+            theme_advanced_statusbar_location : "none",
             theme_advanced_resizing : true,
             schema: "html5",
 

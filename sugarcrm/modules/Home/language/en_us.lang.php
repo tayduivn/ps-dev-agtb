@@ -160,7 +160,7 @@ $mod_strings = array (
   'LBL_NEW_PAGE_FEEDBACK' => 'You have created a new page. You can add new content with the Add Sugar Dashlets option.',
   'LBL_DELETE_PAGE_CONFIRM' => 'Are you sure you want to delete this page?',
   'LBL_DELETE_DASHBOARD_CONFIRM' => 'Are you sure you want to delete this dashboard?',
-  'LBL_DELETE_DASHBOARD_SUCCSS' => 'The dashboard "{{name}}" has been deleted.',
+  'LBL_DELETE_DASHBOARD_SUCCESS' => 'The dashboard "{{name}}" has been deleted.',
   'LBL_SAVING_PAGE_TITLE' => 'Saving Page Title...',
   'LBL_RETRIEVING_PAGE' => 'Retrieving Page...',
 
@@ -263,6 +263,13 @@ $mod_strings = array (
 	'LBL_MORE_DETAIL' => 'More Detail' /*for 508 compliance fix*/,
 	'LBL_BASIC_SEARCH' => 'Basic Search' /*for 508 compliance fix*/,
 	'LBL_ADVANCED_SEARCH' => 'Advanced Search' /*for 508 compliance fix*/,
+
+  'LBL_MOST_ACTIVE_COLLEAGUES' => 'Most Active Colleagues',
+  'LBL_MOST_ACTIVE_COLLEAGUES_DESC' => 'It displays internal users who are most active',
+  'LBL_MOST_CALLS_MADE' => '{{count}} calls made',
+  'LBL_MOST_EMAILS_SENT' => '{{count}} emails sent',
+  'LBL_MOST_EMAILS_RECEIVED' => '{{count}} emails received',
+  'LBL_MOST_MEETING_HELD' => '{{count}} meetings held',
 
 );
 

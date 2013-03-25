@@ -192,7 +192,7 @@ class MetadataApi extends SugarApi {
             $data['modules'] = array(
                 "Login" => array("fields" => array()));
             $data['config']           = $this->getConfigs();
-            $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);        
+            $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);
             $data["_hash"] = md5(serialize($data));
             
             $this->putMetadataCache($data, $this->platforms[0], TRUE);
@@ -208,10 +208,13 @@ class MetadataApi extends SugarApi {
         return $this->filterResults($args, $data, $onlyHash, $baseChunks);
     }
 
-    protected function buildJSFileFromMD(&$data, $platform) {
+    protected function buildJSFileFromMD(&$data, $platform, $onlyReturnModuleComponents = false) {
         $js = "(function(app) {\n SUGAR.jssource = {";
-        $compJS = $this->buildJSForComponents($data);
-        $js .= $compJS;
+
+        if (!$onlyReturnModuleComponents) {
+            $compJS = $this->buildJSForComponents($data);
+            $js .= $compJS;
+        }
 
         if (!empty($data['modules']))
         {
@@ -345,7 +348,7 @@ class MetadataApi extends SugarApi {
         $data['layouts'] = $mm->getSugarLayouts();
         $data['labels'] = $this->getStringUrls($data,false);
         $data['relationships'] = $mm->getRelationshipData();
-        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
+        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0], true);
         $data['server_info'] = $mm->getServerInfo();
         $hash = md5(serialize($data));
         $data["_hash"] = $hash;
@@ -647,8 +650,14 @@ class MetadataApi extends SugarApi {
         } else {
             $type = 'private';
         }
-        $cacheFile = sugar_cached('api/metadata/metadata_'.$platform.'_'.$type.'.php');
-        create_cache_directory($cacheFile);
+        
+        // Create the cache cirectory if need be
+        // The is a fix for the cache/cache/api/metadata problem
+        $cacheDir  = 'api/metadata';
+        create_cache_directory($cacheDir);
+        
+        // Handle the cache file
+        $cacheFile = sugar_cached($cacheDir . '/metadata_'.$platform.'_'.$type.'.php');
         write_array_to_file('metadata', $data, $cacheFile);
     }
 

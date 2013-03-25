@@ -145,7 +145,7 @@ $dictionary['Opportunity'] = array(
             'enable_range_search' => true,
             //BEGIN SUGARCRM flav=ent ONLY
             'calculated' => true,
-            'formula' => 'rollupSum($products, "likely_case")',
+            'formula' => 'rollupCurrencySum($products, "likely_case")',
             'enforced' => true,
             //END SUGARCRM flav=ent ONLY
             'validation' => array('type' => 'range', 'min' => 0)
@@ -294,7 +294,7 @@ $dictionary['Opportunity'] = array(
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
             //BEGIN SUGARCRM flav=ent ONLY
-            'formula' => 'rollupSum($products, "best_case")',
+            'formula' => 'rollupCurrencySum($products, "best_case")',
             'calculated' => true,
             'enforced' => true,
             //END SUGARCRM flav=ent ONLY
@@ -308,7 +308,7 @@ $dictionary['Opportunity'] = array(
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
             //BEGIN SUGARCRM flav=ent ONLY
-            'formula' => 'rollupSum($products, "worst_case")',
+            'formula' => 'rollupCurrencySum($products, "worst_case")',
             'calculated' => true,
             'enforced' => true,
             //END SUGARCRM flav=ent ONLY

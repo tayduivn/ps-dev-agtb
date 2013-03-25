@@ -142,28 +142,28 @@ var oldStartsWith = '';
  *
  */
 function isSupportedIE() {
-	var userAgent = navigator.userAgent.toLowerCase() ;
+    var userAgent = navigator.userAgent.toLowerCase();
 
-	// IE Check supports ActiveX controls
-	if (userAgent.indexOf("msie") != -1 && userAgent.indexOf("mac") == -1 && userAgent.indexOf("opera") == -1) {
-		var version = navigator.appVersion.match(/MSIE (.\..)/)[1] ;
-		if(version >= 5.5 && version < 10) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    // IE Check supports ActiveX controls
+    if ($.browser.msie) {
+        var version = $.browser.version;
+        if (version >= 5.5 && version < 15) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
-SUGAR.isUnsupportedIE = function (){
-    var userAgent = navigator.userAgent.toLowerCase() ;
+SUGAR.isUnsupportedIE = function () {
+    var userAgent = navigator.userAgent.toLowerCase();
     // IE Check supports ActiveX controls
-    if (userAgent.indexOf("msie") != -1 && userAgent.indexOf("mac") == -1 && userAgent.indexOf("opera") == -1) {
-        var version = navigator.appVersion.match(/MSIE (.\..)/)[1] ;
-        return version < 9;
+    if ($.browser.msie) {
+        var version = $.browser.version;
+        return version < 15;
     }
     return false;
-}
+};
 
 function checkMinSupported(c, s) {
     var current = c.split(".");
@@ -1714,31 +1714,31 @@ function goToUrl(selObj, goToLocation) {
 var json_objects = new Object();
 
 function getXMLHTTPinstance() {
-	var xmlhttp = false;
-	var userAgent = navigator.userAgent.toLowerCase() ;
+    var xmlhttp = false;
+    var userAgent = navigator.userAgent.toLowerCase();
 
-	// IE Check supports ActiveX controls
-	if (userAgent.indexOf("msie") != -1 && userAgent.indexOf("mac") == -1 && userAgent.indexOf("opera") == -1) {
-		var version = navigator.appVersion.match(/MSIE (.\..)/)[1] ;
-		if(version >= 5.5 ) {
-			try {
-				xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-			}
-			catch (e) {
-				try {
-					xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-				}
-				catch (E) {
-					xmlhttp = false;
-				}
-			}
-		}
-	}
+    // IE Check supports ActiveX controls
+    if ($.browser.msie) {
+        var version = $.browser.version;
+        if (version >= 5.5) {
+            try {
+                xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+            }
+            catch (e) {
+                try {
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                catch (E) {
+                    xmlhttp = false;
+                }
+            }
+        }
+    }
 
-	if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-		xmlhttp = new XMLHttpRequest();
-	}
-	return xmlhttp;
+    if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+        xmlhttp = new XMLHttpRequest();
+    }
+    return xmlhttp;
 }
 
 // NOW LOAD THE OBJECT..

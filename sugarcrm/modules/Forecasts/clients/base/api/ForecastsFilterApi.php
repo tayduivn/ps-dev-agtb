@@ -29,30 +29,6 @@ class ForecastsFilterApi extends FilterApi
     public function registerApiRest()
     {
         return array(
-            'forecastsCommitted' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts', '?', '?'),
-                'pathVars' => array('module', 'timeperiod_id', 'user_id'),
-                'method' => 'forecastsCommitted',
-                'shortHelp' => 'A list of forecasts entries matching filter criteria',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCommittedGet.html',
-            ),
-            'forecastsCommittedDefaultUser' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts', '?'),
-                'pathVars' => array('module', 'timeperiod_id'),
-                'method' => 'forecastsCommitted',
-                'shortHelp' => 'A list of forecasts entries matching filter criteria',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCommittedGet.html',
-            ),
-            'forecastsCommittedDefaultTimeperiodAndUser' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts'),
-                'pathVars' => array('module'),
-                'method' => 'forecastsCommitted',
-                'shortHelp' => 'A list of forecasts entries matching filter criteria',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCommittedGet.html',
-            ),
             'filterModuleGet' => array(
                 'reqType' => 'GET',
                 'path' => array('Forecasts', 'filter'),
@@ -74,7 +50,7 @@ class ForecastsFilterApi extends FilterApi
     }
 
     /**
-     * forecastsCommitted
+     * forecastsCommitted -- only left in for testing purposes
      *
      * @param $api
      * @param $args

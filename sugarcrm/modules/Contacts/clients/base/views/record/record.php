@@ -1,33 +1,18 @@
 <?php
 //FILE SUGARCRM flav=pro || flav=sales ONLY
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/*********************************************************************************
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 $viewdefs['Contacts']['base']['view']['record'] = array(
     'panels' => array(
@@ -45,7 +30,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 array(
                     'name' => 'full_name',
                     'type' => 'fieldset-with-labels',
-                    'fields' => array('salutation', 'first_name', 'last_name')
+                    'fields' => array('salutation', 'first_name', 'last_name'),
                 ),
                 array(
                     'type' => 'favorite',
@@ -55,7 +40,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'type' => 'follow',
                     'readonly' => true,
                 ),
-            )
+            ),
         ),
         array(
             'name' => 'panel_body',
@@ -66,9 +51,18 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 'title',
                 'phone_mobile',
                 'department',
-                'phone_work',
+                'do_not_call',
                 'account_name',
-                'phone_fax',
+                'email',
+            ),
+        ),
+        array(
+            'columns' => 2,
+            'name' => 'panel_hidden',
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
                 array(
                     'name' => 'fieldset_address',
                     'type' => 'fieldset',
@@ -99,72 +93,6 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                             'name' => 'primary_address_country',
                             'css_class' => 'address_country',
                             'placeholder' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
-                        ),
-                    ),
-                ),
-                'email',
-            ),
-        ),
-        array(
-            'columns' => 2,
-            'name' => 'panel_hidden',
-            'hide' => true,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'fields' => array(
-                array(
-                    'name' => 'description',
-                    'span' => 12,
-                ),
-                'report_to_name',
-                'sync_contact',
-                'lead_source',
-                'do_not_call',
-                array(
-                    'name' => 'campaign_name',
-                    'span' => 12,
-                ),
-                'portal_name',
-                'portal_active',
-                array(
-                    'name' => 'preferred_language',
-                    'span' => 12,
-                ),
-                'assigned_user_name',
-                array(
-                    'name' => 'date_modified_by',
-                    'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_MODIFIED',
-                    'fields' => array(
-                        array(
-                            'name' => 'date_modified',
-                        ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY'
-                        ),
-                        array(
-                            'name' => 'modified_by_name',
-                        ),
-                    ),
-                ),
-                'team_name',
-                array(
-                    'name' => 'date_entered_by',
-                    'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'fields' => array(
-                        array(
-                            'name' => 'date_entered',
-                        ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY'
-                        ),
-                        array(
-                            'name' => 'created_by_name',
                         ),
                     ),
                 ),
@@ -200,9 +128,9 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                             'placeholder' => 'LBL_ALT_ADDRESS_COUNTRY',
                         ),
                         array(
-                            'name'    => 'copy',
-                            'label'   => 'NTC_COPY_PRIMARY_ADDRESS',
-                            'type'    => 'copy',
+                            'name' => 'copy',
+                            'label' => 'NTC_COPY_PRIMARY_ADDRESS',
+                            'type' => 'copy',
                             'mapping' => array(
                                 'primary_address_street' => 'alt_address_street',
                                 'primary_address_city' => 'alt_address_city',
@@ -213,7 +141,64 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-            )
-        )
+                'phone_fax',
+                'phone_work',
+                array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
+                'report_to_name',
+                'sync_contact',
+                'lead_source',
+                'assigned_user_name',
+                array(
+                    'name' => 'campaign_name',
+                    'span' => 12,
+                ),
+                array(
+                    'name' => 'preferred_language',
+                    'span' => 12,
+                ),
+                'portal_name',
+                'portal_active',
+                array(
+                    'name' => 'date_modified_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_MODIFIED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY',
+                        ),
+                        array(
+                            'name' => 'modified_by_name',
+                        ),
+                    ),
+                ),
+                'team_name',
+                array(
+                    'name' => 'date_entered_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_entered',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY',
+                        ),
+                        array(
+                            'name' => 'created_by_name',
+                        ),
+                    ),
+                ),
+            ),
+        ),
     ),
 );

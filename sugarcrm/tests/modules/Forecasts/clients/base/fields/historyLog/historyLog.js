@@ -29,7 +29,7 @@ describe("forecasts_field_historyLog", function() {
 
         model = new Backbone.Model({
             user_id: 'test_user',
-            show_history_log: "0"
+            show_history_log: "1"
         });
 
         fieldDef = {
@@ -52,6 +52,8 @@ describe("forecasts_field_historyLog", function() {
 
     describe("showFieldAlert", function() {
         it("should be false", function() {
+            model.set({show_history_log: 0});
+            var field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef, null, model, context);
             expect(field.showFieldAlert).toBeFalsy();
         });
         it("should be true", function() {

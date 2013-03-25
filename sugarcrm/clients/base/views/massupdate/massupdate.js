@@ -223,7 +223,7 @@
         var massExport = this.context.get("mass_collection");
         if (massExport) {
             app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
-            app.api.export({
+            app.api['export']({
                     module: this.module,
                     uid: (massExport.entire) ? undefined : massExport.pluck('id'),
                     entire: massExport.entire,

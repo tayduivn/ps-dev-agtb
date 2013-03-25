@@ -74,48 +74,8 @@ class SugarJobUpdateForecastWorksheets implements RunnableSchedulerJob
         $args = json_decode(html_entity_decode($data), true);
         $this->job->runnable_ran = true;
 
-        if (empty($args['timeperiod_id']) || empty($args['user_id'])) {
-            $GLOBALS['log']->fatal("Unable to run job due to missing arguments");
-            return false;
-        }
-
-        /* @var $tp TimePeriod */
-        $tp = BeanFactory::getBean('TimePeriods', $args['timeperiod_id']);
-
-        if (empty($tp->id)) {
-            $GLOBALS['log']->fatal("Unable to load TimePeriod for id: " . $args['timeperiod_id']);
-            return false;
-        }
-
-        $type = ucfirst(strtolower($settings['forecast_by']));
-
-        $sq = new SugarQuery();
-        $sq->from(BeanFactory::getBean($type))->where()
-            ->equals('assigned_user_id', $args['user_id'])
-            ->queryAnd()
-                ->gte('date_closed_timestamp', $tp->start_date_timestamp)
-                ->lte('date_closed_timestamp', $tp->end_date_timestamp);
-        $beans = $sq->execute();
-
-        foreach ($beans as $bean) {
-            /* @var $obj Opportunity|Product */
-            $obj = BeanFactory::getBean($type);
-            $obj->loadFromRow($bean);
-
-            /* @var $worksheet ForecastWorksheet */
-            $worksheet = BeanFactory::getBean('ForecastWorksheets');
-            if ($type == 'Opportunities') {
-                $worksheet->saveRelatedOpportunity($obj, true);
-                //BEGIN SUGARCRM flav=ent ONLY
-                // for opps we need to commit any products attached to them
-                $worksheet->saveOpportunityProducts($obj, true);
-                //END SUGARCRM flav=ent ONLY
-
-            } elseif ($type == 'Products') {
-                $worksheet->saveRelatedProduct($obj, true);
-            }
-
-        }
+        // use the processWorksheetDataChunk to run the code.
+        ForecastWorksheet::processWorksheetDataChunk($args['forecast_by'], $args['data']);
 
         $this->job->succeedJob();
         return true;

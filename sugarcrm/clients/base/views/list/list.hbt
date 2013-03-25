@@ -33,7 +33,9 @@
         {{#each fields}}
             <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.columnName name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
                  data-fieldname="{{name}}" data-orderby="{{orderBy}}">
-                {{str label ../../module}}
+                 <span>
+                    {{str label ../../module}}
+                 </span>
             </th>
         {{/each}}
     </tr>

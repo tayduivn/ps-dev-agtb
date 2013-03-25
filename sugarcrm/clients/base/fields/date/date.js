@@ -109,6 +109,9 @@
     _setupDatepicker: function() {
         this.datepickerMap = this._patchDatepickerMeta(); // converts com_cal_* to languageDictionary
         this.$(".datepicker").attr('placeholder', app.date.toDatepickerFormat(this.usersDatePrefs));
+        if(_.isFunction(this.setRequiredPlaceholder)){
+            this.setRequiredPlaceholder(this.$(".datepicker"));
+        }
 
         /* TODO: Remove all this once satisfied language injection works properly ;)
         var spanishLangExample = {

@@ -47,15 +47,15 @@
             this.$el.append($body);
         }
         var headerTemplate = app.template.getLayout(this.name + '.header') || app.template.empty,
-            $container = $("<div></div>", {class: 'rows well well-invisible'})
+            $container = $("<div></div>", {'class': 'rows well well-invisible'})
                 .append(headerTemplate())
                 .append(comp.el),
-            $el = $("<li></li>", {class: 'row-fluid'}).data('index', function() {
+            $el = $("<li></li>", {'class': 'row-fluid'}).data('index', function() {
                 return comp.index + '';
             }).append($container);
 
         if(prepend) {
-            $body.children("li:last").before($el)
+            $body.children("li:last").before($el);
         } else {
             $body.append($el);
         }
@@ -87,7 +87,7 @@
         component.rows.push(JSON.parse(JSON.stringify(components)));
         this.model.set("metadata", metadata, {silent: true});
         this.model.trigger("change:layout");
-        
+
         this.prependComponent = true;
         _.each(this._components, function(component){
             component.index++;

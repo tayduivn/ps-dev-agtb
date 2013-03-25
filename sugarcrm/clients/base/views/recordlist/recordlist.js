@@ -66,8 +66,8 @@
                 name:'inline-cancel',
                 css_class:'btn-link btn-invisible inline-cancel'
             });
+            this.leftColumns[0] = firstLeftColumn;
         }
-        this.leftColumns[0] = firstLeftColumn;
         var firstRightColumn = this.rightColumns[0];
         if (firstRightColumn && _.isArray(firstRightColumn.fields)) {
             //Add Save button to right
@@ -78,8 +78,8 @@
                 name:'inline-save',
                 css_class:'btn-primary'
             });
+            this.rightColumns[0] = firstRightColumn;
         }
-        this.rightColumns[0] = firstRightColumn;
         this.actionsAdded = true;
     },
 
