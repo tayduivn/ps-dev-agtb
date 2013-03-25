@@ -23,14 +23,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Calls';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#'.$module_name.'/create',
+        'route'=>'#bwc/index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView',
         'label' =>'LNK_NEW_CALL',
         'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#'.$module_name,
+        'route'=>'#bwc/index.php?module=Calls&action=index&return_module=Calls&return_action=DetailView',
         'label' =>'LNK_CALL_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,

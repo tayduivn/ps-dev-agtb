@@ -538,6 +538,7 @@ $bwcModules = array(
     'Administration',
     'Audit',
     'Calendar',
+    'Calls',
     'CampaignLog',
     'Campaigns',
     'CampaignTrackers',
