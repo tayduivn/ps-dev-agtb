@@ -1,46 +1,40 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
 (function (app) {
     app.events.on("app:init", function () {
         app.plugins.register('list-column-ellipsis', ['view'], {
 
-            events:{
-                'click th.morecol':'toggleDropdown',
-                'click th.morecol li a':'toggleColumn'
+            events: {
+                'click [data-field-toggle]': 'toggleColumn'
             },
 
-            /**
-             * Manually toggle the dropdown on cell click
-             * @param {Object}(optional) event jquery event object
-             */
-            toggleDropdown:function (event) {
-                var self = this;
-                var $dropdown = self.$('.morecol > div');
-                if ($dropdown.length > 0 && _.isFunction($dropdown.dropdown)) {
-                    $dropdown.toggleClass('open');
-                    if (event) event.stopPropagation();
-                    $('html').one('click', function () {
-                        $dropdown.removeClass('open');
-                    });
-                }
-            },
             /**
              * Toggle the 'visible' state of an available field
              * @param {Object} event jquery event object
              */
-            toggleColumn:function (event) {
-                if (!event) return;
-                event.stopPropagation();
+            toggleColumn: function (event) {
 
-                var $li = this.$(event.currentTarget).closest('li'),
-                    column = $li.data('fieldname');
+                var column = $(event.currentTarget).data('fieldToggle');
 
                 this._fields.visible = [];
                 this._fields.available = [];
 
-                _.each(this._fields.options, function(fieldMeta){
-                    if(fieldMeta.name === column) {
+                _.each(this._fields.options, function (fieldMeta) {
+                    if (fieldMeta.name === column) {
                         fieldMeta.selected = !fieldMeta.selected;
                     }
-                    if(fieldMeta.selected) {
+                    if (fieldMeta.selected) {
 
                         this._fields.visible.push(fieldMeta);
                     } else {
@@ -49,13 +43,19 @@
                 }, this);
 
                 this.render();
-                this.toggleDropdown();
+
+                // reopen fields dropdown
+                this.$('[data-action="fields-toggle"]').dropdown('toggle');
+                // stopPropagation to keep the fields dropdown opened
+                event.stopPropagation();
             },
 
-            onAttach:function (component, plugin) {
+            onAttach: function (component, plugin) {
                 this.before('render', function () {
                     var lastActionColumn = _.last(this.rightColumns);
-                    if (lastActionColumn) lastActionColumn.isColumnDropdown = true;
+                    if (lastActionColumn) {
+                        lastActionColumn.isColumnDropdown = true;
+                    }
                 }, null, this);
             }
         });
