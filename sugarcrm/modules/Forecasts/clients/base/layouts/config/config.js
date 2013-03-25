@@ -95,7 +95,7 @@
 
     _showModal:function () {
         var self = this,
-            isAdmin = app.user.getAcls()['Forecasts'].admin == "yes",
+            isAdmin = (_.isUndefined(app.user.getAcls()['Forecasts'].admin)),
             isSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
 
         if (isAdmin) {
