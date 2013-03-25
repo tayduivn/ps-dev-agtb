@@ -11,7 +11,6 @@
   *zoom: 1;
   //
 }
-
 table.dataTable {
   margin: 0 auto;
   clear: both;
@@ -24,8 +23,9 @@ table.dataTable {
     .box-sizing(border-box);
   }
 
-  /* ---------
-  TABLE HEADER*/
+
+//  TABLE HEADER
+
   & > thead {
     th {
       line-height: 26px !important;
@@ -38,19 +38,23 @@ table.dataTable {
       border-right: 1px solid darken(@grayLighter,5%);
       .rtl(@direction,ltr);
 
-      white-space: nowrap;
-      word-break: break-word;
-      position: relative;
-      vertical-align: middle;
-      overflow-x: hidden;
-      text-overflow: ellipsis;
-
+      & > * {
+        display: inline-block;
+        width: 100%;
+        overflow-x: hidden;
+        white-space: nowrap;
+        word-break: break-word;
+        position: relative;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+      }
       &:first-child {
         overflow-x: visible;
         padding-left: 15px;
         padding-right: 0;
         width: 30px;
       }
+
       &:last-child {
         max-width: 60px;
         min-width: 60px;
@@ -60,6 +64,40 @@ table.dataTable {
         overflow-x: visible;
         border-right: 0;
       }
+
+      &:first-child {
+        overflow-x: visible;
+        padding-left: 15px;
+        padding-right: 0;
+        width: 50px;
+        height: 26px;
+        z-index: 1;
+        background: @white;
+        position: absolute;
+        left: 0;
+        border-right: 0;
+      }
+      &:nth-child(2) {
+        padding-left: 75px;
+      }
+      &:nth-last-child(2) {
+        padding-right: 75px;
+      }
+      &:last-child {
+        max-width: 60px;
+        min-width: 60px;
+        width: 60px;
+        padding: 0 8px 0 5px;
+        //vertical-align: middle;
+        overflow-x: visible;
+        border-right: 0;
+        height: 42px;
+        line-height: 42px !important;
+        background: @white;
+        position: absolute;
+        right: 0;
+      }
+
       a {
         color: @grayLight;
         text-decoration: none;
@@ -67,69 +105,102 @@ table.dataTable {
     }
   }
 
-  /* ---------
-  TABLE BODY*/
-  & > tbody {
-    & > tr {
-      //from tables.less?
-      &:last-child {
-        td {
-          border-bottom-size: 2px;
-        }
-        td:last-child,
-        td:first-child {
-          .border-radius(0 0 4px 4px)
-        }
+
+
+//  TABLE BODY
+& > tbody {
+  & > tr {
+    //from tables.less?
+    &:last-child {
+      td {
+        border-bottom-size: 2px;
       }
-      & > td {
+      td:last-child,
+      td:first-child {
+        .border-radius(0 0 4px 4px)
+      }
+    }
+    & > td {
+      white-space: nowrap;
+      word-break: break-word;
+      position: relative;
+      vertical-align: middle;
+      text-overflow: ellipsis;
+      max-width: 100px;
+
+      border-top: 1px solid darken(@grayLighter, 5%);
+      border-bottom: 1px solid darken(@grayLighter, 5%);
+      background-color: @white;
+      .rtl(@direction,ltr);
+
+      &> *:not(.overflow-visible) {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: inline-block;
         white-space: nowrap;
         word-break: break-word;
         position: relative;
         vertical-align: middle;
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-        max-width: 100px;
-
-        border-top: 1px solid darken(@grayLighter, 5%);
-        border-bottom: 1px solid darken(@grayLighter, 5%);
-        background-color: @white;
-        .rtl(@direction,ltr);
-
-        &> *:not(.overflow-visible) {
-          overflow-x: hidden;
-          text-overflow: ellipsis;
-          max-width: 100%;
-          display: inline-block;
-          white-space: nowrap;
-          word-break: break-word;
-          position: relative;
-          vertical-align: middle;
-        }
-        &.td-inline-edit {
+      }
+      &.td-inline-edit {
+        overflow: visible;
+        span {
           overflow: visible;
-          span {
-            overflow: visible;
+        }
+      }
+      &:first-child {
+        overflow-x: visible;
+        padding-left: 15px;
+        padding-right: 0;
+        width: 30px;
+        span {
+          overflow: visible;
+        }
+      }
+      &:last-child {
+        max-width: 60px;
+        min-width: 60px;
+        padding: 0 8px 0 5px;
+        width: 60px;
+        //vertical-align: middle;
+        overflow-x: visible;
+        border-right: 0;
+      }
+      //for forecasts row extend info cell (single td so override :first-child,:last-child)
+      &.details {
+        padding: 0px;
+        width: auto;
+        max-width: inherit;
+        .extend {
+          background-color: @grayLight;
+          margin: -1px -1px -1px 0;
+          display: block;
+          .box-shadow(~"inset 0 10px 6px -6px rgba(0,0,0,.2)");
+          .icon-arrow-down:before {
+            color: @red;
           }
-        }
-        &:first-child {
-          overflow-x: visible;
-          padding-left: 15px;
-          padding-right: 0;
-          width: 30px;
-        }
-        &:last-child {
-          max-width: 60px;
-          min-width: 60px;
-          padding: 0 8px 0 5px;
-          width: 60px;
-          //vertical-align: middle;
-          overflow-x: visible;
-          border-right: 0;
+          .icon-arrow-up:before {
+            color: @green;
+          }
+          article {
+            color: @grayDark;
+            date {
+              color: @gray;
+            }
+          }
+          article:first-child {
+            .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.2)");
+          }
+          article:nth-child(even), article:nth-child(odd) {
+            border-top: 1px solid @grayLighter;
+            border-bottom-color: @gray;
+          }
         }
       }
     }
   }
-
+}
   /* ---------
   TABLE FOOTER */
   & > tfoot {
@@ -290,30 +361,7 @@ table.dataTable {
   /* ---------
   TABLE CELL (specific)*/
   td {
-    //?legacy??
-    &.details {
-      padding: 0px;
-      .extend {
-        background-color: @grayLight;
-        text-shadow: none;
-        margin: 5px -5px -5px;
-        text-align: left;
-        .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.2)");
-        article {
-          color: @grayDark;
-          date {
-            color: @gray;
-          }
-        }
-        article:first-child {
-          .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.2)");
-        }
-        article:nth-child(even), article:nth-child(odd) {
-          border-top: 1px solid @grayLighter;
-          border-bottom-color: @gray;
-        }
-      }
-    }
+
     .actions {
       display:inline-block;
       white-space: nowrap;
@@ -414,6 +462,92 @@ table.dataTable {
     color: @orange;
   }
 }
+
+
+/**
+ * The flex list allows you to add left actions and right actions to the traditional list view.
+ * The code below aims to fix the first action column and the last action column
+ */
+.flex-list {
+  // .flex-list.left-actions to fix the first column
+  &.left-actions {
+    table.dataTable {
+      & > thead th {
+        &:first-child {
+          overflow-x: visible;
+          padding-left: 15px;
+          padding-right: 0;
+          width: 50px;
+          height: 26px;
+          z-index: 1;
+          background: @white;
+          position: absolute;
+          left: 0;
+          border-right: 0;
+        }
+        &:nth-child(2) {
+          padding-left: 75px;
+        }
+      }
+      & > tbody td {
+        &:first-child {
+          overflow-x: visible;
+          padding-left: 15px;
+          padding-right: 0;
+          width: 48px;
+
+          position: absolute;
+          left: 0;
+          z-index: 10;
+        }
+        &:nth-child(2) {
+          padding-left: 75px;
+        }
+      }
+    }
+  }
+
+  // .flex-list.right-actions to fix the last column
+  &.right-actions {
+    table.dataTable {
+      & > thead th {
+        &:nth-last-child(2) {
+          padding-right: 75px;
+        }
+        &:last-child {
+          max-width: 60px;
+          min-width: 60px;
+          width: 60px;
+          padding: 4px 8px 0 5px; //vertical-align: middle;
+          overflow-x: visible;
+          border-right: 0;
+          height: 31px;
+          line-height: 42px !important;
+          background: @white;
+          position: absolute;
+          right: 0;
+        }
+      }
+      & > tbody td {
+        &:nth-last-child(2) {
+          padding-right: 75px;
+        }
+        &:last-child {
+          max-width: 60px;
+          min-width: 60px;
+          padding: 4px 8px 0 5px;
+          width: 60px; //vertical-align: middle;
+          overflow-x: visible;
+          border-right: 0;
+          height: 31px;
+          position: absolute;
+          right: 0;
+        }
+      }
+    }
+  }
+}
+
 
 //from twitter-bootstrap/datatables.less
 .sorting {

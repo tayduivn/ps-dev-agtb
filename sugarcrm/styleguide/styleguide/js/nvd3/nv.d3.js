@@ -10682,11 +10682,10 @@ var format = d3.time.format("%Y-%m-%d");
         e.pos[1] = e.pos[1] * ratio;
       }
     }
-
-    var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
-        top = e.pos[1] + ( offsetElement.offsetTop || 0),
-        x = xAxis.tickFormat()(bubbles.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(e.point, e.pointIndex),
+    var left = e.pos[0] + ( $(offsetElement).offset().left || 0 ),
+        top = e.pos[1] + ( $(offsetElement).offset().top || 0),
+        x = e.point.x,
+        y = e.point.y,
         content = tooltip(e.series.key, x, y, e, chart);
 
     nv.tooltip.show([left, top], content, null, null, offsetElement);
@@ -10720,10 +10719,11 @@ var format = d3.time.format("%Y-%m-%d");
       var container = d3.select(this),
           that = this;
 
-      var availableWidth = (width  || parseInt(container.style('width'),10) || 960)
-                             - margin.left - margin.right,
-          availableHeight = (height || parseInt(container.style('height'),10) || 400)
-                             - margin.top - margin.bottom;
+      var width = width  || parseInt(container.style('width'),10)
+        , height = height || parseInt(container.style('height'),10);
+
+      var availableWidth = (width || 960) - margin.left - margin.right,
+          availableHeight = (height || 400) - margin.top - margin.bottom;
 
       function getTimeTicks(data) {
         function daysInMonth(date) {
@@ -10840,7 +10840,7 @@ var format = d3.time.format("%Y-%m-%d");
       {
         gEnter.append('g').attr('class', 'nv-legendWrap');
 
-        legend.width(availableWidth*(showTitle?0.7:1));
+        legend.width(width*(showTitle?0.7:1)-10);
 
         g.select('.nv-legendWrap')
           .datum(data)
@@ -10855,7 +10855,7 @@ var format = d3.time.format("%Y-%m-%d");
         }
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate('+(availableWidth*(showTitle?0.3:0))+',' + (-margin.top) +')');
+            .attr('transform', 'translate('+ ((width*(showTitle?0.3:0))-margin.left+10) +',' + (-margin.top) +')');
       }
 
       if (showTitle && properties.title )

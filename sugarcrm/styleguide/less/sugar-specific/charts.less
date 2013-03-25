@@ -175,18 +175,13 @@
       top: 1px;
       font-size: 18px;
       &.disabled {
-        [class^="icon-"] {
-          color: lighten(@grayLight,10%) !important;
-        }
+        color: lighten(@grayLight,10%) !important;
       }
     }
-    a:hover {
-      text-decoration: none;
-    }
-    a[data-control="zoom-out"] {
+    i[data-control="zoom-out"] {
       left: -26px;
     }
-    a[data-control="zoom-in"] {
+    i[data-control="zoom-in"] {
       right: -26px;
     }
     &:before,
