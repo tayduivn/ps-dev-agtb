@@ -106,6 +106,10 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'required' => true,
                 ),
                 'product_template_name',
+                array(
+                    'name' => 'category_name',
+                    'label' => 'LBL_CATEGORY'
+                ),
                 'quantity',
                 'discount_price',
                 array(
