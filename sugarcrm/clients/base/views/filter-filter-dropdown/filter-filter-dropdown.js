@@ -22,7 +22,8 @@
         this.filterList = [];
 
         this.layout.filters.each(function(model){
-            this.filterList.push({id:model.id, text:model.get("name")});
+            var isAllRecords = model.id !== "all_records" ? false : true;
+            this.filterList.push({id:model.id, text: self.getTranslatedSelectionText(isAllRecords, model.get("name"))});
         }, this);
 
         if(this.layout.canCreateFilter()) {
@@ -86,9 +87,9 @@
 
             if (model) {
                 if (val !== "all_records") {
-                    data = {id: model.id, text: model.get("name")};
+                    data = {id: model.id, text: this.getTranslatedSelectionText(false, model.get("name"))};
                 } else {
-                    data = {id: "all_records", text: model.get("name")};
+                    data = {id: "all_records", text: this.getTranslatedSelectionText(true, model.get("name"))};
                 }
             } else {
                 data = {id: "all_records", text: app.lang.get("LBL_FILTER_ALL_RECORDS")};
@@ -103,7 +104,7 @@
             selectionLabel = filterLabel;
 
         // Update the text for the selected filter.
-        this.$('.choice-filter').html(app.lang.get(item.text, "Filters"));
+        this.$('.choice-filter').html(item.text);
 
         if(this.enabled) {
             selectionLabel += '<i class="icon-caret-down"></i>';
@@ -113,7 +114,7 @@
 
     formatResult: function (option) {
         // TODO: Determine whether active filters should be highlighted in bold in this menu.
-        return '<div><span class="select2-match"></span>'+ app.lang.get(option.text, "Filters") +'</div>';
+        return '<div><span class="select2-match"></span>'+ option.text +'</div>';
     },
 
     /**
@@ -133,5 +134,25 @@
      */
     handleModuleChange: function(linkModuleName, linkName) {
         this.enabled = (linkName !== "all_modules");
+    },
+
+    /**
+     * Translates the selection text's labels
+     * @param isAllRecords
+     * @param label
+     * @returns {*}
+     * @private
+     */
+    getTranslatedSelectionText: function(isAllRecords, label) {
+        var translatedText, moduleName;
+
+        if (isAllRecords) {
+            moduleName = app.lang.get('LBL_MODULE_NAME', this.module);
+            translatedText = app.lang.get(label, null, {'moduleName': moduleName});
+        }
+        else {
+            translatedText = app.lang.get(label, 'Filters');
+        }
+        return translatedText;
     }
 })
