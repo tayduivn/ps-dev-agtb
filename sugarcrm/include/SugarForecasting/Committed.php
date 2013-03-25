@@ -73,6 +73,9 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         //If we are committing a rep forecast, calculate things.  Otherwise, for a manager, just use what is passed in.
         if ($args['pipeline_opp_count'] == 0 && $args['pipeline_amount'] == 0) {
             $forecast->calculatePipelineData(($args['includedClosedAmount']), ($args['includedClosedCount']));
+            //push the pipeline numbers back into the args
+            $args['pipeline_opp_count'] = $forecast->pipeline_opp_count;
+            $args['pipeline_amount'] = $forecast->pipeline_amount;
         } else {
             $forecast->pipeline_opp_count = $args['pipeline_opp_count'];
             $forecast->pipeline_amount = $args['pipeline_amount'];
