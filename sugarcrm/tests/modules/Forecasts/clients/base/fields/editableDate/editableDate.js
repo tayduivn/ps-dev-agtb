@@ -19,10 +19,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecasts_field_editableDate", function () {
+describe("forecasts_field_editableDate", function() {
     var field, fieldDef, context, model, app, getModuleStub;
 
-    beforeEach(function () {
+    beforeEach(function() {
         app = SugarTest.app;
         context = app.context.getContext();
         getModuleStub = sinon.stub(app.metadata, "getModule", function() {
@@ -47,24 +47,6 @@ describe("forecasts_field_editableDate", function () {
         model = null;
     });
 
-    describe("event should fire", function() {
-        var stubs = [];
-
-        afterEach(function(){
-            _.each(stubs, function(stub){
-                stub.restore();
-            });
-
-            stubs = [];
-        });
-
-        xit("onClick when clicked", function() {
-            stubs.push(sinon.stub(field, "onClick", function(){}));
-
-            field.$el.html('<span class="editable"></span>');
-        });
-    });
-
     describe("dispose safe", function() {
         it("should not render if disposed", function() {
             var renderStub = sinon.stub(field, 'render'),
@@ -82,15 +64,86 @@ describe("forecasts_field_editableDate", function () {
     });
     describe("checkIfCanEdit", function() {
         it("should not be able to edit", function() {
-            field.model.set({sales_stage : "Closed Won"});
+            field.model.set({sales_stage: "Closed Won"});
             field.checkIfCanEdit();
             expect(field._canEdit).toBeFalsy();
         });
 
         it("should be able to edit", function() {
-            field.model.set({sales_stage : "asdf"});
+            field.model.set({sales_stage: "asdf"});
             field.checkIfCanEdit();
             expect(field._canEdit).toBeTruthy();
         })
     });
+
+    describe("field validates date properly on hide", function() {
+        var stubs = [],
+            initialDate = '01/01/2001',
+            newValidDate = '02/02/2002',
+            newInvalidDate = '89543627598276435',
+            fieldTemplate;
+
+        beforeEach(function() {
+            SugarTest.loadFile("../modules/Forecasts/clients/base/helper", "hbt-helpers", "js", function(d) {
+                return eval(d);
+            });
+            SugarTest.loadFile("../styleguide/assets/js", "bootstrap-tooltip", "js", function(d) {
+                return eval(d);
+            });
+            // stub a bunch of functions so they dont get called
+            stubs.push(sinon.stub(field, 'onBlur', function() {}));
+            stubs.push(sinon.stub(field, 'showErrors', function() {}));
+            stubs.push(sinon.stub(field, 'render', function() {}));
+            stubs.push(sinon.stub(field, '_render', function() {}));
+
+            fieldTemplate = _.template('<span class="edit">'
+                + '<div class="input-append date" rel="datepicker">'
+                + '<input type="text" class="datepicker input-small focused" value="<%= dateValue %>" rel="datepicker">'
+                + '<span class="add-on"><i class="icon-calendar"></i></span>'
+                + '<span class="error-tooltip hide" rel="tooltip">'
+                + '<i class="icon-exclamation-sign"></i>'
+                + '</span>'
+                + '</div>'
+                + '</span>');
+
+            field.usersDatePrefs = 'm/d/Y';
+            field.dateValue = initialDate;
+
+            field.$el.html(fieldTemplate({dateValue: initialDate}));
+            field.model.set({editableDate: initialDate});
+            field._setupDatepicker();
+        });
+
+        afterEach(function() {
+            _.each(stubs, function(stub) {
+                stub.restore();
+            });
+            stubs = [];
+        });
+
+        it("should not update the field model when given a invalid date", function() {
+            // set the date value to an invalid date
+            field.$el.find('input.datepicker').prop('value', newInvalidDate);
+
+            // hideDatepicker has the field validation stuff to set or not set the model
+            // passing in a dummy jQuery.Event
+            field.hideDatepicker(jQuery.Event());
+
+            // the model should NOT change with an invalid date, it should still be the initial date
+            expect(field.model.get('editableDate')).toBe(initialDate);
+        });
+
+        it("should update the field model when given a valid date", function() {
+            // set the date value to a valid date
+            field.$el.find('input.datepicker').prop('value', newValidDate);
+
+            // hideDatepicker has the field validation stuff to set or not set the model
+            // passing in a dummy jQuery.Event
+            field.hideDatepicker(jQuery.Event());
+
+            // the model should change with a valid date, it should not still be the initial date
+            expect(field.model.get('editableDate')).not.toBe(initialDate);
+        });
+    });
+
 });

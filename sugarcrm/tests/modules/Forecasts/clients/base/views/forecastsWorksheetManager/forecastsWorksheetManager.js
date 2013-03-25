@@ -209,6 +209,22 @@ describe("forecasts_view_forecastsWorksheetManager", function() {
         })
     });
 
+    describe("when the Forecast Worksheet has Draft models in the collection", function(){
+        beforeEach(function(){
+            view.collection.add(new Backbone.Model({"version": "0", "id": "GABE!"}));
+            view.collection.add(new Backbone.Model({"version": "0", "id": "MADE ME"}));
+            view.collection.add(new Backbone.Model({"version": "1", "id": "DO THIS!"}));
+        });
+
+        afterEach(function(){
+            view.collection.reset();
+        });
+
+        it("should have 2 items in draft", function(){
+            expect(view.getDraftModels().length).toEqual(2);
+        });
+    });
+
     describe('Forecast Worksheet Save Dirty Models', function() {
         var m, saveStub;
         beforeEach(function() {

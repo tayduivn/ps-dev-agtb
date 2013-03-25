@@ -73,8 +73,8 @@
 
         this.on('filter:get', this.initializeFilterState, this);
 
-        this.on('filter:change:filter', function(id) {
-            if (id && id != 'create') {
+        this.on('filter:change:filter', function(id, preventCache) {
+            if (id && id != 'create' && !preventCache) {
                 app.cache.set("filters:last:" + this.layout.currentModule + ":" + this.layoutType, id);
             }
             var filter = this.filters.get(id) || this.emptyFilter,
@@ -243,12 +243,13 @@
                     app.cache.cut("filters:last:" + moduleName + ":" + self.layoutType);
                 }
                 self.trigger('filter:render:filter');
-                self.trigger('filter:change:filter', app.cache.get("filters:last:" + moduleName + ":" + self.layoutType) ||  _.first(possibleFilters) || 'all_records');
+                self.trigger('filter:change:filter', app.cache.get("filters:last:" + moduleName + ":" + self.layoutType) ||  _.first(possibleFilters) || 'all_records', true);
             };
 
         // TODO: Add filtering on subpanel vs. non-subpanel filters here.
         if (app.view.layouts.FilterLayout.loadedModules[moduleName] && !_.isEmpty(app.cache.get("filters:" + moduleName)))
         {
+            this.filters.reset();
             var filters = app.cache.get("filters:" + moduleName);
             _.each(filters, function(f){
                 self.filters.add(app.data.createBean("Filters", f));

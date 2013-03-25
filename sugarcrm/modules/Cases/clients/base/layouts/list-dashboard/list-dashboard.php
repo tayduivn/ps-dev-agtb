@@ -15,6 +15,7 @@ $layout->push(
             'context' => array(
                 'module' => 'Bugs',
                 'dashlet' => array(
+                    'name' => 'My Assigned Bugs',
                     'type' => 'dashablelist',
                     'module' => 'Bugs',
                     'display_columns' => array(
@@ -38,6 +39,7 @@ $layout->push(
             'view' => 'twitter',
             'context' => array(
                 'dashlet' => array(
+                    'name' => 'Twitter Dashlet',
                     'type' => 'twitter',
                     'twitter' => 'sugarcrm',
                     'limit' => '5',

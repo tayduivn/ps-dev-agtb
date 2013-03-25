@@ -14,6 +14,7 @@ $layout->push(
             'view' => 'countrychart',
             'context' => array(
                 'dashlet' => array(
+                    'name' => 'Sales By Country',
                     'type' => 'countrychart',
                 ),
             ),

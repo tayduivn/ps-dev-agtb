@@ -22,7 +22,7 @@
                     leader,
                     leaderIndex,
                     el = this.$(event.currentTarget),
-                    word = event.currentTarget.innerText;
+                    word = el.text();
 
                 el.parent().find("ul.typeahead.activitystream-tag-dropdown").remove();
 
@@ -118,18 +118,13 @@
                         }});
                         break;
                     case '@':
-                        var coll = app.data.createBeanCollection('Users');
-                        coll.filterDef = [
-                            {
-                                '$or':
-                                [{
-                                   'first_name': {'$starts': word}
-                                }, {
-                                   'last_name': {'$starts': word}
-                                }]
-                            }
-                        ];
-                        coll.fetch({limit: 8, success: callback});
+                        // We cannot use the filter API here as we need to
+                        // support users typing in full names, which are not
+                        // stored in the database as fields.
+                        app.api.search({q: word, module_list: "Users", limit: 8}, {success: function(response) {
+                            var coll = app.data.createBeanCollection("Users", response.records);
+                            callback(coll);
+                        }});
                         break;
                 }
             }, 250),
@@ -195,7 +190,7 @@
 
             addTag: function(event) {
                 var el = this.$(event.currentTarget),
-                    body = this.$('.sayit'),
+                    body = this.$('.taggable'),
                     originalChildren = body.clone(true).children(),
                     lastIndex = this._lastLeaderPosition(body.html()),
                     data = el.data();
@@ -287,8 +282,10 @@
                 var self = this;
                 component.on('render', function() {
                     component.$(".tagged").each(function() {
-                        var x = this.innerText;
-                        $(this).html(self._parseTags(x, self.model.get('data').tags));
+                        var $el = $(this),
+                            tagList = _.isFunction(component.getTagList)? component.getTagList() : [];
+
+                        $el.html(self._parseTags($el.text(), tagList));
                     });
                 });
             }

@@ -462,6 +462,9 @@ for($i=0; $i<$number_leads; $i++)
 	$leads_account = $accounts[$account_number];
 	$lead->primary_address_state = $leads_account->billing_address_state;
 	$lead->status = array_rand($app_list_strings['lead_status_dom']);
+	if ($lead->status === 'Converted') {
+		$lead->converted = true;
+	}
 	$lead->lead_source = array_rand($app_list_strings['lead_source_dom']);
 	if($i % 3 == 1)
 	{

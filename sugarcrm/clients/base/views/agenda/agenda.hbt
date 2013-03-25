@@ -1,5 +1,5 @@
 <div class="block thumbnail">
-     <h4 data-tour="tour-agenda">Agenda:</h4>
+     <h4>Agenda:</h4>
           <div class="accordion" id="accordion2">
             <div class="accordion-group">
               <div class="accordion-heading">

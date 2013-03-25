@@ -363,7 +363,26 @@
         return value;
     },
     focus: function() {
-        this.$('input').first().focus();
+        // this should be zero but lets make sure
+        if (this.focusIndex < 0) {
+            this.focusIndex = 0;
+        }
+
+        if (this.focusIndex >= this.$inputs.length) {
+            // done focusing our inputs return false
+            this.focusIndex = -1
+            return false;
+        } else {
+            // focus the next item in our list of inputs
+            this.$inputs[this.focusIndex].focus();
+            this.focusIndex++;
+            return true;
+        }
+    },
+    _render: function() {
+        app.view.Field.prototype._render.call(this);
+        this.$inputs = this.$('input');
+        this.focusIndex = 0;
     },
     composeEmail: function(evt) {
         evt.stopPropagation();

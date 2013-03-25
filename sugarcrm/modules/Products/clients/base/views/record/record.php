@@ -1,32 +1,18 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/*********************************************************************************
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 $viewdefs['Products']['base']['view']['record'] = array(
     'buttons' => array(
@@ -79,7 +65,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'event' => 'button:convert_to_quote:click',
                     'name' => 'convert_to_quote_button',
                     'label' => 'LBL_CONVERT_TO_QUOTE',
-                    'acl_action' => 'view'
+                    'acl_action' => 'view',
                 ),
             ),
         ),
@@ -95,9 +81,9 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'required' => true
+                    'required' => true,
                 ),
-            )
+            ),
         ),
         array(
             'name' => 'panel_body',
@@ -117,9 +103,13 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'sales_status',
                 array(
                     'name' => 'date_closed',
-                    'required' => true
+                    'required' => true,
                 ),
                 'product_template_name',
+                array(
+                    'name' => 'category_name',
+                    'label' => 'LBL_CATEGORY'
+                ),
                 'quantity',
                 'discount_price',
                 array(
@@ -133,12 +123,11 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
-                
                 array(
                     'name' => 'product_line_item_amount',
                     'type' => 'currency',
                     'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
-                    'readonly' => true
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'likely_case',
@@ -151,7 +140,15 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     ),
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
-                )
+                ),
+                array(
+                    'name' => 'quote_name',
+                    'label' => 'LBL_ASSOCIATED_QUOTE',
+                    'related_fields' => array('quote_id'),
+                    // this is a hack to get the quote_id field loaded
+                    'readonly' => true,
+                    'bwcLink' => true,
+                ),
             ),
         ),
         array(
@@ -183,42 +180,31 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
-                array(
-                    'name' => 'quote_name',
-                    'label' => 'LBL_ASSOCIATED_QUOTE',
-                    'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
-                    'readonly' => true,
-                    'bwcLink' => true
-                ),                
+                'next_step',
                 'product_type',
                 'lead_source',
                 'campaign_name',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'type' => 'teamset',
-                    'name' => 'team_name',
-                ),
+                'team_name',
                 //END SUGARCRM flav=pro ONLY
-                'next_step',
                 array(
                     'name' => 'description',
-                    'span' => 12
+                    'span' => 12,
                 ),
                 array(
                     'name' => 'list_price',
-                    'readonly' => true
-                ),                                
+                    'readonly' => true,
+                ),
                 array(
                     'name' => 'tax_class',
-                    'readonly' => true
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'cost_price',
-                    'readonly' => true
+                    'readonly' => true,
                 ),
-                
-            )
-        )
+            ),
+        ),
     ),
 );

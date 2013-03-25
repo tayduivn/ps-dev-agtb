@@ -114,7 +114,8 @@
               },
              { temp: true }); //for File API to understand we upload a temporary file
     },
-    delete: function(e) {
+
+    'delete': function(e) {
         var self = this;
         //If we are previewing a file and want to cancel
         if (this.preview === true) {

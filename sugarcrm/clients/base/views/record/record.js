@@ -23,7 +23,7 @@
     // current button states
     currentState: null,
 
-    initialize: function(options) {
+    initialize: function (options) {
         _.bindAll(this);
         options.meta = _.extend({}, app.metadata.getView(null, 'record'), options.meta);
         app.view.views.EditableView.prototype.initialize.call(this, options);
@@ -54,40 +54,40 @@
      *
      * @param {Object} prefill Bean that will be used for new record
      */
-    setupDuplicateFields: function(prefill){
+    setupDuplicateFields: function (prefill) {
 
     },
 
-    setLabel: function(context, value) {
+    setLabel: function (context, value) {
         this.$(".record-label[data-name=" + value.field + "]").text(value.label);
     },
 
-    delegateButtonEvents: function() {
+    delegateButtonEvents: function () {
         this.context.on('button:edit_button:click', this.editClicked, this);
         this.context.on('button:save_button:click', this.saveClicked, this);
         this.context.on('button:delete_button:click', this.deleteClicked, this);
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
         this.context.on('button:find_duplicates_button:click', this.findDuplicatesClicked, this);
     },
-
-    _renderPanels: function(panels) {
+    noEditFields: null,
+    _renderPanels: function (panels) {
         var totalFieldCount = 0;
-
-        _.each(panels, function(panel) {
-            var columns    = (panel.columns) || 1,
-                rows       = [],
-                row        = [],
-                size       = panel.fields.length,
-                rowSpan    = 0,
+        this.noEditFields = [];
+        _.each(panels, function (panel) {
+            var columns = (panel.columns) || 1,
+                rows = [],
+                row = [],
+                size = panel.fields.length,
+                rowSpan = 0,
                 rowSpanMax = 12,
-                colCount   = 0;
+                colCount = 0;
 
-            var _startNewRow = function() {
+            var _startNewRow = function () {
                 rows.push(row); // push the current row onto the grid
 
                 // reset variables that keep track of the current row's state
-                row      = [];
-                rowSpan  = 0;
+                row = [];
+                rowSpan = 0;
                 colCount = 0;
             };
 
@@ -96,23 +96,23 @@
                 this.hiddenPanelExists = true;
             }
 
-            _.each(panel.fields, function(field, index) {
+            _.each(panel.fields, function (field, index) {
                 var isLabelInline,
                     fieldSpan,
                     maxFieldSpan,
                     maxSpanForFieldWithInlineLabel = 8,
-                    maxSpanForFieldWithLabelOnTop  = 12;
+                    maxSpanForFieldWithLabelOnTop = 12;
 
                 //The code below assumes that the field is an object but can be a string
-                if(_.isString(field)) {
+                if (_.isString(field)) {
                     panel.fields[index] = field = {
                         name: field
                     };
                 }
 
                 //Disable the pencil icon if the user doesn't have ACLs
-                if (!app.acl.hasAccessToModel('edit', this.model, field.name)) {
-                    field.readonly = true;
+                if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                    this.noEditFields.push(field.name);
                 }
 
                 //labels: visibility for the label
@@ -124,7 +124,7 @@
 
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
                 isLabelInline = (panel.labelsOnTop === false && panel.labels);
-                maxFieldSpan  = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
+                maxFieldSpan = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
 
                 // calculate the 2/3 ratio for the field span
                 if (_.isUndefined(field.span)) {
@@ -185,7 +185,7 @@
 
                 // if there isn't enough room remaining on the current row to contain the field or all available
                 // columns in the row have been filled, then start a new row
-                if ((rowSpan + fieldSpan) > rowSpanMax || colCount == columns) {
+                if ((rowSpan + fieldSpan) > rowSpanMax || colCount === columns) {
                     _startNewRow();
                 }
 
@@ -202,21 +202,23 @@
 
             // Display module label in header panel it doesn't contain the picture field
             if (panel.header) {
-                panel.isAvatar = !!_.find(panel.fields, function(f) { return f.name === 'picture'; });
+                panel.isAvatar = !!_.find(panel.fields, function (f) {
+                    return f.name === 'picture';
+                });
             }
 
             panel.grid = rows;
         }, this);
     },
 
-    _render: function() {
+    _render: function () {
         this._renderPanels(this.meta.panels);
 
         app.view.View.prototype._render.call(this);
 
         // Field labels in headerpane should be hidden on view but displayed in edit and create
-        _.each(this.fields, function(field) {
-            var toggleLabel = _.bind(function() {
+        _.each(this.fields, function (field) {
+            var toggleLabel = _.bind(function () {
                 this.toggleLabelByField(field);
             }, this);
 
@@ -238,17 +240,17 @@
         }
     },
 
-    setEditableFields: function() {
+    setEditableFields: function () {
         delete this.editableFields;
         this.editableFields = [];
 
         var previousField, firstField;
-        _.each(this.fields, function(field, index) {
+        _.each(this.fields, function (field, index) {
             //Exclude read only fields
-            if (field.def.readonly || field.parent || (field.name && this.buttons[field.name])) {
+            if (field.def.readonly || _.indexOf(this.noEditFields, field.def.name) >= 0 || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
-            if(previousField) {
+            if (previousField) {
                 previousField.nextField = field;
             } else {
                 firstField = field;
@@ -256,62 +258,64 @@
             previousField = field;
             this.editableFields.push(field);
         }, this);
-        if(previousField) {
+        if (previousField) {
             previousField.nextField = firstField;
         }
     },
-    initButtons: function() {
-        if(this.options.meta && this.options.meta.buttons) {
-            _.each(this.options.meta.buttons, function(button) {
+    initButtons: function () {
+        if (this.options.meta && this.options.meta.buttons) {
+            _.each(this.options.meta.buttons, function (button) {
                 this.registerFieldAsButton(button.name);
                 if (button.buttons) {
-                    _.each(button.buttons, function(dropdownButton) {
+                    _.each(button.buttons, function (dropdownButton) {
                         this.registerFieldAsButton(dropdownButton.name);
                     }, this);
                 }
             }, this);
         }
     },
-    showPreviousNextBtnGroup:function() {
+    showPreviousNextBtnGroup: function () {
         var listCollection = this.context.get('listCollection') || new Backbone.Collection();
         var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
-        if(this.collection){
-            this.collection.previous = listCollection.models[recordIndex-1] ? listCollection.models[recordIndex-1] : undefined;
-            this.collection.next = listCollection.models[recordIndex+1] ? listCollection.models[recordIndex+1] : undefined;
+        if (this.collection) {
+            this.collection.previous = listCollection.models[recordIndex - 1] ? listCollection.models[recordIndex - 1] : undefined;
+            this.collection.next = listCollection.models[recordIndex + 1] ? listCollection.models[recordIndex + 1] : undefined;
         }
     },
 
-    registerFieldAsButton: function(buttonName) {
+    registerFieldAsButton: function (buttonName) {
         var button = this.getField(buttonName);
         if (button) {
             this.buttons[buttonName] = button;
         }
     },
 
-    _renderHtml: function() {
+    _renderHtml: function () {
         this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
     },
 
-    toggleMoreLess: function() {
+    toggleMoreLess: function () {
         this.$(".less").toggleClass("hide");
         this.$(".more").toggleClass("hide");
         this.$(".panel_hidden").toggleClass("hide");
     },
 
-    bindDataChange: function() {
-        this.model.on("change", function(fieldType) {
+    bindDataChange: function () {
+        this.model.on("change", function (fieldType) {
             if (this.inlineEditMode) {
                 this.setButtonStates(this.STATE.EDIT);
             }
             if (this.model.isNotEmpty !== true && fieldType !== 'image') {
                 this.model.isNotEmpty = true;
-                if(!this.disposed) this.render();
+                if (!this.disposed) {
+                    this.render();
+                }
             }
         }, this);
     },
 
-    duplicateClicked: function() {
+    duplicateClicked: function () {
         var self = this,
             prefill = app.data.createBean(this.model.module);
 
@@ -322,22 +326,22 @@
             layout: 'create',
             context: {
                 create: true,
-                model : prefill
+                model: prefill
             }
-        }, function(context, newModel) {
-            if(newModel && newModel.id) {
+        }, function (context, newModel) {
+            if (newModel && newModel.id) {
                 app.router.navigate("#" + self.model.module + "/" + newModel.id, {trigger: true});
             }
         });
     },
 
-    findDuplicatesClicked: function() {
+    findDuplicatesClicked: function () {
         var model = app.data.createBean(this.model.module);
 
         model.copy(this.model);
         model.set('id', this.model.id);
         app.drawer.open({
-            layout : 'find-duplicates',
+            layout: 'find-duplicates',
             context: {
                 dupeCheckModel: model,
                 dupelisttype: 'dupecheck-list-multiselect'
@@ -345,26 +349,26 @@
         });
     },
 
-    editClicked: function() {
+    editClicked: function () {
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
 
-    saveClicked: function() {
+    saveClicked: function () {
         this.clearValidationErrors();
-        if(this.model.isValid(this.getFields(this.module))){
+        if (this.model.isValid(this.getFields(this.module))) {
             this.setButtonStates(this.STATE.VIEW);
             this.handleSave();
         }
     },
 
-    cancelClicked: function() {
+    cancelClicked: function () {
         this.handleCancel();
         this.setButtonStates(this.STATE.VIEW);
         this.clearValidationErrors(this.editableFields);
     },
 
-    deleteClicked: function() {
+    deleteClicked: function () {
         this.handleDelete();
     },
 
@@ -372,7 +376,7 @@
      * Render fields into either edit or view mode.
      * @param isEdit
      */
-    toggleEdit: function(isEdit) {
+    toggleEdit: function (isEdit) {
         if (isEdit) {
             this.$('.record-edit-link-wrapper').hide();
         } else {
@@ -387,7 +391,7 @@
      * @param e {Event} jQuery Event object (should be from click)
      * @param cell {jQuery Node} cell of the target node to edit
      */
-    handleEdit: function(e, cell) {
+    handleEdit: function (e, cell) {
         var target,
             cellData,
             field;
@@ -411,11 +415,11 @@
             case "image":
                 var self = this;
                 app.file.checkFileFieldsAndProcessUpload(self, {
-                        success:function () {
+                        success: function () {
                             self.toggleField(field);
                         }
                     },
-                    { deleteIfFails:false}
+                    { deleteIfFails: false}
                 );
                 break;
             default:
@@ -427,7 +431,7 @@
      * Hide/show all field labels in headerpane
      * @param isEdit
      */
-    toggleHeaderLabels: function(isEdit) {
+    toggleHeaderLabels: function (isEdit) {
         if (isEdit) {
             this.$('.headerpane .record-label').show();
         } else {
@@ -439,7 +443,7 @@
      * Hide/show field label given a field
      * @param field
      */
-    toggleLabelByField: function(field) {
+    toggleLabelByField: function (field) {
         if (field.action === 'edit') {
             field.$el.closest('.record-cell').find('.record-label').show();
         } else {
@@ -447,7 +451,7 @@
         }
     },
 
-    handleSave: function() {
+    handleSave: function () {
         var self = this;
         self.inlineEditMode = false;
 
@@ -460,29 +464,33 @@
             }
         };
         app.file.checkFileFieldsAndProcessUpload(self, {
-                success:function () {
+                success: function () {
                     self.model.save({}, {
-                        success:finalSuccess,
+                        success: finalSuccess,
                         viewed: true
                     });
                 }
-            },
-            { deleteIfFails:false});
+            }, {
+                deleteIfFails: false
+            }
+        );
 
         self.$(".record-save-prompt").hide();
-        if (!self.disposed) self.render();
+        if (!self.disposed) {
+            self.render();
+        }
     },
 
-    handleCancel: function() {
+    handleCancel: function () {
         this.model.revertAttributes({silent: !this.inlineEditMode});
         this.toggleEdit(false);
         this.inlineEditMode = false;
     },
 
-    handleDelete: function() {
+    handleDelete: function () {
         var self = this,
             moduleContext = {
-                module: app.lang.get('LBL_MODULE_NAME_SINGULAR',this.module),
+                module: app.lang.get('LBL_MODULE_NAME_SINGULAR', this.module),
                 name: (this.model.get('name') ||
                     (this.model.get('first_name') + ' ' + this.model.get('last_name')) || '').trim()
             };
@@ -490,10 +498,10 @@
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('NTC_RECORD_DELETE_CONFIRMATION', null, moduleContext),
-            onConfirm: function() {
+            onConfirm: function () {
                 self.model.destroy({
                     alerts: {
-                        'success' : {
+                        'success': {
                             messages: app.lang.get('NTC_RECORD_DELETE_SUCCESS', null, moduleContext)
                         }
                     }
@@ -503,15 +511,36 @@
         });
     },
 
-    handleKeyDown: function(e, field) {
+    handleKeyDown: function (e, field) {
         app.view.views.EditableView.prototype.handleKeyDown.call(this, e, field);
 
-        if (e.which == 9) { // If tab
+        if (e.which === 9) { // If tab
             e.preventDefault();
-            field.$(field.fieldTag).trigger("change");
-            if(field.nextField) {
-                this.toggleField(field, false);
-                this.toggleField(field.nextField, true);
+            // field isnt done being focused yet so focus some more
+            if (_.isFunction(field.focus) && field.focus()) {
+                return true;
+            } else {
+                field.$(field.fieldTag).trigger("change");
+                if (field.nextField) {
+                    if (field.nextField.$el.closest('.panel_hidden').hasClass('hide')) {
+                        this.toggleMoreLess();
+                    }
+                    this.toggleField(field, false);
+                    this.toggleField(field.nextField, true);
+                    // the field we need to toggle until we reach one that's not
+                    if (field.isDisabled() && field.nextField) {
+                        var curField = field;
+                        while (curField.isDisabled) {
+                            if (curField.nextField) {
+                                this.toggleField(curField.nextField, true);
+                                curField = curField.nextField;
+                            } else {
+                                break;
+                            }
+
+                        }
+                    }
+                }
             }
         }
     },
@@ -520,10 +549,10 @@
      * Show/hide buttons depending on the state defined for each buttons in the metadata
      * @param state
      */
-    setButtonStates: function(state) {
+    setButtonStates: function (state) {
         this.currentState = state;
 
-        _.each(this.buttons, function(field) {
+        _.each(this.buttons, function (field) {
             var showOn = field.def.showOn;
             if (_.isUndefined(showOn) || (showOn === state)) {
                 field.show();
@@ -537,7 +566,7 @@
      * Set the title in the header pane
      * @param title
      */
-    setTitle: function(title) {
+    setTitle: function (title) {
         var $title = this.$('.headerpane h1.title');
         if ($title.length > 0) {
             $title.text(title);
@@ -545,9 +574,9 @@
             this.$('.headerpane').prepend('<h1 class="title">' + title + '</h1>');
         }
     },
-    _dispose: function(){
+    _dispose: function () {
         app.view.views.EditableView.prototype._dispose.call(this);
-        if(this.context){
+        if (this.context) {
             this.context.off(null, null, this);
             this.context = null;
         }

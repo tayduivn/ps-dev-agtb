@@ -389,7 +389,7 @@
         // apply data to model then save
         forecast.save(forecastData, { success: _.bind(function() {
             this.context.trigger("forecasts:committed:saved");
-        }, this), silent: true});
+        }, this), silent: true, alerts: { 'success': false }});
 
         // clear out the arrows
         this.likelyCaseCls = '';

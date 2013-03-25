@@ -1,5 +1,9 @@
 ({
     events: {
+        'change div[data-placeholder]': 'checkPlaceholder',
+        'keydown div[data-placeholder]': 'checkPlaceholder',
+        'keypress div[data-placeholder]': 'checkPlaceholder',
+        'input div[data-placeholder]': 'checkPlaceholder',
         'click .reply': 'showAddComment',
         'click .reply-btn': 'addComment',
         'click .deleteRecord': 'deleteRecord',
@@ -111,27 +115,27 @@
      * @param {Event} event
      */
     addComment: function(event) {
-        // TODO: Change to using a content-editable box instead of input tag.
         var self = this,
             parentId = this.model.id,
-            $input = this.$('input.reply'),
-            attachments = this.$('.activitystream-pending-attachment'),
+            $el = this.$('div.reply'),
             payload = {
                 parent_id: parentId,
-                data: {
-                    value: $input.val()
-                }
+                data: {}
         };
+
+        payload.data.value = this.getText($el);
+        if (this.getTags) {
+            payload.data.tags = this.getTags($el);
+        }
 
         var bean = app.data.createRelatedBean(this.model, null, 'comments');
         bean.save(payload, {
             relate: true,
             success: function(model) {
-                $input.val('');
+                $el.html('').trigger('change');
                 self.layout.prependPost(self.model);
                 self.commentsCollection.add(model).trigger('reset');
                 self.toggleReplyBar();
-                // We need to add any attachments we may have over here.
             }
         });
     },
@@ -177,14 +181,14 @@
 
         // Save state of the reply bar before rendering
         var isReplyBarOpen = this.$(".comment").hasClass("active") && this.$(".comment").is(":visible"),
-            replyVal = this.$(".reply").val();
+            replyVal = this.$(".reply").html();
 
         app.view.View.prototype._renderHtml.call(this);
 
         // If the reply bar was previously open, keep it open (render hides it by default)
         if(isReplyBarOpen) {
             this.toggleReplyBar();
-            this.$(".reply").val(replyVal);
+            this.$(".reply").html(replyVal);
         }
     },
 
@@ -218,6 +222,31 @@
 
     hideTooltip: function(e) {
         this.$(e.currentTarget).tooltip("hide");
+    },
+
+    getText: function($el) {
+        return $el.contents().html();
+    },
+
+    getTagList: function() {
+        var tagList = this.model.get('data').tags || [];
+        var childTagLists = this.commentsCollection.map(function(comment) {
+            return comment.get('data').tags || [];
+        });
+        tagList = _.uniq(_.reduce(childTagLists, function(memo, el) {
+            return memo.concat(el);
+        }, tagList));
+
+        return tagList;
+    },
+
+    checkPlaceholder: function(e) {
+        var el = e.currentTarget;
+        if (el.textContent) {
+            el.dataset.hidePlaceholder = true;
+        } else {
+            delete el.dataset.hidePlaceholder;
+        }
     },
 
     /**

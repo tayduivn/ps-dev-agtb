@@ -16,6 +16,7 @@ $layout->push(
             'context' => array(
                 'module' => 'Leads',
                 'dashlet' => array(
+                    'name' => 'Interactions',
                     'type' => 'interactions',
                     'filter_duration' => '7',
                 ),
@@ -32,6 +33,7 @@ $layout->push(
             'context' => array(
                 'module' => 'Leads',
                 'dashlet' => array(
+                    'name' => 'Interactions Chart',
                     'type' => 'interactionschart',
                     'filter_duration' => '7',
                 ),
