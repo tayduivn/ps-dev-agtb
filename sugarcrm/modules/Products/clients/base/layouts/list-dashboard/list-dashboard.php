@@ -15,6 +15,7 @@ $layout->push(
             'context' => array(
                 'module' => 'Contacts',
                 'dashlet' => array(
+                    'name' => 'My Contacts',
                     'type' => 'dashablelist',
                     'module' => 'Contacts',
                     'display_columns' => array(

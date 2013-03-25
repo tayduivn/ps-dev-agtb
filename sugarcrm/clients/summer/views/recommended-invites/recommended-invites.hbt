@@ -1,5 +1,5 @@
 <div class="block thumbnail">
-    <h4 data-tour="tour-recommended-invites">{{str "LBL_RECOMMENDED_INVITES"}}:</h4>
+    <h4>{{str "LBL_RECOMMENDED_INVITES"}}:</h4>
     {{#if inviteCollection.models.length}}
     <span class="invites-description">Here are some people you may know. Invite them to your CRM instance!</span>
     <div>

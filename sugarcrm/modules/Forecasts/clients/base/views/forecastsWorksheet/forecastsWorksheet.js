@@ -357,7 +357,7 @@
                             }
                             this.context.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
                         }
-                    }, this), silent: true});
+                    }, this), silent: true, alerts: { 'success': false }});
                 }, this);
 
                 this.cleanUpDirtyModels();

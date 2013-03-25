@@ -15,8 +15,9 @@
         _.bindAll(this);
 
         this.toggleComponents = [];
+        this.componentsList = {};
         this.processMeta();
-        this.renderHtml();
+        this.processToggles();
 
         this.on("filter:change", function(module, link) {
             this.currentModule = module;
@@ -31,7 +32,7 @@
         this.tabs = this.options.meta.tabs;
     },
 
-    renderHtml: function() {
+    processToggles: function() {
         // Enable toggles
         this.toggles = [];
 
@@ -44,7 +45,7 @@
             }
 
             if (toggle && this.availableToggles[toggle]) {
-                this.toggles.push({toggle: toggle, title: this.availableToggles[toggle].label, class: this.availableToggles[toggle].icon });
+                this.toggles.push({toggle: toggle, title: this.availableToggles[toggle].label, 'class': this.availableToggles[toggle].icon });
             }
         }, this);
     },
@@ -57,12 +58,11 @@
         } else if(def.view == "filter-create") {
             this.$(".form-search-related").append(component.el);
         } else {
-            // Check if hidden or not.
             if (this.availableToggles[component.name]) {
                 this.toggleComponents.push(component);
+                this.componentsList[component.name] = component;
+                this._components.splice(this._components.indexOf(component), 1);
             }
-
-            this.$(".main-content").append(component.el);
 
             if (component.name == "activitystream") {
                 this.activityContext = component.context;
@@ -82,6 +82,12 @@
     },
 
     showComponent: function(name) {
+        if (this.componentsList[name]) {
+            this.componentsList[name].render();
+            this.$(".main-content").append(this.componentsList[name].el);
+            this.componentsList[name] = null;
+        }
+
         _.each(this.toggleComponents, function(comp) {
             if (comp.name == name) {
                 comp.show();

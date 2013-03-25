@@ -360,13 +360,15 @@
                 array(
                    'styleguide/assets/js/bootstrap-tab.js'   => 'include/javascript/sugar_sidecar.min.js',
                    'styleguide/assets/js/jquery.timepicker.js'=> 'include/javascript/sugar_sidecar.min.js',
-                   'include/javascript/nvd3/lib/d3.v2.min.js' => 'include/javascript/sugar_sidecar.min.js',
-                    "include/javascript/select2-release-3.2/select2.min.js" => "include/javascript/sugar_sidecar.min.js",
-                    'styleguide/assets/js/bootstrap-collapse.js'   => 'include/javascript/sugar_sidecar.min.js',
-                   // To add more models to NV D3, run the makefile in styleguide.
-                   'include/javascript/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/select2-release-3.2/select2.min.js' => "include/javascript/sugar_sidecar.min.js",
+                   'styleguide/assets/js/bootstrap-collapse.js'   => 'include/javascript/sugar_sidecar.min.js',
+                   // D3 library
+                   'styleguide/assets/js/nvd3/lib/d3.v2.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   // To add more models to NV D3, run the makefile in styleguide/js/nvd3.
+                   'styleguide/assets/js/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'portal2/error.js'               => 'include/javascript/sugar_sidecar.min.js',
                    'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/jquery/jquery.jstree.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',

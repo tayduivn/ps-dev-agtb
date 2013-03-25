@@ -1,4 +1,4 @@
-<div id="searchForm" data-tour="tour-navbar-search">
+<div id="searchForm">
     <form class="navbar-search pull-right">
         <input type="text" class="search-query span2" placeholder="{{str "LBL_SEARCH"}}" data-provide="typeahead" data-items="5">
         <div class="advanced">

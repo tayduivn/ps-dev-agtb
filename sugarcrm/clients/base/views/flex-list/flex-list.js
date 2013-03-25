@@ -108,7 +108,7 @@
      */
     addActions: function() {
         var meta = this.meta;
-        if(meta.selection) {
+        if(_.isObject(meta.selection)) {
             switch (meta.selection.type) {
                 case 'single':
                     this.addSingleSelectionAction();
@@ -120,7 +120,7 @@
                     break;
             }
         }
-        if(meta && meta.rowactions) {
+        if(meta && _.isObject(meta.rowactions)) {
             this.addRowActions();
         }
     },

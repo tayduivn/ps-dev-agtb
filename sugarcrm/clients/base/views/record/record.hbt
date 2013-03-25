@@ -1,4 +1,4 @@
-<div data-tour="tour-{{module}}-businesscard">
+<div>
     {{#if model.isNotEmpty}}
         {{#if enableHeaderPane}}
         <div class="headerpane">
@@ -15,15 +15,15 @@
                                         <div class="record-label" data-name="{{name}}">{{str label ../../../../../this.model.module}}</div>
                                     {{/unless}}
                                 {{/if}}
-                                <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
+                                <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
                                     {{field ../../../this ../../../this.model ../../../this.action}}
                                 </span>
                                 {{#unless ../../../createMode}}
-                                    {{#unless readonly}}
+                                    {{#notHas name ../../../../noEditFields}}
                                         <span class="record-edit-link-wrapper" data-name="{{name}}">
                                             <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="icon-pencil"></i></a>
                                         </span>
-                                    {{/unless}}
+                                    {{/notHas}}
                                 {{/unless}}
                             </span>
                         {{/each}}
@@ -60,16 +60,16 @@
                                         <div class="record-label" data-name="{{../this.name}}">{{#unless ../../this.dismiss_label}}{{str ../../this.label ../../../../../../../this.model.module}}{{/unless}}</div>
                                     {{/if}}
                                     {{#if name}}
-                                        <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../../../this.module}}-{{name}}">
+                                        <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
                                             {{field ../../../../../../this ../../../../../../../this.model ../../../../../../../this.action}}
                                         </span>
                                     {{/if}}
                                     {{#unless ../../../../../../createMode}}
-                                        {{#unless readonly}}
+                                        {{#notHas name ../../../../../../../noEditFields}}
                                             <span class="record-edit-link-wrapper" data-name="{{../name}}">
                                                 <a class="record-edit-link btn btn-invisible" data-type="{{../type}}" data-name="{{../name}}"><i class="icon-pencil"></i></a>
                                             </span>
-                                        {{/unless}}
+                                        {{/notHas}}
                                     {{/unless}}
                                 </div>
                             {{/each}}
@@ -98,16 +98,16 @@
 
                                 <div class="controls span{{this.span}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
                                     {{#if name}}
-                                        <span class='normal {{css}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../../../this.module}}-{{name}}">
+                                        <span class='normal {{css}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}">
                                             {{field ../../../../../../this ../../../../../../this.model ../../../../../../this.action}}
                                         </span>
                                     {{/if}}
                                     {{#unless ../../../../../../createMode}}
-                                        {{#unless readonly}}
+                                        {{#notHas name ../../../../../../../noEditFields}}
                                             <span class="record-edit-link-wrapper" data-name="{{../../name}}">
                                                 <a class="record-edit-link btn btn-invisible" data-type="{{../../type}}" data-name="{{../../name}}"><i class="icon-pencil"></i></a>
                                             </span>
-                                        {{/unless}}
+                                        {{/notHas}}
                                     {{/unless}}
                                 </div>
                             {{/each}}

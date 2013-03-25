@@ -1,6 +1,6 @@
 <div class="block thumbnail widget">
     <div class="influencers-widget">
-        <h4 data-tour="tour-influencers">Similar Opportunities</h4>
+        <h4>Similar Opportunities</h4>
         <div class="influencers-wrapper">
             <ul class="influencers-list">
                 {{#if this.collections.length}}
