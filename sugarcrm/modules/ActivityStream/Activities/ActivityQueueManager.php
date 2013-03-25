@@ -271,9 +271,11 @@ class ActivityQueueManager
     protected function processTags(Activity $act)
     {
         $data = json_decode($act->data, true);
-        foreach ($data['tags'] as $tag) {
-            $bean = BeanFactory::retrieveBean($tag['module'], $tag['id']);
-            $this->processRecord($bean, $act);
+        if (!empty($data['tags']) && is_array($data['tags'])) {
+            foreach ($data['tags'] as $tag) {
+                $bean = BeanFactory::retrieveBean($tag['module'], $tag['id']);
+                $this->processRecord($bean, $act);
+            }
         }
     }
 
