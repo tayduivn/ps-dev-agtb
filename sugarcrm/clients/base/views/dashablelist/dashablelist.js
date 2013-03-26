@@ -2,17 +2,16 @@
     extendsFrom: 'ListView',
     plugins: ['Dashlet', 'GridBuilder'],
     _dataFetched: false, // flag to determine if we tried to get records already
+    type : "list",
     initDashlet: function (view) {
-        var dashlet = app.utils.deepCopy(this.context.get("dashlet")),
+        var module = this.context.get("module"),
             filterDef = [];
 
-        this.model.set("auto_refresh", dashlet.auto_refresh || 0);
+        //If we are displaying the configuration view instead of the dashlet itself.
+        if(this.meta.config) {
+            var metadata = app.metadata.getView(module, 'list');
 
-        if (view === 'config') {
-
-            var metadata = app.metadata.getView(dashlet.module, 'list');
-
-            var panel_module_metadata = _.find(this.meta.dashlet_config_panels, function (panel) {
+            var panel_module_metadata = _.find(this.dashletConfig.dashlet_config_panels, function(panel){
                     return panel.name === 'panel_module_metadata';
                 }, this),
                 display_column = _.find(panel_module_metadata.fields, function (field) {
@@ -23,22 +22,21 @@
             };
             if (metadata) {
                 _.each(_.flatten(_.pluck(metadata.panels, 'fields')), function (field, index) {
-                    display_column.options[field.name] = app.lang.get(field.label, dashlet.module);
+                    display_column.options[field.name] = app.lang.get(field.label, module);
                 }, this);
             }
-            this.meta.panels = this.meta.dashlet_config_panels;
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+            this.meta.panels = this.dashletConfig.dashlet_config_panels;
             app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args:[this.meta.panels]});
         } else {
-            this.context.set("limit", dashlet.display_rows || 5);
+            this.context.set("limit", this.meta.display_rows || 5);
             var collection = this.context.get("collection");
 
             // set up filters for conditions
-            if (dashlet.my_items === "1") {
+            if (this.meta.my_items === "1") {
                 filterDef.push({'$owner': ''});
             }
 
-            if (dashlet.favorites === "1") {
+            if (this.meta.favorites === "1") {
                 filterDef.push({'$favorite': ''});
             }
 
@@ -50,29 +48,27 @@
                 this._dataFetched = true;
             }, this);
 
-            if (dashlet.auto_refresh && dashlet.auto_refresh > 0) {
+            if (this.meta.auto_refresh && this.meta.auto_refresh > 0) {
                 if (this.timerId) {
                     clearInterval(this.timerId);
                 }
                 this.timerId = setInterval(_.bind(function () {
                     this.context._dataFetched = false;
                     this.layout.loadData();
-                }, this), dashlet.auto_refresh * 1000 * 60);
+                }, this), this.meta.auto_refresh * 1000 * 60);
             }
 
-            var metadata = app.metadata.getView(dashlet.module, 'list');
+            var metadata = app.metadata.getView(module, 'list');
             _.each(dashlet.display_columns, function (name, index) {
                 var field = _.find(_.flatten(_.pluck(metadata.panels, 'fields')), function (field) {
                     return field.name === name;
                 }, this);
-                dashlet.display_columns[index] = _.extend({
+                this.meta.display_columns[index] = _.extend({
                     name: name,
                     sortable: true
                 }, field || {});
             }, this);
-
-            this.meta.panels = this.meta.panels || this.meta.dashlet_config_panels;
-            this.meta.panels[0].fields = dashlet.display_columns;
+            this.meta.panels[0].fields = this.meta.display_columns;
 
             // add css class based on module
             this.$el.addClass(dashlet.module.toLocaleLowerCase());

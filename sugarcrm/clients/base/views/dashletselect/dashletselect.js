@@ -94,30 +94,26 @@
         var collection = this.context.get("dashlet_collection");
         this.selectDashlet(collection[index].metadata);
     },
-    selectDashlet: function(metadata) {
+    selectDashlet:function (metadata) {
         app.drawer.load({
-            layout: {
-                name: 'dashletconfiguration',
-                components: [
-                    {
-                        view: metadata.type,
-                        context: {
-                            model: new app.Bean(),
-                            dashlet: _.extend({
-                                name: app.lang.get(metadata.name, metadata.config.module),
-                                type: metadata.type,
-                                viewName: 'config'
-                            },{
-                                module: metadata.module
-                            }, metadata.config)
-                        }
+            layout:{
+                name:'dashletconfiguration',
+                components:[{
+                    view:_.extend({}, metadata.config, {
+                        label:app.lang.get(metadata.name, metadata.config.module),
+                        name:metadata.type,
+                        config:true
+                    }),
+                    context:{
+                        model:new app.Bean(),
+                        module:metadata.config.module
                     }
-                ]
+                }]
             },
-            context: {
-                module: this.module,
-                model: new app.Bean(),
-                forceNew: true
+            context:{
+                module:this.module,
+                model:new app.Bean(),
+                forceNew:true
             }
         });
     },

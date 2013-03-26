@@ -380,7 +380,7 @@ class DependencyManager
 
     static function getDependenciesForFields($fields, $view = "")
     {
-        if ($view == "DetailView") {
+        if ($view == "DetailView" || $view == "ListView") {
             return array_merge(
                 self::getDependentFieldDependencies($fields),
                 self::getDropDownDependencies($fields)

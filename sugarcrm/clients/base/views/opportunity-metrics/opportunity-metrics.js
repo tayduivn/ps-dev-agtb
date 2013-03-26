@@ -95,8 +95,8 @@
 
     loadData: function (options) {
         var self = this,
-            url = app.api.buildURL(this.model.parentModel.module, 'opportunity_stats', {
-                id: this.model.parentModel.get('id')
+            url = app.api.buildURL(this.model.module, 'opportunity_stats', {
+                id: this.model.get('id')
             });
 
         app.api.call('read', url, null, {

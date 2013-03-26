@@ -21,7 +21,8 @@
         else
             this.$el.html(this.template(this));
 
-        app.view.Layout.prototype._addComponentsFromDef.call(this, components);
+        var context = this.context.parent || this.context;
+        app.view.Layout.prototype._addComponentsFromDef.call(this, components, context, context.get("module"));
     },
     _placeComponent: function(comp, def) {
         if(this.meta.empty) {
@@ -36,6 +37,7 @@
     setDashletMetadata: function(meta) {
         var metadata = this.model.get("metadata"),
             component = this.getCurrentComponent(metadata, this.index);
+
         _.each(meta, function(value, key){
             this[key] = value;
         }, component);
@@ -49,6 +51,7 @@
             });
         }
 
+        this.meta.components[0] = component;
         return component;
     },
     getCurrentComponent: function(metadata, tracekey) {
@@ -62,9 +65,10 @@
     },
     addDashlet: function(meta) {
         var component = this.setDashletMetadata(meta);
+        var def = component.view || component.layout || component;
 
         this.meta.empty = false;
-        this.meta.label = component.name;
+        this.meta.label =  def.label || def.name || "";
         //clear previous dashlet
         this._components[0].dispose();
         this.removeComponent(0);
@@ -120,40 +124,37 @@
         this.loadData();
     },
     editClicked: function(evt) {
-        var component = _.first(this._components),
-            self = this;
+        var self = this,
+            meta = app.utils.deepCopy(this.meta.components[0]),
+            type = meta.layout ? "layout" : "view";
+        if(_.isString(meta[type]))
+        {
+            meta[type] = {name:meta[type], config:true};
+        } else {
+            meta[type].config = true;
+        }
+
         app.drawer.open({
             layout: {
                 name: 'dashletconfiguration',
-                components: [
-                    {
-                        view: component.context.get("dashlet").type,
-                        context: {
-                            model: new app.Bean(),
-                            module: component.context.get("module"),
-                            dashlet: _.extend({
-                                viewName: 'config'
-                            },component.context.get("dashlet"))
-                        }
-                    }
-                ]
+                components: [meta]
             },
             context: {
                 model: new app.Bean(),
                 forceNew: true
             }
         }, function(model) {
+            debugger;
             if(!model) return;
-            self.addDashlet({
-                name: model.get("name"),
-                view: model.get("type"),
-                context: {
-                    module: model.get("module") || null,
-                    model: model.get("model") || null,
-                    modelId: model.get("modelId") || null,
-                    dashlet: model.attributes
-                }
-            });
+            var conf = model.toJSON(),
+                dash = {
+                    context: {
+                        module: model.get("module") || meta.context ? meta.context.module : null
+                    }
+                };
+            delete conf.config;
+            dash[type] = conf;
+            self.addDashlet(dash);
         });
     },
     toggleMinify: function(evt) {

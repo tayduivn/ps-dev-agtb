@@ -1,3 +1,9 @@
+/**
+ * @class app.view.layouts.DashboardLayout
+ *
+ * The outer layout of the dashboard. This layout contains the header view and wraps the daslet-main layout. The layouts for each dashboard are stored in the dashboard endpoint (rest/v10/Dashboards/{id})
+ *
+ */
 ({
     toggled: false,
     className: 'row-fluid',
@@ -63,57 +69,54 @@
         if (app.plugins._get('Dashlet', 'view')) {
             return;
         }
+        var sync = function (method, model, options) {
+                options = app.data.parseOptionsForSync(method, model, options);
+                var callbacks = app.data.getSyncCallbacks(method, model, options),
+                    path = (this.dashboardModule === 'Home' || model.id) ? this.apiModule : this.apiModule + '/' + this.dashboardModule;
+                if (method === 'read') {
+                    options.params.view = view;
+                }
+                app.api.records(method, path, model.attributes, options.params, callbacks);
+            },
+            Dashlet = app.Bean.extend({
+                sync:sync,
+                apiModule:'Dashboards',
+                module:'Home'
+            });
+
+
         app.plugins.register('Dashlet', 'view', {
-            onAttach: function () {
+            onAttach:function () {
                 this.on("init", function () {
-                    this.model.isNotEmpty = true;
-                    if (this.context.parent && this.context.parent.parent) {
-                        this.model.parentModel = this.context.parent.parent.get("model");
-                        this.model.parentCollection = this.context.parent.parent.get("collection");
-                    } else {
-                        this.model.parentModel = this.context.get("model");
-                        this.model.parentCollection = this.context.get("collection");
-                    }
-                    var dashlet_context = this.context.get("dashlet");
-                    var viewName;
-                    if (dashlet_context) {
-                        viewName = dashlet_context.viewName;
-                        delete dashlet_context.viewName;
-                    } else {
-                        dashlet_context = {};
-                    }
-
-                    if (viewName !== "config" && dashlet_context.link) {
-                        this.context.set("parentModel", this.model.parentModel);
-                        this.context.set("parentModule", this.model.parentModel.module);
-                        this.context.set("link", dashlet_context.link);
-                        this.context.set(this.context._prepareRelated(dashlet_context.link, this.model.parentModel.get("id")));
-                        this.collection = this.context.get("collection");
-                    }
-
-                    this.model.set(_.extend({
-                        name: dashlet_context.name,
-                        type: dashlet_context.type
-                    }, dashlet_context));
-                    if (viewName === "config") {
+                    this.dashletConfig = app.metadata.getView(this.module, this.name);
+                    this.dashModel = this.layout.context.get("model");
+                    var settings = _.extend({}, this.meta);
+                    delete settings.panels;
+                    delete settings.type;
+                    delete settings.action;
+                    this.settings = new Dashlet(settings);//
+                    if (this.meta && this.meta.config) {
                         this.createMode = true;
                         this.action = 'edit';
-                        this.layout.context.set("model", this.context.get("model"));
+                        //needed to allow the record hbt to render our settings rather than the context model
+                        this.model = this.dashModel;
+                        this.model.set(settings);
+                        this.model.set("componentType", (this instanceof app.view.Layout) ? "layout" : "view");
+                        this.model.isNotEmpty = true;
+                        this.meta.panels = this.dashletConfig.panels;
                         var templateName = this.name + '.dashlet-config';
                         this.template = app.template.getView(templateName, this.module) ||
                             app.template.getView(templateName) ||
                             app.template.getView('record') ||
                             this.template;
-                    } else if (viewName === "preview") {
-                        this.layout.context.set("model", this.context.get("model"));
+                    } else if (this.meta && this.meta.preview) {
                         var templateName = this.name + '.dashlet-preview';
                         this.template = app.template.getView(templateName, this.module) ||
                             app.template.getView(templateName) ||
                             this.template;
                     }
-
                     if (this.initDashlet && _.isFunction(this.initDashlet)) {
-                        this.initDashlet(viewName);
+                        this.initDashlet(this.name);
                     }
                 });
             }
@@ -136,8 +139,15 @@
             this.toggled = true;
         }
     },
+
+    /**
+     * Places only components that include the Dashlet plugin and places them in the "main-pane" div of
+     * the dashlet layout.
+     * @param component
+     * @private
+     */
     _placeComponent: function (component) {
-        var dashboardEl = this.$("#dashboard"),
+        var dashboardEl = this.$(".dashboard"),
             css = this.context.get("create") ? " edit" : "";
         if (dashboardEl.length == 0) {
             dashboardEl = $("<div></div>").attr({
@@ -145,8 +155,7 @@
             });
             this.$el.append(
                 $("<div></div>").attr({
-                    id: 'dashboard',
-                    'class': 'dashboard main-pane' + css
+                    'class' : 'dashboard main-pane' + css
                 }).append(
                         dashboardEl
                     )

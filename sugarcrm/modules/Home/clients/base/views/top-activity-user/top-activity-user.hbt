@@ -1,8 +1,8 @@
 <div class="dashlet-options">
     <div class="row-fluid">
         <div class="span6">
-            {{#each this.meta.buttons}}
-                {{field ../this model=../this.model template="edit"}}
+            {{#each this.dashletConfig.buttons}}
+                {{field ../this model=../this.settings template="edit"}}
             {{/each}}
         </div>
     </div>

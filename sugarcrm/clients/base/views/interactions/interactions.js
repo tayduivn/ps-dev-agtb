@@ -33,14 +33,11 @@
             'limit' : this.limit,
             'view' : 'calls'
         };
-        this.model.on("change:filter_duration", this.filterSwitcher, this);
-        if(this.model.parentModel) {
-            this.model.parentModel.on("change", this.loadData, this);
-        }
+        this.model.on("change", this.loadData, this);
     },
 
     initDashlet: function(view) {
-        var dashlet = app.utils.deepCopy(this.context.get("dashlet"));
+        this.settings.on("change:filter_duration", this.filterSwitcher, this);
 
         if(view === 'config') {
             // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
@@ -48,12 +45,12 @@
         }
     },
     loadData: function(params) {
-        if(this.disposed || !this.model.parentModel || !this.model.parentModel.get("id")) {
+        if(this.disposed || !this.model.get("id")) {
             return;
         }
 
         var self = this,
-            url = app.api.buildURL(this.model.parentModel.module, "interactions", {"id": this.model.parentModel.get("id")}, null);
+            url = app.api.buildURL(this.model.module, "interactions", {"id": this.model.get("id")}, null);
 
         var querystring = $.param(this.params);
         if (querystring.length > 0) {
@@ -98,7 +95,7 @@
     },
 
     filterSwitcher: function() {
-        this.params.filter = this.model.get("filter_duration");
+        this.params.filter = this.settings.get("filter_duration");
         this.params.limit = this.limit;
         this.layout.loadData();
     },
@@ -126,12 +123,6 @@
         this.$(".select2").select2({
             width: '100%'
         });
-    },
-    unbindData: function() {
-        if(this.model.parentModel) {
-            this.model.parentModel.off("change", null, this);
-        }
-        app.view.View.prototype.unbindData.call(this);
     },
     _dispose: function() {
         this.$(".select2").select2('destroy');

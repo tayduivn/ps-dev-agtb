@@ -42,11 +42,12 @@
             return;
         }
 
-        var twitter = this.model.get('twitter') ||
-                this.model.parentModel.get('name') ||
-                this.model.parentModel.get('account_name') ||
-                this.model.parentModel.get('full_name'),
-            limit = parseInt(this.model.get("limit") || 20, 10),
+        var twitter = this.settings.get('twitter') ||
+                this.model.get('twitter') ||
+                this.model.get('name') ||
+                this.model.get('account_name') ||
+                this.model.get('full_name'),
+            limit = parseInt(this.settings.get("limit") || 20, 10),
             self = this;
 
         this.screen_name = this.model.get('twitter') || false;

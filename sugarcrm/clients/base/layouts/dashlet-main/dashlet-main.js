@@ -19,7 +19,7 @@
             component.dispose();
         }, this);
         this._components = [];
-        this.$("#dashlets").remove();
+        this.$(".dashlets").remove();
 
         var components = app.utils.deepCopy(this.model.get("metadata")).components;
         _.each(components, function(component, index) {
@@ -47,7 +47,7 @@
     _placeComponent: function(comp, def) {
         this.$el.attr({
             id : 'dashlets',
-            'class': 'row-fluid'
+            class: 'dashlets row-fluid'
         }).append(comp.el);
     },
     applyDragAndDrop: function() {

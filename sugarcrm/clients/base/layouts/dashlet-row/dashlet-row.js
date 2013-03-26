@@ -30,7 +30,12 @@
                 empty: true,
                 components: [
                     {
-                        view: 'dashlet-row-empty'
+                        view: 'dashlet-row-empty',
+                        context:{
+                            module:'Home',
+                            forceNew:true,
+                            create:true
+                        }
                     }
                 ]
             }

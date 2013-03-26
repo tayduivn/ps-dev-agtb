@@ -21,7 +21,7 @@ $viewdefs["base"]["view"]["dashletconfiguration-headerpane"] = array(
             "fields" => array(
                 array(
                     "type" => "base",
-                    "name" => "name",
+                    "name" => "label",
                     "placeholder" => "LBL_NAME",
                 ),
             )

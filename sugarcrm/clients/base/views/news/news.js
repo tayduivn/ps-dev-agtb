@@ -13,27 +13,15 @@
 
 ({
     plugins: ['Dashlet'],
-    initialize: function (o) {
-        app.view.View.prototype.initialize.call(this, o);
-        if (this.context.parent.parent && this.context.parent.parent.get('model')) {
-            this.targetModel = this.context.parent.parent.get('model');
-            this.targetModel.on('change', this.loadData, this);
-        }
-    },
 
     loadData: function (options) {
         var name, limit;
 
-        if (_.isUndefined(this.targetModel)) {
+        if(_.isUndefined(this.model)){
             return;
         }
-
-        name = this.targetModel.get('account_name') ||
-            this.targetModel.get('name') ||
-            this.targetModel.get('full_name');
-        if (!name) {
-            return;
-        }
+        var name = this.model.get("account_name") || this.model.get('name') || this.model.get('full_name'),
+            limit = parseInt(this.model.get("limit") || 20, 10);
 
         limit = parseInt(this.model.get('limit') || 8, 10);
         $.ajax({
@@ -50,12 +38,5 @@
             context: this,
             complete: options ? options.complete : null
         });
-    },
-
-    _dispose: function () {
-        if (this.targetModel) {
-            this.targetModel.off('change', this.loadData, this);
-        }
-        app.view.View.prototype._dispose.call(this);
     }
 })

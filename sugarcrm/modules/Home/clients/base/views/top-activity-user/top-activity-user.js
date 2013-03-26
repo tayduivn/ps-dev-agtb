@@ -4,8 +4,8 @@
         'change select[name=filter_duration]': 'filterChanged'
     },
     initDashlet: function(viewName) {
-        this.viewName =viewName;
-        if(viewName !== "config") {
+        this.collection = new app.BeanCollection();
+        if(!this.meta.config) {
             this.collection.on("reset", this.render, this);
         } else {
             // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
@@ -31,10 +31,10 @@
         }
     },
     loadData: function(params) {
-        if(this.viewName === "config") {
+        if(this.meta.config) {
             return;
         }
-        var url = app.api.buildURL('mostactiveusers', null, null, {days: this.model.get("filter_duration")}),
+        var url = app.api.buildURL('mostactiveusers', null, null, {days: this.settings.get("filter_duration")}),
             self = this;
         app.api.call("read", url, null, {
             success: function(data) {
@@ -73,9 +73,8 @@
     },
 
     _dispose: function() {
-        if(this.collection) {
+        if (this.collection)
             this.collection.off("reset", null, this);
-        }
         app.view.View.prototype._dispose.call(this);
     }
 })

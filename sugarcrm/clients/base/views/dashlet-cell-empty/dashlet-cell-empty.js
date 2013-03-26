@@ -5,6 +5,8 @@
     originalTemplate: null,
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        //use the dashboard model rather than the current page's
+        this.model = this.layout.context.get("model");
 
         this.model.on("setMode", this.setMode, this);
         this.originalTemplate = this.template;
@@ -21,17 +23,17 @@
             }
         }, function(model) {
             if(!model) return;
-
-            self.layout.addDashlet({
-                name: model.get("name"),
-                view: model.get("type"),
-                context: {
-                    module: model.get("module") || null,
-                    model: model.get("model") || null,
-                    modelId: model.get("modelId") || null,
-                    dashlet: model.attributes
-                }
-            });
+            var conf = model.toJSON(),
+                dash = {
+                    context: {
+                        module: model.get("module") || null
+                    }
+                },
+                type = conf.componentType;
+            delete conf.config;
+            delete conf.componentType;
+            dash[type] = conf;
+            self.layout.addDashlet(dash);
         });
     },
     setMode: function(type) {
