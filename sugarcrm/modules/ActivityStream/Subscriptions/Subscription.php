@@ -77,6 +77,7 @@ class Subscription extends Basic
      */
     public static function checkSubscriptionList(User $user, array $records)
     {
+        $return = array();
         // Plucks IDs of records passed in.
         $ids = array_map(
             function ($record) {
@@ -84,15 +85,18 @@ class Subscription extends Basic
             },
             $records
         );
-        $query = self::getQueryObject();
-        $query->select(array('parent_id'));
-        $query->where()->in('parent_id', $ids);
-        $query->where()->equals('created_by', $user->id);
-        $result = $query->execute();
-        $return = array();
-        foreach ($result as $row) {
-            $return[$row['parent_id']] = true;
+
+        if (!empty($ids)) {
+            $query = self::getQueryObject();
+            $query->select(array('parent_id'));
+            $query->where()->in('parent_id', $ids);
+            $query->where()->equals('created_by', $user->id);
+            $result = $query->execute();
+            foreach ($result as $row) {
+                $return[$row['parent_id']] = true;
+            }
         }
+
         return $return;
     }
 
