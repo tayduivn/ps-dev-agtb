@@ -403,7 +403,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                             $fieldName .= '^' . $def['full_text_search']['boost'];
                             $fieldName = $mod . '.' . $fieldName;
                         }
-
                         $fields[] = $fieldName;
                     }
                 }
