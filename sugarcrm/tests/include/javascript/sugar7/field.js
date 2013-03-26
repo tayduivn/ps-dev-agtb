@@ -88,5 +88,37 @@ describe('Sugar7 field extensions', function() {
             expect(field.getFieldElement().hasClass(editClass)).toBeFalsy();
             expect(field.getFieldElement().hasClass(detailClass)).toBeTruthy();
         });
+
+        describe('Disabled', function() {
+           it('has both detail and disabled classes on set disabled', function() {
+               field = SugarTest.createField("base", "description", "base", "detail");
+               field.render();
+               field.setDisabled(true);
+
+               expect(field.getFieldElement().hasClass(detailClass)).toBeTruthy();
+               expect(field.getFieldElement().hasClass('disabled')).toBeTruthy();
+           });
+
+           it('has both edit and disabled classes on mode change from detail to edit', function() {
+               field = SugarTest.createField("base", "description", "base", "detail");
+               field.render();
+               field.setDisabled(true);
+
+               field.setMode('edit');
+               expect(field.getFieldElement().hasClass(detailClass)).toBeFalsy();
+               expect(field.getFieldElement().hasClass(editClass)).toBeTruthy();
+               expect(field.getFieldElement().hasClass('disabled')).toBeTruthy();
+           });
+
+           it('loses the disabled class when re-enabled', function() {
+               field = SugarTest.createField("base", "description", "base", "detail");
+               field.render();
+               field.setDisabled(true);
+
+               field.setDisabled(false);
+               expect(field.getFieldElement().hasClass(detailClass)).toBeTruthy();
+               expect(field.getFieldElement().hasClass('disabled')).toBeFalsy();
+           });
+        });
     });
 });

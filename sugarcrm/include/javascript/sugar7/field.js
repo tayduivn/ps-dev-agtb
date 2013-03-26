@@ -84,6 +84,10 @@
 
                 _fieldProto._render.call(this);
 
+                // handle rendering the action class if disabled
+                if(this._previousAction) {
+                    this._addViewClass(this._previousAction);
+                }
                 this._addViewClass(this.action);
                 if (isErrorState) {
                     this.decorateError(this._errors);
@@ -153,9 +157,27 @@
              * @override
              */
             setMode: function(name) {
-                this._removeViewClass(this.action);
+                // if we are disabled, we want to remove the previous view action, not the disabled class
+                var oldAction = this._previousAction || this.action;
+                this._removeViewClass(oldAction);
 
                 _fieldProto.setMode.call(this,name);
+            },
+
+            /**
+             * {@inheritdoc}
+             *
+             * Override setMode to remove the stale disabled CSS class.
+             * @override
+             */
+            setDisabled: function(disable) {
+                disable = _.isUndefined(disable) ? true : disable;
+
+                // remove the stale disabled CSS class (this.action === 'disabled')
+                if (disable === false && this.isDisabled()) {
+                    this._removeViewClass(this.action);
+                }
+                _fieldProto.setDisabled.call(this,disable);
             },
             /**
              * Decorate error gets called when this Field has a validation error.  This function applies custom error
