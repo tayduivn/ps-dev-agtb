@@ -38,7 +38,7 @@ table.dataTable {
       border-right: 1px solid darken(@grayLighter,5%);
       .rtl(@direction,ltr);
 
-      & > * {
+      &:not(:last-child) > * {
         display: inline-block;
         width: 100%;
         overflow-x: hidden;
