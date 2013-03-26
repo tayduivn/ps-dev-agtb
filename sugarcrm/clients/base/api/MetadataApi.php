@@ -34,6 +34,7 @@ class MetadataApi extends SugarApi {
                 'method' => 'getAllMetadata',
                 'shortHelp' => 'This method will return all metadata for the system',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
+                'noEtag' => true,
             ),
             'getAllMetadataPost' => array(
                 'reqType' => 'POST',
@@ -42,6 +43,7 @@ class MetadataApi extends SugarApi {
                 'method' => 'getAllMetadata',
                 'shortHelp' => 'This method will return all metadata for the system, filtered by the array of hashes sent to the server',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
+                'noEtag' => true,
             ),
             'getAllMetadataHashes' => array(
                 'reqType' => 'GET',
@@ -59,6 +61,29 @@ class MetadataApi extends SugarApi {
                 'shortHelp' => 'This method will return the metadata needed when not logged in',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noLoginRequired' => true,
+                'noEtag' => true,
+            ),
+            'getLanguage' => array(
+                'reqType' => 'GET',
+                'path' => array('lang', '?'),
+                'pathVars' => array('', 'lang'),
+                'method' => 'getLanguage',
+                'shortHelp' => 'Returns the labels for the application',
+                'longHelp' => 'include/api/html/metadata_all_help.html',
+                'noLoginRequired' => true,
+                'rawReply' => true,
+                'noEtag' => true,
+            ),
+            'getPublicLanguage' => array(
+                'reqType' => 'GET',
+                'path' => array('lang', 'public', '?'),
+                'pathVars' => array('', '', 'lang'),
+                'method' => 'getPublicLanguage',
+                'shortHelp' => 'Returns the public labels for the application',
+                'longHelp' => 'include/api/html/metadata_all_help.html',
+                'noLoginRequired' => true,
+                'rawReply' => true,
+                'noEtag' => true,
             ),
         );
     }
@@ -73,6 +98,13 @@ class MetadataApi extends SugarApi {
 
     public function getAllMetadata(ServiceBase $api, array $args) {
         global $current_language, $app_strings, $app_list_strings, $current_user;
+
+        $this->setPlatformList($api);
+
+        $hash = $this->getCachedMetadataHash();
+        if (!empty($hash)){
+            generateETagHeader($hash);
+        }
 
         // asking for a specific language
         if (isset($args['lang']) && !empty($args['lang'])) {
@@ -112,11 +144,6 @@ class MetadataApi extends SugarApi {
 
         $this->setPlatformList($api);
 
-        $hash = $this->getCachedMetadataHash();
-        if (!empty($hash)){
-            generateETagHeader($hash);
-        }
-        //If we have gotten here, either the hash cache was empty or the etag didn't match the hash so we have to send data
 
         $data = $this->getMetadataCache($this->platforms[0],false);
 
@@ -152,6 +179,11 @@ class MetadataApi extends SugarApi {
         // Added an isset check for platform because with no platform set it was
         // erroring out. -- rgonzalez
         $this->setPlatformList($api);
+
+        $hash = $this->getCachedMetadataHash(true);
+        if (!empty($hash)){
+            generateETagHeader($hash);
+        }
 
         // Default the type filter to everything available to the public, no module info at this time
         $this->typeFilter = array('fields','labels','views', 'layouts', 'config', 'jssource');
@@ -238,6 +270,10 @@ class MetadataApi extends SugarApi {
 
         $js .= "}})(SUGAR.App);";
         $hash = md5($js);
+        //If we are going to be using uglify to minify our JS, we should minify the entire file rather than each component separately.
+        if (!inDeveloperMode() && !empty($GLOBALS['sugar_config']['uglify'])) {
+            $js = SugarMin::minify($js);
+        }
         $path = "cache/javascript/$platform/components_$hash.js";
         if (!file_exists($path)){
             mkdir_recursive(dirname($path));
@@ -552,54 +588,95 @@ class MetadataApi extends SugarApi {
      * @return array
      */
     public function getStringUrls(&$data, $isPublic = false) {
-        $mm = $this->getMetadataManager();
-
+        $platform = $this->platforms[0];
         $languageList = array_keys(get_languages());
         sugar_mkdir(sugar_cached('api/metadata'), null, true);
 
         $fileList = array();
-        foreach ( $languageList as $language ) {            
-            $stringData = array();
-            $stringData['app_list_strings'] = $mm->getAppListStrings($language);
-            $stringData['app_strings'] = $mm->getAppStrings($language);
-            if ( $isPublic ) {
-                // Exception for the AppListStrings.
-                $app_list_strings_public = array();
-                $app_list_strings_public['available_language_dom'] = $stringData['app_list_strings']['available_language_dom'];
-                
-                // Let clients fill in any gaps that may need to be filled in
-                $app_list_strings_public = $this->fillInAppListStrings($app_list_strings_public, $stringData['app_list_strings'],$language);
-                $stringData['app_list_strings'] = $app_list_strings_public;
-                
-            } else {
-                $modStrings = array();
-                foreach ($data['modules'] as $modName => $moduleDef) {
-                    $modData = $mm->getModuleStrings($modName, $language);
-                    $modStrings[$modName] = $modData;
-                }
-                $stringData['mod_strings'] = $modStrings;
-            }
-            // cast the app list strings to objects to make integer key usage in them consistent for the clients
-            foreach ($stringData['app_list_strings'] as $listIndex => $listArray) {
-                if (is_array($listArray) && !array_key_exists('',$listArray)) {
-                    $stringData['app_list_strings'][$listIndex] = (object) $listArray;
-                }
-            }
-            $stringData['_hash'] = md5(serialize($stringData));
-            $fileList[$language] = sugar_cached('api/metadata/lang_'.$language.'_'.$stringData['_hash'].'.json');
-            sugar_file_put_contents_atomic($fileList[$language],json_encode($stringData));
+        foreach ( $languageList as $language ) {
+            $fileList[$language] = $this->getLangUrl($platform, $language, $isPublic);
         }
-        
         $urlList = array();
         foreach ( $fileList as $lang => $file ) {
             $urlList[$lang] = $this->getUrlForCacheFile($file);
         }
-
-        // We need the default language somewhere, how about here?
         $urlList['default'] = $GLOBALS['sugar_config']['default_language'];
-        $urlList['_hash'] = md5(serialize($urlList));
-
         return $urlList;
+    }
+
+    /**
+     * Given a platform and language, returns the language JSON contents.
+     * @param ServiceBase $api
+     * @param array $args
+     */
+    public function getLanguage(ServiceBase $api, array $args, $public = false)
+    {
+        $this->setPlatformList($api);
+
+        $hash = $this->getCachedLanguageHash($this->platforms[0], $args['lang'], $public);
+        if (!empty($hash)){
+            generateETagHeader($hash);
+        }
+
+        $resp = $this->buildLanguageFile($this->platforms[0], $args['lang'], $this->getModuleList(), $public);
+        if(empty($hash) || $hash != $resp['hash']){
+            $this->putCachedLanguageHash($this->platforms[0], $args['lang'], $resp['hash'], $public);
+            generateETagHeader($resp['hash']);
+        }
+
+        return $resp['data'];
+    }
+
+    public function getPublicLanguage(ServiceBase $api, array $args)
+    {
+        return $this->getLanguage($api, $args, true);
+    }
+
+    protected function getLangUrl($platform, $language, $isPublic=false){
+        $public_key = $isPublic ? "_public" : "";
+        return  sugar_cached("api/metadata/lang_{$language}_{$platform}{$public_key}.json");
+    }
+
+    protected function buildLanguageFile($platform, $language, $modules, $isPublic=false) {
+        $mm = $this->getMetadataManager();
+        sugar_mkdir(sugar_cached('api/metadata'), null, true);
+        $filePath = $this->getLangUrl($platform, $language, $isPublic);
+        if (SugarAutoLoader::fileExists($filePath)) {
+            return file_get_contents($filePath);
+        }
+
+
+        $stringData = array();
+        $stringData['app_list_strings'] = $mm->getAppListStrings($language);
+        $stringData['app_strings'] = $mm->getAppStrings($language);
+        if ( $isPublic ) {
+            // Exception for the AppListStrings.
+            $app_list_strings_public = array();
+            $app_list_strings_public['available_language_dom'] = $stringData['app_list_strings']['available_language_dom'];
+
+            // Let clients fill in any gaps that may need to be filled in
+            $app_list_strings_public = $this->fillInAppListStrings($app_list_strings_public, $stringData['app_list_strings'],$language);
+            $stringData['app_list_strings'] = $app_list_strings_public;
+
+        } else {
+            $modStrings = array();
+            foreach ($modules as $modName => $moduleDef) {
+                $modData = $mm->getModuleStrings($modName, $language);
+                $modStrings[$modName] = $modData;
+            }
+            $stringData['mod_strings'] = $modStrings;
+        }
+        // cast the app list strings to objects to make integer key usage in them consistent for the clients
+        foreach ($stringData['app_list_strings'] as $listIndex => $listArray) {
+            if (is_array($listArray) && !array_key_exists('',$listArray)) {
+                $stringData['app_list_strings'][$listIndex] = (object) $listArray;
+            }
+        }
+        $stringData['_hash'] = md5(serialize($stringData));
+        $data = json_encode($stringData);
+        sugar_file_put_contents_atomic($filePath,$data);
+
+        return array("hash" => $stringData['_hash'], "data" => $data);
     }
 
     public function getUrlForCacheFile($cacheFile) {
@@ -666,7 +743,7 @@ class MetadataApi extends SugarApi {
         if ( inDeveloperMode() ) {
             return null;
         }
-
+        $metadata = array();
         if ( $isPublic ) {
             $type = 'public';
         } else {
@@ -713,21 +790,42 @@ class MetadataApi extends SugarApi {
     protected function cacheMetadataHash($hash, $isPublic = false)
     {
         $public = $isPublic ? "public_" : "";
-        $key = "meta_hash_$public" . implode( ",", $this->platforms);
-        $path = sugar_cached("api/metadata/$key.php");
-        file_put_contents($path, "<?php\n \$_hash='$hash';");
+        $key = "meta_hash_$public" . implode( "_", $this->platforms);
+        return $this->addToHashCache($key, $hash);
     }
 
     protected function getCachedMetadataHash($isPublic = false)
     {
-        $_hash = false;
         $public = $isPublic ? "public_" : "";
-        $key = "meta_hash_$public" . implode( ",", $this->platforms);
-        $path = sugar_cached("api/metadata/$key.php");
-        if (file_exists($path))
-        {
-            include($path);
-        }
-        return $_hash;
+        $key = "meta_hash_$public" . implode( "_", $this->platforms);
+        return $this->getFromHashCache($key);
+    }
+
+    protected function putCachedLanguageHash($platform, $lang, $hash, $isPublic=false)
+    {
+        $key = $this->getLangUrl($platform, $lang, $isPublic);
+        $this->addToHashCache($key, $hash);
+    }
+
+    protected function getCachedLanguageHash($platform, $lang, $isPublic=false)
+    {
+        $key = $this->getLangUrl($platform, $lang, $isPublic);
+        return $this->getFromHashCache($key);
+    }
+
+    protected function addToHashCache($key, $hash){
+        $hashes = array();
+        $path = sugar_cached("api/metadata/hashes.php");
+        @include($path);
+        $hashes[$key] = $hash;
+        write_array_to_file("hashes", $hashes, $path);
+        SugarAutoLoader::addToMap($path);
+    }
+
+    protected function getFromHashCache($key){
+        $hashes = array();
+        $path = sugar_cached("api/metadata/hashes.php");
+        @include($path);
+        return !empty($hashes[$key]) ? $hashes[$key] : false;
     }
 }

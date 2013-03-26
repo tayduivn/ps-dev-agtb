@@ -621,7 +621,7 @@ class RestService extends ServiceBase {
     protected function respond($output, $route, $args) {
         // TODO: gzip, and possibly XML based output
         if (!empty($route['rawReply'])) {
-            if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($route['noEtag'])) {
         	   $this->generateETagHeader(md5($output));
             }
             elseif($_SERVER['REQUEST_METHOD'] == 'POST') {
