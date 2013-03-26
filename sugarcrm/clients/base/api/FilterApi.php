@@ -307,7 +307,7 @@ class FilterApi extends SugarApi
                     }
                 }
 
-                if(empty($rbean->id) && !empty($fieldDef['id_name'])) {
+                if(empty($rbean->id) && !empty($fieldDef['id_name']) && !empty($data[$fieldDef['id_name']])) {
                 	$rbean->id = $data[$fieldDef['id_name']];
                 }
 
