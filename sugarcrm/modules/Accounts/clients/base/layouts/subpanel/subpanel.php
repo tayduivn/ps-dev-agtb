@@ -4,7 +4,6 @@ $subpanels = array(
     'LBL_MEMBER_ORG_SUBPANEL_TITLE' => 'members',
     'LBL_CONTACTS_SUBPANEL_TITLE' => 'contacts',
     'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'opportunities',
-    'LBL_QUOTES_SUBPANEL_TITLE' => 'quotes',
     'LBL_LEADS_SUBPANEL_TITLE' => 'leads',
     'LBL_CAMPAIGNS' => 'campaign_accounts',
     'LBL_CASES_SUBPANEL_TITLE' => 'cases',

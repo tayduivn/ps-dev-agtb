@@ -3,7 +3,6 @@
 $subpanels = array(
     'LBL_LEADS_SUBPANEL_TITLE' => 'leads',
     'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'opportunities',
-    'LBL_QUOTES_SUBPANEL_TITLE' => 'quotes',
     'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE' => 'campaign_contacts',
     'LBL_CASES_SUBPANEL_TITLE' => 'cases',
     'LBL_BUGS_SUBPANEL_TITLE' => 'bugs',
