@@ -43,6 +43,11 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function factoryProvider()
     {
+        switch(SugarSearchEngineFactory::getFTSEngineNameFromConfig()) {
+            case 'Elastic'  : $default = 'SugarSearchEngineElastic'; break;
+            default         : $default = 'SugarSearchEngine';
+        }
+
         return array(
             // depends on config, disabled array('','SugarSearchEngine'),
             array('Elastic','SugarSearchEngineElastic'),
