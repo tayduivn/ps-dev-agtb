@@ -58,12 +58,14 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                     'default' => true,
                     'sortable' => false,
                 ),
+//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
                 array(
                     'name' => 'sales_stage',
                     'width' => 10,
                     'label' => 'LBL_LIST_SALES_STAGE',
                     'default' => true,
                 ),
+//END SUGARCRM flav=pro && flav!=ent ONLY
                 'sales_status',
                 array(
                     'name' => 'amount',
