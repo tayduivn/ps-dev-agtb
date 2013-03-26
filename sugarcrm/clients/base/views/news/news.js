@@ -2,8 +2,9 @@
     plugins: ['Dashlet'],
     initialize: function(o) {
         app.view.View.prototype.initialize.call(this, o);
-        if(this.model.parentModel && this.model.get("requiredModel")) {
-            this.model.parentModel.on("change", this.loadData, this);
+        if(this.context.parent.parent && this.context.parent.parent.get("model")) {
+            this.targetModel = this.context.parent.parent.get("model");
+            this.targetModel.on("change", this.loadData, this);
         }
     },
 
@@ -19,10 +20,10 @@
     },
 
     loadData: function(options) {
-        if(_.isUndefined(this.model.parentModel)){
+        if(_.isUndefined(this.targetModel)){
             return;
         }
-        var name = this.model.parentModel.get("account_name") || this.model.parentModel.get('name') || this.model.parentModel.get('full_name'),
+        var name = this.targetModel.get("account_name") || this.targetModel.get('name') || this.targetModel.get('full_name'),
             limit = parseInt(this.model.get("limit") || 20, 10);
 
         if (name) {
@@ -41,7 +42,8 @@
     },
 
     _dispose: function() {
-        this.model.parentModel.on("change", this.loadData, this);
+        if (this.targetModel)
+            this.targetModel.off("change", this.loadData, this);
         app.view.View.prototype._dispose.call(this);
     }
 })
