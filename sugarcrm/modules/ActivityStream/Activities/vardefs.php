@@ -139,7 +139,7 @@ $dictionary['Activity'] = array(
         'meetings' => array(
             'name' => 'meetings',
             'type' => 'link',
-            'relationship' => 'meetings_activities',
+            'relationship' => 'meeting_activities',
             'source' => 'non-db',
             'vname' => 'LBL_MEETINGS',
         ),
@@ -153,7 +153,7 @@ $dictionary['Activity'] = array(
         'tasks' => array(
             'name' => 'tasks',
             'type' => 'link',
-            'relationship' => 'tasks_activities',
+            'relationship' => 'task_activities',
             'source' => 'non-db',
             'vname' => 'LBL_TASKS',
         ),
