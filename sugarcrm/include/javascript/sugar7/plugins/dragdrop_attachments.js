@@ -111,7 +111,7 @@
                                     module: note.module,
                                     id: note.id,
                                     field: 'filename'
-                                });
+                                }) + "&skipConnectors=true";
 
                                 data.append("filename", file);
                                 $.ajax({
