@@ -52,6 +52,11 @@
         this.initDashletPlugin();
         if (module === 'Home') {
             this.on("render", this.toggleSidebar);
+            
+            if (context.get("modelId")) {
+                // save it as last visit
+                app.user.setPreference('home-last-visit', context.get("modelId"));
+            }
         }
     },
     initDashletPlugin: function () {
@@ -170,6 +175,9 @@
                         //For other modules
                         this.navigateLayout(model.id);
                     } else {
+                        if (app.user.getPreference('home-last-visit')) {
+                            model = _.findWhere(this.collection.models, {id: app.user.getPreference('home-last-visit')});
+                        }
                         app.navigate(this.context, model);
                     }
                 } else {
