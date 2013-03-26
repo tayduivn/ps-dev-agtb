@@ -36,6 +36,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['ProductTemplates']['base']['view']['list'] = array(
+    'favorites' => false,
     'panels' => array(
         array(
             'name' => 'panel_header',
