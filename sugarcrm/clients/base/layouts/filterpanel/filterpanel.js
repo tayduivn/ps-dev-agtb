@@ -58,10 +58,17 @@
         } else if(def.view == "filter-create") {
             this.$(".form-search-related").append(component.el);
         } else {
+            // If we recognize the view, prevent it from rendering until it's
+            // requested explicitly by the user.
             if (this.availableToggles[component.name]) {
                 this.toggleComponents.push(component);
                 this.componentsList[component.name] = component;
                 this._components.splice(this._components.indexOf(component), 1);
+            } else {
+                // Safety check, just in case we've got a view that the layout
+                // doesn't recognize.
+                component.render();
+                this.$(".main-content").append(component.el);
             }
 
             if (component.name == "activitystream") {
