@@ -161,6 +161,7 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
         // call filter to get data
         $filterApi = new FilterApi();
         $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
         $filterArgs = array(
             'filter' => $filter,
             'module' => $this->bean->module_name,
