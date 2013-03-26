@@ -1,4 +1,8 @@
 ({
+    plugins: ['dropdown'],
+    events: {
+      'click .navbar':'closeOpenDrops'
+    },
     /**
      * Listen to events to resize the header to fit the browser width
      * @param options
