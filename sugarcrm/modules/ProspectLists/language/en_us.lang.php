@@ -66,6 +66,7 @@ $mod_strings = array (
   'LBL_LEADS_SUBPANEL_TITLE' => 'Leads',
   'LBL_PROSPECTS_SUBPANEL_TITLE'=>'Targets',
   'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'Accounts',
+  'LBL_CAMPAIGNS_SUBPANEL_TITLE' => 'Campaigns',
   'LBL_COPY_PREFIX' =>'Copy of',
   'LBL_USERS_SUBPANEL_TITLE' =>'Users',
   'LBL_TYPE' => 'Type',
