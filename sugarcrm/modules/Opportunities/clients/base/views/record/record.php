@@ -90,14 +90,26 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'account_name',
                 array(
-                    'name' => 'date_closed',
-                    //BEGIN SUGARCRM flav=ent ONLY
-                    'readonly' => true,
-                    //END SUGARCRM flav=ent ONLY
-                ),
+                    'name' => 'account_name',
+                    'related_fields' => array(
+                        'account_id'
+                    )
+                ),                
+                'lead_source',
                 'sales_status',
+                'campaign_name',
+                'assigned_user_name',
+                'opportunity_type',                
+                )
+            ),
+        array(
+            'name' => 'panel_hidden',
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'columns' => 2,
+            'fields' => array(
                 array(
                     'name' => 'amount',
                     'type' => 'currency',
@@ -114,6 +126,12 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'base_rate_field' => 'base_rate',
                 ),
                 array(
+                    'name' => 'date_closed',
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    'readonly' => true,
+                    //END SUGARCRM flav=ent ONLY
+                ),
+                array(
                     'name' => 'best_case',
                     'type' => 'currency',
                     'label' => 'LBL_BEST_CASE',
@@ -122,7 +140,9 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         'currency_id',
                         'base_rate',
                     ),
+                    //BEGIN SUGARCRM flav=ent ONLY
                     'readonly' => true,
+                    //END SUGARCRM flav=ent ONLY
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
@@ -135,28 +155,21 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         'currency_id',
                         'base_rate',
                     ),
+                    //BEGIN SUGARCRM flav=ent ONLY
                     'readonly' => true,
+                    //END SUGARCRM flav=ent ONLY
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
-                'opportunity_type',
-                'assigned_user_name',
-            ),
-        ),
-        array(
-            'name' => 'panel_hidden',
-            'hide' => true,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'columns' => 2,
-            'fields' => array(
+                array(
+                    'type' => 'teamset',
+                    'name' => 'team_name'
+                ),
                 'next_step',
                 array(
                     'name' => 'description',
-                    'span' => 12,
+                    'span' => 12
                 ),
-                'lead_source',
-                'campaign_name',
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,
@@ -168,33 +181,14 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         ),
                         array(
                             'type' => 'label',
-                            'default_value' => 'LBL_BY',
+                            'default_value' => 'LBL_BY'
                         ),
                         array(
                             'name' => 'created_by_name',
-                        ),
-                    ),
-                ),
-                'team_name',
-                array(
-                    'name' => 'date_modified_by',
-                    'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_MODIFIED',
-                    'fields' => array(
-                        array(
-                            'name' => 'date_modified',
-                        ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY',
-                        ),
-                        array(
-                            'name' => 'modified_by_name',
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    ),
+                        )
+                    )
+                )               
+            )
+        )
+    )    
 );
