@@ -9,7 +9,7 @@
             },
 
             expandNewPost: function(event) {
-                this.$(event.currentTarget).attr("placeholder", "Drop a file to attach it to the comment.").addClass("dragdrop");
+                this.$(event.currentTarget).addClass("dragdrop");
                 return false;
             },
 
@@ -20,14 +20,19 @@
             shrinkNewPost: function(event) {
                 event.stopPropagation();
                 event.preventDefault();
-                this.$(event.currentTarget).attr("placeholder", "Type your post").removeClass("dragdrop");
+                this.$(event.currentTarget).removeClass("dragdrop");
                 return false;
             },
 
             dropAttachment: function(event) {
-                event.stopPropagation();
-                event.preventDefault();
+                var text = $.trim(event.dataTransfer.getData("text/plain")),
+                    container = this.$(event.currentTarget);
                 this.shrinkNewPost(event);
+
+                if (text.length) {
+                    container.html(container.html() + " " + text).trigger('change');
+                }
+
                 _.each(event.dataTransfer.files, function(file, i) {
                     var fileReader = new FileReader();
 
@@ -74,6 +79,9 @@
 
                     fileReader.readAsDataURL(file);
                 }, this);
+
+                event.stopPropagation();
+                event.preventDefault();
             },
 
             getAttachments: function() {
