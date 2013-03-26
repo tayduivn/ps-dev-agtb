@@ -29,7 +29,8 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
     'vname' => 'LBL_CONVERTED',
     'type' => 'bool',
     'default' => '0',
-    'comment' => 'Has Lead been converted to a Contact (and other Sugar objects)'
+    'comment' => 'Has Lead been converted to a Contact (and other Sugar objects)',
+    'massupdate' => false,
   ),
   'refered_by' =>
   array (
@@ -226,6 +227,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
         'len' => '255',
         'source' => 'non-db',
         'unified_search' => false,
+        'massupdate' => false,
     ),
   'account_id' =>
   array (
@@ -289,7 +291,8 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
       'isnull' => 'true',
       'module' => 'Campaigns',
       'source' => 'non-db',
-      'additionalFields' => array('id' => 'campaign_id')
+      'additionalFields' => array('id' => 'campaign_id'),
+      'massupdate' => false,
     ),
     'campaign_leads' =>
     array (
