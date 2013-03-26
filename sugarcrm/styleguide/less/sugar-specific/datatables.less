@@ -55,6 +55,7 @@ table.dataTable {
         width: 30px;
       }
 
+      /*
       &:last-child {
         max-width: 60px;
         min-width: 60px;
@@ -97,7 +98,7 @@ table.dataTable {
         position: absolute;
         right: 0;
       }
-
+      */
       a {
         color: @grayLight;
         text-decoration: none;
@@ -468,7 +469,14 @@ table.dataTable {
  * The flex list allows you to add left actions and right actions to the traditional list view.
  * The code below aims to fix the first action column and the last action column
  */
-.flex-list {
+.flex-list-view {
+
+  position: relative;
+  .flex-list-view-content {
+    overflow-y: auto;
+    width: 100%;
+  }
+
   // .flex-list.left-actions to fix the first column
   &.left-actions {
     table.dataTable {
