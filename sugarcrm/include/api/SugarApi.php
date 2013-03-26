@@ -84,6 +84,10 @@ abstract class SugarApi {
             $data = html_entity_decode($data, ENT_COMPAT|ENT_QUOTES, 'UTF-8');
         }
 
+        // Support returning whether the current user is following the record.
+        $sub = Subscription::checkSubscription($api->user, $bean);
+        $data['following'] = !empty($sub);
+
         if (!empty($bean->module_name)) {
             $data['_module'] = $bean->module_name;
         }
@@ -94,12 +98,18 @@ abstract class SugarApi {
     protected function formatBeans(ServiceBase $api, $args, $beans)
     {
         $ret = array();
-        foreach($beans as $bean){
-            if(!is_subclass_of($bean, 'SugarBean')) {
+        foreach ($beans as $bean) {
+            if (!is_subclass_of($bean, 'SugarBean')) {
                 continue;
             }
             $ret[] = $this->formatBean($api, $args, $bean);
         }
+
+        $subscriptions = Subscription::checkSubscriptionList($api->user, $ret);
+        foreach ($ret as &$record) {
+            $record['following'] = !empty($subscriptions[$record['id']]);
+        }
+
         return $ret;
     }
     /**
@@ -216,7 +226,7 @@ abstract class SugarApi {
 
     protected function toggleFavorites($bean, $favorite)
     {
-        
+
         $reindexBean = false;
 
         $favorite = (bool) $favorite;
@@ -315,7 +325,7 @@ abstract class SugarApi {
         $monitor->setValue('visible', 1);
         $monitor->setValue('item_id', $bean->id);
         $monitor->setValue('item_summary', $bean->get_summary_text());
-        
+
         $manager->saveMonitor($monitor, true, true);
     }
 

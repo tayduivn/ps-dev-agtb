@@ -658,9 +658,10 @@ $app_list_strings = array (
   'product_status_quote_key' => 'Quotes',
   'product_status_dom' =>
   array (
-    'Quotes' => 'Quoted',
-    'Orders' => 'Ordered',
-    'Ship' => 'Shipped',
+      '' => '',
+      'Quotes' => 'Quoted',
+      'Orders' => 'Ordered',
+      'Ship' => 'Shipped',
   ),
 
 
@@ -1973,7 +1974,8 @@ $app_strings = array (
     'LBL_ROUTING_TO_ADDRESS'                => 'to address',
     'LBL_ROUTING_WITH_TEMPLATE'             => 'with template',
   'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'This record currently contains values in the Office Phone and Address fields. To overwrite these values with the following Office Phone and Address of the Account that you selected, click "OK". To keep the current values, click "Cancel".',
-  'LBL_DROP_HERE' => '[Drop Here]',
+  'NTC_OVERWRITE_POPULATED_DATA_CONFIRM' => 'This record currently contains the following related values. To overwrite these values with the following values that you selected, click "Confirm". To keep the current values, click "Cancel".',
+    'LBL_DROP_HERE' => '[Drop Here]',
     'LBL_EMAIL_ACCOUNTS_EDIT'               => 'Edit',
     'LBL_EMAIL_ACCOUNTS_GMAIL_DEFAULTS'     => 'Prefill Gmail&#153; Defaults',
     'LBL_EMAIL_ACCOUNTS_NAME'               => 'Name',
@@ -2648,6 +2650,7 @@ $app_strings = array (
     'LBL_LISTVIEW_TWO_REQUIRED' => 'Please select at least 2 records to proceed.',
     'LBL_LISTVIEW_LESS_THAN_TEN_SELECT' => 'Please select less than 10 records to proceed.',
     'LBL_LISTVIEW_ALL' => 'All',
+    'LBL_LISTVIEW_FILTER_ALL' => 'All {{moduleName}}',
     'LBL_LISTVIEW_NONE' => 'Deselect All',
     'LBL_LISTVIEW_OPTION_CURRENT' => 'Select This Page',
     'LBL_LISTVIEW_OPTION_ENTIRE' => 'Select All',
@@ -3578,6 +3581,7 @@ $app_strings = array (
     'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.',
     //END SUGARCRM flav=PRO ONLY
 
+    'LBL_REQUIRED_FIELD' => 'Required',
     // for nomad mobile
     'LBL_OPTIONAL' => 'Optional',
     'LBL_RELATED_MODULE' => 'Related {{{this}}}',
@@ -3850,7 +3854,8 @@ $app_strings = array (
     'LBL_CALLED' => 'called',
 
     //record save
-    'LBL_RECORD_SAVED' => 'Record saved.',
+    'LBL_RECORD_SAVED' => 'Record saved.', // use when there is no information about the record
+    'LBL_RECORD_SAVED_SUCCESS' => 'Record {{name}} was created.', // use when a model is available
 
     //for sidecar alert view
     'LBL_ALERT_TITLE_SUCCESS' => 'Success:',
@@ -3858,13 +3863,20 @@ $app_strings = array (
     'LBL_ALERT_TITLE_NOTICE' => 'Notice:',
     'LBL_ALERT_TITLE_ERROR' => 'Error:',
     'LBL_ALERT_TITLE_LOADING' => 'Loading',
+    'LBL_ALERT_BROWSER_NOT_SUPPORTED' => 'Your browser version is no longer supported or you are using an unsupported browser.',
+    'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 10</li><li>Firefox 18</li><li>Safari 6</li><li>Chrome 24</li></ul>',
 
     //interaction chart
     'LBL_CHART_NO_DATA' => 'No Data Available.',
 
+    //organization chart
+    'LBL_ORG_CHART' => 'Organization Chart',
+    'LBL_ORG_CHART_DESC' => 'Displays the employee structure of your organization.',
+
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
     'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment',
+    'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip;',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
     'LBL_DATA_VIEW' => 'Data View',
 

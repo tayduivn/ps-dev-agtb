@@ -224,10 +224,9 @@ class UnifiedSearchApi extends SugarListApi {
         $sortByDateModified = true;
         //END SUGARCRM flav=!pro ONLY
 
-        foreach($recordSet['records'] as &$record) {
-            $bean = BeanFactory::retrieveBean($record['_module'], $record['id']);
-            $sub = Subscription::checkSubscription($api->user, $bean);
-            $record['following'] = !empty($sub);
+        $subscriptions = Subscription::checkSubscriptionList($api->user, $recordSet['records']);
+        foreach ($recordSet['records'] as &$record) {
+            $record['following'] = !empty($subscriptions[$record['id']]);
         }
 
         return $recordSet;

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -42,21 +42,21 @@ $vardefs = array(
 			'dbType' => 'id',
 			'audited'=>true,
 			'comment' => 'User ID assigned to record',
-            'duplicate_merge'=>'disabled'           
+            'duplicate_merge'=>'disabled'
 		),
-	 'assigned_user_name' => 
+	 'assigned_user_name' =>
 	 array (
 		    'name' => 'assigned_user_name',
 		    'link'=>'assigned_user_link' ,
 		    'vname' => 'LBL_ASSIGNED_TO_NAME',
-		    'rname' => 'user_name',
+		    'rname' => 'full_name',
 		    'type' => 'relate',
 		    'reportable'=>false,
 		    'source'=>'non-db',
 		    'table' => 'users',
 		    'id_name' => 'assigned_user_id',
 		    'module'=>'Users',
-		    'duplicate_merge'=>'disabled' 
+		    'duplicate_merge'=>'disabled'
 	 ),
 		      'assigned_user_link' =>
   array (
@@ -71,7 +71,7 @@ $vardefs = array(
     'duplicate_merge'=>'enabled',
     'rname' => 'user_name',
     'id_name' => 'assigned_user_id',
-    'table' => 'users',     
+    'table' => 'users',
   ),
 ),
 'relationships'=>array(

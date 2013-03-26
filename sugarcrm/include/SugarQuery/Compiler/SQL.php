@@ -31,10 +31,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 /**
  * This is the base object for compiling SugarQueries
- * ************ WARNING**********************************************
- * THIS CLASS AND ALL RELATED CLASSES WILL BE FUNDAMENTALLY CHANGING
- * DO NOT USE THIS TO BUILD YOUR QUERIES.
- * ******************************************************************
  * TODO:
  * Move all bean/vardef functionality out of here and into sugarquery
  * This will allow compilers to be strictly object->desired output without
@@ -72,50 +68,12 @@ class SugarQuery_Compiler_SQL
      */
     protected $db;
 
-    // TODO EXPAND THE TYPE MAP
+    protected $jtcount = 0;
     /**
+     * Bean templates for used tables
      * @var array
      */
-    protected $type_map = array(
-        'module' => 'string',
-        'parent_type' => 'string',
-        'parent_id' => 'string',
-        'name' => 'string',
-        'int' => 'number',
-        'double' => 'number',
-        'float' => 'number',
-        'uint' => 'number',
-        'ulong' => 'number',
-        'long' => 'number',
-        'short' => 'number',
-        'varchar' => 'string',
-        'text' => 'string',
-        'longtext' => 'string',
-        'date' => 'date',
-        'enum' => 'string',
-        'relate' => 'string',
-        'multienum' => 'string',
-        'html' => 'string',
-        'longhtml' => 'string',
-        'datetime' => 'datetime',
-        'datetimecombo' => 'datetime',
-        'time' => 'time',
-        'bool' => 'bool',
-        'tinyint' => 'number',
-        'char' => 'string',
-        'blob' => 'binary',
-        'longblob' => 'binary',
-        'currency' => 'number',
-        'decimal' => 'number',
-        'decimal2' => 'number',
-        'id' => 'string',
-        'url' => 'string',
-        'encrypt' => 'string',
-        'file' => 'string',
-        'decimal_tpl' => 'number',
-        'phone' => 'string',
-        'assigned_user_name' => 'string',
-    );
+    protected $table_beans = array();
 
     public function __construct($db)
     {
@@ -150,11 +108,6 @@ class SugarQuery_Compiler_SQL
         $order_by_part = '';
         $having_part = '';
 
-        $select = $this->sugar_query->select;
-        $from = $this->sugar_query->from;
-        $join = $this->sugar_query->join;
-        $where = $this->sugar_query->where;
-
         $group_by = $this->sugar_query->group_by;
         $having = $this->sugar_query->having;
         $order_by = $this->sugar_query->order_by;
@@ -163,18 +116,28 @@ class SugarQuery_Compiler_SQL
 
         $union = $this->sugar_query->union;
 
+        /* order by clauses should be in SELECT, ensure they are there */
+        if (!empty($order_by)) {
+            $order_fields = array();
+            foreach($order_by as $order) {
+                $order_fields[] = $order[0];
+            }
+            if(!empty($order_fields)) {
+                $this->sugar_query->select->field($order_fields);
+            }
+        }
 
-        if ($from !== null) {
-            $from_part = trim($this->compileFrom($from));
+        if (!empty($this->sugar_query->from)) {
+            $from_part = trim($this->compileFrom($this->sugar_query->from));
         }
-        if ($select !== null) {
-            $select_part = trim($this->compileSelect($select));
+        if (!empty($this->sugar_query->select)) {
+        	$select_part = trim($this->compileSelect($this->sugar_query->select));
         }
-        if ($join !== null) {
-            $join_part = trim($this->compileJoin($join));
+        if (!empty($this->sugar_query->join) ) {
+            $join_part = trim($this->compileJoin($this->sugar_query->join));
         }
-        if ($where !== null) {
-            $where_part = trim($this->compileWhere($where));
+        if (!empty($this->sugar_query->where)) {
+            $where_part = trim($this->compileWhere($this->sugar_query->where));
         }
 
         if ($this->sugar_query->distinct) {
@@ -270,7 +233,21 @@ class SugarQuery_Compiler_SQL
         $return = array();
         foreach ($order_by AS $order) {
             list($field, $direction) = $order;
-            $field = $this->canonicalizeField($field);
+            $field = $this->canonicalizeFieldName($field);
+            $defs = $this->getFieldVardef($field);
+            if(empty($defs)) {
+                $GLOBALS['log']->error("Could not find definition for field $field, skipping ORDER BY");
+                continue;
+            } else {
+                if(!empty($defs['sort_on'])) {
+                    $field = $this->canonicalizeFieldName($defs['sort_on']);
+                } else if(!empty($defs['source']) && $defs['source'] == 'non-db') {
+                    $GLOBALS['log']->error("Could not sort on non-db field $field, skipping ORDER BY");
+                }
+            }
+            if(strcasecmp($direction, "ASC") !== 0) {
+                $direction = "DESC";
+            }
             $return[] = "{$field} {$direction}";
         }
 
@@ -278,12 +255,106 @@ class SugarQuery_Compiler_SQL
     }
 
     /**
+     * Get bean that corresponds to this table name
+     * @param string $table_name
+     * @return SugarBean
+     */
+    protected function getTableBean($table_name)
+    {
+        if(!isset($this->table_beans[$table_name])) {
+            if(empty($this->sugar_query->join[$table_name])) {
+                return null;
+            }
+            $link_name = $this->sugar_query->join[$table_name]->linkName;
+            if (empty($link_name)) {
+                $this->table_beans[$table_name] = null;
+                return null;
+            }
+            //BEGIN SUGARCRM flav=pro ONLY
+            if($link_name == 'favorites') {
+                // FIXME: special case, should eliminate it
+                $module = 'SugarFavorites';
+            }
+            //END SUGARCRM flav=pro ONLY
+            if(empty($module)) {
+                $this->from_bean->load_relationship($link_name);
+                if(!empty($this->from_bean->$link_name)) {
+                    $module = $this->from_bean->$link_name->getRelatedModuleName();
+                }
+            }
+            if(empty($module)) {
+                $this->table_beans[$table_name] = null;
+                return null;
+            }
+            $bean = BeanFactory::newBean($module);
+            $this->table_beans[$table_name] = $bean;
+        }
+        return $this->table_beans[$table_name];
+    }
+
+    /**
+     * Bring field name to canonical form of table_name.field_name
+     * @param string $field
+     * @return string
+     */
+    protected function canonicalizeFieldName($field)
+    {
+        /**
+         * We need to figure out if the field is prefixed with an alias.  If it is and the alias is not the from beans table,
+         * we must load the relationship that the alias is referencing so that we can determine if they are using the correct alias
+         * and change it around if necessary
+         * An exception must be made for link tables because there could be multiple joins to different link tables and these aliases are
+         * taken care of automatically when M2M relationships are joined.
+         */
+        $bean = $this->from_bean;
+        if (strstr($field, '.')) {
+        	list($table_name, $field) = explode('.', $field);
+        	if ($table_name != $bean->getTableName()) {
+        		$bean = $this->getTableBean($table_name);
+        		if(empty($bean)) {
+        			return "{$table_name}.{$field}";
+        			}
+        		}
+        		} else {
+        		$table_name = $bean->getTableName();
+        }
+
+       	return "{$table_name}.{$field}";
+    }
+
+    /**
+     * Get vardef for the field in the query
+     * @param string $field
+     * @return array|null
+     */
+    protected function getFieldVardef($field)
+    {
+        $bean = $this->from_bean;
+        if (strstr($field, '.')) {
+        	list($table_name, $field) = explode('.', $field);
+        	if ($table_name != $bean->getTableName()) {
+        		$bean = $this->getTableBean($table_name);
+        	}
+        }
+
+        if(!empty($bean) && !empty($bean->field_defs[$field])) {
+            return $bean->field_defs[$field];
+        }
+        return null;
+    }
+
+    /**
      * @param $field
      * @return string
      */
-    protected function canonicalizeField($field)
+    protected function resolveField($field, $alias = null)
     {
         $bean = $this->from_bean;
+        if($field == '*') {
+            // Not really a good idea, but let's support it for now
+            return array($field, null);
+        }
+
         /**
          * We need to figure out if the field is prefixed with an alias.  If it is and the alias is not the from beans table,
          * we must load the relationship that the alias is referencing so that we can determine if they are using the correct alias
@@ -292,23 +363,90 @@ class SugarQuery_Compiler_SQL
          * taken care of automatically when M2M relationships are joined.
          */
         if (strstr($field, '.')) {
-            list($table, $field) = explode('.', $field);
-            if ($table != $bean->getTableName()) {
-                $link_name = $this->sugar_query->join[$table]->linkName;
-                if (!empty($link_name)) {
-                    $bean->load_relationship($link_name);
-
-                    $module = $bean->$link_name->getRelatedModuleName();
-                    $bean = BeanFactory::newBean($module);
-                } else {
-                    return "{$table}.{$field}";
+            list($table_name, $field) = explode('.', $field);
+            if ($table_name != $bean->getTableName()) {
+                $bean = $this->getTableBean($table_name);
+                if(empty($bean)) {
+                    return array("{$table_name}.{$field}", $alias);
                 }
             }
+            if($field == "*") {
+                // don't do anything with * for now
+                return array("{$table_name}.{$field}", null);
+            }
+        } else {
+            $table_name = $bean->getTableName();
         }
-        if (isset($bean->field_defs[$field]['source']) && $bean->field_defs[$field]['source'] == 'custom') {
-            return $bean->get_custom_table_name() . ".{$field}";
+
+        if(!isset($bean->field_defs[$field])) {
+            // FIXME: we don't know about if - how it even ended up here?
+            return false;
         }
-        return $bean->getTableName() . ".{$field}";
+        $data = $bean->field_defs[$field];
+
+        if(!isset($data['source']) || $data['source'] == 'db') {
+            return array("{$table_name}.{$field}", $alias);
+        }
+
+        if (isset($data['source']) && $data['source'] == 'custom') {
+            // FIXME: if we're given table.field with custom field, we should use custom alias
+            $table_name = $bean->get_custom_table_name();
+            return array("{$table_name}.{$field}", $alias);
+        }
+
+        if($data['type'] == 'parent') {
+            // special hack to handle parent rels
+            $this->sugar_query->hasParent($field);
+            return array($this->resolveField('parent_type'), $this->resolveField('parent_id'));
+        }
+
+        if($data['type'] == 'relate') {
+            // this is a link field
+            $bean->load_relationship($data['link']);
+            if(empty($bean->$data['link'])) {
+                // failed to load link - bail out
+                return false;
+            }
+            $this->jtcount++;
+            $params = array('joinType' => 'LEFT', 'alias' => 'jt' . $this->jtcount);
+            if(isset($data['join_name'])) {
+            	$params['alias'] = $data['join_name'];
+            }
+
+            $join = $this->sugar_query->join($data['link'], $params);
+            $jalias = $join->joinName();
+            $fields = $this->resolveField("$jalias.{$data['rname']}", $field);
+            if(!empty($fields)) {
+                if(!is_array($fields[0])) {
+                    $fields = array($fields);
+                }
+            }
+            if(!empty($data['id_name']) && $data['id_name'] != $field && !in_array($data['id_name'], $this->sugar_query->select->select)) {
+                $id_field = $this->resolveField($data['id_name'], $data['id_name']);
+                if(!empty($id_field)) {
+                    $fields[] = $id_field;
+                }
+            }
+            if(isset($data['custom_type']) && $data['custom_type'] == 'teamset') {
+                $fields[] = $this->resolveField('team_set_id', 'team_set_id');
+            }
+            return $fields;
+        }
+
+        if(!empty($data['fields'])) {
+        	// this is a compound field
+        	$sub_fields = array();
+        	foreach($data['fields'] as $field) {
+        		$sub_fields[] = array("{$table_name}.{$field}", !empty($alias)?"{$alias}__{$field}":$field);
+        	}
+        	if(!empty($data['id_name'])) {
+        	    $sub_fields[] = array("{$table_name}.id", !empty($alias)?"{$alias}__{$data['id_name']}":$data['id_name']);
+            }
+
+        	return $sub_fields;
+        }
+
+        return false;
     }
 
     /**
@@ -321,19 +459,36 @@ class SugarQuery_Compiler_SQL
     {
         $return = array();
         foreach ($selectObj->select AS $field) {
-            $alias = false;
+            $alias = null;
+            $s_alias = '';
             if (is_array($field)) {
                 list($field, $alias) = $field;
-                $alias = " AS {$alias}";
+                $s_alias = " AS {$alias}";
             }
 
             if ($field instanceof SugarQuery) {
-                $return[] = '(' . $field->compileSql() . ')' . $alias;
+                $return[] = '(' . $field->compileSql() . ')' . $s_alias;
             } else {
-                $field = $this->canonicalizeField($field);
-                $return[] = $field . $alias;
+                $resolvedFields = $this->resolveField($field, $alias);
+                if(empty($resolvedFields)) {
+                    // FIXME: can be dangerous to put $field here
+                    $return[] = "NULL $s_alias /* $field */";
+                    continue;
+                }
+                if(!is_array($resolvedFields[0])) {
+                    $resolvedFields = array($resolvedFields);
+                }
+                foreach($resolvedFields as $resolvedField) {
+                        if(empty($resolvedField)) continue;
+                        $alias = $resolvedField[1];
+                        if(empty($alias)) {
+                            $s_alias = "";
+                        } else {
+                            $s_alias = " AS $alias";
+                        }
+                        $return[] = $resolvedField[0] . $s_alias;
+                }
             }
-
         }
 
         return implode(", ", $return);
@@ -421,11 +576,10 @@ class SugarQuery_Compiler_SQL
                     $sql = $this->compileCondition($condition, $sql, $operator);
                 } else {
                     if (is_array($condition)) {
-                        $sql .= explode(' ', $condition);
+                        $sql .= join(' ', $condition);
                     }
                 }
             }
-            $prev_operator = $operator;
         }
         return $sql;
     }
@@ -443,7 +597,7 @@ class SugarQuery_Compiler_SQL
         if (!empty($sql) && substr($sql, -1) != '(') {
             $sql .= $operator;
         }
-        $field = $this->canonicalizeField($condition->field);
+        $field = $this->canonicalizeFieldName($condition->field);
 
         if ($condition->isNull) {
             $sql .= "{$field} IS NULL";
@@ -503,8 +657,6 @@ class SugarQuery_Compiler_SQL
         return $sql;
     }
 
-    // TODO: FIX THIS SO THAT WE USE MORE DBMANAGER STUFF
-    // FIGURE OUT WHY db->quotes() DOESN'T RETURN QUOTED STRING FOR US TO USE
     /**
      * @param $field
      * @param $value
@@ -514,6 +666,9 @@ class SugarQuery_Compiler_SQL
      */
     protected function quoteValue($field, $value, $bean = false, $operator = false)
     {
+        if($value instanceof SugarQuery_Builder_Literal) {
+            return (string)$value;
+        }
 
         if ($bean === false) {
             $bean = $this->from_bean;
@@ -527,56 +682,45 @@ class SugarQuery_Compiler_SQL
         if (stristr($field, '.')) {
             list($table, $field) = explode('.', $field);
             if ($table != $bean->getTableName()) {
-                $link_name = $this->sugar_query->join[$table]->linkName;
-                if (!empty($link_name)) {
-                    // currently we only go one level deep on links,
-                    // so we know that the link has to be in the from beans relationships
-                    $bean->load_relationship($link_name);
-                    // we have to get the module name and then override the $bean var with the new bean
-                    $module = $bean->$link_name->getRelatedModuleName();
-                    $bean = BeanFactory::newBean($module);
+                $bean = $this->getTableBean($table);
+                if(empty($bean)) {
+                    // quote the value by default
+                    return $this->db->quoted($value);
                 }
             }
         }
 
 
         if (isset($bean->field_defs[$field])) {
-            switch ($this->type_map[$bean->field_defs[$field]['type']]) {
-                case 'number':
-                    return $value;
-                    break;
+            $dbtype = $this->db->getFieldType($bean->field_defs[$field]);
+
+            if(empty($value)) {
+                return $this->db->emptyValue($dbtype);
+            }
+
+            switch ($dbtype) {
                 case 'date':
                 case 'datetime':
                 case 'time':
-                    $db = DBManagerFactory::getInstance();
                     if ($value == 'NOW()') {
-                        return $db->now();
+                        return $this->db->now();
                     }
-                    return $db->quote($value);
-                    break;
-                case 'bool':
-                    return $value;
-                    break;
-                case 'binary':
-                    return $value;
-                    break;
-                case 'string':
-                default:
-                    if ($operator == 'STARTS') {
-                        $value = $value . '%';
-                    }
-                    if ($operator == 'CONTAINS') {
-                        $value = '%' . $value . '%';
-                    }
-                    if ($operator == 'ENDS') {
-                        $value = '%' . $value;
-                    }
-                    return "'{$value}'";
-                    break;
             }
-        } else {
-            return "'$value'";
+
+            if($this->db->getTypeClass($dbtype) == 'string') {
+                if ($operator == 'STARTS') {
+                    $value = $value . '%';
+                }
+                if ($operator == 'CONTAINS') {
+                    $value = '%' . $value . '%';
+                }
+                if ($operator == 'ENDS') {
+                    $value = '%' . $value;
+                }
+            }
+            return $this->db->quoteType($dbtype, $value);
         }
+        return $this->db->quoted($value);
     }
 
     /**
@@ -620,6 +764,6 @@ class SugarQuery_Compiler_SQL
             $return[] = $sql;
         }
 
-        return implode(' ', $return);
+        return implode("\n ", $return);
     }
 }

@@ -133,9 +133,7 @@
             level: 'confirmation',
             messages: app.lang.get('LBL_DELETE_DASHBOARD_CONFIRM', this.module),
             onConfirm: function() {
-
-                var template = Handlebars.compile(app.lang.get('LBL_DELETE_DASHBOARD_SUCCSS', self.module)),
-                    message = template({name: self.model.get("name")});
+                var message = app.lang.get('LBL_DELETE_DASHBOARD_SUCCESS', self.module, {name: self.model.get("name")});
 
                 self.model.destroy({
                     success: function() {
@@ -151,7 +149,7 @@
                     },
                     alerts: {
                         success: {
-                            title: message
+                            messages: message
                         }
                     }
                 });

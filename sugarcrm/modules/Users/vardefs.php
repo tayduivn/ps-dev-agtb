@@ -159,11 +159,8 @@ $dictionary['User'] = array(
             'name' => 'full_name',
             'rname' => 'full_name',
             'vname' => 'LBL_NAME',
-            'type' => 'name',
-            'fields' => array(
-                'first_name',
-                'last_name'
-            ) ,
+            'type' => 'fullname',
+            'fields' => array('first_name', 'last_name'),
             'source' => 'non-db',
             'sort_on' => 'last_name',
             'sort_on2' => 'first_name',
@@ -178,9 +175,10 @@ $dictionary['User'] = array(
             'name' => 'name',
             'rname' => 'name',
             'vname' => 'LBL_NAME',
-            'type' => 'varchar',
+            'type' => 'name',
             'source' => 'non-db',
             'len' => '510',
+			'fields' => array('first_name', 'last_name'),
             'db_concat_fields' => array(
                 0 => 'first_name',
                 1 => 'last_name'
@@ -295,7 +293,7 @@ $dictionary['User'] = array(
             'vname' => 'LBL_DEPARTMENT',
             'type' => 'varchar',
             'len' => '50',
-        ) ,            
+        ) ,
         'phone_home' => array(
             'name' => 'phone_home',
             'vname' => 'LBL_HOME_PHONE',
@@ -1052,7 +1050,7 @@ $dictionary['UserSignature'] = array(
 			'vname' => 'LBL_USER_ID',
 			'type' => 'varchar',
 			'len' => 36,
-		),  
+		),
 		'name' => array(
 			'name' => 'name',
 			'vname' => 'LBL_SUBJECT',

@@ -27,9 +27,7 @@ describe("forecasts_view_forecastsCommitButtons", function(){
         app = SugarTest.app;
         metaStub = sinon.stub(app.user, 'getAcls', function() {
             return {
-                'Forecasts': {
-                    admin: 'yes'
-                }
+                'Forecasts': {}
             }
         });
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitButtons", "forecastsCommitButtons", "js", function(d) { return eval(d); });
@@ -81,7 +79,7 @@ describe("forecasts_view_forecastsCommitButtons", function(){
             view.context = null;
         });
 
-        it("variable should be true an admin", function() {
+        it("variable should be true for an admin", function() {
             var options = {};
             view.initialize(options);
             expect(view.showConfigButton).toBeTruthy();

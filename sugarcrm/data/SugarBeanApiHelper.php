@@ -64,70 +64,59 @@ class SugarBeanApiHelper
                     continue;
                 }
 
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ( !$bean->ACLFieldAccess($fieldName,'read') ) {
+                    // No read access to the field, eh?  Unset the field from the array of data returned
+                    unset($data[$fieldName]);
+                    continue;
+                }
+                //END SUGARCRM flav=pro ONLY
+
                 $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
                 if ($type == 'link') {
                     // There is a different API to fetch linked records, don't try to encode all of the related data.
                     continue;
                 }
+
                 $field = $sfh->getSugarField($type);
 
-                if ( $field != null && isset($bean->$fieldName) ) {
+                if(empty($field)) continue;
+
+                if (isset($bean->$fieldName)  || $type == 'relate') {
                      $field->apiFormatField($data, $bean, $options, $fieldName, $properties);
                 }
 
-                //BEGIN SUGARCRM flav=pro ONLY
-                if ( !$bean->ACLFieldAccess($fieldName,'read') ) {
-                    // No read access to the field, eh?  Unset the field from the array of data returned
-                    unset($data[$fieldName]);
-                }
-                //END SUGARCRM flav=pro ONLY
             }
 
-            if (isset($bean->field_defs['email']) &&
-                (empty($fieldList) || in_array('email',$fieldList))) {
-                $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
-                $emails = array();
-                $emailProps = array(
-                    'email_address',
-                    'opt_out',
-                    'invalid_email',
-                    'primary_address'
-                );
-                foreach ($emailsRaw as $rawEmail) {
-                    $formattedEmail = array();
-                    foreach ($emailProps as $property) {
-                        if (isset($rawEmail[$property])) {
-                            $formattedEmail[$property] = $rawEmail[$property];
-                        }
-                    }
-                    array_push($emails, $formattedEmail);
+            if (isset($bean->field_defs['email']) && (empty($fieldList) || in_array('email',$fieldList))) {
+                if(!empty($bean->emailData)) {
+                    $rawEmails = $bean->emailData;
+                } else if(!empty($bean->emailAddress->addresses)) {
+                    $rawEmails = $bean->emailAddress->addresses;
                 }
-                $data['email'] = $emails;
+                if(!empty($rawEmails)) {
+                        $data['email'] = array();
+                        $emailProps = array('email_address','opt_out','invalid_email','primary_address');
+                        foreach ($rawEmails as $rawEmail) {
+                            $formattedEmail = array();
+                            foreach ($emailProps as $property) {
+                                if (isset($rawEmail[$property])) {
+                                    $formattedEmail[$property] = $rawEmail[$property];
+                                }
+                            }
+                            $data['email'][] = $formattedEmail;
+                        }
+                }
             }
 
 
             //BEGIN SUGARCRM flav=pro ONLY
-
-            // get favorites
             // mark if its a favorite
-
-            if ( empty($fieldList) || !in_array('my_favorite',$fieldList) ) {
-                if (!isset($bean->my_favorite)) {
-                    $bean->my_favorite = SugarFavorites::isUserFavorite($bean->module_dir, $bean->id, $this->api->user->id);
-                }
+            // FIXME: this should not always send the favorite, but because of the bug #62096 we always send it
+            if ( !isset($data['my_favorite'])) { //&& in_array('my_favorite', $fieldList)) {
                 $data['my_favorite'] = $bean->my_favorite;
             }
-
             //END SUGARCRM flav=pro ONLY
-
-            // Mark if it's a subscribed bean (for activity streams).
-            if ( empty($fieldList) || !in_array('following', $fieldList) ) {
-                if (!isset($bean->following)) {
-                    $sub = Subscription::checkSubscription($this->api->user, $bean);
-                    $bean->following = !empty($sub);
-                }
-                $data['following'] = $bean->following;
-            }
 
             // set ACL
             // if not an admin and the hashes differ, send back bean specific acl's

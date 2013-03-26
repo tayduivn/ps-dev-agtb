@@ -59,6 +59,7 @@ $mod_strings = array (
 	'LBL_SHOW_ALT_TEXT'			=> 'Show Plain Text',
 	'LBL_SUBJECT'				=> 'Subject:',
     'LBL_SUGAR_DOCUMENT'        => 'Sugar Document',
+    'LBL_TEAM'                  => 'Teams',
 	'LBL_TEAMS'					=> 'Teams:',
 	'LBL_TEAMS_LINK'			=> 'Teams',
 	'LBL_TEXT_BODY'				=> 'Text Body',

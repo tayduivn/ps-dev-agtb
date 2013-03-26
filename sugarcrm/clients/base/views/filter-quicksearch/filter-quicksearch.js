@@ -26,9 +26,8 @@
         }
     }, 400),
 
-
     clearInput: function() {
-        this.$el.val("");
+        this.$el.val("").toggleClass('hide', this.layout.showingActivities);
         this.currentSearch = "";
         this.layout.trigger("filter:change:quicksearch");
     }

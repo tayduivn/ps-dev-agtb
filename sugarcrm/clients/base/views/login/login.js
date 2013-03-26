@@ -3,22 +3,7 @@
         "click .login-submit": "login",
         "keypress": "handleKeypress"
     },
-
-    initialize: function(options) {
-        // Adds the metadata for the Login module
-        app.metadata.set(this._metadata);
-        app.data.declareModels();
-
-        // Reprepare the context because it was initially prepared without metadata
-        app.controller.context.prepare(true);
-
-        // Attach the metadata to the view
-        this.options.meta = this._metadata.modules[this.options.module].views[this.options.name].meta;
-        app.view.View.prototype.initialize.call(this, options);
-
-        // use modal template for the fields
-        this.fallbackFieldTemplate = "modal";
-    },
+    fallbackFieldTemplate: "modal",
 
     handleKeypress: function(e) {
         if (e.keyCode === 13) {
@@ -33,6 +18,20 @@
         }
         app.view.View.prototype._render.call(this);
         this.refreshAddtionalComponents();
+        /**
+         * Added browser version check for MSIE since we are dropping support
+         * for MSIE 9.0 for SugarCon
+         */
+        if (!this._isSupportedBrowser()) {
+            app.alert.show('unsupported_browser', {
+                level:'warning',
+                title: '',
+                messages: [
+                    app.lang.getAppString('LBL_ALERT_BROWSER_NOT_SUPPORTED'),
+                    app.lang.getAppString('LBL_ALERT_BROWSER_SUPPORT')
+                ]
+            });
+        }
         return this;
     },
     refreshAddtionalComponents: function() {
@@ -67,57 +66,25 @@
         }
     },
 
-    _metadata : {
-        _hash: '',
-        "modules": {
-            "Login": {
-                "fields": {
-                    "username": {
-                        "name": "username",
-                        "type": "base",
-                        "required": true
-                    },
-                    "password": {
-                        "name": "password",
-                        "type": "password",
-                        "required": true
-                    }
-                },
-                "views": {
-                    "login": {
-                        "meta": {
-                            "buttons": [
-                                {
-                                    name: "login_button",
-                                    type: "button",
-                                    label: "LBL_LOGIN_BUTTON_LABEL",
-                                    'css_class': "login-submit",
-                                    value: "login",
-                                    primary: true
-                                }
-                            ],
-                            "panels": [
-                                {
-                                    "fields": [
-                                        {name: "username", label: "LBL_LOGIN_USERNAME"},
-                                        {name: "password", label: "LBL_LOGIN_PASSWORD"}
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                },
-                "layouts": {
-                    "login": {
-                        "meta": {
-                            //Default layout is a single view
-                            "type": "simple",
-                            "components": [
-                                {view: "login"}
-                            ]
-                        }
-                    }
-                }
+    /**
+     * Taken from sugar_3. returns true if the users browser is recognized
+     * @return {Boolean}
+     * @private
+     */
+    _isSupportedBrowser:function () {
+        var supportedBrowsers = {
+            msie:{min:10},
+            mozilla:{min:18},
+            // For Safari & Chrome jQuery.Browser returns the webkit revision instead of the browser version
+            // and it's hard to determine this number.
+            safari:{min:536},
+            chrome:{min:537}
+        };
+        for (var b in supportedBrowsers) {
+            if ($.browser[b]) {
+                var current = parseInt($.browser.version);
+                var supported = supportedBrowsers[b];
+                return current >= supported.min;
             }
         }
     }

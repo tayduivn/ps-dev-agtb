@@ -1,39 +1,17 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
- *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
 
-/*********************************************************************************
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 $viewdefs['Opportunities']['base']['view']['record'] = array(
     'buttons' => array(
@@ -112,14 +90,26 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'account_name',
                 array(
-                    'name' => 'date_closed',
-                    //BEGIN SUGARCRM flav=ent ONLY
-                    'readonly' => true,
-                    //END SUGARCRM flav=ent ONLY
-                ),
+                    'name' => 'account_name',
+                    'related_fields' => array(
+                        'account_id'
+                    )
+                ),                
+                'lead_source',
                 'sales_status',
+                'campaign_name',
+                'assigned_user_name',
+                'opportunity_type',                
+                )
+            ),
+        array(
+            'name' => 'panel_hidden',
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'columns' => 2,
+            'fields' => array(
                 array(
                     'name' => 'amount',
                     'type' => 'currency',
@@ -136,6 +126,12 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'base_rate_field' => 'base_rate',
                 ),
                 array(
+                    'name' => 'date_closed',
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    'readonly' => true,
+                    //END SUGARCRM flav=ent ONLY
+                ),
+                array(
                     'name' => 'best_case',
                     'type' => 'currency',
                     'label' => 'LBL_BEST_CASE',
@@ -144,7 +140,9 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         'currency_id',
                         'base_rate',
                     ),
+                    //BEGIN SUGARCRM flav=ent ONLY
                     'readonly' => true,
+                    //END SUGARCRM flav=ent ONLY
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
@@ -157,28 +155,21 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         'currency_id',
                         'base_rate',
                     ),
+                    //BEGIN SUGARCRM flav=ent ONLY
                     'readonly' => true,
+                    //END SUGARCRM flav=ent ONLY
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
-            )
-        ),
-        array(
-            'name' => 'panel_hidden',
-            'hide' => true,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'columns' => 2,
-            'fields' => array(
-                'campaign_name',
-                'lead_source',
-                'opportunity_type',
-                'assigned_user_name',
                 array(
-                    "type" => "teamset",
-                    "name" => "team_name"
+                    'type' => 'teamset',
+                    'name' => 'team_name'
                 ),
                 'next_step',
+                array(
+                    'name' => 'description',
+                    'span' => 12
+                ),
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,
@@ -194,29 +185,10 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         ),
                         array(
                             'name' => 'created_by_name',
-                        ),
-                    ),
-                ),
-                array(
-                    'name' => 'date_modified_by',
-                    'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_MODIFIED',
-                    'fields' => array(
-                        array(
-                            'name' => 'date_modified',
-                        ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY'
-                        ),
-                        array(
-                            'name' => 'modified_by_name',
-                        ),
-                    ),
-                ),
-                'description',
+                        )
+                    )
+                )               
             )
         )
-    ),
+    )    
 );

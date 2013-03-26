@@ -249,7 +249,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
                     return -1;
                 }
                 $docs = $processedBeans = array();
-                sugar_cache_reset();
+                SugarCache::instance()->flush();
                 if( function_exists('gc_collect_cycles') )
                     gc_collect_cycles();
 

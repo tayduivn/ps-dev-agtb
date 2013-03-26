@@ -136,12 +136,12 @@
             css = this.context.get("create") ? " edit" : "";
         if (dashboardEl.length == 0) {
             dashboardEl = $("<div></div>").attr({
-                class: 'cols row-fluid'
+                'class': 'cols row-fluid'
             });
             this.$el.append(
                 $("<div></div>").attr({
                     id: 'dashboard',
-                    class: 'dashboard main-pane' + css
+                    'class': 'dashboard main-pane' + css
                 }).append(
                         dashboardEl
                     )

@@ -151,5 +151,5 @@
             self.context.set('skipFetch', false);
             self.context.loadData();
         });
-    },
+    }
 })

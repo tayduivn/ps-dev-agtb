@@ -1,13 +1,6 @@
 ({
     className: 'filter-view search',
 
-    emptyFilter: app.data.createBean('Filters', {
-        id: 'all_records',
-        name: 'All Records',
-        filter_def: {},
-        editable: false
-    }),
-
     initialize: function(opts) {
         app.view.layouts.FilterLayout.loadedModules = app.view.layouts.FilterLayout.loadedModules || {};
         app.view.Layout.prototype.initialize.call(this, opts);
@@ -16,6 +9,13 @@
 
         this.aclToCheck = (this.layoutType === 'record')? 'view' : 'list';
         this.filters = app.data.createBeanCollection('Filters');
+
+        this.emptyFilter = app.data.createBean('Filters', {
+            id: 'all_records',
+            name: app.lang.get('LBL_FILTER_ALL_RECORDS'),
+            filter_def: {},
+            editable: false
+        });
 
         // Can't use getRelevantContextList here, because the context may not
         // have all the children we need.
@@ -73,9 +73,9 @@
 
         this.on('filter:get', this.initializeFilterState, this);
 
-        this.on('filter:change:filter', function(id) {
-            if (id && id != 'create') {
-                app.cache.set("filters:last:" + this.module + ":" + this.layoutType, id);
+        this.on('filter:change:filter', function(id, preventCache) {
+            if (id && id != 'create' && !preventCache) {
+                app.cache.set("filters:last:" + this.layout.currentModule + ":" + this.layoutType, id);
             }
             var filter = this.filters.get(id) || this.emptyFilter,
                 ctxList = this.getRelevantContextList();
@@ -90,7 +90,13 @@
         this.layout.on('filterpanel:change', function(name) {
             this.showingActivities = name === 'activitystream';
             var module = this.showingActivities ? "Activities" : this.module;
-            var link = (this.layoutType === 'record' && !this.showingActivities) ? 'all_modules' : null;
+            var link;
+
+            if(this.layoutType === 'record' && !this.showingActivities) {
+                module = link = 'all_modules';
+            } else {
+                link = null;
+            }
             this.trigger("filter:render:module");
             this.trigger("filter:change:module", module, link);
         }, this);
@@ -98,9 +104,9 @@
         //When a filter is saved, update the cache and set the filter to be the currently used filter
         this.layout.on('filter:add', function(model){
             this.filters.add(model);
-            app.cache.set("filters:" + this.module, this.filters.toJSON());
-            app.cache.set("filters:last:" + this.module + ":" + this.layoutType, model.get("id"));
-            this.initializeFilterState();
+            app.cache.set("filters:" + this.layout.currentModule, this.filters.toJSON());
+            app.cache.set("filters:last:" + this.layout.currentModule + ":" + this.layoutType, model.get("id"));
+            this.initializeFilterState(this.layout.currentModule, this.layout.currentLink);
         }, this);
     },
 
@@ -237,12 +243,13 @@
                     app.cache.cut("filters:last:" + moduleName + ":" + self.layoutType);
                 }
                 self.trigger('filter:render:filter');
-                self.trigger('filter:change:filter', app.cache.get("filters:last:" + self.module + ":" + self.layoutType) ||  _.first(possibleFilters) || 'all_records');
+                self.trigger('filter:change:filter', app.cache.get("filters:last:" + moduleName + ":" + self.layoutType) ||  _.first(possibleFilters) || 'all_records', true);
             };
 
         // TODO: Add filtering on subpanel vs. non-subpanel filters here.
-        if (app.view.layouts.FilterLayout.loadedModules[moduleName] && _.isArray(app.cache.get("filters:" + moduleName)))
+        if (app.view.layouts.FilterLayout.loadedModules[moduleName] && !_.isEmpty(app.cache.get("filters:" + moduleName)))
         {
+            this.filters.reset();
             var filters = app.cache.get("filters:" + moduleName);
             _.each(filters, function(f){
                 self.filters.add(app.data.createBean("Filters", f));

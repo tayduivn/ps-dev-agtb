@@ -31,9 +31,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * This is the base object for building SugarQueries Joins
  * ************ WARNING**********************************************
  * THIS CLASS AND ALL RELATED CLASSES WILL BE FUNDAMENTALLY CHANGING
- * DO NOT USE THIS TO BUILD YOUR QUERIES.  
+ * DO NOT USE THIS TO BUILD YOUR QUERIES.
  * ******************************************************************
- * 
+ *
  */
 
 require_once('include/SugarQuery/Builder/Where.php');
@@ -68,8 +68,8 @@ class SugarQuery_Builder_Join {
     public $linkName = false;
 	/**
 	 * Create the JOIN Object
-	 * @param string $table 
-	 * @param string $type 
+	 * @param string $table
+	 * @param string $type
 	 */
 	public function __construct($table = null, array $options = array())
 	{
@@ -80,9 +80,9 @@ class SugarQuery_Builder_Join {
 
 	/**
 	 * Set the ON criteria
-	 * @param string $c1 
-	 * @param string $op 
-	 * @param string $c2 
+	 * @param string $c1
+	 * @param string $op
+	 * @param string $c2
 	 * @return object this
 	 */
 	public function on()
@@ -112,7 +112,7 @@ class SugarQuery_Builder_Join {
 
 	/**
 	 * Add a string of Raw SQL
-	 * @param string $sql 
+	 * @param string $sql
 	 * @return SugarQuery_Builder_Join
 	 */
 	public function addRaw($sql) {
@@ -122,12 +122,24 @@ class SugarQuery_Builder_Join {
 
 	/**
 	 * Add a string that is a link name from vardefs
-	 * @param string $linkName 
+	 * @param string $linkName
 	 * @return SugarQuery_Builder_Join
 	 */
 	public function addLinkName($linkName) {
 		$this->linkName = $linkName;
 		return $this;
+	}
+
+	/**
+	 * Return name of the join table
+	 * @return string
+	 */
+	public function joinName()
+	{
+	    if(!empty($this->options['alias'])) {
+	        return $this->options['alias'];
+	    }
+	    return $this->table;
 	}
 
 
@@ -136,4 +148,4 @@ class SugarQuery_Builder_Join {
 		return $this->$name;
 	}
 
-} 
+}

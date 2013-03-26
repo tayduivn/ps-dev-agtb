@@ -68,7 +68,7 @@ class SugarEmailAddress extends SugarBean
                         $this->addAddress($address, $primaryE, false, $invalidE, $optO);
                     }
                 } else if (empty($bean->email)) {
-                    // Special case if not bean->email - removing results in legacy breakage, broken tests, and general sadness. 
+                    // Special case if not bean->email - removing results in legacy breakage, broken tests, and general sadness.
                     for ($i = 1; $i <= 10; $i++) {
                         $email = 'email' . $i;
                         if (isset($bean->$email) && !empty($bean->$email)) {
@@ -79,7 +79,7 @@ class SugarEmailAddress extends SugarBean
                             $this->addAddress($bean->$email, $isPrimary, false, $field_invalid, $field_optOut);
                             $isPrimary = false;
                         }
-                    } 
+                    }
                 } else {
                     // bug57601 - All but first two email addresses removed; settings changed e.g. opt out isn't marked
                     $mod_dir = $this->getCorrectedModule($bean->module_dir);
@@ -708,7 +708,7 @@ class SugarEmailAddress extends SugarBean
             return $guid;
         }
     }
- 
+
     /**
      * Returns Primary or newest email address
      * @param object $focus Object in focus
@@ -801,6 +801,23 @@ class SugarEmailAddress extends SugarBean
         }
 
         return $return;
+    }
+
+    /**
+     * Returns query to ask for email addresses for specific bean type
+     * @param string $module
+     * @return SugarQuery
+     */
+    public function getEmailsQuery($module)
+    {
+        $q = new SugarQuery();
+        $q->from($this);
+        $q->select(array('email_address', 'opt_out', 'invalid_email', 'ear.primary_address', 'ear.reply_to_address'));
+        $q->joinTable("email_addr_bean_rel", array('alias'=>"ear", 'joinType'=>"LEFT"))
+            ->on()->equalsField('id', 'ear.email_address_id', $this)->equals('ear.deleted', 0);
+        $q->where()->equals('deleted', 0)->equals('ear.bean_module', $module);
+        $q->orderBy('ear.primary_address', 'DESC');
+        return $q;
     }
 
     /**

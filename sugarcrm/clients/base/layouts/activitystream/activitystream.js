@@ -8,6 +8,33 @@
 
         app.view.Layout.prototype.initialize.call(this, opts);
 
+        var endpoint = function(method, model, options, callbacks) {
+            var real_module = self.context.parent.get('module'),
+                layoutType = self.context.parent.get('layout'),
+                modelId = self.context.parent.get('modelId'),
+                action = model.module, // equal to 'Activities'
+                url;
+            switch (layoutType) {
+                case "activities":
+                    url = app.api.buildURL(real_module, null, {}, options.params);
+                    break;
+                case "records":
+                    url = app.api.buildURL(real_module, action, {}, options.params);
+                    break;
+                case "record":
+                    url = app.api.buildURL(real_module, "activities", {id: modelId, link: true}, options.params);
+                    break;
+            }
+            return app.api.call("read", url, null, callbacks);
+        };
+
+        this.context.set("collectionOptions", {
+            endpoint: endpoint,
+            success: function(collection) {
+                collection.each(_.bind(self.renderPost, self));
+            }
+        });
+
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
     },
@@ -58,33 +85,10 @@
     },
 
     _load: function(options) {
-        var self = this,
-            endpoint = function(method, model, options, callbacks) {
-                var real_module = self.context.parent.get('module'),
-                    layoutType = self.context.parent.get('layout'),
-                    modelId = self.context.parent.get('modelId'),
-                    action = model.module, // equal to 'Activities'
-                    url;
-                switch (layoutType) {
-                    case "activities":
-                        url = app.api.buildURL(real_module, null, {}, options.params);
-                        break;
-                    case "records":
-                        url = app.api.buildURL(real_module, action, {}, options.params);
-                        break;
-                    case "record":
-                        url = app.api.buildURL(real_module, "activities", {id: modelId, link: true}, options.params);
-                        break;
-                }
-                return app.api.call("read", url, null, callbacks);
-            };
-        options = _.extend({
-            endpoint: endpoint,
-            success: function(collection) {
-                collection.each(_.bind(self.renderPost, self));
-            }
-        }, options);
-        this.context.set("collectionOptions", options);
+        if(_.isUndefined(this.context.parent.get('layout'))) {
+            return;
+        }
+        options = _.extend(options, this.context.get('collectionOptions'));
         this.collection.fetch(options);
     },
 

@@ -309,6 +309,7 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_STATUS',
             'type' => 'enum',
             'options' => 'product_status_dom',
+            'default' => '',
             'len' => 100,
             'audited' => true,
             'comment' => 'Product status (ex: Quoted, Ordered, Shipped)'
@@ -677,7 +678,7 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_OPPORTUNITY_NAME',
             'join_name' => 'opportunities',
             'type' => 'relate',
-            'link' => 'opportunity_link',
+            'link' => 'opportunities',
             'table' => 'opportunities',
             'isnull' => 'true',
             'module' => 'Opportunities',
@@ -910,7 +911,6 @@ $dictionary['Product'] = array(
             'rhs_key' => 'created_by',
             'relationship_type' => 'one-to-many'
         ),
-
         //BEGIN SUGARCRM flav=pro ONLY
         'products_worksheet' =>  array(
             'lhs_module' => 'Products',

@@ -30,11 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * This is the base object for building SugarQueries
  *
- * ************ WARNING**********************************************
- * THIS CLASS AND ALL RELATED CLASSES WILL BE FUNDAMENTALLY CHANGING
- * DO NOT USE THIS TO BUILD YOUR QUERIES.
- * ******************************************************************
- *
  */
 
 require_once('include/SugarQuery/Compiler.php');
@@ -44,7 +39,7 @@ require_once('include/SugarQuery/Builder/Orwhere.php');
 require_once('include/SugarQuery/Builder/Join.php');
 require_once('include/SugarQuery/Builder/Select.php');
 require_once('include/SugarQuery/Builder/Condition.php');
-
+require_once('include/SugarQuery/Builder/Literal.php');
 
 class SugarQuery
 {
@@ -105,10 +100,23 @@ class SugarQuery
      */
     public $join = array();
 
+    protected $joined_tables = array();
     /**
      * @var DBManager
      */
     protected $db;
+
+    /**
+     * Stores joins corresponding to links
+     * @var array
+     */
+    protected $links = array();
+
+    /**
+     * Stores parent field for this query
+     * @var array
+     */
+    protected $has_parent;
 
     /**
      * Build the select object
@@ -117,7 +125,7 @@ class SugarQuery
      */
     public function select($fields = false) {
 		if(empty($this->select)) {
-			$this->select = new SugarQuery_Builder_Select($fields);
+			$this->select = new SugarQuery_Builder_Select($this, $fields);
 		}
 		return $this->select;
 	}
@@ -237,8 +245,22 @@ class SugarQuery
             $options['alias'] = $link_name;
         }
 
-		$this->loadBeans($link_name, $options);
+        if(!empty($this->links[$link_name])) {
+            return $this->links[$link_name];
+        }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        if($link_name == 'favorites') {
+            $sfOptions = array('joinType'=>'LEFT');
+            $sf = new SugarFavorites();
+            $options['alias'] = $sf->addToSugarQuery($this, $sfOptions);
+        } else
+        //END SUGARCRM flav=pro ONLY
+        {
+    		$this->loadBeans($link_name, $options);
+        }
 		$this->join[$options['alias']]->addLinkName($link_name);
+		$this->links[$link_name] = $this->join[$options['alias']];
 		return $this->join[$options['alias']];
 	}
 
@@ -388,9 +410,8 @@ class SugarQuery
      * @param Linkname $join
      * @param $alias
      */
-    protected function loadBeans($join, $options) {
-		require_once('data/Link2.php');
-
+    protected function loadBeans($join, $options)
+    {
         $alias = (!empty($options['alias'])) ? $options['alias'] : $join;
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
         $team_security = (!empty($options['team_security'])) ? $options['team_security'] : true;
@@ -404,8 +425,11 @@ class SugarQuery
 
 
 		$bean->$join->buildJoinSugarQuery($this, array('joinTableAlias'=>$bean->module_name, 'myAlias'=>$alias, 'joinType' => $joinType));
-
 		$joined = BeanFactory::newBean($bean->$join->getRelatedModuleName());
+		if($team_security === true) {
+			$joined->addVisibilityQuery($this, array("table_alias" => $alias, 'as_condition' => true));
+		}
+
 
 		if($joined->hasCustomFields())
 		{
@@ -417,9 +441,14 @@ class SugarQuery
 				$this->joinRaw($sql);
 			}
 		}
-        if($team_security === true) {
-            $joined->addVisibilityQuery($this);
-        }
 
+	}
+
+	public function hasParent($has = null)
+	{
+	    if($has !== null) {
+	        $this->has_parent = $has;
+	    }
+	    return $this->has_parent;
 	}
 }

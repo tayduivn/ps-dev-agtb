@@ -25,35 +25,218 @@
 
 class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private static $data;
 
-    public static function setUpBeforeClass()
+    protected static $settings = array();
+
+    /**
+     * @var TimePeriod
+     */
+    protected static $timeperiod;
+
+    /**
+     * @var User
+     */
+    protected static $user;
+
+    public function setUp()
     {
+        parent::setUp();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        global $current_user;
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        self::$settings = $admin->getConfigForModule('Forecasts');
+        $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
+        $admin->saveSetting('Forecasts', 'forecast_by', 'products', 'base');
 
-        $config = array(
-            'user' => array('reports_to' => $current_user->id),
-        );
+        self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
 
-        self::$data = SugarTestForecastUtilities::createForecastUser($config);
+        self::$user = SugarTestUserUtilities::createAnonymousUser();
+
+        // setup 10 products
+        for ($x = 0; $x < 10; $x++) {
+            $product = SugarTestProductUtilities::createProduct();
+            $product->date_closed = '2009-02-01';
+            $product->assigned_user_id = self::$user->id;
+            $product->save();
+        }
     }
 
-    public static function tearDownAfterClass()
+    public function tearDown()
     {
-        SugarTestHelper::tearDown();
-        SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $admin->saveSetting('Forecasts', 'is_setup', self::$settings['is_setup'], 'base');
+        $admin->saveSetting('Forecasts', 'forecast_by', self::$settings['forecast_by'], 'base');
+
+        SugarTestWorksheetUtilities::removeAllWorksheetsForParentIds(SugarTestProductUtilities::getCreatedProductIds());
+        SugarTestWorksheetUtilities::removeAllWorksheetsForParentIds(SugarTestOpportunityUtilities::getCreatedOpportunityIds());
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestProductUtilities::removeAllCreatedProducts();
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        SugarTestJobQueueUtilities::removeAllCreatedJobs();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+
+        parent::tearDown();
     }
 
     /**
-     * @outputBuffering disabled
      * @group forecasts
      */
-    public function testExportCreateQuery()
+    public function testCommitWorksheetDoesNotCreateAnyJobsAndHasTenCommittedRecords()
     {
+        /* @var $bean ForecastWorksheet */
+        $bean = BeanFactory::getBean('ForecastWorksheets');
+        $bean->commitWorksheet(self::$user->id, self::$timeperiod->id);
 
+        // query for jobs based on name
+        $sq = new SugarQuery();
+        $sq->select(array('id'));
+        $sq->from(BeanFactory::getBean('SchedulersJobs'))->where()
+            ->equals('target', 'class::SugarJobUpdateForecastWorksheets');
+        $results = $sq->execute();
+
+        foreach($results as $result) {
+            SugarTestJobQueueUtilities::setCreatedJobs(array($result['id']));
+        }
+
+        $this->assertEquals(0, count($results));
+
+        $worksheets = SugarTestWorksheetUtilities::loadWorksheetForBeans(
+            'Products',
+            SugarTestProductUtilities::getCreatedProductIds(),
+            true
+        );
+        $this->assertEquals(10, count($worksheets));
     }
+
+    /**
+     * @group forecasts
+     */
+    public function testCommitWorksheetsCreatesOneJobAndHasFiveCommittedRecords()
+    {
+        /* @var $bean ForecastWorksheet */
+        $bean = BeanFactory::getBean('ForecastWorksheets');
+        $bean->commitWorksheet(self::$user->id, self::$timeperiod->id, 5);
+
+        // query for jobs based on name
+        $sq = new SugarQuery();
+        $sq->select(array('id'));
+        $sq->from(BeanFactory::getBean('SchedulersJobs'))->where()
+            ->equals('target', 'class::SugarJobUpdateForecastWorksheets');
+        $results = $sq->execute();
+
+        foreach($results as $result) {
+            SugarTestJobQueueUtilities::setCreatedJobs(array($result['id']));
+        }
+
+        // we should have 1 job created
+        $this->assertEquals(1, count($results));
+
+        // make sure we have 5 worksheets committed (the other 5 are in the job)
+        $worksheets = SugarTestWorksheetUtilities::loadWorksheetForBeans(
+            'Products',
+            SugarTestProductUtilities::getCreatedProductIds(),
+            true
+        );
+        $this->assertEquals(5, count($worksheets));
+    }
+
+    /**
+     * Make sure closed_date is being updated on worksheet save
+     *
+     * @ticket SFA-704
+     * @group forecasts
+     * @group products
+     * @group opportunities
+     */
+    public function testExpectedCloseDateRollupWorks()
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $product = SugarTestProductUtilities::createProduct();
+
+        $product->date_closed = '2009-02-01';
+        $product->opportunity_id = $opp->id;
+        $product->likely_case = '1000.00';
+
+        $product->save();
+
+        // test to make sure opp was updated
+        /* @var $oppBean Opportunity */
+        $oppBean = BeanFactory::getBean($opp->module_name);
+        $oppBean->retrieve($opp->id);
+
+        // test the db formatted version
+        $this->assertEquals($product->date_closed, $oppBean->fetched_row['date_closed']);
+
+        // find the product worksheet
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($product);
+
+        // make sure a worksheet is actually returned
+        $this->assertInstanceOf('ForecastWorksheet', $worksheet);
+        // make sure it has the correct date closed on it
+        $this->assertEquals($product->date_closed, $worksheet->date_closed);
+
+        // update the worksheet date_closed
+        $worksheet->date_closed = '2009-03-16';
+        $worksheet->saveWorksheet();
+
+        // get the product and make sure it was updated
+        /* @var $prodBean Product */
+        $prodBean = BeanFactory::getBean($product->module_name);
+        $prodBean->retrieve($product->id);
+
+        // test the db formatted version
+        $this->assertEquals($worksheet->date_closed, $prodBean->fetched_row['date_closed']);
+
+        // test the the opp to make sure it's updated as well
+        unset($oppBean);
+        /* @var $oppBean Opportunity */
+        $oppBean = BeanFactory::getBean($opp->module_name);
+        $oppBean->retrieve($opp->id);
+
+        // test the db formatted version
+        $this->assertEquals($worksheet->date_closed, $oppBean->fetched_row['date_closed']);
+    }
+
+    /**
+     * @dataProvider dataProviderSaveWorksheetUpdatesBeanValues
+     * @group forecasts
+     * @param $field
+     * @param $start_value
+     * @param $updated_value
+     */
+    public function testSaveWorksheetUpdatesBeanValues($field, $start_value, $updated_value)
+    {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->$field = $start_value;
+        $product->save();
+
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($product);
+
+        $worksheet->$field = $updated_value;
+        $worksheet->saveWorksheet();
+
+        //load the product and test to see if it's the updated value
+        $prodBean = BeanFactory::getBean($product->module_name);
+        $prodBean->retrieve($product->id);
+
+        $this->assertEquals($updated_value, $prodBean->fetched_row[$field]);
+    }
+
+    public function dataProviderSaveWorksheetUpdatesBeanValues()
+    {
+        return array(
+            array('likely_case', '1000', '1500'),
+            array('best_case', '1000', '1500'),
+            array('worst_case', '1000', '1500'),
+            array('probability', '50', '80'),
+            array('date_closed', '2009-02-01', '2009-03-01'),
+            array('commit_stage', 'include', 'exclude'),
+            array('sales_stage', 'test1', 'test2')
+        );
+    }
+
 }

@@ -43,6 +43,17 @@
         //Attempt to pick up css class from defs but fallback
         this.def.css_class = this.def.css_class || 'textarea-text';
 
+        //Figure out if we need to display the show more link
+        var value = this.model.get(this.name);
+
+        if ((!_.isUndefined(value)) && (value.length > this.maxDisplayLength)) {
+            this.isTooLong = true;
+        } else {
+            this.isTooLong = false;
+            this.lastMode = null;
+            this.value = value;
+        }
+
         //Check if we've blur'd out from textarea edit mode. If so, we check "last mode"
         //we were in before entering the edit mode. We show more or less based on that.
         if (this.lastMode && this.tplName === 'edit') {
@@ -54,12 +65,6 @@
             return;
         }
 
-        //Figure out if we need to display the show more link
-        var value = this.model.get(this.name);
-
-        if ((!_.isUndefined(value)) && (value.length > this.maxDisplayLength)) {
-            this.isTooLong = true;
-        }
         app.view.Field.prototype._render.call(this);
         //Dynamically add the appropriate css class to this.$el (avoids extra spans)
         this.$el.addClass(this.def.css_class);

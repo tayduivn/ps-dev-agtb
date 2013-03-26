@@ -1,5 +1,5 @@
 <div class="block thumbnail">
-    <h4 data-tour="tour-recommended-experts">Recommended Experts</h4>
+    <h4>Recommended Experts</h4>
     <div class="recommended-experts-input-wrapper">
         <input class="span9 job-title" type="text" data-provide="typeahead" placeholder="Type a job title">
         <button class="btn btn-primary find-experts">Find Experts</button>

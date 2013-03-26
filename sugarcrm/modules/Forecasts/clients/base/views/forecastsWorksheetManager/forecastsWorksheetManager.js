@@ -179,6 +179,10 @@
         // put the selected user on top
         users.unshift({id: this.selectedUser.id, name: this.selectedUser.full_name});
 
+        // get the base currency
+        var currency_id = app.currency.getBaseCurrencyId();
+        var currency_base_rate = app.metadata.getCurrency(app.currency.getBaseCurrencyId()).conversion_rate;
+
         _.each(users, function(user) {
             var row = _.find(resp.records, function(rec) {
                 return (rec.user_id == this.id)
@@ -188,7 +192,11 @@
                 row.name = user.name;
             } else {
                 row = _.clone(this.defaultValues);
+                row.currency_id = currency_id;
+                row.base_rate = currency_base_rate;
                 row.user_id = user.id;
+                row.assigned_user_id = this.selectedUser.id;
+                row.draft = (this.selectedUser.id == app.user.id) ? 1 : 0;
                 row.name = user.name;
             }
             records.push(row);
@@ -211,18 +219,26 @@
      *
      * @return {object}
      */
-    createURL: function() {
-        // we need to default the type to products
-        var args_filter = [];
+    createURL: function(isCommitLog, userId, showOpps) {
+        isCommitLog = isCommitLog || false;
+
+        var args_filter = [],
+            beanName = 'ForecastManagerWorksheets',
+            url;
+
         if(this.timePeriod) {
             args_filter.push({"timeperiod_id": this.timePeriod});
         }
 
-        if(this.selectedUser) {
+        if(isCommitLog && this.selectedUser) {
+            args_filter.push({"user_id": userId});
+            beanName = 'Forecasts';
+            args_filter.push({"forecast_type": (showOpps) ? 'Direct' : 'Rollup'});
+        } else if(this.selectedUser) {
             args_filter.push({"assigned_user_id": this.selectedUser.id});
         }
 
-        var url = app.api.buildURL('ForecastManagerWorksheets', 'filter');
+        url = app.api.buildURL(beanName, 'filter');
 
         return {"url": url, "filters": {"filter": args_filter}};
     },
@@ -460,7 +476,7 @@
                 }
                 this.context.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', saveObj.isDraft);
             }
-        }, this), silent: true});
+        }, this), silent: true, alerts: { 'success': false }});
     },
 
     /**
@@ -590,16 +606,7 @@
             }
         );
 
-        //see if anything in the model is a draft version
-        var enableCommit = this.collection.find(function(model) {
-            if(model.get("version") == 0) {
-                this.draftModels.add(model, {merge: true});
-                return true;
-            }
-
-            return false;
-        }, this);
-        if(_.isObject(enableCommit)) {
+        if (this.getDraftModels().length > 0) {
             this.context.trigger("forecasts:commitButtons:enabled");
         }
 
@@ -607,7 +614,17 @@
         this.context.trigger('forecasts:worksheetmanager:rendered');
 
         return this;
-
+    },
+    
+    getDraftModels: function(){
+      //see if anything in the model is a draft version
+        return this.collection.filter(function(model) {
+            if (model.get("version") == "0") {
+                this.draftModels.add(model, {merge: true});
+                return true;
+            }            
+            return false;            
+        }, this);
     },
 
     /**
@@ -642,17 +659,14 @@
     fetchUserCommitHistory: function(event, nTr) {
         var jTarget = $(event.target),
             dataCommitDate = jTarget.data('commitdate'),
-            options = {
-                timeperiod_id: this.timePeriod,
-                user_id: jTarget.data('uid'),
-                forecast_type: (jTarget.data('showopps')) ? 'Direct' : 'Rollup'
-            };
+            url = this.createURL(true, jTarget.data('uid'), jTarget.data('showopps'));
 
         return app.api.call('read',
-            app.api.buildURL('Forecasts', 'committed', null, options),
-            null,
+            url.url,
+            url.filters,
             {
                 success: function(data) {
+                    data = data.records;
                     var commitDate = new Date(dataCommitDate),
                         newestModel = new Backbone.Model(_.first(data)),
                     // get everything that is left but the first item.

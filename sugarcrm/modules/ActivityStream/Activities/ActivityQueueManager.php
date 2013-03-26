@@ -43,18 +43,18 @@ class ActivityQueueManager
     {
         if ($bean instanceof Activity && ($bean->activity_type == 'post' || $bean->activity_type == 'attach')) {
             // Posts.
-            if ($event == 'after_save') {
+            if ($event == 'after_save' && !$args['isUpdate']) {
                 $this->processPostSubscription($bean);
                 $this->processTags($bean);
             } elseif ($event == 'before_save') {
                 $bean->data = json_decode($bean->data, true);
 
-                if (!isset($bean->data['object'])) {
+                if (!isset($bean->data['object']) && !empty($bean->parent_type)) {
                     $parent = BeanFactory::retrieveBean($bean->parent_type, $bean->parent_id);
                     if ($parent && !is_null($parent->id)) {
                         $bean->data['object'] = self::getBeanAttributes($parent);
                     } else {
-                        $bean->data['object_type'] = $parent->module_name;
+                        $bean->data['object_type'] = $bean->parent_type;
                     }
                 }
 
@@ -271,9 +271,11 @@ class ActivityQueueManager
     protected function processTags(Activity $act)
     {
         $data = json_decode($act->data, true);
-        foreach ($data['tags'] as $tag) {
-            $bean = BeanFactory::retrieveBean($tag['module'], $tag['id']);
-            $this->processRecord($bean, $act);
+        if (!empty($data['tags']) && is_array($data['tags'])) {
+            foreach ($data['tags'] as $tag) {
+                $bean = BeanFactory::retrieveBean($tag['module'], $tag['id']);
+                $this->processRecord($bean, $act);
+            }
         }
     }
 
@@ -296,6 +298,7 @@ class ActivityQueueManager
                 '"Teams"',
                 '"1"',
                 '"[]"',
+                '"' . $act->date_modified . '"',
                 '0',
             );
             $sql .= implode(', ', $values) . ')';

@@ -34,8 +34,8 @@
                     var prefill = app.data.createBean(self.model.module);
                     prefill.copy(self.model);
 
-                    if (module.fields.status && module.fields.status.default) {
-                        prefill.set('status', module.fields.status.default);
+                    if (module.fields.status && module.fields.status['default']) {
+                        prefill.set('status', module.fields.status['default']);
                     } else {
                         prefill.unset('status');
                     }

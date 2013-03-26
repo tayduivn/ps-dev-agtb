@@ -77,6 +77,10 @@ class FilterApi extends SugarApi
 
     protected $current_user;
 
+    // id and date_modified should always be in the response
+    // user fields are needed for ACLs since they check owners
+    protected $mandatory_fields = array('id', 'date_modified', 'assigned_user_id', 'created_by');
+
     public function __construct()
     {
         global $current_user;
@@ -135,6 +139,12 @@ class FilterApi extends SugarApi
         // type.
         $options['module'] = $seed->module_name;
 
+        //Set the list of fields to be used in the select.
+        $options['select'] = !empty($args['fields']) ? explode(",", $args['fields']) : array();
+
+        //Force id and date_modified into the select
+        $options['select'] = array_unique(array_merge($options['select'], $this->mandatory_fields));
+
         return $options;
     }
 
@@ -158,7 +168,7 @@ class FilterApi extends SugarApi
 
         $api->action = 'list';
 
-        return $this->runQuery($api, $args, $q, $options);
+        return $this->runQuery($api, $args, $q, $options, $seed);
     }
 
     public function filterRelated(ServiceBase $api, array $args)
@@ -213,17 +223,37 @@ class FilterApi extends SugarApi
         $args['filter'][][$tableName . '.' . $column] = array('$equals' => $record->id);
         $this->addFilters($args['filter'], $q->where(), $q);
 
-        $api->action = 'list';
+		$api->action = 'list';
 
-        return $this->runQuery($api, $args, $q, $options);
+        return $this->runQuery($api, $args, $q, $options, $linkSeed);
     }
 
     protected function getQueryObject(SugarBean $seed, array $options)
     {
         $q = new SugarQuery();
         // Just need ID, we need to fetch beans so we can format them later.
-        $q->select(array('id'));
         $q->from($seed);
+        if(empty($options['select'])) {
+            $options['select'] = $this->mandatory_fields;
+        }
+
+        $fields = array();
+        foreach($options['select'] as $field) {
+            // FIXME: convert this to vardefs too?
+            //BEGIN SUGARCRM flav=pro ONLY
+            if($field == 'my_favorite') {
+                $fjoin = $q->join("favorites");
+                $fields[] = array($fjoin->joinName().".id", 'my_favorite');
+                continue;
+            }
+            //END SUGARCRM flav=pro ONLY
+
+            // fields that aren't in field defs are removed, since we don't know what to do with them
+            if(!empty($seed->field_defs[$field])) {
+                $fields[] = $field;
+            }
+        }
+        $q->select($fields);
         $q->distinct(true);
         $q->where()->equals("deleted", 0);
 
@@ -237,8 +267,67 @@ class FilterApi extends SugarApi
         return $q;
     }
 
-    protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options)
+
+    /**
+     * Populate related beans from data array
+     * @param SugarBean $bean
+     * @param array $data
+     */
+    protected function populateRelatedFields($bean, $data)
     {
+        $relates = array();
+        // fill in related rows data by field
+        foreach($data as $key => $value) {
+            if(($split = strpos($key, "__")) > 0) {
+                $relates[substr($key, 0, $split)][] = substr($key, $split+2);
+            }
+        }
+
+        foreach($bean->field_defs as $field => $fieldDef) {
+            if($fieldDef['type'] == 'relate' && !empty($fieldDef['link'])) {
+                if(empty($data[$field]) && empty($relates[$field])) continue;
+
+                $rbean = $bean->getRelatedBean($fieldDef['link']);
+                if(empty($rbean)) continue;
+
+                if(!empty($data[$field])) {
+                    // we have direct data - populate it
+                    $rbean->populateFromRow(array($fieldDef['rname'] => $data[$field]), true);
+                } else {
+                    if(empty($relates[$field])) {
+                        continue;
+                    }
+
+                    $reldata = array();
+                    foreach($relates[$field] as $relfield) {
+                        $reldata[$relfield] = $data["{$field}__{$relfield}"];
+                    }
+                    if(!empty($reldata)) {
+                        $rbean->populateFromRow($reldata, true);
+                    }
+                }
+
+                if(empty($rbean->id) && !empty($fieldDef['id_name']) && !empty($data[$fieldDef['id_name']])) {
+                	$rbean->id = $data[$fieldDef['id_name']];
+                }
+
+            }
+        }
+        // Call some data fillings for the bean
+        foreach($bean->related_beans as $rbean) {
+            if(empty($rbean->id)) continue;
+
+            $rbean->check_date_relationships_load();
+            // $rbean->fill_in_additional_list_fields();
+            if($rbean->hasCustomFields()) $rbean->custom_fields->fill_relationships();
+            $rbean->call_custom_logic("process_record");
+        }
+        //
+    }
+
+    protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed)
+    {
+        $seed->call_custom_logic("before_filter", array($q, $options));
         $GLOBALS['log']->info("Filter SQL: ".$q->compileSql());
         $idRows = $q->execute();
         // return $idRows;
@@ -246,16 +335,49 @@ class FilterApi extends SugarApi
         $data = array();
         $data['next_offset'] = -1;
 
-        $beans = array();
+        $beans = $bean_ids = array();
         foreach ($idRows as $i => $row) {
             if ($i == $options['limit']) {
                 $data['next_offset'] = (int)($options['limit']+$options['offset']);
                 continue;
             }
-            $bean = BeanFactory::getBean($options['module'], $row['id']);
-            if ($bean) {
-                // Sometimes team security changes mid-query
-                $beans[] = $bean;
+            if (empty($args['fields'])){
+                //FIXME: Without a field list, we need to just do a full retrieve to make sure we get the entire bean.
+                $bean = BeanFactory::getBean($options['module'], $row['id']);
+            } else {
+                $bean = clone $seed;
+                // convert will happen inside populateFromRow
+                $bean->loadFromRow($row, true);
+                $this->populateRelatedFields($bean, $row);
+                if(!empty($bean->id) && !empty($row['parent_type']) && $q->hasParent()) {
+                    $child_info[$row['parent_type']][] = array('child_id'=>$bean->id, 'parent_id'=> $bean->parent_id,
+                        'parent_type'=>$bean->parent_type, 'type'=>'parent');
+                }
+            }
+            if ($bean && !empty($bean->id)) {
+                $beans[$bean->id] = $bean;
+                $bean_ids[] = $bean->id;
+            }
+        }
+        /* FIXME: this is a hack for emails, think about how to fix it */
+        if (!empty($bean_ids) && isset($seed->field_defs['email']) && in_array('email',$options['select'])) {
+            $email = BeanFactory::getBean('EmailAddresses');
+            $q = $email->getEmailsQuery($seed->module_name);
+            $q->where()->in("ear.bean_id", $bean_ids);
+            $q->select->field("ear.bean_id");
+            $email_rows = $q->execute();
+            foreach($email_rows as $email) {
+                $beans[$email['bean_id']]->emailData[] = $email;
+            }
+        }
+        // Load parent records
+        if(!empty($child_info)) {
+            $parent_beans = $seed->retrieve_parent_fields($child_info);
+            foreach($parent_beans as $id => $parent_data) {
+                unset($parent_data['id']);
+                foreach($parent_data as $field => $value) {
+                    $beans[$id]->$field = $value;
+                }
             }
         }
 
@@ -342,7 +464,7 @@ class FilterApi extends SugarApi
                                 break;
                             case '$fromDays':
                                 // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
-                                $where->addRaw("{$field} >= DATE_ADD(NOW(), INTERVAL {$value} DAY)");
+                                $where->gte($field, TimeDate::getInstance()->getNow()->get("-{$value} days")->asDb());
                                 break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: ".$op);
@@ -393,7 +515,7 @@ class FilterApi extends SugarApi
      * This function adds a favorite filter to the sugar query
      * @param SugarQuery $q The whole SugarQuery object
      * @param SugarQuery_Builder_Where $where The Where part of the SugarQuery object
-     * @param string $link Which module are you adding the owner filter to.
+     * @param string $link Which module are you adding the favorite filter to.
      */
     protected function addFavoriteFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $link)
     {
@@ -403,11 +525,9 @@ class FilterApi extends SugarApi
             $q->join($link, array('joinType'=>'LEFT'));
             $sfOptions['joinTo'] = $link;
         }
+        $fjoin = $q->join("favorites");
 
-        $sf = new SugarFavorites();
-        $sfAlias = $sf->addToSugarQuery($q, $sfOptions);
-
-        $where->notNull($sfAlias . '.id');
+        $where->notNull($fjoin->joinName() . '.id');
     }
 
     protected function addTrackerFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $interval)
@@ -420,12 +540,12 @@ class FilterApi extends SugarApi
                     ."AND tracker.user_id='{$GLOBALS['current_user']->id}' ",array('alias'=>'tracker'));
 
         $td = new SugarDateTime();
-        $td->modify($interval);        
+        $td->modify($interval);
         $where->addRaw("tracker.date_modified >= '".$td->asDb()."' ");
 
         // Now, if they want tracker records, so let's order it by the tracker date_modified
         $q->order_by = array(array('tracker.date_modified','DESC'));
-        
+
         // Also, turn the distinct part off otherwise the sorting doesn't work.
         $q->distinct(false);
     }

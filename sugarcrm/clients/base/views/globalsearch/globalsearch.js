@@ -1,10 +1,17 @@
 ({
+    plugins: ['dropdown'],
+
     searchModules: [],
     events: {
         'click .typeahead a': 'clearSearch',
         'click .icon-search': 'gotoFullSearchResultsPage',
         'click .globalsearch-adv': 'persistMenu',
-        'click .select-module': 'selectModule'
+        'click .select-module': 'selectModule',
+        'click .dropdown-toggle':'toggleDropdown'
+    },
+    toggleDropdown: function(event) {
+        var $currentTarget = this.$(event.currentTarget);
+        this.toggleDropdownHTML($currentTarget);
     },
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);

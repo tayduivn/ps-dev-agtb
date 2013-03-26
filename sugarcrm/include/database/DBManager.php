@@ -1633,6 +1633,19 @@ protected function checkQuery($sql, $object_name = false)
         return $this->quoted($value);
 	}
 
+	/**
+	 * Get type class for certain type
+	 * @param string $type
+	 * @return string
+	 */
+	public function getTypeClass($type)
+	{
+	    if(isset($this->type_class[$type])) {
+	        return $this->type_class[$type];
+	    }
+	    return 'string';
+	}
+
     /**
      * Quote the strings of the passed in array
      *
@@ -2933,10 +2946,10 @@ protected function checkQuery($sql, $object_name = false)
         if (isset($options['field_filter']) && is_array($options['field_filter'])) {
             $fields = array_intersect_key($fields, array_flip($options['field_filter']));
         }
-        
+
         // remove fields which do not present in fetched row
         $fields = array_intersect_key($fields, $fetched_row);
-        
+
         // remove fields which do not exist as bean property
         $fields = array_intersect_key($fields, (array) $bean);
 
@@ -2956,7 +2969,7 @@ protected function checkQuery($sql, $object_name = false)
 							$field_type=$properties['dbtype'];
 					}
                 }
-                    
+
                 //Because of bug #25078(sqlserver haven't 'date' type, trim extra "00:00:00" when insert into *_cstm table).
                 // so when we read the audit datetime field from sqlserver, we have to replace the extra "00:00:00" again.
                 if(!empty($field_type) && $field_type == 'date'){

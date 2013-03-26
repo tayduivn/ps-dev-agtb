@@ -166,6 +166,7 @@ $mod_strings = array (
     'LBL_PRIMARY_ADDRESS_STREET_3'=>'Primary Address Street 3',   
     'LBL_PRIMARY_ADDRESS_STREET' => 'Primary Address Street',
     'LBL_PRIMARY_ADDRESS' => 'Primary Address:',
+    'LBL_RECORD_SAVED_SUCCESS' => 'Record {{first_name}} {{last_name}} was created.',
     'LBL_REFERED_BY' => 'Referred By:',
     'LBL_REPORTS_TO_ID'=>'Reports To ID',
     'LBL_REPORTS_TO' => 'Reports To:',
@@ -276,9 +277,9 @@ $mod_strings = array (
 	'LBL_EDIT_INLINE' => 'Edit' /*for 508 compliance fix*/,
     'LBL_CONVERT_FAILED_VALIDATION_TITLE' => 'Failed Validation',
     'LBL_CONVERT_FAILED_VALIDATION_MESSAGE' => 'Failed Validation',
-
     //Dashlet
     'LBL_DASHLET_LISTVIEW_NAME' => 'My Leads',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing of your leads',
+    'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'Opportunities',
 );
 ?>

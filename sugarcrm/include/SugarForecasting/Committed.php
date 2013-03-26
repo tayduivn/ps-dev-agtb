@@ -30,47 +30,13 @@ require_once('include/SugarForecasting/AbstractForecast.php');
 class SugarForecasting_Committed extends SugarForecasting_AbstractForecast implements SugarForecasting_ForecastSaveInterface
 {
     /**
-     * Run all the tasks we need to process get the data back
+     * No longer used but the class parent implements SugarForecasting_ForecastProcessInterface
      *
      * @return array|string
      */
     public function process()
     {
-        $this->loadCommitted();
-
         return array_values($this->dataArray);
-    }
-
-    /**
-     * Load the Committed Values for someones forecast
-     *
-     * @return void
-     */
-    protected function loadCommitted()
-    {
-        $db = DBManagerFactory::getInstance();
-
-        $args = $this->getArgs();
-
-        $where = "forecasts.user_id = '{$args['user_id']}' AND forecasts.forecast_type='{$args['forecast_type']}' AND forecasts.timeperiod_id = '{$args['timeperiod_id']}'";
-
-        $order_by = 'forecasts.date_modified DESC';
-        if (isset($args['order_by'])) {
-            $order_by = clean_string($args['order_by']);
-        }
-
-        $bean = BeanFactory::getBean('Forecasts');
-        $query = $bean->create_new_list_query($order_by, $where, array(), array(), $args['include_deleted']);
-        $results = $db->query($query);
-
-        $forecasts = array();
-        while (($row = $db->fetchByAssoc($results))) {
-            $row['date_entered'] = $this->convertDateTimeToISO($db->fromConvert($row['date_entered'],'datetime'));
-            $row['date_modified'] = $this->convertDateTimeToISO($db->fromConvert($row['date_modified'],'datetime'));
-            $forecasts[] = $row;
-        }
-
-        $this->dataArray = $forecasts;
     }
 
     /**
@@ -101,12 +67,15 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->worst_case = $args['worst_case'];
         $forecast->forecast_type = $args['forecast_type'];
         $forecast->opp_count = $args['opp_count'];
-        $forecast->currency_id = $args['currency_id'];
-        $forecast->base_rate = $args['base_rate'];
+        $forecast->currency_id = '-99';
+        $forecast->base_rate = '1';
         
         //If we are committing a rep forecast, calculate things.  Otherwise, for a manager, just use what is passed in.
         if ($args['pipeline_opp_count'] == 0 && $args['pipeline_amount'] == 0) {
             $forecast->calculatePipelineData(($args['includedClosedAmount']), ($args['includedClosedCount']));
+            //push the pipeline numbers back into the args
+            $args['pipeline_opp_count'] = $forecast->pipeline_opp_count;
+            $args['pipeline_amount'] = $forecast->pipeline_amount;
         } else {
             $forecast->pipeline_opp_count = $args['pipeline_opp_count'];
             $forecast->pipeline_amount = $args['pipeline_amount'];
@@ -122,25 +91,13 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $mgr_worksheet->reporteeForecastRollUp($current_user, $args);
 
-        // ForecastWorksheets Table Commit Version
-        $data = array(
-            'user_id' => $current_user->id,
-            'timeperiod_id' => $args['timeperiod_id']
-        );
-
-        /* @var $job SchedulersJob */
-        $job = BeanFactory::getBean('SchedulersJobs');
-        $job->name = "Update ForecastWorksheets";
-        $job->target = "class::SugarJobUpdateForecastWorksheets";
-        $job->data = json_encode($data);
-        $job->retry_count = 0;
-        $job->assigned_user_id = $current_user->id;
-
-        require_once('include/SugarQueue/SugarJobQueue.php');
-        $jq = new SugarJobQueue();
-        $jq->submitJob($job);
-
-        $mgr_worksheet->commitManagerForecast($current_user, $args['timeperiod_id']);
+        if ($this->getArg('commit_type') == "sales_rep") {
+            /* @var $worksheet ForecastWorksheet */
+            $worksheet = BeanFactory::getBean('ForecastWorksheets');
+            $worksheet->commitWorksheet($current_user->id, $args['timeperiod_id']);
+        } else if($this->getArg('commit_type') == "manager") {
+            $mgr_worksheet->commitManagerForecast($current_user, $args['timeperiod_id']);
+        }
 
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         $admin = BeanFactory::getBean('Administration');

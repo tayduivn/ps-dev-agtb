@@ -100,8 +100,8 @@ class One2OneBeanRelationship extends One2MBeanRelationship
 
     /**
      * Build a Join for an existing SugarQuery
-     * @param Link2 $link 
-     * @param SugarQuery $sugar_query 
+     * @param Link2 $link
+     * @param SugarQuery $sugar_query
      * @return SugarQuery
      */
     public function buildJoinSugarQuery(Link2 $link, $sugar_query, $options)
@@ -113,7 +113,7 @@ class One2OneBeanRelationship extends One2MBeanRelationship
 
 
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
-        
+
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
 
 
@@ -121,10 +121,10 @@ class One2OneBeanRelationship extends One2MBeanRelationship
 
         $sugar_query->joinTable($targetTable, array('alias' => $options['myAlias'], 'joinType' => $join_type))
             ->on()->equalsField("{$startingTable}.{$startingKey}","{$options['myAlias']}.{$targetKey}")
-            ->equals("{$targetTable}.deleted","0");
+            ->equals("{$options['myAlias']}.deleted","0");
 
         $this->buildSugarQueryRoleWhere($sugar_query, $options['myAlias']);
 
         return $sugar_query->join[$options['myAlias']];
-    }    
+    }
 }

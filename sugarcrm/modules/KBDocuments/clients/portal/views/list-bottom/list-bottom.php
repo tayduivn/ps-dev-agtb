@@ -21,16 +21,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *********************************************************************************/
 
 $viewdefs['KBDocuments']['portal']['view']['list-bottom'] = array(
-    'buttons' =>
-    array(
-        0 =>
-        array(
-            'name' => 'show_more_button',
-            'type' => 'button',
-            'label' => 'LBL_SHOW_MORE',
-            'class' => 'loading wide'
-        ),
-    ),
     'listNav' =>
     array(
         0 =>
