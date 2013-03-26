@@ -90,7 +90,12 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'account_name',                
+                array(
+                    'name' => 'account_name',
+                    'related_fields' => array(
+                        'account_id'
+                    )
+                ),                
                 'lead_source',
                 'sales_status',
                 'campaign_name',
