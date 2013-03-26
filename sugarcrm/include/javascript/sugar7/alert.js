@@ -46,8 +46,7 @@
     };
 
     /**
-     * By default,
-     * on 'data:sync:start' we DON'T display a process alert
+     * By default, on 'data:sync:start' we DON'T display a process alert
      *
      * You can pass options.showAlerts = true to your requests to enable the alert messages.
      *
@@ -86,23 +85,21 @@
      *          }
      *      });
      */
-    var _methods = ['create', 'read', 'update', 'delete'];
-    var nbProcessAlerts = 0;
+    var numActiveProcessAlerts = 0;
     app.events.on('data:sync:start', function(method, model, options) {
 
         options = options || {};
 
         // By default we don't display the alert
-        if (!options.showAlerts)  return;
+        if (!options.showAlerts) return;
 
         // The user can have disabled only the process alert
-        if ((_.isObject(options.showAlerts) && options.showAlerts.process === false))   return;
+        if (options.showAlerts.process === false) return;
 
         // From here we are sure we want to show the process alert
-        var alert = {},
-            alertOpts = {
-                level: 'process'
-            };
+        var alertOpts = {
+            level: 'process'
+        };
 
         // Pull labels for each method
         if (method === 'read') {
@@ -118,13 +115,12 @@
         }
 
         // Check for an alert options object attach to options that would override
-        if (_.isObject(options.showAlerts) && _.isObject(options.showAlerts.process)) {
-            alert = options.showAlerts.process;
+        if (_.isObject(options.showAlerts.process)) {
+            _.extend(alertOpts, options.showAlerts.process);
         }
-        alertOpts = _.extend({}, alertOpts, alert);
 
         // Increase the counter so we know have many process alerts are currently being displayed
-        nbProcessAlerts++;
+        numActiveProcessAlerts++;
         app.alert.show('data:sync:process', alertOpts);
     });
 
@@ -137,12 +133,12 @@
 
         // As we display alerts we have have to check if there is a process alert to dismiss prior to display the success one
         // (as many requests can be fired at the same time we make sure not to dismiss another process alert!)
-        if (options.showAlerts === true || (_.isObject(options.showAlerts) && options.showAlerts.process !== false)) {
+        if (options.showAlerts.process !== false) {
             // Decrease the number of alerts to dismiss
-            nbProcessAlerts--;
+            numActiveProcessAlerts--;
             // Dismiss only if it's the last one
-            if (nbProcessAlerts < 1) {
-                nbProcessAlerts = 0;
+            if (numActiveProcessAlerts < 1) {
+                numActiveProcessAlerts = 0;
                 app.alert.dismiss('data:sync:process');
             }
         }
@@ -151,18 +147,13 @@
         if (error || method === 'read') return;
 
         // The user can have disabled only the success alert
-        if ((_.isObject(options.showAlerts) && options.showAlerts.success === false))   return;
+        if (options.showAlerts.success === false) return;
 
         // From here we are sure we want to show the success alert
-        var alert = {},
-            alertOpts = {
-                level: 'success',
-                autoClose: true
-            };
-        // Check for an alert options object attach to options
-        if (_.isObject(options.showAlerts) && _.isObject(options.showAlerts.success)) {
-            alert = options.showAlerts.success;
-        }
+        var alertOpts = {
+            level: 'success',
+            autoClose: true
+        };
 
         if (method === 'delete') {
             // options.relate means we are breaking a relationship between two records, not actually deleting a record
@@ -171,7 +162,12 @@
         else {
             alertOpts.messages = 'LBL_SAVED';
         }
-        alertOpts = _.extend({}, alertOpts, alert);
+
+        // Check for an alert options object attach to options
+        if (_.isObject(options.showAlerts.success)) {
+            _.extend(alertOpts, options.showAlerts.success);
+        }
+
         app.alert.show('data:sync:success', alertOpts);
     });
 
