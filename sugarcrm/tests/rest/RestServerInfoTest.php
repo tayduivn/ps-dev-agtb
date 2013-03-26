@@ -49,9 +49,6 @@ class RestServerInfoTest extends RestTestBase {
         //BEGIN SUGARCRM flav=pro ONLY
         $this->assertTrue(is_array($restReply['reply']['server_info']['fts']), "No FTS Info Set");
         //END SUGARCRM flav=pro ONLY
-        
-        $this->assertTrue(isset($restReply['reply']['server_info']['gmt_time']), "No GMT Time Set");
-        $this->assertTrue(isset($restReply['reply']['server_info']['server_time']), "No Server Time Set");
     }
 
 }
