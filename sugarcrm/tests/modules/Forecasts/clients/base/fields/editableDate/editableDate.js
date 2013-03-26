@@ -25,6 +25,9 @@ describe("forecasts_field_editableDate", function() {
     beforeEach(function() {
         app = SugarTest.app;
         context = app.context.getContext();
+        app.user = SugarTest.app.user;
+        app.user.setPreference('decimal_precision', 2);
+        context.set({"selectedUser": {'id': app.user.get('id')}});
         getModuleStub = sinon.stub(app.metadata, "getModule", function() {
             return {
                 sales_stage_won: ["Closed Won"],
@@ -74,6 +77,12 @@ describe("forecasts_field_editableDate", function() {
             field.checkIfCanEdit();
             expect(field._canEdit).toBeTruthy();
         })
+
+        it("should be false with different user and no configured excluded sales stage", function() {
+            field.context.set({"selectedUser": {"id": "doh"}});
+            field.checkIfCanEdit();
+            expect(field.isEditable()).toBeFalsy();
+        });
     });
 
     describe("field validates date properly on hide", function() {
