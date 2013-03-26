@@ -675,11 +675,24 @@ input[type="color"],
     width: 100%;
     clear: both;
   }
-  .address_city:after,
-  .address_state:after {
-    content: ",";
-    margin-left: -2px;
+  :not(.edit) {
+    &.address_city,
+    &.address_state {
+      div:after {
+        content: ",";
+        margin-left: -4px;
+        margin-right: 4px;
+      }
+    }
   }
+
+  .address_city,
+  .address_state {
+    .ellipsis_inline:empty:after {
+      content: "";
+    }
+  }
+
   .address_city,
   .address_state,
   .address_zip {
