@@ -42,6 +42,11 @@ class SugarMin {
     }
 
     protected function jsParser() {
+        //If the JSMIn extension is loaded, use that as it can be as much as 1000x faster than JShrink
+        if (extension_loaded("jsmin"))
+        {
+            return jsmin($this->text);
+        }
         require_once('jssource/Minifier.php');
         return JShrink\Minifier::minify($this->text);
 	}
