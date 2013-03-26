@@ -215,9 +215,35 @@ class SugarFieldRelate extends SugarFieldBase {
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         return $this->fetch($this->findTemplate('SearchView'));
     }
-    
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
-        $data[$fieldName] = $this->formatField($bean->$fieldName, $properties);
+
+    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties)
+    {
+        /*
+         * If we have a related field, use its formatter to format it
+         */
+        if(!empty($properties['link']) && !empty($bean->related_beans[$properties['link']])) {
+            $rbean = $bean->related_beans[$properties['link']];
+            if(empty($rbean->field_defs[$properties['rname']])) {
+                $data[$fieldName] = '';
+                return;
+            }
+            $rdefs = $rbean->field_defs[$properties['rname']];
+            if(!empty($rdefs) && !empty($rdefs['type'])) {
+                $sfh = new SugarFieldHandler();
+                $field = $sfh->getSugarField($rdefs['type']);
+                $rdata = array();
+                $field->apiFormatField($rdata, $rbean, $args, $properties['rname'], $rdefs);
+                $data[$fieldName] = $rdata[$properties['rname']];
+                if(!empty($data[$fieldName])) {
+                    return;
+                }
+            }
+        }
+        if(empty($bean->$fieldName)) {
+            $data[$fieldName] = '';
+        } else {
+            $data[$fieldName] = $this->formatField($bean->$fieldName, $properties);
+        }
     }
 
     /**

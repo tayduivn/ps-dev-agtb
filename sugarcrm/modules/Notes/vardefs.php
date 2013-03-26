@@ -31,87 +31,6 @@ $dictionary['Note'] = array(
 
 	'comment' => 'Notes and Attachments'
                                ,'fields' => array (
-  'id' =>
-  array (
-    'name' => 'id',
-    'vname' => 'LBL_ID',
-    'type' => 'id',
-    'required'=>true,
-    'reportable'=>true,
-    'comment' => 'Unique identifier'
-  ),
-   'date_entered' =>
-  array (
-    'name' => 'date_entered',
-    'vname' => 'LBL_DATE_ENTERED',
-    'type' => 'datetime',
-    'comment' => 'Date record created',
-    'enable_range_search' => true,
-    'options' => 'date_range_search_dom',
-  ),
-  'date_modified' =>
-  array (
-    'name' => 'date_modified',
-    'vname' => 'LBL_DATE_MODIFIED',
-    'type' => 'datetime',
-    'comment' => 'Date record last modified',
-    'enable_range_search' => true,
-  ),
-   'modified_user_id' =>
-	  array (
-	    'name' => 'modified_user_id',
-	    'rname' => 'user_name',
-	    'id_name' => 'modified_user_id',
-	    'vname' => 'LBL_MODIFIED',
-	    'type' => 'assigned_user_name',
-	    'table' => 'users',
-	    'isnull' => 'false',
-	     'group'=>'modified_by_name',
-	    'dbType' => 'id',
-	    'reportable'=>true,
-	    'comment' => 'User who last modified record',
-	  ),
-	  'modified_by_name' =>
-	  array (
-	    'name' => 'modified_by_name',
-    'vname' => 'LBL_MODIFIED_BY',
-	    'type' => 'relate',
-	    'reportable'=>false,
-	    'source'=>'non-db',
-	    'rname'=>'user_name',
-	    'table' => 'users',
-	    'id_name' => 'modified_user_id',
-	    'module'=>'Users',
-	    'link'=>'modified_user_link',
-	    'duplicate_merge'=>'disabled'
-	  ),
-	  'created_by' =>
-	  array (
-	    'name' => 'created_by',
-	    'rname' => 'user_name',
-	    'id_name' => 'modified_user_id',
-   		'vname' => 'LBL_CREATED_BY',
-	    'type' => 'assigned_user_name',
-	    'table' => 'users',
-	    'isnull' => 'false',
-	    'dbType' => 'id',
-    'comment' => 'User who created record'
-	  ),
-	  	'created_by_name' =>
-	  array (
-	    'name' => 'created_by_name',
-		'vname' => 'LBL_CREATED_BY',
-		'type' => 'relate',
-		'reportable'=>false,
-	    'link' => 'created_by_link',
-	    'rname' => 'user_name',
-		'source'=>'non-db',
-		'table' => 'users',
-		'id_name' => 'created_by',
-		'module'=>'Users',
-		'duplicate_merge'=>'disabled',
-        'importable' => 'false',
-	),
   'name' =>
   array (
     'name' => 'name',
@@ -209,18 +128,6 @@ $dictionary['Note'] = array(
     'type' => 'text',
     'comment' => 'Full text of the note'
   ),
-  'deleted' =>
-  array (
-    'name' => 'deleted',
-    'vname' => 'LBL_DELETED',
-    'type' => 'bool',
-    'required' => false,
-    'default' => '0',
-    'reportable'=>false,
-    'comment' => 'Record deletion indicator'
-  ),
-
-
 
  'parent_name'=>
  	array(
@@ -475,20 +382,8 @@ $dictionary['Note'] = array(
       ),
 ),
 'relationships'=>array(
-'notes_modified_user' =>
-   array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
-   'rhs_module'=> 'Notes', 'rhs_table'=> 'notes', 'rhs_key' => 'modified_user_id',
-   'relationship_type'=>'one-to-many')
-
-   ,'notes_created_by' =>
-   array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
-   'rhs_module'=> 'Notes', 'rhs_table'=> 'notes', 'rhs_key' => 'created_by',
-   'relationship_type'=>'one-to-many')
-
-
 )
                                                       , 'indices' => array (
-       array('name' =>'notespk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_note_name', 'type'=>'index', 'fields'=>array('name')),
        array('name' =>'idx_notes_parent', 'type'=>'index', 'fields'=>array('parent_id', 'parent_type')),
        array('name' =>'idx_note_contact', 'type'=>'index', 'fields'=>array('contact_id')),
@@ -500,7 +395,7 @@ $dictionary['Note'] = array(
 	,'optimistic_locking'=>true,
                             );
 
-VardefManager::createVardef('Notes','Note', array('assignable',
+VardefManager::createVardef('Notes','Note', array('default', 'assignable',
 //BEGIN SUGARCRM flav=pro ONLY
 'team_security',
 //END SUGARCRM flav=pro ONLY

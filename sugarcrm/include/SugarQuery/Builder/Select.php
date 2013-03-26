@@ -43,17 +43,19 @@ class SugarQuery_Builder_Select
      */
     protected $select = array();
 
+    protected $query;
+
     /**
      * Create Select Object
      * @param $columns
      */
-    public function __construct($columns)
+    public function __construct(SugarQuery $query, $columns)
 	{
-		if(!is_array($columns)) {
-			$columns = func_get_args();
-
-		}
-		$this->select = array_merge($this->select, $columns);	
+        if(!is_array($columns)) {
+            $columns = array_slice(func_get_args(), 1);
+        }
+        $this->query = $query;
+        $this->field($columns);
 	}
 
     /**
@@ -63,8 +65,14 @@ class SugarQuery_Builder_Select
      * @return object this
      */
 	public function field($columns) {
-		$columns = func_get_args();
-		$this->select = array_merge($this->select, $columns);
+        if(!is_array($columns)) {
+            $columns = func_get_args();
+        }
+        if(!empty($this->select)) {
+            $this->select = array_unique(array_merge($this->select, $columns));
+        } else {
+            $this->select = $columns;
+        }
 		return $this;
 	}
 
@@ -87,6 +95,46 @@ class SugarQuery_Builder_Select
 	{
 		return $this->$name;
 	}
+
+    /**
+     * Add bean field to the query
+     * @param SugarQuery $query
+     * @param string $field
+     */
+    protected function addFieldToQuery(SugarQuery $query, $field)
+    {
+        if (in_array($field, $this->select))
+        {
+            return;
+        }
+
+        $fieldName = is_array($field) ?  $field[0] : $field;
+        $seed = !empty($query->from) && is_array($query->from) ? $query->from[0] : $query->from;
+        if (!empty($seed))
+        {
+            if (isset($seed->field_defs[$fieldName]))
+            {
+                $def = $seed->field_defs[$fieldName];
+                //Simple DB fields can be placed in the select normally
+                if (!isset($def['source']) || $def['source'] == 'db')
+                {
+                    $this->select[] = $field;
+                } else
+                {
+                    //Here is where we need to start implementing the harder code.
+                    //Similar to what we have in create_new_list_query, we will need joins, additional alias's, ect
+                    //I'm not sure how well we can do thins like track what tables are already joined in the query
+                    //And determine if we need to join them a second time or re-use the existing join.
+                }
+            } else {
+                $this->select[] = $field;
+            }
+        } else
+        {
+            $this->select[] = $field;
+        }
+
+    }
 
 
 }

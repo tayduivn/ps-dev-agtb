@@ -252,8 +252,8 @@ class SugarFavorites extends Basic
         $sugar_query->joinTable(self::getTableName(), array('alias'=>$sfAlias, 'joinType'=>$joinType))
                     ->on()->equals("{$sfAlias}.module", $bean->module_name, $this)
                         ->equalsField("{$sfAlias}.record_id","{$alias}.id", $this)
-                    ->equals("{$sfAlias}.assigned_user_id", $user_id)
-                    ->equals("{$sfAlias}.deleted", 0);
+                    ->equals("{$sfAlias}.assigned_user_id", $user_id, $this)
+                    ->equals("{$sfAlias}.deleted", 0, $this);
 
         return $sfAlias;
     }

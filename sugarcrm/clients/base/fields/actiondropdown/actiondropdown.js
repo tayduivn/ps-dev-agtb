@@ -30,6 +30,12 @@
     initialize: function(options) {
         app.view.fields.FieldsetField.prototype.initialize.call(this, options);
         //Throttle the setPlaceholder function per instance of this field.
+        var origRender = this._render;
+        this._render = _.debounce(function(){
+            //Because of throttle, calls to render may come in after dispose has been called.
+            if (this.disposed) return;
+            return origRender.call(this);
+        }, 100);
         this.setPlaceholder = _.throttle(app.view.fields.ActiondropdownField.prototype.setPlaceholder, 100);
     },
     getPlaceholder: function() {

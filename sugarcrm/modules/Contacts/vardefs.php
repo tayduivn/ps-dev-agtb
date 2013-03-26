@@ -72,7 +72,7 @@ $dictionary['Contact'] = array(
             'rname' => 'id',
             'id_name' => 'account_id',
             'vname' => 'LBL_ACCOUNT_ID',
-            'type' => 'id',
+            'type' => 'relate',
             'table' => 'accounts',
             'isnull' => 'true',
             'module' => 'Accounts',
@@ -140,7 +140,7 @@ $dictionary['Contact'] = array(
         ),
         'report_to_name' => array(
             'name' => 'report_to_name',
-            'rname' => 'last_name',
+            'rname' => 'name',
             'id_name' => 'reports_to_id',
             'vname' => 'LBL_REPORTS_TO',
             'type' => 'relate',

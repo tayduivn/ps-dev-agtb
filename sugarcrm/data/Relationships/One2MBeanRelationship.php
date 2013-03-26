@@ -169,7 +169,7 @@ class One2MBeanRelationship extends One2MRelationship
                 $id = $link->getFocus()->$rhsID;
                 if (!empty($id)) {
                     $rows[$id] = array('id' => $id);
-                }                
+                }
             }
         }
         else //If the link is LHS, we need to query to get the full list and load all the beans.
@@ -297,15 +297,15 @@ class One2MBeanRelationship extends One2MRelationship
 
     /**
      * Build a Join Query with a SugarQuery Object
-     * @param Link2 $link 
-     * @param SugarQuery $sugar_query 
+     * @param Link2 $link
+     * @param SugarQuery $sugar_query
      * @return SugarQuery
      */
     public function buildJoinSugarQuery(Link2 $link, $sugar_query, $options)
     {
         $linkIsLHS = $link->getSide() == REL_LHS;
         $startingTable = $this->def['lhs_table'];
-        
+
         if (!$linkIsLHS)
             $startingTable = $this->def['rhs_table'];
 
@@ -317,7 +317,7 @@ class One2MBeanRelationship extends One2MRelationship
 
         $sugar_query->joinTable($targetTable, array('alias' => $options['myAlias'], 'joinType' => $join_type))
             ->on()->equalsField("{$startingTable}.{$startingKey}", "{$options['myAlias']}.{$targetKey}")
-            ->equals("{$targetTable}.deleted","0");
+            ->equals("{$options['myAlias']}.deleted","0");
 
 
         $this->buildSugarQueryRoleWhere($sugar_query,$options['myAlias']);
@@ -367,7 +367,7 @@ class One2MBeanRelationship extends One2MRelationship
         $targetTableWithAlias = "$targetTable $alias";
         $targetTable = $alias;
 
-        $query .= "$join_type $targetTableWithAlias ON $startingTable.$startingKey=$targetTable.$targetKey AND $targetTable.deleted=0\n"
+        $query .= "$join_type $targetTableWithAlias ON ($startingTable.$startingKey=$targetTable.$targetKey AND $targetTable.deleted=0)\n"
         //Next add any role filters
                . $this->getRoleWhere($tableInRoleFilter) . "\n";
 

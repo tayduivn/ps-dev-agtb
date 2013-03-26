@@ -32,9 +32,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * This is the base object for building SugarQueries And Where's
  * ************ WARNING**********************************************
  * THIS CLASS AND ALL RELATED CLASSES WILL BE FUNDAMENTALLY CHANGING
- * DO NOT USE THIS TO BUILD YOUR QUERIES.  
+ * DO NOT USE THIS TO BUILD YOUR QUERIES.
  * ******************************************************************
- * 
+ *
  */
 class SugarQuery_Builder_Andwhere extends SugarQuery_Builder_Where
 {
@@ -47,7 +47,4 @@ class SugarQuery_Builder_Andwhere extends SugarQuery_Builder_Where
      */
     public $raw = false;
 
-	public function __construct() {
-		parent::__construct();
-	}
 }

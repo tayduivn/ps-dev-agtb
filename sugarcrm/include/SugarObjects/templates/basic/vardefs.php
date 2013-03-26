@@ -25,9 +25,9 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$vardefs = array(  
+$vardefs = array(
 //BEGIN SUGARCRM flav=pro ONLY
-'favorites'=>true, 
+'favorites'=>true,
 //END SUGARCRM flav=pro ONLY
 'fields' => array (
 	  'id' =>
@@ -44,7 +44,7 @@ $vardefs = array(
 	    'name'=>'name',
 	    'vname'=> 'LBL_NAME',
 	    'type'=>'name',
-	    'link' => true, // bug 39288 
+	    'link' => true, // bug 39288
 		'dbType' => 'varchar',
 	    'len'=>255,
         'unified_search' => true,
@@ -96,21 +96,21 @@ $vardefs = array(
 	    'comment' => 'User who last modified record',
         'massupdate' => false,
 	  ),
-	  'modified_by_name' => 
+	  'modified_by_name' =>
 	  array (
 	    'name' => 'modified_by_name',
 	    'vname' => 'LBL_MODIFIED_NAME',
 	    'type' => 'relate',
 	    'reportable'=>false,
 	    'source'=>'non-db',
-	    'rname'=>'user_name',
+	    'rname'=>'full_name',
 	    'table' => 'users',
 	    'id_name' => 'modified_user_id',
 	    'module'=>'Users',
 	    'link'=>'modified_user_link',
 	    'duplicate_merge'=>'disabled',
         'massupdate' => false,
-	  ),  
+	  ),
 	  'created_by' =>
 	  array (
 	    'name' => 'created_by',
@@ -125,14 +125,14 @@ $vardefs = array(
 	    'comment' => 'User who created record',
         'massupdate' => false,
 	  ),
-	  	'created_by_name' => 
+	  	'created_by_name' =>
 	  array (
 	    'name' => 'created_by_name',
 		'vname' => 'LBL_CREATED',
 		'type' => 'relate',
 		'reportable'=>false,
 	    'link' => 'created_by_link',
-	    'rname' => 'user_name',
+	    'rname' => 'full_name',
 		'source'=>'non-db',
 		'table' => 'users',
 		'id_name' => 'created_by',
@@ -159,7 +159,7 @@ $vardefs = array(
 	    'reportable'=>false,
 	    'comment' => 'Record deletion indicator'
 	  ),
-	    
+
 /////////////////RELATIONSHIP LINKS////////////////////////////
 	  'created_by_link' =>
   array (
