@@ -27,24 +27,15 @@ require_once 'include/utils/file_utils.php';
 class SugarAutoLoader
 {
     const CACHE_FILE = "file_map.php";
+    const CLASS_CACHE_FILE = "class_map.php";
 
     /**
      * Direct class mapping
      * @var array name => path
      */
-	public static $map = array(
-		'XTemplate'=>'vendor/XTemplate/xtpl.php',
-		'Javascript'=>'include/javascript/javascript.php',
-        'ListView'=>'include/ListView/ListView.php',
-        'Sugar_Smarty'=>'include/Sugar_Smarty.php',
-        'CustomSugarView' => 'custom/include/MVC/View/SugarView.php',
-	    'Sugar_Smarty' => 'include/Sugar_Smarty.php',
-	    'HTMLPurifier_Bootstrap' => 'vendor/HTMLPurifier/HTMLPurifier.standalone.php',
-        'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
-        'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
-        'SugarCurrency'=>'include/SugarCurrency/SugarCurrency.php',
-        'SugarRelationshipFactory' => 'data/Relationships/RelationshipFactory.php',
+	public static $classMap = array(
 	);
+    public static $classMapDirty = false;
 
 	/**
 	 * Classes not to be loaded
@@ -143,6 +134,7 @@ class SugarAutoLoader
 	        self::$exclude += $GLOBALS['sugar_config']['autoloader']['exclude'];
 	    }
 	    self::loadFileMap();
+        self::loadClassMap();
 	    spl_autoload_register(array('SugarAutoLoader', 'autoload'));
 	    self::loadExts();
 	}
@@ -160,17 +152,13 @@ class SugarAutoLoader
 		}
 
 		// try known classes
-		if(!empty(self::$map[$uclass])){
-		    if(self::fileExists(self::$map[$uclass])) {
-			    require_once(self::$map[$uclass]);
-			    return true;
-		    } else {
-		        return false;
-		    }
-		}
-
-		if (strncmp('HTMLPurifier', $class, 12) == 0) {
-			return HTMLPurifier_Bootstrap::autoload($class);
+		if(isset(self::$classMap[$uclass])){
+			if(self::$classMap[$uclass]){
+				// No need for a file_exists, if it is in the map we have found it before
+				require_once self::$classMap[$uclass];
+				return true;
+			}
+			return false;
 		}
 
 		if(empty(self::$moduleMap)){
@@ -188,6 +176,10 @@ class SugarAutoLoader
 			return true;
 		}
 
+		if (strncmp('HTMLPurifier', $class, 12) == 0) {
+			return HTMLPurifier_Bootstrap::autoload($class);
+		}
+
 	    // Split on _, capitalize elements and make a path
 	    // foo_bar -> Foo/Bar.
 	    $class_file = join('/', array_map('ucfirst', explode('_', $class)));
@@ -195,7 +187,9 @@ class SugarAutoLoader
 		// Try known prefixes
 		foreach(self::$prefixMap as $prefix => $dir) {
 		    if(strncasecmp($prefix, $class, strlen($prefix)) === 0) {
-		        if(self::requireWithCustom("{$dir}$class_file.php")) {
+		        if($file = self::requireWithCustom("{$dir}$class_file.php")) {
+		            self::$classMap[$uclass] = $file;
+		            self::$classMapDirty = true;
 		            return true;
 		        } else {
 		            break;
@@ -205,19 +199,27 @@ class SugarAutoLoader
 
 		// Special cases
 		// Special case because lookup goes to $_REQUEST['module']
-		if(self::getFilenameForViewClass($class)) {
+		if($file = self::getFilenameForViewClass($class)) {
+			self::$classMap[$uclass] = $file;
+			self::$classMapDirty = true;
 			return true;
 		}
 		// Special case because widget name can be lowercased
-		if(self::getFilenameForSugarWidget($class)) {
+		if($file = self::getFilenameForSugarWidget($class)) {
+			self::$classMap[$uclass] = $file;
+			self::$classMapDirty = true;
 			return true;
 		}
 		// Special case because it checks by ending in Layout
-		if(self::getFilenameForLayoutClass($class)) {
-		    return true;
+		if($file = self::getFilenameForLayoutClass($class)) {
+			self::$classMap[$uclass] = $file;
+			self::$classMapDirty = true;
+			return true;
 		}
         //BEGIN SUGARCRM flav=pro ONLY
-        if(self::getFilenameForExpressionClass($class)) {
+        if($file = self::getFilenameForExpressionClass($class)) {
+            self::$classMap[$uclass] = $file;
+            self::$classMapDirty = true;
             return true;
         }
         //END SUGARCRM flav=pro ONLY
@@ -225,22 +227,30 @@ class SugarAutoLoader
 		// Try known dirs
 		foreach(self::$dirMap as $dir) {
 		    // include/Class.php
-		    if(self::requireWithCustom("{$dir}$class_file.php")) {
+		    if($file = self::requireWithCustom("{$dir}$class_file.php")) {
+		        self::$classMap[$uclass] = $file;
+		        self::$classMapDirty = true;
 		        return true;
 		    }
 		    // include/Class/Class.php
 		    // Note here we don't use $class_file since using path twice would not make sense:
 		    // Foo/Bar/Foo/Bar.php vs. Foo_Bar/Foo_Bar.php
-			if(self::requireWithCustom("{$dir}$class/$class.php")) {
+			if($file = self::requireWithCustom("{$dir}$class/$class.php")) {
+		        self::$classMap[$uclass] = $file;
+		        self::$classMapDirty = true;
 		        return true;
 		    }
 		    // try include/Foo_Bar.php as a last resort
-			if(self::requireWithCustom("{$dir}$class.php")) {
+			if($file = self::requireWithCustom("{$dir}$class.php")) {
+		        self::$classMap[$uclass] = $file;
+		        self::$classMapDirty = true;
 		        return true;
 		    }
 		}
 
-  		return false;
+        self::$classMap[$uclass] = false;
+        self::$classMapDirty = true;
+        return false;
 	}
 
 	/**
@@ -359,11 +369,11 @@ class SugarAutoLoader
                 }
             }
             require_once "custom/$file";
-            return true;
+            return "custom/$file";
         } else {
             if(self::fileExists($file)) {
                 require_once($file);
-                return true;
+                return $file;
             }
         }
         return false;
@@ -467,15 +477,15 @@ class SugarAutoLoader
     protected static function getFilenameForExpressionClass($class)
     {
         if(substr($class, -10) == 'Expression') {
-            if(self::requireWithCustom("include/Expressions/Expression/{$class}.php")) {
-                return true;
+            if($file = self::requireWithCustom("include/Expressions/Expression/{$class}.php")) {
+                return $file;
             }
 
             $types = array("Boolean", "Date", "Enum", "Generic", "Numeric", "Relationship", "String", "Time");
 
             foreach($types as $type) {
-                if(self::requireWithCustom("include/Expressions/Expression/{$type}/{$class}.php")) {
-                    return true;
+                if($file = self::requireWithCustom("include/Expressions/Expression/{$type}/{$class}.php")) {
+                    return $file;
                 }
             }
         }
@@ -485,11 +495,11 @@ class SugarAutoLoader
 
 
     /**
-     * Load all classes in self::$map
+     * Load all classes in self::$classMap
      */
 	public static function loadAll()
 	{
-		foreach(self::$map as $class=>$file){
+		foreach(self::$classMap as $class=>$file){
 			require_once($file);
 		}
 		if(isset($GLOBALS['beanFiles'])){
@@ -498,7 +508,7 @@ class SugarAutoLoader
 			include('include/modules.php');
 			$files = $beanList;
 		}
-		foreach(self::$map as $class=>$file){
+		foreach($files as $class=>$file){
 			require_once($file);
 		}
 	}
@@ -726,6 +736,8 @@ class SugarAutoLoader
         write_array_to_file("existing_files", $data, sugar_cached(self::CACHE_FILE));
         self::$filemap = $data;
         self::$memmap = array();
+        // Rebuild the class cache so that it can find any new classes in the file map
+        self::buildClassCache();
 	}
 
 	/**
@@ -744,6 +756,38 @@ class SugarAutoLoader
         self::$filemap = $existing_files;
         self::$memmap = array();
 	}
+
+    /**
+     * Build class map cache
+     */
+    public static function buildClassCache()
+    {
+        $class_map = null;
+        foreach(self::existingCustom('include/utils/class_map.php') as $file) {
+            require $file;
+        }
+        write_array_to_file("class_map", $class_map, sugar_cached(self::CLASS_CACHE_FILE));
+
+        self::$classMap = $class_map;
+        self::$classMapDirty = false;
+    }
+
+    /**
+     * Load cached class map
+     */
+    public static function loadClassMap()
+    {
+        $class_map = null;
+        @include sugar_cached(self::CLASS_CACHE_FILE);
+        if(empty($class_map)) {
+            // oops, something happened to cache
+            // try to rebuild
+            self::buildClassCache();
+        } else {
+            self::$classMap = $class_map;
+            self::$classMapDirty = false;
+        }
+    }
 
 	/**
 	 * Load extensions map
@@ -933,6 +977,18 @@ class SugarAutoLoader
 	{
 	    write_array_to_file("existing_files", self::$filemap, sugar_cached(self::CACHE_FILE));
 	}
+
+    /**
+     * Save the file map to disk
+     */
+    public static function saveClassMap()
+    {
+        if ( self::$classMapDirty && !empty(self::$classMap) ) {
+            write_array_to_file("class_map", self::$classMap, sugar_cached(self::CLASS_CACHE_FILE));
+            self::$classMapDirty = false;
+        }
+    }
+
 
     /**
      * Cleans up a filepath, normalizing path separators and removing extras

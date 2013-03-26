@@ -19,9 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('data/SugarBean.php');
-require_once('include/OutboundEmail/OutboundEmail.php');
-
 class Administration extends SugarBean {
     var $settings;
     var $table_name = "config";

@@ -27,11 +27,6 @@
  ********************************************************************************/
 
 /**
- * Used in clearing out the metadata API cache
- */
-require_once "include/MetaDataManager/MetaDataManager.php";
-
-/**
  * Language files management
  * @api
  */

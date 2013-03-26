@@ -3260,6 +3260,7 @@ function sugar_cleanup($exit = false)
         </script>";
 
     }
+    SugarAutoLoader::saveClassMap();
 
 //	pre_login_check();
     if (class_exists('DBManagerFactory')) {
