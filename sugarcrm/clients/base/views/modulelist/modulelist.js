@@ -122,7 +122,9 @@
                 this.populateDashboards();
             }
             else if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
-                this.populateFavorites(module);
+                if(moduleMeta.favoritesEnabled){
+                    this.populateFavorites(module);
+                }
                 this.populateRecents(module);
             }
             if (numberMenuItems >= 1) {
@@ -133,32 +135,44 @@
     },
     /**
      * Populates favorites on open menu
-     * @param module
+     * @param {Object} module Module name
+     * @param {Function} populateCallback Called on successful api request
      */
-    populateFavorites: function(module, populatecallback) {
+    populateFavorites: function(module, populateCallback) {
         var self = this;
-        var rowCollection = app.data.createBeanCollection(module);
-        rowCollection.fetch({
-            //Don't show alerts for this request
-            showAlerts: false,
-            favorites:true,
+        var filter = {
+            "filter":[
+                {
+                    "$favorite":""
+                }
+            ],
+            "max_num":3
+        };
+        var url = app.api.buildURL(module, 'read', {id:"filter"});
+        app.api.call('create', url, filter, {
             limit:3,
-            success:function (collection) {
-               if (collection.models && collection.models.length >  0) {
-                   if (_.isFunction(populatecallback)) {
-                       populatecallback();
-                   }
+            success:function (data) {
+                if (data.records && data.records.length > 0) {
+                    if (_.isFunction(populateCallback)) {
+                        populateCallback();
+                    }
+                    var beans = [];
+                    _.each(data.records, function (recordData) {
+                        beans.push(app.data.createBean(module, recordData));
+                    });
+                    var collection = app.data.createBeanCollection(module, beans);
                    self.$('[data-module=' + module + '] .favoritesAnchor').show();
                    self.$('[data-module=' + module + '] .favoritesContainer').show().html(self.favRowTemplate(collection));
-               }
+                }
            }
         });
     },
     /**
      * Populates recents on open menu
-     * @param module
+     * @param {String} module Module name
+     * @param {Function} populateCallback Called on successful api request
      */
-    populateRecents:function (module, populatecallback) {
+    populateRecents:function (module, populateCallback) {
         var self = this;
         var filter = {
             "filter":[
@@ -172,8 +186,8 @@
         app.api.call('create', url, filter, {
             success:function (data) {
                 if (data.records && data.records.length > 0) {
-                    if (_.isFunction(populatecallback)) {
-                        populatecallback();
+                    if (_.isFunction(populateCallback)) {
+                        populateCallback();
                     }
                     var beans = [];
                     _.each(data.records, function (recordData) {

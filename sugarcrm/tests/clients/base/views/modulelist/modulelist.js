@@ -90,26 +90,21 @@ describe("Module List", function() {
         it("Should populate favorites and call favorite populate callback", function() {
             var cbMock = sinon.mock();
             var module = 'Accounts';
-            var beanCreateMock = sinon.stub(SugarTest.app.data,'createBeanCollection', function() {
-               var collection = new Backbone.Collection();
-                collection.url = "/test/url";
+            var beanCreateMock = sinon.stub(SugarTest.app.data,'createBeanCollection', function(module, models) {
+                var collection = new Backbone.Collection(models);
                 return collection;
             });
             // Workaround because router not defined yet
             var oRouter = SugarTest.app.router;
             SugarTest.app.router = {buildRoute: function(){}};
             sinon.stub(SugarTest.app.router,'buildRoute',function(){
-                        return 'testRouteString';
-                    }
+                    return 'testRouteString';
+                }
             );
-
-            view.activeModule._moduleList = view;
-            view.render();
-
-            SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", /.*\/test\/url.*/,
-                [200, {  "Content-Type": "application/json"},
-                    JSON.stringify( [
+            var apiStub = sinon.stub(SugarTest.app.api, 'call', function(){
+                if(arguments){
+                    arguments[3].success.call(view, {
+                        records: [
                             new Backbone.Model({
                                 id:'model1',
                                 name:'model1'
@@ -119,13 +114,20 @@ describe("Module List", function() {
                                 name:'model2'
                             })
                         ]
-                    )]);
+                    });
+                }
+            })
+
+            view.activeModule._moduleList = view;
+            view.render();
+
 
             view.populateFavorites(module, cbMock);
-            SugarTest.server.respond();
+            expect(apiStub).toHaveBeenCalled();
             expect(cbMock).toHaveBeenCalled();
             expect(view.$el.find("[data-module='Accounts']").find('.favoritesContainer').find('li').length).toEqual(2);
             beanCreateMock.restore();
+            apiStub.restore();
             SugarTest.app.router = oRouter;
         });
         it("Should populate Recents and call recents populate callback", function() {
