@@ -35,13 +35,19 @@
      * Utility Method to check if we can edit again.
      */
     checkIfCanEdit: function() {
-        var salesStage = this.model.get('sales_stage'),
-            disableIfSalesStageIs = _.union(
-                app.metadata.getModule('Forecasts', 'config').sales_stage_won,
-                app.metadata.getModule('Forecasts', 'config').sales_stage_lost
-            );
-        if(salesStage && _.indexOf(disableIfSalesStageIs, salesStage) != -1) {
-            this._canEdit = false;
+        // only worksheet owner can edit
+        var selectedUser = this.context.get('selectedUser');
+        this._canEdit = _.isEqual(app.user.get('id'), selectedUser.id);
+        // only if sales stage is won/lost can edit
+        if(this._canEdit) {
+            var salesStage = this.model.get('sales_stage'),
+                disableIfSalesStageIs = _.union(
+                    app.metadata.getModule('Forecasts', 'config').sales_stage_won,
+                    app.metadata.getModule('Forecasts', 'config').sales_stage_lost
+                );
+            if(salesStage && _.indexOf(disableIfSalesStageIs, salesStage) != -1) {
+                this._canEdit = false;
+            }
         }
     },
 
