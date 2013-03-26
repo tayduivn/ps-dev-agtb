@@ -204,39 +204,52 @@
             module: module
         });
     },
+
+    getFilterDef: function(searchTerm, context) {
+        var searchFilter = [], returnFilter = [];
+        // We allow searching on both 'name' and 'id' (e.g. if user is searching for
+        // 'MyBug 12345', both terms '12', or, 'MyB' need to produce a match)
+        var fieldNames = _.union(['id', 'name'], _.keys(this.def.populate_list || {}));
+        if (searchTerm) {
+            _.each(fieldNames, function(name) {
+                var o = {};
+                o[name] = {'$starts': searchTerm};
+                searchFilter.push(o);
+            });
+            returnFilter[0] = {'$or' : searchFilter};
+        }
+        return returnFilter;
+    },
+
     /**
      * Searches for related field
      * @param event
      */
     search: _.debounce(function (query) {
-        var term = query.term,
-            self = this,
+        var term = query.term || '',
+            self = this, searchCollection, filterDef,
             searchModule = this.getSearchModule(),
             params = {},
             limit = self.def.limit || 5;
 
-        if (!_.isUndefined(term) && term) {
-            params.q = term;
-        }
-
-        var search_collection = query.context || app.data.createBeanCollection(searchModule);
+        searchCollection = query.context || app.data.createBeanCollection(searchModule);
 
         if (query.context) {
-            params.offset = search_collection.next_offset;
+            params.offset = searchCollection.next_offset;
         }
-        search_collection.fetch({
+        filterDef = self.getFilterDef(term, self);
+        params.filter = JSON.parse(JSON.stringify(filterDef));
+
+        searchCollection.fetch({
             //Don't show alerts for this request
             showAlerts: false,
             update: true,
             remove: _.isUndefined(params.offset),
-            fields: _.union([
-                'id', 'name'
-            ], _.keys(this.def.populate_list || {})),
             context: self,
             params: params,
             limit: limit,
             success: function (data) {
-                var fetch = {results: [], more: data.next_offset > 0, context: search_collection};
+                var fetch = {results: [], more: data.next_offset > 0, context: searchCollection};
                 if (fetch.more) {
                     var plugin = self.$(self.fieldTag).data("select2"),
                         height = plugin.searchmore.children("li:first").children(":first").outerHeight(),
@@ -262,6 +275,6 @@
                 app.logger.error("Unable to fetch the bean collection.");
             }
         });
-
     }, app.config.requiredElapsed || 500)
+
 })
