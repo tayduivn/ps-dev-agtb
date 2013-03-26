@@ -357,7 +357,7 @@
                 array('include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
                'sidecar/lib/jquery/jquery.placeholder.min.js' => 'include/javascript/sugar_sidecar.min.js'),
                 getSubgroupForTarget('bootstrap', 'include/javascript/sugar_sidecar.min.js'),
-                array(
+               array(
                    'styleguide/assets/js/bootstrap-tab.js'   => 'include/javascript/sugar_sidecar.min.js',
                    'styleguide/assets/js/jquery.timepicker.js'=> 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/select2-release-3.2/select2.min.js' => "include/javascript/sugar_sidecar.min.js",

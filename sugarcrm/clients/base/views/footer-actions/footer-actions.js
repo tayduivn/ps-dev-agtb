@@ -1,8 +1,7 @@
 ({
     events: {
         'click #tour': 'showTutorial',
-        'click #print': 'print',
-        'click #top': 'top'
+        'click #print': 'print'
     },
     tagName: "span",
     _renderHtml: function(){
@@ -11,9 +10,6 @@
     },
     print: function() {
         window.print();
-    },
-    top: function() {
-        scroll(0,0);
     },
     showTutorial: function() {
         app.tutorial.resetPrefs();
