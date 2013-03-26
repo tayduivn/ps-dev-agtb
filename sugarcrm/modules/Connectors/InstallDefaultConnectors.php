@@ -24,9 +24,6 @@ $default_modules_sources = array (
   'Accounts' =>
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
-    //BEGIN SUGARCRM flav!=com ONLY
-    'ext_soap_hoovers' => 'ext_soap_hoovers',
-    //END SUGARCRM flav!=com ONLY
     //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY

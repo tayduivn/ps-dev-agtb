@@ -55,7 +55,7 @@ class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
     	$_REQUEST['modify'] = true;
     	$_REQUEST['action'] = 'SaveModifyDisplay';
     	$_REQUEST['display_values'] = 'ext_rest_zoominfoperson:Leads,ext_rest_zoominfocompany:Leads';
-    	$_REQUEST['display_sources'] = 'ext_soap_hoovers,ext_rest_linkedin,ext_rest_zoominfocompany,ext_rest_zoominfoperson';
+    	$_REQUEST['display_sources'] = 'ext_rest_linkedin,ext_rest_zoominfocompany,ext_rest_zoominfoperson';
 
     	$controller = new ConnectorsController();
     	$controller->action_SaveModifyDisplay();

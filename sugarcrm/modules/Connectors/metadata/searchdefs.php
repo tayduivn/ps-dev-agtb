@@ -21,21 +21,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  ********************************************************************************/
 $searchdefs = array(
-    //BEGIN SUGARCRM flav=pro ONLY
-	'ext_soap_hoovers' => array(
-		'Leads' => array(
-			'recname',
-		),
-		'Accounts' => array(
-			'recname',
-		),
-		'Contacts' => array(
-		    'recname',
-		),	
-	),
-	//END SUGARCRM flav=pro ONLY
-	
-	
 	//BEGIN SUGARCRM flav=pro ONLY
 	'ext_rest_zoominfocompany' => array(
 		'Leads' => array(

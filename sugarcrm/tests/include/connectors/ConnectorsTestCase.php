@@ -34,26 +34,6 @@ class Sugar_Connectors_TestCase extends Sugar_PHPUnit_Framework_TestCase {
 	public $original_searchdefs;
 	public $original_connectors;
 
-	static $drop_lookup_mapping = false;
-
-    public static function setUpBeforeClass()
-	{
-    	SourceFactory::getSource('ext_soap_hoovers', false);
-	    // this is so that Hoovers connector won't SOAP for the huge lookup file
-        if(!file_exists(HOOVERS_LOOKUP_MAPPING_FILE)) {
-	         mkdir_recursive(dirname(HOOVERS_LOOKUP_MAPPING_FILE));
-	         copy(dirname(__FILE__)."/lookup_mapping_stub", HOOVERS_LOOKUP_MAPPING_FILE);
-	         self::$drop_lookup_mapping = true;
-	     }
-	}
-
-	public static function tearDownAfterClass()
-	{
-	    if(self::$drop_lookup_mapping) {
-	        @SugarAutoLoader::unlink(HOOVERS_LOOKUP_MAPPING_FILE, true);
-	    }
-	}
-
 	function setUp() {
 	    ConnectorUtils::getDisplayConfig();
     	require(CONNECTOR_DISPLAY_CONFIG_FILE);

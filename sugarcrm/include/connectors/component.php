@@ -172,14 +172,14 @@ class component{
  	}
 
  	/**
- 	 * setConfig
  	 * Used by the Factories to set the config on the corresponding object
  	 *
- 	 * @param array $config this file will be specified in config file corresponding to the wrapper or data source we are
- 	 * using. The name would be something like hoovers.php if we are using the hoovers data source or hoovers wrapper
- 	 * and it would exist in the same directory as the connector and/or wrapper.
- 	 * Note that the confing specified at the connector level takes precendence over the config specified at the wrapper level.
- 	 * This logic is performed in ConnectorFactory.php
+ 	 * @param array $config this file will be specified in config file
+     * corresponding to the wrapper or data source we are using. The name would
+     * be the filename of the object and it would exist in the same directory as
+     * the connector and/or wrapper. Note that the confing specified at the
+     * connector level takes precendence over the config specified at the
+     * wrapper level. This logic is performed in ConnectorFactory.php.
  	 */
 	public function setConfig($config){
  		$this->_source->setConfig($config);

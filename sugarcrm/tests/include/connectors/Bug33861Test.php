@@ -168,18 +168,6 @@ class Bug33861Test extends Sugar_PHPUnit_Framework_TestCase
 
     private function install_connectors() {
 		$default_connectors = array (
-		  'ext_soap_hoovers' =>
-		  array (
-		    'id' => 'ext_soap_hoovers',
-		    'name' => 'Hoovers&#169;',
-		    'enabled' => true,
-		    'directory' => 'modules/Connectors/connectors/sources/ext/soap/hoovers',
-		    'modules' =>
-		    array (
-		      0 => 'Accounts',
-		      1 => 'Contacts',
-		    ),
-		  ),
 		  'ext_rest_zoominfoperson' =>
 		  array (
 		    'id' => 'ext_rest_zoominfoperson',
@@ -231,7 +219,6 @@ class Bug33861Test extends Sugar_PHPUnit_Framework_TestCase
 		$default_modules_sources = array (
 		  'Accounts' =>
 		  array (
-		    'ext_soap_hoovers' => 'ext_soap_hoovers',
 		    'ext_rest_zoominfoperson' => 'ext_rest_zoominfoperson',
 		    'ext_rest_zoominfocompany' => 'ext_rest_zoominfocompany',
 		    'ext_rest_linkedin' => 'ext_rest_linkedin',
@@ -239,7 +226,6 @@ class Bug33861Test extends Sugar_PHPUnit_Framework_TestCase
 		  ),
 		  'Contacts' =>
 		  array (
-		    'ext_soap_hoovers' => 'ext_soap_hoovers',
 		    'ext_rest_zoominfoperson' => 'ext_rest_zoominfoperson',
 		    'ext_rest_zoominfocompany' => 'ext_rest_zoominfocompany',
 		    'ext_rest_linkedin' => 'ext_rest_linkedin',

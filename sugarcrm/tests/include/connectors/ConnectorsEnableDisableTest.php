@@ -45,8 +45,8 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
     	require_once('modules/Connectors/controller.php');
     	require_once('include/MVC/Controller/SugarController.php');
 
-    	$_REQUEST['display_values'] = "ext_soap_hoovers:Accounts,ext_soap_hoovers:Contacts,ext_soap_hoovers:Leads,ext_rest_linkedin:Accounts,ext_rest_linkedin:Contacts,ext_rest_linkedin:Leads";
-    	$_REQUEST['display_sources'] = 'ext_soap_hoovers,ext_rest_linkedin';
+    	$_REQUEST['display_values'] = "ext_rest_linkedin:Accounts,ext_rest_linkedin:Contacts,ext_rest_linkedin:Leads";
+    	$_REQUEST['display_sources'] = 'ext_rest_linkedin';
     	$_REQUEST['action'] = 'SaveModifyDisplay';
     	$_REQUEST['module'] = 'Connectors';
     	$_REQUEST['from_unit_test'] = true;
@@ -60,7 +60,6 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         {
             if($module == 'Accounts' || $module == 'Contacts')
             {
-                $this->assertTrue(in_array('ext_soap_hoovers', $entries));
                 $this->assertTrue(in_array('ext_rest_linkedin', $entries));
             }
         }
@@ -72,7 +71,7 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
     	$controller = new ConnectorsController();
 
     	$_REQUEST['display_values'] = '';
-    	$_REQUEST['display_sources'] = 'ext_soap_hoovers,ext_rest_linkedin';
+    	$_REQUEST['display_sources'] = 'ext_rest_linkedin';
     	$_REQUEST['action'] = 'SaveModifyDisplay';
     	$_REQUEST['module'] = 'Connectors';
     	$_REQUEST['from_unit_test'] = true;
@@ -80,7 +79,6 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
     	$controller->action_SaveModifyDisplay();
 
     	require(CONNECTOR_DISPLAY_CONFIG_FILE);
-    	$this->assertTrue(empty($modules_sources['ext_soap_hoovers']));
     	$this->assertTrue(empty($modules_sources['ext_rest_linkedin']));
     }
 
@@ -91,7 +89,7 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
     	$controller = new ConnectorsController();
 
     	$_REQUEST['display_values'] = '';
-    	$_REQUEST['display_sources'] = 'ext_soap_hoovers,ext_rest_linkedin,ext_rest_twitter,ext_eapm_webex,ext_eapm_facebook';
+    	$_REQUEST['display_sources'] = 'ext_rest_linkedin,ext_rest_twitter,ext_eapm_webex,ext_eapm_facebook';
     	$_REQUEST['ext_eapm_facebook_external'] = 1;
     	$_REQUEST['action'] = 'SaveModifyDisplay';
     	$_REQUEST['module'] = 'Connectors';
@@ -104,7 +102,7 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
 
         // now reenable them
     	$_REQUEST['display_values'] = '';
-    	$_REQUEST['display_sources'] = 'ext_soap_hoovers,ext_rest_linkedin,ext_rest_twitter,ext_eapm_webex';
+    	$_REQUEST['display_sources'] = 'ext_rest_linkedin,ext_rest_twitter,ext_eapm_webex';
     	$_REQUEST['ext_rest_twitter_external'] = 1;
     	$_REQUEST['ext_eapm_webex_external'] = 1;
     	$_REQUEST['action'] = 'SaveModifyDisplay';

@@ -53,9 +53,6 @@ public function testMapConnectorFields()
     $view = new ViewModifyMapping(null, null);
     $view->ss = new Sugar_Smarty();
     $view->display();
-    //BEGIN SUGARCRM flav=pro ONLY
-    $this->expectOutputRegex('/ext_soap_hoovers/', 'Failed to asssert that Hoovers connector appears');
-    //END SUGARCRM flav=pro ONLY
     $this->expectOutputRegex('/ext_rest_linkedin/', 'Failed to asssert that LinkedIn connector appears');
     $this->expectOutputNotRegex('/ext_rest_insideview/', 'Failed to asssert that InsideView text does not appear');
 
@@ -67,9 +64,6 @@ public function testEnableConnectors()
     $view = new ViewModifyDisplay(null, null);
     $view->ss = new Sugar_Smarty();
     $view->display();
-    //BEGIN SUGARCRM flav=pro ONLY
-    $this->expectOutputRegex('/ext_soap_hoovers/', 'Failed to asssert that Hoovers connector appears');
-    //END SUGARCRM flav=pro ONLY
     $this->expectOutputRegex('/ext_rest_linkedin/', 'Failed to asssert that LinkedIn connector appears');
     $this->expectOutputRegex('/ext_rest_insideview/', 'Failed to asssert that InsideView text does not appear');
 
@@ -81,9 +75,6 @@ public function testConnectorProperties()
     $view = new ViewModifyProperties(null, null);
     $view->ss = new Sugar_Smarty();
     $view->display();
-    //BEGIN SUGARCRM flav=pro ONLY
-    $this->expectOutputRegex('/ext_soap_hoovers/', 'Failed to asssert that Hoovers connector appears');
-    //END SUGARCRM flav=pro ONLY
     $this->expectOutputRegex('/ext_rest_linkedin/', 'Failed to asssert that LinkedIn connector appears');
     $this->expectOutputNotRegex('/ext_rest_insideview/', 'Failed to asssert that InsideView text does not appear');
 
@@ -95,9 +86,6 @@ public function testConnectorSearchProperties()
     $view = new ViewModifySearch(null, null);
     $view->ss = new Sugar_Smarty();
     $view->display();
-    //BEGIN SUGARCRM flav=pro ONLY
-    $this->expectOutputRegex('/ext_soap_hoovers/', 'Failed to asssert that Hoovers connector appears');
-    //END SUGARCRM flav=pro ONLY
     $this->expectOutputNotRegex('/ext_rest_linkedin/', 'Failed to asssert that LinkedIn connector appears');
     $this->expectOutputNotRegex('/ext_rest_insideview/', 'Failed to asssert that InsideView text does not appear');
 }

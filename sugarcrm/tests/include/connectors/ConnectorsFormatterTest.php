@@ -41,16 +41,13 @@ $the_string = <<<EOQ
   'Accounts' =>
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
-    'ext_soap_hoovers' => 'ext_soap_hoovers',
   ),
   'Opportunities' =>
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
-    'ext_soap_hoovers' => 'ext_soap_hoovers',
   ),
   'Contacts' =>
   array (
-    'ext_soap_hoovers' => 'ext_soap_hoovers',
   ),
 );
 ?>
@@ -71,12 +68,6 @@ SugarAutoLoader::put(CONNECTOR_DISPLAY_CONFIG_FILE, $the_string, true);
    		   copy_recursive('custom/modules/Connectors/connectors/sources/ext/rest/linkedin', 'custom/modules/Connectors/backup/connectors/sources/ext/rest/linkedin_backup');
     	   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/rest/linkedin');
     	   SugarAutoLoader::delFromMap('custom/modules/Connectors/backup/sources/ext/rest/linkedin');
-   		}
-
-   		if(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/hoovers.php')) {
-    	   copy_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers', 'custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers_backup');
-   		   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/soap/hoovers');
-    	   SugarAutoLoader::delFromMap('custom/modules/Connectors/backup/sources/ext/rest/hoovers');
    		}
 
    		//Setup the neccessary Smarty configurations
@@ -100,8 +91,8 @@ SugarAutoLoader::put(CONNECTOR_DISPLAY_CONFIG_FILE, $the_string, true);
     	$_REQUEST['from_unit_test'] = true;
     	$_REQUEST['modify'] = true;
     	$_REQUEST['action'] = 'SaveModifyMapping';
-    	$_REQUEST['mapping_values'] = 'ext_soap_hoovers:Accounts:addrcountry=billing_address_country,ext_soap_hoovers:Accounts:id=id,ext_soap_hoovers:Accounts:addrcity=billing_address_city,ext_soap_hoovers:Accounts:addrzip=billing_address_postalcode,ext_soap_hoovers:Accounts:recname=name,ext_soap_hoovers:Accounts:addrstateprov=billing_address_state';
-    	$_REQUEST['mapping_sources'] = 'ext_soap_hoovers,ext_rest_linkedin,ext_rest_twitter';
+    	$_REQUEST['mapping_values'] = '';
+    	$_REQUEST['mapping_sources'] = 'ext_rest_linkedin,ext_rest_twitter';
 
     	$controller = new ConnectorsController();
     	$controller->action_SaveModifyMapping();
@@ -120,11 +111,6 @@ SugarAutoLoader::put(CONNECTOR_DISPLAY_CONFIG_FILE, $the_string, true);
         if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/linkedin_backup/linkedin.php')) {
     	   copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/rest/linkedin_backup', 'custom/modules/Connectors/connectors/sources/ext/rest/linkedin');
     	   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/rest/linkedin_backup');
-        }
-
-        if(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers_backup/hoovers.php')) {
-    	   copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers_backup', 'custom/modules/Connectors/connectors/sources/ext/rest/hoovers');
-    	   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers_backup');
         }
     }
 
@@ -201,8 +187,8 @@ SugarAutoLoader::put(CONNECTOR_DISPLAY_CONFIG_FILE, $the_string, true);
     	$module = 'Accounts';
 
     	//Now call the code that will add the mapping fields
-    	$_REQUEST['display_values'] = "ext_soap_hoovers:Accounts,ext_rest_linkedin:Accounts";
-    	$_REQUEST['display_sources'] = "ext_soap_hoovers,ext_rest_linkedin,ext_rest_twitter";
+    	$_REQUEST['display_values'] = "ext_rest_linkedin:Accounts";
+    	$_REQUEST['display_sources'] = "ext_rest_linkedin,ext_rest_twitter";
     	$_REQUEST['action'] = 'SaveModifyDisplay';
     	$_REQUEST['module'] = 'Connectors';
     	$_REQUEST['from_unit_test'] = true;
