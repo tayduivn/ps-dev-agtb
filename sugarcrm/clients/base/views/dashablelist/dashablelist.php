@@ -8,17 +8,21 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'config' => array(
                 'module' => 'Accounts',
                 'display_columns' => array(
-                    'name','phone_office', 'billing_address_country'
+                    'name',
+                    'phone_office',
+                    'billing_address_country',
                 ),
                 'my_items' => '1',
             ),
             'preview' => array(
                 'module' => 'Accounts',
                 'display_columns' => array(
-                    'name','phone_office', 'billing_address_country'
+                    'name',
+                    'phone_office',
+                    'billing_address_country',
                 ),
                 'my_items' => '1',
-            )
+            ),
         ),
         array(
             'name' => 'LBL_DASHLET_LISTVIEW_NAME',
@@ -26,7 +30,10 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'config' => array(
                 'module' => 'Bugs',
                 'display_columns' => array(
-                    'bug_number', 'name', 'status', 'priority'
+                    'bug_number',
+                    'name',
+                    'status',
+                    'priority',
                 ),
                 'my_items' => '1',
                 'status' => 'Assigned',
@@ -34,11 +41,14 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'preview' => array(
                 'module' => 'Bugs',
                 'display_columns' => array(
-                    'bug_number', 'name', 'status', 'priority'
+                    'bug_number',
+                    'name',
+                    'status',
+                    'priority',
                 ),
                 'my_items' => '1',
                 'status' => 'Assigned',
-            )
+            ),
         ),
         array(
             'name' => 'LBL_DASHLET_LISTVIEW_NAME',
@@ -46,14 +56,20 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'config' => array(
                 'module' => 'Opportunities',
                 'display_columns' => array(
-                    'name', 'account_name', 'amount', 'date_closed'
+                    'name',
+                    'account_name',
+                    'amount',
+                    'date_closed',
                 ),
                 'my_items' => '1',
             ),
             'preview' => array(
                 'module' => 'Opportunities',
                 'display_columns' => array(
-                    'name', 'account_name', 'amount', 'date_closed'
+                    'name',
+                    'account_name',
+                    'amount',
+                    'date_closed',
                 ),
                 'my_items' => '1',
             ),
@@ -64,14 +80,22 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'config' => array(
                 'module' => 'Contacts',
                 'display_columns' => array(
-                    'name', 'title', 'phone_work', 'date_entered', 'assigned_user_name'
+                    'name',
+                    'title',
+                    'phone_work',
+                    'date_entered',
+                    'assigned_user_name',
                 ),
                 'my_items' => '1',
             ),
             'preview' => array(
                 'module' => 'Contacts',
                 'display_columns' => array(
-                    'name', 'title', 'phone_work', 'date_entered', 'assigned_user_name'
+                    'name',
+                    'title',
+                    'phone_work',
+                    'date_entered',
+                    'assigned_user_name',
                 ),
                 'my_items' => '1',
             ),
@@ -82,18 +106,22 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'config' => array(
                 'module' => 'Leads',
                 'display_columns' => array(
-                    'name', 'phone_work', 'email'
+                    'name',
+                    'phone_work',
+                    'email',
                 ),
                 'my_items' => '1',
             ),
             'preview' => array(
                 'module' => 'Leads',
                 'display_columns' => array(
-                    'name', 'phone_work', 'email'
+                    'name',
+                    'phone_work',
+                    'email',
                 ),
                 'my_items' => '1',
             ),
-        )
+        ),
     ),
     'dashlet_config_panels' => array(
         array(
@@ -110,8 +138,8 @@ $viewdefs['base']['view']['dashablelist'] = array(
                         5 => 5,
                         10 => 10,
                         15 => 15,
-                        20 => 20
-                    )
+                        20 => 20,
+                    ),
                 ),
                 array(
                     'name' => 'auto_refresh',
@@ -124,7 +152,7 @@ $viewdefs['base']['view']['dashablelist'] = array(
                         10 => "Every 10 Minutes",
                         15 => "Every 15 Minutes",
                         30 => "Every 30 Minutes",
-                    )
+                    ),
                 ),
             ),
         ),
@@ -164,5 +192,5 @@ $viewdefs['base']['view']['dashablelist'] = array(
                 ),
             ),
         ),
-    )
+    ),
 );
