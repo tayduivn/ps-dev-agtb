@@ -55,8 +55,7 @@ function perform_save($focus)
     }
 
     if (!empty($date_close_db)) {
-        $date_close_datetime = $timedate->fromDbDate($date_close_db);
-        $focus->date_closed_timestamp = $date_close_datetime->getTimestamp();
+        $focus->date_closed_timestamp = strtotime($date_close_db);
     }
 
     // if any of the case fields are NULL or an empty string set it to the amount from the main opportunity
