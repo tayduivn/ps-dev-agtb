@@ -676,8 +676,7 @@ input[type="color"],
     clear: both;
   }
   :not(.edit) {
-    &.address_city,
-    &.address_state {
+    &.address_city {
       div:after {
         content: ",";
         margin-left: -4px;
@@ -686,8 +685,7 @@ input[type="color"],
     }
   }
 
-  .address_city,
-  .address_state {
+  .address_city {
     .ellipsis_inline:empty:after {
       content: "";
     }
