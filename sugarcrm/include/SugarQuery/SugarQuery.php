@@ -140,6 +140,7 @@ class SugarQuery
     public function from(SugarBean $bean, $options = array()) {
         $alias = (isset($options['alias'])) ? $options['alias'] : false;
         $team_security = (isset($options['team_security'])) ? $options['team_security'] : true;
+        $add_deleted = (isset($options['add_deleted'])) ? $options['add_deleted'] : true;
 		$this->from = $bean;
 		if(!empty($alias)) {
 			$this->from = array($bean, $alias);
@@ -147,6 +148,10 @@ class SugarQuery
 
         if($team_security === true) {
             $bean->addVisibilityQuery($this);
+        }
+
+        if($add_deleted === true) {
+            $this->where()->equals('deleted',0);
         }
 
         return $this;

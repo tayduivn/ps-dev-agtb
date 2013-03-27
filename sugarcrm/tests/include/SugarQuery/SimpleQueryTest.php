@@ -143,6 +143,36 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
             'McTester',
             'The Last Name Did Not Match'
         );
+
+        // delete contact verify I can't get it
+        $contact = BeanFactory::getBean('Contacts', $id);
+        $contact->mark_deleted($id);
+        unset($contact);
+
+        $result = $sq->execute();
+        $this->assertTrue(empty($result), "Result Set was not empty, it contained: " . print_r($result, true));
+
+        // get deleted items
+        $sq = new SugarQuery();
+        $sq->select(array("first_name", "last_name"));
+        $sq->from(BeanFactory::getBean('Contacts'), array('add_deleted' => false));
+        $sq->where()->equals("id", $id);
+        
+        $result = $sq->execute();
+
+        $result = reset($result);
+
+        $this->assertEquals(
+            $result['first_name'],
+            'Test',
+            'The First Name Did Not Match, the deleted record did not return'
+        );
+        $this->assertEquals(
+            $result['last_name'],
+            'McTester',
+            'The Last Name Did Not Match, the deleted record did not return'
+        );
+
     }
 
     public function testSelectWithJoin()
