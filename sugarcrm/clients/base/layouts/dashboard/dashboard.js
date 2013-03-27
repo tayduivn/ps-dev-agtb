@@ -185,8 +185,8 @@
                         _initDashboard = app.metadata.getLayout(this.model.dashboardModule, layoutName),
                         params = {
                             silent: true,
-                            //Show alerts for this request
-                            showAlerts: true
+                            //Don't show alerts for this request
+                            showAlerts: false
                         };
 
                     if (this.context.parent) {
