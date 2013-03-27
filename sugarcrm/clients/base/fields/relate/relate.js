@@ -94,19 +94,28 @@
                 }).on("change", function (e) {
                     var id = e.val,
                         plugin = $(this).data('select2'),
-                        value = (id) ? plugin.selection.find("span").text() : '',
-                        collection = plugin.context,
-                        model = collection.get(id),
-                        attributes = {
-                            id: model.id,
-                            value: model.get('name')
-                        };
+                        value = (id) ? plugin.selection.find("span").text() : $(this).data('id'),
+                        collection = plugin.context, attributes = {};
+                    // if we have search results use that to set new values
+                    if (collection) {
+                        var model = collection.get(id);
+                        attributes.id = model.id;
+                        attributes.value = model.get('name');
+                        _.each(model.attributes, function (value, field) {
+                            if (app.acl.hasAccessToModel('view', model, field)) {
+                                attributes[field] = attributes[field] || model.get(field);
+                            }
+                        });
+                        // if we have previous values keep them
+                    } else if (e.currentTarget.value && value) {
+                        attributes.id = value;
+                        attributes.value = e.currentTarget.value;
+                        // default to empty
+                    } else {
+                        attributes.id = '';
+                        attributes.value = '';
+                    }
 
-                    _.each(model.attributes, function (value, field) {
-                        if (app.acl.hasAccessToModel('view', model, field)) {
-                            attributes[field] = attributes[field] || model.get(field);
-                        }
-                    });
                     self.setValue(attributes);
                 });
         } else if (this.tplName === 'disabled') {
