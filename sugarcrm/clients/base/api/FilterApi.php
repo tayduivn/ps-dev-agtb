@@ -613,12 +613,16 @@ class FilterApi extends SugarApi
             array('alias' => 'tracker')
         );
 
+        // we need to set the linkName to hack around tracker not having real relationships
+        /* TODO think about how to fix this so we can be less restrictive to raw joins that don't have a relationship */
+        $q->join['tracker']->linkName = 'tracker';
+
         $td = new SugarDateTime();
         $td->modify($interval);
         $where->addRaw("tracker.date_modified >= '" . $td->asDb() . "' ");
 
         // Now, if they want tracker records, so let's order it by the tracker date_modified
-        $q->order_by = array(array('tracker.date_modified', 'DESC'));
+        $q->orderBy('tracker.date_modified', 'DESC');
 
         // Also, turn the distinct part off otherwise the sorting doesn't work.
         $q->distinct(false);

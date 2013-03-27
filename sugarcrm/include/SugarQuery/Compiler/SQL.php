@@ -250,7 +250,7 @@ class SugarQuery_Compiler_SQL
             }
             $return[] = "{$field} {$direction}";
         }
-
+        
         return implode(',', $return);
     }
 
@@ -276,6 +276,10 @@ class SugarQuery_Compiler_SQL
                 $module = 'SugarFavorites';
             }
             //END SUGARCRM flav=pro ONLY
+            /* TODO Fix this hack so we don't need to have special cases for these modules */
+            if($link_name == 'tracker') {
+                $module = 'Trackers';
+            }
             if(empty($module)) {
                 $this->from_bean->load_relationship($link_name);
                 if(!empty($this->from_bean->$link_name)) {
@@ -313,9 +317,9 @@ class SugarQuery_Compiler_SQL
         		$bean = $this->getTableBean($table_name);
         		if(empty($bean)) {
         			return "{$table_name}.{$field}";
-        			}
         		}
-        		} else {
+        	}
+        } else {
         		$table_name = $bean->getTableName();
         }
 
