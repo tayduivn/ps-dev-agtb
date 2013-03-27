@@ -21,10 +21,11 @@
                 var list,
                     leader,
                     leaderIndex,
+                    self = this,
                     el = this.$(event.currentTarget),
                     word = el.text();
 
-                el.parent().find("ul.typeahead.activitystream-tag-dropdown").remove();
+                el.parent().find('ul.typeahead.activitystream-tag-dropdown').remove();
 
                 leaderIndex = this._lastLeaderPosition(word);
                 leader = leaderIndex === -1 ? null : word.charAt(leaderIndex);
@@ -71,25 +72,24 @@
 
                     if (list.length) {
                         _.each(list, function(el, index) {
-                            var data = {
-                                module: el.get('_module'),
-                                id: el.get('id'),
-                                name: el.get('name')
-                            };
-                            var i = $(blankItem).data(data);
-                            var query = word.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
-                            i.find('a').html(function() {
-                                return el.get('name').replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
+                            var query = word.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&'),
+                                htmlName = el.get('name').replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
                                     return '<strong>' + match + '</strong>';
-                                });
-                            });
+                                }),
+                                data = {
+                                    module: el.get('_module'),
+                                    id: el.get('id'),
+                                    name: el.get('name'),
+                                    htmlName: htmlName
+                                },
+                                i = $(this._tplTagList(data)).data(data);
 
                             if (index === 0) {
                                 i.addClass('active');
                             }
 
                             ul.append(i);
-                        });
+                        }, this);
                     } else {
                         var noResults = app.lang.get('LBL_SEARCH_NO_RESULTS');
                         var i = $(blankItem).addClass('placeholder active').find('a').html(noResults + word).wrap('emph');
@@ -100,7 +100,7 @@
                 };
 
                 var ul = $("<ul/>").addClass('typeahead dropdown-menu activitystream-tag-dropdown');
-                var blankItem = '<li><a></a></li>';
+                var blankItem = this._tplTagList({});
                 var defaultItem = $(blankItem).addClass('placeholder active').find('a').html(word + '&hellip;').wrap('emph');
 
                 ul.css({
@@ -114,7 +114,7 @@
                     case '#':
                         app.api.search({q: word, limit: 8}, {success: function(response) {
                             var coll = app.data.createMixedBeanCollection(response.records);
-                            callback(coll);
+                            callback.call(self, coll);
                         }});
                         break;
                     case '@':
@@ -123,7 +123,7 @@
                         // stored in the database as fields.
                         app.api.search({q: word, module_list: "Users", limit: 8}, {success: function(response) {
                             var coll = app.data.createBeanCollection("Users", response.records);
-                            callback(coll);
+                            callback.call(self, coll);
                         }});
                         break;
                 }
@@ -232,13 +232,14 @@
             },
 
             _parseTags: function(text, tagList) {
-                var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*)\]/g);
+                var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*)\]/g),
+                    self = this;
 
                 return (!text || text.length === 0) ? text : text.replace(pattern, function(str, module, id) {
                     var name = _(tagList).find(function(el) {
                         return el.id == id;
                     }).name;
-                    return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + name + "</a></span>";
+                    return self._tplTag({module: module, id: id, name: name});
                 });
             },
 
@@ -251,7 +252,7 @@
                 var contents = '';
                 $el.contents().each(function() {
                     if (this.nodeName == "#text") {
-                        contents += this.data.replace('&nbsp;', ' ');
+                        contents += this.data.replace('&nbsp;', ' ', 'g');
                     } else if (this.nodeName == "SPAN") {
                         var el = $(this);
                         var data = el.data();
@@ -279,7 +280,22 @@
             },
 
             onAttach: function(component, plugin) {
-                var self = this;
+                var self = this,
+                    tplTag,
+                    tplTagList;
+
+                if (!_.has(Handlebars.templates, "p.taggable.tag")) {
+                    tplTag = '<span class="label label-{{module}}"><a href="#{{module}}/{{id}}">{{name}}</a></span>';
+                    Handlebars.templates['p.taggable.tag'] = Handlebars.compile(tplTag);
+                }
+                component._tplTag = Handlebars.templates['p.taggable.tag'];
+
+                if (!_.has(Handlebars.templates, "p.taggable.taglist")) {
+                    tplTagList = '<li><a>{{#if htmlName}}<div class="label label-module label-{{module}} pull-left" rel="tooltip" data-title="{{parent_type}}">{{firstChars module 2}}</div>{{{htmlName}}}{{/if}}</a></li>';
+                    Handlebars.templates['p.taggable.taglist'] = Handlebars.compile(tplTagList);
+                }
+                component._tplTagList = Handlebars.templates['p.taggable.taglist'];
+
                 component.on('render', function() {
                     component.$(".tagged").each(function() {
                         var $el = $(this),
