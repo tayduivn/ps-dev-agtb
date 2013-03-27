@@ -147,7 +147,7 @@
         var translatedText, moduleName;
 
         if (isAllRecords) {
-            moduleName = app.lang.get('LBL_MODULE_NAME', this.module);
+            moduleName = app.lang.get('LBL_MODULE_NAME', this.layout.layout.currentModule);
             translatedText = app.lang.get(label, null, {'moduleName': moduleName});
         }
         else {

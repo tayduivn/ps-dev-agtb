@@ -80,7 +80,8 @@
     },
 
     getModuleListForActivities: function() {
-        this.filterList.push({id: 'Activities', text: app.lang.get('LBL_ACTIVITIES')});
+        var text = (this.module == "Activities") ? app.lang.get("LBL_TABGROUP_ALL") : app.lang.get('LBL_MODULE_NAME', this.module);
+        this.filterList.push({id: 'Activities', text: text});
     },
 
     pullSubpanelRelationships: function() {
