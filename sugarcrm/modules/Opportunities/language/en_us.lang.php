@@ -175,4 +175,5 @@ $mod_strings = array(
     //Dashlet
     'LBL_DASHLET_LISTVIEW_NAME' => 'My Closed Opportunies',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Opportunies that you have closed',
+    'LBL_PIPELINE_TOTAL_IS' => 'Pipeline Total is',
 );
