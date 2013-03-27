@@ -77,10 +77,14 @@ $dictionary['Opportunity'] = array(
         'account_id' => array(
             'name' => 'account_id',
             'vname' => 'LBL_ACCOUNT_ID',
-            'type' => 'id',
+            'id_name' => 'account_id',
+            'type' => 'relate',
+            'link' => 'accounts',
+            'rname' => 'id',
             'source' => 'non-db',
             'audited' => true,
             'dbType' => 'id',
+            'module' => 'Accounts'
         ),
         'campaign_id' => array(
             'name' => 'campaign_id',
