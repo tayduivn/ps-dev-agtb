@@ -6896,7 +6896,7 @@ nv.models.pie = function() {
                   return this.getAttribute('class') || (
                     'nv-slice' + (
                       useClass
-                        ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
+                        ? ( ' '+ ( d.data.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
                         : ''
                     )
                   );
@@ -7166,6 +7166,7 @@ nv.models.pieChart = function() {
     , height = null
     , showLegend = true
     , showTitle = false
+    , hole = false
     , color = nv.utils.defaultColor()
     , tooltips = true
     , tooltip = function(key, y, e, graph) {
@@ -7341,6 +7342,16 @@ nv.models.pieChart = function() {
 
       d3.transition(pieWrap).call(pie);
 
+      wrap.selectAll('.nv-pie-hole').remove();
+
+      if (hole) {
+          var pieHole = wrap.append('g').append('text')
+            .text(hole)
+              .attr('text-anchor', 'middle')
+              .attr('class','nv-pie-hole')
+              .attr('transform', 'translate(' + availableWidth/2 + ',' + (12+availableHeight/2) + ')')
+              .attr('fill', '#333');
+      }
       //------------------------------------------------------------
 
 
@@ -7502,6 +7513,12 @@ nv.models.pieChart = function() {
   chart.noData = function(_) {
     if (!arguments.length) return noData;
     noData = _;
+    return chart;
+  };
+
+  chart.hole = function(_) {
+    if (!arguments.length) return hole;
+    hole = _;
     return chart;
   };
 
