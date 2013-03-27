@@ -250,6 +250,16 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEmpty($ret);
     }
+
+    public function testGetNotificationRecipientsReturnsNonEmptyArray()
+    {
+        $mock = new SugarBean();
+        $mock->assigned_user_id = '1';
+
+        $ret = $mock->get_notification_recipients();
+
+        $this->assertEquals('1',$ret[0]->id);
+    }
 }
 
 // Using Mssql here because mysql needs real connection for quoting
