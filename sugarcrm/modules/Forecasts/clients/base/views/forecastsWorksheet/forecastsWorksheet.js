@@ -466,6 +466,13 @@
             this.context.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
                 this.saveWorksheet(isDraft);
             }, this);
+            
+            this.context.on("forecasts:worksheet:saved", function(totalToSave, type, isDraft){
+                if (isDraft) {
+                    //normal fetch instead of safefetch.  We've already saved, we just want to reload the worksheet.
+                    this.collection.fetch();
+                }
+            }, this);
 
             this.context.on('forecasts:tabKeyPressed', function(isShift, field) {
                 this.editableFieldNavigate(isShift, field);
