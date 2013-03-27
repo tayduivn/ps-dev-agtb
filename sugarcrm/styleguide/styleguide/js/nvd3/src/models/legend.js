@@ -13,6 +13,7 @@ nv.models.legend = function() {
     , align = true
     , dispatch = d3.dispatch('legendClick', 'legendDblclick', 'legendMouseover', 'legendMouseout')
     , useClass = false
+    , classStep = 1
     ;
 
   //============================================================
@@ -36,6 +37,7 @@ nv.models.legend = function() {
 
       //------------------------------------------------------------
 
+      //var label = g.append('text').text('Probability:').attr('class','nv-series-label').attr('transform','translate(0,0)');
 
       var series = g.selectAll('.nv-series')
           .data(function(d) { return d });
@@ -56,7 +58,7 @@ nv.models.legend = function() {
           .attr('class', function(d,i) {
             return this.getAttribute('class') || (
               useClass
-                ? ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 )
+                ? ( d.class || 'nv-fill' + (i*classStep%20>9?'':'0') + i*classStep%20 ) + ' nv-stroke'+ (i%10)
                 : '' );
             }
           )
@@ -78,9 +80,11 @@ nv.models.legend = function() {
       // NEW ALIGNING CODE, TODO: clean up
       if (align) {
         var seriesWidths = [];
+       // console.log(d3.select('.nv-series-label').select('text').getComputedTextLength());
+
         series.each(function(d,i) {
-              seriesWidths.push(d3.select(this).select('text').node().getComputedTextLength() + 28); // 28 is ~ the width of the circle plus some padding
-            });
+          seriesWidths.push(d3.select(this).select('text').node().getComputedTextLength() + 28); // 28 is ~ the width of the circle plus some padding
+        });
 
         //nv.log('Series Widths: ', JSON.stringify(seriesWidths));
 
@@ -199,6 +203,12 @@ nv.models.legend = function() {
   chart.useClass = function(_) {
     if (!arguments.length) return useClass;
     useClass = _;
+    return chart;
+  };
+
+  chart.classStep = function(_) {
+    if (!arguments.length) return classStep;
+    classStep = _;
     return chart;
   };
 

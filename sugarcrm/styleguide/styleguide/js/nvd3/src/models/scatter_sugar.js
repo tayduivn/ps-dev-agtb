@@ -34,6 +34,7 @@ nv.models.scatter = function() {
     , fill = function (d,i) { return color(d,i); }
     , gradient = function (d,i) { return color(d,i); }
     , useClass = false
+    , classStep = 1
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
     ;
 
@@ -265,7 +266,7 @@ nv.models.scatter = function() {
           .attr('class', function(d,i) {
               return this.getAttribute('class') || (
                 'nv-group nv-series-' + i + (
-                  useClass ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) ) : ''
+                  useClass ? ( ' '+ ( d.class || 'nv-fill' + (i*classStep%20>9?'':'0') + i*classStep%20 ) ) : ''
                 )
               );
           } )
@@ -364,6 +365,11 @@ nv.models.scatter = function() {
   chart.useClass = function(_) {
     if (!arguments.length) return useClass;
     useClass = _;
+    return chart;
+  };
+  chart.classStep = function(_) {
+    if (!arguments.length) return classStep;
+    classStep = _;
     return chart;
   };
 

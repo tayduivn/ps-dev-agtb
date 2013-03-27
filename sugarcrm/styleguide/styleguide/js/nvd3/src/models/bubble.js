@@ -23,6 +23,7 @@ nv.models.bubble = function() {
     , fill = function (d,i) { return color(d,i); }
     , gradient = function (d,i) { return color(d,i); }
     , useClass = false
+    , classStep = 1
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
     , format = d3.time.format("%Y-%m-%d")
   ;
@@ -130,27 +131,31 @@ nv.models.bubble = function() {
   chart.color = function(_) {
     if (!arguments.length) return color;
     color = _;
-
     scatter.color(color);
-
     return chart;
   };
   chart.fill = function(_) {
     if (!arguments.length) return fill;
     fill = _;
-
     scatter.fill(fill);
-
     return chart;
   };
   chart.gradient = function(_) {
     if (!arguments.length) return gradient;
     gradient = _;
+    scatter.gradient(_);
     return chart;
   };
   chart.useClass = function(_) {
     if (!arguments.length) return useClass;
     useClass = _;
+    scatter.useClass(_);
+    return chart;
+  };
+  chart.classStep = function(_) {
+    if (!arguments.length) return classStep;
+    classStep = _;
+    scatter.classStep(_);
     return chart;
   };
 
