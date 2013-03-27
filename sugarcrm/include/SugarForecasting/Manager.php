@@ -467,6 +467,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         }
 
         $seed->setWorksheetArgs($this->getArgs());
-        $seed->saveWorksheet();
+        $seed->save();
     }
 }
