@@ -1,6 +1,8 @@
 // search filter widget
 .form-search-related {
-
+    .select2-container .select2-choice {
+        padding: 0 0 0 4px;
+    }
   // outer wrapper
   .control-group {
     padding: 5px;
@@ -11,10 +13,11 @@
     border: 1px solid @inputBorder;
     position: relative;
     margin-left: 0px;
+    margin-right: 5px;
     background-color: @white;
     margin-bottom: 0px;
     overflow: hidden;
-    height: 28px;
+    height: 26px;
     .box-shadow(~"inset 0 1px 1px rgba(0,0,0,0.075)");
     .border-radius(@baseBorderRadius);
     .user-select(none);
@@ -27,7 +30,7 @@
       display: inline-block;
       height: 13px;
       white-space: nowrap;
-      margin-top: 4px;
+      margin-top: 3px;
       margin-left: -6px;
       font-size: @fontSizeSmall;
       font-weight: bold;
@@ -88,9 +91,13 @@
           color: @gray;
           padding: 4px 4px 4px 6px;
           margin-right: 2px;
+          line-height: 27px;
           background: @grayLighter;
           i[class^="icon-"] {
             margin-left: 4px;
+          }
+          &:hover {
+            .box-shadow(~"inset 0 -16px 8px rgba(0,0,0,.1) !important");
           }
         }
         span.select2-choice-related,
@@ -137,13 +144,8 @@
       .box-sizing(border-box);
       height: 26px;
       border: 0;
-      margin-top: 2px;
       padding: 4px 8px;
       box-shadow: none;
-
-      &.hide {
-        display: none;
-      }
     }
     .search-name:focus {
       border: 0;
@@ -162,9 +164,10 @@
 .form-search-related,
 .form-search  {
   margin: -1px 0 0 0;
+  .box-shadow(~"inset 0 -1px 0 rgba(255,255,255,.5)");
   background: @grayLighter;
-  border-top: 1px solid darken(@grayLighter, 2%);
-  border-bottom: 1px solid darken(@grayLighter, 2%);
+  border-top: 1px solid darken(@grayLighter,10%);
+  border-bottom: 1px solid darken(@grayLighter,10%);
   .mu.extend,
   .inset-form.extend {
     margin-top:-1px;
@@ -179,8 +182,6 @@
 .filter-options.extend,
 .mu.extend,
 .inset-form.extend {
-  background: darken(@grayLighter, 5%);
-
   .filter-body {
     .controls {
       line-height: 16px;
@@ -194,8 +195,8 @@
   // inset form rows
   article {
     background-color: transparent;
-    border-top: 1px solid @grayLighter;
-    border-bottom: 1px solid darken(@grayLighter, 15%);
+    border-top: 1px solid lighten(@grayLighter, 5%);
+    border-bottom: 1px solid darken(@grayLighter, 5%);
     padding: 7px 10px 7px 10px;
   }
   article.filter-header,
