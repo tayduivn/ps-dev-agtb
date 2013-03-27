@@ -128,7 +128,7 @@
 
   .record-label {
     font-size: @fontSizeSmall;
-    color: lighten(@gray, 12%);
+    color: darken(@grayLight, 5%);
     line-height: 14px;
     position: absolute;
     top: 3px;
@@ -182,10 +182,6 @@
     height: 60px;
     .btn-group {
       vertical-align: middle;
-      i {
-        //was making icons gray
-        //color: @gray !important;
-      }
     }
   }
 
@@ -244,12 +240,9 @@
 
 //main record edit
 .record {
-
   clear: both;
   margin: 20px 20px 10px 5px;
-
   .form-horizontal {
-
     .record-cell,
     .normal {
       min-height: 50px;
@@ -289,17 +282,14 @@
   }
 
   .record-cell {
-
     display: inline-block;
     position: relative;
     padding-left: 15px;
-    min-height: 58px;
-
+    min-height: 50px;
     .record-label {
       font-size: @fontSizeSmall;
-      color: lighten(@gray, 12%);
-      margin-top: -4px;
-      margin-bottom: -4px;
+      color: darken(@grayLight, 5%);
+      padding-bottom: 2px;
     }
 
     .ellipsis_inline {
@@ -307,22 +297,22 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding: 7px 0;
     }
-
+    [class*='address_'] {
+        margin-bottom: 2px;
+    }
     input[type="text"],
     select,
     textarea,
     .uneditable-input {
       position: relative;
       z-index: 1;
-      margin-top: 0;
+      margin-top: -5px;
       //this has to be important because there is an input that is a .row-fluid [class*="span"]:first-child
       margin-left: -7px !important;
       font-size: @fontSizeLarge;
       font-weight: 500;
-      padding: 6px;
-      color: @grayDark;
+      color: @gray;
       width: 100%;
     }
 
@@ -334,7 +324,7 @@
     input[type="checkbox"],
     input[type="image"] {
       display: inline-block;
-      margin: 10px 6px 0 0;
+      margin: 0 6px 4px 0;
       vertical-align: baseline;
     }
 
@@ -350,20 +340,20 @@
     .help-block {
       margin: 0 0 0 8px;
       min-height: 18px;
+      display: none;
     }
 
     &[data-type="textarea"] {
       .normal > span {
         display: block !important;
-        //margin-bottom: 9px;
-        padding: 7px 0;
+        margin-bottom: 10px;
         width: 100%;
       }
       .textarea-text {
         //display: inline-block !important;
       }
       textarea {
-        margin-top: -7px;
+        margin-top: -5px;
       }
     }
 
@@ -376,7 +366,6 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          padding: 7px 0;
         }
       }
     }
@@ -384,13 +373,18 @@
     &[data-type="email"] {
       .normal > span {
         display: block !important;
-        margin-bottom: 9px;
+        margin-bottom: 10px;
       }
       .control-group.email {
         padding-right: 132px;
         position: relative;
-        min-height: 30px;
-        margin-bottom: 0;
+        margin-bottom: 2px;
+        input[type="text"]{
+            min-height: 20px;
+            padding: 6px 6px 3px;
+            margin-bottom: 2px;
+            .border-radius(0);
+        }
         .input-append.widget {
           margin-bottom: 0;
           input[type="text"],
@@ -410,7 +404,7 @@
         }
         .btn-toolbar {
           position: absolute;
-          top: 2px;
+          top: -3px;
           right: 0;
           width: 118px;
           padding: 0;
@@ -422,12 +416,12 @@
       .help-block {
         min-height: 0;
       }
-      .control-group.email:first-child .input-append.widget input[type="text"] {
+      .control-group.email:first-child input[type="text"] {
         .border-top-left-radius(3px);
         .border-top-right-radius(3px);
         border-width: 1px 1px 1px 1px;
       }
-      .control-group.email:last-child .input-append.widget input[type="text"] {
+      .control-group.email:last-child input[type="text"] {
         .border-bottom-left-radius(3px);
         .border-bottom-right-radius(3px);
       }
@@ -458,9 +452,8 @@
         display: block !important;
         white-space: nowrap;
         text-overflow: ellipsis;
-        padding: 7px 0;
         .select2-container {
-          margin: -7px 0 0 -9px;
+          margin: -5px 0 0 -9px;
           position: absolute;
         }
       }
@@ -476,10 +469,11 @@
         }
       }
     }
+    
 
     &[data-type="teamset"] {
       .control-group.teamset {
-        padding: 7px 0;
+        padding: 0;
         label {
           margin-bottom: 0;
         }
@@ -497,7 +491,7 @@
     &[data-type="fieldset"] {
       .normal > span {
         display: block !important;
-        padding: 0;
+        padding: 0 0 10px;
       }
       .input-append.date {
         //display: block !important;
@@ -508,8 +502,8 @@
         }
         .add-on {
           z-index: 2;
-          padding: 5px 7px 5px 0;
-          margin: 0 10px 0 -20px;
+          padding: 0;
+          margin: 0 10px 0 -10px;
           width: 12px;
           height: 12px;
         }
@@ -517,10 +511,8 @@
     }
 
     &[data-type="fieldset"] {
-      margin-bottom: 9px;
       .ellipsis_inline {
         margin-bottom: 0;
-        padding: 7px 0;
         height: 18px;
       }
       input[type="text"] {
@@ -586,7 +578,7 @@
   }
 
   .record-edit-link-wrapper {
-    top: 12px;
+    top: 15px;
     left: -18px;
   }
 
@@ -599,17 +591,6 @@
     font-weight: 500;
     display: block;
     width: 100%;
-    min-height: 50px;
-  }
-
-  .big {
-    font-size: 260%;
-    color: black;
-    line-height: normal;
-  }
-
-  .bigcell {
-    margin: 16px 0;
   }
 
   .record-save-btns-bar {
@@ -648,5 +629,6 @@
 
 //show more-less control
 .show-hide-toggle {
-  margin: 0 20px 10px 20px;
+  margin: 0 20px 20px 20px;
 }
+

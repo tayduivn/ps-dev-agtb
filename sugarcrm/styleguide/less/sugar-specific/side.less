@@ -1,7 +1,10 @@
-#folded.tab-content,
+#folded .tab-pane {
+    padding: 28px;
+    border-left: 1px solid darken(@grayLighter, 10%);
+}
+
 .side {
-  .box-shadow(~"inset 4px 0px 16px -4px rgba(0, 0, 0, .2)");
-  border-left: 2px solid @grayLight;
+  border-left: 1px solid darken(@grayLighter, 10%);
   >.tab-pane,
   >.side-pane,
   >.preview-pane {
@@ -62,9 +65,6 @@
 
 // below is for nutmeg
 #folded {
-  > div {
-    width: inherit;
-  }
   [data-toggle="tab"].actions {
     top: 0;
     color: @gray;
