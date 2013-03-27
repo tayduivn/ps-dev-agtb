@@ -238,6 +238,11 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
             'type' => 'int',
             'studio' => false,
+            //BEGIN SUGARCRM flav=ent ONLY
+            'calculated' => true,
+            'formula' => 'rollupMax($products, "date_closed_timestamp")',
+            'enforced' => true
+            //END SUGARCRM flav=ent ONLY
         ),
         'next_step' => array(
             'name' => 'next_step',
