@@ -104,6 +104,8 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'showOn' => 'view',
                     'value' => 'edit',
                 ),
+                //TODO: Commented out for SugarCon.  Will add back once actions are ready
+                /*
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:change_log_button:click',
@@ -111,6 +113,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'label' => 'LNK_VIEW_CHANGE_LOG',
                     'value' => 'view',
                 ),
+                */
             ),
         ),
         array(
