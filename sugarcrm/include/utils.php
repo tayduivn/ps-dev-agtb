@@ -2289,6 +2289,9 @@ function str_end($str, $end) {
 }
 
 function securexss($value) {
+    if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
+        return $value;
+    }
 	if(is_array($value)){
     	$new = array();
         foreach($value as $key=>$val){
@@ -2299,7 +2302,6 @@ function securexss($value) {
 	static $xss_cleanup=  array("&quot;" => "&#38;", '"' =>'&quot;', "'" =>  '&#039;' , '<' =>'&lt;' , '>'=>'&gt;');
 	$value = preg_replace(array('/javascript:/i', '/\0/'), array('java script:', ''), $value);
 	$value = preg_replace('/javascript:/i', 'java script:', $value);
-	if($GLOBALS['db'])
 	return str_replace(array_keys($xss_cleanup), array_values($xss_cleanup), $value);
 }
 

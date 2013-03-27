@@ -108,10 +108,10 @@ if (!empty($sugar_config['xhprof_config']))
 // make sure SugarConfig object is available
 require_once 'include/SugarObjects/SugarConfig.php';
 
-///////////////////////////////////////////////////////////////////////////////
-////	DATA SECURITY MEASURES
 require_once('include/utils.php');
 register_shutdown_function('sugar_cleanup');
+///////////////////////////////////////////////////////////////////////////////
+////	DATA SECURITY MEASURES
 require_once('include/clean.php');
 clean_special_arguments();
 clean_incoming_data();

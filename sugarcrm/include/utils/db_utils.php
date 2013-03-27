@@ -66,6 +66,9 @@ function from_db_convert($string, $type)
  */
 function to_html($string, $encode=true)
 {
+    if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
+        return $string;
+    }
 	if (empty($string)) {
 		return $string;
 	}
@@ -81,6 +84,9 @@ function to_html($string, $encode=true)
  */
 function from_html($string, $encode=true)
 {
+    if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
+        return $string;
+    }
     if (!is_string($string) || !$encode) {
         return $string;
     }
