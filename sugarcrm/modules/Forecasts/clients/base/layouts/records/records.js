@@ -91,6 +91,8 @@
             selectedGroupBy: defaultSelections.group_by,
             selectedDataSet: defaultSelections.dataset,
 
+            currentForecastCommitDate: '',
+
             /**
              * Initially set to the currently logged-in user, selectedUser is different from currentUser
              * because selectedUser is used by other components and is changeable by most components

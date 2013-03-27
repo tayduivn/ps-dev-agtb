@@ -385,6 +385,7 @@ class ForecastManagerWorksheet extends SugarBean
             $this->show_history_log = intval(
                 strtotime($committed_date) < strtotime($this->date_modified)
             );
+            $this->isManager = User::isManager($this->user_id);
         }
     }
 

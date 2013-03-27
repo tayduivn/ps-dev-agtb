@@ -219,7 +219,7 @@
      *
      * @return {object}
      */
-    createURL: function(isCommitLog, userId, showOpps) {
+    createURL: function(isCommitLog, userId, showOpps, isManager) {
         isCommitLog = isCommitLog || false;
 
         var args_filter = [],
@@ -233,7 +233,20 @@
         if(isCommitLog && this.selectedUser) {
             args_filter.push({"user_id": userId});
             beanName = 'Forecasts';
-            args_filter.push({"forecast_type": (showOpps) ? 'Direct' : 'Rollup'});
+            var forecastType = 'Direct';
+            /**
+             * Three cases exist when a row is showing historyLog icon:
+             *
+             * Manager  - showOpps=1 - isManager=1 => Manager's Opportunities row - forecast_type = 'Direct'
+             * Manager  - showOpps=0 - isManager=1 => Manager has another manager in their ManagerWorksheet - forecast_type = 'Rollup'
+             * Rep      - showOpps=0 - isManager=0 => Sales Rep (not a manager) row - forecast_type = 'Direct'
+             *
+             */
+            if(!showOpps && isManager) {
+                forecastType = 'Rollup';
+            }
+
+            args_filter.push({"forecast_type": forecastType});
         } else if(this.selectedUser) {
             args_filter.push({"assigned_user_id": this.selectedUser.id});
         }
@@ -658,16 +671,16 @@
      */
     fetchUserCommitHistory: function(event, nTr) {
         var jTarget = $(event.target),
-            dataCommitDate = jTarget.data('commitdate'),
-            url = this.createURL(true, jTarget.data('uid'), jTarget.data('showopps'));
+            forecastCommitDate = new Date(this.context.get('currentForecastCommitDate')),
+            url = this.createURL(true, jTarget.data('uid'), jTarget.data('showopps'), jTarget.data('ismanager'));
 
-        return app.api.call('read',
+        return app.api.call('create',
             url.url,
             url.filters,
             {
                 success: function(data) {
                     data = data.records;
-                    var commitDate = new Date(dataCommitDate),
+                    var commitDate = new Date(forecastCommitDate),
                         newestModel = new Backbone.Model(_.first(data)),
                     // get everything that is left but the first item.
                         otherModels = _.last(data, data.length - 1),

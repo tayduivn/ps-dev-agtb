@@ -1028,6 +1028,13 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'type' => 'int',
             'default' => 0,
         ),
+        'isManager' =>
+        array(
+            'name' => 'isManager',
+            'type' => 'bool',
+            'source' => 'non-db',
+            'comment' => 'needed for commitLog field logic'
+        ),
         'user_id' =>
         array(
             'name' => 'user_id',

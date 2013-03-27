@@ -268,8 +268,19 @@
          * @return {*}
          */
         getDifference: function(oldModel, newModel, attr) {
-            return newModel.get(attr) - oldModel.get(attr);
+            var diff = newModel.get(attr) - oldModel.get(attr);
+            /**
+             * if the difference is between -0.01 and 0.01 not including those numbers,
+             * set the diff to zero otherwise you get "Forecast went up $0.00 to..." when the difference is < 0.01
+             * because it gets rounded later
+             */
+            //
+            if(diff > -0.01 && diff < 0.01) {
+                diff = 0;
+            }
+            return diff;
         },
+
 
         /**
          * Returns the proper direction label to use
