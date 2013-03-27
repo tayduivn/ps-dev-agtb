@@ -344,6 +344,7 @@ $dictionary['Document'] = array('table' => 'documents',
             'vname' => 'LBL_DET_RELATED_DOCUMENT_VERSION',
             'source' => 'non-db',
             'comment' => 'The related document version number for Meta-Data framework',
+            'module' => 'Documents', // If the module is not set, sidecar should look at the link to determine the module. This is just temp solution.
         ),
 
         'is_template' =>
