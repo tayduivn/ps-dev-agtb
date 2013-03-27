@@ -67,49 +67,6 @@ header .subnav {
   margin-top: 20px;
 }
 
-//This is the new headerpane with ellipsis
-//Requires that H1 be below button group and avatar
-.headerpane.ellipsis,
-.main-pane.span8 .subnav.subnav-fixed.ellipsis {
-  height: 60px;
-  z-index: 1000;
-  background: @grayLighter;
-  border-bottom: 1px solid darken(@grayLighter,5%);
-
-  h1 {
-    float: none;
-    margin-top: 0;
-    padding-top: 12px;
-    margin-left: 20px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  .fav-star {
-    padding: 3px;
-    //margin-right: 5px;
-    font-size: 20px;
-    i.icon-favorite {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
-    }
-  }
-
-  .avatar {
-    margin: 10px 0 0 20px;
-    float: left;
-    img {
-      width: 42px;
-      height: 42px;
-      vertical-align: middle;
-      //margin: -2px 12px 0;
-    }
-  }
-}
-
 //TODO: is media query needed below??
 .subnav-fixed {
   position: fixed;
