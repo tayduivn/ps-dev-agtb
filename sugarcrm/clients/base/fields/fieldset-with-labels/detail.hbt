@@ -29,9 +29,9 @@
 {{#with def}}
     {{#each fields}}
         <span class="record-cell" data-name="{{name}}" data-type="{{type}}">
-            {{#unless ../dismiss_label}}
-                <div class="record-label" data-name="{{name}}">{{str label ../../../module}}</div>
-            {{/unless}}
+            {{#if ../labelSpan}}
+            <div class="record-label" data-name="{{name}}">{{str label ../../../module}}</div>
+            {{/if}}
             <span data-fieldname="{{name}}">
                 {{field ../../view ../../model ../../options.viewName}}
             </span>

@@ -43,6 +43,8 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'name'            => 'email_config',
                     'label'           => 'LBL_FROM',
                     'type'            => 'sender',
+                    "span"            => 12,
+                    "labelSpan"       => 2,
                     'css_class'       => 'inherit-width',
                     'label_css_class' => 'begin-fieldgroup',
                     'endpoint'        => array(
@@ -54,6 +56,8 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     "name"           => "to_addresses",
                     "type"           => "recipients",
                     "label"          => "LBL_TO_ADDRS",
+                    "span"           => 12,
+                    "labelSpan"      => 2,
                     'cell_css_class' => 'controls-one btn-fit',
                     'required'       => true,
                 ),
@@ -61,17 +65,23 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     "name"           => "cc_addresses",
                     "type"           => "recipients",
                     "label"          => "LBL_CC",
+                    "span"           => 12,
+                    "labelSpan"      => 2,
                     'cell_css_class' => 'controls-one btn-fit',
                 ),
                 array(
                     "name"           => "bcc_addresses",
                     "type"           => "recipients",
                     "label"          => "LBL_BCC",
+                    "span"           => 12,
+                    "labelSpan"      => 2,
                     'cell_css_class' => 'controls-one btn-fit',
                 ),
                 array(
                     'name'            => 'subject',
                     'label'           => 'LBL_SUBJECT',
+                    "span"            => 12,
+                    "labelSpan"       => 2,
                     'label_css_class' => 'end-fieldgroup',
                 ),
                 array(
@@ -82,6 +92,8 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                 array(
                     'name'           => 'actionbar',
                     'type'           => 'compose-actionbar',
+                    "span"           => 12,
+                    "labelSpan"      => 2,
                     'buttonSections' => array(
                         array(
                             'name'      => 'attachments_dropdown',
@@ -125,8 +137,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                 array(
                     'name'          => 'html_body',
                     'type'          => 'htmleditable_tinymce',
-                    'dismiss_label' => true,
-                    'span'          => 12,
+                    'labelSpan'     => 0,
                     'tinyConfig'    => array(
                         // Location of TinyMCE script
                         'script_url'                        => 'include/javascript/tiny_mce/tiny_mce.js',
@@ -163,15 +174,19 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
             'fields'       => array(
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
-                    "type" => "teamset",
-                    "name" => "team_name",
+                    "type"      => "teamset",
+                    "name"      => "team_name",
+                    "span"      => 12,
+                    "labelSpan" => 2,
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
-                    "label"   => "LBL_LIST_RELATED_TO",
-                    'type'    => 'parent',
-                    'name'    => 'parent_name',
-                    'options' => "parent_type_display"
+                    "label"     => "LBL_LIST_RELATED_TO",
+                    'type'      => 'parent',
+                    'name'      => 'parent_name',
+                    'options'   => "parent_type_display",
+                    'span'      => 12,
+                    'labelSpan' => 2,
                 ),
             ),
         ),

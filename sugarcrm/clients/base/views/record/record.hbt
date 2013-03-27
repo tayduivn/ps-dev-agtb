@@ -4,43 +4,45 @@
         <div class="headerpane">
             {{#each meta.panels}}
                 {{#if header}}
-                    <h1>
-                        {{#unless isAvatar}}
-                            <span class="label label-module label-{{../../../module}}" rel="tooltip" data-title="{{../../../module}} avatar" data-original-title="">{{moduleIconLabel ../../../module}}</span>
-                        {{/unless}}
-                        {{#each fields}}
-                            <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
-                                {{#if ../../this.labels}}
-                                    {{#unless ../this.dismiss_label}}
-                                        <div class="record-label" data-name="{{name}}">{{str label ../../../../../this.model.module}}</div>
-                                    {{/unless}}
+                <h1>
+                    {{#unless isAvatar}}
+                    <span class="label label-module label-{{../../../module}}" rel="tooltip" data-title="{{../../../module}} avatar" data-original-title="">{{firstChars ../../../module 2}}</span>
+                    {{/unless}}
+                    {{#each grid}}
+                        {{#each this}}
+                        <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
+                            {{#if ../../labels}}
+                                {{#if labelSpan}}
+                                <div class="record-label" data-name="{{name}}">{{str label ../../../../../../module}}</div>
                                 {{/if}}
-                                <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
-                                    {{field ../../../this ../../../this.model ../../../this.action}}
-                                </span>
-                                {{#unless ../../../createMode}}
-                                    {{#notHas name ../../../../noEditFields}}
-                                        <span class="record-edit-link-wrapper" data-name="{{name}}">
-                                            <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="icon-pencil"></i></a>
-                                        </span>
-                                    {{/notHas}}
-                                {{/unless}}
+                            {{/if}}
+                            <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
+                                {{field ../../../../this ../../../../model ../../../../action}}
                             </span>
+                            {{#unless ../../../../createMode}}
+                                {{#notHas name ../../../../../noEditFields}}
+                                <span class="record-edit-link-wrapper" data-name="{{name}}">
+                                    <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="icon-pencil"></i></a>
+                                </span>
+                                {{/notHas}}
+                            {{/unless}}
+                        </span>
                         {{/each}}
-                    </h1>
+                    {{/each}}
+                </h1>
                 {{/if}}
             {{/each}}
             {{#if enableHeaderButtons}}
             <div class="btn-toolbar pull-right">
                 {{#unless createMode}}
                 <div class="btn-group btn-group-previous-next">
-                      <a href="{{#if collection.previous}}#{{modelRoute collection.previous def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible previous-row{{#unless collection.previous}} disabled{{/unless}}"><i class="icon-chevron-left"></i></a>
-                      <a href="{{#if collection.next}}#{{modelRoute collection.next def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible next-row{{#unless collection.next}} disabled{{/unless}}"><i class="icon-chevron-right"></i></a>
+                    <a href="{{#if collection.previous}}#{{modelRoute collection.previous def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible previous-row{{#unless collection.previous}} disabled{{/unless}}"><i class="icon-chevron-left"></i></a>
+                    <a href="{{#if collection.next}}#{{modelRoute collection.next def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible next-row{{#unless collection.next}} disabled{{/unless}}"><i class="icon-chevron-right"></i></a>
                 </div>
                 {{/unless}}
-                    {{#each meta.buttons}}
-                        {{field ../this}}
-                    {{/each}}
+                {{#each meta.buttons}}
+                    {{field ../this}}
+                {{/each}}
             </div>
             {{/if}}
         </div>
@@ -48,76 +50,67 @@
         <div class="record">
             {{#each meta.panels}}
                 {{#unless header}}
-
                     {{#if ../labelsOnTop}}
-
-                    {{#each grid}}
-                        <div class="row-fluid {{../../name}}{{#if ../../hide}} hide{{/if}}">
+                        {{#each grid}}
+                        <div class="row-fluid {{../name}}{{#if ../hide}} hide{{/if}}">
                             {{#each this}}
-
-                                <div class="span{{this.span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
-                                    {{#if ../../../this.labels}}
-                                        <div class="record-label" data-name="{{../this.name}}">{{#unless ../../this.dismiss_label}}{{str ../../this.label ../../../../../../../this.model.module}}{{/unless}}</div>
-                                    {{/if}}
-                                    {{#if name}}
-                                        <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
-                                            {{field ../../../../../../this ../../../../../../../this.model ../../../../../../../this.action}}
-                                        </span>
-                                    {{/if}}
-                                    {{#unless ../../../../../../createMode}}
-                                        {{#notHas name ../../../../../../../noEditFields}}
-                                            <span class="record-edit-link-wrapper" data-name="{{../name}}">
-                                                <a class="record-edit-link btn btn-invisible" data-type="{{../type}}" data-name="{{../name}}"><i class="icon-pencil"></i></a>
-                                            </span>
-                                        {{/notHas}}
-                                    {{/unless}}
-                                </div>
+                            <div class="span{{span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
+                                {{#if ../../labels}}
+                                <div class="record-label" data-name="{{name}}">{{#if labelSpan}}{{str label ../../../../../../../module}}{{/if}}</div>
+                                {{/if}}
+                                {{#if name}}
+                                <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
+                                    {{field ../../../../../../this ../../../../../../model ../../../../../../action}}
+                                </span>
+                                {{/if}}
+                                {{#unless ../../../../../../createMode}}
+                                    {{#notHas name ../../../../../../../noEditFields}}
+                                    <span class="record-edit-link-wrapper" data-name="{{name}}">
+                                        <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="icon-pencil"></i></a>
+                                    </span>
+                                    {{/notHas}}
+                                {{/unless}}
+                            </div>
                             {{/each}}
                         </div>
-                    {{/each}}
-
+                        {{/each}}
                     {{else}}
-
-                <div class="form-horizontal">
-                    <fieldset class="card2">
-                    {{#each grid}}
-                        <div class="row-fluid control-group {{../../name}}{{#if ../../hide}} hide{{/if}}">
-                            {{#each this}}
-
-                                {{#unless this.dismiss_label}}
-                                    {{#if ../../../this.labels}}
-                                    <div class="control-label span{{this.labelSpan}} {{label_css_class}}">
-                                        {{#if ../this.label}}
-                                        <div class="control-label-background span{{this.labelSpan}}">
-                                        <label class="tright record-label" data-name="{{../this.name}}">{{str ../../this.label ../../../../../../../../this.model.module}}:</label>
+                    <div class="form-horizontal">
+                        <fieldset class="card2">
+                            {{#each grid}}
+                            <div class="row-fluid control-group {{../name}}{{#if ../hide}} hide{{/if}}">
+                                {{#each this}}
+                                    {{#if labelSpan}}
+                                        {{#if ../../../labels}}
+                                        <div class="control-label span{{labelSpan}} {{label_css_class}}">
+                                            {{#if label}}
+                                            <div class="control-label-background span{{labelSpan}}">
+                                                <label class="tright record-label" data-name="{{name}}">{{str label ../../../../../../../../module}}:</label>
+                                            </div>
+                                            {{/if}}
                                         </div>
                                         {{/if}}
-                                    </div>
                                     {{/if}}
-                                {{/unless}}
-
-                                <div class="controls span{{this.span}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
-                                    {{#if name}}
-                                        <span class='normal {{css}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}">
-                                            {{field ../../../../../../this ../../../../../../this.model ../../../../../../this.action}}
+                                    <div class="controls span{{span}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
+                                        {{#if name}}
+                                        <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
+                                            {{field ../../../../../../this ../../../../../../model ../../../../../../action}}
                                         </span>
-                                    {{/if}}
-                                    {{#unless ../../../../../../createMode}}
-                                        {{#notHas name ../../../../../../../noEditFields}}
-                                            <span class="record-edit-link-wrapper" data-name="{{../../name}}">
-                                                <a class="record-edit-link btn btn-invisible" data-type="{{../../type}}" data-name="{{../../name}}"><i class="icon-pencil"></i></a>
+                                        {{/if}}
+                                        {{#unless ../../../../../../createMode}}
+                                            {{#notHas name ../../../../../../../noEditFields}}
+                                            <span class="record-edit-link-wrapper" data-name="{{name}}">
+                                                <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="icon-pencil"></i></a>
                                             </span>
-                                        {{/notHas}}
-                                    {{/unless}}
-                                </div>
+                                            {{/notHas}}
+                                        {{/unless}}
+                                    </div>
+                                {{/each}}
+                            </div>
                             {{/each}}
-                        </div>
-                    {{/each}}
-                    </fieldset>
-                </div>
-
+                        </fieldset>
+                    </div>
                     {{/if}}
-
                 {{/unless}}
             {{/each}}
         </div>

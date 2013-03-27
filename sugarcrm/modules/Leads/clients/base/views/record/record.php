@@ -131,7 +131,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'type' => 'image',
                     'width' => 42,
                     'height' => 42,
-                    'dismiss_label' => true,
+                    'labelSpan' => 0,
                 ),
                 array(
                     'name' => 'fieldset_name',
