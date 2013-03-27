@@ -3,7 +3,7 @@
 $viewdefs['base']['view']['opportunity-pipeline'] = array(
     'dashlets' => array(
         array(
-            'name' => 'Opportunity Pipline Chart',
+            'name' => 'Opportunity Pipeline Chart',
             'description' => 'Displays current pipeline chart.',
             'config' => array(
             ),
@@ -17,4 +17,11 @@ $viewdefs['base']['view']['opportunity-pipeline'] = array(
             )
         ),
     ),
+    'timeperiod' => array(
+        array(
+            'name' => 'selectedTimePeriod',
+            'label' => 'TimePeriod',
+            'type' => 'enum',
+        ),
+    )
 );
