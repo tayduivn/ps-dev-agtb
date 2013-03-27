@@ -956,17 +956,19 @@ nv.models.funnel = function() {
 
       //------------------------------------------------------------
 
-      var w = availableHeight/1.1
-        , r = ( ( (w/8) - w ) / 2 ) / availableHeight
+      var w = Math.min(availableHeight/1.1,availableWidth-40)
+        , r = ( ( (w/3) - w ) / 2 ) / availableHeight
         , c = availableWidth/2
         ;
 
 
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
           .data(function(d) { return d }, function(d) { return d.key });
+
       groups.enter().append('g')
           .style('stroke-opacity', 1e-6)
           .style('fill-opacity', 1e-6);
+
       d3.transition(groups.exit())
         .selectAll('polygon.nv-bar')
         .delay(function(d,i) { return i * delay/ data[0].values.length })
@@ -980,18 +982,20 @@ nv.models.funnel = function() {
               );
             })
           .remove();
+
       d3.transition(groups.exit())
-        .selectAll('text.nv-label-value')
+        .selectAll('g.nv-label-value')
         .delay(function(d,i) { return i * delay/ data[0].values.length })
           .attr('y', 0)
           .remove();
+
       d3.transition(groups.exit())
         .selectAll('text.nv-label-group')
         .delay(function(d,i) { return i * delay/ data[0].values.length })
           .attr('y', 0)
           .remove();
+
       groups
-          //.attr('class', function(d,i) { return this.getAttribute('class') || 'nv-group nv-series-' + i + ' nv-fill' + (i%20>9?'':'0') + i%20; } )
           .attr('class', function(d,i) {
               return this.getAttribute('class') || (
                 'nv-group nv-series-' + i + (
@@ -1002,8 +1006,9 @@ nv.models.funnel = function() {
               );
           } )
           .classed('hover', function(d) { return d.hover })
-          .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i) })
+          .attr('fill', function(d,i){ return fill(d,i) })
           .attr('stroke', function(d,i){ return this.getAttribute('fill') || fill(d,i) });
+
       d3.transition(groups)
           .style('stroke-opacity', 1)
           .style('fill-opacity', .85);
@@ -1015,13 +1020,12 @@ nv.models.funnel = function() {
       var funs = groups.selectAll('polygon.nv-bar')
           .data(function(d) { return d.values });
 
-      funs.exit().remove();
-
       var funsEnter = funs.enter()
           .append('polygon')
             .attr('class', 'nv-bar positive')
             .attr('points', function(d) {
-              var w0 = (r * y(d.y0)) + w/2, w1 = (r * y(d.y0+d.y)) + w/2;
+              var w0 = (r * y(d.y0)) + w/2,
+                  w1 = (r * y(d.y0+d.y)) + w/2;
               return (
                 (c - w0) + ',' +  0 + ' ' +
                 (c - w1) + ',' +  0 + ' ' +
@@ -1033,7 +1037,8 @@ nv.models.funnel = function() {
       d3.transition(funs)
           .delay(function(d,i) { return i * delay / data[0].values.length })
           .attr('points', function(d) {
-            var w0 = (r * y(d.y0)) + w/2, w1 = (r * y(d.y0+d.y)) + w/2;
+            var w0 = (r * y(d.y0)) + w/2,
+                w1 = (r * y(d.y0+d.y)) + w/2;
             return (
               (c - w0) + ',' +  y(d.y0) + ' ' +
               (c - w1) + ',' +  y(d.y0+d.y) + ' ' +
@@ -1041,75 +1046,64 @@ nv.models.funnel = function() {
               (c + w0) + ',' +  y(d.y0)
             );
           });
-          // .each('end', function() {
-          //   d3.transition(d3.select(this))
-          //     .attr('width', x.rangeBand() );
-          // })
-
-      // funs
-      //     .attr('class', 'nv-bar positive')
-      //     .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; });
 
 
       //------------------------------------------------------------
       // Value Labels
 
-      var lblValue = groups.selectAll('text.nv-label-value')
+      var lblValue = groups.selectAll('.nv-label-value')
           .data( function(d) { return d.values } );
 
-      lblValue.exit().remove();
-
       var lblValueEnter = lblValue.enter()
-          .append('text')
-            .attr('class', 'nv-label-value')
-            .attr('x', function(d) {
-              return c - (r * y(d.y0)) - w/2;
-            })
-            .attr('y', 0 )
-            .attr('text-anchor', 'end')
-            .text(function(d) { return '$' + d.y + 'K' })
-            .attr('stroke', 'none')
-            .attr('fill', 'black')
-            .attr('dx', -20)
-            .attr('dy', '-.5em')
-          ;
+            .append('g')
+              .attr('class', 'nv-label-value');
+
+          lblValueEnter.append('rect')
+              .attr('x', -20)
+              .attr('y', -15)
+              .attr('width', 40)
+              .attr('height', 30)
+              .attr('rx',3)
+              .attr('ry',3)
+              .attr('stroke', 'none')
+              .attr('fill', 'white')
+              .style('fill-opacity', 0.5);
+
+          lblValueEnter.append('text')
+              .attr('x', 0)
+              .attr('y', 5)
+              .attr('text-anchor', 'middle')
+              .text(function(d) { return '$' + d.y + 'K' })
+              .attr('stroke', 'none')
+              .attr('fill', 'black')
+            ;
 
       d3.transition(lblValue)
           .delay(function(d,i) { return i * delay / data[0].values.length })
-          .attr('x', function(d) {
-              return c - (r * y(d.y0)) - w/2;
-            })
-          .attr('y', function(d) { return y(d.y0) } );
+          .attr('transform', function(d){ return 'translate('+ c +','+ ( y(d.y0+d.y/2) ) +')'; })
 
       //------------------------------------------------------------
       // Group Labels
 
       var lblGroup = groups.selectAll('text.nv-label-group')
-          .data( function(d) { return [ { y0: d.values[0].y0, key: d.key } ] } );
-
-      lblGroup.exit().remove();
+          .data( function(d) { return [ { y: d.values[0].y, y0: d.values[0].y0, key: d.count } ] } );
 
       var lblGroupEnter = lblGroup.enter()
           .append('text')
             .attr('class', 'nv-label-group')
-            .attr('x', function(d) {
-              return c + (r * y(d.y0)) + w/2;
-            })
+            .attr('x', 0 )
             .attr('y', 0 )
-            .attr('text-anchor', 'start')
+            .attr('text-anchor', 'end')
             .text(function(d) { return d.key })
             .attr('stroke', 'none')
             .attr('fill', 'black')
-            .attr('dx', 20)
-            .attr('dy', '-.5em')
+            .attr('dx', -20)
+            .attr('dy', 5)
           ;
 
       d3.transition(lblGroup)
           .delay(function(d,i) { return i * delay / data[0].values.length })
-          .attr('x', function(d) {
-              return c + (r * y(d.y0)) + w/2;
-            })
-          .attr('y', function(d) { return y(d.y0) } );
+          .attr('transform', function(d){ return 'translate('+ availableWidth +','+ ( y(d.y0+d.y/2) ) +')'; })
 
       //------------------------------------------------------------
 
@@ -1301,7 +1295,7 @@ nv.models.funnelChart = function() {
     , legend = nv.models.legend()
     ;
 
-  var margin = {top: 30, right: 20, bottom: 20, left: 60}
+  var margin = {top: 30, right: 20, bottom: 20, left: 20}
     , width = null
     , height = null
     , color = nv.utils.defaultColor()
@@ -1532,18 +1526,17 @@ nv.models.funnelChart = function() {
       var yAxis = d3.svg.axis()
             .scale(yScale)
             .orient('left')
-            .tickSize( -availableWidth/2, 0)
+            .tickSize( -availableWidth, 0)
             .tickValues(aTicks)
             .tickFormat( function(d,i) {
-              return '$' + d + 'K';
+              return '';
             })
           ;
 
       d3.transition(g.select('.nv-y.nv-axis'))
         .call(yAxis)
-          .style('stroke-width', '2')
+          .style('stroke-width', '1')
           .selectAll('line')
-            .attr('x2', function(d,i){ return d !== 0 ? ( c + ( r * y(d) ) + w/2 + 60 ) : availableWidth; });
 
       //------------------------------------------------------------
 
@@ -1623,7 +1616,7 @@ nv.models.funnelChart = function() {
     }
     else if (_ === 'class')
     {
-      chart.useClass(true);
+      funnel.useClass(true);
       legend.useClass(true);
       var color = function (d,i) { return 'inherit' };
     }
@@ -1641,6 +1634,7 @@ nv.models.funnelChart = function() {
   chart.colorFill = function(_) {
     if (_ === 'gradient')
     {
+
       var fill = function (d,i) { return chart.gradient()(d,i) };
     }
     else
@@ -1684,13 +1678,6 @@ nv.models.funnelChart = function() {
   chart.height = function(_) {
     if (!arguments.length) return height;
     height = _;
-    return chart;
-  };
-
-  chart.color = function(_) {
-    if (!arguments.length) return color;
-    color = nv.utils.getColor(_);
-    legend.color(color);
     return chart;
   };
 
