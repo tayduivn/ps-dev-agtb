@@ -26,7 +26,17 @@ nv.utils.windowSize = function()
     return (size);
 };
 
+nv.utils.getAbsoluteXY = function (element)
+{
+  var viewportElement = document.documentElement
+    , box = element.getBoundingClientRect()
+    , scrollLeft = viewportElement.scrollLeft + document.body.scrollLeft
+    , scrollTop = viewportElement.scrollTop + document.body.scrollTop
+    , x = box.left + scrollLeft
+    , y = box.top + scrollTop;
 
+  return {'left': x, 'top': y};
+};
 
 // Easy way to bind multiple functions to window.onresize
 // TODO: give a way to remove a function after its bound, other than removing alkl of them

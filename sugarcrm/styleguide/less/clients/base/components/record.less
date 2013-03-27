@@ -12,21 +12,26 @@
   width: 100%;
 
   h1 {
-    line-height: 24px;
+    font-size: @fontSizeHeader;
+    line-height: 22px;
     width: 100%;
     display: table-cell;
-    padding-left: 18px;
+    padding-left: 20px;
     margin: 0;
     vertical-align: top;
-    font-size: 24px;
-    padding-top: 19px;
   }
   .view-forecastsTitle h1 {
     margin-top: 18px;
   }
 
+  .module-title {
+    padding-top: 19px;
+    display: inline-block;
+  }
+
   .record-edit-link-wrapper {
     width: 28px;
+    height: 28px;
     top: 16px;
     left: -24px;
     .record-edit-link {
@@ -44,52 +49,39 @@
     width: 32px !important;
     height: 32px !important;
     vertical-align: top;
-    margin-left: 2px !important;
     margin-right: 12px !important;
+    margin-top: 11px;
     display: inline-block;
     position: relative;
-    top: -7px;
   }
 
   //40+1+1=42px=standard height of headerpane elements
   .record-cell {
     display: inline-block;
     vertical-align: top;
-    font-size: 24px;
-    margin-top: -10px;
+    font-size: @fontSizeHeader;
     position: relative;
     .record-cell {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      font-size: 24px;
-      position: relative;
-      margin-top: -6px;
+      font-size: @fontSizeHeader;
       margin-right: 8px;
-      padding: 0;
-      padding-top: 6px;
-      padding-bottom: 6px;
+      padding-top: 19px;
     }
   }
   .ellipsis_inline {
-    padding-top: 9px;
     max-width: 300px;
   }
 
   span[data-type="image"] {
-    margin-top: -10px;
     margin-right: 12px;
-    margin-bottom: 3px;
     margin-left: 2px;
-    .record-edit-link-wrapper {
-      top: 10px;
-      left: -24px;
-    }
+    padding-top: 9px;
     .image_preview {
-      //background-color: red;
+      background-color: red;
     }
     .image_field.image_edit {
-      top: -2px;
       .image_input input {
         float: none;
         position: static;
@@ -101,8 +93,7 @@
   span {
     &[data-type="text"],
     &[data-type="int"] {
-      padding-top: 6px;
-      margin-top: -15px;
+      padding-top: 19px;
       [data-fieldname="bug_number"] span {
         padding-top: 9px;
         display: inline-block;
@@ -112,20 +103,13 @@
 
   span[data-type="fieldset-with-labels"] {
     font-size: 0;
-    .record-edit-link-wrapper {
-      left: -24px;
-      top: 10px;
-    }
   }
 
   span[data-type="follow"],
   span[data-type="badge"] {
-    margin-top: -6px;
-    position: relative;
-    height: 32px;
+    padding-top: 16px;
     .label {
       font-size: @fontSizeMini;
-      padding: 1px 4px 3px;
     }
     span {
       font-size: @fontSizeLarge;
@@ -133,9 +117,7 @@
   }
   span[data-type="favorite"] {
     font-size: @baseFontSize;
-    margin-top: 0px;
-    position: relative;
-    height: 32px;
+    padding-top: 20px;
     [class="icon-favorite"] {
       color: @grayLight;
     }
@@ -149,46 +131,46 @@
     color: lighten(@gray, 12%);
     line-height: 14px;
     position: absolute;
-    top: -1px;
+    top: 3px;
     left: 8px;
   }
 
   input[type="text"] {
-    font-size: 24px;
-    padding: 4px 6px 2px;
-    margin-top: 5px;
+    font-size: @fontSizeHeader;
+    line-height: 26px;
+    padding: 4px 6px 4px;
+    margin-top: -3px;
     width: 190px;
-    height: 24px;
+    height: @fontSizeHeader;
+    line-height: 24px;
   }
 
   .select2-container {
-    margin-top: 5px;
+    margin-top: -3px;
     .select2-choice {
-      height: 22px;
+      height: @fontSizeHeader;
+      line-height: @fontSizeHeader;
       padding: 5px 0 3px 8px;
-      line-height: 20px;
       min-width: 50px;
       span {
         margin-right: 32px;
       }
       div {
-        top: 2px;
+        top: 1px;
       }
       abbr {
-        top: 8px;
+        top: 7px;
       }
     }
   }
 
   .help-block {
-    margin-bottom: 0;
+    display: none;
   }
 
   //action buttons
 
   .btn-toolbar {
-    /*margin: 16px 10px 0 0;
-    padding-left: 0;*/
     padding: 16px 8px 0 8px;
     margin: 0;
     white-space: nowrap;
@@ -198,7 +180,6 @@
     .box-sizing(border-box);
     vertical-align: top;
     height: 60px;
-    box-sizing: border-box;
     .btn-group {
       vertical-align: middle;
       i {
@@ -239,7 +220,7 @@
     }
     [class*="icon-"]{
         line-height: 16px;
-        font-size: @fontSizeLarge + 4;
+        font-size: @fontSizeHeader;
         vertical-align: top;
         font-weight: 500;
     }

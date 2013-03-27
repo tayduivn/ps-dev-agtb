@@ -21,13 +21,14 @@
 
     container.innerHTML = content;
     container.style.left = 0;
-    container.style.top = 0;
+    container.style.top = -1000;
     container.style.opacity = 0;
     container.style.position = 'absolute'; //fix scroll bar issue
     container.style.pointerEvents = 'none'; //fix scroll bar issue
 
-    nvtooltip.position(container,pos,gravity,dist);
     body.appendChild(container);
+
+    nvtooltip.position(container,pos,gravity,dist);
 
     container.style.opacity = 1;
 

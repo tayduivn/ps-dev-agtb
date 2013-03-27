@@ -675,11 +675,24 @@ input[type="color"],
     width: 100%;
     clear: both;
   }
-  .address_city:after,
-  .address_state:after {
-    content: ",";
-    margin-left: -2px;
+  :not(.edit) {
+    &.address_city,
+    &.address_state {
+      div:after {
+        content: ",";
+        margin-left: -4px;
+        margin-right: 4px;
+      }
+    }
   }
+
+  .address_city,
+  .address_state {
+    .ellipsis_inline:empty:after {
+      content: "";
+    }
+  }
+
   .address_city,
   .address_state,
   .address_zip {
@@ -708,21 +721,7 @@ td {
 }
 
 
-
-
-
-
-
-//54580: use media queries to also position symbol properly
-//43d1a253e5dae2f5d02b9273f527f9e43ff2dd6c
-
-@media (max-width: 480px) {
-  .row > .empty,
-  .row-fluid > .empty {
-    display:none !important;
-  }
-}
-
+//??legacy??
 @media (max-width: 768px) {
   .card2 {margin: 10px 0;}
   .card2 .row-fluid .span2, .card2 .row-fluid .span10 {
@@ -730,9 +729,5 @@ td {
     background: none;
     padding: 0 10px;
     border: none;
-  }
-  .row > .empty,
-  .row-fluid > .empty {
-    display:none !important;
   }
 }
