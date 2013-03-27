@@ -6,34 +6,19 @@
   position: relative;
 }
 
-.bcard1 {
-  padding: 20px;
-  .span6 {
-    label {
-      color: @gray;
-      font-size: 11px;
-      margin-bottom: 0;
-    }
-    span {
-      font-size: @baseFontSize * 1.25;
-      line-height: @baseLineHeight;
-      margin-bottom: 10px;
-      display: block;
-    }
-  }
-}
-
 .acomment .avatar {
   margin-right: 10px;
 }
 
 .more, .less {
+    border: none !important;
   &.padded {
     padding: 8px 20px;
     display: inline-block;
   }
   //color: @linkMore;
   &:hover {
+    .box-shadow(none);
     color: @linkMore;
     text-decoration: none;
   }
@@ -134,25 +119,6 @@ h2 + .row {
   margin-top: 5px;
 }
 
-/* Example sites showcase */
-.example-sites img {
-  max-width: 100%;
-  margin: 0 auto;
-}
-.marketing-byline {
-  margin: -18px 0 27px;
-  font-size: 18px;
-  font-weight: 300;
-  line-height: 24px;
-  color: #999;
-  text-align: center;
-}
-
-.scrollspy-example {
-  height: 200px;
-  overflow: auto;
-  position: relative;
-}
 
 /* Remove bottom margin on example forms in wells */
 form.well {
@@ -259,9 +225,10 @@ hr.soften {
 
 .filter.controls {margin-left: 0 !important;}
 .subpanel {
-    #gradient > .vertical(@white, @grayLighter);
+    #gradient > .vertical(lighten(@grayLighter, 3%), @grayLighter);
+    border-bottom: 1px solid darken(@grayLighter, 5%);
     border-top: 1px solid @white;
-    border-bottom: 1px solid @grayLighter;
+
 }
 .subpanel.out {
   background: @white;
