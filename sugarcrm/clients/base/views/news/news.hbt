@@ -1,6 +1,7 @@
-        {{#each responseData.results}}
-        <div class="news-article">
-            <h5><a href="{{this.unescapedUrl}}">{{{this.titleNoFormatting}}}</a></h5> ({{{this.publisher}}})
-            <p>{{{this.content}}}</p>
-        </div>
-        {{/each}}
+{{#each responseData.results}}
+    <div class="news-article">
+        <h5><a href="{{this.unescapedUrl}}">{{{this.titleNoFormatting}}}</a>
+        </h5> ({{{this.publisher}}})
+        <p>{{{this.content}}}</p>
+    </div>
+{{/each}}
