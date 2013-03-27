@@ -36,6 +36,8 @@
             model = app.data.createBean(data.module, {id:data.id});
 
         model.fetch({
+            //Show alerts for this request
+            showAlerts: true,
             success: _.bind(function(model) {
                 model.set("_module", data.module);
                 app.events.trigger("preview:render", model, this.associatedModels);

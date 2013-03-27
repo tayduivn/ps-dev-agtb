@@ -466,6 +466,8 @@
         app.file.checkFileFieldsAndProcessUpload(self, {
                 success: function () {
                     self.model.save({}, {
+                        //Show alerts for this request
+                        showAlerts: true,
                         success: finalSuccess,
                         viewed: true
                     });
@@ -500,7 +502,9 @@
             messages: app.lang.get('NTC_RECORD_DELETE_CONFIRMATION', null, moduleContext),
             onConfirm: function () {
                 self.model.destroy({
-                    alerts: {
+                    //Show alerts for this request
+                    showAlerts: {
+                        'process': true,
                         'success': {
                             messages: app.lang.get('NTC_RECORD_DELETE_SUCCESS', null, moduleContext)
                         }

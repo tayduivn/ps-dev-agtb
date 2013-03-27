@@ -125,7 +125,10 @@
         this.model.trigger("change:layout");
         if(this.model._previousMode === 'view') {
             //Autosave for view mode
-            this.model.save();
+            this.model.save(null, {
+                //Show alerts for this request
+                showAlerts: true
+            });
         }
 
         //Swap the view components

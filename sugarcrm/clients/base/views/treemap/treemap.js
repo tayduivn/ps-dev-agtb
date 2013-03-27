@@ -2,7 +2,10 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.treeCollection = app.data.createBeanCollection(this.model.module);
-        this.treeCollection.fetch();
+        this.treeCollection.fetch({
+            //Don't show alerts for this request
+            showAlerts: false
+        });
     },
 
     margin: {top: 20, right: 0, bottom: 0, left: 0},

@@ -225,6 +225,8 @@
             params.offset = search_collection.next_offset;
         }
         search_collection.fetch({
+            //Don't show alerts for this request
+            showAlerts: false,
             update: true,
             remove: _.isUndefined(params.offset),
             fields: _.union([

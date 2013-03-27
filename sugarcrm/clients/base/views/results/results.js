@@ -92,6 +92,8 @@
         var mlist = null, self = this, options;
         mlist = app.metadata.getModuleNames(true); // visible
         options = {
+            //Show alerts for this request
+            showAlerts: true,
             query: self.lastQuery, 
             success:function(collection) {
                 cb(collection);
@@ -110,6 +112,8 @@
     showMoreResults: function() {
         var self = this, options = {};
         options.add = true;
+        //Show alerts for this request
+        options.showAlerts = true;
         options.success = function() {
             app.view.View.prototype._render.call(self);
             window.scrollTo(0, document.body.scrollHeight);

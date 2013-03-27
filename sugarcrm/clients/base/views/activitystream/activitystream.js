@@ -81,10 +81,15 @@
 
     fetchComments: function() {
         var self = this;
-        this.commentsCollection.fetch({relate: true, success: function(collection) {
-            self.model.set("remaining_comments", 0);
-            self.render();
-        }});
+        this.commentsCollection.fetch({
+            //Don't show alerts for this request
+            showAlerts: false,
+            relate: true,
+            success: function(collection) {
+                self.model.set("remaining_comments", 0);
+                self.render();
+            }
+        });
     },
 
     showAllComments: function(event) {
@@ -130,6 +135,8 @@
 
         var bean = app.data.createRelatedBean(this.model, null, 'comments');
         bean.save(payload, {
+            //Show alerts for this request
+            showAlerts: true,
             relate: true,
             success: function(model) {
                 $el.html('').trigger('change');

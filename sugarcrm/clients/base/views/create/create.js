@@ -244,6 +244,8 @@
      */
     checkForDuplicate: function (success, error) {
         var options = {
+            //Show alerts for this request
+            showAlerts: true,
             success: success,
             error: error
         };
@@ -302,10 +304,12 @@
             error: error,
             viewed: true,
             relate: (self.model.link) ? true : null,
-            alerts: {
-                'success': {
+            //Show alerts for this request
+            showAlerts: {
+               'process' : true,
+               'success' : {
                     messages: app.lang.get('LBL_RECORD_SAVED_SUCCESS', self.module, self.model.attributes)
-                }
+               }
             }
         };
 

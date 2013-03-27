@@ -43,7 +43,10 @@
         this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
         this.model.trigger("change:layout");
         if(this.model.mode === 'view') {
-            this.model.save();
+            this.model.save(null, {
+                //Show alerts for this request
+                showAlerts: true
+            });
         }
 
         return component;
@@ -88,7 +91,10 @@
         this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
         this.model.trigger("change:layout");
         if(this.model.mode === 'view') {
-            this.model.save();
+            this.model.save(null, {
+                //Show alerts for this request
+                showAlerts: true
+            });
         }
         this.meta.empty = true;
         this._components[0].dispose();

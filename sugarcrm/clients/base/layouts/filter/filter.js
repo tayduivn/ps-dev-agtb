@@ -42,6 +42,8 @@
                     origfilterDef = ctxCollection.filterDef || [],
                     filterDef = self.getFilterDef(origfilterDef, query, ctx),
                     options = {
+                        //Show alerts for this request
+                        showAlerts: true,
                         success: function() {
                             // Close the preview pane to ensure that the preview
                             // collection is in sync with the list collection.
@@ -258,6 +260,8 @@
         }
         else {
             this.filters.fetch({
+                //Don't show alerts for this request
+                showAlerts: false,
                 filter: filter,
                 success:function(){
                     app.view.layouts.FilterLayout.loadedModules[moduleName] = true;

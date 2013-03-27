@@ -270,9 +270,12 @@
     /**
      * Wrapper to check whether to fire the duplicate check event;
      */
-    triggerDuplicateCheck : function(){
-        if(this.enableDuplicateCheck) {
-            this.duplicateView.context.trigger("dupecheck:fetch:fire",  this.recordView.model);
+    triggerDuplicateCheck: function() {
+        if (this.enableDuplicateCheck) {
+            this.duplicateView.context.trigger("dupecheck:fetch:fire", this.recordView.model, {
+                //Show alerts for this request
+                showAlerts: true
+            });
         }
     },
 

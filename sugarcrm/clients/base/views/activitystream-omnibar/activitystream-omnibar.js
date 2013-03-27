@@ -47,6 +47,8 @@
         if (payload.data.value) {
             var bean = app.data.createBean('Activities');
             bean.save(payload, {
+                //Show alerts for this request
+                showAlerts: true,
                 success: function(model) {
                     self.$('div.sayit').html('').trigger('change').focus();
                     model.set('picture_url', self.picture_url);

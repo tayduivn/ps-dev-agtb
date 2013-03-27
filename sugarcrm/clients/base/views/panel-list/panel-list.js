@@ -20,6 +20,8 @@
             messages: app.lang.get('NTC_UNLINK_CONFIRMATION'),
             onConfirm: function() {
                 model.destroy({
+                    //Show alerts for this request
+                    showAlerts: true,
                     relate: true,
                     success: function() {
                         // We trigger reset after removing the model so that
