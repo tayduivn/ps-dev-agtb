@@ -240,9 +240,10 @@ class Administration extends SugarBean {
      *
      * @param string $module        The module we are wanting to get the config for
      * @param string $platform      The platform we want to get the data back for
+     * @param boolean $clean        Get clean copy of module config
      * @return array
      */
-    public function getConfigForModule($module, $platform = 'base') {
+    public function getConfigForModule($module, $platform = 'base', $clean = false) {
         // platform is always lower case
         $platform = strtolower($platform);
 
@@ -251,11 +252,15 @@ class Administration extends SugarBean {
             $cache_key .= $platform;
         }
 
-        // try and see if there is a cache for this
-        $moduleConfig = sugar_cache_retrieve($cache_key);
+        if($clean){
+            sugar_cache_clear($cache_key);
+        } else {
+            // try and see if there is a cache for this
+            $moduleConfig = sugar_cache_retrieve($cache_key);
 
-        if(!empty($moduleConfig)) {
-            return $moduleConfig;
+            if(!empty($moduleConfig)) {
+                return $moduleConfig;
+            }
         }
 
         $sql = "SELECT name, value FROM config WHERE category = '{$module}'";

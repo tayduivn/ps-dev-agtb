@@ -114,41 +114,37 @@
 {literal}
 
 <script language='javascript'>
-    // Hack-Possibly due to being in iframe and jquery getting loaded twice but $
-    // doesn't have the select2 plugin defined properly.
+    // Hack: In iframe and jquery's getting loaded twice so $ doesn't seem to have select2 plugin
     jQuery('#defaultUser').select2({
         placeholder: "{$mod.LBL_USER_SELECT}",
-        allowClear: true
+        allowClear: true,
+        width: '50%'
     });
     addToValidateRange(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal},1,100);
     addToValidateRange(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal},1,100);
     $('#gobutton').click(function(event){
-        var field, fields, props, i, key, val;
+        var $field, fields, props, i, key, val;
         fields = $('.portalField');
         props = {};
 
         for(i=0; i<fields.length; i++) {
-            field = $(fields[i]);
-            key = field.attr('name') || field.data('name');
-            val = field.val();
-            if (!val && key==='defaultUser') {
-                key = jQuery(field).select2().val()
-            }
-            // select2 copies over attributes (including .portalField class) to a temporary
-            // element; so we end up with an extra fields element. so we ignore if not both key/val
+            $field = $(fields[i]);
+            key = $field.attr('name') || $field.data('name');
+            val = $field.val();
+            // select2 copies over attributes (including .portalField class) to a temp element and
+            // so we end up with an extra fields element; so here we ignore if not both key/val
             if(key && val) props[key] = val;
 
-            if (field.is(':checked')) {
-                // We look for isset and 'true' on other side so 'online' will still
-                // be considered falsy
+            if ($field.is(':checked')) {
+                // We look for both: isset, and, 'true' on other side ('online' still considered falsy!)
                 props[key] = 'true';
             }
         }
-        retrieve_portal_page($.param(props))
+        retrieve_portal_page($.param(props));
     });
     function retrieve_portal_page(props) {
-        if (validate_form(0,'')){
-        ModuleBuilder.getContent("module=ModuleBuilder&action=portalconfigsave&" + props);
+        if (validate_form(0,'')) {
+            ModuleBuilder.getContent("module=ModuleBuilder&action=portalconfigsave&" + props);
         }
     }
 </script>

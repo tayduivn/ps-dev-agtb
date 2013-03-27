@@ -76,7 +76,7 @@ class ViewPortalConfig extends SugarView
 
         $admin = Administration::getSettings();
 
-        $portalConfig = $admin->getConfigForModule('portal','support');
+        $portalConfig = $admin->getConfigForModule('portal','support', true);
         $smarty = new Sugar_Smarty();
         $smarty->assign('disabledDisplayModulesList', $disabledModules);
         $smarty->assign('disabledDisplayModules', $disabledModulesFlag);
