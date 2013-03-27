@@ -1,49 +1,95 @@
 div.opportunity-metrics-wrapper {
-    padding: 10px 10px 0 10px;
-
-    div.opportunity-metric {
-        margin-bottom: 10px;
-        text-align: right;
-
-        div.opportunity-metric-description {
-            color: @grayLight;
+    padding: 0;
+    .nv-chart {
+        height: 250px;
+        .nv-pie-hole {
+            font-size: 32px;
             font-weight: bold;
-            text-transform: uppercase;
+        }
+        .won {
+            fill: @green;
+        }
+        .lost {
+            fill: @red;
+        }
+        .active {
+            fill: @blue;
+        }
+    }
+}
+div.opportunity-metric {
+    text-align: right;
+    text-align: center;
+    width: 33%;
+    position: relative;
+    display: inline-block;
+    border-top: 1px solid @grayLight;
+    border-right: 1px solid @grayLight;
+    float: left;
+    padding: 24px 4px 12px;
+    box-sizing: border-box;
 
-            span {
-                float: none;
-                display: inline-block;
-                font-weight: bold;
-                font-size: 12px;
-                text-align: center;
-                text-shadow: 0px 1px 0 #636363;
-                margin-right: 3px!important;
+    &:last-child {
+        border-right: none;
+        width: 34%;
+    }
+
+    span.label {
+        width: 22px;
+        height: 22px;
+        font-size: 14px;
+        padding: 3px;
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        margin-left: -14px;
+        line-height: 22px;
+        &.won {
+            background-color: @green;
+        }
+        &.lost {
+            background-color: @red;
+        }
+        &.active {
+            background-color: @blue;
+        }
+    }
+
+    div.opportunity-metric-description {
+/*            color: @grayLight;
+        font-weight: bold;
+        text-transform: uppercase;*/
+
+        span {
+            float: none;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 10px;
+            text-align: center;
+            text-shadow: 0px 1px 0 #636363;
+            margin-right: 3px!important;
+        }
+    }
+
+    div.deal-amount-metric {
+        font-size: 16px;
+        font-weight: bold;
+        //letter-spacing: -1px;
+        box-sizing: border-box;
+        & > i {
+            color: inherit;
+            &.icon-minus {
+                font-size: 22px;
             }
         }
-
-        div.deal-amount-metric {
-            font-size: 2.5em;
-            font-weight: bold;
-            letter-spacing: -1px;
-
-            & > i {
-                color: inherit;
-                &.icon-minus {
-                    font-size: 22px;
-                }
-            }
-
-            &.won {
-                color: @green;
-            }
-
-            &.lost {
-                color: @red;
-            }
-
-            &.active {
-                color: @blue;
-            }
+        &.won {
+            color: @green;
+        }
+        &.lost {
+            color: @red;
+        }
+        &.active {
+            color: @blue;
         }
     }
 }
