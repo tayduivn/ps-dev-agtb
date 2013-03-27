@@ -17,6 +17,7 @@
 <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
 <script src="../js/nvd3/data/pie_chart_data.js"></script>
+<script src="../js/nvd3/src/models/pieChart.js"></script>
 
 <script>
 
@@ -30,7 +31,10 @@
           //.color(d3.scale.category10().range())
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
           //.colorData( 'class' )
+          .donut(true)
+          .donutLabelsOutside(true)
           .colorData( 'default' )
+          .hole(true)
           .colorFill( 'gradient' )
           //.colorFill( 'default' )
           .tooltip( function(key, x, y, e, graph) {
