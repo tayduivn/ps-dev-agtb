@@ -314,6 +314,11 @@ describe("forecasts_lib_forecastsUtils", function() {
             result = app.utils.getDifference(oldestModel, newestModel, 'best_case');
             expect(result).toBe(0);
         });
+        it("newestModel being different by decimals smaller than 0.01 should give a difference of 0", function() {
+            newestModel.set({best_case: 1000.009});
+            result = app.utils.getDifference(oldestModel, newestModel, 'best_case');
+            expect(result).toBe(0);
+        });
     });
 
     describe("test getDirection function", function() {

@@ -28,6 +28,10 @@
 }}
 {{#if showFieldAlert}}
     <a href="javascript:void(0)" rel="historyLog">
-        <i class="icon-exclamation-sign label-warn" data-uid="{{uid}}" data-showopps="{{showOpps}}" data-commitdate="{{commitDate}}"></i>
+        <i class="icon-exclamation-sign label-warn"
+           data-uid="{{uid}}"
+           data-showopps="{{showOpps}}"
+           data-ismanager="{{isManager}}">
+        </i>
     </a>
 {{/if}}

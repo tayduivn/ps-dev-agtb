@@ -161,6 +161,9 @@
             // we have to override sync right now as there is no way to run the filter by default
             this.collection.sync = _.bind(function(method, model, options) {
                 options.success = _.bind(function(resp, status, xhr) {
+                    if(!_.isEmpty(resp.records)) {
+                        this.context.set({currentForecastCommitDate: _.first(resp.records).date_modified});
+                    }
                     this.collection.reset(resp.records);
                 }, this);
                 // we need to force a post, so get the url object and put it in

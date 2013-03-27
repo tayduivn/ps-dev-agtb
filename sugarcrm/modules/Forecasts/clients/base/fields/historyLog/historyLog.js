@@ -43,9 +43,9 @@
     showOpps: '',
 
     /**
-     * Commit Date
+     * if the user is a manager or not
      */
-    commitDate: '',
+    isManager: 0,
 
     initialize : function(options) {
         app.view.Field.prototype.initialize.call(this, options);
@@ -58,11 +58,11 @@
                 this.commitDate = new Date(this.model.get('date_modified'));
             }
 
-
             this.uid = this.model.get('user_id');
 
             // Have to make it 1 or 0 for handlebars to parse properly
             this.showOpps = (this.context.get('selectedUser').id == this.uid) ? 1 : 0;
+            this.isManager = (this.model.get('isManager')) ? 1 : 0;
         }
     }
 })
