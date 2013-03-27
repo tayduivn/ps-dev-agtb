@@ -275,10 +275,7 @@
              * because it gets rounded later
              */
             //
-            if(diff > -0.01 && diff < 0.01) {
-                diff = 0;
-            }
-            return diff;
+            return (Math.abs(diff) < 0.01) ? 0 : diff;
         },
 
 
