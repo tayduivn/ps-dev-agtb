@@ -1,5 +1,5 @@
 <?php
 
 $viewdefs['Tasks']['base']['filter']['default'] = array(
-    'default_filter' => 'all_records',
+    'default_filter' => 'assigned_to_me',
 );

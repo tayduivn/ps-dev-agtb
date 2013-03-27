@@ -2,10 +2,12 @@
 
 $viewdefs['Documents']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
+    'quicksearch_field' => array('document_name'),
+    'quicksearch_priority' => 2,
     'filters' => array(
         array(
-            'id' => 'my_documents',
-            'name' => translate('LBL_HOMEPAGE_TITLE', 'Documents'),
+            'id' => 'created_by_me',
+            'name' => 'LBL_CREATED_BY_ME',
             'filter_definition' => array(
                 '$creator' => '',
             ),
