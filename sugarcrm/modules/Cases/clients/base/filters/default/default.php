@@ -1,29 +1,22 @@
 <?php
 
-$viewdefs['Notes']['base']['filter']['default'] = array(
+$viewdefs['Cases']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
-    'filters' => array(
-        array(
-            'id' => 'created_by_me',
-            'name' => 'LBL_CREATED_BY_ME',
-            'filter_definition' => array(
-                '$creator' => '',
-            ),
-            'editable' => false
-        ),
-    ),
     'fields' => array(
         'name' => array(),
-        'contact_name_related' => array(
+        'account_name_related' => array(
             'dbFields' => array(
-                'contact.first_name',
-                'contact.last_name',
+                'accounts.name',
             ),
             'type' => 'text',
-            'vname' => 'LBL_CONTACT_NAME',
+            'vname' => 'LBL_ACCOUNT_NAME',
         ),
+        'status' => array(),
+        'priority' => array(),
+        'case_number' => array(),
         'date_entered' => array(),
         'date_modified' => array(),
+        'assigned_user_id'=> array(),
         '$owner' => array(
             'options' => 'filter_predefined_dom',
             'type' => 'bool',

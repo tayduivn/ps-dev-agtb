@@ -1,28 +1,27 @@
 <?php
 
-$viewdefs['Tasks']['base']['filter']['default'] = array(
-    'default_filter' => 'assigned_to_me',
+$viewdefs['Products']['base']['filter']['default'] = array(
+    'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
         'contact_name_related' => array(
             'dbFields' => array(
-                'contacts.first_name',
-                'contacts.last_name',
+                'contact_link.first_name',
+                'contact_link.last_name',
             ),
             'type' => 'text',
             'vname' => 'LBL_CONTACT_NAME',
         ),
         'status' => array(),
+        'type_id' => array(),
+        'category_id' => array(),
+        'manufacturer_id' => array(),
+        'mft_part_num' => array(),
+        'vendor_part_num' => array(),
+        'tax_class'=> array(),
+        'support_term'=> array(),
         'date_entered' => array(),
         'date_modified' => array(),
-        'date_start' => array(),
-        'date_due' => array(),
-        'assigned_user_id'=> array(),
-        '$owner' => array(
-            'options' => 'filter_predefined_dom',
-            'type' => 'bool',
-            'vname' => 'LBL_CURRENT_USER_FILTER',
-        ),
         '$favorite' => array(
             'options' => 'filter_predefined_dom',
             'type' => 'bool',
