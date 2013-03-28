@@ -433,6 +433,9 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         require_once('include/SugarFields/SugarFieldHandler.php');
         /* @var $seed ForecastManagerWorksheet */
         $seed = BeanFactory::getBean('ForecastManagerWorksheets');
+        // team name comes in as an array and blows up the cleaner, just ignore it for the worksheet as we don't want
+        // it set from there right now, it's always controlled by the parent row.
+        unset($this->args['team_name']);
         $seed->loadFromRow($this->getArgs());
         $sfh = new SugarFieldHandler();
 
