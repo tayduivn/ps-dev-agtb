@@ -49,13 +49,16 @@
 .label-module-mini {
   height: 14px;
   width: 14px;
-  font-weight: 300;
+  font-weight: 600;
   font-size: 8px;
   line-height: 8px;
   margin: 0;
   border: none;
   padding: 2px 0 0 2px;
   .border-radius(@baseBorderRadius - 1px);
+}
+.dropdown-menu .label-module-mini {
+  margin: 0 10px 0 0;
 }
 .label,
 .badge {
@@ -98,7 +101,7 @@
   &-Leads,
   &-Leads[href]         {background-color: darken(@green,20%);}
   &-Meetings,
-  &-Meetings[href]      {background-color: darken(@yellow,15%);}    
+  &-Meetings[href]      {background-color: @yellow;}    
   &-Notes,
   &-Notes[href]         {background-color: @blue;}
   &-Opportunities,
@@ -106,7 +109,9 @@
   &-Reports,
   &-Reports[href]       {background-color: darken(@orange,10%);}
   &-Quotes,
-  &-Quotes[href]        {background-color: darken(@purple,20%);}  
+  &-Quotes[href]        {background-color: darken(@purple,20%);} 
+  &-Users,
+  &-Users[href]        {background-color: @grayDarker;}
 }
 
 .label-module.label, .label-module-sm.label, .label-module-mini.label {
@@ -135,7 +140,7 @@
   &-Leads,
   &-Leads[href]         {.box-shadow(0 2px 0 darken(@green,25%));} 
   &-Meetings,
-  &-Meetings[href]      {.box-shadow(0 2px 0 darken(@yellow,20%));}   
+  &-Meetings[href]      {.box-shadow(0 2px 0 darken(@yellow,5%));}   
   &-Notes,
   &-Notes[href]         {.box-shadow(0 2px 0 darken(@blue,10%));}  
   &-Opportunities,
@@ -144,4 +149,6 @@
   &-Reports[href]       {.box-shadow(0 2px 0 darken(@orange,15%));}
   &-Quotes,
   &-Quotes[href]        {.box-shadow(0 2px 0 darken(@purple,25%));}
+  &-Users,
+  &-Users[href]        {.box-shadow(0 2px 0 darken(@grayDarker,5%));} 
 }

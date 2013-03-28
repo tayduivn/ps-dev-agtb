@@ -1,5 +1,6 @@
 .dashboard {
   background-image: url('@{textureSecondary}');
+  .box-shadow(~"inset 4px 0px 16px -4px rgba(0, 0, 0, .2)");
   position: absolute;
   width: 100%;
   height: auto;
@@ -10,7 +11,13 @@
           line-height: 22px;
         }
         .ellipsis_inline {
-          padding-top: 3px;
+          margin-top: 19px;
+        }
+        input[type="text"] {
+          margin-top: -8px;
+        }
+        .btn-group {
+          margin-top: 16px;
         }
       }
     }
@@ -187,7 +194,7 @@
         margin-left: 0;
         div.dropdown {
           &> a {
-            font-size: 20px;
+            font-size: @fontSizeHeader;
             color: inherit;
             padding-let: 0;
             margin-left: 0;
@@ -212,6 +219,8 @@
       }
       input[type=text] {
         width: 150px;
+        font-size: @fontSizeHeader;
+        line-height: 24px;
       }
     }
     &.edit {

@@ -96,7 +96,7 @@ nv.models.pie = function() {
                   return this.getAttribute('class') || (
                     'nv-slice' + (
                       useClass
-                        ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
+                        ? ( ' '+ ( d.data.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
                         : ''
                     )
                   );

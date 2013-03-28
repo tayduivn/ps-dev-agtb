@@ -1,35 +1,37 @@
 {
-  "next_offset": 10,
+  "next_offset": 50,
   "records": [
     {
-      "id": "764d403d-7e85-a9a7-01e0-514a896e46ef",
-      "name": "Super Star Holdings Inc - 1000 units",
-      "date_modified": "2013-03-21T04:14:00+00:00",
+      "id": "59dc5863-83ca-ba49-cffc-514de6c23bea",
+      "name": "Complete Holding - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Will Westin",
+      "account_name": "Complete Holding",
+      "account_id": "2a0a1dc9-3358-2e66-9392-514de506b874",
+      "amount": "535138",
+      "date_closed": "2013-05-27",
+      "sales_stage": "Perception Analysis",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "d4aca841-a864-2bf3-821d-514de601566a",
+      "name": "EEE Endowments LTD - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
       "assigned_user_name": "Sarah Smith",
-      "account_name": "Super Star Holdings Inc",
-      "account_id": "ee88242e-9b09-b35e-ceac-514a898755c7",
-      "amount": "567619",
-      "base_rate": "1",
-      "currency_id": "-99",
-      "date_closed": "2013-03-22",
-      "my_favorite": false,
-      "following": false,
-      "_acl": {
-        "fields": {}
-      },
-      "_module": "Opportunities"
-    },
-    {
-      "id": "bf3ea114-aa86-d4b4-967a-514a89ca16fa",
-      "name": "Q3 ARVRO III PR - 1000 units",
-      "date_modified": "2013-03-21T04:14:00+00:00",
-      "assigned_user_name": "Max Jensen",
-      "account_name": "Q3 ARVRO III PR",
-      "account_id": "ab69212c-04f6-2deb-659d-514a89832450",
-      "amount": "549563",
-      "base_rate": "1",
-      "currency_id": "-99",
+      "account_name": "EEE Endowments LTD",
+      "account_id": "47a18017-38c7-aed8-f937-514de5926854",
+      "amount": "522038",
       "date_closed": "2013-03-26",
+      "sales_stage": "Needs Analysis",
+      "probability": "70",
+      "commit_stage": "include",
       "my_favorite": false,
       "following": false,
       "_acl": {
@@ -38,16 +40,36 @@
       "_module": "Opportunities"
     },
     {
-      "id": "b9fa05eb-33e9-0189-b1cc-514a891255f5",
+      "id": "e3318c61-dfc5-9d19-ddb8-514de65e9fe8",
+      "name": "Green Tractor Group Limited - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Chris Olliver",
+      "account_name": "Green Tractor Group Limited",
+      "account_id": "b4fa7f77-409d-f945-f11f-514de5f0ed88",
+      "amount": "516274",
+      "date_closed": "2013-06-24",
+      "sales_stage": "Negotiation/Review",
+      "probability": "70",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "aeb2a0ad-cbfe-e943-20d0-514de6bc59fb",
       "name": "T-Cat Media Group Inc - 1000 units",
-      "date_modified": "2013-03-21T04:14:00+00:00",
+      "date_modified": "2013-03-23T17:25:00+00:00",
       "assigned_user_name": "Sarah Smith",
       "account_name": "T-Cat Media Group Inc",
-      "account_id": "77fabb4d-ee40-b706-9709-514a892b95dc",
-      "amount": "523850",
-      "base_rate": "1",
-      "currency_id": "-99",
-      "date_closed": "2013-03-31",
+      "account_id": "b940ab4d-ee40-b706-9709-514de52b95dc",
+      "amount": "503794",
+      "date_closed": "2013-02-01",
+      "sales_stage": "Closed Won",
+      "probability": "40",
+      "commit_stage": "exclude",
       "my_favorite": false,
       "following": false,
       "_acl": {
@@ -56,16 +78,17 @@
       "_module": "Opportunities"
     },
     {
-      "id": "eb329731-9b2e-29f0-a6f3-514a893ca03d",
-      "name": "B.H. Edwards Inc - 1000 units",
-      "date_modified": "2013-03-21T04:14:00+00:00",
-      "assigned_user_name": "Sarah Smith",
-      "account_name": "B.H. Edwards Inc",
-      "account_id": "e013bd37-6986-46ee-bbd0-514a89f4540c",
-      "amount": "469703",
-      "base_rate": "1",
-      "currency_id": "-99",
-      "date_closed": "2013-04-22",
+      "id": "6795b251-5f01-697a-e576-514de6c6368a",
+      "name": "Sea Region Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "Sea Region Inc",
+      "account_id": "c4220181-f6a6-25aa-fb48-514de56b564d",
+      "amount": "497168",
+      "date_closed": "2013-11-23",
+      "sales_stage": "Proposal/Price Quote",
+      "probability": "40",
+      "commit_stage": "exclude",
       "my_favorite": false,
       "following": false,
       "_acl": {
@@ -74,16 +97,17 @@
       "_module": "Opportunities"
     },
     {
-      "id": "81aab47a-19bd-ca26-46a1-514a890bab4d",
+      "id": "4298d62e-50d4-1193-d630-514de6395522",
       "name": "Coolview Net Ltd - 1000 units",
-      "date_modified": "2013-03-21T04:14:00+00:00",
+      "date_modified": "2013-03-23T17:25:00+00:00",
       "assigned_user_name": "Jim Brennan",
       "account_name": "Coolview Net Ltd",
-      "account_id": "4ef73254-60bc-aab2-e53e-514a893db6f2",
-      "amount": "465199",
-      "base_rate": "1",
-      "currency_id": "-99",
-      "date_closed": "2013-03-21",
+      "account_id": "4f283254-60bc-aab2-e53e-514de53db6f2",
+      "amount": "481673",
+      "date_closed": "2014-02-24",
+      "sales_stage": "Closed Lost",
+      "probability": "90",
+      "commit_stage": "include",
       "my_favorite": false,
       "following": false,
       "_acl": {
@@ -92,16 +116,17 @@
       "_module": "Opportunities"
     },
     {
-      "id": "69234cf6-df07-9de7-69a7-514a89ecefd9",
-      "name": "Arts & Crafts Inc - 1000 units",
-      "date_modified": "2013-03-21T04:14:00+00:00",
-      "assigned_user_name": "Will Westin",
-      "account_name": "Arts & Crafts Inc",
-      "account_id": "bc353eb0-1fc9-66c2-4798-514a8959fbaf",
-      "amount": "461654",
-      "base_rate": "1",
-      "currency_id": "-99",
-      "date_closed": "2013-05-26",
+      "id": "ebc26281-ce82-300f-3dbf-514de651769f",
+      "name": "JBC Banking Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sally Bronsen",
+      "account_name": "JBC Banking Inc",
+      "account_id": "e3beeee5-df92-941a-5081-514de5b5c36f",
+      "amount": "481027",
+      "date_closed": "2013-05-29",
+      "sales_stage": "Value Proposition",
+      "probability": "70",
+      "commit_stage": "include",
       "my_favorite": false,
       "following": false,
       "_acl": {
@@ -110,16 +135,55 @@
       "_module": "Opportunities"
     },
     {
-      "id": "1fda72c1-b1fc-ba3d-2a52-514a89770202",
+      "id": "509f9095-ef8c-7a91-810b-514de6dfc459",
+      "name": "Income Free Investing LP - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "Income Free Investing LP",
+      "account_id": "833508d8-bd1c-e951-9cdd-514de53c24c2",
+      "amount": "479962",
+      "date_closed": "2013-03-11",
+      "sales_stage": "Closed Won",
+      "probability": "10",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "67ecf3b2-8609-bbed-10ee-514de68ae64f",
+      "name": "JBC Banking Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sally Bronsen",
+      "account_name": "JBC Banking Inc",
+      "account_id": "e3beeee5-df92-941a-5081-514de5b5c36f",
+      "amount": "475961",
+      "date_closed": "2013-03-30",
+      "sales_stage": "Perception Analysis",
+      "probability": "70",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "5ab65c10-14dc-84ca-5870-514de66ecd49",
       "name": "Kings Royalty Trust - 1000 units",
-      "date_modified": "2013-03-21T04:14:00+00:00",
+      "date_modified": "2013-03-23T17:25:00+00:00",
       "assigned_user_name": "Will Westin",
       "account_name": "Kings Royalty Trust",
-      "account_id": "e61d2773-99d8-a6eb-c40e-514a8978438c",
-      "amount": "454098",
-      "base_rate": "1",
-      "currency_id": "-99",
-      "date_closed": "2013-05-21",
+      "account_id": "d18a1773-99d8-a6eb-c40e-514de578438c",
+      "amount": "470746",
+      "date_closed": "2013-03-29",
+      "sales_stage": "Proposal/Price Quote",
+      "probability": "90",
+      "commit_stage": "include",
       "my_favorite": false,
       "following": false,
       "_acl": {
@@ -128,52 +192,758 @@
       "_module": "Opportunities"
     },
     {
-      "id": "dcfe875f-7ed7-79c6-10eb-514a89ba1964",
-      "name": "Airline Maintenance Co - 1000 units",
-      "date_modified": "2013-03-21T04:14:00+00:00",
-      "assigned_user_name": "Max Jensen",
-      "account_name": "Airline Maintenance Co",
-      "account_id": "b40b0605-6468-2c3c-681d-514a893c7ce0",
-      "amount": "453668",
-      "base_rate": "0.9",
-      "currency_id": "9f180c5b-3a5f-60ce-8caf-514a892d1619",
-      "date_closed": "2013-02-12",
-      "my_favorite": false,
-      "following": false,
-      "_acl": {
-        "fields": {}
-      },
-      "_module": "Opportunities"
-    },
-    {
-      "id": "e02e21d0-a407-0fb7-908b-514a89599e0c",
-      "name": "24/7 Couriers - 1000 units",
-      "date_modified": "2013-03-21T04:14:00+00:00",
-      "assigned_user_name": "Sarah Smith",
-      "account_name": "24/7 Couriers",
-      "account_id": "51cb235a-b085-97d8-891c-514a89b7f8d3",
-      "amount": "425520",
-      "base_rate": "0.9",
-      "currency_id": "9f180c5b-3a5f-60ce-8caf-514a892d1619",
-      "date_closed": "2013-08-30",
-      "my_favorite": false,
-      "following": false,
-      "_acl": {
-        "fields": {}
-      },
-      "_module": "Opportunities"
-    },
-    {
-      "id": "d7986d54-4393-0fa2-da12-514a89842b60",
+      "id": "1ca8d6bc-0fca-fdc1-d43a-514de683e4ad",
       "name": "Smith & Sons - 1000 units",
-      "date_modified": "2013-03-21T04:14:00+00:00",
+      "date_modified": "2013-03-23T17:25:00+00:00",
       "assigned_user_name": "Will Westin",
       "account_name": "Smith & Sons",
-      "account_id": "81888045-fb70-33ea-25f5-514a8949a4b3",
-      "amount": "419846",
-      "base_rate": "1",
-      "currency_id": "-99",
+      "account_id": "f2fda045-fb70-33ea-25f5-514de549a4b3",
+      "amount": "467169",
+      "date_closed": "2013-03-27",
+      "sales_stage": "Negotiation/Review",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "bfb0a0a3-f6e2-4db0-9ff4-514de6e9ff20",
+      "name": "Coolview Net Ltd - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Jim Brennan",
+      "account_name": "Coolview Net Ltd",
+      "account_id": "4f283254-60bc-aab2-e53e-514de53db6f2",
+      "amount": "459069",
+      "date_closed": "2013-04-24",
+      "sales_stage": "Prospecting",
+      "probability": "70",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "23b157cc-fa0f-a7f1-2ee6-514de6ad70c0",
+      "name": "Start Over Trust - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sally Bronsen",
+      "account_name": "Start Over Trust",
+      "account_id": "776ffea7-f4cf-a268-2ea6-514de57016c3",
+      "amount": "457326",
+      "date_closed": "2013-04-25",
+      "sales_stage": "Negotiation/Review",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "43329dc8-e1fc-1e7d-d0f4-514de67c1f66",
+      "name": "Bay Funding Co - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sally Bronsen",
+      "account_name": "Bay Funding Co",
+      "account_id": "3262e5d8-ac67-6155-ebdd-514de5ea5930",
+      "amount": "452557",
+      "date_closed": "2013-03-20",
+      "sales_stage": "Closed Won",
+      "probability": "10",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "77b93abf-2f01-e93b-53a6-514de69f6a2a",
+      "name": "Smith & Sons - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Will Westin",
+      "account_name": "Smith & Sons",
+      "account_id": "f2fda045-fb70-33ea-25f5-514de549a4b3",
+      "amount": "450519",
+      "date_closed": "2013-03-28",
+      "sales_stage": "Closed Lost",
+      "probability": "10",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "47014f0b-2bbc-38e8-fe79-514de6b5f67b",
+      "name": "A.D. Importing Company Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "A.D. Importing Company Inc",
+      "account_id": "8f5a1ca0-caff-b7d3-2bf7-514de560de94",
+      "amount": "445191",
+      "date_closed": "2013-04-25",
+      "sales_stage": "Closed Lost",
+      "probability": "70",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "de5fc2c4-c8dd-1a99-c20e-514de64dec52",
+      "name": "Union Bank - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Will Westin",
+      "account_name": "Union Bank",
+      "account_id": "be6b8c37-86f4-cc0c-141f-514de53d2e49",
+      "amount": "442065",
+      "date_closed": "2013-03-27",
+      "sales_stage": "Value Proposition",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "c6552095-0746-419d-6e39-514de69fdeca",
+      "name": "5D Investments - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sarah Smith",
+      "account_name": "5D Investments",
+      "account_id": "7790e981-9043-1e95-ceeb-514de534362d",
+      "amount": "436218",
+      "date_closed": "2012-11-18",
+      "sales_stage": "Closed Won",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "daad77cb-a522-bfb6-e8ad-514de63882e3",
+      "name": "Max Holdings Ltd - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Chris Olliver",
+      "account_name": "Max Holdings Ltd",
+      "account_id": "b2350786-bb3f-6196-e0c7-514de553706a",
+      "amount": "432909",
+      "date_closed": "2013-03-23",
+      "sales_stage": "Proposal/Price Quote",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "5e1ab599-6a5e-551f-6c25-514de6acfa5d",
+      "name": "Income Free Investing LP - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "Income Free Investing LP",
+      "account_id": "833508d8-bd1c-e951-9cdd-514de53c24c2",
+      "amount": "427695",
+      "date_closed": "2013-03-28",
+      "sales_stage": "Value Proposition",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "772da096-cd0c-b54f-4aa5-514de6c610bc",
+      "name": "5D Investments - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "5D Investments",
+      "account_id": "a0a0703a-3228-9d76-79e2-514de5af1136",
+      "amount": "419486",
+      "date_closed": "2013-04-27",
+      "sales_stage": "Proposal/Price Quote",
+      "probability": "70",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "7fa7d47c-3420-bcbf-0de2-514de67b25a9",
+      "name": "Kings Royalty Trust - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Will Westin",
+      "account_name": "Kings Royalty Trust",
+      "account_id": "d18a1773-99d8-a6eb-c40e-514de578438c",
+      "amount": "410358",
+      "date_closed": "2013-09-25",
+      "sales_stage": "Proposal/Price Quote",
+      "probability": "10",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "1b770d3f-d1d5-98b4-8652-514de6750685",
+      "name": "24/7 Couriers - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sarah Smith",
+      "account_name": "24/7 Couriers",
+      "account_id": "c0ba035a-b085-97d8-891c-514de5b7f8d3",
+      "amount": "406570",
+      "date_closed": "2013-04-27",
+      "sales_stage": "Negotiation/Review",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "2e32e081-efc7-dd64-5703-514de612a7d5",
+      "name": "B.H. Edwards Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sarah Smith",
+      "account_name": "B.H. Edwards Inc",
+      "account_id": "8a222d37-6986-46ee-bbd0-514de5f4540c",
+      "amount": "404238",
+      "date_closed": "2013-04-29",
+      "sales_stage": "Id. Decision Makers",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "650027b2-93a7-0782-ceaa-514de661c2e4",
+      "name": "Smallville Resources Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Chris Olliver",
+      "account_name": "Smallville Resources Inc",
+      "account_id": "27b8041d-f612-9bfd-d849-514de52c12f5",
+      "amount": "394247",
+      "date_closed": "2012-07-01",
+      "sales_stage": "Closed Won",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "25b70851-4a0b-d802-d2e4-514de61a35e6",
+      "name": "Max Holdings Ltd - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "Max Holdings Ltd",
+      "account_id": "b3fadfe6-a1b2-a0b5-4121-514de531bd32",
+      "amount": "379360",
+      "date_closed": "2013-04-26",
+      "sales_stage": "Prospecting",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "efb15f06-a53f-90d6-ecb8-514de6615843",
+      "name": "Max Holdings Ltd - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Chris Olliver",
+      "account_name": "Max Holdings Ltd",
+      "account_id": "b2350786-bb3f-6196-e0c7-514de553706a",
+      "amount": "379106",
+      "date_closed": "2013-05-31",
+      "sales_stage": "Negotiation/Review",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "14587bb7-369a-5578-2025-514de6914d81",
+      "name": "Complete Holding - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Will Westin",
+      "account_name": "Complete Holding",
+      "account_id": "2a0a1dc9-3358-2e66-9392-514de506b874",
+      "amount": "376630",
+      "date_closed": "2013-05-30",
+      "sales_stage": "Prospecting",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "25d80288-4c0b-29cf-7d9e-514de69f40ea",
+      "name": "Green Tractor Group Limited - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Chris Olliver",
+      "account_name": "Green Tractor Group Limited",
+      "account_id": "b4fa7f77-409d-f945-f11f-514de5f0ed88",
+      "amount": "375527",
+      "date_closed": "2013-01-03",
+      "sales_stage": "Closed Won",
+      "probability": "70",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "2e6d1a13-aae3-c6b5-d838-514de6ab3334",
+      "name": "Super Star Holdings Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sarah Smith",
+      "account_name": "Super Star Holdings Inc",
+      "account_id": "eb49942e-9b09-b35e-ceac-514de58755c7",
+      "amount": "371449",
+      "date_closed": "2014-03-26",
+      "sales_stage": "Negotiation/Review",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "dbf11004-f8b5-5ebf-3454-514de6d4f8bb",
+      "name": "Q3 ARVRO III PR - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "Q3 ARVRO III PR",
+      "account_id": "c69586b7-8dc0-4fa4-87a8-514de5ee1c17",
+      "amount": "371243",
+      "date_closed": "2014-02-28",
+      "sales_stage": "Needs Analysis",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "978f7150-6c3e-843d-4536-514de6ffa8f6",
+      "name": "JBC Banking Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sally Bronsen",
+      "account_name": "JBC Banking Inc",
+      "account_id": "e3beeee5-df92-941a-5081-514de5b5c36f",
+      "amount": "369326",
+      "date_closed": "2013-04-26",
+      "sales_stage": "Id. Decision Makers",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "3643c309-3f47-0ff4-0793-514de659285f",
+      "name": "Complete Holding - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Will Westin",
+      "account_name": "Complete Holding",
+      "account_id": "2a0a1dc9-3358-2e66-9392-514de506b874",
+      "amount": "368139",
+      "date_closed": "2013-03-26",
+      "sales_stage": "Perception Analysis",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "c3ea891c-42ef-f7ab-b7fa-514de6fd7964",
+      "name": "Nelson Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "Nelson Inc",
+      "account_id": "f33fa9bc-ec61-1860-a97e-514de5e92066",
+      "amount": "367649",
+      "date_closed": "2013-09-27",
+      "sales_stage": "Closed Lost",
+      "probability": "70",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "709701e4-de8b-b52d-21b5-514de6fdaf5f",
+      "name": "5D Investments - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "5D Investments",
+      "account_id": "a0a0703a-3228-9d76-79e2-514de5af1136",
+      "amount": "363834",
+      "date_closed": "2014-03-24",
+      "sales_stage": "Proposal/Price Quote",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "8f5c8eed-bd3c-ed08-eb55-514de6ca1d56",
+      "name": "24/7 Couriers - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sarah Smith",
+      "account_name": "24/7 Couriers",
+      "account_id": "c0ba035a-b085-97d8-891c-514de5b7f8d3",
+      "amount": "362320",
+      "date_closed": "2013-04-26",
+      "sales_stage": "Qualification",
+      "probability": "10",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "428d8096-e920-0f22-03c7-514de618b2e7",
+      "name": "RRR Advertising Inc. - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sally Bronsen",
+      "account_name": "RRR Advertising Inc.",
+      "account_id": "57b66e16-19a6-d8f6-c9cd-514de56d4b17",
+      "amount": "347154",
+      "date_closed": "2013-03-29",
+      "sales_stage": "Negotiation/Review",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "4da9d0bc-38e7-d60e-b5f9-514de6ba687b",
+      "name": "Overhead & Underfoot Ltd. - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sarah Smith",
+      "account_name": "Overhead & Underfoot Ltd.",
+      "account_id": "961a4198-90ca-0700-2317-514de5c0d399",
+      "amount": "346913",
+      "date_closed": "2013-04-24",
+      "sales_stage": "Prospecting",
+      "probability": "70",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "56a504f5-613a-9de8-0ab4-514de6dac36f",
+      "name": "EEE Endowments LTD - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sarah Smith",
+      "account_name": "EEE Endowments LTD",
+      "account_id": "47a18017-38c7-aed8-f937-514de5926854",
+      "amount": "345718",
+      "date_closed": "2014-03-23",
+      "sales_stage": "Closed Lost",
+      "probability": "10",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "58395f8e-cf4f-865a-9151-514de6c99af7",
+      "name": "Max Holdings Ltd - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Chris Olliver",
+      "account_name": "Max Holdings Ltd",
+      "account_id": "b2350786-bb3f-6196-e0c7-514de553706a",
+      "amount": "343956",
+      "date_closed": "2013-04-26",
+      "sales_stage": "Perception Analysis",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "1022c5ae-aa58-759b-b590-514de6dd4659",
+      "name": "Max Holdings Ltd - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Chris Olliver",
+      "account_name": "Max Holdings Ltd",
+      "account_id": "b2350786-bb3f-6196-e0c7-514de553706a",
+      "amount": "339628",
+      "date_closed": "2013-07-27",
+      "sales_stage": "Proposal/Price Quote",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "ba072da6-84ea-9f51-3d93-514de628ee6e",
+      "name": "Kings Royalty Trust - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Will Westin",
+      "account_name": "Kings Royalty Trust",
+      "account_id": "d18a1773-99d8-a6eb-c40e-514de578438c",
+      "amount": "335252",
+      "date_closed": "2013-03-27",
+      "sales_stage": "Qualification",
+      "probability": "40",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "32ed0162-2808-1a78-a83a-514de6c4cef6",
+      "name": "JJ Resources Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Chris Olliver",
+      "account_name": "JJ Resources Inc",
+      "account_id": "6cae6f76-a119-d7bc-017a-514de5b88457",
+      "amount": "330134",
+      "date_closed": "2013-05-29",
+      "sales_stage": "Perception Analysis",
+      "probability": "10",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "ec629454-60d9-127f-5cd0-514de6786267",
+      "name": "Super Star Holdings Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sally Bronsen",
+      "account_name": "Super Star Holdings Inc",
+      "account_id": "624e7d27-1675-39a3-683d-514de5499d9d",
+      "amount": "324517",
+      "date_closed": "2012-05-15",
+      "sales_stage": "Closed Won",
+      "probability": "70",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "1cb711c7-2726-58bb-259d-514de6d4f942",
+      "name": "Smallville Resources Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Chris Olliver",
+      "account_name": "Smallville Resources Inc",
+      "account_id": "27b8041d-f612-9bfd-d849-514de52c12f5",
+      "amount": "321725",
       "date_closed": "2013-04-28",
+      "sales_stage": "Perception Analysis",
+      "probability": "10",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "a4a31400-4b80-ae22-6c44-514de6b25b27",
+      "name": "JAB Funds Ltd. - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sally Bronsen",
+      "account_name": "JAB Funds Ltd.",
+      "account_id": "136ff9cb-48cd-a1fb-beae-514de59247b5",
+      "amount": "319807",
+      "date_closed": "2013-03-30",
+      "sales_stage": "Qualification",
+      "probability": "10",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "b50e8f89-e063-2631-b022-514de6b48f0f",
+      "name": "JBC Banking Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sally Bronsen",
+      "account_name": "JBC Banking Inc",
+      "account_id": "e3beeee5-df92-941a-5081-514de5b5c36f",
+      "amount": "319683",
+      "date_closed": "2013-05-26",
+      "sales_stage": "Negotiation/Review",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "31ab88e0-632a-b30f-4475-514de6955b08",
+      "name": "Q3 ARVRO III PR - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Max Jensen",
+      "account_name": "Q3 ARVRO III PR",
+      "account_id": "a51d012c-04f6-2deb-659d-514de5832450",
+      "amount": "319111",
+      "date_closed": "2012-05-20",
+      "sales_stage": "Closed Won",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "1f2f0c14-d74c-2408-b7df-514de6e37967",
+      "name": "Super Star Holdings Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Sally Bronsen",
+      "account_name": "Super Star Holdings Inc",
+      "account_id": "624e7d27-1675-39a3-683d-514de5499d9d",
+      "amount": "318299",
+      "date_closed": "2013-11-30",
+      "sales_stage": "Closed Lost",
+      "probability": "70",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "following": false,
+      "_acl": {
+        "fields": {}
+      },
+      "_module": "Opportunities"
+    },
+    {
+      "id": "91485954-beb9-eec6-b531-514de6f5750d",
+      "name": "JJ Resources Inc - 1000 units",
+      "date_modified": "2013-03-23T17:25:00+00:00",
+      "assigned_user_name": "Chris Olliver",
+      "account_name": "JJ Resources Inc",
+      "account_id": "6cae6f76-a119-d7bc-017a-514de5b88457",
+      "amount": "318071",
+      "date_closed": "2013-03-29",
+      "sales_stage": "Needs Analysis",
+      "probability": "40",
+      "commit_stage": "exclude",
       "my_favorite": false,
       "following": false,
       "_acl": {

@@ -11,6 +11,7 @@ JS_FILES = \
 	src/models/legend.js \
 	src/models/line.js \
 	src/models/lineChart_sugar.js \
+	src/models/lineWithFocusChart.js \
 	src/models/multiBar_sugar.js \
 	src/models/multiBarChart_sugar.js \
 	src/models/paretoChart.js \
@@ -19,8 +20,7 @@ JS_FILES = \
 	src/models/multiBarHorizontalChart_sugar.js \
 	src/models/pie.js \
 	src/models/pieChart.js \
-	src/models/scatter.js \
-	src/models/scatterChart.js \
+	src/models/scatter_sugar.js \
 	src/models/sparkline.js \
 	src/models/sparklinePlus.js \
 	src/models/stackedArea.js \

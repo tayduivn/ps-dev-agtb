@@ -47,10 +47,7 @@
     width: 100%;
     min-height: 28px; /* Make inputs at least the height of their button counterpart */
     /* Makes inputs behave like true block-level elements */
-    -webkit-box-sizing: border-box; /* Older Webkit */
-       -moz-box-sizing: border-box; /* Older FF */
-        -ms-box-sizing: border-box; /* IE8 */
-            box-sizing: border-box; /* CSS3 spec*/
+    .box-sizing(border-box);
   }
   // But don't let it screw up prepend/append inputs
   .input-prepend input[class*="span"],
@@ -89,12 +86,76 @@
   .carousel-caption {
     position: static;
   }
+  //54580: use media queries to also position symbol properly
+  //43d1a253e5dae2f5d02b9273f527f9e43ff2dd6c
+  .row > .empty,
+  .row-fluid > .empty {
+    display:none !important;
+  }
+
+  //from responsive-forecast.less
+  .span2 .block > * {
+    display: none !important;
+  }
+
+  table th:gt(3), table td:gt(3)  {
+    display: none !important;
+  }
+
+  .span2 .block > h4 {
+    display: block !important;
+  }
+
+  #stream tbody tr td {
+    #gradient > .vertical(@white, lighten(@grayLighter, 1%));
+    border-top: 1px solid @white;
+    border-bottom: 1px solid darken(@white, 10%);
+    vertical-align: middle;
+  }
+
+  /* Change up some type stuff */
+  h2 {
+    margin-top: 27px;
+  }
+  h2 small {
+    display: block;
+    line-height: 18px;
+  }
+  h3 {
+    margin-top: 18px;
+  }
+
+  /* Don't space out quick links so much */
+  .quick-links {
+    margin: 40px 0 0;
+  }
+  /* hide the bullets on mobile since our horizontal space is limited */
+  .quick-links .divider {
+    display: none;
+  }
+
+  table code {
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+
+  /* Modal example */
+  .modal-example .modal {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+  }
 }
 
-@media (max-width: 768px) {  
-  
-  body {padding-top: 30px;}
-  
+@media (max-width: 768px) {
+
+  body {
+    padding-top: 30px;
+  }
+
   // GRID & CONTAINERS
   // -----------------
   // Remove width from containers
@@ -118,7 +179,7 @@
     width: auto;
     margin: 10px;
   }
-  
+
   .subnav {
     margin-top: 17px;
   }
@@ -127,7 +188,8 @@
   }
 
   /*#createList,*/
-  #searchForm, #userList {
+  #searchForm,
+  #userList {
     display: none !important;
   }
 
@@ -136,7 +198,7 @@
   }
   .thumbnail h1 {
   }
-  
+
   .modal {
     height: 100%;
     width: 100%;
@@ -144,7 +206,63 @@
     left: 0;
     margin: 0;
   }
+
+  .row > .empty,
+  .row-fluid > .empty {
+    display:none !important;
+  }
+
+  //from responsive-forecast.less
+  #folded,
+  .row-fluid .span8.main-pane {
+    width: 100%;
+    float: none;
+    position: relative;
+  }
+  .row-fluid .side.sidebar-content.span4 {
+    width: 100%;
+    //float: none;
+    position: relative;
+    //margin: 0;
+    //padding: 8px 20px 0;
+    //margin-bottom: 44px;
+
+    .side-pane.active {
+      padding: 36px 0 0;
+      top: auto;
+      right: auto;
+      width: auto;
+      position: relative !important;
+      .block.thumbnail {
+        margin: 0;
+        width: 94%;
+      }
+    }
+    .widget-control {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+
+  #dashboard.dashboard {
+    position: relative;
+  }
+}
+
+//from responsive-forecast.less
+@media (max-width: 920px) {
+  .side .side-pane.active {
+  position: absolute !important;
+  }
+  /*.row > [class*="span"], .container-fluid .row-fluid > [class*="span"] {
+  overflow-y: auto !important;
+  margin: 0;
+  }*/
 }
 
 
-
+//is this the best place for this? grid.less? it is responsive though
+.row-fluid [class*="span"] {
+    .rtlFloat(@direction,right);
+}

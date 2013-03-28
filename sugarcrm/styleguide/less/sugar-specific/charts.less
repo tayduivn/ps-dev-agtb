@@ -200,18 +200,45 @@
   }
 }
 
-//.main-pane.span8 .thumbnail.viz:not(.expanded) .nv-chart-org,
-.thumbnail.widget:not(.expanded) .nv-chart-org {
+
+.nv-chart {
   height: 400px;
+  min-width: 300px;
+  min-height: 100px;
+  /*
+    Minimum height and width is a good idea to prevent negative SVG dimensions...
+    For example width should be =< margin.left + margin.right + 1,
+    of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
+  */
 }
-.sidebar-content .thumbnail.widget:not(.expanded) .nv-chart-org {
-  height: 151px;
+
+.thumbnail.widget:not(.expanded) {
+  .nv-chart {
+    height: 450px;
+    margin: 8px;
+    //border: 1px solid #ddd;
+  }
+  .dashlet-options+.nv-chart {
+    height: 409px;
+  }
+  .opportunity-metrics-wrapper .nv-chart {
+    height: 309px;
+  }
+}
+.sidebar-content .thumbnail.widget:not(.expanded) {
+  .nv-chart {
+    height: 350px;
+  }
+  .dashlet-options+.nv-chart {
+    height: 309px;
+  }
+  .opportunity-metrics-wrapper .nv-chart {
+    height: 250px;
+  }
 }
 
 // for org chart demo renderer
 .nv-chart-org {
-  margin: 8px;
-  border: 1px solid #ddd;
   .nv-foreign-object body {
     width: 100px;
     height: 32px;
@@ -234,6 +261,27 @@
     font-size: 8px;
   }
 }
+
+.nv-chart-funnel {
+  .nv-y path {
+    stroke: none;
+  }
+  .nv-label-value {
+    text {
+      font-size: 16px;
+      font-weight: bold;
+      fill: @white;
+    }
+    rect {
+      fill: #12448F;
+    }
+  }
+  text.nv-label-group {
+    font-size: 16px;
+    font-weight: bold;
+  }
+}
+
 
 /*TOOLTIPS*/
 .tip {

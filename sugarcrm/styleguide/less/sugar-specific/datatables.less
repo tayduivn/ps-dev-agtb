@@ -38,7 +38,7 @@ table.dataTable {
       border-right: 1px solid darken(@grayLighter,5%);
       .rtl(@direction,ltr);
 
-      & > * {
+      &:not(:last-child) > * {
         display: inline-block;
         width: 100%;
         overflow-x: hidden;
@@ -55,6 +55,7 @@ table.dataTable {
         width: 30px;
       }
 
+      /*
       &:last-child {
         max-width: 60px;
         min-width: 60px;
@@ -97,7 +98,7 @@ table.dataTable {
         position: absolute;
         right: 0;
       }
-
+      */
       a {
         color: @grayLight;
         text-decoration: none;
@@ -154,6 +155,9 @@ table.dataTable {
         padding-left: 15px;
         padding-right: 0;
         width: 30px;
+        span {
+          overflow: visible;
+        }
       }
       &:last-child {
         max-width: 60px;
@@ -163,6 +167,37 @@ table.dataTable {
         //vertical-align: middle;
         overflow-x: visible;
         border-right: 0;
+      }
+      //for forecasts row extend info cell (single td so override :first-child,:last-child)
+      &.details {
+        padding: 0px;
+        width: auto;
+        max-width: inherit;
+        .extend {
+          background-color: @grayLight;
+          margin: -1px -1px -1px 0;
+          display: block;
+          .box-shadow(~"inset 0 10px 6px -6px rgba(0,0,0,.2)");
+          .icon-arrow-down:before {
+            color: @red;
+          }
+          .icon-arrow-up:before {
+            color: @green;
+          }
+          article {
+            color: @grayDark;
+            date {
+              color: @gray;
+            }
+          }
+          article:first-child {
+            .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.2)");
+          }
+          article:nth-child(even), article:nth-child(odd) {
+            border-top: 1px solid @grayLighter;
+            border-bottom-color: @gray;
+          }
+        }
       }
     }
   }
@@ -188,21 +223,18 @@ table.dataTable {
   tr {
     //for preview
     &.highlighted {
-      &.above th,
-      &.above td {
-        .box-shadow(~"inset 0px -6px 3px -5px rgba(0, 0, 0, 0.25)");
-      }
       &.current td {
-        background-image: url('@{textureSecondary}');
+        #gradient > .vertical(darken(@grayLighter, 6%), darken(@grayLighter, 2%));
+        border-bottom: 1px solid darken(@grayLighter, 8%);
         &:last-child {
           z-index: 2;
         }
+        .rowaction {
+            .box-shadow(~"inset 0 1px 6px rgba(0,0,0,.2) !important");
+        }        
         .icon-eye-open {
-          color: @gray !important;
+          color: @grayDark;
         }
-      }
-      &.below td {
-        .box-shadow(~"inset 0px 5px 6px -5px rgba(0, 0, 0, 0.25)");
       }
     }
     //also for preview??legacy?
@@ -327,30 +359,7 @@ table.dataTable {
   /* ---------
   TABLE CELL (specific)*/
   td {
-    //?legacy??
-    &.details {
-      padding: 0px;
-      .extend {
-        background-color: @grayLight;
-        text-shadow: none;
-        margin: 5px -5px -5px;
-        text-align: left;
-        .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.2)");
-        article {
-          color: @grayDark;
-          date {
-            color: @gray;
-          }
-        }
-        article:first-child {
-          .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.2)");
-        }
-        article:nth-child(even), article:nth-child(odd) {
-          border-top: 1px solid @grayLighter;
-          border-bottom-color: @gray;
-        }
-      }
-    }
+
     .actions {
       display:inline-block;
       white-space: nowrap;
@@ -457,7 +466,14 @@ table.dataTable {
  * The flex list allows you to add left actions and right actions to the traditional list view.
  * The code below aims to fix the first action column and the last action column
  */
-.flex-list {
+.flex-list-view {
+
+  position: relative;
+  .flex-list-view-content {
+    overflow-y: auto;
+    width: 100%;
+  }
+
   // .flex-list.left-actions to fix the first column
   &.left-actions {
     table.dataTable {
@@ -468,11 +484,14 @@ table.dataTable {
           padding-right: 0;
           width: 50px;
           height: 26px;
-          z-index: 1;
+          z-index: 11;
           background: @white;
           position: absolute;
           left: 0;
           border-right: 0;
+          span {
+            overflow-x: visible;
+          }
         }
         &:nth-child(2) {
           padding-left: 75px;
@@ -608,16 +627,28 @@ table.dataTable th:active {
     a {
       padding-left: 32px;
     }
-    .active {
+    button {
+      text-decoration: none;
       color: @gray;
-      font-weight: bold;
-      padding-left: 10px;
-      margin-left: 0;
-    }
-    .active .icon-ok {
-      color: @gray;
-      font-weight: normal;
-      margin-right: 5px;
+      &:hover,
+      &:active {
+        color: @gray !important;
+        .box-shadow(none) !important;
+        text-decoration: none;
+      }
+      &.active {
+        font-weight: bold;
+        padding-left: 10px;
+        margin-left: 0;
+        .icon-ok {
+          color: @gray;
+          font-weight: normal;
+          margin-right: 5px;
+        }
+      }
+      &:not(.active){
+        padding-left: 22px;
+      }
     }
   }
 }

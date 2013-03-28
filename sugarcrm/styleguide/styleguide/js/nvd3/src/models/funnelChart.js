@@ -10,7 +10,7 @@ nv.models.funnelChart = function() {
     , legend = nv.models.legend()
     ;
 
-  var margin = {top: 30, right: 20, bottom: 20, left: 60}
+  var margin = {top: 30, right: 20, bottom: 20, left: 20}
     , width = null
     , height = null
     , color = nv.utils.defaultColor()
@@ -26,11 +26,6 @@ nv.models.funnelChart = function() {
     , y //can be accessed via chart.yScale()
     , noData = "No Data Available."
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
-    ;
-
-  yAxis
-    .orient('left')
-    .tickFormat(d3.format(',.1f'))
     ;
 
   //============================================================
@@ -241,18 +236,17 @@ nv.models.funnelChart = function() {
       var yAxis = d3.svg.axis()
             .scale(yScale)
             .orient('left')
-            .tickSize( -availableWidth/2, 0)
+            .tickSize( -availableWidth, 0)
             .tickValues(aTicks)
             .tickFormat( function(d,i) {
-              return '$' + d + 'K';
+              return '';
             })
           ;
 
       d3.transition(g.select('.nv-y.nv-axis'))
         .call(yAxis)
-          .style('stroke-width', '2')
+          .style('stroke-width', '1')
           .selectAll('line')
-            .attr('x2', function(d,i){ return d !== 0 ? ( c + ( r * y(d) ) + w/2 + 60 ) : availableWidth; });
 
       //------------------------------------------------------------
 
@@ -320,7 +314,7 @@ nv.models.funnelChart = function() {
   chart.funnel = funnel;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, funnel, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'color', 'gradient', 'useClass');
+  d3.rebind(chart, funnel, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'color', 'gradient', 'useClass', 'fmtValueLabel');
 
   chart.colorData = function(_) {
     if (arguments[0] === 'graduated')
@@ -332,7 +326,7 @@ nv.models.funnelChart = function() {
     }
     else if (_ === 'class')
     {
-      chart.useClass(true);
+      funnel.useClass(true);
       legend.useClass(true);
       var color = function (d,i) { return 'inherit' };
     }
@@ -350,6 +344,7 @@ nv.models.funnelChart = function() {
   chart.colorFill = function(_) {
     if (_ === 'gradient')
     {
+
       var fill = function (d,i) { return chart.gradient()(d,i) };
     }
     else
@@ -393,13 +388,6 @@ nv.models.funnelChart = function() {
   chart.height = function(_) {
     if (!arguments.length) return height;
     height = _;
-    return chart;
-  };
-
-  chart.color = function(_) {
-    if (!arguments.length) return color;
-    color = nv.utils.getColor(_);
-    legend.color(color);
     return chart;
   };
 

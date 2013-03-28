@@ -21,13 +21,13 @@
   h4,
   h1,
   .dashlet-options {
-    font-size: 13px;
-    color: lighten(@gray,10%);
+    font-size: @baseFontSize;
+    color: @tableHeader;
     line-height: @baseLineHeight;
-    #gradient > .vertical(@white, @grayLighter);
-    .border-radius(4px 4px 0 0);
+    .border-radius(3px 3px 0 0);
     font-weight: 500;
-    border-bottom: 1px solid darken(@grayLighter, 5%) !important;
+    #gradient > .vertical(@grayLighter, darken(@grayLighter, 2%));
+    border-bottom: 1px solid darken(@grayLighter, 5%);
     padding: 7px 80px 7px 10px;
     margin: 0;
     .rtlPadding(@direction,7px 10px 7px 80px);
@@ -37,11 +37,16 @@
   }
   .dashlet-options {
     .border-radius(0);
-    padding: 8px;
+    #gradient > .vertical(@white, lighten(@grayLighter, 1%));
+    border-bottom: 1px solid darken(@grayLighter, 5%);
+    padding: 6px 8px;
     .select2-container,
     .btn-group {
-      padding: 0;
-      margin: 2px 0;
+        padding: 0;
+        margin: 0;
+    }
+    .btn:first-child {
+        margin: 0;
     }
   }
 
