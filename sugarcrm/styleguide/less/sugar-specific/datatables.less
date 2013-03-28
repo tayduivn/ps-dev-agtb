@@ -627,16 +627,28 @@ table.dataTable th:active {
     a {
       padding-left: 32px;
     }
-    .active {
+    button {
+      text-decoration: none;
       color: @gray;
-      font-weight: bold;
-      padding-left: 10px;
-      margin-left: 0;
-    }
-    .active .icon-ok {
-      color: @gray;
-      font-weight: normal;
-      margin-right: 5px;
+      &:hover,
+      &:active {
+        color: @gray !important;
+        .box-shadow(none) !important;
+        text-decoration: none;
+      }
+      &.active {
+        font-weight: bold;
+        padding-left: 10px;
+        margin-left: 0;
+        .icon-ok {
+          color: @gray;
+          font-weight: normal;
+          margin-right: 5px;
+        }
+      }
+      &:not(.active){
+        padding-left: 22px;
+      }
     }
   }
 }
