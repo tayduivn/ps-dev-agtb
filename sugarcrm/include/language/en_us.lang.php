@@ -1747,97 +1747,83 @@ $app_list_strings = array (
     'less_than_equals' => 'Less Than Or Equal To',
     'between' => 'Is Between',
   ),
-  'filter_operators_dom' =>
-  array(
-    'enum' => array(
-        '$equals' => 'is',
-        '$not_equals' => 'is not',
-      ),
-    'varchar' => array(
-        '$equals' => 'matches',
-        '$not_equals' => 'does not match',
-        '$contains' => 'contains',
-        '$starts' => 'starts with',
-        '$ends' => 'ends with'
-      ),
-    'name' => array(
-        '$equals' => 'matches',
-        '$not_equals' => 'does not match',
-        '$contains' => 'contains',
-        '$starts' => 'starts with',
-        '$ends' => 'ends with'
-      ),
-    'text' => array(
-        '$equals' => 'matches',
-        '$not_equals' => 'does not match',
-        '$contains' => 'contains',
-        '$starts' => 'starts with',
-        '$ends' => 'ends with'
-      ),
-    'textarea' => array(
-        '$equals' => 'matches',
-        '$not_equals' => 'does not match',
-        '$contains' => 'contains',
-        '$starts' => 'starts with',
-        '$ends' => 'ends with'
-      ),
-    'currency' => array(
-        '$equals' => 'is equal to',
-        '$gt' => 'is greater than',
-        '$gte' => 'is greater than or equal to',
-        '$lt' => 'is less than',
-        '$lte' => 'is less than or equal to',
-      ),
-    'int' => array(
-        '$equals' => 'is equal to',
-        '$gt' => 'is greater than',
-        '$gte' => 'is greater than or equal to',
-        '$lt' => 'is less than',
-        '$lte' => 'is less than or equal to',
-      ),
-    'double' => array(
-        '$equals' => 'is equal to',
-        '$gt' => 'is greater than',
-        '$gte' => 'is greater than or equal to',
-        '$lt' => 'is less than',
-        '$lte' => 'is less than or equal to',
-      ),
-    'float' => array(
-        '$equals' => 'is equal to',
-        '$gt' => 'is greater than',
-        '$gte' => 'is greater than or equal to',
-        '$lt' => 'is less than',
-        '$lte' => 'is less than or equal to',
-      ),
-    'decimal' => array(
-        '$equals' => 'is equal to',
-        '$gt' => 'is greater than',
-        '$gte' => 'is greater than or equal to',
-        '$lt' => 'is less than',
-        '$lte' => 'is less than or equal to',
-      ),
-    'date' => array(
-        '$equals' => 'on',
-        '$lt' => 'before',
-        '$gt' => 'after',
-      ),
-    'datetime' => array(
-        '$equals' => 'on',
-        '$lt' => 'before',
-        '$gt' => 'after'
-      ),
-    'bool' => array(
-        '$equals' => 'is'
-      ),
-    'phone' => array(
-        '$starts' => 'starts with',
-        '$equals' => 'is'
-      )
-  ),
-  'filter_checkbox_dom' => array(
-      0 => 'No',
-      1 => 'Yes'
-  ),
+    'filter_operators_dom' => array(
+        'enum' => array(
+            '$in' => 'is',
+            '$not_in' => 'is not',
+        ),
+        'varchar' => array(
+            '$equals' => 'matches',
+            '$starts' => 'starts with',
+        ),
+        'name' => array(
+            '$equals' => 'matches',
+            '$starts' => 'starts with',
+        ),
+        'text' => array(
+            '$equals' => 'matches',
+            '$starts' => 'starts with',
+        ),
+        'textarea' => array(
+            '$equals' => 'matches',
+            '$starts' => 'starts with',
+        ),
+        'currency' => array(
+            '$equals' => 'is equal to',
+            '$gte' => 'is greater than or equal to',
+            '$lte' => 'is less than or equal to',
+        ),
+        'int' => array(
+            '$equals' => 'is equal to',
+            '$gte' => 'is greater than or equal to',
+            '$lte' => 'is less than or equal to',
+        ),
+        'double' => array(
+            '$equals' => 'is equal to',
+            '$gte' => 'is greater than or equal to',
+            '$lte' => 'is less than or equal to',
+        ),
+        'float' => array(
+            '$equals' => 'is equal to',
+            '$gte' => 'is greater than or equal to',
+            '$lte' => 'is less than or equal to',
+        ),
+        'decimal' => array(
+            '$equals' => 'is equal to',
+            '$gte' => 'is greater than or equal to',
+            '$lte' => 'is less than or equal to',
+        ),
+        'date' => array(
+            '$lt' => 'before',
+            '$gt' => 'after',
+        ),
+        'datetime' => array(
+            '$lt' => 'before',
+            '$gt' => 'after'
+        ),
+        'datetimecombo' => array(
+            '$lt' => 'before',
+            '$gt' => 'after'
+        ),
+        'bool' => array(
+            '$equals' => 'is'
+        ),
+        'phone' => array(
+            '$starts' => 'starts with',
+            '$equals' => 'is'
+        )
+    ),
+
+    'filter_checkbox_dom' => array(
+        '' => '',
+        0 => 'False',
+        1 => 'True',
+    ),
+
+    'filter_predefined_dom' => array(
+        '' => '',
+        'true' => 'True',
+    ),
 
   'opportunity_metrics_dom' => array(
       'won' => 'Won',
