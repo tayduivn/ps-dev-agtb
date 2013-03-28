@@ -23,7 +23,7 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @var DBManager
      */
-    private $_db;
+    private $db;
     protected $created = array();
 
     protected $backupGlobals = false;
@@ -32,7 +32,7 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
     protected $accounts = array();
     protected $notes = array();
 
-    static public function setupBeforeClass()
+    public static function setupBeforeClass()
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user');
@@ -40,15 +40,15 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
     }
 
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
     }
 
     public function setUp()
     {
-        if (empty($this->_db)) {
-            $this->_db = DBManagerFactory::getInstance();
+        if (empty($this->db)) {
+            $this->db = DBManagerFactory::getInstance();
         }
     }
 
@@ -59,13 +59,13 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
             foreach ($this->contacts as $contact) {
                 $contactList[] = $contact->id;
             }
-            $this->_db->query(
+            $this->db->query(
                 "DELETE FROM contacts WHERE id IN ('" . implode(
                     "','",
                     $contactList
                 ) . "')"
             );
-            $this->_db->query(
+            $this->db->query(
                 "DELETE FROM contacts_cstm WHERE id_c IN ('" . implode(
                     "','",
                     $contactList
@@ -77,13 +77,13 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
             foreach ($this->accounts as $account) {
                 $accountList[] = $account->id;
             }
-            $this->_db->query(
+            $this->db->query(
                 "DELETE FROM accounts WHERE id IN ('" . implode(
                     "','",
                     $accountList
                 ) . "')"
             );
-            $this->_db->query(
+            $this->db->query(
                 "DELETE FROM accounts_cstm WHERE id_c IN ('" . implode(
                     "','",
                     $accountList
@@ -96,13 +96,13 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
             foreach ($this->notes as $note) {
                 $notesList[] = $note->id;
             }
-            $this->_db->query(
+            $this->db->query(
                 "DELETE FROM notes WHERE id IN ('" . implode(
                     "','",
                     $notesList
                 ) . "')"
             );
-            $this->_db->query(
+            $this->db->query(
                 "DELETE FROM notes_cstm WHERE id_c IN ('" . implode(
                     "','",
                     $notesList
@@ -143,6 +143,42 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
             'McTester',
             'The Last Name Did Not Match'
         );
+
+        // delete contact verify I can't get it
+        $contact = BeanFactory::getBean('Contacts', $id);
+        $contact->mark_deleted($id);
+        unset($contact);
+
+        $result = $sq->execute();
+        $this->assertTrue(
+            empty($result),
+            "Result Set was not empty, it contained: " . print_r($result, true)
+        );
+
+        // get deleted items
+        $sq = new SugarQuery();
+        $sq->select(array("first_name", "last_name"));
+        $sq->from(
+            BeanFactory::getBean('Contacts'),
+            array('add_deleted' => false)
+        );
+        $sq->where()->equals("id", $id);
+
+        $result = $sq->execute();
+
+        $result = reset($result);
+
+        $this->assertEquals(
+            $result['first_name'],
+            'Test',
+            'The First Name Did Not Match, the deleted record did not return'
+        );
+        $this->assertEquals(
+            $result['last_name'],
+            'McTester',
+            'The Last Name Did Not Match, the deleted record did not return'
+        );
+
     }
 
     public function testSelectWithJoin()
