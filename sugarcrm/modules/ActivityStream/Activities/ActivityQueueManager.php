@@ -32,6 +32,8 @@ class ActivityQueueManager
     public static $linkBlacklist = array('user_sync', 'activities');
     public static $linkModuleBlacklist = array('ActivityStream/Activities');
     public static $linkDupeCheck = array();
+    public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs', 'Activities', 'vCals');
+    public static $moduleWhitelist = array('Notes', 'Tasks', 'Meetings', 'Calls', 'Emails');
 
     /**
      * Logic hook arbiter for activity streams.
@@ -60,25 +62,41 @@ class ActivityQueueManager
 
                 $bean->data = json_encode($bean->data);
             }
-        } elseif ($bean->is_AuditEnabled() && Activity::isEnabled()) {
+        } elseif (Activity::isEnabled()) {
             $activity = BeanFactory::getBean('Activities');
-            if ($event == 'after_save') {
+            $eventTriggered = true;
+            if ($event == 'after_save' && self::isAuditable($bean)) {
                 $this->createOrUpdate($bean, $args, $activity);
-            } elseif ($event == 'after_delete') {
+            } elseif ($event == 'after_delete' && self::isAuditable($bean)) {
                 $this->delete($bean, $activity);
-            } elseif ($event == 'after_restore') {
+            } elseif ($event == 'after_restore' && self::isAuditable($bean)) {
                 $this->undelete($bean, $args, $activity);
             } elseif ($event == 'after_relationship_add' && $this->isValidLink($args)) {
                 $this->link($args, $activity);
             } elseif ($event == 'after_relationship_delete' && $this->isValidLink($args)) {
                 $this->unlink($args, $activity);
+            } else {
+                $eventTriggered = false;
             }
 
             // Add the job queue process to add rows to the activities_users
             // join table. This has been moved to the job queue as it's a
             // potentially slow operation.
-            $this->processSubscriptions($bean, $activity, $args);
+            if ($eventTriggered) {
+                $this->processSubscriptions($bean, $activity, $args);
+            }
         }
+    }
+
+    protected static function isAuditable(SugarBean $bean)
+    {
+        if (in_array($bean->module_name, self::$moduleBlacklist)) {
+            return false;
+        }
+        if (in_array($bean->module_name, self::$moduleWhitelist)) {
+            return true;
+        }
+        return $bean->is_AuditEnabled();
     }
 
     /**
@@ -90,7 +108,7 @@ class ActivityQueueManager
         $blacklist = in_array($args['link'], self::$linkBlacklist);
         $lhs_module = in_array($args['module'], self::$linkModuleBlacklist);
         $rhs_module = in_array($args['related_module'], self::$linkModuleBlacklist);
-        if ($blacklist || $lhs_module || $rhs_module) {
+        if ($blacklist || $lhs_module || $rhs_module || $GLOBALS['resavingRelatedBeans']) {
             return false;
         } else {
             foreach (self::$linkDupeCheck as $dupe_args) {
@@ -113,6 +131,9 @@ class ActivityQueueManager
     protected static function isLinkDupe($args1, $args2)
     {
         if ($args1['module'] == $args2['related_module'] && $args1['id'] == $args2['related_id']) {
+            return true;
+        }
+        if ($args1['module'] == $args2['module'] && $args1['id'] == $args2['id']) {
             return true;
         }
         return false;
@@ -153,6 +174,7 @@ class ActivityQueueManager
         $act->data = $data;
         $act->save();
         $this->processRecord($bean, $act);
+        $this->processParentAttributes($bean);
     }
 
     /**
@@ -200,6 +222,9 @@ class ActivityQueueManager
      */
     protected function link(array $args, Activity $act)
     {
+        if (!$args['id'] || !$args['related_id']) {
+            return;
+        }
         $lhs = BeanFactory::getBean($args['module'], $args['id']);
         $rhs = BeanFactory::getBean($args['related_module'], $args['related_id']);
         $data = array(
@@ -225,6 +250,9 @@ class ActivityQueueManager
      */
     protected function unlink(array $args, Activity $act)
     {
+        if (!$args['id'] || !$args['related_id']) {
+            return;
+        }
         $lhs = BeanFactory::getBean($args['module'], $args['id']);
         $rhs = BeanFactory::getBean($args['related_module'], $args['related_id']);
         $data = array(
@@ -256,6 +284,55 @@ class ActivityQueueManager
             'module' => $bean->module_name,
             'id' => $bean->id,
         );
+    }
+
+    /**
+     * Helper for processing records which aren't explicitly linked.
+     *
+     * THIS IS A BIG, GIANT HACK. IF YOU ARE READING THIS, PLEASE PLEASE MAKE
+     * SURE THAT WE'RE WORKING ON A WAY TO GET RID OF THIS. To get away from
+     * this hack, we need to ensure that Meetings/Calls/Tasks/etc save their
+     * relationships correctly when parent_type/parent_id are set.
+     *
+     * @ticket ABE-430
+     * @param  SugarBean $bean
+     */
+    protected function processParentAttributes(SugarBean $bean)
+    {
+        $old_parent_id = '';
+        if (is_array($bean->fetched_row) && isset($bean->fetched_row['parent_id'])) {
+            $old_parent_id = $bean->fetched_row['parent_id'];
+        }
+
+        if ($bean->parent_id !== $old_parent_id) {
+            if (!empty($old_parent_id)) {
+                // Create a fake unlink.
+                $args = array(
+                    'id' => $old_parent_id,
+                    'module' => $bean->fetched_row['parent_type'],
+                    'related_id' => $bean->id,
+                    'related_module' => $bean->module_name,
+                    'link' => 'fake_link_' . $bean->module_name,
+                    'relationship' => 'fake_rel_' . $bean->module_name,
+                );
+                $unlink_activity = BeanFactory::getBean('Activities');
+                $this->unlink($args, $unlink_activity);
+                $this->processSubscriptions($bean, $unlink_activity, $args);
+            }
+
+            // We create a fake link here.
+            $args = array(
+                'id' => $bean->parent_id,
+                'module' => $bean->parent_type,
+                'related_id' => $bean->id,
+                'related_module' => $bean->module_name,
+                'link' => 'fake_link_' . $bean->module_name,
+                'relationship' => 'fake_rel_' . $bean->module_name,
+            );
+            $link_activity = BeanFactory::getBean('Activities');
+            $this->link($args, $link_activity);
+            $this->processSubscriptions($bean, $link_activity, $args);
+        }
     }
 
     /**
