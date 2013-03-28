@@ -5,7 +5,7 @@
 </a>
 {{else}}
 <div class="label label-module label-{{parent_type}} pull-left" rel="tooltip" data-title="{{parent_type}}" data-original-title="">
-    {{firstChars parent_type 2}}
+    {{moduleIconLabel parent_type}}
 </div>
 {{/eq}}
 <p>

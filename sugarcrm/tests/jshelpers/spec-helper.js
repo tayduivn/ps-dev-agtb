@@ -22,9 +22,17 @@ beforeEach(function(){
             });
         }
     });
+
+    // stub out the icon helper so that tests calling templates don't bomb...
+    Handlebars.registerHelper('moduleIconLabel', function(module) {
+        return module.substring(0, 2);
+    });
+
 });
 
 afterEach(function() {
+    delete Handlebars.helpers.moduleIconLabel;
+
     SugarTest.clock.restore();
     _.each(underscoreDelayFunctions, function(func){
         if(_[func].restore)

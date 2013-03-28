@@ -80,7 +80,8 @@ $viewdefs['Products']['base']['view']['create'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'required' => true
+                    'required' => true,
+                    'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
             )
         ),

@@ -50,7 +50,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contracts',
     'Quotes' => 'Quotes',
-    'Products' => 'Products',
+    'Products' => 'Revenue Line Items',
     'ProductCategories' => 'Product Categories',
     'ProductTypes' => 'Product Types',
     'ProductTemplates' => 'Product Catalog',
@@ -149,7 +149,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
-    'Products' => 'Product Line Item',
+    'Products' => 'Revenue Line Item',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
@@ -580,7 +580,7 @@ $app_list_strings = array (
     'Leads' => 'Lead',
     'Contacts' => 'Contacts', // cn (11/22/2005) added to support Emails
     //BEGIN SUGARCRM flav=pro ONLY
-    'ProductTemplates' => 'Product Line Item',
+    'ProductTemplates' => 'Revenue Line Item',
     'Quotes' => 'Quote',
 
     //END SUGARCRM flav=pro ONLY
@@ -611,7 +611,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'ProductTemplates' => 'Product Catalog',
     'Quotes' => 'Quote',
-    'Products' => 'Product Line Item',
+    'Products' => 'Revenue Line Item',
     'Contracts' => 'Contract',
     //END SUGARCRM flav=pro ONLY
     'Emails' => 'Email',
@@ -637,7 +637,7 @@ $app_list_strings = array (
 
     //BEGIN SUGARCRM flav=pro ONLY
 
-    'Products' => 'Product Line Item',
+    'Products' => 'Revenue Line Item',
 
     'Quotes' => 'Quote',
     //END SUGARCRM flav=pro ONLY
@@ -846,7 +846,7 @@ $app_list_strings = array (
     'Outlook Plugin' => 'Outlook Plugin',
     //BEGIN SUGARCRM flav=pro ONLY
     'Product Catalog' => 'Product Catalog',
-    'Products' => 'Product Line Items',
+    'Products' => 'Revenue Line Items',
     //END SUGARCRM flav=pro ONLY
     'Projects' => 'Projects',
     'Quotes' => 'Quotes',
@@ -4754,7 +4754,7 @@ $app_list_strings['forecasts_timeperiod_options_dom'] = array(
     'Quarter' => 'Quarterly (Monthly sub-periods)',
 );
 $app_list_strings['forecasts_config_worksheet_layout_forecast_by_options_dom'] = array(
-    'products' => 'Product Line Items',
+    'products' => 'Revenue Line Items',
     'opportunities' => 'Opportunities',
 );
 

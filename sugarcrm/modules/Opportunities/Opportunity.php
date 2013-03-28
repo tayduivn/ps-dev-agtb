@@ -607,7 +607,7 @@ class Opportunity extends SugarBean
     /**
      * getProducts
      *
-     * This is a convenience function to return the product lines entries associated with the opportunity
+     * This is a convenience function to return the revenue Lines entries associated with the opportunity
      *
      */
     public function getProducts()
