@@ -161,6 +161,15 @@
             return value;
         }
     },
+
+    /**
+     * Closes the select2 dropdown if it is open during disposal.
+     */
+    _dispose: function() {
+        this.$(this.fieldTag).select2('close');
+        app.view.Field.prototype._dispose.call(this);
+    },
+
     /**
      * Converts multiselect default strings into array of option keys for template
      * @param {String} defaultString string of the format "^option1^,^option2^,^option3^"
