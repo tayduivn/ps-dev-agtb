@@ -32,7 +32,8 @@ class FilterPanelLayout
             $filterLayout['context']['layoutName'] = $opts['layoutName'];
         }
         $this->layout->push($filterLayout);
-        $this->layout->push(array("view" => "filter-create"));
+        $this->layout->push(array("view" => "filter-actions"));
+        $this->layout->push(array("view" => "filter-rows"));
 
         if (in_array('activitystream', $toggles)) {
             $this->layout->push(

@@ -11,6 +11,9 @@
         "list": {icon: "icon-table", label: "LBL_LISTVIEW"}
     },
 
+    // This is set to the filter that's currently being edited.
+    editingFilter: null,
+
     initialize: function(opts) {
         _.bindAll(this);
 
@@ -25,6 +28,18 @@
         }, this);
 
         app.view.Layout.prototype.initialize.call(this, opts);
+
+        this.on("filter:create:open", function(model) {
+            this.$(".filter-options").show();
+        }, this);
+
+        this.on("filter:create:close", function(reinitialize, id) {
+            if (reinitialize && !id) {
+                this.trigger("filter:reinitialize");
+            }
+            this.$(".filter-options").hide();
+        }, this);
+
         this.showComponent(this.options.meta['default']);
     },
 
@@ -55,8 +70,8 @@
         if (def.layout == "filter") {
             this.$(".filter").prepend(component.el);
             return;
-        } else if(def.view == "filter-create") {
-            this.$(".form-search-related").append(component.el);
+        } else if(def.view == "filter-actions" || def.view == "filter-rows") {
+            this.$(".filter-options").append(component.el);
         } else {
             // If we recognize the view, prevent it from rendering until it's
             // requested explicitly by the user.

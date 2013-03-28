@@ -1,0 +1,12 @@
+<div class="row-fluid">
+    <div class="controls span6">
+        <input type="text" class="inherit-width" placeholder="{{str 'LBL_FILTER_NEW_NAME' 'Filters'}}…">
+    </div>
+    <div class="span6">
+        <div class="pull-right">
+            <a class="btn btn-link btn-invisible hide delete_button">{{str "LBL_DELETE"}}</a>
+            <a class="btn btn-primary disabled save_button">{{str "LBL_SAVE_BUTTON_LABEL"}}</a>
+            <a class="btn btn-invisible btn-dark filter-close"><i class="icon-remove"></i></a>
+        </div>
+    </div>
+</div>

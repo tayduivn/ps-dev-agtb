@@ -60,7 +60,7 @@
         var filter = this.layout.filters.get(id) || this.layout.emptyFilter;
         if (id === "create") {
             this.$('.choice-filter').css("cursor", "not-allowed");
-            this.layout.trigger("filter:create:open");
+            this.layout.trigger("filter:create:open", app.data.createBean('Filters'));
         } else {
             if (filter.get("editable") === false) {
                 this.layout.trigger("filter:create:close");
@@ -124,7 +124,7 @@
         var filterId = this.filterNode.val(),
             filterModel = this.layout.filters.get(filterId);
 
-        if (filterModel.get("editable")) {
+        if (filterModel && filterModel.get("editable") !== false) {
             this.layout.trigger("filter:create:open", filterModel);
         }
     },
