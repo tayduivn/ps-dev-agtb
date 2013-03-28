@@ -34,7 +34,7 @@ class ProductToQuoteConvertApi extends SugarApi
                 'path' => array('Products', '?', 'quote'),
                 'pathVars' => array('module', 'record', 'action'),
                 'method' => 'convertToQuote',
-                'shortHelp' => 'Convert a Product Line Item Into A Quote Record',
+                'shortHelp' => 'Convert a Revenue Line Item Into A Quote Record',
                 'longHelp' => 'modules/Products/clients/base/api/help/convert_to_quote.html',
             ),
         );

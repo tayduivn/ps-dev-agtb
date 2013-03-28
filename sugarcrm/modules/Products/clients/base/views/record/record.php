@@ -82,6 +82,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 array(
                     'name' => 'name',
                     'required' => true,
+                    'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
                 array(
                     'type' => 'follow',

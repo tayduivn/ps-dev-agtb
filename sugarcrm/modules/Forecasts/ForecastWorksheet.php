@@ -58,7 +58,7 @@ class ForecastWorksheet extends SugarBean
      */
     public function saveWorksheet($check_notify = false)
     {
-        //Update the Opportunities bean -- should update the product line item as well through SaveOverload.php
+        //Update the Opportunities bean -- should update the revenue line item as well through SaveOverload.php
         /* @var $bean Opportunity|Product */
         $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
         $bean->probability = $this->probability;
