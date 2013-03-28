@@ -26,9 +26,19 @@
  ********************************************************************************/
 ({
     extendsFrom: 'RecordView',
+    currencyFields: new Array(),
 
     initialize: function(options) {
         this._setupCommitStageField(options.meta.panels);
+        _.each(
+            options.meta.panels, function(panel) {
+                _.each(panel.fields, function(field) {
+                    if(field.type == 'currency' && (_.isUndefined(field.readonly) || !field.readonly)) {
+                        this.currencyFields.push(field.name);
+                    }
+                }, this);
+            }, this
+        );
         app.view.views.RecordView.prototype.initialize.call(this, options);
     },
 
@@ -42,10 +52,34 @@
         }
     },
 
+    /**
+     * Bind to model to make it so that it will re-render once it has loaded.
+     */
+    bindDataChange : function() {
+        app.view.views.RecordView.prototype.bindDataChange.call(this);
+        this.model.on('change:currency_id', function() {
+            this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id"));
+        }, this)
+    },
+
     delegateButtonEvents: function() {
         this.context.on('button:convert_to_quote:click', this.convertToQuote, this);
 
         app.view.views.RecordView.prototype.delegateButtonEvents.call(this);
+    },
+
+    /**
+     * convert all of the currency fields to the new currency
+     * @param oldCurrencyId
+     * @param newCurrencyId
+     */
+    convertCurrencyFields: function(oldCurrencyId, newCurrencyId) {
+        if(_.isUndefined(oldCurrencyId)) {
+            return;
+        }
+        _.each(this.currencyFields, function(currencyField) {
+           this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId));
+        }, this);
     },
 
     convertToQuote: function(e) {
