@@ -30,9 +30,11 @@
 
     initialize: function(options) {
         this._setupCommitStageField(options.meta.panels);
+        //pull the fields in the panels that are editable currency fields
         _.each(
             options.meta.panels, function(panel) {
                 _.each(panel.fields, function(field) {
+                    //if the field is currency and not read only, then push it into our currency fields array
                     if(field.type == 'currency' && (_.isUndefined(field.readonly) || !field.readonly)) {
                         this.currencyFields.push(field.name);
                     }
@@ -74,9 +76,12 @@
      * @param newCurrencyId
      */
     convertCurrencyFields: function(oldCurrencyId, newCurrencyId) {
+        //this ends up getting called on init without an old currency id, so just return in that case
         if(_.isUndefined(oldCurrencyId)) {
             return;
         }
+
+        //run through the editable currency fields and convert the amounts to the new currency
         _.each(this.currencyFields, function(currencyField) {
            this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId));
         }, this);
