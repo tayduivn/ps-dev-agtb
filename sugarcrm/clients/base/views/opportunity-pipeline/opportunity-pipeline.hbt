@@ -1,3 +1,13 @@
+<div class="dashlet-options">
+    <div class="row-fluid">
+      <div class="span8">{{#each this.meta.timeperiod}}
+                {{field ../this ../this.model "edit"}}
+            {{/each}}</div>
+      <div class="span4">
+        Buttons here
+      </div>
+    </div>
+  </div>
 <div class="block">
   <div class="nv-chart"><svg id="{{cid}}"></svg></div>
 </div>
