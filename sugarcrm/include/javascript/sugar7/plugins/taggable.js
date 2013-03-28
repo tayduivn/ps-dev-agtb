@@ -291,7 +291,7 @@
                 component._tplTag = Handlebars.templates['p.taggable.tag'];
 
                 if (!_.has(Handlebars.templates, "p.taggable.taglist")) {
-                    tplTagList = '<li><a>{{#if htmlName}}<div class="label label-module label-{{module}} pull-left" rel="tooltip" data-title="{{parent_type}}">{{firstChars module 2}}</div>{{{htmlName}}}{{/if}}</a></li>';
+                    tplTagList = '<li><a>{{#if htmlName}}<div class="label label-module-mini label-{{module}} pull-left" rel="tooltip" data-title="{{parent_type}}">{{firstChars module 2}}</div> {{{htmlName}}}{{/if}}</a></li>';
                     Handlebars.templates['p.taggable.taglist'] = Handlebars.compile(tplTagList);
                 }
                 component._tplTagList = Handlebars.templates['p.taggable.taglist'];
