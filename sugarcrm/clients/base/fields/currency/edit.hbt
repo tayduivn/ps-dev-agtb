@@ -26,5 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<input type="text" name="{{name}}" value="{{value}}" class="input-large"><span sfuuid="{{currencySfId}}"></span>
-<p class="help-block"></p>
+<div class="row-fluid">
+<div class="span9"><input type="text" name="{{name}}" value="{{value}}" class="input-large"></div>
+<div class="span3"><span sfuuid="{{currencySfId}}"></span><p class="help-block"></p></div>
+</div>
