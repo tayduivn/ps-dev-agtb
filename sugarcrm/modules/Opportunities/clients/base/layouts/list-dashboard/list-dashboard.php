@@ -30,4 +30,28 @@ $layout->push(
         ),
     )
 );
+
+$layout->push(
+    0,
+    array(
+        array(
+            'name' => 'My Contacts',
+            'view' => 'dashablelist',
+            'context' => array(
+                'module' => 'Contacts',
+                'dashlet' => array(
+                    'name' => 'My Contacts',
+                    'type' => 'dashablelist',
+                    'module' => 'Contacts',
+                    'display_columns' => array(
+                        'full_name',
+                        'email',
+                        'phone_work',
+                    ),
+                    'my_items' => '1',
+                ),
+            ),
+        ),
+    )
+);
 $viewdefs['Opportunities']['base']['layout']['list-dashboard'] = $layout->getLayout();
