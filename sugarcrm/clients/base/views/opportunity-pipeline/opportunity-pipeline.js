@@ -40,7 +40,6 @@
         var url = app.api.buildURL('Opportunities/chart/pipeline');
         app.api.call('GET', url, null, {
             success: _.bind(function(o) {
-                console.log(o);
                 this.results = {};
                 this.results = o;
                 if(!this.disposed) this.render();

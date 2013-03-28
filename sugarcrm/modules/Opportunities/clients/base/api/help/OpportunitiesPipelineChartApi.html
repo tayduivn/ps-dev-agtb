@@ -1,0 +1,145 @@
+<div class="longHelpTitle">Get the current users personal or team opportunity pipeline</div>
+<div class="summary">
+    <h2>Summary:</h2>
+     This endpoint is used to pipeline chart data for the Pipeline widget
+</div>
+<div class="params">
+    <h2>Query Parameters:</h2>
+    <table>
+        <tr>
+            <td><strong>Param</strong></td>
+            <td><strong>Description</strong></td>
+            <td><strong>Optional</strong></td>
+        </tr>
+        <tr>
+            <td>timeperiod_id</td>
+            <td>Which Timeperiod to View, defaults to the current timeperiod if not defined</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td>What type of pipeline to view, valid options are self which will just show your pipeline and team
+            which will show you and everyone under the current user, defaults to self if not defined</td>
+            <td>true</td>
+        </tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Valid Urls:</h2>
+    <ul>
+        <li>/rest/v10/Opportunities/chart/pipeline/</li>
+        <li>/rest/v10/Opportunities/chart/pipeline/:timeperiod_id</li>
+        <li>/rest/v10/Opportunities/chart/pipeline/:timeperiod_id/:type</li>
+    </ul>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <code class="codesample">
+        {
+           "properties":{
+              "title":"Pipeline Total is$3,311,893.00",
+              "total":"3311893",
+              "scale":1000,
+              "units":"$"
+           },
+           "data":[
+              {
+                 "key":"Qualification",
+                 "bar":true,
+                 "values":[
+                    {
+                       "series":0,
+                       "x":0,
+                       "y":258928,
+                       "y0":0
+                    }
+                 ]
+              },
+              {
+                 "key":"Perception Analysis",
+                 "bar":true,
+                 "values":[
+                    {
+                       "series":1,
+                       "x":0,
+                       "y":287107,
+                       "y0":258928
+                    }
+                 ]
+              },
+              {
+                 "key":"Prospecting",
+                 "bar":true,
+                 "values":[
+                    {
+                       "series":2,
+                       "x":0,
+                       "y":305081,
+                       "y0":546035
+                    }
+                 ]
+              },
+              {
+                 "key":"Proposal\/Price Quote",
+                 "bar":true,
+                 "values":[
+                    {
+                       "series":3,
+                       "x":0,
+                       "y":327504,
+                       "y0":851116
+                    }
+                 ]
+              },
+              {
+                 "key":"Needs Analysis",
+                 "bar":true,
+                 "values":[
+                    {
+                       "series":4,
+                       "x":0,
+                       "y":390889,
+                       "y0":1178620
+                    }
+                 ]
+              },
+              {
+                 "key":"Id. Decision Makers",
+                 "bar":true,
+                 "values":[
+                    {
+                       "series":5,
+                       "x":0,
+                       "y":515320,
+                       "y0":1569509
+                    }
+                 ]
+              },
+              {
+                 "key":"Negotiation\/Review",
+                 "bar":true,
+                 "values":[
+                    {
+                       "series":6,
+                       "x":0,
+                       "y":565033,
+                       "y0":2084829
+                    }
+                 ]
+              },
+              {
+                 "key":"Value Proposition",
+                 "bar":true,
+                 "values":[
+                    {
+                       "series":7,
+                       "x":0,
+                       "y":662031,
+                       "y0":2649862
+                    }
+                 ]
+              }
+           ]
+        }
+    </code>
+</div>
