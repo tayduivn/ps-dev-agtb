@@ -1,9 +1,9 @@
-describe('fieldset field', function() {
+describe('fieldset field', function () {
 
-    var model;
-    var field;
+    var model,
+        field;
 
-    beforeEach(function() {
+    beforeEach(function () {
 
         model = new Backbone.Model({
             address_street: '1 Foo Way',
@@ -26,12 +26,12 @@ describe('fieldset field', function() {
         field = SugarTest.createField('base', 'fieldset', 'fieldset', 'edit', fieldDef);
     });
 
-    afterEach(function() {
+    afterEach(function () {
         model = null;
         field = null;
     });
 
-    it('should initialize all the private properties correctly', function() {
+    it('should initialize all the private properties correctly', function () {
 
         field.fields = ['fields must be initialized'];
 
@@ -40,28 +40,28 @@ describe('fieldset field', function() {
         expect(field.fields).toEqual(expectedFields);
     });
 
-    it('should render fields html nested on the fieldset', function() {
+    it('should render fields html nested on the fieldset', function () {
 
         var html = field.getPlaceholder();
         var regex = new RegExp('<span sfuuid="' + field.sfId + '"><span (.*)>(.*)</span></span>');
         expect(html).toMatch(regex);
     });
 
-    it('should render nested fields on render', function() {
+    it('should render nested fields on render', function () {
 
-        _.each(field.fields, function(childField) {
+        _.each(field.fields, function (childField) {
             sinon.spy(childField, 'render');
         });
 
         field.render();
 
-        _.each(field.fields, function(childField) {
+        _.each(field.fields, function (childField) {
             expect(childField.render).toHaveBeenCalled();
             childField.render.restore();
         });
     });
 
-    it('should render with css classes', function() {
+    it('should render with css classes', function () {
 
         var addClass = sinon.spy(field.getFieldElement(), 'addClass');
 
@@ -71,5 +71,44 @@ describe('fieldset field', function() {
         expect(field.getFieldElement().hasClass('address_fields')).toBeTruthy();
 
         addClass.restore();
+    });
+
+    describe('Edit mode css class', function () {
+        var editClass = 'edit';
+        var viewClass = 'view';
+
+        it('should update the CSS classes of the itself and its child fields', function () {
+            var addViewClassSpy = sinon.spy(field, '_addViewClass'),
+                removeViewClassSpy = sinon.spy(field, '_removeViewClass');
+
+            _.each(field.fields, function (childField) {
+                sinon.spy(childField, '_addViewClass');
+                sinon.spy(childField, '_removeViewClass');
+            });
+
+            field.render();
+            expect(addViewClassSpy.calledWith(editClass)).toBeTruthy();
+            expect(addViewClassSpy.calledWith(viewClass)).toBeFalsy();
+            _.each(field.fields, function (childField) {
+                expect(childField._addViewClass.calledWith(editClass)).toBeTruthy();
+                expect(childField._addViewClass.calledWith(viewClass)).toBeFalsy();
+            });
+
+            field.setMode('view');
+            expect(removeViewClassSpy.calledWith(editClass)).toBeTruthy();
+            expect(addViewClassSpy.calledWith(viewClass)).toBeTruthy();
+            _.each(field.fields, function (childField) {
+                expect(childField._removeViewClass.calledWith(editClass)).toBeTruthy();
+                expect(childField._addViewClass.calledWith(viewClass)).toBeTruthy();
+            });
+
+            addViewClassSpy.restore();
+            removeViewClassSpy.restore();
+
+            _.each(field.fields, function (childField) {
+                childField._addViewClass.restore();
+                childField._removeViewClass.restore();
+            });
+        });
     });
 });

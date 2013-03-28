@@ -1,3 +1,16 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
 (function (app) {
 
     /**
@@ -17,7 +30,7 @@
         "radioenum": 'edit'
     };
 
-    app.events.on("app:init", function() {
+    app.events.on("app:init", function () {
 
         var _fieldProto = _.clone(app.view.Field.prototype);
         _.extend(app.view.Field.prototype, {
@@ -34,9 +47,9 @@
              * Set to edit mode and decorates the field
              * @param {Object} errors The validation error(s) affecting this field
              */
-            handleValidationError: function(errors) {
+            handleValidationError: function (errors) {
                 this.clearErrorDecoration();
-                _.defer(function(field){
+                _.defer(function (field) {
                     field._errors = errors;
                     field.setMode('edit');
                     field.decorateError(errors);
@@ -47,9 +60,36 @@
             },
 
             /**
-             * Override _render to redecorate fields if field is on error state
+             * Remove the old view's css class (e.g. detail, edit)
+             * currently maps the action directly to the css class name
+             * but may be overridden in the future.
+             *
+             * @param {String} action the name of the action to remove
+             * @protected
              */
-            _render: function() {
+            _removeViewClass: function (action) {
+                // in case our getFieldElement has been overridden, use this.$el directly
+                this.$el.removeClass(action);
+            },
+
+            /**
+             * Add the new view's css class (e.g. detail, edit)
+             * currently maps the action directly to the css class name
+             * but may be overridden in the future.
+             *
+             * @param {String} action the name of the action to remove
+             * @protected
+             */
+            _addViewClass: function (action) {
+                // in case our getFieldElement has been overridden, use this.$el directly
+                this.$el.addClass(action);
+            },
+
+            /**
+             * Override _render to redecorate fields if field is on error state
+             * and to add view action CSS class.
+             */
+            _render: function () {
                 // This is hacky but tooltips are appended to body and when the field rerenders we lose control of
                 // shown tooltips.
                 $('body > .tooltip').remove();
@@ -57,12 +97,17 @@
 
                 _fieldProto._render.call(this);
 
+                // handle rendering the action class if disabled
+                if (this._previousAction) {
+                    this._addViewClass(this._previousAction);
+                }
+                this._addViewClass(this.action);
                 if (isErrorState) {
                     this.decorateError(this._errors);
                 }
-                if(this.def.required){
+                if (this.def.required) {
                     this.clearRequiredLabel();
-                    if(this.action === "edit"){
+                    if (this.action === "edit") {
                         this.decorateRequired();
                     }
                 }
@@ -70,10 +115,10 @@
             /**
              * Default implementation of Required decoration
              */
-            decorateRequired: function(){
+            decorateRequired: function () {
                 var useLabels = _useRequiredLabels[this.type];
                 useLabels = _.isString(useLabels) ? (useLabels === this.tplName) : useLabels;
-                if(useLabels){
+                if (useLabels) {
                     this.setRequiredLabel();
                 } else {
                     // Most fields use Placeholder
@@ -86,14 +131,14 @@
              * Add Required placeholder for input, select kinds of fields
              * @param element (Optional) element to attach placeholder
              */
-            setRequiredPlaceholder: function(element){
+            setRequiredPlaceholder: function (element) {
                 var el = element || this.$(this.fieldTag).first();
                 var old = el.attr("placeholder");
                 var requiredPlaceholder = app.lang.get("LBL_REQUIRED_FIELD", this.module);
                 var newPlaceholder = requiredPlaceholder;
-                if(old){
+                if (old) {
                     // If there is an existing placeholder then add required label after it
-                    newPlaceholder =  old + " (" + requiredPlaceholder + ")";
+                    newPlaceholder = old + " (" + requiredPlaceholder + ")";
                 }
                 el.attr("placeholder", newPlaceholder);
             },
@@ -102,22 +147,51 @@
              * Add Required label to field's label for fields that don't support placeholders
              * @param element (Optional) any element that is enclosed by field's record-cell
              */
-            setRequiredLabel: function(element){
+            setRequiredLabel: function (element) {
                 var ele = element || this.$el;
                 var $label = ele.closest('.record-cell').find(".record-label");
-                $label.append(' <span data-required="required">('+app.lang.get("LBL_REQUIRED_FIELD", this.module)+')</span>');
+                $label.append(' <span data-required="required">(' + app.lang.get("LBL_REQUIRED_FIELD", this.module) + ')</span>');
             },
 
             /**
              * Remove default Required label from field labels
              * @param element (Optional) any element that is enclosed by field's record-cell
              */
-            clearRequiredLabel: function(element){
+            clearRequiredLabel: function (element) {
                 var ele = element || this.$el;
                 var $label = ele.closest('.record-cell').find('span[data-required]');
                 $label.remove();
             },
 
+            /**
+             * {@inheritdoc}
+             *
+             * Override setMode to remove any stale view action CSS classes.
+             * @override
+             */
+            setMode: function (name) {
+                // if we are disabled, we want to remove the previous view action, not the disabled class
+                var oldAction = this._previousAction || this.action;
+                this._removeViewClass(oldAction);
+
+                _fieldProto.setMode.call(this, name);
+            },
+
+            /**
+             * {@inheritdoc}
+             *
+             * Override setMode to remove the stale disabled CSS class.
+             * @override
+             */
+            setDisabled: function (disable) {
+                disable = _.isUndefined(disable) ? true : disable;
+
+                // remove the stale disabled CSS class (this.action === 'disabled')
+                if (disable === false && this.isDisabled()) {
+                    this._removeViewClass(this.action);
+                }
+                _fieldProto.setDisabled.call(this, disable);
+            },
             /**
              * Decorate error gets called when this Field has a validation error.  This function applies custom error
              * styling appropriate for this field.
@@ -128,7 +202,7 @@
              *
              * @param {Object} errors The validation error(s) affecting this field
              */
-            decorateError: function(errors) {
+            decorateError: function (errors) {
                 var ftag = this.fieldTag || '',
                     $ftag = this.$(ftag),
                     errorMessages = [],
@@ -141,11 +215,11 @@
                 _.each(errors, function (errorContext, errorName) {
                     errorMessages.push(app.error.getErrorString(errorName, errorContext));
                 });
-                $ftag.wrap('<div class="input-append error '+ftag+'">');
+                $ftag.wrap('<div class="input-append error ' + ftag + '">');
                 $ftag.after(this.exclamationMarkTemplate(errorMessages));
                 $tooltip = this.$('.error-tooltip');
                 if (_.isFunction($tooltip.tooltip)) {
-                    var tooltipOpts = { container:'body', placement:'top', trigger: 'click' };
+                    var tooltipOpts = { container: 'body', placement: 'top', trigger: 'click' };
                     $tooltip.tooltip(tooltipOpts);
                 }
             },
@@ -153,7 +227,7 @@
             /**
              * Remove error decoration from field if it exists.
              */
-            clearErrorDecoration: function() {
+            clearErrorDecoration: function () {
                 var ftag = this.fieldTag || '',
                     $ftag = this.$(ftag);
                 // Remove previous exclamation then add back.
