@@ -11,6 +11,8 @@
                 </div>
             </div>
         </div>
+        <div class="filter-options extend hide">
+        </div>
     </form>
 </div>
 <div class="main-content">

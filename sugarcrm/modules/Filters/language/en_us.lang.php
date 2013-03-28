@@ -81,5 +81,6 @@ $mod_strings = array(
     'LBL_URGENT_OPEN_BUGS' => 'Urgent Open Bugs',
     'LBL_NEGLECTED_BUGS' => 'Neglected Bugs',
     'LBL_OPEN_CASES' => 'Urgent Open Cases',
-    'LBL_NEGLECTED_CASES' => 'Neglected Cases'
+    'LBL_NEGLECTED_CASES' => 'Neglected Cases',
+    'LBL_FILTER_NEW_NAME' => 'Enter new filter name',
 );

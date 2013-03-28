@@ -1,0 +1,11 @@
+<article class="filter-body">
+    <div class="row-fluid">
+        <div class="filter-field controls span3"></div>
+        <div class="filter-operator hide controls span3"></div>
+        <div class="filter-value hide controls span4"></div>
+        <div class="filter-actions span2">
+            <a class="removeme btn btn-invisible btn-dark"><i class="icon-minus"></i></a>
+            <a class="addme btn btn-invisible btn-dark"><i class="icon-plus"></i></a>
+        </div>
+    </div>
+</article>

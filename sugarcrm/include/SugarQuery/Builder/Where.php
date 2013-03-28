@@ -210,6 +210,22 @@ abstract class SugarQuery_Builder_Where
 
     /**
      * @param $field
+     * @param array|SugarQuery $vals
+     * @param bool $bean
+     * @return SugarQuery_Builder_Where
+     */
+    public function notIn($field, $vals, $bean = false) {
+        $condition = new SugarQuery_Builder_Condition();
+        $condition->setOperator('NOT IN')->setField($field)->setValues($vals);
+        if($bean instanceof SugarBean) {
+            $condition->setBean($bean);
+        }
+        $this->conditions[] = $condition;
+        return $this;
+    }
+
+    /**
+     * @param $field
      * @param $min
      * @param $max
      * @param bool $bean

@@ -13,7 +13,7 @@
         this.emptyFilter = app.data.createBean('Filters', {
             id: 'all_records',
             name: app.lang.get('LBL_FILTER_ALL_RECORDS'),
-            filter_def: {},
+            filter_definition: {},
             editable: false
         });
 
@@ -33,13 +33,17 @@
             });
         }
 
-        this.on('filter:change:quicksearch', function(query) {
+        this.layout.on('filter:change:quicksearch', function(query, def) {
+            this.trigger('filter:change:quicksearch', query, def);
+        }, this);
+
+        this.on('filter:change:quicksearch', function(query, dynamicFilterDef) {
             var self = this,
                 ctxList = this.getRelevantContextList();
 
             _.each(ctxList, function(ctx) {
                 var ctxCollection = ctx.get('collection'),
-                    origfilterDef = ctxCollection.filterDef || [],
+                    origfilterDef = dynamicFilterDef || ctxCollection.filterDef || [],
                     filterDef = self.getFilterDef(origfilterDef, query, ctx),
                     options = {
                         //Show alerts for this request
@@ -62,10 +66,13 @@
         }, this);
 
         this.on('filter:create:close', function() {
+
+            this.layout.editingFilter = null;
             this.layout.trigger('filter:create:close');
         }, this);
 
         this.on('filter:create:open', function(filterModel) {
+            this.layout.editingFilter = filterModel;
             this.layout.trigger('filter:create:open', filterModel);
         }, this);
 
@@ -95,7 +102,10 @@
             var link;
 
             if(this.layoutType === 'record' && !this.showingActivities) {
-                module = link = 'all_modules';
+                module = link = app.cache.get("subpanels:last:" + module) || 'all_modules';
+                if (link !== 'all_modules') {
+                    module = app.data.getRelatedModule(this.module, link);
+                }
             } else {
                 link = null;
             }
@@ -108,6 +118,18 @@
             this.filters.add(model);
             app.cache.set("filters:" + this.layout.currentModule, this.filters.toJSON());
             app.cache.set("filters:last:" + this.layout.currentModule + ":" + this.layoutType, model.get("id"));
+            this.layout.trigger('filter:reinitialize');
+        }, this);
+
+        // When a filter is deleted, update the cache and set the default filter
+        // to be the currently used filter.
+        this.layout.on('filter:remove', function(model){
+            this.filters.remove(model);
+            app.cache.set("filters:" + this.layout.currentModule, this.filters.toJSON());
+            this.layout.trigger('filter:reinitialize');
+        }, this);
+
+        this.layout.on('filter:reinitialize', function() {
             this.initializeFilterState(this.layout.currentModule, this.layout.currentLink);
         }, this);
     },
@@ -273,7 +295,7 @@
     },
 
     createPanelIsOpen: function() {
-        return !this.layout.$(".filter-options").hasClass("hide");
+        return !this.layout.$(".filter-options").is(":hidden");
     },
 
     /**
