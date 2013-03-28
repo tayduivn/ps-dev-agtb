@@ -16,11 +16,13 @@
     },
 
     bindDataChange: function() {
+        var func = function() {
+            this.context._dataFetched = true;
+            this.render();
+        };
         if (this.collection) {
-            this.collection.on("reset", function() {
-                this.context._dataFetched = true;
-                this.render();
-            }, this);
+            this.listenTo(this.collection, "reset", func);
+            this.listenTo(this.collection, "add", func);
         }
     }
 })
