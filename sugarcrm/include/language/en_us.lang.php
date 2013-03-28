@@ -1,31 +1,18 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/*********************************************************************************
- * $Id: en_us.lang.php 57929 2010-08-25 21:52:39Z kjing $
- * Description:  Defines the English language pack for the base application.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
 
 //the left value is the key stored in the db and the right value is ie display value
 //to translate, only modify the right value in each key/value pair
@@ -3859,6 +3846,12 @@ $app_strings = array (
     'LBL_ORG_CHART' => 'Organization Chart',
     'LBL_ORG_CHART_DESC' => 'Displays the employee structure of your organization.',
 
+    //top 10 opportunities chart
+    'LBL_TOP10_OPPORTUNITIES_CHART' => 'Top 10 Opportunities Chart',
+    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten opportunities in a bubble chart.',
+    'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
+    'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
+
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
     'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment',
@@ -3892,6 +3885,19 @@ $app_list_strings['activity_user_options'] = array (
     '7' => 'Last 7 Days',
     '30' => 'Last 30 Days',
     '90' => 'Last Quarter',
+);
+
+//top 10 opportunites chart config options
+// see sugarcrm/clients/base/views/bubblechart/bubblechart.php
+$app_list_strings['top10_opportunities_duration_options'] = array (
+    0 => 'This Quarter',
+    3 => 'Next Quarter',
+    12 => 'This Year',
+);
+// see sugarcrm/clients/base/views/bubblechart/bubblechart.php
+$app_list_strings['top10_opportunities_filter_assigned_options'] = array (
+    'my' => 'My Opportunities',
+    'group' => 'Group Opportunities',
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
