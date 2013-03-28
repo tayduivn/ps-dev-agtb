@@ -192,7 +192,11 @@ class SugarQuery_Compiler_SQL
      */
     protected function compileGroupBy($groupBy)
     {
-        return implode(',', $groupBy);
+        $return = array();
+        foreach($groupBy AS $field) {
+            $return[] = $this->canonicalizeFieldName($field);
+        }
+        return implode(',', $return);
     }
 
     /**

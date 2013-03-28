@@ -642,8 +642,8 @@ class FilterApi extends SugarApi
 
         // Now, if they want tracker records, so let's order it by the tracker date_modified
         $q->orderBy('tracker.date_modified', 'DESC');
-
-        // Also, turn the distinct part off otherwise the sorting doesn't work.
-        $q->distinct(false);
+        // need this to eliminate dupe id's in case you visit the same record many-a-time
+        $q->groupBy('id');
+        $q->distinct(FALSE);
     }
 }
