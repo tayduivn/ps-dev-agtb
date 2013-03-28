@@ -7,7 +7,7 @@
                     <a class="advanced btn-invisible dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
                         <span class="caret"></span>
                     </a>
-                    <div class="dropdown-menu scroll pull-right">
+                    <div class="dropdown-menu pull-right">
                         <ul class="globalsearch-adv reset-width" role="menu">
                             <li><label class="active"><input class="select-module" data-module="all" type="checkbox" checked="checked"> {{str "LBL_SEARCH_ALL_MODULES"}}</label></li>
                             {{#each searchModules}}
