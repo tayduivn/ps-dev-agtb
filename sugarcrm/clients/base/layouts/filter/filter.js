@@ -102,7 +102,10 @@
             var link;
 
             if(this.layoutType === 'record' && !this.showingActivities) {
-                module = link = 'all_modules';
+                module = link = app.cache.get("subpanels:last:" + module) || 'all_modules';
+                if (link !== 'all_modules') {
+                    module = app.data.getRelatedModule(this.module, link);
+                }
             } else {
                 link = null;
             }
