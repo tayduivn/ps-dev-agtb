@@ -4,7 +4,10 @@
                 {{field ../this ../this.model "edit"}}
             {{/each}}</div>
       <div class="span4">
-        Buttons here
+        <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
+          <button class="btn active" rel="tooltip" data-type="self" data-original-title="My Pipeline" data-placement="top"><i class="icon-user"></i></button>
+          <button class="btn" rel="tooltip" data-type="team" data-original-title="My Teams Pipeline" data-placement="top"><i class="icon-group"></i></button>
+        </div>
       </div>
     </div>
   </div>
