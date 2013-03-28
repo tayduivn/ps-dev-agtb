@@ -83,6 +83,10 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'name',
                     'required' => true,
                 ),
+                array(
+                    'type' => 'follow',
+                    'readonly' => true,
+                ),
             ),
         ),
         array(
