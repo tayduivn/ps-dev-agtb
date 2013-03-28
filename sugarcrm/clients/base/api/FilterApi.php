@@ -128,7 +128,13 @@ class FilterApi extends SugarApi
                     'list'
                 ) || !isset($seed->field_defs[$orderSplit[0]])
                 ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: ' . $orderSplit[0] . ' in module: ' . $args['module']);
+                    throw new SugarApiExceptionNotAuthorized(
+                        sprintf(
+                            'No access to view field: %s in module: %s',
+                            $orderSplit[0],
+                            $args['module']
+                        )
+                    );
                 }
 
                 if (!isset($orderSplit[1]) || strtolower(
@@ -191,7 +197,13 @@ class FilterApi extends SugarApi
         $record = BeanFactory::retrieveBean($args['module'], $args['record']);
 
         if (empty($record)) {
-            throw new SugarApiExceptionNotFound('Could not find parent record ' . $args['record'] . ' in module ' . $args['module']);
+            throw new SugarApiExceptionNotFound(
+                sprintf(
+                    'Could not find parent record %s in module: %s',
+                    $args['record'],
+                    $args['module']
+                )
+            );
         }
         if (!$record->ACLAccess('view')) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
@@ -426,10 +438,12 @@ class FilterApi extends SugarApi
     ) {
         foreach ($filterDefs as $filterDef) {
             if (!is_array($filterDef)) {
-                throw new SugarApiExceptionInvalidParameter("Did not recognize the definition: " . print_r(
-                    $filterDef,
-                    true
-                ));
+                throw new SugarApiExceptionInvalidParameter(
+                    sprintf(
+                        'Did not recognize the definition: %s',
+                        print_r($filterDef, true)
+                    )
+                );
             }
             foreach ($filterDef as $field => $filter) {
                 if ($field == '$or') {
@@ -491,7 +505,9 @@ class FilterApi extends SugarApi
                                 break;
                             case '$between':
                                 if (!is_array($value) || count($value) != 2) {
-                                    throw new SugarApiExceptionInvalidParameter('$between requires an array with two values.');
+                                    throw new SugarApiExceptionInvalidParameter(
+                                        '$between requires an array with two values.'
+                                    );
                                 }
                                 $where->between($field, $value[0], $value[1]);
                                 break;
@@ -607,9 +623,12 @@ class FilterApi extends SugarApi
 
         // Since tracker relationships don't actually exist, we're gonna have to add a direct join
         $q->joinRaw(
-            " LEFT JOIN tracker ON tracker.item_id={$q->from->getTableName()}.id "
-                . "AND tracker.module_name='{$q->from->module_name}' "
-                . "AND tracker.user_id='{$GLOBALS['current_user']->id}' ",
+            sprintf(
+                " LEFT JOIN tracker ON tracker.item_id=%s.id AND tracker.module_name='%s' AND tracker.user_id='%s' ",
+                $q->from->getTableName(),
+                $q->from->module_name,
+                $GLOBALS['current_user']->id
+            ),
             array('alias' => 'tracker')
         );
 
