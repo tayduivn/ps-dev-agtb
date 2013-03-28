@@ -106,6 +106,7 @@
     showComponent: function(name) {
         if (this.componentsList[name]) {
             this.componentsList[name].render();
+            this._components.push(this.componentsList[name]);
             this.$(".main-content").append(this.componentsList[name].el);
             this.componentsList[name] = null;
         }
@@ -118,6 +119,16 @@
             }
         }, this);
         this.trigger('filterpanel:change', name);
+    },
+
+    _dispose: function() {
+        _.each(this.componentsList, function(component) {
+            if (component) {
+                component.dispose();
+            }
+        });
+        this.componentsList = {};
+        app.view.Layout.prototype._dispose.call(this);
     },
 
     getActivityContext: function() {
