@@ -10765,9 +10765,10 @@ nv.models.bubbleChart = function() {
                '<p>' +  y + ' on ' + x + '</p>';
       }
     , noData = "No Data Available."
+    , bubbleClick = function(e) {
+        return;
+      }
     ;
-
-  //============================================================
 
 
   //============================================================
@@ -10788,7 +10789,10 @@ nv.models.bubbleChart = function() {
         .showMaxMin(false)
     , legend = nv.models.legend()
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
+    , yValues = []
   ;
+
+  //============================================================
 
   var showTooltip = function(e, offsetElement) {
     // New addition to calculate position if SVG is scaled with viewBox, may move TODO: consider implementing everywhere else
@@ -10814,14 +10818,7 @@ nv.models.bubbleChart = function() {
     nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
 
-  var bubbleClick = function(e) {
-    return;
-  };
-
-
-
   //============================================================
-
 
   function chart(selection) {
 
@@ -10832,13 +10829,6 @@ nv.models.bubbleChart = function() {
 
       var container = d3.select(this)
         , that = this;
-
-      var width = width  || parseInt(container.style('width'), 10)
-        , height = height || parseInt(container.style('height'), 10);
-
-      var availableWidth = (width || 960) - margin.left - margin.right
-        , availableHeight = (height || 400) - margin.top - margin.bottom;
-
 
       // Calculate the x-axis ticks
       function getTimeTicks(data) {
@@ -10866,17 +10856,16 @@ nv.models.bubbleChart = function() {
         return timeTicks;
       }
 
-
       // Group data by groupBy function to prep data for calculating y-axis groups
       // and y scale value for points
-      function getGroupTicks(data) {
+      function getGroupTicks(data,height) {
 
         var groupedData = d3.nest()
                             .key(groupBy)
                             .entries(data);
 
         // Calculate y scale parameters
-        var gHeight = availableHeight/groupedData.length
+        var gHeight = height/groupedData.length
           , gOffset = gHeight*0.25
           , gDomain = [0,1]
           , gRange = [0,1]
@@ -10927,32 +10916,45 @@ nv.models.bubbleChart = function() {
         return yValues;
       }
 
-      var yValues = getGroupTicks(data);
-      //------------------------------------------------------------
-      // Display noData message if there's nothing to show.
-
-      if (!data || !data.length) {
-        container.append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('x', availableWidth / 2)
-          .attr('y', availableHeight / 2)
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'middle')
-          .text(noData);
-          return chart;
-      } else {
-        container.select('.nv-noData').remove();
-      }
-
-      // Now that group calculations are done,
-      // group the data by filter so that legend filters
-      var filteredData = d3.nest()
-                          .key(filterBy)
-                          .entries(data);
-
       //properties.title = 'Total = $' + d3.format(',.02d')(total);
 
+      //============================================================
+
       chart.render = function() {
+
+        var width = width  || parseInt(container.style('width'), 10)
+          , height = height || parseInt(container.style('height'), 10);
+
+        var availableWidth = (width || 960) - margin.left - margin.right
+          , availableHeight = (height || 400) - margin.top - margin.bottom;
+
+
+        //------------------------------------------------------------
+        // Display noData message if there's nothing to show.
+
+        if (!data || !data.length) {
+          container.select('.nv-bubbleChart').remove();
+          container.append('text')
+            .attr('class', 'nvd3 nv-noData')
+            .attr('x', availableWidth / 2)
+            .attr('y', availableHeight / 2)
+            .attr('dy', '-.7em')
+            .style('text-anchor', 'middle')
+            .text(noData);
+            return chart;
+        } else {
+          container.select('.nv-noData').remove();
+        }
+
+        // Calculate the grouping values for y-axis
+        var yValues = getGroupTicks(data,availableHeight);
+
+        // Now that group calculations are done,
+        // group the data by filter so that legend filters
+        var filteredData = d3.nest()
+                            .key(filterBy)
+                            .entries(data);
+
 
         //------------------------------------------------------------
         // Setup containers and skeleton of chart
@@ -11091,7 +11093,7 @@ nv.models.bubbleChart = function() {
         selection.transition().call(chart.render);
       });
 
-/*
+      /*
       legend.dispatch.on('legendMouseover', function(d, i) {
         d.hover = true;
         selection.transition().call(chart)
@@ -11101,7 +11103,7 @@ nv.models.bubbleChart = function() {
         d.hover = false;
         selection.transition().call(chart)
       });
-*/
+      */
 
       dispatch.on('tooltipShow', function(e) {
         if (tooltips) showTooltip(e, that.parentNode);
@@ -11110,6 +11112,7 @@ nv.models.bubbleChart = function() {
       //============================================================
 
       chart.render();
+
 
       chart.update = function() { chart(selection); };
       chart.container = this;
@@ -11139,8 +11142,6 @@ nv.models.bubbleChart = function() {
   bubbles.dispatch.on('elementClick', function(e) {
     bubbleClick(e);
   });
-
-  //============================================================
 
 
   //============================================================
@@ -11268,6 +11269,7 @@ nv.models.bubbleChart = function() {
     filterBy = _;
     return chart;
   };
+
   //============================================================
 
 

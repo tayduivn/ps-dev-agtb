@@ -9,7 +9,7 @@
   <link href="../css/sugar.css" rel="stylesheet" type="text/css">
   <style>
     #bubble {
-      width: 700px;
+      max-width: 700px;
       height: 500px;
     }
   </style>
@@ -33,7 +33,8 @@
 
   // Wrapping in nv.addGraph allows for '0 timeout render', stors rendered charts in nv.graphs, and may do more in the future... it's NOT required
   nv.addGraph(function() {
-    var now = new Date(),
+    var self = this,
+        now = new Date(),
         duration = 12,
         startDate = new Date(now.getFullYear(), (duration === 12 ? 0 : Math.ceil((now.getMonth())/3)-1+duration), 1),
         endDate = new Date(now.getFullYear(), (duration === 12 ? 12 : startDate.getMonth()+3), 0),
@@ -96,7 +97,11 @@
         .transition().duration(500)
           .call(chart);
 
-      nv.utils.windowResize(chart.update);
+      self.chart = chart;
+
+      chart.render();
+
+      nv.utils.windowResize(self.chart.render);
 
       return chart;
     });
