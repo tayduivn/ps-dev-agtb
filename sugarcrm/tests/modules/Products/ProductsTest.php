@@ -587,6 +587,42 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group products
      */
+    public function testProductTemplateSetsProductFieldsWithCurrencyConversion()
+    {
+        SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87,'currency-yen');
+        $pt_values = array(
+            'mft_part_num' => 'unittest',
+            'list_price' => '800',
+            'cost_price' => '400',
+            'discount_price' => '700',
+            'list_usdollar' => '800',
+            'cost_usdollar' => '400',
+            'discount_usdollar' => '700',
+            'tax_class' => 'Taxable',
+            'weight' => '100',
+            'currency_id' => '-99'
+        );
+
+        $pt = SugarTestProductTemplatesUtilities::createProductTemplate('', $pt_values);
+
+        $product = SugarTestProductUtilities::createProduct();
+        $product->product_template_id = $pt->id;
+        $product->currency_id = 'currency-yen';
+
+        SugarTestReflection::callProtectedMethod($product, 'mapFieldsFromProductTemplate');
+
+        $this->assertEquals(SugarCurrency::convertAmount(800, '-99', 'currency-yen'), $product->list_price);
+        $this->assertEquals(SugarCurrency::convertAmount(400, '-99', 'currency-yen'), $product->cost_price);
+        $this->assertEquals(SugarCurrency::convertAmount(700, '-99', 'currency-yen'), $product->discount_price);
+
+        SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
+        // remove test currencies
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+    }
+
+    /**
+     * @group products
+     */
     public function testBestCaseAutofillEmpty()
     {
         $product = SugarTestProductUtilities::createProduct();
