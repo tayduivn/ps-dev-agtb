@@ -1,15 +1,19 @@
 ({
     events: {
         'click #tour': 'showTutorial',
-        'click #print': 'print'
+        'click #feedback': 'feedback',
+        'click #support': 'support'
     },
     tagName: "span",
     _renderHtml: function(){
         this.isAuthenticated = app.api.isAuthenticated();
         app.view.View.prototype._renderHtml.call(this);
     },
-    print: function() {
-        window.print();
+    feedback: function() {
+        window.open("http://www.surveymonkey.com/s/FNCXF3S","_blank");
+    },
+    support: function() {
+        window.open("http://support.sugarcrm.com", '_blank');;
     },
     showTutorial: function() {
         app.tutorial.resetPrefs();
