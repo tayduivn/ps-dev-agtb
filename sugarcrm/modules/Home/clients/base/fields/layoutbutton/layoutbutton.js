@@ -2,7 +2,7 @@
     events: {
         'click .btn.layout' : 'layoutClicked'
     },
-    extendFrom: 'ButtonField',
+    extendsFrom: 'ButtonField',
     getFieldElement: function() {
         return this.$el;
     },

@@ -19,7 +19,6 @@
             this.hide();
         } else {
             app.view.fields.ButtonField.prototype._render.call(this);
-            this.show();
         }
     },
     _close: function (createNew) {

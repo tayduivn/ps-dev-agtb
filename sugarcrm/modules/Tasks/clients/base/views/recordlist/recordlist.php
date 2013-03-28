@@ -33,7 +33,7 @@ $viewdefs['Tasks']['base']['view']['recordlist']['rowactions']['actions'] = arra
         'tooltip' => 'LBL_PREVIEW',
         'event' => 'list:preview:fire',
         'icon' => 'icon-eye-open',
-        'value' => 'view',
+        'acl_action' => 'view',
     ),
     array(
         'type' => 'rowaction',
@@ -41,20 +41,20 @@ $viewdefs['Tasks']['base']['view']['recordlist']['rowactions']['actions'] = arra
         'icon' => 'icon-pencil',
         'label' => 'LBL_EDIT_BUTTON',
         'event' => 'list:editrow:fire',
-        'value' => 'edit',
+        'acl_action' => 'edit',
     ),
     array(
         'type' => 'closebutton',
         'name' => 'record-close',
         'icon' => 'icon-none',
         'label' => 'LBL_CLOSE_BUTTON_TITLE',
-        'value' => 'edit',
+        'acl_action' => 'edit',
     ),
     array(
         'type' => 'rowaction',
         'icon' => 'icon-trash',
         'event' => 'list:deleterow:fire',
         'label' => 'LBL_DELETE_BUTTON',
-        'value' => 'delete',
+        'acl_action' => 'delete',
     ),
 );

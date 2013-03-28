@@ -28,6 +28,7 @@
     tagName: "span",
     fieldTag: "a",
     initialize: function(options) {
+        var self = this;
         this.events = _.extend({}, this.events, options.def.events, {
             'click .disabled' : 'preventClick'
         });
@@ -38,26 +39,29 @@
             return origRender.call(this);
         }, 100);
         app.view.Field.prototype.initialize.call(this, options);
+
+        // take advantage of this hook to do the acl check
+        // we use this wrapper because our spec
+        // requires us to set the button.isHidden = true
+        // if we don't render it.
+        this.before("render", function() {
+            if (self.hasAccess()) {
+                return true;
+            }
+            else {
+                this.hide();
+                return false;
+            }
+        });
     },
     _render:function(){
-        // buttons use the acl_action and acl_module properties in metadata to denote their action for acls
-        var acl_module = this.def.acl_module,
-            acl_action = this.def.acl_action,
-            hasAccess;
-
         this.full_route = _.isString(this.def.route) ? this.def.route : null;
 
-        if (!acl_module) {
-            hasAccess = app.acl.hasAccessToModel(acl_action, this.model, this);
-        } else {
-            hasAccess = app.acl.hasAccess(acl_action, acl_module);
-        }
-
         app.view.Field.prototype._render.call(this);
-        if (!hasAccess  || this.isHidden) {
+        if (this.isHidden) {
             this.hide();
         } else {
-            this.show();
+            this._show();
         }
     },
     getFieldElement: function() {
@@ -81,14 +85,38 @@
             return false;
         }
     },
-    show: function() {
+    /**
+     * Handles the jquery showing and event throwing
+     * of the button. does no access checks.
+     * @protected
+     */
+    _show: function() {
         app.view.Field.prototype.show.call(this);
         this.isHidden = false;
         this.trigger("show");
+    },
+    show: function() {
+        if(this.hasAccess()) {
+            this._show();
+        }
     },
     hide: function() {
         app.view.Field.prototype.hide.call(this);
         this.isHidden = true;
         this.trigger("hide");
+    },
+    /**
+     * Determine if ACLs allow for the button to show
+     * @return {Boolean} true if ACLs allow access, false otherwise
+     */
+    hasAccess: function() {
+        // buttons use the acl_action and acl_module properties in metadata to denote their action for acls
+        var acl_module = this.def.acl_module,
+            acl_action = this.def.acl_action;
+        if (!acl_module) {
+            return app.acl.hasAccessToModel(acl_action, this.model, this);
+        } else {
+            return app.acl.hasAccess(acl_action, acl_module);
+        }
     }
 })
