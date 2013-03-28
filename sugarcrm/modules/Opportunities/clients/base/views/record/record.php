@@ -187,6 +187,24 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                             'name' => 'created_by_name',
                         )
                     )
+                ),
+                array(
+                    'name' => 'date_modified_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_MODIFIED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY'
+                        ),
+                        array(
+                            'name' => 'created_by_name',
+                        )
+                    )
                 )               
             )
         )
