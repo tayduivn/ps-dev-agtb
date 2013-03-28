@@ -98,11 +98,13 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                     'width' => 10,
                     'label' => 'LBL_NEXT_STEP',
                 ),
+//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
                 array(
                     'name' => 'probability',
                     'width' => 10,
                     'label' => 'LBL_PROBABILITY',
                 ),
+//END SUGARCRM flav=pro && flav!=ent ONLY
                 array (
                     'name' => 'date_closed',
                     'width' => 10,
