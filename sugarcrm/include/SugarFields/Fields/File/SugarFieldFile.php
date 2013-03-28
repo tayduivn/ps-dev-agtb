@@ -145,9 +145,7 @@ class SugarFieldFile extends SugarFieldBase
             if ($upload_file->final_move($bean->id)) {
                 // This fixes an undefined index warning being thrown
                 $docType = isset($vardef['docType']) && isset($params[$prefix . $vardef['docType']]) ? $params[$prefix . $vardef['docType']] : null;
-                if (!isset($params['skipConnectors']) || $params['skipConnectors'] === false) {
-                    $upload_file->upload_doc($bean, $bean->id, $docType, $bean->$field, $upload_file->mime_type);
-                }
+                $upload_file->upload_doc($bean, $bean->id, $docType, $bean->$field, $upload_file->mime_type);
             } else {
                 // Reset the bean back to original, but only if we had set them.
                 $bean->$field = $originalvals['value'];
