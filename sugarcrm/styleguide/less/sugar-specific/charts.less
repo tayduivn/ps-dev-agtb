@@ -212,20 +212,29 @@
   */
 }
 
-//.main-pane.span8 .thumbnail.viz:not(.expanded) .nv-chart-org,
-.thumbnail.widget:not(.expanded) .nv-chart {
-  height: 450px;
-  margin: 8px;
-  //border: 1px solid #ddd;
+.thumbnail.widget:not(.expanded) {
+  .nv-chart {
+    height: 450px;
+    margin: 8px;
+    //border: 1px solid #ddd;
+  }
+  .dashlet-options+.nv-chart {
+    height: 409px;
+  }
+  .opportunity-metrics-wrapper .nv-chart {
+    height: 309px;
+  }
 }
-.thumbnail.widget:not(.expanded) .dashlet-options+.nv-chart {
-  height: 409px;
-}
-.sidebar-content .thumbnail.widget:not(.expanded) .dashlet-options+.nv-chart {
-  height: 309px;
-}
-.sidebar-content .thumbnail.widget:not(.expanded) .nv-chart {
-  height: 350px;
+.sidebar-content .thumbnail.widget:not(.expanded) {
+  .nv-chart {
+    height: 350px;
+  }
+  .dashlet-options+.nv-chart {
+    height: 309px;
+  }
+  .opportunity-metrics-wrapper .nv-chart {
+    height: 250px;
+  }
 }
 
 // for org chart demo renderer
