@@ -1,45 +1,31 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 /**
  * This is the base object for building SugarQueries
  *
  */
 
-require_once('include/SugarQuery/Compiler.php');
-require_once('include/SugarQuery/Builder/Where.php');
-require_once('include/SugarQuery/Builder/Andwhere.php');
-require_once('include/SugarQuery/Builder/Orwhere.php');
-require_once('include/SugarQuery/Builder/Join.php');
-require_once('include/SugarQuery/Builder/Select.php');
-require_once('include/SugarQuery/Builder/Condition.php');
-require_once('include/SugarQuery/Builder/Literal.php');
+require_once 'include/SugarQuery/Compiler.php';
+require_once 'include/SugarQuery/Builder/Where.php';
+require_once 'include/SugarQuery/Builder/Andwhere.php';
+require_once 'include/SugarQuery/Builder/Orwhere.php';
+require_once 'include/SugarQuery/Builder/Join.php';
+require_once 'include/SugarQuery/Builder/Select.php';
+require_once 'include/SugarQuery/Builder/Condition.php';
+require_once 'include/SugarQuery/Builder/Literal.php';
 
 class SugarQuery
 {
@@ -120,298 +106,342 @@ class SugarQuery
 
     /**
      * Build the select object
+     *
      * @param bool $fields
+     *
      * @return null|SugarQuery_Builder_Select
      */
-    public function select($fields = false) {
-		if(empty($this->select)) {
-			$this->select = new SugarQuery_Builder_Select($this, $fields);
-		}
-		return $this->select;
-	}
+    public function select($fields = false)
+    {
+        if (empty($this->select)) {
+            $this->select = new SugarQuery_Builder_Select($this, $fields);
+        }
+        return $this->select;
+    }
 
 
     /**
      * Set the from bean
+     *
      * @param SugarBean $bean
      * @param bool $alias
+     *
      * @return SugarQuery
      */
-    public function from(SugarBean $bean, $options = array()) {
+    public function from(SugarBean $bean, $options = array())
+    {
         $alias = (isset($options['alias'])) ? $options['alias'] : false;
         $team_security = (isset($options['team_security'])) ? $options['team_security'] : true;
         $add_deleted = (isset($options['add_deleted'])) ? $options['add_deleted'] : true;
-		$this->from = $bean;
-		if(!empty($alias)) {
-			$this->from = array($bean, $alias);
-		}
+        $this->from = $bean;
+        if (!empty($alias)) {
+            $this->from = array($bean, $alias);
+        }
 
-        if($team_security === true) {
+        if ($team_security === true) {
             $bean->addVisibilityQuery($this);
         }
 
-        if($add_deleted === true) {
-            $this->where()->equals('deleted',0);
+        if ($add_deleted === true) {
+            $this->where()->equals('deleted', 0);
         }
 
         return $this;
-	}
+    }
 
     /**
      * Add an AND Where Object to this query
+     *
      * @param array $conditions
+     *
      * @return SugarQuery_Builder_Where
      */
-    public function where($conditions = array()) {
-		if(!isset($this->where['and'])) {
-			$this->where['and'] = new SugarQuery_Builder_Andwhere($conditions);
-		}
-		if(!empty($conditions)) {
-			$this->where['and']->add($conditions);
-		}
-		return $this->where['and'];
-	}
+    public function where($conditions = array())
+    {
+        if (!isset($this->where['and'])) {
+            $this->where['and'] = new SugarQuery_Builder_Andwhere($conditions);
+        }
+        if (!empty($conditions)) {
+            $this->where['and']->add($conditions);
+        }
+        return $this->where['and'];
+    }
 
     /**
      * Build a raw where statement
+     *
      * @param $sql
+     *
      * @return SugarQuery_Builder_Andwhere
      */
-    public function whereRaw($sql) {
-		$where = new SugarQuery_Builder_Andwhere();
-		$where->addRaw($sql);
-		$this->where['and']->add($where);
+    public function whereRaw($sql)
+    {
+        $where = new SugarQuery_Builder_Andwhere();
+        $where->addRaw($sql);
+        $this->where['and']->add($where);
         return $this->where['and'];
-	}
+    }
 
 
     /**
      * Add an Or Where Object to this query
+     *
      * @param array $conditions
+     *
      * @return SugarQuery_Builder_Orwhere
      */
-    public function orWhere($conditions = array()) {
-		if(!isset($this->where['or'])) {
-			$this->where['or'] = new SugarQuery_Builder_Orwhere($conditions);
-		}
+    public function orWhere($conditions = array())
+    {
+        if (!isset($this->where['or'])) {
+            $this->where['or'] = new SugarQuery_Builder_Orwhere($conditions);
+        }
 
-		return $this->where['or'];
-	}
+        return $this->where['or'];
+    }
 
 
     /**
      * Add a traditional query builder join object to this query
+     *
      * @param string $table
      * @param array $options
+     *
      * @return SugarQuery_Builder_Join
      */
-    public function joinTable($table, $options = array()) {
+    public function joinTable($table, $options = array())
+    {
 
-		$join = new SugarQuery_Builder_Join($table, $options);
-		if(isset($options['alias'])) {
-			$key = $options['alias'];
-		}
-		else {
-			$key = $table;
-		}
+        $join = new SugarQuery_Builder_Join($table, $options);
+        if (isset($options['alias'])) {
+            $key = $options['alias'];
+        } else {
+            $key = $table;
+        }
 
-		$this->join[$key] = $join;
-		return $join;
-	}
+        $this->join[$key] = $join;
+        return $join;
+    }
 
     /**
      * Add a raw [straight SQL] join object to this query
+     *
      * @param string $sql
      * @param array $options
+     *
      * @return SugarQuery_Builder_Join
      */
-    public function joinRaw($sql, $options = array()) {
-		$join = new SugarQuery_Builder_Join();
-		$join->addRaw($sql);
-        if(isset($options['alias']) && !empty($options['alias'])) {
+    public function joinRaw($sql, $options = array())
+    {
+        $join = new SugarQuery_Builder_Join();
+        $join->addRaw($sql);
+        if (isset($options['alias']) && !empty($options['alias'])) {
             $this->join[$options['alias']] = $join;
-        }
-        else {
+        } else {
             $this->join[md5($sql)] = $join;
         }
 
 
-		return $join;
-	}
+        return $join;
+    }
 
     /**
      * Add a join based on a link with the from bean
+     *
      * @param string $link_name
      * @param array $options
+     *
      * @return SugarQuery
      */
-    public function join($link_name, $options = array()) {
-        if(!isset($options['alias'])) {
+    public function join($link_name, $options = array())
+    {
+        if (!isset($options['alias'])) {
             $options['alias'] = $link_name;
         }
 
-        if(!empty($this->links[$link_name])) {
+        if (!empty($this->links[$link_name])) {
             return $this->links[$link_name];
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
-        if($link_name == 'favorites') {
-            $sfOptions = array('joinType'=>'LEFT');
+        if ($link_name == 'favorites') {
+            $sfOptions = array('joinType' => 'LEFT');
             $sf = new SugarFavorites();
             $options['alias'] = $sf->addToSugarQuery($this, $sfOptions);
-        } else
-        //END SUGARCRM flav=pro ONLY
-        {
-    		$this->loadBeans($link_name, $options);
+        } else {
+            $this->loadBeans($link_name, $options);
         }
-		$this->join[$options['alias']]->addLinkName($link_name);
-		$this->links[$link_name] = $this->join[$options['alias']];
-		return $this->join[$options['alias']];
-	}
+        $this->join[$options['alias']]->addLinkName($link_name);
+        $this->links[$link_name] = $this->join[$options['alias']];
+        return $this->join[$options['alias']];
+    }
 
     /**
      * Compile this SugarQuery into a standard SQL-92 Query string
      * @return string
      */
-    public function compileSql() {
+    public function compileSql()
+    {
         global $db;
-		$compiler = new SugarQuery_Compiler();
-		return $compiler->compile($this, $db);
-	}
+        $compiler = new SugarQuery_Compiler();
+        return $compiler->compile($this, $db);
+    }
 
     /**
      * Execute this query and return it as a raw string, db object json, or array
+     *
      * @param string $type
+     *
      * @return array|dbObject|string
      */
-    public function execute($type = "array", $encode = true) {
-		switch($type)
-		{
-			case 'raw':
-				return $this->compileSql($this);
-				break;
-			case 'db':
-				return $this->runQuery($this);
-				break;
-			case 'json':
-			case 'array':
-			default:
-				$results = $this->runQuery($this);
-				$return = array();
-				while($row = $this->db->fetchByAssoc($results, $encode))
-				{
-					$return[] = $row;
-				}
-				if($type == 'json')
-				{
-					return json_encode($return);
-				}
-				return $return;
-				break;
-		}
+    public function execute($type = "array", $encode = true)
+    {
+        switch ($type) {
+            case 'raw':
+                return $this->compileSql($this);
+                break;
+            case 'db':
+                return $this->runQuery($this);
+                break;
+            case 'json':
+            case 'array':
+            default:
+                $results = $this->runQuery($this);
+                $return = array();
+                while ($row = $this->db->fetchByAssoc($results, $encode)) {
+                    $return[] = $row;
+                }
+                if ($type == 'json') {
+                    return json_encode($return);
+                }
+                return $return;
+                break;
+        }
 
-	}
+    }
 
     /**
      * Run the query and return the db result object
      * @return db result object
      */
-    protected function runQuery() {
-		$this->db = DBManagerFactory::getInstance();
-		return $this->db->query($this->compileSql($this));
-	}
+    protected function runQuery()
+    {
+        $this->db = DBManagerFactory::getInstance();
+        return $this->db->query($this->compileSql($this));
+    }
 
 
     /**
      * This will eventually determine the type of query [select, update, delete, insert] and return the specific type
      * @return string
      */
-    public static function getType() {
-		return 'select';
-	}
+    public static function getType()
+    {
+        return 'select';
+    }
 
     /**
      * Set this Query as Distinct
+     *
      * @param bool $value
+     *
      * @return SugarQuery
      */
-    public function distinct($value) {
-		$this->distinct = (bool) $value;
-		return $this;
-	}
+    public function distinct($value)
+    {
+        $this->distinct = (bool) $value;
+        return $this;
+    }
 
 
     /**
      * Set the offset of this query
+     *
      * @param int $number
+     *
      * @return SugarQuery
      */
-    public function offset($number) {
-		$this->offset = $number;
+    public function offset($number)
+    {
+        $this->offset = $number;
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Add a union query to this query
+     *
      * @param SugarQuery $select
      * @param bool $all
+     *
      * @return SugarQuery
      */
-    public function union(SugarQuery $select, $all = TRUE) {
+    public function union(SugarQuery $select, $all = true)
+    {
 
-		$this->union []= array('select' => $select, 'all' => $all);
+        $this->union [] = array('select' => $select, 'all' => $all);
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Add a group by statement to this query
+     *
      * @param array $array
+     *
      * @return SugarQuery
      */
-    public function groupBy($array) {
-		$this->group_by[] = $array;
+    public function groupBy($array)
+    {
+        $this->group_by[] = $array;
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Add a having statement to this query
+     *
      * @param array $array
+     *
      * @return SugarQuery
      */
-    public function having($array) {
-		$this->having[] = array($array);
-		return $this;
-	}
+    public function having($array)
+    {
+        $this->having[] = array($array);
+        return $this;
+    }
 
 
     /**
      * Add an order by statement for this query
+     *
      * @param string $column
      * @param string $direction
+     *
      * @return SugarQuery
      */
-    public function orderBy($column, $direction = NULL) {
-		$this->order_by[] = array($column, $direction);
+    public function orderBy($column, $direction = null)
+    {
+        $this->order_by[] = array($column, $direction);
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Set the limit of this query
+     *
      * @param int $number
+     *
      * @return SugarQuery
      */
-    public function limit($number) {
-		$this->limit = $number;
+    public function limit($number)
+    {
+        $this->limit = $number;
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Load Beans uses Link2 to take a SugarQuery object and add the joins needed to take a link and make the connection
+     *
      * @param Linkname $join
      * @param $alias
      */
@@ -421,39 +451,47 @@ class SugarQuery
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
         $team_security = (!empty($options['team_security'])) ? $options['team_security'] : true;
 
-		$bean = $this->from;
-		if(is_array($bean)) {
-			list($bean, $alias) = $bean;
-		}
+        $bean = $this->from;
+        if (is_array($bean)) {
+            list($bean, $alias) = $bean;
+        }
 
         $bean->load_relationship($join);
 
 
-		$bean->$join->buildJoinSugarQuery($this, array('joinTableAlias'=>$bean->module_name, 'myAlias'=>$alias, 'joinType' => $joinType));
-		$joined = BeanFactory::newBean($bean->$join->getRelatedModuleName());
-		if($team_security === true) {
-			$joined->addVisibilityQuery($this, array("table_alias" => $alias, 'as_condition' => true));
-		}
+        $bean->$join->buildJoinSugarQuery(
+            $this,
+            array(
+                'joinTableAlias' => $bean->module_name,
+                'myAlias' => $alias,
+                'joinType' => $joinType
+            )
+        );
+        $joined = BeanFactory::newBean($bean->$join->getRelatedModuleName());
+        if ($team_security === true) {
+            $joined->addVisibilityQuery(
+                $this,
+                array("table_alias" => $alias, 'as_condition' => true)
+            );
+        }
 
 
-		if($joined->hasCustomFields())
-		{
-			$table_cstm = $joined->get_custom_table_name();
-			// TODO: CLEAN THIS UP TO USE A JOIN OBJECT, IT WOULD BE NICER
-			if(!empty($table_cstm))
-			{
-				$sql = "LEFT JOIN {$table_cstm} ON {$table_cstm}.id_c = {$alias}.id";
-				$this->joinRaw($sql);
-			}
-		}
+        if ($joined->hasCustomFields()) {
+            $table_cstm = $joined->get_custom_table_name();
+            // TODO: CLEAN THIS UP TO USE A JOIN OBJECT, IT WOULD BE NICER
+            if (!empty($table_cstm)) {
+                $sql = "LEFT JOIN {$table_cstm} ON {$table_cstm}.id_c = {$alias}.id";
+                $this->joinRaw($sql);
+            }
+        }
 
-	}
+    }
 
-	public function hasParent($has = null)
-	{
-	    if($has !== null) {
-	        $this->has_parent = $has;
-	    }
-	    return $this->has_parent;
-	}
+    public function hasParent($has = null)
+    {
+        if ($has !== null) {
+            $this->has_parent = $has;
+        }
+        return $this->has_parent;
+    }
 }
