@@ -188,6 +188,7 @@ nv.models.bubbleChart = function() {
       // Display noData message if there's nothing to show.
 
       if (!data || !data.length) {
+        container.selectAll('.nv-bubbleChart').remove();
         container.append('text')
           .attr('class', 'nvd3 nv-noData')
           .attr('x', availableWidth / 2)
@@ -208,7 +209,7 @@ nv.models.bubbleChart = function() {
 
       chart.render = function() {
 
-        container.select('.nv-noData').remove();
+        container.selectAll('.nv-noData').remove();
 
         var width = width  || parseInt(container.style('width'), 10)
           , height = height || parseInt(container.style('height'), 10);
