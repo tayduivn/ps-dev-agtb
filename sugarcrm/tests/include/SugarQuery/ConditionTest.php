@@ -222,6 +222,18 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(count($result), 6, "Wrong row count, actually received: " . count($result) . " back.");
     }
 
+    public function testNotIn()
+    {
+        $sq = new SugarQuery();
+
+        $sq->select(array("name", "amount"));
+        $sq->from(BeanFactory::newBean('Opportunities'));
+        $sq->where()->notIn('amount', array(100,101,102,103,104,105));
+
+        $result = $sq->execute();
+
+        $this->assertEquals(195, count($result), "Wrong row count, actually received: " . count($result) . " back.");
+    }
     public function testBetween()
     {
         $sq = new SugarQuery();

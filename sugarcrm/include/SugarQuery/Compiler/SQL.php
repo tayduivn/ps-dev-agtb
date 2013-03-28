@@ -616,6 +616,17 @@ class SugarQuery_Compiler_SQL
                         $sql .= "{$field} IN (" . implode(',', $valArray) . ")";
                     }
                     break;
+                case 'NOT IN':
+                    $valArray = array();
+                    if ($condition->values instanceof SugarQuery) {
+                        $sql .= "{$field} NOT IN (" . $condition->values->compileSql() . ")";
+                    } else {
+                        foreach ($condition->values AS $val) {
+                            $valArray[] = $this->quoteValue($condition->field, $val, $condition->bean);
+                        }
+                        $sql .= "{$field} NOT IN (" . implode(',', $valArray) . ")";
+                    }
+                    break;
                 case 'BETWEEN':
                     $value['min'] = $this->quoteValue($condition->field, $condition->values['min'], $condition->bean);
                     $value['max'] = $this->quoteValue($condition->field, $condition->values['max'], $condition->bean);
