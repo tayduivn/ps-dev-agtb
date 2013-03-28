@@ -131,14 +131,16 @@ abstract class ServiceBase {
     }
 
 	/**
-	 * Release current session
+     * Release session data
+     * Keeps $_SESSION but it's no longer preserved after the end of the request
 	 */
     protected function releaseSession()
     {
-        if(session_status() == PHP_SESSION_ACTIVE) {
-            $session_data = $_SESSION; // keep session values
-            session_write_close();
-            $_SESSION = $session_data;
-        }
+        if(!session_id()) return;
+        if(function_exists('session_status') && session_status() != PHP_SESSION_ACTIVE) return;
+
+        $session_data = $_SESSION; // keep session values
+        session_write_close();
+        $_SESSION = $session_data;
     }
 }
