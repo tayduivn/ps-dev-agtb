@@ -109,7 +109,9 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'span' => 6
                 ),
                 array(
-                    'span' => 6
+                    'name' => 'spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
+                    'span' => 6,
+                    'readonly' => true
                 ),
                 'product_template_name',
                 array(
