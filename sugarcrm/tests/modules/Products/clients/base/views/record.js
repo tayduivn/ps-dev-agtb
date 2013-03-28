@@ -56,6 +56,8 @@ describe("products_view_record", function() {
         };
 
         app = SugarTest.app;
+        SugarTest.seedMetadata(true);
+        app.user.setPreference('decimal_precision', 2);
         SugarTest.loadComponent('base', 'view', 'record');
         view = SugarTest.loadFile("../modules/Products/clients/base/views/record", "record", "js", function(d) { return eval(d); });
     });
