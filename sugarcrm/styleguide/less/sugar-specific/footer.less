@@ -3,10 +3,13 @@
 footer {
   .border-radius(0);
   border: none;
-  border-top: 1px solid darken(@grayLighter, 8%);
-	padding: 0;
-	height: inherit;
-	position: fixed;
+  background: @grayLighter;
+  width: 100%;
+  min-height: 44px;
+  border-top: 1px solid darken(@grayLighter,10%);
+  padding: 0;
+  height: inherit;
+  position: fixed;
   z-index: @zindexFixedNavbar;
   .row-fluid {
     .span5:first-child {
@@ -25,7 +28,7 @@ footer {
   }
   p {
     margin-bottom: 0;
-    color: #555;
+    color: @gray;
   }
   .btn-toolbar.pull-right {
     //margin: 8px 8px 0 0;
@@ -42,7 +45,7 @@ footer {
   //from nutmeg
   height: 44px;
   .copyright {
-    color: #A0A0A0;
+    color: @grayLight;
     text-decoration: none;
     font-size: 11px;
     padding-top: 16px;
@@ -86,7 +89,7 @@ footer {
 
 footer p {
   margin-bottom: 0;
-  color: #555;
+  color: @gray;
 }
 footer .btn-toolbar.pull-right {
   margin: 8px 8px 0 0;
