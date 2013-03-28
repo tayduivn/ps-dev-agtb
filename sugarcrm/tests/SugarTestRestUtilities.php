@@ -29,7 +29,9 @@ class SugarTestRestUtilities
     private function __construct() {}
     /**
      * Get the RestServiceMock
-     * @return object SugarTestRestService
+     * @param User $user            A User to put in the rest service
+     *
+     * @return RestService SugarTestRestService
      */
     public static function getRestServiceMock(User $user = null)
     {

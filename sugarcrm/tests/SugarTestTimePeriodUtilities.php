@@ -90,6 +90,7 @@ class SugarTestTimePeriodUtilities
         if (!empty($parent_id)) {
             $timeperiod->parent_id = $parent_id;
         }
+        $timeperiod->type = 'Quarter';
         $timeperiod->save();
         self::$_createdTimePeriods[] = $timeperiod;
         return $timeperiod;
