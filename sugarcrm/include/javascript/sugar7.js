@@ -21,7 +21,8 @@
                 callback: function(){
                     app.controller.loadView({
                         layout: "activities",
-                        module: "Activities"
+                        module: "Activities",
+                        skipFetch: true
                     });
                 }
             },
