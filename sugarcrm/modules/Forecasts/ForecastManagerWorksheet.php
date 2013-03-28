@@ -310,7 +310,7 @@ class ForecastManagerWorksheet extends SugarBean
         $this->copyValues($copyMap, $worksheet->toArray(), $committed_worksheet);
 
         $committed_worksheet->update_date_modified = false;
-        
+
         $committed_worksheet->save();
 
         return true;
@@ -382,9 +382,40 @@ class ForecastManagerWorksheet extends SugarBean
         } else {
             $bean = $beans[0];
             $committed_date = $this->db->fromConvert($bean["date_modified"], "datetime");
-            $this->show_history_log = intval(
-                strtotime($committed_date) < strtotime($this->date_modified)
-            );
+
+            if (strtotime($committed_date) < strtotime($this->date_modified)) {
+
+                // find the differences via the audit table
+                // we use a direct query since SugarQuery can't do the audit tables...
+                $sql = sprintf(
+                    "SELECT field_name, before_value_string, after_value_string FROM %s_audit
+                    WHERE parent_id = '%s' AND date_created >= '%s'",
+                    $this->table_name,
+                    $this->db->quote($this->id),
+                    $this->db->quote($this->fetched_row['date_modified'])
+                );
+
+                $results = $this->db->query($sql);
+
+                // get the setting for which fields to compare on
+                /* @var $admin Administration */
+                $admin = BeanFactory::getBean('Administration');
+                $settings = $admin->getConfigForModule('Forecasts', 'base');
+
+                while ($row = $this->db->fetchByAssoc($results)) {
+                    $field = substr($row['field_name'], 0, strpos($row['field_name'], '_'));
+                    if ($settings['show_worksheet_' . $field] == "1") {
+                        // calculate the difference to make sure it actually changed at 2 digits vs changed at 6 digits
+                        $diff = SugarMath::init($row['after_value_string'], 2)->sub(
+                            $row['before_value_string']
+                        )->result();
+                        if ($diff != '0.00') {
+                            $this->show_history_log = 1;
+                            break;
+                        }
+                    }
+                }
+            }
             $this->isManager = User::isManager($this->user_id);
         }
     }

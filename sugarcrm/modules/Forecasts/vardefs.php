@@ -960,6 +960,7 @@ VardefManager::createVardef('ForecastWorksheets', 'ForecastWorksheet', array('de
 $dictionary['ForecastManagerWorksheet'] = array(
     'table' => 'forecast_manager_worksheets',
     'acl_fields' => false,
+    'audited' => true,
     'fields' => array(
         'quota' =>
         array(
@@ -972,6 +973,7 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'name' => 'best_case',
             'vname' => 'LBL_BEST_CASE',
             'type' => 'currency',
+            'audited' => true,
         ),
         'best_case_adjusted' =>
         array(
@@ -984,6 +986,7 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'name' => 'likely_case',
             'vname' => 'LBL_LIKELY_CASE',
             'type' => 'currency',
+            'audited' => true,
         ),
         'likely_case_adjusted' =>
         array(
@@ -996,6 +999,7 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'name' => 'worst_case',
             'vname' => 'LBL_WORST_CASE',
             'type' => 'currency',
+            'audited' => true,
         ),
         'worst_case_adjusted' =>
         array(
