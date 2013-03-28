@@ -839,11 +839,11 @@ nv.models.funnel = function() {
     , getX = function(d) { return d.x }
     , getY = function(d) { return d.y }
     , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
-    , stacked = false
     , clipEdge = true
     , delay = 1200
     , xDomain
     , yDomain
+    , fmtValueLabel = function (d) { return d.y; }
     , color = nv.utils.defaultColor()
     , fill = function (d,i) { return color(d,i); }
     , gradient = function (d,i) { return color(d,i); }
@@ -1078,7 +1078,7 @@ nv.models.funnel = function() {
               .attr('x', 0)
               .attr('y', 5)
               .attr('text-anchor', 'middle')
-              .text(function(d) { return '$' + d.y + 'K' })
+              .text(function(d){ return fmtValueLabel(d) })
               .attr('stroke', 'none')
               .style('fill', '#fff')
             ;
@@ -1273,12 +1273,6 @@ nv.models.funnel = function() {
     return chart;
   };
 
-  chart.stacked = function(_) {
-    if (!arguments.length) return stacked;
-    stacked = _;
-    return chart;
-  };
-
   chart.id = function(_) {
     if (!arguments.length) return id;
     id = _;
@@ -1294,6 +1288,12 @@ nv.models.funnel = function() {
   chart.clipEdge = function(_) {
     if (!arguments.length) return clipEdge;
     clipEdge = _;
+    return chart;
+  };
+
+  chart.fmtValueLabel = function(_) {
+    if (!arguments.length) return fmtValueLabel;
+    fmtValueLabel = _;
     return chart;
   };
 
@@ -1330,11 +1330,6 @@ nv.models.funnelChart = function() {
     , y //can be accessed via chart.yScale()
     , noData = "No Data Available."
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
-    ;
-
-  yAxis
-    .orient('left')
-    .tickFormat(d3.format(',.1f'))
     ;
 
   //============================================================
@@ -1623,7 +1618,7 @@ nv.models.funnelChart = function() {
   chart.funnel = funnel;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, funnel, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'color', 'gradient', 'useClass');
+  d3.rebind(chart, funnel, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'color', 'gradient', 'useClass', 'fmtValueLabel');
 
   chart.colorData = function(_) {
     if (arguments[0] === 'graduated')

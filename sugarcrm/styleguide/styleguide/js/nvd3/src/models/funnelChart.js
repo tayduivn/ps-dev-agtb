@@ -28,11 +28,6 @@ nv.models.funnelChart = function() {
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
     ;
 
-  yAxis
-    .orient('left')
-    .tickFormat(d3.format(',.1f'))
-    ;
-
   //============================================================
 
 
@@ -319,7 +314,7 @@ nv.models.funnelChart = function() {
   chart.funnel = funnel;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, funnel, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'color', 'gradient', 'useClass');
+  d3.rebind(chart, funnel, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'color', 'gradient', 'useClass', 'fmtValueLabel');
 
   chart.colorData = function(_) {
     if (arguments[0] === 'graduated')
