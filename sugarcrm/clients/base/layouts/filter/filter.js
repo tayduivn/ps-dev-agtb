@@ -121,17 +121,17 @@
             }
         } else {
             if (this.layoutType === 'records' && this.module !== "Home") {
-                contextList.push(this.context);
-            } else {
-                if (this.context.children.length) {
-                    _.each(this.context.children, function(childCtx) {
-                        if (childCtx.get('link') && !childCtx.get('hidden')) {
-                            contextList.push(childCtx);
-                        }
-                    });
-                } else {
+                if (this.context.parent) {
                     contextList.push(this.context.parent);
+                } else {
+                    contextList.push(this.context);
                 }
+            } else {
+                _.each(this.context.children, function(childCtx) {
+                    if (childCtx.get('link') && !childCtx.get('hidden')) {
+                        contextList.push(childCtx);
+                    }
+                });
             }
         }
         return contextList;
