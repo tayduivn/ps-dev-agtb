@@ -115,7 +115,12 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'label' => 'LBL_CATEGORY'
                 ),
                 'quantity',
-                'discount_price',
+                array(
+                    'name' => 'discount_price',
+                    'type' => 'currency',
+                    'convertToBase' => true,
+                    'showTransactionalAmount' => true
+                ),
                 array(
                     'name' => 'discount_amount',
                     'type' => 'currency',
@@ -124,6 +129,8 @@ $viewdefs['Products']['base']['view']['record'] = array(
                         'currency_id',
                         'base_rate',
                     ),
+                    'convertToBase' => true,
+                    'showTransactionalAmount' => true,
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
@@ -132,6 +139,8 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'type' => 'currency',
                     'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
                     'readonly' => true,
+                    'convertToBase' => true,
+                    'showTransactionalAmount' => true,
                 ),
                 array(
                     'name' => 'likely_case',
@@ -142,6 +151,8 @@ $viewdefs['Products']['base']['view']['record'] = array(
                         'currency_id',
                         'base_rate',
                     ),
+                    'convertToBase' => true,
+                    'showTransactionalAmount' => true,
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),

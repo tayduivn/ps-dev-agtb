@@ -62,7 +62,7 @@
      */
     format: function(value) {
         if (_.isNull(value) || _.isUndefined(value) || _.isNaN(value)){
-            value = "";
+            return "";
         }
 
         if (this.tplName === 'edit') {

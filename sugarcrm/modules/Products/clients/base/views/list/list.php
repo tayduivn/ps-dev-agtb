@@ -52,12 +52,15 @@ $viewdefs['Products']['base']['view']['list'] = array(
                 'sales_status',
                 'quantity',
                 array(
-                    'name' => 'discount_usdollar',
-                    'type' => 'currency'
+                    'name' => 'discount_price',
+                    'type' => 'currency',
+                    'convertToBase' => true
                 ),
                 array(
-                    'name' => 'list_usdollar',
-                    'type' => 'currency'
+                    'name' => 'list_price',
+                    'type' => 'currency',
+                    'convertToBase' => true,
+                    'readonly' => true
                 ),
                 'date_purchased',
                 'date_support_expires',
