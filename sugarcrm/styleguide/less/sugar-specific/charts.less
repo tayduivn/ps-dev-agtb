@@ -219,10 +219,10 @@
   //border: 1px solid #ddd;
 }
 .thumbnail.widget:not(.expanded) .dashlet-options+.nv-chart {
-  height: 405px;
+  height: 409px;
 }
 .sidebar-content .thumbnail.widget:not(.expanded) .dashlet-options+.nv-chart {
-  height: 305px;
+  height: 309px;
 }
 .sidebar-content .thumbnail.widget:not(.expanded) .nv-chart {
   height: 350px;
@@ -252,6 +252,27 @@
     font-size: 8px;
   }
 }
+
+.nv-chart-funnel {
+  .nv-y path {
+    stroke: none;
+  }
+  .nv-label-value {
+    text {
+      font-size: 16px;
+      font-weight: bold;
+      fill: @white;
+    }
+    rect {
+      fill: #12448F;
+    }
+  }
+  text.nv-label-group {
+    font-size: 16px;
+    font-weight: bold;
+  }
+}
+
 
 /*TOOLTIPS*/
 .tip {

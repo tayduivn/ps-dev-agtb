@@ -871,7 +871,7 @@ nv.models.funnel = function() {
         , fillGradient = function(d,i) {
             return nv.utils.colorLinearGradient( d, i, 'vertical', color(d,i), wrap.select('defs') );
           }
-        ;
+        , labelBoxWidth = 20;
 
       chart.gradient( fillGradient );
 
@@ -880,7 +880,6 @@ nv.models.funnel = function() {
                .values(function(d){ return d.values })
                .y(getY)
                (data);
-
 
       //add series index to each data point for reference
       data = data.map(function(series, i) {
@@ -987,12 +986,16 @@ nv.models.funnel = function() {
         .selectAll('g.nv-label-value')
         .delay(function(d,i) { return i * delay/ data[0].values.length })
           .attr('y', 0)
+          .style('fill-opacity', 1e-6)
+          .attr('transform', 'translate('+ c +',0)')
           .remove();
 
       d3.transition(groups.exit())
         .selectAll('text.nv-label-group')
         .delay(function(d,i) { return i * delay/ data[0].values.length })
           .attr('y', 0)
+          .style('fill-opacity', 1e-6)
+          .attr('transform', 'translate('+ availableWidth +',0)')
           .remove();
 
       groups
@@ -1011,7 +1014,7 @@ nv.models.funnel = function() {
 
       d3.transition(groups)
           .style('stroke-opacity', 1)
-          .style('fill-opacity', .85);
+          .style('fill-opacity', 1);
 
 
       //------------------------------------------------------------
@@ -1056,18 +1059,20 @@ nv.models.funnel = function() {
 
       var lblValueEnter = lblValue.enter()
             .append('g')
-              .attr('class', 'nv-label-value');
+              .attr('class', 'nv-label-value')
+              .attr('transform', 'translate('+ c +',0)');
 
           lblValueEnter.append('rect')
-              .attr('x', -20)
-              .attr('y', -15)
-              .attr('width', 40)
-              .attr('height', 30)
+              .attr('x', -labelBoxWidth/2)
+              .attr('y', -20)
+              .attr('width', labelBoxWidth)
+              .attr('height', 40)
               .attr('rx',3)
               .attr('ry',3)
+              .style('fill', fill({},0))
               .attr('stroke', 'none')
-              .attr('fill', 'white')
-              .style('fill-opacity', 0.5);
+              .style('fill-opacity', 0.4)
+            ;
 
           lblValueEnter.append('text')
               .attr('x', 0)
@@ -1075,8 +1080,18 @@ nv.models.funnel = function() {
               .attr('text-anchor', 'middle')
               .text(function(d) { return '$' + d.y + 'K' })
               .attr('stroke', 'none')
-              .attr('fill', 'black')
+              .style('fill', '#fff')
             ;
+
+      lblValue.selectAll('text').each(function(d,i){
+            var width = this.getBBox().width + 20
+            if(width > labelBoxWidth) labelBoxWidth = width;
+          });
+      lblValue.selectAll('rect').each(function(d,i){
+            d3.select(this)
+              .attr('width', labelBoxWidth)
+              .attr('x', -labelBoxWidth/2);
+          });
 
       d3.transition(lblValue)
           .delay(function(d,i) { return i * delay / data[0].values.length })
@@ -1093,17 +1108,21 @@ nv.models.funnel = function() {
             .attr('class', 'nv-label-group')
             .attr('x', 0 )
             .attr('y', 0 )
-            .attr('text-anchor', 'end')
+            .attr('dx', -10)
+            .attr('dy', 5)
+            .attr('text-anchor', 'middle')
             .text(function(d) { return d.key })
             .attr('stroke', 'none')
-            .attr('fill', 'black')
-            .attr('dx', -20)
-            .attr('dy', 5)
+            .style('fill', 'black')
+            .style('fill-opacity', 1e-6)
+            .attr('transform', 'translate('+ availableWidth +',0)');
           ;
 
       d3.transition(lblGroup)
           .delay(function(d,i) { return i * delay / data[0].values.length })
+          .style('fill-opacity', 1)
           .attr('transform', function(d){ return 'translate('+ availableWidth +','+ ( y(d.y0+d.y/2) ) +')'; })
+        ;
 
       //------------------------------------------------------------
 
