@@ -47,13 +47,12 @@
         }
 
         this.tpl = "TPL_ACTIVITY_" + this.model.get('activity_type').toUpperCase();
-        var data;
-        if(this.model.get('activity_type') === "update") {
+        var data = this.model.get('data');
+        switch(this.model.get('activity_type')) {
+        case 'update':
             var updateTpl = Handlebars.compile(app.lang.get('TPL_ACTIVITY_UPDATE_FIELD', 'Activities')),
                 parentType = this.model.get("parent_type"),
                 fields = app.metadata.getModule(parentType).fields;
-
-            data = this.model.get('data');
 
             data.updateStr = _.reduce(data.changes, function(memo, changeObj) {
                 changeObj.field_label = app.lang.get(fields[changeObj.field_name].vname, parentType);
@@ -65,8 +64,9 @@
             }, '');
 
             this.model.set('data', data);
-        } else if (this.model.get('activity_type') === 'attach') {
-            data = this.model.get('data');
+            break;
+
+        case 'attach':
             var url = app.api.buildFileURL({
                 module: 'Notes',
                 id: data.noteId,
@@ -76,6 +76,19 @@
             this.$el.data(data);
             this.model.set('data', data);
             this.model.set('parent_type', 'Files');
+            break;
+
+        case 'link':
+        case 'unlink':
+            // Flip the module if we are on any link event so that the event is
+            // more noticeable in the activity stream.
+            if (this.context.parent.get('module') === this.model.get('parent_type')) {
+                this.model.set('parent_type', data.subject.module);
+                if (this.context.parent.get('modelId') === this.model.get('parent_id')) {
+                    this.model.set('parent_id', data.subject.id);
+                }
+            }
+            break;
         }
     },
 
