@@ -108,7 +108,7 @@ class ActivityQueueManager
         $blacklist = in_array($args['link'], self::$linkBlacklist);
         $lhs_module = in_array($args['module'], self::$linkModuleBlacklist);
         $rhs_module = in_array($args['related_module'], self::$linkModuleBlacklist);
-        if ($blacklist || $lhs_module || $rhs_module || $GLOBALS['resavingRelatedBeans']) {
+        if ($blacklist || $lhs_module || $rhs_module || !empty($GLOBALS['resavingRelatedBeans'])) {
             return false;
         } else {
             foreach (self::$linkDupeCheck as $dupe_args) {
@@ -299,6 +299,11 @@ class ActivityQueueManager
      */
     protected function processParentAttributes(SugarBean $bean)
     {
+        if (!(isset($bean->parent_id) && isset($bean->parent_type))) {
+            // If we don't have a parent type or parent ID on this bean, stop.
+            return;
+        }
+
         $old_parent_id = '';
         if (is_array($bean->fetched_row) && isset($bean->fetched_row['parent_id'])) {
             $old_parent_id = $bean->fetched_row['parent_id'];
