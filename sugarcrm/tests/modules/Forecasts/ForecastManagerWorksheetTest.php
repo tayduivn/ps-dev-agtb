@@ -76,6 +76,10 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+
+        $admin = BeanFactory::getBean('Administration');
+        $admin->getConfigForModule('Forecasts');
+        $admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base'); // make sure this is one, it should be
         self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
 
         self::$topLevelManager = SugarTestUserUtilities::createAnonymousUser();
