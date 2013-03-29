@@ -62,7 +62,6 @@
     convertCurrencyFields: function(oldCurrencyId, newCurrencyId) {
         //run through the editable currency fields and convert the amounts to the new currency
         _.each(this.currencyFields, function(currencyField) {
-            console.log('convert', currencyField);
             this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId));
             this.model.trigger("change:"+currencyField);
         }, this);
