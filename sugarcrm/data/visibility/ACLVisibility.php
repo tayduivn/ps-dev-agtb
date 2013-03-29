@@ -53,4 +53,15 @@ class ACLVisibility extends SugarVisibility
         
         return $sugarQuery;
     }
+
+    public function addSseVisibilityFilter($engine, $filter)
+    {
+        if ($this->bean->bean_implements('ACL') && ACLController::requireOwner($this->bean->module_dir, 'list'))
+        {
+            if($engine instanceof SugarSearchEngineElastic) {
+                $filter->addMust($engine->getOwnerTermFilter());
+            }
+        }
+        return $filter;
+    }
 }

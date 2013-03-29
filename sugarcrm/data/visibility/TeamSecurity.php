@@ -28,18 +28,15 @@ class TeamSecurity extends SugarVisibility
 {
     public function addVisibilityFrom(&$query)
     {
+        global $current_user;
+
         // Support portal will never respect Teams, even if they do earn more than them even while raising the teamsets
         if(isset($_SESSION['type'])&&$_SESSION['type']=='support_portal') {
             return;
         }
 
-
-        // copied from old team security clause
-        if($this->bean->module_dir == 'WorkFlow') return;
-        if(!$this->bean->disable_row_level_security) {
-            // We need to confirm that the user is a member of the team of the item.
-
-            global $current_user;
+        if($this->isTeamSecurityApplicable())
+        {
             if(empty($current_user)) {
                 $current_user_id = '';
             } else {
@@ -104,5 +101,49 @@ class TeamSecurity extends SugarVisibility
             }
         }
         return $sugarQuery;
+    }
+
+    /*
+     * Get sugar search engine definitions
+     * @param string $engine search engine name
+     * @return array
+     */
+    public function getSseVisibilityDefs($engine, $defs)
+    {
+        return $defs;
+    }
+
+    public function addSseVisibilityData($engine, $document)
+    {
+        return $document;
+    }
+
+    public function addSseVisibilityFilter($engine, $filter)
+    {
+        if($this->isTeamSecurityApplicable())
+        {
+            if($engine instanceof SugarSearchEngineElastic) {
+                $filter->addMust($engine->getTeamTermFilter());
+            }
+        }
+        return $filter;
+    }
+
+    /**
+     * Verifies if team security needs to be applied
+     * @return bool true if team security needs to be applied
+     */
+    protected function isTeamSecurityApplicable()
+    {
+        global $current_user;
+
+        if( $this->bean->module_dir == 'WorkFlow'  // copied from old team security clause
+            || $this->bean->disable_row_level_security
+            || (!empty($current_user) && $current_user->isAdminForModule($this->module_dir))
+        ) return false;
+
+        // Note that if the $current_user is not set we still apply team security
+        // This does not make any sense by itself as the result will always be negative (no access)
+        return true;
     }
 }

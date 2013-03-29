@@ -666,13 +666,20 @@ class SugarBean
 
     /**
      * Get SugarSeachEngine visibility definitions
-     * @param string $engine SugarSearchEngine name
+     * @param SugarSearchEngine $engine search engine instance that is being used
      */
     public function getSseVisibilityDefs($engine)
     {
     	return $this->loadVisibility()->getSseVisibilityDefs($engine);
     }
 
+    /**
+     * Add SugarSearchEngine visibility data to the passed in document
+     * @param $engine
+     * @param $document
+     *
+     * @return Updated document
+     */
     public function addSseVisibilityData($engine, $document)
     {
     	return $this->loadVisibility()->addSseVisibilityData($engine, $document);

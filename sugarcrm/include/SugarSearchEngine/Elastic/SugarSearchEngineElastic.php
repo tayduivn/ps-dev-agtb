@@ -198,10 +198,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
 
-        if (isset($bean->team_set_id)) {
-            $keyValues['team_set_id'] = $this->formatGuidFields($bean->team_set_id);
-        }
-
         //BEGIN SUGARCRM flav=pro ONLY
         $user_ids = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord($bean->module_dir, $bean->id);
         $keyValues['user_favorites'] = array();
@@ -213,6 +209,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         //END SUGARCRM flav=pro ONLY
 
         // to index owner
+        ///XXX TODO: This needs to go to strategies
+        $keyValues['team_set_id'] = $this->formatGuidFields($bean->team_set_id);
         $ownerField = $this->getOwnerField($bean);
         if ($ownerField) {
             $keyValues['doc_owner'] = $this->formatGuidFields($ownerField);
@@ -523,15 +521,19 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      *
      * @return \Elastica\Filter\Terms
      */
-    protected function constructTeamFilter()
+    public function getTeamTermFilter()
     {
-        $teamIDS = TeamSet::getTeamSetIdsForUser($GLOBALS['current_user']->id);
-
-        //TODO: Determine why term filters aren't working with the hyphen present.
-        //Term filters dont' work for terms with '-' present so we need to clean
-        $teamIDS = array_map(array($this,'cleanTeamSetID'), $teamIDS);
-
-        $termFilter = new \Elastica\Filter\Terms('team_set_id', $teamIDS);
+        global $current_user;
+        if(empty($current_user)) {
+            // This condition should never happen, but just to be consistent with the SQl side of the house, we are adding a filter that is false for this module
+            $termFilter = new \Elastica\Filter\Terms('team_set_id', array('Non existing team_set_id to fake search term that is always false'));
+        } else {
+            $teamIDS = TeamSet::getTeamSetIdsForUser($current_user->id);
+            //TODO: Determine why term filters aren't working with the hyphen present.
+            //Term filters dont' work for terms with '-' present so we need to clean
+            $teamIDS = array_map(array($this,'cleanTeamSetID'), $teamIDS);
+            $termFilter = new \Elastica\Filter\Terms('team_set_id', $teamIDS);
+        }
 
         return $termFilter;
     }
@@ -554,7 +556,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      *
      * @return \Elastica\Filter\Term
      */
-    protected function getOwnerTermFilter()
+    public function getOwnerTermFilter()
     {
         $ownerTermFilter = new \Elastica\Filter\Term();
         $ownerTermFilter->setTerm('doc_owner', $this->formatGuidFields($GLOBALS['current_user']->id));
@@ -569,45 +571,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function constructModuleLevelFilter($module)
     {
-        $requireOwner = ACLController::requireOwner($module, 'list');
+        $this->logger->fatal("constructModuleLevelFilter: {$module}");
+        $moduleFilter = new \Elastica\Filter\Bool();
+        $typeTermFilter = $this->getTypeTermFilter($module);
+        $moduleFilter->addMust($typeTermFilter);
 
         $seed = BeanFactory::newBean($module);
+        $moduleFilter = $seed->addSseVisibilityFilter($this, $moduleFilter);
 
-        $hasAdminAccess = $GLOBALS['current_user']->isAdminForModule($seed->getACLCategory());
-
-        $moduleFilter = new \Elastica\Filter\Bool();
-
-        if ($hasAdminAccess) {
-            $typeTermFilter = $this->getTypeTermFilter($module);
-            $moduleFilter->addMust($typeTermFilter);
-            // user has admin access for this module, skip team filter
-            if ($requireOwner) {
-                // owner term filter
-                $ownerTermFilter = $this->getOwnerTermFilter();
-                $moduleFilter->addMust($ownerTermFilter);
-            }
-        } else {
-
-            // team filter
-            if ($seed->loadVisibility()->isLoaded('TeamSecurity')) {
-                $teamFilter = $this->constructTeamFilter();
-                $moduleFilter->addFilter($teamFilter);
-            }
-
-            // type term filter
-            $typeTermFilter = $this->getTypeTermFilter($module);
-            $moduleFilter->addMust($typeTermFilter);
-
-            if ($requireOwner) {
-                // need to be document owner to view, owner term filter
-                $ownerTermFilter = $this->getOwnerTermFilter();
-                $moduleFilter->addMust($ownerTermFilter);
-            }
-            
-            // add visibility
-            $moduleFilter = $seed->addSseVisibilityFilter('Elastic', $moduleFilter);
-        }
-        
         return $moduleFilter;
     }
 
