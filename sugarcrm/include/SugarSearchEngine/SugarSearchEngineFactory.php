@@ -94,6 +94,7 @@ class SugarSearchEngineFactory
         $defaultTemplateLocation = "include/SugarSearchEngine/%sSugarSearchEngine%s.php";
 
         $searchEngineLocations = array(
+            sprintf($defaultTemplateLocation, $name.'/Custom', $name),
             sprintf($defaultTemplateLocation, $name.'/', $name),
             sprintf($defaultTemplateLocation, '','')
         );
