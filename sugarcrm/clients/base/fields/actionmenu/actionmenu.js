@@ -1,6 +1,6 @@
 ({
     events: {
-        'click [name="checkall"]': 'checkAll',
+        'click .checkall': 'checkAll',
         'click input[name="check"]': 'check'
     },
     fields: null, //action button fields
