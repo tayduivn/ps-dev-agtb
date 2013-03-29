@@ -52,6 +52,7 @@
                 success: function(model) {
                     self.$('div.sayit').html('').trigger('change').focus();
                     model.set('picture_url', self.picture_url);
+                    self.collection.add(model);
                     self.layout.prependPost(model);
                 }
             });

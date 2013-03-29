@@ -76,6 +76,10 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+
+        $admin = BeanFactory::getBean('Administration');
+        $admin->getConfigForModule('Forecasts');
+        $admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base'); // make sure this is one, it should be
         self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
 
         self::$topLevelManager = SugarTestUserUtilities::createAnonymousUser();
@@ -349,6 +353,49 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(1, $worksheet->show_history_log);
+    }
+
+    /**
+     * @depends testManagerShowHistoryLogIsTrue
+     * @group forecasts
+     */
+    public function testShowHistoryLogIsZeroWhenAdjustedColumnIsChanged()
+    {
+        // commit the manager
+        /* @var $worksheet ForecastManagerWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet->commitManagerForecast(self::$manager, self::$timeperiod->id);
+
+        // change an adjust column on the draft record
+        // load up the draft record for the manager
+        /* @var $worksheet ForecastManagerWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet->retrieve_by_string_fields(
+            array(
+                'assigned_user_id' => self::$manager->id,
+                'user_id' => self::$user->id,
+                'draft' => 1,
+                'deleted' => 0
+            )
+        );
+
+        $worksheet->likely_case_adjusted = SugarMath::init($worksheet->likely_case_adjusted)->add(100)->result();
+        $worksheet->save();
+
+        // get the draft record again
+        // load up the draft record for the manager
+        /* @var $worksheet ForecastManagerWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet->retrieve_by_string_fields(
+            array(
+                'assigned_user_id' => self::$manager->id,
+                'user_id' => self::$user->id,
+                'draft' => 1,
+                'deleted' => 0
+            )
+        );
+        // make sure that we are not showing the history log
+        $this->assertEquals(0, $worksheet->show_history_log);
     }
 
     /**

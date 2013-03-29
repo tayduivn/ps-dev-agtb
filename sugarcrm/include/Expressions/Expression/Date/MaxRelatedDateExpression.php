@@ -23,7 +23,7 @@ require_once('include/Expressions/Expression/Date/DateExpression.php');
  * <b>maxRelatedDate(Relate <i>link</i>, String <i>field</i>)</b><br>
  * Returns the highest value of <i>field</i> in records related by <i>link</i><br/>
  * ex: <i>maxRelatedDate($products, "date_closed_timestamp")</i> in Opportunities would return the <br/>
- * latest date_closed_timestamp of all related Product Line Items.
+ * latest date_closed_timestamp of all related Revenue Line Items.
  */
 
 class MaxRelatedDateExpression extends DateExpression

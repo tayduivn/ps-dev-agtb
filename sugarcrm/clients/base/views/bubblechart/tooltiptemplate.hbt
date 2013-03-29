@@ -1,0 +1,5 @@
+<p>Assigned: <b>{{assigned_user_name}}</b></p>
+<p>Amount: <b>{{amount}}</b></p>
+<p>Close Date: <b>{{close_date}}</b></p>
+<p>Probability: <b>{{probability}}%</b></p>
+<p>Account: <b>{{account_name}}</b></p>

@@ -82,6 +82,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 array(
                     'name' => 'name',
                     'required' => true,
+                    'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
                 array(
                     'type' => 'follow',
@@ -103,11 +104,19 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 ),
                 'sales_stage',
                 'probability',
-                'commit_stage',
                 'sales_status',
                 array(
                     'name' => 'date_closed',
                     'required' => true,
+                ),
+                array(
+                    'name' => 'commit_stage',
+                    'span' => 6
+                ),
+                array(
+                    'name' => 'spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
+                    'span' => 6,
+                    'readonly' => true
                 ),
                 'product_template_name',
                 array(

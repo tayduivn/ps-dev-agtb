@@ -85,7 +85,7 @@
     },
 
     _load: function(options) {
-        if(_.isUndefined(this.context.parent.get('layout'))) {
+        if (_.isUndefined(this.context.parent.get('layout')) || _.isUndefined(options)) {
             return;
         }
         options = _.extend(options, this.context.get('collectionOptions'));

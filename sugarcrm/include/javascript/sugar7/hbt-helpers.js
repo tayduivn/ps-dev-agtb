@@ -20,5 +20,9 @@
             moduleMeta = null;
             return new Handlebars.SafeString(url);
         });
+
+        Handlebars.registerHelper('moduleIconLabel', function(module) {
+            return app.lang.getAppListStrings('moduleListSingular')[module].substring(0, 2);
+        });
     });
 })(SUGAR.App);

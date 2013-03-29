@@ -148,7 +148,7 @@ $mod_strings = array(
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_CONTRACTS' => 'Contracts',
     'LBL_CONTRACTS_SUBPANEL_TITLE' => 'Contracts',
-    'LBL_PRODUCTS' => 'Product Line Items',
+    'LBL_PRODUCTS' => 'Revenue Line Items',
     'LNK_OPPORTUNITY_REPORTS' => 'View Opportunity Reports',
     'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
     'LBL_TEAM_ID' => 'Team ID',
@@ -169,7 +169,7 @@ $mod_strings = array(
     //END SUGARCRM flav=pro ONLY
 
     //BEGIN SUGARCRM flav=ent ONLY
-    'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Product Line Items',
+    'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Revenue Line Items',
     //END SUGARCRM flav=ent ONLY
 
     //Dashlet

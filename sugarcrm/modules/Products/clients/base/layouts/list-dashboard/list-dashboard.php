@@ -10,6 +10,32 @@ $layout->push(
     0,
     array(
         array(
+            'name' => 'My Accounts',
+            'view' => 'dashablelist',
+            'context' => array(
+                'module' => 'Accounts',
+                'dashlet' => array(
+                    'name' => 'My Accounts',
+                    'type' => 'dashablelist',
+                    'module' => 'Accounts',
+                    'display_columns' => array(
+                        'name',
+                        'billing_address_country',
+                        'billing_address_city',
+                    ),
+                    'my_items' => '1',
+                    'display_rows' => 5,
+                ),
+            ),
+        ),
+    )
+);
+
+
+$layout->push(
+    0,
+    array(
+        array(
             'name' => 'My Contacts',
             'view' => 'dashablelist',
             'context' => array(
@@ -20,10 +46,8 @@ $layout->push(
                     'module' => 'Contacts',
                     'display_columns' => array(
                         'full_name',
-                        'title',
+                        'email',
                         'phone_work',
-                        'date_entered',
-                        'assigned_user_name',
                     ),
                     'my_items' => '1',
                 ),
