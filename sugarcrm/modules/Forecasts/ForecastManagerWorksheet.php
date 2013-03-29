@@ -377,8 +377,11 @@ class ForecastManagerWorksheet extends SugarBean
             ->equals('timeperiod_id', $this->timeperiod_id);
         $beans = $sq->execute();
 
-        if (empty($beans)) {
+        if (empty($beans) && empty($this->date_modified)) {
             $this->show_history_log = 0;
+        } else if(empty($beans) && !empty($this->date_modified)) {
+            // When reportee has committed but manager has not
+            $this->show_history_log = 1;
         } else {
             $bean = $beans[0];
             $committed_date = $this->db->fromConvert($bean["date_modified"], "datetime");
