@@ -122,16 +122,17 @@ class OpportunitiesPipelineChartApi extends SugarApi
 
             // if we have not seen this sales stage before, set the value to zero (0)
             if (!isset($data[$row['sales_stage']])) {
-                $data[$row['sales_stage']] = '0';
+                $data[$row['sales_stage']] = array('count' => 0, 'total' => '0');
             }
 
             // convert to the base currency
             $base_amount = SugarCurrency::convertAmountToBase($row['amount'], $row['base_rate']);
 
             // add the new value into what was already there
-            $data[$row['sales_stage']] = SugarMath::init($data[$row['sales_stage']], 0)->add(
+            $data[$row['sales_stage']]['total'] = SugarMath::init($data[$row['sales_stage']]['total'], 0)->add(
                 $base_amount
             )->result();
+            $data[$row['sales_stage']]['count']++;
 
             // add to the total
             $total = SugarMath::init($total, 0)->add($base_amount)->result();
@@ -140,18 +141,24 @@ class OpportunitiesPipelineChartApi extends SugarApi
         // sort the data for the final loop
         asort($data);
 
+        // get the default currency
+        /* @var $currency Currency */
+        $currency = SugarCurrency::getBaseCurrency();
+
         // setup for return format
         $return_data = array();
         $series = 0;
         $previous_value = '0';
-        foreach ($data as $key => $value) {
+        foreach ($data as $key => $item) {
+            $value = $item['total'];
             // set up each return key
             $return_data[] = array(
                 'key' => $key,          // the label/sales stage
-                'bar' => true,          // Show a bar
+                'count' => $item['count'],
                 'values' => array(      // the values used in the grid
                     array(
                         'series' => $series++,
+                        'label' => SugarCurrency::formatAmount($value, $currency->id, 0),
                         'x' => 0,
                         'y' => intval($value),                  // this needs to be an integer
                         'y0' => intval($previous_value)         // this needs to be an integer
@@ -161,10 +168,6 @@ class OpportunitiesPipelineChartApi extends SugarApi
             // save the previous value for use in the next item in the series
             $previous_value = SugarMath::init($previous_value, 0)->add($value)->result();
         }
-
-        // get the default currency
-        /* @var $currency Currency */
-        $currency = SugarCurrency::getBaseCurrency();
 
         // actually return the formatted data
         $mod_strings = return_module_language($GLOBALS['current_language'], 'Opportunities');

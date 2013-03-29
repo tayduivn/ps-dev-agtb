@@ -14,7 +14,7 @@
         this.model.module = 'Forecasts';
 
         // set the default button state
-        this.model.set({'type': 'self'}, {silent: true});
+        this.model.set({'display_type': 'self'}, {silent: true});
 
         // get the current timeperiod
         app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
@@ -28,8 +28,8 @@
     handleTypeButtonClick: function(e) {
         var elm = $(e.currentTarget),
             displayType = elm.data('type');
-        if(this.model.get('type') != displayType) {
-            this.model.set({'type': displayType});
+        if(this.model.get('display_type') != displayType) {
+            this.model.set({'display_type': displayType});
         }
     },
 
@@ -45,18 +45,11 @@
         // clear out the current chart before a re-render
         this.$el.find('.nv-chart').html('<svg id="view51"></svg>');
         chart = nv.models.funnelChart()
-            .showTitle(true)
-            .tooltips(true)
-            .colorData('default')
+            .showTitle(false)
+            .tooltips(false)
+            .colorData('graduated', {c1: '#0b274c', c2: '#cbfaff', l: this.results.data.length})
             .colorFill('default')
-            .tooltip(function(key, x, y, e, graph) {
-                return '<p>Stage: <b>' + key + '</b></p>' +
-                    '<p>Amount: <b>' + app.currency.formatAmountLocale(y, app.currency.getBaseCurrencyId()) + '</b></p>' +
-                    '<p>Percent: <b>' + x + '%</b></p>'
-            });
-
-        chart.yAxis
-            .tickFormat(d3.format(',.1f'));
+            .fmtValueLabel(function(d) { return d.label });
 
         d3.select('svg#' + this.cid)
             .datum(this.results)
@@ -72,8 +65,8 @@
         var url_base = 'Opportunities/chart/pipeline';
         if(this.model.has('selectedTimePeriod')) {
             url_base += '/' + this.model.get('selectedTimePeriod');
-            if(this.model.has('type')) {
-                url_base += '/' + this.model.get('type');
+            if(this.model.has('display_type')) {
+                url_base += '/' + this.model.get('display_type');
             }
         }
         var url = app.api.buildURL(url_base);
