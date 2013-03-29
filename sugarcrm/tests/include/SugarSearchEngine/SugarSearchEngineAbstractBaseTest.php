@@ -23,38 +23,11 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/SugarSearchEngine/SugarSearchEngineFactory.php';
+//require_once 'include/SugarSearchEngine/SugarSearchEngineFactory.php';
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 
-
-class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarSearchEngineAbstractBaseTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    /**
-     * @dataProvider factoryProvider
-     * @param string $engineName
-     * @param string $expectedClass
-     */
-    public function testFactoryMethod($engineName, $expectedClass)
-    {
-        $instance = SugarSearchEngineFactory::getInstance($engineName);
-        $this->assertEquals($expectedClass, get_class($instance));
-    }
-
-    public function factoryProvider()
-    {
-        switch(SugarSearchEngineFactory::getFTSEngineNameFromConfig()) {
-            case 'Elastic'  : $default = 'SugarSearchEngineElastic'; break;
-            default         : $default = 'SugarSearchEngine';
-        }
-
-        return array(
-            // depends on config, disabled array('','SugarSearchEngine'),
-            array('Elastic','SugarSearchEngineElastic'),
-            //Fallback to default.
-            array('BadClassName','SugarSearchEngine')
-        );
-    }
 
     public function testSearchEngineDown()
     {
@@ -69,26 +42,4 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
         $isDown = SugarSearchEngineAbstractBase::isSearchEngineDown();
         $this->assertFalse($isDown, 'Incorrect status');
     }
-}
-
-class SugarSearchEngineTestStub extends SugarSearchEngineAbstractBase
-{
-    public function connect() {}
-
-    public function indexBean($bean, $batched = TRUE){}
-
-    public function flush() {}
-
-    public function delete(SugarBean $bean){}
-
-    public function search($query, $offset = 0, $limit = 20) {}
-
-    public function bulkInsert(array $docs){}
-
-    public function getServerStatus(){}
-
-    public function createIndex($recreate = false) {}
-
-    public function createIndexDocument($bean, $searchFields = null){}
-
 }
