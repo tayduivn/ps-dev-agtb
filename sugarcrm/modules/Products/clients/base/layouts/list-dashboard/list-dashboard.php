@@ -10,27 +10,27 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'My Contacts',
+            'name' => 'My Accounts',
             'view' => 'dashablelist',
             'context' => array(
-                'module' => 'Contacts',
+                'module' => 'Accounts',
                 'dashlet' => array(
-                    'name' => 'My Contacts',
+                    'name' => 'My Accounts',
                     'type' => 'dashablelist',
-                    'module' => 'Contacts',
+                    'module' => 'Accounts',
                     'display_columns' => array(
-                        'full_name',
-                        'title',
-                        'phone_work',
-                        'date_entered',
-                        'assigned_user_name',
+                        'name',
+                        'billing_address_country',
+                        'billing_address_city',
                     ),
                     'my_items' => '1',
+                    'display_rows' => 5,
                 ),
             ),
         ),
     )
 );
+
 
 $layout->push(
     0,
