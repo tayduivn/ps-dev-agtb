@@ -664,61 +664,6 @@ input[type="color"],
   margin-bottom: 0;
 }
 
-/* Special treatment for the address fields */
-.record-cell {
-  [class*='address_'] {
-    display: inline-block;
-  }
-  .address_street,
-  .address_country,
-  .address_misc_block /* miscelaneous class for more complex/international address formats */ {
-    width: 100%;
-    clear: both;
-  }
-  :not(.edit) {
-    &.address_city {
-      div:after {
-        content: ",";
-        margin-left: -4px;
-        margin-right: 4px;
-      }
-    }
-  }
-
-  .address_city {
-    .ellipsis_inline:empty:after {
-      content: "";
-    }
-  }
-
-  .address_city,
-  .address_state,
-  .address_zip {
-    &> div.ellipsis_inline {
-      display: inline !important;
-      overflow: visible;
-    }
-  }
-}
-
-/* Special treatment for dual input box in one container, eg. first and last name in list view */
-
-
-td {
-  span.full-name {
-    input.inherit-width {
-      width: 49%;
-      &:not(:first-child) {
-        float: left;
-      }
-    }
-    div.ellipsis_inline {
-      display: inline !important;
-    }
-  }
-}
-
-
 //??legacy??
 @media (max-width: 768px) {
   .card2 {margin: 10px 0;}
