@@ -27,8 +27,8 @@
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
 *}
-<link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
-<script src="sidecar/lib/chosen/chosen.jquery.js"></script>
+<link rel="stylesheet" href="include/javascript/select2-release-3.2/select2.css"/>
+<script src="include/javascript/select2-release-3.2/select2.min.js"></script>
 <form id='0' name='0'>
     <table class='tabform' width='100%' cellpadding=4>
 
@@ -78,7 +78,7 @@
                 {$mod.LBL_PORTAL_DEFAULT_ASSIGN_USER}:
             </td>
             <td colspan='1' nowrap class="defaultUser">
-                <select data-placeholder="{$mod.LBL_USER_SELECT}" class="chzn-select portalProperty portalField" id='defaultUser' name='defaultUser' >
+                <select data-placeholder="{$mod.LBL_USER_SELECT}" class="portalProperty portalField" id='defaultUser' data-name='defaultUser' >
                 {foreach from=$userList item=user key=userId}
                     <option value="{$userId}" {if $userId == $defaultUser}selected{/if}>{$user}</option>
                 {/foreach}
@@ -114,19 +114,34 @@
 {literal}
 
 <script language='javascript'>
-    $('.chzn-select').chosen({allow_single_deselect: true});
+    // Hack-Possibly due to being in iframe and jquery getting loaded twice but $
+    // doesn't have the select2 plugin defined properly.
+    jQuery('#defaultUser').select2({
+        placeholder: "{$mod.LBL_USER_SELECT}",
+        allowClear: true
+    });
     addToValidateRange(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal},1,100);
     addToValidateRange(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal},1,100);
     $('#gobutton').click(function(event){
-        var field;
-        var fields = $('.portalField');
-        var props = {};
-        var fName; var i;
+        var field, fields, props, i, key, val;
+        fields = $('.portalField');
+        props = {};
+
         for(i=0; i<fields.length; i++) {
             field = $(fields[i]);
-            props[field.attr('name')] = field.val();
+            key = field.attr('name') || field.data('name');
+            val = field.val();
+            if (!val && key==='defaultUser') {
+                key = jQuery(field).select2().val()
+            }
+            // select2 copies over attributes (including .portalField class) to a temporary
+            // element; so we end up with an extra fields element. so we ignore if not both key/val
+            if(key && val) props[key] = val;
+
             if (field.is(':checked')) {
-                props[field.attr('name')] = 'true';
+                // We look for isset and 'true' on other side so 'online' will still
+                // be considered falsy
+                props[key] = 'true';
             }
         }
         retrieve_portal_page($.param(props))
