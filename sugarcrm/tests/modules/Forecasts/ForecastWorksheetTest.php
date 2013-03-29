@@ -238,5 +238,138 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             array('sales_stage', 'test1', 'test2')
         );
     }
+    
+    /**
+     * @group forecasts
+     */
+    public function testTimeperiodHasMigrated_invalidDates()
+    {
+    	$tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');
+        $worksheet = new ForecastWorksheet();                     
+        
+        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array(null, null));
+        $this->assertEquals(false, $hasMigrated);        
+    }
+    
+    /**
+     * @group forecasts
+     */
+    public function testTimeperiodHasMigrated_oneInvalidDate()
+    {
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');                     
+        $worksheet = new ForecastWorksheet();
+        
+        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array('2013-02-01', null));
+        $this->assertEquals(false, $hasMigrated); 
+        
+        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array(null, '2013-02-01'));
+        $this->assertEquals(false, $hasMigrated);       
+    }
+    
+    /**
+     * @group forecasts
+     */
+    public function testTimeperiodHasMigrated_equalDates()
+    {
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');                     
+        $worksheet = new ForecastWorksheet();
+        
+        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array('2013-02-01', '2013-02-01'));
+        $this->assertEquals(false, $hasMigrated);        
+    }
+    
+    /**
+     * @group forecasts
+     */
+    public function testTimeperiodHasMigrated_diffDatesSameTP()
+    {
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');                     
+        $worksheet = new ForecastWorksheet();
+        
+        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array('2013-02-01', '2013-02-02'));
+        $this->assertEquals(false, $hasMigrated);        
+    }
+    
+    /**
+     * @group forecasts
+     */
+    public function testTimeperiodHasMigrated_diffDatesDiffTP()
+    {
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');                     
+        $worksheet = new ForecastWorksheet();
+        
+        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array('2013-02-01', '2013-05-01'));
+        $this->assertEquals(true, $hasMigrated);        
+    }
 
+    /**
+     * @group forecasts
+     */
+    public function testTimeperiodMigratedDeleteCommittedOpp()
+    {
+    	$tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');
+        
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->date_closed = '2013-01-01';
+        $opp->save();
+        $opp->retrieve($opp->id);
+        
+        $product = SugarTestProductUtilities::createProduct();
+        $product->opportunity_id = $opp->id;
+        $product->date_closed = '2013-01-01';
+        $product->save();
+        
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($opp);
+        $worksheet2 = SugarTestWorksheetUtilities::loadWorksheetForBean($opp);
+        $worksheet2->id = "";
+        $worksheet2->draft = 0;
+        $worksheet2->save();
+                
+        $worksheet->date_closed = '2013-05-01';
+        $worksheet->save();
+        
+        $worksheet->saveRelatedOpportunity($opp);
+        $worksheet2 = BeanFactory::getBean("ForecastWorksheets", $worksheet2->id);
+                
+        $this->assertEquals(1, $worksheet2->deleted);        
+    }
+    
+    /**
+     * @group forecasts
+     */
+    public function testTimeperiodMigratedDeleteCommittedProduct()
+    {
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');
+        
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->date_closed = '2013-01-01';
+        $opp->save();
+        
+        $product = SugarTestProductUtilities::createProduct();
+        $product->opportunity_id = $opp->id;
+        $product->date_closed = '2013-01-01';
+        $product->save();
+        $product->retrieve($product->id);
+        
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($product);
+        $worksheet2 = SugarTestWorksheetUtilities::loadWorksheetForBean($product);
+        $worksheet2->id = "";
+        $worksheet2->draft = 0;
+        $worksheet2->save();
+               
+        $worksheet->date_closed = '2013-05-01';
+        $worksheet->save();
+        
+        $worksheet->saveRelatedProduct($product);
+        $worksheet2 = BeanFactory::getBean("ForecastWorksheets", $worksheet2->id);
+        
+        $this->assertEquals(1, $worksheet2->deleted);        
+    }
 }
