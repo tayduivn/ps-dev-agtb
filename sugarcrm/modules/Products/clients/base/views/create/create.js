@@ -26,10 +26,46 @@
  ********************************************************************************/
 ({
     extendsFrom: 'CreateView',
+    currencyFields: new Array(),
 
     initialize: function(options) {
         this._setupCommitStageField(options.meta.panels);
+        //pull the fields in the panels that are editable currency fields
+        _.each(
+            options.meta.panels, function(panel) {
+                _.each(panel.fields, function(field) {
+                    // push currency fields to array
+                    if(field.type == 'currency') {
+                        this.currencyFields.push(field.name);
+                    }
+                }, this);
+            }, this
+        );
         app.view.views.CreateView.prototype.initialize.call(this, options);
+    },
+
+    /**
+     * Bind to model to make it so that it will re-render once it has loaded.
+     */
+    bindDataChange : function() {
+        app.view.views.RecordView.prototype.bindDataChange.call(this);
+        this.model.on('change:currency_id', function() {
+            this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id"));
+        }, this)
+    },
+
+    /**
+     * convert all of the currency fields to the new currency
+     * @param oldCurrencyId
+     * @param newCurrencyId
+     */
+    convertCurrencyFields: function(oldCurrencyId, newCurrencyId) {
+        //run through the editable currency fields and convert the amounts to the new currency
+        _.each(this.currencyFields, function(currencyField) {
+            console.log('convert', currencyField);
+            this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId));
+            this.model.trigger("change:"+currencyField);
+        }, this);
     },
 
     /**
