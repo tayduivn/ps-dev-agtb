@@ -149,13 +149,13 @@
             //only if the collection contains more records
             var self = this;
             if(massCollection.entire) {
-                var allSelected = $("<div>").css("textAlign", "center").html(app.lang.get('LBL_LISTVIEW_SELECTED_ALL'));
+                var allSelected = $('<div>').html(app.lang.get('LBL_LISTVIEW_SELECTED_ALL'));
                 $(allSelected).find('a').on("click", function(evt) {
                     massCollection.reset();
                 });
                 this.view.layout.trigger("list:alert:show", allSelected);
             } else if(massCollection.length == this.view.collection.models.length) {
-                var selectAll = $("<div>").css("textAlign", "center").html(app.utils.formatString(
+                var selectAll = $("<div>").html(app.utils.formatString(
                     app.lang.get('LBL_LISTVIEW_SELECT_ALL_RECORDS'),{
                         "num": massCollection.length
                     }));
