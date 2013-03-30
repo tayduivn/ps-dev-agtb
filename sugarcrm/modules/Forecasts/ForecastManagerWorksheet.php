@@ -419,6 +419,8 @@ class ForecastManagerWorksheet extends SugarBean
                     }
                 }
             }
+        }
+        if(!empty($this->user_id)) {
             $this->isManager = User::isManager($this->user_id);
         }
     }
