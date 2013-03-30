@@ -38,6 +38,9 @@
         this._fields = this.parseFields();
 
         this.addPreviewEvents();
+
+        var resize = _.bind(this.resize, this);
+        $(window).off("resize", resize).on("resize", resize);
     },
     addPreviewEvents: function () {
         //When clicking on eye icon, we need to trigger preview:render with model&collection
@@ -213,5 +216,17 @@
         if (this.rightColumns.length) {
             this.$el.addClass('right-actions');
         }
-    }
+    },
+
+    /**
+     * Updates the class of this flex list as scrollable or not.
+     *
+     * Runs debunced to postpone the execution when the window is resized.
+     */
+    resize: _.debounce(function() {
+        var $content = this.$('.flex-list-view-content');
+        var toggle = $content.get(0).scrollWidth > $content.width();
+        this.$el.toggleClass('scroll-width', toggle);
+    }, 300)
+
 })
