@@ -225,6 +225,9 @@
      */
     resize: _.debounce(function() {
         var $content = this.$('.flex-list-view-content');
+        if (!$content.length) {
+            return;
+        }
         var toggle = $content.get(0).scrollWidth > $content.width();
         this.$el.toggleClass('scroll-width', toggle);
     }, 300)
