@@ -155,38 +155,40 @@
         return value;
     },
     setValue: function (model) {
-        if (model) {
-            var silent = model.silent || false;
-            this.model.set(this.def.id_name, model.id, {silent: silent});
-            this.model.set(this.def.name, model.value, {silent: silent});
-
-            var newData = {},
-                self = this;
-            _.each(this.def.populate_list, function (target, source) {
-                source = _.isNumber(source) ? target : source;
-                if (!_.isUndefined(model[source]) && app.acl.hasAccessToModel('edit', this.model, target)) {
-                    newData[target] = model[source];
-                }
-            }, this);
-
-            if (!_.isEmpty(newData)) {
-                var message = app.lang.get(self.def.populate_confirm || 'NTC_OVERWRITE_POPULATED_DATA_CONFIRM', this.getSearchModule()) +
-                    '<br/><br/>';
-                _.each(newData, function (value, field) {
-                    var def = this.model.fields[field];
-                    message += app.lang.get(def.label || def.vname || field, this.module) + ': ' + value + '<br/>';
-                }, this);
-                message += '<br/>';
-
-                app.alert.show('overwrite_confirmation', {
-                    level: 'confirmation',
-                    messages: message,
-                    onConfirm: function () {
-                        self.model.set(newData);
-                    }
-                });
-            }
+        if (!model) {
+            return;
         }
+        var silent = model.silent || false;
+        this.model.set(this.def.id_name, model.id, {silent: silent});
+        this.model.set(this.def.name, model.value, {silent: silent});
+
+        var newData = {},
+            self = this;
+        _.each(this.def.populate_list, function (target, source) {
+            source = _.isNumber(source) ? target : source;
+            if (!_.isUndefined(model[source]) && app.acl.hasAccessToModel('edit', this.model, target)) {
+                newData[target] = model[source];
+            }
+        }, this);
+
+        if (_.isEmpty(newData)) {
+            return;
+        }
+        var message = app.lang.get(self.def.populate_confirm || 'NTC_OVERWRITE_POPULATED_DATA_CONFIRM',
+            this.getSearchModule()) + '<br/><br/>';
+        _.each(newData, function (value, field) {
+            var def = this.model.fields[field];
+            message += app.lang.get(def.label || def.vname || field, this.module) + ': ' + value + '<br/>';
+        }, this);
+        message += '<br/>';
+
+        app.alert.show('overwrite_confirmation', {
+            level: 'confirmation',
+            messages: message,
+            onConfirm: function () {
+                self.model.set(newData);
+            }
+        });
     },
     /**
      * {@inheritdoc}
