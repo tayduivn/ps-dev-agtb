@@ -155,6 +155,7 @@ $app_list_strings = array (
     'Project'=>'Project',
     'ProjectTask'=>'Project Task',
     'Prospects' => 'Target',
+    'ProspectLists' => 'Target List',
     'Campaigns'=>'Campaign',
     'Documents'=>'Document',
     'Sync'=>'Sync',
