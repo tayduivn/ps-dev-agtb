@@ -90,51 +90,6 @@ class SugarSearchEngineMappingHelper
         ),
     );
 
-    /**
-     * this defines the field types that can be enabled for full text search
-     * @var array
-     */
-    protected static $ftsEnabledFieldTypes = array('name', 'user_name', 'varchar', 'decimal', 'float', 'int', 'phone', 'text', 'url', 'relate');
-
-    /**
-     *
-     * Given a field type, determine whether this type can be enabled for full text search.
-     *
-     * @param $type field type
-     *
-     * @return boolean whether the field type can be enabled for full text search
-     */
-    public static function isTypeFtsEnabled($type)
-    {
-        return in_array($type, self::$ftsEnabledFieldTypes);
-    }
-
-    /**
-     *
-     * Given a modulename, determine whether this module can be enabled for full text search.
-     *
-     * @param $moduleName module name
-     *
-     * @return boolean whether the module can be enabled for full text search
-     */
-    public static function shouldShowModule($moduleName)
-    {
-        require_once('modules/Home/UnifiedSearchAdvanced.php');
-        $usa = new UnifiedSearchAdvanced();
-        $modLists = $usa->retrieveEnabledAndDisabledModules();
-
-        foreach ($modLists as $list)
-        {
-            foreach ($list as $module)
-            {
-                if (isset($module['module']) && $module['module'] == $moduleName)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     /**
      *

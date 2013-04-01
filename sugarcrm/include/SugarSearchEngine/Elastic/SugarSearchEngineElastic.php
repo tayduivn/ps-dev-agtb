@@ -825,4 +825,24 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     {
         return $this->_indexName;
     }
+
+    /**
+     * this defines the field types that can be enabled for full text search
+     * @var array
+     */
+    protected static $ftsEnabledFieldTypes = array('name', 'user_name', 'varchar', 'decimal', 'float', 'int', 'phone', 'text', 'url', 'relate');
+
+    /**
+     *
+     * Given a field type, determine whether this type can be enabled for full text search.
+     *
+     * @param string $type Sugar field type
+     *
+     * @return boolean whether the field type can be enabled for full text search
+     */
+    public function isTypeFtsEnabled($type)
+    {
+        return in_array($type, self::$ftsEnabledFieldTypes);
+    }
+
 }

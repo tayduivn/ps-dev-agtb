@@ -438,6 +438,34 @@ class UnifiedSearchAdvanced {
 		write_array_to_file('unified_search_modules', $supported_modules, $this->cache_search);
 	}
 
+
+    /**
+     *
+     * Given a modulename, determine whether this module can be enabled for full text search.
+     *
+     * @param $moduleName module name
+     *
+     * @return boolean whether the module can be enabled for full text search
+     */
+    public function shouldShowModule($moduleName)
+    {
+        //require_once('modules/Home/UnifiedSearchAdvanced.php');
+        //$usa = new UnifiedSearchAdvanced();
+        $modLists = $this->retrieveEnabledAndDisabledModules();
+
+        foreach ($modLists as $list)
+        {
+            foreach ($list as $module)
+            {
+                if (isset($module['module']) && $module['module'] == $moduleName)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Retrieve the enabled and disabled modules used for global search.
      *

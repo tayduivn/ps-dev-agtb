@@ -73,4 +73,17 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
      */
     public function createIndex($recreate = false){}
 
+    /**
+     *
+     * Given a field type, determine whether this type can be enabled for full text search.
+     *
+     * @abstract
+     * @param string $type Sugar field type
+     * @return boolean whether the field type can be enabled for full text search
+     */
+    public function isTypeFtsEnabled($type)
+    {
+        return false;
+    }
+
 }
