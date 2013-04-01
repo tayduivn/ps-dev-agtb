@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'timeago'],
     initialize: function (options) {
         app.view.View.prototype.initialize.call(this, options);
         if (this.model.parentModel && this.model.get("requiredModel")) {
@@ -29,7 +29,6 @@
         }
 
         var twitter = this.model.get('twitter') ||
-                this.model.parentModel.get('twitter') ||
                 this.model.parentModel.get('name') ||
                 this.model.parentModel.get('account_name') ||
                 this.model.parentModel.get('full_name'),
@@ -48,6 +47,9 @@
             dataType: "jsonp",
             context: this,
             success: function (data) {
+                if (this.disposed) {
+                    return;
+                }
                 var tweets = [];
 
                 _.each(data, function (tweet) {
@@ -60,6 +62,7 @@
                         name = tweet.user.name,
                         tokenText = text.split(' '),
                         screen_name = tweet.user.screen_name,
+                        profile_image_url = tweet.user.profile_image_url_https,
                         j;
 
                     // Search for links and turn them into hrefs
@@ -69,14 +72,12 @@
                         }
                     }
 
-                    text = tokenText.join(" ");
-                    tweets.push({id: id, name: name, screen_name: screen_name, text: text, source: sourceUrl, date: date});
+                    text = tokenText.join(' ');
+                    tweets.push({id: id, name: name, screen_name: screen_name, profile_image_url: profile_image_url, text: text, source: sourceUrl, date: date});
                 }, this);
 
                 this.tweets = tweets;
-                if (!this.disposed) {
-                    self.render();
-                }
+                self.render();
             },
             complete: (options) ? options.complete : null
         });

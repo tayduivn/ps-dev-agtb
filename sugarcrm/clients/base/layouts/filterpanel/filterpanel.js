@@ -136,10 +136,16 @@
     },
 
     showTooltip: function(e) {
-        this.$(e.currentTarget).tooltip("show");
+        var $el = this.$(e.currentTarget);
+        //Hotfix for the top left checkall (actionmenu) tooltip
+        if ($el.hasClass('checkall')) {
+            $el.tooltip({container: this.$el, trigger: 'manual'}).tooltip('show');
+        } else {
+            $el.tooltip('show');
+        }
     },
 
     hideTooltip: function(e) {
-        this.$(e.currentTarget).tooltip("hide");
+        this.$(e.currentTarget).tooltip('hide');
     }
 })

@@ -61,7 +61,6 @@
 
         this.chart = chart;
     },
-
     loadData: function(options) {
 
         var url_base = 'Opportunities/chart/pipeline';
