@@ -46,11 +46,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * Setup global variables
      */
     public static function setUpBeforeClass()
-    {
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user');
+    {   
         self::$configDateFormat = $GLOBALS['sugar_config']['datef'];
         $db = DBManagerFactory::getInstance();
         $db->query('UPDATE timeperiods set deleted = 1');
@@ -68,6 +64,11 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         self::$currentYear = date('Y');
         $this->preTestIds = TimePeriod::get_timeperiods_dom();
 
@@ -111,6 +112,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $db->query("UPDATE timeperiods SET deleted = 0 WHERE id IN ('" . implode("', '", array_keys($this->preTestIds))  . "')");
 
         $db->query("DELETE FROM timeperiods WHERE deleted = 1");
+        parent::tearDown();
     }
 
     /**

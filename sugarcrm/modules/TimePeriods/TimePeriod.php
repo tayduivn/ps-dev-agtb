@@ -324,26 +324,8 @@ class TimePeriod extends SugarBean {
      * @return bool|TimePeriod TimePeriod instance for corresponding database date; false if nothing found
      */
     public static function retrieveFromDate($db_date)
-    {
-        global $app_strings;
-        $timestamp = strtotime($db_date);
-        $db = DBManagerFactory::getInstance();
-        $db_date = $db->quote($db_date);
-        $timeperiod_id = $db->getOne("SELECT id FROM timeperiods " .
-                                     "WHERE start_date_timestamp <= '{$timestamp}' " .
-                                        "AND end_date_timestamp >= '{$timestamp}' " .
-                                        "AND is_fiscal_year = 0 " .
-                                        "AND deleted = 0", 
-                                     false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($db_date)));
-
-        if(!empty($timeperiod_id)) {            
-            $tp = BeanFactory::getBean('TimePeriods');
-            $tp->retrieve($timeperiod_id);
-            
-            return $tp;
-        }
-
-        return false;
+    {        
+        return TimePeriod::getByDateAndType($db_date);
     }
 
 
@@ -390,26 +372,57 @@ class TimePeriod extends SugarBean {
      */
     public static function getCurrentId($type='')
     {
-        if(empty($type)) {
-            $admin = BeanFactory::getBean('Administration');
-            $config = $admin->getConfigForModule('Forecasts', 'base');
-            $type = $config['timeperiod_leaf_interval'];
-        }
-
-        $timedate = TimeDate::getInstance();
+        $id = null;
         $db = DBManagerFactory::getInstance();
+        $timedate = TimeDate::getInstance();
         $queryDate = $timedate->getNow(true);
-        $date = $db->convert($db->quoted($queryDate->asDbDate(false)), 'date');
-        $query = "SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} AND type = '{$type}' AND deleted = 0 ORDER BY start_date_timestamp DESC";
-
-        $result = $db->limitQuery($query, 0 , 1);
-        if(!empty($result)) {
-            $row = $db->fetchByAssoc($result);
-            return $row['id'];
+        $date = $db->convert($queryDate->asDbDate(false), 'date');
+        $tp = TimePeriod::getByDateAndType($date, $type);
+        
+        if (!empty($tp)) {
+        	$id = $tp->id;
         }
-
-        return null;
+        
+        return $id;
     }
+    
+    /**
+     * Gets timeperiod based on date and type
+     * 
+     * @param string Database formatted date
+     * @param string Timeperiod type
+     * @return Timeperiod|bool Timeperiod if found, false if not
+     */
+     protected static function getByDateAndType($date, $type="")
+     {
+        global $app_strings;
+        $db = DBManagerFactory::getInstance();
+        $timestamp = $db->quoted(strtotime($date));
+        $retVal = false;
+        
+     	if (empty($type)) {
+            $admin = BeanFactory::getBean("Administration");
+            $config = $admin->getConfigForModule("Forecasts", "base");
+            $type = $config["timeperiod_leaf_interval"];
+        }
+        $type = $db->quoted($type);       
+        
+        $timeperiod_id = $db->getOne("SELECT id FROM timeperiods " .
+                                     "WHERE start_date_timestamp <= {$timestamp} " .
+                                        "AND end_date_timestamp >= {$timestamp} " .
+                                        "AND type = {$type} " .
+                                        "AND deleted = 0", 
+                                     false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($db->quote($date))));
+        
+        if(!empty($timeperiod_id)) {            
+            $tp = BeanFactory::getBean('TimePeriods');
+            $tp->retrieve($timeperiod_id);
+            
+            $retVal = $tp;
+        }
+        
+        return $retVal;
+     }
 
 
     /**

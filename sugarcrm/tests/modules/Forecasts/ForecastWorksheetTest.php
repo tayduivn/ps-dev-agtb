@@ -240,14 +240,14 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     public function dataProviderTimePeriodsHasMigrated() {
-    return array(
-        array(null, null, false),                   // invalid dates
-        array('2013-02-01', null, false),           // one invalid date
-        array(null, '2013-02-01', false),           // one invalid date
-        array('2013-02-01', '2013-02-01', false),    // equal dates
-        array('2013-02-01', '2013-05-01', true)    // equal dates
-    );
-}
+        return array(
+            array(null, null, false),                   // invalid dates
+            array('2013-02-01', null, false),           // one invalid date
+            array(null, '2013-02-01', false),           // one invalid date
+            array('2013-02-01', '2013-02-01', false),    // equal dates
+            array('2013-02-01', '2013-05-01', true)    // equal dates
+        );
+    }
     
     /**
      * @group forecasts

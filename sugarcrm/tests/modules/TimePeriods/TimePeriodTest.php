@@ -31,6 +31,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -52,6 +53,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestHelper::tearDown();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        parent::tearDown();
     }
 
     /**
@@ -126,9 +128,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');
         
         //check to see if dates are in a timeperiod
-        $tp3 = $tp1->retrieveFromDate('2013-01-30');
-        $tp4 = $tp1->retrieveFromDate('2013-05-14');
-        $tp5 = $tp1->retrieveFromDate('2013-07-01');
+        $tp3 = TimePeriod::retrieveFromDate('2013-01-30');
+        $tp4 = TimePeriod::retrieveFromDate('2013-05-14');
+        $tp5 = TimePeriod::retrieveFromDate('2013-07-01');
         
         $this->assertEquals($tp1->id, $tp3->id);
         $this->assertEquals($tp2->id, $tp4->id);

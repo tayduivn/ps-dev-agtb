@@ -54,6 +54,7 @@ class TimePeriodsCurrentApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
         $this->api = new TimePeriodsCurrentApi();
     }
 
@@ -68,6 +69,7 @@ class TimePeriodsCurrentApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        parent::tearDown();
     }
 
     /**
