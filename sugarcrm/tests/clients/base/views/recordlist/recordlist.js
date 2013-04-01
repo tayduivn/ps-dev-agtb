@@ -41,6 +41,11 @@ describe("Base.View.RecordList", function () {
 
     describe('adding actions to list view', function () {
 
+        it('should return my_favorite field when calling getFieldNames', function () {
+            var fields = view.getFieldNames();
+            expect(_.indexOf(fields, 'my_favorite')).toBeGreaterThan(-1);
+        });
+
         it('should have added favorite field', function () {
             view.render();
             expect(view.leftColumns[0].fields[1]).toEqual({type:'favorite'});
