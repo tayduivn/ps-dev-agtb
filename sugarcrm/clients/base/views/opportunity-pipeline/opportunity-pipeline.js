@@ -28,7 +28,7 @@
     handleTypeButtonClick: function(e) {
         var elm = $(e.currentTarget),
             displayType = elm.data('type');
-        if(this.model.get('display_type') != displayType) {
+        if (this.model.get('display_type') != displayType) {
             this.model.set({'display_type': displayType});
         }
     },
@@ -49,7 +49,9 @@
             .tooltips(false)
             .colorData('graduated', {c1: '#0b274c', c2: '#cbfaff', l: this.results.data.length})
             .colorFill('default')
-            .fmtValueLabel(function(d) { return d.label });
+            .fmtValueLabel(function(d) {
+                return d.label
+            });
 
         d3.select('svg#' + this.cid)
             .datum(this.results)
@@ -63,9 +65,9 @@
     loadData: function(options) {
 
         var url_base = 'Opportunities/chart/pipeline';
-        if(this.model.has('selectedTimePeriod')) {
+        if (this.model.has('selectedTimePeriod')) {
             url_base += '/' + this.model.get('selectedTimePeriod');
-            if(this.model.has('display_type')) {
+            if (this.model.has('display_type')) {
                 url_base += '/' + this.model.get('display_type');
             }
         }
