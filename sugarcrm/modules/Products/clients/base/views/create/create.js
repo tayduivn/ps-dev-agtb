@@ -31,8 +31,7 @@
     initialize: function(options) {
         this._setupCommitStageField(options.meta.panels);
         //pull the fields in the panels that are editable currency fields
-        _.each(
-            options.meta.panels, function(panel) {
+        _.each(options.meta.panels, function(panel) {
                 _.each(panel.fields, function(field) {
                     // push currency fields to array
                     if(field.type == 'currency') {
@@ -62,7 +61,7 @@
     convertCurrencyFields: function(oldCurrencyId, newCurrencyId) {
         //run through the editable currency fields and convert the amounts to the new currency
         _.each(this.currencyFields, function(currencyField) {
-            this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId));
+            this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId), {silent: true});
             this.model.trigger("change:"+currencyField);
         }, this);
     },
