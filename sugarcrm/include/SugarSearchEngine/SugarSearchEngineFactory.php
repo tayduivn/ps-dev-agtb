@@ -95,6 +95,7 @@ class SugarSearchEngineFactory
 
         $searchEngineLocations = array(
             sprintf($defaultTemplateLocation, $name.'/Custom', $name),
+            sprintf($defaultTemplateLocation, '/Custom', $name),
             sprintf($defaultTemplateLocation, $name.'/', $name),
             sprintf($defaultTemplateLocation, '','')
         );
@@ -126,15 +127,8 @@ class SugarSearchEngineFactory
             {
                 return $engineInstance;
             }
-            else
-            {
-                return FALSE;
-            }
         }
-        else
-        {
-            return FALSE;
-        }
+        return false;
     }
 }
 
