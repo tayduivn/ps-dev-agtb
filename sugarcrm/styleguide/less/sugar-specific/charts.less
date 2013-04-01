@@ -201,6 +201,9 @@
 }
 
 
+svg {
+  max-height: 500px;
+}
 .nv-chart {
   height: 400px;
   min-width: 300px;
@@ -211,29 +214,58 @@
     of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
   */
 }
+.dashboard {
+  .thumbnail.widget:not(.collapsed) {
+    //overflow: hidden;
+    max-height: 500px;
 
-.thumbnail.widget:not(.expanded) {
-  .nv-chart {
-    height: 450px;
-    margin: 8px;
-    //border: 1px solid #ddd;
-  }
-  .dashlet-options+.nv-chart {
-    height: 409px;
-  }
-  .opportunity-metrics-wrapper .nv-chart {
-    height: 309px;
+    //500(max)-33(menubar)-1(bottom-border)
+    .widget-content,
+    .block {
+      max-height: 466px;
+    }
+    .dashlet-options+.block {
+      height: 417px;
+    }
+    //466(max)-16(margins)
+    .nv-chart {
+      height: 450px;
+      margin: 8px;
+    }
+    .dashlet-options+.block .nv-chart,
+    .dashlet-options+.nv-chart {
+      height: 409px;
+    }
+    .opportunity-metrics-wrapper .nv-chart {
+      height: 309px;
+    }
   }
 }
-.sidebar-content .thumbnail.widget:not(.expanded) {
-  .nv-chart {
-    height: 350px;
-  }
-  .dashlet-options+.nv-chart {
-    height: 309px;
-  }
-  .opportunity-metrics-wrapper .nv-chart {
-    height: 250px;
+.sidebar-content {
+  .thumbnail.widget:not(.collapsed) {
+    //overflow: hidden;
+    max-height: 400px;
+    //400(max)-33(menubar)-1(bottom-border)
+    .widget-content,
+    .block {
+      max-height: 366px;
+    }
+    .dashlet-options+.block {
+      height: 317px;
+    }
+    //366(max)-16(margins)
+    .nv-chart {
+      height: 350px;
+      margin: 8px;
+    }
+    //350(h)-41(options)
+    .dashlet-options+.block .nv-chart,
+    .dashlet-options+.nv-chart {
+      height: 309px;
+    }
+    .opportunity-metrics-wrapper .nv-chart {
+      height: 250px;
+    }
   }
 }
 

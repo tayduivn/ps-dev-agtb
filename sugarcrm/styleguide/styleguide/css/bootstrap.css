@@ -2905,7 +2905,7 @@ ul.icons li [class*=" icon-"] {
   list-style: none;
   background-color: #fff;
   border: 1px solid #ccc;
-  border: 1px solid rgba(0,0,0,0.2);
+  border: 1px solid #bbb;
   *border-right-width: 2px;
   *border-bottom-width: 2px;
   -webkit-border-radius: 6px;
@@ -4273,7 +4273,7 @@ input[type="submit"].btn.btn-mini {
   margin-left: -20px;
   font-size: 20px;
   font-weight: 200;
-  color: yellow;
+  color: #fff;
   text-shadow: 0 1px 0 #404040;
 }
 .navbar .brand:hover {
@@ -4285,7 +4285,7 @@ input[type="submit"].btn.btn-mini {
   color: #bbb;
 }
 .navbar-link {
-  color: yellow;
+  color: #fff;
 }
 .navbar-link:hover {
   color: #fff;
@@ -4441,7 +4441,7 @@ input[type="submit"].btn.btn-mini {
 .navbar .nav > li > a {
   float: none;
   padding: 13px 15px 13px;
-  color: yellow;
+  color: #fff;
   text-decoration: none;
   text-shadow: 0 1px 0 #404040;
 }
@@ -4525,7 +4525,7 @@ input[type="submit"].btn.btn-mini {
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
   border-bottom: 7px solid #ccc;
-  border-bottom-color: rgba(0,0,0,0.2);
+  border-bottom-color: #bbb;
   position: absolute;
   top: -7px;
   left: 9px;
@@ -4542,7 +4542,7 @@ input[type="submit"].btn.btn-mini {
 }
 .navbar-fixed-bottom .nav > li > .dropdown-menu:before {
   border-top: 7px solid #ccc;
-  border-top-color: rgba(0,0,0,0.2);
+  border-top-color: #bbb;
   border-bottom: 0;
   bottom: -7px;
   top: auto;
@@ -4564,8 +4564,8 @@ input[type="submit"].btn.btn-mini {
   color: #fff;
 }
 .navbar .nav li.dropdown > .dropdown-toggle .caret {
-  border-top-color: yellow;
-  border-bottom-color: yellow;
+  border-top-color: #fff;
+  border-bottom-color: #fff;
 }
 .navbar .nav li.dropdown.open > .dropdown-toggle .caret,
 .navbar .nav li.dropdown.active > .dropdown-toggle .caret,

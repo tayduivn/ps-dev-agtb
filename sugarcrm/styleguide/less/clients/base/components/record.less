@@ -20,9 +20,6 @@
     margin: 0;
     vertical-align: top;
   }
-  .view-forecastsTitle h1 {
-    margin-top: 18px;
-  }
 
   .module-title {
     padding-top: 19px;
@@ -221,6 +218,10 @@
         margin: 0 2px 0 -2px;
     }
   }
+
+  .dashletconfiguration-headerpane input[type="text"] {
+    margin-top: 16px;
+  }
 }
 
 #contentflex #headerbar {
@@ -229,6 +230,9 @@
   .view-forecastsCommitButtons {
     vertical-align: top;
     display: inline-block;
+  }
+  .view-forecastsTitle h1 {
+    padding-top: 18px;
   }
   .view-forecastsCommitButtons {
     float: right;
@@ -239,6 +243,13 @@
 .record {
   clear: both;
   margin: 20px 20px 10px 5px;
+  .record-cell {
+      div[class*="span"] {
+          .select2-container {
+              margin-top: -5px;
+          }
+      }
+  }
   .form-horizontal {
     .record-cell,
     .normal {
@@ -629,3 +640,39 @@
   margin: 0 20px 20px 20px;
 }
 
+/* Special treatment for the address fields */
+.record-cell {
+  [class*='address_']:not(.edit) {
+    display: inline-block;
+  }
+  .address_street,
+  .address_country,
+  .address_misc_block /* miscelaneous class for more complex/international address formats */ {
+    width: 100%;
+    clear: both;
+  }
+  :not(.edit) {
+    &.address_city {
+      div:after {
+        content: ",";
+        margin-left: -4px;
+        margin-right: 4px;
+      }
+    }
+  }
+
+  .address_city {
+    .ellipsis_inline:empty:after {
+      content: "";
+    }
+  }
+
+  .address_city,
+  .address_state,
+  .address_zip {
+    &> div.ellipsis_inline {
+      display: inline !important;
+      overflow: visible;
+    }
+  }
+}

@@ -87,6 +87,24 @@
     left: @beforeLeftCaretPos;
     right: @beforeRightCaretPos;
   }
+
+    &.bottom-up {
+        &:after {
+            border-top: 6px solid @white;
+            border-bottom: none;
+            top: auto;
+            left: @afterLeftCaretPos;
+            right: @afterRightCaretPos;
+
+        }
+        &:before {
+            border-top: 7px solid @white;
+            border-bottom: none;
+            top: auto;
+            left: @beforeLeftCaretPos;
+            right: @beforeRightCaretPos;
+        }
+    }
 }
 
 // CSS3 PROPERTIES

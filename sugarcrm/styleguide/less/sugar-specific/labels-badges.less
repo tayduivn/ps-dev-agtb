@@ -66,6 +66,8 @@
   &-important[href]     {background-color: @btnDangerBackground;}
   &-warning,
   &-warning[href]       {background-color: @orange;}
+  &-pending,
+  &-pending[href]       {background-color: @yellow;}
   &-success,
   &-success[href]       {background-color: @btnSuccessBackground;}
   &-info,
@@ -106,12 +108,14 @@
   &-Notes[href]         {background-color: @blue;}
   &-Opportunities,
   &-Opportunities[href] {background-color: @purple;}  
+  &-Products,
+  &-Products[href]      {background-color: darken(@purple,10%);}
   &-Reports,
   &-Reports[href]       {background-color: darken(@orange,10%);}
   &-Quotes,
   &-Quotes[href]        {background-color: darken(@purple,20%);} 
   &-Users,
-  &-Users[href]        {background-color: @grayDarker;}
+  &-Users[href]         {background-color: @grayDarker;}
 }
 
 .label-module.label, .label-module-sm.label, .label-module-mini.label {
@@ -145,10 +149,12 @@
   &-Notes[href]         {.box-shadow(0 2px 0 darken(@blue,10%));}  
   &-Opportunities,
   &-Opportunities[href] {.box-shadow(0 2px 0 darken(@purple,5%));}
+  &-Products,
+  &-Products[href]      {.box-shadow(0 2px 0 darken(@purple,15%));}  
   &-Reports,
   &-Reports[href]       {.box-shadow(0 2px 0 darken(@orange,15%));}
   &-Quotes,
   &-Quotes[href]        {.box-shadow(0 2px 0 darken(@purple,25%));}
   &-Users,
-  &-Users[href]        {.box-shadow(0 2px 0 darken(@grayDarker,5%));} 
+  &-Users[href]         {.box-shadow(0 2px 0 darken(@grayDarker,5%));} 
 }
