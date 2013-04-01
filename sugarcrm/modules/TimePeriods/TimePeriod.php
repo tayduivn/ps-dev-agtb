@@ -36,7 +36,7 @@ class TimePeriod extends SugarBean {
     var $start_date;
     var $end_date;
     var $start_date_timestamp;
-       var $end_date_timestamp;
+    var $end_date_timestamp;
     var $created_by;
     var $date_entered;
     var $date_modified;
@@ -136,10 +136,10 @@ class TimePeriod extends SugarBean {
         global $disable_date_format;
         $previous_disable_date_format = $disable_date_format;
         $disable_date_format = 1;
-           $ret = parent::retrieve($id, $encode, $deleted);
+        $ret = parent::retrieve($id, $encode, $deleted);
         $disable_date_format = $previous_disable_date_format;
-           return $ret;
-       }
+        return $ret;
+    }
 
     public function is_authenticated()
     {
@@ -476,8 +476,8 @@ class TimePeriod extends SugarBean {
         $queryDate = $timedate->fromDbDate($this->end_date);
         $queryDate = $queryDate->modify('+1 day');
         $query = sprintf("SELECT id FROM timeperiods WHERE type = %s AND start_date = %s AND deleted = 0 ",
-            $this->db->quoted($this->type),
-            $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date'));
+                         $this->db->quoted($this->type),
+                         $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date'));
 
         $result = $this->db->query($query);
         $row = $this->db->fetchByAssoc($result);
@@ -497,8 +497,8 @@ class TimePeriod extends SugarBean {
         $queryDate = $timedate->fromDbDate($this->start_date);
         $queryDate = $queryDate->modify('-1 day');
         $query = sprintf("SELECT id FROM timeperiods WHERE type = %s AND end_date = %s AND deleted = 0 ",
-            $this->db->quoted($this->type),
-            $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date'));
+                         $this->db->quoted($this->type),
+                         $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date'));
 
         $result = $this->db->query($query);
         $row = $this->db->fetchByAssoc($result);
@@ -654,7 +654,7 @@ class TimePeriod extends SugarBean {
 
             //If no currentTimePeriod instance was found, just use the most recent upcoming TimePeriod instance
             $query = sprintf("SELECT id FROM timeperiods WHERE start_date > %s AND parent_id IS NOT NULL AND deleted = 0 ORDER BY start_date ASC",
-                $db->convert($db->quoted($currentDate->asDbDate()), 'date'));
+                             $db->convert($db->quoted($currentDate->asDbDate()), 'date'));
 
             $result = $db->limitQuery($query, 0, 1);
             $row = $db->fetchByAssoc($result);
@@ -666,8 +666,8 @@ class TimePeriod extends SugarBean {
             if(empty($currentTimePeriod)) {
                 //One last attempt using timeperiods without parent_id
                 $query = sprintf("SELECT id FROM timeperiods WHERE start_date <= %s AND end_date >= %s AND parent_id IS NULL AND deleted = 0 ORDER BY start_date ASC",
-                   $db->convert($db->quoted($currentDate->asDbDate()), 'date'),
-                   $db->convert($db->quoted($currentDate->asDbDate()), 'date'));
+                                 $db->convert($db->quoted($currentDate->asDbDate()), 'date'),
+                                 $db->convert($db->quoted($currentDate->asDbDate()), 'date'));
 
                 $result = $db->limitQuery($query, 0, 1);
 
