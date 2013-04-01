@@ -43,7 +43,7 @@
     renderChart: function() {
         var chart, svg;
         // clear out the current chart before a re-render
-        this.$el.find('.nv-chart').html('<svg id="view51"></svg>');
+        this.$el.find('.nv-chart').html('<svg id="' + this.cid + '"></svg>');
         chart = nv.models.funnelChart()
             .showTitle(false)
             .tooltips(false)
