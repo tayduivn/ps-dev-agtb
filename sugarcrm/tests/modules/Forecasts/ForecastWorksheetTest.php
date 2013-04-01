@@ -239,73 +239,29 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
     
+    public function dataProviderTimePeriodsHasMigrated() {
+    return array(
+        array(null, null, false),                   // invalid dates
+        array('2013-02-01', null, false),           // one invalid date
+        array(null, '2013-02-01', false),           // one invalid date
+        array('2013-02-01', '2013-02-01', false),    // equal dates
+        array('2013-02-01', '2013-05-01', true)    // equal dates
+    );
+}
+    
     /**
      * @group forecasts
+     * @dataProvider dataProviderTimePeriodsHasMigrated
      */
-    public function testTimeperiodHasMigrated_invalidDates()
+    public function testTimeperiodHasMigrated($date1, $date2, $expectedReturn)
     {
         $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
         $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');
-        $worksheet = new ForecastWorksheet();                     
+        $worksheet = BeanFactory::getBean("ForecastWorksheets");                    
         
-        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array(null, null));
-        $this->assertEquals(false, $hasMigrated);        
-    }
-    
-    /**
-     * @group forecasts
-     */
-    public function testTimeperiodHasMigrated_oneInvalidDate()
-    {
-        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
-        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');                     
-        $worksheet = new ForecastWorksheet();
-        
-        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array('2013-02-01', null));
-        $this->assertEquals(false, $hasMigrated); 
-        
-        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array(null, '2013-02-01'));
-        $this->assertEquals(false, $hasMigrated);       
-    }
-    
-    /**
-     * @group forecasts
-     */
-    public function testTimeperiodHasMigrated_equalDates()
-    {
-        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
-        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');                     
-        $worksheet = new ForecastWorksheet();
-        
-        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array('2013-02-01', '2013-02-01'));
-        $this->assertEquals(false, $hasMigrated);        
-    }
-    
-    /**
-     * @group forecasts
-     */
-    public function testTimeperiodHasMigrated_diffDatesSameTP()
-    {
-        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
-        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');                     
-        $worksheet = new ForecastWorksheet();
-        
-        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array('2013-02-01', '2013-02-02'));
-        $this->assertEquals(false, $hasMigrated);        
-    }
-    
-    /**
-     * @group forecasts
-     */
-    public function testTimeperiodHasMigrated_diffDatesDiffTP()
-    {
-        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
-        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');                     
-        $worksheet = new ForecastWorksheet();
-        
-        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array('2013-02-01', '2013-05-01'));
-        $this->assertEquals(true, $hasMigrated);        
-    }
+        $hasMigrated = SugarTestReflection::callProtectedMethod($worksheet, 'timeperiodHasMigrated', array($date1, $date2));
+        $this->assertEquals($expectedReturn, $hasMigrated);        
+    }   
 
     /**
      * @group forecasts

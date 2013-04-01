@@ -141,19 +141,7 @@ class ForecastWorksheet extends SugarBean
         $this->save(false);
         
         //if this migrated, we need to delete the committed row
-        if ($this->timeperiodHasMigrated($this->fetched_row['date_closed'], $opp->fetched_row['date_closed'])) {
-            $worksheet = BeanFactory::getBean("ForecastWorksheets");
-            $worksheet->retrieve_by_string_fields(
-                array(
-                    'parent_type' => 'Opportunities',
-                    'parent_id' => $opp->id,
-                    'draft' => 0,
-                    'deleted' => 0,
-                )
-            );
-            $worksheet->deleted = 1;
-            $worksheet->save();
-        }
+        $this->removeMigratedRow($opp);
 
         //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         $this->saveOpportunityProducts($opp, $isCommit);
@@ -182,6 +170,31 @@ class ForecastWorksheet extends SugarBean
             $product_wkst->saveRelatedProduct($product, $isCommit);
             unset($product_wkst);   // clear the cache
         }
+    }
+    
+    /**
+     * Removes committed row for a bean if it has moved timeperiods.
+     * 
+     * @param SugarBean $bean
+     * @return boolean true if something is removed, false if not
+     */
+    public function removeMigratedRow(SugarBean $bean) {
+        $return = false;
+        if ($this->timeperiodHasMigrated($this->fetched_row["date_closed"], $bean->fetched_row["date_closed"])) {
+            $worksheet = BeanFactory::getBean("ForecastWorksheets");
+            $worksheet->retrieve_by_string_fields(
+                array(
+                    "parent_type" => $bean->module_name,
+                    "parent_id" => $bean->id,
+                    "draft" => 0,
+                    "deleted" => 0,
+                )
+            );
+            $worksheet->deleted = 1;
+            $worksheet->save();
+            $return = true;
+        }
+        return $return;
     }
 
     /**
@@ -230,19 +243,7 @@ class ForecastWorksheet extends SugarBean
         $this->draft = ($isCommit === false) ? 1 : 0;
         
         //if this migrated, we need to delete the committed row
-        if ($this->timeperiodHasMigrated($this->fetched_row['date_closed'], $product->fetched_row['date_closed'])) {
-            $worksheet = BeanFactory::getBean("ForecastWorksheets");
-            $worksheet->retrieve_by_string_fields(
-                array(
-                    'parent_type' => 'Products',
-                    'parent_id' => $product->id,
-                    'draft' => 0,
-                    'deleted' => 0,
-                )
-            );            
-            $worksheet->deleted = 1;
-            $worksheet->save();
-        }
+        $this->removeMigratedRow($product);
 
         $this->save(false);
     }
