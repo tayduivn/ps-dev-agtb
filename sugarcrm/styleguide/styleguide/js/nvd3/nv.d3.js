@@ -7777,11 +7777,11 @@ nv.models.scatter = function() {
                 pointIndex: d.point
               });
             });
-
       }
 
 
-
+      //TODO: fix this
+      wrap.select('.nv-groups').selectAll('.nv-group').remove();
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
           .data(function(d) { return d; }, function(d) { return d.key; });
       groups.enter().append('g')
@@ -7794,9 +7794,10 @@ nv.models.scatter = function() {
       groups
           //.attr('class', function(d,i) { return 'nv-group nv-series-' + i })
           .attr('class', function(d,i) {
+              var iClass = (d.iClass*classStep)%20;
               return this.getAttribute('class') || (
                 'nv-group nv-series-' + i + (
-                  useClass ? ( ' '+ ( d.class || 'nv-fill' + (i*classStep%20>9?'':'0') + i*classStep%20 ) ) : ''
+                  useClass ? ( ' '+ ( d.class || 'nv-fill' + (iClass>9?'':'0') + iClass ) ) : ''
                 )
               );
           } )
@@ -10496,249 +10497,6 @@ nv.models.tree = function() {
   return chart;
 };
 
-nv.models.bubble = function() {
-
-  //============================================================
-  // Public Variables with Default Settings
-  //------------------------------------------------------------
-
-  var margin = {top: 0, right: 0, bottom: 0, left: 0}
-    , scatter = nv.models.scatter()
-    , width = 960
-    , height = 500
-    //, x = scatter.xScale()
-    , x = d3.time.scale()
-    , y = scatter.yScale()
-    , id = Math.floor(Math.random() * 10000) //Create semi-unique ID incase user doesn't select one
-    , getX = function(d) { return d.x; } // accessor to get the x value from a data point
-    , getY = function(d) { return d.y; } // accessor to get the y value from a data point
-    , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
-    , clipEdge = false // if true, masks lines within x and y scale
-    , xDomain
-    , yDomain
-    , color = nv.utils.defaultColor() // a function that returns a color
-    , fill = function (d,i) { return color(d,i); }
-    , gradient = function (d,i) { return color(d,i); }
-    , useClass = false
-    , classStep = 1
-    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
-    , format = d3.time.format("%Y-%m-%d")
-  ;
-
-
-  //============================================================
-
-
-  //============================================================
-  // Private Variables
-  //------------------------------------------------------------
-
-
-  //============================================================
-
-  function chart(selection) {
-    selection.each(function(data) {
-      var availableWidth = width - margin.left - margin.right,
-          availableHeight = height - margin.top - margin.bottom,
-          container = d3.select(this),
-          fillGradient = function(d,i) {
-            return nv.utils.colorLinearGradient( d, i, 'vertical', color(d,i), wrap.select('defs') );
-          }
-        ;
-
-      chart.gradient( fillGradient );
-
-
-      //------------------------------------------------------------
-      // Setup Scales
-      // remap and flatten the data for use in calculating the scales' domains
-
-      var timeExtent =
-            d3.extent(
-              d3.merge(
-                data.map(function(d) {
-                  return d.values.map(function(d,i) {
-                    return format.parse(d.x);
-                  });
-                })
-              )
-            );
-      var xD = [
-            d3.time.month.floor(timeExtent[0]),
-            d3.time.day.offset(d3.time.month.ceil(timeExtent[1]),-1)
-          ];
-
-      var yD = d3.extent(
-            d3.merge(
-              data.map(function(d) {
-                return d.values.map(function(d,i) {
-                  return getY(d,i);
-                });
-              })
-            ).concat(forceY)
-          );
-
-      scatter
-        .id(id)
-        .size(function(d){ return d.opportunity; }) // default size
-        //.sizeDomain([16,256]) //set to speed up calculation, needs to be unset if there is a custom size accessor
-        .sizeRange([256,2048])
-        .singlePoint(true)
-        .xScale(x)
-        .xDomain(xD)
-        .yScale(y)
-        .yDomain(yD)
-        .width(availableWidth)
-        .height(availableHeight)
-        //.margin(margin)
-        .id(chart.id())
-      ;
-
-      //------------------------------------------------------------
-      // Setup containers and skeleton of chart
-
-      var wrap = container.selectAll('g.nv-wrap.nv-bubble').data([data]);
-      var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-bubble');
-      var gEnter = wrapEnter.append('g');
-      var g = wrap.select('g');
-
-      gEnter.append('g').attr('class', 'nv-bubbleWrap');
-
-      //------------------------------------------------------------
-
-      var bubbleWrap = wrap.select('.nv-bubbleWrap');
-
-      d3.transition(bubbleWrap).call(scatter);
-
-    });
-
-    return chart;
-  }
-
-
-  //============================================================
-  // Expose Public Variables
-  //------------------------------------------------------------
-
-  chart.dispatch = scatter.dispatch;
-  chart.scatter = scatter;
-
-  d3.rebind(chart, scatter, 'interactive', 'size', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceX', 'forceY', 'forceSize', 'clipVoronoi', 'clipRadius', 'color', 'gradient', 'useClass');
-
-  chart.color = function(_) {
-    if (!arguments.length) return color;
-    color = _;
-    scatter.color(color);
-    return chart;
-  };
-  chart.fill = function(_) {
-    if (!arguments.length) return fill;
-    fill = _;
-    scatter.fill(fill);
-    return chart;
-  };
-  chart.gradient = function(_) {
-    if (!arguments.length) return gradient;
-    gradient = _;
-    scatter.gradient(_);
-    return chart;
-  };
-  chart.useClass = function(_) {
-    if (!arguments.length) return useClass;
-    useClass = _;
-    scatter.useClass(_);
-    return chart;
-  };
-  chart.classStep = function(_) {
-    if (!arguments.length) return classStep;
-    classStep = _;
-    scatter.classStep(_);
-    return chart;
-  };
-
-  chart.x = function(_) {
-    if (!arguments.length) return getX;
-    getX = _;
-    scatter.x(_);
-    return chart;
-  };
-
-  chart.y = function(_) {
-    if (!arguments.length) return getY;
-    getY = _;
-    scatter.y(_);
-    return chart;
-  };
-
-  chart.margin = function(_) {
-    if (!arguments.length) return margin;
-    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
-    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
-    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
-    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
-    return chart;
-  };
-
-  chart.width = function(_) {
-    if (!arguments.length) return width;
-    width = _;
-    return chart;
-  };
-
-  chart.height = function(_) {
-    if (!arguments.length) return height;
-    height = _;
-    return chart;
-  };
-
-  chart.xScale = function(_) {
-    if (!arguments.length) return x;
-    x = _;
-    return chart;
-  };
-
-  chart.yScale = function(_) {
-    if (!arguments.length) return y;
-    y = _;
-    return chart;
-  };
-
-  chart.xDomain = function(_) {
-    if (!arguments.length) return xDomain;
-    xDomain = _;
-    return chart;
-  };
-
-  chart.yDomain = function(_) {
-    if (!arguments.length) return yDomain;
-    yDomain = _;
-    return chart;
-  };
-
-  chart.forceY = function(_) {
-    if (!arguments.length) return forceY;
-    forceY = _;
-    return chart;
-  };
-
-  chart.id = function(_) {
-    if (!arguments.length) return id;
-    id = _;
-    return chart;
-  };
-
-  chart.clipEdge = function(_) {
-    if (!arguments.length) return clipEdge;
-    clipEdge = _;
-    return chart;
-  };
-
-  //============================================================
-
-
-  return chart;
-}
-
 nv.models.bubbleChart = function() {
 
   //============================================================
@@ -10750,10 +10508,14 @@ nv.models.bubbleChart = function() {
     , height = null
     , getX = function(d) { return d.x; }
     , getY = function(d) { return d.y; }
+    , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
+    , clipEdge = false // if true, masks lines within x and y scale
+    , xDomain
+    , yDomain
     , groupBy = function(d) { return d.y; }
     , filterBy = function(d) { return d.y; }
+    , seriesLength = 0
     , color = nv.utils.defaultColor()
-    , classStep = 1
     , showLegend = true
     , showTitle = false
     , reduceXTicks = true // if false a tick will show for every data point
@@ -10768,6 +10530,7 @@ nv.models.bubbleChart = function() {
     , bubbleClick = function(e) {
         return;
       }
+    , format = d3.time.format("%Y-%m-%d")
     ;
 
 
@@ -10775,9 +10538,9 @@ nv.models.bubbleChart = function() {
   // Private Variables
   //------------------------------------------------------------
 
-  var bubbles = nv.models.bubble()
-    , x = bubbles.xScale()
-    , y = bubbles.yScale()
+  var scatter = nv.models.scatter()
+    , x = scatter.xScale()
+    , y = scatter.yScale()
     , xAxis = nv.models.axis()
         .orient('bottom')
         .tickPadding(5)
@@ -10872,7 +10635,7 @@ nv.models.bubbleChart = function() {
           , yValues = []
           , total = 0;
 
-        // Calculate series total for each data group and
+        // Calculate total for each data group and
         // point y value
         groupedData
           .map(function(s, i) {
@@ -10939,14 +10702,20 @@ nv.models.bubbleChart = function() {
           return chart;
       }
 
+
       // Now that group calculations are done,
       // group the data by filter so that legend filters
       var filteredData = d3.nest()
                           .key(filterBy)
                           .entries(data);
 
-      //properties.title = 'Total = $' + d3.format(',.02d')(total);
+      //add series index to each data point for reference
+      filteredData = filteredData.map(function(series, i) {
+        series.iClass = i;
+        return series;
+      });
 
+      //properties.title = 'Total = $' + d3.format(',.02d')(total);
       chart.render = function() {
 
         container.selectAll('.nv-noData').remove();
@@ -11035,14 +10804,51 @@ nv.models.bubbleChart = function() {
         //------------------------------------------------------------
         // Main Chart Component(s)
 
-        bubbles
+        var timeExtent =
+              d3.extent(
+                d3.merge(
+                  filteredData.map(function(d) {
+                    return d.values.map(function(d,i) {
+                      return d3.time.format("%Y-%m-%d").parse(d.x);
+                    });
+                  })
+                )
+              );
+        var xD = [
+              d3.time.month.floor(timeExtent[0]),
+              d3.time.day.offset(d3.time.month.ceil(timeExtent[1]),-1)
+            ];
+
+        var yD = d3.extent(
+              d3.merge(
+                filteredData.map(function(d) {
+                  return d.values.map(function(d,i) {
+                    return getY(d,i);
+                  });
+                })
+              ).concat(forceY)
+            );
+
+        scatter
+          .size(function(d){ return d.opportunity; }) // default size
+          //.sizeDomain([16,256]) //set to speed up calculation, needs to be unset if there is a custom size accessor
+          .sizeRange([256,2048])
+          .singlePoint(true)
+          .xScale(x)
+          .xDomain(xD)
+          .yScale(y)
+          .yDomain(yD)
           .width(availableWidth)
-          .height(availableHeight);
+          .height(availableHeight)
+          //.margin(margin)
+          .id(chart.id())
+        ;
+
 
         var bubblesWrap = g.select('.nv-bubblesWrap')
             .datum(filteredData.filter(function(d) { return !d.disabled; }));
 
-        d3.transition(bubblesWrap).call(bubbles);
+        d3.transition(bubblesWrap).call(scatter);
 
         // x Axis
         xAxis
@@ -11064,7 +10870,7 @@ nv.models.bubbleChart = function() {
         // y Axis
         yAxis
           .scale(y)
-          .ticks(filteredData.length)
+          .ticks(yValues.length)
           .tickValues( yValues.map(function(d,i) { return yValues[i].y; }) )
           .tickSize(-availableWidth, 0)
           .tickFormat(function(d,i) { return yValues[i].key; });
@@ -11127,11 +10933,11 @@ nv.models.bubbleChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  bubbles.dispatch.on('elementMouseover.tooltip', function(e) {
+  scatter.dispatch.on('elementMouseover.tooltip', function(e) {
     dispatch.tooltipShow(e);
   });
 
-  bubbles.dispatch.on('elementMouseout.tooltip', function(e) {
+  scatter.dispatch.on('elementMouseout.tooltip', function(e) {
     dispatch.tooltipHide(e);
   });
 
@@ -11139,7 +10945,7 @@ nv.models.bubbleChart = function() {
     if (tooltips) nv.tooltip.cleanup();
   });
 
-  bubbles.dispatch.on('elementClick', function(e) {
+  scatter.dispatch.on('elementClick', function(e) {
     bubbleClick(e);
   });
 
@@ -11150,12 +10956,12 @@ nv.models.bubbleChart = function() {
 
   // expose chart's sub-components
   chart.dispatch = dispatch;
-  chart.bubbles = bubbles;
+  chart.scatter = scatter;
   chart.legend = legend;
   chart.xAxis = xAxis;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, bubbles, 'defined', 'isArea', 'x', 'y', 'size', 'xScale', 'yScale', 'xDomain', 'yDomain', 'forceX', 'forceY', 'interactive', 'clipEdge', 'clipVoronoi', 'id', 'interpolate', 'color', 'gradient', 'useClass');
+  d3.rebind(chart, scatter, 'interactive', 'size', 'x', 'y', 'id', 'forceX', 'forceY', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceSize', 'clipEdge', 'clipVoronoi', 'clipRadius', 'color', 'fill', 'gradient', 'useClass', 'classStep');
 
   chart.colorData = function(_) {
     if (arguments[0] === 'graduated')
@@ -11167,10 +10973,12 @@ nv.models.bubbleChart = function() {
     }
     else if (_ === 'class')
     {
-      bubbles.useClass(true);
+      scatter.useClass(true);
       legend.useClass(true);
-      bubbles.classStep(classStep);
-      legend.classStep(classStep);
+      if (arguments[1]) {
+        scatter.classStep(arguments[1]);
+        legend.classStep(arguments[1]);
+      }
       var color = function (d,i) { return 'inherit'; };
     }
     else
@@ -11178,14 +10986,9 @@ nv.models.bubbleChart = function() {
       var color = function(d,i) { return nv.utils.defaultColor()(d,i); };
     }
 
-    bubbles.color(color);
+    scatter.color(color);
     legend.color(color);
 
-    return chart;
-  };
-  chart.classStep = function(_) {
-    if (!arguments.length) return classStep;
-    classStep = _;
     return chart;
   };
 
@@ -11199,7 +11002,7 @@ nv.models.bubbleChart = function() {
       var fill = chart.color();
     }
 
-    bubbles.fill(fill);
+    scatter.fill(fill);
 
     return chart;
   };
@@ -11269,6 +11072,7 @@ nv.models.bubbleChart = function() {
     filterBy = _;
     return chart;
   };
+
 
   //============================================================
 

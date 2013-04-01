@@ -247,11 +247,11 @@ nv.models.scatter = function() {
                 pointIndex: d.point
               });
             });
-
       }
 
 
-
+      //TODO: fix this
+      wrap.select('.nv-groups').selectAll('.nv-group').remove();
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
           .data(function(d) { return d; }, function(d) { return d.key; });
       groups.enter().append('g')
@@ -264,9 +264,10 @@ nv.models.scatter = function() {
       groups
           //.attr('class', function(d,i) { return 'nv-group nv-series-' + i })
           .attr('class', function(d,i) {
+              var iClass = (d.iClass*classStep)%20;
               return this.getAttribute('class') || (
                 'nv-group nv-series-' + i + (
-                  useClass ? ( ' '+ ( d.class || 'nv-fill' + (i*classStep%20>9?'':'0') + i*classStep%20 ) ) : ''
+                  useClass ? ( ' '+ ( d.class || 'nv-fill' + (iClass>9?'':'0') + iClass ) ) : ''
                 )
               );
           } )
