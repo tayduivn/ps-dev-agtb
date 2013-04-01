@@ -6,13 +6,13 @@
 
         this.bind("hide", this.toggleChevron);
 
-        this.collection.on("reset", function() {
+        this.listenTo(this.collection, "reset", function() {
             if (this.collection.length === 0) {
                 this.trigger('hide', false);
             } else {
                 this.trigger('hide', true);
             }
-        }, this);
+        });
     },
 
     _placeComponent: function(component) {
