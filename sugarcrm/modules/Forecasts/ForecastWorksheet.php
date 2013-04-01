@@ -100,7 +100,7 @@ class ForecastWorksheet extends SugarBean
      * @param bool $isCommit        Is the Opportunity being committed
      */
     public function saveRelatedOpportunity(Opportunity $opp, $isCommit = false)
-    {        
+    {
         $this->retrieve_by_string_fields(
             array(
                 'parent_type' => 'Opportunities',
@@ -261,9 +261,8 @@ class ForecastWorksheet extends SugarBean
         
         //if the close dates are different, we need to see if the obj is in a new timeperiod
         if ($worksheetDate != $objDate) {
-            $tp = new TimePeriod();
-            $tp1 = $tp->retrieveFromDate($worksheetDate);
-            $tp2 = $tp->retrieveFromDate($objDate);
+            $tp1 = TimePeriod::retrieveFromDate($worksheetDate);
+            $tp2 = TimePeriod::retrieveFromDate($objDate);
                        
             if (!empty($tp1) && !empty($tp2) && ($tp1->id != $tp2->id)) {
                 $return = true;

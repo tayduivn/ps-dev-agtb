@@ -29,25 +29,25 @@ class TimePeriod extends SugarBean {
     const QUARTER_TYPE = 'Quarter';
     const MONTH_TYPE = 'Month';
 
-	//time period stored fields.
-	var $id;
-	var $name;
-	var $parent_id;
-	var $start_date;
-	var $end_date;
+    //time period stored fields.
+    var $id;
+    var $name;
+    var $parent_id;
+    var $start_date;
+    var $end_date;
     var $start_date_timestamp;
-   	var $end_date_timestamp;
-	var $created_by;
-	var $date_entered;
-	var $date_modified;
-	var $deleted;
-	var $fiscal_year;
-	var $is_fiscal_year = 0;
+       var $end_date_timestamp;
+    var $created_by;
+    var $date_entered;
+    var $date_modified;
+    var $deleted;
+    var $fiscal_year;
+    var $is_fiscal_year = 0;
     var $is_fiscal;
-	//end time period stored fields.
-	var $table_name = "timeperiods";
-	var $fiscal_year_checked;
-	var $module_dir = 'TimePeriods';
+    //end time period stored fields.
+    var $table_name = "timeperiods";
+    var $fiscal_year_checked;
+    var $module_dir = 'TimePeriods';
     var $type;
     var $leaf_period_type;
     var $leaf_periods;
@@ -55,17 +55,17 @@ class TimePeriod extends SugarBean {
     var $periods_in_year;
     var $leaf_name_template;
     var $name_template;
-	var $object_name = "TimePeriod";
-	var $user_preferences;
+    var $object_name = "TimePeriod";
+    var $user_preferences;
     var $date_modifier;
-	var $encodeFields = Array("name");
+    var $encodeFields = Array("name");
     var $priorSettings;
     var $currentSettings;
 
-	// This is used to retrieve related fields from form posts.
-	var $additional_column_fields = Array('reports_to_name');
+    // This is used to retrieve related fields from form posts.
+    var $additional_column_fields = Array('reports_to_name');
 
-	var $new_schema = true;
+    var $new_schema = true;
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -78,13 +78,13 @@ class TimePeriod extends SugarBean {
         $this->__construct();
     }
 
-	public function __construct()
+    public function __construct()
     {
-		parent::__construct();
-		$this->disable_row_level_security =true;
-	}
+        parent::__construct();
+        $this->disable_row_level_security =true;
+    }
 
-	public function save($check_notify = false)
+    public function save($check_notify = false)
     {
         $timedate = TimeDate::getInstance();
 
@@ -109,8 +109,8 @@ class TimePeriod extends SugarBean {
 
         $this->end_date_timestamp = $date_close_datetime->setTime(23,59,59)->getTimestamp();
 
-		return parent::save($check_notify);
-	}
+        return parent::save($check_notify);
+    }
 
 
     /**
@@ -119,9 +119,9 @@ class TimePeriod extends SugarBean {
      * @return string
      */
     public function get_summary_text()
-	{
-		return $this->name;
-	}
+    {
+        return $this->name;
+    }
 
     /**
      * custom override of retrieve function to disable the date formatting and reset it again after the bean has been retrieved.
@@ -136,72 +136,72 @@ class TimePeriod extends SugarBean {
         global $disable_date_format;
         $previous_disable_date_format = $disable_date_format;
         $disable_date_format = 1;
-   		$ret = parent::retrieve($id, $encode, $deleted);
+           $ret = parent::retrieve($id, $encode, $deleted);
         $disable_date_format = $previous_disable_date_format;
-   		return $ret;
-   	}
+           return $ret;
+       }
 
     public function is_authenticated()
-	{
-		return $this->authenticated;
-	}
+    {
+        return $this->authenticated;
+    }
 
     public function fill_in_additional_list_fields()
     {
-		$this->fill_in_additional_detail_fields();
-	}
+        $this->fill_in_additional_detail_fields();
+    }
 
     public function fill_in_additional_detail_fields()
     {
-		if (isset($this->parent_id) && !empty($this->parent_id)) {
+        if (isset($this->parent_id) && !empty($this->parent_id)) {
 
-		  $query ="SELECT name from timeperiods where id = '$this->parent_id' and deleted = 0";
-		  $result =$this->db->query($query, true, "Error filling in additional detail fields") ;
-		  $row = $this->db->fetchByAssoc($result);
-		  $GLOBALS['log']->debug("additional detail query results: ".print_r($row, true));
+          $query ="SELECT name from timeperiods where id = '$this->parent_id' and deleted = 0";
+          $result =$this->db->query($query, true, "Error filling in additional detail fields") ;
+          $row = $this->db->fetchByAssoc($result);
+          $GLOBALS['log']->debug("additional detail query results: ".print_r($row, true));
 
 
-		  if($row != null) {
-			 $this->fiscal_year = $row['name'];
-		  }
-		}
-	}
+          if($row != null) {
+             $this->fiscal_year = $row['name'];
+          }
+        }
+    }
 
     public function get_list_view_data()
     {
 
-		$timeperiod_fields = $this->get_list_view_array();
-		$timeperiod_fields['FISCAL_YEAR'] = $this->fiscal_year;
+        $timeperiod_fields = $this->get_list_view_array();
+        $timeperiod_fields['FISCAL_YEAR'] = $this->fiscal_year;
 
-		if ($this->is_fiscal_year == 1) {
-			$timeperiod_fields['FISCAL_YEAR_CHECKED'] = "checked";
+        if ($this->is_fiscal_year == 1) {
+            $timeperiod_fields['FISCAL_YEAR_CHECKED'] = "checked";
         }
-		return $timeperiod_fields;
-	}
+        return $timeperiod_fields;
+    }
 
     public function list_view_parse_additional_sections(&$list_form, $xTemplateSection)
     {
-		return $list_form;
-	}
+        return $list_form;
+    }
 
     public function create_export_query($order_by, $where)
     {
-		$query = "SELECT timeperiods.* FROM timeperiods ";
+        $query = "SELECT timeperiods.* FROM timeperiods ";
 
-		$where_auto = " timeperiods.deleted = 0";
+        $where_auto = " timeperiods.deleted = 0";
 
-		if($where != "")
-			$query .= " WHERE $where AND " . $where_auto;
-		else
-			$query .= " WHERE " . $where_auto;
+        if($where != "")
+            $query .= " WHERE $where AND " . $where_auto;
+        else
+            $query .= " WHERE " . $where_auto;
 
-		if($order_by != "")
-			$query .= " ORDER BY $order_by";
-		else
-			$query .= " ORDER BY timeperiods.name";
+        if($order_by != "")
+            $query .= " ORDER BY $order_by";
+        else
+            $query .= " ORDER BY timeperiods.name";
 
-		return $query;
-	}
+        return $query;
+    }
 
     /**
      * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
@@ -260,24 +260,24 @@ class TimePeriod extends SugarBean {
 
     public static function get_fiscal_year_dom()
     {
-		static $fiscal_years;
+        static $fiscal_years;
 
-		if (!isset($fiscal_years)) {
+        if (!isset($fiscal_years)) {
 
-			$query = 'select id, name from timeperiods where deleted=0 and is_fiscal_year = 1 order by name';
-			$db = DBManagerFactory::getInstance();
-			$result = $db->query($query,true," Error filling in fiscal year domain: ");
+            $query = 'select id, name from timeperiods where deleted=0 and is_fiscal_year = 1 order by name';
+            $db = DBManagerFactory::getInstance();
+            $result = $db->query($query,true," Error filling in fiscal year domain: ");
 
-			while (($row  =  $db->fetchByAssoc($result)) != null) {
-				$fiscal_years[$row['id']]=$row['name'];
-			}
+            while (($row  =  $db->fetchByAssoc($result)) != null) {
+                $fiscal_years[$row['id']]=$row['name'];
+            }
 
-			if (!isset($fiscal_years)) {
-				$fiscal_years=array();
-			}
-		}
-		return $fiscal_years;
-	}
+            if (!isset($fiscal_years)) {
+                $fiscal_years=array();
+            }
+        }
+        return $fiscal_years;
+    }
 
 
     /**

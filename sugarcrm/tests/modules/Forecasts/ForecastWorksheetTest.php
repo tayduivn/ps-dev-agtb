@@ -244,7 +244,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testTimeperiodHasMigrated_invalidDates()
     {
-    	$tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
         $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');
         $worksheet = new ForecastWorksheet();                     
         
@@ -312,7 +312,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testTimeperiodMigratedDeleteCommittedOpp()
     {
-    	$tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
         $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');
         
         $opp = SugarTestOpportunityUtilities::createOpportunity();
