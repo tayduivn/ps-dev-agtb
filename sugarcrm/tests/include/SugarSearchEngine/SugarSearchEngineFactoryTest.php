@@ -14,25 +14,15 @@
 
 
 require_once 'include/SugarSearchEngine/SugarSearchEngineFactory.php';
-require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
-
 
 class SugarSearchEngineFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
-//    static $customfile;
-
     public static function setUpBeforeClass()
     {
-//        $directory = 'custom/include/SugarSearchEngine/Fake';
-//        self::$customfile = $directory . '/CustomSugarSearchEngineFake.php';
-//        if(!is_dir($directory)) sugar_mkdir($directory, '', true);
     }
 
     public static function tearDownAfterClass()
     {
-//        unset(SugarSearchEngineFactory::$_instance['Fake']); // Clearing cache
-//        if (file_exists(self::$customfile)) unlink(self::$customfile);
-
         foreach(self::customizationProvider() as $row) {
             $file = self::getCustomEngineFilePath($row[0], $row[1]);
             if(file_exists($file)) unlink($file);   // Clean up customizations
@@ -130,28 +120,4 @@ EOQ;
     {
         return 'CustomSugarSearchEngine' . $engineName;
     }
-
-//
-//    public function testLoadingCustomSearchEngineClass()
-//    {
-//        if(file_exists(self::$customfile)) unlink(self::$customfile);
-//        SugarAutoLoader::buildCache();
-//        $instance = SugarSearchEngineFactory::getInstance('Fake');
-//        $this->assertEquals('SugarSearchEngine', get_class($instance));
-//
-//        $fileContents = <<<EOQ
-//<?PHP
-//require_once('include/SugarSearchEngine/SugarSearchEngine.php');
-//class CustomSugarSearchEngineFake extends SugarSearchEngine {
-//}
-//
-//EOQ;
-//        file_put_contents(self::$customfile, $fileContents);
-//        SugarAutoLoader::buildCache();
-//        unset(SugarSearchEngineFactory::$_instance['Fake']); // Clearing cache
-//        $instance = SugarSearchEngineFactory::getInstance('Fake');
-//        $this->assertEquals('CustomSugarSearchEngineFake', get_class($instance));
-//    }
-
-
 }
