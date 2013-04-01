@@ -571,7 +571,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function constructModuleLevelFilter($module)
     {
-        $this->logger->fatal("constructModuleLevelFilter: {$module}");
         $moduleFilter = new \Elastica\Filter\Bool();
         $typeTermFilter = $this->getTypeTermFilter($module);
         $moduleFilter->addMust($typeTermFilter);
