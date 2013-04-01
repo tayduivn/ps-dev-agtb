@@ -814,40 +814,6 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider dataProviderUpdateCommitStageFromSalesStage
-     * @group products
-     *
-     * @param $sales_stage
-     * @param $probability
-     * @param $commit_stage
-     */
-    public function testUpdateCommitStageFromSalesStage($sales_stage, $probability, $commit_stage)
-    {
-        $product = new MockProduct();
-        $product->sales_stage = $sales_stage;
-        // use the Reflection Helper to call the Protected Method
-        SugarTestReflection::callProtectedMethod($product, 'mapProbabilityFromSalesStage');
-        SugarTestReflection::callProtectedMethod($product, 'updateCommitStageFromSalesStage');
-
-        $this->assertEquals($probability, $product->probability);
-        $this->assertEquals($commit_stage, $product->commit_stage);
-    }
-
-    public static function dataProviderUpdateCommitStageFromSalesStage()
-    {
-        return array(
-            array('Prospecting', '10', 'exclude'),
-            array('Qualification', '20', 'exclude'),
-            array('Needs Analysis', '25', 'exclude'),
-            array('Value Proposition', '30', 'exclude'),
-            array('Id. Decision Makers', '40', 'exclude'),
-            array('Perception Analysis', '50', 'exclude'),
-            array('Proposal/Price Quote', '65', 'exclude'),
-            array('Negotiation/Review', '80', 'include')
-        );
-    }
-
-    /**
      * @group products
      * @group currency
      * @ticket SFA-745
