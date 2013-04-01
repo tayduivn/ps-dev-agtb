@@ -52,6 +52,9 @@
      * @param model New value for teamset
      */
     setValue: function (model) {
+        if (!model) {
+            return;
+        }
         var index = this.currentIndex,
             team = this.value;
         team[index || 0].id = model.id;
@@ -71,7 +74,9 @@
         }
         if (!_.isArray(value)) {
             value = [
-                {name: value}
+                {
+                    name: value
+                }
             ];
         }
         // Place the add button as needed
