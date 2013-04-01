@@ -253,10 +253,6 @@
         this._renderField(field);
     },
 
-    setField: function(fieldName) {
-
-    },
-
     chooseOperator: function(e) {
         var $el = this.$(e.currentTarget),
             $row = $el.parents('.filter-body'),
@@ -320,9 +316,10 @@
 
         model.on("change", (function($row) {
             return function() {
+                var field = $row.data("valueField"),
                 // We use _.result here to prevent an undefined method error
                 // in case the val method is not defined on the field.
-                var result = $row.data("valueField").value || _.result($row.data("valueField"), 'val') || '';
+                    result = field.unformat(field.value) || _.result(field, 'val') || '';
                 $row.data("value", result);
                 // check each row for a valid filter, add to dynamic filter def
                 var dynamicFilterDef = this.buildFilterDef();
