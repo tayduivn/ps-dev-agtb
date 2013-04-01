@@ -121,6 +121,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
                 'quantity',
                 array(
                     'name' => 'discount_price',
+                    'type' => 'currency',
                     'readonly' => true
                 ),
                 'discount_amount',
