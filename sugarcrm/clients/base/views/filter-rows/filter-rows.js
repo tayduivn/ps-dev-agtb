@@ -319,7 +319,7 @@
                 var field = $row.data("valueField"),
                 // We use _.result here to prevent an undefined method error
                 // in case the val method is not defined on the field.
-                    result = field.unformat(field.value) || _.result(field, 'val') || '';
+                    result = field? (field.unformat(field.value) || _.result(field, 'val')) : '';
                 $row.data("value", result);
                 // check each row for a valid filter, add to dynamic filter def
                 var dynamicFilterDef = this.buildFilterDef();
