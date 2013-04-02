@@ -311,9 +311,6 @@ class DownloadFileApi extends DownloadFile
      */
     public function outputFile($type, $info)
     {
-        $this->api->setHeader("Pragma", "public");
-        $this->api->setHeader("Cache-Control", "maxage=1, post-check=0, pre-check=0");
-        $this->api->setHeader("X-Content-Type-Options", "nosniff");
         $this->api->setHeader("Expires", TimeDate::httpTime(time() + 2592000));
 
         if ($type == 'image') {

@@ -133,11 +133,8 @@ class ReportsExportApi extends SugarApi {
             //Generate actual pdf
             $report_filename = template_handle_pdf($reporter, false);
 
-            $api->setHeader("Pragma", "public");
-            $api->setHeader("Cache-Control", "maxage=1, post-check=0, pre-check=0");
             $api->setHeader("Content-Type", "application/pdf");
             $api->setHeader("Content-Disposition", "attachment; filename=\"".basename($report_filename)."\";");
-            $api->setHeader("X-Content-Type-Options", "nosniff");
             $api->setHeader("Expires", TimeDate::httpTime(time() + 2592000));
             $api->fileResponse($report_filename);
         }

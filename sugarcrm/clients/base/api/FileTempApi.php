@@ -105,8 +105,9 @@ class FileTempApi extends FileApi {
                 'path' => $filepath,
             );
             require_once "include/download_file.php";
-            DownloadFile::outputFile('image', $info);
-            unlink($filepath);
+            $dl = new DownloadFileApi($api);
+            $dl->outputFile('image', $info);
+            register_shutdown_function(function () use($filepath) { unlink($filepath); });
         } else {
             throw new SugarApiExceptionInvalidParameter('File not found');
         }

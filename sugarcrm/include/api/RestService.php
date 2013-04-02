@@ -637,5 +637,8 @@ class RestService extends ServiceBase {
     public function fileResponse($filename)
     {
         $this->response->setType(RestResponse::FILE)->setFile($filename);
+        $this->response->setHeader("Pragma", "public");
+        $this->response->setHeader("Cache-Control", "maxage=1, post-check=0, pre-check=0");
+        $this->response->setHeader("X-Content-Type-Options", "nosniff");
     }
 }
