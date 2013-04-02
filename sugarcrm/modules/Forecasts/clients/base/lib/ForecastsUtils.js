@@ -198,7 +198,6 @@
          * @return {String} 'Direct' or 'Rollup'
          */
         getForecastType: function(isManager, showOpps) {
-            var forecastType = 'Direct';
             /**
              * Three cases exist when a row is showing historyLog icon:
              *
@@ -207,10 +206,7 @@
              * Rep      - showOpps=0 - isManager=0 => Sales Rep (not a manager) row - forecast_type = 'Direct'
              *
              */
-            if(!showOpps && isManager) {
-                forecastType = 'Rollup';
-            }
-            return forecastType;
+            return (!showOpps && isManager) ? 'Rollup' : 'Direct';
         },
 
         /**
