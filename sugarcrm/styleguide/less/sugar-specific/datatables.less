@@ -481,7 +481,7 @@ table.dataTable {
   // .flex-list.left-actions to fix the first column
   &.left-actions {
     table.dataTable {
-      & > thead th {
+      & > thead >tr > th {
         &:first-child {
           overflow-x: visible;
           padding-left: 15px;
@@ -502,7 +502,7 @@ table.dataTable {
           padding-left: 75px;
         }
       }
-      & > tbody td {
+      & > tbody > tr > td {
         &:first-child {
           overflow-x: visible;
           padding-left: 15px;
@@ -523,7 +523,7 @@ table.dataTable {
   // .flex-list.right-actions to fix the last column
   &.right-actions {
     table.dataTable {
-      & > thead th {
+      & > thead > tr > th {
         &:nth-last-child(2) {
           padding-right: 75px;
         }
@@ -542,7 +542,7 @@ table.dataTable {
           .box-shadow(~"-2px 0 1px 0 rgba(0,0,0,.1);");
         }
       }
-      & > tbody td {
+      & > tbody > tr > td {
         &:nth-last-child(2) {
           padding-right: 75px;
         }
