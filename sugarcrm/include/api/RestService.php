@@ -416,7 +416,8 @@ class RestService extends ServiceBase {
             try {
                 $oauthServer = SugarOAuth2Server::getOAuth2Server();
                 $oauthServer->verifyAccessToken($token);
-                if ( isset($_SESSION['authenticated_user_id']) ) {
+                
+                if ( isset($_SESSION['authenticated_user_id']) && $_SESSION['unique_key'] == $GLOBALS['sugar_config']['unique_key'] ) {
                     $valid = true;
                     $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
                 }
