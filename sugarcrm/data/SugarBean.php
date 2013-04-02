@@ -2277,6 +2277,8 @@ class SugarBean
 
         $this->handle_remaining_relate_fields($exclude);
 
+        $this->update_parent_relationships($exclude);
+
         $this->handle_request_relate($new_rel_id, $new_rel_link);
     }
 
@@ -2455,6 +2457,67 @@ class SugarBean
         }
 
         return $modified_relationships;
+    }
+
+
+    /**
+     * Updates relationships based on changed to fields of type 'parent' which
+     * may or may not have links associated with them
+     * @param array $exclude
+     */
+    protected function update_parent_relationships($exclude = array())
+    {
+        foreach ($this->field_defs as $def)
+        {
+            if (!empty($def['type']) && $def['type'] == "parent")
+            {
+                if (empty($def['type_name']) || empty($def['id_name']))
+                    continue;
+                $typeField = $def['type_name'];
+                $idField = $def['id_name'];
+                if (in_array($idField, $exclude))
+                    continue;
+                //Determine if the parent field has changed.
+                if (
+                    //First check if the fetched row parent existed and now we no longer have one
+                    (!empty($this->fetched_row[$typeField]) && !empty($this->fetched_row[$idField])
+                        && (empty($this->$typeField) || empty($this->$idField))
+                    ) ||
+                    //Next check if we have one now that doesn't match the fetch row
+                    (!empty($this->$typeField) && !empty($this->$idField) &&
+                        (empty($this->fetched_row[$typeField]) || empty($this->fetched_row[$idField])
+                        || $this->fetched_row[$idField] != $this->$idField)
+                    )
+                ) {
+                    $parentLinks = array();
+                    //Correlate links to parent field module types
+                    foreach ($this->field_defs as $ldef) {
+                        if (!empty($ldef['type']) && $ldef['type'] == "link" && !empty($ldef['relationship'])) {
+                            $relDef = SugarRelationshipFactory::getInstance()->getRelationshipDef($ldef['relationship']);
+                            if (!empty($relDef['relationship_role_column']) && $relDef['relationship_role_column'] == $typeField)
+                            {
+                                $parentLinks[$relDef['lhs_module']] = $ldef;
+                            }
+                        }
+                    }
+                    //If we used to have a parent, call remove on that relationship
+                    if (!empty($this->fetched_row[$typeField]) && !empty($this->fetched_row[$idField])
+                        && !empty($parentLinks[$this->fetched_row[$typeField]])
+                    ) {
+                        $oldParentLink = $parentLinks[$this->fetched_row[$typeField]]['name'];
+                        //Load the relationship
+                        if ($this->load_relationship($oldParentLink)) {
+                            $this->$oldParentLink->delete($this->fetched_row[$idField]);
+                        }
+                    }
+                    //Now add the new parent
+                    $parentLink = $parentLinks[$this->$typeField]['name'];
+                    if ($this->load_relationship($parentLink)) {
+                        $this->$parentLink->add($this->$idField);
+                    }
+                }
+            }
+        }
     }
 
     /**
