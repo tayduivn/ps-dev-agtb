@@ -23,7 +23,6 @@
 
         app.view.views.FlexListView.prototype.initialize.call(this, options);
 
-        this.context.off("change:selection_model", this._selectModel);
         this.context.on("change:selection_model", this._selectModel, this);
     },
     _selectModel: function () {
@@ -38,8 +37,9 @@
                     attributes[field] = attributes[field] || model.get(field);
                 }
             }, this);
-            app.drawer.close(attributes);
             this.context.unset("selection_model", {silent: true});
+            this.context.off("change:selection_model", null, this);
+            app.drawer.close(attributes);
         }
     }
 })

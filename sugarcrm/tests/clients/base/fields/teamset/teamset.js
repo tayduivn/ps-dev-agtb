@@ -24,10 +24,10 @@ describe("Base.Field.Teamset", function () {
         };
         sinonSandbox = sinon.sandbox.create();
         SugarTest.loadComponent("base", "field", "relate");
-        field = SugarTest.createField("base", "team_name", "teamset", "edit", fieldDef);
-        field.model = new Backbone.Model({team_name: [
+        var model = new Backbone.Model({team_name: [
             {id: 'test-id', name: 'blahblah', primary: false}
         ]});
+        field = SugarTest.createField("base", "team_name", "teamset", "edit", fieldDef, null, model);
 
         if (!$.fn.select2) {
             $.fn.select2 = function (options) {
@@ -121,11 +121,13 @@ describe("Base.Field.Teamset", function () {
     });
 
 
-    it("should toggle out the primary option when it sets the existing primary index as primary once again", function () {
+    it("should toggle out the primary option only if the teamset appends to the massupdate and it sets the existing primary index as primary once again", function () {
         field.model.set('team_name', [
             {id: '111-222', name: 'blahblah', primary: false},
             {id: 'abc-eee', name: 'poo boo', primary: true}
         ]);
+        //Setup for appeding team
+        field.model.set('team_name_type', '1');
         field.render();
         expect(field.value[0].primary).toBe(false);
         expect(field.value[1].primary).toBe(true);
@@ -139,6 +141,23 @@ describe("Base.Field.Teamset", function () {
         expect(field.value[0].primary).toBe(false);
         expect(field.value[1].primary).toBe(true);
 
+    });
+
+    it("should set the first item as primary when user choose the appending team option as false and no teams are assigned to primary", function() {
+        field.model.set('team_name', [
+            {id: '111-222', name: 'blahblah', primary: false},
+            {id: 'abc-eee', name: 'poo boo', primary: true}
+        ]);
+        //Setup for appeding team
+        field.model.set('team_name_type', '1');
+        field.render();
+        field.setPrimary(1);
+        expect(field.value[0].primary).toBe(false);
+        expect(field.value[1].primary).toBe(false);
+
+        field.model.set('team_name_type', '0');
+        expect(field.value[0].primary).toBe(true);
+        expect(field.value[1].primary).toBe(false);
     });
 
     it("should not let you remove last team when there is only one team left", function () {

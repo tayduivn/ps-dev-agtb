@@ -155,38 +155,40 @@
         return value;
     },
     setValue: function (model) {
-        if (model) {
-            var silent = model.silent || false;
-            this.model.set(this.def.id_name, model.id, {silent: silent});
-            this.model.set(this.def.name, model.value, {silent: silent});
-
-            var newData = {},
-                self = this;
-            _.each(this.def.populate_list, function (target, source) {
-                source = _.isNumber(source) ? target : source;
-                if (!_.isUndefined(model[source]) && app.acl.hasAccessToModel('edit', this.model, target)) {
-                    newData[target] = model[source];
-                }
-            }, this);
-
-            if (!_.isEmpty(newData)) {
-                var message = app.lang.get(self.def.populate_confirm || 'NTC_OVERWRITE_POPULATED_DATA_CONFIRM', this.getSearchModule()) +
-                    '<br/><br/>';
-                _.each(newData, function (value, field) {
-                    var def = this.model.fields[field];
-                    message += app.lang.get(def.label || def.vname || field, this.module) + ': ' + value + '<br/>';
-                }, this);
-                message += '<br/>';
-
-                app.alert.show('overwrite_confirmation', {
-                    level: 'confirmation',
-                    messages: message,
-                    onConfirm: function () {
-                        self.model.set(newData);
-                    }
-                });
-            }
+        if (!model) {
+            return;
         }
+        var silent = model.silent || false;
+        this.model.set(this.def.id_name, model.id, {silent: silent});
+        this.model.set(this.def.name, model.value, {silent: silent});
+
+        var newData = {},
+            self = this;
+        _.each(this.def.populate_list, function (target, source) {
+            source = _.isNumber(source) ? target : source;
+            if (!_.isUndefined(model[source]) && app.acl.hasAccessToModel('edit', this.model, target)) {
+                newData[target] = model[source];
+            }
+        }, this);
+
+        if (_.isEmpty(newData)) {
+            return;
+        }
+        var message = app.lang.get(self.def.populate_confirm || 'NTC_OVERWRITE_POPULATED_DATA_CONFIRM',
+            this.getSearchModule()) + '<br/><br/>';
+        _.each(newData, function (value, field) {
+            var def = this.model.fields[field];
+            message += app.lang.get(def.label || def.vname || field, this.module) + ': ' + value + '<br/>';
+        }, this);
+        message += '<br/>';
+
+        app.alert.show('overwrite_confirmation', {
+            level: 'confirmation',
+            messages: message,
+            onConfirm: function () {
+                self.model.set(newData);
+            }
+        });
     },
     /**
      * {@inheritdoc}
@@ -260,7 +262,9 @@
             success: function (data) {
                 var fetch = {results: [], more: data.next_offset > 0, context: searchCollection};
                 if (fetch.more) {
-                    var plugin = self.$(self.fieldTag).data("select2"),
+                    var fieldEl = self.$(self.fieldTag),
+                        //For teamset widget, we should specify which index element to be filled in
+                        plugin = (fieldEl.length > 1) ? $(fieldEl.get(self.currentIndex)).data("select2") : fieldEl.data("select2"),
                         height = plugin.searchmore.children("li:first").children(":first").outerHeight(),
                     //0.2 makes scroll not to touch the bottom line which avoid fetching next record set
                         maxHeight = height * (limit - .2);

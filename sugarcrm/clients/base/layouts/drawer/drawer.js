@@ -199,10 +199,12 @@
         }
 
         var drawers = this._getDrawers(false),
-            drawerHeight = this._determineDrawerHeight();
+            drawerHeight = this._determineDrawerHeight(),
+            transitionEndEvents = 'webkitTransitionEnd oTransitionEnd otransitionend transitionend msTransitionEnd';
 
         //once the animation is done, reset to original state and execute callback parameter
-        drawers.$bottom.one('webkitTransitionEnd oTransitionEnd otransitionend transitionend msTransitionEnd', _.bind(function(){
+        drawers.$bottom.one(transitionEndEvents, _.bind(function() {
+            drawers.$bottom.off(transitionEndEvents); //some browsers fire multiple transitionend events
             this._removeTabAndBackdrop(drawers.$bottom);
             if (this._isMainAppContent(drawers.$bottom)) {
                 drawers.$bottom.removeClass('drawer transition');

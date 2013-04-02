@@ -641,6 +641,7 @@ class Product extends SugarBean
         $this->convertDateClosedToTimestamp();
         $this->mapFieldsFromProductTemplate();
         $this->mapFieldsFromOpportunity();
+
         $id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out

@@ -81,4 +81,32 @@ describe("Base.View.SelectionList", function () {
         aclStub.restore();
         delete app.drawer;
     });
+
+    it("Should release the selection_model listender once it is selected", function() {
+        var model = new Backbone.Model({
+            id: "1234",
+            name: "bob"
+        }), model2 = new Backbone.Model({
+            id: "0987",
+            name: "blah"
+        });;
+
+        app.drawer = {
+            close: function(attributes) {
+            }
+        };
+
+        //First time it is selected, it should trigger the selection_model changed
+        var drawerStub = sinon.spy(app.drawer, "close");
+        view.context.set("selection_model", model);
+        expect(drawerStub).toHaveBeenCalledOnce();
+        drawerStub.restore();
+
+        //Next time, the listener should be released
+        drawerStub = sinon.spy(app.drawer, "close");
+        view.context.set("selection_model", model2);
+        expect(drawerStub).not.toHaveBeenCalledOnce();
+        drawerStub.restore();
+        delete app.drawer;
+    });
 });

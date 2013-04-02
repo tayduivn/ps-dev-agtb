@@ -1,29 +1,16 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
 ({
     extendsFrom: 'RelateField',
     minChars: 1,
@@ -43,6 +30,7 @@
                 return team.primary ? -1 : 0;
             })
         );
+        this.model.on("change:team_name_type", this.appendTeam, this);
     },
     _render: function () {
         var self = this;
@@ -64,6 +52,9 @@
      * @param model New value for teamset
      */
     setValue: function (model) {
+        if (!model) {
+            return;
+        }
         var index = this.currentIndex,
             team = this.value;
         team[index || 0].id = model.id;
@@ -83,7 +74,9 @@
         }
         if (!_.isArray(value)) {
             value = [
-                {name: value}
+                {
+                    name: value
+                }
             ];
         }
         // Place the add button as needed
@@ -93,11 +86,10 @@
                 delete team.add_button;
             });
             value[value.length - 1].add_button = true;
-            // Count the number of valid teams
-            var numTeams = 0;
-            _.each(value, function (team) {
-                if (!_.isUndefined(team.id)) numTeams++;
-            });
+            // number of valid teams
+            var numTeams = _.filter(value, function (team) {
+                return !_.isUndefined(team.id);
+            }).length;
             // Show remove button for all unset combos and only set combos if there are more than one
             _.each(value, function (team) {
                 if (_.isUndefined(team.id) || numTeams > 1) {
@@ -116,19 +108,29 @@
         if (index === 0 && this.value.length === 1) {
             return;
         }
-        else {
-            //Pick first team to be Primary if we're removing Primary team
-            var removed = this.value.splice(index, 1);
-            if (removed && removed.length > 0 && removed[0].primary) {
-                this.setPrimary(0);
-            }
+        //Pick first team to be Primary if we're removing Primary team
+        var removed = this.value.splice(index, 1);
+        if (removed && removed.length > 0 && removed[0].primary) {
+            this.setPrimary(0);
         }
         this._updateAndTriggerChange(this.value);
     },
+    appendTeam: function () {
+        var appendTeam = this.model.get("team_name_type");
+        if (appendTeam !== "1") {
+            var primaryTeam = _.find(this.value, function (team) {
+                return team.primary;
+            }, this);
+            if (_.isEmpty(primaryTeam)) {
+                this.setPrimary(0);
+            }
+        }
+    },
     setPrimary: function (index) {
-        var previousPrimary = null;
+        var previousPrimary = null,
+            appendTeam = this.model.get("team_name_type");
         _.each(this.value, function (team, i) {
-            if (team.primary) {
+            if (team.primary && appendTeam === "1") {
                 previousPrimary = i;
             }
             team.primary = false;

@@ -79,9 +79,6 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
      */
     public function getManagerProgress()
     {
-        //create opportunity to use to build queries
-        $this->opportunity = BeanFactory::getBean('Opportunities');
-
         //get the quota data for user
         /* @var $quota Quota */
         $quota = BeanFactory::getBean('Quotas');
@@ -191,6 +188,10 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $repIds = User::getReporteeReps($user_id);
         $mgrIds = User::getReporteeManagers($user_id);
         $arrayLen = 0;
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        $tableName = $settings['forecast_by'];
+        $amountColumn = $tableName == 'products' ? 'likely_case' : 'amount';
 
         //Note: this will all change in sugar7 to the filter API
         //set up outer part of the query
@@ -199,8 +200,8 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         //build up two subquery strings so we can unify the sales stage loops
         //all manager opps 
         $queryMgrOpps = "SELECT " .
-                            "sum(o.amount/o.base_rate) AS amount, count(*) as recordcount " .
-                        "FROM opportunities o " .
+                            "sum(o.{$amountColumn}/o.base_rate) AS amount, count(*) as recordcount " .
+                        "FROM {$tableName} o " .
                         "INNER JOIN users u  " .
                             "ON o.assigned_user_id = u.id " .
                         "INNER JOIN timeperiods t " .
