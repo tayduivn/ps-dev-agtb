@@ -54,13 +54,27 @@ $viewdefs['Products']['base']['view']['list'] = array(
                 array(
                     'name' => 'discount_price',
                     'type' => 'currency',
-                    'convertToBase' => true
+                    'related_fields' => array(
+                        'discount_price',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'convertToBase' => true,
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
                 array(
                     'name' => 'list_price',
                     'type' => 'currency',
                     'convertToBase' => true,
-                    'readonly' => true
+                    'readonly' => true,
+                    'related_fields' => array(
+                        'discount_price',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
                 'date_purchased',
                 'date_support_expires',
