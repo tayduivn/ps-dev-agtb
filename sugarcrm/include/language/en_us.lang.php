@@ -3509,6 +3509,10 @@ $app_strings = array (
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
     'LBL_SUCCESS' => 'Success',
 
+    'LBL_TWITTER_TIME_AGO_SECONDS' => 's',
+    'LBL_TWITTER_TIME_AGO_MINUTES' => 'm',
+    'LBL_TWITTER_TIME_AGO_HOURS' => 'h',
+
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
 
