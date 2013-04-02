@@ -35,7 +35,7 @@
             options.meta.panels, function(panel) {
                 _.each(panel.fields, function(field) {
                     //if the field is currency and not read only, then push it into our currency fields array
-                    if(field.type == 'currency' && (_.isUndefined(field.readonly) || !field.readonly)) {
+                    if(field.type == 'currency') {
                         this.currencyFields.push(field.name);
                     }
                 }, this);
@@ -59,9 +59,9 @@
      */
     bindDataChange : function() {
         app.view.views.RecordView.prototype.bindDataChange.call(this);
-        this.model.on('change:currency_id', function() {
-            this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id"));
-        }, this)
+        this.model.on('change:base_rate', function() {
+            _.debounce(this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id")),500, true);
+        }, this);
     },
 
     delegateButtonEvents: function() {
@@ -83,11 +83,8 @@
 
         //run through the editable currency fields and convert the amounts to the new currency
         _.each(this.currencyFields, function(currencyField) {
-           if(this.model.get(currencyField) == 0) {
-               this.model.trigger("change:"+currencyField);
-               return;
-           }
-           this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId));
+           this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId), {silent: true});
+           this.model.trigger("change:"+currencyField);
         }, this);
     },
 

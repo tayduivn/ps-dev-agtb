@@ -53,6 +53,18 @@
     },
 
     /**
+     * When currency changes, we need to make appropriate silent changes to the base rate.
+     */
+    bindDataChange : function() {
+        app.view.Field.prototype.bindDataChange.call(this);
+        var currencyField = this.def.currency_field || 'currency_id';
+        this.model.on('change:' + currencyField, function(model, value, options) {
+            var baseRateField = this.def.base_rate_field || 'base_rate';
+            this.model.set(baseRateField, app.metadata.getCurrency(value).conversion_rate);
+        }, this);
+    },
+
+    /**
      * {@inheritdoc}
      *
      * Convert to base currency if flag is present.
@@ -72,6 +84,8 @@
         }
 
         // TODO review this forecasts requirement and make it work with css defined on metadata
+        // force this to recalculate the transaction value if needed
+        this.transactionValue = '';
         if (this.def.convertToBase &&
             this.def.showTransactionalAmount &&
             this.model.get(this.def.currency_field || 'currency_id') !== app.currency.getBaseCurrencyId()
