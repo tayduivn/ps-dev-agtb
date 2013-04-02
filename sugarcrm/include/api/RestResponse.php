@@ -20,10 +20,17 @@ class RestResponse extends Zend_Http_Response
      */
     protected $type = self::RAW;
 
-    public function __construct()
+    /**
+     * Data from $_SERVER
+     * @var array
+     */
+    protected $server_data = array();
+
+    public function __construct($server)
     {
         $this->code = 200;
         $this->version = '1.1';
+        $this->server_data = $server;
     }
 
     /**
@@ -119,6 +126,9 @@ class RestResponse extends Zend_Http_Response
     	if(!isset($this->headers["Content-Type"])) {
     	    $this->setContentTypeByType();
     	}
+    	if(!empty($response)) {
+    	    $this->setHeader('Content-Length', strlen($response));
+    	}
     	return $response;
     }
 
@@ -152,8 +162,8 @@ class RestResponse extends Zend_Http_Response
      */
     protected function generateETagHeader($etag)
     {
-    	if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
-    		if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
+    	if(isset($this->server_data["HTTP_IF_NONE_MATCH"])){
+    		if($etag == $this->server_data["HTTP_IF_NONE_MATCH"]){
     		    // Same data, clean it up and return 304
     		    $this->body = '';
                 $this->headers = array();

@@ -72,7 +72,7 @@ class RestService extends ServiceBase {
      */
     public function execute()
     {
-        $this->response = new RestResponse();
+        $this->response = new RestResponse($_SERVER);
         try {
             $rawPath = $this->getRawPath();
 
