@@ -92,7 +92,10 @@ $viewdefs['Products']['base']['view']['create'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'opportunity_name',
+                array(
+                    'name' => 'opportunity_name',
+                    'required' => true
+                ),
                 array(
                     'name' => 'account_name',
                     'readonly' => true
