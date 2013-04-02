@@ -65,12 +65,12 @@ class ReportsExportApi extends SugarApi {
         }
 
         $saved_report = $this->loadBean($api, $args, 'view');
-        
+
         if(!$saved_report->ACLAccess('view')) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: Reports');
         }
 
-        return $this->$method($saved_report);
+        return $this->$method($api, $saved_report);
 
     }
 
@@ -79,7 +79,7 @@ class ReportsExportApi extends SugarApi {
      * @param SugarBean report
      * @return file contents
      */
-    protected function exportBase64(SugarBean $report)
+    protected function exportBase64(ServiceBase $api, SugarBean $report)
     {
         global  $beanList, $beanFiles;
         global $sugar_config,$current_language;
@@ -99,23 +99,23 @@ class ReportsExportApi extends SugarApi {
             $report_filename = template_handle_pdf($reporter, false);
 
             sugar_cache_put($report->id . '-' . $GLOBALS['current_user']->id, $report_filename, $this->cacheLength * 60);
-         
+
             $dl = new DownloadFile();
-            $contents = $dl->getFileByFilename($report_filename);     
+            $contents = $dl->getFileByFilename($report_filename);
         }
         if(empty($contents)) {
             throw new SugarApiException('File contents empty.');
         }
         // Reply is raw just pass back the base64 encoded contents
-        echo base64_encode($contents);
+        return base64_encode($contents);
     }
 
     /**
      * Export a Report As PDF
-     * @param SugarBean $report 
+     * @param SugarBean $report
      * @return null
      */
-    protected function exportPdf(SugarBean $report)
+    protected function exportPdf(ServiceBase $api, SugarBean $report)
     {
         global  $beanList, $beanFiles;
         global $sugar_config,$current_language;
@@ -133,29 +133,13 @@ class ReportsExportApi extends SugarApi {
             //Generate actual pdf
             $report_filename = template_handle_pdf($reporter, false);
 
-            header("Pragma: public");
-            header("Cache-Control: maxage=1, post-check=0, pre-check=0");
-            header("Content-Type: application/pdf");
-            header("Content-Disposition: attachment; filename=\"".basename($report_filename)."\";");
-            header("X-Content-Type-Options: nosniff");
-            header("Content-Length: " . filesize($report_filename));
-            header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 2592000));
-            set_time_limit(0);
-            ob_start();
-
-
-            //BEGIN SUGARCRM flav=int ONLY
-            // awu: stripping out zend_send_file function call, the function changes the filename to be whatever is on the file system
-            if(function_exists('zend_send_file')){
-                zend_send_file($report_filename);
-            }else{
-            //END SUGARCRM flav=int ONLY
-                readfile($report_filename);
-            //BEGIN SUGARCRM flav=int ONLY
-            }
-            //END SUGARCRM flav=int ONLY
-            @ob_end_flush();
+            $api->setHeader("Pragma", "public");
+            $api->setHeader("Cache-Control", "maxage=1, post-check=0, pre-check=0");
+            $api->setHeader("Content-Type", "application/pdf");
+            $api->setHeader("Content-Disposition", "attachment; filename=\"".basename($report_filename)."\";");
+            $api->setHeader("X-Content-Type-Options", "nosniff");
+            $api->setHeader("Expires", TimeDate::httpTime(time() + 2592000));
+            $api->fileResponse($report_filename);
         }
-
     }
 }

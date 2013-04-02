@@ -121,4 +121,12 @@ abstract class ServiceBase {
         // do nothing in base class
         return false;
     }
+
+    /**
+     * Set response to be read from file
+     */
+    public function fileResponse($filename)
+    {
+        return false;
+    }
 }

@@ -123,7 +123,7 @@ class FileApi extends SugarApi {
         // Now get our actual mime type from our internal methodology if it wasn't passed
         if (empty($filetype)) {
             require_once 'include/download_file.php';
-            $dl = new DownloadFile();
+            $dl = new DownloadFileApi($api);
             $filetype = $dl->getMimeType($tempfile);
         }
 
@@ -176,7 +176,7 @@ class FileApi extends SugarApi {
 
         if(!$bean->ACLAccess('view')) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
-        }        
+        }
 
         // Simple validation
         // In the case of very large files that are too big for the request too handle AND
@@ -204,9 +204,9 @@ class FileApi extends SugarApi {
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Handle ACL - if there is no current field data, it is a CREATE
-        // This addresses an issue where the portal user has create but not edit 
+        // This addresses an issue where the portal user has create but not edit
         // rights for particular modules. The perspective here is that even if
-        // a record exists, if there is no attachment, you are CREATING the 
+        // a record exists, if there is no attachment, you are CREATING the
         // attachment instead of EDITING the parent record. -rgonzalez
         $accessType = empty($bean->$field) ? 'create' : 'edit';
         $this->verifyFieldAccess($bean, $field, $accessType);
@@ -239,12 +239,12 @@ class FileApi extends SugarApi {
                         $filesIndex .= '_file';
                     }
                 }
-                
+
                 // Noticed for some reason that API FILE[type] was set to application/octet-stream
                 // That breaks the uploader which is looking for very specific mime types
                 // So rather than rely on what $_FILES thinks, set it with our own methodology
                 require_once 'include/download_file.php';
-                $dl = new DownloadFile();
+                $dl = new DownloadFileApi($api);
                 $mime = $dl->getMimeType($_FILES[$filesIndex]['tmp_name']);
                 $_FILES[$filesIndex]['type'] = $mime;
 
@@ -260,7 +260,7 @@ class FileApi extends SugarApi {
                 // Handle errors
                 if (!empty($sf->error)) {
 
-                    // Note, that although the code earlier in this method (where attachment too large) handles 
+                    // Note, that although the code earlier in this method (where attachment too large) handles
                     // if file > php.ini upload_maxsize, we still may have a file > sugarcrm maxsize
                     $this->deleteIfFails($bean, $args);
                     throw new SugarApiExceptionError($sf->error);
@@ -268,7 +268,7 @@ class FileApi extends SugarApi {
 
                 // Prep our return
                 $fileinfo = array();
-                
+
                 //In case we are returning a temporary file
                 if ($temporary) {
                     $fileinfo['guid'] = $bean->$field;
@@ -373,7 +373,7 @@ class FileApi extends SugarApi {
         //END SUGARCRM flav=pro ONLY
 
         require_once 'include/download_file.php';
-        $download = new DownloadFile();
+        $download = new DownloadFileApi($api);
         try {
             $download->getFile($bean, $field);
         } catch (Exception $e) {
@@ -438,13 +438,13 @@ class FileApi extends SugarApi {
      * Provides ability to mark a SugarBean deleted if related file upload failed (and user passed
      * the delete_if_fails optional parameter). Note, private to respect "Principle of least privilege"
      * If you need in derived classes then you may change to protected.
-     * 
-     * @param SugarBean $bean Bean 
+     *
+     * @param SugarBean $bean Bean
      * @param array $args The request args
      * @return false if no deletion occured because delete_if_fails was not set otherwise true.
-     */                   
+     */
     private function deleteIfFails($bean, $args) {
-        // Bug 57210: Need to be able to mark a related record 'deleted=1' when a file uploads fails. 
+        // Bug 57210: Need to be able to mark a related record 'deleted=1' when a file uploads fails.
         // delete_if_fails flag is an optional query string which can trigger this behavior. An example
         // use case might be: user's in a modal and client: 1. POST's related record 2. uploads file...
         // If the file was too big, the user may still want to go back and select a smaller file < max;
@@ -456,7 +456,7 @@ class FileApi extends SugarApi {
             if($bean->created_by == $GLOBALS['current_user']->id) {
                 $bean->mark_deleted($bean->id);
                 return true;
-            } 
+            }
         }
         return false;
     }
@@ -495,7 +495,7 @@ class FileApi extends SugarApi {
                     );
                 } elseif ($def['type'] == 'file') {
                     require_once 'include/download_file.php';
-                    $download = new DownloadFile();
+                    $download = new DownloadFileApi($api);
                     $info = $download->getFileInfo($bean, $field);
                     if (!empty($info) && empty($info['uri'])) {
                         $info['uri'] = $api->getResourceURI(array($bean->module_dir, $bean->id, 'file', $field));

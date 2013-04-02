@@ -608,12 +608,10 @@ class RestService extends ServiceBase {
     protected function respond($route, $args) {
         if (!empty($route['rawReply'])) {
             if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($route['noEtag'])) {
-                $this->response->generateETagHeader(md5($this->response->getRawBody()));
-            }
-            elseif($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $this->response->generateETagHeader();
+            } elseif($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $this->response->setPostHeaders();
             }
-            $this->response->setType(RestResponse::RAW);
         } else {
             $this->setResponseType($args);
         }
@@ -631,5 +629,13 @@ class RestService extends ServiceBase {
     public function generateETagHeader($etag)
     {
         return $this->response->generateETagHeader($etag);
+    }
+
+    /**
+     * Set response to be read from file
+     */
+    public function fileResponse($filename)
+    {
+        $this->response->setType(RestResponse::FILE)->setFile($filename);
     }
 }

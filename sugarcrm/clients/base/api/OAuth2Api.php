@@ -56,13 +56,12 @@ class OAuth2Api extends SugarApi {
 
     public function token($api, $args) {
         $platform = empty($args['platform']) ? 'base' : $args['platform'];
+        ob_start();
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
         $oauth2Server->setPlatform($platform);
 
         $oauth2Server->grantAccessToken($args);
-        
-        // grantAccessToken directly echo's (BAD), but it's a 3rd party library, so what are you going to do?
-        return '';
+        return ob_get_flush();
     }
 
     public function logout($api, $args) {
@@ -70,7 +69,7 @@ class OAuth2Api extends SugarApi {
 
         if ( isset($args['refresh_token']) ) {
             // Nuke the refresh token as well.
-            // No security checks needed here to make sure the refresh token is theirs, 
+            // No security checks needed here to make sure the refresh token is theirs,
             // because if someone else has your refresh token logging out is the nicest possible thing they could do.
             $oauth2Server->storage->unsetRefreshToken($args['refresh_token']);
         }

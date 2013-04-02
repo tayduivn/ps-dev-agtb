@@ -13,6 +13,7 @@ class RestResponse extends Zend_Http_Response
     const RAW = 0;
     const JSON = 1;
     const JSON_HTML = 2;
+    const FILE = 3;
 
     /**
      * Response type
@@ -25,6 +26,12 @@ class RestResponse extends Zend_Http_Response
      * @var array
      */
     protected $server_data = array();
+
+    /**
+     * Filename to read response from
+     * @var string
+     */
+    protected $filename;
 
     public function __construct($server)
     {
@@ -119,6 +126,9 @@ class RestResponse extends Zend_Http_Response
             case self::JSON_HTML:
                 $response = json_encode($this->body);
                 break;
+            case self::FILE:
+                // special case
+                return '';
         }
     	if($this->type == self::JSON_HTML) {
     		$response = htmlentities($response);
@@ -161,8 +171,14 @@ class RestResponse extends Zend_Http_Response
      * @param string $etag ETag to use for this content.
      * @return bool Did we have a match?
      */
-    public function generateETagHeader($etag)
+    public function generateETagHeader($etag = null)
     {
+        if(is_null($etag)) {
+            if($this->type != self::RAW) {
+                return false;
+            }
+            $etag = md5($this->body);
+        }
     	if(isset($this->server_data["HTTP_IF_NONE_MATCH"])){
     		if($etag == $this->server_data["HTTP_IF_NONE_MATCH"]){
     		    // Same data, clean it up and return 304
@@ -190,11 +206,44 @@ class RestResponse extends Zend_Http_Response
     }
 
     /**
+     * Send out the file
+     * @param string $file
+     */
+    protected function sendFile($file)
+    {
+        if(!file_exists($file)) {
+            return;
+        }
+        header("Content-Length: " . filesize($file));
+        set_time_limit(0);
+        if(function_exists('zend_send_file')) {
+        	zend_send_file($file);
+        } else {
+        	readfile($file);
+        }
+    }
+
+    /**
+     * Set filename to read response from
+     * @param string $filename
+     * @return RestResponse
+     */
+    public function setFilename($filename)
+    {
+        $this->filename = $filename;
+        return $this;
+    }
+
+    /**
      * Send the response out
      */
     public function send()
     {
         $this->sendHeaders();
+        if($this->type == self::FILE) {
+            $this->sendFile($this->filename);
+            return;
+        }
         echo $this->sendContent();
     }
 
