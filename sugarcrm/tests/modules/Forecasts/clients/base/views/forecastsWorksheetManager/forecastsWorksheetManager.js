@@ -31,6 +31,12 @@ describe("forecasts_view_forecastsWorksheetManager", function() {
                 show_worksheet_worst: 0
             };
         });
+        sinon.stub(app.metadata, 'getCurrency', function() {
+            return {
+                conversion_rate: 1
+            }
+        })
+
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) {
             return eval(d);
         });
@@ -53,14 +59,17 @@ describe("forecasts_view_forecastsWorksheetManager", function() {
             ranges: {}
         };
 
-        var collection = new Backbone.Collection();
+        var collection = new Backbone.Collection(),
+            context = app.context.getContext();
 
         apiClassStub = sinon.stub(app.api, 'call');
 
-
-        var context = app.context.getContext();
-        context.set({'selectedTimePeriod': new Backbone.Model({'id': 'fake_id'})});
-        context.set({'collection': collection});
+        context.set({
+            selectedTimePeriod: new Backbone.Model({
+                id: 'fake_id'
+            }),
+            collection: collection
+        });
 
         var meta = {
             panels: [
@@ -88,6 +97,7 @@ describe("forecasts_view_forecastsWorksheetManager", function() {
 
     afterEach(function() {
         apiClassStub.restore();
+        app.metadata.getCurrency.restore();
         app.metadata.getModule.restore();
         app.user.unset('id');
         app.user.set('isManager', false);
