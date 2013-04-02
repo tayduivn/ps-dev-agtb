@@ -30,42 +30,42 @@ class TimePeriod extends SugarBean {
     const MONTH_TYPE = 'Month';
 
     //time period stored fields.
-    var $id;
-    var $name;
-    var $parent_id;
-    var $start_date;
-    var $end_date;
-    var $start_date_timestamp;
-    var $end_date_timestamp;
-    var $created_by;
-    var $date_entered;
-    var $date_modified;
-    var $deleted;
-    var $fiscal_year;
-    var $is_fiscal_year = 0;
-    var $is_fiscal;
+    public $id;
+    public $name;
+    public $parent_id;
+    public $start_date;
+    public $end_date;
+    public $start_date_timestamp;
+    public $end_date_timestamp;
+    public $created_by;
+    public $date_entered;
+    public $date_modified;
+    public $deleted;
+    public $fiscal_year;
+    public $is_fiscal_year = 0;
+    public $is_fiscal;
     //end time period stored fields.
-    var $table_name = "timeperiods";
-    var $fiscal_year_checked;
-    var $module_dir = 'TimePeriods';
-    var $type;
-    var $leaf_period_type;
-    var $leaf_periods;
-    var $leaf_cycle;
-    var $periods_in_year;
-    var $leaf_name_template;
-    var $name_template;
-    var $object_name = "TimePeriod";
-    var $user_preferences;
-    var $date_modifier;
-    var $encodeFields = Array("name");
-    var $priorSettings;
-    var $currentSettings;
+    public $table_name = "timeperiods";
+    public $fiscal_year_checked;
+    public $module_dir = 'TimePeriods';
+    public $type;
+    public $leaf_period_type;
+    public $leaf_periods;
+    public $leaf_cycle;
+    public $periods_in_year;
+    public $leaf_name_template;
+    public $name_template;
+    public $object_name = "TimePeriod";
+    public $user_preferences;
+    public $date_modifier;
+    public $encodeFields = Array("name");
+    public $priorSettings;
+    public $currentSettings;
 
     // This is used to retrieve related fields from form posts.
-    var $additional_column_fields = Array('reports_to_name');
+    public $additional_column_fields = Array('reports_to_name');
 
-    var $new_schema = true;
+    public $new_schema = true;
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -325,7 +325,7 @@ class TimePeriod extends SugarBean {
      */
     public static function retrieveFromDate($db_date)
     {        
-        return TimePeriod::getByDateAndType($db_date);
+        return self::getByDateAndType($db_date);
     }
 
 
@@ -373,11 +373,9 @@ class TimePeriod extends SugarBean {
     public static function getCurrentId($type='')
     {
         $id = null;
-        $db = DBManagerFactory::getInstance();
         $timedate = TimeDate::getInstance();
-        $queryDate = $timedate->getNow(true);
-        $date = $db->convert($queryDate->asDbDate(false), 'date');
-        $tp = TimePeriod::getByDateAndType($date, $type);
+        $date = $timedate->getNow(true);
+        $tp = self::getByDateAndType($date, $type);
         
         if (!empty($tp)) {
         	$id = $tp->id;
