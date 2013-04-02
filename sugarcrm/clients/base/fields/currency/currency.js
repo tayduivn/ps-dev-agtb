@@ -60,6 +60,7 @@
         var currencyField = this.def.currency_field || 'currency_id';
         this.model.on('change:' + currencyField, function(model, value, options) {
             var baseRateField = this.def.base_rate_field || 'base_rate';
+            // manually force a change on the base rate in the model when the currency changes
             this.model.set(baseRateField, app.metadata.getCurrency(value).conversion_rate);
         }, this);
     },
@@ -85,6 +86,7 @@
 
         // TODO review this forecasts requirement and make it work with css defined on metadata
         // force this to recalculate the transaction value if needed
+        // and more importantly, clear out previous transaction value
         this.transactionValue = '';
         if (this.def.convertToBase &&
             this.def.showTransactionalAmount &&
