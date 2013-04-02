@@ -61,7 +61,7 @@ class OAuth2Api extends SugarApi {
         $oauth2Server->setPlatform($platform);
 
         $oauth2Server->grantAccessToken($args);
-        return ob_get_flush();
+        return ob_get_clean();
     }
 
     public function logout($api, $args) {
