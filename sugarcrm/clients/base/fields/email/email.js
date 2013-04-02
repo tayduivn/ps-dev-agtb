@@ -263,7 +263,7 @@
     },
 
     /**
-     * Format and unformat
+     * To API representation
      * @param {String|Array} value single email address or set of email addresses
      */
     format: function(value) {
@@ -311,7 +311,7 @@
         return value;
     },
     /**
-     * Unformat
+     * To display representation
      * @param {String|Array} value single email address or set of email addresses
      */
     unformat: function(value) {
@@ -319,6 +319,9 @@
         if(this.view.action === 'list') {
             var emails = this.model.get(this.name),
                 changed = false;
+            if(!_.isArray(emails)){ // emails is empty, initialize array
+                emails = [];
+            }
             _.each(emails, function(email, index) {
                 if(email.primary_address === '1') {
                     if(email.email_address !== value) {
