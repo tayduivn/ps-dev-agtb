@@ -159,8 +159,9 @@ class RestResponse extends Zend_Http_Response
      * simply have to generate the ETag, pass it in, and the function handles the rest.
      *
      * @param string $etag ETag to use for this content.
+     * @return bool Did we have a match?
      */
-    protected function generateETagHeader($etag)
+    public function generateETagHeader($etag)
     {
     	if(isset($this->server_data["HTTP_IF_NONE_MATCH"])){
     		if($etag == $this->server_data["HTTP_IF_NONE_MATCH"]){
@@ -169,10 +170,11 @@ class RestResponse extends Zend_Http_Response
                 $this->headers = array();
                 $this->code = 304;
                 $this->type = self::RAW;
-                return;
+                return true;
     		}
     	}
     	$this->setHeader('ETag', $etag);
+    	return false;
     }
 
     /**

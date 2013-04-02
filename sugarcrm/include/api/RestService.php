@@ -618,4 +618,18 @@ class RestService extends ServiceBase {
             $this->setResponseType($args);
         }
     }
+
+    /**
+     * generateETagHeader
+     *
+     * This function generates the necessary cache headers for using ETags with dynamic content. You
+     * simply have to generate the ETag, pass it in, and the function handles the rest.
+     *
+     * @param string $etag ETag to use for this content.
+     * @return bool Did we have a match?
+     */
+    public function generateETagHeader($etag)
+    {
+        return $this->response->generateETagHeader($etag);
+    }
 }
