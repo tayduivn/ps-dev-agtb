@@ -241,7 +241,7 @@
         var url = 'index.php?module=Forecasts&action=';
         url += (this.context.get("currentWorksheet") == 'worksheetmanager') ? 'ExportManagerWorksheet' : 'ExportWorksheet';
         url += '&user_id=' + this.context.get('selectedUser').id;
-        url += '&timeperiod_id=' + $("#timeperiod").val();
+        url += '&timeperiod_id=' + this.context.get('selectedTimePeriod').id;
 
         if(savebtn.length > 0 && !savebtn.hasClass("disabled")) {
             if(confirm(app.lang.get("LBL_WORKSHEET_EXPORT_CONFIRM", "Forecasts"))) {

@@ -201,10 +201,13 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testBug58397()
     {
-        $opp = $this->reportee['opportunities'][0];
-        $opp->name = $opp->name."'";
-        $opp->save();
 
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($this->reportee['opportunities'][0]);
+        $worksheet->name .= "'";
+        $worksheet->save();
+
+        $current_user = $GLOBALS['current_user'];
+        $GLOBALS['current_user'] = $this->reportee['user'];
         $args = array();
         $args['timeperiod_id'] = $this->timeperiod->id;
         $args['user_id'] = $this->repData['id'];
@@ -212,6 +215,8 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
 
         $obj = new SugarForecasting_Export_Individual($args);
         $content = $obj->process();
+
+        $GLOBALS['current_user'] = $current_user;
 
         $this->assertNotEmpty($content, "content empty. Rep data should have returned csv file contents.");
         $this->assertNotContains('#039', $content);
