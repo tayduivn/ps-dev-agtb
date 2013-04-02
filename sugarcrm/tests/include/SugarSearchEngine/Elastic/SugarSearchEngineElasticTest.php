@@ -80,6 +80,29 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         
     }
 
+
+    public function mappingSearchableTypeProvider()
+    {
+        return array(
+            array('name', true),
+            array('varchar', true),
+            array('phone', true),
+            array('enum', false),
+            array('iframe', false),
+            array('bool', false),
+            array('invalid', false),
+        );
+    }
+
+    /**
+     * @dataProvider mappingSearchableTypeProvider
+     */
+    public function testSearchableType($type, $searchable)
+    {
+        $ret = SugarSearchEngineFactory::getInstance('Elastic')->isTypeFtsEnabled($type);
+        $this->assertEquals($searchable, $ret, 'field type incorrect searchable definition');
+    }
+
 }
 
 
