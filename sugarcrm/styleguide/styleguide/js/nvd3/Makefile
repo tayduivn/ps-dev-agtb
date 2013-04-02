@@ -31,13 +31,16 @@ JS_FILES = \
 	src/models/bubbleChart.js \
 	src/outro.js
 
+D3_FILES = \
+	lib/d3.v2.js
+
 JS_COMPILER = \
 	uglifyjs
 
 all: nv.d3.js nv.d3.min.js
 nv.d3.js: $(JS_FILES)
 nv.d3.min.js: $(JS_FILES)
-d3.min: d3.v2.min.js
+d3.v2.min.js: $(D3_FILES)
 
 nv.d3.js: Makefile
 	rm -f $@
@@ -49,7 +52,7 @@ nv.d3.min.js: Makefile
 
 d3.v2.min.js: Makefile
 	rm -f ../../../assets/js/nvd3/lib/$@
-	cat lib/d3.v2.js | $(JS_COMPILER) >> ../../../assets/js/nvd3/lib/$@
+	cat $(filter %.js,$^) | $(JS_COMPILER) >> ../../../assets/js/nvd3/lib/$@
 
 clean:
 	rm -rf nv.d3.js ../../../assets/js/nvd3/nv.d3.min.js
