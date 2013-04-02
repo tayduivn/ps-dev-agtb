@@ -65,7 +65,7 @@
         if (this.model.isNew()) {
             //load the default team setting that is specified in the user profile settings
             if (_.isEmpty(value)) {
-                value = app.user.getPreference("default_teams");
+                value = app.utils.deepCopy(app.user.getPreference("default_teams"));
             }
             this.model.set(this.name, value);
         }
