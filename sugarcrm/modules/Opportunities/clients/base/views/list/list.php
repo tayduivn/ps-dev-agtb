@@ -111,6 +111,10 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                     'label' => 'LBL_LIST_DATE_CLOSED',
                     'enabled' => true,
                     'default' => true,
+//BEGIN SUGARCRM flav=ent ONLY
+                    'readonly' => true
+//END SUGARCRM flav=ent ONLY
+
                 ),
                 array(
                     'name' => 'created_by_name',
