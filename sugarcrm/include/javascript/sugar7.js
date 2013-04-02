@@ -82,10 +82,14 @@
                         return;
                     }
 
-                    app.controller.loadView({
-                        module: module,
-                        layout: "records"
-                    });
+                    var previousModule = app.controller.context.get("module"),
+                        previousLayout = app.controller.context.get("layout");
+                    if(!(previousModule === module && previousLayout === "records")) {
+                        app.controller.loadView({
+                            module: module,
+                            layout: "records"
+                        });
+                    }
 
                     app.drawer.open({
                         layout:'create',
@@ -96,7 +100,7 @@
                         var module = context.get("module") || model.module,
                             route  = app.router.buildRoute(module);
 
-                        app.router.navigate(route, {trigger: true});
+                        app.router.navigate(route, {trigger: (model instanceof Backbone.Model)});
                     }, this));
                 }
             },
