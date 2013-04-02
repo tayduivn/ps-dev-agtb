@@ -23,6 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/api/ServiceBase.php');
 require_once('include/api/ServiceDictionaryRest.php');
 require_once('include/SugarOAuth2/SugarOAuth2Server.php');
+require_once('include/api/RestResponse.php');
 
 class RestService extends ServiceBase {
 
@@ -31,9 +32,9 @@ class RestService extends ServiceBase {
      * The request headers
      * @var array
      */
-    
+
     public $request_headers = array();
-    
+
     public $platform = 'base';
 
     /**
@@ -41,12 +42,12 @@ class RestService extends ServiceBase {
      * @var
      */
     protected $resourceURIBase;
-    
+
     /**
      * The response headers that will be sent
-     * @var array
+     * @var RestResponse
      */
-    protected $response_headers = array();
+    protected $response = null;
 
     /**
      * The minimum version accepted
@@ -69,10 +70,12 @@ class RestService extends ServiceBase {
     /**
      * This function executes the current request and outputs the response directly.
      */
-    public function execute() {
+    public function execute()
+    {
+        $this->response = new RestResponse();
         try {
             $rawPath = $this->getRawPath();
-            
+
             $this->getRequestHeaders();
 
             list($version,$path) = $this->parsePath($rawPath);
@@ -111,7 +114,7 @@ class RestService extends ServiceBase {
                 if ( !$isLoggedIn ) {
                     if(!$loginException) {
                         // @TODO Localize exception strings
-                        throw new SugarApiExceptionNeedLogin("No valid authentication for user.");                        
+                        throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
                     } else {
                         throw $loginException;
                     }
@@ -134,8 +137,8 @@ class RestService extends ServiceBase {
                 $getVars = $_GET;
                 if ( !empty($route['jsonParams']) ) {
                     foreach ( $route['jsonParams'] as $fieldName ) {
-                        if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName]) 
-                             &&  isset($_GET[$fieldName]{0}) 
+                        if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
+                             &&  isset($_GET[$fieldName]{0})
                              && ( $_GET[$fieldName]{0} == '{'
                                    || $_GET[$fieldName]{0} == '[' )) {
                             // This may be JSON data
@@ -204,13 +207,12 @@ class RestService extends ServiceBase {
             $apiClass = $this->loadApiClass($route);
             $apiMethod = $route['method'];
 
-            $output = $apiClass->$apiMethod($this,$argArray);
-
-            $this->respond($output, $route, $argArray);
-
+            $this->response->setContent($apiClass->$apiMethod($this,$argArray));
+            $this->respond($route, $argArray);
         } catch ( Exception $e ) {
             $this->handleException($e);
         }
+        $this->response->send();
     }
 
     /**
@@ -338,7 +340,8 @@ class RestService extends ServiceBase {
      *
      * @param Exception $exception
      */
-    protected function handleException(Exception $exception) {
+    protected function handleException(Exception $exception)
+    {
         if ( is_a($exception,"SugarApiException") ) {
             $httpError = $exception->getHttpCode();
             $errorLabel = $exception->getErrorLabel();
@@ -353,23 +356,23 @@ class RestService extends ServiceBase {
             $errorLabel = 'unknown_error';
             $message = $exception->getMessage();
         }
-        header("HTTP/1.1 {$httpError}");
+        $this->response->setStatus($httpError);
 
         $GLOBALS['log']->error('An exception happened: ( '.$httpError.': '.$errorLabel.')'.$message);
 
         // For edge cases when an HTML response is needed as a wrapper to JSON
         if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
             if (!isset($_REQUEST['platform']) || (isset($_REQUEST['platform']) && $_REQUEST['platform'] == 'portal')) {
-                $message = htmlentities(json_encode($this->getHXRReturnArray($message, $httpError)));
-                header("HTTP/1.0 200 Success");
-                echo($message);
-                die();
+                $this->response->setContent($this->getHXRReturnArray($message, $httpError));
+                $this->response->setType(RestResponse::JSON_HTML, true);
+                $this->response->setStatus(200);
+                return;
             }
         }
 
         // Send proper headers
-        header("Content-Type: application/json");
-        header("Cache-Control: no-store");
+        $this->response->setType(RestResponse::JSON, true);
+        $this->response->setHeader("Cache-Control", "no-store");
 
         $replyData = array(
             'error'=>$errorLabel,
@@ -377,9 +380,7 @@ class RestService extends ServiceBase {
         if( !empty($message) ) {
             $replyData['error_message'] = $message;
         }
-
-        echo(json_encode($replyData));
-        die();
+        $this->response->setContent($replyData);
     }
 
     /**
@@ -409,7 +410,7 @@ class RestService extends ServiceBase {
      */
     protected function authenticateUser() {
         $valid = false;
-        
+
         $token = $this->grabToken();
 
         if ( !empty($token) ) {
@@ -485,7 +486,7 @@ class RestService extends ServiceBase {
         // Bug 61887 - initial portal load dies with undefined variable error
         // Initialize the return var in case all conditionals fail
         $sessionId = '';
-        
+
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
@@ -518,47 +519,44 @@ class RestService extends ServiceBase {
      */
     protected function setContentTypeHeader($args) {
         if (isset($args['format']) && $args['format'] == 'sugar-html-json') {
-            $this->setHeader('Content-Type', 'text/html');
         } else {
             // @TODO: Handle other response types here
-            $this->setHeader('Content-Type', 'application/json');
         }
     }
 
     /**
-     * Sends the content to the client
+     * Sets the response type for the client
      *
      * @TODO Handle proper content disposition based on response content type
-     * @access protected
-     * @param mixed $content
+     * @TODO gzip, and possibly XML based output
      * @param array $args The request arguments
      */
-    protected function sendContent($content, $args) {
-        $response = json_encode($content);
+    protected function setResponseType($args)
+    {
         if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
-            $response = htmlentities($response);
+            $this->response->setType(RestResponse::JSON_HTML);
+        } else {
+            $this->response->setType(RestResponse::JSON);
         }
-        echo $response;
     }
 
     /**
      * Set a response header
-     * @param string $header 
-     * @param string $info 
+     * @param string $header
+     * @param string $info
      * @return bool
      */
     public function setHeader($header, $info) {
-        $this->response_headers[$header] = $info;
-        return true;
+        return $this->response->setHeader($header, $info);
     }
 
     /**
      * Check if the response headers have a header set
-     * @param string $header 
+     * @param string $header
      * @return bool
      */
     public function hasHeader($header) {
-        return array_key_exists($header, $this->response_headers);
+        return $this->response->hasHeader($header);
     }
 
     /**
@@ -566,25 +564,9 @@ class RestService extends ServiceBase {
      * @return bool
      */
     public function sendHeaders() {
-        if(headers_sent()) {
-            return false;
-        }
-        foreach($this->response_headers AS $header => $info) {
-            header("{$header}: {$info}");
-        }
-        return true;
+        return $this->response->sendHeaders();
     }
 
-    /**
-     * Set Post Headers
-     * @return bool
-     */
-    protected function setPostHeaders() {
-        $this->setHeader('Cache-Control', 'no-cache, must-revalidate');
-        $this->setHeader('Pragma', 'no-cache');
-        $this->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
-        return true;
-    }
     /**
      * Sets the leading portion of any request URI for this API instance
      *
@@ -623,44 +605,17 @@ class RestService extends ServiceBase {
      * @param array $route The route for this request
      * @param array $args The request arguments
      */
-    protected function respond($output, $route, $args) {
-        // TODO: gzip, and possibly XML based output
+    protected function respond($route, $args) {
         if (!empty($route['rawReply'])) {
             if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($route['noEtag'])) {
-        	   $this->generateETagHeader(md5($output));
+                $this->response->generateETagHeader(md5($this->response->getRawBody()));
             }
             elseif($_SERVER['REQUEST_METHOD'] == 'POST') {
-                $this->setPostHeaders();
+                $this->response->setPostHeaders();
             }
-            $this->sendHeaders();
-            echo $output;
+            $this->response->setType(RestResponse::RAW);
         } else {
-            // Handle content type header sending
-            $this->setContentTypeHeader($args);
-            $this->sendHeaders();
-            // Send the content
-            $this->sendContent($output, $args);
+            $this->setResponseType($args);
         }
-
-        $this->response_headers = array();
     }
-    /**
-	 * generateETagHeader
-	 *
-	 * This function generates the necessary cache headers for using ETags with dynamic content. You
-	 * simply have to generate the ETag, pass it in, and the function handles the rest.
-	 *
-	 * @param string $etag ETag to use for this content.
-	 */
-	protected function generateETagHeader($etag){
-        if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
-            if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
-                ob_clean();
-                header("Status: 304 Not Modified");
-                header("HTTP/1.0 304 Not Modified");
-                die();
-            }
-        }
-        $this->setHeader('ETag', $etag);
-	}
 }
