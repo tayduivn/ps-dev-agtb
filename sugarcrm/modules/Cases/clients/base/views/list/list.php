@@ -72,7 +72,6 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'default' => true,
                 ),
                 array(
-                    'bwcLink' => true,
                     'name' => 'assigned_user_name',
                     'label' => 'LBL_ASSIGNED_TO_NAME',
                     'width' =>  10,
