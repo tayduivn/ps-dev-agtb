@@ -1,14 +1,12 @@
-<div class="block">
-  <div><div class="loading">{{str "LBL_LOADING"}}</div><svg id="{{cid}}"></svg></div>
-</div>
+<svg id="{{cid}}"></svg>
 <style>
-    .block path {
+    /* TODO move this to less */
+    #{{cid}} path {
         stroke: #fff;
+        stroke-width: 0.5;
     }
-    .dashboard-pane .block {
-        margin:0px;
-    }
-    .dashboard-pane .block svg {
-        height:200px;
+    /* this is due to styleguide 5f3a2d8c commit (dashboard.less) */
+    #{{cid}} {
+        max-height: 100%;
     }
 </style>

@@ -184,7 +184,6 @@ class ActivityQueueManager
      */
     protected function delete(SugarBean $bean, Activity $act)
     {
-        $act = BeanFactory::getBean('Activities');
         $data = array(
             'object' => self::getBeanAttributes($bean),
         );
@@ -193,6 +192,7 @@ class ActivityQueueManager
         $act->parent_type = $bean->module_name;
         $act->data = $data;
         $act->save();
+
         $this->processRecord($bean, $act);
     }
 
@@ -203,7 +203,6 @@ class ActivityQueueManager
      */
     protected function undelete(SugarBean $bean, Activity $act)
     {
-        $act = BeanFactory::getBean('Activities');
         $data = array(
             'object' => self::getBeanAttributes($bean),
         );

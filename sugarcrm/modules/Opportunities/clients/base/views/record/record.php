@@ -14,58 +14,6 @@
  */
 
 $viewdefs['Opportunities']['base']['view']['record'] = array(
-    'buttons' => array(
-        array(
-            'type' => 'button',
-            'name' => 'cancel_button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'edit',
-        ),
-        array(
-            'type' => 'rowaction',
-            'event' => 'button:save_button:click',
-            'name' => 'save_button',
-            'label' => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'btn btn-primary',
-            'showOn' => 'edit',
-            'acl_action' => 'edit',
-        ),
-        array(
-            'type' => 'actiondropdown',
-            'name' => 'main_dropdown',
-            'primary' => true,
-            'showOn' => 'view',
-            'buttons' => array(
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:edit_button:click',
-                    'name' => 'edit_button',
-                    'label' => 'LBL_EDIT_BUTTON_LABEL',
-                    'primary' => true,
-                    'acl_action' => 'edit',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:delete_button:click',
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'acl_action' => 'delete',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:duplicate_button:click',
-                    'name' => 'duplicate_button',
-                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_action' => 'create',
-                ),
-            ),
-        ),
-        array(
-            'name' => 'sidebar_toggle',
-            'type' => 'sidebartoggle',
-        ),
-    ),
     'panels' => array(
         array(
             'name' => 'panel_header',
@@ -80,7 +28,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'type' => 'follow',
                     'readonly' => true,
                 ),
-            )
+            ),
         ),
         array(
             'name' => 'panel_body',
@@ -95,21 +43,14 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'related_fields' => array(
                         'account_id'
                     )
-                ),                
-                'lead_source',
+                ),
+                array(
+                    'name' => 'date_closed',
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    'readonly' => true,
+                    //END SUGARCRM flav=ent ONLY
+                ),
                 'sales_status',
-                'campaign_name',
-                'assigned_user_name',
-                'opportunity_type',                
-                )
-            ),
-        array(
-            'name' => 'panel_hidden',
-            'hide' => true,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'columns' => 2,
-            'fields' => array(
                 array(
                     'name' => 'amount',
                     'type' => 'currency',
@@ -124,12 +65,6 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     //END SUGARCRM flav=ent ONLY
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
-                ),
-                array(
-                    'name' => 'date_closed',
-                    //BEGIN SUGARCRM flav=ent ONLY
-                    'readonly' => true,
-                    //END SUGARCRM flav=ent ONLY
                 ),
                 array(
                     'name' => 'best_case',
@@ -161,15 +96,24 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
-                array(
-                    'type' => 'teamset',
-                    'name' => 'team_name'
-                ),
+                'opportunity_type',
+                'assigned_user_name',
+            ),
+        ),
+        array(
+            'name' => 'panel_hidden',
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'columns' => 2,
+            'fields' => array(
                 'next_step',
                 array(
                     'name' => 'description',
-                    'span' => 12
+                    'span' => 12,
                 ),
+                'lead_source',
+                'campaign_name',
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,
@@ -185,9 +129,10 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         ),
                         array(
                             'name' => 'created_by_name',
-                        )
-                    )
+                        ),
+                    ),
                 ),
+                'team_name',
                 array(
                     'name' => 'date_modified_by',
                     'readonly' => true,
@@ -199,14 +144,14 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         ),
                         array(
                             'type' => 'label',
-                            'default_value' => 'LBL_BY'
+                            'default_value' => 'LBL_BY',
                         ),
                         array(
-                            'name' => 'created_by_name',
-                        )
-                    )
-                )               
-            )
-        )
-    )    
+                            'name' => 'modified_by_name',
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    ),
 );

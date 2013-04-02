@@ -641,9 +641,7 @@ class Product extends SugarBean
         $this->convertDateClosedToTimestamp();
         $this->mapFieldsFromProductTemplate();
         $this->mapFieldsFromOpportunity();
-        //BEGIN SUGARCRM flav=ent ONLY
-        $this->updateCommitStageFromSalesStage();
-        //END SUGARCRM flav=ent ONLY
+
         $id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
@@ -792,29 +790,6 @@ class Product extends SugarBean
     }
 
     //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * Set the Commit Stage based on the probability
-     */
-    protected function updateCommitStageFromSalesStage()
-    {
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        //Determine the default commit_stage based on the probability
-        if ($settings['is_setup'] && $this->probability !== '') {
-            //Retrieve Forecasts_category_ranges and json decode as an associative array
-            $forecast_ranges = isset($settings['forecast_ranges']) ? $settings['forecast_ranges'] : '';
-            $category_ranges = isset($settings[$forecast_ranges . '_ranges']) ?
-                $settings[$forecast_ranges . '_ranges'] : array();
-            foreach ($category_ranges as $key => $entry) {
-                if ($this->probability >= $entry['min'] && $this->probability <= $entry['max']) {
-                    $this->commit_stage = $key;
-                    break;
-                }
-            }
-        }
-    }
-
     /**
      * Save the updated product to the worksheet, this will create one if one does not exist
      * this will also update one if a draft version exists
