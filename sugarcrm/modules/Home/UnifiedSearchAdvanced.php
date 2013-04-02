@@ -449,6 +449,11 @@ class UnifiedSearchAdvanced {
      */
     public function shouldShowModule($moduleName)
     {
+        // TODO XXX: REWRITE -> This is a very inefficient way to retrieve the modules to show
+        // Why isn't getUnifiedSearchModulesDisplay enough?
+        // Why do we have the 2nd foreach loop isn't the caching happening in getUnifiedSearchModulesDisplay already?
+        // This code needs to be consolidated.
+
         //require_once('modules/Home/UnifiedSearchAdvanced.php');
         //$usa = new UnifiedSearchAdvanced();
         $modLists = $this->retrieveEnabledAndDisabledModules();
