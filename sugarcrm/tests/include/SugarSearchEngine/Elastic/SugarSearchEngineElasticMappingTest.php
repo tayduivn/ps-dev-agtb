@@ -33,9 +33,11 @@ require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.
 
 class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    static $stub; // Using static as we are not sharing state for the unit tests
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
+        self::$stub = new SugarSearchEngineElasticMappingTestStub();
     }
 
     public function testConstructMappingProperties()
@@ -55,11 +57,51 @@ class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCa
                 'type' => 'string',
             ),
         );
-        $stub = new SugarSearchEngineElasticMappingTestStub();
-        $result = $stub->constructMappingProperties($fieldDefs);
+        $result = self::$stub->constructMappingProperties($fieldDefs);
 
         $this->assertArrayHasKey('first_name', $result);
         $this->assertEquals($expected['first_name'], $result['first_name'], 'result is different from expected array');
+    }
+
+    public function mappingNameProvider()
+    {
+        return array(
+            array('boost', 'boost'),
+            array('analyzer', 'analyzer'),
+            array('type', 'type'),
+        );
+    }
+
+    /**
+     * @dataProvider mappingNameProvider
+     */
+    public function testGetMappingName($originalName, $expectedName)
+    {
+
+        $newName = self::$stub->getMappingName($originalName);
+
+        $this->assertEquals($expectedName, $newName, 'not expected name');
+    }
+
+    public function mappingTypeProvider()
+    {
+        return array(
+            array(array('type'=>'datetimecombo'), 'date'),
+            array(array('type'=>'date'), 'string'),
+            array(array('type'=>'int'), 'string'),
+            array(array('type'=>'currency'), 'string'),
+            array(array('type'=>'bool'), 'string'),
+            array(array('dbType'=>'decimal'), 'string'),
+        );
+    }
+
+    /**
+     * @dataProvider mappingTypeProvider
+     */
+    public function testGetMappingType($fieldDef, $expectedType)
+    {
+        $newType = self::$stub->getTypeFromSugarType($fieldDef);
+        $this->assertEquals($expectedType, $newType, 'not expected type');
     }
 }
 
@@ -76,4 +118,15 @@ class SugarSearchEngineElasticMappingTestStub extends SugarSearchEngineElasticMa
     {
         return parent::constructMappingProperties($fieldDefs);
     }
+
+    public function getTypeFromSugarType($fieldDef)
+    {
+        return parent::getTypeFromSugarType($fieldDef);
+    }
+
+    public function getMappingName($sugarName)
+    {
+        return parent::getMappingName($sugarName);
+    }
+
 }

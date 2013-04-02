@@ -22,7 +22,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
-require_once('include/SugarSearchEngine/SugarSearchEngineMappingHelper.php');
 
 /**
  * Module mapping for Elastica
@@ -113,7 +112,7 @@ class SugarSearchEngineElasticMapping
 
                 foreach ($fieldDef['full_text_search'] as $sugarName => $val)
                 {
-                    $mappingName = SugarSearchEngineMappingHelper::getMappingName('Elastic', $sugarName);
+                    $mappingName = $this->getMappingName('Elastic', $sugarName);
                     if (!empty($mappingName))
                     {
                         $tmpArray[$mappingName] = $fieldDef['full_text_search'][$sugarName];
@@ -123,12 +122,12 @@ class SugarSearchEngineElasticMapping
                 // field type is required when setting mapping
                 if (empty($tmpArray['type']))
                 {
-                    $tmpArray['type'] = SugarSearchEngineMappingHelper::getTypeFromSugarType('Elastic', $fieldDef);
+                    $tmpArray['type'] = $this->getTypeFromSugarType('Elastic', $fieldDef);
                 }
 
                 // set field analyzer
                 if (empty($tmpArray['analyzer'])
-                    && $analyzer = SugarSearchEngineMappingHelper::getAnalyzerFromType('Elastic', $tmpArray))
+                    && $analyzer = $this->getAnalyzerFromType('Elastic', $tmpArray))
                 {
                     $tmpArray['analyzer'] = $analyzer;
                 }
@@ -209,6 +208,131 @@ class SugarSearchEngineElasticMapping
         $fieldDefs = $this->sse->retrieveFtsEnabledFieldsPerModule($module);
 
         return $this->setFieldMapping($module, $fieldDefs);
+    }
+
+    /**
+     * mapping map
+     * This defines the vardefs to search engine mapping.
+     * Technically we only need to define them if the vardef name is different from the search engine mapping name.
+     * But it won't hurt to define them even if they are the same.
+     * @var array
+     */
+    protected static $mappingMap = array (
+        'boost' => 'boost',
+        'analyzer' => 'analyzer',
+        'type' => 'type',
+    );
+
+    /**
+     * non string type map
+     * sugar vardef type to search engine type mapping
+     * @var array
+     */
+    protected static $typeMap = array(
+        // searching string in non string types seems to cause elastic to return 500 error
+        // for example, search 'aaa' in case_number field (type=long) when no data indexed causes error
+        // we also need to figure out how date works with date format
+        // so use only strings for now
+        /*
+        'type' => array(
+            'bool' => 'boolean',
+            'int' => 'long',
+            'currency' => 'double',
+            'date' => 'date',
+            'datetime' => 'date',
+        ),
+        'dbType' => array(
+            'decimal' => 'double',
+        ),
+        */
+        'type' => array(
+            'datetimecombo'  =>  'date',
+            'relate' => 'string',
+        ),
+    );
+
+    /**
+     *
+     * Default field type to analyzer map
+     * @var array
+     */
+    protected static $analyzerMap = array(
+        'string' => 'standard',
+    );
+
+
+    /**
+     *
+     * Given a search engine name and a vardef name, this function returns corresponding search engine map type.
+     *
+     * @param $sugarName vardef name
+     *
+     * @return string search engine map name, or the original name if the mapping is not found
+     */
+    protected function getMappingName($sugarName)
+    {
+        if (isset(self::$mappingMap[$sugarName]))
+        {
+            return self::$mappingMap[$sugarName];
+        }
+
+        return $sugarName;
+    }
+    /**
+     *
+     * This function returns search engine dependent field type.
+     *
+     * @param $fieldDefs array of field definitions
+     *
+     * @return string search engine dependent type
+     */
+    protected function getTypeFromSugarType($fieldDef)
+    {
+        $searchEngineType = '';
+        if (isset($fieldDef['type']))
+        {
+            $sugarType = $fieldDef['type'];
+            if (isset(self::$typeMap['type'][$sugarType]))
+            {
+                $searchEngineType = self::$typeMap['type'][$sugarType];
+            }
+        }
+
+        if (empty($searchEngineType) && isset($fieldDef['dbType']))
+        {
+            $sugarType = $fieldDef['dbType'];
+            if (isset(self::$typeMap['dbType'][$sugarType]))
+            {
+                $searchEngineType = self::$typeMap['dbType'][$sugarType];
+            }
+        }
+
+        if (empty($searchEngineType))
+        {
+            $searchEngineType = 'string'; // default
+        }
+
+        return $searchEngineType;
+    }
+
+    /**
+     *
+     * Return analyzer based on the field type
+     * @param string $params elastic field parameters
+     */
+    protected function getAnalyzerFromType($params)
+    {
+        // dont return analyzer if not index or analyzed
+        if (isset($params['index']) && ($params['index'] == 'not_analyzed' || $params['index'] == 'no')) {
+            return false;
+        }
+
+        // return from analyzer map or default
+        $type = $params['type'];
+        if (isset(self::$analyzerMap[$type])) {
+            return self::$analyzerMap[$type];
+        }
+        return 'standard';
     }
 
 }
