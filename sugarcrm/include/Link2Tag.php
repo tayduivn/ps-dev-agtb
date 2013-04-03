@@ -122,7 +122,7 @@ class Link2Tag
 
         if (count($ret)) {
             $ret['type'] = 'twitter';
-            $ret['url'] = $url;
+            $ret['url'] = $uri;
             return $ret;
         }
     }
