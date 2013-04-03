@@ -29,24 +29,46 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Accounts']['base']['view']['tutorial'] = array(
-    'records' => array(
+$viewdefs['Home']['base']['view']['tutorial'] = array(
+    'record' => array(
         'version' =>1,
-        'intro' => 'LBL_DASHLET_LISTVIEW_DESCRIPTION',
+        'intro' => 'LBL_TOUR_INTRO',
         'content' => array(
             array(
                 'name' => '[href=#Home]',
-                'text' => 'Yum! Sugar Cube! in accounts',
+                'text' => 'LBL_TOUR_CUBE',
                 'full' => true,
             ),
             array(
-                'name' => '.btn-danger',
-                'text' => 'Notifications go here in accounts',
+                'name' => '.routeLink.[data-route="#Accounts"]',
+                'text' => 'LBL_TOUR_NAV_BAR',
                 'full' => true,
             ),
             array(
-                'name' => '[data-action=show-more]',
-                'text' => 'show more down here',
+                'name' => '#notificationDrop',
+                'text' => 'LBL_TOUR_NOTIFICATIONS',
+                'full' => true,
+                'horizAdj'=> -15,
+                'vertAdj'=> -5,
+            ),
+            array(
+                'name' => '.search-query',
+                'text' => 'LBL_TOUR_SEARCH',
+                'full' => true,
+            ),
+            array(
+                'name' => '#userActions',
+                'text' => 'LBL_TOUR_AVATAR',
+                'full' => true,
+            ),
+            array(
+                'name' => '#createList',
+                'text' => 'LBL_TOUR_ADD',
+                'full' => true,
+            ),
+            array(
+                'name' => '#tour',
+                'text' => 'LBL_TOUR_TOUR',
                 'full' => true,
             ),
         )
