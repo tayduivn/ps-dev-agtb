@@ -107,6 +107,12 @@ class M2MRelationship extends SugarRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
+        // Test to see if the relationship already exists before attempting to
+        // add it again.
+        if ($this->relationship_exists($lhs, $rhs)) {
+            return false;
+        }
+
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
 
