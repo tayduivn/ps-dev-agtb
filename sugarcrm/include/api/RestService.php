@@ -417,10 +417,12 @@ class RestService extends ServiceBase {
             try {
                 $oauthServer = SugarOAuth2Server::getOAuth2Server();
                 $oauthServer->verifyAccessToken($token);
-                
-                if ( isset($_SESSION['authenticated_user_id']) && $_SESSION['unique_key'] == $GLOBALS['sugar_config']['unique_key'] ) {
-                    $valid = true;
+                if ( isset($_SESSION['authenticated_user_id']) && $_SESSION['unique_key'] == $GLOBALS['sugar_config']['unique_key']) {
                     $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
+                    if(!empty($GLOBALS['current_user'])) {
+                        $valid = true;
+                        $GLOBALS['logic_hook']->call_custom_logic('', 'after_load_user');
+                    }
                 }
             } catch ( OAuth2AuthenticateException $e ) {
                 // This was failing if users were passing an oauth token up to a public url.
