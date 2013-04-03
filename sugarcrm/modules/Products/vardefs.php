@@ -49,6 +49,19 @@ $dictionary['Product'] = array(
             'len' => '255',
             'source' => 'non-db',
             'studio' => array('editview' => false, 'detailview' => false, 'quickcreate' => false),
+            'populate_list' => array(
+                'category_id' => 'category_id',
+                'category_name' => 'category_name',
+                'mft_part_num' => 'mft_part_num',
+                'list_price' => 'list_price',
+                'cost_price' => 'cost_price',
+                'discount_price' => 'discount_price',
+                'list_usdollar' => 'list_usdollar',
+                'cost_usdollar' => 'cost_usdollar',
+                'discount_usdollar' => 'discount_usdollar',
+                'tax_class' => 'tax_class',
+                'weight' => 'weight'
+            ),
         ),
         'account_id' =>  array(
             'name' => 'account_id',
