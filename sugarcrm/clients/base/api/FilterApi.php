@@ -69,11 +69,11 @@ class FilterApi extends SugarApi
 
     protected $defaultLimit = 20; // How many records should we show if they don't pass up a limit
 
-    protected $current_user;
+    protected static $current_user;
 
     // id and date_modified should always be in the response
     // user fields are needed for ACLs since they check owners
-    protected $mandatory_fields = array(
+    protected static $mandatory_fields = array(
         'id',
         'date_modified',
         'assigned_user_id',
@@ -83,7 +83,7 @@ class FilterApi extends SugarApi
     public function __construct()
     {
         global $current_user;
-        $this->current_user = $current_user;
+        self::$current_user = $current_user;
     }
 
     public function filterById(ServiceBase $api, array $args)
@@ -95,10 +95,10 @@ class FilterApi extends SugarApi
         return $this->filterList($api, $args);
     }
 
-    protected function parseOptions(
+    protected function parseArguments(
         ServiceBase $api,
         array $args,
-        SugarBean $seed
+        SugarBean $seed = null
     ) {
         $options = array();
 
@@ -117,7 +117,7 @@ class FilterApi extends SugarApi
                 $options['offset'] = (int) $args['offset'];
             }
         }
-        if (!empty($args['order_by'])) {
+        if (!empty($args['order_by']) && !empty($seed)) {
             $orderBys = explode(',', $args['order_by']);
             $orderByArray = array();
             foreach ($orderBys as $order) {
@@ -152,7 +152,10 @@ class FilterApi extends SugarApi
 
         // Set $options['module'] so that runQuery can create beans of the right
         // type.
-        $options['module'] = $seed->module_name;
+        if (!empty($seed)) {
+            $options['module'] = $seed->module_name;
+        }
+
 
         //Set the list of fields to be used in the select.
         $options['select'] = !empty($args['fields']) ? explode(
@@ -162,7 +165,7 @@ class FilterApi extends SugarApi
 
         //Force id and date_modified into the select
         $options['select'] = array_unique(
-            array_merge($options['select'], $this->mandatory_fields)
+            array_merge($options['select'], self::$mandatory_fields)
         );
 
         return $options;
@@ -176,15 +179,15 @@ class FilterApi extends SugarApi
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
         }
 
-        $options = $this->parseOptions($api, $args, $seed);
+        $options = $this->parseArguments($api, $args, $seed);
 
-        $q = $this->getQueryObject($seed, $options);
+        $q = self::getQueryObject($seed, $options);
 
         // return $args['filter'];
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
-        $this->addFilters($args['filter'], $q->where(), $q);
+        self::addFilters($args['filter'], $q->where(), $q);
 
         $api->action = 'list';
 
@@ -232,26 +235,26 @@ class FilterApi extends SugarApi
             $column = $relDef['rhs_key'];
         }
 
-        $options = $this->parseOptions($api, $args, $linkSeed);
-        $q = $this->getQueryObject($linkSeed, $options);
+        $options = $this->parseArguments($api, $args, $linkSeed);
+        $q = self::getQueryObject($linkSeed, $options);
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
         $args['filter'][][$tableName . '.' . $column] = array('$equals' => $record->id);
-        $this->addFilters($args['filter'], $q->where(), $q);
+        self::addFilters($args['filter'], $q->where(), $q);
 
         $api->action = 'list';
 
         return $this->runQuery($api, $args, $q, $options, $linkSeed);
     }
 
-    protected function getQueryObject(SugarBean $seed, array $options)
+    protected static function getQueryObject(SugarBean $seed, array $options)
     {
         $q = new SugarQuery();
         // Just need ID, we need to fetch beans so we can format them later.
         $q->from($seed);
         if (empty($options['select'])) {
-            $options['select'] = $this->mandatory_fields;
+            $options['select'] = self::$mandatory_fields;
         }
 
         $fields = array();
@@ -431,7 +434,7 @@ class FilterApi extends SugarApi
         return $data;
     }
 
-    protected function addFilters(
+    protected static function addFilters(
         array $filterDefs,
         SugarQuery_Builder_Where $where,
         SugarQuery $q
@@ -447,17 +450,17 @@ class FilterApi extends SugarApi
             }
             foreach ($filterDef as $field => $filter) {
                 if ($field == '$or') {
-                    $this->addFilters($filter, $where->queryOr(), $q);
+                    self::addFilters($filter, $where->queryOr(), $q);
                 } elseif ($field == '$and') {
-                    $this->addFilters($filter, $where->queryAnd(), $q);
+                    self::addFilters($filter, $where->queryAnd(), $q);
                 } elseif ($field == '$favorite') {
-                    $this->addFavoriteFilter($q, $where, $filter);
+                    self::addFavoriteFilter($q, $where, $filter);
                 } elseif ($field == '$owner') {
-                    $this->addOwnerFilter($q, $where, $filter);
+                    self::addOwnerFilter($q, $where, $filter);
                 } elseif ($field == '$creator') {
-                    $this->addCreatorFilter($q, $where, $filter);
+                    self::addCreatorFilter($q, $where, $filter);
                 } elseif ($field == '$tracker') {
-                    $this->addTrackerFilter($q, $where, $filter);
+                    self::addTrackerFilter($q, $where, $filter);
                 } else {
                     // Looks like just a normal field, parse it's options
                     if (strpos($field, '.')) {
@@ -554,7 +557,7 @@ class FilterApi extends SugarApi
      * @param SugarQuery_Builder_Where $where The Where part of the SugarQuery object
      * @param string $link Which module are you adding the owner filter to.
      */
-    protected function addOwnerFilter(
+    protected static function addOwnerFilter(
         SugarQuery $q,
         SugarQuery_Builder_Where $where,
         $link
@@ -566,7 +569,7 @@ class FilterApi extends SugarApi
             $linkPart = $link . '.';
         }
 
-        $where->equals($linkPart . 'assigned_user_id', $this->current_user->id);
+        $where->equals($linkPart . 'assigned_user_id', self::$current_user->id);
     }
 
     /**
@@ -576,7 +579,7 @@ class FilterApi extends SugarApi
      * @param SugarQuery_Builder_Where $where The Where part of the SugarQuery object
      * @param string $link Which module are you adding the owner filter to.
      */
-    protected function addCreatorFilter(
+    protected static function addCreatorFilter(
         SugarQuery $q,
         SugarQuery_Builder_Where $where,
         $link
@@ -588,7 +591,7 @@ class FilterApi extends SugarApi
             $linkPart = $link . '.';
         }
 
-        $where->equals($linkPart . 'created_by', $this->current_user->id);
+        $where->equals($linkPart . 'created_by', self::$current_user->id);
     }
 
     /**
@@ -598,7 +601,7 @@ class FilterApi extends SugarApi
      * @param SugarQuery_Builder_Where $where The Where part of the SugarQuery object
      * @param string $link Which module are you adding the favorite filter to.
      */
-    protected function addFavoriteFilter(
+    protected static function addFavoriteFilter(
         SugarQuery $q,
         SugarQuery_Builder_Where $where,
         $link
@@ -614,7 +617,7 @@ class FilterApi extends SugarApi
         $where->notNull($fjoin->joinName() . '.id');
     }
 
-    protected function addTrackerFilter(
+    protected static function addTrackerFilter(
         SugarQuery $q,
         SugarQuery_Builder_Where $where,
         $interval
