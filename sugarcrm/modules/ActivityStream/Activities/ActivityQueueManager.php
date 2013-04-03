@@ -30,7 +30,7 @@ require_once 'include/Link2Tag.php';
  */
 class ActivityQueueManager
 {
-    public static $linkBlacklist = array('user_sync', 'activities');
+    public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync');
     public static $linkModuleBlacklist = array('ActivityStream/Activities');
     public static $linkDupeCheck = array();
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs', 'Activities', 'vCals');
