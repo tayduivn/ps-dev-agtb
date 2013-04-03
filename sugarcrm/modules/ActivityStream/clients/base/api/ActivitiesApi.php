@@ -36,7 +36,7 @@ class ActivitiesApi extends FilterApi
             ),
             'record_activities_filter' => array(
                 'reqType' => 'GET',
-                'path' => array('<module>','?', 'Activities', 'filter'),
+                'path' => array('<module>','?', 'link', 'activities', 'filter'),
                 'pathVars' => array('module','record', ''),
                 'method' => 'getRecordActivities',
                 'shortHelp' => 'This method retrieves a filtered list of a record\'s activities',
