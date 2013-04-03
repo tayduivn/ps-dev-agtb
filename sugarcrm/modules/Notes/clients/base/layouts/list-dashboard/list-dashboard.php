@@ -45,6 +45,7 @@ $layout->push(
                     'module' => 'Contacts',
                     'display_columns' => array(
                         'full_name',
+                        'account_name',
                         'email',
                         'phone_work',
                     ),
