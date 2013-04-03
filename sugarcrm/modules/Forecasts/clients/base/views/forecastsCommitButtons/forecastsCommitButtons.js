@@ -248,15 +248,10 @@
     triggerRightColumnVisibility: function(evt) {
         evt.preventDefault();
 
-        var visibilityChanged = false;
         if(!this.inspectorVisible) {
             // toggle rightPanelVisible boolean
             this.rightPanelVisible = !this.rightPanelVisible;
             this.setChevronsClass();
-            visibilityChanged = true;
-        }
-        // only if right panel visibility changed
-        if(visibilityChanged) {
             this.setRightPanelClass();
         }
 
