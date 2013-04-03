@@ -3144,7 +3144,7 @@ $app_strings = array (
     'LBL_TWITTER_DISPLAY_ROWS' => 'Display Rows',
     'LBL_TWITTER_MY_ACCOUNT' => 'My Account',
     'LBL_TWITTER_NAME' => 'Twitter',
-        
+
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
     'LBL_DELETE_PAGE' => 'Delete Page',
@@ -4805,13 +4805,3 @@ $app_list_strings ['pdfmanager_yes_no_list'] = array (
     'no' => 'No',
 );
 //END SUGARCRM flav=pro ONLY
-
-//BEGIN SUGARCRM flav=free ONLY
-$app_list_strings['sales_stage_dom'] = array(
-    'Prospecting'=>'New',
-    'Qualification'=>'Engaged',
-    'Closed Won'=>'Won',
-    'Closed Lost'=>'Lost',
-);
-//END SUGARCRM flav=free ONLY
-?>

@@ -76,36 +76,20 @@ if (!defined('PHP_VERSION_ID')) {
     define('PHP_VERSION_ID', ($version_array[0]*10000 + $version_array[1]*100 + $version_array[2]));
 }
 
-// BEGIN SUGARCRM flav!=free ONLY
 if(empty($GLOBALS['installing']) && !file_exists('config.php'))
 {
 	header('Location: install.php');
 	exit ();
 }
-// END SUGARCRM flav!=free ONLY
 
-/**
- * If we have the BoxOfficeClient let's use it to load the config
- */
+// config|_override.php
+if(is_file('config.php')) {
+    require_once('config.php'); // provides $sugar_config
+}
 
-if(empty($GLOBALS['installing']) && file_exists('summer/splash/config.php')){
-    require_once('summer/splash/BoxOfficeClient.php');
-    $sugar_config = BoxOfficeClient::getInstance()->getConfig();
-    if(empty($sugar_config)){
-        throw new Exception('Instance does not have a config');
-    }
-
-}else{
-    // config|_override.php
-    if(is_file('config.php')) {
-        require_once('config.php'); // provides $sugar_config
-    }
-
-    // load up the config_override.php file.  This is used to provide default user settings
-    if(is_file('config_override.php')) {
-        require_once('config_override.php');
-    }
-
+// load up the config_override.php file.  This is used to provide default user settings
+if(is_file('config_override.php')) {
+    require_once('config_override.php');
 }
 
 
