@@ -35,10 +35,10 @@
 
         // If comment_count is 0, we don't want to decrement the count by 1 since -1 is truthy.
         var count = parseInt(this.model.get('comment_count'), 10);
-        this.model.set("remaining_comments", 0);
+        this.remaining_comments = 0;
         this.more_tpl = "TPL_MORE_COMMENT";
         if(count) {
-            this.model.set("remaining_comments", count - 1);
+            this.remaining_comments = count - 1;
 
             // Pluralize the comment count label
             if (count > 2) {
@@ -46,9 +46,16 @@
             }
         }
 
-        this.tpl = "TPL_ACTIVITY_" + this.model.get('activity_type').toUpperCase();
         var data = this.model.get('data');
-        switch(this.model.get('activity_type')) {
+        var activity_type = this.model.get('activity_type');
+        this.tpl = "TPL_ACTIVITY_" + activity_type.toUpperCase();
+
+        switch(activity_type) {
+        case 'post':
+            if (!data.value) {
+                this.tpl = null;
+            }
+            break;
         case 'update':
             var updateTpl = Handlebars.compile(app.lang.get('TPL_ACTIVITY_UPDATE_FIELD', 'Activities')),
                 parentType = this.model.get("parent_type"),
@@ -89,6 +96,19 @@
                 }
             }
             break;
+        }
+
+        if (_.isObject(data.embed) && data.embed.type) {
+            var typeParts = data.embed.type.split('.'),
+                type = typeParts.shift(),
+                embedTpl;
+
+            _.each(typeParts, function(part) {
+                type = type + part.charAt(0).toUpperCase() + part.substr(1);
+            });
+
+            embedTpl = app.template.get(this.name + '.' + type + 'Embed');
+            this.embed = embedTpl ? embedTpl(data.embed) : "No embed partial found for " + data.embed.type;
         }
     },
 
