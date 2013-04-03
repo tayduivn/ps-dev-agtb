@@ -41,13 +41,6 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'vertAdj' => -13,
             ),
             array(
-                'name' => '[data-view="activitystream"]',
-                'text' => 'LBL_TOUR_LIST_ACTIVTYSTREAMLIST_TOGGLE',
-                'full' => true,
-                'horizAdj' =>5,
-                'vertAdj' => -10,
-            ),
-            array(
                 'name' => '.choice-related',
                 'text' => 'LBL_TOUR_LIST_FILTER1',
                 'full' => true,
@@ -66,6 +59,13 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'vertAdj' => -15,
             ),
             array(
+                'name' => '[data-view="activitystream"]',
+                'text' => 'LBL_TOUR_LIST_ACTIVTYSTREAMLIST_TOGGLE',
+                'full' => true,
+                'horizAdj' =>5,
+                'vertAdj' => -10,
+            ),
+            array(
                 'name' => '[data-event="list:preview:fire"]',
                 'text' => 'LBL_TOUR_LIST_FILTER_PREVIEW',
                 'full' => true,
@@ -77,13 +77,6 @@ $viewdefs['base']['view']['tutorial'] = array(
         'version' =>1,
         'content' => array(
             array(
-                'name' => '[name="edit_button"]',
-                'text' => 'LBL_TOUR_RECORD_ACTIONS',
-                'full' => true,
-                'horizAdj' =>-1,
-                'vertAdj' => -13,
-            ),
-            array(
                 'name' => '[data-fieldname="first_name"]',
                 'text' => 'LBL_TOUR_RECORD_INLINEEDIT',
                 'full' => true,
@@ -92,14 +85,21 @@ $viewdefs['base']['view']['tutorial'] = array(
             ),
             array(
                 'name' => '[data-fieldname="name"]',
-                'text' => 'LBL_TOUR_RECORD_ACTIONS',
+                'text' => 'LBL_TOUR_RECORD_INLINEEDIT',
                 'full' => true,
                 'horizAdj' =>-11,
                 'vertAdj' => -13,
             ),
             array(
-                'name' => '[data-event="list:follow:fire"]',
-                'text' => 'LBL_TOUR_RECORD_STATUS',
+                'name' => '[name="edit_button"]',
+                'text' => 'LBL_TOUR_RECORD_ACTIONS',
+                'full' => true,
+                'horizAdj' =>-1,
+                'vertAdj' => -13,
+            ),
+            array(
+                'name' => '.record .record-cell',
+                'text' => 'LBL_TOUR_RECORD_INLINEEDITRECORD',
                 'full' => true,
                 'horizAdj' =>-11,
                 'vertAdj' => -13,
@@ -119,8 +119,8 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'vertAdj' => -13,
             ),
             array(
-                'name' => '.record .record-cell',
-                'text' => 'LBL_TOUR_RECORD_INLINEEDITRECORD',
+                'name' => '.preview-headerbar .dropdown-toggle',
+                'text' => 'LBL_TOUR_RECORD_DASHBOARDNAME',
                 'full' => true,
                 'horizAdj' =>-11,
                 'vertAdj' => -13,
@@ -128,13 +128,6 @@ $viewdefs['base']['view']['tutorial'] = array(
             array(
                 'name' => '.preview-headerbar .btn-toolbar',
                 'text' => 'LBL_TOUR_RECORD_DASHBOARDACTIONS',
-                'full' => true,
-                'horizAdj' =>-11,
-                'vertAdj' => -13,
-            ),
-            array(
-                'name' => '.preview-headerbar .dropdown-toggle',
-                'text' => 'LBL_TOUR_RECORD_DASHBOARDNAME',
                 'full' => true,
                 'horizAdj' =>-11,
                 'vertAdj' => -13,

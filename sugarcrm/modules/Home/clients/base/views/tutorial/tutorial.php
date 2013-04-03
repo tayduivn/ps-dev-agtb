@@ -45,16 +45,16 @@ $viewdefs['Home']['base']['view']['tutorial'] = array(
                 'full' => true,
             ),
             array(
+                'name' => '.search-query',
+                'text' => 'LBL_TOUR_SEARCH',
+                'full' => true,
+            ),
+            array(
                 'name' => '#notificationDrop',
                 'text' => 'LBL_TOUR_NOTIFICATIONS',
                 'full' => true,
                 'horizAdj'=> -15,
                 'vertAdj'=> -5,
-            ),
-            array(
-                'name' => '.search-query',
-                'text' => 'LBL_TOUR_SEARCH',
-                'full' => true,
             ),
             array(
                 'name' => '#userActions',
