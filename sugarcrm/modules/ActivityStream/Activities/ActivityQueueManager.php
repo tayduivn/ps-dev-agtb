@@ -61,7 +61,9 @@ class ActivityQueueManager
                     }
                 }
 
-                $this->processEmbed($bean);
+                if (!$args['isUpdate']) {
+                    $this->processEmbed($bean);
+                }
 
                 $bean->data = json_encode($bean->data);
             }
