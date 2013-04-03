@@ -30,18 +30,17 @@
 
     initialize: function(options) {
         this._setupCommitStageField(options.meta.panels);
+        app.view.views.RecordView.prototype.initialize.call(this, options);
         //pull the fields in the panels that are editable currency fields
-        _.each(
-            options.meta.panels, function(panel) {
-                _.each(panel.fields, function(field) {
-                    //if the field is currency and not read only, then push it into our currency fields array
-                    if(field.type == 'currency' && (_.isUndefined(field.readonly) || !field.readonly)) {
+        _.each(options.meta.panels, function(panel) {
+            _.each(panel.fields, function(field) {
+                    //if the field is currency and not the known calculated field, add to the array
+                    if(field.type == 'currency' && field.name != 'product_line_item_amount') {
                         this.currencyFields.push(field.name);
                     }
                 }, this);
             }, this
         );
-        app.view.views.RecordView.prototype.initialize.call(this, options);
     },
 
     initButtons: function() {
@@ -59,9 +58,9 @@
      */
     bindDataChange : function() {
         app.view.views.RecordView.prototype.bindDataChange.call(this);
-        this.model.on('change:currency_id', function() {
-            this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id"));
-        }, this)
+        this.model.on('change:base_rate', function() {
+            _.debounce(this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id")),500,true);
+        }, this);
     },
 
     delegateButtonEvents: function() {
@@ -83,11 +82,10 @@
 
         //run through the editable currency fields and convert the amounts to the new currency
         _.each(this.currencyFields, function(currencyField) {
-           if(this.model.get(currencyField) == 0) {
-               this.model.trigger("change:"+currencyField);
-               return;
-           }
-           this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId));
+           //convert the currency and set the model silenty, then force the change to trigger.  Otherwise, a 0 value won't
+           //trigger the change event, because 0 will convert to 0, but we need the change event for the currency symbol to update
+           this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId), {silent: true});
+           this.model.trigger("change:"+currencyField);
         }, this);
     },
 

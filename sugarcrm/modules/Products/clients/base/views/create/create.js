@@ -30,17 +30,17 @@
 
     initialize: function(options) {
         this._setupCommitStageField(options.meta.panels);
+        app.view.views.CreateView.prototype.initialize.call(this, options);
         //pull the fields in the panels that are editable currency fields
         _.each(options.meta.panels, function(panel) {
-                _.each(panel.fields, function(field) {
-                    // push currency fields to array
-                    if(field.type == 'currency') {
+            _.each(panel.fields, function(field) {
+                    //if the field is currency and not the known calculated field, add to the array
+                    if(field.type == 'currency' && field.name != 'product_line_item_amount') {
                         this.currencyFields.push(field.name);
                     }
                 }, this);
             }, this
         );
-        app.view.views.CreateView.prototype.initialize.call(this, options);
     },
 
     /**
@@ -48,8 +48,8 @@
      */
     bindDataChange : function() {
         app.view.views.RecordView.prototype.bindDataChange.call(this);
-        this.model.on('change:currency_id', function() {
-            this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id"));
+        this.model.on('change:base_rate', function() {
+            _.debounce(this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id")),500,true);
         }, this)
     },
 
