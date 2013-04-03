@@ -320,6 +320,13 @@
                 // We use _.result here to prevent an undefined method error
                 // in case the val method is not defined on the field.
                     result = field? (field.unformat(field.value) || _.result(field, 'val')) : '';
+
+                if (_.isArray(result)) {
+                    // If we are filtering a multi-enum, strip out the blank value that
+                    // is required in the <select><option></option></select> structure.
+                    result = _.without(result, "");
+                }
+
                 $row.data("value", result);
                 // check each row for a valid filter, add to dynamic filter def
                 var dynamicFilterDef = this.buildFilterDef();
