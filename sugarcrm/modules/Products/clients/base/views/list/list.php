@@ -69,7 +69,7 @@ $viewdefs['Products']['base']['view']['list'] = array(
                     'convertToBase' => true,
                     'readonly' => true,
                     'related_fields' => array(
-                        'discount_price',
+                        'list_price',
                         'currency_id',
                         'base_rate',
                     ),
