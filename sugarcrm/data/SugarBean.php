@@ -1709,8 +1709,10 @@ class SugarBean
             unset($this->date_entered);
         }
         // call the custom business logic
-        $custom_logic_arguments['check_notify'] = $check_notify;
-
+        $custom_logic_arguments = array(
+            'check_notify' => $check_notify,
+            'isUpdate' => $isUpdate,
+        );
 
         $this->call_custom_logic("before_save", $custom_logic_arguments);
         unset($custom_logic_arguments);
