@@ -7,9 +7,9 @@ class Link2Tag
     private static $processors = array(
         'Image',
         'OEmbed',
-        //'Hcard',
-        'TwitterCard',
         'OpenGraph',
+        'TwitterCard',
+        'Hcard',
         'Webpage',
     );
 
@@ -71,9 +71,29 @@ class Link2Tag
 
     protected static function processHcard($uri)
     {
+        $attributes = array('fn', 'industry', 'title', 'locality', 'photo');
         libxml_use_internal_errors(true);
         $dom = new DOMDocument();
         $dom->loadHTML(self::fetch($uri));
+        $xPath = new DOMXPath($dom);
+        $basicQuery = '//*[contains(@class,\'vcard\')]';
+        $ret = array();
+
+        foreach ($attributes as $attribute) {
+            $query = $basicQuery . '//*[contains(@class, \'' . $attribute . '\')]';
+            $relevantElements = $xPath->query($query);
+            $element = $relevantElements->item(0);
+            $ret[$attribute] = trim($element->nodeValue);
+            if ($attribute === 'photo') {
+                $ret[$attribute] = $element->getAttribute('src');
+            }
+        }
+
+        if (count($ret)) {
+            $ret['type'] = 'hcard';
+            $ret['url'] = $uri;
+            return $ret;
+        }
     }
 
     protected static function processImage($uri)
@@ -122,7 +142,7 @@ class Link2Tag
 
         if (count($ret)) {
             $ret['type'] = 'twitter';
-            $ret['url'] = $url;
+            $ret['url'] = $uri;
             return $ret;
         }
     }
