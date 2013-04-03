@@ -18,11 +18,11 @@
         },
         inbound_emails: {
             icon: 'icon-envelope',
-            label: 'LBL_MOST_EMAILS_SENT'
+            label: 'LBL_MOST_EMAILS_RECEIVED'
         },
         outbound_emails: {
             icon: 'icon-envelope-alt',
-            label: 'LBL_MOST_EMAILS_RECEIVED'
+            label: 'LBL_MOST_EMAILS_SENT'
         },
         calls: {
             icon: 'icon-phone',
