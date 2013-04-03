@@ -68,9 +68,8 @@ $dictionary['Product'] = array(
             'audited' => true,
             'comment' => 'Contact this product is associated with'
         ),
-        'product_line_item_amount' => array(
-            'name' => 'product_line_item_amount',
-            'source' => 'non-db',
+        'total_amount' => array(
+            'name' => 'total_amount',
             'formula' => 'subtract(multiply(ifElse(isNumeric($discount_price), $discount_price, 0), ifElse(isNumeric($quantity), $quantity, 1)), ifElse(isNumeric($discount_amount), $discount_amount, 0))',
             'calculated' => true,
             'enforced' => true,
