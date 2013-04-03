@@ -82,6 +82,8 @@
 
         //run through the editable currency fields and convert the amounts to the new currency
         _.each(this.currencyFields, function(currencyField) {
+           //convert the currency and set the model silenty, then force the change to trigger.  Otherwise, a 0 value won't
+           //trigger the change event, because 0 will convert to 0, but we need the change event for the currency symbol to update
            this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId), {silent: true});
            this.model.trigger("change:"+currencyField);
         }, this);
