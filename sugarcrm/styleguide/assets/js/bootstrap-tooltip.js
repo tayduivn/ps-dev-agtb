@@ -36,6 +36,9 @@
     constructor: Tooltip
 
   , init: function (type, element, options) {
+
+      if (this.isTouchDevice()) return
+
       var eventIn
         , eventOut
         , triggers
@@ -64,6 +67,16 @@
       this.options.selector ?
         (this._options = $.extend({}, this.options, { trigger: 'manual', selector: '' })) :
         this.fixTitle()
+    }
+
+  , isTouchDevice: function () {
+      var el = document.createElement('div')
+      el.setAttribute('ongesturestart', 'return;')
+      if (typeof el.ongesturestart == 'function') {
+        return true
+      } else {
+        return false
+      }
     }
 
   , getOptions: function (options) {
