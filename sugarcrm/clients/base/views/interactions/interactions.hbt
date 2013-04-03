@@ -50,12 +50,12 @@
                         {{#eq this.module "Calls"}}
                             <a href="#{{modelRoute this}}">{{this.attributes.assigned_user_name}}</a> {{str "LBL_CALLED"}} 
                             <a href="#{{modelRoute this}}">{{this.attributes.parent_name}}</a> 
-                            {{str "LBL_FOR_DURATION_MINUTES" null this}} 
+                            {{str "LBL_FOR_DURATION_MINUTES" null this.attributes}}
                             <br>
                             <date class="date"><i class="icon-plus-sign icon-added"></i>{{timeago this.attributes.date_end}}</date>
                         {{/eq}}
                         {{#eq this.module "Emails"}}
-                            <a href="#{{modelRoute this}}">{{this.attributes.assigned_user_name}}</a> {{str "LBL_EMAIL_ADDED_TO_THE"}} 
+                            <a href="#{{modelRoute this}}">{{this.attributes.assigned_user_name}}</a> {{str "LBL_EMAIL_ADDED_TO_THE"}}
                             <a href="#{{modelRoute this}}">{{this.attributes.parent_name}}</a> {{str "LBL_OPPORTUNITY"}}.
                             <br>
                             <date class="date"><i class="icon-plus-sign icon-added"></i> {{timeago this.attributes.date_entered}}</date>
@@ -74,7 +74,7 @@
                     </li>
                     {{/notEq}}
                 {{else}}
-                    <li class="interactions-item"><em>{{str "LBL_MODULE_NO_INTERACTIONS_FOUND" null this}}</em></li>
+                    <li class="interactions-item"><em>{{str "LBL_MODULE_NO_INTERACTIONS_FOUND"}}</em></li>
                 {{/if}}
             </ul>
         </div>
