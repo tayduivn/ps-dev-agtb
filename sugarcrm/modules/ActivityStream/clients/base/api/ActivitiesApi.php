@@ -171,11 +171,8 @@ class ActivitiesApi extends FilterApi
         $query = new SugarQuery();
         $query->from($seed);
 
-        if (!empty($params['orderBy'])) {
-            foreach ($params['orderBy'] as $column => $direction) {
-                $query->orderBy($column, $direction);
-            }
-        }
+        // Always order the activity stream by date modified DESC.
+        $query->orderBy('date_modified', 'DESC');
 
         // +1 used to determine if we have more records to show.
         $query->limit($params['limit'] + 1)->offset($params['offset']);
