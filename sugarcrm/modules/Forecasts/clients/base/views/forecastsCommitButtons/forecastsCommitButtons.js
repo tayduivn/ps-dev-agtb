@@ -75,6 +75,21 @@
     inspectorVisible: false,
 
     /**
+     * Track if right panel is visible
+     */
+    rightPanelVisible: true,
+
+    /**
+     * keeps reference to the container of the right panel element
+     */
+    rightPanelContainerEl: null,
+
+    /**
+     * keeps reference to chevrons element
+     */
+    chevronsEl: null,
+
+    /**
      * Adds event listener to elements
      */
     events: {
@@ -134,7 +149,13 @@
 
         this.layout.on('inspectorVisible', function(visible) {
             this.inspectorVisible = visible;
-        }, this)
+            // if inspectorVisible is changed to true, make sure we change rightPanelVisible
+            if(this.inspectorVisible) {
+                this.rightPanelVisible = visible;
+            }
+            this.setChevronsClass();
+            this.setRightPanelClass();
+        }, this);
     },
 
     /**
@@ -142,6 +163,12 @@
      */
     _renderHtml: function(ctx, options) {
         app.view.View.prototype._renderHtml.call(this, ctx, options);
+        // grab references to elements the first time this renders
+        if(!this.rightPanelContainerEl) {
+            this.rightPanelContainerEl = this.$el.parents('#contentflex').find('>div.row-fluid');
+            this.chevronsEl = this.$el.find('.drawerTrig i');
+        }
+
         if(this.showCommitButton) {
             if(this.commitButtonEnabled) {
                 this.$el.find('a[id=commit_forecast]').removeClass('disabled');
@@ -214,22 +241,50 @@
      * Toggle the right Column Visibility
      * @param evt
      */
+    /**
+     * Toggle the right Column Visibility
+     * @param evt
+     */
     triggerRightColumnVisibility: function(evt) {
         evt.preventDefault();
-        // we need to use currentTarget so we always get the a and not any child that was clicked on
-
-        var el = $(evt.currentTarget);
-        el.find('i').toggleClass('icon-double-angle-right icon-double-angle-left');
 
         if(!this.inspectorVisible) {
-            var container = el.parents('#contentflex').find('>div.row-fluid');
-            // we need to go up and find the parent containing the two rows
-            container.find('>div:first').toggleClass('span8 span12');
-            container.find('>div:last').toggleClass('span4 hide');
+            // toggle rightPanelVisible boolean
+            this.rightPanelVisible = !this.rightPanelVisible;
+            this.setChevronsClass();
+            this.setRightPanelClass();
         }
 
         // toggle the "event" to make the chart stop rendering if the sidebar is hidden
-        this.context.trigger('forecasts:commitButtons:sidebarHidden', el.find('i').hasClass('icon-chevron-left'));
+        this.context.trigger('forecasts:commitButtons:sidebarHidden', this.$el.find('i').hasClass('icon-double-angle-left'));
+    },
+
+    /**
+     * Sets the >> and << chevrons to the proper class
+     */
+    setChevronsClass: function() {
+        if(this.rightPanelVisible) {
+            // set to open-panel chevron class
+            this.chevronsEl.removeClass('icon-double-angle-left').addClass('icon-double-angle-right');
+        } else {
+            // set to closed-panel chevron class
+            this.chevronsEl.removeClass('icon-double-angle-right').addClass('icon-double-angle-left');
+        }
+    },
+
+    /**
+     * Sets the main Forecast div and the right panel div to the proper classes
+     */
+    setRightPanelClass: function() {
+        if(this.rightPanelVisible) {
+            // set main div and right panel to open-panel classes
+            this.rightPanelContainerEl.find('>div:first').removeClass('span12').addClass('span8');
+            this.rightPanelContainerEl.find('>div:last').removeClass('hide').addClass('span4');
+        } else {
+            // set main div and right panel to closed-panel classes
+            this.rightPanelContainerEl.find('>div:first').removeClass('span8').addClass('span12');
+            this.rightPanelContainerEl.find('>div:last').removeClass('span4').addClass('hide');
+        }
     },
 
     /**
