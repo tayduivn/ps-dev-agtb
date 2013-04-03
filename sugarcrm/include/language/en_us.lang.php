@@ -3829,9 +3829,8 @@ $app_strings = array (
 
     //interactions dashlet
     'LBL_DASHLET_SETTINGS' => 'Settings',
-    'LBL_MODULE_INTERACTIONS_TITLE' => '{{str \'LBL_MODULE_NAME\' attributes.module}} interactions',
-    'LBL_MODULE_NO_INTERACTIONS_FOUND' => 'No {{str \'LBL_MODULE_NAME\' attributes.module}} found',
-    'LBL_FOR_DURATION_MINUTES' => 'for {{this.attributes.duration_minutes}} min.',
+    'LBL_MODULE_NO_INTERACTIONS_FOUND' => 'No data found.',
+    'LBL_FOR_DURATION_MINUTES' => 'for {{duration_minutes}} min.',
 
     'LBL_EMAIL_SENT' => 'sent',
     'LBL_EMAIL_RECV' => 'rec',
