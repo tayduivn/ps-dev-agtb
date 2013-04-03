@@ -93,7 +93,9 @@ class AuthenticationController
 		unset($GLOBALS['login_error']);
 
 		if($this->loggedIn)return $this->loginSuccess;
-		LogicHook::initialize()->call_custom_logic('Users', 'before_login');
+		if(empty($PARAMS['noHooks'])) {
+		    LogicHook::initialize()->call_custom_logic('Users', 'before_login');
+		}
 
 		$this->loginSuccess = $this->authController->loginAuthenticate($username, $password, false, $PARAMS);
 		$this->loggedIn = true;
@@ -111,7 +113,7 @@ class AuthenticationController
 			}
 
 			//call business logic hook
-			if(isset($GLOBALS['current_user']))
+			if(isset($GLOBALS['current_user']) && empty($PARAMS['noHooks']))
 				$GLOBALS['current_user']->call_custom_logic('after_login');
 
 			// Check for running Admin Wizard
@@ -147,8 +149,10 @@ class AuthenticationController
 			}
 		}else{
 			//kbrill bug #13225
-			LogicHook::initialize();
-			$GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
+			if(empty($PARAMS['noHooks'])) {
+			    LogicHook::initialize();
+			    $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
+			}
 			$GLOBALS['log']->fatal('FAILED LOGIN:attempts[' .$_SESSION['loginAttempts'] .'] - '. $username);
 		}
 		// if password has expired, set a session variable

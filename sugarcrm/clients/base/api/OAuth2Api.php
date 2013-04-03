@@ -60,7 +60,22 @@ class OAuth2Api extends SugarApi {
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
         $oauth2Server->setPlatform($platform);
 
-        $oauth2Server->grantAccessToken($args);
+        try {
+            $GLOBALS['logic_hook']->call_custom_logic('Users', 'before_login');
+            $oauth2Server->grantAccessToken($args);
+            // if we're here, the login was OK
+            if(!empty($GLOBALS['current_user'])) {
+                $GLOBALS['current_user']->call_custom_logic('after_login');
+            }
+        } catch(OAuth2ServerException $e) {
+            // failed to get token - something went wrong - list as failed login
+            // We catch only OAuth2ServerException exceptions since other ones result from the
+            // AuthController failing to log in, and the controller would call the hook
+            $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
+            throw $e;
+        }
+
+        // grantAccessToken directly echo's (BAD), but it's a 3rd party library, so what are you going to do?
         return ob_get_clean();
     }
 
