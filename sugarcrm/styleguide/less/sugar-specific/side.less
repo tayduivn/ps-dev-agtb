@@ -30,10 +30,15 @@
       }
     }
   }
-  >.tab-pane,
-  >.side-pane {
+  >.tab-pane {
     width: 90%;
     padding: 62px 5% 8px;
+  }
+  >.side-pane {
+     width: 100%;
+     &.active {
+         display: inline-block;
+     }
   }
   >.preview-pane {
     width: 100%;
