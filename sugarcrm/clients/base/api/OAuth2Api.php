@@ -66,6 +66,7 @@ class OAuth2Api extends SugarApi {
 
     public function logout($api, $args) {
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
+        $GLOBALS['current_user']->call_custom_logic('before_logout');
 
         if ( isset($args['refresh_token']) ) {
             // Nuke the refresh token as well.
@@ -77,6 +78,7 @@ class OAuth2Api extends SugarApi {
         // The OAuth access token is actually just a session, so we can nuke that here.
         $_SESSION = array();
         session_regenerate_id(true);
+        $GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
 
         return array('success'=>true);
     }
