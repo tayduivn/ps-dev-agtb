@@ -123,8 +123,8 @@
      * and convert into format convienient for d3
      */
     evaluateResult: function (data) {
-        var self = this,
-            salesStageMap = {
+        // TODO need i18n on this
+        var salesStageMap = {
                 'Negotiation/Review': 'Negotiat./Review',
                 'Perception Analysis': 'Percept. Analysis',
                 'Proposal/Price Quote': 'Proposal/Quote',
@@ -180,7 +180,7 @@
                 self.evaluateResult(data);
                 self.trigger('data-changed');
             },
-            complete: (options) ? options.complete : null
+            complete: options ? options.complete : null
         });
     },
 

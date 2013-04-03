@@ -14,6 +14,7 @@
     allow_single_deselect: true,
     minChars: 1,
     fieldTag: 'input.select2',
+    plugins: ['quicksearchfilter'],
     /**
      * Initializes field and binds all function calls to this
      * @param {Object} options
@@ -30,7 +31,8 @@
         }
         _.each(this.def.populate_list, function (target, source) {
             if (_.isUndefined(populateMetadata.fields[source])) {
-                app.logger.error('Fail to populate the related attributes: attempt to access undefined key - ' + this.getSearchModule() + '::' + source);
+                app.logger.error('Fail to populate the related attributes: attempt to access undefined key - ' +
+                    this.getSearchModule() + '::' + source);
             }
         }, this);
     },
@@ -68,21 +70,20 @@
                 allowClear: self.allow_single_deselect,
                 minimumInputLength: self.minChars,
                 query: self.search
-            }).on("open",function () {
+            }).on("open", function () {
                     var plugin = $(this).data('select2');
                     if (!plugin.searchmore) {
-                        plugin.searchmore = $('<ul class="select2-results">')
-                            .append(
-                                $('<li class="select2-result">')
-                                    .append($('<div/>').addClass('select2-result-label').html(app.lang.get('LBL_SEARCH_FOR_MORE')))
-                                    .mousedown(function () {
-                                        plugin.opts.element.trigger($.Event("searchmore"));
-                                        plugin.close();
-                                    })
-                            );
+                        var $content = $('<li class="select2-result">').append(
+                                $('<div/>').addClass('select2-result-label')
+                                    .html(app.lang.get('LBL_SEARCH_FOR_MORE', self.module))
+                            ).mousedown(function () {
+                                plugin.opts.element.trigger($.Event("searchmore"));
+                                plugin.close();
+                            });
+                        plugin.searchmore = $('<ul class="select2-results">').append($content);
                         plugin.dropdown.append(plugin.searchmore);
                     }
-                }).on("searchmore",function () {
+                }).on("searchmore", function () {
                     $(this).select2("close");
                     app.drawer.open({
                         layout: 'selection-list',
@@ -95,9 +96,10 @@
                     var id = e.val,
                         plugin = $(this).data('select2'),
                         value = (id) ? plugin.selection.find("span").text() : $(this).data('id'),
-                        collection = plugin.context, attributes = {};
-                    // if we have search results use that to set new values
+                        collection = plugin.context,
+                        attributes = {};
                     if (collection) {
+                        // if we have search results use that to set new values
                         var model = collection.get(id);
                         attributes.id = model.id;
                         attributes.value = model.get('name');
@@ -106,12 +108,12 @@
                                 attributes[field] = attributes[field] || model.get(field);
                             }
                         });
-                        // if we have previous values keep them
                     } else if (e.currentTarget.value && value) {
+                        // if we have previous values keep them
                         attributes.id = value;
                         attributes.value = e.currentTarget.value;
-                        // default to empty
                     } else {
+                        // default to empty
                         attributes.id = '';
                         attributes.value = '';
                     }
@@ -216,22 +218,6 @@
         });
     },
 
-    getFilterDef: function(searchTerm, context) {
-        var searchFilter = [], returnFilter = [];
-        // We allow searching on both 'name' and 'id' (e.g. if user is searching for
-        // 'MyBug 12345', both terms '12', or, 'MyB' need to produce a match)
-        var fieldNames = _.union(['id', 'name'], _.keys(this.def.populate_list || {}));
-        if (searchTerm) {
-            _.each(fieldNames, function(name) {
-                var o = {};
-                o[name] = {'$starts': searchTerm};
-                searchFilter.push(o);
-            });
-            returnFilter[0] = {'$or' : searchFilter};
-        }
-        return returnFilter;
-    },
-
     /**
      * Searches for related field
      * @param event
@@ -248,7 +234,7 @@
         if (query.context) {
             params.offset = searchCollection.next_offset;
         }
-        filterDef = self.getFilterDef(term, self);
+        filterDef = self.getFilterDef(searchModule, term);
         params.filter = JSON.parse(JSON.stringify(filterDef));
 
         searchCollection.fetch({
@@ -256,6 +242,9 @@
             showAlerts: false,
             update: true,
             remove: _.isUndefined(params.offset),
+            fields: _.union([
+                'id', 'name'
+            ], _.keys(this.def.populate_list || {})),
             context: self,
             params: params,
             limit: limit,
@@ -263,14 +252,12 @@
                 var fetch = {results: [], more: data.next_offset > 0, context: searchCollection};
                 if (fetch.more) {
                     var fieldEl = self.$(self.fieldTag),
-                        //For teamset widget, we should specify which index element to be filled in
+                    //For teamset widget, we should specify which index element to be filled in
                         plugin = (fieldEl.length > 1) ? $(fieldEl.get(self.currentIndex)).data("select2") : fieldEl.data("select2"),
                         height = plugin.searchmore.children("li:first").children(":first").outerHeight(),
                     //0.2 makes scroll not to touch the bottom line which avoid fetching next record set
                         maxHeight = height * (limit - .2);
                     plugin.results.css("max-height", maxHeight);
-                } else {
-
                 }
                 _.each(data.models, function (model, index) {
                     if (params.offset && index < params.offset) {
