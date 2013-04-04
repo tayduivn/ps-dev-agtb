@@ -133,7 +133,9 @@
                 "bPaginate": false,
                 "aaData": _.pluck(_.filter(this.context.get("dashlet_collection"), function(dashlet) {
                     var filter = dashlet.filter;
-                    return _.isUndefined(filter) || (_.indexOf(filter.module || [parentModule], parentModule) >= 0  && (filter.view || parentView) === parentView);
+                    return _.isUndefined(filter) ||
+                        (_.indexOf(filter.module || [parentModule], parentModule) >= 0
+                            && (_.indexOf(filter.view || [parentView], parentView) >= 0));
                 }), 'table'),
                 "aoColumns": [
                     {
