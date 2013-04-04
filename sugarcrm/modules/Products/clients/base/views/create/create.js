@@ -35,7 +35,7 @@
         _.each(options.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
                     //if the field is currency and not the known calculated field, add to the array
-                    if(field.type == 'currency' && field.name != 'product_line_item_amount') {
+                    if(field.type == 'currency' && field.name != 'total_amount') {
                         this.currencyFields.push(field.name);
                     }
                 }, this);
