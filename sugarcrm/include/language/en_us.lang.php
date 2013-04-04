@@ -3903,7 +3903,7 @@ $app_strings = array (
     'LBL_ORG_CHART_DESC' => 'Displays the employee structure of your organization.',
 
     //top 10 opportunities chart
-    'LBL_TOP10_OPPORTUNITIES_CHART' => 'Top 10 Opportunities Chart',
+    'LBL_TOP10_OPPORTUNITIES_CHART' => 'Top 10 sales opportunities',
     'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten opportunities in a bubble chart.',
     'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
     'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
