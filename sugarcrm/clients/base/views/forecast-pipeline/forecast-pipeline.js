@@ -35,6 +35,7 @@
             app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
                 success: _.bind(function(o) {
                     this.model.set({'selectedTimePeriod': o.id}, {silent: true});
+                    this.layout.loadData();
                 }, this),
                 complete: options ? options.complete : null
             });
@@ -78,6 +79,12 @@
         this.chart = chart;
     },
     loadData: function(options) {
+
+        var timePeriod = this.model.get('selectedTimePeriod');
+        if (!timePeriod) {
+            return;
+        }
+
 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         var url_base = 'Opportunities/chart/pipeline';
 //END SUGARCRM flav=pro && flav!=ent ONLY
@@ -85,7 +92,7 @@
         var url_base = 'Products/chart/pipeline';
 //END SUGARCRM flav=ent ONLY
         if (this.model.has('selectedTimePeriod')) {
-            url_base += '/' + this.model.get('selectedTimePeriod');
+            url_base += '/' + timePeriod;
             if (this.model.has('display_type')) {
                 url_base += '/' + this.model.get('display_type');
             }
