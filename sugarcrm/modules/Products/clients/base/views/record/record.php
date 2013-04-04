@@ -154,12 +154,12 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'base_rate_field' => 'base_rate',
                 ),
                 array(
-                    'name' => 'product_line_item_amount',
+                    'name' => 'total_amount',
                     'type' => 'currency',
                     'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
                     'readonly' => true,
                     'related_fields' => array(
-                        'product_line_item_amount',
+                        'total_amount',
                         'currency_id',
                         'base_rate',
                     ),
