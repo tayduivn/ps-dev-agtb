@@ -203,8 +203,6 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
-                'currency_field' => 'currency_id',
-                'base_rate_field' => 'base_rate',
                 'next_step',
                 'product_type',
                 'lead_source',
