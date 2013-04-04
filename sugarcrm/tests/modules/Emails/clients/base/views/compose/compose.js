@@ -57,11 +57,17 @@ describe("Emails.Views.Compose", function() {
         });
 
         it("Recipients on context - call is made to populate them", function() {
-            var dummyRecipientModel = {'foo':'bar'};
+            var expectedId = '111-29303-2aad-9asdf',
+                expectedModule = 'Accounts',
+                dummyRecipientModel = new Backbone.Model({'foo':'bar', 'id': expectedId});
+            dummyRecipientModel.module = expectedModule;
             view.context.set('recipientModel', dummyRecipientModel);
             view._render();
             expect(populateToRecipientsStub.callCount).toEqual(1);
             expect(populateToRecipientsStub.lastCall.args).toEqual([dummyRecipientModel]);
+            var actualRelated = view.model.get("related");
+            expect(actualRelated.type).toBe(expectedModule);
+            expect(actualRelated.id).toBe(expectedId);
         });
 
         //test different sender recipient scenarios

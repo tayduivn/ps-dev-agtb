@@ -40,6 +40,10 @@
 
             if (!_.isEmpty(recipientModel)) {
                 this.populateToRecipients(recipientModel);
+                this.model.set("related", {
+                    type: recipientModel.module,
+                    id: recipientModel.get("id")
+                });
             }
 
             if (this.model.isNew()) {
