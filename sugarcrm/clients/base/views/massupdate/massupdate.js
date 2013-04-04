@@ -208,11 +208,8 @@
                                 //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                                 //TODO: Need trigger for fetching new record list
                                 app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_DELETED'), autoClose: true});
-                                self.layout.collection.fetch({
-                                    //Don't show alerts for this request
-                                    showAlerts: false
-                                });
-                            } else if(response.status == 'queued') {
+                                self.layout.context.reloadData({showAlerts: false});
+                            } else if (response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
                             }
                         }
