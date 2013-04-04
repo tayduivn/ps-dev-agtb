@@ -63,7 +63,12 @@
     },
     loadData: function(options) {
 
+//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         var url_base = 'Opportunities/chart/pipeline';
+//END SUGARCRM flav=pro && flav!=ent ONLY
+//BEGIN SUGARCRM flav=ent ONLY
+        var url_base = 'Products/chart/pipeline';
+//END SUGARCRM flav=ent ONLY
         if (this.model.has('selectedTimePeriod')) {
             url_base += '/' + this.model.get('selectedTimePeriod');
             if (this.model.has('display_type')) {
