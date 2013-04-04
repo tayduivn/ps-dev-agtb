@@ -128,6 +128,25 @@
             return;
         }
 
+        var disable = ["Quotes",
+            "ProductCategories",
+            "Meetings",
+            "Reports",
+            "KBDocuments",
+            "Users",
+            "Administration",
+            "ProspectLists",
+            "Calls",
+            "Employees",
+            "Emails",
+            "EmailTemplates"];
+        // HACK FOR SUGARCON 2013. This should be removed afterwards.
+        if (_.contains(disable, model.module)) {
+            app.events.trigger('preview:close');
+            app.alert.show('preview_bwc_error', {level:'error', messages: app.lang.getAppString('LBL_PREVIEW_BWC_ERROR'), autoClose: true});
+            return;
+        }
+
         if (model) {
             // Get the corresponding detail view meta for said module.
             // this.meta needs to be set before this.getFieldNames is executed.
