@@ -315,18 +315,22 @@ hr.soften {
             }
             &> a:first-child {
               float: left;
-              height: 40px;
               padding: 0 6px 0 0;
             }
           }
           .follow-button {
             padding-top: 8px;
           }
+          a {
+            color: darken(@grayLight, 10%);
+            font-weight: 200;
+          }
         }
         &.body {
-          margin: 10px 0 6px;
+          margin: 0 0 6px 0;
         }
         &.footer {
+          display: none;
           timestamp {
             font-size: 10px;
             display: inline-block;
@@ -347,9 +351,11 @@ hr.soften {
         }
       }
     }
-
     &:first-child {
       margin-top: 0px;
+    }
+    &:hover {
+      background: @grayLighter;
     }
   }
   aside {
