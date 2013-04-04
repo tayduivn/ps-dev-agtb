@@ -452,6 +452,10 @@ class RestService extends ServiceBase {
                     }
                 }
             }
+            // If token is invalid, destroy the session for bwc
+            // It looks like a big upload can cause no auth error, 
+            // so we do it here instead of the catch block above
+            session_destroy();
             $exception = (isset($e)) ? $e : false;
             return array('isLoggedIn' => false, 'exception' => $exception);
         }

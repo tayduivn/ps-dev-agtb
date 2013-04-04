@@ -3451,6 +3451,9 @@ $app_strings = array (
     'UPLOAD_REQUEST_ERROR'    => 'An error has occured. Please refresh your page and try again.',
 
 
+    // Preview pane
+    'LBL_PREVIEW_BWC_ERROR' => 'Cannot preview a record operating in backwards compatibility mode.',
+
     //508 used Access Keys
     'LBL_EDIT_BUTTON_KEY' => 'i',
     'LBL_EDIT_BUTTON_LABEL' => 'Edit',
@@ -3589,7 +3592,17 @@ $app_strings = array (
     'LBL_TOUR_RECORD_DASHBOARDACTIONS' => 'Create new groups of Dashlets',
     'LBL_TOUR_RECORD_DASHBOARDNAME' => 'Assign a name to the group of Dashlets',
     'LBL_TOUR_RECORD_DASHLETCOG' => 'Choose to remove Dashlet or to change settings',
-    'LBL_TOUR_INTRO' =>'Welcome to Sugar 7 Preview. Configure dashboards with dashlets of your choice. Take a tour on each page to get quick orientation',
+    'LBL_TOUR_INTRO' =>'Welcome to Sugar 7 preview. Use arrows below for a quick tour.',
+    'LBL_TOUR_LIST_INTRO' =>'View a list of records and take actions records.',
+    'LBL_TOUR_RECORD_INTRO' =>'View details on this record and see all data related to it.',
+    'LBL_TOUR_FORECAST_INTRO' =>'Manage pipeline and forecast.',
+    'LBL_TOUR_FORECASTS_TIMEPERIODS' =>'Choose a time period to see the corresponding forecast',
+    'LBL_TOUR_FORECASTS_COMMITS' =>'Click to see previous commits',
+    'LBL_TOUR_FORECASTS_INLINEEDIT' =>'Click to edit data inline',
+    'LBL_TOUR_FORECASTS_PROGRESS' =>'Review distance to quota',
+    'LBL_TOUR_FORECASTS_CHART' =>'Review forecast distribution',
+
+
 
     'LBL_REQUIRED_FIELD' => 'Required',
     // for nomad mobile

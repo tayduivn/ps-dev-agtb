@@ -52,6 +52,10 @@
         app.events.off("preview:render", null, this).on("preview:render", this._renderPreview, this);
         app.events.off("preview:collection:change", null, this).on("preview:collection:change", this.updateCollection, this);
         app.events.off("preview:close", null, this).on("preview:close", this.closePreview,  this);
+
+        // TODO: Remove when pagination on activity streams is fixed.
+        app.events.off("preview:module:update", null, this).on("preview:module:update", this.updatePreviewModule,  this);
+
         if(this.layout){
             this.layout.off("preview:pagination:fire", null, this);
             this.layout.on("preview:pagination:fire", this.switchPreview, this);
@@ -63,6 +67,11 @@
             this.collection.reset(collection.models);
             this.showPreviousNextBtnGroup();
        }
+    },
+
+    // TODO: Remove when pagination on activity streams is fixed.
+    updatePreviewModule: function(module) {
+        this.previewModule = module;
     },
 
     filterCollection: function() {
@@ -128,6 +137,25 @@
             return;
         }
 
+        var disable = ["Quotes",
+            "ProductCategories",
+            "Meetings",
+            "Reports",
+            "KBDocuments",
+            "Users",
+            "Administration",
+            "ProspectLists",
+            "Calls",
+            "Employees",
+            "Emails",
+            "EmailTemplates"];
+        // HACK FOR SUGARCON 2013. This should be removed afterwards.
+        if (_.contains(disable, model.module)) {
+            app.events.trigger('preview:close');
+            app.alert.show('preview_bwc_error', {level:'error', messages: app.lang.getAppString('LBL_PREVIEW_BWC_ERROR'), autoClose: true});
+            return;
+        }
+
         if (model) {
             // Get the corresponding detail view meta for said module.
             // this.meta needs to be set before this.getFieldNames is executed.
@@ -165,6 +193,12 @@
             this.model = app.data.createBean(model.module, model.toJSON());
 
             app.view.View.prototype._render.call(this);
+
+            // TODO: Remove when pagination on activity streams is fixed.
+            if (this.previewModule && this.previewModule === "Activities") {
+                this.layout.hideNextPrevious = true;
+                this.layout.trigger("preview:pagination:update");
+            }
             // Open the preview panel
             app.events.trigger("preview:open",this);
             // Highlight the row

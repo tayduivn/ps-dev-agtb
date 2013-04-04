@@ -103,7 +103,6 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
             //$val['gvalue'] = number_format($data[$this->dataset . '_adjusted'], 2, '.', '');
             //$val['gvaluelabel'] = number_format($data[$this->dataset . '_adjusted'], 2, '.', '');
 
-
             foreach ($this->dataset as $dataset) {
                 if (!isset($dataset_sums[$dataset])) {
                     $dataset_sums[$dataset] = 0;
@@ -158,20 +157,24 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         // figure out the labels
         $labels = array();
         foreach ($this->dataset as $dataset) {
-            switch ($dataset) {
-                case "best":
-                    $labels[] = $forecast_strings['LBL_BEST_CASE'];
-                    $labels[] = $forecast_strings['LBL_BEST_CASE_VALUE'];
-                    break;
-                case "worst":
-                    $labels[] = $forecast_strings['LBL_WORST_CASE'];
-                    $labels[] = $forecast_strings['LBL_WORST_CASE_VALUE'];
-                    break;
-                case 'likely':
-                default:
-                    $labels[] = $forecast_strings['LBL_LIKELY_CASE'];
-                    $labels[] = $forecast_strings['LBL_LIKELY_CASE_VALUE'];
-                    break;
+            if ((isset($dataset_sums[$dataset]) && $dataset_sums[$dataset] != 0) ||
+                (isset($dataset_sums[$dataset . '_case_adjusted']) && $dataset_sums[$dataset . '_case_adjusted'] != 0))
+            {
+                switch ($dataset) {
+                    case "best":
+                        $labels[] = $forecast_strings['LBL_BEST_CASE'];
+                        $labels[] = $forecast_strings['LBL_BEST_CASE_VALUE'];
+                        break;
+                    case "worst":
+                        $labels[] = $forecast_strings['LBL_WORST_CASE'];
+                        $labels[] = $forecast_strings['LBL_WORST_CASE_VALUE'];
+                        break;
+                    case 'likely':
+                    default:
+                        $labels[] = $forecast_strings['LBL_LIKELY_CASE'];
+                        $labels[] = $forecast_strings['LBL_LIKELY_CASE_VALUE'];
+                        break;
+                }
             }
         }
 

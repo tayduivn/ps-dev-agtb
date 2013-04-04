@@ -79,6 +79,14 @@
                 id: data.noteId,
                 field: 'filename'
             });
+
+            if (data.mimetype && data.mimetype.indexOf("image/") === 0) {
+                data.embed = {
+                    type: "image",
+                    src: url
+                };
+            }
+
             data.url = url;
             this.$el.data(data);
             this.model.set('data', data);
@@ -210,6 +218,7 @@
                 collection = this.context.get("collection");
 
             model.set("id", id);
+            app.events.trigger("preview:module:update", this.context.get("module"));
             app.events.trigger("preview:render", model, collection, true, this.cid);
         }
 
