@@ -68,19 +68,31 @@ class RestService extends ServiceBase {
     public $action = 'view';
 
     /**
+     * Request object
+     * @var RestRequest
+     */
+    protected $request;
+
+    /**
+     * Get request object
+     * @return RestRequest
+     */
+    public function getRequest()
+    {
+        return new RestRequest($_SERVER, $_REQUEST);
+    }
+
+    /**
      * This function executes the current request and outputs the response directly.
      */
     public function execute()
     {
         $this->response = new RestResponse($_SERVER);
         try {
-            $rawPath = $this->getRawPath();
+            $this->request = $this->getRequest();
+            $this->request_headers = $this->request->request_headers;
 
-            $this->getRequestHeaders();
-
-            list($version,$path) = $this->parsePath($rawPath);
-
-            if($this->min_version > $version || $this->max_version < $version) {
+            if($this->min_version > $this->request->version || $this->max_version < $this->request->version) {
                 throw new SugarApiExceptionIncorrectVersion("Please change your url to reflect version between {$this->min_version} and {$this->max_version}");
             }
 
@@ -102,13 +114,21 @@ class RestService extends ServiceBase {
                     $this->platform = basename($_GET['platform']);
                 }
             }
+            $this->request->setPlatform($this->platform);
 
+            $GLOBALS['logic_hook']->call_custom_logic('', 'before_routing', array("api" => $this, "request" => $this->request));
 
-            $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD'],$this->platform);
+            $route = $this->findRoute($this->request);
 
             if ( $route == false ) {
-                throw new SugarApiExceptionNoMethod('Could not find any route that accepted a path like: '.$rawPath);
+                throw new SugarApiExceptionNoMethod('Could not find any route that accepted a path like: '.$this->request->rawPath);
             }
+
+            $this->request->setRoute($route);
+            $GLOBALS['logic_hook']->call_custom_logic('', 'after_routing', array("api" => $this, "request" => $this->request));
+            // Get it back in case hook changed it
+            $route = $this->request->getRoute();
+
 
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
                 if ( !$isLoggedIn ) {
@@ -129,7 +149,7 @@ class RestService extends ServiceBase {
             }
 
             // This loads the path variables in, so that on the /Accounts/abcd, $module is set to Accounts, and $id is set to abcd
-            $pathVars = $this->getPathVars($path,$route);
+            $pathVars = $this->request->getPathVars($route);
 
             if ( count($_GET) > 0 ) {
                 // This has some get arguments, let's parse those in
@@ -149,6 +169,7 @@ class RestService extends ServiceBase {
                                 continue;
                             }
                             // Need to dig through this array and make sure all of the elements in here are safe
+                            // FIXME: this should be removed and handled by the DB layer
                             $getVars[$fieldName] = securexss($jsonData);
                         }
                     }
@@ -165,6 +186,7 @@ class RestService extends ServiceBase {
                 $postVars = array();
             } else if ( count($_POST) > 0 ) {
                 // They have normal post arguments
+                // FIXME: this should be removed and handled by the DB layer
                 $postVars = securexss($_POST);
             } else {
                 $postContents = null;
@@ -181,6 +203,7 @@ class RestService extends ServiceBase {
                         // FIXME: Handle improperly encoded JSON
                         $postVars = array();
                     }
+                    // FIXME: this should be removed and handled by the DB layer
                     $postVars = securexss($postVars);
                 } else {
                     // No posted variables
@@ -192,6 +215,12 @@ class RestService extends ServiceBase {
             // in the case of REST, get vars are fairly uncommon and pretty explicit, where
             // the posted document is probably the output of a generated form.
             $argArray = array_merge($postVars,$getVars,$pathVars);
+
+            $this->request->setArgs($argArray)->setRoute($route);
+            $GLOBALS['logic_hook']->call_custom_logic('', 'before_api_call', array("api" => $this, "request" => $this->request));
+            // Get it back in case hook changed it
+            $route = $this->request->getRoute();
+            $argArray = $this->request->getArgs();
 
             // Trying to fetch correct module while API use search
             $module = $route['className'];
@@ -213,40 +242,6 @@ class RestService extends ServiceBase {
             $this->handleException($e);
         }
         $this->response->send();
-    }
-
-    /**
-     * Set the Request headers in an array
-     * @return bool
-     */
-    public function getRequestHeaders() {
-        $headers = array();
-        foreach($_SERVER as $key => $value) {
-            if (substr($key, 0, 5) <> 'HTTP_') {
-                continue;
-            }
-            $header = str_replace('HTTP_', '', $key);
-            $headers[$header] = $value;
-        }
-        $this->request_headers = $headers;
-        return true;
-    }
-
-    /**
-     * Gets the raw path of the request
-     *
-     * @return string
-     */
-    public function getRawPath() {
-        if ( !empty($_REQUEST['__sugar_url']) ) {
-            $rawPath = $_REQUEST['__sugar_url'];
-        } else if ( !empty($_SERVER['PATH_INFO']) ) {
-            $rawPath = $_SERVER['PATH_INFO'];
-        } else {
-            $rawPath = '/';
-        }
-
-        return $rawPath;
     }
 
     /**
@@ -305,34 +300,13 @@ class RestService extends ServiceBase {
     /**
      * Attempts to find the route for this request, API version and request method
      *
-     * @param array $path The request path
-     * @param int $version The API version number
-     * @param string $requestType The request method
-     * @param string $platform The platform of the request
+     * @param RestRequest $req REST request data
      * @return mixed
      */
-    protected function findRoute($path, $version, $requestType, $platform = 'base') {
+    protected function findRoute(RestRequest $req) {
         // Load service dictionary
         $this->dict = $this->loadServiceDictionary('ServiceDictionaryRest');
-        return $this->dict->lookupRoute($path, $version, $requestType, $platform);
-    }
-
-    /**
-     * Maps the route path with the request path to set variables from the request
-     *
-     * @param array $path The request path
-     * @param array $route The route for this request
-     * @return array
-     */
-    protected function getPathVars($path,$route) {
-        $outputVars = array();
-        foreach ( $route['pathVars'] as $i => $varName ) {
-            if ( !empty($varName) ) {
-                $outputVars[$varName] = $path[$i];
-            }
-        }
-
-        return $outputVars;
+        return $this->dict->lookupRoute($req->path, $req->version, $req->method, $req->platform);
     }
 
     /**
@@ -381,24 +355,6 @@ class RestService extends ServiceBase {
             $replyData['error_message'] = $message;
         }
         $this->response->setContent($replyData);
-    }
-
-    /**
-     * Parses the request uri or request path as well as fetching the API request
-     * version
-     *
-     * @param string $rawPath
-     * @return array
-     */
-    protected function parsePath($rawPath) {
-        $pathBits = explode('/',trim($rawPath,'/'));
-
-        $versionBit = array_shift($pathBits);
-
-        $version = (float)ltrim($versionBit,'v');
-
-        return array($version,$pathBits);
-
     }
 
     /**
@@ -644,3 +600,4 @@ class RestService extends ServiceBase {
         $this->response->setHeader("X-Content-Type-Options", "nosniff");
     }
 }
+
