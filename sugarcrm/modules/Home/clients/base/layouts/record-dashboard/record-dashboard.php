@@ -85,21 +85,4 @@ $layout->push(
         ),
     )
 );
-$layout->push(
-    1,
-    array(
-       array(
-            'name' => 'Top 10 Opportunities',
-            'view' => 'bubblechart',
-            'context' => array(
-                'dashlet' => array(
-                    'name' => 'Top 10 Opportunities',
-                    'type' => 'bubblechart',
-                    'filter_duration' => 0,
-                    'filter_assigned' => 'my',
-                ),
-            ),
-        ),
-    )
-);
 $viewdefs['Home']['base']['layout']['record-dashboard'] = $layout->getLayout();
