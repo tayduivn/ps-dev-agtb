@@ -3451,6 +3451,9 @@ $app_strings = array (
     'UPLOAD_REQUEST_ERROR'    => 'An error has occured. Please refresh your page and try again.',
 
 
+    // Preview pane
+    'LBL_PREVIEW_BWC_ERROR' => 'Cannot preview a record operating in backwards compatibility mode.',
+
     //508 used Access Keys
     'LBL_EDIT_BUTTON_KEY' => 'i',
     'LBL_EDIT_BUTTON_LABEL' => 'Edit',
