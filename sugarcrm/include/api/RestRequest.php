@@ -10,12 +10,40 @@ class RestRequest {
      */
     public $request_headers = array();
 
+    /**
+     * REST platform
+     * @var string
+     */
     public $platform = 'base';
+    /**
+     * Server variables
+     * @var array
+     */
     public $server;
+    /**
+     * Request variables
+     * @var array
+     */
     public $request;
+    /**
+     * Raw path string
+     * @var string
+     */
     public $rawPath;
+    /**
+     * API version
+     * @var string
+     */
     public $version;
+    /**
+     * Parsed path components
+     * @var array
+     */
     public $path;
+    /**
+     * Request method
+     * @var string
+     */
     public $method;
     /**
      * REST route chosen by the controller
