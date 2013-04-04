@@ -12,8 +12,14 @@ $viewdefs['base']['view']['forecast-pipeline'] = array(
             'filter' => array(
                 'module' => array(
                     'Home',
+                    'Accounts',
+                    'Opportunities',
+                    'Products'
                 ),
-                'view' => 'record'
+                'view' => array(
+                    'record',
+                    'records'
+                )
             )
         ),
     ),
