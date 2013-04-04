@@ -43,10 +43,7 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user');
+        
         global $current_user;
         $current_user->is_admin = 1;
     }
@@ -58,6 +55,11 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         $this->preTestIds = TimePeriod::get_timeperiods_dom();
 
         $db = DBManagerFactory::getInstance();
@@ -95,6 +97,7 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $db->query("UPDATE timeperiods SET deleted = 0 WHERE id IN ('" . implode("', '", array_keys($this->preTestIds))  . "')");
 
         $db->query("DELETE FROM timeperiods WHERE deleted = 1");
+        parent::tearDown();
     }
 
     /**

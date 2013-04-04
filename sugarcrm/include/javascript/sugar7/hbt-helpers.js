@@ -22,7 +22,8 @@
         });
 
         Handlebars.registerHelper('moduleIconLabel', function(module) {
-            return app.lang.getAppListStrings('moduleListSingular')[module].substring(0, 2);
+            var name = app.lang.getAppListStrings('moduleListSingular')[module] || module;
+            return name.substring(0, 2);
         });
     });
 })(SUGAR.App);

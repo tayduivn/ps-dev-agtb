@@ -41,9 +41,7 @@ if(!ACLController::checkAccess('Opportunities', 'edit', true)){
 function send_to_url($redirect_Url)
 {
 	echo "<script language=javascript>\n";
-	echo "<!-- //\n";
-	echo "	window.location.href=\"{$redirect_Url}\";\n";
-	echo "// -->\n";
+    echo "javascript:parent.SUGAR.App.router.navigate('$redirect_Url', {trigger: true});";
 	echo "</script>\n";
 }
 
@@ -155,7 +153,7 @@ else
 		}
 	}
 
-	$redirect_Url = "index.php?action=DetailView&module=Opportunities&record=" . $opp->id;
+	$redirect_Url = "Opportunities/" . $opp->id;
 	send_to_url($redirect_Url);
 }
 

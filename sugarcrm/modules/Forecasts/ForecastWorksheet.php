@@ -139,6 +139,9 @@ class ForecastWorksheet extends SugarBean
         $this->draft = ($isCommit === false) ? 1 : 0;
 
         $this->save(false);
+        
+        //if this migrated, we need to delete the committed row
+        $this->removeMigratedRow($opp);
 
         //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         $this->saveOpportunityProducts($opp, $isCommit);
@@ -167,6 +170,31 @@ class ForecastWorksheet extends SugarBean
             $product_wkst->saveRelatedProduct($product, $isCommit);
             unset($product_wkst);   // clear the cache
         }
+    }
+    
+    /**
+     * Removes committed row for a bean if it has moved timeperiods.
+     * 
+     * @param SugarBean $bean
+     * @return boolean true if something is removed, false if not
+     */
+    public function removeMigratedRow(SugarBean $bean) {
+        $return = false;
+        if ($this->timeperiodHasMigrated($this->fetched_row["date_closed"], $bean->fetched_row["date_closed"])) {
+            $worksheet = BeanFactory::getBean("ForecastWorksheets");
+            $worksheet->retrieve_by_string_fields(
+                array(
+                    "parent_type" => $bean->module_name,
+                    "parent_id" => $bean->id,
+                    "draft" => 0,
+                    "deleted" => 0,
+                )
+            );
+            $worksheet->deleted = 1;
+            $worksheet->save();
+            $return = true;
+        }
+        return $return;
     }
 
     /**
@@ -213,9 +241,37 @@ class ForecastWorksheet extends SugarBean
         $this->parent_type = 'Products';
         $this->parent_id = $product->id;
         $this->draft = ($isCommit === false) ? 1 : 0;
+        
+        //if this migrated, we need to delete the committed row
+        $this->removeMigratedRow($product);
 
         $this->save(false);
     }
+
+    /**
+     * Checks to see if a worksheet item being saved has jumped timeperiods.
+     * 
+     * @param date $worksheetDate
+     * @param date $objDate
+     * 
+     * @return bool
+     */
+    protected function timeperiodHasMigrated($worksheetDate, $objDate)
+    {
+        $return = false;
+        
+        //if the close dates are different, we need to see if the obj is in a new timeperiod
+        if ($worksheetDate != $objDate) {
+            $tp1 = TimePeriod::retrieveFromDate($worksheetDate);
+            $tp2 = TimePeriod::retrieveFromDate($objDate);
+                       
+            if (!empty($tp1) && !empty($tp2) && ($tp1->id != $tp2->id)) {
+                $return = true;
+            }
+        }
+        
+        return $return;
+    }    
 
     /**
      * Copy the fields from the $seed bean to the worksheet object
@@ -275,7 +331,11 @@ class ForecastWorksheet extends SugarBean
                 ->gte('date_closed_timestamp', $tp->start_date_timestamp)
                 ->lte('date_closed_timestamp', $tp->end_date_timestamp);
         $beans = $sq->execute();
-
+               
+        if (empty($beans)) {
+            return false;
+        }
+        
         $bean_chunks = array_chunk($beans, $chunk_size);
 
         // process the first chunk

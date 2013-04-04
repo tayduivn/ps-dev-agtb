@@ -92,7 +92,10 @@ $viewdefs['Products']['base']['view']['create'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'opportunity_name',
+                array(
+                    'name' => 'opportunity_name',
+                    'required' => true
+                ),
                 array(
                     'name' => 'account_name',
                     'readonly' => true
@@ -122,14 +125,40 @@ $viewdefs['Products']['base']['view']['create'] = array(
                 array(
                     'name' => 'discount_price',
                     'type' => 'currency',
-                    'readonly' => true
+                    'readonly' => true,
+                    'related_fields' => array(
+                        'discount_price',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
-                'discount_amount',
                 array(
-                    'name' => 'product_line_item_amount',
+                    'name' => 'discount_amount',
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'discount_amount',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'convertToBase' => true,
+                    'showTransactionalAmount' => true,
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                ),
+                array(
+                    'name' => 'total_amount',
                     'type' => 'currency',
                     'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
-                    'readonly' => true
+                    'readonly' => true,
+                    'related_fields' => array(
+                        'total_amount',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
                 array(
                     'name' => 'likely_case',
@@ -191,11 +220,27 @@ $viewdefs['Products']['base']['view']['create'] = array(
                 ),
                 array(
                     'name' => 'list_price',
-                    'readonly' => true
+                    'readonly' => true,
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'list_price',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
                 array(
                     'name' => 'cost_price',
-                    'readonly' => true
+                    'readonly' => true,
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'cost_price',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
                 array(
                     'name' => 'quote_name',

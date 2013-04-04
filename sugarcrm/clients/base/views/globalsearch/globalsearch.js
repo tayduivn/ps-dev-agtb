@@ -148,6 +148,9 @@
             success:function(data) {
                 var formattedRecords = [];
                 _.each(data.records, function(record) {
+                    if (!record.id) {
+                        return; // Elastic Search may return records without id and record names.
+                    }
                     var formattedRecord = {id:record.id,name:record.name,module:record._module},
                         meta = app.metadata.getModule(record._module);
 

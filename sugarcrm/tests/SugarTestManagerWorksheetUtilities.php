@@ -82,4 +82,32 @@ class SugarTestManagerWorksheetUtilities
         }
         return $worksheet_ids;
     }
+
+    /**
+     * @param $user_id
+     * @param $timeperiod_id
+     * @param bool $isCommit
+     * @return bool|ForecastManagerWorksheet
+     */
+    public static function getManagerWorksheetForUserAndTimePeriod($user_id, $timeperiod_id, $isCommit = false)
+    {
+        /* @var $worksheet ForecastManagerWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet->retrieve_by_string_fields(
+            array(
+                'user_id' => $user_id,
+                'timeperiod_id' => $timeperiod_id,
+                'draft' => ($isCommit === false) ? 1 : 0,
+                'deleted' => 0,
+            )
+        );
+
+        if (empty($worksheet->id)) {
+            return false;
+        }
+
+        self::$_createdWorksheets[] = $worksheet;
+
+        return $worksheet;
+    }
 }

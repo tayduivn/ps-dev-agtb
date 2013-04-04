@@ -32,26 +32,112 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['base']['view']['tutorial'] = array(
     'records' => array(
         'version' =>1,
-        'intro' => 'Welcome to SugarCRM.<br/><br/> Allow us to highlight some new features...',
         'content' => array(
             array(
-                'name' => '[href=#Home]',
-                'text' => 'Yum! Sugar Cube! records',
+                'name' => '.drawerTrig',
+                'text' => 'LBL_TOUR_LIST_INT_TOGGLE',
                 'full' => true,
+                'horizAdj' =>-11,
+                'vertAdj' => -13,
             ),
             array(
-                'name' => '#notificationDrop',
-                'text' => 'Notifications go here in records',
+                'name' => '.choice-related',
+                'text' => 'LBL_TOUR_LIST_FILTER1',
                 'full' => true,
-                "vertAdj" => -10,
-                "horizAdj" => -14
+                'vertAdj' => -15,
             ),
             array(
-                'name' => '#tour',
-                'text' => 'LBL_WELCOMEBAR',
+                'name' => '.choice-filter',
+                'text' => 'LBL_TOUR_LIST_FILTER2',
                 'full' => true,
-                "horizAdj" => -5,
-                "vertAdj" => -12,
+                'vertAdj' => -15,
+            ),
+            array(
+                'name' => '.filter-view .search-name',
+                'text' => 'LBL_TOUR_LIST_FILTER_SEARCH',
+                'full' => true,
+                'vertAdj' => -15,
+            ),
+            array(
+                'name' => '[data-view="activitystream"]',
+                'text' => 'LBL_TOUR_LIST_ACTIVTYSTREAMLIST_TOGGLE',
+                'full' => true,
+                'horizAdj' =>5,
+                'vertAdj' => -10,
+            ),
+            array(
+                'name' => '[data-event="list:preview:fire"]',
+                'text' => 'LBL_TOUR_LIST_FILTER_PREVIEW',
+                'full' => true,
+                'vertAdj' => -15,
+            ),
+        )
+    ),
+    'record' => array(
+        'version' =>1,
+        'content' => array(
+            array(
+                'name' => '[data-fieldname="first_name"]',
+                'text' => 'LBL_TOUR_RECORD_INLINEEDIT',
+                'full' => true,
+                'horizAdj' =>-15,
+                'vertAdj' => -13,
+            ),
+            array(
+                'name' => '[data-fieldname="name"]',
+                'text' => 'LBL_TOUR_RECORD_INLINEEDIT',
+                'full' => true,
+                'horizAdj' =>-11,
+                'vertAdj' => -13,
+            ),
+            array(
+                'name' => '[name="edit_button"]',
+                'text' => 'LBL_TOUR_RECORD_ACTIONS',
+                'full' => true,
+                'horizAdj' =>-1,
+                'vertAdj' => -13,
+            ),
+            array(
+                'name' => '.record .record-cell',
+                'text' => 'LBL_TOUR_RECORD_INLINEEDITRECORD',
+                'full' => true,
+                'horizAdj' =>-11,
+                'vertAdj' => -13,
+            ),
+            array(
+                'name' => '.show-hide-toggle',
+                'text' => 'LBL_TOUR_RECORD_SHOWMORE',
+                'full' => true,
+                'horizAdj' =>-11,
+                'vertAdj' => -13,
+            ),
+            array(
+                'name' => '[data-view="subpanel"]',
+                'text' => 'LBL_TOUR_RECORD_TOGGLEACTIVITIES',
+                'full' => true,
+                'horizAdj' =>-11,
+                'vertAdj' => -13,
+            ),
+            array(
+                'name' => '.preview-headerbar .dropdown-toggle',
+                'text' => 'LBL_TOUR_RECORD_DASHBOARDNAME',
+                'full' => true,
+                'horizAdj' =>-11,
+                'vertAdj' => -13,
+            ),
+            array(
+                'name' => '.preview-headerbar .btn-toolbar',
+                'text' => 'LBL_TOUR_RECORD_DASHBOARDACTIONS',
+                'full' => true,
+                'horizAdj' =>-11,
+                'vertAdj' => -13,
+            ),
+            array(
+                'name' => '.dashlet-cell .icon-cog',
+                'text' => 'LBL_TOUR_RECORD_DASHLETCOG',
+                'full' => true,
+                'horizAdj' =>-18,
+                'vertAdj' => -18,
             ),
         )
     ),

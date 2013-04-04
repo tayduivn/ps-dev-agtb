@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once 'include/SugarQueue/SugarJobQueue.php';
+require_once 'include/Link2Tag.php';
 
 /**
  * Queue class for activity stream events.
@@ -29,7 +30,7 @@ require_once 'include/SugarQueue/SugarJobQueue.php';
  */
 class ActivityQueueManager
 {
-    public static $linkBlacklist = array('user_sync', 'activities');
+    public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync');
     public static $linkModuleBlacklist = array('ActivityStream/Activities');
     public static $linkDupeCheck = array();
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs', 'Activities', 'vCals');
@@ -58,6 +59,10 @@ class ActivityQueueManager
                     } else {
                         $bean->data['object_type'] = $bean->parent_type;
                     }
+                }
+
+                if (!$args['isUpdate']) {
+                    $this->processEmbed($bean);
                 }
 
                 $bean->data = json_encode($bean->data);
@@ -356,6 +361,16 @@ class ActivityQueueManager
             foreach ($data['tags'] as $tag) {
                 $bean = BeanFactory::retrieveBean($tag['module'], $tag['id']);
                 $this->processRecord($bean, $act);
+            }
+        }
+    }
+
+    protected function processEmbed(Activity $act)
+    {
+        if (!empty($act->data['value'])) {
+            $val = Link2Tag::convert($act->data['value']);
+            if (!empty($val)) {
+                $act->data = array_merge($act->data, $val);
             }
         }
     }

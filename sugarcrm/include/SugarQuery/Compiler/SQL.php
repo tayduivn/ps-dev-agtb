@@ -422,6 +422,11 @@ class SugarQuery_Compiler_SQL
 
         if ($data['type'] == 'relate') {
             // this is a link field
+            if (!isset($data['link'])) {
+                // no link specified - bail out
+                $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField, relate field exists with no link: {$field}");
+                return false;
+            }
             $bean->load_relationship($data['link']);
             if (empty($bean->$data['link'])) {
                 // failed to load link - bail out

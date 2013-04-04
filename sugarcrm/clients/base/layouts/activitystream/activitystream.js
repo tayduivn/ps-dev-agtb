@@ -57,11 +57,12 @@
 
         if (this.context.parent) {
             var model = this.context.parent.get("model");
-            model.on("change", _.once(function() {
-                model.on("sync", function() {
-                    var options = self.collection.get("collectionOptions");
-                    this.fetch(options);
-                }, this.collection);
+            this.listenTo(model, "sync", _.once(function() {
+                // Only attach to the sync event after the inital sync is done.
+                this.listenTo(model, "sync", function() {
+                    var options = this.context.get("collectionOptions");
+                    this.collection.fetch(options);
+                });
             }));
         }
     },

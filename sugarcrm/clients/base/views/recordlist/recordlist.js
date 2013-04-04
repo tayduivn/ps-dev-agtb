@@ -153,5 +153,17 @@
             this.context.off(null, null, this);
             this.context = null;
         }
+    },
+
+    /**
+     * Adds the favorite field to app.view.View.getFieldNames() if meta.favorites is true
+     * so my_favorite is part of the field list and is fetched
+     */
+    getFieldNames: function(module) {
+        var fields = app.view.View.prototype.getFieldNames.call(this, module);
+        if (this.meta.favorite) {
+            fields = _.union(fields, ['my_favorite']);
+        }
+        return fields;
     }
 })

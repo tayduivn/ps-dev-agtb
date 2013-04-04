@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'timeago'],
     events: {
         'click ul.nav-tabs > li > a' : 'contentSwitcher',
         'click button.interactions-list' : 'listSwitcher',

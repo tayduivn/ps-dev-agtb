@@ -49,10 +49,7 @@ $config['builds']['ult']['lic'] = array('sub');
 $config['builds']['dev']['flav'] = array('een','ent','pro','dev','ult','corp');
 $config['builds']['dev']['lic'] = array('sub');
 
-$config['builds']['free']['flav'] = array('pro','corp','ent','ult');
-$config['builds']['free']['lic'] = array('sub');
-
-$config['product']= array("com","dce","dev","eng","exp","pro", "free");
+$config['product']= array("com","dce","dev","eng","exp","pro",);
 $config['replace'] = array('$Id:','$Log:','$Header$', '$Id$');
 
 //Controls whether or not to include the original line numbering (i.e. commented lines appear as newlines)

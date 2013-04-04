@@ -24,6 +24,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 /**
  * View that displays committed forecasts for current user.  If the manager view is selected, the Forecasts
  * of Rollup type are shown; otherwise the Forecasts of Direct type are shown.
@@ -48,8 +49,6 @@
  *      by: commitForecast()
  *      when: the new forecast model has saved successfully
  */
-
-
 ({
     /**
      * The url for the REST endpoint
@@ -62,19 +61,34 @@
     viewSelector: '.forecastsCommitted',
 
     /**
-     * Stores the best case to display in the view
+     * Best case value to display in the view
      */
     bestCase: 0,
 
     /**
-     * Stores the likely case to display in the view
+     * Likely case value to display in the view
      */
     likelyCase: 0,
 
     /**
-     * Stores the likely case to display in the view
+     * Worst case value to display in the view
      */
     worstCase: 0,
+
+    /**
+     * Previously committed likely case value to display in the view
+     */
+    lastLikelyCommit: 0,
+
+    /**
+     * Previously committed best case value to display in the view
+     */
+    lastBestCommit: 0,
+
+    /**
+     * Previously committed worst case value to display in the view
+     */
+    lastWorstCommit: 0,
 
     /**
      * Used to query for the timeperiod_id value in Forecasts
@@ -91,28 +105,11 @@
      */
     totals: null,
 
-    /**
-     * Stores the previous totals to display in the view
-     */
-    previousTotals: null,
-
-    /**
-     * Template to use when updating the bestCase on the committed bar
-     */
-    bestTemplate: _.template('<%= bestCase %>&nbsp;<span class="icon-sm committed_arrow<%= bestCaseCls %>"></span>'),
-
-    /**
-     * Template to use when updating the likelyCase on the committed bar
-     */
-    likelyTemplate: _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
-
-    /**
-     * Template to use when updating the worstCase on the committed bar
-     */
-    worstTemplate: _.template('<%= worstCase %>&nbsp;<span class="icon-sm committed_arrow<%= worstCaseCls %>"></span>'),
-
     savedTotal: null,
 
+    /**
+     * state variable if we're currently fetching or not
+     */
     runningFetch: false,
 
     /**
@@ -135,42 +132,42 @@
      */
     show_worst: false,
 
-    /**
-     * Does the layout have the forecastCommitLog View?
-     */
-    layoutHasForecastCommitLog: true,
-
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
         this.bestCase = 0;
         this.likelyCase = 0;
         this.worstCase = 0;
+        this.lastBestCommit = 0;
+        this.lastLikelyCommit = 0;
+        this.lastWorstCommit = 0;
 
         this.show_likely = app.metadata.getModule('Forecasts', 'config').show_worksheet_likely;
         this.show_best = app.metadata.getModule('Forecasts', 'config').show_worksheet_best;
         this.show_worst = app.metadata.getModule('Forecasts', 'config').show_worksheet_worst;
 
-        this.selectedUser = {id: app.user.get('id'), "isManager": app.user.get('isManager'), "showOpps": false};
+        this.selectedUser = {
+            id: app.user.get('id'),
+            isManager: app.user.get('isManager'),
+            showOpps: false
+        };
 
-        if(_.isUndefined(this.layout.getComponent('forecastsCommitLog'))) {
-            this.layoutHasForecastCommitLog = false;
-            this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
-            this.timePeriod = app.defaultSelections.timeperiod_id.id;
+        this.forecastType = app.utils.getForecastType(app.user.get('isManager'), app.user.get('showOpps'));
+        this.timePeriod = app.defaultSelections.timeperiod_id.id;
 
-            // we have to override sync right now as there is no way to run the filter by default
-            this.collection.sync = _.bind(function(method, model, options) {
-                options.success = _.bind(function(resp, status, xhr) {
-                    if(!_.isEmpty(resp.records)) {
-                        this.context.set({currentForecastCommitDate: _.first(resp.records).date_modified});
-                    }
-                    this.collection.reset(resp.records);
-                }, this);
-                // we need to force a post, so get the url object and put it in
-                var url = this.createURL();
-                app.api.call("create", url.url, url.filters, options);
+        // we have to override sync right now as there is no way to run the filter by default
+        this.collection.sync = _.bind(function(method, model, options) {
+            options.success = _.bind(function(resp, status, xhr) {
+                if(!_.isEmpty(resp.records)) {
+                    this.context.set({currentForecastCommitDate: _.first(resp.records).date_modified});
+                }
+                this.collection.reset(resp.records);
+                this.context.trigger('forecasts:committed:collectionUpdated', this.collection)
             }, this);
-        }
+            // we need to force a post, so get the url object and put it in
+            var url = this.createURL();
+            app.api.call("create", url.url, url.filters, options);
+        }, this);
     },
     /**
      *
@@ -203,11 +200,8 @@
         this.bestCaseCls = '';
         this.worstCaseCls = '';
         this.totals = null;
-
-        if(!this.layoutHasForecastCommitLog) {
-            this.context.resetLoadFlag();
-            this.loadData();
-        }
+        // method gets overridden and options just needs an
+        this.collection.sync('',{},{});
     },
 
     /**
@@ -233,7 +227,8 @@
 
         if(this.context) {
             this.context.on("change:selectedUser", function(context, user) {
-                this.forecastType = user.showOpps ? 'Direct' : 'Rollup';
+                // keep forecastType updated with every user change
+                this.forecastType = app.utils.getForecastType(user.isManager, user.showOpps);
                 this.selectedUser = user;
                 this.updateCommitted();
             }, this);
@@ -267,19 +262,13 @@
         // we need to clone this to not affect other views
         var _totals = _.clone(totals);
 
-
-        // these fields don't matter when it comes to tracking these values so just 0 them out.
-        // we don't care about this field
-        if(!_.isUndefined(_totals.quota)) {
-            _totals.quota = 0;
-        }
-
         if(!_.isEqual(this.totals, _totals)) {
-            var best = {};
-            var likely = {};
-            var worst = {};
+            var best = {},
+                likely = {},
+                worst = {},
+                previousCommit = null;
+
             // get the last committed value
-            var previousCommit = null;
             if(!_.isEmpty(this.collection.models)) {
                 previousCommit = _.first(this.collection.models);
             } else {
@@ -299,23 +288,25 @@
                 this.savedTotal = null;
             }
 
-            if(this.selectedUser.isManager == true && this.selectedUser.showOpps === false) {
+            // since we use getArrowIconColorClass 3 times, making a local instance
+            var utilsGetArrowIconColorClass = app.utils.getArrowIconColorClass,
+                totalsProperty = 'case',
+                likelyProperty = 'amount';
+
+            if(this.forecastType == 'Rollup') {
                 // management view
-                best.bestCaseCls = this.getColorArrow(_totals.best_adjusted, previousCommit.get('best_case'));
-                best.bestCase = app.currency.formatAmountLocale(_totals.best_adjusted);
-                likely.likelyCaseCls = this.getColorArrow(_totals.likely_adjusted, previousCommit.get('likely_case'));
-                likely.likelyCase = app.currency.formatAmountLocale(_totals.likely_adjusted);
-                worst.worstCaseCls = this.getColorArrow(_totals.worst_adjusted, previousCommit.get('worst_case'));
-                worst.worstCase = app.currency.formatAmountLocale(_totals.worst_adjusted);
-            } else {
-                // sales rep view
-                best.bestCaseCls = this.getColorArrow(_totals.best_case, previousCommit.get('best_case'));
-                best.bestCase = app.currency.formatAmountLocale(_totals.best_case);
-                likely.likelyCaseCls = this.getColorArrow(_totals.amount, previousCommit.get('likely_case'));
-                likely.likelyCase = app.currency.formatAmountLocale(_totals.amount);
-                worst.worstCaseCls = this.getColorArrow(_totals.worst_case, previousCommit.get('worst_case'));
-                worst.worstCase = app.currency.formatAmountLocale(_totals.worst_case);
+                totalsProperty = 'adjusted';
+                likelyProperty = 'likely_adjusted';
             }
+            // app.currency.formatAmountLocale is not brought into a local variable because it returns calling another
+            // function on currency "this.formatAmount" so there's no real benefit
+            best.bestCase = app.currency.formatAmountLocale(_totals['best_' + totalsProperty]);
+            likely.likelyCase = app.currency.formatAmountLocale(_totals[likelyProperty]);
+            worst.worstCase = app.currency.formatAmountLocale(_totals['worst_' + totalsProperty]);
+
+            best.bestCaseCls = utilsGetArrowIconColorClass(_totals['best_' + totalsProperty], previousCommit.get('best_case'));
+            likely.likelyCaseCls = utilsGetArrowIconColorClass(_totals[likelyProperty], previousCommit.get('likely_case'));
+            worst.worstCaseCls = utilsGetArrowIconColorClass(_totals['worst_' + totalsProperty], previousCommit.get('worst_case'));
 
             if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls) || !_.isEmpty(worst.worstCaseCls)) {
                 this.context.trigger("forecasts:commitButtons:enabled");
@@ -328,34 +319,23 @@
             this.worstCaseCls = worst.worstCaseCls;
             this.worstCase = worst.worstCase;
 
-            $('h2#best').html(this.bestTemplate(best));
-            $('h2#likely').html(this.likelyTemplate(likely));
-            $('h2#worst').html(this.worstTemplate(worst));
+            this.lastBestCommit = app.currency.formatAmountLocale(previousCommit.get('best_case'));
+            this.lastLikelyCommit = app.currency.formatAmountLocale(previousCommit.get('likely_case'));
+            this.lastWorstCommit = app.currency.formatAmountLocale(previousCommit.get('worst_case'));
 
+            if (!this.disposed) {
+                this.render();
+            }
         }
 
         this.totals = _totals;
     },
 
     /**
-     * Utility method to get the arrow and color depending on how the values match up.
-     *
-     * @param newValue
-     * @param currentValue
-     * @return {String}
-     */
-    getColorArrow: function(newValue, currentValue) {
-        var cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
-        return (newValue == currentValue) ? '' : cls;
-    },
-
-    /**
      * commit the forecast and by creating a forecast entry if the totals have been updated and the new forecast entry
      * is different from the previous one (best_case and likely_case are not exactly identical)
-     *
      */
     commitForecast: function() {
-
         this.context.trigger("forecasts:commitButtons:disabled");
 
         //If the totals have not been set, don't save
@@ -366,17 +346,18 @@
         var forecast = new this.collection.model();
         forecast.url = this.url;
 
-        var forecastData = {};
+        var forecastData = {},
+            totalsProperty = 'case',
+            likelyProperty = 'amount';
 
-        if(this.selectedUser.isManager == true && this.selectedUser.showOpps == false) {
-            forecastData.best_case = this.totals.best_adjusted;
-            forecastData.likely_case = this.totals.likely_adjusted;
-            forecastData.worst_case = this.totals.worst_adjusted;
-        } else {
-            forecastData.best_case = this.totals.best_case;
-            forecastData.likely_case = this.totals.amount;
-            forecastData.worst_case = this.totals.worst_case;
+        if(this.forecastType == 'Rollup') {
+            totalsProperty = 'adjusted';
+            likelyProperty = 'likely_adjusted';
         }
+
+        forecastData.best_case = this.totals['best_' + totalsProperty];
+        forecastData.likely_case = this.totals[likelyProperty];
+        forecastData.worst_case = this.totals['worst_' + totalsProperty];
 
         // we need a commit_type so we know what to do on the back end.
         forecastData.commit_type = (this.context.get('currentWorksheet') == "worksheetmanager") ? 'manager' : 'sales_rep';
@@ -389,17 +370,27 @@
         forecastData.pipeline_amount = this.totals.pipeline_amount;
         forecastData.pipeline_opp_count = this.totals.pipeline_opp_count;
 
-        // apply data to model then save
         forecast.save(forecastData, { success: _.bind(function() {
+            // Call sync again so commitLog has the full collection
+            // method gets overridden and options just needs an
+            this.collection.sync('',{},{});
             this.context.trigger("forecasts:committed:saved");
         }, this), silent: true, alerts: { 'success': false }});
 
+        this.previous = this.totals;
+
+        // Handle updating the values in the template
         // clear out the arrows
         this.likelyCaseCls = '';
         this.bestCaseCls = '';
         this.worstCaseCls = '';
 
-        this.previous = this.totals;
-        this.collection.unshift(forecast);
+        this.lastBestCommit = app.currency.formatAmountLocale(this.previous['best_' + totalsProperty]);
+        this.lastLikelyCommit = app.currency.formatAmountLocale(this.previous[likelyProperty]);
+        this.lastWorstCommit = app.currency.formatAmountLocale(this.previous['worst_' + totalsProperty]);
+
+        if (!this.disposed) {
+            this.render();
+        }
     }
 })

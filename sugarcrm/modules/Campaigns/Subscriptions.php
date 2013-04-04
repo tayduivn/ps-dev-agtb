@@ -81,6 +81,13 @@ if(isset($_REQUEST['record'])){
 } else {
     $this->ss->assign("RECORD", '');
 }
+if(isset($_REQUEST['sidecar_return'])){
+    $this->ss->assign("SIDECAR_RETURN", $_REQUEST['sidecar_return']);
+    $cancelButtonClick = "top.App.router.navigate('".$_REQUEST['sidecar_return']."', {trigger:true});";
+} else {
+    $this->ss->assign("SIDECAR_RETURN", '');
+    $cancelButtonClick = "this.form.action.value='".$this->ss->get_template_vars('RETURN_ACTION')."';this.form.module.value='".$this->ss->get_template_vars('RETURN_MODULE')."';";
+}
 
 //if subsaction has been set, then process subscriptions
 if(isset($_REQUEST['subs_action'])){manageSubscriptions($focus);}
@@ -105,7 +112,7 @@ $this->ss->assign('disabled_subs_string', $orig_vals_str[1]);
 
 $buttons = array(
     '<input id="save_button" title="'.$app_strings['LBL_SAVE_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_SAVE_BUTTON_KEY'].'" class="button" onclick="save();this.form.action.value=\'Subscriptions\'; " type="submit" name="button" value="'.$app_strings['LBL_SAVE_BUTTON_LABEL'].'">',
-    '<input id="cancel_button" title="'.$app_strings['LBL_CANCEL_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_CANCEL_BUTTON_KEY'].'" class="button" onclick="this.form.action.value=\''.$this->ss->get_template_vars('RETURN_ACTION').'\'; this.form.module.value=\''.$this->ss->get_template_vars('RETURN_MODULE').'\';" type="submit" name="button" value="'.$app_strings['LBL_CANCEL_BUTTON_LABEL'].'">'
+    '<input id="cancel_button" title="'.$app_strings['LBL_CANCEL_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_CANCEL_BUTTON_KEY'].'" class="button" onclick="'.$cancelButtonClick.'" type="submit" name="button" value="'.$app_strings['LBL_CANCEL_BUTTON_LABEL'].'">'
 );
 $this->ss->assign('BUTTONS', $buttons);
 $this->ss->display('modules/Campaigns/Subscriptions.tpl');
@@ -242,5 +249,3 @@ function manageSubscriptions($focus){
     }
 
 }
-
-?>

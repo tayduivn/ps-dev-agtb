@@ -5,7 +5,8 @@ $subpanels = array(
     'LBL_CONTACTS_SUBPANEL_TITLE' => 'contacts',
     'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'opportunities',
     'LBL_LEADS_SUBPANEL_TITLE' => 'leads',
-    'LBL_CAMPAIGNS' => 'campaign_accounts',
+    //TODO: Subpanel needs to support read only list for Campaigns (which is actually campaign log relationship)
+    //'LBL_CAMPAIGNS' => 'campaigns',
     'LBL_CASES_SUBPANEL_TITLE' => 'cases',
     'LBL_BUGS_SUBPANEL_TITLE' => 'bugs',
     'LBL_PRODUCTS_SUBPANEL_TITLE' => 'products',

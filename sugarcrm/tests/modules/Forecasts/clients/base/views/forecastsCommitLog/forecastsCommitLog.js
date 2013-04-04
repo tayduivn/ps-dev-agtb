@@ -27,19 +27,16 @@ describe("forecasts_view_forecastsCommitLog", function(){
         SugarTest.loadFile("../sidecar/src/utils", "date", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
 
-
         context = app.context.getContext();
-        context.set({"selectedUser": {"id": 'test_user'}});
-        context.set({"timeperiod_id": {"id": 'timeperiod_id'}});
-        context.set({"collection": new Backbone.Collection()});
-
-
-        app.initData = {};
-        app.defaultSelections = {
-            timeperiod_id: {},
-            group_by: {},
-            selectedUser: {}
-        };
+        context.set({
+            selectedUser: {
+                id: 'test_user'
+            },
+            timeperiod_id: {
+                id: 'timeperiod_id'
+            },
+            collection: new Backbone.Collection()
+        });
 
         var layout = {
             getComponent : function(){
@@ -48,6 +45,17 @@ describe("forecasts_view_forecastsCommitLog", function(){
         };
 
         view = SugarTest.createView("base", "Forecasts", "forecastsCommitLog", null, context, true, layout);
+        view.context = app.context.getContext({
+            url:"someurl",
+            module:"Forecasts"
+        });
+    });
+
+    afterEach(function(){
+        delete view.context;
+        delete view.collection;
+        view = null;
+        app = null
     });
 
     describe("test buildForecastsCommitted function", function() {
@@ -98,14 +106,14 @@ describe("forecasts_view_forecastsCommitLog", function(){
 
             beforeEach(function(){
                 userStub = sinon.stub(app.user, "get", function(type){
-                   switch(type) {
-                       case "datepref":
-                           return "m/d/Y";
-                           break;
-                       case "timepref":
-                           return "h:m:s";
-                           break;
-                   }
+                    switch(type) {
+                        case "datepref":
+                            return "m/d/Y";
+                            break;
+                        case "timepref":
+                            return "h:m:s";
+                            break;
+                    }
                 });
             });
 
@@ -126,44 +134,28 @@ describe("forecasts_view_forecastsCommitLog", function(){
             });
         })
     });
-    
+
     describe("Forecasts Commit Log Bindings ", function(){
         beforeEach(function(){
-            sinon.stub(view.collection, "on");
+            sinon.stub(view.context, "on");
             view.bindDataChange();
         });
-        
+
         afterEach(function(){
-            view.collection.on.restore();
+            view.context.on.restore();
         });
-        
+
         //bindDataChange redefines this.collection to be context.committed
-        it("collection.on should have been called with 'reset change'", function(){
-            expect(view.collection.on).toHaveBeenCalledWith("reset change");
-        });               
+        it("context.on should have been called with 'forecasts:committed:collectionUpdated'", function(){
+            expect(view.context.on).toHaveBeenCalledWith("forecasts:committed:collectionUpdated");
+        });
     });
-    
+
     describe("Forecasts Commit Log Reset (resetCommittedLog)", function(){
         beforeEach(function(){
-            view.context = {
-                forecasts:{
-                    on: function(){},
-                    committed:{
-                        on:  function(){}
-                    }
-                }
-            };
-            
             view.buildForecastsCommitted();
         });
-        
-        afterEach(function(){
-            delete view.context;
-            delete view.collection;
-            view.context = {};
-            view.collection = {};
-        });
-        
+
         it("bestCase should equal ''", function(){
             expect(view.bestCase).toEqual("");
         });
@@ -172,18 +164,6 @@ describe("forecasts_view_forecastsCommitLog", function(){
         });
         it("worstCase should equal ''", function(){
             expect(view.worstCase).toEqual("");
-        });
-        it("previousBestCase should equal ''", function(){
-            expect(view.previousBestCase).toEqual("");
-        });
-        it("previousLikelyCase should equal ''", function(){
-            expect(view.previousLikelyCase).toEqual("");
-        });
-        it("previousWorstCase should equal ''", function(){
-            expect(view.previousWorstCase).toEqual("");
-        });
-        it("showHistoryLog should equal ''", function(){
-            expect(view.showHistoryLog).toBeFalsy();
         });
         it("previousDateEntered should equal ''", function(){
             expect(view.previousDateEntered).toEqual("");

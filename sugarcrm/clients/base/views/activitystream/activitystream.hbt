@@ -1,30 +1,35 @@
-{{#with model.attributes}}
-{{#eq activity_type "post"}}
-<a href="#Users/{{created_by}}" class="pull-left avatar avatar42" rel="tooltip" data-html="true" data-title="{{created_by_name}}" data-original-title="">
-    <img src="{{picture_url}}" alt="{{created_by_name}} avatar">
+{{#eq model.attributes.activity_type "post"}}
+<a href="#Users/{{model.attributes.created_by}}" class="pull-left avatar avatar42" rel="tooltip" data-title="{{model.attributes.created_by_name}}">
+    <img src="{{model.attributes.picture_url}}" alt="{{model.attributes.created_by_name}} avatar">
 </a>
 {{else}}
-<div class="label label-module label-{{parent_type}} pull-left" rel="tooltip" data-title="{{parent_type}}" data-original-title="">
-    {{moduleIconLabel parent_type}}
+<div class="label label-module label-{{model.attributes.parent_type}} pull-left" rel="tooltip" data-title="{{model.attributes.parent_type}}">
+    {{moduleIconLabel model.attributes.parent_type}}
 </div>
 {{/eq}}
 <p>
-    <span class="tagged">{{{str ../tpl "Activities" data}}}</span>
-    <br />
+    {{#if tpl}}
+        <div><span class="tagged">{{{str tpl "Activities" model.attributes.data}}}</span></div>
+    {{/if}}
+    {{#if embed}}
+        <div class="embed">
+            {{{embed}}}
+        </div>
+    {{/if}}
     <date class="date">
-        <a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
+        <a href="#Users/{{model.attributes.created_by}}">{{model.attributes.created_by_name}}</a> {{timeago model.attributes.date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
     </date>
 </p>
 <ul class="commented">
-{{#if comment_count}}
-    {{#each comments.models}}
+{{#if model.attributes.comment_count}}
+    {{#each model.attributes.comments.models}}
     {{#with attributes}}
     <li>
         <a href="#Users/{{created_by}}" class="pull-left avatar">
             <img src="{{picture_url}}" alt="{{created_by_name}} avatar">
         </a>
         <p>
-            <span class="tagged">{{str "TPL_COMMENT" "Activities" data}}</span>
+            <span class="tagged">{{{str "TPL_COMMENT" "Activities" data}}}</span>
             <br />
             <date class="date"><a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_modified "LBL_TIME_RELATIVE_ACTIVITIES"}}</date>
         </p>
@@ -34,7 +39,7 @@
     {{#if remaining_comments}}
     <li>
         <a class="more">
-            {{str ../../../more_tpl "Activities" remaining_comments}}
+            {{str more_tpl "Activities" remaining_comments}}
         </a>
     </li>
     {{/if}}
@@ -52,8 +57,7 @@
     <a class="btn btn-mini comment" rel="tooltip" data-title="Comment" data-original-title="">
         <i class="icon-comment"></i>
     </a>
-    <a class="btn btn-mini preview" rel="tooltip" data-title="Preview" data-original-title="" data-module="{{parent_type}}" data-id="{{parent_id}}">
+    <a class="btn btn-mini preview" rel="tooltip" data-title="Preview" data-original-title="" data-module="{{model.attributes.parent_type}}" data-id="{{model.attributes.parent_id}}">
         <i class="icon-eye-open"></i>
     </a>
 </div>
-{{/with}}
