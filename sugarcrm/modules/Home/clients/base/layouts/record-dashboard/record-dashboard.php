@@ -17,39 +17,32 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'My Closed Opportunities',
-            'view' => 'dashablelist',
+            'name' => 'Pipeline',
+            'view' => 'forecast-pipeline',
             'context' => array(
-                'module' => 'Opportunities',
                 'dashlet' => array(
-                    'name' => 'My Closed Opportunities',
-                    'type' => 'dashablelist',
-                    'module' => 'Opportunities',
-                    'display_columns' => array(
-                        'name',
-                        'account_name',
-                        'amount',
-                        'date_closed',
-                        'sales_status',
-                    ),
-                    'my_items' => '1',
+                    'name' => 'Pipeline',
+                    'type' => 'forecast-pipeline',
+                    'display_type' => 'self'
                 ),
             ),
         ),
     )
 );
+
 $layout->push(
     0,
     array(
+
         array(
-            'name' => 'Twitter Dashlet with SugarCRM',
-            'view' => 'twitter',
+            'name' => 'Top 10 Opportunities',
+            'view' => 'bubblechart',
             'context' => array(
                 'dashlet' => array(
-                    'name' => 'Twitter Dashlet with SugarCRM',
-                    'type' => 'twitter',
-                    'twitter' => 'sugarcrm',
-                    'limit' => '5',
+                    'name' => 'Top 10 Opportunities',
+                    'type' => 'bubblechart',
+                    'filter_duration' => 0,
+                    'filter_assigned' => 'my',
                 ),
             ),
         ),
@@ -58,23 +51,16 @@ $layout->push(
 $layout->push(
     1,
     array(
+
         array(
-            'name' => 'My Accounts',
-            'view' => 'dashablelist',
+            'name' => 'Recent Tweets - @SugarCRM',
+            'view' => 'twitter',
             'context' => array(
-                'module' => 'Accounts',
                 'dashlet' => array(
-                    'name' => 'My Accounts',
-                    'type' => 'dashablelist',
-                    'module' => 'Accounts',
-                    'display_columns' => array(
-                        'name',
-                        'phone_office',
-                        'billing_address_country',
-                        'billing_address_city',
-                    ),
-                    'my_items' => '1',
-                    'display_rows' => 15
+                    'name' => 'Recent Tweets - @SugarCRM',
+                    'type' => 'twitter',
+                    'twitter' => 'sugarcrm',
+                    'limit' => '20',
                 ),
             ),
         ),
@@ -105,11 +91,12 @@ $layout->push(
                     'display_columns' => array(
                         'full_name',
                         'title',
-                        'account_name',
                         'phone_work',
+                        'account_name',
                         'email',
                     ),
                     'my_items' => '1',
+                    'display_rows' => 15,
                 ),
             ),
         ),
