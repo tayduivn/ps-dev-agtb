@@ -33,7 +33,7 @@
         app.view.View.prototype._renderHtml.call(this);
     },
     feedback: function() {
-        window.open('https://www.research.net/s/P2565P7', '_blank');
+        window.open('http://www.sugarcrm.com/sugar7survey', '_blank');
     },
     support: function() {
         window.open('http://support.sugarcrm.com', '_blank');
