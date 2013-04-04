@@ -2461,8 +2461,9 @@ class SugarBean
 
 
     /**
-     * Updates relationships based on changed to fields of type 'parent' which
+     * Updates relationships based on changes to fields of type 'parent' which
      * may or may not have links associated with them
+     *
      * @param array $exclude
      */
     protected function update_parent_relationships($exclude = array())
@@ -2487,12 +2488,16 @@ class SugarBean
                     (!empty($this->$typeField) && !empty($this->$idField) &&
                         (empty($this->fetched_row[$typeField]) || empty($this->fetched_row[$idField])
                         || $this->fetched_row[$idField] != $this->$idField)
-                    )
+                    ) ||
+                    // Check if we are deleting the bean, should remove the bean from any relationships
+                    $this->deleted == 1
                 ) {
                     $parentLinks = array();
                     //Correlate links to parent field module types
-                    foreach ($this->field_defs as $ldef) {
-                        if (!empty($ldef['type']) && $ldef['type'] == "link" && !empty($ldef['relationship'])) {
+                    foreach ($this->field_defs as $ldef)
+                    {
+                        if (!empty($ldef['type']) && $ldef['type'] == "link" && !empty($ldef['relationship']))
+                        {
                             $relDef = SugarRelationshipFactory::getInstance()->getRelationshipDef($ldef['relationship']);
                             if (!empty($relDef['relationship_role_column']) && $relDef['relationship_role_column'] == $typeField)
                             {
@@ -2500,20 +2505,31 @@ class SugarBean
                             }
                         }
                     }
+
                     //If we used to have a parent, call remove on that relationship
                     if (!empty($this->fetched_row[$typeField]) && !empty($this->fetched_row[$idField])
                         && !empty($parentLinks[$this->fetched_row[$typeField]])
-                    ) {
+                        && ($this->fetched_row[$idField] != $this->$idField))
+                    {
                         $oldParentLink = $parentLinks[$this->fetched_row[$typeField]]['name'];
                         //Load the relationship
-                        if ($this->load_relationship($oldParentLink)) {
+                        if ($this->load_relationship($oldParentLink))
+                        {
                             $this->$oldParentLink->delete($this->fetched_row[$idField]);
+                            // Should resave the old parent
+                            SugarRelationship::addToResaveList(BeanFactory::getBean($this->fetched_row[$typeField], $this->fetched_row[$idField]));
                         }
                     }
-                    //Now add the new parent
-                    $parentLink = $parentLinks[$this->$typeField]['name'];
-                    if ($this->load_relationship($parentLink)) {
-                        $this->$parentLink->add($this->$idField);
+
+                    // If both parent type and parent id are set, save it unless the bean is being deleted
+                    if (!empty($this->$typeField) && !empty($this->$idField) && $this->deleted != 1)
+                    {
+                        //Now add the new parent
+                        $parentLink = $parentLinks[$this->$typeField]['name'];
+                        if ($this->load_relationship($parentLink))
+                        {
+                            $this->$parentLink->add($this->$idField);
+                        }
                     }
                 }
             }
