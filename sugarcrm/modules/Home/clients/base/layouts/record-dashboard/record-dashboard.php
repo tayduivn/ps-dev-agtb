@@ -16,7 +16,7 @@ $layout = MetaDataManager::getLayout(
 $layout->push(
     0,
     array(
-     array(
+        array(
             'name' => 'Recent Tweets - @SugarCRM',
             'view' => 'twitter',
             'context' => array(
@@ -28,7 +28,7 @@ $layout->push(
                 ),
             ),
         ),
-           )
+    )
 );
 
 $layout->push(
@@ -46,7 +46,8 @@ $layout->push(
                     'display_columns' => array(
                         'full_name',
                         'account_name',
-                        'email',
+                        'phone_work',
+                        'title',
                     ),
                     'my_items' => '1',
                     'display_rows' => 15,
