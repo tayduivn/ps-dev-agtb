@@ -124,7 +124,9 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'product_template_name',
                 array(
                     'name' => 'category_name',
-                    'label' => 'LBL_CATEGORY'
+                    'type' => 'productCategoriesRelate',
+                    'label' => 'LBL_CATEGORY',
+                    'readonly' => true
                 ),
                 'quantity',
                 array(

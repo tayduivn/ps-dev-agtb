@@ -79,7 +79,11 @@ $viewdefs['Products']['base']['view']['list'] = array(
                 ),
                 'date_purchased',
                 'date_support_expires',
-                'category_name',
+                array(
+                    'name' => 'category_name',
+                    'type' => 'productCategoriesRelate',
+                    'readonly' => true
+                ),
                 'contact_name',
                 array(
                     'name' => 'quote_name',
