@@ -699,7 +699,11 @@ $dictionary['Product'] = array(
             'source' => 'non-db',
             'unified_search' => true,
             'full_text_search' => array('boost' => 1),
-            'comment' => 'The opportunity name associated with the opportunity_id'
+            'comment' => 'The opportunity name associated with the opportunity_id',
+            'populate_list' => array(
+                'account_id' => 'account_id',
+                'account_name' => 'account_name'
+            ),
         ),
         'product_type' => array(
             'name' => 'product_type',
