@@ -119,7 +119,9 @@ $viewdefs['Products']['base']['view']['create'] = array(
                 'product_template_name',
                 array(
                     'name' => 'category_name',
-                    'label' => 'LBL_CATEGORY'
+                    'type' => 'productCategoriesRelate',
+                    'label' => 'LBL_CATEGORY',
+                    'readonly' => true
                 ),
                 'quantity',
                 array(
@@ -230,6 +232,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
+                'tax_class',
                 array(
                     'name' => 'cost_price',
                     'readonly' => true,

@@ -2373,7 +2373,7 @@ private function dir_file_count($path){
                 )
             ),
             'alertsEl' => '#alerts',
-            'alertAutoCloseDelay' => 9000,
+            'alertAutoCloseDelay' => 2500,
             'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
             'siteUrl' => $sugar_config['site_url'],
             'unsecureRoutes' => array('signup', 'error'),
@@ -2412,7 +2412,7 @@ private function dir_file_count($path){
                 ),
             ),
             'alertsEl' => '#alerts',
-            'alertAutoCloseDelay' => 9000,
+            'alertAutoCloseDelay' => 2500,
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
             'siteUrl' => $sugar_config['site_url'],
             'maxQueryResult' => $sugar_config['list_max_entries_per_page'],

@@ -4,12 +4,12 @@
         'click #feedback': 'feedback',
         'click #support': 'support'
     },
-    tagName: "span",
+    tagName: 'span',
     handleViewChange: function() {
         if (app.tutorial.hasTutorial()) {
             this.enableTourButton();
         } else {
-            this.disableTourButton()
+            this.disableTourButton();
         }
     },
     enableTourButton: function() {
@@ -26,17 +26,17 @@
     },
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        app.events.on("app:view:change", this.handleViewChange, this);
+        app.events.on('app:view:change', this.handleViewChange, this);
     },
     _renderHtml: function(){
         this.isAuthenticated = app.api.isAuthenticated();
         app.view.View.prototype._renderHtml.call(this);
     },
     feedback: function() {
-        window.open("http://www.surveymonkey.com/s/FNCXF3S","_blank");
+        window.open('https://www.research.net/s/P2565P7', '_blank');
     },
     support: function() {
-        window.open("http://support.sugarcrm.com", '_blank');;
+        window.open('http://support.sugarcrm.com', '_blank');
     },
     showTutorial: function() {
         app.tutorial.resetPrefs();

@@ -32,6 +32,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['base']['view']['tutorial'] = array(
     'records' => array(
         'version' =>1,
+        'intro' =>'LBL_TOUR_LIST_INTRO',
         'content' => array(
             array(
                 'name' => '.drawerTrig',
@@ -75,6 +76,7 @@ $viewdefs['base']['view']['tutorial'] = array(
     ),
     'record' => array(
         'version' =>1,
+        'intro' =>'LBL_TOUR_RECORD_INTRO',
         'content' => array(
             array(
                 'name' => '[data-fieldname="first_name"]',

@@ -31,10 +31,10 @@
 
         this.$(".label").on("mouseover", function() {
             oldText = $(this).text();
-            $(this).text(mouseoverText).attr("class", "label " + mouseoverClass);
+            $(this).text(mouseoverText).attr("class", "label").addClass(mouseoverClass);
         }).on("mouseout", function() {
             var kls = self.model.get("following") ? "label-success" : "";
-            $(this).text(oldText).attr("class", "label " + kls);
+            $(this).text(oldText).attr("class", "label").addClass(kls);
         });
     },
 

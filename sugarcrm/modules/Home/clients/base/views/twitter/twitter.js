@@ -1,5 +1,19 @@
 ({
     plugins: ['Dashlet', 'timeago'],
+    events: {
+        'mouseover .news-article': 'onTweetOver',
+        'mouseout .news-article': 'onTweetOut',
+    },
+    onTweetOver: function(event) {
+        if ( !_.isUndefined(event.currentTarget) ) {
+            this.$(event.currentTarget).find('.footer').show();
+        }
+    },
+    onTweetOut: function(event) {
+        if ( !_.isUndefined(event.currentTarget) ) {
+            this.$(event.currentTarget).find('.footer').hide();
+        }
+    },
     initialize: function (options) {
         app.view.View.prototype.initialize.call(this, options);
         if (this.model.parentModel && this.model.get("requiredModel")) {

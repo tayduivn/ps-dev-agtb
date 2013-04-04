@@ -3451,6 +3451,9 @@ $app_strings = array (
     'UPLOAD_REQUEST_ERROR'    => 'An error has occured. Please refresh your page and try again.',
 
 
+    // Preview pane
+    'LBL_PREVIEW_BWC_ERROR' => 'Cannot preview a record operating in backwards compatibility mode.',
+
     //508 used Access Keys
     'LBL_EDIT_BUTTON_KEY' => 'i',
     'LBL_EDIT_BUTTON_LABEL' => 'Edit',
@@ -3509,6 +3512,10 @@ $app_strings = array (
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
     'LBL_SUCCESS' => 'Success',
+
+    'LBL_TWITTER_TIME_AGO_SECONDS' => 's',
+    'LBL_TWITTER_TIME_AGO_MINUTES' => 'm',
+    'LBL_TWITTER_TIME_AGO_HOURS' => 'h',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
@@ -3589,7 +3596,17 @@ $app_strings = array (
     'LBL_TOUR_RECORD_DASHBOARDACTIONS' => 'Create new groups of Dashlets',
     'LBL_TOUR_RECORD_DASHBOARDNAME' => 'Assign a name to the group of Dashlets',
     'LBL_TOUR_RECORD_DASHLETCOG' => 'Choose to remove Dashlet or to change settings',
-    'LBL_TOUR_INTRO' =>'Welcome to Sugar 7 Preview. Configure dashboards with dashlets of your choice. Take a tour on each page to get quick orientation',
+    'LBL_TOUR_INTRO' =>'Welcome to Sugar 7 preview. Use arrows below for a quick tour.',
+    'LBL_TOUR_LIST_INTRO' =>'View a list of records and take actions records.',
+    'LBL_TOUR_RECORD_INTRO' =>'View details on this record and see all data related to it.',
+    'LBL_TOUR_FORECAST_INTRO' =>'Manage pipeline and forecast.',
+    'LBL_TOUR_FORECASTS_TIMEPERIODS' =>'Choose a time period to see the corresponding forecast',
+    'LBL_TOUR_FORECASTS_COMMITS' =>'Click to see previous commits',
+    'LBL_TOUR_FORECASTS_INLINEEDIT' =>'Click to edit data inline',
+    'LBL_TOUR_FORECASTS_PROGRESS' =>'Review distance to quota',
+    'LBL_TOUR_FORECASTS_CHART' =>'Review forecast distribution',
+
+
 
     'LBL_REQUIRED_FIELD' => 'Required',
     // for nomad mobile
@@ -3875,18 +3892,24 @@ $app_strings = array (
     'LBL_ALERT_BROWSER_NOT_SUPPORTED' => 'Your browser version is no longer supported or you are using an unsupported browser.',
     'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 10</li><li>Firefox 18</li><li>Safari 6</li><li>Chrome 24</li></ul>',
 
+    //opportunity chart
+    'LBL_NO_OPPORTUNITY_DATA' => 'No data found.',
+
     //interaction chart
-    'LBL_CHART_NO_DATA' => 'No Data Available.',
+    'LBL_CHART_NO_DATA' => 'No data found.',
 
     //organization chart
     'LBL_ORG_CHART' => 'Organization Chart',
     'LBL_ORG_CHART_DESC' => 'Displays the employee structure of your organization.',
 
     //top 10 opportunities chart
-    'LBL_TOP10_OPPORTUNITIES_CHART' => 'Top 10 Opportunities Chart',
+    'LBL_TOP10_OPPORTUNITIES_CHART' => 'Top 10 sales opportunities',
     'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten opportunities in a bubble chart.',
     'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
     'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
+
+    //News feed
+    'LBL_NEWS_FEED_NO_DATA' => 'No data found.',
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',

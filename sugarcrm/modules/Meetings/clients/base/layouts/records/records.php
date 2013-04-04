@@ -1,7 +1,8 @@
 <?php
 
 $viewdefs['Meetings']['base']['layout']['records'] = array(
-    'type' => 'simple',
+    'name' => 'bwc',
+    'type' => 'bwc',
     'components' => array(
         array(
             'view' => 'bwc',

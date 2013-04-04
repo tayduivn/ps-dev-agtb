@@ -90,6 +90,7 @@
                 label: total
             }
         };
+        this.total = total;
     },
 
     loadData: function (options) {
