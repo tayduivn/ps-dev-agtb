@@ -115,12 +115,12 @@
         var self = this;
 
         // If there are drawers there could be multiple previews, make sure we are only rendering preview for active drawer
-        if(app.drawer && !app.drawer.isActive(self.$el)){
+        if(app.drawer && !app.drawer.isActive(this.$el)){
             return;  //This preview isn't on the active layout
         }
 
         // Close preview if we are already displaying this model
-        if(self.model && model && (self.model.get("id") == model.get("id") && previewId == this.previewId)) {
+        if(this.model && model && (this.model.get("id") == model.get("id") && previewId == this.previewId)) {
             // Remove the decoration of the highlighted row
             app.events.trigger("list:preview:decorate", false);
             // Close the preview panel
@@ -128,17 +128,24 @@
             return;
         }
 
-        if(fetch){
+        if (model) {
+            // Get the corresponding detail view meta for said module.
+            // this.meta needs to be set before this.getFieldNames is executed.
+            this.meta = app.metadata.getView(model.module, 'record') || {};
+            this.meta = this._previewifyMetadata(this.meta);
+        }
+
+        if (fetch) {
             model.fetch({
                 //Show alerts for this request
                 showAlerts: true,
                 success: function(model) {
                     self.renderPreview(model, collection);
                 },
-                fields : this.getFieldNames()
+                fields: this.getFieldNames(model.module)
             });
         } else {
-            self.renderPreview(model, collection);
+            this.renderPreview(model, collection);
         }
 
         this.previewId = previewId;
@@ -157,9 +164,6 @@
         if (model) {
             this.model = app.data.createBean(model.module, model.toJSON());
 
-            // Get the corresponding detail view meta for said module
-            this.meta = app.metadata.getView(this.model.module, 'record') || {};
-            this.meta = this._previewifyMetadata(this.meta);
             app.view.View.prototype._render.call(this);
             // Open the preview panel
             app.events.trigger("preview:open",this);

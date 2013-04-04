@@ -1,9 +1,9 @@
 <?php
 
-$viewdefs['base']['view']['opportunity-pipeline'] = array(
+$viewdefs['base']['view']['forecast-pipeline'] = array(
     'dashlets' => array(
         array(
-            'name' => 'Opportunity Pipeline Chart',
+            'name' => 'Forecast Pipeline Chart',
             'description' => 'Displays current pipeline chart.',
             'config' => array(
             ),
