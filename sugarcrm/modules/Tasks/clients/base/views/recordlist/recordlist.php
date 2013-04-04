@@ -46,7 +46,6 @@ $viewdefs['Tasks']['base']['view']['recordlist']['rowactions']['actions'] = arra
     array(
         'type' => 'closebutton',
         'name' => 'record-close',
-        'icon' => 'icon-none',
         'label' => 'LBL_CLOSE_BUTTON_TITLE',
         'acl_action' => 'edit',
     ),
