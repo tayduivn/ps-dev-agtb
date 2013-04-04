@@ -3893,7 +3893,7 @@ $app_strings = array (
     'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 10</li><li>Firefox 18</li><li>Safari 6</li><li>Chrome 24</li></ul>',
 
     //interaction chart
-    'LBL_CHART_NO_DATA' => 'No Data Available.',
+    'LBL_CHART_NO_DATA' => 'No data found.',
 
     //organization chart
     'LBL_ORG_CHART' => 'Organization Chart',
@@ -3904,6 +3904,9 @@ $app_strings = array (
     'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten opportunities in a bubble chart.',
     'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
     'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
+
+    //News feed
+    'LBL_NEWS_FEED_NO_DATA' => 'No data found.',
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
