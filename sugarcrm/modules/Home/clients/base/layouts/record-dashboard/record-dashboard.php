@@ -16,43 +16,7 @@ $layout = MetaDataManager::getLayout(
 $layout->push(
     0,
     array(
-        array(
-            'name' => 'Pipeline',
-            'view' => 'forecast-pipeline',
-            'context' => array(
-                'dashlet' => array(
-                    'name' => 'Pipeline',
-                    'type' => 'forecast-pipeline',
-                    'display_type' => 'self'
-                ),
-            ),
-        ),
-    )
-);
-
-$layout->push(
-    0,
-    array(
-
-        array(
-            'name' => 'Top 10 Opportunities',
-            'view' => 'bubblechart',
-            'context' => array(
-                'dashlet' => array(
-                    'name' => 'Top 10 Opportunities',
-                    'type' => 'bubblechart',
-                    'filter_duration' => 0,
-                    'filter_assigned' => 'my',
-                ),
-            ),
-        ),
-    )
-);
-$layout->push(
-    1,
-    array(
-
-        array(
+     array(
             'name' => 'Recent Tweets - @SugarCRM',
             'view' => 'twitter',
             'context' => array(
@@ -64,6 +28,50 @@ $layout->push(
                 ),
             ),
         ),
+           )
+);
+
+$layout->push(
+    0,
+    array(	
+    	 array(
+            'name' => 'My Contacts',
+            'view' => 'dashablelist',
+            'context' => array(
+                'module' => 'Contacts',
+                'dashlet' => array(
+                    'name' => 'My Contacts',
+                    'type' => 'dashablelist',
+                    'module' => 'Contacts',
+                    'display_columns' => array(
+                        'full_name',
+                        'account_name',
+                        'email',
+                    ),
+                    'my_items' => '1',
+                    'display_rows' => 15,
+                ),
+            ),
+        ),
+        
+    )
+);
+$layout->push(
+    1,
+    array(
+		 array(
+            'name' => 'Pipeline',
+            'view' => 'forecast-pipeline',
+            'context' => array(
+                'dashlet' => array(
+                    'name' => 'Pipeline',
+                    'type' => 'forecast-pipeline',
+                    'display_type' => 'self'
+                ),
+            ),
+        ),
+
+       
         array(
             'name' => 'Sales By Country',
             'view' => 'countrychart',
@@ -79,24 +87,15 @@ $layout->push(
 $layout->push(
     1,
     array(
-        array(
-            'name' => 'My Contacts',
-            'view' => 'dashablelist',
+       array(
+            'name' => 'Top 10 Opportunities',
+            'view' => 'bubblechart',
             'context' => array(
-                'module' => 'Contacts',
                 'dashlet' => array(
-                    'name' => 'My Contacts',
-                    'type' => 'dashablelist',
-                    'module' => 'Contacts',
-                    'display_columns' => array(
-                        'full_name',
-                        'title',
-                        'phone_work',
-                        'account_name',
-                        'email',
-                    ),
-                    'my_items' => '1',
-                    'display_rows' => 15,
+                    'name' => 'Top 10 Opportunities',
+                    'type' => 'bubblechart',
+                    'filter_duration' => 0,
+                    'filter_assigned' => 'my',
                 ),
             ),
         ),
