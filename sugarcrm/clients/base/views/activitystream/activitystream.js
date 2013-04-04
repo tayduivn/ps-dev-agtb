@@ -99,9 +99,7 @@
             // more noticeable in the activity stream.
             if (this.context.parent.get('module') === this.model.get('parent_type')) {
                 this.model.set('parent_type', data.subject.module);
-                if (this.context.parent.get('modelId') === this.model.get('parent_id')) {
-                    this.model.set('parent_id', data.subject.id);
-                }
+                this.model.set('parent_id', data.subject.id);
             }
             break;
         }
