@@ -218,6 +218,7 @@
                 collection = this.context.get("collection");
 
             model.set("id", id);
+            app.events.trigger("preview:module:update", this.context.get("module"));
             app.events.trigger("preview:render", model, collection, true, this.cid);
         }
 
