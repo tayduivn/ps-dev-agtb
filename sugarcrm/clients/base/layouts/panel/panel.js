@@ -17,6 +17,9 @@
 
     _placeComponent: function(component) {
         this.$(".subpanel").append(component.el);
+        if (component.name != "panel-top") {
+            component.hide();
+        }
     },
 
     toggleChevron: function(e) {
