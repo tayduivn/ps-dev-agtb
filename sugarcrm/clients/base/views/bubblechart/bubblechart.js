@@ -32,7 +32,7 @@
                 'id',
                 'name',
                 'account_name',
-                'amount',
+                'likely_case',
                 'base_rate',
                 'currency_id',
                 'assigned_user_name',
@@ -46,7 +46,7 @@
         this.params = {
             'fields': fields.join(','),
             'max_num': 10,
-            'order_by': 'amount:desc'
+            'order_by': 'likely_case:desc'
         };
 
         this.tooltiptemplate = app.template.getView(this.name + '.tooltiptemplate');
@@ -71,7 +71,7 @@
             .tooltips(true)
             .showLegend(true)
             .bubbleClick(function (e) {
-                app.router.navigate(app.router.buildRoute('Opportunities', e.point.id), {trigger: true});
+                app.router.navigate(app.router.buildRoute('Products', e.point.id), {trigger: true});
             })
             .colorData('class', 2)
             .colorFill('default')
@@ -135,14 +135,14 @@
                 return {
                     id: d.id,
                     x: d.date_closed,
-                    y: Math.round(parseInt(d.amount, 10) / parseFloat(d.base_rate)),
+                    y: Math.round(parseInt(d.likely_case, 10) / parseFloat(d.base_rate)),
                     shape: 'circle',
                     account_name: d.account_name,
                     assigned_user_name: d.assigned_user_name,
                     sales_stage: d.sales_stage,
                     sales_stage_short: salesStageMap[d.sales_stage] || d.sales_stage,
                     probability: parseInt(d.probability, 10),
-                    base_amount: parseInt(d.amount, 10),
+                    base_amount: parseInt(d.likely_case, 10),
                     currency_symbol: app.currency.getCurrencySymbol(d.currency_id)
                 };
             }),
@@ -161,8 +161,12 @@
             _filter = [
                 {
                     'date_closed': {
-                        '$gt': self.dateRange.begin,
-                        '$lt': self.dateRange.end
+                        '$gt': self.dateRange.begin
+                    }
+                },
+                {
+                    'date_closed': {
+                        '$lte': self.dateRange.end
                     }
                 }
             ];
@@ -173,7 +177,7 @@
 
         var _local = _.extend({'filter': _filter}, this.params);
 
-        var url = app.api.buildURL('Opportunities', null, null, _local, this.params);
+        var url = app.api.buildURL('Products', null, null, _local, this.params);
 
         app.api.call('read', url, null, {
             success: function (data) {
@@ -194,8 +198,8 @@
             startDate = new Date(now.getFullYear(), (duration === 12 ? 0 : startMonth + duration), 1),
             endDate = new Date(now.getFullYear(), (duration === 12 ? 12 : startDate.getMonth() + 3), 0);
         this.dateRange = {
-            'begin': startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate(),
-            'end': endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate()
+            'begin': app.date.format(startDate, 'Y-m-d'),
+            'end': app.date.format(endDate, 'Y-m-d')
         };
     },
 
