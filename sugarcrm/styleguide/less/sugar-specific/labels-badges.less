@@ -2,16 +2,9 @@
 .badge {
   font-weight: 600;
   text-shadow: none;
-  color: darken(@white, 5%);
+  color: @white;
   display:inline-block;
-}
-.label,
-.label a,
-.badge,
-.badge a {
-  font-weight: 600;
-  text-shadow: none;
-  color: darken(@white, 5%);
+  cursor: default;
 }
 .label {
   padding: 1px 4px 2px;
@@ -21,7 +14,14 @@
   padding: 1px 9px 2px;
   .border-radius(10px);
 }
-.label:hover, .badge:hover {
+a.label,
+a.badge,
+a > .label,
+a > .badge,
+.label a,
+.badge a {
+  font-weight: 600;
+  text-shadow: none;
   color: @white;
   text-decoration: none;
   cursor: pointer;
