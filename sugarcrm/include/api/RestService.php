@@ -241,6 +241,8 @@ class RestService extends ServiceBase {
         } catch ( Exception $e ) {
             $this->handleException($e);
         }
+        // last chance for hooks to mess with the response
+        $GLOBALS['logic_hook']->call_custom_logic('', "before_respond", $this->response);
         $this->response->send();
     }
 
@@ -316,6 +318,7 @@ class RestService extends ServiceBase {
      */
     protected function handleException(Exception $exception)
     {
+        $GLOBALS['logic_hook']->call_custom_logic('', "handle_exception", $exception);
         if ( is_a($exception,"SugarApiException") ) {
             $httpError = $exception->getHttpCode();
             $errorLabel = $exception->getErrorLabel();
