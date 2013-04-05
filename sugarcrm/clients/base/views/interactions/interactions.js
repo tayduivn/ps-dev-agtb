@@ -1,5 +1,15 @@
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'timeago'],
+    statusMapping:{
+        'New' : 'important',
+        'Assigned' : 'warning',
+        'Pending Input' : 'pending',
+        'Pending' : 'pending',
+        'Held' : 'success',
+        'Planned' : 'warning',
+        'Not Held' : 'important'
+    },
+
     events: {
         'click ul.nav-tabs > li > a' : 'contentSwitcher',
         'click button.interactions-list' : 'listSwitcher',
@@ -55,8 +65,22 @@
                     return;
                 }
                 _.each(data, function(el, name) {
+                    self.collections[name].loaded = true;
                     self.collections[name].count = el.count;
+                    self.collections[name].module = el.module;
                     self.collections[name].update(el.data);
+                    _.each(self.collections[name].models, function(model){
+                        var picture = app.api.buildFileURL({
+                            module: "Users",
+                            id: model.get("assigned_user_id"),
+                            field: "picture"
+                });
+                        model.set("picture_url", picture);
+                        model.set("labelType", "label-" + self.statusMapping[model.get("status")]);
+                        if (model.get("status") == "Not Held"){
+                            model.set("status", "Missed");
+                        }
+                    });
                 });
                 self.collection = self.collections[self.params.view];
                 self.render();

@@ -76,8 +76,9 @@
      */
     manageSubscriptionsClicked: function() {
         var params = [
+            {'name': 'sidecar_return', value: app.router.buildRoute(this.module, this.model.id)},
             {'name': 'return_module', value: this.module},
-            {'name': 'return_id', value: this.model.id},
+            {'name': 'record', value: this.model.id},
             {'name': 'action', value: 'Subscriptions'},
             {'name': 'module', value: 'Campaigns'}
         ];

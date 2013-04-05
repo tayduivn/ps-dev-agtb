@@ -233,20 +233,7 @@
         if(isCommitLog && this.selectedUser) {
             args_filter.push({"user_id": userId});
             beanName = 'Forecasts';
-            var forecastType = 'Direct';
-            /**
-             * Three cases exist when a row is showing historyLog icon:
-             *
-             * Manager  - showOpps=1 - isManager=1 => Manager's Opportunities row - forecast_type = 'Direct'
-             * Manager  - showOpps=0 - isManager=1 => Manager has another manager in their ManagerWorksheet - forecast_type = 'Rollup'
-             * Rep      - showOpps=0 - isManager=0 => Sales Rep (not a manager) row - forecast_type = 'Direct'
-             *
-             */
-            if(!showOpps && isManager) {
-                forecastType = 'Rollup';
-            }
-
-            args_filter.push({"forecast_type": forecastType});
+            args_filter.push({"forecast_type": app.utils.getForecastType(isManager, showOpps)});
         } else if(this.selectedUser) {
             args_filter.push({"assigned_user_id": this.selectedUser.id});
         }

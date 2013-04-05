@@ -270,7 +270,25 @@ describe("forecasts_layout_inspector", function() {
             expect(hideSpy).toHaveBeenCalled();
 
             hideSpy.restore();
-        })
+        });
 
-    })
+    });
+
+    describe("checkSidebarVisibility", function() {
+        beforeEach(function(){
+            layout = app.view.createLayout({
+                name : "ForecastsInspector",
+                context : context,
+                module : null,
+                meta : {},
+                layout: parent
+            });
+        });
+
+        it("should set toggleSidebar to false if it entered the function true", function() {
+            layout.toggleSidebar = true;
+            layout.checkSidebarVisibility();
+            expect(layout.toggleSidebar).toBeFalsy();
+        });
+    });
 });

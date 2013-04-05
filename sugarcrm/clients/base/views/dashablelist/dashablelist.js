@@ -1,10 +1,12 @@
 ({
     extendsFrom: 'ListView',
     plugins: ['Dashlet'],
+    _dataFetched: false, // flag to determine if we tried to get records already
     initDashlet: function (view) {
-        var dashlet = JSON.parse(JSON.stringify(this.context.get("dashlet")));
+        var dashlet = JSON.parse(JSON.stringify(this.context.get("dashlet"))),
+            filterDef = [];
 
-        this.model.set("auto_refresh", dashlet['auto_refresh'] || 0);
+        this.model.set("auto_refresh", dashlet.auto_refresh || 0);
 
         if (view === 'config') {
 
@@ -30,8 +32,23 @@
         } else {
             this.context.set("limit", dashlet.display_rows || 5);
             var collection = this.context.get("collection");
-            collection.myItems = (dashlet.my_items === "1") ? true : false;
-            collection.favorites = (dashlet.favorites === "1") ? true : false;
+
+            // set up filters for conditions
+            if (dashlet.my_items === "1") {
+                filterDef.push({'$owner': ''});
+            }
+
+            if (dashlet.favorites === "1") {
+                filterDef.push({'$favorite': ''});
+            }
+
+            // and collapse them with an $and clause if necessary
+            collection.filterDef = (_.size(filterDef) > 1) ? {'$and': filterDef} : filterDef;
+
+            // and bind a flag to the context so we know we have tried to get data
+            collection.once("reset", function () {
+                this._dataFetched = true;
+            }, this);
 
             if (dashlet.auto_refresh && dashlet.auto_refresh > 0) {
                 if (this.timerId) {
@@ -54,6 +71,9 @@
                 }, field || {});
             }, this);
             this.meta.panels[0].fields = dashlet.display_columns;
+
+            // add css class based on module
+            this.$el.addClass(dashlet.module.toLocaleLowerCase());
         }
     },
     _dispose: function () {

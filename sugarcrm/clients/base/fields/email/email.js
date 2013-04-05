@@ -99,7 +99,7 @@
      * Manipulations of the emails object
      */
     _addNewAddress: function(email) {
-        var dupeAddress = false;
+        var dupeAddress;
         var existingAddresses = _.clone(this.model.get(this.name)) || [];
         var oldAddresses = this.model.get(this.name) || [];
         dupeAddress = _.find(oldAddresses, function(address){
@@ -263,7 +263,7 @@
     },
 
     /**
-     * Format and unformat
+     * To API representation
      * @param {String|Array} value single email address or set of email addresses
      */
     format: function(value) {
@@ -274,7 +274,7 @@
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
                 email.hasAnchor = this.def.link && email.opt_out != "1" && email.invalid_email != "1";
             }, this);
-        } else if (_.isString(value) || this.view.action === 'list') {
+        } else if ((_.isString(value) && value !== "") || this.view.action === 'list') {
             // expected an array with a single address but got a string or an empty array
             value = [{
                 email_address:value,
@@ -311,7 +311,7 @@
         return value;
     },
     /**
-     * Unformat
+     * To display representation
      * @param {String|Array} value single email address or set of email addresses
      */
     unformat: function(value) {
@@ -319,6 +319,9 @@
         if(this.view.action === 'list') {
             var emails = this.model.get(this.name),
                 changed = false;
+            if(!_.isArray(emails)){ // emails is empty, initialize array
+                emails = [];
+            }
             _.each(emails, function(email, index) {
                 if(email.primary_address === '1') {
                     if(email.email_address !== value) {

@@ -13,5 +13,20 @@ $viewdefs['Documents']['base']['filter']['default'] = array(
             ),
             'editable' => false
         ),
-    )
+    ),
+    'fields' => array(
+        'document_name' => array(),
+        'category_id' => array(),
+        'subcategory_id' => array(),
+        'active_date' => array(),
+        'exp_date' => array(),
+        'date_entered' => array(),
+        'date_modified' => array(),
+        'assigned_user_id'=> array(),
+        '$favorite' => array(
+            'options' => 'filter_predefined_dom',
+            'type' => 'bool',
+            'vname' => 'LBL_FAVORITES_FILTER',
+        ),
+    ),
 );

@@ -355,7 +355,11 @@
                                     messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
                                 });
                             }
-                            this.context.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
+                            //we've already saved, so we just want to fetch to refresh instead of safeFetch
+                            this.collection.fetch();
+                            this.context.once("forecasts:worksheet:rendered", function(){
+                                this.context.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
+                            }, this);                            
                         }
                     }, this), silent: true, alerts: { 'success': false }});
                 }, this);
@@ -465,14 +469,7 @@
 
             this.context.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
                 this.saveWorksheet(isDraft);
-            }, this);
-            
-            this.context.on("forecasts:worksheet:saved", function(totalToSave, type, isDraft){
-                if (isDraft) {
-                    //normal fetch instead of safefetch.  We've already saved, we just want to reload the worksheet.
-                    this.collection.fetch();
-                }
-            }, this);
+            }, this); 
 
             this.context.on('forecasts:tabKeyPressed', function(isShift, field) {
                 this.editableFieldNavigate(isShift, field);

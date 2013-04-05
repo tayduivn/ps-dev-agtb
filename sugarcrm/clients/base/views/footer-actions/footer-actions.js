@@ -1,14 +1,15 @@
 ({
     events: {
         'click #tour': 'showTutorial',
-        'click #print': 'print'
+        'click #feedback': 'feedback',
+        'click #support': 'support'
     },
-    tagName: "span",
+    tagName: 'span',
     handleViewChange: function() {
         if (app.tutorial.hasTutorial()) {
             this.enableTourButton();
         } else {
-            this.disableTourButton()
+            this.disableTourButton();
         }
     },
     enableTourButton: function() {
@@ -25,14 +26,17 @@
     },
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        app.events.on("app:view:change", this.handleViewChange, this);
+        app.events.on('app:view:change', this.handleViewChange, this);
     },
     _renderHtml: function(){
         this.isAuthenticated = app.api.isAuthenticated();
         app.view.View.prototype._renderHtml.call(this);
     },
-    print: function() {
-        window.print();
+    feedback: function() {
+        window.open('http://www.sugarcrm.com/sugar7survey', '_blank');
+    },
+    support: function() {
+        window.open('http://support.sugarcrm.com', '_blank');
     },
     showTutorial: function() {
         app.tutorial.resetPrefs();

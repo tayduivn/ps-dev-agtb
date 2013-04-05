@@ -179,6 +179,37 @@
         },
 
         /**
+         * Returns the CSS classes for an up or down arrow icon
+         *
+         * @param newValue the new value
+         * @param oldValue the previous value
+         * @return {String} css classes for up or down arrow icons, if the values didn't change, returns ''
+         */
+        getArrowIconColorClass: function(newValue, oldValue) {
+            var cls = (newValue > oldValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+            return (newValue == oldValue) ? '' : cls;
+        },
+
+        /**
+         * Centralizes our forecast type switch.
+         *
+         * @param isManager
+         * @param showOpps
+         * @return {String} 'Direct' or 'Rollup'
+         */
+        getForecastType: function(isManager, showOpps) {
+            /**
+             * Three cases exist when a row is showing historyLog icon:
+             *
+             * Manager  - showOpps=1 - isManager=1 => Manager's Opportunities row - forecast_type = 'Direct'
+             * Manager  - showOpps=0 - isManager=1 => Manager has another manager in their ManagerWorksheet - forecast_type = 'Rollup'
+             * Rep      - showOpps=0 - isManager=0 => Sales Rep (not a manager) row - forecast_type = 'Direct'
+             *
+             */
+            return (!showOpps && isManager) ? 'Rollup' : 'Direct';
+        },
+
+        /**
          * builds the args to look up for the history label based on what has changed in the model
          * @param best {Object}
          * @param likely {Object}

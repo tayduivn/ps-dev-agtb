@@ -1,7 +1,8 @@
 {{#if isAuthenticated}}
     <div class="btn-group">
         <a id="tour" title="{{str "LBL_TOUR"}}" class="btn btn-invisible"><i class="icon-road"></i> {{str "LNK_TOUR"}}</a>
-        <a id="print" class="btn btn-invisible"><i class="icon-print"></i> {{str "LBL_PRINT"}}</a>
+        <a id="feedback" class="btn btn-invisible"><i class="icon-comment"></i> {{str "LBL_FEEDBACK"}}</a>
+        <a id="support" class="btn btn-invisible"><i class="icon-question-sign"></i> {{str "LBL_SUPPORT"}}</a>
     </div>
 {{/if}}
 

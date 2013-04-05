@@ -14,12 +14,11 @@
     },
 
     hidePanel: function(e) {
-        var target = this.$(e.currentTarget),
-            data = target.data();
+        var currentlyVisible = this.layout.$(".subpanel").hasClass("out");
 
-        this.layout.trigger("hide", data.visible);
-        target.data("visible", !data.visible);
+        this.layout.trigger("hide", !currentlyVisible);
     },
+
     openSelectDrawer: function() {
         var parentModel = this.context.parent.get("model"),
             linkModule = this.context.get("module"),
@@ -56,6 +55,7 @@
             relatedModel.save(null, options);
         });
     },
+
     openCreateDrawer: function() {
         var parentModel = this.context.parent.get("model"),
             link = this.context.get("link"),
@@ -89,7 +89,7 @@
 
     bindDataChange: function() {
         if (this.collection) {
-            this.collection.on('reset', this.render, this);
+            this.listenTo(this.collection, 'reset', this.render);
         }
     }
 })

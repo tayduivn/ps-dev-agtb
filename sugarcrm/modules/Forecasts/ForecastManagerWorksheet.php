@@ -377,8 +377,11 @@ class ForecastManagerWorksheet extends SugarBean
             ->equals('timeperiod_id', $this->timeperiod_id);
         $beans = $sq->execute();
 
-        if (empty($beans)) {
+        if (empty($beans) && empty($this->date_modified)) {
             $this->show_history_log = 0;
+        } else if(empty($beans) && !empty($this->date_modified)) {
+            // When reportee has committed but manager has not
+            $this->show_history_log = 1;
         } else {
             $bean = $beans[0];
             $committed_date = $this->db->fromConvert($bean["date_modified"], "datetime");
@@ -406,16 +409,21 @@ class ForecastManagerWorksheet extends SugarBean
                     $field = substr($row['field_name'], 0, strpos($row['field_name'], '_'));
                     if ($settings['show_worksheet_' . $field] == "1") {
                         // calculate the difference to make sure it actually changed at 2 digits vs changed at 6 digits
-                        $diff = SugarMath::init($row['after_value_string'], 2)->sub(
+                        $diff = SugarMath::init($row['after_value_string'], 6)->sub(
                             $row['before_value_string']
                         )->result();
-                        if ($diff != '0.00') {
+                        // due to decimal rounding on the front end, we only want to know about differences greater
+                        // of two decimal places.
+                        // todo-sfa: This hardcoded 0.01 value needs to be changed to a value determined by userprefs
+                        if (abs($diff) >= 0.01) {
                             $this->show_history_log = 1;
                             break;
                         }
                     }
                 }
             }
+        }
+        if(!empty($this->user_id)) {
             $this->isManager = User::isManager($this->user_id);
         }
     }
@@ -595,7 +603,7 @@ class ForecastManagerWorksheet extends SugarBean
         $reporteeTotal = $this->getQuotaSum($userId, $timeperiodId);
         $managerQuota = $this->getManagerQuota($userId, $timeperiodId);
         $managerAmount = (isset($managerQuota['amount'])) ? $managerQuota['amount'] : '0';
-        $newTotal = SugarMath::init($managerAmount)->sub($reporteeTotal)->result();
+        $newTotal = SugarMath::init($managerAmount, 6)->sub($reporteeTotal)->result();
         if ($newTotal < 0) {
             $newTotal = '0';
         }

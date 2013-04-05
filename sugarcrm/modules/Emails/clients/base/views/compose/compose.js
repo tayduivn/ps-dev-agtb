@@ -40,6 +40,10 @@
 
             if (!_.isEmpty(recipientModel)) {
                 this.populateToRecipients(recipientModel);
+                this.model.set("related", {
+                    type: recipientModel.module,
+                    id: recipientModel.get("id")
+                });
             }
 
             if (this.model.isNew()) {
@@ -637,5 +641,15 @@
             autoClose: false
         });
         app.error.handleHttpError(error);
+    },
+
+    /**
+     * Set the title of the Email compose with the proper HTML
+     * TODO: After SugarCon, check to see if we should be changing the record view setTitle
+     *
+     * @param title
+     */
+    setTitle: function(title) {
+        this.$('.headerpane').prepend('<h1><span class="module-title">' + title + '</span></h1>');
     }
 })

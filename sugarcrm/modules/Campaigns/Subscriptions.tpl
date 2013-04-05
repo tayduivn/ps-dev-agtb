@@ -48,6 +48,7 @@
     <input type="hidden" name="orig_disabled_values" id="orig_disabled_values" value="{$disabled_subs_string}">
     <input type="hidden" name="orig_enabled_values" id="orig_enabled_values" value="{$enabled_subs_string}">
     <input type="hidden" name="record" value="{$RECORD}">
+    <input type="hidden" name="sidecar_return" value="{$SIDECAR_RETURN}">
     <input type="hidden" name="subs_action" value="process">
 
     {sugar_action_menu buttons=$BUTTONS}

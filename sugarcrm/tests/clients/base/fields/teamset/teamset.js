@@ -87,8 +87,14 @@ describe("Base.Field.Teamset", function () {
             });
         field.render();
         var actual = field.value;
-        expect(expected).toEqual(actual);
-        expect(field.model.get('team_name')).toEqual(expected);
+        expect(actual.length).toEqual(1);
+        expect(expected[0].id).toEqual(actual[0].id);
+        expect(expected[0].name).toEqual(actual[0].name);
+        var actual_var = field.model.get('team_name');
+        expect(actual_var.length).toEqual(1);
+        expect(actual_var[0].id).toEqual(expected[0].id);
+        expect(actual_var[0].name).toEqual(expected[0].name);
+        expect(actual_var).not.toBe(expected);
         getPreference.restore();
     });
 

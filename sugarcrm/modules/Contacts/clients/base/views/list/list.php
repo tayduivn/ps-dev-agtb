@@ -65,9 +65,7 @@ $viewdefs['Contacts']['base']['view']['list'] = array(
                 ),
                 'phone_work',
                 array (
-                    'bwcLink' => true,
                     'name' => 'assigned_user_name',
-                    'module' => 'Employees',
                     'width' => '10%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
