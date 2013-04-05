@@ -3872,13 +3872,24 @@ $app_strings = array (
 
     //interactions dashlet
     'LBL_DASHLET_SETTINGS' => 'Settings',
-    'LBL_MODULE_NO_INTERACTIONS_FOUND' => 'No data found.',
-    'LBL_FOR_DURATION_MINUTES' => 'for {{duration_minutes}} min.',
+    'LBL_MODULE_INTERACTIONS_TITLE' => '{{str "LBL_MODULE_NAME" attributes._module}} interactions',
+    'LBL_MODULE_NO_INTERACTIONS_FOUND' => 'No {{str "LBL_MODULE_NAME" module}} found',
+    'TPL_FOR_DURATION' => 'for{{#if this.attributes.duration_hours}} {{this.attributes.duration_hours}} hr.{{#if this.attributes.duration_minutes}} {{/if}}{{/if}}'
+                        . '{{#if this.attributes.duration_minutes}} {{this.attributes.duration_minutes}} min.{{/if}}',
+    'LBL_FOR_DURATION_MINUTES' => 'for {{this.attributes.duration_minutes}} min.',
 
     'LBL_EMAIL_SENT' => 'sent',
     'LBL_EMAIL_RECV' => 'rec',
-    'LBL_EMAIL_ADDED_TO_THE' => 'added email to the',
-    'LBL_CALLED' => 'called',
+    'TPL_CALL_WITH' => 'call {{{str "TPL_INTERACTION_OBJECT" "" this}}} with',
+
+    'TPL_INTERACTION_ASSIGNED_USER' => '<a href="#Users/{{this.attributes.assigned_user_id}}">'
+        . '{{this.attributes.assigned_user_name}}</a>',
+    'TPL_INTERACTION_PARENT_OBJECT' => '<a href="#{{this.attributes.parent_type}}/{{this.attributes.parent_id}}">'
+        . '{{this.attributes.parent_name}}</a>',
+    'TPL_INTERACTION_OBJECT' => '<a href="#{{modelRoute this}}">{{this.attributes.name}}</a>',
+    'TPL_ADDED_INTERACTION' =>  'Added '
+            . '{{{str "TPL_INTERACTION_OBJECT" "" this}}} to {{{str "TPL_INTERACTION_PARENT_OBJECT" "" this}}}',
+
 
     //record save
     'LBL_RECORD_SAVED' => 'Record saved.', // use when there is no information about the record
