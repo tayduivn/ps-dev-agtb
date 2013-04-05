@@ -71,6 +71,9 @@
                 }, field || {});
             }, this);
             this.meta.panels[0].fields = dashlet.display_columns;
+
+            // add css class based on module
+            this.$el.addClass(dashlet.module.toLocaleLowerCase());
         }
     },
     _dispose: function () {
