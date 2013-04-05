@@ -1,3 +1,6 @@
+#dashlets {
+    background: url{@textureSecondary};
+}
 .dashboard {
   position: absolute;
   width: 100%;
@@ -176,10 +179,25 @@
   }
   #dashlets {
     clear: both;
+    padding: 10px 0 0 10px;
+    .well {
+      padding: 0 0 15px;
+    }
+    &> .span8 {
+        margin-left: 1.12%;
+    }
   }
   .ui-sortable .ui-sortable-placeholder {
     height: auto !important;
   }
+}
+
+ul#dashlets > li:last-child > ul.dashlet-row {
+    margin-right: 10px !important;
+}
+
+.edit .well {
+  padding: 20px !important;
 }
 
 
