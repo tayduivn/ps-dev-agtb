@@ -30,6 +30,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $preTestIds = array();
     private static $configDateFormat;
+    private static $currentDate;
     private static $currentYear;
 
     //These are the default forecast configuration settings we will use to test
@@ -46,11 +47,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * Setup global variables
      */
     public static function setUpBeforeClass()
-    {
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user');
+    {   
         self::$configDateFormat = $GLOBALS['sugar_config']['datef'];
         $db = DBManagerFactory::getInstance();
         $db->query('UPDATE timeperiods set deleted = 1');
@@ -68,7 +65,16 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         self::$currentYear = date('Y');
+        //get current timedate
+        $timedate = TimeDate::getInstance();
+        self::$currentDate = $timedate->getNow();
+        $timedate->clearCache();
         $this->preTestIds = TimePeriod::get_timeperiods_dom();
 
         $db = DBManagerFactory::getInstance();
@@ -111,6 +117,13 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $db->query("UPDATE timeperiods SET deleted = 0 WHERE id IN ('" . implode("', '", array_keys($this->preTestIds))  . "')");
 
         $db->query("DELETE FROM timeperiods WHERE deleted = 1");
+        
+        //reset timedate
+        $timedate = TimeDate::getInstance();
+        $timedate->setNow(self::$currentDate);
+        $timedate->clearCache();
+        $timedate->allow_cache = true;
+        parent::tearDown();
     }
 
     /**
@@ -1168,125 +1181,142 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
       * 2) TimePeriod start date as String
       * 3) TimePeriod End Date as a String
       * 4) an associative array containing the expected start and end dates of the leaf periods
+     *  5) current date to use so that the timeperiods created are current as of this date (makes the test safe against time itself)
       *
       * @return array
       */
     public function getOddEdgeCasesProvider()
     {
-         //get timeDate instance
-        $timedate = TimeDate::getInstance();
-        $currentDate = $timedate->getNow();
-        $currentYear = $currentDate->format('Y');
-        $febEndDate = $currentDate->format('L') === 1 ? 29 : 28;
-
         return array(
             array(TimePeriod::ANNUAL_TYPE,
                   TimePeriod::QUARTER_TYPE,
-                  ($currentYear-1).'-11-30',
-                  $currentYear.'-11-29',
+                  '2012-11-30',
+                  '2013-11-29',
                   array(
-                      array('expectedStartDate' => ($currentYear-1).'-11-30', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate-1)),
-                      array('expectedStartDate' => ($currentYear).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear).'-05-30'),
-                      array('expectedStartDate' => ($currentYear).'-05-31', 'expectedEndDate' => ($currentYear).'-08-30'),
-                      array('expectedStartDate' => ($currentYear).'-08-31', 'expectedEndDate' => ($currentYear).'-11-29'),
-                  )
+                      array('expectedStartDate' => '2012-11-30', 'expectedEndDate' => '2013-02-27'),
+                      array('expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-30'),
+                      array('expectedStartDate' => '2013-05-31', 'expectedEndDate' => '2013-08-30'),
+                      array('expectedStartDate' => '2013-08-31', 'expectedEndDate' => '2013-11-29'),
+                  ),
+                  '2013-01-29'
             ),
             array(TimePeriod::ANNUAL_TYPE,
                   TimePeriod::QUARTER_TYPE,
-                  ($currentYear).'-01-31',
-                  ($currentYear+1).'-01-30',
+                  '2011-11-30',
+                  '2012-11-29',
                   array(
-                      array('expectedStartDate' => ($currentYear).'-01-31', 'expectedEndDate' => ($currentYear).'-04-29'),
-                      array('expectedStartDate' => ($currentYear).'-04-30', 'expectedEndDate' => ($currentYear).'-07-30'),
-                      array('expectedStartDate' => ($currentYear).'-07-31', 'expectedEndDate' => ($currentYear).'-10-30'),
-                      array('expectedStartDate' => ($currentYear).'-10-31', 'expectedEndDate' => ($currentYear+1).'-01-30'),
-                  )
+                      array('expectedStartDate' => '2011-11-30', 'expectedEndDate' => '2012-02-28'),
+                      array('expectedStartDate' => '2012-02-29', 'expectedEndDate' => '2012-05-30'),
+                      array('expectedStartDate' => '2012-05-31', 'expectedEndDate' => '2012-08-30'),
+                      array('expectedStartDate' => '2012-08-31', 'expectedEndDate' => '2012-11-29'),
+                  ),
+                  '2012-01-29'
+            ),
+            array(TimePeriod::ANNUAL_TYPE,
+                  TimePeriod::QUARTER_TYPE,
+                  '2013-01-31',
+                  '2014-01-30',
+                  array(
+                      array('expectedStartDate' => '2013-01-31', 'expectedEndDate' => '2013-04-29'),
+                      array('expectedStartDate' => '2013-04-30', 'expectedEndDate' => '2013-07-30'),
+                      array('expectedStartDate' => '2013-07-31', 'expectedEndDate' => '2013-10-30'),
+                      array('expectedStartDate' => '2013-10-31', 'expectedEndDate' => '2014-01-30'),
+                  ),
+                  '2013-02-27'
             ),
             array(TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
-                ($currentYear).'-02-'.($febEndDate),
-                ($currentYear+1).'-02-'.($febEndDate-1),
+                '2013-02-28',
+                '2014-02-27',
                 array(
-                    array('expectedStartDate' => ($currentYear).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear).'-05-30'),
-                    array('expectedStartDate' => ($currentYear).'-05-31', 'expectedEndDate' => ($currentYear).'-08-30'),
-                    array('expectedStartDate' => ($currentYear).'-08-31', 'expectedEndDate' => ($currentYear).'-11-29'),
-                    array('expectedStartDate' => ($currentYear).'-11-30', 'expectedEndDate' => ($currentYear+1).'-02-'.($febEndDate-1)),
-                )
+                    array('expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-30'),
+                    array('expectedStartDate' => '2013-05-31', 'expectedEndDate' => '2013-08-30'),
+                    array('expectedStartDate' => '2013-08-31', 'expectedEndDate' => '2013-11-29'),
+                    array('expectedStartDate' => '2013-11-30', 'expectedEndDate' => '2014-02-27'),
+                ),
+                '2013-03-05'
             ),
             array(TimePeriod::ANNUAL_TYPE,
                   TimePeriod::QUARTER_TYPE,
-                  ($currentYear-1).'-03-31',
-                  ($currentYear).'-03-30',
+                  '2012-03-31',
+                  '2013-03-30',
                   array(
-                      array('expectedStartDate' => ($currentYear-1).'-03-31', 'expectedEndDate' => ($currentYear-1).'-06-29'),
-                      array('expectedStartDate' => ($currentYear-1).'-06-30', 'expectedEndDate' => ($currentYear-1).'-09-29'),
-                      array('expectedStartDate' => ($currentYear-1).'-09-30', 'expectedEndDate' => ($currentYear-1).'-12-30'),
-                      array('expectedStartDate' => ($currentYear-1).'-12-31', 'expectedEndDate' => ($currentYear).'-03-30'),
-                  )
+                      array('expectedStartDate' => '2012-03-31', 'expectedEndDate' => '2012-06-29'),
+                      array('expectedStartDate' => '2012-06-30', 'expectedEndDate' => '2012-09-29'),
+                      array('expectedStartDate' => '2012-09-30', 'expectedEndDate' => '2012-12-30'),
+                      array('expectedStartDate' => '2012-12-31', 'expectedEndDate' => '2013-03-30'),
+                  ),
+                  '2013-01-29'
             ),
             array(TimePeriod::ANNUAL_TYPE,
                   TimePeriod::QUARTER_TYPE,
-                  ($currentYear-1).'-04-30',
-                  ($currentYear).'-04-29',
+                  '2012-04-30',
+                  '2013-04-29',
                   array(
-                      array('expectedStartDate' => ($currentYear-1).'-04-30', 'expectedEndDate' => ($currentYear-1).'-07-30'),
-                      array('expectedStartDate' => ($currentYear-1).'-07-31', 'expectedEndDate' => ($currentYear-1).'-10-30'),
-                      array('expectedStartDate' => ($currentYear-1).'-10-31', 'expectedEndDate' => ($currentYear).'-01-30'),
-                      array('expectedStartDate' => ($currentYear).'-01-31', 'expectedEndDate' => ($currentYear).'-04-29'),
-                  )
+                      array('expectedStartDate' => '2012-04-30', 'expectedEndDate' => '2012-07-30'),
+                      array('expectedStartDate' => '2012-07-31', 'expectedEndDate' => '2012-10-30'),
+                      array('expectedStartDate' => '2012-10-31', 'expectedEndDate' => '2013-01-30'),
+                      array('expectedStartDate' => '2013-01-31', 'expectedEndDate' => '2013-04-29'),
+                  ),
+                  '2013-01-29'
             ),
             array(TimePeriod::ANNUAL_TYPE,
                   TimePeriod::QUARTER_TYPE,
-                  ($currentYear-1).'-05-31',
-                  ($currentYear).'-05-30',
+                  '2012-05-31',
+                  '2013-05-30',
                   array(
-                      array('expectedStartDate' => ($currentYear-1).'-05-31', 'expectedEndDate' => ($currentYear-1).'-08-30'),
-                      array('expectedStartDate' => ($currentYear-1).'-08-31', 'expectedEndDate' => ($currentYear-1).'-11-29'),
-                      array('expectedStartDate' => ($currentYear-1).'-11-30', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate-1)),
-                      array('expectedStartDate' => ($currentYear).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear).'-05-30'),
-                  )
+                      array('expectedStartDate' => '2012-05-31', 'expectedEndDate' => '2012-08-30'),
+                      array('expectedStartDate' => '2012-08-31', 'expectedEndDate' => '2012-11-29'),
+                      array('expectedStartDate' => '2012-11-30', 'expectedEndDate' => '2013-02-27'),
+                      array('expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-30'),
+                  ),
+                  '2013-01-29'
             ),
             array(TimePeriod::ANNUAL_TYPE,
                   TimePeriod::QUARTER_TYPE,
-                  ($currentYear-1).'-09-30',
-                  ($currentYear).'-09-29',
+                  '2012-09-30',
+                  '2013-09-29',
                   array(
-                      array('expectedStartDate' => ($currentYear-1).'-09-30', 'expectedEndDate' => ($currentYear-1).'-12-30'),
-                      array('expectedStartDate' => ($currentYear-1).'-12-31', 'expectedEndDate' => ($currentYear).'-03-30'),
-                      array('expectedStartDate' => ($currentYear).'-03-31', 'expectedEndDate' => ($currentYear).'-06-29'),
-                      array('expectedStartDate' => ($currentYear).'-06-30', 'expectedEndDate' => ($currentYear).'-09-29'),
-                  )
+                      array('expectedStartDate' => '2012-09-30', 'expectedEndDate' => '2012-12-30'),
+                      array('expectedStartDate' => '2012-12-31', 'expectedEndDate' => '2013-03-30'),
+                      array('expectedStartDate' => '2013-03-31', 'expectedEndDate' => '2013-06-29'),
+                      array('expectedStartDate' => '2013-06-30', 'expectedEndDate' => '2013-09-29'),
+                  ),
+                  '2013-01-29'
             ),
             array(TimePeriod::ANNUAL_TYPE,
                   TimePeriod::QUARTER_TYPE,
-                  ($currentYear-1).'-11-28',
-                  ($currentYear).'-11-27',
+                  '2012-11-28',
+                  '2013-11-27',
                   array(
-                      array('expectedStartDate' => ($currentYear-1).'-11-28', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate-1)),
-                      array('expectedStartDate' => ($currentYear).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear).'-05-27'),
-                      array('expectedStartDate' => ($currentYear).'-05-28', 'expectedEndDate' => ($currentYear).'-08-27'),
-                      array('expectedStartDate' => ($currentYear).'-08-28', 'expectedEndDate' => ($currentYear).'-11-27'),
-                  )
+                      array('expectedStartDate' => '2012-11-28', 'expectedEndDate' => '2013-02-27'),
+                      array('expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-27'),
+                      array('expectedStartDate' => '2013-05-28', 'expectedEndDate' => '2013-08-27'),
+                      array('expectedStartDate' => '2013-08-28', 'expectedEndDate' => '2013-11-27'),
+                  ),
+                  '2013-01-29'
             ),
             array(TimePeriod::QUARTER_TYPE,
                   TimePeriod::MONTH_TYPE,
-                  ($currentYear).'-01-01',
-                  ($currentYear).'-03-31',
+                  '2013-01-01',
+                  '2013-03-31',
                   array(
-                      array('expectedStartDate' => ($currentYear).'-01-01', 'expectedEndDate' => ($currentYear).'-01-31'),
-                      array('expectedStartDate' => ($currentYear).'-02-01', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate)),
-                      array('expectedStartDate' => ($currentYear).'-03-01', 'expectedEndDate' => ($currentYear).'-03-31'),
-                  )
+                      array('expectedStartDate' => '2013-01-01', 'expectedEndDate' => '2013-01-31'),
+                      array('expectedStartDate' => '2013-02-01', 'expectedEndDate' => '2013-02-28'),
+                      array('expectedStartDate' => '2013-03-01', 'expectedEndDate' => '2013-03-31'),
+                  ),
+                  '2013-01-29'
             ),
             array(TimePeriod::QUARTER_TYPE,
                   TimePeriod::MONTH_TYPE,
-                  ($currentYear).'-01-31',
-                  ($currentYear).'-04-29',
+                  '2013-01-31',
+                  '2013-04-29',
                   array(
-                      array('expectedStartDate' => ($currentYear).'-01-31', 'expectedEndDate' => ($currentYear).'-02-'.($febEndDate-1)),
-                      array('expectedStartDate' => ($currentYear).'-02-'.($febEndDate), 'expectedEndDate' => ($currentYear).'-03-30'),
-                      array('expectedStartDate' => ($currentYear).'-03-31', 'expectedEndDate' => ($currentYear).'-04-29'),
-                  )
+                      array('expectedStartDate' => '2013-01-31', 'expectedEndDate' => '2013-02-27'),
+                      array('expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-03-30'),
+                      array('expectedStartDate' => '2013-03-31', 'expectedEndDate' => '2013-04-29'),
+                  ),
+                  '2013-02-23'
             ),
         );
     }
@@ -1298,7 +1328,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
       * @group timeperiods
       * @group forecasts
       */
-     public function testOddEdgeCases($tpType, $tpLeafType, $tpStartDate, $tpExpectedCloseDate, $tpExpectedLeafDatesArray)
+     public function testOddEdgeCases($tpType, $tpLeafType, $tpStartDate, $tpExpectedCloseDate, $tpExpectedLeafDatesArray, $currentDate)
      {
         //get timeDate instance
         $timedate = TimeDate::getInstance();
@@ -1321,6 +1351,9 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         //rebuild time periods
         $timePeriod = TimePeriod::getByType($tpType);
+        $timedate->allow_cache = true;
+        $timedate->clearCache();
+        $timedate->setNow($timedate->fromDbDate($currentDate));
         $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
 
         //add all of the newly created timePeriods to the test utils
@@ -1346,7 +1379,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals($tpExpectedLeafDatesArray[$i]['expectedStartDate'], $leavesArray[$i]->start_date, "Quarter " . $i+1 . " start date does not match expected start date from data provider.");
             $this->assertEquals($tpExpectedLeafDatesArray[$i]['expectedEndDate'], $leavesArray[$i]->end_date, "Quarter " . $i+1 . " end date does not match expected end date from data provider.");
         }
-
      }
 
 

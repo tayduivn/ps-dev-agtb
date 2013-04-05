@@ -10,43 +10,59 @@
 
             _possibleLeaders: ['@', '#'],
 
+            // Break parsing when encountering one of the following symbols.
+            _terminators: ['.', ',', '!', '?'],
+
             _lastLeaderPosition: function(text) {
-                var indices = _.map(this._possibleLeaders, function(leader) {
+                var leaderIndex = _.max(_.map(this._possibleLeaders, function(leader) {
                     return text.lastIndexOf(leader);
-                });
-                return _.max(indices);
+                })),
+                    terminatorIndex = _.max(_.map(this._terminators, function(terminator) {
+                    return text.lastIndexOf(terminator);
+                }));
+
+                return (leaderIndex > terminatorIndex)? leaderIndex : -1;
             },
 
-            _getEntities: _.debounce(function(event) {
-                var list,
-                    leader,
-                    leaderIndex,
-                    self = this,
-                    el = this.$(event.currentTarget),
-                    word = el.text();
-
-                el.parent().find('ul.typeahead.activitystream-tag-dropdown').remove();
-
-                leaderIndex = this._lastLeaderPosition(word);
-                leader = leaderIndex === -1 ? null : word.charAt(leaderIndex);
-
+            _getTerm: function(leader, text) {
                 if (!leader) {
                     // If there are no leaders, don't do anything.
                     return;
-                } else if (word.indexOf(leader) === 0) {
-                    word = _.last(word.split(leader));
+                } else if (text.indexOf(leader) === 0) {
+                    word = _.last(text.split(leader));
                 } else {
                     // Prevent email addresses from being caught, even though emails
                     // can have spaces in them according to the RFCs (3696/5322/6351).
-                    word = _.last(word.split(' ' + leader));
+                    word = _.last(text.split(' ' + leader));
                 }
 
-                if (word.length < 3) {
+                if (word.length > 2) {
                     // Limit the minimum length before calling the FTS.
-                    return;
+                    return word;
                 }
+            },
+
+            _getLeader: function(text) {
+                var leaderIndex = this._lastLeaderPosition(text);
+
+                return leaderIndex === -1 ? null : text.charAt(leaderIndex);
+            },
+
+            _getEntities: _.debounce(function(event) {
+                var self = this,
+                    el = this.$(event.currentTarget),
+                    text = el.text(),
+                    leader = this._getLeader(text),
+                    list,
+                    word;
+
+                el.parent().find('ul.typeahead.activitystream-tag-dropdown').remove();
+
+                word = this._getTerm(leader, text);
 
                 var callback = function(collection) {
+                    clearTimeout(self._taggingTimeout);
+                    var word = self._getTerm(leader, text);
                     // Do initial list filtering.
                     list = collection.filter(function(entity) {
                         return entity.get('name').toLowerCase().indexOf(word.toLowerCase()) !== -1;
@@ -94,6 +110,9 @@
                         var noResults = app.lang.get('LBL_SEARCH_NO_RESULTS');
                         var i = $(blankItem).addClass('placeholder active').find('a').html(noResults + word).wrap('emph');
                         ul.append(i);
+                        self._taggingTimeout = setTimeout(function() {
+                            self.$("ul.typeahead.activitystream-tag-dropdown").remove();
+                        }, 1500);
                     }
 
                     ulParent.append(ul);
@@ -108,24 +127,26 @@
                     left: el.position().left
                 });
 
-                ul.html(defaultItem).appendTo(el.parent()).show();
+                if (word) {
+                    ul.html(defaultItem).appendTo(el.parent()).show();
 
-                switch (leader) {
-                    case '#':
-                        app.api.search({q: word, limit: 8}, {success: function(response) {
-                            var coll = app.data.createMixedBeanCollection(response.records);
-                            callback.call(self, coll);
-                        }});
-                        break;
-                    case '@':
-                        // We cannot use the filter API here as we need to
-                        // support users typing in full names, which are not
-                        // stored in the database as fields.
-                        app.api.search({q: word, module_list: "Users", limit: 8}, {success: function(response) {
-                            var coll = app.data.createBeanCollection("Users", response.records);
-                            callback.call(self, coll);
-                        }});
-                        break;
+                    switch (leader) {
+                        case '#':
+                            app.api.search({q: word, limit: 8}, {success: function(response) {
+                                var coll = app.data.createMixedBeanCollection(response.records);
+                                callback.call(self, coll);
+                            }});
+                            break;
+                        case '@':
+                            // We cannot use the filter API here as we need to
+                            // support users typing in full names, which are not
+                            // stored in the database as fields.
+                            app.api.search({q: word, module_list: "Users", limit: 8}, {success: function(response) {
+                                var coll = app.data.createBeanCollection("Users", response.records);
+                                callback.call(self, coll);
+                            }});
+                            break;
+                    }
                 }
             }, 250),
 

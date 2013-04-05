@@ -55,9 +55,9 @@ class AccountsApi extends ListApi
         }
 
         $query = new SugarQuery();
-        $query->select(array('accounts.billing_address_country', 'amount_usdollar'));
+        $query->select(array('accounts.billing_address_country', 'accounts.billing_address_state', 'amount_usdollar'));
         $query->from($linkSeed);
-        $query->where()->equals('sales_stage', 'Closed Won');
+        $query->where()->equals('sales_status', 'Closed Won');
         $query->join('accounts');
         // TODO: When we can sum on the database side through SugarQuery, we can
         // use the group by statement.
@@ -65,9 +65,17 @@ class AccountsApi extends ListApi
         $results = $query->execute();
         foreach ($results as $row) {
             if (empty($data[$row['billing_address_country']])) {
-                $data[$row['billing_address_country']] = 0;
+                $data[$row['billing_address_country']] = array(
+                    '_total' => 0
+                );
             }
-            $data[$row['billing_address_country']] += $row['amount_usdollar'];
+            if (empty($data[$row['billing_address_country']][$row['billing_address_state']])) {
+                $data[$row['billing_address_country']][$row['billing_address_state']] = array(
+                    '_total' => 0
+                );
+            }
+            $data[$row['billing_address_country']]['_total'] += $row['amount_usdollar'];
+            $data[$row['billing_address_country']][$row['billing_address_state']]['_total'] += $row['amount_usdollar'];
         }
 
         return $data;

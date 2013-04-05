@@ -27,25 +27,26 @@
     initialize: function (options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        var fields = [
-            'id',
-            'name',
-            'account_name',
-            'amount',
-            'base_rate',
-            'currency_id',
-            'assigned_user_name',
-            'date_closed',
-            'probability',
-            'account_id',
-            'sales_stage',
-            'commit_stage'
-        ];
+        var self = this,
+            fields = [
+                'id',
+                'name',
+                'account_name',
+                'likely_case',
+                'base_rate',
+                'currency_id',
+                'assigned_user_name',
+                'date_closed',
+                'probability',
+                'account_id',
+                'sales_stage',
+                'commit_stage'
+            ];
 
         this.params = {
             'fields': fields.join(','),
             'max_num': 10,
-            'order_by': 'amount:desc'
+            'order_by': 'likely_case:desc'
         };
 
         this.tooltiptemplate = app.template.getView(this.name + '.tooltiptemplate');
@@ -53,6 +54,33 @@
         this.filterAssigned = this.model.get('filter_assigned');
 
         this.setDateRange();
+
+        this.chart = nv.models.bubbleChart()
+            .x(function (d) {
+                return d3.time.format('%Y-%m-%d').parse(d.x);
+            })
+            .y(function (d) {
+                return d.y;
+            })
+            .tooltip(function (key, x, y, e, graph) {
+                e.point.close_date = d3.time.format('%x')(d3.time.format('%Y-%m-%d').parse(e.point.x));
+                e.point.amount = e.point.currency_symbol + d3.format(',.2d')(e.point.base_amount);
+                return self.tooltiptemplate(e.point);
+            })
+            .showTitle(false)
+            .tooltips(true)
+            .showLegend(true)
+            .bubbleClick(function (e) {
+                app.router.navigate(app.router.buildRoute('Products', e.point.id), {trigger: true});
+            })
+            .colorData('class', 2)
+            .colorFill('default')
+            .groupBy(function (d) {
+                return (self.filterAssigned === 'my') ? d.sales_stage_short : d.assigned_user_name;
+            })
+            .filterBy(function (d) {
+                return d.probability;
+            });
 
         this.on('data-changed', function () {
             this.updateChart();
@@ -80,59 +108,14 @@
         if (this.viewName === 'config') {
             return;
         }
-
-        var self = this,
-            groupBy,
-            chart;
-
-        if (self.filterAssigned === 'my') {
-            groupBy = function (d) {
-                var salesMap = {
-                    'Negotiation/Review': 'Negotiat./Review',
-                    'Perception Analysis': 'Percept. Analysis'
-                };
-                return salesMap[d.sales_stage] || d.sales_stage;
-            };
-        } else {
-            groupBy = function (d) {
-                return d.assigned_user_name;
-            };
-        }
-
-        chart = nv.models.bubbleChart()
-            .x(function (d) {
-                return d3.time.format('%Y-%m-%d').parse(d.x);
-            })
-            .y(function (d) {
-                return d.y;
-            })
-            .tooltip(function (key, x, y, e, graph) {
-                e.point.close_date = d3.time.format('%x')(d3.time.format('%Y-%m-%d').parse(e.point.x));
-                e.point.amount = e.point.currency_symbol + d3.format(',.2d')(e.point.base_amount);
-                return self.tooltiptemplate(e.point);
-            })
-            .showTitle(false)
-            .tooltips(true)
-            .showLegend(true)
-            .bubbleClick(function (e) {
-                app.router.navigate(app.router.buildRoute('Opportunities', e.point.id), {trigger: true});
-            })
-            .classStep(2)
-            .colorData('class')
-            .colorFill('default')
-            .groupBy(groupBy)
-            .filterBy(function (d) {
-                return d.probability;
-            });
+        var self = this;
 
         d3.select('svg#' + this.cid)
             .datum(self.dataset)
             .transition().duration(500)
-            .call(chart);
+            .call(self.chart);
 
-        self.chart = chart;
         nv.utils.windowResize(self.chart.render);
-        return chart;
     },
 
     /**
@@ -140,19 +123,26 @@
      * and convert into format convienient for d3
      */
     evaluateResult: function (data) {
-        var self = this;
+        // TODO need i18n on this
+        var salesStageMap = {
+                'Negotiation/Review': 'Negotiat./Review',
+                'Perception Analysis': 'Percept. Analysis',
+                'Proposal/Price Quote': 'Proposal/Quote',
+                'Id. Decision Makers': 'Id. Deciders'
+            };
         this.dataset = {
             data: data.records.map(function (d) {
                 return {
                     id: d.id,
                     x: d.date_closed,
-                    y: Math.round(parseInt(d.amount, 10) / parseFloat(d.base_rate)),
+                    y: Math.round(parseInt(d.likely_case, 10) / parseFloat(d.base_rate)),
                     shape: 'circle',
                     account_name: d.account_name,
                     assigned_user_name: d.assigned_user_name,
                     sales_stage: d.sales_stage,
+                    sales_stage_short: salesStageMap[d.sales_stage] || d.sales_stage,
                     probability: parseInt(d.probability, 10),
-                    base_amount: parseInt(d.amount, 10),
+                    base_amount: parseInt(d.likely_case, 10),
                     currency_symbol: app.currency.getCurrencySymbol(d.currency_id)
                 };
             }),
@@ -171,8 +161,12 @@
             _filter = [
                 {
                     'date_closed': {
-                        '$gt': self.dateRange.begin,
-                        '$lt': self.dateRange.end
+                        '$gt': self.dateRange.begin
+                    }
+                },
+                {
+                    'date_closed': {
+                        '$lte': self.dateRange.end
                     }
                 }
             ];
@@ -183,14 +177,14 @@
 
         var _local = _.extend({'filter': _filter}, this.params);
 
-        var url = app.api.buildURL('Opportunities', null, null, _local, this.params);
+        var url = app.api.buildURL('Products', null, null, _local, this.params);
 
         app.api.call('read', url, null, {
             success: function (data) {
                 self.evaluateResult(data);
                 self.trigger('data-changed');
             },
-            complete: (options) ? options.complete : null
+            complete: options ? options.complete : null
         });
     },
 
@@ -204,8 +198,8 @@
             startDate = new Date(now.getFullYear(), (duration === 12 ? 0 : startMonth + duration), 1),
             endDate = new Date(now.getFullYear(), (duration === 12 ? 12 : startDate.getMonth() + 3), 0);
         this.dateRange = {
-            'begin': startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate(),
-            'end': endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate()
+            'begin': app.date.format(startDate, 'Y-m-d'),
+            'end': app.date.format(endDate, 'Y-m-d')
         };
     },
 

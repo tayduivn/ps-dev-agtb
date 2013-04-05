@@ -268,6 +268,31 @@ describe("Email field", function() {
             expect(actual).toBe(expected);
         });
 
+        it("should still work when model value is not already set on edit in list view (SP-604)", function() {
+            var expected = "abc@abc.com",
+                emails = "abc@abc.com",
+                actual;
+
+            field.view.action = "list";
+            field.model.set({email : ""});
+            actual = field.unformat(emails);
+            expect(actual[0].email_address).toEqual(expected);
+
+            field.model.set({email : undefined});
+            actual = field.unformat(emails);
+            expect(actual[0].email_address).toEqual(expected);
+
+        });
+
+        it("should empty string model value as an empty list of e-mails (MAR-667)", function() {
+            var actual;
+
+            field.model.set("");
+            actual = field.format("");
+            expect(actual).toEqual("");
+
+        });
+
         it("should return only a single primary email address as the value in the list view", function() {
             field.view.action = 'list';
             field.render();

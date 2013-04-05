@@ -10,23 +10,6 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'Interactions Chart',
-            'view' => 'interactionschart',
-            'context' => array(
-                'module' => 'Opportunities',
-                'dashlet' => array(
-                    'name' => 'Interactions Chart',
-                    'type' => 'interactionschart',
-                    'filter_duration' => '7',
-                ),
-            ),
-        ),
-    )
-);
-$layout->push(
-    0,
-    array(
-        array(
             'name' => 'Interactions',
             'view' => 'interactions',
             'context' => array(

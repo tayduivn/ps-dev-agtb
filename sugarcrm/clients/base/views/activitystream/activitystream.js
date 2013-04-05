@@ -35,10 +35,10 @@
 
         // If comment_count is 0, we don't want to decrement the count by 1 since -1 is truthy.
         var count = parseInt(this.model.get('comment_count'), 10);
-        this.model.set("remaining_comments", 0);
+        this.remaining_comments = 0;
         this.more_tpl = "TPL_MORE_COMMENT";
         if(count) {
-            this.model.set("remaining_comments", count - 1);
+            this.remaining_comments = count - 1;
 
             // Pluralize the comment count label
             if (count > 2) {
@@ -46,9 +46,16 @@
             }
         }
 
-        this.tpl = "TPL_ACTIVITY_" + this.model.get('activity_type').toUpperCase();
         var data = this.model.get('data');
-        switch(this.model.get('activity_type')) {
+        var activity_type = this.model.get('activity_type');
+        this.tpl = "TPL_ACTIVITY_" + activity_type.toUpperCase();
+
+        switch(activity_type) {
+        case 'post':
+            if (!data.value) {
+                this.tpl = null;
+            }
+            break;
         case 'update':
             var updateTpl = Handlebars.compile(app.lang.get('TPL_ACTIVITY_UPDATE_FIELD', 'Activities')),
                 parentType = this.model.get("parent_type"),
@@ -72,6 +79,14 @@
                 id: data.noteId,
                 field: 'filename'
             });
+
+            if (data.mimetype && data.mimetype.indexOf("image/") === 0) {
+                data.embed = {
+                    type: "image",
+                    src: url
+                };
+            }
+
             data.url = url;
             this.$el.data(data);
             this.model.set('data', data);
@@ -84,11 +99,22 @@
             // more noticeable in the activity stream.
             if (this.context.parent.get('module') === this.model.get('parent_type')) {
                 this.model.set('parent_type', data.subject.module);
-                if (this.context.parent.get('modelId') === this.model.get('parent_id')) {
-                    this.model.set('parent_id', data.subject.id);
-                }
+                this.model.set('parent_id', data.subject.id);
             }
             break;
+        }
+
+        if (_.isObject(data.embed) && data.embed.type) {
+            var typeParts = data.embed.type.split('.'),
+                type = typeParts.shift(),
+                embedTpl;
+
+            _.each(typeParts, function(part) {
+                type = type + part.charAt(0).toUpperCase() + part.substr(1);
+            });
+
+            embedTpl = app.template.get(this.name + '.' + type + 'Embed');
+            this.embed = embedTpl ? embedTpl(data.embed) : "No embed partial found for " + data.embed.type;
         }
     },
 
@@ -190,6 +216,7 @@
                 collection = this.context.get("collection");
 
             model.set("id", id);
+            app.events.trigger("preview:module:update", this.context.get("module"));
             app.events.trigger("preview:render", model, collection, true, this.cid);
         }
 
@@ -261,11 +288,14 @@
     },
 
     checkPlaceholder: function(e) {
+        // We can't use any of the jQuery methods or use the dataset property to
+        // set this attribute because they don't seem to work in IE 10. Dataset
+        // isn't supported in IE 10 at all.
         var el = e.currentTarget;
         if (el.textContent) {
-            el.dataset.hidePlaceholder = true;
+            el.setAttribute('data-hide-placeholder', 'true');
         } else {
-            delete el.dataset.hidePlaceholder;
+            el.removeAttribute('data-hide-placeholder');
         }
     },
 

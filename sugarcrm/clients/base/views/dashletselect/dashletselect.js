@@ -132,8 +132,12 @@
                 "bInfo":false,
                 "bPaginate": false,
                 "aaData": _.pluck(_.filter(this.context.get("dashlet_collection"), function(dashlet) {
-                    var filter = dashlet.filter;
-                    return _.isUndefined(filter) || (_.indexOf(filter.module || [parentModule], parentModule) >= 0  && (filter.view || parentView) === parentView);
+                    var filter = dashlet.filter,
+                        filterViews = _.isUndefined(filter) ? [] : (filter.view || [parentView]);
+
+                    return _.isUndefined(filter) ||
+                        (_.indexOf(filter.module || [parentModule], parentModule) >= 0
+                            && (_.indexOf(_.isString(filterViews) ? [filterViews] : filterViews, parentView) >= 0));
                 }), 'table'),
                 "aoColumns": [
                     {

@@ -1,8 +1,8 @@
 <?php
 
 $subpanels = array(
-    'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'opportunity',
-    'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE' => 'campaign_leads',
+    //TODO: Subpanel needs to support read only list for Campaigns (which is actually campaign log relationship)
+    //'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE' => 'campaigns',
     'LBL_NOTES_SUBPANEL_TITLE' => 'notes',
 );
 $layout = MetaDataManager::getLayout("SubPanelLayout", $subpanels);

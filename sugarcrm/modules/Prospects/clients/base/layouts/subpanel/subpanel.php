@@ -1,7 +1,8 @@
 <?php
 
 $subpanels = array(
-    'LBL_CAMPAIGNS_SUBPANEL_TITLE'=> 'campaigns',
+    //TODO: Subpanel needs to support read only list for Campaigns (which is actually campaign log relationship)
+    //'LBL_CAMPAIGNS_SUBPANEL_TITLE'=> 'campaigns',
     'LBL_NOTES_SUBPANEL_TITLE' => 'notes',
 );
 

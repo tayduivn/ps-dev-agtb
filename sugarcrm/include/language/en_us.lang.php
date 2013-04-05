@@ -155,6 +155,7 @@ $app_list_strings = array (
     'Project'=>'Project',
     'ProjectTask'=>'Project Task',
     'Prospects' => 'Target',
+    'ProspectLists' => 'Target List',
     'Campaigns'=>'Campaign',
     'Documents'=>'Document',
     'Sync'=>'Sync',
@@ -2576,6 +2577,7 @@ $app_strings = array (
     'LBL_EMAIL_PDF_BUTTON_KEY' => 'M',
     'LBL_EMAIL_PDF_BUTTON_LABEL' => 'Email as PDF',
     'LBL_EMAIL_PDF_BUTTON_TITLE' => 'Email as PDF',
+    'LBL_EMAIL' => 'Email',
     'LBL_EMAILS'=>'Emails',
     'LBL_EMPLOYEES' => 'Employees',
     'LBL_ENTER_DATE' => 'Enter Date',
@@ -3143,7 +3145,7 @@ $app_strings = array (
     'LBL_TWITTER_DISPLAY_ROWS' => 'Display Rows',
     'LBL_TWITTER_MY_ACCOUNT' => 'My Account',
     'LBL_TWITTER_NAME' => 'Twitter',
-        
+
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
     'LBL_DELETE_PAGE' => 'Delete Page',
@@ -3450,6 +3452,9 @@ $app_strings = array (
     'UPLOAD_REQUEST_ERROR'    => 'An error has occured. Please refresh your page and try again.',
 
 
+    // Preview pane
+    'LBL_PREVIEW_BWC_ERROR' => 'Cannot preview a record operating in backwards compatibility mode.',
+
     //508 used Access Keys
     'LBL_EDIT_BUTTON_KEY' => 'i',
     'LBL_EDIT_BUTTON_LABEL' => 'Edit',
@@ -3509,6 +3514,10 @@ $app_strings = array (
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
     'LBL_SUCCESS' => 'Success',
 
+    'LBL_TWITTER_TIME_AGO_SECONDS' => 's',
+    'LBL_TWITTER_TIME_AGO_MINUTES' => 'm',
+    'LBL_TWITTER_TIME_AGO_HOURS' => 'h',
+
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
 
@@ -3516,6 +3525,8 @@ $app_strings = array (
     'LBL_ACTIVITY_VIEW_TOUR' => 'Activity View Tour',
     'LNK_TOUR' => 'Tour',
     'LBL_TOP' => 'Top',
+    'LBL_FEEDBACK' => 'Feedback',
+    'LBL_SUPPORT' => 'Support',
     'LBL_LANGUAGE' => 'Language',
     'LBL_PREFERRED_LANGUAGE' => 'Preferred Language:',
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
@@ -3564,6 +3575,39 @@ $app_strings = array (
     'LBL_TOUR_CALENDAR_URL_1' => 'Do you share your SugarCRM calendar with 3rd party applications, such as Microsoft Outlook or Exchange? If so, you have a new URL. This new, more secure URL includes a personal key which will prevent unauthorized publishing of your calendar.',
     'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.',
     //END SUGARCRM flav=PRO ONLY
+    'LBL_TOUR_CUBE' => 'Access Dashboards and Activity Stream',
+    'LBL_TOUR_NAV_BAR' => 'Access all modules in the Navigation menu and take actions',
+    'LBL_TOUR_NOTIFICATIONS' => 'Click to see Notifications',
+    'LBL_TOUR_SEARCH' => 'Select one or more modules and search',
+    'LBL_TOUR_AVATAR' => 'Get more details about the application or Logout',
+    'LBL_TOUR_ADD' => 'Create a record from here',
+    'LBL_TOUR_TOUR' => 'Access Tours at any time',
+    'LBL_TOUR_LIST_INT_TOGGLE' => 'Click to close or open the intelligence pane',
+    'LBL_TOUR_LIST_ACTIVTYSTREAMLIST_TOGGLE' => 'Choose to see activities or list of records',
+    'LBL_TOUR_LIST_FILTER1' => 'Filter bar enables search for this module',
+    'LBL_TOUR_LIST_FILTER2' => 'Choose predefined filter or create new',
+    'LBL_TOUR_LIST_FILTER_SEARCH' => 'Type here to search based on name',
+    'LBL_TOUR_LIST_FILTER_PREVIEW' => 'Choose to edit the row or preview details',
+    'LBL_TOUR_RECORD_ACTIONS' => 'Take actions on the record',
+    'LBL_TOUR_RECORD_INLINEEDIT' => 'Record name can be updated in place',
+    'LBL_TOUR_RECORD_STATUS' => 'Find record level status here',
+    'LBL_TOUR_RECORD_SHOWMORE' => 'Click to see more data for the record',
+    'LBL_TOUR_RECORD_TOGGLEACTIVITIES' => 'Choose to see activities or related records',
+    'LBL_TOUR_RECORD_INLINEEDITRECORD' => 'Click to edit each field inline',
+    'LBL_TOUR_RECORD_DASHBOARDACTIONS' => 'Create new groups of Dashlets',
+    'LBL_TOUR_RECORD_DASHBOARDNAME' => 'Assign a name to the group of Dashlets',
+    'LBL_TOUR_RECORD_DASHLETCOG' => 'Choose to remove Dashlet or to change settings',
+    'LBL_TOUR_INTRO' =>'Welcome to Sugar 7 preview. Use arrows below for a quick tour.',
+    'LBL_TOUR_LIST_INTRO' =>'View a list of records and take actions records.',
+    'LBL_TOUR_RECORD_INTRO' =>'View details on this record and see all data related to it.',
+    'LBL_TOUR_FORECAST_INTRO' =>'Manage pipeline and forecast.',
+    'LBL_TOUR_FORECASTS_TIMEPERIODS' =>'Choose a time period to see the corresponding forecast',
+    'LBL_TOUR_FORECASTS_COMMITS' =>'Click to see previous commits',
+    'LBL_TOUR_FORECASTS_INLINEEDIT' =>'Click to edit data inline',
+    'LBL_TOUR_FORECASTS_PROGRESS' =>'Review distance to quota',
+    'LBL_TOUR_FORECASTS_CHART' =>'Review forecast distribution',
+
+
 
     'LBL_REQUIRED_FIELD' => 'Required',
     // for nomad mobile
@@ -3828,14 +3872,24 @@ $app_strings = array (
 
     //interactions dashlet
     'LBL_DASHLET_SETTINGS' => 'Settings',
-    'LBL_MODULE_INTERACTIONS_TITLE' => '{{str \'LBL_MODULE_NAME\' attributes.module}} interactions',
-    'LBL_MODULE_NO_INTERACTIONS_FOUND' => 'No {{str \'LBL_MODULE_NAME\' attributes.module}} found',
+    'LBL_MODULE_INTERACTIONS_TITLE' => '{{str "LBL_MODULE_NAME" attributes._module}} interactions',
+    'LBL_MODULE_NO_INTERACTIONS_FOUND' => 'No {{str "LBL_MODULE_NAME" module}} found',
+    'TPL_FOR_DURATION' => 'for{{#if this.attributes.duration_hours}} {{this.attributes.duration_hours}} hr.{{#if this.attributes.duration_minutes}} {{/if}}{{/if}}'
+                        . '{{#if this.attributes.duration_minutes}} {{this.attributes.duration_minutes}} min.{{/if}}',
     'LBL_FOR_DURATION_MINUTES' => 'for {{this.attributes.duration_minutes}} min.',
 
     'LBL_EMAIL_SENT' => 'sent',
     'LBL_EMAIL_RECV' => 'rec',
-    'LBL_EMAIL_ADDED_TO_THE' => 'added email to the',
-    'LBL_CALLED' => 'called',
+    'TPL_CALL_WITH' => 'call {{{str "TPL_INTERACTION_OBJECT" "" this}}} with',
+
+    'TPL_INTERACTION_ASSIGNED_USER' => '<a href="#Users/{{this.attributes.assigned_user_id}}">'
+        . '{{this.attributes.assigned_user_name}}</a>',
+    'TPL_INTERACTION_PARENT_OBJECT' => '<a href="#{{this.attributes.parent_type}}/{{this.attributes.parent_id}}">'
+        . '{{this.attributes.parent_name}}</a>',
+    'TPL_INTERACTION_OBJECT' => '<a href="#{{modelRoute this}}">{{this.attributes.name}}</a>',
+    'TPL_ADDED_INTERACTION' =>  'Added '
+            . '{{{str "TPL_INTERACTION_OBJECT" "" this}}} to {{{str "TPL_INTERACTION_PARENT_OBJECT" "" this}}}',
+
 
     //record save
     'LBL_RECORD_SAVED' => 'Record saved.', // use when there is no information about the record
@@ -3850,18 +3904,24 @@ $app_strings = array (
     'LBL_ALERT_BROWSER_NOT_SUPPORTED' => 'Your browser version is no longer supported or you are using an unsupported browser.',
     'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 10</li><li>Firefox 18</li><li>Safari 6</li><li>Chrome 24</li></ul>',
 
+    //opportunity chart
+    'LBL_NO_OPPORTUNITY_DATA' => 'No data found.',
+
     //interaction chart
-    'LBL_CHART_NO_DATA' => 'No Data Available.',
+    'LBL_CHART_NO_DATA' => 'No data found.',
 
     //organization chart
     'LBL_ORG_CHART' => 'Organization Chart',
     'LBL_ORG_CHART_DESC' => 'Displays the employee structure of your organization.',
 
     //top 10 opportunities chart
-    'LBL_TOP10_OPPORTUNITIES_CHART' => 'Top 10 Opportunities Chart',
+    'LBL_TOP10_OPPORTUNITIES_CHART' => 'Top 10 sales opportunities',
     'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten opportunities in a bubble chart.',
     'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
     'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
+
+    //News feed
+    'LBL_NEWS_FEED_NO_DATA' => 'No data found.',
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
@@ -4780,13 +4840,3 @@ $app_list_strings ['pdfmanager_yes_no_list'] = array (
     'no' => 'No',
 );
 //END SUGARCRM flav=pro ONLY
-
-//BEGIN SUGARCRM flav=free ONLY
-$app_list_strings['sales_stage_dom'] = array(
-    'Prospecting'=>'New',
-    'Qualification'=>'Engaged',
-    'Closed Won'=>'Won',
-    'Closed Lost'=>'Lost',
-);
-//END SUGARCRM flav=free ONLY
-?>

@@ -30,7 +30,7 @@
                 this.shrinkNewPost(event);
 
                 if (text.length) {
-                    container.html(container.html() + " " + text).trigger('change');
+                    container.append(' ' + text).trigger('change');
                 }
 
                 _.each(event.dataTransfer.files, function(file, i) {

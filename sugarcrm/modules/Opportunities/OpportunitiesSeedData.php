@@ -126,6 +126,9 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $opp->id = create_guid();
         $opp->new_with_id = true;
 
+        // we need to save the opp before we create the products
+        $opp->save();
+
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         $products_to_create = 1;
@@ -183,6 +186,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
 
         //END SUGARCRM flav=pro ONLY
 
+        // save the opp again
         $opp->save();
 
         //BEGIN SUGARCRM flav=pro ONLY

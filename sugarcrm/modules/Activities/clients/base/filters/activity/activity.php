@@ -17,7 +17,10 @@ $viewdefs['Activities']['base']['filter']['activity'] = array(
             'id'                => 'messages_for_create',
             'name'              => 'Messages for Create',
             'filter_definition' => array(
-                'activity_type' => 'create',
+                '$or' => array(
+                    array('activity_type' => 'create'),
+                    array('activity_type' => 'attach'),
+                ),
             ),
             'editable'          => false
         ),

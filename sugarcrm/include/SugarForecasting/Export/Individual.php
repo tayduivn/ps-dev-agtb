@@ -43,46 +43,53 @@ class SugarForecasting_Export_Individual extends SugarForecasting_Export_Abstrac
 
     public function process()
     {
-        // base file and class name
-        $file = 'include/SugarForecasting/Individual.php';
-        $klass = 'SugarForecasting_Individual';
-
-        // check for a custom file exists
+        // fetch the data from the filter end point
+        $file = 'modules/Forecasts/clients/base/api/ForecastWorksheetsFilterApi.php';
+        $klass = 'ForecastWorksheetsFilterApi';
+        SugarAutoLoader::requireWithCustom('include/api/RestService.php');
         SugarAutoLoader::requireWithCustom($file);
         $klass = SugarAutoLoader::customClass($klass);
-        // create the class
-        $obj = new $klass($this->args);
-        $data = $obj->process();
+
+        /* @var $obj ForecastWorksheetsFilterApi */
+        $obj = new $klass();
+
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+        $data = $obj->forecastWorksheetsGet(
+            $api,
+            array(
+                'module' => 'ForecastWorksheets',
+                'timeperiod_id' => $this->getArg('timeperiod_id'),
+                'user_id' => $this->getArg('user_id')
+            )
+        );
 
         $fields_array = array(
-            'date_closed'=>'date_closed',
-            'sales_stage'=>'sales_stage',
-            'name'=>'name',
-            'commit_stage'=>'commit_stage',
-            'probability'=>'probability',
+            'date_closed' => 'date_closed',
+            'sales_stage' => 'sales_stage',
+            'name' => 'name',
+            'commit_stage' => 'commit_stage',
+            'probability' => 'probability',
         );
 
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
 
-        if ($settings['show_worksheet_best'])
-        {
+        if ($settings['show_worksheet_best']) {
             $fields_array['best_case'] = 'best_case';
         }
 
-        if ($settings['show_worksheet_likely'])
-        {
+        if ($settings['show_worksheet_likely']) {
             $fields_array['likely_case'] = 'likely_case';
         }
 
-        if ($settings['show_worksheet_worst'])
-        {
+        if ($settings['show_worksheet_worst']) {
             $fields_array['worst_case'] = 'worst_case';
         }
 
         $seed = BeanFactory::getBean('ForecastWorksheets');
 
-        return $this->getContent($data, $seed, $fields_array);
+        return $this->getContent($data['records'], $seed, $fields_array);
     }
 
 
