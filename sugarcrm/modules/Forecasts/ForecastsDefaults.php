@@ -116,7 +116,7 @@ class ForecastsDefaults
             //BEGIN SUGARCRM flav=ent ONLY
             // the defined custom ranges the different buckets opportunities will fall in by default based on their probability
             'show_custom_buckets_ranges' => array(
-                'include' => array('min' => 85, 'max' => 100),
+                'include' => array('min' => 85, 'max' => 100, 'in_included_total' => true),
                 'upside' => array('min' => 70, 'max' => 84),
                 'exclude' => array('min' => 0, 'max' => 69)
             ),
