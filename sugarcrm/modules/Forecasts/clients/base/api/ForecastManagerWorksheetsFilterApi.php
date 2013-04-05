@@ -180,7 +180,7 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
                 $blankWorksheet->currency_id = '-99';
                 $blankWorksheet->base_rate = 1.0;
                 $blankWorksheet->id = '';
-                $blankWorksheet->name = '';
+                $blankWorksheet->name = $user['full_name'];
                 array_push($worksheetData['records'], $this->formatBean($api, $args, $blankWorksheet));
             }
         }

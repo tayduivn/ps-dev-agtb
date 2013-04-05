@@ -1,18 +1,19 @@
 <html>
 <head>
     <!-- required classes for tests -->
-    <script type="text/javascript" src='../sidecar/lib/backbone/underscore.js'></script>
-    <script type="text/javascript" src='../sidecar/lib/jquery/jquery.min.js'></script>
-    <script type="text/javascript" src='../sidecar/lib/backbone/backbone.js'></script>
+    <script type="text/javascript" src="../sidecar/lib/backbone/underscore.js"></script>
+    <script type="text/javascript" src="../sidecar/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../sidecar/lib/backbone/backbone.js"></script>
     <script type="text/javascript" src="../sidecar/lib/handlebars/handlebars-1.0.rc.1.js"></script>
-    <script type="text/javascript" src='../sidecar/lib/sugarapi/sugarapi.js'></script>
-    <script type="text/javascript" src='../sidecar/minified/sidecar.min.js'></script>
+    <script type="text/javascript" src="../sidecar/lib/sugarapi/sugarapi.js"></script>
+    <script type="text/javascript" src="../sidecar/minified/sidecar.min.js"></script>
     <!-- For sugar7 the plan is to generate a sugar.min.js .. in the meantime load each file -->
-    <script type="text/javascript" src='../include/javascript/sugar7/field.js'></script>
-    <script type="text/javascript" src='../include/javascript/sugar7/alert.js'></script>
-    <script type="text/javascript" src='../include/javascript/sugar7/bwc.js'></script>
-    <script type="text/javascript" src='../include/javascript/sugar7/plugins/dropdown.js'></script>
-    <script type="text/javascript" src='../include/javascript/sugar7/plugins/error-decoration.js'></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/field.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/alert.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/bwc.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/dropdown.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/error-decoration.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/quicksearchfilter.js"></script>
 <?php
 // For sugar7 the plan is to generate a /sugarcrm/config.js .. in the meantime fallback to sidecar config.js
 if (file_exists('../config.js')) {
@@ -27,15 +28,15 @@ if (file_exists('../config.js')) {
     <script type="text/javascript" src="../include/javascript/select2-release-3.2/select2.min.js"></script>
 
     <!-- jasmine and sinon core files -->
-    <script type="text/javascript" src='../sidecar/lib/sinon/sinon.js'></script>
-    <script type="text/javascript" src='../sidecar/lib/jasmine/jasmine.js'></script>
-    <script type="text/javascript" src='../sidecar/lib/jasmine/jasmine-html.js'></script>
-    <script type="text/javascript" src='../sidecar/lib/jasmine-sinon/jasmine-sinon.js'></script>
-    <script type="text/javascript" src='../sidecar/lib/jasmine-jquery/jasmine-jquery.js'></script>
+    <script type="text/javascript" src="../sidecar/lib/sinon/sinon.js"></script>
+    <script type="text/javascript" src="../sidecar/lib/jasmine/jasmine.js"></script>
+    <script type="text/javascript" src="../sidecar/lib/jasmine/jasmine-html.js"></script>
+    <script type="text/javascript" src="../sidecar/lib/jasmine-sinon/jasmine-sinon.js"></script>
+    <script type="text/javascript" src="../sidecar/lib/jasmine-jquery/jasmine-jquery.js"></script>
     <script type="text/javascript" src="../sidecar/lib/jasmine-ci/jasmine-reporters/jasmine.phantomjs-reporter.js"></script>
-    <script type="text/javascript" src='../sidecar/tests/spec-helper.js'></script>
-    <script type="text/javascript" src='jshelpers/spec-helper.js'></script>
-    <script type="text/javascript" src='jshelpers/component-helper.js'></script>
+    <script type="text/javascript" src="../sidecar/tests/spec-helper.js"></script>
+    <script type="text/javascript" src="jshelpers/spec-helper.js"></script>
+    <script type="text/javascript" src="jshelpers/component-helper.js"></script>
     <link rel="stylesheet" href="../sidecar/lib/jasmine/jasmine.css"/>
 
     <!-- Fixtures -->

@@ -43,9 +43,15 @@ describe("forecasts_view_forecastsCommitted", function() {
         });
 
         context = app.context.getContext();
-        context.set({"selectedUser": {"id": 'test_user'}});
-        context.set({"timeperiod_id": {"id": 'timeperiod_id'}});
-        context.set({"collection": new Backbone.Collection()});
+        context.set({
+            selectedUser: {
+                id: 'test_user'
+            },
+            timeperiod_id: {
+                id: 'timeperiod_id'
+            },
+            collection: new Backbone.Collection()
+        });
 
         app.initData = {};
         app.defaultSelections = {

@@ -196,6 +196,32 @@ describe('currency field', function() {
 
         });
 
+        it("should not show transactional amount on render when converted to base rate", function() {
+            //convert the field to push a transactionValue as needed
+            model = app.data.createBean(moduleName, {
+                amount: 123456789.12,
+                currency_id: '12a29c87-a685-dbd1-497f-50abfe93aae6',
+                base_rate: 0.9
+            });
+            field.model = model;
+
+            field.def.convertToBase = true;
+            field.def.showTransactionalAmount = true;
+            field.render();
+            expect(field.transactionValue).toEqual('$123,456,789.12');
+
+            //convert the field back to the default currency and expect the transaction value to change back to ''
+            model = app.data.createBean(moduleName, {
+                amount: 123456789.12,
+                currency_id: '-99',
+                base_rate: 1.0
+            });
+
+            field.model = model;
+            field.render();
+            expect(field.transactionValue).toEqual('');
+        });
+
         it("transactional amount should be empty when using the base currency and currency_field not set", function() {
             model = app.data.createBean(moduleName, {
                 amount: 123456789.12,

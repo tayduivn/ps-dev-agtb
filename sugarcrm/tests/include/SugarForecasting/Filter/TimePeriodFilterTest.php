@@ -30,13 +30,8 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
      */
     public static function setUpBeforeClass()
     {
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user');
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts', 'base');
-
         $settingsToRestore = array('timeperod_interval', 'timeperiod_leaf_interval', 'timeperiod_start_date', 'timeperiod_shown_forward', 'timeperiod_shown_backward');
         foreach($settingsToRestore as $id) {
             if(isset($settings[$id])) {
@@ -46,6 +41,12 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
     }
 
     public function setUp() {
+        parent::setUp();
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
+        
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE timeperiods set deleted = 1");
     }
@@ -55,14 +56,15 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
      */
     public static function tearDownAfterClass()
     {
-        self::updateForecastSettings(self::$currentSettings);
-        SugarTestHelper::tearDown();
+        self::updateForecastSettings(self::$currentSettings);        
     }
 
     public function tearDown() {
+        SugarTestHelper::tearDown();
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM timeperiods WHERE deleted = 0");
         $db->query("UPDATE timeperiods SET deleted = 0");
+        parent::tearDown();
     }
 
     public function timePeriodFilterWithTimePeriodsProvider() {

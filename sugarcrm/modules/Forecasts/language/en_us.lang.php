@@ -404,4 +404,8 @@ $mod_strings = array (
     'LBL_FORECASTS_RANGES_BASED_TITLE' => 'Ranges based on probabilities',
     'LBL_FORECASTS_CUSTOM_BASED_TITLE' => 'Custom Ranges based on probabilities',
     'LBL_FORECASTS_CUSTOM_NO_BASED_TITLE' =>'Ranges not based on probabilities',
+
+    // pipline opportunities dashlet
+    'LBL_DASHLET_FORECAST_NOT_SETUP' => 'Forecasts has not been configured and needs to be setup in order to use this widget. Please contact your system administrator.',
+    'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN' => 'Forecasts has not been configured and needs to be setup in order to use this widget. <a href="#Forecasts/layout/config">Please click here to configure Forecasting</a>.'
 );

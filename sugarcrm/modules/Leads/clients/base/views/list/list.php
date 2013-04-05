@@ -80,8 +80,6 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'default' => true,
                 ),
                 array (
-                    'bwcLink' => true,
-                    'module' => 'Employees',
                     'name'  => 'assigned_user_name',
                     'width' => '5%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',

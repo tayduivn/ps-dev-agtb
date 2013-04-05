@@ -46,13 +46,13 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'primary' => true,
                     'acl_action' => 'edit',
                 ),
-                array(
+                /*array(
                     'type' => 'rowaction',
                     'event' => 'button:delete_button:click',
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
                     'acl_action' => 'delete',
-                ),
+                ),*/
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
@@ -60,13 +60,13 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_action' => 'create',
                 ),
-                array(
+                /*array(
                     'type' => 'rowaction',
                     'event' => 'button:convert_to_quote:click',
                     'name' => 'convert_to_quote_button',
                     'label' => 'LBL_CONVERT_TO_QUOTE',
                     'acl_action' => 'view',
-                ),
+                ),*/
             ),
         ),
         array(
@@ -97,7 +97,10 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'opportunity_name',
+                array(
+                    'name' => 'opportunity_name',
+                    'required' => true
+                ),
                 array(
                     'name' => 'account_name',
                     'readonly' => true,
@@ -121,14 +124,23 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'product_template_name',
                 array(
                     'name' => 'category_name',
-                    'label' => 'LBL_CATEGORY'
+                    'type' => 'productCategoriesRelate',
+                    'label' => 'LBL_CATEGORY',
+                    'readonly' => true
                 ),
                 'quantity',
                 array(
                     'name' => 'discount_price',
                     'type' => 'currency',
+                    'related_fields' => array(
+                        'discount_price',
+                        'currency_id',
+                        'base_rate',
+                    ),
                     'convertToBase' => true,
-                    'showTransactionalAmount' => true
+                    'showTransactionalAmount' => true,
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
                 array(
                     'name' => 'discount_amount',
@@ -144,12 +156,19 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'base_rate_field' => 'base_rate',
                 ),
                 array(
-                    'name' => 'product_line_item_amount',
+                    'name' => 'total_amount',
                     'type' => 'currency',
                     'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
                     'readonly' => true,
+                    'related_fields' => array(
+                        'total_amount',
+                        'currency_id',
+                        'base_rate',
+                    ),
                     'convertToBase' => true,
                     'showTransactionalAmount' => true,
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
                 array(
                     'name' => 'likely_case',
@@ -219,14 +238,27 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 array(
                     'name' => 'list_price',
                     'readonly' => true,
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'list_price',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
-                array(
-                    'name' => 'tax_class',
-                    'readonly' => true,
-                ),
+                'tax_class',
                 array(
                     'name' => 'cost_price',
                     'readonly' => true,
+                    'type' => 'currency',
+                    'related_fields' => array(
+                        'cost_price',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
             ),
         ),

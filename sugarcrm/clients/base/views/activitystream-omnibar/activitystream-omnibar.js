@@ -65,11 +65,14 @@
     },
 
     checkPlaceholder: function(e) {
+        // We can't use any of the jQuery methods or use the dataset property to
+        // set this attribute because they don't seem to work in IE 10. Dataset
+        // isn't supported in IE 10 at all.
         var el = e.currentTarget;
         if (el.textContent) {
-            el.dataset.hidePlaceholder = true;
+            el.setAttribute('data-hide-placeholder', 'true');
         } else {
-            delete el.dataset.hidePlaceholder;
+            el.removeAttribute('data-hide-placeholder');
         }
     }
 })

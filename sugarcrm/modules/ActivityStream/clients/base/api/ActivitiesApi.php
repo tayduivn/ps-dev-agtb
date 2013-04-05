@@ -1,8 +1,8 @@
 <?php
 
-require_once 'include/api/SugarListApi.php';
+require_once 'clients/base/api/FilterApi.php';
 
-class ActivitiesApi extends SugarListApi
+class ActivitiesApi extends FilterApi
 {
 
     public function registerApiRest()
@@ -36,7 +36,7 @@ class ActivitiesApi extends SugarListApi
             ),
             'record_activities_filter' => array(
                 'reqType' => 'GET',
-                'path' => array('<module>','?', 'Activities', 'filter'),
+                'path' => array('<module>','?', 'link', 'activities', 'filter'),
                 'pathVars' => array('module','record', ''),
                 'method' => 'getRecordActivities',
                 'shortHelp' => 'This method retrieves a filtered list of a record\'s activities',
@@ -161,6 +161,7 @@ class ActivitiesApi extends SugarListApi
         }
         $response['next_offset'] = $nextOffset;
         $response['args'] = $args;
+        $response['sequel'] = $query->compileSql();
         return $response;
     }
 
@@ -170,9 +171,9 @@ class ActivitiesApi extends SugarListApi
         $query = new SugarQuery();
         $query->from($seed);
 
-        foreach ($params['orderBy'] as $column => $direction) {
-            $query->orderBy($column, $direction);
-        }
+        // Always order the activity stream by date modified DESC.
+        $query->orderBy('date_modified', 'DESC');
+
         // +1 used to determine if we have more records to show.
         $query->limit($params['limit'] + 1)->offset($params['offset']);
 
@@ -207,12 +208,8 @@ class ActivitiesApi extends SugarListApi
         }
 
         // We only support filtering on activity_type.
-        if (!empty($params['filter'][0]['activity_type'])) {
-            $filter = $params['filter'][0]['activity_type'];
-            if (is_array($filter)) {
-                $filter = $filter['$equals'];
-            }
-            $query->where()->equals('activity_type', $filter);
+        if (!empty($params['filter'])) {
+            self::addFilters($params['filter'], $query->where(), $query);
         }
 
         $query->where()->equals('deleted', 0);

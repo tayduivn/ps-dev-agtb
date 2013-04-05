@@ -1,0 +1,7 @@
+{{#eq card "summary"}}
+<p><a href="{{{url}}}"><h4>{{title}}</h4> ({{site}})</a></p>
+{{#if image}}
+    <img src="{{{image}}}" />
+{{/if}}
+<p>{{description}}</p>
+{{/eq}}

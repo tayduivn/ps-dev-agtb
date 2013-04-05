@@ -49,6 +49,19 @@ $dictionary['Product'] = array(
             'len' => '255',
             'source' => 'non-db',
             'studio' => array('editview' => false, 'detailview' => false, 'quickcreate' => false),
+            'populate_list' => array(
+                'category_id' => 'category_id',
+                'category_name' => 'category_name',
+                'mft_part_num' => 'mft_part_num',
+                'list_price' => 'list_price',
+                'cost_price' => 'cost_price',
+                'discount_price' => 'discount_price',
+                'list_usdollar' => 'list_usdollar',
+                'cost_usdollar' => 'cost_usdollar',
+                'discount_usdollar' => 'discount_usdollar',
+                'tax_class' => 'tax_class',
+                'weight' => 'weight'
+            ),
         ),
         'account_id' =>  array(
             'name' => 'account_id',
@@ -68,9 +81,8 @@ $dictionary['Product'] = array(
             'audited' => true,
             'comment' => 'Contact this product is associated with'
         ),
-        'product_line_item_amount' => array(
-            'name' => 'product_line_item_amount',
-            'source' => 'non-db',
+        'total_amount' => array(
+            'name' => 'total_amount',
             'formula' => 'subtract(multiply(ifElse(isNumeric($discount_price), $discount_price, 0), ifElse(isNumeric($quantity), $quantity, 1)), ifElse(isNumeric($discount_amount), $discount_amount, 0))',
             'calculated' => true,
             'enforced' => true,
@@ -658,7 +670,7 @@ $dictionary['Product'] = array(
             'name' => 'opportunity_id',
             'type' => 'id',
             'vname' => 'LBL_OPPORTUNITY_ID',
-            'required' => false,
+            'required' => true,
             'reportable' => false,
             'comment' => 'The opportunity id for the line item entry'
         ),
@@ -686,7 +698,11 @@ $dictionary['Product'] = array(
             'source' => 'non-db',
             'unified_search' => true,
             'full_text_search' => array('boost' => 1),
-            'comment' => 'The opportunity name associated with the opportunity_id'
+            'comment' => 'The opportunity name associated with the opportunity_id',
+            'populate_list' => array(
+                'account_id' => 'account_id',
+                'account_name' => 'account_name'
+            ),
         ),
         'product_type' => array(
             'name' => 'product_type',

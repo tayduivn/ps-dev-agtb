@@ -1,3 +1,4 @@
+{{#if responseData.results}}
 {{#each responseData.results}}
     <div class="news-article">
         <h5><a href="{{this.unescapedUrl}}">{{{this.titleNoFormatting}}}</a>
@@ -5,3 +6,8 @@
         <p>{{{this.content}}}</p>
     </div>
 {{/each}}
+{{else}}
+    <aside>
+        <em>{{str "LBL_NEWS_FEED_NO_DATA"}}</em>
+    </aside>
+{{/if}}

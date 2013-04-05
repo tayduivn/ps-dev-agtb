@@ -386,4 +386,39 @@ describe("forecasts_lib_forecastsUtils", function() {
             expect(arrowText).toEqual('');
         });
     });
+
+    describe("test getArrowIconColorClass function", function() {
+        it("should return an arrow up set of classes", function() {
+            arrowClass = app.utils.getArrowIconColorClass(10, 5);
+            expect(arrowClass).toEqual(' icon-arrow-up font-green');
+        });
+
+        it("should return an arrow down set of classes", function() {
+            arrowClass = app.utils.getArrowIconColorClass(5, 10);
+            expect(arrowClass).toEqual(' icon-arrow-down font-red');
+        });
+
+        it("should return an empty string, no classes", function() {
+            arrowClass = app.utils.getArrowIconColorClass(5, 5);
+            expect(arrowClass).toEqual('');
+        });
+    });
+
+    describe("test getForecastType function", function() {
+        it("should return 'Direct'", function() {
+            forecastType = app.utils.getForecastType(true, true);
+            expect(forecastType).toEqual('Direct');
+        });
+
+        it("should return 'Rollup'", function() {
+            forecastType = app.utils.getForecastType(false, false);
+            expect(forecastType).toEqual('Direct');
+        });
+
+        it("should return 'Direct'", function() {
+            forecastType = app.utils.getForecastType(true, false);
+            expect(forecastType).toEqual('Rollup');
+        });
+    });
+
 });

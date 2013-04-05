@@ -56,10 +56,8 @@ $viewdefs['ProspectLists']['base']['view']['list'] = array(
                     'default' => true
                 ),
                 array(
-                    'name' => 'assigned_user_name',
                     'width' => '10',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
-                    'module' => 'Employees',
                     'id' => 'ASSIGNED_USER_ID',
                     'enabled' => true,
                     'default' => true
