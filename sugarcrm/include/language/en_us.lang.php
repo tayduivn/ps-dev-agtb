@@ -2577,6 +2577,7 @@ $app_strings = array (
     'LBL_EMAIL_PDF_BUTTON_KEY' => 'M',
     'LBL_EMAIL_PDF_BUTTON_LABEL' => 'Email as PDF',
     'LBL_EMAIL_PDF_BUTTON_TITLE' => 'Email as PDF',
+    'LBL_EMAIL' => 'Email',
     'LBL_EMAILS'=>'Emails',
     'LBL_EMPLOYEES' => 'Employees',
     'LBL_ENTER_DATE' => 'Enter Date',
