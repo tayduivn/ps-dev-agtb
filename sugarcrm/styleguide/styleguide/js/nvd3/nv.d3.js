@@ -848,6 +848,7 @@ nv.models.funnel = function() {
     , fill = function (d,i) { return color(d,i); }
     , gradient = function (d,i) { return color(d,i); }
     , useClass = false
+    , classStep = 1
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
     ;
 
@@ -1000,11 +1001,11 @@ nv.models.funnel = function() {
 
       groups
           .attr('class', function(d,i) {
+              var iClass = (i*classStep)%20;
+
               return this.getAttribute('class') || (
                 'nv-group nv-series-' + i + (
-                  useClass
-                    ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
-                    : ''
+                  useClass ? ( ' '+ ( d.class || 'nv-fill' + (iClass>9?'':'0') + iClass ) ) : ''
                 )
               );
           } )
@@ -1210,6 +1211,11 @@ nv.models.funnel = function() {
   chart.useClass = function(_) {
     if (!arguments.length) return useClass;
     useClass = _;
+    return chart;
+  };
+  chart.classStep = function(_) {
+    if (!arguments.length) return classStep;
+    classStep = _;
     return chart;
   };
 
@@ -1632,6 +1638,10 @@ nv.models.funnelChart = function() {
     {
       funnel.useClass(true);
       legend.useClass(true);
+      if (arguments[1]) {
+        funnel.classStep(arguments[1]);
+        legend.classStep(arguments[1]);
+      }
       var color = function (d,i) { return 'inherit' };
     }
     else
