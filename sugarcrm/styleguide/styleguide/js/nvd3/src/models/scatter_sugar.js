@@ -276,7 +276,7 @@ nv.models.scatter = function() {
           .classed('hover', function(d) { return d.hover; });
       d3.transition(groups)
           .style('stroke-opacity', 1)
-          .style('fill-opacity', 0.5);
+          .style('fill-opacity', 1);
 
 
       var points = groups.selectAll('path.nv-point')

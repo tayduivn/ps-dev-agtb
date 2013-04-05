@@ -476,6 +476,22 @@ svg .title {
 /**********
 * Funnel
 */
+.nv-funnelWithLegend .nv-y .nv-axis path {
+  stroke: none;
+}
+
+/**********
+* Bubble
+*/
+.nv-bubbleChart {
+  .nv-axis path {
+    stroke: @gray;
+  }
+  .nvd3.nv-scatter.nv-single-point .nv-groups .nv-point {
+    fill-opacity: 1;
+    stroke-opacity: 1;
+  }
+}
 
 
 /**********
