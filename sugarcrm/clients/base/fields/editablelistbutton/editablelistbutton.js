@@ -21,34 +21,49 @@
             this.template = app.template.empty;
         }
     },
+    /**
+     * Called whenever validation completes on the model being edited
+     * @param {boolean} isValid TRUE if model is valid
+     * @private
+     */
+    _validationComplete : function(isValid){
+        if(!isValid) return;
+        if (!this.changed) {
+            this.cancelEdit();
+        }
+        else {
+            var self = this;
+            this.model.save({}, {
+                success: function(model) {
+                    this.changed = false;
+                    self.view.toggleRow(model.id, false);
+                },
+                //Show alerts for this request
+                showAlerts: {
+                    'process' : true,
+                    'success': {
+                        messages: app.lang.getAppString('LBL_RECORD_SAVED')
+                    }
+                }
+            });
+        }
+
+    },
     saveModel: function() {
         var fieldsToValidate = this.view.getFields(this.module);
         this.view.clearValidationErrors();
-        if (this.model.isValid(fieldsToValidate)) {
-            if (!this.changed) {
-                this.cancelEdit();
-            }
-            else {
-                var self = this;
-                this.model.save({}, {
-                    success: function(model) {
-                        this.changed = false;
-                        self.view.toggleRow(model.id, false);
-                    },
-                    //Show alerts for this request
-                    showAlerts: {
-                        'process' : true,
-                        'success': {
-                            messages: app.lang.getAppString('LBL_RECORD_SAVED')
-                        }
-                    }
-                });
-            }
+        var isValid = this.model.isValid(fieldsToValidate);
+        if(_.isUndefined(isValid)){
+            this.model.once("validation:complete", this._validationComplete, this);
+        } else {
+            this._validationComplete(isValid);
         }
+
     },
     cancelEdit: function() {
         this.changed = false;
         this.model.revertAttributes();
+        this.view.clearValidationErrors();
         this.view.toggleRow(this.model.id, false);
     },
     saveClicked: function(evt) {

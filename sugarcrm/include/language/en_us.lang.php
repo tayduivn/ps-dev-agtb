@@ -2417,6 +2417,7 @@ $app_strings = array (
     'ERR_SQS_NO_MATCH' =>'No Match',
     'ERR_ADDRESS_KEY_NOT_SPECIFIED' => 'Please specify \'key\' index in displayParams attribute for the Meta-Data definition',
     'ERR_EXISTING_PORTAL_USERNAME'=>'Error: The Portal Name is already assigned to another contact.',
+    'ERR_PORTAL_NAME_CHECK' => 'Unable to verify that Portal user name is unique',
     'ERR_COMPATIBLE_PRECISION_VALUE' => 'Field value is not compatible with precision value',
     'ERR_EXTERNAL_API_SAVE_FAIL' => 'An error occurred when trying to save to the external account.',
     'ERR_EXTERNAL_API_UPLOAD_FAIL' => 'An error occurred while uploading.  Please ensure the file you are uploading is not empty.',
@@ -3896,6 +3897,7 @@ $app_strings = array (
     //record save
     'LBL_RECORD_SAVED' => 'Record saved.', // use when there is no information about the record
     'LBL_RECORD_SAVED_SUCCESS' => 'Record {{name}} was saved.', // use when a model is available
+    'LBL_VALIDATING' => 'Validating...',
 
     //for sidecar alert view
     'LBL_ALERT_TITLE_SUCCESS' => 'Success:',

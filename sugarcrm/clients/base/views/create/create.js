@@ -66,6 +66,10 @@
             }
         }, this);
 
+        this.model.on("error:validation", function(){
+            this.alerts.showInvalidModel();
+        }, this);
+
     },
 
     handleSync: function () {
@@ -183,17 +187,18 @@
             }
         }, this));
     },
-
     /**
      * Check to see if all fields are valid
      * @param callback
      */
     validateModelWaterfall: function (callback) {
-        if (this.model.isValid(this.getFields(this.module))) {
-            callback(false);
+        var isValid = this.model.isValid(this.getFields(this.module));
+        if (_.isUndefined(isValid)){
+            this.model.once("validation:complete", function(isValid){
+                callback(!isValid);
+            });
         } else {
-            this.alerts.showInvalidModel();
-            callback(true);
+            callback(!isValid);
         }
     },
 
@@ -303,7 +308,6 @@
             );
         });
         options = {
-            fieldsToValidate: self.getFields(self.module),
             success: success,
             error: error,
             viewed: true,

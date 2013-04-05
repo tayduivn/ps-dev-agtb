@@ -16,6 +16,9 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/quicksearchfilter.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/GridBuilder.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/list-disable-sort.js"></script>
+
+    <!-- customized beans -->
+    <script type="text/javascript" src="../modules/Contacts/clients/base/lib/bean.js"></script>
 <?php
 // For sugar7 the plan is to generate a /sugarcrm/config.js .. in the meantime fallback to sidecar config.js
 if (file_exists('../config.js')) {
