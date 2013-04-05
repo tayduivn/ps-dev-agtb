@@ -27,11 +27,9 @@ $viewdefs['base']['view']['news'] = array(
             'filter' => array(
                 'module' => array(
                     'Accounts',
-                    'Contacts',
-                    'Leads',
                 ),
                 'view' => 'record'
-            )
+            ),
         ),
     ),
     'config' => array(
