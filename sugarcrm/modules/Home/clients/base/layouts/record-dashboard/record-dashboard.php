@@ -33,8 +33,8 @@ $layout->push(
 
 $layout->push(
     0,
-    array(	
-    	 array(
+    array(
+        array(
             'name' => 'My Contacts',
             'view' => 'dashablelist',
             'context' => array(
@@ -54,13 +54,13 @@ $layout->push(
                 ),
             ),
         ),
-        
+
     )
 );
 $layout->push(
     1,
     array(
-		 array(
+        array(
             'name' => 'Pipeline',
             'view' => 'forecast-pipeline',
             'context' => array(
@@ -71,8 +71,6 @@ $layout->push(
                 ),
             ),
         ),
-
-       
         array(
             'name' => 'Sales By Country',
             'view' => 'countrychart',
@@ -80,6 +78,23 @@ $layout->push(
                 'dashlet' => array(
                     'name' => 'Sales By Country',
                     'type' => 'countrychart',
+                ),
+            ),
+        ),
+    )
+);
+$layout->push(
+    1,
+    array(
+        array(
+            'name' => 'Top 10 sales opportunities',
+            'view' => 'bubblechart',
+            'context' => array(
+                'dashlet' => array(
+                    'name' => 'Top 10 sales opportunities',
+                    'type' => 'bubblechart',
+                    'filter_duration' => 0,
+                    'filter_assigned' => 'my',
                 ),
             ),
         ),
