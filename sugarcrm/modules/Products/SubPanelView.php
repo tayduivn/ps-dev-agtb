@@ -73,7 +73,8 @@ function getHeaderText($action, $currentModule){
 		elseif ($currentModule == 'Contacts') {
 			$button .= "<input type='hidden' name='account_name' value='".urlencode($this->focus->account_name)."'>\n";
 			$button .= "<input type='hidden' name='account_id' value='".$this->focus->account_id."'>\n";
-			$button .= "<input type='hidden' name='contact_name' value='".urlencode($locale->getLocaleFormattedName($this->focus->first_name, $this->focus->last_name))."'>\n";
+            $focus_name = $locale->formatName($this->focus);
+            $button .= "<input type='hidden' name='contact_name' value='".urlencode($focus_name)."'>\n";
 			$button .= "<input type='hidden' name='contact_id' value='".$this->focus->id."'>\n";
 		}
 		$button .= "<td><input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."  '></td>\n";

@@ -377,7 +377,7 @@ class Meeting extends SugarBean {
 			$GLOBALS['log']->info("additional call fields $query");
 			if($row != null)
 			{
-				$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], '', '');
+                $this->contact_name = $locale->formatName('Contacts', $row);
 				$GLOBALS['log']->debug("Call($this->id): contact_name = $this->contact_name");
 				$GLOBALS['log']->debug("Call($this->id): contact_id = $this->contact_id");
 			}

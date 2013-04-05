@@ -67,6 +67,13 @@ class Localization {
         'ISO-8859-8-I' => 'ISO-8859-8'            
         );
 
+    /**
+     * Cache of parsed localized name formats.
+     *
+     * @var array
+     */
+    protected $parsedFormats = array();
+
 	/**
 	 * sole constructor
 	 */
@@ -75,6 +82,21 @@ class Localization {
 		$this->localeNameFormatDefault = empty($sugar_config['locale_name_format_default']) ? 's f l' : $sugar_config['default_name_format'];
 		$this->loadCurrencies();
 	}
+
+    /**
+     * Method to get Localization object
+     *
+     * @return Localization
+     */
+    public static function getObject()
+    {
+        $class = __CLASS__;
+        if (SugarAutoLoader::load('custom/include/Localization/Localization.php')) {
+            $class = SugarAutoLoader::customClass($class);
+        }
+
+        return new $class();
+    }
 
 	/**
 	 * returns an array of Sugar Config defaults that are determined by locale settings
@@ -618,6 +640,7 @@ eoq;
 	 * @param bool returnEmptyStringIfEmpty true if we should return back an empty string rather than a single space
 	 * when the formatted name would be blank
 	 * @return string formattedName
+     * @deprecated
 	 */
 	function getLocaleFormattedName($firstName, $lastName, $salutationKey='', $title='', $format="", $user=null, $returnEmptyStringIfEmpty = false) {
 		global $current_user;
@@ -675,6 +698,156 @@ eoq;
 		}
 		return trim($formattedName);
 	}
+
+    /**
+     * Returns formatted name according to $current_user's locale settings
+     *
+     * @param SugarBean|string $beanOrModuleName SugarBean object or module name
+     * @param array            $data             The data that should be used to fetch values from instead of $bean.
+     *
+     * @return string
+     */
+    public function formatName($beanOrModuleName, array $data = null)
+    {
+        global $app_list_strings;
+
+        $result = '';
+        $bean = $this->getBean($beanOrModuleName);
+        if (!$bean) {
+            return $result;
+        }
+
+        $format = $this->getLocaleFormatMacro();
+        $tokens = $this->parseLocaleFormatMacro($format);
+
+        $isEmpty = true;
+        foreach ($tokens as $token) {
+            if ($token['is_field']) {
+                $alias = $token['field_alias'];
+                if (isset($bean->name_format_map[$alias])) {
+                    $field = $bean->name_format_map[$alias];
+                    $value = '';
+                    if ($data === null) {
+                        if (isset($bean->$field)) {
+                            $value = $bean->$field;
+                        }
+                    } else {
+                        if (isset($data[$field])) {
+                            $value = $data[$field];
+                        }
+                    }
+
+                    if ($value != '') {
+                        if ($field == 'salutation' && !empty($app_list_strings['salutation_dom'][$value])) {
+                            $value = $app_list_strings['salutation_dom'][$value];
+                        }
+
+                        $isEmpty = false;
+                        $result .= $value;
+                    }
+                }
+            } else {
+                $result .= $token['value'];
+            }
+        }
+
+        if ($isEmpty) {
+            return '';
+        }
+
+        $result = trim($result);
+
+        return $result;
+    }
+
+    /**
+     * Returns names of SugarBean fields that are used in current formatting macro.
+     *
+     * @param SugarBean|string $beanOrModuleName SugarBean object or module name
+     *
+     * @return array
+     */
+    public function getNameFormatFields($beanOrModuleName)
+    {
+        $fields = array();
+        $bean = $this->getBean($beanOrModuleName);
+        if (!$bean) {
+            return $fields;
+        }
+
+        $format = $this->getLocaleFormatMacro();
+        $tokens = $this->parseLocaleFormatMacro($format);
+
+        foreach ($tokens as $token) {
+            if ($token['is_field']) {
+                $alias = $token['field_alias'];
+                if (isset($bean->name_format_map[$alias])) {
+                    $fields[] = $bean->name_format_map[$alias];
+                }
+            }
+        }
+
+        return array_unique($fields);
+    }
+
+    /**
+     * Returns an instance of specified module or the bean itself.
+     *
+     * @param SugarBean|string $beanOrModuleName SugarBean object or module name
+     *
+     * @return SugarBean|null
+     */
+    protected function getBean($beanOrModuleName)
+    {
+        if (is_string($beanOrModuleName)) {
+            global $current_user;
+
+            // don't instantiate User object if the metadata can be read from current user
+            if ($beanOrModuleName == 'Users' && $current_user) {
+                $bean = $current_user;
+            } else {
+                $bean = BeanFactory::getBean($beanOrModuleName);
+            }
+        } elseif ($beanOrModuleName instanceof SugarBean) {
+            $bean = $beanOrModuleName;
+        } else {
+            $bean = null;
+        }
+
+        return $bean;
+    }
+
+    /**
+     * Returns array of tokens corresponding to the given formatting macro.
+     *
+     * @param string $format
+     * @return array
+     */
+    protected function parseLocaleFormatMacro($format)
+    {
+        if (!isset($this->parsedFormats[$format])) {
+            $tokens = array();
+            for ($i = 0, $length = strlen($format); $i < $length; $i++) {
+                $character = $format{$i};
+                $is_field = $character >= 'a' && $character <= 'z';
+
+                $token = array(
+                    'is_field' => $is_field,
+                );
+
+                if ($is_field) {
+                    $token['field_alias'] = $character;
+                } else {
+                    $token['value'] = $character;
+                }
+
+                $tokens[] = $token;
+            }
+            $this->parsedFormats[$format] = $tokens;
+        }
+
+        return $this->parsedFormats[$format];
+    }
 
 	/**
 	 * outputs some simple Javascript to show a preview of Name format in "My Account" and "Admin->Localization"

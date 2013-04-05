@@ -385,7 +385,7 @@ class Contact extends Person {
 		{
 			$this->account_name = $row['name'];
 			$this->account_id = $row['id'];
-			$this->report_to_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name'],'','','',null,true);
+            $this->report_to_name = $locale->formatName($this->module_name, $row);
 		}
 		else
 		{
@@ -408,7 +408,7 @@ class Contact extends Person {
 		 * 'name' attribute constructed to pass onto related items, such as Tasks
 		 * Notes, etc.
 		 */
-		$this->name = $locale->getLocaleFormattedName($this->first_name, $this->last_name);
+        $this->name = $locale->formatName($this);
 		if(!empty($this->portal_active) && $this->portal_active == 1) {
 		   $this->portal_active = true;
 		}
@@ -482,7 +482,7 @@ class Contact extends Person {
 	{
 	    global $locale;
 
-		$xtpl->assign("CONTACT_NAME", trim($locale->getLocaleFormattedName($contact->first_name, $contact->last_name)));
+        $xtpl->assign("CONTACT_NAME", $locale->formatName($contact));
 		$xtpl->assign("CONTACT_DESCRIPTION", $contact->description);
 
 		return $xtpl;

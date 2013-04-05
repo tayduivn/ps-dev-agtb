@@ -222,22 +222,13 @@ class EmailMan extends SugarBean{
         $temp_array = parent::get_list_view_array();
 
         $related_type = $temp_array['RELATED_TYPE'];
-        $related_id = $temp_array['RELATED_ID'];
-        $is_person = SugarModule::get($related_type)->moduleImplements('Person');
+        $related_type = strtolower($related_type);
+        $related_type = ucfirst($related_type);
+        $related_id   = $temp_array['RELATED_ID'];
 
-        if($is_person)
-        {
-            $query = "SELECT first_name, last_name FROM ". strtolower($related_type) ." WHERE id ='". $related_id ."'";
-        } else {
-            $query = "SELECT name FROM ". strtolower($related_type) ." WHERE id ='". $related_id ."'";
-        }
-
-        $result=$this->db->query($query);
-        $row=$this->db->fetchByAssoc($result);
-
-        if($row)
-        {
-        	$temp_array['RECIPIENT_NAME'] = $is_person ? $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], '') : $row['name'];
+        $related_bean = BeanFactory::getBean($related_type, $related_id);
+        if ($related_bean) {
+            $temp_array['RECIPIENT_NAME'] = $locale->formatName($related_bean);
         }
 
         //also store the recipient_email address

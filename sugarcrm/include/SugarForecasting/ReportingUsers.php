@@ -191,7 +191,13 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
     protected function getTreeArray($id, $first_name, $last_name, $user_name, $reports_to_id, $title, $rel = 'rep')
     {
         global $locale;
-        $fullName = $locale->getLocaleFormattedName($first_name, $last_name);
+        $fullName = $locale->formatName(
+            'Users',
+            array(
+                'first_name' => $first_name,
+                'last_name'  => $last_name,
+            )
+        );
 
         $qa_id = 'jstree_node_';
         if ($rel == "my_opportunities") {

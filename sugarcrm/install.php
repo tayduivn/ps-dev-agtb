@@ -52,7 +52,7 @@ if(isset($_REQUEST['goto']) && $_REQUEST['goto'] != 'SilentInstall') {
 $timedate = TimeDate::getInstance();
 // cn: set php.ini settings at entry points
 setPhpIniSettings();
-$locale = new Localization();
+$locale = Localization::getObject();
 
 if(get_magic_quotes_gpc() == 1) {
    $_REQUEST = array_map("stripslashes_checkstrings", $_REQUEST);

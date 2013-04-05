@@ -382,7 +382,7 @@ function display_conflict($conflict){
 
 	}
 	if($module_name == 'Contacts'){
-		$name = $locale->getLocaleFormattedName($cur->first_name, $cur->last_name);
+        $name = $locale->formatName($cur);
 	}else{
 		if(isset($cur->name)){
 			$name = $cur->name;

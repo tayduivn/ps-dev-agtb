@@ -121,8 +121,8 @@ class ForecastSchedule extends SugarBean {
 		$result = $this->db->query($query,true,"Error fetching user name:");
 		
 		$row = $this->db->fetchByAssoc($result);
-		if ($row != null) {	
-			$this->user_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+        if ($row != null) {
+            $this->user_name = $locale->formatName('Users', $row);
 		}
 		
 		//get timeperiod name.=

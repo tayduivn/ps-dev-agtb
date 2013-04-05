@@ -89,7 +89,7 @@ class CampaignLog extends SugarBean {
             if($temp_array['TARGET_TYPE']=='Accounts'){
                 $temp_array['RECIPIENT_NAME']=$row['name'];
             }else{
-                $full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], '');
+                $full_name = $locale->formatName($temp_array['TARGET_TYPE'], $row);
                 $temp_array['RECIPIENT_NAME']=$full_name;
             }
         }
@@ -148,7 +148,7 @@ class CampaignLog extends SugarBean {
             $result=$db->query($query);
             $row=$db->fetchByAssoc($result);
             if ($row != null) {
-                return $full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+                return $full_name = $locale->formatName('Contacts', $row);
             }
         }
         if ($related_type == 'Leads') {
@@ -156,7 +156,7 @@ class CampaignLog extends SugarBean {
             $result=$db->query($query);
             $row=$db->fetchByAssoc($result);
             if ($row != null) {
-                return $full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+                return $full_name = $locale->formatName('Leads', $row);
             }
         }
         if ($related_type == 'Prospects') {
@@ -164,7 +164,7 @@ class CampaignLog extends SugarBean {
             $result=$db->query($query);
             $row=$db->fetchByAssoc($result);
             if ($row != null) {
-                return $full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+                return $full_name = $locale->formatName('Prospects', $row);
             }
         }
         if ($related_type == 'CampaignTrackers') {

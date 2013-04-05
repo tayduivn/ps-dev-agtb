@@ -224,7 +224,13 @@ class ForecastDirectReports extends SugarBean {
 
         $forecast_fields['FORECAST_TYPE']= $this->forecast_type;
 
-        $forecast_fields['USER_NAME']= $locale->getLocaleFormattedName($forecast_fields['FIRST_NAME'], $forecast_fields['LAST_NAME']);
+        $forecast_fields['USER_NAME']= $locale->formatName(
+            'Users',
+            array(
+                'first_name' => $forecast_fields['FIRST_NAME'],
+                'last_name'  => $forecast_fields['LAST_NAME'],
+            )
+        );
 
         $forecast_fields['BEST_CASE'] =  $this->opp_best_case;
         $forecast_fields['WORST_CASE'] = $this->opp_worst_case;

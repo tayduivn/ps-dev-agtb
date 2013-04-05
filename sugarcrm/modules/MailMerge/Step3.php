@@ -126,7 +126,7 @@ foreach($sel_obj as $key => $value)
 	$contact_id = '';
 	if($row = $seed->db->fetchByAssoc($result, 0)) {
 			if($relModule == "Contacts") {
-			    $full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+                $full_name = $locale->formatName('Contacts', $row);
 			} else {
 				$full_name = $row['name'];
 			}

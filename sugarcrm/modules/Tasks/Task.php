@@ -228,7 +228,7 @@ class Task extends SugarBean {
 		}
 		if (is_subclass_of($parent, 'Person') and $row != null)
 		{
-			$this->parent_name = $locale->getLocaleFormattedName(stripslashes($row['first_name']), stripslashes($row['last_name']));
+            $this->parent_name = $locale->formatName($this->parent_type, $row);
 		}
 		else if (is_subclass_of($parent, 'File') && $row != null) {
 			$this->parent_name = $row['document_name'];

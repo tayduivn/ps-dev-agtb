@@ -23,12 +23,10 @@ global $mod_strings;
 global $locale;
 $userName = $mod_strings['LBL_UNKNOWN'];
 
-if(isset($_REQUEST['user'])) {
-	
+if(isset($_REQUEST['user'])) {	
 	$user = BeanFactory::getBean('Users', $_REQUEST['user']);
-	$userName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
+	$userName = $locale->formatName($user);
 }
-
 
 // NEXT FREE
 if(isset($_REQUEST['next_free']) && $_REQUEST['next_free'] == true) {

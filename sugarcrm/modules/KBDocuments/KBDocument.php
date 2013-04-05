@@ -170,7 +170,7 @@ class KBDocument extends SugarBean {
 		$row = $this->db->fetchByAssoc($result);
 		if(!empty($row)) {
 		   $this->kbarticle_author_id = $this->created_by;
-		   $this->kbarticle_author_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+            $this->kbarticle_author_name = $locale->formatName('Users', $row);
 		   $this->created_by = $this->kbarticle_author_name;
 		}
 

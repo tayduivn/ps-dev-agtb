@@ -802,10 +802,10 @@ function check_special_fields($field_name, $source_object, $use_past_array=false
 	if($field_name == 'full_name'){
 		if($use_past_array==false){
 			//use the future value
-			return $locale->getLocaleFormattedName($source_object->first_name, $source_object->last_name);
+            return $locale->formatName($source_object);
 		} else {
 			//use the past value
-			return $locale->getLocaleFormattedName($source_object->fetched_row['first_name'], $source_object->fetched_row['last_name']);
+            return $locale->formatName($source_object, $source_object->fetched_row);
 		}
 	} elseif($field_name == 'modified_by_name' && $use_past_array) {
         return $source_object->old_modified_by_name;

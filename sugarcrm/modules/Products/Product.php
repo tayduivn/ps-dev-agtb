@@ -481,11 +481,21 @@ class Product extends SugarBean
                         $result = $this->db->query($updateQuery);
                     }
 
-                }
-            }
-        }
-        return $id;
-    }
+		if($row != null)
+		{
+            $this->contact_name = $locale->formatName('Contacts', $row);
+			$this->contact_id = $row['id'];
+			$this->contact_name_owner = $row['assigned_user_id'];
+			$this->contact_name_mod = 'Contacts';
+		}
+		else
+		{
+			$this->contact_name = '';
+			$this->contact_id = '';
+			$this->contact_name_owner = '';
+			$this->contact_name_mod = '';
+		}
+	}
 
     /*
      * map fields if opportunity id is set

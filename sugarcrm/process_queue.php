@@ -37,6 +37,7 @@ require_once('include/modules.php');
 require_once('config.php');
 require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
+/** @var Localization $locale */
 global $sugar_config,
        $current_language,
        $app_list_strings,

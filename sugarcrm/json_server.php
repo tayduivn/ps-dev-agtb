@@ -318,7 +318,7 @@ if(isset($_SESSION['authenticated_user_language']) && $_SESSION['authenticated_u
 	$current_language = $sugar_config['default_language'];
 }
 
-$locale = new Localization();
+$locale = Localization::getObject();
 
 $GLOBALS['log']->debug("JSON_SERVER: current_language:".$current_language);
 

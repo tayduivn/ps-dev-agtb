@@ -905,6 +905,11 @@ $dictionary['User'] = array(
         ),
 
     ) ,
+    'name_format_map' => array(
+        'f' => 'first_name',
+        'l' => 'last_name',
+        't' => 'title',
+    ),
     'indices' => array(
         array(
             'name' => 'userspk',

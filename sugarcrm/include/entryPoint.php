@@ -203,7 +203,7 @@ $GLOBALS['js_version_key'] = md5($GLOBALS['sugar_config']['unique_key'].$GLOBALS
 
 $db = DBManagerFactory::getInstance();
 $db->resetQueryCount();
-$locale = new Localization();
+$locale = Localization::getObject();
 
 // Emails uses the REQUEST_URI later to construct dynamic URLs.
 // IIS does not pass this field to prevent an error, if it is not set, we will assign it to ''.

@@ -55,8 +55,7 @@ global $report_modules,
        $locale;
 
 foreach ($reportsToEmailEnt as $scheduleId => $scheduleInfo) {
-    $user = new User();
-    $user->retrieve($scheduleInfo['user_id']);
+    $user = BeanFactory::getBean('Users', $scheduleInfo['user_id']);
 
     $current_user   = $user; // should this be the global $current_user? global $current_user isn't referenced
     $modListHeader  = query_module_access_list($current_user);

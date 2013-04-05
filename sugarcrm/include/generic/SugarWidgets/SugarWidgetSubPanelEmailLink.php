@@ -65,7 +65,7 @@ class SugarWidgetSubPanelEmailLink extends SugarWidgetField {
 				$name = $focus->name;
 			} else {
 				if( !empty($focus->first_name) && !empty($focus->last_name)) {
-					$name = $locale->getLocaleFormattedName($focus->first_name, $focus->last_name);
+                    $name = $locale->formatName($focus);
 					}
 				if(empty($name)) {
 					$name = '*';

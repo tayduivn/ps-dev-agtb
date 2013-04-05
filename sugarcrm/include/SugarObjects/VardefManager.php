@@ -115,6 +115,18 @@ class VardefManager{
             $GLOBALS['dictionary'][$object]['fields'] = array_merge($templates[$template]['fields'], $GLOBALS['dictionary'][$object]['fields']);
             if(!empty($templates[$template]['relationships']))$GLOBALS['dictionary'][$object]['relationships'] = array_merge($templates[$template]['relationships'], $GLOBALS['dictionary'][$object]['relationships']);
             if(!empty($templates[$template]['indices']))$GLOBALS['dictionary'][$object]['indices'] = array_merge($templates[$template]['indices'], $GLOBALS['dictionary'][$object]['indices']);
+
+            if (!isset($GLOBALS['dictionary'][$object]['name_format_map'])) {
+                $GLOBALS['dictionary'][$object]['name_format_map'] = array();
+            }
+
+            if (isset($templates[$template]['name_format_map'])) {
+                $GLOBALS['dictionary'][$object]['name_format_map'] = array_merge(
+                    $GLOBALS['dictionary'][$object]['name_format_map'],
+                    $templates[$template]['name_format_map']
+                );
+            }
+
             //BEGIN SUGARCRM flav=pro ONLY
             if(isset($templates[$template]['favorites']) && !isset($GLOBALS['dictionary'][$object]['favorites']))
             {

@@ -26,6 +26,10 @@ require_once 'include/Localization/Localization.php';
 
 class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Localization
+     */
+    private $_locale;
 
     /**
      * @var Localization
@@ -300,6 +304,65 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_user->setPreference('num_grp_sep','');
         $this->assertEmpty($this->_locale->getNumberGroupingSeparator(), "1000s separator should be ''");
+    }
+
+    /**
+     * @param string|null      $macro
+     * @param SugarBean|string $bean
+     * @param array|null       $data
+     * @param string           $expected
+     *
+     * @dataProvider testFormatNameProvider
+     */
+    public function testFormatName($macro, $bean, $data, $expected)
+    {
+        if ($macro) {
+            $locale = $this->getMockBuilder('Localization')
+                ->setMethods(array('getLocaleFormatMacro'))
+                ->disableOriginalConstructor()
+                ->getMock();
+            $locale->expects($this->any())
+                ->method('getLocaleFormatMacro')
+                ->will($this->returnValue($macro));
+        } else {
+            $locale = $this->_locale;
+        }
+
+        $actual = $locale->formatName($bean, $data);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function testFormatNameProvider()
+    {
+        $user1 = new User();
+        $user1->first_name = 'John';
+        $user1->last_name  = 'Doe';
+
+        $user2 = clone $user1;
+        $user2->name_format_map = array_merge(
+            $user1->name_format_map,
+            array(
+                'z' => 'non_existing_field',
+            )
+        );
+
+        return array(
+            'invalid-bean-type' => array(null, null, null, false),
+            'invalid-module'    => array(null, 'Apples', null, false),
+            'bean-as-object'    => array(null, $user1, null, 'John Doe'),
+            'bean-as-string'    => array(
+                null,
+                'Users',
+                array(
+                    'first_name' => 'John',
+                    'last_name'  => 'Doe',
+                ),
+                'John Doe',
+            ),
+            'non-existing-token' => array('x f', $user1, null, 'John'),
+            'non-existing-field' => array('z l', $user1, null, 'Doe'),
+            'empty-result'       => array('x z', $user1, null, ''),
+        );
     }
 
     /**
