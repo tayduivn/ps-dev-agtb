@@ -23,6 +23,7 @@ require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSet.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineHighlighter.php');
+SugarAutoLoader::requireWithCustom('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php');
 
 /**
  * Engine implementation for ElasticSearch
@@ -795,8 +796,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $index->create(array(), $recreate);
 
              // create field mappings
-            require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php');
-            $elasticMapping = new SugarSearchEngineElasticMapping($this);
+            $mappingClass = SugarAutoLoader::customClass('SugarSearchEngineElasticMapping');
+            $elasticMapping = new $mappingClass($this);
             $elasticMapping->setFullMapping();
         } catch (Exception $e) {
             // ignore the IndexAlreadyExistsException exception
