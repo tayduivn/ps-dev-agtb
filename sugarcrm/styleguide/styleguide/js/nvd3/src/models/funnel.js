@@ -238,17 +238,17 @@ nv.models.funnel = function() {
               .attr('class', 'nv-label-value')
               .attr('transform', 'translate('+ c +',0)');
 
-          lblValueEnter.append('rect')
-              .attr('x', -labelBoxWidth/2)
-              .attr('y', -20)
-              .attr('width', labelBoxWidth)
-              .attr('height', 40)
-              .attr('rx',3)
-              .attr('ry',3)
-              .style('fill', fill({},0))
-              .attr('stroke', 'none')
-              .style('fill-opacity', 0.4)
-            ;
+          // lblValueEnter.append('rect')
+          //     .attr('x', -labelBoxWidth/2)
+          //     .attr('y', -20)
+          //     .attr('width', labelBoxWidth)
+          //     .attr('height', 40)
+          //     .attr('rx',3)
+          //     .attr('ry',3)
+          //     .style('fill', fill({},0))
+          //     .attr('stroke', 'none')
+          //     .style('fill-opacity', 0.4)
+          //   ;
 
           lblValueEnter.append('text')
               .attr('x', 0)
@@ -263,11 +263,11 @@ nv.models.funnel = function() {
             var width = this.getBBox().width + 20
             if(width > labelBoxWidth) labelBoxWidth = width;
           });
-      lblValue.selectAll('rect').each(function(d,i){
-            d3.select(this)
-              .attr('width', labelBoxWidth)
-              .attr('x', -labelBoxWidth/2);
-          });
+      // lblValue.selectAll('rect').each(function(d,i){
+      //       d3.select(this)
+      //         .attr('width', labelBoxWidth)
+      //         .attr('x', -labelBoxWidth/2);
+      //     });
 
       d3.transition(lblValue)
           .delay(function(d,i) { return i * delay / data[0].values.length })
