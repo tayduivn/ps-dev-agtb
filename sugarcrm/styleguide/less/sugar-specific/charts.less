@@ -240,6 +240,9 @@ svg {
     .opportunity-metrics-wrapper .nv-chart {
       height: 309px;
     }
+    .nv-chart-cases {
+      height: 399px;
+    }
   }
 }
 .sidebar-content {
@@ -266,6 +269,9 @@ svg {
     }
     .opportunity-metrics-wrapper .nv-chart {
       height: 250px;
+    }
+    .nv-chart-cases {
+      height: 290px;
     }
   }
 }
@@ -299,14 +305,9 @@ svg {
   .nv-y path {
     stroke: none;
   }
-  .nv-label-value {
-    text {
-      font-size: 14px;
-      fill: @white;
-    }
-    rect {
-      fill: #12448F;
-    }
+  .nv-label-value text {
+    font-size: 14px;
+    fill: @white;
   }
   text.nv-label-group {
     font-size: 16px;
@@ -314,6 +315,25 @@ svg {
   }
 }
 
+//interactions
+//opportunity-metrics
+//casessummary
+span.count {
+  font-size: 16px;
+  display: block;
+  &.label {
+    font-size: 14px;
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    padding: 3px;
+    //position: absolute;
+    //top: -14px;
+    //left: 50%;
+    //margin-left: -14px;
+  }
+}
 
 /*TOOLTIPS*/
 .tip {
