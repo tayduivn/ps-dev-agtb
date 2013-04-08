@@ -98,11 +98,6 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
         $this->table_name = self::QUEUE_TABLE;
     }
 
-    public function __get($name)
-    {
-        return $this->$name;
-    }
-
     /**
      * Set the scheduler job that initiated the run call.
      *
