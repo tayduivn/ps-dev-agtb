@@ -53,6 +53,11 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
     * @var Administration
     */
     protected static $admin;
+    
+    /**
+     * @var Current Forecasts Config
+     */
+    protected static $current_config;
 
     public static function setUpBeforeClass()
     {
@@ -62,6 +67,8 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         self::$admin = BeanFactory::getBean('Administration');
+        self::$current_config = self::$admin->getConfigForModule('Forecasts');
+        self::$admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
     }
 
     public function setUp()
@@ -129,6 +136,7 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
         self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
         self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 0, 'base');
+        self::$admin->saveSetting('Forecasts', 'is_setup', self::$current_config['is_setup'], 'base');
     }
 
     /**
@@ -201,7 +209,6 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testBug58397()
     {
-
         $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($this->reportee['opportunities'][0]);
         $worksheet->name .= "'";
         $worksheet->save();
