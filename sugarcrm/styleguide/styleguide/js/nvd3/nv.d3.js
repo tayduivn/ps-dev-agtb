@@ -1002,7 +1002,6 @@ nv.models.funnel = function() {
       groups
           .attr('class', function(d,i) {
               var iClass = (i*classStep)%20;
-
               return this.getAttribute('class') || (
                 'nv-group nv-series-' + i + (
                   useClass ? ( ' '+ ( d.class || 'nv-fill' + (iClass>9?'':'0') + iClass ) ) : ''
@@ -1636,11 +1635,11 @@ nv.models.funnelChart = function() {
     }
     else if (_ === 'class')
     {
-      funnel.useClass(true);
       legend.useClass(true);
+      funnel.useClass(true);
       if (arguments[1]) {
-        funnel.classStep(arguments[1]);
         legend.classStep(arguments[1]);
+        funnel.classStep(arguments[1]);
       }
       var color = function (d,i) { return 'inherit' };
     }
@@ -6827,6 +6826,7 @@ nv.models.pie = function() {
     , fill = function (d,i) { return color(d,i); }
     , gradient = function (d,i) { return color(d,i); }
     , useClass = false
+    , classStep = 1
     , valueFormat = d3.format(',.2f')
     , showLabels = true
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
@@ -6904,14 +6904,13 @@ nv.models.pie = function() {
 
       var ae = slices.enter().append('g')
               .attr('class', function(d,i) {
+                  var iClass = (i*classStep)%20;
                   return this.getAttribute('class') || (
                     'nv-slice' + (
-                      useClass
-                        ? ( ' '+ ( d.data.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
-                        : ''
+                      useClass ? ( ' '+ ( d.data.class || 'nv-fill' + (iClass>9?'':'0') + iClass ) ) : ''
                     )
                   );
-              } )
+              })
               .on('mouseover', function(d,i){
                 d3.select(this).classed('hover', true);
                 dispatch.elementMouseover({
@@ -7080,6 +7079,11 @@ nv.models.pie = function() {
   chart.useClass = function(_) {
     if (!arguments.length) return useClass;
     useClass = _;
+    return chart;
+  };
+  chart.classStep = function(_) {
+    if (!arguments.length) return classStep;
+    classStep = _;
     return chart;
   };
 
@@ -7443,8 +7447,12 @@ nv.models.pieChart = function() {
     }
     else if (_ === 'class')
     {
-      chart.useClass(true);
       legend.useClass(true);
+      pie.useClass(true);
+      if (arguments[1]) {
+        legend.classStep(arguments[1]);
+        pie.classStep(arguments[1]);
+      }
       var color = function (d,i) { return 'inherit' };
     }
     else
