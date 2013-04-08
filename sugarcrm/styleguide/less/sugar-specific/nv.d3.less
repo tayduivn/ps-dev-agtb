@@ -298,6 +298,10 @@ svg .title {
   stroke-opacity: 0;
 }
 
+.nv-pie-hole {
+  font-size: 32px;
+  font-weight: bold;
+}
 
 /**********
 * Lines
@@ -476,13 +480,16 @@ svg .title {
 /**********
 * Funnel
 */
+
 .nv-funnelWithLegend .nv-y .nv-axis path {
   stroke: none;
 }
 
+
 /**********
 * Bubble
 */
+
 .nv-bubbleChart {
   .nv-axis path {
     stroke: @gray;
@@ -518,6 +525,7 @@ svg .title {
 /**********
 * Treemap
 */
+
 .nv-treemap svg {
   background-color: @grayLighter;
 
@@ -656,6 +664,18 @@ body.full-screen {
 /***********
 * Colors
 */
+.nv-fill-green {
+  fill: @green;
+  background-color: @green;
+}
+.nv-fill-red {
+  fill: @red;
+  background-color: @red;
+}
+.nv-fill-blue {
+  fill: @blue;
+  background-color: @blue;
+}
 
 .nv-fill00 { fill:@fill00; background-color:@fill00; }
 .nv-fill01 { fill:@fill01; background-color:@fill01; }

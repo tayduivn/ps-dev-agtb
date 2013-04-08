@@ -16,6 +16,7 @@ nv.models.pie = function() {
     , fill = function (d,i) { return color(d,i); }
     , gradient = function (d,i) { return color(d,i); }
     , useClass = false
+    , classStep = 1
     , valueFormat = d3.format(',.2f')
     , showLabels = true
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
@@ -93,14 +94,13 @@ nv.models.pie = function() {
 
       var ae = slices.enter().append('g')
               .attr('class', function(d,i) {
+                  var iClass = (i*classStep)%20;
                   return this.getAttribute('class') || (
                     'nv-slice' + (
-                      useClass
-                        ? ( ' '+ ( d.data.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
-                        : ''
+                      useClass ? ( ' '+ ( d.data.class || 'nv-fill' + (iClass>9?'':'0') + iClass ) ) : ''
                     )
                   );
-              } )
+              })
               .on('mouseover', function(d,i){
                 d3.select(this).classed('hover', true);
                 dispatch.elementMouseover({
@@ -269,6 +269,11 @@ nv.models.pie = function() {
   chart.useClass = function(_) {
     if (!arguments.length) return useClass;
     useClass = _;
+    return chart;
+  };
+  chart.classStep = function(_) {
+    if (!arguments.length) return classStep;
+    classStep = _;
     return chart;
   };
 

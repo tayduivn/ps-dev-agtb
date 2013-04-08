@@ -177,7 +177,6 @@ nv.models.funnel = function() {
       groups
           .attr('class', function(d,i) {
               var iClass = (i*classStep)%20;
-
               return this.getAttribute('class') || (
                 'nv-group nv-series-' + i + (
                   useClass ? ( ' '+ ( d.class || 'nv-fill' + (iClass>9?'':'0') + iClass ) ) : ''
