@@ -39,14 +39,17 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
+        SugarTestForecastUtilities::setUpForecastConfig();
     }
 
     public static function tearDownAfterClass()
     {
-        SugarTestHelper::tearDown();
+        SugarTestForecastUtilities::tearDownForecastConfig();
+        parent::tearDownAfterClass();
     }
 
     public function setUp()

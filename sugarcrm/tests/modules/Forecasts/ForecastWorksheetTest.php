@@ -45,11 +45,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        self::$settings = $admin->getConfigForModule('Forecasts');
-        $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
-        $admin->saveSetting('Forecasts', 'forecast_by', 'products', 'base');
+        SugarTestForecastUtilities::setUpForecastConfig();
 
         self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
 
@@ -66,10 +62,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'is_setup', self::$settings['is_setup'], 'base');
-        $admin->saveSetting('Forecasts', 'forecast_by', self::$settings['forecast_by'], 'base');
+        SugarTestForecastUtilities::tearDownForecastConfig();
 
         SugarTestWorksheetUtilities::removeAllWorksheetsForParentIds(SugarTestProductUtilities::getCreatedProductIds());
         SugarTestWorksheetUtilities::removeAllWorksheetsForParentIds(SugarTestOpportunityUtilities::getCreatedOpportunityIds());

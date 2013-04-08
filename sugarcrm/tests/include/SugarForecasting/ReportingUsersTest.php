@@ -32,8 +32,10 @@ class SugarForecasting_ReportingUsersTest extends Sugar_PHPUnit_Framework_TestCa
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestForecastUtilities::setUpForecastConfig();
 
         self::$users['mgr'] = SugarTestUserUtilities::createAnonymousUser();
 
@@ -68,6 +70,7 @@ class SugarForecasting_ReportingUsersTest extends Sugar_PHPUnit_Framework_TestCa
 
     public static function tearDownAfterClass()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
         $GLOBALS['current_user'] = null;

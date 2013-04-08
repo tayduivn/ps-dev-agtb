@@ -72,6 +72,7 @@ class ForecastsChartManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+        SugarTestForecastUtilities::setUpForecastConfig();
 
 
         self::$manager = SugarTestForecastUtilities::createForecastUser();
@@ -89,6 +90,7 @@ class ForecastsChartManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function tearDownAfterClass()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
 
         parent::tearDownAfterClass();

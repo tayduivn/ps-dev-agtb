@@ -45,6 +45,7 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setup('app_list_strings');
         SugarTestHelper::setup('current_user');
+        SugarTestForecastUtilities::setUpForecastConfig();
         global $timedate, $current_user;
 
         $timedate = TimeDate::getInstance();
@@ -91,6 +92,7 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestHelper::tearDown();
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();

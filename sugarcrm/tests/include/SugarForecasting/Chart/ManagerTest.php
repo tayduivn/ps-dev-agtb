@@ -54,6 +54,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setup('mod_strings', array('manager', 'Forecasts'));
         SugarTestHelper::setup('current_user');
+        SugarTestForecastUtilities::setUpForecastConfig();
 
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
 
@@ -94,6 +95,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
     {
         self::$filterApi = null;
         $GLOBALS["current_user"] = null;
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestHelper::tearDown();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();

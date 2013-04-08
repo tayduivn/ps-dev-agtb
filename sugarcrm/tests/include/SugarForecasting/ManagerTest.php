@@ -39,10 +39,12 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setup('mod_strings', array('Forecasts'));
         SugarTestHelper::setUp('current_user');
+        SugarTestForecastUtilities::setUpForecastConfig();
     }
 
     public static function tearDownAfterClass()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestHelper::tearDown();
         parent::tearDown();
     }

@@ -36,6 +36,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+        SugarTestForecastUtilities::setUpForecastConfig();
 
         $this->currency = SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
 
