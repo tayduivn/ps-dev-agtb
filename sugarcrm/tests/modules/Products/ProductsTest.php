@@ -56,6 +56,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         parent::tearDown();
     }
 
@@ -811,6 +812,39 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
             array('Closed Won', '100'),
             array('Closed Lost', '0')
         );
+    }
+
+    /**
+     * @group products
+     * @group jontest
+     * @ticket SFA-814
+     */
+    public function testProductMarkDeletedAlsoDeletesWorksheet()
+    {
+        SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->date_closed = '2013-01-01';
+        $opp->save();
+
+        $product = SugarTestProductUtilities::createProduct();
+        $product->opportunity_id = $opp->id;
+        $product->date_closed = '2013-01-01';
+        $product->save();
+
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($product);
+
+        // assert that worksheet is not deleted
+        $this->assertEquals(0, $worksheet->deleted);
+
+        $product->mark_deleted($product->id);
+
+        $this->assertEquals(1, $product->deleted);
+
+        // fetch the worksheet again
+        unset($worksheet);
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($product, false, true);
+        $this->assertEquals(1, $worksheet->deleted);
     }
 
     /**
