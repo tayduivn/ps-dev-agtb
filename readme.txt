@@ -1,1 +1,1 @@
-"Bazooka" branch is the base branch for 6.4 release.
+This is the master branch for Sugar 7 Code base.
