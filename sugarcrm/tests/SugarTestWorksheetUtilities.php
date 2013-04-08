@@ -64,10 +64,11 @@ class SugarTestWorksheetUtilities
 
     public static function removeAllCreatedWorksheets()
     {
+        $db = DBManagerFactory::getInstance();
         $worksheet_ids = self::getCreatedWorksheetIds();
-        //clean up any worksheets and draft versions as well.  The drafts were made by code, not the tests,
+        //clean up any worksheets and draft versions as well.  Some were made by code, not the tests,
         //so we have to do some shenanigans to find them.
-        $GLOBALS["db"]->query("delete from forecast_worksheets where id in('" . implode("', '", $worksheet_ids) . "')" );
+        $db->query("delete from forecast_worksheets where name like 'Sugar%'");
     }
     
     public static function removeSpecificCreatedWorksheets($ids)
