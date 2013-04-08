@@ -15,8 +15,18 @@
 
 require_once 'clients/base/api/FilterApi.php';
 
+/**
+ * Class ProductsFilterApi
+ *
+ * Products Module Specific Filter API
+ */
 class ProductsFilterApi extends FilterApi
 {
+    /**
+     * Register the API End Points for Rest
+     *
+     * @return array
+     */
     public function registerApiRest()
     {
         return array(
@@ -48,6 +58,14 @@ class ProductsFilterApi extends FilterApi
         );
     }
 
+    /**
+     * Override the default filterList method to add in the logic that is required for Products to only show items
+     * with associated Opportunities in the List Views
+     *
+     * @param RestService $api
+     * @param array $args
+     * @return array
+     */
     public function filterList(RestService $api, array $args)
     {
         // adjust the filter by the rules set forth by PM/PO's
