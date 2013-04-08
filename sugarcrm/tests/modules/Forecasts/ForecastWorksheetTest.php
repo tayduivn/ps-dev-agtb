@@ -321,4 +321,37 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertEquals(1, $worksheet2->deleted);        
     }
+
+    /**
+     * @group forecasts
+     */
+    public function testDeleteProductMarksDraftWorksheetRecordAsDeleted()
+    {
+        SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->date_closed = '2013-01-01';
+        $opp->save();
+
+        $product = SugarTestProductUtilities::createProduct();
+        $product->opportunity_id = $opp->id;
+        $product->date_closed = '2013-01-01';
+        $product->save();
+
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($product);
+
+        // assert that worksheet is not deleted
+        $this->assertEquals(0, $worksheet->deleted);
+
+        // delete the product
+        $product->deleted = 1;
+        $product->save();
+
+        $this->assertEquals(1, $product->deleted);
+
+        // fetch the worksheet again
+        unset($worksheet);
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($product, false, true);
+        $this->assertEquals(1, $worksheet->deleted);
+    }
 }

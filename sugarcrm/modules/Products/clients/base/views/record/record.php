@@ -46,13 +46,13 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'primary' => true,
                     'acl_action' => 'edit',
                 ),
-                /*array(
+                array(
                     'type' => 'rowaction',
                     'event' => 'button:delete_button:click',
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
                     'acl_action' => 'delete',
-                ),*/
+                ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
@@ -60,13 +60,13 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_action' => 'create',
                 ),
-                /*array(
+                array(
                     'type' => 'rowaction',
                     'event' => 'button:convert_to_quote:click',
                     'name' => 'convert_to_quote_button',
                     'label' => 'LBL_CONVERT_TO_QUOTE',
                     'acl_action' => 'view',
-                ),*/
+                ),
             ),
         ),
         array(
