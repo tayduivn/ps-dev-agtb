@@ -198,6 +198,8 @@ class FilterApi extends SugarApi
 
         $api->action = 'list';
 
+        error_log($q->compileSql());
+
         return $this->runQuery($api, $args, $q, $options, $seed);
     }
 
