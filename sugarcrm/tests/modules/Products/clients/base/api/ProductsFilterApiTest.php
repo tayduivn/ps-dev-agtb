@@ -40,6 +40,9 @@ class ProductsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $db->query('UPDATE products SET deleted = 0');
     }
 
+    /**
+     * @group products
+     */
     public function testMakeUserOnlyOneRecordReturns()
     {
         $return = $this->api->filterList(SugarTestRestUtilities::getRestServiceMock(), array('module' => 'Products'));
