@@ -26,7 +26,7 @@
 <body style="margin: 0px;">
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-global $theme;
+global $theme, $mod_strings;
 
 insert_popup_header($theme);
 
@@ -50,9 +50,9 @@ switch($_REQUEST['style']){
 			 
 }
 
-$founders = array("<b>Founders:</b>", 'John Roberts', 'Clint Oram', 'Jacob Taylor');
+$founders = array("<b>" . $mod_strings['LBL_FOUNDERS'] . ":</b>", 'John Roberts', 'Clint Oram', 'Jacob Taylor');
 
-$body =  implode('<br>', $founders) . "<br><br><b>Developers:</b><br>" . implode('<br>', $sugarteam);
+$body =  implode('<br>', $founders) . "<br><br><b>" . $mod_strings['LBL_DEVELOPERS'] . ":</b><br>" . implode('<br>', $sugarteam);
 ?>
 <script>
 	var user_notices = new Array();

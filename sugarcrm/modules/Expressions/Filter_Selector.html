@@ -83,9 +83,9 @@ function return_filter_values(){
 		window.opener.document.getElementById(return_prefix + '_rhs_value').value = new_value;
 		var field_value_inner_text = parse_multi_array_text(this.document.getElementById(parent_type + '__field_value_multi'));
 		if(document.getElementById(parent_type + '__operator').value=='not_in'){
-			selected_text += ' is not one of ';
+			selected_text += ' ' + SUGAR.language.get('app_strings', 'LBL_OPERATOR_NOT_IN_TEXT') + ' ';
 		}else{
-			selected_text += ' is one of ';
+			selected_text += ' ' + SUGAR.language.get('app_strings', 'LBL_OPERATOR_IN_TEXT') + ' ';
 		}
 	} else {
 		window.opener.document.getElementById(return_prefix + '_rhs_value').value = get_value(parent_type + '__field_value');
@@ -130,7 +130,7 @@ function return_filter_values(){
 			selected_text += ' ' + get_inner_text('time_int') + ' ' + time_suffix;
 			
 		} else {
-			selected_text += ' for at least ' + get_inner_text('time_int');
+			selected_text += ' ' + SUGAR.language.get('Expressions', 'LBL_TIME_INT') + ' ' + get_inner_text('time_int');
 		}		
 	}
 	

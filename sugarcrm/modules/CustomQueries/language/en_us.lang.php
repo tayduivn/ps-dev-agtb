@@ -83,8 +83,10 @@ $mod_strings = array (
   'ERROR_RESULT_MSG' => 'This query is invalid.',
   'CHILD_RESULT_MSG' => 'This query cannot be run independently.',
   'LBL_QUERYRESULT' => 'Query Result',
-	'LBL_EDIT_LAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+  'LBL_EDIT_LAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+  'LBL_OLD_COLUMN_NAME' => 'Old Column Name:',
+  'LBL_NEW_COLUMN_NAME' => 'New Column Name:',
+  'LBL_COLUMN_REMAP' => 'The columns below need to either be removed or mapped to new columns:',
 );
-
 
 ?>
