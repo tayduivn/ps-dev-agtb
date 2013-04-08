@@ -87,12 +87,17 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
         self::$manager2["user"]->reports_to_id = self::$manager['user']->id;
         self::$manager2["user"]->save();
 
-        self::$reportee = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$manager['user']->id)));
-        self::$reportee2 = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$manager2['user']->id)));
+        self::$reportee = SugarTestForecastUtilities::createForecastUser(
+            array('user' => array('reports_to' => self::$manager['user']->id))
+        );
+        self::$reportee2 = SugarTestForecastUtilities::createForecastUser(
+            array('user' => array('reports_to' => self::$manager2['user']->id))
+        );
 
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 
-        self::$managerData = array("amount" => self::$manager['opportunities_total'],
+        self::$managerData = array(
+            "amount" => self::$manager['opportunities_total'],
             "quota" => self::$manager['quota']->amount,
             "quota_id" => self::$manager['quota']->id,
             "best_case" => self::$manager['forecast']->best_case,
@@ -111,7 +116,8 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
 
         );
 
-        self::$managerData2 = array("amount" => self::$manager2['opportunities_total'],
+        self::$managerData2 = array(
+            "amount" => self::$manager2['opportunities_total'],
             "quota" => self::$manager2['quota']->amount,
             "quota_id" => self::$manager2['quota']->id,
             "best_case" => self::$manager2['forecast']->best_case,
@@ -120,7 +126,7 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
             "best_adjusted" => self::$manager2['worksheet']->best_case,
             "likely_adjusted" => self::$manager2['worksheet']->likely_case,
             "worst_adjusted" => self::$manager2['worksheet']->worst_case,
-            "commit_stage" =>self::$manager2['worksheet']->commit_stage,
+            "commit_stage" => self::$manager2['worksheet']->commit_stage,
             "forecast_id" => self::$manager2['forecast']->id,
             "worksheet_id" => self::$manager2['worksheet']->id,
             "show_opps" => true,
@@ -130,7 +136,8 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
 
         );
 
-        self::$repData = array("amount" => self::$reportee['opportunities_total'],
+        self::$repData = array(
+            "amount" => self::$reportee['opportunities_total'],
             "quota" => self::$reportee['quota']->amount,
             "quota_id" => self::$reportee['quota']->id,
             "best_case" => self::$reportee['forecast']->best_case,
@@ -173,18 +180,18 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
      *
      * This is the dataProvider function for testExportForecastWorksheets
      */
-   public function exportForecastWorksheetProvider()
-   {
-       return array
-       (
-           array('show_worksheet_best', '1', 'assertRegExp', '/Best Case/'),
-           array('show_worksheet_best', '0', 'assertNotRegExp', '/Best Case/'),
-           array('show_worksheet_likely', '1', 'assertRegExp', '/Likely Case/'),
-           array('show_worksheet_likely', '0', 'assertNotRegExp', '/Likely Case/'),
-           array('show_worksheet_worst', '1', 'assertRegExp', '/Worst Case/'),
-           array('show_worksheet_worst', '0', 'assertNotRegExp', '/Worst Case/'),
-       );
-   }
+    public function exportForecastWorksheetProvider()
+    {
+        return array
+        (
+            array('show_worksheet_best', '1', 'assertRegExp', '/Best Case/'),
+            array('show_worksheet_best', '0', 'assertNotRegExp', '/Best Case/'),
+            array('show_worksheet_likely', '1', 'assertRegExp', '/Likely Case/'),
+            array('show_worksheet_likely', '0', 'assertNotRegExp', '/Likely Case/'),
+            array('show_worksheet_worst', '1', 'assertRegExp', '/Worst Case/'),
+            array('show_worksheet_worst', '0', 'assertNotRegExp', '/Worst Case/'),
+        );
+    }
 
     /**
      * testExport
@@ -196,8 +203,8 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
      *
      * @dataProvider exportForecastWorksheetProvider
      */
-   public function testExport($hide, $value, $method, $expectedRegex)
-   {
+    public function testExport($hide, $value, $method, $expectedRegex)
+    {
         global $current_user;
         $current_user = self::$manager2['user'];
         $args = array();
@@ -212,11 +219,12 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
 
         $this->assertNotEmpty($content, "content empty. Rep data should have returned csv file contents.");
         $this->$method($expectedRegex, $content);
-   }
+    }
 
 
     /**
      * This is a function to test the getFilename function
+     *
      * @group export
      * @group forecasts
      */
@@ -232,17 +240,19 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
 
     /**
      * This is a function to test the bug 58397
+     *
      * @group export
      * @group forecasts
      */
     public function testBug58397()
     {
-        foreach ( array(self::$reportee['user'], self::$reportee2['user'], self::$manager['user'], self::$manager2['user']) as $user )
-        {
-            $user->first_name = $user->first_name."'";
-            $user->last_name = $user->last_name."'";
-            $user->save();
-        }
+        $worksheet = SugarTestManagerWorksheetUtilities::getManagerWorksheetForUserAndTimePeriod(
+            self::$reportee2['user']->id,
+            self::$timeperiod->id
+        );
+
+        $worksheet->name .= "'";
+        $worksheet->save();
 
         $args = array();
         $args['timeperiod_id'] = self::$timeperiod->id;

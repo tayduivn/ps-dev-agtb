@@ -11,10 +11,13 @@ $viewdefs['base']['view']['interactionschart'] = array(
             ),
             'filter' => array(
                 'module' => array(
-                    'Accounts',
+                    // Changed to 'Documents' for SugarCon 2013 since we don't
+                    // want this chart visible in Sugar 7 Preview.
+                    'Documents',
+                    /*'Accounts',
                     'Contacts',
                     'Leads',
-                    'Opportunities',
+                    'Opportunities',*/
                 ),
                 'view' => 'record'
             )

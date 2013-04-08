@@ -173,6 +173,14 @@ class FilterApi extends SugarApi
 
     public function filterList(ServiceBase $api, array $args)
     {
+        if ( !empty($args['q']) ) {
+            // We need to use unified search for this for compatibilty with Nomad
+            require_once('clients/base/api/UnifiedSearchApi.php');
+            $search = new UnifiedSearchApi();
+            $args['module_list'] = $args['module'];
+            return $search->globalSearch($api, $args);
+        }
+
         $seed = BeanFactory::newBean($args['module']);
 
         if (!$seed->ACLAccess('list')) {
@@ -188,6 +196,14 @@ class FilterApi extends SugarApi
             $args['filter'] = array();
         }
         self::addFilters($args['filter'], $q->where(), $q);
+
+        if (!empty($args['my_items'])) {
+            self::addOwnerFilter($q, $q->where(), '_this');
+        }
+
+        if (!empty($args['favorites'])) {
+            self::addFavoriteFilter($q, $q->where(), '_this');
+        }
 
         $api->action = 'list';
 

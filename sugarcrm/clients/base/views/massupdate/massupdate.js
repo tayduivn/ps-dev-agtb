@@ -181,7 +181,7 @@
                     massupdate_params: _.extend({
                         'uid' : (this.entire) ? null : this.pluck('id'),
                         'entire' : this.entire,
-                        'filter' : (this.entire) ? this.filter : null
+                        'filter' : (this.entire) ? this.filterDef : null
                     }, attributes)
                 };
             }
@@ -208,11 +208,8 @@
                                 //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                                 //TODO: Need trigger for fetching new record list
                                 app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_DELETED'), autoClose: true});
-                                self.layout.collection.fetch({
-                                    //Don't show alerts for this request
-                                    showAlerts: false
-                                });
-                            } else if(response.status == 'queued') {
+                                self.layout.context.reloadData({showAlerts: false});
+                            } else if (response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
                             }
                         }
@@ -225,13 +222,19 @@
     massExport: function(evt) {
         this.hide();
         var massExport = this.context.get("mass_collection");
+        var exportOptions;
+
         if (massExport) {
             app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
+
+            // we need to get our filter cleaned up.
+            exportOptions = app.data.parseOptionsForSync("read", massExport).params;
+
             app.api['export']({
                     module: this.module,
-                    uid: (massExport.entire) ? undefined : massExport.pluck('id'),
+                    uid: (massExport.entire) ? null : massExport.pluck('id'),
                     entire: massExport.entire,
-                    filter: (massExport.filter) ? massExport.filter : undefined
+                    filter: (massExport.entire) ? exportOptions.filter : null
                 },
                 this.$el,
                 {

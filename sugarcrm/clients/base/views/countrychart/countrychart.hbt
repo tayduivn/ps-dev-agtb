@@ -1,12 +1,25 @@
 <svg id="{{cid}}"></svg>
 <style>
     /* TODO move this to less */
-    #{{cid}} path {
-        stroke: #fff;
-        stroke-width: 0.5;
-    }
     /* this is due to styleguide 5f3a2d8c commit (dashboard.less) */
     #{{cid}} {
         max-height: 100%;
+        /*max-width: 700px;*/
+        height: 500px;
+    }
+    #{{cid}} svg {
+        pointer-events: all;
+    }
+    #{{cid}} circle {
+        fill: #dbe4f0;
+    }
+    #{{cid}} path {
+        fill: #aaa;
+        stroke: #fff;
+        stroke-width: 0.5;
+    }
+    #{{cid}} .globe {
+        fill: #6699cc;
+        fill-opacity: .5;
     }
 </style>

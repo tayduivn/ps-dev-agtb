@@ -24,21 +24,4 @@ $layout->push(
          ),
     )
 );
-$layout->push(
-    0,
-    array(
-         array(
-             'name'    => 'Interactions Chart',
-             'view'    => 'interactionschart',
-             'context' => array(
-                 'module'  => 'Prospects',
-                 'dashlet' => array(
-                     'name'            => 'Interactions Chart',
-                     'type'            => 'interactionschart',
-                     'filter_duration' => '7',
-                 ),
-             ),
-         ),
-    )
-);
 $viewdefs['Prospects']['base']['layout']['record-dashboard'] = $layout->getLayout();

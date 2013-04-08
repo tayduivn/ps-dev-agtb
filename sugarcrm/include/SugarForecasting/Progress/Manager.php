@@ -146,8 +146,14 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $timeperiod_id = $this->getArg('timeperiod_id');
         $sales_stage_won = $this->getArg('sales_stage_won');
 
+        $admin = BeanFactory::getBean("Administration");
+        $settings = $admin->getConfigForModule("Forecasts");
+
+        $module = $settings['forecast_by'];
+        $columnName = ($module == "opportunities") ? "amount" : "likely_case";
+
         //set user ids and timeperiods
-        $query = "SELECT sum(o.amount * o.base_rate) AS amount FROM opportunities o INNER JOIN users u ";
+        $query = "SELECT sum(o." . $columnName . " * o.base_rate) AS amount FROM " . $module . " o INNER JOIN users u ";
         $query .= " ON o.assigned_user_id = u.id ";
         $query .= " left join timeperiods t ";
         $query .= " ON t.start_date_timestamp <= o.date_closed_timestamp ";

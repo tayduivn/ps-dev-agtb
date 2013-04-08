@@ -1,0 +1,55 @@
+
+<style>
+.s7icontainer .s7iclose {position:absolute;height:20px;width:20px;margin:0;padding:0;top:10px;right:10px;color:white;text-decoration:none;text-shadow:0px 0px 4px black;z-index:10000}.s7icontainer .s7iclose:hover {color:white !important;text-decoration:none;}.s7icontainer > div article{width:.01%;height:.01%;position:absolute;left:auto;overflow:hidden;padding:0}.s7icontainer > div article > .row-fluid > .span4{position:relative;}.s7icontainer article,.s7icontainer{width:100%;z-index:10;position:absolute;top:0;bottom:45px;background-color:rgba(0,0,0,.64);background-image:url(./include/sugarcon/sugarcon-background.jpg);background-position:center top;overflow:hidden; background-size: 114% 120%}.s7icontainer {z-index: 10000;}.s7icontainer .ft {height:20px;width:96%;margin:0;position:absolute;bottom:0px;text-align:right;color: white; text-shadow:0px 0px 4px black;font-size:14px;z-index: 1040;}.s7icontainer .ft i {margin: 0 .5em 0 2em; color:white;}.s7icontainer .span4 > div > a {height:100%;width:100%;display:inline-block;padding-top:10%}.s7icontainer .span4 > div > a:hover {text-decoration:none}.s7icontainer .span4 > div > .btn {font-size:16px;position: absolute;width: 10px;height: 10px;line-height: 10px;background: none;border: none !important;padding: 0;margin: 0;bottom:26%}.s7icontainer .span4 > div > .btn:hover {color: red;text-shadow:0px 0px 3px;}.s7icontainer a,.s7icontainer a:hover{color:#fff}.s7icontainer article > div,.s7icontainer > div{height:48%;width:80%;margin-left:10%}.s7icontainer nav{position:absolute;top:10px;left:13px;font-size:10px;text-shadow:0px 0px 4px black}.s7icontainer aside{position:absolute;top:44%;left:2%;color:rgba(255,255,255,.5);font-size:180%}.s7icontainer aside:hover{color:rgba(255,255,255,1)}.s7icontainer nav a:hover,.s7icontainer nav a,.s7icontainer nav{color:#FFF}.s7icontainer article > div > div,.s7icontainer > div > div{height:100%}.s7icontainer > div > div > div{font-size:170%}.s7icontainer article > div > div > div,.s7icontainer > div > div > div{background:rgba(0,0,0,.75);color:#fff;text-align:center;width:80%;border:6px solid rgba(255,255,255,.25);border-radius:6px;box-shadow:0 0 26px rgba(0,0,0,0.6);cursor:pointer;line-height:1.4em;height:70%;box-sizing:border-box;padding-top:0;padding-left:5%;padding-right:5%;overflow:hidden;margin:10% 0 0 10%}.s7icontainer article > div > div > div:hover,.s7icontainer > div > div > div:hover{border:6px solid #EC1C23;box-shadow:0 0 30px rgba(0,0,0,.9);background:rgba(0,0,0,.7)}.sugar7intro.active{color:#000}
+</style>
+<div class='s7icontainer' style=''>
+    <nav>Home</nav>
+    <div class='ft'><i class='icon-info-sign'></i>&nbsp;Demo script <i class='icon-ban-circle'></i>&nbsp;Sugar 7 Preview is not compatible with IE</div>
+    <div class='row-fluid'>
+        <div class='span4'><div><a target='_blank' href='http://nomad.sugarcrm.com/n/sugarcon/files/WhatisAvailableinSugar7Preview.pdf'><nobr>Sugar 7</nobr> Overview</a>
+        </div></div>
+        <div class='span4 hasChildren'><div><a href='#'>Explore <nobr>Sugar 7</nobr> Preview</a>
+            <article class=''>
+                <nav><a class='s7i_home' href=''>Home</a> / Explore Sugar 7 Preview</nav>
+                <aside class='icon-chevron-left'></aside>
+                <div class='row-fluid'>
+                    <div class='span4'><div><a class='trigger_dashboard' href='./'>Social Collaboration Platform</a><a class='btn icon-info-sign' target='_blank' href='http://nomad.sugarcrm.com/n/sugarcon/files/CollaborationPlatform.pdf'></a></div></div>
+                    <div class='span4'><div><a class='trigger_dashboard' href='#./'>Dashboard and Dashlet Management</a><a class='btn icon-info-sign' target='_blank' href='http://nomad.sugarcrm.com/n/sugarcon/files/DashboardManagement.pdf'></a></div></div>
+                    <div class='span4'><div><a class='trigger_accounts' href='./'>Improved Search and Filtering</a><a class='btn icon-info-sign' target='_blank' href='http://nomad.sugarcrm.com/n/sugarcon/files/SearchandFilters.pdf'></a></div></div>
+                </div>
+                <div class='row-fluid'>
+                    <div class='span4'><div><a class='trigger_leads' href='./'>Enhanced Lead Management</a><a class='btn icon-info-sign' target='_blank' href='http://nomad.sugarcrm.com/n/sugarcon/files/LeadManagement.pdf'></a></div></div>
+                    <div class='span4'><div><a class='trigger_dashboard' href='./'>Pipeline Management for Sales Representative</a><a class='btn icon-info-sign' target='_blank' href='http://nomad.sugarcrm.com/n/sugarcon/files/PipelineManagement.pdf'></a></div></div>
+                    <div class='span4'><div><a class='trigger_dashboard' target='_blank' href='http://nomad.sugarcrm.com/n/sugarcon/files/Forecasting.pdf'>Forecasting for Sales Manager</a><a class='btn icon-info-sign' target='_blank' href='http://nomad.sugarcrm.com/n/sugarcon/files/PipelineManagement.pdf'></a><a target='_blank' class='btn icon-info-sign' href='http://nomad.sugarcrm.com/n/sugarcon/files/Forecasting.pdf'></a></div></div>
+                </div>
+            </article>
+        </div></div>
+        <div class='span4 hasChildren'><div><a href='#'>Future Concepts for <nobr>Sugar 7</nobr></a>
+            <article class=''>
+                <nav><a class='s7i_home' href=''>Home</a> / Future Concepts for <nobr>Sugar 7</nobr></nav>
+                <aside class='icon-chevron-left'></aside>
+                <div class='row-fluid' style='height:30%'>
+                    <div class='span4'><div><a target='_blank' href='http://www.solidifyapp.com/p/p00ccd3de3a773f66'>Right-Hand Side Pane</a></div></div>
+                    <div class='span4'><div><a target='_blank' href='http://www.solidifyapp.com/p/p6989b01cd21ad4f0'>Find Duplicates</a></div></div>
+                    <div class='span4'><div><a target='_blank' href='http://www.solidifyapp.com/p/p3773eb217b20501d'>Merge Duplicates</a></div></div>
+                </div>
+                <div class='row-fluid' style='height:30%'>
+                    <div class='span4'><div><a target='_blank' href='http://www.solidifyapp.com/p/p37b5bf721b558ce7'>Hierarchies</a></div></div>
+                    <div class='span4'><div><a target='_blank' href='http://www.solidifyapp.com/p/pd48d1a9873bd943f'>Knowledge Base</a></div></div>
+                    <div class='span4'><div><a target='_blank' href='http://www.solidifyapp.com/p/p2092838c3abfaf78'>Training Wheels</a></div></div>
+                </div>
+                <div class='row-fluid' style='height:30%'>
+                    <div class='span4'><div><a target='_blank' href='http://www.solidifyapp.com/p/pd9d11d030399dab6'>List View</div></a></div>
+                    <div class='span4'><div><a target='_blank' href='http://verifyapp.com/u/aa8e2d54a6c5d51a7105a6c94f33e2b67121385c'>Dashlets</a></div></div>
+                    <div class='span4'><div><a target='_blank' href='http://www.surveymonkey.com/s/YFSK8PN'><nobr>Sugar 7</nobr> Preview UX Lab Survey</a></div></div>
+                </div>
+            </article>
+        </div></div>
+    </div>
+    <div class='row-fluid'>
+        <div class='span4'><div><a href='http://nomad.sugarcrm.com/n/sugarcon/files/WhatisAvailableinSugarCRMmobile.pdf' target='_blank'>SugarCRM Mobile Overview</a></div></div>
+        <div class='span4'><div><a target='_blank' href='http://nomad.sugarcrm.com/nomad'>Explore SugarCRM Mobile</a></div></div>
+        <div class='span4'><div><a href='http://nomad.sugarcrm.com/n/sugarcon/files/FutureConceptsofSugarMobile.pdf'  target='_blank'>Future Concepts for SugarCRM Mobile</a></div></div>
+    </div>
+    <a href='#' class='s7iclose btn btn-invisible btn-link icon-remove'></a>
+</div>

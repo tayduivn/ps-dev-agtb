@@ -12,7 +12,7 @@
         if (!massCollection) {
             var MassCollection = app.BeanCollection.extend({
                 reset: function () {
-                    this.filter = null;
+                    this.filterDef = null;
                     this.entire = false;
                     Backbone.Collection.prototype.reset.call(this);
                 }
@@ -40,10 +40,9 @@
                     massCollection.add(this.model);
                 } else {
                     //entire selection
+                    massCollection.reset();
                     massCollection.add(this.view.collection.models);
-                    if (this.view.collection.filterDef && this.view.collection.filterDef.filter) {
-                        massCollection.filter = this.view.collection.filterDef.filter;
-                    }
+                    massCollection.filterDef = this.view.collection.filterDef;
                 }
             } else { //if checkbox is unchecked
                 if (this.model.id) { //each selection

@@ -284,6 +284,15 @@ describe("Email field", function() {
 
         });
 
+        it("should empty string model value as an empty list of e-mails (MAR-667)", function() {
+            var actual;
+
+            field.model.set("");
+            actual = field.format("");
+            expect(actual).toEqual("");
+
+        });
+
         it("should return only a single primary email address as the value in the list view", function() {
             field.view.action = 'list';
             field.render();

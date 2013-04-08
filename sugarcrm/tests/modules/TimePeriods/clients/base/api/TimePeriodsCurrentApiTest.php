@@ -36,6 +36,16 @@ class TimePeriodsCurrentApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected $api;
 
+    //These are the default forecast configuration settings we will use to test
+    private static $forecastConfigSettings = array (
+        array('name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_interval', 'value' => TimePeriod::ANNUAL_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_leaf_interval', 'value' => TimePeriod::QUARTER_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_start_date', 'value' => '2013-01-01', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_shown_forward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_shown_backward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts')
+    );
+
 
     public static function setUpBeforeClass()
     {
@@ -50,6 +60,15 @@ class TimePeriodsCurrentApiTest extends Sugar_PHPUnit_Framework_TestCase
         // delete all current timeperiods
         $db = DBManagerFactory::getInstance();
         $db->query('UPDATE timeperiods SET deleted = 1');
+
+        //setup forecast admin settings for timeperiods to be able to play nice in the suite
+        $admin = BeanFactory::getBean('Administration');
+
+        self::$forecastConfigSettings[3]['timeperiod_start_date']['value'] = TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1)->asDbDate(false);
+        foreach(self::$forecastConfigSettings as $config)
+        {
+            $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
+        }
     }
 
     public function setUp()
