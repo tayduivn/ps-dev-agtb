@@ -113,19 +113,25 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
      */
     public function getQuotaTotalFromData()
     {
-        try {
-            $this->loadUsers();
-        } catch (SugarForecasting_Exception $sfe) {
-            return "";
-        }
+        $quota = '0';
+        //getting quotas from quotas table
+        $db = DBManagerFactory::getInstance();
+        $quota_query = "SELECT u.user_name user_name, q.amount quota, q.id quota_id, q.currency_id
+                        FROM quotas q
+                        INNER JOIN users u
+                        ON q.user_id = u.id
+                        WHERE u.deleted = 0 AND u.status = 'Active'
+                            AND q.timeperiod_id = '{$this->getArg('timeperiod_id')}'
+                            AND ((u.id = '{$this->getArg('user_id')}' and q.quota_type = 'Direct')
+                            OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup'))
+                            AND q.deleted = 0";
 
-        $this->loadUsersQuota();
-        $this->loadWorksheetAdjustedValues();
+        $result = $db->query($quota_query);
 
-        $quota = 0;
-
-        foreach ($this->dataArray as $data) {
-            $quota += SugarCurrency::convertAmountToBase($data['quota'], $data['currency_id']);
+        while (($row = $db->fetchByAssoc($result)) != null) {
+            $quota = SugarMath::init($quota, 2)->add(
+                SugarCurrency::convertAmountToBase($row['quota'], $row['currency_id'])
+            )->result();
         }
 
         return $quota;

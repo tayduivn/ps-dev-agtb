@@ -61,11 +61,11 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
 
     /**
      * Run the Manager Code and set the data in this object
+     *
+     * @deprecated
      */
     public function getManagerData()
     {
-        $mgr_obj = new SugarForecasting_Manager($this->getArgs());
-        $this->dataArray = $mgr_obj->process();
     }
 
     /**
