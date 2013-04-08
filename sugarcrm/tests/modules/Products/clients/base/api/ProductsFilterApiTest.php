@@ -14,7 +14,7 @@ class ProductsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('current_user');
 
-        // mark all the current producst as deleted
+        // mark all the current products as deleted
         $db = DBManagerFactory::getInstance();
         $db->query('UPDATE products SET deleted = 1');
 
@@ -24,7 +24,7 @@ class ProductsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         // create one product with no opp
         $prod1 = SugarTestProductUtilities::createProduct();
 
-        // create a seocnd product associated to the opp
+        // create a second product associated to the opp
         $prod2 = SugarTestProductUtilities::createProduct();
         $prod2->opportunity_id = $opp->id;
         $prod2->save();
