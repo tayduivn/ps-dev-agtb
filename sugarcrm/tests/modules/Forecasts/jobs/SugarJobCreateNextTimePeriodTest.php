@@ -73,15 +73,10 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestForecastUtilities::setUpForecastConfig($this->forecastConfigSettings);
 
-        error_log('-----------------------');
-        error_log(var_export($this->forecastConfigSettings, true));
-
         //Run rebuildForecastingTimePeriods which takes care of creating the TimePeriods based on the configuration data
         $timePeriod = TimePeriod::getByType($timePeriodType);
         $admin = BeanFactory::getBean('Administration');
         $currentForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
-
-        error_log(var_export($currentForecastSettings, true));
 
         $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
     }
