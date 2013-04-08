@@ -21,10 +21,8 @@
                 .showTitle(false)
                 .showLegend(false)
                 .donutLabelsOutside(true)
-                //.color(d3.scale.category10().range())
-                //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
-                //.colorData( 'class' )
-                .colorData( 'default' )
+                .hole(self.totalCases)
+                .colorData( 'class' )
                 .colorFill( 'default' )
                 .tooltip( function(key, x, y, e, graph) {
                     return '<p><b>' + key +' '+  parseInt(y) +'</b></p>'
@@ -59,12 +57,15 @@
                 };
                 self.chartData.data.push({
                     key: 'Closed Cases',
+                    class: 'nv-fill-green',
                     value: self.closedCases.length
                 });
                 self.chartData.data.push({
                     key: 'Open Cases',
+                    class: 'nv-fill-red',
                     value: self.openCases
                 });
+                self.totalCases = self.chartCollection.models.length;
                 self.processCases();
                 self.render();
                 self.addFavs();
@@ -122,7 +123,6 @@
             }
         }, this);
 
-        this.totalCases = _.reduce(this.tabData, function(m,d){ return m + d.models.length; }, 0);
         this.tabClass = ['one','two','three','four','five'][this.tabData.length] || 'four';
     },
 
