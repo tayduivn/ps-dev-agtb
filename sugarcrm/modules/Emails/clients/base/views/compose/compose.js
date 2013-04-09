@@ -32,19 +32,12 @@
         }
 
         if (this.model.isNotEmpty) {
-            this.renderSenderOptions();
-
-            // initialize the TO recipients field with data from the recipientModel, if the user clicked on an email address somewhere in the application
-            // and was routed to the quick compose view
-            var recipientModel = this.context.get("recipientModel");
-
-            if (!_.isEmpty(recipientModel)) {
-                this.populateToRecipients(recipientModel);
-                this.model.set("related", {
-                    type: recipientModel.module,
-                    id: recipientModel.get("id")
-                });
+            var prepopulateValues = this.context.get("prepopulate");
+            if (!_.isEmpty(prepopulateValues)) {
+                this.prepopulate(prepopulateValues);
             }
+
+            this.renderSenderOptions();
 
             if (this.model.isNew()) {
                 this._updateEditorWithSignature(this._lastSelectedSignature);
@@ -53,8 +46,122 @@
     },
 
     /**
+     * Prepopulate fields on the email compose screen that are passed in on the context when opening this view
+     *
+     * @param values
+     */
+    prepopulate: function(values) {
+        _.each(values, function(value, fieldName) {
+            switch(fieldName) {
+                case 'to_addresses':
+                case 'cc_addresses':
+                case 'bcc_addresses':
+                    this.populateRecipients(fieldName, value);
+                    break;
+                case 'related':
+                    this.populateRelated(value);
+                    break;
+                default:
+                    this.model.set(fieldName, value);
+            }
+        }, this);
+    },
+
+    /**
+     * Initialize the recipients fields with data passed into compose
+     *
+     * @param fieldName
+     * @param values
+     */
+    populateRecipients: function(fieldName, inputRecipients) {
+        var recipients = new Backbone.Collection();
+        _.each(inputRecipients, function(inputRecipient) {
+            var recipient = this.mapRecipient(inputRecipient);
+            if (!_.isEmpty(recipient)) {
+                recipients.add(recipient);
+            }
+        }, this);
+
+        if (recipients.length > 0) {
+            this.context.trigger("recipients:" + fieldName + ":add", recipients);
+        }
+    },
+
+    /**
+     * Map from object passed to compose into the recipient model the recipient field expects
+     *
+     * @param inputRecipient
+     */
+    mapRecipient: function(inputRecipient) {
+        // construct a new model from the data in recipientModel, which meets the expectations of the recipient field
+        var recipient = new Backbone.Model(),
+            beanId, beanModule, beanName, beanEmail, email, name;
+
+        //grab values off the bean
+        if (inputRecipient.bean instanceof Backbone.Model) {
+            beanId = inputRecipient.bean.get('id');
+            beanModule = inputRecipient.bean.module;
+            beanName = inputRecipient.bean.get('name');
+            beanEmail = inputRecipient.bean.get('email1');
+            if (_.isEmpty(beanEmail) && _.isArray(inputRecipient.bean.get('email'))) {
+                // grab primary email address
+                var primaryAddress = _.find(inputRecipient.bean.get('email'), function (emailAddress) {
+                    return (emailAddress.primary_address == "1");
+                });
+
+                if (!_.isUndefined(primaryAddress) && !_.isEmpty(primaryAddress.email_address)) {
+                    beanEmail = primaryAddress.email_address;
+                }
+            }
+        }
+
+        //try to grab values directly first, otherwise use the bean
+        recipient.set('id', (inputRecipient.id || beanId));
+        recipient.set('module', (inputRecipient.module || beanModule));
+        name = inputRecipient.name || beanName;
+        email = inputRecipient.email || beanEmail;
+
+        if (!_.isEmpty(name)) {
+            // only set the name if it's actually available
+            recipient.set('name', name);
+        }
+
+        if (!_.isEmpty(email)) {
+            // don't bother adding the recipient unless the email address is present
+            recipient.set('email', email);
+            return recipient;
+        } else {
+            return null;
+        }
+    },
+
+    /**
+     * Populate the parent_name (type: parent) with the related record passed in
+     *
+     * @param relatedModel
+     */
+    populateRelated: function(relatedModel) {
+        var setParent = _.bind(function(model) {
+            model.value = model.get('name');
+            this.getField('parent_name').setValue(model);
+        }, this);
+
+        if (!_.isEmpty(relatedModel.get('id')) && !_.isEmpty(relatedModel.get('name'))) {
+            setParent(relatedModel);
+        } else if (!_.isEmpty(relatedModel.get('id'))) {
+            relatedModel.fetch({
+                showAlerts: false,
+                success: function(relatedModel) {
+                    setParent(relatedModel);
+                },
+                fields: ['name']
+            });
+        }
+    },
+
+    /**
      * Enable/disable the page action dropdown menu based on whether email is sendable
-     * @param enabled
+     * @param disabled
      */
     setMainButtonsDisabled: function(disabled) {
         this.getField('main_dropdown').setDisabled(disabled);
@@ -69,12 +176,12 @@
             toCC = this.model.get('cc_addresses'),
             toBCC = this.model.get('bcc_addresses');
 
-        if (this.model.isNew() || _.isEmpty(toCC)) {
+        if (_.isEmpty(toCC)) {
             this.hideField('cc_addresses');
             showCCLink = true;
         }
 
-        if (this.model.isNew() || _.isEmpty(toBCC)) {
+        if (_.isEmpty(toBCC)) {
             this.hideField('bcc_addresses');
             showBCCLink = true;
         }
@@ -142,48 +249,6 @@
     },
 
     /**
-     * Initialize the TO recipients field with data from the recipientModel
-     *
-     * @param recipientModel
-     */
-    populateToRecipients: function(recipientModel) {
-        // construct a new model from the data in recipientModel, which meets the expectations of the recipient field, to pass to "to_addresses"
-        var recipient = new Backbone.Model({
-                id:recipientModel.get("id"),
-                module:recipientModel.module
-            }),
-            email = recipientModel.get("email"),
-            email1 = recipientModel.get("email1"),
-            name;
-
-        if (!_.isEmpty(email1)) {
-            // get the recipient data from the email1 and name properties
-            recipient.set("email", email1);
-            name = recipientModel.get("name");
-        } else if (!_.isEmpty(email) && _.isArray(email)) {
-            // get recipient data from the email and assigned_user_name properties
-            var primaryAddress = _.find(email, function (emailAddress) {
-                return (emailAddress.primary_address == "1");
-            });
-
-            if (!_.isUndefined(primaryAddress) && !_.isUndefined(primaryAddress.email_address) && primaryAddress.email_address.length > 0) {
-                recipient.set("email", primaryAddress.email_address);
-                name = recipientModel.get("name");
-            }
-        }
-
-        if (!_.isEmpty(name)) {
-            // only set the name if it's actually available
-            recipient.set("name", name);
-        }
-
-        if (!_.isEmpty(recipient.get("email"))) {
-            // don't bother adding the recipient unless the email address is present
-            this.context.trigger("recipients:to_addresses:add", recipient);
-        }
-    },
-
-    /**
      * Cancel and close the drawer
      */
     cancel: function() {
@@ -223,7 +288,11 @@
             cc_addresses: this.model.get('cc_addresses_collection'),
             bcc_addresses: this.model.get('bcc_addresses_collection'),
             attachments: this.getAttachmentsByType('upload'),
-            documents: this.getAttachmentsByType('document')
+            documents: this.getAttachmentsByType('document'),
+            related: {
+                type: this.model.get('parent_type'),
+                id: this.model.get('parent_id')
+            }
         }));
         return sendModel;
     },
@@ -289,6 +358,7 @@
      * @param status (draft or ready)
      * @param pendingMessage message to display while Mail API is being called
      * @param successMessage message to display when a successful Mail API response has been received
+     * @param errorMessage message to display when Mail API call fails
      */
     saveModel: function(status, pendingMessage, successMessage, errorMessage) {
         var myURL,
