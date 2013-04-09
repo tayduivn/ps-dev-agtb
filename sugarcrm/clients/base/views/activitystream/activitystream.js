@@ -79,6 +79,14 @@
                 id: data.noteId,
                 field: 'filename'
             });
+
+            if (data.mimetype && data.mimetype.indexOf("image/") === 0) {
+                data.embed = {
+                    type: "image",
+                    src: url
+                };
+            }
+
             data.url = url;
             this.$el.data(data);
             this.model.set('data', data);
@@ -91,9 +99,7 @@
             // more noticeable in the activity stream.
             if (this.context.parent.get('module') === this.model.get('parent_type')) {
                 this.model.set('parent_type', data.subject.module);
-                if (this.context.parent.get('modelId') === this.model.get('parent_id')) {
-                    this.model.set('parent_id', data.subject.id);
-                }
+                this.model.set('parent_id', data.subject.id);
             }
             break;
         }
@@ -210,6 +216,7 @@
                 collection = this.context.get("collection");
 
             model.set("id", id);
+            app.events.trigger("preview:module:update", this.context.get("module"));
             app.events.trigger("preview:render", model, collection, true, this.cid);
         }
 

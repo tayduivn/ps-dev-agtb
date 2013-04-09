@@ -302,6 +302,7 @@
             var container = $('#contentflex').find('>div.row-fluid');
             container.find('>div:first').toggleClass('span8 span12');
             container.find('>div:last').toggleClass('span4 hide');
+            this.toggleSidebar = false;
         }
 
         return true;

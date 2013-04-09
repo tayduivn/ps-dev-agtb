@@ -13,59 +13,59 @@
         </div>
     </div>
 </div>
-
-<div class="tabbable tabs-full tabs-four">
+<div class="interactions tabbable tabs-full four" style="min-height: 115px">
     <ul class="nav nav-tabs">
         <li class="{{#eq this.params.view "calls"}}active{{/eq}}">
             <a class="calls" data-toggle="tab">
                 <span class="count">{{this.collections.calls.count}}</span> 
-                {{#eq this.collections.calls.length "1"}}{{str "LBL_CALL"}}{{else}}{{str "LBL_CALLS"}}{{/eq}}
+                {{#eq this.collections.calls.length "1"}}{{str "LBL_CALL" "Calls"}}{{else}}{{str "LBL_CALLS"}}{{/eq}}
             </a>
         </li>
         <li class="{{#eq this.params.view "emailsSent"}}active{{/eq}}">
             <a class="emailsSent" data-toggle="tab">
                 <span class="count">{{this.collections.emailsSent.count}}</span>
-                {{#eq this.collections.emailsSent.length "1"}}{{str "LBL_EMAIL"}}{{else}}{{str "LBL_EMAILS"}}{{/eq}} ({{str "LBL_EMAIL_SENT"}})
+                {{#eq this.collections.emailsSent.length "1"}}{{str "LBL_EMAIL" "Calls"}}{{else}}{{str "LBL_EMAILS"}}{{/eq}} ({{str "LBL_EMAIL_SENT"}})
             </a>
         </li>
         <li class="{{#eq this.params.view "emailsRecv"}}active{{/eq}}">
             <a class="emailsRecv" data-toggle="tab">
                 <span class="count">{{this.collections.emailsRecv.count}}</span>
-                {{#eq this.collections.emailsRecv.length "1"}}{{str "LBL_EMAIL"}}{{else}}{{str "LBL_EMAILS"}}{{/eq}} ({{str "LBL_EMAIL_RECV"}}.)
+                {{#eq this.collections.emailsRecv.length "1"}}{{str "LBL_EMAIL" "Calls"}}{{else}}{{str "LBL_EMAILS"}}{{/eq}} ({{str "LBL_EMAIL_RECV"}}.)
             </a>
         </li>
         <li class="{{#eq this.params.view "meetings"}}active{{/eq}}">
             <a class="meetings" data-toggle="tab">
                 <span class="count">{{this.collections.meetings.count}}</span>
-                {{#eq this.collections.meetings.length "1"}}{{str "LBL_MEETING"}}{{else}}{{str "LBL_MEETINGS"}}{{/eq}}
+                {{#eq this.collections.meetings.length "1"}}{{str "LBL_MEETING" "Calls"}}{{else}}{{str "LBL_MEETINGS"}}{{/eq}}
             </a>
         </li>
     </ul>
-    <div class="tab-content">
-        <div class="tab-pane active {{this.collection.module}}">
-            <ul class="listed">
+    <div class="tab-content" style="overflow-y: hidden">
+        <div class="tab-pane active {{this.collection.module}}"><ul class="listed">
                 {{#if this.collection.count}}
                     {{#each this.collection.models}}
                         <li>
+                            <a href="#Users/{{this.attributes.assigned_user_name}}" class="pull-left avatar42" rel="tooltip" data-html="true" data-title="{{this.attributes.assigned_user_name}}" data-original-title="">
+                                <img src="{{this.attributes.picture_url}}" alt="{{this.attributes.assigned_user_name}} avatar">
+                            </a>
                         {{#eq this.module "Calls"}}
-                            <a href="#{{modelRoute this}}">{{this.attributes.assigned_user_name}}</a> {{str "LBL_CALLED"}} 
-                            <a href="#{{modelRoute this}}">{{this.attributes.parent_name}}</a> 
-                            {{str "LBL_FOR_DURATION_MINUTES" null this.attributes}}
-                            <br>
-                            <date class="date"><i class="icon-plus-sign icon-added"></i>{{timeago this.attributes.date_end}}</date>
+                        <a href="#{{modelRoute this}}"><span class="label {{this.attributes.labelType}}">{{this.attributes.status}}</span></a>
+                            {{{str "TPL_CALL_WITH" "" this}}} {{{str "TPL_INTERACTION_PARENT_OBJECT" "" this}}} {{{str "TPL_FOR_DURATION" null this}}}
                         {{/eq}}
                         {{#eq this.module "Emails"}}
-                            <a href="#{{modelRoute this}}">{{this.attributes.assigned_user_name}}</a> {{str "LBL_EMAIL_ADDED_TO_THE"}}
-                            <a href="#{{modelRoute this}}">{{this.attributes.parent_name}}</a> {{str "LBL_OPPORTUNITY"}}.
-                            <br>
-                            <date class="date"><i class="icon-plus-sign icon-added"></i> {{timeago this.attributes.date_entered}}</date>
+                            {{{str "TPL_ADDED_INTERACTION" "" this}}}
+                            {{#eq this.attributes.type "inbound"}}
+                                    <div class="btn-mini btn btn-primary replyToInbound" data-model-id="{{getFieldValue this "id"}}">{{str "LBL_EMAIL_REPLY" this}}</div>
+                        {{/eq}}
                         {{/eq}}
                         {{#eq this.module "Meetings"}}
-                            <a href="#{{modelRoute this}}">{{this.attributes.assigned_user_name}}</a> {{str "LBL_EMAIL_ADDED_TO_THE"}} 
-                            <a href="#{{modelRoute this}}">{{this.attributes.parent_name}}</a> {{str "LBL_OPPORTUNITY"}}.
-                            <br>
-                            <date class="date"><i class="icon-plus-sign icon-added"></i> {{timeago this.attributes.date_entered}}</date>
+                            {{{str "TPL_ADDED_INTERACTION" "" this}}}
                         {{/eq}}
+                            <br>
+                            <date class="date"><i class="icon-plus-sign icon-added"></i>
+                                {{{str "TPL_INTERACTION_ASSIGNED_USER" "" this}}}
+                                {{timeago this.attributes.date_entered}}
+                            </date>
                     </li>
                     {{/each}}
                     {{#notEq this.collection.next_offset -1}}
@@ -74,7 +74,11 @@
                     </li>
                     {{/notEq}}
                 {{else}}
-                    <li class="interactions-item"><em>{{str "LBL_MODULE_NO_INTERACTIONS_FOUND"}}</em></li>
+                    {{#if this.collection.loaded}}
+                        {{#with this.collection}}
+                            <li class="interactions-item"><em>{{{str "LBL_MODULE_NO_INTERACTIONS_FOUND" null this}}}</em></li>
+                        {{/with}}
+                    {{/if}}
                 {{/if}}
             </ul>
         </div>

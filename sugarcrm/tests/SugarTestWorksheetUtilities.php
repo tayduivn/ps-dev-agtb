@@ -132,9 +132,10 @@ class SugarTestWorksheetUtilities
      *
      * @param SugarBean $bean
      * @param bool $isCommit
+     * @param bool $isDeleted
      * @return ForecastWorksheet|boolean        Return the worksheet if found, otherwise return false
      */
-    public static function loadWorksheetForBean($bean, $isCommit = false)
+    public static function loadWorksheetForBean($bean, $isCommit = false, $isDeleted = false)
     {
         /* @var $worksheet ForecastWorksheet */
         $worksheet = BeanFactory::getBean('ForecastWorksheets');
@@ -143,8 +144,10 @@ class SugarTestWorksheetUtilities
                 'parent_type' => $bean->module_name,
                 'parent_id' => $bean->id,
                 'draft' => ($isCommit === false) ? 1 : 0,
-                'deleted' => 0,
-            )
+                'deleted' => ($isDeleted === false) ? 0 : 1
+            ),
+            true,
+            false
         );
 
         if (empty($worksheet->id)) {

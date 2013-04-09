@@ -746,6 +746,23 @@ class Product extends SugarBean
         return $id;
     }
 
+    /**
+     * Override the current SugarBean functionality to make sure that when this method is called that it will also
+     * take care of any draft worksheets by rolling-up the data
+     *
+     * @param string $id            The ID of the record we want to delete
+     */
+    public function mark_deleted($id)
+    {
+        parent::mark_deleted($id);
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        // this only happens when ent is built out
+        $this->saveProductWorksheet();
+        //END SUGARCRM flav=ent ONLY
+    }
+
+
     /*
      * map fields if opportunity id is set
      */

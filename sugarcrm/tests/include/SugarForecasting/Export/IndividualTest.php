@@ -53,6 +53,11 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
     * @var Administration
     */
     protected static $admin;
+    
+    /**
+     * @var Current Forecasts Config
+     */
+    protected static $current_config;
 
     public static function setUpBeforeClass()
     {
@@ -62,6 +67,8 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         self::$admin = BeanFactory::getBean('Administration');
+        self::$current_config = self::$admin->getConfigForModule('Forecasts');
+        self::$admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
     }
 
     public function setUp()
@@ -129,6 +136,7 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
         self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
         self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 0, 'base');
+        self::$admin->saveSetting('Forecasts', 'is_setup', self::$current_config['is_setup'], 'base');
     }
 
     /**
@@ -201,10 +209,12 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testBug58397()
     {
-        $opp = $this->reportee['opportunities'][0];
-        $opp->name = $opp->name."'";
-        $opp->save();
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($this->reportee['opportunities'][0]);
+        $worksheet->name .= "'";
+        $worksheet->save();
 
+        $current_user = $GLOBALS['current_user'];
+        $GLOBALS['current_user'] = $this->reportee['user'];
         $args = array();
         $args['timeperiod_id'] = $this->timeperiod->id;
         $args['user_id'] = $this->repData['id'];
@@ -212,6 +222,8 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
 
         $obj = new SugarForecasting_Export_Individual($args);
         $content = $obj->process();
+
+        $GLOBALS['current_user'] = $current_user;
 
         $this->assertNotEmpty($content, "content empty. Rep data should have returned csv file contents.");
         $this->assertNotContains('#039', $content);

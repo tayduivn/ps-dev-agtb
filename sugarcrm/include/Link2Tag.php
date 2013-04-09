@@ -43,6 +43,10 @@ class Link2Tag
         $linkTags = $dom->getElementsByTagName('link');
         $oembeds = array();
         foreach ($linkTags as $tag) {
+            if (!($tag instanceof DOMElement)) {
+                continue;
+            }
+
             $type = $tag->getAttribute('type');
             if (strpos($type, '+oembed') !== false) {
                 $oembeds[$type] = $tag->getAttribute('href');
@@ -59,6 +63,10 @@ class Link2Tag
             $oembedTags = $xml->getElementsByTagName('oembed');
             $obj = array();
             foreach ($oembedTags as $oembedTag) {
+                if (!($oembedTag instanceof DOMElement)) {
+                    continue;
+                }
+
                 while ($oembedTag->hasChildNodes()) {
                     $child = $oembedTag->firstChild;
                     $obj[$child->nodeName] = $child->nodeValue;
@@ -83,9 +91,11 @@ class Link2Tag
             $query = $basicQuery . '//*[contains(@class, \'' . $attribute . '\')]';
             $relevantElements = $xPath->query($query);
             $element = $relevantElements->item(0);
-            $ret[$attribute] = trim($element->nodeValue);
-            if ($attribute === 'photo') {
-                $ret[$attribute] = $element->getAttribute('src');
+            if ($element instanceof DOMElement) {
+                $ret[$attribute] = trim($element->nodeValue);
+                if ($attribute === 'photo') {
+                    $ret[$attribute] = $element->getAttribute('src');
+                }
             }
         }
 
@@ -117,6 +127,10 @@ class Link2Tag
         $ret = array();
 
         foreach ($metaTags as $metaTag) {
+            if (!($metaTag instanceof DOMElement)) {
+                continue;
+            }
+
             $property = $metaTag->getAttribute('property');
             if (strpos($property, 'twitter:') === 0) {
                 $property = self::processMetaKey(substr($property, 8));
@@ -131,6 +145,10 @@ class Link2Tag
             $key = self::processMetaKey($fallback);
             if (!isset($ret[$key])) {
                 foreach ($ogTags as $ogTag) {
+                    if (!($ogTag instanceof DOMElement)) {
+                        continue;
+                    }
+
                     $property = $ogTag->getAttribute('property');
                     $property = self::processMetaKey(substr($property, 3));
                     if ($property == $key) {
@@ -155,6 +173,10 @@ class Link2Tag
         $metaTags = $dom->getElementsByTagName('meta');
         $ret = array();
         foreach ($metaTags as $metaTag) {
+            if (!($metaTag instanceof DOMElement)) {
+                continue;
+            }
+
             $property = $metaTag->getAttribute('property');
             if (strpos($property, 'og:') === 0) {
                 $property = self::processMetaKey(substr($property, 3));
@@ -162,7 +184,7 @@ class Link2Tag
                 $ret[$property] = $content;
             }
         }
-        if (count($ret)) {
+        if (count($ret) && isset($ret['type']) && isset($ret['og:title'])) {
             return $ret;
         }
     }
@@ -174,6 +196,10 @@ class Link2Tag
         $dom->loadHTML(self::fetch($uri));
         $titleTags = $dom->getElementsByTagName('title');
         foreach ($titleTags as $titleTag) {
+            if (!($titleTag instanceof DOMElement)) {
+                continue;
+            }
+
             return array(
                 'type' => 'website',
                 'url' => $uri,
@@ -195,7 +221,11 @@ class Link2Tag
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
 
-            self::$cache[$uri] = curl_exec($curl);
+            $ret = curl_exec($curl);
+            if ($ret !== false) {
+                // Curl succeeded.
+                self::$cache[$uri] = $ret;
+            }
 
             curl_close($curl);
         }

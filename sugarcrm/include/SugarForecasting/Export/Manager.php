@@ -43,28 +43,27 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
 
     public function process()
     {
-        global $current_user;
-
-        // base file and class name
-        $file = 'include/SugarForecasting/Manager.php';
-        $klass = 'SugarForecasting_Manager';
-
-        // check for a custom file exists
+        // fetch the data from the filter end point
+        $file = 'modules/Forecasts/clients/base/api/ForecastManagerWorksheetsFilterApi.php';
+        $klass = 'ForecastManagerWorksheetsFilterApi';
+        SugarAutoLoader::requireWithCustom('include/api/RestService.php');
         SugarAutoLoader::requireWithCustom($file);
         $klass = SugarAutoLoader::customClass($klass);
-        // create the class
 
-        /* @var $obj SugarForecasting_AbstractForecast */
-        $obj = new $klass($this->args);
-        $data = $obj->process();
+        /* @var $obj ForecastManagerWorksheetsFilterApi */
+        $obj = new $klass();
 
-        //We need to set the keys for the adjusted values to be the same as the vardefs' name so that we may
-        //associate them with the appropriate types for formatting
-        foreach($data as $key=>$row) {
-            $data[$key]['best_case_adjusted'] = $row['best_adjusted'];
-            $data[$key]['likely_case_adjusted'] = $row['likely_adjusted'];
-            $data[$key]['worst_case_adjusted'] = $row['worst_adjusted'];
-        }
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+        $data = $obj->ForecastManagerWorksheetsGet(
+            $api,
+            array(
+                'module' => 'ForecastManagerWorksheets',
+                'timeperiod_id' => $this->getArg('timeperiod_id'),
+                'user_id' => $this->getArg('user_id')
+            )
+        );
+        $data = $data['records'];
 
         $fields_array = array(
             'quota'=>'quota',
@@ -74,20 +73,17 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
 
-        if ($settings['show_worksheet_best'])
-        {
+        if ($settings['show_worksheet_best']) {
             $fields_array['best_case'] = 'best_case';
             $fields_array['best_case_adjusted'] = 'best_case_adjusted';
         }
 
-        if ($settings['show_worksheet_likely'])
-        {
+        if ($settings['show_worksheet_likely']) {
             $fields_array['likely_case'] = 'likely_case';
             $fields_array['likely_case_adjusted'] = 'likely_case_adjusted';
         }
 
-        if ($settings['show_worksheet_worst'])
-        {
+        if ($settings['show_worksheet_worst']) {
             $fields_array['worst_case'] = 'worst_case';
             $fields_array['worst_case_adjusted'] = 'worst_case_adjusted';
         }

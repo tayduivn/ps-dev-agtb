@@ -200,12 +200,7 @@ class SugarACL
         if(empty($list)) {
             return $list;
         }
-        //BEGIN SUGARCRM flav=free ONLY
-        if(class_exists('BoxOfficeClient')){
-        	$boc = BoxOfficeClient::getInstance();
-        	$modules = $boc->filterModules();
-        }
-        //END SUGARCRM flav=free ONLY
+
         foreach($list as $key => $module) {
             if(self::checkAccess($use_value?$module:$key, $action, array("owner_override" => true))) {
                 $result[$key] = $module;

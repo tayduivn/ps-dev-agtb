@@ -1,0 +1,1 @@
+{{#if hasAccess}}<a href="{{../href}}">{{/if}}{{value}}{{#if hasAccess}}</a>{{/if}}
