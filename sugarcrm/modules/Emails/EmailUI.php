@@ -1378,9 +1378,12 @@ eoq;
 		global $current_user;
 		global $current_language;
 
+        $module   = $_REQUEST['qc_module'];
+        $beanName = BeanFactory::getBeanName($module);
+
 		//Setup the current module languge
-		$mod_strings = return_module_language($current_language, $_REQUEST['qc_module']);
-        $focus = BeanFactory::getBean($_REQUEST['qc_module']);
+		$mod_strings = return_module_language($current_language, $module);
+        $focus = BeanFactory::getBean($module);
 
 		$people = array(
 		'Contact'
@@ -1389,7 +1392,7 @@ eoq;
 		$emailAddress = array();
 
 		// people
-		if(in_array($bean, $people)) {
+		if(in_array($beanName, $people)) {
 			// lead specific
 			$focus->lead_source = 'Email';
 			$focus->lead_source_description = trim($email->name);
@@ -1445,7 +1448,6 @@ eoq;
 
 		$EditView = new EditView();
 		$EditView->ss = new Sugar_Smarty();
-		$module = $_REQUEST['qc_module'];
 		//MFH BUG#20283 - checks for custom quickcreate fields
 		$EditView->setup($module, $focus, SugarAutoLoader::loadWithMetafiles($module, 'editviewdefs'));
 		$EditView->process();
@@ -1479,11 +1481,11 @@ eoq;
 		}
 
 		//Get the module language for javascript
-	    if(!is_file(sugar_cached('jsLanguage/') . $_REQUEST['qc_module'] . '/' . $GLOBALS['current_language'] . '.js')) {
+	    if(!is_file(sugar_cached('jsLanguage/') . "{$module}/{$GLOBALS['current_language']}.js")) {
             require_once('include/language/jsLanguage.php');
-            jsLanguage::createModuleStringsCache($_REQUEST['qc_module'], $GLOBALS['current_language']);
+            jsLanguage::createModuleStringsCache($module, $GLOBALS['current_language']);
         }
-		$jsLanguage = getVersionedScript("cache/jsLanguage/{$_REQUEST['qc_module']}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
+		$jsLanguage = getVersionedScript("cache/jsLanguage/{$module}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
 
 		//BEGIN SUGARCRM flav=ent ONLY
 		if($focus->object_name == 'Contact') {
