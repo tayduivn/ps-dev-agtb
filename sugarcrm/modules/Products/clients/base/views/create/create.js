@@ -29,6 +29,8 @@
     currencyFields: new Array(),
 
     initialize: function(options) {
+        //reinitialize array on each init
+        this.currencyFields = new Array;
         this._setupCommitStageField(options.meta.panels);
         app.view.views.CreateView.prototype.initialize.call(this, options);
         //pull the fields in the panels that are editable currency fields
@@ -48,7 +50,7 @@
      */
     bindDataChange : function() {
         app.view.views.RecordView.prototype.bindDataChange.call(this);
-        this.model.on('change:base_rate', function() {
+        this.listenTo(this.model, 'change:base_rate', function() {
             _.debounce(this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id")),500,true);
         }, this)
     },
