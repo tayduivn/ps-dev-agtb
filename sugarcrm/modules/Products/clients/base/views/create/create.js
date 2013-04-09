@@ -50,7 +50,7 @@
      */
     bindDataChange : function() {
         app.view.views.RecordView.prototype.bindDataChange.call(this);
-        this.listenTo(this.model, 'change:base_rate', function() {
+        this.model.on('change:base_rate', function() {
             _.debounce(this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id")),500,true);
         }, this)
     },
