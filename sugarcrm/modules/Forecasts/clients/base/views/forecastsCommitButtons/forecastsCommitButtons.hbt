@@ -38,16 +38,16 @@
     {{/if}}
     <div class="btn-group pull-left">
         <a id="export" class="btn">{{str "LBL_EXPORT_CSV" "Forecasts"}}</a>
-        <!--<a href="#" data-toggle="dropdown" class="btn dropdown-toggle">-->
-            <!--<i class="caret"></i>-->
-        <!--</a>-->
+        <a href="#" data-toggle="dropdown" class="btn dropdown-toggle">
+            <i class="caret"></i>
+        </a>
 
-        <!--<ul class="dropdown-menu">-->
-        <!--{{#if showConfigButton}}-->
-            <!--<li><a href="#Forecasts/layout/config" name="forecastSettings">{{str "LBL_FORECAST_SETTINGS" "Forecasts"}}</a></li>-->
-        <!--{{/if}}-->
-            <!--<li><a id="print">{{str "LBL_PRINT" "Forecasts"}}</a></li>-->
-        <!--</ul>-->
+        <ul class="dropdown-menu">
+        {{#if showConfigButton}}
+            <li><a href="#Forecasts/layout/config" name="forecastSettings">{{str "LBL_FORECAST_SETTINGS" "Forecasts"}}</a></li>
+        {{/if}}
+            <li><a id="print">{{str "LBL_PRINT" "Forecasts"}}</a></li>
+        </ul>
     </div>
     <div class="pull-left">
     <a class="btn btn-invisible drawerTrig" href="#">
