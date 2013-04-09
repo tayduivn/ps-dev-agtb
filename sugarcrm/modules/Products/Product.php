@@ -115,6 +115,7 @@ class Product extends SugarBean
     public $contact_id;
     public $related_product_id;
     public $contracts;
+    public $product_index;
 
     public $table_name = "products";
     public $rel_manufacturers = "manufacturers";
