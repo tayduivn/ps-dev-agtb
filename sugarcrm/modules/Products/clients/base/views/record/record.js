@@ -26,7 +26,7 @@
  ********************************************************************************/
 ({
     extendsFrom: 'RecordView',
-    currencyFields: new Array(),
+    currencyFields: [],
 
     initialize: function(options) {
         //reinitialize array on each init
