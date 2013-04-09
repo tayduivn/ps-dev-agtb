@@ -67,7 +67,9 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        SugarTestForecastUtilities::setUpForecastConfig();
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+                'forecast_by' => 'opportunities'
+            ));
     }
 
     public function setUp()
@@ -216,7 +218,7 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         $GLOBALS['current_user'] = $this->reportee['user'];
         $args = array();
         $args['timeperiod_id'] = $this->timeperiod->id;
-        $args['user_id'] = $this->repData['id'];
+        $args['user_id'] = $this->reportee['user']->id;
         $args['encode_to_html'] = false;
 
         $obj = new SugarForecasting_Export_Individual($args);

@@ -284,6 +284,14 @@ class ForecastWorksheetsFilterApi extends FilterApi
             )
         );
 
+        if(empty($parent_type)) {
+            // get the forecast_by setting
+            /* @var $admin Administration */
+            $admin = BeanFactory::getBean('Administration');
+            $settings = $admin->getConfigForModule('Forecasts', $api->platform);
+            $parent_type = $settings['forecast_by'];
+        }
+
         // we only want to view parent_types of 'Opportunities' here
         array_push($filter, array('parent_type' => $this->getParentType($parent_type)));
 
