@@ -39,126 +39,24 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
     /**
      * Run all the tasks we need to process get the data back
      *
-     * @param $execute boolean indicating whether or not to execute the query and return the results; defaults to true
+     * @deprecated
+     * @see ForecastWorksheetsFilterApi
      * @return array|string
      */
     public function process()
     {
-        global $current_user;
-        $db = DBManagerFactory::getInstance();
-
-        $sql = "select o.id opp_id, " .
-                       "p.probability, " .
-                       "p.commit_stage, " .
-                       "o.sales_stage," .
-                       "p.date_closed, " .
-                       "p.currency_id, " .
-                       "o.name, " .
-                       "p.best_case, " .
-                       "p.worst_case, " .
-                       "p.likely_case, " .
-                       "p.base_rate, " .
-                       "p.assigned_user_id, " .
-                       "p.id product_id, " .
-                       "p.date_modified, " .
-                       "w.id worksheet_id, " .
-                       "w.assigned_user_id w_user_id, " .
-                       "w.best_case w_best_case, " .
-                       "w.likely_case w_likely_case, " .
-                       "w.worst_case w_worst_case, " .
-                       "w.parent_type w_forecast_type, " .
-                       "w.parent_id w_related_id, " .
-                       "w.draft w_version, " .
-                       "w.commit_stage w_commit_stage, " .
-                       "w.probability w_probability, " .
-                       "w.currency_id w_currency_id, " .
-                       "w.base_rate w_base_rate, " .
-                       "w.date_modified w_date_modified " .
-                   "from products p " .
-                   "inner join timeperiods t " .
-                       "on t.id = '" . $this->getArg('timeperiod_id') . "' " .
-                       "and p.date_closed_timestamp >= t.start_date_timestamp " .
-                       "and p.date_closed_timestamp <= t.end_date_timestamp " .
-                       "and p.assigned_user_id = '" . $this->getArg('user_id') . "' " .
-                   "inner join opportunities o " .
-                       "on p.opportunity_id = o.id " .
-                   "left join forecast_worksheets w " .
-                   "on p.id = w.parent_id ";
-
-        if ($this->getArg('user_id') != $current_user->id) {
-               $sql .= "and w.draft = 1 ";
-        }
-
-        $sql .= "where p.deleted = 0 " .
-                "and o.deleted = 0 ";
-        $result = $db->query($sql);
-
-        // use to_html when call DBManager::fetchByAssoc if encode_to_html isn't defined or not equal false
-        // @see Bug #58397 : Comma in opportunity name is exported as #039;
-        $encode_to_html = !isset($this->args['encode_to_html']) || $this->args['encode_to_html'] != false;
-
-        while (($row = $db->fetchByAssoc($result, $encode_to_html)) != null) {
-            
-            /* if we are a manager looking at a reportee worksheet and they haven't committed anything yet 
-             * (no worksheet row), we don't want to add this row to the output.
-             */
-            if ((!isset($row["worksheet_id"]) || empty($row['worksheet_id']))
-                && $this->getArg("user_id") != $current_user->id) {
-                continue;
-            }
-            
-            $data = array();
-            $data["id"] = $row["opp_id"];
-            $data["product_id"] = $row["product_id"];
-            $data["date_closed"] = !empty($row["date_closed"]) ? substr($row["date_closed"],0,10) : $row["date_closed"];
-            $data["sales_stage"] = $row["sales_stage"];
-            $data["assigned_user_id"] = $row["assigned_user_id"];
-            $data["amount"] = $row["likely_case"];
-            $data["worksheet_id"] = "";
-            $data["name"] = $row["name"];
-            $data["currency_id"] = $row["currency_id"];
-            $data["base_rate"] = $row["base_rate"];
-            $data["version"] = 1;
-            $data["worksheet_id"] = $row["worksheet_id"];
-            $data["date_modified"] = $this->convertDateTimeToISO($db->fromConvert($row["date_modified"], "datetime"));
-
-            if (isset($row["worksheet_id"]) && !empty($row['worksheet_id'])) {
-                $data["w_date_modified"] = $this->convertDateTimeToISO(
-                    $db->fromConvert($row["w_date_modified"], "datetime")
-                );
-            }
-            if (isset($row["worksheet_id"]) && $this->getArg("user_id") != $current_user->id) {
-                //use the worksheet data if it exists
-                $data["best_case"] = $row["w_best_case"];
-                $data["likely_case"] = $row["w_likely_case"];
-                $data["worst_case"] = $row["w_worst_case"];
-                $data["amount"] = $row["w_likely_case"];
-                $data["commit_stage"] = $row["w_commit_stage"];
-                $data["probability"] = $row["w_probability"];
-                $data["version"] = $row["w_version"];
-            } else {
-                //Set default values to that of the product"s
-                $data["best_case"] = $row["best_case"];
-                $data["likely_case"] = $row["likely_case"];
-                $data["worst_case"] = $row["worst_case"];
-                $data["commit_stage"] = $row["commit_stage"];
-                $data["probability"] = $row["probability"];
-            }
-            $this->dataArray[] = $data;
-        }
-
-        return array_values($this->dataArray);
+        return array();
     }
 
 
     /**
      * getQuery
-     *
+     * @deprecated
      * This is a helper function to allow for the query function to be used in ForecastWorksheet->create_export_query
      */
     public function getQuery()
     {
-        return $this->query;
+        return '';
     }
 
     /**
