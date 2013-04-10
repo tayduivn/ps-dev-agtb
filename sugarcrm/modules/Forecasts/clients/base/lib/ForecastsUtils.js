@@ -186,8 +186,15 @@
          * @return {String} css classes for up or down arrow icons, if the values didn't change, returns ''
          */
         getArrowIconColorClass: function(newValue, oldValue) {
-            var cls = (newValue > oldValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
-            return (newValue == oldValue) ? '' : cls;
+            var diff = Math.abs(newValue - oldValue),
+                cls = '';
+            // due to decimal rounding on the front end, we only want to know about differences greater
+            // of two decimal places.
+            // todo-sfa: This hardcoded 0.01 value needs to be changed to a value determined by userprefs
+            if(diff >= 0.01) {
+                cls = (newValue > oldValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+            }
+            return cls;
         },
 
         /**
