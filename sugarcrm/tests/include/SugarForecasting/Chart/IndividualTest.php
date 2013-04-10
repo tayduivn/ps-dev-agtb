@@ -73,6 +73,11 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         SugarTestHelper::setup('mod_strings', array('Forecasts'));
         SugarTestHelper::setUp('current_user');
 
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+                'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
+                'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE
+            ));
+
         $admin = BeanFactory::getBean('Administration');
         $config = $admin->getConfigForModule('Forecasts', 'base');
         self::$configTimeperiodType = $config['timeperiod_interval'];
@@ -119,9 +124,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
 
     public static function tearDownAfterClass()
     {
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'timeperiod_interval', self::$configTimeperiodType, 'base');
-        $admin->saveSetting('Forecasts', 'timeperiod_leaf_interval', self::$configTimeperiodLeafType, 'base');
+        SugarTestForecastUtilities::tearDownForecastConfig();
         self::$filterApi = null;
         $GLOBALS["current_user"] = null;
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();

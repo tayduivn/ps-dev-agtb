@@ -77,9 +77,8 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        $admin = BeanFactory::getBean('Administration');
-        $admin->getConfigForModule('Forecasts');
-        $admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base'); // make sure this is one, it should be
+        SugarTestForecastUtilities::setUpForecastConfig();
+
         self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
 
         self::$topLevelManager = SugarTestUserUtilities::createAnonymousUser();
@@ -138,6 +137,9 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM forecast_manager_worksheets WHERE user_id = '" . self::$user->id . "'");
+
+        SugarTestForecastUtilities::tearDownForecastConfig();
+
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();

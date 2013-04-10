@@ -73,7 +73,7 @@ class Administration extends SugarBean {
         //END SUGARCRM flav=pro ONLY
     }
 
-    function retrieveSettings($category = FALSE, $clean=false) {
+    function retrieveSettings($category = false, $clean=false) {
         // declare a cache for all settings
         $settings_cache = sugar_cache_retrieve('admin_settings_cache');
 
@@ -91,15 +91,15 @@ class Administration extends SugarBean {
         }
 
         if ( ! empty($category) ) {
-            $query = "SELECT category, name, value FROM {$this->table_name} WHERE category = '{$category}'";
+            $query = "SELECT category, name, value, platform FROM {$this->table_name} WHERE category = '{$category}'";
         } else {
-            $query = "SELECT category, name, value FROM {$this->table_name}";
+            $query = "SELECT category, name, value, platform FROM {$this->table_name}";
         }
 
         $result = $this->db->query($query, true, "Unable to retrieve system settings");
 
         if(empty($result)) {
-            return NULL;
+            return null;
         }
 
         while($row = $this->db->fetchByAssoc($result)) {
@@ -291,12 +291,30 @@ class Administration extends SugarBean {
     }
 
     /**
+     * Get the full config table as an associative array
+     *
+     * @return array
+     */
+    public function getAllSettings()
+    {
+        $sql = 'SELECT category, name, value, platform FROM {$this->table_name}';
+        $rows = $this->db->query($sql);
+
+        $return = array();
+        while($row = $this->db->fetchByAssoc($rows)) {
+            $return[] = $row;
+        }
+
+        return $return;
+    }
+
+    /**
      * Return Administration object with filled in settings
      * @param string $category
      * @param bool $clean
      * @return Administration
      */
-    public static function getSettings($category = FALSE, $clean=false)
+    public static function getSettings($category = false, $clean=false)
     {
         $admin = BeanFactory::getBean('Administration');
         $admin->retrieveSettings($category, $clean);

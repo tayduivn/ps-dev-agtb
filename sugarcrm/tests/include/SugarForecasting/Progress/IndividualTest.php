@@ -40,12 +40,14 @@ class SugarForecasting_Progress_IndividualTest extends Sugar_PHPUnit_Framework_T
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setup('mod_strings', array('manager', 'Forecasts'));
         SugarTestHelper::setup('current_user');
+        SugarTestForecastUtilities::setUpForecastConfig();
 
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
 
@@ -82,6 +84,7 @@ class SugarForecasting_Progress_IndividualTest extends Sugar_PHPUnit_Framework_T
 
     public static function tearDownAfterClass()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestHelper::tearDown();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
