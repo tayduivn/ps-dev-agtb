@@ -26,9 +26,11 @@
  ********************************************************************************/
 ({
     extendsFrom: 'RecordView',
-    currencyFields: new Array(),
+    currencyFields: [],
 
     initialize: function(options) {
+        //reinitialize array on each init
+        this.currencyFields = [];
         this._setupCommitStageField(options.meta.panels);
         app.view.views.RecordView.prototype.initialize.call(this, options);
         //pull the fields in the panels that are editable currency fields
