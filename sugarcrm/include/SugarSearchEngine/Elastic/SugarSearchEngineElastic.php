@@ -129,24 +129,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     /**
      *
      * @param SugarBean $bean
-     * @return String owner, or null if no owner found
-     */
-    protected function getOwnerField($bean)
-    {
-        // when running full indexing, $bean may be a stdClass and not a SugarBean
-        if ($bean instanceof SugarBean) {
-            return $bean->getOwnerField();
-        } else if (isset($bean->assigned_user_id)) {
-            return $bean->assigned_user_id;
-        } else if (isset($bean->created_by)) {
-            return $bean->created_by;
-        }
-        return null;
-    }
-
-    /**
-     *
-     * @param SugarBean $bean
      * @param $searchFields
      * @return mixed(\Elastica\Document|null)
      */
@@ -160,6 +142,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $emailAddress = BeanFactory::getBean('EmailAddresses');
             $bean->email1 = $emailAddress->getPrimaryAddress($bean);
         }
+
+        $bean->beforeSseIndexing();
 
         $keyValues = array();
         foreach ($searchFields as $fieldName => $fieldDef) {
@@ -175,7 +159,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 // 2. for some reason, bean fields are encoded, decode them first
                 // We are handling date range search for Meetings which is type datetimecombo
                 if (!isset($fieldDef['type']) || $fieldDef['type'] != 'datetimecombo') {
-                    $keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName, ENT_QUOTES));
+                    //$keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName,ENT_QUOTES));
+                    // NOTE Bug 53394 resulted in the decoding scheme above. This needs to be reevaluated in the context of using the right analyzers.
+                    $keyValues[$fieldName] = $bean->$fieldName;
                 } elseif (isset($fieldDef['type']) && $fieldDef['type'] == 'datetimecombo') {
                     // dates have to be in ISO-8601 without the : in the TZ
                     global $timedate;
@@ -199,35 +185,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
 
-        //BEGIN SUGARCRM flav=pro ONLY
-        $user_ids = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord($bean->module_dir, $bean->id);
-        $keyValues['user_favorites'] = array();
-
-        foreach ($user_ids as $user_id) {
-            // need to replace -'s for elastic search, same as team_set_ids
-            $keyValues['user_favorites'][] = $this->formatGuidFields($user_id);
-        }
-        //END SUGARCRM flav=pro ONLY
-
-        // to index owner
-        ///XXX TODO: This needs to go to strategies
-        $keyValues['team_set_id'] = $this->formatGuidFields($bean->team_set_id);
-        $ownerField = $this->getOwnerField($bean);
-        if ($ownerField) {
-            $keyValues['doc_owner'] = $this->formatGuidFields($ownerField);
-        }
-
         if( empty($keyValues) ) {
             return null;
         } else {
-            
             //base document
             $document = new \Elastica\Document($bean->id, $keyValues, $this->getIndexType($bean));
-            
-            // Add visibility denormalized data
-            // @shouldIndexViaBean, bean is not necesarily a full bean
-            $document = $bean->addSseVisibilityData('Elastic', $document);
-            
             return $document;
         }
     }

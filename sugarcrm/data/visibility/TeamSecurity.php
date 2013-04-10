@@ -107,15 +107,11 @@ class TeamSecurity extends SugarVisibility
      * Get sugar search engine definitions
      * @param string $engine search engine name
      * @return array
+     * Called before the bean is indexed so that any calculated attributes can updated.
+     * Since the team security id is updated directly, there is no need to implement anything custom
      */
-    public function getSseVisibilityDefs($engine, $defs)
+    public function beforeSseIndexing()
     {
-        return $defs;
-    }
-
-    public function addSseVisibilityData($engine, $document)
-    {
-        return $document;
     }
 
     public function addSseVisibilityFilter($engine, $filter)

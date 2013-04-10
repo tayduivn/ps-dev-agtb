@@ -665,24 +665,15 @@ class SugarBean
     }
 
     /**
-     * Get SugarSeachEngine visibility definitions
-     * @param SugarSearchEngine $engine search engine instance that is being used
+     *  Called before the bean is indexed so that any calculated attributes can updated
      */
-    public function getSseVisibilityDefs($engine)
+    public function beforeSseIndexing()
     {
-    	return $this->loadVisibility()->getSseVisibilityDefs($engine);
-    }
-
-    /**
-     * Add SugarSearchEngine visibility data to the passed in document
-     * @param $engine
-     * @param $document
-     *
-     * @return Updated document
-     */
-    public function addSseVisibilityData($engine, $document)
-    {
-    	return $this->loadVisibility()->addSseVisibilityData($engine, $document);
+        $this->updateDocOwner();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->updateUserFavorites();
+        //END SUGARCRM flav=pro ONLY
+    	$this->loadVisibility()->beforeSseIndexing();
     }
 
     public function addSseVisibilityFilter($engine, $filter)
@@ -6288,23 +6279,25 @@ class SugarBean
     }
 
     /**
-    * Get owner field
-    *
-    * @return STRING
-    */
-    function getOwnerField($returnFieldName = false)
+     * Updates the doc_owner property if it exists
+     * By default it is as it is part of the Basic vardefs.
+     * However it may have been removed from the vardefs for a particular module.
+     */
+    protected function updateDocOwner()
     {
-        if (isset($this->field_defs['assigned_user_id']))
+        if(isset($this->doc_owner))
         {
-            return $returnFieldName? 'assigned_user_id': $this->assigned_user_id;
+            if (isset($this->field_defs['assigned_user_id']))
+            {
+                $this->doc_owner = $this->assigned_user_id;
+            }
+            elseif(isset($this->field_defs['created_by']))
+            {
+                $this->doc_owner = $this->created_by;
+            } else {
+                $this->doc_owner = '';
+            }
         }
-
-        if (isset($this->field_defs['created_by']))
-        {
-            return $returnFieldName? 'created_by': $this->created_by;
-        }
-
-        return '';
     }
 
     /**
@@ -6357,6 +6350,21 @@ class SugarBean
         }
         return '';
     }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * Updates the user_favorites property if it exists
+     * By default it is as it is part of the Basic vardefs.
+     * However it may have been removed from the vardefs for a particular module.
+     */
+    protected function updateUserFavorites()
+    {
+        if(isset($this->user_favorites))
+        {
+            $this->user_favorites = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord($this->module_dir, $this->id);
+        }
+    }
+    //END SUGARCRM flav=pro ONLY
 
     /**
     *

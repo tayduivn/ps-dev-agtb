@@ -134,8 +134,6 @@ class SugarSearchEngineElasticMapping
             $type['fields'][$fieldDef['name']] = $type['fields']['default'];
             unset($type['fields']['default']);
         }
-//        $GLOBALS['log']->fatal("getFtsTypeFromDef returning result");
-//        $GLOBALS['log']->fatal(print_r($type, true));
         return $type;
     }
 
@@ -154,16 +152,6 @@ class SugarSearchEngineElasticMapping
     {
         $properties = $this->constructIndexMappingProperties($fieldDefs);
 
-//        // Add visibility
-//        $bean = BeanFactory::getBean($module);
-//        $visibility = $bean->getSseVisibilityDefs('Elastic');
-//        if (is_array($visibility)) {
-//            $properties = array_merge($properties, $visibility);
-//        }
-//
-
-        $GLOBALS['log']->fatal("-----------        FIELD MAPPING $module        ----------");
-        $GLOBALS['log']->fatal(print_r($properties, true));
         if (is_array($properties) && count($properties) > 0)
         {
             $index = new \Elastica\Index($this->sse->getClient(), $this->sse->getIndexName());
@@ -184,10 +172,6 @@ class SugarSearchEngineElasticMapping
         return true;
     }
 
-    public function addVisibility ($properties)
-    {
-        
-    }
     /**
      *
      * This function returns an array of properties given a field definition array.
@@ -231,19 +215,6 @@ class SugarSearchEngineElasticMapping
                 }
             }
         }
-        if (isset($properties['doc_owner']) == false)
-        {
-            $properties['doc_owner'] = array(
-                'type' => 'string',
-                'index' => 'not_analyzed'
-            );
-        }
-        if (isset($properties['user_favorites']) == false) {
-            $properties['user_favorites'] = array(
-                'type' => 'string',
-                'index' => 'not_analyzed'
-            );
-        }        
 
         return $properties;
     }
@@ -265,35 +236,5 @@ class SugarSearchEngineElasticMapping
             $this->setFieldMapping($name, $module);
         }
     }
-
-
-    /**
-     * non string type map
-     * sugar vardef type to search engine type mapping
-     * @var array
-     */
-    protected static $typeMap = array(
-        // searching string in non string types seems to cause elastic to return 500 error
-        // for example, search 'aaa' in case_number field (type=long) when no data indexed causes error
-        // we also need to figure out how date works with date format
-        // so use only strings for now
-        /*
-        'type' => array(
-            'bool' => 'boolean',
-            'int' => 'long',
-            'currency' => 'double',
-            'date' => 'date',
-            'datetime' => 'date',
-        ),
-        'dbType' => array(
-            'decimal' => 'double',
-        ),
-        */
-        'type' => array(
-            'datetimecombo'  =>  'date',
-            'relate' => 'string',
-        ),
-    );
-
 
 }

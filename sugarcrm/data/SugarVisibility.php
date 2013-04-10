@@ -122,18 +122,10 @@ abstract class SugarVisibility
     }
 
     /**
-     * Get sugar search engine definitions
-     * @param string $engine search engine name
-     * @return array
+     *  Override to implement visibility related attribute updates before the bean is indexed
      */
-    public function getSseVisibilityDefs($engine, $defs)
+    public function beforeSseIndexing()
     {
-    	return $defs;
-    }
-    
-    public function addSseVisibilityData($engine, $document)
-    {
-    	return $document;
     }
     
     public function addSseVisibilityFilter($engine, $filter)

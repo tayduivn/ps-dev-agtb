@@ -135,30 +135,14 @@ class BeanVisibility
     }
 
     /**
-     * Get SugarSearchEngine visibility definitions
-     * @param string $engine search engine name
-     * @return array
-     */    
-    public function getSseVisibilityDefs($engine)
-    {
-    	$defs = array();
-    	foreach($this->strategies as $strategy) {
-    		$defs = $strategy->getSseVisibilityDefs($engine, $defs);
-    	}
-    	return $defs;
-    }
-
-    /**
-     * Get SugarSearchEngine visibility (denormalized) data
-     * @param string $engine search engine name
-     * @return array
-     */        
-    public function addSseVisibilityData($engine, $document)
+     * Called before the bean is indexed so that any calculated attributes can updated.
+     * Propagates to all registered strategies.
+     */
+    public function beforeSseIndexing()
     {
     	foreach($this->strategies as $strategy) {
-    		$document = $strategy->addSseVisibilityData($engine, $document);
+    		$strategy->beforeSseIndexing();
     	}
-    	return $document;
     }
 
     /**

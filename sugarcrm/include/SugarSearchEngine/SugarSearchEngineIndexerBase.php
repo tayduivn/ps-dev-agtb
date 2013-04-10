@@ -150,58 +150,6 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
 
         return $ftsQuery['select'] . $ftsQuery['from'] . $ftsQuery['where'];
     }
-    
-
-    /**
-     * Generate the query necessary to retrieve FTS enabled fields for a bean.
-     *
-     * @param $module
-     * @param $fieldDefinitions
-     * @return string
-     */
-    protected function generateFTSQueryOld($module, $fieldDefinitions)
-    {
-        $queuTableName = self::QUEUE_TABLE;
-        $bean = BeanFactory::getBean($module, null);
-        $id = isset($fieldDefinitions['email1']) ? $bean->table_name.'.id' : 'id';
-
-        $selectFields = array($id);
-        if (isset($bean->field_defs['team_id'])) {
-            $selectFields += array('team_id', 'team_set_id');
-        }
-
-        $ownerField = $bean->getOwnerField(true);
-        if (!empty($ownerField))
-        {
-            $selectFields[] = $ownerField;
-        }
-
-        foreach($fieldDefinitions as $value)
-        {
-            if(isset($value['name'])) {
-                if ($value['name'] == 'email1')
-                    continue;
-                $selectFields[] = $value['name'];
-            }
-        }
-
-        $ret_array['select'] = " SELECT " . implode(",", $selectFields);
-        $ret_array['from'] = " FROM {$bean->table_name} ";
-        $custom_join = $bean->getCustomJoin();
-        $ret_array['select'] .= $custom_join['select'];
-
-        $ret_array['from'] .= $custom_join['join'];
-
-        $ret_array['from'] .= " INNER JOIN {$queuTableName} on {$queuTableName}.bean_id = {$bean->table_name}.id AND {$queuTableName}.processed = 0 ";
-        $ret_array['where'] = "WHERE {$bean->table_name}.deleted = 0";
-
-        if(isset($fieldDefinitions['email1'])) {
-            $ret_array['select'].= ", email_addresses.email_address email1";
-            $ret_array['from'].= " LEFT JOIN email_addr_bean_rel on {$bean->table_name}.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='{$module}' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id=email_addr_bean_rel.email_address_id ";
-        }
-
-        return  $ret_array['select'] . $ret_array['from'] . $ret_array['where'];
-    }
 
     /**
      * Main function that handles the indexing of a bean and is called by the job queue system.
