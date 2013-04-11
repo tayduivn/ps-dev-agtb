@@ -48,6 +48,15 @@
 
         // display the success message on rerendering
         this.signup_success = false;
+        this.model.set({
+            "email": [
+                {
+                    "email_address": "",
+                    "primary_address": "1"
+                }
+            ]
+        }, {silent: true});
+        this.action = "modal";
     },
     render: function() {
         if (app.config && app.config.logoURL) {
@@ -73,16 +82,7 @@
     },
     signup: function() {
         var self = this;
-        var oEmail = this.model.get("email");
-        if (oEmail) {
-            this.model.set({
-                "email": [
-                    {"email_address": oEmail}
-                ]
-            }, {silent: true});
-        }
         var validFlag = this.model.isValid();
-        this.model.set({"email": oEmail}, {silent: true});
         if (validFlag) {
             $('#content').hide();
             app.alert.show('signup', {level:'process', title:app.lang.getAppString('LBL_PORTAL_SIGNUP_PROCESS'), autoClose:false});
@@ -90,12 +90,7 @@
             var contactData = {
                 first_name: this.model.get("first_name"),
                 last_name: this.model.get("last_name"),
-                email: [{
-                    "email_address" : this.model.get("email"),
-                    "is_primary": true,
-                    "is_invalid": false,
-                    "opted_out": false
-                }],
+                email: this.model.get("email"),
                 phone_work: this.model.get("phone_work"),
                 primary_address_state: this.model.get("state"),
                 primary_address_country: this.model.get("country"),
