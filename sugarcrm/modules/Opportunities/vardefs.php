@@ -320,7 +320,7 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_COMMIT_STAGE',
             'type' => 'enum',
             'options' => 'commit_stage_dom',
-            'len' => '20',
+            'len' => '50',
             'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
         ),
         //END SUGARCRM flav=PRO ONLY

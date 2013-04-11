@@ -523,7 +523,7 @@ $dictionary['Product'] = array(
             'type' => 'enum',
             'default' => 'exclude',
             'options' => 'commit_stage_binary_dom',
-            'len' => '20',
+            'len' => '50',
             'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
         ),
         'sales_stage' =>  array(

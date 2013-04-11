@@ -165,13 +165,42 @@ describe("forecasts_field_commitStage", function() {
         });
     });
 
+    describe("when buckets are set to show_custom_buckets", function() {
+        beforeEach(function() {
+            sinon.stub(app.metadata, "getModule", function() {
+                return {
+                    sales_stage_won: ["Closed Won"],
+                    sales_stage_lost: ["Closed Lost"],
+                    forecast_ranges: "show_custom_buckets",
+                    buckets_dom: "commit_stage_custom_dom"
+                };
+            });
+        });
+
+        afterEach(function() {
+            app.metadata.getModule.restore();
+        });
+
+        it("field should set this.def.options to commit_stage_custom_dom", function() {
+            context.get = function() {
+                return {id: "tester"};
+            };
+
+            model = new Backbone.Model({sales_stage: "Open"});
+            field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);
+
+            expect(field.def.options).toEqual('commit_stage_custom_dom');
+        });
+    });
+
     describe("when buckets are set to show_buckets", function() {
         beforeEach(function() {
             sinon.stub(app.metadata, "getModule", function() {
                 return {
                     sales_stage_won: ["Closed Won"],
                     sales_stage_lost: ["Closed Lost"],
-                    forecast_ranges: "show_buckets"
+                    forecast_ranges: "show_buckets",
+                    buckets_dom: "commit_stage_dom"
                 };
             });
         });
@@ -192,6 +221,10 @@ describe("forecasts_field_commitStage", function() {
 
             afterEach(function() {
 
+            });
+
+            it("should have def.options set to commit_stage_dom", function() {
+                expect(field.def.options).toBe("commit_stage_dom");
             });
 
             it("should have def.view set to default", function() {
