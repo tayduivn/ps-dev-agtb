@@ -128,7 +128,6 @@ describe("forecasts_view_forecastsConfigTimeperiods", function(){
             testIntervalValue = null;
             testLeafIntervalValue = null;
         });
-
         it("should add the event handlers to update the selections for the field", function() {
             expect(intervalField.events["change select"]).toBeDefined();
             expect(intervalField.events["change select"]).toEqual("_updateIntervals");
@@ -138,12 +137,13 @@ describe("forecasts_view_forecastsConfigTimeperiods", function(){
         //BEGIN SUGARCRM flav=pro ONLY
         it("should check that the method to select the interval and default the leaf was called", function() {
             var testIntervalMethodStub = sinon.stub(intervalField, "_updateIntervals", function() {return '';});
-            intervalField._updateIntervals({}, {selected: testIntervalValue});
+            intervalField._updateIntervals({});
             expect(testIntervalMethodStub).toHaveBeenCalled();
         });
 
         it("should check that the method to select the interval and default the leaf set the model correctly", function() {
-            intervalField._updateIntervals({}, {selected: testIntervalValue});
+            spyOn($.fn, "val").andReturn("Annual")
+            intervalField._updateIntervals({target: 'timeperiod_interval'}, {selected: testIntervalValue});
             expect(view.model.get("timeperiod_interval")).toEqual(testIntervalValue);
             expect(view.model.get("timeperiod_leaf_interval")).toEqual(testLeafIntervalValue);
         });
