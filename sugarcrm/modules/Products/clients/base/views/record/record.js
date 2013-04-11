@@ -37,7 +37,7 @@
         _.each(options.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
                     //if the field is currency and not the known calculated field, add to the array
-                    if(field.type == 'currency' && field.name != 'total_amount') {
+                    if(field.type == 'currency') {
                         this.currencyFields.push(field.name);
                     }
                 }, this);
@@ -86,7 +86,9 @@
         _.each(this.currencyFields, function(currencyField) {
            //convert the currency and set the model silenty, then force the change to trigger.  Otherwise, a 0 value won't
            //trigger the change event, because 0 will convert to 0, but we need the change event for the currency symbol to update
-           this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId), {silent: true});
+           if(currencyField != 'total_amount') {
+                this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId), {silent: true});
+           }
            this.model.trigger("change:"+currencyField);
         }, this);
     },
