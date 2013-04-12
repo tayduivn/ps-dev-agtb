@@ -71,7 +71,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->base_rate = '1';
         
         //If we are committing a rep forecast, calculate things.  Otherwise, for a manager, just use what is passed in.
-        if ($args['pipeline_opp_count'] == 0 && $args['pipeline_amount'] == 0) {
+        if ($args['commit_type'] == 'sales_rep') {
             $forecast->calculatePipelineData(($args['closed_amount']), ($args['closed_count']));
             //push the pipeline numbers back into the args
             $args['pipeline_opp_count'] = $forecast->pipeline_opp_count;

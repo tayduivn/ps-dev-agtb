@@ -755,6 +755,67 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         $this->assertEquals($closed, $data["closed_amount"], "Closed Amount Incorrect.");     
     }
     
+     public function testManagerWithSubManagerAndReps_multisave_withOnlyCloseWon()
+    {
+        $manager = SugarTestForecastUtilities::createForecastUser(array(
+            'opportunities' => array(
+                'total' => 1,
+                'include_in_forecast' => 0
+            )
+        ));
+        $subManager1 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 1,
+                'include_in_forecast' => 0
+            ),
+        ));
+        $reportee1 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $subManager1["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 1,
+                'include_in_forecast' => 1
+            ),
+        ));
+        
+                  
+        //now we want to change the stage to close lost/close won of a few opps, commit, and make sure they are excluded
+        $reportee1['opportunities'][0]->sales_stage = Opportunity::STAGE_CLOSED_WON;
+        $reportee1['opportunities'][0]->save();
+        
+        //sleep needed so that the new committed forecasts are clearly newer
+        sleep(1);
+        //recommit
+        $reportee1['forecast'] = SugarTestForecastUtilities::createRepDirectForecast($reportee1);
+        $subManager1['forecast'] = SugarTestForecastUtilities::createManagerRollupForecast($subManager1, $reportee1);    
+        $manager['forecast'] = SugarTestForecastUtilities::createManagerRollupForecast($manager, $subManager1);
+                
+        //calculate what the amount should be
+        $totals = $this->calculatePipelineAmount($manager, $subManager1);
+        $amount = $totals["amount"];
+        $closed = $totals["closed"];
+        
+        $obj = new SugarForecasting_Progress_Manager(array(
+            "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
+            "user_id" => $manager["user"]->id
+        ));
+        
+        $data = $obj->process();
+        
+        //Make sure the pipeline count includes all manager ops and only committed rep ops that aren't close won/lost
+        $this->assertEquals("1", $data["opportunities"], "Pipeline Count Incorrect");
+        
+         //Make sure that the pipeline revenue has something in it.
+        $this->assertEquals($amount, $data["pipeline_revenue"], "Pipeline Amount Incorrect");
+        
+        //Make sure closed amounts match
+        $this->assertEquals($closed, $data["closed_amount"], "Closed Amount Incorrect.");     
+    }
+    
     /* Check for a manager with reps and submanagers with reps with committed opps.. make sure the cascade works after
      * a simulated multisave (commiting multiple times) and marking some as close won/lost (with different currencies)
      * 
