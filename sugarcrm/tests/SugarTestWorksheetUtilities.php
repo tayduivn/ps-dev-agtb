@@ -65,7 +65,6 @@ class SugarTestWorksheetUtilities
     public static function removeAllCreatedWorksheets()
     {
         $db = DBManagerFactory::getInstance();
-        $worksheet_ids = self::getCreatedWorksheetIds();
         //clean up any worksheets and draft versions as well.  Some were made by code, not the tests,
         //so we have to do some shenanigans to find them.
         $db->query("delete from forecast_worksheets where name like 'Sugar%'");
