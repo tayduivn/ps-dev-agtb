@@ -93,8 +93,8 @@
         field.events = _.extend({"change select":  "_updateSelection"}, field.events);
         field.bindDomChange = function() {};
 
-        field._updateSelection = function(event, input) {
-            var value =  parseInt(input.selected);
+        field._updateSelection = function(event) {
+            var value =  $(event.target).val();
             this.def.value = value;
             this.model.set(this.name, value);
         };
@@ -127,15 +127,11 @@
         /**
          * function that updates the selected interval
          * @param event
-         * @param input
          * @private
          */
-        field._updateIntervals = function(event, input) {
+        field._updateIntervals = function(event) {
             //get the timeperiod interval selector
-            var selected_interval = "Annual";
-            if(_.has(input, "selected")) {
-                selected_interval = input.selected;
-            }
+            var selected_interval = $(event.target).val();
             this.def.value = selected_interval;
             this.model.set(this.name, selected_interval);
             this.model.set('timeperiod_leaf_interval', selected_interval == 'Annual' ? 'Quarter' : 'Month');

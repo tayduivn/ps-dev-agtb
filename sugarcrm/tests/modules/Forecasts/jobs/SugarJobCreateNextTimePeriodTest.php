@@ -33,12 +33,12 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     //These are the default forecast configuration settings we will use to test
     protected $forecastConfigSettings = array (
-        array('name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_interval', 'value' => TimePeriod::ANNUAL_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_leaf_interval', 'value' => TimePeriod::QUARTER_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_start_date', 'value' => '2012-01-01', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_shown_forward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_shown_backward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts')
+        'timeperiod_type' => 'chronological',
+        'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
+        'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
+        'timeperiod_start_date' => '2012-01-01',
+        'timeperiod_shown_forward' => '2',
+        'timeperiod_shown_backward' => '2'
     );
 
     public static function setUpBeforeClass()
@@ -71,21 +71,20 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function postSetUp($timePeriodType=TimePeriod::ANNUAL_TYPE)
     {
-        $admin = BeanFactory::getBean('Administration');
-
-        foreach($this->forecastConfigSettings as $config)
-        {
-            $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
-        }
+        SugarTestForecastUtilities::setUpForecastConfig($this->forecastConfigSettings);
 
         //Run rebuildForecastingTimePeriods which takes care of creating the TimePeriods based on the configuration data
         $timePeriod = TimePeriod::getByType($timePeriodType);
+        $admin = BeanFactory::getBean('Administration');
         $currentForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
+
         $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
     }
 
     public function tearDown()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
+
         $db = DBManagerFactory::getInstance();
 
         //Remove any job_queue entries
@@ -174,13 +173,13 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $db->query('UPDATE timeperiods set deleted = 1');
 
         $this->forecastConfigSettings = array (
-            array('name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'),
-            array('name' => 'timeperiod_interval', 'value' => TimePeriod::QUARTER_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
-            array('name' => 'timeperiod_leaf_interval', 'value' => TimePeriod::MONTH_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
-            array('name' => 'timeperiod_start_month', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
-            array('name' => 'timeperiod_start_day', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
-            array('name' => 'timeperiod_shown_forward', 'value' => '8', 'platform' => 'base', 'category' => 'Forecasts'),
-            array('name' => 'timeperiod_shown_backward', 'value' => '8', 'platform' => 'base', 'category' => 'Forecasts')
+            'timeperiod_type' => 'chronological',
+            'timeperiod_interval' => TimePeriod::QUARTER_TYPE,
+            'timeperiod_leaf_interval' => TimePeriod::MONTH_TYPE,
+            'timeperiod_start_month' => '1',
+            'timeperiod_start_day' => '1',
+            'timeperiod_shown_forward' => '8',
+            'timeperiod_shown_backward' => '8'
         );
 
         $this->postSetUp(TimePeriod::QUARTER_TYPE);

@@ -782,8 +782,8 @@
                     'won_amount': wonAmount,
                     'included_opp_count': includedCount,
                     'total_opp_count': totalCount,
-                    'includedClosedCount' : 0,
-                    'includedClosedAmount' : 0
+                    'closed_count' : 0,
+                    'closed_amount' : 0
 
                 }
             }, {silent: true});
@@ -859,8 +859,8 @@
             'won_amount': wonAmount,
             'included_opp_count': includedCount,
             'total_opp_count': this.collection.models.length,
-            'includedClosedCount': includedClosedCount,
-            'includedClosedAmount': includedClosedAmount
+            'closed_count': includedClosedCount,
+            'closed_amount': includedClosedAmount
 
         };
 

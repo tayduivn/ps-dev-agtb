@@ -365,8 +365,8 @@
         forecastData.forecast_type = this.forecastType;
         forecastData.amount = this.totals.amount;
         forecastData.opp_count = this.totals.included_opp_count;
-        forecastData.includedClosedAmount = this.totals.includedClosedAmount;
-        forecastData.includedClosedCount = this.totals.includedClosedCount;
+        forecastData.closed_amount = this.totals.closed_amount;
+        forecastData.closed_count = this.totals.closed_count;
         forecastData.pipeline_amount = this.totals.pipeline_amount;
         forecastData.pipeline_opp_count = this.totals.pipeline_opp_count;
 

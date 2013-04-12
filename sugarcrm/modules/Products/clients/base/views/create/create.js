@@ -26,16 +26,18 @@
  ********************************************************************************/
 ({
     extendsFrom: 'CreateView',
-    currencyFields: new Array(),
+    currencyFields: [],
 
     initialize: function(options) {
+        //reinitialize array on each init
+        this.currencyFields = [];
         this._setupCommitStageField(options.meta.panels);
         app.view.views.CreateView.prototype.initialize.call(this, options);
         //pull the fields in the panels that are editable currency fields
         _.each(options.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
                     //if the field is currency and not the known calculated field, add to the array
-                    if(field.type == 'currency' && field.name != 'total_amount') {
+                    if(field.type == 'currency') {
                         this.currencyFields.push(field.name);
                     }
                 }, this);
@@ -61,7 +63,9 @@
     convertCurrencyFields: function(oldCurrencyId, newCurrencyId) {
         //run through the editable currency fields and convert the amounts to the new currency
         _.each(this.currencyFields, function(currencyField) {
-            this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId), {silent: true});
+            if(!_.isUndefined(this.model.get(currencyField)) && currencyField != 'total_amount') {
+                this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId), {silent: true});
+            }
             this.model.trigger("change:"+currencyField);
         }, this);
     },

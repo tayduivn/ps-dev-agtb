@@ -77,8 +77,9 @@
             this.unformat = _.bind(function(value) {
                 return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
             }, this);
-        }
-        else if(forecastRanges == "show_buckets") {
+        } else {
+            // get the correct buckets dom
+            this.def.options = app.metadata.getModule('Forecasts', 'config').buckets_dom;
             this.def.view = "default";
             this.currentView = "default";
             this.getLanguageValue();

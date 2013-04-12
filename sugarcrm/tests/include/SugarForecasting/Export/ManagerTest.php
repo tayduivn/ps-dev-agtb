@@ -66,19 +66,15 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
      */
     protected static $repData;
 
-    /**
-     * @var Administration
-     */
-    protected static $admin;
-
-
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+        SugarTestForecastUtilities::setUpForecastConfig();
 
         self::$manager = SugarTestForecastUtilities::createForecastUser();
         //set up another manager, and assign him to the first manager manually so his data is generated
@@ -155,19 +151,13 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
             "user_id" => self::$reportee['user']->id,
 
         );
-
-        // get current settings
-        self::$admin = BeanFactory::getBean('Administration');
     }
 
     public static function tearDownAfterClass()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestHelper::tearDown();
-        //Reset all columns to default
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 0, 'base');
     }
 
     /**
@@ -212,7 +202,7 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
         $args['user_id'] = self::$manager2['user']->id;
 
         // hide/show any columns
-        self::$admin->saveSetting('Forecasts', $hide, $value, 'base');
+        SugarTestConfigUtilities::setConfig('Forecasts', $hide, $value);
 
         $obj = new SugarForecasting_Export_Manager($args);
         $content = $obj->process();

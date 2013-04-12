@@ -61,16 +61,6 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
     protected static $repData;
 
     /**
-     * @var Administration
-     */
-    protected static $admin;
-
-    /**
-     * @var isSetup
-     */
-    private static $_isSetup;
-
-    /**
      * @var ForecastWorksheetsFilterApi
      */
     protected $filterApi;
@@ -90,15 +80,11 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp('current_user');
         // get current settings
-        self::$admin = BeanFactory::getBean('Administration');
-        $adminConfig = self::$admin->getConfigForModule('Forecasts');
-        self::$_isSetup = $adminConfig['is_setup'];
-        self::$admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
-        //Reset all columns to be shown
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 1, 'base');
-        self::$admin->saveSetting('Forecasts', 'forecast_by', 'opportunities', 'base');
+
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+                'forecast_by' => 'opportunities',
+                'show_worksheet_worst' => 1
+            ));
 
         // setup the test users
         self::$manager = SugarTestForecastUtilities::createForecastUser();
@@ -176,11 +162,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
-        self::$admin->saveSetting('Forecasts', 'is_setup', self::$_isSetup, 'base');
-        //Reset all columns to be hidden
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 0, 'base');
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 0, 'base');
-        self::$admin->saveSetting('Forecasts', 'forecast_by', 'products', 'base');
+        SugarTestForecastUtilities::tearDownForecastConfig();
         parent::tearDown();
     }
 
@@ -251,7 +233,6 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
             $postData
         );
 
-
         //check to see if the data to the Worksheet table was saved
         $this->assertEquals($probability, $response['probability']);
         $this->assertEquals($best_case, $response['best_case']);
@@ -289,21 +270,16 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @group forecastapi
      * @group forecasts
      * @param array $worksheet
+     * @return array
      */
     public function testForecastWorksheetRepCommit($worksheet)
     {
-        $GLOBALS["current_user"] = self::$reportee["user"];
+        /* @var $worksheetBean ForecastWorksheet */
+        $GLOBALS['current_user'] = self::$reportee['user'];
+        $worksheetBean = BeanFactory::getBean('ForecastWorksheets');
+        $commit = $worksheetBean->commitWorksheet(self::$reportee['user']->id, self::$timeperiod->id);
 
-        // now run the job that actually takes thee draft and moves it to the commit version
-        require_once('include/SugarQueue/jobs/SugarJobUpdateForecastWorksheets.php');
-
-        $mockJob = $this->getMock('SchedulersJob');
-
-        $cls = new SugarJobUpdateForecastWorksheets();
-        $cls->setJob($mockJob);
-
-        $return = $cls->run(json_encode(array('user_id' => self::$reportee["user"]->id, 'timeperiod_id' => self::$timeperiod->id)));
-        $this->assertTrue($return);
+        $this->assertTrue($commit);
 
         return $worksheet;
     }

@@ -59,11 +59,11 @@ class SugarMath
     protected $value = '0';
 
     /**
-     * the math decimal precision, default is 2
+     * the math decimal precision, default is 6
      *
      * @var int $scale
      */
-    protected $scale = 2;
+    protected $scale = 6;
 
     /**
      * class constructor

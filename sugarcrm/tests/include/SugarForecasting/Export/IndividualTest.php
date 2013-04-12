@@ -27,33 +27,33 @@ require_once('include/SugarForecasting/Export/Individual.php');
 class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /** @var array
-    */
+     */
     private $reportee;
 
     /**
-    * @var array
-    */
+     * @var array
+     */
     protected $manager;
     /**
-    * @var TimePeriod
-    */
+     * @var TimePeriod
+     */
     protected $timeperiod;
 
     /**
-    * @var array
-    */
+     * @var array
+     */
     protected $managerData;
 
     /**
-    * @var array
-    */
+     * @var array
+     */
     protected $repData;
 
     /**
-    * @var Administration
-    */
+     * @var Administration
+     */
     protected static $admin;
-    
+
     /**
      * @var Current Forecasts Config
      */
@@ -61,21 +61,24 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        self::$admin = BeanFactory::getBean('Administration');
-        self::$current_config = self::$admin->getConfigForModule('Forecasts');
-        self::$admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+                'forecast_by' => 'opportunities'
+            ));
     }
 
     public function setUp()
     {
         $this->manager = SugarTestForecastUtilities::createForecastUser();
 
-        $this->reportee = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => $this->manager['user']->id)));
+        $this->reportee = SugarTestForecastUtilities::createForecastUser(
+            array('user' => array('reports_to' => $this->manager['user']->id))
+        );
 
         $this->timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 
@@ -131,12 +134,8 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
 
     public static function tearDownAfterClass()
     {
-        SugarTestHelper::tearDown();
-        //Reset all columns to default
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 0, 'base');
-        self::$admin->saveSetting('Forecasts', 'is_setup', self::$current_config['is_setup'], 'base');
+        SugarTestForecastUtilities::tearDownForecastConfig();
+        parent::tearDownAfterClass();
     }
 
     /**
@@ -144,18 +143,18 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
      *
      * This is the dataProvider function for testExportForecastWorksheets
      */
-   public function exportForecastWorksheetProvider()
-   {
-       return array
-       (
-           array('show_worksheet_best', '1', 'assertRegExp', '/Best Case/'),
-           array('show_worksheet_best', '0', 'assertNotRegExp', '/Best Case/'),
-           array('show_worksheet_likely', '1', 'assertRegExp', '/Likely Case/'),
-           array('show_worksheet_likely', '0', 'assertNotRegExp', '/Likely Case/'),
-           array('show_worksheet_worst', '1', 'assertRegExp', '/Worst Case/'),
-           array('show_worksheet_worst', '0', 'assertNotRegExp', '/Worst Case/'),
-       );
-   }
+    public function exportForecastWorksheetProvider()
+    {
+        return array
+        (
+            array('show_worksheet_best', '1', 'assertRegExp', '/Best Case/'),
+            array('show_worksheet_best', '0', 'assertNotRegExp', '/Best Case/'),
+            array('show_worksheet_likely', '1', 'assertRegExp', '/Likely Case/'),
+            array('show_worksheet_likely', '0', 'assertNotRegExp', '/Likely Case/'),
+            array('show_worksheet_worst', '1', 'assertRegExp', '/Worst Case/'),
+            array('show_worksheet_worst', '0', 'assertNotRegExp', '/Worst Case/'),
+        );
+    }
 
     /**
      * testExport
@@ -167,8 +166,8 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
      *
      * @dataProvider exportForecastWorksheetProvider
      */
-   public function testExport($hide, $value, $method, $expectedRegex)
-   {
+    public function testExport($hide, $value, $method, $expectedRegex)
+    {
         global $current_user;
         $current_user = $this->reportee['user'];
         $args = array();
@@ -176,7 +175,7 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         $args['user_id'] = $this->repData['id'];
 
         //hide/show any columns
-        self::$admin->saveSetting('Forecasts', $hide, $value, 'base');
+        SugarTestConfigUtilities::setConfig('Forecasts', $hide, $value);
 
         $obj = new SugarForecasting_Export_Individual($args);
         $content = $obj->process();
@@ -184,11 +183,12 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
 
         $this->assertNotEmpty($content, "content empty. Rep data should have returned csv file contents.");
         $this->$method($expectedRegex, $content);
-   }
+    }
 
 
     /**
      * This is a function to test the getFilename function
+     *
      * @group export
      * @group forecasts
      */
@@ -204,6 +204,7 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
 
     /**
      * This is a function to test the bug 58397
+     *
      * @group export
      * @group forecasts
      */
@@ -217,7 +218,7 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         $GLOBALS['current_user'] = $this->reportee['user'];
         $args = array();
         $args['timeperiod_id'] = $this->timeperiod->id;
-        $args['user_id'] = $this->repData['id'];
+        $args['user_id'] = $this->reportee['user']->id;
         $args['encode_to_html'] = false;
 
         $obj = new SugarForecasting_Export_Individual($args);
@@ -258,7 +259,11 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         $timedate = TimeDate::getInstance();
         $db = DBManagerFactory::getInstance();
         $expectedDateClosed = $timedate->to_display_date($db->fromConvert($opp->date_closed, 'date'), false);
-        $this->assertContains($expectedDateClosed, $content, "Failed asserting that '{$content}' contains '{$expectedDateClosed}'");
+        $this->assertContains(
+            $expectedDateClosed,
+            $content,
+            "Failed asserting that '{$content}' contains '{$expectedDateClosed}'"
+        );
 
         $current_user = $temp_current_user;
     }

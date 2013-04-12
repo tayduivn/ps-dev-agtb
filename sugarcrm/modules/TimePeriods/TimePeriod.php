@@ -395,6 +395,9 @@ class TimePeriod extends SugarBean {
      {
         global $app_strings;
         $db = DBManagerFactory::getInstance();
+        if($date instanceOf SugarDateTime) {
+            $date = $date->asDbDate(false);
+        }
         $timestamp = $db->quoted(strtotime($date));
         $retVal = false;
         

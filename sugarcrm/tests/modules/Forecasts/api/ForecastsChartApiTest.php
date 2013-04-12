@@ -60,6 +60,8 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('current_user');
+
+        SugarTestForecastUtilities::setUpForecastConfig();
         self::$user = SugarTestForecastUtilities::createForecastUser(array("opportunities" => array("total" => 1, "include_in_forecast" => 1)));
 
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();    
@@ -75,6 +77,7 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
     	SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();

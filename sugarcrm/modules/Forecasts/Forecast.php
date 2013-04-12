@@ -125,7 +125,9 @@ class Forecast extends SugarBean
         $this->pipeline_opp_count = $this->opp_count - $closedCount;
         
         $this->pipeline_amount = ($this->pipeline_amount < 0)? 0: $this->pipeline_amount;
-        $this->pipeline_opp_count = ($this->pipeline_opp_count < 0)? 0: $this->pipeline_opp_count;}
+        $this->pipeline_opp_count = ($this->pipeline_opp_count < 0)? 0: $this->pipeline_opp_count;
+        $this->closed_amount = $closedAmount;
+     }
 
     function is_authenticated()
     {
