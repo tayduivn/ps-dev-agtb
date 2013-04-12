@@ -55,7 +55,13 @@ class OutboundEmailConfigurationApiTest extends RestTestBase
         $response = $this->_restCall("/OutboundEmailConfiguration/list");
         $reply    = $response["reply"];
 
-        $expected = count($seedConfigs) + 1; // the additional one is the system config
+        $expected = count($seedConfigs);
+
+        $oe  = new OutboundEmail();
+        if ($oe->isAllowUserAccessToSystemDefaultOutbound()) {
+            $expected++; // system config is included if snd only if Access Allowed designated by Administrator
+        }
+
         $actual   = count($reply);
         self::assertEquals($expected, $actual, "There should be {$expected} configurations");
 
