@@ -1,0 +1,47 @@
+{
+  "next_offset": -1,
+  "records": [
+    {
+      "id": "19037ade-728f-58c7-f9ec-515f4ec5cf0f",
+      "name": "Waverly Trading House - 1000 units",
+      "date_modified": "2013-04-05T22:21:00+00:00",
+      "assigned_user_name": "Jim Brennan",
+      "account_name": "Waverly Trading House",
+      "account_id": "4dfa2037-aa48-4b7d-4170-515f4eaad5b9",
+      "amount": "63166.66",
+      "base_rate": "0.9",
+      "currency_id": "8bc2eed0-544b-5217-60e5-515f4e3c1dee",
+      "date_closed": "2014-02-16",
+      "sales_stage": "Needs Analysis",
+      "probability": "90",
+      "commit_stage": "include",
+      "my_favorite": false,
+      "_acl": {
+        "fields": {}
+      },
+      "following": false,
+      "_module": "Opportunities"
+    },
+    {
+      "id": "c4e70b62-ddaf-f966-7a73-515f4e59d649",
+      "name": "Coolview Net Ltd - 1000 units",
+      "date_modified": "2013-04-05T22:21:00+00:00",
+      "assigned_user_name": "Jim Brennan",
+      "account_name": "Coolview Net Ltd",
+      "account_id": "637cb254-60bc-aab2-e53e-515f4e3db6f2",
+      "amount": "43480",
+      "base_rate": "1",
+      "currency_id": "-99",
+      "date_closed": "2014-02-15",
+      "sales_stage": "Prospecting",
+      "probability": "10",
+      "commit_stage": "exclude",
+      "my_favorite": false,
+      "_acl": {
+        "fields": {}
+      },
+      "following": false,
+      "_module": "Opportunities"
+    }
+  ]
+}
