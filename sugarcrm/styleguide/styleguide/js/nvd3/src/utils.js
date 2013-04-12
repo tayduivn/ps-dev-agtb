@@ -1,6 +1,5 @@
 
-nv.utils.windowSize = function()
-{
+nv.utils.windowSize = function() {
     // Sane defaults
     var size = {width: 640, height: 480};
 
@@ -24,18 +23,6 @@ nv.utils.windowSize = function()
         size.height = window.innerHeight;
     }
     return (size);
-};
-
-nv.utils.getAbsoluteXY = function (element)
-{
-  var viewportElement = document.documentElement
-    , box = element.getBoundingClientRect()
-    , scrollLeft = viewportElement.scrollLeft + document.body.scrollLeft
-    , scrollTop = viewportElement.scrollTop + document.body.scrollTop
-    , x = box.left + scrollLeft
-    , y = box.top + scrollTop;
-
-  return {'left': x, 'top': y};
 };
 
 // Easy way to bind multiple functions to window.onresize
@@ -78,117 +65,50 @@ nv.utils.windowUnResize = function(fun)
 
 // Backwards compatible way to implement more d3-like coloring of graphs.
 // If passed an array, wrap it in a function which implements the old default
-// behaviour
-nv.utils.getColor = function(color)
-{
+// behavior
+nv.utils.getColor = function(color) {
     if (!arguments.length) return nv.utils.defaultColor(); //if you pass in nothing, get default colors back
 
     if( Object.prototype.toString.call( color ) === '[object Array]' )
         return function(d, i) { return d.color || color[i % color.length]; };
     else
         return color;
-        //can't really help it if someone passes rubish as color
+        //can't really help it if someone passes rubbish as color
 }
 
 // Default color chooser uses the index of an object as before.
-nv.utils.defaultColor = function()
-{
+nv.utils.defaultColor = function() {
     var colors = d3.scale.category20().range();
     return function(d, i) { return d.color || colors[i % colors.length] };
 }
 
-//gradient color
-nv.utils.colorLinearGradient = function ( d, i, o, c, defs ) {
-  var id = 'rg_gradient_'+i
-    , grad = defs.select('#'+id);
-  if ( !grad.empty() ){
-    //grad.attr('r',r);
-  }
-  else
-  {
-    nv.utils.createLinearGradient( id, o, defs, [
-      { 'offset': '0%','stop-color': d3.rgb(c).darker().toString(),  'stop-opacity': 1 },
-      { 'offset': '20%', 'stop-color': d3.rgb(c).toString(), 'stop-opacity': 1 },
-      { 'offset': '50%', 'stop-color': d3.rgb(c).brighter().toString(), 'stop-opacity': 1 },
-      { 'offset': '80%', 'stop-color': d3.rgb(c).toString(), 'stop-opacity': 1 },
-      { 'offset': '100%','stop-color': d3.rgb(c).darker().toString(),  'stop-opacity': 1 }
-    ]);
-  }
-  return 'url(#'+ id +')';
-}
 
-// defs:definition container
-// id:dynamic id for arc
-// radius:outer edge of gradient
-// stops: an array of attribute objects
-nv.utils.createLinearGradient = function ( id, orientation, defs, stops )
-{
-  var x2 = orientation === 'horizontal' ? '0%' : '100%'
-    , y2 = orientation === 'horizontal' ? '100%' : '0%'
-    , grad
-    = defs.append('linearGradient')
-        .attr('id', id)
-        .attr('x1', '0%')
-        .attr('y1', '0%')
-        .attr('x2', x2 )
-        .attr('y2', y2 )
-        //.attr('gradientUnits', 'userSpaceOnUse')
-        .attr('spreadMethod', 'pad');
+// Returns a color function that takes the result of 'getKey' for each series and
+// looks for a corresponding color from the dictionary,
+nv.utils.customTheme = function(dictionary, getKey, defaultColors) {
+  getKey = getKey || function(series) { return series.key }; // use default series.key if getKey is undefined
+  defaultColors = defaultColors || d3.scale.category20().range(); //default color function
 
-  for (var i=0;i<stops.length;i++)
-  {
-    var attrs = stops[i]
-      , stop = grad.append('stop')
-    for (var a in attrs)
-    {
-      if ( attrs.hasOwnProperty(a) ) stop.attr( a, attrs[a] );
-    }
+  var defIndex = defaultColors.length; //current default color (going in reverse)
+
+  return function(series, index) {
+    var key = getKey(series);
+
+    if (!defIndex) defIndex = defaultColors.length; //used all the default colors, start over
+
+    if (typeof dictionary[key] !== "undefined")
+      return (typeof dictionary[key] === "function") ? dictionary[key]() : dictionary[key];
+    else
+      return defaultColors[--defIndex]; // no match in dictionary, use default color
   }
 }
 
-nv.utils.colorRadialGradient = function ( d, i, x, y, r, s, c, defs ) {
-  var id = 'rg_gradient_'+i
-    , grad = defs.select('#'+id);
-  if ( !grad.empty() ){
-    grad.attr('r',r);
-  }
-  else
-  {
-    nv.utils.createRadialGradient( id, x, y, r, defs, [
-      { 'offset': s, 'stop-color': d3.rgb(c).brighter().toString(), 'stop-opacity': 1 },
-      { 'offset': '100%','stop-color': d3.rgb(c).darker().toString(),  'stop-opacity': 1 }
-    ]);
-  }
-  return 'url(#'+ id +')';
-}
 
-nv.utils.createRadialGradient = function ( id, x, y, radius, defs, stops )
-{
-  var grad
-    = defs.append('radialGradient')
-        .attr('id', id)
-        .attr('r', radius)
-        .attr('cx', x)
-        .attr('cy', y)
-        .attr('gradientUnits', 'userSpaceOnUse')
-        .attr('spreadMethod', 'pad');
-
-  for (var i=0;i<stops.length;i++)
-  {
-    var attrs = stops[i]
-      , stop = grad.append('stop')
-    for (var a in attrs)
-    {
-      if ( attrs.hasOwnProperty(a) ) stop.attr( a, attrs[a] );
-    }
-  }
-}
 
 // From the PJAX example on d3js.org, while this is not really directly needed
 // it's a very cool method for doing pjax, I may expand upon it a little bit,
 // open to suggestions on anything that may be useful
-nv.utils.pjax = function(links, content)
-{
+nv.utils.pjax = function(links, content) {
   d3.selectAll(links).on("click", function() {
     history.pushState(this.href, this.textContent, this.href);
     load(this.href);
@@ -207,6 +127,111 @@ nv.utils.pjax = function(links, content)
     if (d3.event.state) load(d3.event.state);
   });
 }
+
+//SUGAR ADDITIONS
+
+//gradient color
+nv.utils.colorLinearGradient = function ( d, i, p, c, defs ) {
+  var id = 'lg_gradient_'+ i
+    , grad = defs.select('#'+ id);
+  if ( grad.empty() ) {
+    if (p.position === 'middle')
+    {
+      nv.utils.createLinearGradient( id, p, defs, [
+        { 'offset': '0%',  'stop-color': d3.rgb(c).darker().toString(),  'stop-opacity': 1 },
+        { 'offset': '20%', 'stop-color': d3.rgb(c).toString(), 'stop-opacity': 1 },
+        { 'offset': '50%', 'stop-color': d3.rgb(c).brighter().toString(), 'stop-opacity': 1 },
+        { 'offset': '80%', 'stop-color': d3.rgb(c).toString(), 'stop-opacity': 1 },
+        { 'offset': '100%','stop-color': d3.rgb(c).darker().toString(),  'stop-opacity': 1 }
+      ]);
+    }
+    else
+    {
+      nv.utils.createLinearGradient( id, p, defs, [
+        { 'offset': '0%',  'stop-color': d3.rgb(c).darker().toString(),  'stop-opacity': 1 },
+        { 'offset': '50%', 'stop-color': d3.rgb(c).toString(), 'stop-opacity': 1 },
+        { 'offset': '100%','stop-color': d3.rgb(c).brighter().toString(), 'stop-opacity': 1 },
+      ]);
+    }
+  }
+  return 'url(#'+ id +')';
+}
+
+// defs:definition container
+// id:dynamic id for arc
+// radius:outer edge of gradient
+// stops: an array of attribute objects
+nv.utils.createLinearGradient = function ( id, params, defs, stops )
+{
+  var x2 = params.orientation === 'horizontal' ? '0%' : '100%'
+    , y2 = params.orientation === 'horizontal' ? '100%' : '0%'
+    , grad = defs.append('linearGradient')
+        .attr('id', id)
+        .attr('x1', '0%')
+        .attr('y1', '0%')
+        .attr('x2', x2 )
+        .attr('y2', y2 )
+        //.attr('gradientUnits', 'userSpaceOnUse')objectBoundingBox
+        .attr('spreadMethod', 'pad');
+  for (var i=0; i<stops.length; i++)
+  {
+    var attrs = stops[i]
+      , stop = grad.append('stop');
+    for (var a in attrs)
+    {
+      if ( attrs.hasOwnProperty(a) ) {
+        stop.attr(a, attrs[a]);
+      }
+    }
+  }
+}
+
+nv.utils.colorRadialGradient = function ( d, i, p, c, defs ) {
+  var id = 'rg_gradient_'+ i
+    , grad = defs.select('#'+ id);
+  if ( grad.empty() )
+  {
+    nv.utils.createRadialGradient( id, p, defs, [
+      { 'offset': p.s+'%', 'stop-color': d3.rgb(c).brighter().toString(), 'stop-opacity': 1 },
+      { 'offset': '100%','stop-color': d3.rgb(c).darker().toString(), 'stop-opacity': 1 }
+    ]);
+  }
+  return 'url(#'+ id +')';
+}
+
+nv.utils.createRadialGradient = function ( id, params, defs, stops )
+{
+  var grad = defs.append('radialGradient')
+        .attr('id', id)
+        .attr('r', params.radius)
+        .attr('cx', params.x)
+        .attr('cy', params.y)
+        .attr('gradientUnits', params.u)
+        .attr('spreadMethod', 'pad');
+  for (var i=0; i<stops.length; i++)
+  {
+    var attrs = stops[i]
+      , stop = grad.append('stop');
+    for (var a in attrs)
+    {
+      if ( attrs.hasOwnProperty(a) ) {
+        stop.attr(a, attrs[a]);
+      }
+    }
+  }
+}
+
+nv.utils.getAbsoluteXY = function (element)
+{
+  var viewportElement = document.documentElement
+    , box = element.getBoundingClientRect()
+    , scrollLeft = viewportElement.scrollLeft + document.body.scrollLeft
+    , scrollTop = viewportElement.scrollTop + document.body.scrollTop
+    , x = box.left + scrollLeft
+    , y = box.top + scrollTop;
+
+  return {'left': x, 'top': y};
+};
 
 // Creates a rectangle with rounded corners
 nv.utils.roundedRectangle = function (x, y, width, height, radius)
