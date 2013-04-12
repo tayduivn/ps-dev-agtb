@@ -60,7 +60,7 @@ nv.models.treemap = function() {
         , container = d3.select(this)
         , transitioning
         , fillGradient = function(d,i) {
-            return nv.utils.colorLinearGradient( d, i, 'vertical', color(d,i), wrap.select('defs') );
+            return nv.utils.colorLinearGradient( d, i, 'vertical', 'base', color(d,i), wrap.select('defs') );
           }
         ;
       chart.gradient( fillGradient );

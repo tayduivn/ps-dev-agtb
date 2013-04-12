@@ -1,5 +1,5 @@
 
-nv.models.lineChart = function() {
+nv.models.lineChart = function () {
 
   //============================================================
   // Public Variables with Default Settings
@@ -8,14 +8,13 @@ nv.models.lineChart = function() {
   var margin = {top: 30, right: 20, bottom: 50, left: 60}
     , width = null
     , height = null
-    , color = nv.utils.defaultColor()
-    , showControls = true
+    , showControls = false
     , showLegend = true
     , showTitle = false
     , tooltips = true
-    , tooltip = function(key, x, y, e, graph) {
+    , tooltip = function (key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
-               '<p>' +  y + ' on ' + x + '</p>'
+               '<p>' +  y + ' on ' + x + '</p>';
       }
     , x
     , y
@@ -37,7 +36,7 @@ nv.models.lineChart = function() {
     , controls = nv.models.legend()
     ;
 
-  var showTooltip = function(e, offsetElement) {
+  var showTooltip = function (e, offsetElement) {
 
     // New addition to calculate position if SVG is scaled with viewBox, may move TODO: consider implementing everywhere else
     if (offsetElement) {
@@ -45,7 +44,7 @@ nv.models.lineChart = function() {
       var viewBox = svg.attr('viewBox');
       if (viewBox) {
         viewBox = viewBox.split(' ');
-        var ratio = parseInt(svg.style('width')) / viewBox[2];
+        var ratio = parseInt(svg.style('width'), 10) / viewBox[2];
         e.pos[0] = e.pos[0] * ratio;
         e.pos[1] = e.pos[1] * ratio;
       }
@@ -65,7 +64,7 @@ nv.models.lineChart = function() {
 
   function chart(selection) {
 
-    selection.each(function(chartData) {
+    selection.each(function (chartData) {
 
       var properties = chartData.properties
         , data = chartData.data;
@@ -73,15 +72,13 @@ nv.models.lineChart = function() {
       var container = d3.select(this),
           that = this;
 
-      var availableWidth = (width  || parseInt(container.style('width')) || 960)
-                             - margin.left - margin.right,
-          availableHeight = (height || parseInt(container.style('height')) || 400)
-                             - margin.top - margin.bottom;
+      var availableWidth = (width  || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right,
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
 
       //------------------------------------------------------------
       // Display noData message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function(d) { return d.values.length }).length) {
+      if (!data || !data.length || !data.filter(function (d) { return d.values.length; }).length) {
         container.append('text')
           .attr('class', 'nvd3 nv-noData')
           .attr('x', availableWidth / 2)
@@ -95,6 +92,12 @@ nv.models.lineChart = function() {
       }
 
       //------------------------------------------------------------
+
+      //add series index to each data point for reference
+      data = data.map(function (d, i) {
+        d.series = i;
+        return d;
+      });
 
 
       //------------------------------------------------------------
@@ -140,12 +143,11 @@ nv.models.lineChart = function() {
 
         if ( margin.top !== legendHeight + titleHeight ) {
           margin.top = legendHeight + titleHeight;
-          availableHeight = (height || parseInt(container.style('height')) || 400)
-                             - margin.top - margin.bottom;
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
         }
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate('+(availableWidth*(showControls?0.3:0))+',' + (-margin.top) +')');
+            .attr('transform', 'translate('+ (availableWidth*(showControls?0.3:0)) +','+ (-margin.top) +')');
       }
 
       if (showTitle && properties.title )
@@ -165,32 +167,31 @@ nv.models.lineChart = function() {
             .attr('fill', 'black')
           ;
 
-        titleHeight = parseInt( g.select('.nv-title').node().getBBox().height ) +
-          parseInt( g.select('.nv-title').style('margin-top') ) +
-          parseInt( g.select('.nv-title').style('margin-bottom') );
+        titleHeight = parseInt(g.select('.nv-title').node().getBBox().height, 10) +
+          parseInt(g.select('.nv-title').style('margin-top'), 10) +
+          parseInt(g.select('.nv-title').style('margin-bottom'), 10);
 
         if ( margin.top !== titleHeight + legendHeight )
         {
           margin.top = titleHeight + legendHeight;
-          availableHeight = (height || parseInt(container.style('height')) || 400)
-                             - margin.top - margin.bottom;
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
         }
 
         g.select('.nv-titleWrap')
-            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').node().getBBox().height )) +')');
+            .attr('transform', 'translate(0,' + (-margin.top+parseInt(g.select('.nv-title').node().getBBox().height, 10)) +')');
       }
 
       //------------------------------------------------------------
       // Controls
 
-        var controlsData = [
-          { key: 'Linear', disabled: lines.interpolate()!=='linear' },
-          { key: 'Basis', disabled: lines.interpolate()!=='basis' },
-          { key: 'Monotone', disabled: lines.interpolate()!=='monotone' },
-          { key: 'Cardinal', disabled: lines.interpolate()!=='cardinal' },
-          { key: 'Line', disabled: lines.isArea()()===true },
-          { key: 'Area', disabled: lines.isArea()()===false }
-        ];
+      var controlsData = [
+        { key: 'Linear', disabled: lines.interpolate() !== 'linear' },
+        { key: 'Basis', disabled: lines.interpolate() !== 'basis' },
+        { key: 'Monotone', disabled: lines.interpolate() !== 'monotone' },
+        { key: 'Cardinal', disabled: lines.interpolate() !== 'cardinal' },
+        { key: 'Line', disabled: lines.isArea()() === true },
+        { key: 'Area', disabled: lines.isArea()() === false }
+      ];
 
       if (showControls)
       {
@@ -199,16 +200,12 @@ nv.models.lineChart = function() {
         controls.width(availableWidth*0.3).color(['#444']);
 
         g.select('.nv-controlsWrap')
-            // .color(data.map(function(d,i) {
-            //   return color(di);
-            // })
             .datum(controlsData)
             .attr('transform', 'translate(0,' + (-margin.top+titleHeight) +')')
             .call(controls);
       }
 
       //------------------------------------------------------------
-
 
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -217,20 +214,15 @@ nv.models.lineChart = function() {
       // Main Chart Component(s)
 
       lines
-        //.isArea(true)
-        //.interpolate(interpolate())
         .width(availableWidth)
         .height(availableHeight)
-        .color(data.map(function(d,i) {
-          return d.color || color(d, i);
-        }).filter(function(d,i) { return !data[i].disabled }));
+      ;
 
 
       var linesWrap = g.select('.nv-linesWrap')
-          .datum(data.filter(function(d) { return !d.disabled }))
+          .datum(data.filter(function (d) { return !d.disabled; }));
 
       d3.transition(linesWrap).call(lines);
-
 
       //------------------------------------------------------------
       // Setup Axes
@@ -241,7 +233,7 @@ nv.models.lineChart = function() {
         .tickSize(-availableHeight, 0);
 
       g.select('.nv-x.nv-axis')
-          .attr('transform', 'translate(0,' + y.range()[0] + ')');
+          .attr('transform', 'translate(0,'+ y.range()[0] +')');
       d3.transition(g.select('.nv-x.nv-axis'))
           .call(xAxis);
 
@@ -260,11 +252,11 @@ nv.models.lineChart = function() {
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
 
-      legend.dispatch.on('legendClick', function(d,i) {
+      legend.dispatch.on('legendClick', function (d,i) {
         d.disabled = !d.disabled;
 
-        if (!data.filter(function(d) { return !d.disabled }).length) {
-          data.map(function(d) {
+        if (!data.filter(function (d) { return !d.disabled; }).length) {
+          data.map(function (d) {
             d.disabled = false;
             wrap.selectAll('.nv-series').classed('disabled', false);
             return d;
@@ -275,21 +267,21 @@ nv.models.lineChart = function() {
       });
 
 /*
-      legend.dispatch.on('legendMouseover', function(d, i) {
+      legend.dispatch.on('legendMouseover', function (d, i) {
         d.hover = true;
         selection.transition().call(chart)
       });
 
-      legend.dispatch.on('legendMouseout', function(d, i) {
+      legend.dispatch.on('legendMouseout', function (d, i) {
         d.hover = false;
         selection.transition().call(chart)
       });
 */
 
-      controls.dispatch.on('legendClick', function(d,i) {
-        if (!d.disabled) return;
+      controls.dispatch.on('legendClick', function (d,i) {
+        if (!d.disabled) { return; }
 
-        controlsData = controlsData.map(function(s) {
+        controlsData = controlsData.map(function (s) {
           s.disabled = true;
           return s;
         });
@@ -319,14 +311,16 @@ nv.models.lineChart = function() {
         selection.transition().call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) {
-        if (tooltips) showTooltip(e, that.parentNode);
+      dispatch.on('tooltipShow', function (e) {
+        if (tooltips) {
+          showTooltip(e, that.parentNode);
+        }
       });
 
       //============================================================
 
 
-      chart.update = function() { chart(selection) };
+      chart.update = function () { chart(selection); };
       chart.container = this;
 
     });
@@ -339,17 +333,19 @@ nv.models.lineChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  lines.dispatch.on('elementMouseover.tooltip', function(e) {
+  lines.dispatch.on('elementMouseover.tooltip', function (e) {
     e.pos = [e.pos[0] + margin.left, e.pos[1] + margin.top];
     dispatch.tooltipShow(e);
   });
 
-  lines.dispatch.on('elementMouseout.tooltip', function(e) {
+  lines.dispatch.on('elementMouseout.tooltip', function (e) {
     dispatch.tooltipHide(e);
   });
 
-  dispatch.on('tooltipHide', function() {
-    if (tooltips) nv.tooltip.cleanup();
+  dispatch.on('tooltipHide', function () {
+    if (tooltips) {
+      nv.tooltip.cleanup();
+    }
   });
 
   //============================================================
@@ -366,98 +362,95 @@ nv.models.lineChart = function() {
   chart.xAxis = xAxis;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, lines, 'defined', 'isArea', 'x', 'y', 'size', 'xScale', 'yScale', 'xDomain', 'yDomain', 'forceX', 'forceY', 'interactive', 'clipEdge', 'clipVoronoi', 'id', 'interpolate', 'color', 'gradient', 'useClass');
+  d3.rebind(chart, lines, 'defined', 'isArea', 'x', 'y', 'size', 'xScale', 'yScale', 'xDomain', 'yDomain', 'forceX', 'forceY', 'interactive', 'clipEdge', 'clipVoronoi', 'id', 'interpolate', 'color', 'fill', 'classes', 'gradient');
 
-  chart.colorData = function(_) {
-    if (arguments[0] === 'graduated')
-    {
-      var c1 = arguments[1].c1
-        , c2 = arguments[1].c2
-        , l = arguments[1].l;
-      var color = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(i/l) };
-    }
-    else if (_ === 'class')
-    {
-      chart.useClass(true);
-      legend.useClass(true);
-      var color = function (d,i) { return 'inherit' };
-    }
-    else
-    {
-      var color = nv.utils.defaultColor();
-    }
+  chart.colorData = function (_) {
+    var colors = function (d,i) { return nv.utils.defaultColor()(d,d.series); },
+        classes = function (d,i) { return 'nv-group nv-series-' + i; },
+        type = arguments[0],
+        params = arguments[1] || {};
 
-    legend.color(color);
-    lines.color(color);
-
-    return chart;
-  };
-
-  chart.colorFill = function(_) {
-    if (_ === 'gradient')
-    {
-      var fill = function (d,i) { return chart.gradient()(d,i) };
-    }
-    else
-    {
-      var fill = chart.color();
+    switch (type) {
+      case 'graduated':
+        var c1 = params.c1
+          , c2 = params.c2
+          , l = params.l;
+        colors = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(d.series/l); };
+        break;
+      case 'class':
+        colors = function () { return 'inherit'; };
+        classes = function (d,i) {
+          var iClass = (d.series * (params.step || 1)) % 20;
+          return 'nv-group nv-series-'+ i +' '+ (d.classes || 'nv-fill'+ (iClass>9?'':'0') + iClass +' nv-stroke'+ d.series);
+        };
+        break;
     }
 
+    var fill = (!params.gradient) ? colors : function (d,i) {
+      var p = {orientation: params.orientation || 'horizontal', position: params.position || 'base'};
+      return lines.gradient(d,d.series,p);
+    };
+
+    lines.color(colors);
     lines.fill(fill);
+    lines.classes(classes);
+
+    legend.color(colors);
+    legend.classes(classes);
 
     return chart;
   };
 
-  chart.margin = function(_) {
-    if (!arguments.length) return margin;
+  chart.margin = function (_) {
+    if (!arguments.length) { return margin; }
     margin = _;
     return chart;
   };
 
-  chart.width = function(_) {
-    if (!arguments.length) return width;
+  chart.width = function (_) {
+    if (!arguments.length) { return width; }
     width = _;
     return chart;
   };
 
-  chart.height = function(_) {
-    if (!arguments.length) return height;
+  chart.height = function (_) {
+    if (!arguments.length) { return height; }
     height = _;
     return chart;
   };
 
-  chart.showControls = function(_) {
-    if (!arguments.length) return showControls;
+  chart.showControls = function (_) {
+    if (!arguments.length) { return showControls; }
     showControls = _;
     return chart;
   };
 
-  chart.showLegend = function(_) {
-    if (!arguments.length) return showLegend;
+  chart.showLegend = function (_) {
+    if (!arguments.length) { return showLegend; }
     showLegend = _;
     return chart;
   };
 
-  chart.showTitle = function(_) {
-    if (!arguments.length) return showTitle;
+  chart.showTitle = function (_) {
+    if (!arguments.length) { return showTitle; }
     showTitle = _;
     return chart;
   };
 
-  chart.tooltips = function(_) {
-    if (!arguments.length) return tooltips;
+  chart.tooltips = function (_) {
+    if (!arguments.length) { return tooltips; }
     tooltips = _;
     return chart;
   };
 
-  chart.tooltip = function(_) {
-    if (!arguments.length) return tooltip;
+  chart.tooltip = function (_) {
+    if (!arguments.length) { return tooltip; }
     tooltip = _;
     return chart;
   };
 
-  chart.noData = function(_) {
-    if (!arguments.length) return noData;
+  chart.noData = function (_) {
+    if (!arguments.length) { return noData; }
     noData = _;
     return chart;
   };
@@ -466,4 +459,4 @@ nv.models.lineChart = function() {
 
 
   return chart;
-}
+};

@@ -11,18 +11,18 @@ nv.models.multiBar = function() {
     , x = d3.scale.ordinal()
     , y = d3.scale.linear()
     , id = Math.floor(Math.random() * 10000) //Create semi-unique ID in case user doesn't select one
-    , getX = function(d) { return d.x }
-    , getY = function(d) { return d.y }
-    , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
-    , stacked = false
+    , getX = function(d) { return d.x; }
+    , getY = function(d) { return d.y; }
     , clipEdge = true
-    , delay = 1200
     , xDomain
     , yDomain
+    , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
+    , stacked = false
+    , delay = 1200
+    , scatter = nv.models.scatter()
     , color = nv.utils.defaultColor()
-    , fill = function (d,i) { return color(d,i); }
-    , gradient = function (d,i) { return color(d,i); }
-    , useClass = false
+    , fill = color
+    , classes = function (d,i) { return 'nv-group nv-series-'+ i; }
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
     ;
 
@@ -43,20 +43,15 @@ nv.models.multiBar = function() {
       var availableWidth = width - margin.left - margin.right
         , availableHeight = height - margin.top - margin.bottom
         , container = d3.select(this)
-        , fillGradient = function(d,i) {
-            return nv.utils.colorLinearGradient( d, i, 'vertical', color(d,i), wrap.select('defs') );
-          }
         ;
 
-      chart.gradient( fillGradient );
-
-      if (stacked)
+      if (stacked) {
         data = d3.layout.stack()
                  .offset('zero')
-                 .values(function(d){ return d.values })
+                 .values(function(d){ return d.values; })
                  .y(getY)
                  (data);
-
+      }
 
       //add series index to each data point for reference
       data = data.map(function(series, i) {
@@ -67,7 +62,6 @@ nv.models.multiBar = function() {
         return series;
       });
 
-
       //------------------------------------------------------------
       // Setup Scales
 
@@ -75,14 +69,14 @@ nv.models.multiBar = function() {
       var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
             data.map(function(d) {
               return d.values.map(function(d,i) {
-                return { x: getX(d,i), y: getY(d,i), y0: d.y0 }
-              })
+                return { x: getX(d,i), y: getY(d,i), y0: d.y0 };
+              });
             });
 
-      x   .domain(d3.merge(seriesData).map(function(d) { return d.x }))
-          .rangeBands([0, availableWidth], .3);
+      x   .domain(d3.merge(seriesData).map(function(d) { return d.x; }))
+          .rangeBands([0, availableWidth], 0.3);
 
-      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + (stacked ? d.y0 : 0) }).concat(forceY)))
+      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + (stacked ? d.y0 : 0); }).concat(forceY)))
           .range([availableHeight, 0]);
 
       // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point
@@ -96,7 +90,6 @@ nv.models.multiBar = function() {
         y.domain()[0] ?
             y.domain([y.domain()[0] + y.domain()[0] * 0.01, y.domain()[1] - y.domain()[1] * 0.01])
           : y.domain([-1,1]);
-
 
       x0 = x0 || x;
       y0 = y0 || y;
@@ -113,26 +106,31 @@ nv.models.multiBar = function() {
       var gEnter = wrapEnter.append('g');
       var g = wrap.select('g');
 
+      //set up the gradient constructor function
+      chart.gradient = function(d,i,p) {
+        return nv.utils.colorLinearGradient( d, id +'-'+ i, p, color(d,i), wrap.select('defs') );
+      };
+
       gEnter.append('g').attr('class', 'nv-groups');
 
-      wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      wrap.attr('transform', 'translate('+ margin.left +','+ margin.top +')');
 
       //------------------------------------------------------------
       // Clip Path
 
       defsEnter.append('clipPath')
-          .attr('id', 'nv-edge-clip-' + id)
+          .attr('id', 'nv-edge-clip-'+ id)
         .append('rect');
-      wrap.select('#nv-edge-clip-' + id + ' rect')
+      wrap.select('#nv-edge-clip-'+ id +' rect')
           .attr('width', availableWidth)
           .attr('height', availableHeight);
-      g.attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
+      g.attr('clip-path', clipEdge ? 'url(#nv-edge-clip-'+ id +')' : '');
 
 
       //------------------------------------------------------------
 
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
-          .data(function(d) { return d }, function(d) { return d.key });
+          .data(function(d) { return d; }, function(d) { return d.key; });
       groups.enter().append('g')
           .style('stroke-opacity', 1e-6)
           .style('fill-opacity', 1e-6);
@@ -140,46 +138,38 @@ nv.models.multiBar = function() {
           //.style('stroke-opacity', 1e-6)
           //.style('fill-opacity', 1e-6)
         .selectAll('rect.nv-bar')
-        .delay(function(d,i) { return i * delay/ data[0].values.length })
-          .attr('y', function(d) { return stacked ? y0(d.y0) : y0(0) })
+        .delay(function(d,i) { return i * delay/ data[0].values.length; })
+          .attr('y', function(d) { return stacked ? y0(d.y0) : y0(0); })
           .attr('height', 0)
           .remove();
       groups
           //.attr('class', function(d,i) { return 'nv-group nv-series-' + i })
-          .attr('class', function(d,i) {
-              return this.getAttribute('class') || (
-                'nv-group nv-series-' + i + (
-                  useClass
-                    ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
-                    : ''
-                )
-              );
-          } )
-          .classed('hover', function(d) { return d.hover })
-          .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i) })
-          .attr('stroke', function(d,i){ return this.getAttribute('fill') || fill(d,i) });
+          .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
+          .classed('hover', function(d) { return d.hover; })
+          .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i); })
+          .attr('stroke', function(d,i){ return this.getAttribute('fill') || fill(d,i); });
       d3.transition(groups)
           .style('stroke-opacity', 1)
-          .style('fill-opacity', .85);
+          .style('fill-opacity', 0.85);
 
       var bars = groups.selectAll('rect.nv-bar')
-          .data(function(d) { return d.values });
+          .data(function(d) { return d.values; });
 
       bars.exit().remove();
 
       var barsEnter = bars.enter().append('rect')
-          .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
+          .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'; })
           .attr('x', function(d,i,j) {
-              return stacked ? 0 : ( j * x.rangeBand()  / data.length )
+              return stacked ? 0 : (j * x.rangeBand() / data.length );
           })
-          .attr('y', function(d) { return y0(stacked ? d.y0 : 0) } )
+          .attr('y', function(d) { return y0(stacked ? d.y0 : 0); })
           .attr('height', 0)
           .attr('width', x.rangeBand() / (stacked ? 1 : data.length) );
 
       bars
-          .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
+          .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'; })
           .attr('transform', function(d,i) {
-            return 'translate(' + x(getX(d,i)) + ',0)';
+            return 'translate('+ x(getX(d,i)) +',0)';
           });
 
       //------------------------------------------------------------
@@ -191,7 +181,7 @@ nv.models.multiBar = function() {
               value: getY(d,i),
               point: d,
               series: data[d.series],
-              pos: [x(getX(d,i)) + ( x.rangeBand() * (stacked ? data.length / 2 : d.series + .5) / data.length), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
+              pos: [x(getX(d,i)) + (x.rangeBand() * (stacked ? data.length / 2 : d.series + 0.5) / data.length), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
               pointIndex: i,
               seriesIndex: d.series,
               e: d3.event
@@ -213,7 +203,7 @@ nv.models.multiBar = function() {
               value: getY(d,i),
               point: d,
               series: data[d.series],
-              pos: [x(getX(d,i)) + ( x.rangeBand() * (stacked ? data.length / 2 : d.series + .5) / data.length ), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
+              pos: [x(getX(d,i)) + ( x.rangeBand() * (stacked ? data.length / 2 : d.series + 0.5) / data.length ), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
               pointIndex: i,
               seriesIndex: d.series,
               e: d3.event
@@ -225,7 +215,7 @@ nv.models.multiBar = function() {
               value: getY(d,i),
               point: d,
               series: data[d.series],
-              pos: [x(getX(d,i)) + (x.rangeBand() * (stacked ? data.length / 2 : d.series + .5) / data.length), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
+              pos: [x(getX(d,i)) + (x.rangeBand() * (stacked ? data.length / 2 : d.series + 0.5) / data.length), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
               pointIndex: i,
               seriesIndex: d.series,
               e: d3.event
@@ -236,25 +226,25 @@ nv.models.multiBar = function() {
       if (stacked)
       {
         d3.transition(bars)
-            .delay(function(d,i) { return i * delay / data[0].values.length })
+            .delay(function(d,i) { return i * delay / data[0].values.length; })
             .attr('y', function(d,i) {
               return y(getY(d,i) + (stacked ? d.y0 : 0));
             })
             .attr('height', function(d,i) {
-              return Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0)))
+              return Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0)));
             })
             .each('end', function() {
               d3.transition(d3.select(this))
                 .attr('x', 0)
                 .attr('width', x.rangeBand() );
-            })
+            });
       }
       else
       {
         d3.transition(bars)
-          .delay(function(d,i) { return i * delay/ data[0].values.length })
+          .delay(function(d,i) { return i * delay/ data[0].values.length; })
             .attr('x', function(d,i) {
-              return d.series * x.rangeBand() / data.length
+              return d.series * x.rangeBand() / data.length;
             })
             .attr('width', x.rangeBand() / data.length)
             .each('end', function() {
@@ -262,12 +252,12 @@ nv.models.multiBar = function() {
                 .attr('y', function(d,i) {
                   return getY(d,i) < 0 ?
                     y(0) :
-                    y(getY(d,i))
+                    y(getY(d,i));
                 })
                 .attr('height', function(d,i) {
-                  return Math.abs(y(getY(d,i)) - y(0))
+                  return Math.abs(y(getY(d,i)) - y(0));
                 });
-            })
+            });
       }
 
       //store old scales for use in transitions on update
@@ -296,14 +286,14 @@ nv.models.multiBar = function() {
     fill = _;
     return chart;
   };
+  chart.classes = function(_) {
+    if (!arguments.length) return classes;
+    classes = _;
+    return chart;
+  };
   chart.gradient = function(_) {
     if (!arguments.length) return gradient;
     gradient = _;
-    return chart;
-  };
-  chart.useClass = function(_) {
-    if (!arguments.length) return useClass;
-    useClass = _;
     return chart;
   };
 

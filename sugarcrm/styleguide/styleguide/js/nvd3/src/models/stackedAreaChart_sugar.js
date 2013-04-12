@@ -8,13 +8,13 @@ nv.models.stackedAreaChart = function() {
   var margin = {top: 30, right: 20, bottom: 50, left: 60}
     , width = null
     , height = null
-    , showControls = true
+    , showControls = false
     , showLegend = true
     , showTitle = false
     , tooltips = true
     , tooltip = function(key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
-               '<p>' +  y + ' on ' + x + '</p>'
+               '<p>' +  y + ' on ' + x + '</p>';
       }
     , x
     , y //can be accessed via chart.stacked.[x/y]Scale()
@@ -67,15 +67,15 @@ nv.models.stackedAreaChart = function() {
       var container = d3.select(this),
           that = this;
 
-      var availableWidth = (width  || parseInt(container.style('width')) || 960)
+      var availableWidth = (width  || parseInt(container.style('width'), 10) || 960)
                              - margin.left - margin.right,
-          availableHeight = (height || parseInt(container.style('height')) || 400)
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
                              - margin.top - margin.bottom;
 
       //------------------------------------------------------------
       // Display noData message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function(d) { return d.values.length }).length) {
+      if (!data || !data.length || !data.filter(function(d) { return d.values.length; }).length) {
         container.append('text')
           .attr('class', 'nvd3 nv-noData')
           .attr('x', availableWidth / 2)
@@ -134,12 +134,12 @@ nv.models.stackedAreaChart = function() {
 
         if ( margin.top !== legendHeight + titleHeight ) {
           margin.top = legendHeight + titleHeight;
-          availableHeight = (height || parseInt(container.style('height')) || 400)
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
                              - margin.top - margin.bottom;
         }
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate('+(availableWidth*(showControls?0.3:0))+',' + (-margin.top) +')');
+            .attr('transform', 'translate('+ (availableWidth*(showControls?0.3:0)) +','+ (-margin.top) +')');
       }
 
       if (showTitle && properties.title )
@@ -159,19 +159,19 @@ nv.models.stackedAreaChart = function() {
             .attr('fill', 'black')
           ;
 
-        titleHeight = parseInt( g.select('.nv-title').node().getBBox().height ) +
-          parseInt( g.select('.nv-title').style('margin-top') ) +
-          parseInt( g.select('.nv-title').style('margin-bottom') );
+        titleHeight = parseInt(g.select('.nv-title').node().getBBox().height, 10) +
+          parseInt(g.select('.nv-title').style('margin-top'), 10) +
+          parseInt(g.select('.nv-title').style('margin-bottom'), 10);
 
         if ( margin.top !== titleHeight + legendHeight )
         {
           margin.top = titleHeight + legendHeight;
-          availableHeight = (height || parseInt(container.style('height')) || 400)
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
                              - margin.top - margin.bottom;
         }
 
         g.select('.nv-titleWrap')
-            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').node().getBBox().height )) +')');
+            .attr('transform', 'translate(0,' + ( -margin.top+parseInt(g.select('.nv-title').node().getBBox().height, 10) ) +')');
       }
 
       //------------------------------------------------------------
@@ -199,7 +199,7 @@ nv.models.stackedAreaChart = function() {
 
       stacked
         .width(availableWidth)
-        .height(availableHeight)
+        .height(availableHeight);
 
       var stackedWrap = g.select('.nv-stackedWrap')
           .datum(data);
@@ -215,7 +215,7 @@ nv.models.stackedAreaChart = function() {
         .tickSize(-availableHeight, 0);
 
       g.select('.nv-x.nv-axis')
-          .attr('transform', 'translate(0,' + availableHeight + ')');
+          .attr('transform', 'translate(0,'+ availableHeight +')');
       d3.transition(g.select('.nv-x.nv-axis'))
           .call(xAxis);
 
@@ -236,15 +236,15 @@ nv.models.stackedAreaChart = function() {
       //------------------------------------------------------------
 
       stacked.dispatch.on('areaClick.toggle', function(e) {
-        if (data.filter(function(d) { return !d.disabled }).length === 1)
+        if (data.filter(function(d) { return !d.disabled; }).length === 1)
           data = data.map(function(d) {
             d.disabled = false;
-            return d
+            return d;
           });
         else
           data = data.map(function(d,i) {
             d.disabled = (i != e.seriesIndex);
-            return d
+            return d;
           });
 
         selection.transition().call(chart);
@@ -253,7 +253,7 @@ nv.models.stackedAreaChart = function() {
       legend.dispatch.on('legendClick', function(d,i) {
         d.disabled = !d.disabled;
 
-        if (!data.filter(function(d) { return !d.disabled }).length) {
+        if (!data.filter(function(d) { return !d.disabled; }).length) {
           data.map(function(d) {
             d.disabled = false;
             return d;
@@ -294,7 +294,7 @@ nv.models.stackedAreaChart = function() {
       //============================================================
 
 
-      chart.update = function() { selection.transition().call(chart) };
+      chart.update = function() { selection.transition().call(chart); };
       chart.container = this; // I need a reference to the container in order to have outside code check if the chart is visible or not
 
     });
@@ -311,7 +311,7 @@ nv.models.stackedAreaChart = function() {
     //disable tooltips when value ~= 0
     //// TODO: consider removing points from voronoi that have 0 value instead of this hack
     if (!Math.round(stacked.y()(e.point) * 100)) {  // 100 will not be good for very small numbers... will have to think about making this valu dynamic, based on data range
-      setTimeout(function() { d3.selectAll('.point.hover').classed('hover', false) }, 0);
+      setTimeout(function() { d3.selectAll('.point.hover').classed('hover', false); }, 0);
       return false;
     }
 
@@ -341,44 +341,41 @@ nv.models.stackedAreaChart = function() {
   chart.xAxis = xAxis;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, stacked, 'x', 'y', 'size', 'xScale', 'yScale', 'xDomain', 'yDomain', 'sizeDomain', 'interactive', 'offset', 'order', 'style', 'clipEdge', 'forceX', 'forceY', 'forceSize', 'color', 'gradient', 'useClass');
+  d3.rebind(chart, stacked, 'x', 'y', 'size', 'xScale', 'yScale', 'xDomain', 'yDomain', 'sizeDomain', 'interactive', 'offset', 'order', 'style', 'clipEdge', 'forceX', 'forceY', 'forceSize', 'color', 'fill', 'classes', 'gradient');
 
-  chart.colorData = function(_) {
-    if (arguments[0] === 'graduated')
-    {
-      var c1 = arguments[1].c1
-        , c2 = arguments[1].c2
-        , l = arguments[1].l;
-      var color = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(i/l) };
-    }
-    else if (_ === 'class')
-    {
-      chart.useClass(true);
-      legend.useClass(true);
-      var color = function (d,i) { return 'inherit' };
-    }
-    else
-    {
-      var color = nv.utils.defaultColor();
-    }
+  chart.colorData = function (_) {
+    var colors = function (d,i) { return nv.utils.defaultColor()(d,i); },
+        classes = function (d,i) { return 'nv-area nv-area-' + i; },
+        type = arguments[0],
+        params = arguments[1] || {};
 
-    legend.color(color);
-    stacked.color(color);
-
-    return chart;
-  };
-
-  chart.colorFill = function(_) {
-    if (_ === 'gradient')
-    {
-      var fill = function (d,i) { return chart.gradient()(d,i) };
-    }
-    else
-    {
-      var fill = chart.color();
+    switch (type) {
+      case 'graduated':
+        var c1 = params.c1
+          , c2 = params.c2
+          , l = params.l;
+        colors = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(i/l); };
+        break;
+      case 'class':
+        colors = function () { return 'inherit'; };
+        classes = function (d,i) {
+          var iClass = (i*(params.step || 1))%20;
+          return 'nv-area nv-area-'+ i +' '+ ( d.classes || 'nv-fill'+ (iClass>9?'':'0') + iClass +' nv-stroke'+ i  );
+        };
+        break;
     }
 
+    var fill = (!params.gradient) ? colors : function (d,i) {
+      var p = {orientation: params.orientation || 'horizontal', position: params.position || 'base'};
+      return stacked.gradient(d,i,p);
+    };
+
+    stacked.color(colors);
     stacked.fill(fill);
+    stacked.classes(classes);
+
+    legend.color(colors);
+    legend.classes(classes);
 
     return chart;
   };
