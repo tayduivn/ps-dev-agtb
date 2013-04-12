@@ -40,68 +40,136 @@ class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCa
         self::$stub = new SugarSearchEngineElasticMappingTestStub();
     }
 
-    public function testConstructMappingProperties()
-    {
-        $fieldDefs = array (
-            'field1' => array (
-                'name'=>'first_name',
-                'full_text_search' => array (
-                    'enabled' => true, 'boost' => 3,
-                    'type' => 'string',
-                ),
-            ),
-        );
-        $expected = array(
-            'first_name' => array (
-                'enabled' => true, 'boost' => 3,
-                'type' => 'string',
-            ),
-        );
-        $result = self::$stub->constructMappingProperties($fieldDefs);
-
-        $this->assertArrayHasKey('first_name', $result);
-        $this->assertEquals($expected['first_name'], $result['first_name'], 'result is different from expected array');
-    }
-
-    public function mappingNameProvider()
-    {
-        return array(
-            array('boost', 'boost'),
-            array('analyzer', 'analyzer'),
-            array('type', 'type'),
-        );
-    }
-
-    /**
-     * @dataProvider mappingNameProvider
-     */
-    public function testGetMappingName($originalName, $expectedName)
-    {
-
-        $newName = self::$stub->getMappingName($originalName);
-
-        $this->assertEquals($expectedName, $newName, 'not expected name');
-    }
-
     public function mappingTypeProvider()
     {
         return array(
-            array(array('type'=>'datetimecombo'), 'date'),
-            array(array('type'=>'date'), 'string'),
-            array(array('type'=>'int'), 'string'),
-            array(array('type'=>'currency'), 'string'),
-            array(array('type'=>'bool'), 'string'),
-            array(array('dbType'=>'decimal'), 'string'),
+            array(
+                array('type'=>'datetimecombo'),
+                array('type'=>'date'),
+                "testing basic datetimecombo mapping",
+            ),
+            array(
+                array('type'=>'datetime'),
+                array('type'=>'date'),
+                "testing basic datetime mapping",
+            ),
+            array(
+                array('type'=>'id'),
+                array('type'=>'string',
+                      'index'=>'not_analyzed'),
+                "testing basic id mapping",
+            ),
+            array(
+                array('type'=>'enum'),
+                array('type'=>'string',
+                      'index'=>'not_analyzed'),
+                "testing enum mapping",
+            ),
+            array(
+                array('type'=>'email'),
+                array('type'=>'string',
+                      'index'=>'not_analyzed'),
+                "testing email mapping",
+            ),
+            array(
+                array('type'=>'url'),
+                array('type'=>'string',
+                      'index'=>'not_analyzed'),
+                "testing url mapping",
+            ),
+            array(
+                array('type'=>'name'),
+                array('type'=>'string',
+                      'analyzer'=>'standard'),
+                "testing name mapping",
+            ),
+            array(
+                array('type'=>'phone'),
+                array('type'=>'string',
+                      'analyzer'=>'standard'),
+                "testing phone mapping",
+            ),
+            array(
+                array('type'=>'varchar'),
+                array('type'=>'string',
+                      'analyzer'=>'standard'),
+                "testing varchar mapping",
+            ),
+            array(
+                array('type'=>'fullname'),
+                array('type'=>'string',
+                      'analyzer'=>'standard'),
+                "testing fullname mapping",
+            ),
+            array(
+                array('type'=>'double'),
+                array('type'=>'double'),
+                "testing basic double mapping",
+            ),
+            array(
+                array('type'=>'currency'),
+                array('type'=>'double'),
+                "testing currency mapping",
+            ),
+            array(
+                array('type'=>'int'),
+                array('type'=>'integer'),
+                "testing int mapping",
+            ),
+            array(
+                array('type'=>'boolean'),
+                array('type'=>'boolean'),
+                "testing basic boolean mapping",
+            ),
+            array(
+                array('type'=>'bool'),
+                array('type'=>'boolean'),
+                "testing bool mapping",
+            ),
+            array(
+                array('type'=>'relate',
+                      'name'=>'unit_test'),
+                array('type'=>'multi_field',
+                      'fields'=> array(
+                         'length' => 2,
+                         'type' => 'string',
+                      )),
+                "testing relate mapping",
+            ),
         );
     }
 
     /**
      * @dataProvider mappingTypeProvider
      */
-    public function testGetMappingType($fieldDef, $expectedType)
+    public function testGetFtsTypeFromDef($fieldDef, $expectedType, $message)
     {
-        $newType = self::$stub->getTypeFromSugarType($fieldDef);
-        $this->assertEquals($expectedType, $newType, 'not expected type');
+        $newType = self::$stub->getFtsTypeFromDef($fieldDef);
+        foreach($expectedType as $key => $val)
+        {
+            $this->assertArrayHasKey($key, $newType, "Mapped type is missing $key for $message");
+            if($key == 'fields')
+                $this->assertFields($val, $newType[$key], $message);
+            else
+                $this->assertEquals($val, $newType[$key], "$key did not match for $message");
+        }
+    }
+
+    /**
+     * Provisional method for asserting multi-field mappings
+     * This need to be revisited once we have more than 1 multi-field type in our mappings
+     * @param $val
+     * @param $mappedType
+     * @param $message
+     */
+    private function assertFields($val, $mappedType, $message)
+    {
+        $this->assertEquals($val['length'], count($mappedType), "Number of multi-fields did not match for $message");
+        foreach($mappedType as $name => $map)
+        {
+            if($name == 'type')
+                $this->assertEquals($map, $mappedType['type'], "One of the fields type did not match for $message");
+        }
     }
 }
 
@@ -113,20 +181,9 @@ class SugarSearchEngineElasticMappingTestStub extends SugarSearchEngineElasticMa
     {
     }
 
-    // to test protected function
-    public function constructMappingProperties($fieldDefs)
+    public function getFtsTypeFromDef($fieldDef)
     {
-        return parent::constructMappingProperties($fieldDefs);
-    }
-
-    public function getTypeFromSugarType($fieldDef)
-    {
-        return parent::getTypeFromSugarType($fieldDef);
-    }
-
-    public function getMappingName($sugarName)
-    {
-        return parent::getMappingName($sugarName);
+        return parent::getFtsTypeFromDef($fieldDef);
     }
 
 }
