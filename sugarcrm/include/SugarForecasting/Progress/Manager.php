@@ -37,6 +37,10 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
      */
      protected $pipelineRevenue;
      
+     /**
+      * @var closedAmount
+      */
+     protected $closedAmount;     
      
     /**
      * Class Constructor
@@ -98,7 +102,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
 
         //get data
         $progressData = array(
-            "closed_amount"     => $this->getClosedAmount(),
+            "closed_amount"     => $this->closedAmount,
             "opportunities"     => $this->pipelineCount,
             "pipeline_revenue"  => $this->pipelineRevenue,
             "quota_amount"      => isset($quotaData["amount"]) ? ($quotaData["amount"]) : 0
@@ -131,51 +135,6 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
     }    
 
     /**
-     * Retrieves the amount of closed won opportunities
-     *
-     * @return int
-     */
-    public function getClosedAmount()
-    {
-        $db = DBManagerFactory::getInstance();
-
-        $amountSum = 0;
-
-        $user_id = $this->getArg('user_id');
-        $timeperiod_id = $this->getArg('timeperiod_id');
-        $sales_stage_won = $this->getArg('sales_stage_won');
-
-        $admin = BeanFactory::getBean("Administration");
-        $settings = $admin->getConfigForModule("Forecasts");
-
-        $module = $settings['forecast_by'];
-        $columnName = ($module == "opportunities") ? "amount" : "likely_case";
-
-        //set user ids and timeperiods
-        $query = "SELECT sum(o." . $columnName . " * o.base_rate) AS amount FROM " . $module . " o INNER JOIN users u ";
-        $query .= " ON o.assigned_user_id = u.id ";
-        $query .= " left join timeperiods t ";
-        $query .= " ON t.start_date_timestamp <= o.date_closed_timestamp ";
-        $query .= " AND t.end_date_timestamp >= o.date_closed_timestamp ";
-        $query .= " WHERE t.id = " . $db->quoted($timeperiod_id);
-        $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $db->quoted($user_id);
-        $query .= " OR o.assigned_user_id = " . $db->quoted($user_id) . ")";
-
-        //pre requirements, include only closed won opportunities
-        if (!empty($sales_stage_won)) {
-            $query .= " AND o.sales_stage in ( '";
-            $query .= join("','", $sales_stage_won) . "')";
-        }
-
-        $result = $db->query($query);
-
-        $row = $db->fetchByAssoc($result);
-        $amountSum = $row["amount"];
-
-        return is_numeric($amountSum) ? $amountSum : 0;
-    }
-
-    /**
      * retrieves the amount of opportunities with count less the closed won/lost stages
      *
      */
@@ -200,12 +159,12 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
 
         //Note: this will all change in sugar7 to the filter API
         //set up outer part of the query
-        $query = "select sum(amount) as amount, sum(recordcount) as recordcount from(";
+        $query = "select sum(amount) as amount, sum(recordcount) as recordcount, sum(closed) as closed from(";
         
         //build up two subquery strings so we can unify the sales stage loops
         //all manager opps 
         $queryMgrOpps = "SELECT " .
-                            "sum(o.{$amountColumn}/o.base_rate) AS amount, count(*) as recordcount " .
+                            "sum(o.{$amountColumn}/o.base_rate) AS amount, count(*) as recordcount, 0 as closed " .
                         "FROM {$tableName} o " .
                         "INNER JOIN users u  " .
                             "ON o.assigned_user_id = u.id " .
@@ -217,11 +176,26 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
                             "AND t.start_date_timestamp <= o.date_closed_timestamp " . 
                             "AND t.end_date_timestamp >= o.date_closed_timestamp ";
         
+        $queryClosedMgrOpps = "SELECT " .
+                                  "0 as amount, 0 as recordcount, sum(o.{$amountColumn}/o.base_rate) AS closed " .
+                              "FROM {$tableName} o " .
+                              "INNER JOIN users u  " .
+                                  "ON o.assigned_user_id = u.id " .
+                              "INNER JOIN timeperiods t " .
+                                  "ON t.id = {$db->quoted($timeperiod_id)} " . 
+                              "WHERE " .
+                                  "o.assigned_user_id = {$db->quoted($user_id)} " .                            
+                                  "AND o.deleted = 0 " .
+                                  "AND t.start_date_timestamp <= o.date_closed_timestamp " . 
+                                  "AND t.end_date_timestamp >= o.date_closed_timestamp ";
+        
         //only committed direct reportee (manager) opps
         $queryRepOpps = "";
         $arrayLen = count($mgrIds);
         for($index = 0; $index < $arrayLen; $index++) {
-            $subQuery = "(select (pipeline_amount * base_rate) as amount, pipeline_opp_count as recordcount from forecasts " .
+            $subQuery = "(select (pipeline_amount / base_rate) as amount, " .
+                                 "pipeline_opp_count as recordcount, " .
+                                 "(closed_amount / base_rate) as closed from forecasts " .
                          "where timeperiod_id = {$db->quoted($timeperiod_id)} " .
                             "and user_id = {$db->quoted($mgrIds[$index])} " .
                             "and forecast_type = 'Rollup' " .
@@ -241,7 +215,9 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         }
         //only committed direct reportee (manager) opps
         for($index = 0; $index < $arrayLen; $index++) {
-            $subQuery = "(select (pipeline_amount * base_rate) as amount, pipeline_opp_count as recordcount from forecasts " .
+            $subQuery = "(select (pipeline_amount / base_rate) as amount, " .
+                                 "pipeline_opp_count as recordcount, " .
+                                 "(closed_amount / base_rate) as closed from forecasts " .
                          "where timeperiod_id = {$db->quoted($timeperiod_id)} " .
                             "and user_id = {$db->quoted($repIds[$index])} " .
                             "and forecast_type = 'Direct' " .
@@ -253,12 +229,13 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
             }
         }
         
-        //per requirements, exclude the sales stages won
+        //per requirements, exclude the sales stages won from amount, but find them for the closed total
         if (count($excluded_sales_stages_won)) {
             foreach ($excluded_sales_stages_won as $exclusion) {
                 $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";                
             }
-        }
+            $queryClosedMgrOpps .= "AND o.sales_stage IN ('" . implode("', '", $excluded_sales_stages_won) . "') ";
+        }       
 
         //per the requirements, exclude the sales stages for closed lost
         if (count($excluded_sales_stages_lost)) {
@@ -268,11 +245,11 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         }
         
         //Union the two together if we have two separate queries
+        $query .= $queryMgrOpps . " union all " . $queryClosedMgrOpps;
         if ($queryRepOpps != "") {
-            $query .= $queryMgrOpps . " union all " . $queryRepOpps;
-        } else {
-            $query .= $queryMgrOpps;
+            $query .= " union all " . $queryRepOpps;
         }
+        
         //finally, finish up the outer query
         $query .= ") sums";
         
@@ -280,5 +257,6 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $row = $db->fetchByAssoc($result);
         $this->pipelineRevenue = is_numeric($row["amount"]) ? $row["amount"] : 0;
         $this->pipelineCount = is_numeric($row["recordcount"]) ? $row["recordcount"] : 0;
+        $this->closedAmount = is_numeric($row["closed"]) ? $row["closed"] : 0;
     }
 }

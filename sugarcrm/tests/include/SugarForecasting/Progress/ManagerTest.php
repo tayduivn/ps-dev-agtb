@@ -127,10 +127,12 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
      * 
      * @param obj Top level manager
      * @param obj users, passed in as individual arguments ($manager, $user1, $user2, ... $userN)
+     * @return array consisting of the amount and closed amount
      */
     protected function calculatePipelineAmount($manager, $user)
     {
-        $amount = 0;
+        $returnArray = array("amount" => 0, "closed" => 0);
+        
         $users = array($user);
                 
         $numargs = func_num_args();
@@ -142,15 +144,18 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         
     	foreach($manager["opportunities"] as $opp){
             if($opp->sales_stage != Opportunity::STAGE_CLOSED_WON || $opp->sales_stage != Opportunity::STAGE_CLOSED_LOST){
-                $amount += $opp->amount;
+                $returnArray["amount"] += $opp->amount;
+            } else if($opp->sales_stage == Opportunity::STAGE_CLOSED_WON){
+                $returnArray["closed"] += $opp->closed;
             }
         }
                     
         foreach($users as $user){
-        	$amount += ($user["forecast"]->pipeline_amount);
+        	$returnArray["amount"] += ($user["forecast"]->pipeline_amount);
+            $returnArray["closed"] += ($user["forecast"]->closed_amount);
         }
         
-        return $amount;
+        return $returnArray;
     }
     /**
      * Check for manager with no committed forecasts, but reps with committed forecasts
@@ -186,8 +191,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         ));
         
         //calculate what the amount should be
-        $amount = 0;
-        $amount += $this->calculatePipelineAmount($manager, $reportee1, $reportee2);
+        $totals = $this->calculatePipelineAmount($manager, $reportee1, $reportee2);
+        $amount = $totals["amount"];
             
         SugarTestForecastUtilities::createManagerRollupForecast($manager, $reportee1, $reportee2);
         
@@ -238,8 +243,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         ));
         
         //calculate what the amount should be
-        $amount = 0;
-        $amount += $this->calculatePipelineAmount($manager, $reportee1, $reportee2);
+        $totals = $this->calculatePipelineAmount($manager, $reportee1, $reportee2);
+        $amount = $totals["amount"];
         
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
@@ -290,8 +295,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         SugarTestForecastUtilities::createManagerRollupForecast($manager, $reportee1, $reportee2);
         
         //calculate what the amount should be
-        $amount = 0;
-        $amount += $this->calculatePipelineAmount($manager, $reportee1, $reportee2);
+        $totals = $this->calculatePipelineAmount($manager, $reportee1, $reportee2);
+        $amount = $totals["amount"];
         
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
@@ -342,8 +347,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         SugarTestForecastUtilities::createManagerRollupForecast($manager, $reportee1, $reportee2);
         
         //calculate what the amount should be
-        $amount = 0;
-        $amount += $this->calculatePipelineAmount($manager, $reportee1, $reportee2);
+        $totals = $this->calculatePipelineAmount($manager, $reportee1, $reportee2);
+        $amount = $totals["amount"];
         
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
@@ -394,8 +399,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         SugarTestForecastUtilities::createManagerRollupForecast($manager, $reportee1, $reportee2);
         
         //calculate what the amount should be
-        $amount = 0;
-        $amount += $this->calculatePipelineAmount($manager, $reportee1, $reportee2);
+        $totals = $this->calculatePipelineAmount($manager, $reportee1, $reportee2);
+        $amount = $totals["amount"];
         
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
@@ -466,8 +471,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         $manager["forecast"] = SugarTestForecastUtilities::createManagerRollupForecast($manager, $subManager1, $subManager2);
         
         //calculate what the amount should be
-        $amount = 0;
-        $amount += $this->calculatePipelineAmount($manager, $subManager1, $subManager2);
+        $totals = $this->calculatePipelineAmount($manager, $subManager1, $subManager2);
+        $amount = $totals["amount"];
         
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
@@ -548,8 +553,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         $manager["forecast"] = SugarTestForecastUtilities::createManagerRollupForecast($manager, $subManager1, $subManager2, $reportee3);
         
         //calculate what the amount should be
-        $amount = 0;
-        $amount += $this->calculatePipelineAmount($manager, $subManager1, $subManager2, $reportee3);
+        $totals = $this->calculatePipelineAmount($manager, $subManager1, $subManager2, $reportee3);
+        $amount = $totals["amount"];
         
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
@@ -635,8 +640,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         $manager["forecast"] = SugarTestForecastUtilities::createManagerRollupForecast($manager, $subManager1, $subManager2, $reportee3);
         
         //calculate what the amount should be
-        $amount = 0;
-        $amount += $this->calculatePipelineAmount($manager, $subManager1, $subManager2, $reportee3);
+        $totals = $this->calculatePipelineAmount($manager, $subManager1, $subManager2, $reportee3);
+        $amount = $totals["amount"];
         
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
@@ -662,7 +667,7 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         $manager = SugarTestForecastUtilities::createForecastUser(array(
             'opportunities' => array(
                 'total' => 2,
-                'include_in_forecast' => 1
+                'include_in_forecast' => 2
             )
         ));
         $subManager1 = SugarTestForecastUtilities::createForecastUser(array(
@@ -712,6 +717,8 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         ));
                   
         //now we want to change the stage to close lost/close won of a few opps, commit, and make sure they are excluded
+        $manager['opportunities'][0]->sales_stage = Opportunity::STAGE_CLOSED_WON;
+        $manager['opportunities'][0]->save();
         $reportee3['opportunities'][0]->sales_stage = Opportunity::STAGE_CLOSED_WON;
         $reportee3['opportunities'][0]->save();
         $reportee2['opportunities'][0]->sales_stage = Opportunity::STAGE_CLOSED_LOST;
@@ -727,8 +734,9 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         $manager['forecast'] = SugarTestForecastUtilities::createManagerRollupForecast($manager, $subManager1, $subManager2, $reportee3);
         
         //calculate what the amount should be
-        $amount = 0;
-        $amount += $this->calculatePipelineAmount($manager, $subManager1, $subManager2, $reportee3);
+        $totals = $this->calculatePipelineAmount($manager, $subManager1, $subManager2, $reportee3);
+        $amount = $totals["amount"];
+        $closed = $totals["closed"];
         
         $obj = new SugarForecasting_Progress_Manager(array(
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
@@ -738,10 +746,115 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         $data = $obj->process();
         
         //Make sure the pipeline count includes all manager ops and only committed rep ops that aren't close won/lost
-        $this->assertEquals("8", $data["opportunities"]);
+        $this->assertEquals("8", $data["opportunities"], "Pipeline Count Incorrect");
         
          //Make sure that the pipeline revenue has something in it.
-        $this->assertEquals($amount, $data["pipeline_revenue"]);     
+        $this->assertEquals($amount, $data["pipeline_revenue"], "Pipeline Amount Incorrect");
+        
+        //Make sure closed amounts match
+        $this->assertEquals($closed, $data["closed_amount"], "Closed Amount Incorrect.");     
+    }
+    
+    /* Check for a manager with reps and submanagers with reps with committed opps.. make sure the cascade works after
+     * a simulated multisave (commiting multiple times) and marking some as close won/lost (with different currencies)
+     * 
+     * @group forecasts
+     * @group forecastsprogress
+     */
+    public function testManagerWithSubManagerAndReps_multisave_withCloseLostWon_diffCurrencies()
+    {   
+        $manager = SugarTestForecastUtilities::createForecastUser(array(
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 2
+            )
+        ));
+        $subManager1 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 1
+            ),
+        ));
+        $subManager2 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 1
+            ),
+        ));
+        $reportee1 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $subManager1["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 2
+            ),
+        ));
+        $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $subManager2["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 2
+            ),
+        ));        
+        $reportee3 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 2
+            ),
+        ));
+                  
+        //now we want to change the stage to close lost/close won of a few opps, commit, and make sure they are excluded
+        $manager['opportunities'][0]->sales_stage = Opportunity::STAGE_CLOSED_WON;
+        $manager['opportunities'][0]->currency_id = self::$currency->id;
+        $manager['opportunities'][0]->save();
+        $reportee3['opportunities'][0]->sales_stage = Opportunity::STAGE_CLOSED_WON;
+        $reportee3['opportunities'][0]->save();
+        $reportee3['opportunities'][1]->currency_id = self::$currency->id;
+        $reportee3['opportunities'][1]->save();
+        $reportee2['opportunities'][0]->sales_stage = Opportunity::STAGE_CLOSED_LOST;
+        $reportee2['opportunities'][0]->save();
+        
+        //sleep needed so that the new committed forecasts are clearly newer
+        sleep(1);
+        //recommit
+        $reportee3['forecast'] = SugarTestForecastUtilities::createRepDirectForecast($reportee3);
+        $reportee2['forecast'] = SugarTestForecastUtilities::createRepDirectForecast($reportee2);
+        $subManager1['forecast'] = SugarTestForecastUtilities::createManagerRollupForecast($subManager1, $reportee1);
+        $subManager2['forecast'] = SugarTestForecastUtilities::createManagerRollupForecast($subManager2, $reportee2);        
+        $manager['forecast'] = SugarTestForecastUtilities::createManagerRollupForecast($manager, $subManager1, $subManager2, $reportee3);
+        
+        //calculate what the amount should be
+        $totals = $this->calculatePipelineAmount($manager, $subManager1, $subManager2, $reportee3);
+        $amount = $totals["amount"];
+        $closed = $totals["closed"];
+        
+        $obj = new SugarForecasting_Progress_Manager(array(
+            "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
+            "user_id" => $manager["user"]->id
+        ));
+        
+        $data = $obj->process();
+        
+        //Make sure the pipeline count includes all manager ops and only committed rep ops that aren't close won/lost
+        $this->assertEquals("8", $data["opportunities"], "Pipeline Count Incorrect");
+        
+         //Make sure that the pipeline revenue has something in it.
+        $this->assertEquals($amount, $data["pipeline_revenue"], "Pipeline Amount Incorrect");
+        
+        //Make sure closed amounts match
+        $this->assertEquals($closed, $data["closed_amount"], "Closed Amount Incorrect.");     
     }
     
     /**

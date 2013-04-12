@@ -228,7 +228,8 @@ class ForecastManagerWorksheet extends SugarBean
             'quota',
             'opp_count',
             'pipeline_opp_count',
-            'pipeline_amount'
+            'pipeline_amount',
+            'closed_amount'
         );
 
         // we don't have a row to update, so set the values to the adjusted column
