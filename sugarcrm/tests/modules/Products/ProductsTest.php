@@ -735,6 +735,20 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(42, $product->quantity, "Null not converted to 1");
     }
 
+    /**
+     * @dataProvider dataProviderMapProbabilityFromSalesStage
+     * @group products
+     */
+    public function testProbabilityNotOverwrittenBySaleStageIfGiven($salesStage)
+    {
+        $product = SugarTestProductUtilities::createProduct();
+
+        $product->sales_stage = $salesStage;
+        $product->probability = 22;
+        $product->save();
+        $this->assertEquals(22, $product->probability);
+    }
+
     // BEGIN SUGARCRM flav=ent ONLY
     /**
      * @group products
