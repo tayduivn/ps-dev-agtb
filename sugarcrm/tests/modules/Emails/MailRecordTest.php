@@ -23,167 +23,531 @@
  ********************************************************************************/
 
 require_once('modules/Emails/MailRecord.php');
-require_once('modules/Emails/EmailUI.php');
+require_once "tests/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
 
 /**
- *
+ * @group email
  */
 class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $input;
+    private $mailRecord,
+            $mockEmail;
 
     public function setUp()
     {
-        // $user = new User();
-        // $user->retrieve('a19adb46-86ee-aebd-c361-503f74779927');
-        // $GLOBALS["current_user"] = $user;
+        parent::setUp();
+
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
-        $this->input = array(
-            "email_config"  =>  "1234567890", // "7c8d3023-dddb-144c-105e-504e1e872b06",
+        OutboundEmailConfigurationTestHelper::setUp();
 
-            "to_addresses"	=>  array(
-                array("name" => "Captain Kangaroo",  "email" => "twolf@sugarcrm.com"),
-                array("name" => "Mister Moose",  	 "email" => "twb2@webtribune.com"),
-            ),
+        $this->mailRecord          = new MailRecord();
+        $this->mailRecord->subject = "MailRecord subject";
 
-            "cc_addresses"	=> 	array(
-                array("name" => "Bunny Rabbit",  	 "email" => "twb3@webtribune.com"),
-            ),
-
-            "bcc_addresses"	=> 	null,
-
-            "attachments"	=> 	array(
-                array("name" => "rodgers.tiff",  "id" => "5beb1fad-9aa4-c3ed-b7f8-50363d5e3a2b"),
-            ),
-            "documents"		=>	array(
-                "123456789012345678901234567890123456",
-            ),
-
-            "subject"  		=>	"This is a Test Email",
-
-            "html_body" 	=>	urlencode("<div>Hello World!</div>"),
-
-            "text_body" 	=>	"Hello There World!",
-
-            "related"		=>	array(
-                "type"	=> "Opportunities",
-                "id"	=> "102181a2-5c05-b879-8e68-502279a8c401"
-            ),
-
-            "teams"			=>	array(
-                "primary"	=> "West",
-                "other"		=> array("1", "East")
-            ),
-        );
-
+        $this->mockEmail = $this->getMock("Email", array("email2Send"));
     }
 
     public function tearDown()
     {
+        // this call is in support of the functional test: testSaveAsDraft
+        SugarTestEmailUtilities::removeAllCreatedEmails();
+
+        $_REQUEST = array();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
+
+        parent::tearDown();
     }
 
-    /**
-     * @group email
-     * @group mailer
-     * @group mailrecordtest
-     */
-    public function testSaveAsDraft_Success ()
+    public function testAddRecipients_ParameterIsNotAnArray_ReturnsABlankString()
     {
-        global $current_user;
+        $mailRecord = new MailRecordCaller();
 
-        $mailRecord = new MailRecord($current_user);
+        $expected = "";
+        $actual   = $mailRecord->addRecipientsCaller("not an array");
+        $this->assertEquals($expected, $actual, "No recipients should have been added.");
+    }
 
-        $mailRecord->mailConfig   = $this->input["email_config"];
-        $mailRecord->toAddresses  = $this->input["to_addresses"];
-        $mailRecord->ccAddresses  = $this->input["cc_addresses"];
-        $mailRecord->bccAddresses = $this->input["bcc_addresses"];
+    public function testAddRecipients_ParameterIsAnArrayButArrayIsEmpty_ReturnsABlankString()
+    {
+        $mailRecord = new MailRecordCaller();
 
-        $mailRecord->attachments  = $this->input["attachments"];
-        $mailRecord->documents    = $this->input["documents"];
-        $mailRecord->teams        = $this->input["teams"];
-        $mailRecord->related      = $this->input["related"];
+        $expected = "";
+        $actual   = $mailRecord->addRecipientsCaller();
+        $this->assertEquals($expected, $actual, "No recipients should have been added.");
+    }
 
-        $mailRecord->subject      = $this->input["subject"];
-        $mailRecord->html_body    = $this->input["html_body"];
-        $mailRecord->text_body    = $this->input["text_body"];
-
-        $emailRequest = array (
-            'fromAccount' => '1234567890',
-            'sendSubject' => 'This is a Test Email',
-            'sendTo' => 'Captain Kangaroo <twolf@sugarcrm.com>, Mister Moose <twb2@webtribune.com>',
-            'sendCc' => 'Bunny Rabbit <twb3@webtribune.com>',
-            'sendBcc' => '',
-            'saveToSugar' => '1',
-            'sendDescription' => '<div>Hello World!</div>',
-            'setEditor' => '1',
-            'attachments' => '5beb1fad-9aa4-c3ed-b7f8-50363d5e3a2brodgers.tiff',
-            'documents' => '123456789012345678901234567890123456',
-            'parent_type' => 'Opportunities',
-            'parent_id' => '102181a2-5c05-b879-8e68-502279a8c401',
-            'primaryteam' => 'West',
-            'teamIds' => 'West,1,East',
-            'saveDraft' => 'true',
+    public function testAddRecipients_ParameterIsAnArrayAndArrayIsNotEmpty_ReturnsACommaSeparatedStringOfValidRecipients()
+    {
+        $mailRecord = new MailRecordCaller();
+        $recipients = array(
+            array(
+                "email" => "foo@bar.com",
+            ),
+            array(
+                "email" => "biz@baz.com",
+                "name"  => "Biz Baz",
+            ),
+            "invalid recipient",
         );
 
-        $emailBeanResponseValue = true;
+        $expected = "<foo@bar.com>, Biz Baz <biz@baz.com>";
+        $actual   = $mailRecord->addRecipientsCaller($recipients);
+        $this->assertEquals($expected, $actual, "Only two recipients should have been added.");
+    }
 
-        $mockEmailBean =  $this->getMock('Email' , array('email2Send'));
-        $mockEmailBean->expects($this->once())
-                ->method('email2Send')
-                ->with($emailRequest)
-                ->will($this->returnValue($emailBeanResponseValue));
+    public function testAddAttachments_ParameterIsNotAnArray_ReturnsABlankString()
+    {
+        $mailRecord = new MailRecordCaller();
 
-        $mailRecord->emailBean = $mockEmailBean;
-        $result = $mailRecord->saveAsDraft();
+        $expected = "";
+        $actual   = $mailRecord->addAttachmentsCaller("not an array");
+        $this->assertEquals($expected, $actual, "No attachments should have been added.");
+    }
 
-        $this->assertEquals($result['SUCCESS'],  $emailBeanResponseValue, "Unexpected Success Value");
+    public function testAddAttachments_ParameterIsAnArrayButArrayIsEmpty_ReturnsABlankString()
+    {
+        $mailRecord = new MailRecordCaller();
+
+        $expected = "";
+        $actual   = $mailRecord->addAttachmentsCaller();
+        $this->assertEquals($expected, $actual, "No attachments should have been added.");
+    }
+
+    public function testAddAttachments_ParameterIsAnArrayAndArrayIsNotEmpty_ReturnsADoubleSemiColonSeparatedStringOfAttachments()
+    {
+        $mailRecord  = new MailRecordCaller();
+        $attachments = array(
+            array(
+                "id"   => "abcd-1234",
+                "name" => "attachment1",
+            ),
+            array(
+                "id"   => "efgh-5678",
+                "name" => "attachment2",
+            ),
+        );
+
+        $expected = "abcd-1234attachment1::efgh-5678attachment2";
+        $actual   = $mailRecord->addAttachmentsCaller($attachments);
+        $this->assertEquals($expected, $actual, "Two attachments should have been added.");
+    }
+
+    public function testAddAttachments_ParameterIsAnArrayAndArrayIsNotEmptyAndIsDocumentsIsTrue_ReturnsADoubleSemiColonSeparatedStringOfDocuments()
+    {
+        $mailRecord  = new MailRecordCaller();
+        $attachments = array(
+            "attachment1",
+            "attachment2",
+        );
+
+        $expected = "attachment1::attachment2";
+        $actual   = $mailRecord->addAttachmentsCaller($attachments, true);
+        $this->assertEquals($expected, $actual, "Two documents should have been added.");
+    }
+
+    public function dataProviderForSetSendRequest_SetBody()
+    {
+        return array(
+            array(
+                null,
+                null,
+                array(
+                    "sendDescription" => "",
+                ),
+            ),
+            array(
+                null,
+                "foo bar",
+                array(
+                    "sendDescription" => "foo bar",
+                ),
+            ),
+            array(
+                "<b>foo</b> <i>bar</i>",
+                "foo bar",
+                array(
+                    "sendDescription" => "<b>foo</b> <i>bar</i>",
+                    "setEditor" => "1",
+                ),
+            ),
+        );
     }
 
     /**
-     * @group email
-     * @group mailer
-     * @group mailrecordtest
+     * @dataProvider dataProviderForSetSendRequest_SetBody
+     * @param $htmlBody
+     * @param $textBody
+     * @param $expected
      */
+    public function testSetSendRequest_SetBody($htmlBody, $textBody, $expected)
+    {
+        $mailRecord            = new MailRecordCaller();
+        $mailRecord->html_body = $htmlBody;
+        $mailRecord->text_body = $textBody;
+
+        $actual = $mailRecord->setSendRequestCaller();
+
+        $this->assertEquals($expected["sendDescription"], $actual["sendDescription"]);
+
+        if (array_key_exists("setEditor", $expected)) {
+            // the "setEditor" values should match
+            $this->assertEquals($expected["setEditor"], $actual["setEditor"]);
+        } else {
+            // the "setEditor" key should not be returned
+            $this->assertArrayNotHasKey("setEditor", $actual);
+        }
+    }
+
+    public function dataProviderForSetSendRequest_SetStatus()
+    {
+        return array(
+            array("send", false),
+            array("draft", true),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderForSetSendRequest_SetStatus
+     * @param $status
+     * @param $expected
+     */
+    public function testSetSendRequest_SetStatus($status, $expected)
+    {
+        $mailRecord = new MailRecordCaller();
+
+        $actual = $mailRecord->setSendRequestCaller($status);
+
+        if ($expected) {
+            // the "saveDraft" value should be the string "true"
+            $this->assertEquals("true", $actual["saveDraft"]);
+        } else {
+            // the "saveDraft" key should not be returned
+            $this->assertArrayNotHasKey("saveDraft", $actual);
+        }
+    }
+
+    public function dataProviderForSetSendRequest_SetTeams()
+    {
+        return array(
+            array(
+                null,
+                null,
+            ),
+            array(
+                array(
+                    "primary" => "team1",
+                ),
+                "team1",
+            ),
+            array(
+                array(
+                    "primary" => "team1",
+                    "other"   => array("team2", "team3"),
+                ),
+                "team1,team2,team3",
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderForSetSendRequest_SetTeams
+     * @param $teams
+     * @param $expected
+     */
+    public function testSetSendRequest_SetTeams($teams, $expected)
+    {
+        $mailRecord        = new MailRecordCaller();
+        $mailRecord->teams = $teams;
+
+        $actual = $mailRecord->setSendRequestCaller();
+
+        if (!is_null($expected)) {
+            $this->assertEquals($teams["primary"], $actual["primaryteam"]);
+            $this->assertEquals($expected, $actual["teamIds"]);
+        } else {
+            // the "primaryteam" and "teamIds" keys should not be returned
+            $this->assertArrayNotHasKey("primaryteam", $actual);
+            $this->assertArrayNotHasKey("teamIds", $actual);
+        }
+    }
+
+    public function dataProviderForSetSendRequest_SetRelated()
+    {
+        return array(
+            array(
+                null,
+                null,
+            ),
+            array(
+                array(
+                    "type" => "Contacts",
+                    "id"   => "abcd-1234",
+                ),
+                array(
+                    "parent_type" => "Contacts",
+                    "parent_id"   => "abcd-1234",
+                ),
+            ),
+            array(
+                array(
+                    "id"   => "abcd-1234",
+                ),
+                null,
+            ),
+            array(
+                array(
+                    "type" => "Contacts",
+                ),
+                null,
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderForSetSendRequest_SetRelated
+     * @param $related
+     * @param $expected
+     */
+    public function testSetSendRequest_SetRelated($related, $expected)
+    {
+        $mailRecord          = new MailRecordCaller();
+        $mailRecord->related = $related;
+
+        $actual = $mailRecord->setSendRequestCaller();
+
+        if (!is_null($expected)) {
+            $this->assertEquals($expected["parent_type"], $actual["parent_type"]);
+            $this->assertEquals($expected["parent_id"], $actual["parent_id"]);
+        } else {
+            // the "parent_type" and "parent_id" keys should not be returned
+            $this->assertArrayNotHasKey("parent_type", $actual);
+            $this->assertArrayNotHasKey("parent_id", $actual);
+        }
+    }
+
+    public function testSend_Email2SendThrowsAnException_ReturnsArrayWithErrorData()
+    {
+        $this->mockEmail->expects($this->once())
+            ->method("email2Send")
+            ->will($this->throwException(new Exception("An exception was thrown from within email2Send.")));
+
+        $this->mailRecord->emailBean = $this->mockEmail;
+
+        $actual = $this->mailRecord->send();
+        $this->assertFalse($actual["SUCCESS"], "The send request should have failed.");
+        $this->assertArrayHasKey("ERROR_MESSAGE", $actual, "The error message should have been added to the result.");
+        $this->assertArrayHasKey("ERROR_DATA", $actual, "The error data should have been added to the result.");
+    }
+
+    public function testSend_Email2SendReturnsTrue_ReturnsArrayForSuccess()
+    {
+        $this->mockEmail->expects($this->once())
+            ->method("email2Send")
+            ->will($this->returnValue(true));
+
+        $this->mailRecord->emailBean = $this->mockEmail;
+
+        $actual = $this->mailRecord->send();
+        $this->assertTrue($actual["SUCCESS"], "The send request should have succeeded.");
+        $this->assertArrayNotHasKey("ERROR_MESSAGE", $actual, "The error message should not have been added to the result.");
+        $this->assertArrayNotHasKey("ERROR_DATA", $actual, "The error data should not have been added to the result.");
+    }
+
+    public function testSend_Email2SendReturnsFalse_ReturnsArrayForFailureWithoutExceptions()
+    {
+        $this->mockEmail->expects($this->once())
+            ->method("email2Send")
+            ->will($this->returnValue(false));
+
+        $this->mailRecord->emailBean = $this->mockEmail;
+
+        $actual = $this->mailRecord->send();
+        $this->assertFalse($actual["SUCCESS"], "The send request should have failed.");
+        $this->assertArrayNotHasKey("ERROR_MESSAGE", $actual, "The error message should not have been added to the result.");
+        $this->assertArrayNotHasKey("ERROR_DATA", $actual, "The error data should not have been added to the result.");
+    }
+
+    public function testSend_Email2SendReturnsTrueAndOutputWasCaptured_ExceptionIsThrown_ReturnsArrayWithErrorData()
+    {
+        $this->mockEmail->expects($this->once())
+            ->method("email2Send")
+            ->will($this->returnValue(true));
+
+        $mailRecord            = $this->getMock("MailRecord", array("endCapturingOutput"));
+        $mailRecord->subject   = "MailRecord subject";
+        $mailRecord->emailBean = $this->mockEmail;
+        $mailRecord->expects($this->once())
+            ->method("endCapturingOutput")
+            ->will($this->returnValue("output to capture"));
+
+        $actual = $mailRecord->send();
+        $this->assertFalse($actual["SUCCESS"], "The send request should have failed.");
+        $this->assertArrayHasKey("ERROR_MESSAGE", $actual, "The error message should have been added to the result.");
+        $this->assertArrayHasKey("ERROR_DATA", $actual, "The error data should have been added to the result.");
+    }
+
+    /**
+     * This test case is considered a functional test for the relationship between MailRecord and Email. While it is
+     * not fully comprehensive, it should help to prevent bugs in MailRecord when untested changes are made to
+     * Email::email2Send. Once Email::email2Send is tested -- as we further change/enhance our email workflows
+     * throughout the application -- then some of these included test cases can move and become unit tests in the right
+     * location, and a single unit test can remain in MailRecordTest for testing MailRecordTest::saveAsDraft as needed.
+     *
+     * @group functional
+     */
+    public function testSaveAsDraft()
+    {
+        OutboundEmailConfigurationTestHelper::setUp();
+        $outboundEmailConfiguration = OutboundEmailConfigurationTestHelper::createSystemOverrideOutboundEmailConfiguration(
+            $GLOBALS["current_user"]->id
+        );
+
+        $mailRecord              = new MailRecord();
+        $mailRecord->mailConfig  = $outboundEmailConfiguration->id;
+        $mailRecord->toAddresses = array(
+            array(
+                "name"  => "Captain Kangaroo",
+                "email" => "twolf@sugarcrm.com",
+            ),
+            array(
+                "name"  => "Mister Moose",
+                "email" => "twb2@webtribune.com",
+            ),
+        );
+        $mailRecord->ccAddresses = array(
+            array(
+                "name"  => "Bunny Rabbit",
+                "email" => "twb3@webtribune.com",
+            ),
+        );
+        $mailRecord->subject     = "The Funnies";
+        // TODO: need input from architecture
+        // Can't test attachments/documents without the ability to either mock the filesystem or a utility for adding
+        // and removing files from the filesystem.
+//        $mailRecord->attachments = array(
+//            array(
+//                "name" => "rodgers.tiff",
+//                "id"   => "abcd-1234",
+//            ),
+//        );
+//        $mailRecord->documents   = array("cartoon_doc");
+        $mailRecord->html_body   = urlencode("<b>Hello, World!</b>");
+        $mailRecord->text_body   = "Hello, World!";
+        $mailRecord->related     = array(
+            "type" => "Opportunities",
+            "id"   => "efgh-5678",
+        );
+        $mailRecord->teams       = array(
+            "primary" => "West",
+            "other"   => array("1", "East"),
+        );
+
+        $actual = $mailRecord->saveAsDraft();
+
+        $email = $actual["EMAIL"];
+        SugarTestEmailUtilities::setCreatedEmail($email->id);
+
+        $success = (int) $actual["SUCCESS"];
+        $this->assertEquals(1, $success, "The request should have been successful.");
+
+        $emailClone = clone $email;
+        $email      = $emailClone->toArray();
+        $this->assertEquals(36, strlen($email["id"]), "The EmailId should be 36 characters.");
+
+        $keysInEmail = array(
+            "from_addr_name",
+            "to_addrs_names",
+            "cc_addrs_names",
+            "bcc_addrs_names",
+            "team_set_id",
+        );
+
+        foreach ($keysInEmail as $key) {
+            $this->assertArrayHasKey($key, $email, "The {$key} key should be found in the email array.");
+        }
+
+        $valuesInEmail = array(
+            "status"           => "draft",
+            "type"             => "draft",
+            "name"             => $mailRecord->subject,
+            "description_html" => htmlentities(urldecode($mailRecord->html_body)),
+            "description"      => $mailRecord->text_body,
+            "parent_id"        => $mailRecord->related["id"],
+            "parent_type"      => $mailRecord->related["type"],
+            "team_id"          => $mailRecord->teams["primary"],
+            "assigned_user_id" => $GLOBALS["current_user"]->id,
+            // attachments?
+            // documents?
+        );
+
+        foreach ($valuesInEmail as $key => $value) {
+            $this->assertEquals(
+                $value,
+                $email[$key],
+                "The {$key} key should have the value {$value} in the email array."
+            );
+        }
+
+        OutboundEmailConfigurationTestHelper::tearDown();
+    }
+
     public function testGetErrorMessage_ErrorCodeExists_ReturnsMappedModuleString()
     {
-        global $current_user, $mod_string;
-        $expected = 'bar';
+        global $mod_string;
+        $expected                         = 'bar';
         $mod_string['LBL_INTERNAL_ERROR'] = $expected;
 
-        $mailRecord = new MailRecordCaller($current_user);
+        $mailRecord = new MailRecordCaller();
 
         $exception = new MailerException('foo', MailerException::FailedToSend);
-        $result = $mailRecord->getErrorMessageCaller($exception);
+        $result    = $mailRecord->getErrorMessageCaller($exception);
 
-        $this->assertEquals($expected,  $result, 'Should map to the correct error message');
+        $this->assertEquals($expected, $result, 'Should map to the correct error message');
         unset($mod_string['LBL_INTERNAL_ERROR']);
     }
 
-    /**
-     * @group email
-     * @group mailer
-     * @group mailrecordtest
-     */
     public function testGetErrorMessage_ErrorCodeDoesNotExist_ReturnsErrorMessage()
     {
-        global $current_user;
         $expected = 'foo';
 
-        $mailRecord = new MailRecordCaller($current_user);
+        $mailRecord = new MailRecordCaller();
 
         $exception = new MailerException($expected, 99999);
-        $result = $mailRecord->getErrorMessageCaller($exception);
+        $result    = $mailRecord->getErrorMessageCaller($exception);
 
-        $this->assertEquals($expected,  $result, 'Should return the specified error message in the exception');
+        $this->assertEquals($expected, $result, 'Should return the specified error message in the exception');
     }
 }
 
 class MailRecordCaller extends MailRecord
 {
-    public function getErrorMessageCaller($exception) {
+    public $subject = "MailRecordCaller Subject";
+
+    public function addRecipientsCaller($recipients = array())
+    {
+        return $this->addRecipients($recipients);
+    }
+
+    public function addAttachmentsCaller($attachments = array(), $isDocuments = false)
+    {
+        return $this->addAttachments($attachments, $isDocuments);
+    }
+
+    public function getErrorMessageCaller($exception)
+    {
         return $this->getErrorMessage($exception);
+    }
+
+    public function setSendRequestCaller(
+        $status = "ready",
+        $from = null,
+        $to = "",
+        $cc = "",
+        $bcc = "",
+        $attachments = "",
+        $documents = ""
+    ) {
+        return $this->setupSendRequest($status, $from, $to, $cc, $bcc, $attachments, $documents);
     }
 }
