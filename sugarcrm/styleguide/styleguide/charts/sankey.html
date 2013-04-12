@@ -5,7 +5,6 @@
   <meta charset="utf-8">
   <link href="../css/bootstrap.css" rel="stylesheet" type="text/css">
   <link href="../css/sugar.css" rel="stylesheet" type="text/css">
-  <link href="../src/sugar_colors.css" rel="stylesheet" type="text/css">
   <style>
     body {
       overflow-y:scroll;
@@ -166,9 +165,9 @@ var svgWonLost = d3.select("#chartWonLost").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("../js/nvd3/data/sales.json", function(data) { draw(svgAll,sankey1,data) });
+d3.json("data/sankey.json", function(data) { draw(svgAll,sankey1,data) });
 
-d3.json("../js/nvd3/data/sales-wonlost-source.json", function(data) { draw(svgWonLost,sankey2,data) });
+d3.json("data/sankey-wonlost-source.json", function(data) { draw(svgWonLost,sankey2,data) });
 </script>
 
 </body>

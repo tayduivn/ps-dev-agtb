@@ -23,10 +23,8 @@
 
 <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
-<script src="../js/nvd3/data/line_data.js"></script>
-<script src="../js/nvd3/src/models/scatter_sugar.js"></script>
-<script src="../js/nvd3/src/models/bubble.js"></script>
-<script src="../js/nvd3/src/models/legend.js"></script>
+<script src="data/line_data.js"></script>
+<script src="../js/nvd3/src/models/scatter.js"></script>
 <script src="../js/nvd3/src/models/bubbleChart.js"></script>
 
 <script>
@@ -40,7 +38,7 @@
         endDate = new Date(now.getFullYear(), (duration === 12 ? 12 : startDate.getMonth()+3), 0),
         dateRange = [startDate,endDate];
 
-    d3.json("../js/nvd3/data/top10_opportunities_preprocessed.json", function(data) {
+    d3.json("data/top10_opportunities_preprocessed.json", function(data) {
       // console.log(json)
 
       var bubble_data = {
@@ -82,10 +80,8 @@
           .tooltips(true)
           .showLegend(true)
           //.colorData( 'graduated', {c1: '#acddff', c2: '#193372', l: seriesLength} )
-          .colorData( 'class', 2 )
-          //.colorData( 'default' )
-          //.colorFill( 'gradient' )
-          .colorFill( 'default' )
+          //.colorData( 'class', {step:2} )
+          .colorData( 'default' )
           .groupBy(function(d){ return d.assigned_user_name; })
           .filterBy(function(d){ return d.probability; })
         ;

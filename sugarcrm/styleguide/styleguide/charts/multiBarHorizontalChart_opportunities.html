@@ -16,7 +16,9 @@
 
 <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
-<script src="../js/nvd3/data/opportunities.js"></script>
+<script src="data/horizbar_data.js"></script>
+<script src="../js/nvd3/src/models/multiBarHorizontal.js"></script>
+<script src="../js/nvd3/src/models/multiBarHorizontalChart.js"></script>
 
 <script>
   nv.addGraph(function() {
@@ -30,10 +32,6 @@
           .showControls(true)
           .stacked(true)
           .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: opportunities_data.data.length} )
-          //.colorData( 'class' )
-          //.colorData( 'default' )
-          //.colorFill( 'gradient' )
-          .colorFill( 'default' )
           .tooltip( function(key, x, y, e, graph) {
             return '<p>Outcome: <b>' + key + '</b></p>' +
                    '<p>Lead Source: <b>' +  x + '</b></p>' +

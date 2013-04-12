@@ -107,7 +107,7 @@
       unLoadCountry();
     });
 
-    d3.json('../js/nvd3/data/world-countries.json', function (collection) {
+    d3.json('data/world-countries.json', function (collection) {
       world_data = collection.features;
 
       loadChart(world_data);
@@ -115,7 +115,7 @@
       iRotation = setInterval(autoSpin,10);
     });
 
-    d3.json('../js/nvd3/data/us-states.json', function (collection) {
+    d3.json('data/us-states.json', function (collection) {
       country_data['USA'] = collection.features;
     });
 

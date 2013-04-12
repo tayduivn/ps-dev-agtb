@@ -32,7 +32,7 @@
 <script src="../js/backbone-min.js"></script>
 <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
-<script src="../js/nvd3/data/treemap_data.js"></script>
+<script src="data/treemap_data.js"></script>
 
 <script>
   var Chart = Backbone.Model.extend({});
@@ -98,8 +98,6 @@
               //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
               //.colorData( 'class' )
               //.colorData( 'default' )
-              //.colorFill( 'gradient' )
-              //.colorFill( 'default' )
           ;
 
         nv.utils.windowResize(this.chart.update);

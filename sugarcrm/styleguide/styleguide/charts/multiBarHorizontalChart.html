@@ -10,20 +10,22 @@
 </head>
 <body class="full-screen">
 
-<div id="chart1" class="nv-chart">
+<div id="chart1" class="nv-chart nv-chart-multibar">
   <svg></svg>
 </div>
 
 <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
-<script src="../js/nvd3/data/horizbar_data.js"></script>
+<script src="data/horizbar_data.js"></script>
+<script src="../js/nvd3/src/models/multiBarHorizontal.js"></script>
+<script src="../js/nvd3/src/models/multiBarHorizontalChart.js"></script>
 
 <script>
   nv.addGraph(function() {
     var chart = nv.models.multiBarHorizontalChart()
           .x(function(d) { return d.label })
           .y(function(d) { return d.value })
-          .margin({top: 30, right: 20, bottom: 50, left: 175})
+          .margin({top: 30, right: 20, bottom: 30, left: 75})
           .showValues(true)
           .showTitle(true)
           .tooltips(true)
@@ -31,21 +33,19 @@
           .stacked(false)
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: horizbar_data.data.length} )
           //.colorData( 'class' )
-          .colorData( 'default' )
-          .colorFill( 'gradient' )
-          //.colorFill( 'default' )
+          //.colorData('default')
           .tooltip( function(key, x, y, e, graph) {
             return '<p>Outcome: <b>' + key + '</b></p>' +
                    '<p>Lead Source: <b>' +  x + '</b></p>' +
                    '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'
-            })
+          })
         ;
 
     chart.yAxis
         .tickFormat(d3.format(',.2f'));
 
     d3.select('#chart1 svg')
-        .datum(horizbar_data)
+        .datum(horizbar_data_default)
       .transition().duration(500)
         .call(chart);
 

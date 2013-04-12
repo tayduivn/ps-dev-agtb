@@ -19,7 +19,13 @@
 <script src="../js/backbone-min.js"></script>
 <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
-<script src="../js/nvd3/data/forecasting_jit.js"></script>
+<script src="data/pareto_data.js"></script>
+<script src="../js/nvd3/src/models/scatter.js"></script>
+<script src="../js/nvd3/src/models/line.js"></script>
+<script src="../js/nvd3/src/models/multiBar.js"></script>
+<script src="../js/nvd3/src/models/paretoLegend.js"></script>
+<script src="../js/nvd3/src/models/paretoChart.js"></script>
+
 
 <script>
   var Chart = Backbone.Model.extend({});
@@ -104,13 +110,12 @@
 
       this.chart = nv.models.paretoChart()
             .showTitle(true)
+            .showLegend(true)
             .tooltips(true)
-            .showControls(false)
+            .showControls(true)
             .stacked(false)
-            //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
-            //.colorData( 'class' )
-            .colorData( 'default' )
-            .colorFill( 'gradient' );
+            .clipEdge(false)
+            .colorData( 'default' );
 
       d3.select(this.el)
         .datum( this.translateDataToD3(chartData) )
