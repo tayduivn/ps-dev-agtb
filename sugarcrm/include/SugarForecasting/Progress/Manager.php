@@ -194,9 +194,9 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $queryRepOpps = "";
         $arrayLen = count($mgrIds);
         for($index = 0; $index < $arrayLen; $index++) {
-            $subQuery = "(select (pipeline_amount * base_rate) as amount, " .
+            $subQuery = "(select (pipeline_amount / base_rate) as amount, " .
                                  "pipeline_opp_count as recordcount, " .
-                                 "(closed_amount * base_rate) as closed from forecasts " .
+                                 "(closed_amount / base_rate) as closed from forecasts " .
                          "where timeperiod_id = {$db->quoted($timeperiod_id)} " .
                             "and user_id = {$db->quoted($mgrIds[$index])} " .
                             "and forecast_type = 'Rollup' " .
@@ -216,9 +216,9 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         }
         //only committed direct reportee (manager) opps
         for($index = 0; $index < $arrayLen; $index++) {
-            $subQuery = "(select (pipeline_amount * base_rate) as amount, " .
+            $subQuery = "(select (pipeline_amount / base_rate) as amount, " .
                                  "pipeline_opp_count as recordcount, " .
-                                 "(closed_amount * base_rate) as closed from forecasts " .
+                                 "(closed_amount / base_rate) as closed from forecasts " .
                          "where timeperiod_id = {$db->quoted($timeperiod_id)} " .
                             "and user_id = {$db->quoted($repIds[$index])} " .
                             "and forecast_type = 'Direct' " .
