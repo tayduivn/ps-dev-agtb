@@ -46,7 +46,7 @@ class SignaturesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_user             = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS["current_user"] = $this->_user;
 
-        $this->api           = new SignaturesApiServiceMock();
+        $this->api           = SugarTestRestUtilities::getRestServiceMock();
         $this->signaturesApi = new SignaturesApi();
 
         $this->signature1          = SugarTestUserUtilities::createUserSignature();
@@ -169,14 +169,4 @@ class SignaturesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedCount, count($actual["records"]), "Incorrect number of signatures returned");
         $this->assertEquals($expectedOffset, $actual["next_offset"], "Incorrect next offset");
     }
-}
-
-// need to make sure ServiceBase is included when extending it to avoid a fatal error
-require_once("include/api/ServiceBase.php");
-
-class SignaturesApiServiceMock extends ServiceBase
-{
-    public function execute() {}
-
-    protected function handleException(Exception $exception) {}
 }
