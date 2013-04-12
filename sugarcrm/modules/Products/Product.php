@@ -637,7 +637,9 @@ class Product extends SugarBean
             }
         }
 
-        $this->mapProbabilityFromSalesStage();
+        if($this->probability == '') {
+            $this->mapProbabilityFromSalesStage();
+        }
         $this->handleSalesStatus();
         $this->convertDateClosedToTimestamp();
         $this->mapFieldsFromProductTemplate();
