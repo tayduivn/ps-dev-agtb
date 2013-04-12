@@ -6,7 +6,7 @@
       <div class="row">
         <div class="span6">
           <h3>Pipeline By Sales Stage</h3>
-          <p>This is a new NVD3 funnel chart type created for SugarCRM. <a href="charts/funnelChart.html">Full Screen</a></p>
+          <p>A new NVD3 funnel chart type created for SugarCRM. [<a href="charts/funnelChart.html">Full Screen</a> | <a href="charts/funnelChart_colors.html">Color Options</a>]</p>
           <div>
 <div id="funnel1" class="thumbnail nv-chart">
   <svg></svg>
@@ -15,7 +15,7 @@
         </div>
         <div class="span6">
           <h3>Closed Won Opportunities</h3>
-          <p>This is a new NVD3 gauge chart type created for SugarCRM. <a href="charts/gaugeChart.html">Full Screen</a></p>
+          <p>A new NVD3 gauge chart type created for SugarCRM. [<a href="charts/gaugeChart.html">Full Screen</a> | <a href="charts/gaugeChart_colors.html">Color Options</a>]</p>
           <div>
 <div id="gauge" class="thumbnail nv-chart">
   <svg></svg>
@@ -27,7 +27,7 @@
       <div class="row" style="margin-top:8px">
         <div class="span6">
           <h3>Treemap Chart</h3>
-          <p>This is a new NVD3 treemap chart type created for SugarCRM. <a href="charts/treemapChart.html">Full Screen</a></p>
+          <p>A new NVD3 treemap chart type created for SugarCRM. [<a href="charts/treemapChart.html">Full Screen</a>]</p>
           <div>
 <div id="treemap1" class="thumbnail nv-chart nv-treemap">
   <svg></svg>
@@ -36,7 +36,7 @@
         </div>
         <div class="span6">
           <h3>Opportunities</h3>
-          <p>This is a new NVD3 treemap chart type created for SugarCRM. <a href="charts/treemapChart_opportunities.html">Full Screen</a></p>
+          <p>A new NVD3 treemap chart type created for SugarCRM. [<a href="charts/treemapChart_opportunities.html">Full Screen</a>]</p>
           <div>
 <div id="treemap2" class="thumbnail nv-chart nv-treemap">
   <svg></svg>
@@ -49,7 +49,7 @@
       <div class="row" style="margin-top:8px">
         <div class="span6">
           <h3>Org Chart</h3>
-          <p>This is a new NVD3 tree chart type created for SugarCRM. <a href="charts/orgChart.html">Full Screen</a></p>
+          <p>A new NVD3 tree chart type created for SugarCRM. [<a href="charts/orgChart.html">Full Screen</a>]</p>
           <div>
 <div id="org" class="thumbnail nv-tree nv-chart">
   <svg></svg>
@@ -60,7 +60,7 @@
         </div>
         <div class="span6">
           <h3>Bubble Chart</h3>
-          <p>This is a new NVD3 tree chart type created for SugarCRM. <a href="charts/bubbleChart.html">Full Screen</a></p>
+          <p>A new NVD3 tree chart type created for SugarCRM. [<a href="charts/bubbleChart.html">Full Screen</a> | <a href="charts/bubbleChart_colors.html">Color Options</a>]</p>
           <div>
 <div id="bubble" class="thumbnail nv-bubble nv-chart">
   <svg></svg>
@@ -72,11 +72,12 @@
       </div>
     </section>
 
-<script src="js/nvd3/data/gauge_data.js"></script>
-<script src="js/nvd3/data/funnel_data.js"></script>
-<script src="js/nvd3/data/treemap_data.js"></script>
-<script src="js/nvd3/data/flare.js"></script>
-<script src="js/nvd3/data/tree_data.js"></script>
+<script src="charts/data/bubble_data.js"></script>
+<script src="charts/data/gauge_data.js"></script>
+<script src="charts/data/funnel_data.js"></script>
+<script src="charts/data/treemap_data.js"></script>
+<script src="charts/data/flare.js"></script>
+<script src="charts/data/tree_data.js"></script>
 
 <script>
   // Funnel Chart
@@ -93,7 +94,7 @@
         .tickFormat(d3.format(',.1f'));
 
     d3.select('#funnel1 svg')
-        .datum(funnel_data)
+        .datum(funnel_data_default)
       .transition().duration(500)
         .call(chart);
 
@@ -108,13 +109,12 @@
           .showLabels(true)
           .showTitle(false)
           .colorData( 'default' )
-          .colorFill( 'gradient' )
           .ringWidth(50)
           .maxValue(9)
           .transitionMs(4000);
 
     d3.select("#gauge svg")
-        .datum(gauge_data)
+        .datum(gauge_data_color)
       .transition().duration(500)
         .call(gauge);
 
@@ -140,8 +140,6 @@
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
           //.colorData( 'class' )
           //.colorData( 'default' )
-          //.colorFill( 'gradient' )
-          //.colorFill( 'default' )
       ;
 
     d3.select('#treemap1 svg')
@@ -184,7 +182,7 @@
         endDate = new Date(now.getFullYear(), (duration === 12 ? 12 : startDate.getMonth()+3), 0),
         dateRange = [startDate,endDate];
 
-    d3.json("js/nvd3/data/top10_opportunities_preprocessed.json", function(json) {
+    d3.json("charts/data/top10_opportunities_preprocessed.json", function(json) {
       // console.log(json)
       var bubble_data = {
             data: d3.nest()
@@ -230,13 +228,11 @@
           .colorData( 'graduated', {c1: '#d9edf7', c2: '#134158', l: bubble_data.data.length} )
           //.colorData( 'class' )
           //.colorData( 'default' )
-          //.colorFill( 'gradient' )
-          .colorFill( 'default' )
         ;
 
 
       d3.select('#bubble svg')
-          .datum(bubble_data)
+          .datum(bubble_data_default)
         .transition().duration(500)
           .call(chart);
 
@@ -290,8 +286,6 @@
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
           //.colorData( 'class' )
           //.colorData( 'default' )
-          //.colorFill( 'gradient' )
-          //.colorFill( 'default' )
         ;
 
     d3.select('#treemap2 svg')

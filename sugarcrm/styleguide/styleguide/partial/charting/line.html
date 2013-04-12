@@ -24,7 +24,8 @@
   </div>
 </section>
 
-<script src="js/nvd3/data/line_data.js"></script>
+<script src="charts/data/line_data.js"></script>
+
 
 <script>
   // Line chart
@@ -51,7 +52,7 @@
         .tickFormat(d3.format(',.2f'));
 
     d3.select('#line1 svg')
-        .datum(line_data)
+        .datum(line_data_default)
       .transition().duration(500)
         .call(chart);
 
@@ -72,11 +73,9 @@
           .showTitle(false)
           .tooltips(true)
           .showControls(false)
-          //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: line_data.data.length} )
+          .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: line_data_default.data.length} )
           //.colorData( 'class' )
-          .colorData( 'default' )
-          //.colorFill( 'gradient' )
-          .colorFill( 'default' )
+          //.colorData( 'default' )
           //.clipEdge(true)
         ;
 
@@ -88,7 +87,7 @@
         .tickFormat(d3.format(',.2f'));
 
     d3.select('#area svg')
-        .datum(line_data)
+        .datum(line_data_default)
       .transition().duration(500)
         .call(chart);
 
