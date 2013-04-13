@@ -64,18 +64,22 @@ nv.models.treemapChart = function() {
       // Display noData message if there's nothing to show.
 
       if (!data || !data.length || !data.filter(function(d) { return d.children.length }).length) {
-        container.append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('x', availableWidth / 2)
-          .attr('y', availableHeight / 2)
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'middle')
-          .text(noData);
-          return chart;
-      } else {
-        container.select('.nv-noData').remove();
-      }
+        var noDataText = container.selectAll('.nv-noData').data([noData]);
 
+        noDataText.enter().append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function(d) { return d });
+
+        return chart;
+      } else {
+        container.selectAll('.nv-noData').remove();
+      }
 
       //------------------------------------------------------------
       // Setup Scales
