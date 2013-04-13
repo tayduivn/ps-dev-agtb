@@ -88,6 +88,9 @@
 <script src="../js/nvd3/src/models/multiBarChart.js"></script>
 
 <script>
+  var multibar_data_default_JSON = JSON.stringify(multibar_data_default);
+  var multibar_data_color_JSON = JSON.stringify(multibar_data_color);
+
   nv.addGraph(function() {
     var chart = nv.models.multiBarChart()
           .tooltips(false)
@@ -99,7 +102,7 @@
         .axisLabel('Expenditures ($)')
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart1 svg')
-        .datum(multibar_data_default)
+        .datum(JSON.parse(multibar_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -114,7 +117,7 @@
         .axisLabel('Expenditures ($)')
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart2 svg')
-        .datum(multibar_data_default)
+        .datum(JSON.parse(multibar_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -129,7 +132,7 @@
         .axisLabel('Expenditures ($)')
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart3 svg')
-        .datum(multibar_data_default)
+        .datum(JSON.parse(multibar_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -147,7 +150,7 @@
         .axisLabel('Expenditures ($)')
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart4 svg')
-        .datum(multibar_data_color)
+        .datum(JSON.parse(multibar_data_color_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -163,7 +166,7 @@
         .axisLabel('Expenditures ($)')
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart5 svg')
-        .datum(multibar_data_color)
+        .datum(JSON.parse(multibar_data_color_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -179,7 +182,7 @@
         .axisLabel('Expenditures ($)')
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart6 svg')
-        .datum(multibar_data_color)
+        .datum(JSON.parse(multibar_data_color_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -196,7 +199,7 @@
         .axisLabel('Expenditures ($)')
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart7 svg')
-        .datum(multibar_data_default)
+        .datum(JSON.parse(multibar_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -211,7 +214,7 @@
         .axisLabel('Expenditures ($)')
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart8 svg')
-        .datum(multibar_data_default)
+        .datum(JSON.parse(multibar_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });

@@ -88,13 +88,16 @@
 <script src="../js/nvd3/src/models/funnelChart.js"></script>
 
 <script>
+  var funnel_data_default_JSON = JSON.stringify(funnel_data_default);
+  var funnel_data_color_JSON = JSON.stringify(funnel_data_color);
+
   nv.addGraph(function() {
     var chart = nv.models.funnelChart()
           .tooltips(false)
           .colorData( 'default' )
         ;
     d3.select('#chart1 svg')
-        .datum(funnel_data_default)
+        .datum(JSON.parse(funnel_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -104,7 +107,7 @@
           .colorData( 'default', {gradient:true} )
         ;
     d3.select('#chart2 svg')
-        .datum(funnel_data_default)
+        .datum(JSON.parse(funnel_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -114,7 +117,7 @@
           .colorData( 'class', {step:2} )
         ;
     d3.select('#chart3 svg')
-        .datum(funnel_data_default)
+        .datum(JSON.parse(funnel_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -126,7 +129,7 @@
           .colorData( 'default' )
         ;
     d3.select('#chart4 svg')
-        .datum(funnel_data_color)
+        .datum(JSON.parse(funnel_data_color_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -136,7 +139,7 @@
           .colorData( 'default', {gradient:true} )
         ;
     d3.select('#chart5 svg')
-        .datum(funnel_data_color)
+        .datum(JSON.parse(funnel_data_color_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -146,7 +149,7 @@
           .colorData( 'class', {step:2} )
         ;
     d3.select('#chart6 svg')
-        .datum(funnel_data_color)
+        .datum(JSON.parse(funnel_data_color_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -158,7 +161,7 @@
           .colorData( 'graduated', {c1:'#12448f', c2:'#deeeff', l:funnel_data_default.data.length} )
         ;
     d3.select('#chart7 svg')
-        .datum(funnel_data_default)
+        .datum(JSON.parse(funnel_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -168,7 +171,7 @@
           .colorData( 'graduated', {c1:'#12448f', c2:'#deeeff', l:funnel_data_default.data.length, gradient:true} )
         ;
     d3.select('#chart8 svg')
-        .datum(funnel_data_default)
+        .datum(JSON.parse(funnel_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });

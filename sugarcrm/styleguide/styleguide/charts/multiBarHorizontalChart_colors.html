@@ -88,33 +88,23 @@
 <script src="../js/nvd3/src/models/multiBarHorizontalChart.js"></script>
 
 <script>
+  var horizbar_data_default_JSON = JSON.stringify(horizbar_data_default);
+  var horizbar_data_color_JSON = JSON.stringify(horizbar_data_color);
+  var opportunities_data_JSON = JSON.stringify(opportunities_data);
+
   nv.addGraph(function() {
     var chart = nv.models.multiBarHorizontalChart()
           .x(function(d) { return d.label })
           .y(function(d) { return d.value })
           .showControls(false)
+          .stacked(true)
           .tooltips(false)
           .colorData( 'default' )
         ;
     chart.yAxis
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart1 svg')
-        .datum(horizbar_data_default)
-      .transition().duration(500).call(chart);
-    return chart;
-  });
-  nv.addGraph(function() {
-    var chart = nv.models.multiBarHorizontalChart()
-          .x(function(d) { return d.label })
-          .y(function(d) { return d.value })
-          .showControls(false)
-          .tooltips(true)
-          .colorData('default', {gradient:true})
-        ;
-    chart.yAxis
-        .tickFormat(d3.format(',.2f'));
-    d3.select('#chart2 svg')
-        .datum(horizbar_data_default)
+        .datum(JSON.parse(horizbar_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -124,12 +114,28 @@
           .y(function(d) { return d.value })
           .showControls(false)
           .tooltips(false)
+          .colorData('default', {gradient:true})
+        ;
+    chart.yAxis
+        .tickFormat(d3.format(',.2f'));
+    d3.select('#chart2 svg')
+        .datum(JSON.parse(horizbar_data_default_JSON))
+      .transition().duration(500).call(chart);
+    return chart;
+  });
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarHorizontalChart()
+          .x(function(d) { return d.label })
+          .y(function(d) { return d.value })
+          .showControls(false)
+          .stacked(true)
+          .tooltips(false)
           .colorData('class', {step:2})
         ;
     chart.yAxis
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart3 svg')
-        .datum(horizbar_data_default)
+        .datum(JSON.parse(horizbar_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -147,7 +153,7 @@
     chart.yAxis
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart4 svg')
-        .datum(opportunities_data)
+        .datum(JSON.parse(opportunities_data_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -163,7 +169,7 @@
     chart.yAxis
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart5 svg')
-        .datum(horizbar_data_color)
+        .datum(JSON.parse(horizbar_data_color_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -179,7 +185,7 @@
     chart.yAxis
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart6 svg')
-        .datum(opportunities_data)
+        .datum(JSON.parse(opportunities_data_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -196,7 +202,7 @@
     chart.yAxis
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart7 svg')
-        .datum(horizbar_data_default)
+        .datum(JSON.parse(horizbar_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
@@ -205,13 +211,14 @@
           .x(function(d) { return d.label })
           .y(function(d) { return d.value })
           .showControls(false)
+          .stacked(true)
           .tooltips(false)
           .colorData( 'graduated', {c1:'#12448f', c2:'#deeeff', l:horizbar_data_default.data.length, gradient:true} )
         ;
     chart.yAxis
         .tickFormat(d3.format(',.2f'));
     d3.select('#chart8 svg')
-        .datum(horizbar_data_default)
+        .datum(JSON.parse(horizbar_data_default_JSON))
       .transition().duration(500).call(chart);
     return chart;
   });
