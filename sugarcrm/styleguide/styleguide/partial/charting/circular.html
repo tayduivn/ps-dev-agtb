@@ -38,7 +38,7 @@
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
           //.colorData( 'class' )
           .colorData( 'default' )
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
             return '<p>Stage: <b>' + key + '</b></p>' +
                    '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
                    '<p>Percent: <b>' +  x + '%</b></p>'
@@ -61,13 +61,14 @@
           .showLabels(true)
           .showTitle(false)
           .donut(true)
+          .donutRatio(0.4)
           .donutLabelsOutside(true)
           .hole(10)
           //.color(d3.scale.category10().range())
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
           //.colorData( 'class' )
           .colorData( 'default' )
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
             return '<p>Stage: <b>' + key + '</b></p>' +
                    '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
                    '<p>Percent: <b>' +  x + '%</b></p>'

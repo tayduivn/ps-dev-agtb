@@ -28,24 +28,22 @@
   nv.addGraph(function() {
 
     var chart = nv.models.lineChart()
-          .x(function(d) { return d[0] })
-          .y(function(d) { return d[1] })
-          .tooltip( function(key, x, y, e, graph) {
-              return '<p>Category: <b>' + key + '</b></p>' +
-                     '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
-                     '<p>Date: <b>' +  x + '</b></p>'
-            })
+          .x(function(d) { return d[0]; })
+          .y(function(d) { return d[1]; })
+          .tooltipContent( function(key, x, y, e, graph) {
+            return '<p>Category: <b>' + key + '</b></p>' +
+                   '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
+                   '<p>Date: <b>' +  x + '</b></p>';
+          })
           .showTitle(true)
           .tooltips(true)
           .showControls(true)
-          //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
-          //.colorData( 'class' )
-          //.colorData( 'default' )
+          .colorData( 'default' )
           //.forceY([0,400]).forceX([0,6]);
         ;
 
     chart.xAxis
-        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
 
     chart.yAxis
         .axisLabel('Expenditures ($)')

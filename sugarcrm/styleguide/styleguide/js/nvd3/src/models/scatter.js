@@ -325,9 +325,9 @@ nv.models.scatter = function() {
                   pointIndex: i
                 });
               });
-          }
+        }
 
-          needsUpdate = false;
+        needsUpdate = false;
       }
 
       needsUpdate = true;

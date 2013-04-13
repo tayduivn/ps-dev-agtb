@@ -15,10 +15,10 @@ nv.models.multiBarHorizontalChart = function() {
   var margin = {top: 30, right: 20, bottom: 50, left: 60}
     , width = null
     , height = null
+    , showTitle = false
     , showControls = true
     , showLegend = true
-    , showTitle = false
-    , stacked = true
+    , stacked = false
     , tooltips = true
     , tooltip = function(key, x, y, e, graph) {
         return '<h3>' + key + ' - ' + x + '</h3>' +
@@ -31,12 +31,6 @@ nv.models.multiBarHorizontalChart = function() {
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState')
     , controlWidth = function(w) { return showControls ? w * 0.3 : 0 }
     ;
-
-
-  //var xAxis = nv.models.axis().scale(x)
-  //  , yAxis = nv.models.axis().scale(y)
-  //  , legend = nv.models.legend().height(30)
-  //  , controls = nv.models.legend().height(30)
 
   multibar
     .stacked(stacked)
@@ -439,6 +433,12 @@ nv.models.multiBarHorizontalChart = function() {
     return chart;
   };
 
+  chart.showTitle = function(_) {
+    if (!arguments.length) return showTitle;
+    showTitle = _;
+    return chart;
+  };
+
   chart.showControls = function(_) {
     if (!arguments.length) return showControls;
     showControls = _;
@@ -448,12 +448,6 @@ nv.models.multiBarHorizontalChart = function() {
   chart.showLegend = function(_) {
     if (!arguments.length) return showLegend;
     showLegend = _;
-    return chart;
-  };
-
-  chart.showTitle = function(_) {
-    if (!arguments.length) return showTitle;
-    showTitle = _;
     return chart;
   };
 
