@@ -59,6 +59,7 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->opportunity = SugarTestOpportunityUtilities::createOpportunity();
         $this->opportunity->currency_id = $this->currency->id;
+        $this->opportunity->sales_stage = 'Prospecting';
         $this->opportunity->save();
 
         $this->opportunityClosed = SugarTestOpportunityUtilities::createOpportunity();
@@ -131,12 +132,12 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $forecastBaseRate = $db->getOne(sprintf("SELECT base_rate FROM forecasts WHERE id = '%s'", $this->forecast->id));
         //$forecastScheduleBaseRate = $db->getOne(sprintf("SELECT base_rate FROM forecast_schedule WHERE id = '%s'", $this->forecastSchedule->id));
 
-        $this->assertNotEquals($oppBaseRatePreJob, $oppBaseRate, 'opportunities.base_rate was modified by CurrencyRateSchedulerJob');
-        $this->assertNotEquals($oppUsDollarPreJob, $oppUsDollar, 'opportunities.amount_usdollar was modified by CurrencyRateSchedulerJob',2);
-        $this->assertEquals($oppBaseRateClosedPreJob, $oppBaseRateClosed, 'opportunities.base_rate was not modified by CurrencyRateSchedulerJob');
-        $this->assertEquals($oppUsDollarClosedPreJob, $oppUsDollarClosed, 'opportunities.amount_usdollar was not modified by CurrencyRateSchedulerJob for closed opportunity',2);
-        $this->assertNotEquals($quotaBaseRatePreJob, $quotaBaseRate, 'quotas.base_rate was modified by CurrencyRateSchedulerJob');
-        $this->assertEquals($forecastBaseRatePreJob, $forecastBaseRate, 'forecasts.base_rate was not modified by CurrencyRateSchedulerJob');
+        $this->assertNotEquals($oppBaseRatePreJob, $oppBaseRate, 'opportunities.base_rate was not modified by CurrencyRateSchedulerJob');
+        $this->assertNotEquals($oppUsDollarPreJob, $oppUsDollar, 'opportunities.amount_usdollar was not modified by CurrencyRateSchedulerJob',2);
+        $this->assertEquals($oppBaseRateClosedPreJob, $oppBaseRateClosed, 'opportunities.base_rate was modified by CurrencyRateSchedulerJob');
+        $this->assertEquals($oppUsDollarClosedPreJob, $oppUsDollarClosed, 'opportunities.amount_usdollar was modified by CurrencyRateSchedulerJob for closed opportunity',2);
+        $this->assertNotEquals($quotaBaseRatePreJob, $quotaBaseRate, 'quotas.base_rate was not modified by CurrencyRateSchedulerJob');
+        $this->assertEquals($forecastBaseRatePreJob, $forecastBaseRate, 'forecasts.base_rate was modified by CurrencyRateSchedulerJob');
         //$this->assertNotEquals($forecastScheduleBaseRatePreJob, $forecastScheduleBaseRate, 'forecast_schedule.base_rate modified by CurrencyRateSchedulerJob');
     }
 
