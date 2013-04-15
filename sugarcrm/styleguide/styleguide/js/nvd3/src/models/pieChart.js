@@ -31,14 +31,6 @@ nv.models.pieChart = function() {
   // Private Variables
   //------------------------------------------------------------
 
-  // var showTooltip = function(e, offsetElement) {
-  //   var left = e.pos[0] + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
-  //       top = e.pos[1] + ( (offsetElement && offsetElement.offsetTop) || 0),
-  //       y = pie.valueFormat()(pie.y()(e.point)),
-  //       content = tooltip(pie.x()(e.point), y, e, chart);
-
-  //   nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
-  // };
   var showTooltip = function(e, offsetElement, total) {
 
     var left = e.pos[0] + ( (offsetElement && offsetElement.offsetLeft) || 0 )
@@ -46,8 +38,10 @@ nv.models.pieChart = function() {
       , x = (pie.y()(e.point) * 100 / total).toFixed(1)
       , y = pie.valueFormat()( pie.y()(e.point) )
       , content = ( tooltip( e.point.key, x, y, e, chart ) )
+      //content = tooltip(pie.x()(e.point), y, e, chart);
     ;
 
+    //nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
     nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
 
@@ -55,7 +49,6 @@ nv.models.pieChart = function() {
 
 
   function chart(selection) {
-
     selection.each(function(chartData) {
 
       var properties = chartData.properties
@@ -64,16 +57,16 @@ nv.models.pieChart = function() {
       var container = d3.select(this),
           that = this;
 
-      var availableWidth = (width || parseInt(container.style('width'), 10) || 960)
-                             - margin.left - margin.right
-        , availableHeight = (height || parseInt(container.style('height'), 10) || 400)
-                             - margin.top - margin.bottom
+      var availableWidth = (width || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right
+        , availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom
         , total = d3.sum( data.map( function(d) { return d.value; }) )
       ;
 
       chart.update = function() { chart(selection); };
       chart.container = this;
 
+      //set state.disabled
+      state.disabled = data.map(function(d) { return !!d.disabled });
 
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
@@ -102,7 +95,7 @@ nv.models.pieChart = function() {
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
 
-      var wrap = container.selectAll('g.nv-wrap.nv-pieChart').data([chartData]);
+      var wrap = container.selectAll('g.nv-wrap.nv-pieChart').data([data]);
       var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-pieChart').append('g');
       var g = wrap.select('g');
 
@@ -127,18 +120,16 @@ nv.models.pieChart = function() {
 
         legendHeight = legend.height() + 10;
 
-        if ( margin.top !== legendHeight + titleHeight ) {
+        if (margin.top !== legendHeight + titleHeight) {
           margin.top = legendHeight + titleHeight;
-          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
-                             - margin.top - margin.bottom;
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
         }
 
         wrap.select('.nv-legendWrap')
             .attr('transform', 'translate(0,' + (-margin.top) +')');
       }
 
-      if (showTitle && properties.title )
-      {
+      if (showTitle && properties.title) {
         gEnter.append('g').attr('class', 'nv-titleWrap');
 
         g.select('.nv-title').remove();
@@ -158,11 +149,9 @@ nv.models.pieChart = function() {
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
 
-        if ( margin.top !== titleHeight + legendHeight )
-        {
+        if (margin.top !== titleHeight + legendHeight) {
           margin.top = titleHeight + legendHeight;
-          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
-                             - margin.top - margin.bottom;
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
         }
 
         g.select('.nv-titleWrap')

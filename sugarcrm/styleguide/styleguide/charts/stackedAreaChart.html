@@ -38,7 +38,7 @@
     var chart = nv.models.stackedAreaChart()
           .x(function(d) { return d[0] })
           .y(function(d) { return d[1] })
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
               return '<p>Category: <b>' + key + '</b></p>' +
                      '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
                      '<p>Date: <b>' +  x + '</b></p>'

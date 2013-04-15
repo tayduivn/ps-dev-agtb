@@ -427,7 +427,7 @@ nv.models.stackedAreaChart = function() {
     return chart;
   };
 
-  chart.tooltip = function(_) {
+  chart.tooltipContent = function(_) {
     if (!arguments.length) return tooltip;
     tooltip = _;
     return chart;

@@ -23,10 +23,6 @@ nv.models.multiBarHorizontal = function() {
     , delay = 1200
     , xDomain
     , yDomain
-    , tooltip = function(key, x, y, e, graph) {
-        return '<h3>' + key + " - " + x + '</h3>' +
-               '<p>' +  y + '</p>'
-      }
     , color = nv.utils.defaultColor()
     , fill = color
     , classes = function (d,i) { return 'nv-group nv-series-'+ i; }
