@@ -3226,9 +3226,12 @@ function sugar_cleanup($exit = false)
     static $called = false;
     if($called)return;
     $called = true;
-    set_include_path(realpath(dirname(__FILE__) . '/..') . PATH_SEPARATOR . get_include_path());
-    chdir(sugar_root_dir());
-    global $sugar_config;
+    $root_path = sugar_root_dir();
+    $paths = explode(PATH_SEPARATOR, get_include_path());
+    if (in_array($root_path, $paths) == false) {
+        set_include_path($root_path . PATH_SEPARATOR . get_include_path());
+    }
+    chdir($root_path);    global $sugar_config;
     require_once 'include/utils/LogicHook.php';
     LogicHook::initialize();
     $GLOBALS['logic_hook']->call_custom_logic('', 'server_round_trip');
@@ -3237,7 +3240,7 @@ function sugar_cleanup($exit = false)
     if (empty($sugar_config['dbconfig'])) {
         if ($exit) exit; else return;
     }
-
+    
     if (!class_exists('Tracker', true)) {
         require_once 'modules/Trackers/Tracker.php';
     }
