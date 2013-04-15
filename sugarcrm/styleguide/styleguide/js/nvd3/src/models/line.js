@@ -307,4 +307,4 @@ nv.models.line = function() {
 
 
   return chart;
-}
+};
