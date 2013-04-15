@@ -203,7 +203,7 @@ function sync_set_entries($session, $module_name,$from_date, $to_date, $sync_ent
 		foreach($entry_list as $value )
 		{
 
-				$cur = $seed->getCopy();
+				$cur = $seed->getCleanCopy();
 				foreach($value['name_value_list'] as $name_value){
 
 					$cur->$name_value['name'] = $name_value['value'];
