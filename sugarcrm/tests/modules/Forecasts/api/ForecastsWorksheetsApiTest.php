@@ -82,7 +82,6 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         // get current settings
 
         SugarTestForecastUtilities::setUpForecastConfig(array(
-                'forecast_by' => 'opportunities',
                 'show_worksheet_worst' => 1
             ));
 
@@ -209,7 +208,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @group forecasts
      * @depends testForecastWorksheets
      *
-     * @param array $worksheet  The worksheet we want to workwith though out the test
+     * @param array $worksheet  The worksheet we want to work with throughout the test
      * @return array
      */
     public function testForecastWorksheetSaveDraft($worksheet)
