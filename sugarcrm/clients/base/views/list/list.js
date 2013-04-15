@@ -68,6 +68,19 @@
 
         options.meta.action = 'list';
 
+        // standardize the align param in the defs if one exist
+        _.each(options.meta.panels, function(panel, panelIdx) {
+            _.each(panel.fields, function(field, fieldIdx) {
+                if (!_.isUndefined(field.align)) {
+                    var alignClass = '';
+                    if (_.contains(['left', 'center', 'right'], field.align)) {
+                        alignClass = 't' + field.align;
+                    }
+                    options.meta.panels[panelIdx].fields[fieldIdx].align = alignClass;
+                }
+            }, this);
+        }, this);
+
         app.view.View.prototype.initialize.call(this, options);
 
         this.fallbackFieldTemplate = 'list-header';

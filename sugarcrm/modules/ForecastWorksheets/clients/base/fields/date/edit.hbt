@@ -26,30 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#each meta.panels}}
-<table class="table table-striped dataTable">
-    <thead>
-    <tr>
-        {{#each fields}}
-            <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.columnName name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
-                 data-fieldname="{{name}}" data-orderby="{{orderBy}}">
-                 <span>
-                    {{str label ../../module}}
-                 </span>
-            </th>
-        {{/each}}
-    </tr>
-    </thead>
-    <tbody>
-    {{#each ../collection.models}}
-    <tr name="{{module}}_{{attributes.id}}" class="single">
-        {{#each ../fields}}
-            <td{{#if this.align}} class="{{this.align}}"{{/if}}>
-              {{field ../../../this model=../this template=../../../this.viewName}}
-            </td>
-        {{/each}}
-    </tr>
-    {{/each}}
-    </tbody>
-</table>
-{{/each}}
+<span class="edit">
+    <div class="input-append date" rel="datepicker">
+        <input type="text" class="datepicker input-small focused" value="{{this.dateValue}}" rel="datepicker">
+        <span class="add-on"><i class="icon-calendar"></i></span>
+        <span class="error-tooltip hide" rel="tooltip">
+            <i class="icon-exclamation-sign"></i>
+        </span>
+    </div>
+</span>

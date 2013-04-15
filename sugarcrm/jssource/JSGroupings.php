@@ -381,6 +381,7 @@
                     'include/javascript/sugar7/plugins/timeago.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/error-decoration.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/quicksearchfilter.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/click-to-edit.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/GridBuilder.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/list-disable-sort.js'  => 'include/javascript/sugar_sidecar.min.js',
 

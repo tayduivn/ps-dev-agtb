@@ -1,29 +1,19 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-/********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 require_once('clients/base/api/FilterApi.php');
-class ForecastManagerWorksheetsFilterApi extends FilterApi
+class ForecastWorksheetsFilterApi extends FilterApi
 {
 
     /**
@@ -38,73 +28,72 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
         return array(
             'forecastWorksheetGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastManagerWorksheets'),
+                'path' => array('ForecastWorksheets'),
                 'pathVars' => array('module'),
-                'method' => 'ForecastManagerWorksheetsGet',
+                'method' => 'forecastWorksheetsGet',
                 'jsonParams' => array(),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
             ),
             'forecastWorksheetTimePeriodGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastManagerWorksheets', '?'),
+                'path' => array('ForecastWorksheets','?'),
                 'pathVars' => array('module', 'timeperiod_id'),
-                'method' => 'ForecastManagerWorksheetsGet',
+                'method' => 'forecastWorksheetsGet',
                 'jsonParams' => array(),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
             ),
             'forecastWorksheetTimePeriodUserIdGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastManagerWorksheets', '?', '?'),
+                'path' => array('ForecastWorksheets','?', '?'),
                 'pathVars' => array('module', 'timeperiod_id', 'user_id'),
-                'method' => 'ForecastManagerWorksheetsGet',
+                'method' => 'forecastWorksheetsGet',
                 'jsonParams' => array(),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
             ),
             'forecastWorksheetChartGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastManagerWorksheets', 'chart'),
+                'path' => array('ForecastWorksheets', 'chart'),
                 'pathVars' => array('module', ''),
-                'method' => 'forecastManagerWorksheetsChartGet',
+                'method' => 'forecastWorksheetsChartGet',
                 'jsonParams' => array(),
                 'shortHelp' => 'Filter records and reformat data for chart presentation',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/forecastManagerWorksheetsChartGet.html'
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsWorksheetChartGet.html'
             ),
             'forecastWorksheetChartTimePeriodGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastManagerWorksheets', 'chart', '?'),
+                'path' => array('ForecastWorksheets', 'chart', '?'),
                 'pathVars' => array('module', '', 'timeperiod_id'),
-                'method' => 'forecastManagerWorksheetsChartGet',
+                'method' => 'forecastWorksheetsChartGet',
                 'jsonParams' => array(),
                 'shortHelp' => 'Filter records and reformat data for chart presentation',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/forecastManagerWorksheetsChartGet.html'
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsWorksheetChartGet.html'
             ),
             'forecastWorksheetChartTimePeriodUserIdGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastManagerWorksheets', 'chart', '?', '?'),
+                'path' => array('ForecastWorksheets', 'chart', '?', '?'),
                 'pathVars' => array('module', '', 'timeperiod_id', 'user_id'),
-                'method' => 'forecastManagerWorksheetsChartGet',
+                'method' => 'forecastWorksheetsChartGet',
                 'jsonParams' => array(),
                 'shortHelp' => 'Filter records and reformat data for chart presentation',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/forecastManagerWorksheetsChartGet.html'
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsWorksheetChartGet.html'
             ),
             'filterModuleGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastManagerWorksheets', 'filter'),
+                'path' => array('ForecastWorksheets', 'filter'),
                 'pathVars' => array('module', ''),
-                'method' => 'filterList',
+                'method' => 'forecastWorksheetsGet',
                 'jsonParams' => array('filter'),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetFilter.html',
             ),
             'filterModulePost' => array(
                 'reqType' => 'POST',
-                'path' => array('ForecastManagerWorksheets', 'filter'),
+                'path' => array('ForecastWorksheets', 'filter'),
                 'pathVars' => array('module', ''),
-                'method' => 'filterList',
-                'jsonParams' => array('filter'),
+                'method' => 'forecastWorksheetsGet',
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetFilter.html',
             ),
@@ -118,18 +107,18 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
      * @param array $args
      * @return array
      */
-    public function ForecastManagerWorksheetsGet(ServiceBase $api, array $args)
+    public function forecastWorksheetsGet(ServiceBase $api, array $args)
     {
         // if no timeperiod is set, just set it to false, and the current time period will be set
-        if (!isset($args['timeperiod_id'])) {
+        if(!isset($args['timeperiod_id'])) {
             $args['timeperiod_id'] = false;
         }
         // if no user id is set, just set it to false so it will use the default user
-        if (!isset($args['user_id'])) {
+        if(!isset($args['user_id'])) {
             $args['user_id'] = false;
         }
         // make sure the type arg is set to prevent notices
-        if (!isset($args['type'])) {
+        if(!isset($args['type'])) {
             $args['type'] = '';
         }
 
@@ -139,55 +128,21 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
     }
 
     /**
-     * Forecast Manager Worksheet API handler to return data formatted for the chart
+     * Forecast Worksheet API Handler to return data formatted for the chart
      *
      * @param ServiceBase $api
      * @param array $args
      * @return array|string
      */
-    public function forecastManagerWorksheetsChartGet(ServiceBase $api, array $args)
+    public function forecastWorksheetsChartGet(ServiceBase $api, array $args)
     {
 
         //get data via forecastWorksheetsGet, no need to bother with filter setup, get will do that
-        $worksheetData = $this->ForecastManagerWorksheetsGet($api, $args);
-
-        //get all users in direct hierarchy
-        $usersList = $this->getDirectHierarchyUsers($api, $args);
-        $assignedUser = BeanFactory::getBean("Users", $args['user_id']);
-
-        //compare users and worksheet data to fill in gaps
-        foreach($usersList['records'] as $user) {
-            $userExists = false;
-            foreach($worksheetData['records'] as $worksheet) {
-                if($worksheet['user_id'] == $user['id']) {
-                    $userExists = true;
-                    break;
-                }
-            }
-            if(!$userExists) {
-                $blankWorksheet = BeanFactory::newBean('ForecastManagerWorksheets');
-                $blankWorksheet->assigned_user_id = $args['user_id'];
-                $blankWorksheet->user_id = $user['id'];
-                $blankWorksheet->timeperiod_id = $args['timeperiod_id'];
-                $blankWorksheet->assigned_user_name = $assignedUser->user_name;
-                $blankWorksheet->quota = 0;
-                $blankWorksheet->likely_case = 0;
-                $blankWorksheet->likely_case_adjusted = 0;
-                $blankWorksheet->best_case = 0;
-                $blankWorksheet->best_case_adjusted = 0;
-                $blankWorksheet->worst_case = 0;
-                $blankWorksheet->worst_case_adjusted = 0;
-                $blankWorksheet->currency_id = '-99';
-                $blankWorksheet->base_rate = 1.0;
-                $blankWorksheet->id = '';
-                $blankWorksheet->name = $user['full_name'];
-                array_push($worksheetData['records'], $this->formatBean($api, $args, $blankWorksheet));
-            }
-        }
+        $worksheetData = $this->forecastWorksheetsGet($api, $args);
 
         // default to the Individual Code
-        $file = 'include/SugarForecasting/Chart/Manager.php';
-        $klass = 'SugarForecasting_Chart_Manager';
+        $file = 'include/SugarForecasting/Chart/Individual.php';
+        $klass = 'SugarForecasting_Chart_Individual';
 
         // check for a custom file exists
         SugarAutoLoader::requireWithCustom($file);
@@ -201,35 +156,6 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
         $chartData = $obj->process();
 
         return $chartData;
-    }
-
-    protected function getDirectHierarchyUsers(ServiceBase $api, array $args) {
-        // we need to check if the $api->user is a manager
-        // if they are not a manager, throw back a 403 (Not Authorized) error
-        if (!User::isManager($api->user->id)) {
-            throw new SugarApiExceptionNotAuthorized();
-        }
-
-        $args['filter'] = array();
-
-        // if we did not find a user in the args array, set it to the current user's id
-        if (!isset($args['user_id'])) {
-           $args['user_id'] = $api->user->id;
-        } else {
-            // make sure that the passed in user is a valid user
-            /* @var $user User */
-            // we use retrieveBean so it will return NULL and not an empty bean if the $args['user_id'] is invalid
-            $user = BeanFactory::retrieveBean('Users', $args['user_id']);
-            if (is_null($user)) {
-                throw new SugarApiExceptionInvalidParameter('Provided User is not valid');
-            }
-        }
-
-        // set the reports to id
-        array_push($args['filter'], array('$or' => array(array('reports_to_id' => $args['user_id']),array('id' => $args['user_id']))));
-
-        $args['module'] = 'Users';
-        return parent::filterList($api, $args);
     }
 
     /**
@@ -266,7 +192,7 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
                     // remove the timeperiod_id
                     unset($args['filter'][$key]);
                 }
-                // if the key is 'draft', remote it from the filter
+                // if the key is 'draft', remove it from the filter
                 if ($filter_key == 'draft') {
                     unset($args['filter'][$key]);
                 }
@@ -288,18 +214,13 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
      * @param ServiceBase $api                  Service Api Class
      * @param mixed $user_id                    Passed in User ID, if false, it will use the current use from $api->user
      * @param mixed $timeperiod_id              TimePeriod Id, if false, the current time period will be found an used
+     * @param string $parent_type               Type of worksheet to return, defaults to 'opportunities', but can be 'products'
      * @return array                            The Filer array to be passed back into the filerList Api
      * @throws SugarApiExceptionNotAuthorized
      * @throws SugarApiExceptionInvalidParameter
      */
-    protected function createFilter(ServiceBase $api, $user_id, $timeperiod_id)
+    protected function createFilter(ServiceBase $api, $user_id, $timeperiod_id, $parent_type = 'opportunities')
     {
-        // we need to check if the $api->user is a manager
-        // if they are not a manager, throw back a 403 (Not Authorized) error
-        if (!User::isManager($api->user->id)) {
-            throw new SugarApiExceptionNotAuthorized();
-        }
-
         $filter = array();
 
         // default draft to be 1
@@ -320,6 +241,11 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
             $draft = ($user_id == $api->user->id) ? 1 : 0;
         }
 
+        // so we have a valid user, and it's not the $api->user, we need to check if the $api->user is a manager
+        // if they are not a manager, throw back a 403 (Not Authorized) error
+        if ($draft == 0 && !User::isManager($api->user->id)) {
+            throw new SugarApiExceptionNotAuthorized();
+        }
         // todo-sfa: Make sure that the passed in user can be viewed by the $api->user, need to check reportee tree
         // set the assigned_user_id
         array_push($filter, array('assigned_user_id' => $user_id));
@@ -338,8 +264,58 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
         if (is_null($tp)) {
             throw new SugarApiExceptionInvalidParameter('Provided TimePeriod is not valid');
         }
-        array_push($filter, array('timeperiod_id' => $tp->id));
+        array_push(
+            $filter,
+            array(
+                '$and' => array(
+                    array('date_closed_timestamp' => array('$gte' => $tp->start_date_timestamp)),
+                    array('date_closed_timestamp' => array('$lte' => $tp->end_date_timestamp)),
+                )
+            )
+        );
+
+        if(empty($parent_type)) {
+            // get the forecast_by setting
+            /* @var $admin Administration */
+            $admin = BeanFactory::getBean('Administration');
+            $settings = $admin->getConfigForModule('Forecasts', $api->platform);
+            $parent_type = $settings['forecast_by'];
+        }
+
+        // we only want to view parent_types of 'Opportunities' here
+        array_push($filter, array('parent_type' => $this->getParentType($parent_type)));
 
         return $filter;
     }
+
+    /**
+     * Utility Method to find the proper ParentType for the filter
+     *
+     * @param string $param         The Type from the ajax request
+     * @return string
+     */
+    protected function getParentType($param)
+    {
+        // make sure that type is a module name
+        if (is_string($param)) {
+            switch (strtolower($param)) {
+                case 'lineitem':
+                case 'lineitems':
+                case 'product':
+                case 'products':
+                    $param = 'Products';
+                    break;
+                case 'opportunity':
+                case 'opportunities':
+                default:
+                    $param = 'Opportunities';
+
+            }
+        } else {
+            $param = 'Opportunities';
+        }
+
+        return $param;
+    }
+
 }
