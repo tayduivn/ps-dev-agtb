@@ -13,13 +13,14 @@ nv.models.multiBar = function() {
     , id = Math.floor(Math.random() * 10000) //Create semi-unique ID in case user doesn't select one
     , getX = function(d) { return d.x; }
     , getY = function(d) { return d.y; }
+    , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
     , clipEdge = true
+    , stacked = false
+    , barColor = null // adding the ability to set the color for each rather than the whole group
+    , disabled // used in conjunction with barColor to communicate from multiBarHorizontalChart what series are disabled
+    , delay = 1200
     , xDomain
     , yDomain
-    , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
-    , stacked = false
-    , delay = 1200
-    , scatter = nv.models.scatter()
     , color = nv.utils.defaultColor()
     , fill = color
     , classes = function (d,i) { return 'nv-group nv-series-'+ i; }
@@ -38,6 +39,7 @@ nv.models.multiBar = function() {
 
   //============================================================
 
+
   function chart(selection) {
     selection.each(function(data) {
       var availableWidth = width - margin.left - margin.right
@@ -53,6 +55,7 @@ nv.models.multiBar = function() {
                  (data);
       }
 
+
       //add series index to each data point for reference
       data = data.map(function(series, i) {
         series.values = series.values.map(function(point) {
@@ -62,21 +65,41 @@ nv.models.multiBar = function() {
         return series;
       });
 
+
+      //------------------------------------------------------------
+      // HACK for negative value stacking
+      if (stacked)
+        data[0].values.map(function (d,i) {
+          var posBase = 0, negBase = 0;
+          data.map(function (d) {
+            var f = d.values[i];
+            f.size = Math.abs(f.y);
+            if (f.y<0) {
+              f.y1 = negBase;
+              negBase = negBase - f.size;
+            } else {
+              f.y1 = f.size + posBase;
+              posBase = posBase + f.size;
+            }
+          });
+        });
+
       //------------------------------------------------------------
       // Setup Scales
 
       // remap and flatten the data for use in calculating the scales' domains
       var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
             data.map(function(d) {
-              return d.values.map(function(d,i) {
-                return { x: getX(d,i), y: getY(d,i), y0: d.y0 };
+              return d.values.map(function (d,i) {
+                return { x: getX(d,i), y: getY(d,i), y0: d.y0, y1: d.y1 };
               });
             });
 
-      x   .domain(d3.merge(seriesData).map(function(d) { return d.x; }))
+      x   .domain(d3.merge(seriesData).map(function (d) { return d.x; }))
           .rangeBands([0, availableWidth], 0.3);
 
-      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + (stacked ? d.y0 : 0); }).concat(forceY)))
+      //y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + (stacked ? d.y0 : 0); }).concat(forceY)))
+      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y }).concat(forceY)))
           .range([availableHeight, 0]);
 
       // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point
@@ -90,6 +113,7 @@ nv.models.multiBar = function() {
         y.domain()[0] ?
             y.domain([y.domain()[0] + y.domain()[0] * 0.01, y.domain()[1] - y.domain()[1] * 0.01])
           : y.domain([-1,1]);
+
 
       x0 = x0 || x;
       y0 = y0 || y;
@@ -113,21 +137,22 @@ nv.models.multiBar = function() {
 
       gEnter.append('g').attr('class', 'nv-groups');
 
-      wrap.attr('transform', 'translate('+ margin.left +','+ margin.top +')');
+      wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
       //------------------------------------------------------------
-      // Clip Path
+
+
 
       defsEnter.append('clipPath')
-          .attr('id', 'nv-edge-clip-'+ id)
+          .attr('id', 'nv-edge-clip-' + id)
         .append('rect');
-      wrap.select('#nv-edge-clip-'+ id +' rect')
+      wrap.select('#nv-edge-clip-' + id + ' rect')
           .attr('width', availableWidth)
           .attr('height', availableHeight);
-      g.attr('clip-path', clipEdge ? 'url(#nv-edge-clip-'+ id +')' : '');
+
+      g   .attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
 
 
-      //------------------------------------------------------------
 
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
           .data(function(d) { return d; }, function(d) { return d.key; });
@@ -143,7 +168,7 @@ nv.models.multiBar = function() {
           .attr('height', 0)
           .remove();
       groups
-          //.attr('class', function(d,i) { return 'nv-group nv-series-' + i })
+          //.attr('class', function(d,i) { return 'nv-group nv-series-' + i; })
           .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
           .classed('hover', function(d) { return d.hover; })
           .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i); })
@@ -152,10 +177,12 @@ nv.models.multiBar = function() {
           .style('stroke-opacity', 1)
           .style('fill-opacity', 0.85);
 
+
       var bars = groups.selectAll('rect.nv-bar')
           .data(function(d) { return d.values; });
 
       bars.exit().remove();
+
 
       var barsEnter = bars.enter().append('rect')
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'; })
@@ -165,15 +192,6 @@ nv.models.multiBar = function() {
           .attr('y', function(d) { return y0(stacked ? d.y0 : 0); })
           .attr('height', 0)
           .attr('width', x.rangeBand() / (stacked ? 1 : data.length) );
-
-      bars
-          .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'; })
-          .attr('transform', function(d,i) {
-            return 'translate('+ x(getX(d,i)) +',0)';
-          });
-
-      //------------------------------------------------------------
-
       bars
           .on('mouseover', function(d,i) { //TODO: figure out why j works above, but not here
             d3.select(this).classed('hover', true);
@@ -203,7 +221,7 @@ nv.models.multiBar = function() {
               value: getY(d,i),
               point: d,
               series: data[d.series],
-              pos: [x(getX(d,i)) + ( x.rangeBand() * (stacked ? data.length / 2 : d.series + 0.5) / data.length ), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
+              pos: [x(getX(d,i)) + (x.rangeBand() * (stacked ? data.length / 2 : d.series + 0.5) / data.length), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
               pointIndex: i,
               seriesIndex: d.series,
               e: d3.event
@@ -222,25 +240,43 @@ nv.models.multiBar = function() {
             });
             d3.event.stopPropagation();
           });
+      bars
+          .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'; })
+          .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; });
 
-      if (stacked)
-      {
+      if (barColor) {
+        if (!disabled) disabled = data.map(function() { return true; });
+        bars
+          //.style('fill', barColor)
+          //.style('stroke', barColor)
+          //.style('fill', function(d,i,j) { return d3.rgb(barColor(d,i)).darker(j).toString(); })
+          //.style('stroke', function(d,i,j) { return d3.rgb(barColor(d,i)).darker(j).toString(); })
+          .style('fill', function(d,i,j) {
+            return d3.rgb(barColor(d,i)).darker(disabled.map(function(d,i) { return i }).filter(function(d,i){ return !disabled[i]  })[j]).toString();
+          })
+          .style('stroke', function(d,i,j) {
+            return d3.rgb(barColor(d,i)).darker(disabled.map(function(d,i) { return i }).filter(function(d,i){ return !disabled[i]  })[j]).toString();
+          });
+      }
+
+
+      if (stacked) {
         d3.transition(bars)
             .delay(function(d,i) { return i * delay / data[0].values.length; })
             .attr('y', function(d,i) {
-              return y(getY(d,i) + (stacked ? d.y0 : 0));
+              return y((stacked ? d.y1 : 0));
             })
             .attr('height', function(d,i) {
-              return Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0)));
+              return Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))),1);
             })
             .each('end', function() {
               d3.transition(d3.select(this))
-                .attr('x', 0)
-                .attr('width', x.rangeBand() );
+                .attr('x', function(d,i) {
+                  return stacked ? 0 : (d.series * x.rangeBand() / data.length);
+                })
+                .attr('width', x.rangeBand() / (stacked ? 1 : data.length));
             });
-      }
-      else
-      {
+      } else {
         d3.transition(bars)
           .delay(function(d,i) { return i * delay/ data[0].values.length; })
             .attr('x', function(d,i) {
@@ -251,14 +287,17 @@ nv.models.multiBar = function() {
               d3.transition(d3.select(this))
                 .attr('y', function(d,i) {
                   return getY(d,i) < 0 ?
-                    y(0) :
-                    y(getY(d,i));
-                })
-                .attr('height', function(d,i) {
-                  return Math.abs(y(getY(d,i)) - y(0));
+                          y(0) :
+                          y(0) - y(getY(d,i)) < 1 ?
+                            y(0) - 1 :
+                          y(getY(d,i)) || 0;
+              })
+              .attr('height', function(d,i) {
+                  return Math.max(Math.abs(y(getY(d,i)) - y(0)),1) || 0;
                 });
             });
       }
+
 
       //store old scales for use in transitions on update
       x0 = x.copy();
@@ -311,7 +350,10 @@ nv.models.multiBar = function() {
 
   chart.margin = function(_) {
     if (!arguments.length) return margin;
-    margin = _;
+    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
+    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
+    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
+    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
     return chart;
   };
 
@@ -363,6 +405,24 @@ nv.models.multiBar = function() {
     return chart;
   };
 
+  chart.clipEdge = function(_) {
+    if (!arguments.length) return clipEdge;
+    clipEdge = _;
+    return chart;
+  };
+
+  chart.barColor = function(_) {
+    if (!arguments.length) return barColor;
+    barColor = nv.utils.getColor(_);
+    return chart;
+  };
+
+  chart.disabled = function(_) {
+    if (!arguments.length) return disabled;
+    disabled = _;
+    return chart;
+  };
+
   chart.id = function(_) {
     if (!arguments.length) return id;
     id = _;
@@ -375,14 +435,8 @@ nv.models.multiBar = function() {
     return chart;
   };
 
-  chart.clipEdge = function(_) {
-    if (!arguments.length) return clipEdge;
-    clipEdge = _;
-    return chart;
-  };
-
   //============================================================
 
 
   return chart;
-}
+};
