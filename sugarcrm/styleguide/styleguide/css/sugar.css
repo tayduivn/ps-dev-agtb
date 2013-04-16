@@ -7659,16 +7659,18 @@ svg .title {
   cursor: default;
 }
 .nv-treemap svg {
-  background-color: #f5f5f5;
+  background-color: #fff;
 }
 .nv-treemap svg text {
   pointer-events: none;
+  fill: #fff;
 }
 .nv-treemap svg .nv-depth text {
   fill: #fff;
 }
 .nv-treemap svg .nv-grandparent text {
   font-weight: bold;
+  fill: #58595B;
 }
 .nv-treemap svg rect {
   stroke: #fff;
@@ -7686,6 +7688,7 @@ svg .title {
 }
 .nv-treemap svg .nv-parent {
   fill: none;
+  font-weight: normal;
 }
 .nv-treemap svg .nv-grandparent rect {
   fill: #fff;
@@ -7698,37 +7701,37 @@ svg .title {
   pointer-events: all;
 }
 .stage_closedwon {
-  fill: #696969;
+  fill: #2ca02c;
 }
 .stage_prospecting {
-  fill: #9c9c9c;
+  fill: #5b2a00;
 }
 .stage_closedlost {
-  fill: #a9a9a9;
+  fill: #d62728;
 }
 .stage_qualification {
-  fill: #4f4f4f;
+  fill: #ff7f0e;
 }
 .stage_thisopp {
-  fill: #3FB300;
+  fill: #1f77b4;
 }
 .stage_negotiationreview {
-  fill: #8f8f8f;
+  fill: #000000;
 }
 .stage_perceptionanalysis {
-  fill: #a9a9a9;
+  fill: #0b280b;
 }
 .stage_proposalpricequote {
-  fill: #828282;
+  fill: #000000;
 }
 .stage_valueproposition {
-  fill: #8f8f8f;
+  fill: #ff7f0e;
 }
 .stage_iddecisionmakers {
-  fill: #434343;
+  fill: #9467bd;
 }
 .stage_needsanalysis {
-  fill: #dcdcdc;
+  fill: #d9a400;
 }
 .nv-card {
   fill: #E9EFEF;

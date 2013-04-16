@@ -1,5 +1,5 @@
 {
-  "predef": [],
+  "predef": ["d3","nv"],
   "node": true,
   "es5": true,
   "bitwise": true,
@@ -7,7 +7,7 @@
   "eqeqeq": true,
   "forin": true,
   "immed": true,
-  "latedef": true,
+  "latedef": false,
   "newcap": true,
   "noarg": true,
   "noempty": true,
@@ -18,7 +18,8 @@
   "trailing": true,
   "globalstrict": false,
   "nonstandard": true,
-  "white": true,
+  "quotemark": "single",
+  "white": false,
   "indent": 2,
   "onevar": false,
   "laxcomma": true
