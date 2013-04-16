@@ -649,6 +649,9 @@ class Product extends SugarBean
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
         $this->saveProductWorksheet();
+        if ($this->opportunity_id != $this->fetched_row["opportunity_id"]) {
+            $this->resaveOppForRecalc($this->fetched_row["opportunity_id"]);
+        }
         //END SUGARCRM flav=ent ONLY
 
         $this->handleOppSalesStatus();
@@ -757,12 +760,28 @@ class Product extends SugarBean
      */
     public function mark_deleted($id)
     {
+        $oppId = $this->opportunity_id;
         parent::mark_deleted($id);
-
+           
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
         $this->saveProductWorksheet();
+        
+        //save to trigger related field recalculations for deleted item
+        $this->resaveOppForRecalc($oppId);
         //END SUGARCRM flav=ent ONLY
+    }
+    
+    /**
+     * Utility to load/save a related Opp when things are deleted/reassigned so calcuated fields
+     * in Opportunities update with new totals.
+     */
+    protected function resaveOppForRecalc($oppId)
+    {
+    	if (!empty($oppId)) {
+            $opp = BeanFactory::getBean('Opportunities', $oppId);
+            $opp->save();
+        }
     }
 
 
