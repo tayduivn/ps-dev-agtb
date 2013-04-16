@@ -49,7 +49,7 @@ $mod_strings = array(
 	'ERR_UW_FLAVOR_2'							=> 'Upgrade Flavor: ',
 	'ERR_UW_FLAVOR'								=> 'SugarCRM System Flavor: ',
 	'ERR_UW_LOG_FILE_UNWRITABLE'				=> './upgradeWizard.log could not be created/written to.  Please fix permissions on your SugarCRM directory.',
-	'ERR_UW_MBSTRING_FUNC_OVERLOAD'				=> 'mbstring.func_overload set to a value higher than 1.  Please change this in your php.ini and restart the web server.',
+    'ERR_UW_MBSTRING_FUNC_OVERLOAD'				=> 'mbstring.func_overload set to a value higher than 1.  Please change this in your php.ini and restart the web server.',
 	'ERR_UW_MYSQL_VERSION'						=> 'SugarCRM requires MySQL version 4.1.2 or newer.  Found: ',
 	'ERR_UW_OCI8_VERSION'				        => 'Your version of Oracle is not supported by Sugar.  You will need to install a version that is compatible with the Sugar application.  Please consult the Compatibility Matrix in the Release Notes for supported Oracle Versions. Current version: ',
 	'ERR_UW_NO_FILE_UPLOADED'					=> 'Please specify a file and try again!',
@@ -60,10 +60,10 @@ $mod_strings = array(
 	'ERR_UW_NOT_VALID_UPLOAD'					=> 'Not valid upload.',
 	'ERR_UW_NO_CREATE_TMP_DIR'					=> 'Could not create the temp directory. Check file permissions.',
 	'ERR_UW_ONLY_PATCHES'						=> 'You can only upload patches on this page.',
-	'ERR_UW_PREFLIGHT_ERRORS'					=> 'Errors Found During Preflight Check',
+    'ERR_UW_PREFLIGHT_ERRORS'					=> 'Errors Found During Preflight Check',
 	'ERR_UW_UPLOAD_ERR'							=> 'There was an error uploading the file, please try again!<br>\n',
 	'ERR_UW_VERSION'							=> 'SugarCRM System Version: ',
-	'ERR_UW_WRONG_TYPE'							=> 'This page is not for running ',
+    'ERR_UW_WRONG_TYPE'							=> 'This page is not for running ',
 	'ERR_UW_PHP_FILE_ERRORS'					=> array(
 													1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',
 													2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
@@ -74,7 +74,14 @@ $mod_strings = array(
 													7 => 'Failed to write file to disk.',
 													8 => 'File upload stopped by extension.',
 ),
-	'LBL_BUTTON_BACK'							=> '< Back',
+
+    'ERROR_HT_NO_WRITE'                         => 'Cannot write to the file: %s',
+    'ERROR_MANIFEST_TYPE'                       => 'Manifest file must specify the package type.',
+    'ERROR_PACKAGE_TYPE'                        => 'Manifest file specifies an unrecognized package type: %s',
+    'ERROR_VERSION_INCOMPATIBLE'                => 'The upgrade package is not compatible with this version of Sugar: %s',
+
+
+    'LBL_BUTTON_BACK'							=> '< Back',
 	'LBL_BUTTON_CANCEL'							=> 'Cancel',
 	'LBL_BUTTON_DELETE'							=> 'Delete Package',
 	'LBL_BUTTON_DONE'							=> 'Done',
@@ -234,11 +241,6 @@ $mod_strings = array(
 	'LBL_UW_CUSTOMIZED_OR_UPGRADED_MODULES'     => 'Upgraded/Customized Modules',
 	'LBL_UW_FOLLOWING_MODULES_CUSTOMIZED'       => 'The following modules are detected as customized and preserved',
 	'LBL_UW_FOLLOWING_MODULES_UPGRADED'         => 'The following modules are detected as Studio-customized and have been upgraded',
-	//BEGIN SUGARCRM flav=com  && dep=os ONLY
-
-	'LBL_UW_SUGAR_COMMUNITY_EDITION_LICENSE'    => 'The Sugar Community Edition 5.0 uses GNU Affero General Public License version 3. This upgrade will convert your existing license to the new license displayed below.',
-
-	//END SUGARCRM flav=com  && dep=os ONLY
 
 	'LBL_START_UPGRADE_IN_PROGRESS'             => 'Start in progress',
 	'LBL_SYSTEM_CHECKS_IN_PROGRESS'             => 'System Check in Progress',
@@ -301,4 +303,5 @@ $mod_strings = array(
 	'LBL_WORKFLOW' => 'Workflow' /*for 508 compliance fix*/,
 	'LBL_UPGRADE' => 'Upgrade' /*for 508 compliance fix*/,
 	'LBL_PROCESSING' => 'Processing' /*for 508 compliance fix*/,
+    'LBL_GLOBAL_TEAM_DESC'                      => 'Globally Visible',
 );
