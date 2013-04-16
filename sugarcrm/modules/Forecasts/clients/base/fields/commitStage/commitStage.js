@@ -129,6 +129,7 @@
     onKeyDown: function(evt) {
         if(evt.which == 9) {
             evt.preventDefault();
+            this.$("select").select2("close");
             // tab key pressed, trigger event from context
             this.context.trigger('forecasts:tabKeyPressed', evt.shiftKey, this);
         }
