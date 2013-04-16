@@ -763,8 +763,8 @@ class Product extends SugarBean
         $oppId = $this->opportunity_id;
         parent::mark_deleted($id);
            
-        // this only happens when ent is built out
         //BEGIN SUGARCRM flav=ent ONLY
+        // this only happens when ent is built out
         $this->saveProductWorksheet();
         
         //save to trigger related field recalculations for deleted item
