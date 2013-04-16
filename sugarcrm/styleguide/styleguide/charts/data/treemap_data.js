@@ -1,4 +1,4 @@
-var treemap_data = {
+var treemap_data_default = {
     "next_offset": -1,
     "records": [{
         "id": "seed_rbs_op1",
@@ -45,7 +45,9 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#2ca02c"
+
     }, {
         "id": "seed_zebras",
         "name": "Wal-Mart - On Site Training",
@@ -91,7 +93,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_wombats",
         "name": "Wal-Mart - 100 Licenses",
@@ -137,7 +140,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#2ca02c"
     }, {
         "id": "seed_wheels",
         "name": "Volkswagen - 100 Licenses",
@@ -183,7 +187,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_water",
         "name": "British Petroleum - 3000 Licenses",
@@ -229,7 +234,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#2ca02c"
     }, {
         "id": "seed_tshirts",
         "name": "Royal Dutch Shell - 200 T-Shirts",
@@ -275,7 +281,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#d62728"
     }, {
         "id": "seed_sodas",
         "name": "British Petroleum - On Site Training",
@@ -321,7 +328,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_servers",
         "name": "SugarCRM - 150 Liceneses",
@@ -367,7 +375,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#2ca02c"
     }, {
         "id": "seed_rbs_op3",
         "name": "Royal Bank of Scotland - Advanced Analytics Engine",
@@ -413,7 +422,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#2ca02c"
     }, {
         "id": "seed_rbs_op2",
         "name": "Royal Bank of Scotland - On Site Training",
@@ -459,7 +469,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#2ca02c"
     }, {
         "id": "seed_mops",
         "name": "Royal Dutch Shell - 700 Licensed Users",
@@ -505,7 +516,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#2ca02c"
     }, {
         "id": "seed_internets2",
         "name": "Google - 5 Licensed User Trial",
@@ -551,7 +563,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#2ca02c"
     }, {
         "id": "seed_internets",
         "name": "Google - 100 Licensed Users",
@@ -597,7 +610,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_iCats",
         "name": "Apple - 5 User Trial",
@@ -643,7 +657,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#2ca02c"
     }, {
         "id": "seed_hp_op2",
         "name": "HP - Training",
@@ -689,7 +704,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_hp_op1",
         "name": "HP - 25 Liceneses",
@@ -735,7 +751,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_floppy",
         "name": "Apple - 50 User Licenses",
@@ -781,7 +798,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#d62728"
     }, {
         "id": "seed_dell_op3",
         "name": "Dell - Jump Start",
@@ -827,7 +845,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_dell_op2",
         "name": "Dell - Training",
@@ -873,7 +892,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_dell_op1",
         "name": "Dell - 150 Liceneses",
@@ -919,7 +939,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_cubes",
         "name": "SugarCRM - 50 Liceneses",
@@ -965,7 +986,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#d62728"
     }, {
         "id": "seed_chase_op3",
         "name": "JP Morgan Chase - 5 user Pilot",
@@ -1011,7 +1033,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#2ca02c"
     }, {
         "id": "seed_chase_op2",
         "name": "JP Morgan Chase - Training",
@@ -1057,7 +1080,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_chase_op1",
         "name": "JP Morgan Chase - 450 Liceneses",
@@ -1103,7 +1127,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_bugs",
         "name": "Volkswagen - 50 Licenses",
@@ -1149,7 +1174,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#d62728"
     }, {
         "id": "seed_bots",
         "name": "Google - Training",
@@ -1195,7 +1221,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_barclays_op2",
         "name": "Barclays - On Site Training",
@@ -1241,7 +1268,8 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }, {
         "id": "seed_barclays_op1",
         "name": "Barclays - 800 Liceneses",
@@ -1287,6 +1315,7 @@ var treemap_data = {
         "modified_user_name": "",
         "my_favorite": false,
         "_module": "Opportunities",
-        "_score": 1
+        "_score": 1,
+        "color": "#ff7f0e"
     }]
 };
