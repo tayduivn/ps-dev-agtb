@@ -179,7 +179,7 @@ class RestResponse extends Zend_Http_Response
             }
             $etag = md5($this->body);
         }
-    	if(isset($this->server_data["HTTP_IF_NONE_MATCH"])){
+        if(isset($this->server_data["HTTP_IF_NONE_MATCH"])){
     		if($etag == $this->server_data["HTTP_IF_NONE_MATCH"]){
     		    // Same data, clean it up and return 304
     		    $this->body = '';
