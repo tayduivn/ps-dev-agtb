@@ -39,14 +39,14 @@ nv.models.treemap = function() {
     selection.each(function(chartData) {
 
       var data = chartData[0];
-console.log(data);
 
+      //this is for data sets that don't include a colorIndex
+      //excludes leaves
       function reduceGroups(d) {
-        console.log(d);
         var i, l;
-        if ( d.children && groupBy(d) && groups.indexOf(d.type + '_' + groupBy(d)) === -1 )
+        if ( d.children && groupBy(d) && groups.indexOf(groupBy(d)) === -1 )
         {
-          groups.push(d.type + '_' + groupBy(d));
+          groups.push(groupBy(d));
           l = d.children.length;
           for (i = 0; i < l; i += 1) {
             reduceGroups(d.children[i]);
@@ -54,11 +54,6 @@ console.log(data);
         }
       }
       reduceGroups(data);
-      groups.sort(d3.ascending());
-      groups = _.map(groups, function(d){
-        return d.substring(d.indexOf('_')+1);
-      });
-console.log(groups);
 
       var availableWidth = width - margin.left - margin.right
         , availableHeight = height - margin.top - margin.bottom
@@ -91,7 +86,8 @@ console.log(groups);
 
       //set up the gradient constructor function
       chart.gradient = function(d,i,p) {
-        return nv.utils.colorLinearGradient( d, id +'-'+ i, p, color(d, groups.indexOf(groupBy(d.parent)), groups.length), wrap.select('defs') );
+        var iColor = (d.parent.colorIndex||groups.indexOf(groupBy(d.parent))||i);
+        return nv.utils.colorLinearGradient( d, id +'-'+ i, p, color(d, iColor, groups.length), wrap.select('defs') );
       };
 
       //wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -179,8 +175,9 @@ console.log(groups);
           }).enter().append('rect')
               .attr('class', classes)
               .attr('fill', function(d,i){
-                  return this.getAttribute('fill') || fill(d, groups.indexOf(groupBy(d.parent)), groups.length);
-              }).call(rect);
+                var iColor = (d.parent.colorIndex||groups.indexOf(groupBy(d.parent))||i);
+                return this.getAttribute('fill') || fill(d, iColor, groups.length); })
+              .call(rect);
 
         child_rects
           .on('mouseover', function(d,i){
@@ -292,109 +289,109 @@ console.log(groups);
   chart.dispatch = dispatch;
 
   chart.color = function(_) {
-    if (!arguments.length) return color;
+    if (!arguments.length) { return color; }
     color = _;
     return chart;
   };
   chart.fill = function(_) {
-    if (!arguments.length) return fill;
+    if (!arguments.length) { return fill; }
     fill = _;
     return chart;
   };
   chart.classes = function(_) {
-    if (!arguments.length) return classes;
+    if (!arguments.length) { return classes; }
     classes = _;
     return chart;
   };
   chart.gradient = function(_) {
-    if (!arguments.length) return gradient;
+    if (!arguments.length) { return gradient; }
     gradient = _;
     return chart;
   };
 
   chart.x = function(_) {
-    if (!arguments.length) return getX;
+    if (!arguments.length) { return getX; }
     getX = _;
     return chart;
   };
 
   chart.y = function(_) {
-    if (!arguments.length) return getY;
+    if (!arguments.length) { return getY; }
     getY = _;
     return chart;
   };
 
   chart.margin = function(_) {
-    if (!arguments.length) return margin;
-    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
-    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
-    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
-    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
+    if (!arguments.length) { return margin; }
+    margin.top    = typeof _.top    !== 'undefined' ? _.top    : margin.top;
+    margin.right  = typeof _.right  !== 'undefined' ? _.right  : margin.right;
+    margin.bottom = typeof _.bottom !== 'undefined' ? _.bottom : margin.bottom;
+    margin.left   = typeof _.left   !== 'undefined' ? _.left   : margin.left;
     return chart;
   };
 
   chart.width = function(_) {
-    if (!arguments.length) return width;
+    if (!arguments.length) { return width; }
     width = _;
     return chart;
   };
 
   chart.height = function(_) {
-    if (!arguments.length) return height;
+    if (!arguments.length) { return height; }
     height = _;
     return chart;
   };
 
   chart.xScale = function(_) {
-    if (!arguments.length) return x;
+    if (!arguments.length) { return x; }
     x = _;
     return chart;
   };
 
   chart.yScale = function(_) {
-    if (!arguments.length) return y;
+    if (!arguments.length) { return y; }
     y = _;
     return chart;
   };
 
   chart.xDomain = function(_) {
-    if (!arguments.length) return xDomain;
+    if (!arguments.length) { return xDomain; }
     xDomain = _;
     return chart;
   };
 
   chart.yDomain = function(_) {
-    if (!arguments.length) return yDomain;
+    if (!arguments.length) { return yDomain; }
     yDomain = _;
     return chart;
   };
 
   chart.leafClick = function(_) {
-    if (!arguments.length) return leafClick;
+    if (!arguments.length) { return leafClick; }
     leafClick = _;
     return chart;
   };
 
   chart.getSize = function(_) {
-    if (!arguments.length) return getSize;
+    if (!arguments.length) { return getSize; }
     getSize = _;
     return chart;
   };
 
   chart.groupBy = function(_) {
-    if (!arguments.length) return groupBy;
+    if (!arguments.length) { return groupBy; }
     groupBy = _;
     return chart;
   };
 
   chart.groups = function(_) {
-    if (!arguments.length) return groups;
+    if (!arguments.length) { return groups; }
     groups = _;
     return chart;
   };
 
   chart.id = function(_) {
-    if (!arguments.length) return id;
+    if (!arguments.length) { return id; }
     id = _;
     return chart;
   };
