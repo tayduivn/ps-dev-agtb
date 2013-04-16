@@ -270,6 +270,8 @@ class TestSugarSearchEngineFullIndexer extends SugarSearchEngineFullIndexer
 
     private $shouldIndexViaBean;
 
+    public $table_name;
+
     public function markBeansProcessedStub($ids)
     {
         $this->markBeansProcessed($ids);
