@@ -67,16 +67,17 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         
         $product = SugarTestProductUtilities::createProduct();
         $product->opportunity_id = $oppId;        
-        $product->likely_case = 1000;
-        $product->best_case = 1000;
-        $product->worst_case = 1000;
+        $product->likely_case = "1000";
+        $product->best_case = "1000";
+        $product->worst_case = "1000";
         $product->date_closed = "2013-03-01";
         $product->date_closed_timestamp = strtotime("2013-03-01");
         $product->save();
-                
-        $this->assertEquals(1000, $opp->amount, "Amount not equal.");
-        $this->assertEquals(1000, $opp->best_case, "Best_case not equal");
-        $this->assertEquals(1000, $opp->worst_case, "Worst_case not equal");
+        
+        $opp->retrieve($oppId);
+        $this->assertEquals("1000", $opp->amount, "Amount not equal.");
+        $this->assertEquals("1000", $opp->best_case, "Best_case not equal");
+        $this->assertEquals("1000", $opp->worst_case, "Worst_case not equal");
     }
    
    /**
@@ -89,26 +90,28 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         
         $product = SugarTestProductUtilities::createProduct();
         $product->opportunity_id = $oppId;        
-        $product->likely_case = 1000;
-        $product->best_case = 1000;
-        $product->worst_case = 1000;
+        $product->likely_case = "1000";
+        $product->best_case = "1000";
+        $product->worst_case = "1000";
         $product->date_closed = "2013-03-01";
         $product->date_closed_timestamp = strtotime("2013-03-01");
         $product->save();
-                
-        $this->assertEquals(1000, $opp->amount, "Amount not equal.");
-        $this->assertEquals(1000, $opp->best_case, "Best_case not equal");
-        $this->assertEquals(1000, $opp->worst_case, "Worst_case not equal");
+        
+        $opp->retrieve($oppId);
+        $this->assertEquals("1000", $opp->amount, "Amount not equal.");
+        $this->assertEquals("1000", $opp->best_case, "Best_case not equal");
+        $this->assertEquals("1000", $opp->worst_case, "Worst_case not equal");
         
         //change the product and save again
-        $product->likely_case = 5000;
-        $product->best_case = 5000;
-        $product->worst_case = 5000;
+        $product->likely_case = "5000";
+        $product->best_case = "5000";
+        $product->worst_case = "5000";
         $product->save();
         
-        $this->assertEquals(5000, $opp->amount, "Amount not equal.");
-        $this->assertEquals(5000, $opp->best_case, "Best_case not equal");
-        $this->assertEquals(5000, $opp->worst_case, "Worst_case not equal");
+        $opp->retrieve($oppId);
+        $this->assertEquals("5000", $opp->amount, "Amount not equal.");
+        $this->assertEquals("5000", $opp->best_case, "Best_case not equal");
+        $this->assertEquals("5000", $opp->worst_case, "Worst_case not equal");
     }
    
    /**
@@ -123,17 +126,52 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         for ($index = 0; $index < $products; $index++) {        
             $product = SugarTestProductUtilities::createProduct();
             $product->opportunity_id = $oppId;        
-            $product->likely_case = 10000;
-            $product->best_case = 10000;
-            $product->worst_case = 10000;
+            $product->likely_case = "10000";
+            $product->best_case = "10000";
+            $product->worst_case = "10000";
             $product->date_closed = "2013-03-01";
             $product->date_closed_timestamp = strtotime("2013-03-01");
             $product->save();
         }      
-                       
-        $this->assertEquals(20000, $opp->amount, "Amount not equal.");
-        $this->assertEquals(20000, $opp->best_case, "Best_case not equal");
-        $this->assertEquals(20000, $opp->worst_case, "Worst_case not equal");
+        
+        $opp->retrieve($oppId);               
+        $this->assertEquals("20000", $opp->amount, "Amount not equal.");
+        $this->assertEquals("20000", $opp->best_case, "Best_case not equal");
+        $this->assertEquals("20000", $opp->worst_case, "Worst_case not equal");
+    }
+    
+    /**
+    * @group forecasts
+    */
+    public function testOpportunitiesWithTwoProducts_deleteOne()
+    {
+        $products = 2;
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $oppId = $opp->id;
+        
+        for ($index = 0; $index < $products; $index++) {        
+            $product = SugarTestProductUtilities::createProduct();
+            $product->opportunity_id = $oppId;        
+            $product->likely_case = "10000";
+            $product->best_case = "10000";
+            $product->worst_case = "10000";
+            $product->date_closed = "2013-03-01";
+            $product->date_closed_timestamp = strtotime("2013-03-01");
+            $product->save();
+        }      
+        
+        //make sure the opp has both products
+        $opp->retrieve($oppId);               
+        $this->assertEquals("20000", $opp->amount, "Amount not equal.");
+        $this->assertEquals("20000", $opp->best_case, "Best_case not equal");
+        $this->assertEquals("20000", $opp->worst_case, "Worst_case not equal");
+        
+        //delete one, and make sure it removed the value of that opp.
+        $product->mark_deleted($product->id);
+        $opp->retrieve($oppId);
+        $this->assertEquals("10000", $opp->amount, "Amount not equal.");
+        $this->assertEquals("10000", $opp->best_case, "Best_case not equal");
+        $this->assertEquals("10000", $opp->worst_case, "Worst_case not equal");
     }
    
    /**
@@ -148,27 +186,29 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         for ($index = 0; $index < $products; $index++) {        
             $product = SugarTestProductUtilities::createProduct();
             $product->opportunity_id = $oppId;        
-            $product->likely_case = 10000;
-            $product->best_case = 10000;
-            $product->worst_case = 10000;
+            $product->likely_case = "10000";
+            $product->best_case = "10000";
+            $product->worst_case = "10000";
             $product->date_closed = "2013-03-01";
             $product->date_closed_timestamp = strtotime("2013-03-01");
             $product->save();
         }
-                       
-        $this->assertEquals(20000, $opp->amount, "Amount not equal.");
-        $this->assertEquals(20000, $opp->best_case, "Best_case not equal");
-        $this->assertEquals(20000, $opp->worst_case, "Worst_case not equal");
+        
+        $opp->retrieve($oppId); 
+        $this->assertEquals("20000", $opp->amount, "Amount not equal.");
+        $this->assertEquals("20000", $opp->best_case, "Best_case not equal");
+        $this->assertEquals("20000", $opp->worst_case, "Worst_case not equal");
         
         //change the product and save again
-        $product->likely_case = 40000;
-        $product->best_case = 40000;
-        $product->worst_case = 40000;
+        $product->likely_case = "40000";
+        $product->best_case = "40000";
+        $product->worst_case = "40000";
         $product->save();
         
-        $this->assertEquals(50000, $opp->amount, "Amount not equal.");
-        $this->assertEquals(50000, $opp->best_case, "Best_case not equal");
-        $this->assertEquals(50000, $opp->worst_case, "Worst_case not equal");
+        $opp->retrieve($oppId);
+        $this->assertEquals("50000", $opp->amount, "Amount not equal.");
+        $this->assertEquals("50000", $opp->best_case, "Best_case not equal");
+        $this->assertEquals("50000", $opp->worst_case, "Worst_case not equal");
     }
    
    /**
@@ -183,17 +223,18 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         for ($index = 0; $index < $products; $index++) {        
             $product = SugarTestProductUtilities::createProduct();
             $product->opportunity_id = $oppId;        
-            $product->likely_case = 10000;
-            $product->best_case = 10000;
-            $product->worst_case = 10000;
+            $product->likely_case = "10000";
+            $product->best_case = "10000";
+            $product->worst_case = "10000";
             $product->date_closed = "2013-03-01";
             $product->date_closed_timestamp = strtotime("2013-03-01");
             $product->save();
         }
-              
-        $this->assertEquals(30000, $opp->amount, "Amount not equal.");
-        $this->assertEquals(30000, $opp->best_case, "Best_case not equal");
-        $this->assertEquals(30000, $opp->worst_case, "Worst_case not equal");
+        
+        $opp->retrieve($oppId);
+        $this->assertEquals("30000", $opp->amount, "Amount not equal.");
+        $this->assertEquals("30000", $opp->best_case, "Best_case not equal");
+        $this->assertEquals("30000", $opp->worst_case, "Worst_case not equal");
     }
    
    /**
@@ -208,29 +249,31 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         for ($index = 0; $index < $products; $index++) {        
             $product[] = SugarTestProductUtilities::createProduct();
             $product[$index]->opportunity_id = $oppId;        
-            $product[$index]->likely_case = 10000;
-            $product[$index]->best_case = 10000;
-            $product[$index]->worst_case = 10000;
+            $product[$index]->likely_case = "10000";
+            $product[$index]->best_case = "10000";
+            $product[$index]->worst_case = "10000";
             $product[$index]->date_closed = "2013-03-01";
             $product[$index]->date_closed_timestamp = strtotime("2013-03-01");
             $product[$index]->save();
         }
-              
-        $this->assertEquals(30000, $opp->amount, "Amount not equal.");
-        $this->assertEquals(30000, $opp->best_case, "Best_case not equal");
-        $this->assertEquals(30000, $opp->worst_case, "Worst_case not equal");
+        
+        $opp->retrieve($oppId);      
+        $this->assertEquals("30000", $opp->amount, "Amount not equal.");
+        $this->assertEquals("30000", $opp->best_case, "Best_case not equal");
+        $this->assertEquals("30000", $opp->worst_case, "Worst_case not equal");
         
         for ($index = 0; $index < $products; $index++) { 
             $product[$index]->opportunity_id = $oppId;        
-            $product[$index]->likely_case = 20000;
-            $product[$index]->best_case = 20000;
-            $product[$index]->worst_case = 20000;
+            $product[$index]->likely_case = "20000";
+            $product[$index]->best_case = "20000";
+            $product[$index]->worst_case = "20000";
             $product[$index]->save();
         }
         
-        $this->assertEquals(60000, $opp->amount, "Amount not equal.");
-        $this->assertEquals(60000, $opp->best_case, "Best_case not equal");
-        $this->assertEquals(60000, $opp->worst_case, "Worst_case not equal");
+        $opp->retrieve($oppId);
+        $this->assertEquals("60000", $opp->amount, "Amount not equal.");
+        $this->assertEquals("60000", $opp->best_case, "Best_case not equal");
+        $this->assertEquals("60000", $opp->worst_case, "Worst_case not equal");
     }
    
    /**
@@ -244,9 +287,9 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         //grab default product
         $product = SugarTestProductUtilities::createProduct();
         $product->opportunity_id = $oppId;  
-        $product->likely_case = 1000;
-        $product->best_case = 1000;
-        $product->worst_case = 1000;
+        $product->likely_case = "1000";
+        $product->best_case = "1000";
+        $product->worst_case = "1000";
         $product->date_closed = "2013-02-01";
         $product->date_closed_timestamp = strtotime($product->date_closed);
         $product->save();
@@ -254,15 +297,15 @@ class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
         //create an additional product to go with the $10,000 default product that is created
         $product2 = SugarTestProductUtilities::createProduct();
         $product2->opportunity_id = $oppId;        
-        $product2->likely_case = 10000;
-        $product2->best_case = 10000;
-        $product2->worst_case = 10000;
+        $product2->likely_case = "10000";
+        $product2->best_case = "10000";
+        $product2->worst_case = "10000";
         $product2->date_closed = "2013-01-01";
         $product2->date_closed_timestamp = strtotime($product2->date_closed);
         $product2->save();
                        
         $this->assertEquals($product->date_closed, $opp->date_closed, "Dates not equal.");
-        $this->assertEquals($product->date_closed, $opp->date_closed, "Timestamps not equal");
+        $this->assertEquals($product->date_closed_timestamp, $opp->date_closed_timestamp, "Timestamps not equal");
     }   
    
    /**
