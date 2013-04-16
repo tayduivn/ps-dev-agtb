@@ -17,7 +17,7 @@ class RestResponse extends Zend_Http_Response
 
     /**
      * Response type
-     * @var unknown_type
+     * @var int
      */
     protected $type = self::RAW;
 
