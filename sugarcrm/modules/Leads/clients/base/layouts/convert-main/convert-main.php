@@ -47,6 +47,9 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
             'module' => 'Accounts',
             'required' => true,
             'duplicateCheckOnStart' => true,
+            'duplicateCheckRequiredFields' => array(
+                'name'
+            ),
             'contactRelateField' => 'account_name',
             'fieldMapping' => array(
                 //account field => lead field

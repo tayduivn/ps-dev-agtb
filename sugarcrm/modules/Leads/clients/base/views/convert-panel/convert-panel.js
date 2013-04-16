@@ -57,7 +57,6 @@
 
     /**
      * Resets the status of the duplicate and record views.
-     * @param activeView
      */
     resetViewsState : function() {
         var selection_model = this.duplicateView.context.get('selection_model');
@@ -253,10 +252,10 @@
      * @param model
      */
     updateFromDependentModuleChanges: function(moduleName, model) {
-        var doDupe = false;
+        var modelChanged = false;
         if (this.meta.dependentModules && this.meta.dependentModules[moduleName] && this.meta.dependentModules[moduleName].fieldMapping) {
-            this.populateRecords(model, this.meta.dependentModules[moduleName].fieldMapping);
-            if (doDupe) {
+            modelChanged = this.populateRecords(model, this.meta.dependentModules[moduleName].fieldMapping);
+            if (modelChanged) {
                 if (this.currentState.activeView === this.DUPLICATE_VIEW) {
                     this.resetPanelToDefaultState(this.DUPLICATE_VIEW);
                 }
@@ -266,15 +265,32 @@
     },
 
     /**
-     * Wrapper to check whether to fire the duplicate check event;
+     * Wrapper to check whether to fire the duplicate check event
      */
     triggerDuplicateCheck: function() {
-        if (this.enableDuplicateCheck) {
+        if (this.shouldDupeCheckBePerformed(this.recordView.model)) {
             this.duplicateView.context.trigger("dupecheck:fetch:fire", this.recordView.model, {
                 //Show alerts for this request
                 showAlerts: true
             });
         }
+    },
+
+    /**
+     * Check if duplicate check should be performed - dependent on enableDuplicateCheck setting and required dupe check fields
+     * @param model
+     */
+    shouldDupeCheckBePerformed: function(model) {
+        var performDuplicateCheck = this.enableDuplicateCheck;
+
+        if (this.meta.duplicateCheckRequiredFields) {
+            _.each(this.meta.duplicateCheckRequiredFields, function (field) {
+                if (_.isEmpty(model.get(field))) {
+                    performDuplicateCheck = false;
+                }
+            });
+        }
+        return performDuplicateCheck;
     },
 
     /**
@@ -428,13 +444,18 @@
      * Use the convert metadata to determine how to map the lead fields to module fields
      *
      * @param model
+     * @param fieldMapping
+     * @return {Boolean} whether the recordview model has changed
      */
     populateRecords:function (model, fieldMapping) {
+        var hasChanged = false;
         _.each(fieldMapping, function (sourceField, targetField) {
-            if (model.has(sourceField)) {
+            if (model.has(sourceField) && model.get(sourceField) !== this.recordView.model.get(targetField)) {
                 this.recordView.model.set(targetField, model.get(sourceField));
+                hasChanged = true;
             }
         }, this);
+        return hasChanged
     },
 
     /**
