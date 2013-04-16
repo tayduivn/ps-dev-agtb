@@ -162,6 +162,10 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 'portal_name',
                 'portal_active',
                 array(
+                    'name' => 'portal_password',
+                    'type' => 'change-password'
+                ),
+                array(
                     'name' => 'date_modified_by',
                     'readonly' => true,
                     'type' => 'fieldset',
