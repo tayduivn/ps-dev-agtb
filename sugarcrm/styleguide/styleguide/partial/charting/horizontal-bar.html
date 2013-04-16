@@ -38,8 +38,9 @@
               .showValues(true)
               .showTitle(false)
               .tooltips(true)
+              .stacked(true)
               .showControls(false)
-              .tooltip( function(key, x, y, e, graph) {
+              .tooltipContent( function(key, x, y, e, graph) {
                 return '<p>Outcome: <b>' + key + '</b></p>' +
                        '<p>Lead Source: <b>' +  x + '</b></p>' +
                        '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'
@@ -75,7 +76,7 @@
               .tooltips(true)
               .showControls(false)
               .stacked(false)
-              .tooltip( function(key, x, y, e, graph) {
+              .tooltipContent( function(key, x, y, e, graph) {
                 return '<p>Outcome: <b>' + key + '</b></p>' +
                        '<p>Lead Source: <b>' +  x + '</b></p>' +
                        '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'

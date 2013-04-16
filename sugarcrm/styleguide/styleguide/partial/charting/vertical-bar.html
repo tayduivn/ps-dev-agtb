@@ -120,7 +120,7 @@
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#336699', l: forecast_data_Q1.data.length} )
           //.colorData( 'class' )
           .colorData( 'default' )
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
               return '<p>Stage: <b>' + key + '</b></p>' +
                      '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
                      '<p>Percent: <b>' +  x + '%</b></p>'

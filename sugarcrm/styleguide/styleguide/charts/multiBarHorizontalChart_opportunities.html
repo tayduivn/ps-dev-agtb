@@ -32,7 +32,7 @@
           .showControls(true)
           .stacked(true)
           .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: opportunities_data.data.length} )
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
             return '<p>Outcome: <b>' + key + '</b></p>' +
                    '<p>Lead Source: <b>' +  x + '</b></p>' +
                    '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'

@@ -84,7 +84,7 @@
   nv.addGraph(function() {
     var chart = nv.models.funnelChart()
           .showTitle(false)
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
               return '<p>Stage: <b>' + key + '</b></p>' +
                      '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
                      '<p>Percent: <b>' +  x + '%</b></p>'
@@ -128,18 +128,13 @@
           .leafClick( function(d) {
               alert('leaf clicked');
           })
-          .useClass(true)
           .showTitle(false)
           .tooltips(true)
           .getSize(function(d) { return d.size; })
-          .className(function(d,i) {
-            var m = chart.groups().indexOf(d.parent.name) % 20;
-            return 'nv-fill' + (m>9?'':'0') + m%20;
-          })
           //.showControls(false)
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
           //.colorData( 'class' )
-          //.colorData( 'default' )
+          .colorData( 'default' )
       ;
 
     d3.select('#treemap1 svg')
@@ -217,7 +212,7 @@
       var chart = nv.models.bubbleChart()
           .x(function(d) { return format.parse(d.x) })
           .y(function(d) { return d.y })
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
               return '<p>Assigned: <b>' + key + '</b></p>' +
                      '<p>Amount: <b>$' +  d3.format(',.02d')(e.point.opportunity) + '</b></p>' +
                      '<p>Cloase Date: <b>' +  d3.time.format('%x')(format.parse(e.point.x)) + '</b></p>'
@@ -243,122 +238,120 @@
 
   });
 
-
   // Treemap opportunities chart
   nv.addGraph(function() {
-
-    var root = {
-        name: "Opportunities",
-        children: [],
-        x: 0,
-        y: 0,
-        dx: parseInt($('#treemap2 svg').width(), 10),
-        dy: parseInt($('#treemap2 svg').height(), 10),
-        depth: 0
-    };
-
-    root.children = parseData( treemap_data.records );
-
     var chart = nv.models.treemapChart()
-          .leafClick( function(d) {
-              // var model = app.data.createBean(self.module);
-              // model.set("id", d.id);
-              // model.fetch();
-              // app.navigate(self.context, model);
-              alert('leaf clicked');
-          })
-          .useClass(true)
-          .showTitle(false)
-          .tooltips(true)
-          .tooltipContent( function(point) {
-              var rep = (point.assigned_user_name) ? point.assigned_user_name : (point.className) ? point.parent.name : point.name,
-                  stage = (point.sales_stage) ? point.sales_stage : (point.className) ? point.name : null,
-                  account = (point.account_name) ? point.account_name : null;
-              var tt = '<h4>Amount: <b>$' + d3.format(',.2s')(point.value) + '</b></h4>' +
-                '<p>Sales Rep: <b>' + rep + '</b></p>';
-              if (stage) tt += '<p>Stage: <b>' +  stage + '</b></p>';
-              if (account) tt += '<p>Account: <b>' +  account + '</b></p>';
-              return tt;
-          })
+          .leafClick(function(d) { alert('leaf clicked'); })
           .getSize(function(d) { return d.value; })
-          .className(function(d) { return d.className; })
-          //.showControls(false)
-          //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
-          //.colorData( 'class' )
-          //.colorData( 'default' )
-        ;
-
+          .showTitle(false)
+          .tooltips(false)
+          .colorData('class');
     d3.select('#treemap2 svg')
-        .datum(root)
+        .datum(parseData(treemap_data_default.records))
       .transition().duration(500)
         .call(chart);
-
-    function parseData(data) {
-      var today = new Date();
-          today.setUTCHours(0,0,0,0);
-
-      var day_ms = 1000*60*60*24
-        , d1 = new Date(today.getTime() + 31*day_ms)
-        , root = {
-              children: []
-          };
-
-      data = data.filter(function(model) {
-          // Filter for 30 days from now.
-          var d2 = new Date(model.date_closed || "1970-01-01");
-          return (d2-d1)/day_ms <= 30;
-      }).map(function(d){
-          // Include properties to be included in leaves
-          return {
-            assigned_user_name: d.assigned_user_name,
-            sales_stage: d.sales_stage,
-            name: d.name,
-            amount_usdollar: d.amount_usdollar
-          };
-      });
-
-      data = _.groupBy(data, function(m) {
-          return m.assigned_user_name;
-      });
-
-      _.each(data, function(value, key, list) {
-          list[key] = _.groupBy(value, function(m) {
-              return m.sales_stage;
-          });
-      });
-
-      _.each(data, function(value1, key1) {
-          var child = [];
-          _.each(value1, function(value2, key2) {
-              _.each(value2, function(record) {
-                  record.className = 'stage_'+record.sales_stage.toLowerCase().replace(' ', '');
-                  record.value = parseInt(record.amount_usdollar, 10);
-              });
-              child.push({
-                  name: key2,
-                  className: 'stage_'+key2.toLowerCase().replace(' ', ''),
-                  children: value2
-              });
-          });
-
-          root.children.push({
-              name: key1,
-              children: child
-          });
-      });
-
-      function accumulate(d) {
-          if(d.children) {
-              return d.value = d.children.reduce(function(p, v) { return p + accumulate(v); }, 0);
-          }
-          return d.value;
-      }
-
-      accumulate(root);
-
-      return root.children;
-    }
-
     return chart;
   });
+
+  function parseData (data) {
+    var root = {
+          name: 'Opportunities',
+          children: [],
+          x: 0,
+          y: 0,
+          dx: parseInt(document.getElementById('treemap2').offsetWidth, 10),
+          dy: parseInt(document.getElementById('treemap2').offsetHeight, 10),
+          depth: 0,
+          colorIndex: '0root_Opportunities'
+        }
+      , colorIndices = ['0root_Opportunities']
+      , colors = d3.scale.category20().range();
+
+    var today = new Date();
+        today.setUTCHours(0,0,0,0);
+
+    var day_ms = 1000*60*60*24
+      , d1 = new Date(today.getTime() + 31*day_ms);
+
+    var data = data.filter(function(model) {
+      // Filter for 30 days from now.
+      var d2 = new Date(model.date_closed || '1970-01-01');
+      return (d2-d1)/day_ms <= 30;
+    }).map(function(d){
+      // Include properties to be included in leaves
+      return {
+        assigned_user_name: d.assigned_user_name,
+        sales_stage: d.sales_stage,
+        name: d.name,
+        amount_usdollar: d.amount_usdollar,
+        color: d.color
+      };
+    });
+
+    data = _.groupBy(data, function(m) {
+      return m.assigned_user_name;
+    });
+
+    _.each(data, function(value, key, list) {
+      list[key] = _.groupBy(value, function(m) {
+        return m.sales_stage;
+      });
+    });
+
+    _.each(data, function(value1, key1) {
+      var child = [];
+      _.each(value1, function(value2, key2) {
+        if (colorIndices.indexOf('2oppgroup_' + key2) === -1) {
+          colorIndices.push('2oppgroup_' + key2);
+        }
+        _.each(value2, function(record) {
+          record.className = 'stage_'+record.sales_stage.toLowerCase().replace(' ', '');
+          record.value = parseInt(record.amount_usdollar, 10);
+          record.colorIndex = '2oppgroup_' + key2;
+        });
+        child.push({
+          name: key2,
+          className: 'stage_'+key2.toLowerCase().replace(' ', ''),
+          children: value2,
+          colorIndex: '2oppgroup_' + key2
+        });
+      });
+      if (colorIndices.indexOf('1rep_' + key1) === -1) {
+        colorIndices.push('1rep_' + key1);
+      }
+      root.children.push({
+        name: key1,
+        children: child,
+        colorIndex: '1rep_' + key1
+      });
+    });
+
+    function accumulate(d) {
+      if(d.children) {
+        return d.value = d.children.reduce(function(p, v) { return p + accumulate(v); }, 0);
+      }
+      return d.value;
+    }
+
+    accumulate(root);
+
+    colorIndices.sort(d3.ascending());
+
+    //build color indexes
+    function setColorIndex(d) {
+      var i, l;
+      d.colorIndex = colorIndices.indexOf(d.colorIndex);
+      if ( d.children )
+      {
+        l = d.children.length;
+        for (i = 0; i < l; i += 1) {
+          setColorIndex(d.children[i]);
+        }
+      }
+    }
+
+    setColorIndex(root);
+
+    return root;
+  }
 </script>

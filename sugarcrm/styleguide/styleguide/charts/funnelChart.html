@@ -29,7 +29,7 @@
           //.colorData( 'graduated', {c1: '#12448f', c2: '#deeeff', l: funnel_data.data.length} )
           //.colorData( 'class', 2 )
           //.colorData( 'default' )
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
               return '<p>Stage: <b>' + key + '</b></p>' +
                      '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
                      '<p>Percent: <b>' +  x + '%</b></p>'

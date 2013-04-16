@@ -68,7 +68,7 @@
       var chart = nv.models.bubbleChart()
           .x(function(d) { return d3.time.format("%Y-%m-%d").parse(d.x) })
           .y(function(d) { return d.y })
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
               return '<p>Assigned: <b>' + e.point.assigned_user_name + '</b></p>' +
                      '<p>Amount: <b>$' +  d3.format(',.2d')(e.point.opportunity) + '</b></p>' +
                      '<p>Close Date: <b>' +  d3.time.format('%x')(d3.time.format("%Y-%m-%d").parse(e.point.x)) + '</b></p>' +
