@@ -76,7 +76,7 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         $stub = new SugarSearchEngineElasticTestStub();
         $document = $stub->createIndexDocument($this->bean);
         $data = $document->getData();
-        $this->assertEquals(str_replace('-','', strval($this->bean->assigned_user_id)), $data['doc_owner']);
+        $this->assertEquals($this->bean->assigned_user_id, $data['doc_owner']);
         
     }
 

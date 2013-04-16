@@ -144,6 +144,7 @@ $vardefs = array(
                 'importable' => 'false',
                 'massupdate' => false,
                 'full_text_search' => array('enabled' => true),
+                'default' => '', // Force attribute to be set for fts indexer reevaluation
             ),
         'user_favorites' => array(
                 'name' => 'user_favorites',
@@ -155,6 +156,7 @@ $vardefs = array(
                 'importable' => 'false',
                 'massupdate' => false,
                 'full_text_search' => array('enabled' => true),
+                'default' => '', // Force attribute to be set for fts indexer reevaluation
             ),
         'description' => array(
                 'name' => 'description',
