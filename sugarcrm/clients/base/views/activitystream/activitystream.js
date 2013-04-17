@@ -124,7 +124,7 @@
             showAlerts: false,
             relate: true,
             success: function(collection) {
-                self.model.set("remaining_comments", 0);
+                self.remaining_comments = 0;
                 self.render();
             }
         });
