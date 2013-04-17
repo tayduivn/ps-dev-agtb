@@ -63,6 +63,7 @@
 </script>
 <script src='include/javascript/sugarAuthStore.js'></script>
 <script src='styleguide/assets/js/bootstrap-colorpicker.js'></script>
+<script src='include/javascript/select2-release-3.2/select2.min.js'></script>
 {* //END SUGARCRM flav=ent ONLY *}
 
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file="modules/ModuleBuilder/tpls/MB.css"}" />
