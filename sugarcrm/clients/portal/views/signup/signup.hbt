@@ -26,37 +26,29 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<form name='{{name}}'>
-    <div class="container welcome subhead">
-        <div class="row">
-            <div class="span4 offset4 thumbnail signup">
-                <div class="tcenter">
-                    <h2 class="brand" {{#if logoURL}} style=" background: url({{logoURL}}) 50% 50% no-repeat;"{{/if}}>SugarCRM</h2>
-                </div>
-                {{#each meta.panels}}
-                <div class="form-horizontal">
-                    {{#if ../signup_success}}
-                    <div class="alert alert-success tleft">
-                        <p><strong>{{str "LBL_PORTAL_SIGNUP_TITLE"}}</strong><p>
-                        <p>{{str "LBL_PORTAL_SIGNUP"}}</p>
-                    </div>
-                    {{else}}
-                    {{#each fields}}
-                    <div class="row-fluid control-group">
-                    <div class="tcenter">
-                    {{field ../../../this ../../../model}}
-                    </div>
-                    </div>
-                    {{/each}}
-                    {{/if}}
-                </div>
-                {{/each}}
-                <div class="signup-footer span3">
-                    {{#each meta.buttons}}
-                    {{field ../this ../model}}
-                    {{/each}}
-                </div>
-            </div>
+<div class="welcome">
+    <div class="thumbnail signup">
+        <div class="tcenter">
+            <h2 class="brand" {{#if logoURL}} style="background: url({{logoURL}}) 50% 50% no-repeat;"{{/if}}>SugarCRM</h2>
         </div>
+        <form name='{{name}}' class="tcenter">
+            {{#if _showSignupSuccess}}
+                <div class="alert alert-success tleft">
+                    <p><strong>{{str "LBL_PORTAL_SIGNUP_TITLE"}}</strong><p>
+                    <p>{{str "LBL_PORTAL_SIGNUP"}}</p>
+                </div>
+            {{else}}
+                {{#each meta.panels}}
+                    {{#each fields}}
+                    <div class="control-group">{{field ../../this ../../model}}</div>
+                    {{/each}}
+                {{/each}}
+            {{/if}}
+            <div class="signup-footer">
+                {{#each meta.buttons}}
+                   {{field ../this ../model}}
+                {{/each}}
+            </div>
+        </form>
     </div>
-</form>
+</div>

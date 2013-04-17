@@ -38,9 +38,6 @@
         // Attach the metadata to the view
         this.options.meta = this._metadata.modules[this.options.module].views[this.options.name].meta;
         app.view.View.prototype.initialize.call(this, options);
-
-        // use modal template for the fields
-        this.fallbackFieldTemplate = "modal";
     },
     _render: function() {
         if(this.context.get('errorType')) {

@@ -1,10 +1,13 @@
 ({
     events: {
-        "click .login-submit": "login",
+        "click [name=login_button]": "login",
         "keypress": "handleKeypress"
     },
-    fallbackFieldTemplate: "modal",
 
+    /**
+     * Process login on key 'Enter'
+     * @param e
+     */
     handleKeypress: function(e) {
         if (e.keyCode === 13) {
             this.$("input").trigger("blur");
@@ -12,6 +15,10 @@
         }
     },
 
+    /**
+     * @override
+     * @private
+     */
     _render: function() {
         if (app.config && app.config.logoURL) {
             this.logoURL = app.config.logoURL;
@@ -34,11 +41,19 @@
         }
         return this;
     },
+
+    /**
+     * Refresh additional components
+     */
     refreshAddtionalComponents: function() {
         _.each(app.additionalComponents, function(component) {
             component.render();
         });
     },
+
+    /**
+     * Process Login
+     */
     login: function() {
         var self = this;
         if (this.model.isValid()) {

@@ -18,13 +18,6 @@ describe("Portal Signup View", function() {
 
     describe("signup", function() {
 
-        it("should have metadata defined", function() {
-            expect(view.meta).toBeDefined();
-            expect(view.meta.buttons).toBeDefined();
-            expect(view.meta.panels).toBeDefined();
-        });
-
-
         it("should toggle state field", function() {
             var $countries = $('<select>').attr('name', 'country');
             $('<option></option>').attr('value', '').appendTo($countries);
