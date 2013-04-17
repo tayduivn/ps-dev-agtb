@@ -314,6 +314,13 @@ $dictionary['Note'] = array(
     'source' => 'non-db',
     'vname' => 'LBL_CONTRACTS',
   ),
+    'prospects' => array (
+      'name' => 'prospects',
+      'type' => 'link',
+      'relationship' => 'prospect_notes',
+      'source' => 'non-db',
+      'vname' => 'LBL_PROSPECTS',
+    ),
 //END SUGARCRM flav=pro ONLY
   'bugs' =>
   array (
