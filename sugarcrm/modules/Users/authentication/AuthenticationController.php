@@ -83,21 +83,24 @@ class AuthenticationController
 	 *
 	 * @param string $username
 	 * @param string $password
-	 * @param array $PARAMS
+	 * @param array $params Login parameters:
+	 * - noHooks - don't run logic hooks
+	 * - noRedirect - don't redirect if not logged in
+	 * - passwordEncrypted - is password plaintext (false) or md5 (true)?
 	 * @return boolean true if the user successfully logs in or false otherwise.
 	 */
-	public function login($username, $password, $PARAMS = array())
+	public function login($username, $password, $params = array())
 	{
 		//kbrill bug #13225
 		$_SESSION['loginAttempts'] = (isset($_SESSION['loginAttempts']))? $_SESSION['loginAttempts'] + 1: 1;
 		unset($GLOBALS['login_error']);
 
 		if($this->loggedIn)return $this->loginSuccess;
-		if(empty($PARAMS['noHooks'])) {
+		if(empty($params['noHooks'])) {
 		    LogicHook::initialize()->call_custom_logic('Users', 'before_login');
 		}
 
-		$this->loginSuccess = $this->authController->loginAuthenticate($username, $password, false, $PARAMS);
+		$this->loginSuccess = $this->authController->loginAuthenticate($username, $password, false, $params);
 		$this->loggedIn = true;
 
 		if($this->loginSuccess){
@@ -113,14 +116,14 @@ class AuthenticationController
 			}
 
 			//call business logic hook
-			if(isset($GLOBALS['current_user']) && empty($PARAMS['noHooks']))
+			if(isset($GLOBALS['current_user']) && empty($params['noHooks']))
 				$GLOBALS['current_user']->call_custom_logic('after_login');
 
 			// Check for running Admin Wizard
             $config = Administration::getSettings();
 		    if ( is_admin($GLOBALS['current_user']) && empty($config->settings['system_adminwizard']) && isset($_REQUEST['action']) && $_REQUEST['action'] != 'AdminWizard' ) {
 
-                if ( isset($PARAMS['noRedirect']) && $PARAMS['noRedirect'] == true ) {
+                if ( isset($params['noRedirect']) && $params['noRedirect'] == true ) {
                     $this->nextStep = array('module'=>'Configurator','action'=>'AdminWizard');
                 } else {
                     ob_clean();
@@ -133,11 +136,11 @@ class AuthenticationController
 
 			$ut = $GLOBALS['current_user']->getPreference('ut');
 			$checkTimeZone = true;
-			if (is_array($PARAMS) && !empty($PARAMS) && isset($PARAMS['passwordEncrypted'])) {
+			if (is_array($params) && !empty($params) && isset($params['passwordEncrypted'])) {
 				$checkTimeZone = false;
 			} // if
 			if(empty($ut) && $checkTimeZone && isset($_REQUEST['action']) && $_REQUEST['action'] != 'SetTimezone' && $_REQUEST['action'] != 'SaveTimezone' ) {
-			    if ( isset($PARAMS['noRedirect']) && $PARAMS['noRedirect'] == true && empty($this->nextStep) ) {
+			    if ( isset($params['noRedirect']) && $params['noRedirect'] == true && empty($this->nextStep) ) {
                     $this->nextStep = array('module'=>'Users','action'=>'Wizard');
                 } else {
                     $GLOBALS['module'] = 'Users';
@@ -149,7 +152,7 @@ class AuthenticationController
 			}
 		}else{
 			//kbrill bug #13225
-			if(empty($PARAMS['noHooks'])) {
+			if(empty($params['noHooks'])) {
 			    LogicHook::initialize();
 			    $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
 			}
