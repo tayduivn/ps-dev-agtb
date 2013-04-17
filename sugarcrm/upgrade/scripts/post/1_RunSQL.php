@@ -13,7 +13,7 @@ class SugarUpgradeRunSQL extends UpgradeScript
     {
         $vfrom = $this->implodeVersion($this->from_version);
         $vto = $this->implodeVersion($this->to_version);
-        $this->log("Looking for SQL scripts from $vftom/{$this->from_flavor} to $vto/{$this->to_flavor}");
+        $this->log("Looking for SQL scripts from $vfrom/{$this->from_flavor} to $vto/{$this->to_flavor}");
         if ($vfrom == $vto) {
             if ($this->from_flavor == $this->to_flavor) {
                 // minor upgrade, no schema changes

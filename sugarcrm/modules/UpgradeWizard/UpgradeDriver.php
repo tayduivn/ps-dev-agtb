@@ -867,7 +867,7 @@ abstract class Upgrader
      * @param string $stage stage on which we're running
      * @return boolean
      */
-    public function run($stage = null)
+    public function run($stage)
     {
         // TODO: re-run from given state/script
         ini_set('memory_limit',-1);
