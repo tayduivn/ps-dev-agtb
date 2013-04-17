@@ -108,7 +108,7 @@ abstract class ServiceBase {
     }
 
     /**
-     * generateETagHeader
+     * Generate suitable ETag for content
      *
      * This function generates the necessary cache headers for using ETags with dynamic content. You
      * simply have to generate the ETag, pass it in, and the function handles the rest.

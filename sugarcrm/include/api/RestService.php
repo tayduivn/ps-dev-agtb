@@ -416,7 +416,7 @@ class RestService extends ServiceBase {
                 }
             }
             // If token is invalid, clear the session for bwc
-            // It looks like a big upload can cause no auth error, 
+            // It looks like a big upload can cause no auth error,
             // so we do it here instead of the catch block above
             $_SESSION = array();
             $exception = (isset($e)) ? $e : false;
@@ -579,7 +579,7 @@ class RestService extends ServiceBase {
     }
 
     /**
-     * generateETagHeader
+     * Generate suitable ETag for content
      *
      * This function generates the necessary cache headers for using ETags with dynamic content. You
      * simply have to generate the ETag, pass it in, and the function handles the rest.

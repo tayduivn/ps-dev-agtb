@@ -1,7 +1,16 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
 /**
@@ -33,10 +42,19 @@ class RestResponse extends Zend_Http_Response
      */
     protected $filename;
 
+    /**
+     * Create HTTP response
+     * @param array $server _SERVER array from the request
+     */
     public function __construct($server)
     {
         $this->code = 200;
-        $this->version = '1.1';
+        if(!empty($server['SERVER_PROTOCOL'])) {
+            list($http, $version) = explode('/', $server['SERVER_PROTOCOL']);
+            $this->version = $version;
+        } else {
+            $this->version = '1.1';
+        }
         $this->server_data = $server;
     }
 
@@ -44,9 +62,11 @@ class RestResponse extends Zend_Http_Response
      * Set a response header
      * @param string $header
      * @param string $info
-     * @return bool
+     * @return RestResponse
      */
-    public function setHeader($header, $info) {
+    public function setHeader($header, $info)
+    {
+        //$header = ucwords(strtolower($header));
         $this->headers[$header] = $info;
         return $this;
     }
@@ -56,7 +76,9 @@ class RestResponse extends Zend_Http_Response
      * @param string $header
      * @return bool
      */
-    public function hasHeader($header) {
+    public function hasHeader($header)
+    {
+        //$header = ucwords(strtolower($header));
         return array_key_exists($header, $this->headers);
     }
 
@@ -104,10 +126,10 @@ class RestResponse extends Zend_Http_Response
     protected function setContentTypeByType()
     {
         if($this->type == self::JSON_HTML) {
-            $this->headers["Content-Type"] = "text/html";
+            $this->setHeader("Content-Type", "text/html");
         }
         if($this->type == self::JSON) {
-            $this->headers["Content-Type"] = "application/json";
+            $this->setHeader("Content-Type", "application/json");
         }
         return $this;
     }
@@ -116,24 +138,24 @@ class RestResponse extends Zend_Http_Response
      * Returns content to be sent to the client
      * @return string
      */
-    public function sendContent()
+    public function processContent()
     {
         switch($this->type) {
-            case self::RAW:
-                $response = $this->body;
-                break;
             case self::JSON:
-            case self::JSON_HTML:
                 $response = json_encode($this->body);
+                break;
+            case self::JSON_HTML:
+                $response = htmlentities(json_encode($this->body));
                 break;
             case self::FILE:
                 // special case
                 return '';
+            case self::RAW:
+            default: /* we assume if we don't know they type, it's raw */
+                $response = $this->body;
+                break;
         }
-    	if($this->type == self::JSON_HTML) {
-    		$response = htmlentities($response);
-    	}
-    	if(!isset($this->headers["Content-Type"])) {
+    	if(!$this->hasHeader("Content-Type")) {
     	    $this->setContentTypeByType();
     	}
     	if(!empty($response)) {
@@ -148,7 +170,7 @@ class RestResponse extends Zend_Http_Response
      */
     public function sendHeaders()
     {
-    	if(headers_sent()) {
+        if(headers_sent()) {
     		return false;
     	}
     	if($this->code != 200) {
@@ -156,14 +178,14 @@ class RestResponse extends Zend_Http_Response
     	    header("HTTP/{$this->version} {$this->code} {$text}");
     	    $this->headers['Status'] = "{$this->code} {$text}";
     	}
-    	foreach($this->headers AS $header => $info) {
+    	foreach($this->headers as $header => $info) {
     		header("{$header}: {$info}");
     	}
     	return true;
     }
 
     /**
-     * generateETagHeader
+     * Generate suitable ETag for content
      *
      * This function generates the necessary cache headers for using ETags with dynamic content. You
      * simply have to generate the ETag, pass it in, and the function handles the rest.
@@ -179,30 +201,31 @@ class RestResponse extends Zend_Http_Response
             }
             $etag = md5($this->body);
         }
-        if(isset($this->server_data["HTTP_IF_NONE_MATCH"])){
-    		if($etag == $this->server_data["HTTP_IF_NONE_MATCH"]){
-    		    // Same data, clean it up and return 304
-    		    $this->body = '';
-                $this->headers = array();
-                $this->code = 304;
-                $this->type = self::RAW;
-                return true;
-    		}
+        if(isset($this->server_data["HTTP_IF_NONE_MATCH"]) && $etag == $this->server_data["HTTP_IF_NONE_MATCH"]){
+		    // Same data, clean it up and return 304
+		    $this->body = '';
+            $this->headers = array();
+            $this->code = 304;
+            $this->type = self::RAW;
+            return true;
     	}
     	$this->setHeader('ETag', $etag);
     	return false;
     }
 
     /**
-     * Set Post Headers
-     * @return bool
+     * Set POST response headers
+     *
+     * Sets headers to prevent caching of the content
+     *
+     * @return RestResponse
      */
     public function setPostHeaders()
     {
     	$this->setHeader('Cache-Control', 'no-cache, must-revalidate');
     	$this->setHeader('Pragma', 'no-cache');
     	$this->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
-    	return true;
+    	return $this;
     }
 
     /**
@@ -212,9 +235,15 @@ class RestResponse extends Zend_Http_Response
     protected function sendFile($file)
     {
         if(!file_exists($file)) {
+            $this->body = '';
+            $this->headers = array();
+            $this->code = 404;
+            $this->type = self::RAW;
+            $this->sendHeaders();
             return;
         }
-        header("Content-Length: " . filesize($file));
+        $this->setHeader("Content-Length", filesize($file));
+        $this->sendHeaders();
         set_time_limit(0);
         if(function_exists('zend_send_file')) {
         	zend_send_file($file);
@@ -239,12 +268,12 @@ class RestResponse extends Zend_Http_Response
      */
     public function send()
     {
-        $this->sendHeaders();
         if($this->type == self::FILE) {
             $this->sendFile($this->filename);
             return;
         }
-        echo $this->sendContent();
+        $this->sendHeaders();
+        echo $this->processContent();
     }
 
 }

@@ -308,16 +308,30 @@ class DownloadFileApi extends DownloadFile
      *
      * @param string $type Field type (image/file)
      * @param array $info Array containing the file details.
+     * Currently supported:
+     * - content-type - content type for the file
+     *
      */
     public function outputFile($type, $info)
     {
+        if(empty($info['path'])) {
+            throw new SugarApiException('No file name supplied');
+        }
+
         $this->api->setHeader("Expires", TimeDate::httpTime(time() + 2592000));
 
         if ($type == 'image') {
-            $this->api->setHeader("Content-Type", $info['content-type']);
+            if($info['content-type']) {
+                $this->api->setHeader("Content-Type", $info['content-type']);
+            } else {
+                $this->api->setHeader("Content-Type", "application/octet-stream");
+            }
         } else {
             $this->api->setHeader("Content-Type", "application/force-download");
             $this->api->setHeader("Content-type", "application/octet-stream");
+            if(empty($info['name'])) {
+                $info['name'] = pathinfo($info['path'], PATHINFO_FILENAME);
+            }
             $this->api->setHeader("Content-Disposition", "attachment; filename=\"".$info['name']."\";");
         }
         $this->api->fileResponse($info['path']);
