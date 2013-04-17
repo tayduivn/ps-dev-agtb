@@ -59,7 +59,7 @@ nv.models.gaugeChart = function() {
           availableHeight = (height || parseInt(container.style('height'), 10) || 400)
                              - margin.top - margin.bottom;
 
-      chart.update = function() { chart(selection); };
+      chart.update = function() { container.transition().duration(300).call(chart); };
       chart.container = this;
 
 
@@ -174,7 +174,7 @@ nv.models.gaugeChart = function() {
       var gaugeWrap = g.select('.nv-gaugeWrap')
           .datum(chartData);
 
-      d3.transition(gaugeWrap).call(gauge);
+      gaugeWrap.transition().call(gauge);
 
       //gauge.setPointer(properties.value);
 

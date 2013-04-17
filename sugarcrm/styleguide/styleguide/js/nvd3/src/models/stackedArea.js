@@ -350,9 +350,9 @@ nv.models.stackedArea = function() {
 	    if (!arguments.length) return interpolate;
 	    interpolate = _;
 	    return interpolate;
-  
+
   };
-  
+
   //============================================================
 
 

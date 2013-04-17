@@ -59,7 +59,7 @@ nv.models.treemapChart = function() {
       var availableWidth = (width  || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right,
           availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
 
-      chart.update = function() { selection.transition().call(chart); };
+      chart.update = function() { container.transition().duration(300).call(chart); };
       chart.container = this;
 
       //------------------------------------------------------------
@@ -177,7 +177,7 @@ nv.models.treemapChart = function() {
       var treemapWrap = g.select('.nv-treemapWrap')
           .datum(data.filter(function(d) { return !d.disabled; }));
 
-      d3.transition(treemapWrap).call(treemap);
+      treemapWrap.transition().call(treemap);
 
       //------------------------------------------------------------
 
@@ -198,7 +198,7 @@ nv.models.treemapChart = function() {
           });
         }
 
-        selection.transition().call(chart);
+        container.transition().duration(300).call(chart);
       });
 
       dispatch.on('tooltipShow', function(e) {

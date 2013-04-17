@@ -80,7 +80,7 @@ nv.models.paretoChart = function () {
         return d;
       });
     }
-    selection.transition().call(chart);
+    container.transition().duration(300).call(chart);
   };
 
   var getAbsoluteXY = function (element) {
@@ -109,6 +109,9 @@ nv.models.paretoChart = function () {
       var availableWidth = (width  || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right
         , availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom
         , expandMode = container.node().parentNode.className.indexOf('expanded') !== -1;
+
+      chart.update = function () { container.transition().duration(300).call(chart); };
+      chart.container = this;
 
       margin.left = (expandMode) ? 50 : 40;
       margin.bottom = (expandMode) ? 40 : 34;
@@ -338,8 +341,8 @@ nv.models.paretoChart = function () {
               }) : [{values:[]}]
           );
 
-      d3.transition(barsWrap).call(multibar);
-      d3.transition(linesWrap).call(lines);
+      barsWrap.transition().call(multibar);
+      linesWrap.transition().call(lines);
 
       //------------------------------------------------------------
       // Quota Line
@@ -370,7 +373,7 @@ nv.models.paretoChart = function () {
 
       g.select('.nv-x.nv-axis')
           .attr('transform', 'translate(0,'+ y.range()[0] +')');
-      d3.transition(g.select('.nv-x.nv-axis'))
+      g.select('.nv-x.nv-axis').transition()
           .call(xAxis);
 
       var xTicks = g.select('.nv-x.nv-axis > g').selectAll('g');
@@ -450,7 +453,7 @@ nv.models.paretoChart = function () {
         .tickSize(-availableWidth, 0)
         .tickFormat(function (d) { return '$'+ d3.format(',.2s')(d); });
 
-      d3.transition(g.select('.nv-y.nv-axis'))
+      g.select('.nv-y.nv-axis').transition()
           .style('opacity', dataBars.length ? 1 : 0)
           .call(yAxis);
 
@@ -479,7 +482,7 @@ nv.models.paretoChart = function () {
             return d;
           });
         }
-        selection.transition().call(chart);
+        container.transition().duration(300).call(chart);
       });
 
       controls.dispatch.on('legendClick', function (d,i) {
@@ -501,7 +504,7 @@ nv.models.paretoChart = function () {
             break;
         }
 
-        selection.transition().call(chart);
+        container.transition().duration(300).call(chart);
       });
 
       /*dispatch.on('tooltipShow', function(e) {
@@ -541,10 +544,6 @@ nv.models.paretoChart = function () {
       }
 
       //============================================================
-
-
-      chart.update = function () { selection.transition().call(chart); };
-      chart.container = this; // I need a reference to the container in order to have outside code check if the chart is visible or not
 
     });
 

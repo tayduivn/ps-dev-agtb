@@ -79,7 +79,7 @@ nv.models.multiBarHorizontalChart = function() {
       var availableWidth = (width  || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right,
           availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
 
-      chart.update = function() { selection.transition().call(chart) };
+      chart.update = function() { container.transition().duration(300).call(chart) };
       chart.container = this;
 
       //set state.disabled
@@ -231,7 +231,7 @@ nv.models.multiBarHorizontalChart = function() {
       var barsWrap = g.select('.nv-barsWrap')
           .datum(data.filter(function(d) { return !d.disabled; }));
 
-      d3.transition(barsWrap).call(multibar);
+      barsWrap.transition().call(multibar);
 
       //------------------------------------------------------------
 
@@ -244,7 +244,7 @@ nv.models.multiBarHorizontalChart = function() {
         .ticks( availableHeight / 24 )
         .tickSize(-availableWidth, 0);
 
-      d3.transition(g.select('.nv-x.nv-axis'))
+      g.select('.nv-x.nv-axis').transition()
           .call(xAxis);
 
       var xTicks = g.select('.nv-x.nv-axis').selectAll('g');
@@ -261,7 +261,7 @@ nv.models.multiBarHorizontalChart = function() {
 
       g.select('.nv-y.nv-axis')
           .attr('transform', 'translate(0,' + availableHeight + ')');
-      d3.transition(g.select('.nv-y.nv-axis'))
+      g.select('.nv-y.nv-axis').transition()
           .call(yAxis);
 
       //------------------------------------------------------------
@@ -286,7 +286,7 @@ nv.models.multiBarHorizontalChart = function() {
         state.disabled = data.map(function(d) { return !!d.disabled });
         dispatch.stateChange(state);
 
-        selection.transition().call(chart);
+        container.transition().duration(300).call(chart);
       });
 
       controls.dispatch.on('legendClick', function(d,i) {
@@ -309,7 +309,7 @@ nv.models.multiBarHorizontalChart = function() {
         state.stacked = multibar.stacked();
         dispatch.stateChange(state);
 
-        selection.transition().call(chart);
+        container.transition().duration(300).call(chart);
       });
 
       dispatch.on('tooltipShow', function(e) {
@@ -332,7 +332,7 @@ nv.models.multiBarHorizontalChart = function() {
           state.stacked = e.stacked;
         }
 
-        selection.call(chart);
+        container.transition().duration(300).call(chart);
       });
       //============================================================
 

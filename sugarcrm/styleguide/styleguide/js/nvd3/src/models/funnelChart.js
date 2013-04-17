@@ -62,6 +62,9 @@ nv.models.funnelChart = function() {
           availableHeight = (height || parseInt(container.style('height'), 10) || 400)
                              - margin.top - margin.bottom;
 
+      chart.update = function() { container.transition().duration(300).call(chart); };
+      chart.container = this;
+
       //------------------------------------------------------------
       // Display noData message if there's nothing to show.
 
@@ -193,7 +196,7 @@ nv.models.funnelChart = function() {
       var funnelWrap = g.select('.nv-funnelWrap')
           .datum( data.filter(function(d) { return !d.disabled; }) );
 
-      d3.transition(funnelWrap).call(funnel);
+      funnelWrap.transition().call(funnel);
 
       //------------------------------------------------------------
 
@@ -248,7 +251,7 @@ nv.models.funnelChart = function() {
             })
           ;
 
-      d3.transition(g.select('.nv-y.nv-axis'))
+      g.select('.nv-y.nv-axis').transition()
         .call(yAxis)
           .style('stroke-width', '1')
           .selectAll('line');
@@ -271,7 +274,7 @@ nv.models.funnelChart = function() {
           });
         }
 
-        selection.transition().call(chart);
+        container.transition().duration(300).call(chart);
       });
 
       dispatch.on('tooltipShow', function(e) {
@@ -281,10 +284,6 @@ nv.models.funnelChart = function() {
       });
 
       //============================================================
-
-      //TODO: decide if this makes sense to add into all the models for ease of updating (updating without needing the selection)
-      chart.update = function() { selection.transition().call(chart); };
-      chart.container = this; // I need a reference to the container in order to have outside code check if the chart is visible or not
 
     });
 

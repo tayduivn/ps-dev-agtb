@@ -85,7 +85,7 @@ nv.models.lineChart = function () {
           availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
 
 
-      chart.update = function() { chart(selection); };
+      chart.update = function() { container.transition().duration(300).call(chart); };
       chart.container = this;
 
       //set state.disabled
@@ -241,7 +241,9 @@ nv.models.lineChart = function () {
       var linesWrap = g.select('.nv-linesWrap')
           .datum(data.filter(function (d) { return !d.disabled; }));
 
-      d3.transition(linesWrap).call(lines);
+      linesWrap
+        .transition()
+          .call(lines);
 
       //------------------------------------------------------------
 
@@ -256,7 +258,8 @@ nv.models.lineChart = function () {
 
       g.select('.nv-x.nv-axis')
           .attr('transform', 'translate(0,' + y.range()[0] + ')');
-      d3.transition(g.select('.nv-x.nv-axis'))
+      g.select('.nv-x.nv-axis')
+        .transition()
           .call(xAxis);
 
 
@@ -265,7 +268,8 @@ nv.models.lineChart = function () {
         .ticks(availableHeight / 36)
         .tickSize(-availableWidth, 0);
 
-      d3.transition(g.select('.nv-y.nv-axis'))
+      g.select('.nv-y.nv-axis')
+        .transition()
           .call(yAxis);
 
       //------------------------------------------------------------
@@ -289,7 +293,7 @@ nv.models.lineChart = function () {
         state.disabled = data.map(function(d) { return !!d.disabled; });
         dispatch.stateChange(state);
 
-        selection.transition().call(chart);
+        container.transition().duration(500).call(chart);
       });
 
 /*
@@ -334,7 +338,7 @@ nv.models.lineChart = function () {
             break;
         }
 
-        selection.transition().call(chart);
+        selection.transition().duration(500).call(chart);
       });
 
       dispatch.on('tooltipShow', function (e) {
@@ -354,7 +358,7 @@ nv.models.lineChart = function () {
           state.disabled = e.disabled;
         }
 
-        selection.call(chart);
+        selection.transition().duration(500).call(chart);
       });
 
       //============================================================

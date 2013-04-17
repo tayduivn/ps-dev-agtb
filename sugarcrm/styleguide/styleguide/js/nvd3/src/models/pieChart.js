@@ -62,7 +62,7 @@ nv.models.pieChart = function() {
         , total = d3.sum( data.map( function(d) { return d.value; }) )
       ;
 
-      chart.update = function() { chart(selection); };
+      chart.update = function() { container.transition().duration(300).call(chart); };
       chart.container = this;
 
       //set state.disabled
@@ -175,7 +175,7 @@ nv.models.pieChart = function() {
       var pieWrap = g.select('.nv-pieWrap')
           .datum(data);
 
-      d3.transition(pieWrap).call(pie);
+      pieWrap.transition().call(pie);
 
       wrap.selectAll('.nv-pie-hole').remove();
 
@@ -208,7 +208,7 @@ nv.models.pieChart = function() {
         state.disabled = data.map(function(d) { return !!d.disabled });
         dispatch.stateChange(state);
 
-        selection.transition().call(chart);
+        container.transition().duration(300).call(chart);
       });
 
       dispatch.on('tooltipShow', function(e) {
@@ -232,7 +232,7 @@ nv.models.pieChart = function() {
           state.disabled = e.disabled;
         }
 
-        selection.call(chart);
+        container.transition().duration(300).call(chart);
       });
 
       //============================================================

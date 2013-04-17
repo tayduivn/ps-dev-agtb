@@ -354,7 +354,7 @@ nv.models.bubbleChart = function () {
         var bubblesWrap = g.select('.nv-bubblesWrap')
             .datum(filteredData.filter(function (d) { return !d.disabled; }));
 
-        d3.transition(bubblesWrap).call(scatter);
+        bubblesWrap.call(scatter);
 
         // x Axis
         xAxis
@@ -403,7 +403,7 @@ nv.models.bubbleChart = function () {
           });
         }
 
-        selection.transition().call(chart.render);
+        container.transition().duration(500).call(chart.render);
       });
 
       /*
