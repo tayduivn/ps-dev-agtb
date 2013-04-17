@@ -86,7 +86,7 @@ class LeadConvert
                 $this->setRelationshipsForModulesToContacts($moduleDef);
             }
 
-            if ($this->modules[$moduleName]->object_name == 'Opportunity' && !empty($this->modules[$moduleName]->account_id)) {
+            if ($this->modules[$moduleName]->object_name == 'Opportunity' && empty($this->modules[$moduleName]->account_id)) {
                 $this->updateOpportunityWithAccountInformation($moduleDef);
             }
             $this->setAssignedForModulesToLeads($moduleDef);
