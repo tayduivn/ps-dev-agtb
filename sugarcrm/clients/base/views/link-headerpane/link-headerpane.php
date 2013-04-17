@@ -26,8 +26,7 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$viewdefs['base']['view']['link-headerpane'] = array(
-    'type' => 'headerpane',
+$viewdefs['base']['view']['link-headerpane']['create'] = array(
     'title' => 'LBL_CREATE_LINK_RECORD',
     'buttons' => array(
         array(
@@ -40,6 +39,27 @@ $viewdefs['base']['view']['link-headerpane'] = array(
             'name'    => 'create_button',
             'type'    => 'button',
             'label'   => 'LBL_CREATE_BUTTON_LABEL',
+            'css_class' => 'btn-primary',
+        ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
+    ),
+);
+$viewdefs['base']['view']['link-headerpane']['select'] = array(
+    'title' => 'LBL_ASSOC_RELATED_RECORD',
+    'buttons' => array(
+        array(
+            'name'    => 'cancel_button',
+            'type'    => 'button',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
+        ),
+        array(
+            'name'    => 'select_button',
+            'type'    => 'button',
+            'label'   => 'LBL_LINK_BUTTON',
             'css_class' => 'btn-primary',
         ),
         array(

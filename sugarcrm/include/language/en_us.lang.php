@@ -3003,7 +3003,7 @@ $app_strings = array (
     'LBL_UNSUBSCRIBE'=>'Unsubscribe',
     'LBL_CREATE_LINK_RECORD' => 'Create and Link Record',
     'LBL_CREATE_LINK_BUTTON_LABEL' => 'Create and Link Record',
-    'ERROR_EMPTY_LINK_MODULE' => 'Please select a module first.',
+    'ERROR_EMPTY_LINK_MODULE' => 'Please select the relationship first.',
     // Ajax status strings
     'LBL_LOADING' => 'Loading...',
     'LBL_SEARCHING' => 'Searching...',
@@ -3630,6 +3630,7 @@ $app_strings = array (
     'LBL_CALL_BUTTON' => 'Call',
     'LBL_SMS_BUTTON' => 'SMS',
     'LBL_EMAIL_BUTTON' => 'Email',
+    'LBL_LINK_BUTTON' => 'Link',
     'LBL_UNLINK_BUTTON' => 'Unlink',
     'LBL_MAP_BUTTON' => 'Map',
     'LBL_FILE_BUTTON' => 'File',
