@@ -32,7 +32,7 @@ JS_FILES = \
 	src/outro.js
 
 D3_FILES = \
-	lib/d3.v2.js
+	lib/d3.js
 
 JS_COMPILER = \
 	uglifyjs
@@ -40,7 +40,7 @@ JS_COMPILER = \
 all: nv.d3.js nv.d3.min.js
 nv.d3.js: $(JS_FILES)
 nv.d3.min.js: $(JS_FILES)
-d3.v2.min.js: $(D3_FILES)
+d3.min.js: $(D3_FILES)
 
 nv.d3.js: Makefile
 	rm -f $@
@@ -50,7 +50,7 @@ nv.d3.min.js: Makefile
 	rm -f ../../../assets/js/nvd3/$@
 	cat $(filter %.js,$^) | $(JS_COMPILER) >> ../../../assets/js/nvd3/$@
 
-d3.v2.min.js: Makefile
+d3.min.js: Makefile
 	rm -f ../../../assets/js/nvd3/lib/$@
 	cat $(filter %.js,$^) | $(JS_COMPILER) >> ../../../assets/js/nvd3/lib/$@
 
