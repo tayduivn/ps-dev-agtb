@@ -63,7 +63,8 @@ class FileTempApi extends FileApi {
      * @return array
      * @throws SugarApiExceptionError
      */
-    public function saveTempImagePost($api, $args) {
+    public function saveTempImagePost($api, $args)
+    {
         if (!isset($args['record'])) {
             $args['record'] = null;
         }
@@ -78,8 +79,8 @@ class FileTempApi extends FileApi {
      * @param array $args Arguments array built by the service base
      * @return array
      */
-    public function getTempImage($api, $args) {
-
+    public function getTempImage($api, $args)
+    {
         // Get the field
         if (empty($args['field'])) {
             // @TODO Localize this exception message
@@ -101,13 +102,16 @@ class FileTempApi extends FileApi {
 
             $info = array(
                 'content-type' => $filedata['mime'],
-                'content-length' => filesize($filepath),
                 'path' => $filepath,
             );
             require_once "include/download_file.php";
             $dl = new DownloadFileApi($api);
             $dl->outputFile('image', $info);
-            register_shutdown_function(function () use($filepath) { unlink($filepath); });
+            register_shutdown_function(
+                function () use($filepath) {
+                    unlink($filepath);
+                }
+            );
         } else {
             throw new SugarApiExceptionInvalidParameter('File not found');
         }

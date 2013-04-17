@@ -232,9 +232,11 @@ class MetadataApi extends SugarApi {
             $this->putMetadataCache($data, $this->platforms[0], TRUE);
 
         }
-        if(empty($hash) || $hash != $data['_hash']){
+        if(empty($hash) || $hash != $data['_hash']) {
             $this->cacheMetadataHash($data['_hash'], true);
-            if($api->generateETagHeader($data['_hash'])) return;
+            if($api->generateETagHeader($data['_hash'])) {
+                return;
+            }
         }
 
         $baseChunks = array('fields','labels','views', 'layouts', 'config', 'jssource');
@@ -621,9 +623,11 @@ class MetadataApi extends SugarApi {
         }
 
         $resp = $this->buildLanguageFile($this->platforms[0], $args['lang'], $this->getModuleList(), $public);
-        if(empty($hash) || $hash != $resp['hash']){
+        if(empty($hash) || $hash != $resp['hash']) {
             $this->putCachedLanguageHash($this->platforms[0], $args['lang'], $resp['hash'], $public);
-            if($api->generateETagHeader($resp['hash'])) return;
+            if($api->generateETagHeader($resp['hash'])) {
+                return;
+            }
         }
 
         return $resp['data'];

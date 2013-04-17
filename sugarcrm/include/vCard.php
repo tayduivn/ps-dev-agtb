@@ -149,8 +149,8 @@ class vCard
 
 	public function saveVCardApi(ServiceBase $api)
 	{
-		global $locale;
-		$content = $this->toString();
+        global $locale;
+        $content = $this->toString();
         $api->setHeader("Content-Disposition","attachment; filename={$this->name}.vcf");
         $api->setHeader("Content-Type","text/x-vcard; charset=".$locale->getExportCharset());
         $api->setHeader("Expires","Mon, 26 Jul 1997 05:00:00 GMT" );
