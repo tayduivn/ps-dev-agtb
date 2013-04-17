@@ -51,7 +51,7 @@ nv.models.pie = function() {
 
       //set up the gradient constructor function
       chart.gradient = function(d,i) {
-        return nv.utils.colorRadialGradient( d, id+'-'+i, {x:0, y:0, r:'35%', s:'35%', u:'userSpaceOnUse'}, color(d,i), wrap.select('defs') );
+        return nv.utils.colorRadialGradient( d, id+'-'+i, {x:0, y:0, r:radius, s:(donut?'50%':'0%'), u:'userSpaceOnUse'}, color(d,i), wrap.select('defs') );
       };
 
       gEnter.append('g').attr('class', 'nv-pie');

@@ -418,7 +418,7 @@ nv.utils.colorRadialGradient = function ( d, i, p, c, defs ) {
   if ( grad.empty() )
   {
     nv.utils.createRadialGradient( id, p, defs, [
-      { 'offset': p.s+'%', 'stop-color': d3.rgb(c).brighter().toString(), 'stop-opacity': 1 },
+      { 'offset': p.s, 'stop-color': d3.rgb(c).brighter().toString(), 'stop-opacity': 1 },
       { 'offset': '100%','stop-color': d3.rgb(c).darker().toString(), 'stop-opacity': 1 }
     ]);
   }
@@ -429,7 +429,7 @@ nv.utils.createRadialGradient = function ( id, params, defs, stops )
 {
   var grad = defs.append('radialGradient')
         .attr('id', id)
-        .attr('r', params.radius)
+        .attr('r', params.r)
         .attr('cx', params.x)
         .attr('cy', params.y)
         .attr('gradientUnits', params.u)
@@ -8337,7 +8337,7 @@ nv.models.pie = function() {
 
       //set up the gradient constructor function
       chart.gradient = function(d,i) {
-        return nv.utils.colorRadialGradient( d, id+'-'+i, {x:0, y:0, r:'35%', s:'35%', u:'userSpaceOnUse'}, color(d,i), wrap.select('defs') );
+        return nv.utils.colorRadialGradient( d, id+'-'+i, {x:0, y:0, r:'15%', s:'50%', u:'userSpaceOnUse'}, color(d,i), wrap.select('defs') );
       };
 
       gEnter.append('g').attr('class', 'nv-pie');

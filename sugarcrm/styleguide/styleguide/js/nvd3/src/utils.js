@@ -192,7 +192,7 @@ nv.utils.colorRadialGradient = function ( d, i, p, c, defs ) {
   if ( grad.empty() )
   {
     nv.utils.createRadialGradient( id, p, defs, [
-      { 'offset': p.s+'%', 'stop-color': d3.rgb(c).brighter().toString(), 'stop-opacity': 1 },
+      { 'offset': p.s, 'stop-color': d3.rgb(c).brighter().toString(), 'stop-opacity': 1 },
       { 'offset': '100%','stop-color': d3.rgb(c).darker().toString(), 'stop-opacity': 1 }
     ]);
   }
@@ -203,7 +203,7 @@ nv.utils.createRadialGradient = function ( id, params, defs, stops )
 {
   var grad = defs.append('radialGradient')
         .attr('id', id)
-        .attr('r', params.radius)
+        .attr('r', params.r)
         .attr('cx', params.x)
         .attr('cy', params.y)
         .attr('gradientUnits', params.u)
