@@ -26,17 +26,4 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<ul class="nav pull-right megamenu" >
-    <li class="dropdown" id="createList">
-        <div class="btn-group">
-            <a data-toggle="dropdown" href="javascript:void(0);" role="button" class="btn btn-invisible btn-link dropdown-toggle dtoggle"><i class="icon-plus icon-md"></i></a>
-            <div class="dropdown-menu scroll pull-right">
-                <ul role="menu">
-                    {{#each createMenuItems}}
-                        <li>{{field ../this model ../this.action}}</li>
-                    {{/each}}
-                </ul>
-            </div>
-        </div>
-    </li>
-</ul>
+<a class="actionLink" data-module="{{def.module}}" data-layout="{{def.layout}}" {{#if def.href}}href="{{def.href}}"{{else}}data-event="true" href="javascript:void(0);"{{/if}}>{{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{label}}</a>

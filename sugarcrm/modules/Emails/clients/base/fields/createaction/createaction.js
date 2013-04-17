@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,18 +24,16 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<ul class="nav pull-right megamenu" >
-    <li class="dropdown" id="createList">
-        <div class="btn-group">
-            <a data-toggle="dropdown" href="javascript:void(0);" role="button" class="btn btn-invisible btn-link dropdown-toggle dtoggle"><i class="icon-plus icon-md"></i></a>
-            <div class="dropdown-menu scroll pull-right">
-                <ul role="menu">
-                    {{#each createMenuItems}}
-                        <li>{{field ../this model ../this.action}}</li>
-                    {{/each}}
-                </ul>
-            </div>
-        </div>
-    </li>
-</ul>
+({
+    extendsFrom: 'CreateactionField',
+
+    initialize: function(options) {
+        // determine if the app should send email according to the has_outbound_email_config user preference
+        var hasOutboundEmailConfig = app.user.getPreference("has_outbound_email_config");
+        if (hasOutboundEmailConfig !== "true") {
+            options.def.href = "mailto:"; // use the user's default mail client instead of email compose view
+        }
+
+        app.view.fields.CreateactionField.prototype.initialize.call(this, options);
+    }
+})
