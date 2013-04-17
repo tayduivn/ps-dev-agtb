@@ -90,6 +90,11 @@
 
         app.view.View.prototype._render.call(this);
 
+        var record_label = this.context.get("record_label");
+        if(record_label) {
+            this.setLabel(this.context, record_label);
+        }
+
         // Field labels in headerpane should be hidden on view but displayed in edit and create
         _.each(this.fields, function (field) {
             var toggleLabel = _.bind(function () {
