@@ -280,8 +280,12 @@ nv.models.pieChart = function() {
     }
     else if (_ === 'class')
     {
-      chart.useClass(true);
       legend.useClass(true);
+      pie.useClass(true);
+      if (arguments[1]) {
+        legend.classStep(arguments[1]);
+        pie.classStep(arguments[1]);
+      }
       var color = function (d,i) { return 'inherit' };
     }
     else

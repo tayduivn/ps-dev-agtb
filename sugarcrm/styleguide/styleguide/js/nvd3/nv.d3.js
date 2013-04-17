@@ -848,6 +848,7 @@ nv.models.funnel = function() {
     , fill = function (d,i) { return color(d,i); }
     , gradient = function (d,i) { return color(d,i); }
     , useClass = false
+    , classStep = 1
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
     ;
 
@@ -1000,11 +1001,10 @@ nv.models.funnel = function() {
 
       groups
           .attr('class', function(d,i) {
+              var iClass = (i*classStep)%20;
               return this.getAttribute('class') || (
                 'nv-group nv-series-' + i + (
-                  useClass
-                    ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
-                    : ''
+                  useClass ? ( ' '+ ( d.class || 'nv-fill' + (iClass>9?'':'0') + iClass ) ) : ''
                 )
               );
           } )
@@ -1062,17 +1062,17 @@ nv.models.funnel = function() {
               .attr('class', 'nv-label-value')
               .attr('transform', 'translate('+ c +',0)');
 
-          lblValueEnter.append('rect')
-              .attr('x', -labelBoxWidth/2)
-              .attr('y', -20)
-              .attr('width', labelBoxWidth)
-              .attr('height', 40)
-              .attr('rx',3)
-              .attr('ry',3)
-              .style('fill', fill({},0))
-              .attr('stroke', 'none')
-              .style('fill-opacity', 0.4)
-            ;
+          // lblValueEnter.append('rect')
+          //     .attr('x', -labelBoxWidth/2)
+          //     .attr('y', -20)
+          //     .attr('width', labelBoxWidth)
+          //     .attr('height', 40)
+          //     .attr('rx',3)
+          //     .attr('ry',3)
+          //     .style('fill', fill({},0))
+          //     .attr('stroke', 'none')
+          //     .style('fill-opacity', 0.4)
+          //   ;
 
           lblValueEnter.append('text')
               .attr('x', 0)
@@ -1087,11 +1087,11 @@ nv.models.funnel = function() {
             var width = this.getBBox().width + 20
             if(width > labelBoxWidth) labelBoxWidth = width;
           });
-      lblValue.selectAll('rect').each(function(d,i){
-            d3.select(this)
-              .attr('width', labelBoxWidth)
-              .attr('x', -labelBoxWidth/2);
-          });
+      // lblValue.selectAll('rect').each(function(d,i){
+      //       d3.select(this)
+      //         .attr('width', labelBoxWidth)
+      //         .attr('x', -labelBoxWidth/2);
+      //     });
 
       d3.transition(lblValue)
           .delay(function(d,i) { return i * delay / data[0].values.length })
@@ -1210,6 +1210,11 @@ nv.models.funnel = function() {
   chart.useClass = function(_) {
     if (!arguments.length) return useClass;
     useClass = _;
+    return chart;
+  };
+  chart.classStep = function(_) {
+    if (!arguments.length) return classStep;
+    classStep = _;
     return chart;
   };
 
@@ -1630,8 +1635,12 @@ nv.models.funnelChart = function() {
     }
     else if (_ === 'class')
     {
-      funnel.useClass(true);
       legend.useClass(true);
+      funnel.useClass(true);
+      if (arguments[1]) {
+        legend.classStep(arguments[1]);
+        funnel.classStep(arguments[1]);
+      }
       var color = function (d,i) { return 'inherit' };
     }
     else
@@ -6817,6 +6826,7 @@ nv.models.pie = function() {
     , fill = function (d,i) { return color(d,i); }
     , gradient = function (d,i) { return color(d,i); }
     , useClass = false
+    , classStep = 1
     , valueFormat = d3.format(',.2f')
     , showLabels = true
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
@@ -6894,14 +6904,13 @@ nv.models.pie = function() {
 
       var ae = slices.enter().append('g')
               .attr('class', function(d,i) {
+                  var iClass = (i*classStep)%20;
                   return this.getAttribute('class') || (
                     'nv-slice' + (
-                      useClass
-                        ? ( ' '+ ( d.data.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
-                        : ''
+                      useClass ? ( ' '+ ( d.data.class || 'nv-fill' + (iClass>9?'':'0') + iClass ) ) : ''
                     )
                   );
-              } )
+              })
               .on('mouseover', function(d,i){
                 d3.select(this).classed('hover', true);
                 dispatch.elementMouseover({
@@ -7070,6 +7079,11 @@ nv.models.pie = function() {
   chart.useClass = function(_) {
     if (!arguments.length) return useClass;
     useClass = _;
+    return chart;
+  };
+  chart.classStep = function(_) {
+    if (!arguments.length) return classStep;
+    classStep = _;
     return chart;
   };
 
@@ -7433,8 +7447,12 @@ nv.models.pieChart = function() {
     }
     else if (_ === 'class')
     {
-      chart.useClass(true);
       legend.useClass(true);
+      pie.useClass(true);
+      if (arguments[1]) {
+        legend.classStep(arguments[1]);
+        pie.classStep(arguments[1]);
+      }
       var color = function (d,i) { return 'inherit' };
     }
     else
@@ -7806,7 +7824,7 @@ nv.models.scatter = function() {
           .classed('hover', function(d) { return d.hover; });
       d3.transition(groups)
           .style('stroke-opacity', 1)
-          .style('fill-opacity', 0.5);
+          .style('fill-opacity', 1);
 
 
       var points = groups.selectAll('path.nv-point')

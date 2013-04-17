@@ -74,6 +74,7 @@ var pages = {
         , {"label":"Wizard", "description":"Wizard takes advantage of bootstrap modals and sets up a framework for taking a user through multiple steps to complete a task."}
         , {"label":"DataTable", "description":"DataTables is a highly flexible tool, based upon the foundations of progressive enhancement, which will add advanced interaction controls to any HTML table."}
         , {"label":"Date-time picker", "description":"Lightweight date/time picker"}
+        , {"label":"Switch", "description":"Turns check boxes into toggle switch"}
       ]
     }
   , "charting":{

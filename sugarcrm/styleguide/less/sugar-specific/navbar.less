@@ -74,24 +74,19 @@
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
 .cube {
-  background: url('@{baseUrl}/img/badge_256f.png') 16px 11px no-repeat;
+  background: url('@{baseUrl}/img/badge_256nmd.png') 17px 11px no-repeat;
+  background-size: 21px;
   float: left;
   height: 32px;
   width: 28px;
   z-index: 2000;
   display: block;
-/*
-  -webkit-transition: all .2s linear;
-     -moz-transition: all .2s linear;
-          transition: all .2s linear;
-  filter:  ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
-  -ms-filter: ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
-*/
   &.hide { 
     display: none;
   }
   &.btn.btn-invisible:hover {
-    background: url('@{baseUrl}/img/badge_256f.png') 16px 11px no-repeat;
+    background: url('@{baseUrl}/img/badge_256nmd.png') 17px 11px no-repeat;
+    background-size: 21px;
   }
 }
 
@@ -284,12 +279,9 @@
         &.home {
           width: 64px;
           &.active {
-            .cube {
-              background-position: 17px 11px;
-            }
             &.open {
               .cube {
-                background-position: 16px 11px;
+                background-position: 17px 11px;
               }
             }
           }

@@ -3,10 +3,6 @@ div.opportunity-metrics-wrapper {
     .nv-chart {
         height: 250px;
         min-width: 250px;
-        .nv-pie-hole {
-            font-size: 32px;
-            font-weight: bold;
-        }
         .won {
             fill: @green;
         }
@@ -23,16 +19,14 @@ div.opportunity-metric {
     text-align: center;
     width: 33%;
     position: relative;
-    display: inline-block;
-    border-top: 1px solid lighten(@grayLight,10%);
-    border-right: 1px solid lighten(@grayLight,10%);
+    border-top: 1px solid darken(@grayLighter,5%);
+    border-right: 1px solid darken(@grayLighter,5%);
     float: left;
-    padding: 24px 4px 12px;
+    padding: 20px 0 10px;
     box-sizing: border-box;
 
     &:last-child {
         border-right: none;
-        width: 34%;
     }
 
     span.label {

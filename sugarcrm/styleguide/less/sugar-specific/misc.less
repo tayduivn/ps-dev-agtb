@@ -149,15 +149,12 @@ form.well {
   width: auto;
 }
 
-.news-article:first-child {
-  margin-top: -10px;
-}
-
 .news-article {
   padding: 10px;
   border-bottom: 1px solid @grayLighter;
   h5 {
-    padding: 10px 0 5px;
+    padding: 0;
+    margin: 0;
   }
 }
 
@@ -245,8 +242,12 @@ hr.soften {
   border-bottom: 1px solid #eee;
   height: 44px;
   display: block;
+  cursor: pointer;
 }
 
+.subpanel-header:hover {
+  #gradient > .vertical(lighten(@grayLighter, 3%), darken(@grayLighter, 3%));
+}
 .subpanel-header h4 {
   line-height: 26px;
   font-weight: normal;

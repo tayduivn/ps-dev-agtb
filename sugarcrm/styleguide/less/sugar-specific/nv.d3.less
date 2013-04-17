@@ -298,6 +298,10 @@ svg .title {
   stroke-opacity: 0;
 }
 
+.nv-pie-hole {
+  font-size: 32px;
+  font-weight: bold;
+}
 
 /**********
 * Lines
@@ -477,6 +481,25 @@ svg .title {
 * Funnel
 */
 
+.nv-funnelWithLegend .nv-y .nv-axis path {
+  stroke: none;
+}
+
+
+/**********
+* Bubble
+*/
+
+.nv-bubbleChart {
+  .nv-axis path {
+    stroke: @gray;
+  }
+  .nvd3.nv-scatter.nv-single-point .nv-groups .nv-point {
+    fill-opacity: 1;
+    stroke-opacity: 1;
+  }
+}
+
 
 /**********
 * Pareto
@@ -502,6 +525,7 @@ svg .title {
 /**********
 * Treemap
 */
+
 .nv-treemap svg {
   background-color: @grayLighter;
 
@@ -553,18 +577,39 @@ svg .title {
 
 //Opportunities Treemap
 .stage_closedwon {
-  fill: darken(@green, 5%);
+  fill: darken(@grayLighter, 55%);
 }
 .stage_prospecting {
-  fill: darken(@orange, 5%);
+  fill: darken(@grayLighter, 35%);
 }
 .stage_closedlost {
-  fill: darken(@red, 5%);
+  fill: darken(@grayLighter, 30%);
 }
 .stage_qualification {
-  fill: darken(@blueDark, 5%);
+  fill: darken(@grayLighter, 65%);
+}
+.stage_thisopp {
+  fill: @green;
+}
+.stage_negotiationreview {
+  fill: darken(@grayLighter, 40%);
+}
+.stage_perceptionanalysis {
+  fill: darken(@grayLighter, 30%);
+}
+.stage_proposalpricequote {
+  fill: darken(@grayLighter, 45%);
+}
+.stage_valueproposition {
+  fill: darken(@grayLighter, 40%);
+}
+.stage_iddecisionmakers{
+  fill: darken(@grayLighter, 70%);
 }
 
+.stage_needsanalysis{
+  fill: darken(@grayLighter, 10%);
+}
 /**********
 * Dendrogram
 */
@@ -619,6 +664,18 @@ body.full-screen {
 /***********
 * Colors
 */
+.nv-fill-green {
+  fill: @green;
+  background-color: @green;
+}
+.nv-fill-red {
+  fill: @red;
+  background-color: @red;
+}
+.nv-fill-blue {
+  fill: @blue;
+  background-color: @blue;
+}
 
 .nv-fill00 { fill:@fill00; background-color:@fill00; }
 .nv-fill01 { fill:@fill01; background-color:@fill01; }

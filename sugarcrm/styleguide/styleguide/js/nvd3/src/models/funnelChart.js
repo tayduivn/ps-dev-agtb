@@ -326,8 +326,12 @@ nv.models.funnelChart = function() {
     }
     else if (_ === 'class')
     {
-      funnel.useClass(true);
       legend.useClass(true);
+      funnel.useClass(true);
+      if (arguments[1]) {
+        legend.classStep(arguments[1]);
+        funnel.classStep(arguments[1]);
+      }
       var color = function (d,i) { return 'inherit' };
     }
     else
