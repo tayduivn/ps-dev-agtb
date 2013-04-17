@@ -209,8 +209,10 @@ class ForecastsWorksheetManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         );
 
-        // get current settings
-        self::$admin = BeanFactory::getBean('Administration');
+
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+                'show_worksheet_worst' => 1
+            ));
     }
 
     public function setUp()
@@ -219,10 +221,6 @@ class ForecastsWorksheetManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_user = self::$manager['user'];
         $this->_oldUser = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = $this->_user;
-        //Reset all columns to be shown
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 1, 'base');
 
         $this->filterApi = new ForecastManagerWorksheetsFilterApi();
         //$this->putApi = new ForecastsWorksheetApi();
@@ -230,6 +228,7 @@ class ForecastsWorksheetManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         parent::tearDown();

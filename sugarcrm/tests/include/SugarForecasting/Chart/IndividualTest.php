@@ -73,14 +73,13 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         SugarTestHelper::setup('mod_strings', array('Forecasts'));
         SugarTestHelper::setUp('current_user');
 
-        $admin = BeanFactory::getBean('Administration');
-        $config = $admin->getConfigForModule('Forecasts', 'base');
-        self::$configTimeperiodType = $config['timeperiod_interval'];
-        self::$configTimeperiodLeafType = $config['timeperiod_leaf_interval'];
-        //Set the timeperiod_leaf_interval to TimePeriod::QUARTER_TYPE for testing purposes
-        $admin->saveSetting('Forecasts', 'timeperiod_interval', TimePeriod::ANNUAL_TYPE, 'base');
-        $admin->saveSetting('Forecasts', 'timeperiod_leaf_interval', TimePeriod::QUARTER_TYPE, 'base');
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+                'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
+                'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
+                'forecast_by' => 'opportunities'
+            ));
 
+        
         self::$timeperiod = TimePeriod::getByType(TimePeriod::QUARTER_TYPE);
         self::$timeperiod->start_date = '2009-01-01';
         self::$timeperiod->end_date = '2009-03-31';
@@ -119,9 +118,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
 
     public static function tearDownAfterClass()
     {
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'timeperiod_interval', self::$configTimeperiodType, 'base');
-        $admin->saveSetting('Forecasts', 'timeperiod_leaf_interval', self::$configTimeperiodLeafType, 'base');
+        SugarTestForecastUtilities::tearDownForecastConfig();
         self::$filterApi = null;
         $GLOBALS["current_user"] = null;
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();

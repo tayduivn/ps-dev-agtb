@@ -115,6 +115,7 @@ class Product extends SugarBean
     public $contact_id;
     public $related_product_id;
     public $contracts;
+    public $product_index;
 
     public $table_name = "products";
     public $rel_manufacturers = "manufacturers";
@@ -636,7 +637,9 @@ class Product extends SugarBean
             }
         }
 
-        $this->mapProbabilityFromSalesStage();
+        if($this->probability == '') {
+            $this->mapProbabilityFromSalesStage();
+        }
         $this->handleSalesStatus();
         $this->convertDateClosedToTimestamp();
         $this->mapFieldsFromProductTemplate();
@@ -646,6 +649,9 @@ class Product extends SugarBean
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
         $this->saveProductWorksheet();
+        if ($this->opportunity_id != $this->fetched_row["opportunity_id"]) {
+            $this->resaveOppForRecalc($this->fetched_row["opportunity_id"]);
+        }
         //END SUGARCRM flav=ent ONLY
 
         $this->handleOppSalesStatus();
@@ -745,6 +751,39 @@ class Product extends SugarBean
         }
         return $id;
     }
+
+    /**
+     * Override the current SugarBean functionality to make sure that when this method is called that it will also
+     * take care of any draft worksheets by rolling-up the data
+     *
+     * @param string $id            The ID of the record we want to delete
+     */
+    public function mark_deleted($id)
+    {
+        $oppId = $this->opportunity_id;
+        parent::mark_deleted($id);
+           
+        //BEGIN SUGARCRM flav=ent ONLY
+        // this only happens when ent is built out
+        $this->saveProductWorksheet();
+        
+        //save to trigger related field recalculations for deleted item
+        $this->resaveOppForRecalc($oppId);
+        //END SUGARCRM flav=ent ONLY
+    }
+    
+    /**
+     * Utility to load/save a related Opp when things are deleted/reassigned so calcuated fields
+     * in Opportunities update with new totals.
+     */
+    protected function resaveOppForRecalc($oppId)
+    {
+    	if (!empty($oppId)) {
+            $opp = BeanFactory::getBean('Opportunities', $oppId);
+            $opp->save();
+        }
+    }
+
 
     /*
      * map fields if opportunity id is set

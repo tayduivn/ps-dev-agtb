@@ -52,8 +52,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $db = DBManagerFactory::getInstance();
         
         $args['opp_count'] = !isset($args['opp_count']) ? 0 : $args['opp_count'];
-        $args['includedClosedAmount'] = !isset($args['includedClosedAmount']) ? 0 : $args['includedClosedAmount'];
-        $args['includedClosedCount'] = !isset($args['includedClosedCount']) ? 0 : $args['includedClosedCount'];
+        $args['closed_amount'] = !isset($args['closed_amount']) ? 0 : $args['closed_amount'];
+        $args['closed_count'] = !isset($args['closed_count']) ? 0 : $args['closed_count'];
         $args['lost_amount'] = !isset($args['lost_amount']) ? 0 : $args['lost_amount'];
         $args['pipeline_opp_count'] = !isset($args['pipeline_opp_count']) ? 0 : $args['pipeline_opp_count'];
         $args['pipeline_amount'] = !isset($args['pipeline_amount']) ? 0 : $args['pipeline_amount'];
@@ -71,14 +71,15 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->base_rate = '1';
         
         //If we are committing a rep forecast, calculate things.  Otherwise, for a manager, just use what is passed in.
-        if ($args['pipeline_opp_count'] == 0 && $args['pipeline_amount'] == 0) {
-            $forecast->calculatePipelineData(($args['includedClosedAmount']), ($args['includedClosedCount']));
+        if ($args['commit_type'] == 'sales_rep') {
+            $forecast->calculatePipelineData(($args['closed_amount']), ($args['closed_count']));
             //push the pipeline numbers back into the args
             $args['pipeline_opp_count'] = $forecast->pipeline_opp_count;
             $args['pipeline_amount'] = $forecast->pipeline_amount;
         } else {
             $forecast->pipeline_opp_count = $args['pipeline_opp_count'];
             $forecast->pipeline_amount = $args['pipeline_amount'];
+            $forecast->closed_amount = $args['closed_amount'];
         }
        
         if ($args['likely_case'] != 0 && $args['opp_count'] != 0) {

@@ -45,11 +45,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        self::$settings = $admin->getConfigForModule('Forecasts');
-        $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
-        $admin->saveSetting('Forecasts', 'forecast_by', 'products', 'base');
+        SugarTestForecastUtilities::setUpForecastConfig();
 
         self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
 
@@ -66,10 +62,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'is_setup', self::$settings['is_setup'], 'base');
-        $admin->saveSetting('Forecasts', 'forecast_by', self::$settings['forecast_by'], 'base');
+        SugarTestForecastUtilities::tearDownForecastConfig();
 
         SugarTestWorksheetUtilities::removeAllWorksheetsForParentIds(SugarTestProductUtilities::getCreatedProductIds());
         SugarTestWorksheetUtilities::removeAllWorksheetsForParentIds(SugarTestOpportunityUtilities::getCreatedOpportunityIds());
@@ -327,5 +320,38 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         $worksheet2 = BeanFactory::getBean("ForecastWorksheets", $worksheet2->id);
         
         $this->assertEquals(1, $worksheet2->deleted);        
+    }
+
+    /**
+     * @group forecasts
+     */
+    public function testDeleteProductMarksDraftWorksheetRecordAsDeleted()
+    {
+        SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->date_closed = '2013-01-01';
+        $opp->save();
+
+        $product = SugarTestProductUtilities::createProduct();
+        $product->opportunity_id = $opp->id;
+        $product->date_closed = '2013-01-01';
+        $product->save();
+
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($product);
+
+        // assert that worksheet is not deleted
+        $this->assertEquals(0, $worksheet->deleted);
+
+        // delete the product
+        $product->deleted = 1;
+        $product->save();
+
+        $this->assertEquals(1, $product->deleted);
+
+        // fetch the worksheet again
+        unset($worksheet);
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($product, false, true);
+        $this->assertEquals(1, $worksheet->deleted);
     }
 }

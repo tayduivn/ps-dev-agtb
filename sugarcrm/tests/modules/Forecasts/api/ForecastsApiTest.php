@@ -45,6 +45,8 @@ class ForecastsApiTest extends RestTestBase
     {
         parent::setUpBeforeClass();
 
+        SugarTestForecastUtilities::setUpForecastConfig();
+
         self::$currentUser = SugarTestUserUtilities::createAnonymousUser();
         self::$currentUser->user_name = 'employee0';
         self::$currentUser->save();
@@ -72,6 +74,7 @@ class ForecastsApiTest extends RestTestBase
 
     public static function tearDownAfterClass()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         parent::tearDown();
     }

@@ -127,6 +127,7 @@ describe("forecasts_view_forecastsCommitted", function() {
 
         it("should show down for  best, worst and likely", function() {
             totals = {
+                'amount': 1,
                 'best_case': 1,
                 'best_adjusted': 1,
                 'likely_case': 1,
@@ -134,7 +135,6 @@ describe("forecasts_view_forecastsCommitted", function() {
                 'worst_case': 1,
                 'worst_adjusted': 1
             };
-
             view.updateTotals(totals);
 
             expect(view.bestCaseCls).toContain('icon-arrow-down');
@@ -173,6 +173,7 @@ describe("forecasts_view_forecastsCommitted", function() {
 
         it("should show down for  best, worst and likely", function() {
             totals = {
+                'amount': 1,
                 'best_case': 1,
                 'best_adjusted': 1,
                 'likely_case': 1,

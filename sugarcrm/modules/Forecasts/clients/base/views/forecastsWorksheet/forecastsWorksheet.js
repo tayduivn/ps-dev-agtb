@@ -583,12 +583,16 @@
         /*
          * Next, we need to check to see if the user is a manager.  They have their own requirements and dialogs (those described below)
          */
-        else if(this.selectedUser.isManager && (this.context.get("currentWorksheet") == "worksheet") && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings) {
+        else if(this.selectedUser.isManager &&
+                _.isEqual(this.selectedUser.id, App.user.id) &&
+                (this.context.get("currentWorksheet") == "worksheet") && 
+                app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings) {
             /*
              * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that
              * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
              * is enabled and they are on the rep worksheet.
              */
+            
             if(this.commitButtonEnabled) {
                 var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
                 //show dialog
@@ -782,8 +786,8 @@
                     'won_amount': wonAmount,
                     'included_opp_count': includedCount,
                     'total_opp_count': totalCount,
-                    'includedClosedCount' : 0,
-                    'includedClosedAmount' : 0
+                    'closed_count' : 0,
+                    'closed_amount' : 0
 
                 }
             }, {silent: true});
@@ -859,8 +863,8 @@
             'won_amount': wonAmount,
             'included_opp_count': includedCount,
             'total_opp_count': this.collection.models.length,
-            'includedClosedCount': includedClosedCount,
-            'includedClosedAmount': includedClosedAmount
+            'closed_count': includedClosedCount,
+            'closed_amount': includedClosedAmount
 
         };
 

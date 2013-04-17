@@ -100,11 +100,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
-
-        //We are trying to simulate setting a timeperiod_id based on the date_closed
-        //so let's retrieve the Opportunity and then try to set the date_closed (BeanFactory::getBean will not work)
-        $opp = new Opportunity();
-        $opp->retrieve($opp->id);
         $opp->date_closed = "2009-02-15";
         $opp->save();
 
@@ -129,11 +124,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
-
-        //We are trying to simulate setting a timeperiod_id based on the date_closed
-        //so let's retrieve the Opportunity and then try to set the date_closed (BeanFactory::getBean will not work)
-        $opp = new Opportunity();
-        $opp->retrieve($opp->id);
         $opp->date_closed = "2009-01-02";
         $opp->save();
 
@@ -159,11 +149,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
-
-        //We are trying to simulate setting a timeperiod_id based on the date_closed
-        //so let's retrieve the Opportunity and then try to set the date_closed (BeanFactory::getBean will not work)
-        $opp = new Opportunity();
-        $opp->retrieve($opp->id);
         $opp->date_closed = "2009-03-31";
         $opp->save();
 

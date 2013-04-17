@@ -704,13 +704,15 @@
             worst_case = 0,
             included_opp_count = 0,
             pipeline_opp_count = 0,
-            pipeline_amount = 0;
+            pipeline_amount = 0,
+            closed_amount = 0;
 
 
         this.collection.forEach(function(model) {
             var base_rate = parseFloat(model.get('base_rate')),
                 mPipeline_opp_count = model.get("pipeline_opp_count"),
                 mPipeline_amount = model.get("pipeline_amount"),
+                mClosed_amount = model.get("closed_amount"),
                 mOpp_count = model.get("opp_count");
 
             quota += app.currency.convertWithRate(model.get('quota'), base_rate);
@@ -722,8 +724,11 @@
             worst_case_adjusted += app.currency.convertWithRate(model.get('worst_case_adjusted'), base_rate);
             included_opp_count += (_.isUndefined(mOpp_count))? 0 : parseInt(mOpp_count);
             pipeline_opp_count += (_.isUndefined(mPipeline_opp_count))? 0 : parseInt(mPipeline_opp_count);
-            if(!_.isUndefined(mPipeline_amount)) {
+            if (!_.isUndefined(mPipeline_amount)) {
                 pipeline_amount = app.math.add(pipeline_amount, mPipeline_amount);
+            }
+            if (!_.isUndefined(mClosed_amount)) {
+                closed_amount = app.math.add(closed_amount, mClosed_amount);
             }
 
         });
@@ -739,8 +744,8 @@
             'worst_adjusted': worst_case_adjusted,
             'included_opp_count': included_opp_count,
             'pipeline_opp_count': pipeline_opp_count,
-            'pipeline_amount': pipeline_amount
-
+            'pipeline_amount': pipeline_amount,
+            'closed_amount' : closed_amount
         });
 
         this.context.trigger("forecasts:worksheetManager:updateTotals", this.totalModel.toJSON());

@@ -28,8 +28,8 @@
 }}
 <div class="btn-toolbar pull-right">
     <form class="dropdown form-horizontal btn-group" id="forecastsChartDisplayOptions">
-        <a href="#" class="btn btn-mini btn-invisible btn-expand-full"><span class="icon-resize-full"></span></a>
-        <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-mini btn-invisible"><span class="icon-cog"></span></a>
+        <a href="javascript:void(0)" class="btn btn-mini btn-invisible btn-expand-full"><span class="icon-resize-full"></span></a>
+        <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle btn btn-mini btn-invisible"><span class="icon-cog"></span></a>
         <ul class="dropdown-menu left carettop" id="chartDisplayOptions">
             <div class="datasetOptions">
             {{#eachOptions chartDataSet}}

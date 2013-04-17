@@ -80,6 +80,7 @@ class ForecastWorksheet extends SugarBean
 
     /**
      * Sets Worksheet args so that we save the supporting tables.
+     *
      * @param array $args Arguments passed to save method through PUT
      */
     public function setWorksheetArgs($args)
@@ -107,7 +108,9 @@ class ForecastWorksheet extends SugarBean
                 'parent_id' => $opp->id,
                 'draft' => ($isCommit === false) ? 1 : 0,
                 'deleted' => 0,
-            )
+            ),
+            true,
+            false
         );
 
         $fields = array(
@@ -139,7 +142,7 @@ class ForecastWorksheet extends SugarBean
         $this->draft = ($isCommit === false) ? 1 : 0;
 
         $this->save(false);
-        
+
         //if this migrated, we need to delete the committed row
         $this->removeMigratedRow($opp);
 
@@ -168,19 +171,22 @@ class ForecastWorksheet extends SugarBean
             /* @var $product_wkst ForecastWorksheet */
             $product_wkst = BeanFactory::getBean('ForecastWorksheets');
             $product_wkst->saveRelatedProduct($product, $isCommit);
-            unset($product_wkst);   // clear the cache
+            unset($product_wkst); // clear the cache
         }
     }
-    
+
     /**
      * Removes committed row for a bean if it has moved timeperiods.
-     * 
+     *
      * @param SugarBean $bean
      * @return boolean true if something is removed, false if not
      */
-    public function removeMigratedRow(SugarBean $bean) {
+    public function removeMigratedRow(SugarBean $bean)
+    {
         $return = false;
-        if ($this->timeperiodHasMigrated($this->fetched_row["date_closed"], $bean->fetched_row["date_closed"])) {
+        if (isset($this->fetched_row['date_closed']) && isset($bean->fetched_row['date_closed']) &&
+            $this->timeperiodHasMigrated($this->fetched_row["date_closed"], $bean->fetched_row["date_closed"])
+        ) {
             $worksheet = BeanFactory::getBean("ForecastWorksheets");
             $worksheet->retrieve_by_string_fields(
                 array(
@@ -188,7 +194,9 @@ class ForecastWorksheet extends SugarBean
                     "parent_id" => $bean->id,
                     "draft" => 0,
                     "deleted" => 0,
-                )
+                ),
+                true,
+                false
             );
             $worksheet->deleted = 1;
             $worksheet->save();
@@ -211,7 +219,9 @@ class ForecastWorksheet extends SugarBean
                 'parent_id' => $product->id,
                 'draft' => ($isCommit === false) ? 1 : 0,
                 'deleted' => 0,
-            )
+            ),
+            true,
+            false
         );
 
         $fields = array(
@@ -241,7 +251,7 @@ class ForecastWorksheet extends SugarBean
         $this->parent_type = 'Products';
         $this->parent_id = $product->id;
         $this->draft = ($isCommit === false) ? 1 : 0;
-        
+
         //if this migrated, we need to delete the committed row
         $this->removeMigratedRow($product);
 
@@ -250,28 +260,28 @@ class ForecastWorksheet extends SugarBean
 
     /**
      * Checks to see if a worksheet item being saved has jumped timeperiods.
-     * 
+     *
      * @param date $worksheetDate
      * @param date $objDate
-     * 
+     *
      * @return bool
      */
     protected function timeperiodHasMigrated($worksheetDate, $objDate)
     {
         $return = false;
-        
+
         //if the close dates are different, we need to see if the obj is in a new timeperiod
         if ($worksheetDate != $objDate) {
             $tp1 = TimePeriod::retrieveFromDate($worksheetDate);
             $tp2 = TimePeriod::retrieveFromDate($objDate);
-                       
+
             if (!empty($tp1) && !empty($tp2) && ($tp1->id != $tp2->id)) {
                 $return = true;
             }
         }
-        
+
         return $return;
-    }    
+    }
 
     /**
      * Copy the fields from the $seed bean to the worksheet object
@@ -290,7 +300,7 @@ class ForecastWorksheet extends SugarBean
                 $field = array_shift($field);
             }
             // make sure the field is set, as not to cause a notice since a field might get unset() from the $seed class
-            if(isset($seed->$field)) {
+            if (isset($seed->$field)) {
                 $this->$key = $seed->$field;
             }
         }
@@ -331,18 +341,18 @@ class ForecastWorksheet extends SugarBean
                 ->gte('date_closed_timestamp', $tp->start_date_timestamp)
                 ->lte('date_closed_timestamp', $tp->end_date_timestamp);
         $beans = $sq->execute();
-               
+
         if (empty($beans)) {
             return false;
         }
-        
+
         $bean_chunks = array_chunk($beans, $chunk_size);
 
         // process the first chunk
         self::processWorksheetDataChunk($type, $bean_chunks[0]);
 
         // process any remaining in the background
-        for($x=1; $x < count($bean_chunks); $x++) {
+        for ($x = 1; $x < count($bean_chunks); $x++) {
             $this->createUpdateForecastWorksheetJob($type, $bean_chunks[$x], $user_id);
         }
 

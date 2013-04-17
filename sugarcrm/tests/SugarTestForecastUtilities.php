@@ -42,6 +42,32 @@ class SugarTestForecastUtilities
     private static $timeperiod;
 
     /**
+     * Utility method to setup Forecasts Data
+     *
+     * @param array $additional_config              A Key Value pair to set Forecast Config Settings
+     */
+    public static function setUpForecastConfig(array $additional_config = array())
+    {
+        SugarTestConfigUtilities::setConfig('Forecasts', 'is_setup', 1);
+        SugarTestConfigUtilities::setConfig('Forecasts', 'forecast_by', 'products');
+        SugarTestConfigUtilities::setConfig('Forecasts', 'show_worksheet_likely', 1);
+        SugarTestConfigUtilities::setConfig('Forecasts', 'show_worksheet_best', 1);
+        SugarTestConfigUtilities::setConfig('Forecasts', 'show_worksheet_worst', 0);
+
+        foreach($additional_config as $key => $value) {
+            SugarTestConfigUtilities::setConfig('Forecasts', $key, $value);
+        }
+    }
+
+    /**
+     * Utility Method to Rest Forecast Config Data
+     */
+    public static function tearDownForecastConfig()
+    {
+        SugarTestConfigUtilities::resetConfig();
+    }
+
+    /**
      * @static
      * This is a static function to create a test Forecast instance
      * @param $timeperiod TimePeriod instance for Forecast
