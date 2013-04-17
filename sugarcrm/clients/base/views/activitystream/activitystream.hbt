@@ -3,7 +3,7 @@
     <img src="{{model.attributes.picture_url}}" alt="{{model.attributes.created_by_name}} avatar">
 </a>
 {{else}}
-<div class="label label-module label-{{model.attributes.parent_type}} pull-left" rel="tooltip" data-title="{{model.attributes.parent_type}}">
+<div class="label label-module label-{{model.attributes.parent_type}} pull-left" rel="tooltip" data-title="{{moduleIconToolTip model.attributes.parent_type}}">
     {{moduleIconLabel model.attributes.parent_type}}
 </div>
 {{/eq}}
