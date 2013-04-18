@@ -4,7 +4,7 @@ require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 /**
  * Command-line upgrader
  */
-class CliUpgrader extends Upgrader
+class CliUpgrader extends UpgradeDriver
 {
     /*
      * CLI arguments: Zipfile Logfile Sugardir Adminuser [Stage]

@@ -3,7 +3,7 @@
  * Upgrader main driver class
  * @api
  */
-abstract class Upgrader
+abstract class UpgradeDriver
 {
     /**
      * If upgrade is successful
@@ -586,10 +586,11 @@ abstract class Upgrader
         $results = array();
         foreach($dirs as $dirname) {
             if(!file_exists($dirname.$stage)) continue;
+
             foreach(new FilesystemIterator($dirname.$stage, FilesystemIterator::SKIP_DOTS) as $fileInfo) {
                 if(!$fileInfo->isFile() || $fileInfo->getExtension() != "php") continue;
 
-                include $fileInfo->getPathName();
+                include_once $fileInfo->getPathName();
                 $scriptname = $fileInfo->getBasename(".php");
                 $classname = "SugarUpgrade".preg_replace("/^\d+_/", "", $scriptname); // strip numeric prefix, add SugarUpgrade
                 if(!class_exists($classname)) continue;
@@ -981,7 +982,7 @@ abstract class UpgradeScript
     public $type = self::UPGRADE_ALL;
     /**
      * Upgrade driver
-     * @var Upgrader
+     * @var UpgradeDriver
      */
     public $upgrader;
 
