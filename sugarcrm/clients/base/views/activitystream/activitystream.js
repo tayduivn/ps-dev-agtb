@@ -167,6 +167,11 @@
         };
 
         payload.data.value = this.getText($el);
+
+        if (!payload.data.value) {
+            return;
+        }
+
         if (this.getTags) {
             payload.data.tags = this.getTags($el);
         }
