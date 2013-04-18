@@ -240,7 +240,7 @@
     switchPreview: function(data, index, id, module) {
         var self = this,
             currModule = module || this.model.module,
-            currID = id || this.model.get("postId") || this.model.get("id"),
+            currID = id || this.model.get("id"),
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
 
         if( this.switching || this.collection.models.length < 2) {
@@ -253,54 +253,32 @@
             data.direction === "right" && (currID === _.last(this.collection.models).get("id")) ) {
             this.switching = false;
             return;
-        }
-        else {
+        } else {
             // We can increment/decrement
             data.direction === "left" ? currIndex -= 1 : currIndex += 1;
 
-            // If there is no target_id, we don't have access to that activity record
-            // The other condition ensures we're previewing from activity stream items.
-            if( _.isUndefined(this.collection.models[currIndex].get("target_id")) &&
-                this.collection.models[currIndex].get("activity_data") ) {
+            var moduleMeta = app.metadata.getModule(currModule);
 
+            // Some activity stream items aren't previewable - e.g. no detail views
+            // for "Meetings" module.
+            if( moduleMeta && _.isUndefined(moduleMeta.views.detail) ) {
                 currID = this.collection.models[currIndex].id;
                 this.switching = false;
                 this.switchPreview(data, currIndex, currID, currModule);
-            }
-            else {
-                var targetModule = this.collection.models[currIndex].get("target_module") || currModule,
-                    moduleMeta = app.metadata.getModule(targetModule);
-
-                // Some activity stream items aren't previewable - e.g. no detail views
-                // for "Meetings" module.
-                if( moduleMeta && _.isUndefined(moduleMeta.views.detail) ) {
-                    currID = this.collection.models[currIndex].id;
-                    this.switching = false;
-                    this.switchPreview(data, currIndex, currID, currModule);
-                }
-                else {
-                    this.model = app.data.createBean(targetModule);
-
-                    if( _.isUndefined(this.collection.models[currIndex].get("target_id")) ) {
-                        this.model.set("id", this.collection.models[currIndex].get("id"));
+            } else {
+                this.model = app.data.createBean(currModule);
+                this.model.set("id", this.collection.models[currIndex].get("id"));
+                this.model.fetch({
+                    //Show alerts for this request
+                    showAlerts: true,
+                    success: function(model) {
+                        model.set("_module", currModule);
+                        self.model = null;
+                        //Reset the preview
+                        app.events.trigger("preview:render", model, null, false);
+                        self.switching = false;
                     }
-                    else
-                    {
-                        this.model.set("postId", this.collection.models[currIndex].get("id"));
-                        this.model.set("id", this.collection.models[currIndex].get("target_id"));
-                    }
-                    this.model.fetch({
-                        //Show alerts for this request
-                        showAlerts: true,
-                        success: function(model) {
-                            model.set("_module", targetModule);
-                            self.model = null;
-                            //Reset the preview
-                            app.events.trigger("preview:render", model, null, false);
-                            self.switching = false;
-                        }
-                    });
-                }
+                });
             }
         }
     },
