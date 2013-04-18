@@ -2522,7 +2522,7 @@ class SugarBean
                     }
 
                     // If both parent type and parent id are set, save it unless the bean is being deleted
-                    if (!empty($this->$typeField) && !empty($this->$idField) && $this->deleted != 1)
+                    if (!empty($this->$typeField) && !empty($this->$idField) && !empty($parentLinks[$this->$typeField]['name']) && $this->deleted != 1)
                     {
                         //Now add the new parent
                         $parentLink = $parentLinks[$this->$typeField]['name'];
