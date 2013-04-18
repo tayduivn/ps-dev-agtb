@@ -125,6 +125,8 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * An entry in campaign_log table should be created for the new contact during lead conversion
+     * @group bug44522
      * @dataProvider providerDataAddLogForContactInCampaign
      */
     public function testAddLogForContactInCampaign_LogsProperlyWhenCorrectDataSet($hasCampaign, $hasContact, $expected) {
@@ -477,5 +479,43 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(LeadConvert::STATUS_CONVERTED, $lead->status, 'Lead status field was not changed properly.');
         $this->assertEquals(true, $lead->converted, 'Lead converted field not set properly');
         $this->assertEquals(true, $lead->in_workflow, 'Lead workflow field not set properly');
+    }
+
+    /**
+     * Account related to leads record are copied over to contact record during conversion
+     * @group bug40209
+     */
+    public function testConvertLead_AccountIsCopiedFromLeadToContact()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+        $account = SugarTestAccountUtilities::createAccount();
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        $this->lead = SugarTestLeadUtilities::createLead();
+        $this->leadId = $this->lead->id;
+
+        $modules = array(
+            'Contacts' => $contact,
+            'Accounts' => $account,
+            'Opportunities' => $opp
+        );
+
+        $leadConvert = $this->getMock('LeadConvert',
+            array('getVarDefs'), array($this->lead->id), '', false);
+        $leadConvert->expects($this->once())
+            ->method('getVarDefs')
+            ->will($this->returnValue($this->modulesDef));
+
+        $leadConvert->initialize($this->leadId);
+        $leadConvert->convertLead($modules);
+
+        $lead = BeanFactory::getBean('Leads', $this->leadId);
+        $this->assertEquals(LeadConvert::STATUS_CONVERTED, $lead->status, 'Lead status field was not changed properly.');
+
+        $contact_id = $lead->contact_id;
+        $this->assertNotEmpty($contact_id, "contact id was not created during conversion process.  An error has ocurred");
+
+        $contact = BeanFactory::getBean('Contacts', $contact_id);
+        $this->assertEquals($lead->account_id, $contact->account_id, "Account id from converted lead does not match the new contact account id, there was an error during conversion.");
     }
 }
