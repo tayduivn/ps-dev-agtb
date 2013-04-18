@@ -342,9 +342,9 @@ nv.models.scatter = function() {
           .style('fill-opacity', 1e-6)
           .remove();
       groups
-          .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,d.iClass); })
-          .attr('fill', function(d,i) { return this.getAttribute('fill') || fill(d,d.iClass); })
-          .attr('stroke', function(d,i) { return this.getAttribute('stroke') || fill(d, d.iClass); })
+          .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,d.series); })
+          .attr('fill', function(d,i) { return this.getAttribute('fill') || fill(d,d.series); })
+          .attr('stroke', function(d,i) { return this.getAttribute('stroke') || fill(d, d.series); })
           .classed('hover', function(d) { return d.hover; });
       d3.transition(groups)
           .style('stroke-opacity', 1)

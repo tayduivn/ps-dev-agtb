@@ -218,7 +218,8 @@ nv.models.bubbleChart = function () {
       //add series index to each data point for reference
       filteredData = filteredData.map(function (d, i) {
         d.series = i;
-        d.className = d.values[0].classes;
+        d.classes = d.values[0].classes;
+        d.color = d.values[0].color;
         return d;
       });
 

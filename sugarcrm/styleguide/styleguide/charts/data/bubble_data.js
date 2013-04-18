@@ -146,8 +146,8 @@ var bubble_data_color = {
       "probability": 40,
       "base_amount": 489455,
       "currency_symbol": "$",
-      "color": "#1f77b4",
-      "classes": "nv-fill04"
+      "color": "#FFBB78",
+      "classes": "nv-fill03"
     },
     {
       "id": "7918196d-1aff-103d-7e85-515586a9a701",
@@ -160,7 +160,7 @@ var bubble_data_color = {
       "probability": 10,
       "base_amount": 464387,
       "currency_symbol": "$",
-      "color": "#1f77b4",
+      "color": "#AEC7E8",
       "classes": "nv-fill01"
     },
     {
@@ -174,7 +174,7 @@ var bubble_data_color = {
       "probability": 70,
       "base_amount": 460707,
       "currency_symbol": "$",
-      "color": "#1f77b4",
+      "color": "#FF9896",
       "classes": "nv-fill07"
     },
     {
@@ -188,7 +188,7 @@ var bubble_data_color = {
       "probability": 10,
       "base_amount": 439633,
       "currency_symbol": "$",
-      "color": "#1f77b4",
+      "color": "#AEC7E8",
       "classes": "nv-fill01"
     },
     {
@@ -202,7 +202,7 @@ var bubble_data_color = {
       "probability": 90,
       "base_amount": 423856,
       "currency_symbol": "$",
-      "color": "#1f77b4",
+      "color": "#C5B0D5",
       "classes": "nv-fill09"
     },
     {
@@ -216,7 +216,7 @@ var bubble_data_color = {
       "probability": 10,
       "base_amount": 414137,
       "currency_symbol": "$",
-      "color": "#1f77b4",
+      "color": "#AEC7E8",
       "classes": "nv-fill01"
     },
     {
@@ -230,7 +230,7 @@ var bubble_data_color = {
       "probability": 90,
       "base_amount": 404513,
       "currency_symbol": "$",
-      "color": "#1f77b4",
+      "color": "#C5B0D5",
       "classes": "nv-fill09"
     },
     {
@@ -244,7 +244,7 @@ var bubble_data_color = {
       "probability": 10,
       "base_amount": 397978,
       "currency_symbol": "$",
-      "color": "#1f77b4",
+      "color": "#AEC7E8",
       "classes": "nv-fill01"
     },
     {
@@ -258,7 +258,7 @@ var bubble_data_color = {
       "probability": 70,
       "base_amount": 392750,
       "currency_symbol": "$",
-      "color": "#1f77b4",
+      "color": "#FF9896",
       "classes": "nv-fill07"
     },
     {
@@ -272,8 +272,8 @@ var bubble_data_color = {
       "probability": 40,
       "base_amount": 373486,
       "currency_symbol": "$",
-      "color": "#1f77b4",
-      "classes": "nv-fill04"
+      "color": "#FFBB78",
+      "classes": "nv-fill03"
     }
   ]
 };
