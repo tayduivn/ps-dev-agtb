@@ -178,8 +178,6 @@
 
         var bean = app.data.createRelatedBean(this.model, null, 'comments');
         bean.save(payload, {
-            //Show alerts for this request
-            showAlerts: true,
             relate: true,
             success: function(model) {
                 $el.html('').trigger('change');
