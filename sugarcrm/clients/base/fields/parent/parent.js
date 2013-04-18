@@ -89,6 +89,10 @@
     },
     getPlaceHolder: function() {
         return  app.lang.get('LBL_SEARCH_SELECT', this.module);
+    },
+    unbindDom: function() {
+        this.$(this.typeFieldTag).select2('destroy');
+        app.view.fields.RelateField.prototype.unbindDom.call(this);
     }
 
 })

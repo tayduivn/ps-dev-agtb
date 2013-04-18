@@ -147,12 +147,8 @@
      * @private
      */
     _dispose: function(){
-        app.view.views.ListView.prototype._dispose.call(this);
-        delete this.rowFields;
-        if(this.context){
-            this.context.off(null, null, this);
-            this.context = null;
-        }
+        app.view.views.FlexListView.prototype._dispose.call(this);
+        this.rowFields = null;
     },
 
     /**

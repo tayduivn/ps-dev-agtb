@@ -20,7 +20,6 @@
      * @param {Object} options
      */
     initialize: function (options) {
-        _.bindAll(this);
         this.minChars = options.def.minChars || this.minChars;
         this.bwcLink = options.def.bwcLink;//false is a perfectly valid value for this boolean metadata property!
         app.view.Field.prototype.initialize.call(this, options);
@@ -69,8 +68,8 @@
                 placeholder: this.getPlaceHolder(),
                 allowClear: self.allow_single_deselect,
                 minimumInputLength: self.minChars,
-                query: self.search
-            }).on("open", function () {
+                query: _.bind(this.search, this)
+            }).on("open",function () {
                     var plugin = $(this).data('select2');
                     if (!plugin.searchmore) {
                         var $content = $('<li class="select2-result">').append(
@@ -91,7 +90,7 @@
                             module: self.getSearchModule(),
                             fields: _.union(['id', 'name'], _.keys(self.def.populate_list || {}))
                         }
-                    }, self.setValue);
+                    }, _.bind(self.setValue, self));
                 }).on("change", function (e) {
                     var id = e.val,
                         plugin = $(this).data('select2'),
@@ -275,6 +274,10 @@
                 app.logger.error("Unable to fetch the bean collection.");
             }
         });
-    }, app.config.requiredElapsed || 500)
+    }, app.config.requiredElapsed || 500),
 
+    unbindDom: function() {
+        this.$(this.fieldTag).select2('destroy');
+        app.view.Field.prototype.unbindDom.call(this);
+    }
 })

@@ -7,8 +7,6 @@
     pixelsFromFooter: 60, //how many pixels from the footer the drawer will drop down to
 
     initialize: function(options) {
-        _.bindAll(this);
-
         if (!this.$el.is('#drawers')) {
             app.logger.error('Drawer layout can only be included as an Additional Component.');
             return;
@@ -183,7 +181,7 @@
 
             //resize the visible drawer when the browser resizes
             if (this._components.length === 1) {
-                $(window).on('resize', this._resizeDrawer);
+                $(window).on('resize.drawer', _.bind(this._resizeDrawer, this));
             }
         }, this));
     },
@@ -226,7 +224,7 @@
 
         //remove resize handler
         if (this._components.length === 1) {
-            $(window).off('resize', this._resizeDrawer)
+            $(window).off('resize.drawer');
         }
     },
 
@@ -400,6 +398,7 @@
     _dispose: function() {
         app.routing.offBefore("route", this.reset, this);
         this.reset();
+        $(window).off('resize.drawer');
         app.view.View.prototype._dispose.call(this);
     },
 

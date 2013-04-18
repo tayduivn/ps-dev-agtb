@@ -34,7 +34,7 @@
                 if (fields.length > 0) {
                     _.defer(function () {
                         _.each(fields, function (field) {
-                            if (_.isFunction(field.clearErrorDecoration)) {
+                            if (_.isFunction(field.clearErrorDecoration) && field.disposed !== true) {
                                 field.isErrorState = false;
                                 field.clearErrorDecoration();
                             }

@@ -109,5 +109,13 @@
      */
     _search: function(module_list, term) {
         this.collection.fetch({query: term, module_list: [module_list], offset: 0}); // reset offset to 0 on a search
+    },
+
+    unbindData: function() {
+        var collection = this.context.get('mass_collection');
+        if(collection) {
+            collection.off(null, null, this);
+        }
+        app.view.views.FlexListView.prototype.unbindData.call(this);
     }
 })

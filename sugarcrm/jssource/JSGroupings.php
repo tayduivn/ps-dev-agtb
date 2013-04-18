@@ -56,7 +56,6 @@
                             'styleguide/assets/js/bootstrap-modal.js'   => $target,
                             'styleguide/assets/js/bootstrap-alert.js'   => $target,
                             'styleguide/assets/js/bootstrap-datepicker.js' => $target,
-                            'styleguide/assets/js/bootstrapx-clickover.js' => $target,
                         );
                         break;
                     case 'bootstrap_core':
@@ -70,7 +69,6 @@
                     case 'bootstrap_forecasts':
                         return array(
                             'styleguide/assets/js/bootstrap-datepicker.js' => $target,
-                            'styleguide/assets/js/bootstrapx-clickover.js' => $target,
                         );
                         break;
                     case 'jquery_core':
@@ -85,12 +83,10 @@
                             'include/javascript/jquery/jquery.hoverIntent.js'            =>   $target,
                             'include/javascript/jquery/jquery.hoverscroll.js'            =>   $target,
                             'include/javascript/jquery/jquery.hotkeys.js'                =>   $target,
-//                            'include/javascript/jquery/jquery.superfish.js'              =>   $target,
                             'include/javascript/jquery/jquery.tipTip.js'              	 =>   $target,
                             'include/javascript/jquery/jquery.sugarMenu.js'              =>   $target,
                             'include/javascript/jquery/jquery.highLight.js'              =>   $target,
                             'include/javascript/jquery/jquery.showLoading.js'            =>   $target,
-                            'include/javascript/jquery/jquery.chosen.min.js'             =>   $target,
                             'include/javascript/jquery/jquery.jstree.js'              	 =>   $target,
                             'include/javascript/jquery/jquery.dataTables.min.js'         =>   $target,
                             'include/javascript/jquery/jquery.dataTables.customSort.js'  =>   $target,
@@ -114,8 +110,6 @@
                 "sidecar/lib/handlebars/handlebars-1.0.rc.1.js" => "summer/summer.min.js",
                 "sidecar/lib/stash/stash.js" => "summer/summer.min.js",
                 "sidecar/lib/async/async.js" => "summer/summer.min.js",
-                "styleguide/styleguide/js/chosen.jquery.hal.js" => "summer/summer.min.js",
-//                "sidecar/lib/chosen/chosen.jquery.js" => "summer/summer.min.js",
                 "sidecar/lib/sugar/sugar.searchahead.js" => "summer/summer.min.js",
                 "sidecar/lib/sugar/sugar.timeago.js" => "summer/summer.min.js",
                 "summer/lib/TimelineJS/js/storyjs-embed.js" => "summer/summer.min.js",
@@ -184,7 +178,6 @@
             ),
 
             $summer_css = array(
-                "sidecar/lib/chosen/chosen.css" => "summer/summer.min.css",
                 "summer/lib/fullcalendar/fullcalendar.css" => "summer/summer.min.css",
                 "sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" => "summer/summer.min.css",
                 //"styleguide/styleguide/css/nv.d3.css" => "summer/summer.min.css",
@@ -198,7 +191,6 @@
             ),
 
             $summer_splash_css = array(
-                "sidecar/lib/chosen/chosen.css" => "summer/summer-splash.min.css",
                 "summer/lib/twitterbootstrap/css/bootstrap.css" => "summer/summer-splash.min.css",
                 "sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" => "summer/summer-splash.min.css",
                 "summer/splash/static/css/splash.css" => "summer/summer-splash.min.css",

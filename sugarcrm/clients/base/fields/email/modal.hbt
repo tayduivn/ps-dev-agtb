@@ -28,7 +28,7 @@
 }}
 {{#each value}}
 {{#eq primary_address "1"}}
-<input type="text" class="center textField" value="{{../email_address}}" placeholder="{{../../label}}">
+<input type="text" class="center" value="{{../email_address}}" placeholder="{{../../label}}">
 {{/eq}}
 {{/each}}
 <p class="help-block">

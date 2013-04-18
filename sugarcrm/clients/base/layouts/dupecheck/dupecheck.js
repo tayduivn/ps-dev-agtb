@@ -32,7 +32,6 @@
  */
 ({
     initialize: function(options) {
-        _.bindAll(this);
         if(options.context.has('dupelisttype')) {
             options.meta = this.switchListView(options.meta, options.context.get('dupelisttype'));
         }

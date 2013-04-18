@@ -176,8 +176,11 @@
         app.view.views.RecordView.prototype.setEditableFields.call(this);
     },
     _dispose: function() {
-        this.model.off("error:validation", null, this);
-        this.model.off("change change:layout change:metadata", null, this);
+        _.each(this.editableFields, function(field) {
+            field.nextField = null;
+        });
+        this.buttons = null;
+        this.editableFields = null;
         app.view.views.EditableView.prototype._dispose.call(this);
     }
 

@@ -46,18 +46,16 @@
     switching: false,
     hiddenPanelExists: false,
     initialize: function(options) {
-        _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
-        app.events.off("preview:render", null, this).on("preview:render", this._renderPreview, this);
-        app.events.off("preview:collection:change", null, this).on("preview:collection:change", this.updateCollection, this);
-        app.events.off("preview:close", null, this).on("preview:close", this.closePreview,  this);
+        app.events.on("preview:render", this._renderPreview, this);
+        app.events.on("preview:collection:change", this.updateCollection, this);
+        app.events.on("preview:close", this.closePreview,  this);
 
         // TODO: Remove when pagination on activity streams is fixed.
-        app.events.off("preview:module:update", null, this).on("preview:module:update", this.updatePreviewModule,  this);
+        app.events.on("preview:module:update", this.updatePreviewModule,  this);
 
         if(this.layout){
-            this.layout.off("preview:pagination:fire", null, this);
             this.layout.on("preview:pagination:fire", this.switchPreview, this);
         }
         this.collection = app.data.createBeanCollection(this.module);

@@ -52,12 +52,7 @@
      */
     _createFields: function() {
         this._loadTemplate();
-
-        if (app.config.env === "test") {
-            this.$el.html(this.template(this)).addClass('fld_' + this.name);
-        } else {
-            this.$el.html(this.template(this));
-        }
+        this.$el.html(this.template(this));
     },
 
     /**

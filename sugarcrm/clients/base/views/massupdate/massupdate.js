@@ -15,6 +15,11 @@
         this.setMetadata(options);
         app.view.View.prototype.initialize.call(this, options);
         this.setDefault();
+
+        this.layout.on("list:massupdate:fire", this.show, this);
+        this.layout.on("list:massdelete:fire", this.confirmDelete, this);
+        this.layout.on("list:massexport:fire", this.massExport, this);
+        this.before('render', this.isVisible);
     },
     setMetadata: function(options) {
         options.meta.panels = options.meta.panels || [{fields:[]}];
@@ -80,17 +85,14 @@
         this.$(".select2.mu_attribute").each(function(){
             self.placeField($(this));
         });
-        this.layout.off("list:massupdate:fire", null, this);
-        this.layout.on("list:massupdate:fire", this.show, this);
-        this.layout.off("list:massdelete:fire", null, this);
-        this.layout.on("list:massdelete:fire", this.confirmDelete, this);
-        this.layout.off("list:massexport:fire", null, this);
-        this.layout.on("list:massexport:fire", this.massExport, this);
 
         if(this.fields.length == 0) {
             this.hide();
-        };
+        }
         return result;
+    },
+    isVisible: function() {
+        return this.visible;
     },
     placeField: function($el) {
         var name = $el.select2('val'),
@@ -377,5 +379,16 @@
     },
     cancelClicked: function(evt) {
         this.hide();
+    },
+    unbindData: function() {
+        var massModel = this.context.get("mass_collection");
+        if (massModel) {
+            massModel.off();
+        }
+        app.view.View.prototype.unbindData.call(this);
+    },
+    unbind: function() {
+        this.$(".select2.mu_attribute").select2('destroy');
+        app.view.View.prototype.unbind.call(this);
     }
 })

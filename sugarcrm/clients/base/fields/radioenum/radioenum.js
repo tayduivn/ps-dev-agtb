@@ -112,5 +112,9 @@
             this.$el.removeClass("error");
             this.$el.closest('.record-cell').removeClass("error");
         }
+    },
+    unbindDom: function() {
+        this.$(this.fieldTag).select2('destroy');
+        app.view.Field.prototype.unbindDom.call(this);
     }
 })

@@ -257,7 +257,7 @@
         bindAll('.addEmail');
         bindAll('.removeEmail');
 
-        if(this.tplName === 'list-edit') {
+        if(this.tplName === 'list-edit' || this.view.action === 'modal') {
             app.view.Field.prototype.bindDomChange.call(this);
         }
     },
@@ -274,7 +274,7 @@
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
                 email.hasAnchor = this.def.link && email.opt_out != "1" && email.invalid_email != "1";
             }, this);
-        } else if ((_.isString(value) && value !== "") || this.view.action === 'list') {
+        } else if ((_.isString(value) && value !== "") || this.view.action === 'list' || this.view.action === "modal") {
             // expected an array with a single address but got a string or an empty array
             value = [{
                 email_address:value,
@@ -316,7 +316,7 @@
      */
     unformat: function(value) {
         var originalNonArrayValue = null;
-        if(this.view.action === 'list') {
+        if(this.view.action === 'list' || this.view.action === 'modal') {
             var emails = this.model.get(this.name),
                 changed = false;
             if(!_.isArray(emails)){ // emails is empty, initialize array
@@ -410,5 +410,18 @@
     _removeTooltips: function(evt) {
         var $el = this.$(evt.currentTarget);
         if (_.isFunction($el.tooltip)) $el.tooltip('hide');
+    },
+    unbindDom: function() {
+        // Unbind all tooltips on page
+        var unbindTooltips = _.bind(function(sel) {
+            this.$(sel).each(function() {
+                $(this).tooltip('destroy');
+            }, this);
+        }, this);
+        unbindTooltips('.btn-edit');
+        unbindTooltips('.addEmail');
+        unbindTooltips('.removeEmail');
+
+        app.view.Field.prototype.unbindDom.call(this);
     }
 })

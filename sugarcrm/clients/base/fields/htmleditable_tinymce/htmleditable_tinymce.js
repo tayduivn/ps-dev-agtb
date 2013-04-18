@@ -30,14 +30,13 @@
      * Populate the editor or textarea with the value from the model
      */
     bindDataChange: function() {
-        var self = this;
         this.model.on('change:' + this.name, function(model, value) {
-            if (self._isEditView()) {
-                self.setEditorContent(value);
+            if (this._isEditView()) {
+                this.setEditorContent(value);
             } else {
-                self.setViewContent(value)
+                this.setViewContent(value)
             }
-        });
+        }, this);
     },
 
     /**

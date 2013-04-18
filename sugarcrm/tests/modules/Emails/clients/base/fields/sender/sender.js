@@ -1,5 +1,5 @@
 describe("Emails.Field.Sender", function() {
-    var app, field;
+    var app, field, drawer;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -44,6 +44,11 @@ describe("Emails.Field.Sender", function() {
                 return obj;
             };
         }
+
+        drawer = SugarTest.app.drawer;
+        SugarTest.app.drawer = {
+            close: function(){}
+        };
     });
 
     afterEach(function() {
@@ -52,6 +57,7 @@ describe("Emails.Field.Sender", function() {
         delete Handlebars.templates;
         delete field.model;
         delete field;
+        SugarTest.app.drawer = drawer;
     });
 
     it("should call custom endpoint on render when tplName is 'edit'", function() {

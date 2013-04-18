@@ -19,7 +19,6 @@
     plugins: ['timeago', 'file_dragoff', 'taggable'],
 
     initialize: function(options) {
-        _.bindAll(this);
         this.opts = {params: {}};
 
         app.view.View.prototype.initialize.call(this, options);
@@ -309,5 +308,18 @@
                 this.model.set('comment_count', this.model.get('comment_count') + 1);
             }, this);
         }
+    },
+
+    unbindData: function() {
+        if (this.commentsCollection) {
+            this.commentsCollection.off();
+        }
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+    _dispose: function() {
+        app.view.View.prototype._dispose.call(this);
+        this.commentsCollection = null;
+        this.opts = null;
     }
 })

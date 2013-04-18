@@ -276,5 +276,11 @@
 
     bindDataChange: function() {
         this.treeCollection.on("reset", this.processData, this);
+    },
+
+    unbindData: function() {
+        this.treeCollection.off();
+        this.treeCollection = null;
+        app.view.View.prototype.unbindData.call(this);
     }
 })

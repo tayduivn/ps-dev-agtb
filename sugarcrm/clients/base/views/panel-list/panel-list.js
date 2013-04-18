@@ -10,7 +10,7 @@
     initialize: function(opts) {
         app.view.views.RecordlistView.prototype.initialize.call(this, opts);
 
-        this.layout.bind("hide", this.toggleList, this);
+        this.layout.on("hide", this.toggleList, this);
     },
 
     unlinkClicked: function(model) {

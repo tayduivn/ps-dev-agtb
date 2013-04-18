@@ -1,6 +1,6 @@
 describe("Email field", function() {
 
-    var app, field, model, mock_addr;
+    var app, field, model, mock_addr, oldjQueryFn;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -23,6 +23,12 @@ describe("Email field", function() {
         ];
         model = field.model;
         model.set({email:_.clone(mock_addr)});
+
+        if ($.fn.tooltip) {
+            oldjQueryFn = $.fn.tooltip;
+        }
+        $.fn.tooltip = function(){};
+
         field.render();
     });
 
@@ -31,6 +37,10 @@ describe("Email field", function() {
         app.view.reset();
         delete Handlebars.templates;
         field = null;
+        if (oldjQueryFn) {
+            $.fn.tooltip = oldjQueryFn;
+            oldjQueryFn = null;
+        }
     });
 
     describe("adding an email address", function() {
@@ -295,6 +305,21 @@ describe("Email field", function() {
 
         it("should return only a single primary email address as the value in the list view", function() {
             field.view.action = 'list';
+            field.render();
+
+            var new_email_address = 'test@blah.co',
+                new_assigned_email = field.unformat(new_email_address),
+                expected = new_email_address,
+                actual;
+
+            actual = (_.find(new_assigned_email, function(email){
+                return email.primary_address;
+            })).email_address;
+            expect(actual).toBe(expected);
+        });
+
+        it("should return only a single primary email address as the value in the modal view", function() {
+            field.view.action = 'modal';
             field.render();
 
             var new_email_address = 'test@blah.co',

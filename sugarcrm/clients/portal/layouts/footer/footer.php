@@ -1,8 +1,8 @@
 <?php
 
 $viewdefs['portal']['layout']['footer'] = array(
+    'type' => 'footer',
     'components' => array(
-        'type' => 'simple',
         array(
             'view' => 'language-actions'
         ),

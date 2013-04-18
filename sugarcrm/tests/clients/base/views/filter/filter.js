@@ -290,22 +290,6 @@ describe("Filter View", function() {
                 view.render();
                 expect(spy).toHaveBeenCalledWith("list:filter:fire", undefined);
             });
-
-            xit("should get the list of filters for the given module", function() {
-
-            });
-
-            xit("should filter the list once a filter is chosen", function() {
-
-            });
-
-            xit("should set the previously used filter once a filter is chosen", function() {
-
-            });
-
-            xit("should clear the previously used filter once 'All Records' is chosen", function() {
-
-            });
         });
 
         describe("record view (subpanel)", function() {
