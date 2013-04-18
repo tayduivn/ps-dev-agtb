@@ -94,7 +94,7 @@
         options = {
             //Show alerts for this request
             showAlerts: true,
-            query: self.lastQuery, 
+            query: self.lastQuery,
             success:function(collection) {
                 cb(collection);
             },
@@ -123,7 +123,7 @@
     gotoDetail: function(evt) {
         var href = this.$(evt.currentTarget).parent().parent().attr('href');
         window.location = href;
-    },            
+    },
     /**
      * Loads the right side preview view when clicking icon for a particular search result.
      */
@@ -139,7 +139,7 @@
         // Grab search result model corresponding to preview icon clicked
         model = this.collection.get(correspondingResultId);
 
-        // Fire on parent layout .. works nicely for relatively simple page ;=) 
+        // Fire on parent layout .. works nicely for relatively simple page ;=)
         this.layout.layout.trigger("search:preview", model);
     }
 })
