@@ -60,9 +60,6 @@
      */
     _render: function () {
         this._loadTemplate();
-        _.each(this.fields, function (field) {
-            field.render();
-        }, this);
 
         // Adds classes to the component based on the metadata.
         if (this.def && this.def.css_class) {
@@ -94,7 +91,7 @@
             // increment to the next field
             if (_.isFunction(this.fields[this.focusIndex].focus) && this.fields[this.focusIndex].focus()) {
             } else {
-                var field = this.fields[this.focusIndex]
+                var field = this.fields[this.focusIndex];
                 var $el = field.$(field.fieldTag + ":first");
                 $el.focus().val($el.val());
                 this.focusIndex++;
@@ -130,7 +127,6 @@
         }, this);
     },
 
-
     /**
      * {@inheritdoc}
      *
@@ -154,6 +150,16 @@
      * We need this empty so it won't affect the nested fields that have the
      * same `fieldTag` of this fieldset due the usage of `find()` method.
      */
-    unbindDom: function () {
+    unbindDom: function() {
+    },
+
+    _dispose: function() {
+        //fields inside fieldset need to be disposed before the fielset itself is disposed.
+        _.each(this.fields, function(field) {
+            field.parent = null;
+            field.dispose();
+        });
+        this.fields = null;
+        app.view.Field.prototype._dispose.call(this);
     }
 })

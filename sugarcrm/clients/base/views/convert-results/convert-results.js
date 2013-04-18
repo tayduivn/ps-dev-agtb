@@ -6,14 +6,13 @@
     },
 
     initialize: function(options) {
-        _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
-        app.events.on("list:preview:decorate", this.decorateRow);
+        app.events.on("list:preview:decorate", this.decorateRow, this);
         this.associatedModels = app.data.createMixedBeanCollection();
     },
 
     bindDataChange: function() {
-        this.model.on("change", this.populateResults);
+        this.model.on("change", this.populateResults, this);
     },
 
     /**

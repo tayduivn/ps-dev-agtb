@@ -45,7 +45,7 @@
         });
         this.on("render", this._removeLinks, this);
 
-        this.context.on("dupecheck:fetch:fire", this.fetchDuplicates);
+        this.context.on("dupecheck:fetch:fire", this.fetchDuplicates, this);
 
         if (this.context.has('dupeCheckModel')) {
             this.model = this.context.get('dupeCheckModel');

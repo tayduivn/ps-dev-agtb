@@ -17,7 +17,9 @@
             }
 
             _.defer(function(field){
-                field.setMode(viewName);
+                if (field.disposed !== true) {
+                    field.setMode(viewName);
+                }
             }, field);
 
             field.$(field.fieldTag).off("keydown.record", this.keyDowned);
@@ -101,8 +103,8 @@
             this.toggleField(field, false);
         }
     },
-    _dispose: function() {
+    unbind: function() {
         $(document).off("mousedown", this.mouseClicked);
-        app.view.Component.prototype._dispose.call(this);
+        app.view.View.prototype.unbind.call(this);
     }
 })

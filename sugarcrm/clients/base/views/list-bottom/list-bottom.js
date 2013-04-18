@@ -47,7 +47,7 @@
             module: app.lang.get('LBL_MODULE_NAME', this.module)
         });
 
-        this.layout.bind("hide", this.toggleVisibility, this);
+        this.layout.on("hide", this.toggleVisibility, this);
         this.context.get("collection").once("reset", function(){
             this._dataFetched = true;
         }, this);

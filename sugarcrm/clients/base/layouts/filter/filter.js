@@ -30,7 +30,7 @@
                     // We're in a subpanel.
                     childCtx.set('skipFetch', true);
                 }
-            });
+            }, this);
         }
 
         this.layout.on('filter:change:quicksearch', function(query, def) {
@@ -358,6 +358,12 @@
             app.view.Layout.prototype._render.call(this);
             this.initializeFilterState();
         }
+    },
+
+    unbind: function() {
+        this.filters.off();
+        this.filters = null;
+        app.view.Layout.prototype.unbind.call(this);
     }
 
 })

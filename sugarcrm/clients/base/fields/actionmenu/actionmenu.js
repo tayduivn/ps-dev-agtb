@@ -109,7 +109,7 @@
                 }, self);
             };
             if (this.view.collection) {
-                this.view.collection.on("reset", null, this);
+                this.view.collection.off("reset", null, this);
                 this.view.collection.on("reset", function () {
                     if (massCollection.entire) {
                         massCollection.reset();
@@ -169,7 +169,6 @@
         }
     },
     getPlaceholder: function () {
-        var ret = app.view.Field.prototype.getPlaceholder.call(this);
         var self = this,
             viewName = this.options.viewName || this.view.name;
 
@@ -192,7 +191,7 @@
             actionMenu += "</ul>";
             self.actionPlaceHolder = new Handlebars.SafeString(actionMenu);
         }
-        return new Handlebars.SafeString(ret);
+        return app.view.Field.prototype.getPlaceholder.call(this);
     },
     _loadTemplate: function () {
         app.view.Field.prototype._loadTemplate.call(this);
@@ -225,5 +224,37 @@
                 $(el).remove();
             }
         });
+    },
+    unbindData: function() {
+        var collection = this.context.get('mass_collection');
+        if(collection) {
+            collection.off();
+        }
+        if(this.view.collection) {
+            this.view.collection.off("reset", null, this);
+        }
+        app.view.Field.prototype.unbindData.call(this);
+    },
+    _dispose: function() {
+        _.each(this.fields, function(field) {
+            field.parent = null;
+            field.dispose();
+        });
+        this.fields = null;
+        app.view.Field.prototype._dispose.call(this);
+    },
+    /**
+     * {@inheritdoc}
+     *
+     * No data changes to bind.
+     */
+    bindDomChange: function () {
+    },
+    /**
+     * {@inheritdoc}
+     *
+     * No need to unbind DOM changes to a model.
+     */
+    unbindDom: function () {
     }
 })

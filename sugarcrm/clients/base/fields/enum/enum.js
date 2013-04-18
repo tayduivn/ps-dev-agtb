@@ -163,14 +163,6 @@
     },
 
     /**
-     * Closes the select2 dropdown if it is open during disposal.
-     */
-    _dispose: function() {
-        this.$(this.fieldTag).select2('close');
-        app.view.Field.prototype._dispose.call(this);
-    },
-
-    /**
      * Converts multiselect default strings into array of option keys for template
      * @param {String} defaultString string of the format "^option1^,^option2^,^option3^"
      * @return {Array} of the format ["option1","option2","option3"]
@@ -181,6 +173,10 @@
             result[key] = value.replace(/\^/g,"");
         });
         return result;
-    }
+    },
 
+    unbindDom: function() {
+        this.$(this.fieldTag).select2('destroy');
+        app.view.Field.prototype.unbindDom.call(this);
+    }
 })

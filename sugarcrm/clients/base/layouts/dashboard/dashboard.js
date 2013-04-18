@@ -243,12 +243,30 @@
         layout.loadData({}, false);
         layout.render();
     },
-    _dispose: function () {
-        this.off("render");
-        this.model.off("setMode", null, this);
-        if (this.collection) {
-            this.collection.off("reset");
+    unbindData: function() {
+        var model, collection;
+
+        if (this.context.parent) {
+            model = this.context.parent.get("model");
+            collection = this.context.parent.get("collection");
+
+            if (model) {
+                model.off("sync", null, this);
+            }
+            if (collection) {
+                collection.off("sync", null, this);
+            }
         }
+
+        app.view.Layout.prototype.unbindData.call(this);
+    },
+    _dispose: function () {
+        if (this.collection) {
+            this.collection.model.prototype.dashboardLayout = null;
+        }
+        this.model.parentModel = null;
+        this.model.parentCollection = null;
+        this.dashboardLayouts = null;
         app.view.Layout.prototype._dispose.call(this);
     }
 })

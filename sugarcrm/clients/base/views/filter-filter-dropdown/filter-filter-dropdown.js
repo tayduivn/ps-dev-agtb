@@ -7,8 +7,6 @@
 
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
-        // Select2 callbacks require us to _.bindAll(this).
-        _.bindAll(this);
 
         this.layout.on("filter:change:filter", this.handleChange, this);
         this.layout.on("filter:change:module", this.handleModuleChange, this);
@@ -23,7 +21,7 @@
 
         this.layout.filters.each(function(model){
             var isAllRecords = model.id !== "all_records" ? false : true;
-            this.filterList.push({id:model.id, text: self.getTranslatedSelectionText(isAllRecords, model.get("name"))});
+            this.filterList.push({id:model.id, text: this.getTranslatedSelectionText(isAllRecords, model.get("name"))});
         }, this);
 
         if(this.layout.canCreateFilter()) {
@@ -34,11 +32,11 @@
             data: this.filterList,
             multiple: false,
             minimumResultsForSearch: 7,
-            formatSelection: this.formatSelection,
-            formatResult: this.formatResult,
+            formatSelection: _.bind(this.formatSelection, this),
+            formatResult: _.bind(this.formatResult, this),
             dropdownCss: {width:'auto'},
             dropdownCssClass: 'search-filter-dropdown',
-            initSelection: this.initSelection
+            initSelection: _.bind(this.initSelection, this)
         });
 
         if (!this.enabled) {
@@ -154,5 +152,10 @@
             translatedText = app.lang.get(label, 'Filters');
         }
         return translatedText;
+    },
+
+    unbind: function() {
+        this.filterNode.select2('destroy');
+        app.view.View.prototype.unbind.call(this);
     }
 })

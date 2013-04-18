@@ -1,6 +1,6 @@
 describe("Base.View.Massupdate", function() {
 
-    var view, app;
+    var view, app, layout;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -10,7 +10,8 @@ describe("Base.View.Massupdate", function() {
             });
             return fixtures.metadata.modules.Contacts;
         });
-        view = SugarTest.createView("base", "Contacts", "massupdate");
+        layout = SugarTest.createLayout('base', 'Cases', 'list');
+        view = SugarTest.createView("base", "Contacts", "massupdate", null, null, null, layout);
         stub.restore();
         view.model = new Backbone.Model();
     });
@@ -22,6 +23,7 @@ describe("Base.View.Massupdate", function() {
         delete Handlebars.templates;
         view.model = null;
         view = null;
+        layout.dispose();
     });
 
 

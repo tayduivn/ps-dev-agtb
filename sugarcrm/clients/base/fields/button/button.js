@@ -106,6 +106,20 @@
         this.trigger("hide");
     },
     /**
+     * {@inheritdoc}
+     *
+     * No data changes to bind.
+     */
+    bindDomChange: function () {
+    },
+    /**
+     * {@inheritdoc}
+     *
+     * No need to bind DOM changes to a model.
+     */
+    bindDataChange: function () {
+    },
+    /**
      * Determine if ACLs allow for the button to show
      * @return {Boolean} true if ACLs allow access, false otherwise
      */

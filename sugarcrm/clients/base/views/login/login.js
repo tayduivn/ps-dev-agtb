@@ -55,9 +55,9 @@
                     app.logger.debug("logged in successfully!");
                     app.events.on('app:sync:complete', function() {
                         app.logger.debug("sync in successfully!");
-                        self.refreshAddtionalComponents();
+                        this.refreshAddtionalComponents();
                         app.$contentEl.show();
-                    });
+                    }, self);
                 },
                 complete: function() {
                     app.alert.dismiss('login');

@@ -56,7 +56,6 @@
                             'styleguide/assets/js/bootstrap-modal.js'   => $target,
                             'styleguide/assets/js/bootstrap-alert.js'   => $target,
                             'styleguide/assets/js/bootstrap-datepicker.js' => $target,
-                            'styleguide/assets/js/bootstrapx-clickover.js' => $target,
                         );
                         break;
                     case 'bootstrap_core':
@@ -70,7 +69,6 @@
                     case 'bootstrap_forecasts':
                         return array(
                             'styleguide/assets/js/bootstrap-datepicker.js' => $target,
-                            'styleguide/assets/js/bootstrapx-clickover.js' => $target,
                         );
                         break;
                     case 'jquery_core':
