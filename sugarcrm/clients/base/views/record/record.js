@@ -302,6 +302,7 @@
         // Add your own field type handling for focus / editing here.
         switch (field.type) {
             case "image":
+            case "file":
                 var self = this;
                 app.file.checkFileFieldsAndProcessUpload(self, {
                         success: function () {

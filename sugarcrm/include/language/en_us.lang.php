@@ -3560,6 +3560,8 @@ $app_strings = array (
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
     'LBL_IMAGE_DELETE_CONFIRM' => 'Are you sure you want to delete this image?',
+    'LBL_FILE_DELETE_CONFIRM' => "Are you sure you want to delete this file? This cannot be undone.",
+    'LBL_FILE_DELETED' => 'File was successfully deleted',
 
     //theme roller
     'LBL_RESET' => 'Reset',

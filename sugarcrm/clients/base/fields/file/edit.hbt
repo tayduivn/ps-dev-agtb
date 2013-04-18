@@ -26,5 +26,14 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<input type="file" name="{{name}}" />
+{{#if value.length}}
+    {{#each value}}
+        <div class="row-fluid file-field">
+            <a class="span10" href="javascript:void(0);" data-url="{{url}}" data-action="download">{{name}}</a>
+            <button class="btn icon-remove-sign" data-action="delete"></button>
+        </div>
+    {{/each}}
+{{else}}
+    <input type="file" name="{{name}}" />
+{{/if}}
 <p class="help-block"></p>
