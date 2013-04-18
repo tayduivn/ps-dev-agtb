@@ -515,7 +515,7 @@ class Opportunity extends SugarBean
             //propagate change down to products
             $this->load_relationship('products');
             foreach ($this->products->getBeans() as $product) {
-            	$product->account_id = $this->account_id;
+                $product->account_id = $this->account_id;
                 $product->save();
             }
         }
