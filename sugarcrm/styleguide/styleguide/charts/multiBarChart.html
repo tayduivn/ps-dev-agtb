@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=320" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Multibar Chart</title>
+  <link href="../css/bootstrap.css" rel="stylesheet" type="text/css">
+  <link href="../css/sugar.css" rel="stylesheet" type="text/css">
+</head>
+<body class="full-screen">
+
+<div id="chart1" class="nv-chart nv-chart-multibar">
+  <svg></svg>
+</div>
+
+<script src="../../assets/js/nvd3/lib/d3.min.js"></script>
+<script src="../../assets/js/nvd3/nv.d3.min.js"></script>
+<script src="data/multibar_data.js"></script>
+<script src="../js/nvd3/src/models/multiBar.js"></script>
+<script src="../js/nvd3/src/models/multiBarChart.js"></script>
+
+<script>
+  // Wrapping in nv.addGraph allows for '0 timeout render', stors rendered charts in nv.graphs, and may do more in the future... it's NOT required
+  nv.addGraph(function() {
+
+    var chart = nv.models.multiBarChart()
+          .showTitle(true)
+          .tooltips(true)
+          .showControls(true)
+          .colorData( 'graduated', {c1: '#e8e2ca', c2: '#336699', l: multibar_data_default.data.length} )
+          //.colorData( 'class' )
+          //.colorData( 'default' )
+          .tooltipContent( function(key, x, y, e, graph) {
+              return '<p>Stage: <b>' + key + '</b></p>' +
+                     '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+                     '<p>Percent: <b>' +  x + '%</b></p>'
+          })
+          //.forceY([0,400]).forceX([0,6]);
+        ;
+
+    d3.select('#chart1 svg')
+        .datum(multibar_data_default)
+      .transition().duration(500)
+        .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+</script>
+</body>
+</html>

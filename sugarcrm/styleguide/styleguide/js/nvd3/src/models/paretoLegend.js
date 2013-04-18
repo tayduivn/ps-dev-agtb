@@ -1,5 +1,6 @@
 
-nv.models.paretoLegend = function() {
+nv.models.paretoLegend = function () {
+  //'use strict';
 
   //============================================================
   // Public Variables with Default Settings
@@ -8,22 +9,22 @@ nv.models.paretoLegend = function() {
   var margin = {top: 5, right: 0, bottom: 5, left: 0}
     , width = 400
     , height = 20
-    , getKey = function(d) { return d.key }
-    , color = nv.utils.defaultColor()
+    , getKey = function (d) { return d.key; }
     , align = true
     , dispatch = d3.dispatch('legendClick', 'legendDblclick', 'legendMouseover', 'legendMouseout')
-    , useClass = false
+    , color = nv.utils.defaultColor()
+    , classes = function (d,i) { return ''; }
     ;
 
   //============================================================
 
 
   function chart(selection) {
-    selection.each(function(data) {
+    selection.each(function (data) {
       var availableWidth = width - margin.left - margin.right,
           container = d3.select(this);
 
-      if (!data || !data.length || !data.values || !data.values || !data.filter(function(d) { return d.values.length }).length) {
+      if (!data || !data.length || !data.values || !data.values || !data.filter(function (d) { return d.values.length; }).length) {
         return chart;
       } else {
         container.selectAll('g.nv-legend').remove();
@@ -41,34 +42,30 @@ nv.models.paretoLegend = function() {
 
 
       var series = g.selectAll('.nv-series')
-          .data(function(d) { return d });
+          .data(function (d) { return d; });
       var seriesEnter = series.enter().append('g').attr('class', 'nv-series')
-          .on('mouseover', function(d,i) {
+          .on('mouseover', function (d,i) {
             dispatch.legendMouseover(d,i);  //TODO: Make consistent with other event objects
           })
-          .on('mouseout', function(d,i) {
+          .on('mouseout', function (d,i) {
             dispatch.legendMouseout(d,i);
           })
-          .on('click', function(d,i) {
+          .on('click', function (d,i) {
             dispatch.legendClick(d,i);
           })
-          .on('dblclick', function(d,i) {
+          .on('dblclick', function (d,i) {
             dispatch.legendDblclick(d,i);
           });
 
 
-      if (data[0].type==='bar')
+      if (data[0].type === 'bar')
       {
         seriesEnter.append('rect')
-            .attr('class', function(d,i) {
-              return this.getAttribute('class') || (
-                useClass
-                  ? ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 )
-                  : '' );
-              }
-            )
-            .attr('fill', function(d,i) { return color(d,i) })
-            .attr('stroke', function(d,i) { return color(d,i) })
+            .attr('class', function (d,i) {
+              return this.getAttribute('class') || (useClass ? (d.class || 'nv-fill' + (i % 20 > 9 ? '' : '0') + i % 20) : '');
+            })
+            .attr('fill', function (d,i) { return color(d,i); })
+            .attr('stroke', function (d,i) { return color(d,i); })
             .attr('stroke-width', 0)
             .attr('width', 10)
             .attr('height', 10)
@@ -82,27 +79,19 @@ nv.models.paretoLegend = function() {
       else
       {
         seriesEnter.append('circle')
-            .attr('class', function(d,i) {
-              return this.getAttribute('class') || (
-                useClass
-                  ? ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 )
-                  : '' );
-              }
-            )
-            .attr('fill', function(d,i) { return color(d,i) })
-            .attr('stroke', function(d,i) { return color(d,i) })
+            .attr('class', function (d,i) {
+              return this.getAttribute('class') || (useClass ? (d.class || 'nv-fill' + (i % 20 > 9 ? '' : '0') + i % 20) : '');
+            })
+            .attr('fill', function (d,i) { return color(d,i); })
+            .attr('stroke', function (d,i) { return color(d,i); })
             .attr('stroke-width', 0)
             .attr('r', 4)
             .attr('transform', 'translate(8,0)');
         seriesEnter.append('line')
-            .attr('class', function(d,i) {
-              return this.getAttribute('class') || (
-                useClass
-                  ? ( d.class || 'nv-stroke' + (i%10>9?'':'0') + i%10 )
-                  : '' );
-              }
-            )
-            .attr('stroke', function(d,i) { return color(d,i) })
+            .attr('class', function (d,i) {
+              return this.getAttribute('class') || (useClass ? (d.class || 'nv-stroke' + (i % 10 > 9 ? '' : '0') + i % 10) : '');
+            })
+            .attr('stroke', function (d,i) { return color(d,i); })
             .attr('stroke-width', 2)
             .attr('x0',0)
             .attr('x1',16)
@@ -115,7 +104,7 @@ nv.models.paretoLegend = function() {
           .attr('dx', '20');
       }
 
-      series.classed('disabled', function(d) { return d.disabled });
+      series.classed('disabled', function (d) { return d.disabled; });
       series.exit().remove();
 
 
@@ -124,9 +113,9 @@ nv.models.paretoLegend = function() {
       // NEW ALIGNING CODE, TODO: clean up
       if (align) {
         var seriesWidths = [];
-        series.each(function(d,i) {
-              seriesWidths.push(d3.select(this).select('text').node().getComputedTextLength() + 28); // 28 is ~ the width of the circle plus some padding
-            });
+        series.each(function (d,i) {
+          seriesWidths.push(d3.select(this).select('text').node().getComputedTextLength() + 28); // 28 is ~ the width of the circle plus some padding
+        });
 
         //nv.log('Series Widths: ', JSON.stringify(seriesWidths));
 
@@ -134,35 +123,34 @@ nv.models.paretoLegend = function() {
         var legendWidth = 0;
         var columnWidths = [];
 
-        while ( legendWidth < availableWidth && seriesPerRow < seriesWidths.length) {
+        while (legendWidth < availableWidth && seriesPerRow < seriesWidths.length) {
           columnWidths[seriesPerRow] = seriesWidths[seriesPerRow];
-          legendWidth += seriesWidths[seriesPerRow++];
+          legendWidth += seriesWidths[seriesPerRow += 1];
         }
 
 
-        while ( legendWidth > availableWidth && seriesPerRow > 1 ) {
+        while (legendWidth > availableWidth && seriesPerRow > 1) {
           columnWidths = [];
-          seriesPerRow--;
+          seriesPerRow -= 1;
 
-          for (k = 0; k < seriesWidths.length; k++) {
-            if (seriesWidths[k] > (columnWidths[k % seriesPerRow] || 0) )
+          for (k = 0; k < seriesWidths.length; k += 1) {
+            if (seriesWidths[k] > (columnWidths[k % seriesPerRow] || 0)) {
               columnWidths[k % seriesPerRow] = seriesWidths[k];
+            }
           }
 
-          legendWidth = columnWidths.reduce(function(prev, cur, index, array) {
-                          return prev + cur;
-                        });
+          legendWidth = columnWidths.reduce(function (prev, cur, index, array) { return prev + cur; });
         }
         //console.log(columnWidths, legendWidth, seriesPerRow);
 
         var xPositions = [];
-        for (var i = 0, curX = 0; i < seriesPerRow; i++) {
-            xPositions[i] = curX;
-            curX += columnWidths[i];
+        for (var i = 0, curX = 0; i < seriesPerRow; i += 1) {
+          xPositions[i] = curX;
+          curX += columnWidths[i];
         }
 
         series
-            .attr('transform', function(d, i) {
+            .attr('transform', function (d, i) {
               return 'translate(' + xPositions[i % seriesPerRow] + ',' + (5 + Math.floor(i / seriesPerRow) * 20) + ')';
             });
 
@@ -178,7 +166,7 @@ nv.models.paretoLegend = function() {
             maxwidth = 0,
             xpos;
         series
-            .attr('transform', function(d, i) {
+            .attr('transform', function (d,i) {
               var length = d3.select(this).select('text').node().getComputedTextLength() + 28;
               xpos = newxpos;
 
@@ -188,7 +176,9 @@ nv.models.paretoLegend = function() {
               }
 
               newxpos += length;
-              if (newxpos > maxwidth) maxwidth = newxpos;
+              if (newxpos > maxwidth) {
+                maxwidth = newxpos;
+              }
 
               return 'translate(' + xpos + ',' + ypos + ')';
             });
@@ -212,44 +202,44 @@ nv.models.paretoLegend = function() {
 
   chart.dispatch = dispatch;
 
-  chart.margin = function(_) {
-    if (!arguments.length) return margin;
+  chart.margin = function (_) {
+    if (!arguments.length) { return margin; }
     margin = _;
     return chart;
   };
 
-  chart.width = function(_) {
-    if (!arguments.length) return width;
+  chart.width = function (_) {
+    if (!arguments.length) { return width; }
     width = _;
     return chart;
   };
 
-  chart.height = function(_) {
-    if (!arguments.length) return height;
+  chart.height = function (_) {
+    if (!arguments.length) { return height; }
     height = _;
     return chart;
   };
 
-  chart.key = function(_) {
-    if (!arguments.length) return getKey;
+  chart.key = function (_) {
+    if (!arguments.length) { return getKey; }
     getKey = _;
     return chart;
   };
 
-  chart.color = function(_) {
-    if (!arguments.length) return color;
+  chart.color = function (_) {
+    if (!arguments.length) { return color; }
     color = nv.utils.getColor(_);
     return chart;
   };
 
-  chart.useClass = function(_) {
-    if (!arguments.length) return useClass;
-    useClass = _;
+  chart.classes = function (_) {
+    if (!arguments.length) { return classes; }
+    classes = _;
     return chart;
   };
 
-  chart.align = function(_) {
-    if (!arguments.length) return align;
+  chart.align = function (_) {
+    if (!arguments.length) { return align; }
     align = _;
     return chart;
   };
@@ -258,4 +248,4 @@ nv.models.paretoLegend = function() {
 
 
   return chart;
-}
+};

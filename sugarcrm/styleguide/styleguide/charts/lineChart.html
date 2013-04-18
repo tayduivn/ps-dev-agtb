@@ -14,9 +14,13 @@
   <svg></svg>
 </div>
 
-<script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
+<script src="../../assets/js/nvd3/lib/d3.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
-<script src="../js/nvd3/data/line_data.js"></script>
+<script src="data/line_data.js"></script>
+<script src="../js/nvd3/src/models/scatter.js"></script>
+<script src="../js/nvd3/src/models/legend.js"></script>
+<script src="../js/nvd3/src/models/line.js"></script>
+<script src="../js/nvd3/src/models/lineChart.js"></script>
 
 <script>
 
@@ -24,33 +28,29 @@
   nv.addGraph(function() {
 
     var chart = nv.models.lineChart()
-          .x(function(d) { return d[0] })
-          .y(function(d) { return d[1] })
-          .tooltip( function(key, x, y, e, graph) {
-              return '<p>Category: <b>' + key + '</b></p>' +
-                     '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
-                     '<p>Date: <b>' +  x + '</b></p>'
-            })
+          .x(function(d) { return d[0]; })
+          .y(function(d) { return d[1]; })
+          .tooltipContent( function(key, x, y, e, graph) {
+            return '<p>Category: <b>' + key + '</b></p>' +
+                   '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
+                   '<p>Date: <b>' +  x + '</b></p>';
+          })
           .showTitle(true)
           .tooltips(true)
           .showControls(true)
-          //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
-          //.colorData( 'class' )
-          //.colorData( 'default' )
-          //.colorFill( 'gradient' )
-          //.colorFill( 'default' )
+          .colorData( 'default' )
           //.forceY([0,400]).forceX([0,6]);
         ;
 
     chart.xAxis
-        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
 
     chart.yAxis
         .axisLabel('Expenditures ($)')
         .tickFormat(d3.format(',.2f'));
 
     d3.select('#line svg')
-        .datum(line_data)
+        .datum(line_data_default)
       .transition().duration(500)
         .call(chart);
 

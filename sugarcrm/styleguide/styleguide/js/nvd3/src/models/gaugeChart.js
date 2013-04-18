@@ -17,7 +17,7 @@ nv.models.gaugeChart = function() {
     , tooltips = true
     , tooltip = function(key, y, e, graph) {
         return '<h3>' + key + '</h3>' +
-               '<p>' +  y + '</p>'
+               '<p>' +  y + '</p>';
       }
     , x //can be accessed via chart.xScale()
     , y //can be accessed via chart.yScale()
@@ -54,12 +54,12 @@ nv.models.gaugeChart = function() {
       var container = d3.select(this),
           that = this;
 
-      var availableWidth = (width  || parseInt(container.style('width')) || 960)
+      var availableWidth = (width  || parseInt(container.style('width'), 10) || 960)
                              - margin.left - margin.right,
-          availableHeight = (height || parseInt(container.style('height')) || 400)
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
                              - margin.top - margin.bottom;
 
-      chart.update = function() { chart(selection); };
+      chart.update = function() { container.transition().duration(300).call(chart); };
       chart.container = this;
 
 
@@ -67,16 +67,21 @@ nv.models.gaugeChart = function() {
       // Display noData message if there's nothing to show.
 
       if (!data || !data.length) {
-        container.append('text')
+        var noDataText = container.selectAll('.nv-noData').data([noData]);
+
+        noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
-          .attr('x', availableWidth / 2)
-          .attr('y', availableHeight / 2)
           .attr('dy', '-.7em')
-          .style('text-anchor', 'middle')
-          .text(noData);
-          return chart;
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function(d) { return d });
+
+        return chart;
       } else {
-        container.select('.nv-noData').remove();
+        container.selectAll('.nv-noData').remove();
       }
 
       //------------------------------------------------------------
@@ -113,7 +118,7 @@ nv.models.gaugeChart = function() {
 
         if ( margin.top !== legendHeight + titleHeight ) {
           margin.top = legendHeight + titleHeight;
-          availableHeight = (height || parseInt(container.style('height')) || 400)
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
                              - margin.top - margin.bottom;
         }
 
@@ -138,25 +143,25 @@ nv.models.gaugeChart = function() {
             .attr('fill', 'black')
           ;
 
-        titleHeight = parseInt( g.select('.nv-title').node().getBBox().height ) +
-          parseInt( g.select('.nv-title').style('margin-top') ) +
-          parseInt( g.select('.nv-title').style('margin-bottom') );
+        titleHeight = parseInt(g.select('.nv-title').node().getBBox().height, 10) +
+          parseInt(g.select('.nv-title').style('margin-top'), 10) +
+          parseInt(g.select('.nv-title').style('margin-bottom'), 10);
 
         if ( margin.top !== titleHeight + legendHeight )
         {
           margin.top = titleHeight + legendHeight;
-          availableHeight = (height || parseInt(container.style('height')) || 400)
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
                              - margin.top - margin.bottom;
         }
 
         g.select('.nv-titleWrap')
-            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').node().getBBox().height )) +')');
+            .attr('transform', 'translate(0,'+ ( -margin.top+parseInt(g.select('.nv-title').node().getBBox().height, 10) ) +')');
       }
 
       //------------------------------------------------------------
 
 
-      wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      wrap.attr('transform', 'translate('+ margin.left +','+ margin.top +')');
 
 
       //------------------------------------------------------------
@@ -169,7 +174,7 @@ nv.models.gaugeChart = function() {
       var gaugeWrap = g.select('.nv-gaugeWrap')
           .datum(chartData);
 
-      d3.transition(gaugeWrap).call(gauge);
+      gaugeWrap.transition().call(gauge);
 
       //gauge.setPointer(properties.value);
 
@@ -181,7 +186,9 @@ nv.models.gaugeChart = function() {
       //------------------------------------------------------------
 
       dispatch.on('tooltipShow', function(e) {
-        if (tooltips) showTooltip(e)
+        if (tooltips) {
+          showTooltip(e);
+        }
       });
 
       //============================================================
@@ -221,44 +228,40 @@ nv.models.gaugeChart = function() {
   chart.legend = legend;
   chart.gauge = gauge;
 
-  d3.rebind(chart, gauge, 'valueFormat', 'values', 'x', 'y', 'id', 'showLabels', 'setPointer', 'ringWidth', 'labelThreshold', 'maxValue', 'minValue', 'transitionMs', 'color', 'gradient', 'useClass');
+  d3.rebind(chart, gauge, 'valueFormat', 'values', 'x', 'y', 'id', 'showLabels', 'setPointer', 'ringWidth', 'labelThreshold', 'maxValue', 'minValue', 'transitionMs', 'color', 'fill', 'classes', 'gradient');
 
-  chart.colorData = function(_) {
-    if (arguments[0] === 'graduated')
-    {
-      var c1 = arguments[1].c1
-        , c2 = arguments[1].c2
-        , l = arguments[1].l;
-      var color = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(i/l) };
-    }
-    else if (_ === 'class')
-    {
-      chart.useClass(true);
-      legend.useClass(true);
-      var color = function (d,i) { return 'inherit' };
-    }
-    else
-    {
-      var color = nv.utils.defaultColor();
-    }
+  chart.colorData = function (_) {
+    var colors = function (d,i) { return nv.utils.defaultColor()(d,i); },
+        classes = function (d,i) { return 'nv-group nv-series-' + i; },
+        type = arguments[0],
+        params = arguments[1] || {};
 
-    legend.color(color);
-    gauge.color(color);
-
-    return chart;
-  };
-
-  chart.colorFill = function(_) {
-    if (_ === 'gradient')
-    {
-      var fill = function (d,i) { return chart.gradient()(d,i) };
-    }
-    else
-    {
-      var fill = chart.color();
+    switch (type) {
+      case 'graduated':
+        var c1 = params.c1
+          , c2 = params.c2
+          , l = params.l;
+        colors = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(i/l); };
+        break;
+      case 'class':
+        colors = function () { return 'inherit'; };
+        classes = function (d,i) {
+          var iClass = (i*(params.step || 1))%20;
+          return 'nv-group nv-series-'+ i +' '+ ( d.classes || 'nv-fill' + (iClass>9?'':'0') + iClass );
+        };
+        break;
     }
 
+    var fill = (!params.gradient) ? colors : function (d,i) {
+      return gauge.gradient(d,i);
+    };
+
+    gauge.color(colors);
     gauge.fill(fill);
+    gauge.classes(classes);
+
+    legend.color(colors);
+    legend.classes(classes);
 
     return chart;
   };
@@ -290,12 +293,6 @@ nv.models.gaugeChart = function() {
   chart.showTitle = function(_) {
     if (!arguments.length) return showTitle;
     showTitle = _;
-    return chart;
-  };
-
-  chart.tooltip = function(_) {
-    if (!arguments.length) return tooltip;
-    tooltip = _;
     return chart;
   };
 

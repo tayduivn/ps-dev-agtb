@@ -8,7 +8,6 @@ nv.addGraph(function() {
     .donut(true)
     .donutLabelsOutside(true)
     .colorData( 'graduated', {c1: '#C7E8F7', c2: '#023B68', l: pie_data.data.length} )
-    .colorFill( 'default' )
     .tooltip( function(key, x, y, e, graph) {
       return '<p>Interaction: <b>' + key + '</b></p>' +
              '<p>Events: <b>' +  parseInt(y) + '</b></p>';

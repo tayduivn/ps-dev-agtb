@@ -10,13 +10,14 @@
 </head>
 <body class="full-screen">
 
-<div id="pie" class="nv-chart">
+<div id="pie" class="nv-chart nv-chart-pie">
   <svg></svg>
 </div>
 
-<script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
+<script src="../../assets/js/nvd3/lib/d3.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
-<script src="../js/nvd3/data/pie_chart_data.js"></script>
+<script src="data/pie_data.js"></script>
+<script src="../js/nvd3/src/models/pie.js"></script>
 <script src="../js/nvd3/src/models/pieChart.js"></script>
 
 <script>
@@ -24,8 +25,8 @@
   nv.addGraph(function() {
 
     var chart = nv.models.pieChart()
-          .x(function(d) { return d.key })
-          .y(function(d) { return d.value })
+          // .x(function(d) { return d.key })
+          // .y(function(d) { return d.value })
           .showLabels(true)
           .showTitle(true)
           //.color(d3.scale.category10().range())
@@ -33,11 +34,10 @@
           //.colorData( 'class' )
           .donut(true)
           .donutLabelsOutside(true)
-          .colorData( 'default' )
-          .hole(true)
-          .colorFill( 'gradient' )
-          //.colorFill( 'default' )
-          .tooltip( function(key, x, y, e, graph) {
+          .donutRatio(0.4)
+          .hole(10)
+          .colorData( 'default', {gradient:true} )
+          .tooltipContent( function(key, x, y, e, graph) {
             return '<p>Stage: <b>' + key + '</b></p>' +
                    '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
                    '<p>Percent: <b>' +  x + '%</b></p>'
@@ -45,7 +45,7 @@
         ;
 
     d3.select("#pie svg")
-        .datum(pie_data)
+        .datum(pie_data_color)
       .transition().duration(500)
         .call(chart);
 

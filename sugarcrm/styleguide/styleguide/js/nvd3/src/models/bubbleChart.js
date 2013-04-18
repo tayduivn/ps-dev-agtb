@@ -1,5 +1,5 @@
 
-nv.models.bubbleChart = function() {
+nv.models.bubbleChart = function () {
 
   //============================================================
   // Public Variables with Default Settings
@@ -8,28 +8,27 @@ nv.models.bubbleChart = function() {
   var margin = {top: 70, right: 20, bottom: 30, left: 100}
     , width = null
     , height = null
-    , getX = function(d) { return d.x; }
-    , getY = function(d) { return d.y; }
+    , getX = function (d) { return d.x; }
+    , getY = function (d) { return d.y; }
     , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
     , clipEdge = false // if true, masks lines within x and y scale
     , xDomain
     , yDomain
-    , groupBy = function(d) { return d.y; }
-    , filterBy = function(d) { return d.y; }
+    , groupBy = function (d) { return d.y; }
+    , filterBy = function (d) { return d.y; }
     , seriesLength = 0
-    , color = nv.utils.defaultColor()
     , showLegend = true
     , showTitle = false
     , reduceXTicks = true // if false a tick will show for every data point
     , reduceYTicks = false // if false a tick will show for every data point
     , rotateLabels = 0
     , tooltips = true
-    , tooltip = function(key, x, y, e, graph) {
+    , tooltip = function (key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
                '<p>' +  y + ' on ' + x + '</p>';
       }
     , noData = "No Data Available."
-    , bubbleClick = function(e) {
+    , bubbleClick = function (e) {
         return;
       }
     , format = d3.time.format("%Y-%m-%d")
@@ -58,7 +57,7 @@ nv.models.bubbleChart = function() {
 
   //============================================================
 
-  var showTooltip = function(e, offsetElement) {
+  var showTooltip = function (e, offsetElement) {
     // New addition to calculate position if SVG is scaled with viewBox, may move TODO: consider implementing everywhere else
     var offsets = {left:0,right:0};
     if (offsetElement) {
@@ -73,8 +72,8 @@ nv.models.bubbleChart = function() {
       }
     }
 
-    var left = e.pos[0] + ( offsets.left || 0 ) + margin.left,
-        top = e.pos[1] + ( offsets.top || 0) + margin.top,
+    var left = e.pos[0] + (offsets.left || 0) + margin.left,
+        top = e.pos[1] + (offsets.top || 0) + margin.top,
         x = e.point.x,
         y = e.point.y,
         content = tooltip(e.series.key, x, y, e, chart);
@@ -86,7 +85,7 @@ nv.models.bubbleChart = function() {
 
   function chart(selection) {
 
-    selection.each(function(chartData) {
+    selection.each(function (chartData) {
 
       var properties = chartData.properties
         , data = chartData.data;
@@ -101,8 +100,8 @@ nv.models.bubbleChart = function() {
         }
         var timeExtent =
               d3.extent(d3.merge(
-                  data.map(function(d) {
-                    return d.values.map(function(d,i) {
+                  data.map(function (d) {
+                    return d.values.map(function (d,i) {
                       return d3.time.format("%Y-%m-%d").parse(getX(d));
                     });
                   })
@@ -114,8 +113,8 @@ nv.models.bubbleChart = function() {
                 d3.time.month.ceil(timeExtent[1])
               );
         var timeTicks =
-              timeRange.map(function(d) {
-                return d3.time.day.offset( d3.time.month.floor(d), -1+daysInMonth(d)/2 );
+              timeRange.map(function (d) {
+                return d3.time.day.offset(d3.time.month.floor(d), -1 + daysInMonth(d)/2);
               });
         return timeTicks;
       }
@@ -140,13 +139,13 @@ nv.models.bubbleChart = function() {
         // Calculate total for each data group and
         // point y value
         groupedData
-          .map(function(s, i) {
+          .map(function (s, i) {
             s.total = 0;
 
-            s.values = s.values.sort(function(a, b) {
+            s.values = s.values.sort(function (a, b) {
                 return b.y < a.y ? -1 : b.y > a.y ? 1 : 0;
               })
-              .map(function(p) {
+              .map(function (p) {
                 s.total += p.y;
                 return p;
               });
@@ -154,25 +153,25 @@ nv.models.bubbleChart = function() {
             s.group = i;
             return s;
           })
-          .sort(function(a, b) {
+          .sort(function (a, b) {
             return a.total < b.total ? -1 : a.total > b.total ? 1 : 0;
           })
-          .map(function(s, i) {
+          .map(function (s, i) {
             total += s.total;
 
-            gDomain = d3.extent( s.values.map(function(p){ return p.y; }) );
+            gDomain = d3.extent(s.values.map(function (p){ return p.y; }));
             gRange = [gHeight*i+gOffset, gHeight*(i+1)-gOffset];
             gScale.domain(gDomain).range(gRange);
 
             s.values = s.values
-              .map(function(p) {
+              .map(function (p) {
                 p.group = s.group;
                 p.opportunity = p.y;
                 p.y = gScale(p.opportunity);
                 return p;
               });
 
-            yValues.push( {y: d3.min( s.values.map(function(p){ return p.y; } ) ), key: s.key} );
+            yValues.push({y: d3.min(s.values.map(function (p){ return p.y; })), key: s.key});
 
             return s;
           });
@@ -193,17 +192,22 @@ nv.models.bubbleChart = function() {
       // Display noData message if there's nothing to show.
 
       if (!data || !data.length) {
-        container.selectAll('.nv-bubbleChart').remove();
-        container.append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('x', availableWidth / 2)
-          .attr('y', availableHeight / 2)
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'middle')
-          .text(noData);
-          return chart;
-      }
+        var noDataText = container.selectAll('.nv-noData').data([noData]);
 
+        noDataText.enter().append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function(d) { return d });
+
+        return chart;
+      } else {
+        container.selectAll('.nv-noData').remove();
+      }
 
       // Now that group calculations are done,
       // group the data by filter so that legend filters
@@ -212,13 +216,15 @@ nv.models.bubbleChart = function() {
                           .entries(data);
 
       //add series index to each data point for reference
-      filteredData = filteredData.map(function(series, i) {
-        series.iClass = i;
-        return series;
+      filteredData = filteredData.map(function (d, i) {
+        d.series = i;
+        d.classes = d.values[0].classes;
+        d.color = d.values[0].color;
+        return d;
       });
 
       //properties.title = 'Total = $' + d3.format(',.02d')(total);
-      chart.render = function() {
+      chart.render = function () {
 
         container.selectAll('.nv-noData').remove();
 
@@ -251,7 +257,7 @@ nv.models.bubbleChart = function() {
 
           legend
             .width(width*(showTitle?0.7:1)-10)
-            .key( function(d){ return d.key + '%'; });
+            .key(function (d){ return d.key + '%'; });
 
           g.select('.nv-legendWrap')
             .datum(filteredData)
@@ -265,7 +271,7 @@ nv.models.bubbleChart = function() {
           }
 
           g.select('.nv-legendWrap')
-              .attr('transform', 'translate('+ ((width*(showTitle?0.3:0))-margin.left+10) +',' + (-margin.top) +')');
+              .attr('transform', 'translate(' + ((width * (showTitle ? 0.3:0)) - margin.left + 10) + ',' + (-margin.top) + ')');
         }
 
         if (showTitle && properties.title )
@@ -285,18 +291,18 @@ nv.models.bubbleChart = function() {
               .attr('fill', 'black')
             ;
 
-          titleHeight = parseInt( g.select('.nv-title').node().getBBox().height, 10 ) +
-            parseInt( g.select('.nv-title').style('margin-top'), 10 ) +
-            parseInt( g.select('.nv-title').style('margin-bottom'), 10 );
+          titleHeight = parseInt(g.select('.nv-title').node().getBBox().height, 10) +
+            parseInt(g.select('.nv-title').style('margin-top'), 10) +
+            parseInt(g.select('.nv-title').style('margin-bottom'), 10);
 
-          if ( margin.top < Math.max(legendHeight, titleHeight) )
+          if (margin.top < Math.max(legendHeight, titleHeight))
           {
             margin.top = Math.max(legendHeight, titleHeight);
             availableHeight = (height || parseInt(container.style('height'), 10) || 400)  - margin.top - margin.bottom;
           }
 
           g.select('.nv-titleWrap')
-              .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').node().getBBox().height, 10 ) ) +')');
+              .attr('transform', 'translate(0,' + (-margin.top+parseInt(g.select('.nv-title').node().getBBox().height, 10)) + ')');
         }
 
 
@@ -306,11 +312,10 @@ nv.models.bubbleChart = function() {
         //------------------------------------------------------------
         // Main Chart Component(s)
 
-        var timeExtent =
-              d3.extent(
+        var timeExtent = d3.extent(
                 d3.merge(
-                  filteredData.map(function(d) {
-                    return d.values.map(function(d,i) {
+                  filteredData.map(function (d) {
+                    return d.values.map(function (d,i) {
                       return d3.time.format("%Y-%m-%d").parse(d.x);
                     });
                   })
@@ -323,8 +328,8 @@ nv.models.bubbleChart = function() {
 
         var yD = d3.extent(
               d3.merge(
-                filteredData.map(function(d) {
-                  return d.values.map(function(d,i) {
+                filteredData.map(function (d) {
+                  return d.values.map(function (d,i) {
                     return getY(d,i);
                   });
                 })
@@ -332,7 +337,7 @@ nv.models.bubbleChart = function() {
             );
 
         scatter
-          .size(function(d){ return d.opportunity; }) // default size
+          .size(function (d){ return d.y; }) // default size
           //.sizeDomain([16,256]) //set to speed up calculation, needs to be unset if there is a custom size accessor
           .sizeRange([256,2048])
           .singlePoint(true)
@@ -348,9 +353,9 @@ nv.models.bubbleChart = function() {
 
 
         var bubblesWrap = g.select('.nv-bubblesWrap')
-            .datum(filteredData.filter(function(d) { return !d.disabled; }));
+            .datum(filteredData.filter(function (d) { return !d.disabled; }));
 
-        d3.transition(bubblesWrap).call(scatter);
+        bubblesWrap.call(scatter);
 
         // x Axis
         xAxis
@@ -359,7 +364,7 @@ nv.models.bubbleChart = function() {
           .tickSize(0)
           .tickValues(getTimeTicks(filteredData))
           .showMaxMin(false)
-          .tickFormat(function(d) {
+          .tickFormat(function (d) {
             return d3.time.format('%b')(new Date(d));
           });
 
@@ -373,7 +378,7 @@ nv.models.bubbleChart = function() {
         yAxis
           .scale(y)
           .ticks(yValues.length)
-          .tickValues( yValues.map(function(d,i) { return yValues[i].y; }) )
+          .tickValues( yValues.map(function (d,i) { return yValues[i].y; }) )
           .tickSize(-availableWidth, 0)
           .tickFormat(function(d,i) { return yValues[i].key; });
 
@@ -387,7 +392,7 @@ nv.models.bubbleChart = function() {
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
 
-      legend.dispatch.on('legendClick', function(d,i) {
+      legend.dispatch.on('legendClick', function (d,i) {
 
         d.disabled = !d.disabled;
 
@@ -399,7 +404,7 @@ nv.models.bubbleChart = function() {
           });
         }
 
-        selection.transition().call(chart.render);
+        container.transition().duration(500).call(chart.render);
       });
 
       /*
@@ -414,15 +419,17 @@ nv.models.bubbleChart = function() {
       });
       */
 
-      dispatch.on('tooltipShow', function(e) {
-        if (tooltips) showTooltip(e, that.parentNode);
+      dispatch.on('tooltipShow', function (e) {
+        if (tooltips) {
+          showTooltip(e, that.parentNode);
+        }
       });
 
       //============================================================
 
       chart.render();
 
-      chart.update = function() { chart(selection); };
+      chart.update = function () { chart(selection); };
       chart.container = this;
 
     });
@@ -435,20 +442,23 @@ nv.models.bubbleChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  scatter.dispatch.on('elementMouseover.tooltip', function(e) {
+  scatter.dispatch.on('elementMouseover.tooltip', function (e) {
     dispatch.tooltipShow(e);
   });
 
-  scatter.dispatch.on('elementMouseout.tooltip', function(e) {
+  scatter.dispatch.on('elementMouseout.tooltip', function (e) {
     dispatch.tooltipHide(e);
   });
 
-  dispatch.on('tooltipHide', function() {
-    if (tooltips) nv.tooltip.cleanup();
+  dispatch.on('tooltipHide', function () {
+    if (tooltips) {
+      nv.tooltip.cleanup();
+    }
   });
 
-  scatter.dispatch.on('elementClick', function(e) {
+  scatter.dispatch.on('elementClick', function (e) {
     bubbleClick(e);
+    nv.tooltip.cleanup();
   });
 
 
@@ -463,114 +473,106 @@ nv.models.bubbleChart = function() {
   chart.xAxis = xAxis;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, scatter, 'interactive', 'size', 'x', 'y', 'id', 'forceX', 'forceY', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceSize', 'clipEdge', 'clipVoronoi', 'clipRadius', 'color', 'fill', 'gradient', 'useClass', 'classStep');
+  d3.rebind(chart, scatter, 'interactive', 'size', 'x', 'y', 'id', 'forceX', 'forceY', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceSize', 'clipEdge', 'clipVoronoi', 'clipRadius', 'color', 'fill', 'classes', 'gradient');
 
-  chart.colorData = function(_) {
-    if (arguments[0] === 'graduated')
-    {
-      var c1 = arguments[1].c1
-        , c2 = arguments[1].c2
-        , l = arguments[1].l;
-      var color = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(i/l); };
-    }
-    else if (_ === 'class')
-    {
-      scatter.useClass(true);
-      legend.useClass(true);
-      if (arguments[1]) {
-        scatter.classStep(arguments[1]);
-        legend.classStep(arguments[1]);
-      }
-      var color = function (d,i) { return 'inherit'; };
-    }
-    else
-    {
-      var color = function(d,i) { return nv.utils.defaultColor()(d,i); };
-    }
+  chart.colorData = function (_) {
+    var colors = function (d,i) { return nv.utils.defaultColor()(d,d.series); },
+        classes = function (d,i) { return 'nv-group nv-series-' + i; },
+        type = arguments[0],
+        params = arguments[1] || {};
 
-    scatter.color(color);
-    legend.color(color);
-
-    return chart;
-  };
-
-  chart.colorFill = function(_) {
-    if (_ === 'gradient')
-    {
-      var fill = function (d,i) { return chart.gradient()(d,i); };
-    }
-    else
-    {
-      var fill = chart.color();
+    switch (type) {
+      case 'graduated':
+        var c1 = params.c1
+          , c2 = params.c2
+          , l = params.l;
+        colors = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(d.series/l); };
+        break;
+      case 'class':
+        colors = function () { return 'inherit'; };
+        classes = function (d,i) {
+          var iClass = (d.series*(params.step || 1))%20;
+          return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass>9?'':'0') + iClass);
+        };
+        break;
     }
 
+    var fill = (!params.gradient) ? colors : function (d,i) {
+      return scatter.gradient(d,d.series);
+    };
+
+    scatter.color(colors);
     scatter.fill(fill);
+    scatter.classes(classes);
+
+    legend.color(colors);
+    legend.classes(classes);
 
     return chart;
   };
 
-  chart.margin = function(_) {
-    if (!arguments.length) return margin;
+  chart.margin = function (_) {
+    if (!arguments.length) { return margin; }
     margin = _;
     return chart;
   };
 
-  chart.width = function(_) {
-    if (!arguments.length) return width;
+  chart.width = function (_) {
+    if (!arguments.length) { return width; }
     width = _;
     return chart;
   };
 
-  chart.height = function(_) {
-    if (!arguments.length) return height;
+  chart.height = function (_) {
+    if (!arguments.length) { return height; }
     height = _;
     return chart;
   };
 
-  chart.showLegend = function(_) {
-    if (!arguments.length) return showLegend;
+  chart.showLegend = function (_) {
+    if (!arguments.length) { return showLegend; }
     showLegend = _;
     return chart;
   };
 
-  chart.showTitle = function(_) {
-    if (!arguments.length) return showTitle;
+  chart.showTitle = function (_) {
+    if (!arguments.length) { return showTitle; }
     showTitle = _;
     return chart;
   };
 
-  chart.tooltips = function(_) {
-    if (!arguments.length) return tooltips;
+  chart.tooltips = function (_) {
+    if (!arguments.length) { return tooltips; }
     tooltips = _;
     return chart;
   };
 
-  chart.tooltip = function(_) {
-    if (!arguments.length) return tooltip;
+  chart.tooltipContent = function (_) {
+    if (!arguments.length) { return tooltip; }
     tooltip = _;
     return chart;
   };
 
-  chart.noData = function(_) {
-    if (!arguments.length) return noData;
+  chart.noData = function (_) {
+    if (!arguments.length) { return noData; }
     noData = _;
     return chart;
   };
 
-  chart.bubbleClick = function(_) {
-    if (!arguments.length) return bubbleClick;
+  chart.bubbleClick = function (_) {
+    if (!arguments.length) { return bubbleClick; }
     bubbleClick = _;
     return chart;
   };
 
-  chart.groupBy = function(_) {
-    if (!arguments.length) return groupBy;
+  chart.groupBy = function (_) {
+    if (!arguments.length) { return groupBy; }
     groupBy = _;
     return chart;
   };
 
-  chart.filterBy = function(_) {
-    if (!arguments.length) return filterBy;
+  chart.filterBy = function (_) {
+    if (!arguments.length) { return filterBy; }
     filterBy = _;
     return chart;
   };

@@ -14,9 +14,11 @@
   <svg></svg>
 </div>
 
-<script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
+<script src="../../assets/js/nvd3/lib/d3.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
-<script src="../js/nvd3/data/gauge_data.js"></script>
+<script src="data/gauge_data.js"></script>
+<script src="../js/nvd3/src/models/gauge.js"></script>
+<script src="../js/nvd3/src/models/gaugeChart.js"></script>
 
 <script>
   nv.addGraph(function() {
@@ -26,18 +28,14 @@
           .y(function(d) { return d.y })
           .showLabels(true)
           .showTitle(true)
-          //.colorData( 'graduated', {c1: '#d62728', c2: '#2ca02c', l: gauge_data.data.length} )
-          //.colorData( 'class' )
           .colorData( 'default' )
-          .colorFill( 'gradient' )
-          //.colorFill( 'default' )
           .ringWidth(50)
           .maxValue(9)
           .transitionMs(4000)
         ;
 
     d3.select("#gauge svg")
-        .datum(gauge_data)
+        .datum(gauge_data_default)
       .transition().duration(1200)
         .call(chart);
 

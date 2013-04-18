@@ -4,35 +4,35 @@ JS_FILES = \
 	src/tooltip.js \
 	src/utils.js \
 	src/models/axis.js \
+	src/models/legend.js \
+	src/models/scatter.js \
+	src/models/bubbleChart.js \
 	src/models/funnel.js \
 	src/models/funnelChart.js \
 	src/models/gauge.js \
 	src/models/gaugeChart.js \
-	src/models/legend.js \
 	src/models/line.js \
-	src/models/lineChart_sugar.js \
+	src/models/lineChart.js \
 	src/models/lineWithFocusChart.js \
-	src/models/multiBar_sugar.js \
-	src/models/multiBarChart_sugar.js \
-	src/models/paretoChart.js \
+	src/models/multiBar.js \
+	src/models/multiBarChart.js \
+	src/models/multiBarHorizontal.js \
+	src/models/multiBarHorizontalChart.js \
 	src/models/paretoLegend.js \
-	src/models/multiBarHorizontal_sugar.js \
-	src/models/multiBarHorizontalChart_sugar.js \
+	src/models/paretoChart.js \
 	src/models/pie.js \
 	src/models/pieChart.js \
-	src/models/scatter_sugar.js \
 	src/models/sparkline.js \
 	src/models/sparklinePlus.js \
 	src/models/stackedArea.js \
-	src/models/stackedAreaChart_sugar.js \
+	src/models/stackedAreaChart.js \
 	src/models/treemap.js \
 	src/models/treemapChart.js \
 	src/models/tree.js \
-	src/models/bubbleChart.js \
 	src/outro.js
 
 D3_FILES = \
-	lib/d3.v2.js
+	lib/d3.js
 
 JS_COMPILER = \
 	uglifyjs
@@ -40,7 +40,7 @@ JS_COMPILER = \
 all: nv.d3.js nv.d3.min.js
 nv.d3.js: $(JS_FILES)
 nv.d3.min.js: $(JS_FILES)
-d3.v2.min.js: $(D3_FILES)
+d3.min.js: $(D3_FILES)
 
 nv.d3.js: Makefile
 	rm -f $@
@@ -50,7 +50,7 @@ nv.d3.min.js: Makefile
 	rm -f ../../../assets/js/nvd3/$@
 	cat $(filter %.js,$^) | $(JS_COMPILER) >> ../../../assets/js/nvd3/$@
 
-d3.v2.min.js: Makefile
+d3.min.js: Makefile
 	rm -f ../../../assets/js/nvd3/lib/$@
 	cat $(filter %.js,$^) | $(JS_COMPILER) >> ../../../assets/js/nvd3/lib/$@
 

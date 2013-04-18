@@ -9,8 +9,7 @@
                   .showControls(false)
                   .showTitle(false)
                   .stacked(false)
-                  .colorData( 'default' )
-                  .colorFill( 'default' );
+                  .colorData( 'default' );
 
             d3ChartContainer
               .datum(this.translateDataToD3(forecast_data_Q1))

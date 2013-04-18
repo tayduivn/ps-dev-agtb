@@ -9,17 +9,16 @@ nv.models.gauge = function() {
     , width = null
     , height = null
     , clipEdge = true
-    , getValues = function(d) { return d.values }
-    , getX = function(d) { return d.key }
-    , getY = function(d) { return d.y }
+    , getValues = function(d) { return d.values; }
+    , getX = function(d) { return d.key; }
+    , getY = function(d) { return d.y; }
     , id = Math.floor(Math.random() * 10000) //Create semi-unique ID in case user doesn't select one
-    , color = nv.utils.defaultColor()
-    , fill = function (d,i) { return color(d,i); }
-    , gradient = function (d,i) { return color(d,i); }
-    , useClass = false
     , labelFormat = d3.format(',g')
     , valueFormat = d3.format(',.f')
     , showLabels = true
+    , color = nv.utils.defaultColor()
+    , fill = color
+    , classes = function (d,i) { return 'nv-group nv-series-' + i; }
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
   ;
 
@@ -55,15 +54,20 @@ nv.models.gauge = function() {
           , range = maxAngle - minAngle
           , scale = d3.scale.linear().range([0,1]).domain([minValue, maxValue])
           , previousTick = 0
-          , arcData = data.map( function(d,i){ var rtn = { key:d.key, y0:previousTick, y1:d.y, color:d.color, class:d.class }; previousTick = d.y; return rtn; } )
-          , labelData = [0].concat( data.map( function(d){ return d.y } ) )
+          , arcData = data.map( function(d,i){
+              var rtn = {
+                  key:d.key
+                , y0:previousTick
+                , y1:d.y
+                , color:d.color
+                , classes:d.classes
+              };
+              previousTick = d.y;
+              return rtn;
+            })
+          , labelData = [0].concat( data.map( function(d){ return d.y; } ) )
           , prop = function(d){ return d*radius/100; }
-          , fillGradient = function(d,i) {
-              return nv.utils.colorRadialGradient( d, i, 0, 0, radius, ringWidth/100, color(d,i), wrap.select('defs') );
-            }
           ;
-
-        chart.gradient( fillGradient );
 
         //------------------------------------------------------------
         // Setup containers and skeleton of chart
@@ -73,6 +77,11 @@ nv.models.gauge = function() {
         var defsEnter = wrapEnter.append('defs');
         var gEnter = wrapEnter.append('g');
         var g = wrap.select('g');
+
+        //set up the gradient constructor function
+        chart.gradient = function(d,i) {
+          return nv.utils.colorRadialGradient( d, id+'-'+i, {x:0, y:0, r:radius, s:ringWidth/100, u:'userSpaceOnUse'}, color(d,i), wrap.select('defs') );
+        };
 
         gEnter.append('g').attr('class', 'nv-arc-group');
         gEnter.append('g').attr('class', 'nv-labels');
@@ -108,23 +117,15 @@ nv.models.gauge = function() {
             .attr('transform', centerTx);
 
         ag.selectAll('.nv-arc-path').transition().duration(10)
-            .attr('fill', function(d,i){ return fill(d,i) } )
+            .attr('fill', function(d,i){ return fill(d,i); } )
             .attr('d', arc);
 
         ag.selectAll('.nv-arc-path')
             .data(arcData)
           .enter().append('path')
             //.attr('class', 'nv-arc-path')
-            .attr('class', function(d,i) {
-                return this.getAttribute('class') || (
-                  'nv-arc-path' + (
-                    useClass
-                      ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
-                      : ''
-                  )
-                );
-            } )
-            .attr('fill', function(d,i){ return fill(d,i) } )
+            .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
+            .attr('fill', function(d,i){ return fill(d,i); } )
             .attr('stroke', '#ffffff')
             .attr('stroke-width', 3)
             .attr('d', arc)
@@ -199,7 +200,7 @@ nv.models.gauge = function() {
             .attr('transform', centerTx);
 
         pg.selectAll('path').transition().duration(120)
-          .attr('d', d3.svg.line().interpolate('monotone'))
+          .attr('d', d3.svg.line().interpolate('monotone'));
 
         var pointer = pg.selectAll('path')
             .data([pointerData])
@@ -296,14 +297,14 @@ nv.models.gauge = function() {
     fill = _;
     return chart;
   };
+  chart.classes = function(_) {
+    if (!arguments.length) return classes;
+    classes = _;
+    return chart;
+  };
   chart.gradient = function(_) {
     if (!arguments.length) return gradient;
     gradient = _;
-    return chart;
-  };
-  chart.useClass = function(_) {
-    if (!arguments.length) return useClass;
-    useClass = _;
     return chart;
   };
 
@@ -429,7 +430,7 @@ nv.models.gauge = function() {
     return chart;
   };
   chart.isRendered = function(_) {
-    return (svg !== undefined)
+    return (svg !== undefined);
   };
 
 

@@ -5,7 +5,7 @@
   <div class="row">
     <div class="span6">
       <h3>Standard Line Chart</h3>
-      <p>Line chart with baseline y-axis. <a href="charts/lineChart.html">Full Screen</a> with options for line interpolation and fill.</p>
+      <p>Line chart with baseline y-axis. [<a href="charts/lineChart.html">Full Screen</a> | <a href="charts/lineChart_colors.html">Color Options</a>].</p>
       <div>
 <div id="line1" class="nv-chart">
 <svg></svg>
@@ -14,7 +14,7 @@
     </div>
     <div class="span6">
       <h3>Stacked Area Chart</h3>
-      <p>Line chart with cumulative y-axis. <a href="charts/stackedAreaChart.html">Full Screen</a> showing options for cumulative scale.</p>
+      <p>Line chart with cumulative y-axis. [<a href="charts/stackedAreaChart.html">Full Screen</a> | <a href="charts/stackedAreaChart_colors.html">Color Options</a>]</p>
       <div>
 <div id="area" class="nv-chart">
 <svg></svg>
@@ -24,7 +24,8 @@
   </div>
 </section>
 
-<script src="js/nvd3/data/line_data.js"></script>
+<script src="charts/data/line_data.js"></script>
+
 
 <script>
   // Line chart
@@ -35,7 +36,7 @@
           .showTitle(false)
           .tooltips(true)
           .showControls(false)
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
               return '<p>Category: <b>' + key + '</b></p>' +
                      '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
                      '<p>Date: <b>' +  x + '</b></p>'
@@ -51,7 +52,7 @@
         .tickFormat(d3.format(',.2f'));
 
     d3.select('#line1 svg')
-        .datum(line_data)
+        .datum(line_data_default)
       .transition().duration(500)
         .call(chart);
 
@@ -64,7 +65,7 @@
     var chart = nv.models.stackedAreaChart()
           .x(function(d) { return d[0] })
           .y(function(d) { return d[1] })
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
               return '<p>Category: <b>' + key + '</b></p>' +
                      '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
                      '<p>Date: <b>' +  x + '</b></p>'
@@ -72,11 +73,9 @@
           .showTitle(false)
           .tooltips(true)
           .showControls(false)
-          //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: line_data.data.length} )
+          .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: line_data_default.data.length} )
           //.colorData( 'class' )
-          .colorData( 'default' )
-          //.colorFill( 'gradient' )
-          .colorFill( 'default' )
+          //.colorData( 'default' )
           //.clipEdge(true)
         ;
 
@@ -88,7 +87,7 @@
         .tickFormat(d3.format(',.2f'));
 
     d3.select('#area svg')
-        .datum(line_data)
+        .datum(line_data_default)
       .transition().duration(500)
         .call(chart);
 

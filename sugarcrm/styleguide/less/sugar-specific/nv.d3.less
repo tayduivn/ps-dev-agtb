@@ -527,10 +527,11 @@ svg .title {
 */
 
 .nv-treemap svg {
-  background-color: @grayLighter;
+  background-color: @white;
 
   text {
     pointer-events: none;
+    fill: @white;
   }
 
   .nv-depth text {
@@ -539,15 +540,16 @@ svg .title {
 
   .nv-grandparent text {
     font-weight: bold;
+    fill: @gray;
   }
 
   rect {
     //fill: none;
-    stroke: #fff;
+    stroke: @white;
   }
 
   .nv-children.hover .nv-parent {
-    fill: #fff;
+    fill: @white;
     opacity: 0.3;
   }
 
@@ -560,6 +562,7 @@ svg .title {
   }
   .nv-parent {
     fill: none;
+    font-weight: normal;
   }
   .nv-grandparent rect {
     fill: #fff;
@@ -577,38 +580,38 @@ svg .title {
 
 //Opportunities Treemap
 .stage_closedwon {
-  fill: darken(@grayLighter, 55%);
+  fill: #2ca02c;
 }
 .stage_prospecting {
-  fill: darken(@grayLighter, 35%);
+  fill: darken(#ff7f0e, 35%);
 }
 .stage_closedlost {
-  fill: darken(@grayLighter, 30%);
+  fill: #d62728;
 }
 .stage_qualification {
-  fill: darken(@grayLighter, 65%);
+  fill: #ff7f0e;
 }
 .stage_thisopp {
-  fill: @green;
+  fill: #1f77b4;
 }
 .stage_negotiationreview {
-  fill: darken(@grayLighter, 40%);
+  fill: darken(#2ca02c, 40%);
 }
 .stage_perceptionanalysis {
-  fill: darken(@grayLighter, 30%);
+  fill: darken(#2ca02c, 30%);
 }
 .stage_proposalpricequote {
-  fill: darken(@grayLighter, 45%);
+  fill: darken(#2ca02c, 45%);
 }
 .stage_valueproposition {
-  fill: darken(@grayLighter, 40%);
+  fill: #ff7f0e;
 }
 .stage_iddecisionmakers{
-  fill: darken(@grayLighter, 70%);
+  fill: #9467bd;
 }
 
 .stage_needsanalysis{
-  fill: darken(@grayLighter, 10%);
+  fill: darken(@yellow, 10%);
 }
 /**********
 * Dendrogram

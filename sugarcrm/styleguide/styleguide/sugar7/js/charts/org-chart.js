@@ -13,7 +13,7 @@ nv.addGraph(function() {
         .zoomExtents(zoomExtents)
         .horizontal(false);
 
-  d3.json("../js/nvd3/data/tree_data.json", function(json) {
+  d3.json("js/data/org_data.json", function(json) {
     var tree_data = json;
 
     tree_data.x0 = 0;

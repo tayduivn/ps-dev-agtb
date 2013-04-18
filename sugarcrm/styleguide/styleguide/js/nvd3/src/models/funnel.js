@@ -11,8 +11,8 @@ nv.models.funnel = function() {
     , x = d3.scale.ordinal()
     , y = d3.scale.linear()
     , id = Math.floor(Math.random() * 10000) //Create semi-unique ID in case user doesn't select one
-    , getX = function(d) { return d.x }
-    , getY = function(d) { return d.y }
+    , getX = function(d) { return d.x; }
+    , getY = function(d) { return d.y; }
     , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
     , clipEdge = true
     , delay = 1200
@@ -20,10 +20,8 @@ nv.models.funnel = function() {
     , yDomain
     , fmtValueLabel = function (d) { return d.y; }
     , color = nv.utils.defaultColor()
-    , fill = function (d,i) { return color(d,i); }
-    , gradient = function (d,i) { return color(d,i); }
-    , useClass = false
-    , classStep = 1
+    , fill = color
+    , classes = function (d,i) { return 'nv-group nv-series-' + i; }
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
     ;
 
@@ -44,16 +42,11 @@ nv.models.funnel = function() {
       var availableWidth = width - margin.left - margin.right
         , availableHeight = height - margin.top - margin.bottom
         , container = d3.select(this)
-        , fillGradient = function(d,i) {
-            return nv.utils.colorLinearGradient( d, i, 'vertical', color(d,i), wrap.select('defs') );
-          }
         , labelBoxWidth = 20;
-
-      chart.gradient( fillGradient );
 
       data = d3.layout.stack()
                .offset('zero')
-               .values(function(d){ return d.values })
+               .values(function(d){ return d.values; })
                .y(getY)
                (data);
 
@@ -74,14 +67,14 @@ nv.models.funnel = function() {
       var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
             data.map(function(d) {
               return d.values.map(function(d,i) {
-                return { x: getX(d,i), y: getY(d,i), y0: d.y0 }
-              })
+                return { x: getX(d,i), y: getY(d,i), y0: d.y0 };
+              });
             });
 
-      x   .domain(d3.merge(seriesData).map(function(d) { return d.x }))
-          .rangeBands([0, availableWidth], .1);
+      x   .domain(d3.merge(seriesData).map(function(d) { return d.x; }))
+          .rangeBands([0, availableWidth], 0.1);
 
-      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + d.y0 }).concat(forceY)))
+      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + d.y0; }).concat(forceY)))
           .range([availableHeight, 0]);
 
 
@@ -113,6 +106,11 @@ nv.models.funnel = function() {
       var gEnter = wrapEnter.append('g');
       var g = wrap.select('g');
 
+      //set up the gradient constructor function
+      chart.gradient = function(d,i,p) {
+        return nv.utils.colorLinearGradient( d, id+'-'+i, p, color(d,i), wrap.select('defs') );
+      };
+
       gEnter.append('g').attr('class', 'nv-groups');
 
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -138,7 +136,7 @@ nv.models.funnel = function() {
 
 
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
-          .data(function(d) { return d }, function(d) { return d.key });
+          .data(function(d) { return d; }, function(d) { return d.key; });
 
       groups.enter().append('g')
           .style('stroke-opacity', 1e-6)
@@ -146,21 +144,21 @@ nv.models.funnel = function() {
 
       d3.transition(groups.exit())
         .selectAll('polygon.nv-bar')
-        .delay(function(d,i) { return i * delay/ data[0].values.length })
+        .delay(function(d,i) { return i * delay/ data[0].values.length; })
           .attr('points', function(d) {
               var w0 = (r * y(d.y0)) + w/2, w1 = (r * y(d.y0+d.y)) + w/2;
               return (
-                (c - w0) + ',' +  0 + ' ' +
-                (c - w1) + ',' +  0 + ' ' +
-                (c + w1) + ',' +  0 + ' ' +
-                (c + w0) + ',' +  0
+                (c - w0) +','+  0 +' '+
+                (c - w1) +','+  0 +' '+
+                (c + w1) +','+  0 +' '+
+                (c + w0) +','+  0
               );
             })
           .remove();
 
       d3.transition(groups.exit())
         .selectAll('g.nv-label-value')
-        .delay(function(d,i) { return i * delay/ data[0].values.length })
+        .delay(function(d,i) { return i * delay/ data[0].values.length; })
           .attr('y', 0)
           .style('fill-opacity', 1e-6)
           .attr('transform', 'translate('+ c +',0)')
@@ -168,24 +166,17 @@ nv.models.funnel = function() {
 
       d3.transition(groups.exit())
         .selectAll('text.nv-label-group')
-        .delay(function(d,i) { return i * delay/ data[0].values.length })
+        .delay(function(d,i) { return i * delay/ data[0].values.length; })
           .attr('y', 0)
           .style('fill-opacity', 1e-6)
           .attr('transform', 'translate('+ availableWidth +',0)')
           .remove();
 
       groups
-          .attr('class', function(d,i) {
-              var iClass = (i*classStep)%20;
-              return this.getAttribute('class') || (
-                'nv-group nv-series-' + i + (
-                  useClass ? ( ' '+ ( d.class || 'nv-fill' + (iClass>9?'':'0') + iClass ) ) : ''
-                )
-              );
-          } )
-          .classed('hover', function(d) { return d.hover })
-          .attr('fill', function(d,i){ return fill(d,i) })
-          .attr('stroke', function(d,i){ return this.getAttribute('fill') || fill(d,i) });
+          .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
+          .classed('hover', function(d) { return d.hover; })
+          .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i); })
+          .attr('stroke', function(d,i){ return this.getAttribute('fill') || fill(d,i); });
 
       d3.transition(groups)
           .style('stroke-opacity', 1)
@@ -196,7 +187,7 @@ nv.models.funnel = function() {
       // Polygons
 
       var funs = groups.selectAll('polygon.nv-bar')
-          .data(function(d) { return d.values });
+          .data(function(d) { return d.values; });
 
       var funsEnter = funs.enter()
           .append('polygon')
@@ -205,23 +196,23 @@ nv.models.funnel = function() {
               var w0 = (r * y(d.y0)) + w/2,
                   w1 = (r * y(d.y0+d.y)) + w/2;
               return (
-                (c - w0) + ',' +  0 + ' ' +
-                (c - w1) + ',' +  0 + ' ' +
-                (c + w1) + ',' +  0 + ' ' +
-                (c + w0) + ',' +  0
+                (c - w0) +','+  0 +' '+
+                (c - w1) +','+  0 +' '+
+                (c + w1) +','+  0 +' '+
+                (c + w0) +','+  0
               );
             });
 
       d3.transition(funs)
-          .delay(function(d,i) { return i * delay / data[0].values.length })
+          .delay(function(d,i) { return i * delay / data[0].values.length; })
           .attr('points', function(d) {
             var w0 = (r * y(d.y0)) + w/2,
                 w1 = (r * y(d.y0+d.y)) + w/2;
             return (
-              (c - w0) + ',' +  y(d.y0) + ' ' +
-              (c - w1) + ',' +  y(d.y0+d.y) + ' ' +
-              (c + w1) + ',' +  y(d.y0+d.y) + ' ' +
-              (c + w0) + ',' +  y(d.y0)
+              (c - w0) +','+  y(d.y0) +' '+
+              (c - w1) +','+  y(d.y0+d.y) +' '+
+              (c + w1) +','+  y(d.y0+d.y) +' '+
+              (c + w0) +','+  y(d.y0)
             );
           });
 
@@ -230,7 +221,7 @@ nv.models.funnel = function() {
       // Value Labels
 
       var lblValue = groups.selectAll('.nv-label-value')
-          .data( function(d) { return d.values } );
+          .data( function(d) { return d.values; } );
 
       var lblValueEnter = lblValue.enter()
             .append('g')
@@ -253,14 +244,16 @@ nv.models.funnel = function() {
               .attr('x', 0)
               .attr('y', 5)
               .attr('text-anchor', 'middle')
-              .text(function(d){ return fmtValueLabel(d) })
+              .text(function(d){ return fmtValueLabel(d); })
               .attr('stroke', 'none')
               .style('fill', '#fff')
             ;
 
       lblValue.selectAll('text').each(function(d,i){
-            var width = this.getBBox().width + 20
-            if(width > labelBoxWidth) labelBoxWidth = width;
+            var width = this.getBBox().width + 20;
+            if(width > labelBoxWidth) {
+              labelBoxWidth = width;
+            }
           });
       // lblValue.selectAll('rect').each(function(d,i){
       //       d3.select(this)
@@ -269,14 +262,14 @@ nv.models.funnel = function() {
       //     });
 
       d3.transition(lblValue)
-          .delay(function(d,i) { return i * delay / data[0].values.length })
-          .attr('transform', function(d){ return 'translate('+ c +','+ ( y(d.y0+d.y/2) ) +')'; })
+          .delay(function(d,i) { return i * delay / data[0].values.length; })
+          .attr('transform', function(d){ return 'translate('+ c +','+ ( y(d.y0+d.y/2) ) +')'; });
 
       //------------------------------------------------------------
       // Group Labels
 
       var lblGroup = groups.selectAll('text.nv-label-group')
-          .data( function(d) { return [ { y: d.values[0].y, y0: d.values[0].y0, key: d.count } ] } );
+          .data( function(d) { return [ { y: d.values[0].y, y0: d.values[0].y0, key: d.count } ]; });
 
       var lblGroupEnter = lblGroup.enter()
           .append('text')
@@ -286,15 +279,15 @@ nv.models.funnel = function() {
             .attr('dx', -10)
             .attr('dy', 5)
             .attr('text-anchor', 'middle')
-            .text(function(d) { return d.key })
+            .text(function(d) { return d.key; })
             .attr('stroke', 'none')
             .style('fill', 'black')
             .style('fill-opacity', 1e-6)
-            .attr('transform', 'translate('+ availableWidth +',0)');
+            .attr('transform', 'translate('+ availableWidth +',0)')
           ;
 
       d3.transition(lblGroup)
-          .delay(function(d,i) { return i * delay / data[0].values.length })
+          .delay(function(d,i) { return i * delay / data[0].values.length; })
           .style('fill-opacity', 1)
           .attr('transform', function(d){ return 'translate('+ availableWidth +','+ ( y(d.y0+d.y/2) ) +')'; })
         ;
@@ -377,19 +370,14 @@ nv.models.funnel = function() {
     fill = _;
     return chart;
   };
+  chart.classes = function(_) {
+    if (!arguments.length) return classes;
+    classes = _;
+    return chart;
+  };
   chart.gradient = function(_) {
     if (!arguments.length) return gradient;
     gradient = _;
-    return chart;
-  };
-  chart.useClass = function(_) {
-    if (!arguments.length) return useClass;
-    useClass = _;
-    return chart;
-  };
-  chart.classStep = function(_) {
-    if (!arguments.length) return classStep;
-    classStep = _;
     return chart;
   };
 

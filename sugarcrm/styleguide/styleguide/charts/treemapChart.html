@@ -10,14 +10,16 @@
 </head>
 <body class="full-screen">
 
-<div id="treemap" class="nv-treemap nv-chart">
+<div id="treemap" class="nv-chart nv-treemap">
   <svg></svg>
 </div>
 
-<script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
+<script src="../../assets/js/nvd3/lib/d3.min.js"></script>
 <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
-<script src="../js/nvd3/data/flare.js"></script>
+<script src="data/flare.js"></script>
 
+<script src="../js/nvd3/src/models/treemap.js"></script>
+<script src="../js/nvd3/src/models/treemapChart.js"></script>
 <script>
 
   // Wrapping in nv.addGraph allows for '0 timeout render', stors rendered charts in nv.graphs, and may do more in the future... it's NOT required
@@ -27,20 +29,12 @@
           .leafClick( function(d) {
               alert('leaf clicked');
           })
-          .useClass(true)
           .showTitle(false)
           .tooltips(true)
           .getSize(function(d) { return d.size; })
-          .className(function(d,i) {
-            var m = chart.groups().indexOf(d.parent.name) % 20;
-            return 'nv-fill' + (m>9?'':'0') + m%20;
-          })
-          //.showControls(false)
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
           //.colorData( 'class' )
-          //.colorData( 'default' )
-          //.colorFill( 'gradient' )
-          //.colorFill( 'default' )
+          .colorData( 'default' )
       ;
 
     d3.select('#treemap svg')

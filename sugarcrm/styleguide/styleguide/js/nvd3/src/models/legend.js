@@ -1,4 +1,3 @@
-
 nv.models.legend = function() {
 
   //============================================================
@@ -8,12 +7,11 @@ nv.models.legend = function() {
   var margin = {top: 5, right: 0, bottom: 5, left: 0}
     , width = 400
     , height = 20
-    , getKey = function(d) { return d.key }
+    , getKey = function(d) { return d.key; }
     , color = nv.utils.defaultColor()
+    , classes = function (d,i) { return ''; }
     , align = true
     , dispatch = d3.dispatch('legendClick', 'legendDblclick', 'legendMouseover', 'legendMouseout')
-    , useClass = false
-    , classStep = 1
     ;
 
   //============================================================
@@ -27,7 +25,6 @@ nv.models.legend = function() {
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
-      container.selectAll('g.nv-legend').remove();
 
       var wrap = container.selectAll('g.nv-legend').data([data]);
       var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-legend').append('g');
@@ -40,7 +37,7 @@ nv.models.legend = function() {
       //var label = g.append('text').text('Probability:').attr('class','nv-series-label').attr('transform','translate(0,0)');
 
       var series = g.selectAll('.nv-series')
-          .data(function(d) { return d });
+          .data(function(d) { return d; });
       var seriesEnter = series.enter().append('g').attr('class', 'nv-series')
           .on('mouseover', function(d,i) {
             dispatch.legendMouseover(d,i);  //TODO: Make consistent with other event objects
@@ -55,24 +52,19 @@ nv.models.legend = function() {
             dispatch.legendDblclick(d,i);
           });
       seriesEnter.append('circle')
-          .attr('class', function(d,i) {
-            return this.getAttribute('class') || (
-              useClass
-                ? ( d.class || 'nv-fill' + (i*classStep%20>9?'':'0') + i*classStep%20 ) + ' nv-stroke'+ (i%10)
-                : '' );
-            }
-          )
-          .attr('fill', function(d,i) { return color(d,i) })
-          .attr('stroke', function(d,i) { return color(d,i) })
-          .attr('stroke-width', 2)
+          .style('stroke-width', 2)
           .attr('r', 5);
       seriesEnter.append('text')
-          .text(getKey)
           .attr('text-anchor', 'start')
           .attr('dy', '.32em')
           .attr('dx', '8');
-      series.classed('disabled', function(d) { return d.disabled });
+      series.classed('disabled', function(d) { return d.disabled; });
       series.exit().remove();
+      series.select('circle')
+          .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
+          .attr('fill', function(d,i) { return this.getAttribute('fill') || color(d,i); })
+          .attr('stroke', function(d,i) { return this.getAttribute('fill') || color(d,i); });
+      series.select('text').text(getKey);
 
 
       //TODO: implement fixed-width and max-width options (max-width is especially useful with the align option)
@@ -80,8 +72,6 @@ nv.models.legend = function() {
       // NEW ALIGNING CODE, TODO: clean up
       if (align) {
         var seriesWidths = [];
-       // console.log(d3.select('.nv-series-label').select('text').getComputedTextLength());
-
         series.each(function(d,i) {
           seriesWidths.push(d3.select(this).select('text').node().getComputedTextLength() + 28); // 28 is ~ the width of the circle plus some padding
         });
@@ -172,7 +162,10 @@ nv.models.legend = function() {
 
   chart.margin = function(_) {
     if (!arguments.length) return margin;
-    margin = _;
+    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
+    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
+    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
+    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
     return chart;
   };
 
@@ -200,15 +193,9 @@ nv.models.legend = function() {
     return chart;
   };
 
-  chart.useClass = function(_) {
-    if (!arguments.length) return useClass;
-    useClass = _;
-    return chart;
-  };
-
-  chart.classStep = function(_) {
-    if (!arguments.length) return classStep;
-    classStep = _;
+  chart.classes = function(_) {
+    if (!arguments.length) return classes;
+    classes = _;
     return chart;
   };
 
@@ -222,4 +209,4 @@ nv.models.legend = function() {
 
 
   return chart;
-}
+};

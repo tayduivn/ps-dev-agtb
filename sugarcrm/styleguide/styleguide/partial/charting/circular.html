@@ -5,7 +5,7 @@
   <div class="row">
     <div class="span6">
       <h3>Pie Chart</h3>
-      <p>Example pie chart. <a href="charts/pieChart.html">Full Screen</a></p>
+      <p>Example pie chart. [<a href="charts/pieChart.html">Full Screen</a> | <a href="charts/pieChart_colors.html">Color Options</a>]</p>
       <div>
 <div id="pie" class="nv-chart">
 <svg></svg>
@@ -24,7 +24,7 @@
   </div>
 </section>
 
-<script src="js/nvd3/data/pie_data.js"></script>
+<script src="charts/data/pie_data.js"></script>
 
 <script>
   // Pie Chart
@@ -38,9 +38,7 @@
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
           //.colorData( 'class' )
           .colorData( 'default' )
-          //.colorFill( 'gradient' )
-          .colorFill( 'default' )
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
             return '<p>Stage: <b>' + key + '</b></p>' +
                    '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
                    '<p>Percent: <b>' +  x + '%</b></p>'
@@ -48,7 +46,7 @@
         ;
 
       d3.select("#pie svg")
-          .datum(pie_data)
+          .datum(pie_data_default)
         .transition().duration(500)
           .call(chart);
 
@@ -63,14 +61,14 @@
           .showLabels(true)
           .showTitle(false)
           .donut(true)
+          .donutRatio(0.4)
           .donutLabelsOutside(true)
+          .hole(10)
           //.color(d3.scale.category10().range())
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
           //.colorData( 'class' )
           .colorData( 'default' )
-          //.colorFill( 'gradient' )
-          .colorFill( 'default' )
-          .tooltip( function(key, x, y, e, graph) {
+          .tooltipContent( function(key, x, y, e, graph) {
             return '<p>Stage: <b>' + key + '</b></p>' +
                    '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
                    '<p>Percent: <b>' +  x + '%</b></p>'
@@ -78,7 +76,7 @@
         ;
 
       d3.select("#donut svg")
-          .datum(pie_data)
+          .datum(pie_data_default)
         .transition().duration(1200)
           .call(chart);
 
