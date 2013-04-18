@@ -21,9 +21,26 @@
             return new Handlebars.SafeString(url);
         });
 
+
+        /**
+         * Handlebar helper to get the letters used for the icons shown in various headers for each module, based on the
+         * translated singular module name.  This does not always match the name of the module in the model,
+         * i. e. Product == Revenue Line Item
+         * @param {String} module to which the icon belongs
+         */
         Handlebars.registerHelper('moduleIconLabel', function(module) {
             var name = app.lang.getAppListStrings('moduleListSingular')[module] || module;
             return name.substring(0, 2);
+        });
+
+        /**
+         * Handlebar helper to get the Tooltip used for the icons shown in various headers for each module, based on the
+         * translated singular module name.  This does not always match the name of the module in the model,
+         * i. e. Product == Revenue Line Item
+         * @param {String} module to which the icon belongs
+         */
+        Handlebars.registerHelper('moduleIconToolTip', function(module) {
+            return app.lang.getAppListStrings('moduleListSingular')[module] || module;
         });
 
         /**
