@@ -40,8 +40,6 @@
 
         // Grab search result model corresponding to preview icon clicked
         model = this.collection.get(correspondingResultId);
-
-        // Fire on parent layout .. works nicely for relatively simple page ;=) 
-        this.layout.layout.trigger("search:preview", model);
+        app.events.trigger("preview:render", model);
     }
 })

@@ -37,13 +37,11 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
+        app.events.off("preview:render", null, this).on("preview:render", this._renderPreview, this);
+        app.events.off("preview:close", null, this).on("preview:close", this.closePreview,  this);
     },
 
     _render: function() {
-        // Fires on shared parent layout .. nice alternative to app.events for relatively simple page
-        this.layout.layout.off("search:preview", null, this);
-        this.layout.layout.on("search:preview", this.togglePreview, this);
-
         this.$el.parent().parent().addClass("container-fluid tab-content").attr("id", "folded");
     },
     _renderHtml: function() {
@@ -51,7 +49,7 @@
         app.view.View.prototype._renderHtml.call(this);
     },
 
-    togglePreview: function(model) {
+    _renderPreview: function(model) {
         var fieldsToDisplay = app.config.fieldsToDisplay || 5;
         if(model) {
             // Create a corresponding Bean and Context for clicked search result. It
