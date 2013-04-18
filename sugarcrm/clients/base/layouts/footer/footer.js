@@ -12,10 +12,6 @@
             this.logoURL=app.config.logoURL;
         }
         app.view.Layout.prototype.initialize.call(this, options);
-    },
-
-    _render: function(){
-        app.view.Layout.prototype._render.call(this);
     }
 
 })

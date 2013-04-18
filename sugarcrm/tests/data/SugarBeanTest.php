@@ -239,6 +239,28 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * SP-618
+     * Verify that calling getCleanCopy on uncommon beans (like SessionManager) and common beans returns a new instance of the bean and not a null
+     * @group sugarbean
+     */
+    public function testGetCopyNotNull()
+    {
+        $mock = new SessionManager();
+        $newInstance = $mock->getCleanCopy();
+        $this->assertNotNull($newInstance, "New instance of SessionManager SugarBean should not be null");
+        $this->assertEquals($mock->module_name, $newInstance->module_name);
+
+        $mock = new SugarBean();
+        $newInstance = $mock->getCleanCopy();
+        $this->assertNotNull($newInstance, "New instance of SugarBean should not be null");
+
+        $mock = BeanFactory::getBean('Accounts');
+        $newInstance = $mock->getCleanCopy();
+        $this->assertNotNull($newInstance, "New instance of Accounts SugarBean should not be null");
+        $this->assertEquals('Accounts', $newInstance->module_name);
+    }
+
+    /**
      * @group sugarbean
      */
     public function testGetNotificationRecipientsReturnsEmptyArray()

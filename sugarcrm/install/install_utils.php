@@ -887,9 +887,11 @@ function handlePortalConfig()
         'platform' => 'portal',
         'additionalComponents' => array(
             'header' => array(
+                'layout' => 'header',
                 'target' => '#header'
             ),
             'footer' => array(
+                'layout' => 'footer',
                 'target' => '#footer'
             )
         ),

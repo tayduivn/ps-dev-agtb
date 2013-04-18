@@ -29,50 +29,93 @@
     // Add custom events here for now
     app.events.on("app:init", function() {
 
-        // Load dashboard route.
-        app.router.route("", "dashboard", function() {
-            app.controller.loadView({
-                layout: "dashboard"
-            });
-        });
 
-        // Load the search results route.
-        app.router.route("search/:query", "search", function(query) {
-            // For Safari and FF, the query always comes in as URI encoded.
-            // Decode here so we don't accidently double encode it later. (bug55572)
-            try{
-                var decodedQuery = decodeURIComponent(query);
-                app.controller.loadView({
-                    mixed: true,
-                    module: "Search",
-                    layout: "search",
-                    query: decodedQuery,
-                    skipFetch: true
-                });
-            }catch(err){
-                // If not a validly encoded URI, decodeURIComponent will throw an exception
-                // If URI is not valid, don't navigate.
-                app.logger.error("Search term not a valid URI component.  Will not route search/"+query);
+        var routes;
+
+        routes = [
+            {
+                name: "dashboard",
+                route: "",
+                callback: function(){
+                    app.controller.loadView({
+                        layout: "dashboard"
+                    });
+                }
+            },
+            {
+                name: "logout",
+                route: "logout/?clear=:clear"
+            },
+            {
+                name: "logout",
+                route: "logout"
+            },
+            {
+                name: "signup",
+                route: "signup",
+                callback: function(){
+                    app.controller.loadView({
+                        module: "Signup",
+                        layout: "signup",
+                        create: true
+                    });
+                }
+            },
+            {
+                name: "search",
+                route: "search/:query",
+                callback: function(query){
+                    // For Safari and FF, the query always comes in as URI encoded.
+                    // Decode here so we don't accidently double encode it later. (bug55572)
+                    try{
+                        var decodedQuery = decodeURIComponent(query);
+                        app.controller.loadView({
+                            mixed: true,
+                            module: "Search",
+                            layout: "search",
+                            query: decodedQuery,
+                            skipFetch: true
+                        });
+                    }catch(err){
+                        // If not a validly encoded URI, decodeURIComponent will throw an exception
+                        // If URI is not valid, don't navigate.
+                        app.logger.error("Search term not a valid URI component.  Will not route search/"+query);
+                    }
+                }
+            },
+            {
+                name: "profile",
+                route: "profile",
+                callback: function(){
+                    app.controller.loadView({
+                        layout: "profile",
+                        module: "Contacts",
+                        modelId: app.user.get("id")
+                    });
+                }
+            },
+            {
+                name: "profileedit",
+                route: "profile/edit",
+                callback: function(){
+                    app.controller.loadView({
+                        layout: "profile-edit",
+                        module: "Contacts",
+                        modelId: app.user.get("id")
+                    });
+                }
+            },
+            {
+                name: "list",
+                route: ":module"
+            },
+            {
+                name: "record",
+                route: ":module/:id"
             }
+        ];
 
-        });
-
-        // Load the profile
-        app.router.route("profile", "profile", function() {
-            app.controller.loadView({
-                layout: "profile",
-                module: "Contacts",
-                modelId: app.user.get("id")
-            });
-        });
-        // Loadds profile edit
-        app.router.route("profile/edit", "profileedit", function() {
-            app.controller.loadView({
-                layout: "profile-edit",
-                module: "Contacts",
-                modelId: app.user.get("id")
-            });
-        });
+        app.routing.setRoutes(routes);
     });
 
     // bug57318: Mulitple alert warning when multiple views get render denied on same page.
@@ -298,25 +341,6 @@
         //Call the prototype
         __superBeanSave__.call(this, attributes, options);
     };
-
-    var _rrh = {
-        /**
-         * Handles `signup` route.
-         */
-        signup: function() {
-            app.logger.debug("Route changed to signup!");
-            app.controller.loadView({
-                module: "Signup",
-                layout: "signup",
-                create: true
-            });
-        }
-    };
-
-    app.events.on("app:init", function() {
-        // Register portal specific routes
-        app.router.route("signup", "signup", _rrh.signup);
-    });
 
     /**
      * Checks if there are `file` type fields in the view. If yes, process upload of the files
