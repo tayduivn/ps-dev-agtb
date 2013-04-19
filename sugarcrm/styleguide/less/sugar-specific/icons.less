@@ -8,13 +8,13 @@
 a > [class^="icon-"] {
   color: @grayLight;
 }
-a:hover > [class^="icon-"] {
+a:not(.disabled):hover > [class^="icon-"] {
   color: @gray;
 }
-a:active > [class^="icon-"] {
+a:not(.disabled):active > [class^="icon-"] {
   color: @black;
 }
-a.active > [class^="icon-"], .btn.active > [class^="icon-"] {
+a:not(.disabled).active > [class^="icon-"], .btn.active > [class^="icon-"] {
   color: @grayDark;
 }
 
