@@ -56,7 +56,7 @@
                 case 'to_addresses':
                 case 'cc_addresses':
                 case 'bcc_addresses':
-                    this.populateRecipients(fieldName, value);
+                    this.context.trigger("recipients:" + fieldName + ":add", value);
                     break;
                 case 'related':
                     this.populateRelated(value);
@@ -65,74 +65,6 @@
                     this.model.set(fieldName, value);
             }
         }, this);
-    },
-
-    /**
-     * Initialize the recipients fields with data passed into compose
-     *
-     * @param fieldName
-     * @param values
-     */
-    populateRecipients: function(fieldName, inputRecipients) {
-        var recipients = new Backbone.Collection();
-        _.each(inputRecipients, function(inputRecipient) {
-            var recipient = this.mapRecipient(inputRecipient);
-            if (!_.isEmpty(recipient)) {
-                recipients.add(recipient);
-            }
-        }, this);
-
-        if (recipients.length > 0) {
-            this.context.trigger("recipients:" + fieldName + ":add", recipients);
-        }
-    },
-
-    /**
-     * Map from object passed to compose into the recipient model the recipient field expects
-     *
-     * @param inputRecipient
-     */
-    mapRecipient: function(inputRecipient) {
-        // construct a new model from the data in recipientModel, which meets the expectations of the recipient field
-        var recipient = new Backbone.Model(),
-            beanId, beanModule, beanName, beanEmail, email, name;
-
-        //grab values off the bean
-        if (inputRecipient.bean instanceof Backbone.Model) {
-            beanId = inputRecipient.bean.get('id');
-            beanModule = inputRecipient.bean.module;
-            beanName = inputRecipient.bean.get('name');
-            beanEmail = inputRecipient.bean.get('email1');
-            if (_.isEmpty(beanEmail) && _.isArray(inputRecipient.bean.get('email'))) {
-                // grab primary email address
-                var primaryAddress = _.find(inputRecipient.bean.get('email'), function (emailAddress) {
-                    return (emailAddress.primary_address == "1");
-                });
-
-                if (!_.isUndefined(primaryAddress) && !_.isEmpty(primaryAddress.email_address)) {
-                    beanEmail = primaryAddress.email_address;
-                }
-            }
-        }
-
-        //try to grab values directly first, otherwise use the bean
-        recipient.set('id', (inputRecipient.id || beanId));
-        recipient.set('module', (inputRecipient.module || beanModule));
-        name = inputRecipient.name || beanName;
-        email = inputRecipient.email || beanEmail;
-
-        if (!_.isEmpty(name)) {
-            // only set the name if it's actually available
-            recipient.set('name', name);
-        }
-
-        if (!_.isEmpty(email)) {
-            // don't bother adding the recipient unless the email address is present
-            recipient.set('email', email);
-            return recipient;
-        } else {
-            return null;
-        }
     },
 
     /**
@@ -173,15 +105,15 @@
     renderSenderOptions: function() {
         var showCCLink = false,
             showBCCLink = false,
-            toCC = this.model.get('cc_addresses'),
-            toBCC = this.model.get('bcc_addresses');
+            toCC = this.model.get('cc_addresses') || [],
+            toBCC = this.model.get('bcc_addresses') || [];
 
-        if (_.isEmpty(toCC)) {
+        if (toCC.length == 0) {
             this.hideField('cc_addresses');
             showCCLink = true;
         }
 
-        if (_.isEmpty(toBCC)) {
+        if (toBCC.length == 0) {
             this.hideField('bcc_addresses');
             showBCCLink = true;
         }
@@ -280,13 +212,9 @@
      */
     initializeSendEmailModel: function() {
         var sendModel = new Backbone.Model(_.extend({}, this.model.attributes, {
-            // use of *_addresses_collection is only temporary, until the recipients field prioritizes the collection
-            // as its underlying data structure, instead of the string in *_addresses
-            // in the meantime, we must replace the the string stored in *_addresses with the contents of the
-            // synchronized collection
-            to_addresses: this.model.get('to_addresses_collection'),
-            cc_addresses: this.model.get('cc_addresses_collection'),
-            bcc_addresses: this.model.get('bcc_addresses_collection'),
+            to_addresses: this.model.get('to_addresses'),
+            cc_addresses: this.model.get('cc_addresses'),
+            bcc_addresses: this.model.get('bcc_addresses'),
             attachments: this.getAttachmentsByType('upload'),
             documents: this.getAttachmentsByType('document'),
             related: {

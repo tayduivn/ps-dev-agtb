@@ -30,125 +30,245 @@
         "click .btn": "_showAddressBook"
     },
 
+    /**
+     * Initializes the field's value to be an empty collection.
+     *
+     * @param options
+     */
     initialize: function(options) {
-        _.bindAll(this);
         app.view.Field.prototype.initialize.call(this, options);
-
-        this.context.off("recipients:" + this.name + ":add", null, this);
-        this.context.off("recipients:" + this.name + ":remove", null, this);
-        this.context.off("recipients:" + this.name + ":replace", null, this);
-
-        this._replaceRecipients(); // initialize the value to be empty
+        this.model.set(this.name, new Backbone.Collection()); // initialize the value to be an empty collection
     },
 
+    /**
+     * Adding, removing and replacing recipients should be done via events on the context. The following are examples
+     * of how these events could be triggered:
+     *
+     * var recipients = [
+     *      {email: "foo@bar.com", name: "Foo Bar"},
+     *      {email: "biz@baz.com", name: "Biz Baz"}
+     * ];
+     * this.context.trigger("recipients:to_addresses:add", recipients);
+     * this.context.trigger("recipients:to_addresses:remove", recipients[1]);
+     * this.context.trigger("recipients:to_addresses:replace", recipients[1]);
+     *
+     * Change events for the field's value will replace the existing contents of the collection. In most cases this
+     * comes from a DOM-change event. The update to the collection is done silently to avoid triggering circular change
+     * events. Rendering the field must happen immediately after the collection is updated, so that the contents of the
+     * field are synchronized with the collection.
+     */
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change:" + this.name, function() {
-                // an array of the field's recipients is maintained alongside the string that is the field's true value
-                // update this collection (aka array) anytime the field's value is changed
-                this.model.set(this.name + "_collection", this._splitRecipients(this.model.get(this.name)));
+                this.model.set(this.name, this.unformat(this.model.get(this.name)), {silent: true});
                 this.render();
             }, this);
         }
 
-        this.context.on("recipients:" + this.name + ":add", this._addRecipients);
-        this.context.on("recipients:" + this.name + ":remove", this._removeRecipients);
-        this.context.on("recipients:" + this.name + ":replace", this._replaceRecipients);
+        this.context.on("recipients:" + this.name + ":add", function(recipients) {
+            this.model.set(this.name, this._addRecipients(recipients));
+        }, this);
+        this.context.on("recipients:" + this.name + ":remove", function(recipients) {
+            this.model.set(this.name, this._removeRecipients(recipients));
+        }, this);
+        this.context.on("recipients:" + this.name + ":replace", function(recipients) {
+            this.model.set(this.name, this._replaceRecipients(recipients));
+        }, this);
     },
 
     /**
-     * Add one or more recipients to the field's value. No matter the parameter's format, "models" should become an
-     * array of one or more models. This array will be iterated over, adding each individual recipient to the local
-     * copy of the existing recipients. Once all new recipients have been added, the field's value is updated.
+     * All recipients in the collection will be formatted in a comma-delimited string like:
+     *
+     * "Foo Bar" <foo@bar.com>,"biz@baz.com"<biz@baz.com>
+     *
+     * @param {Backbone.Collection} value
+     * @returns {string}
+     */
+    format: function(value) {
+        var formattedRecipients = [];
+
+        value.each(function(recipient) {
+            formattedRecipients.push(this._formatRecipient(recipient));
+        }, this);
+
+        return formattedRecipients.join(",");
+    },
+
+    /**
+     * Returns a collection of recipients that can be used to replace the current collection of recipients.
+     *
+     * @param value A Backbone Collection of Backbone Models, a single Backbone Model or standard JavaScript object,
+     *              a string of one or more comma-delimited recipients, or an array of Backbone Models or standard
+     *              JavaScript objects.
+     * @returns {Backbone.Collection}
+     */
+    unformat: function(value) {
+        return this._replaceRecipients(value);
+    },
+
+    /**
+     * Add zero or more recipients to a collection. No matter the format, "models" should become an array of one or
+     * more models. This array will be iterated over, adding each individual recipient to the clone of the referenced
+     * collection. Once all new recipients have been added, the new collection is returned.
      *
      * Any incoming Backbone Model should at least have an "email" attribute. If a name is associated with the
      * recipient, then the model should have a "name" attribute.
      *
-     * @param models A Backbone Collection of Backbone Models or a single Backbone Model or a string of one or more
-     *               comma-delimited recipients.
+     * @param models A Backbone Collection of Backbone Models, a single Backbone Model or standard JavaScript object,
+     *               a string of one or more comma-delimited recipients, or an array of Backbone Models or standard
+     *               JavaScript objects.
+     * @returns {Backbone.Collection}
      * @private
      */
-    _addRecipients: function(models) {
-        var existingRecipients = this.model.get(this.name);
+    _addRecipientsToCollection: function(collection, models) {
+        // a clone of the existing recipients stored in the field to protect against triggering events on the field
+        // when those events should be deferred
+        collection = collection.clone() || new Backbone.Collection();
 
         if (models instanceof Backbone.Collection) {
             // get the raw array of models to be added since collection.add takes an a single model or array of models
             models = models.models;
-        } else if (models instanceof Backbone.Model) {
+        } else if (models instanceof Backbone.Model || (_.isObject(models) && !_.isArray(models))) {
             // wrap the single model in an array so the code below behaves the same whether its a model or a collection
             models = [models];
-        } else {
-            // it's probably a string like:
+        } else if (_.isString(models)) {
+            // it should be a string like:
             // "Foo Bar" <foo@bar.com>,<foo@bar.com>,foo@bar.com
             // that we want to turn into an array like:
             // [
-            //     new Backbone.Model({email:"foo@bar.com", name:"Foo Bar"}),
-            //     new Backbone.Model({email:"foo@bar.com", name:""}),
-            //     new Backbone.Model({email:"foo@bar.com", name:""})
+            //     {email:"foo@bar.com", name:"Foo Bar"},
+            //     {email:"foo@bar.com", name:""},
+            //     {email:"foo@bar.com", name:""}
             // ]
             models = this._splitRecipients(models);
+        } else {
+            // it's most likely, and hopefully, an array of objects like:
+            // [
+            //     {email:"foo@bar.com", name:"Foo Bar"},
+            //     {email:"foo@bar.com", name:""},
+            //     {email:"foo@bar.com", name:""}
+            // ]
+            // nothing to do but let the rest of the method iterate over the models
         }
 
-        _.each(models, function(recipient) {
-            recipient = this._formatRecipient(recipient);
+        if (_.isArray(models)) {
+            _.each(models, function(recipient) {
+                recipient = this._translateRecipient(recipient);
 
-            // only the add the recipient if the recipient isn't already in the field's value
-            if (!this._hasRecipient(recipient, existingRecipients)) {
-                if (!_.isEmpty(existingRecipients)) {
-                    existingRecipients += ",";
+                // only add the recipient if...
+                // 1. there is an email address
+                // 2. the email address doesn't already exist in the collection
+                //TODO: there might be new data that we want, so merge instead of ignore
+                if (!_.isEmpty(recipient.email) && collection.where({email: recipient.email}).length == 0) {
+                    collection.add(recipient);
                 }
+            }, this);
+        }
 
-                existingRecipients += recipient;
-            }
-        }, this);
-
-        this.model.set(this.name, existingRecipients);
+        return collection;
     },
 
     /**
-     * Works similarly to _addRecipients. Removes one or more recipients found in the field's value. Updates the
-     * field's value with the recipient(s) removed.
+     * Add one or more recipients to the field's value. Once all new recipients have been added, the new collection is
+     * returned, which can be used to update the field's value.
      *
-     * @param models A Backbone Collection of Backbone Models or a single Backbone Model.
+     * @param models A Backbone Collection of Backbone Models, a single Backbone Model or standard JavaScript object,
+     *               a string of one or more comma-delimited recipients, or an array of Backbone Models or standard
+     *               JavaScript objects.
+     * @returns {Backbone.Collection}
+     * @private
+     */
+    _addRecipients: function(models) {
+        return this._addRecipientsToCollection(this.model.get(this.name), models);
+    },
+
+    /**
+     * Remove one or more recipients found in the field's value. Once the recipient(s) has(have) been removed, the new
+     * collection is returned, which can be used to update the field's value.
+     *
+     * @param models A Backbone Collection, a single Backbone Model or standard JavaScript object, or an array of
+     *               Backbone Models or standard JavaScript objects.
+     * @returns {Backbone.Collection}
      * @private
      */
     _removeRecipients: function(models) {
-        var existingRecipients = this.model.get(this.name);
+        // a clone of the existing recipients stored in the field to protect against triggering events on the field
+        // when those events should be deferred
+        var recipients = this.model.get(this.name).clone();
 
-        if (models instanceof Backbone.Collection) {
-            // get the raw array of models to be added since collection.remove takes an a single model or array of models
-            models = models.models;
-        } else if (models instanceof Backbone.Model) {
-            // wrap the single model in an array so the code below behaves the same whether its a model or a collection
-            models = [models];
-        } else {
-            // removing of recipients is only supported for a recipient that is represented as a Backbone model or a
-            // collection of recipients represented as a Backbone collection
-            // removing of a string happens in the DOM, which doesn't result in triggering the event that calls
-            // this method
-            return;
+        // removing of a string should only happen in the DOM, which doesn't result in triggering the event that calls
+        // this method
+        if (!_.isString(models)) {
+            if (models instanceof Backbone.Collection) {
+                // get the raw array of models to be added since collection.remove takes an a single model or array of
+                // models
+                models = models.models;
+            } else if (models instanceof Backbone.Model || (_.isObject(models) && !_.isArray(models))) {
+                // wrap the single model in an array so the code below behaves the same whether its a model or a
+                // collection
+                models = [models];
+            } else {
+                // it's most likely, and hopefully, an array of objects
+                // nothing to do but let the rest of the method iterate over the models
+            }
+
+            _.each(models, function(recipient) {
+                recipient = this._translateRecipient(recipient);
+
+                // Backbone.Collection.remove will only remove a recipient if there is a model with a matching ID
+                // so, it will fail to remove the recipient if no ID attribute exists
+                if (!_.isEmpty(recipient.id)) {
+                    recipients.remove(recipient.id);
+                }
+            }, this);
         }
 
-        _.each(models, function(recipient) {
-            existingRecipients = this._findAndRemoveRecipient(this._formatRecipient(recipient), existingRecipients);
-        }, this);
-
-        this.model.set(this.name, existingRecipients);
+        return recipients;
     },
 
     /**
-     * Removes all recipients from the field's value and adds new recipients if new recipients are passed in.
+     * Remove all recipients from the field's value and add new recipients if new recipients are passed in. The new
+     * collection that is returned can be used to update the field's value.
      *
-     * @param models A Backbone Collection of Backbone Models or a single Backbone Model or a string of one or more
-     *               comma-delimited recipients.
+     * @param models A Backbone Collection of Backbone Models, a single Backbone Model or standard JavaScript object,
+     *               a string of one or more comma-delimited recipients, or an array of Backbone Models or standard
+     *               JavaScript objects.
+     * @returns {Backbone.Collection}
      * @private
      */
     _replaceRecipients: function(models) {
-        this.model.set(this.name, "");
+        var collection    = this.model.get(this.name) || new Backbone.Collection(),
+            // a clone of the existing recipients stored in the field to protect against triggering events on the field
+            // when those events should be deferred
+            recipients    = collection.clone(),
+            newRecipients = this._addRecipientsToCollection(new Backbone.Collection(), models);
 
-        if (!_.isEmpty(models)) {
-            this._addRecipients(models);
+        if (recipients.length > 0) {
+            // remove from the existing-collection any existing recipients that are not in the new-collection
+            // so that those recipients don't continue to persist with the updated collection
+            var notInNewRecipients = recipients.filter(function(recipient) {
+                return (newRecipients.where({email: recipient.get("email")}).length == 0);
+            });
+            recipients.remove(notInNewRecipients);
+
+            // remove from the new-collection any recipients whose email addresses are already found in the
+            // existing-collection so that those recipients don't get added by mistake when their ID's don't match
+            //TODO: there might be new data that we want, so merge instead of ignore
+            var inExistingRecipients = newRecipients.filter(function(recipient) {
+                return (recipients.where({email: recipient.get("email")}).length > 0);
+            });
+            newRecipients.remove(inExistingRecipients);
         }
+
+        // there may be zero or more models to add
+        recipients.add(newRecipients.models);
+
+        // guarantees that the data-change event will be triggered even when there are no changes to the collection
+        // this is necessary when DOM changes occur that don't actually result in a change to the collection, but
+        // the user input should be cleared from the field's value
+        collection.reset();
+
+        return recipients;
     },
 
     /**
@@ -168,12 +288,129 @@
                     forceNew: true
                 }
             },
-            this._addressbookDrawerCallback
+            _.bind(this._addressbookDrawerCallback, this)
         );
     },
 
     _addressbookDrawerCallback: function(recipients) {
-        this._addRecipients(recipients);
+        this.model.set(this.name, this._addRecipients(recipients));
+    },
+
+    /**
+     * Transpose data from a Backbone model into a standard Javascript object with the data required by the field.
+     *
+     * @param bean
+     * @returns {Object}
+     * @private
+     */
+    _getDataFromBean: function(bean) {
+        var model = {
+            id:     bean.get("id"),
+            module: bean.module || bean.get("module"),
+            name:   bean.get("name") || bean.get("full_name"),
+            email:  bean.get("email1") || bean.get("email")
+        };
+
+        if (_.isArray(model.email)) {
+            // grab the primary email address
+            var primaryAddress = _.find(model.email, function (emailAddress) {
+                return (emailAddress.primary_address == "1");
+            });
+
+            if (!_.isUndefined(primaryAddress) && !_.isEmpty(primaryAddress.email_address)) {
+                model.email = primaryAddress.email_address;
+            }
+        }
+
+        if (_.isEmpty(model.email) || !_.isString(model.email)) {
+            delete model.email;
+        }
+
+        if (_.isEmpty(model.name)) {
+            var name      = [],
+                firstName = bean.get("first_name"),
+                lastName  = bean.get("last_name");
+
+            if (!_.isEmpty(firstName)) {
+                name.push(firstName);
+            }
+
+            if (!_.isEmpty(lastName)) {
+                name.push(lastName);
+            }
+
+            if (name.length > 0) {
+                model.name = name.join(" ");
+            } else {
+                delete model.name;
+            }
+        }
+
+        return model;
+    },
+
+    /**
+     * Translate a recipient from a standard JavaScript object or Backbone Model an object that the recipients field
+     * can understand.
+     *
+     * @param model
+     * @returns {Object}
+     * @private
+     */
+    _translateRecipient: function(model) {
+        var recipient = {};
+
+        // can't do anything with the model if it's not an object
+        if (_.isObject(model)) {
+            var bean,
+                id,
+                module,
+                name,
+                email;
+
+            if (model instanceof Backbone.Model) {
+                bean   = this._getDataFromBean(model);
+                id     = bean.id || bean.email;
+                module = bean.module;
+                name   = bean.name;
+                email  = bean.email;
+            } else {
+                bean = {};
+
+                // grab values off the bean
+                if (model.hasOwnProperty("bean") && model.bean instanceof Backbone.Model) {
+                    bean = this._getDataFromBean(model.bean);
+                }
+
+                // try to grab values directly first, otherwise use the bean
+                id     = model.id || bean.id || model.email || bean.email;
+                module = model.module || bean.module;
+                name   = model.name || bean.name;
+                email  = model.email || bean.email;
+            }
+
+            // don't bother with the recipient unless an id is present
+            if (!_.isEmpty(id)) {
+                recipient.id = id;
+
+                if (!_.isEmpty(email)) {
+                    // only set the email if it's actually available
+                    recipient.email = email;
+                }
+
+                if (!_.isEmpty(module)) {
+                    // only set the module if it's actually available
+                    recipient.module = module;
+                }
+
+                if (!_.isEmpty(name)) {
+                    // only set the name if it's actually available
+                    recipient.name = name;
+                }
+            }
+        }
+
+        return recipient;
     },
 
     /**
@@ -192,16 +429,13 @@
      */
     _formatRecipient: function(recipient) {
         var email = recipient.get("email"),
-            name  = recipient.get("name"),
-            emailAddress;
+            name  = recipient.get("name");
 
         if (_.isEmpty(name)) {
             name = email;
         }
 
-        emailAddress = '"' + name + '" <' + email + '>';
-
-        return emailAddress;
+        return '"' + name + '" <' + email + '>';
     },
 
     /**
@@ -248,7 +482,7 @@
     },
 
     /**
-     * Use a regular expression to split a string of comma-delimited recipients into an array of Backbone Models.
+     * Use a regular expression to split a string of comma-delimited recipients into an array of recipient objects.
      *
      * @param recipients A string of one or more comma-delimited recipients.
      * @return {Array}
@@ -264,71 +498,12 @@
             recipients = recipients.replace(regex, "$1" + replace).split(replace);
 
             _.each(recipients, function(recipient, index) {
-                var attributes = this._unformatRecipient(recipient); // get an object with the recipient's attributes
-
-                recipients[index] = new Backbone.Model(attributes);
+                recipients[index] = this._unformatRecipient(recipient); // get an object with the recipient's attributes
             }, this);
         } else {
             recipients = [];
         }
 
         return recipients;
-    },
-
-    /**
-     * Find a recipient (needle) in a string (haystack) and remove the recipient, returning the new string.
-     *
-     * @param needle   A formatted string representation of a recipient.
-     * @param haystack A string of one or more comma-delimited recipients.
-     * @return {String}
-     * @private
-     */
-    _findAndRemoveRecipient: function(needle, haystack) {
-        // add the comma-prefix back in case the string was removed from the middle
-        var result = haystack.replace(this._formatRecipientForRegex(needle), "$1");
-
-        // need to remove a comma if it exists at the beginning of the string since it's a remnant of putting back the
-        // $1 match in String.replace above
-        if (result.charAt(0) == ",") {
-            result = result.substr(1);
-        }
-
-        return result.trim();
-    },
-
-    /**
-     * Determine if a recipient (needle) is found in a string (haystack).
-     *
-     * @param needle   A formatted string representation of a recipient.
-     * @param haystack A string of one or more comma-delimited recipients.
-     * @return {Boolean}
-     * @private
-     */
-    _hasRecipient: function(needle, haystack) {
-        if (haystack.search(this._formatRecipientForRegex(needle)) != -1) {
-            return true;
-        }
-
-        return false;
-    },
-
-    /**
-     * A formatted string representation of a recipient is likely to contain characters that must be escaped before the
-     * string can be used in a regular expression. This method builds a RegExp object that can be used to locate a
-     * recipient within a string of one or more comma-delimited recipients.
-     *
-     * @param recipient A formatted string representation of a recipient.
-     * @return {RegExp}
-     * @private
-     */
-    _formatRecipientForRegex: function(recipient) {
-        // need to escape special characters in a string to be used within a regular expression
-        // source: http://stackoverflow.com/a/13157996/1771599
-        recipient = recipient.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
-
-        // build the string to pass into the RegExp constructor
-        recipient = "(?:^|[,])" + recipient + "([,]|$)";
-
-        return new RegExp(recipient, "gi");
     }
 })

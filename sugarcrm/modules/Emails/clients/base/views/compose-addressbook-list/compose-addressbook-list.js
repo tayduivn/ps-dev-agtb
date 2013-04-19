@@ -82,18 +82,17 @@
 
             // find any currently selected recipients and add them to mass_collection so the checkboxes on the
             // corresponding rows are pre-selected
-            var recipients = this.model.get("compose_addressbook_selected_recipients_collection");
+            var recipients = this.model.get("compose_addressbook_selected_recipients");
 
             if (!_.isEmpty(recipients) && recipients.length > 0) {
                 /**
-                 * The following loop will fail to add recipients because the models don't contain an ID. This means
-                 * that checkboxes will not be pre-selected. However, this bug will be fixed once we move to storing
-                 * the recipients in the recipients field as a collection, instead of as a string. While the recipients
-                 * string can be split into an array of Backbone.Model objects, the ID's are not persisted within the
-                 * string, and therefore cannot be parsed out of the string and tied to the constructed Backbone.Model
-                 * objects.
+                 * The following loop will fail to pre-select recipients who don't have a true GUID for an ID because
+                 * ActionMenu only looks to match IDs. If a recipient's ID is actually his/her email address, then this
+                 * will never produce a match in ActionMenu's eyes. In order for the email address to be treated as a
+                 * real ID, a custom comparator will need to be used to force ActionMenu to fall back to checking the
+                 * email address for a match.
                  */
-                _.each(recipients, function(model) {
+                recipients.each(function(model) {
                     massCollection.add(model);
                 });
             }
