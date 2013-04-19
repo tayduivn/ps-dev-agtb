@@ -41,6 +41,23 @@
             return false;
         });
     },
+    populateModules: function() {
+        if (this.disposed) {
+            return;
+        }
+        this.searchModules = [];
+        /**
+         * Unlike sugar7, today, portal doesn't use ftsEnabled but instead visible modules.
+         */
+        var modules = app.metadata.getModules() || {};
+        var moduleNames = app.metadata.getModuleNames(true); // visible
+        _.each(modules, function(meta, module) {
+            if (_.contains(moduleNames, module) && app.acl.hasAccess('view', module)) {
+                this.searchModules.push(module);
+            }
+        }, this);
+        this.render();
+    },
     /**
      * Callback for the searchahead plugin .. note that
      * 'this' points to the plugin (not the header view!)
