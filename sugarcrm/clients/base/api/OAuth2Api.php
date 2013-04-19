@@ -81,8 +81,8 @@ class OAuth2Api extends SugarApi {
 
     public function logout($api, $args) {
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
-        if(!empty($GLOBALS['current_user'])) {
-            $GLOBALS['current_user']->call_custom_logic('before_logout');
+        if(!empty($api->user)) {
+            $api->user->call_custom_logic('before_logout');
         }
 
         if ( isset($args['refresh_token']) ) {
