@@ -151,7 +151,8 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_view->errors = array('error1','error2');
         $this->_view->suppressDisplayErrors = false;
 
-        $this->assertEmpty($this->_view->displayErrors());
+        $this->expectOutputString('<span class="error">error1</span><br><span class="error">error2</span><br>');
+        $this->_view->displayErrors();
     }
 
     public function testGetBrowserTitle()
@@ -209,11 +210,7 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
         $sugar_config['js_available'] = array('default_action');
 
         $js_array = $this->_view->getSugarConfigJS();
-
-        // this should return 3 objects
-        $this->assertEquals(3, count($js_array));
-
-        $this->assertEquals('SUGAR.config.default_action = "index";', $js_array[2]);
+        $this->assertContains('SUGAR.config.default_action = "index";', $js_array);
     }
 }
 

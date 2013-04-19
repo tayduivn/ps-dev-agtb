@@ -35,7 +35,7 @@ class SavedSearch extends SugarBean {
 //END SUGARCRM flav=pro ONLY
 	var $name;
 	var $description;
-	var $content;
+	var $contents;
 	var $search_module;
 
 	var $object_name = 'SavedSearch';
@@ -385,5 +385,3 @@ class SavedSearch extends SugarBean {
 
     }
 }
-
-?>

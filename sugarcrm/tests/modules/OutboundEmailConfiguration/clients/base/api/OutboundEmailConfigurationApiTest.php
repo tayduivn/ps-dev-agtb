@@ -49,6 +49,7 @@ class OutboundEmailConfigurationApiTest extends RestTestBase
 
     public function testList_ReturnsAllConfigurationsWithTheSystemAsDefault()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $seedConfigs = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfigurations(2);
 
         $response = $this->_restCall("/OutboundEmailConfiguration/list");

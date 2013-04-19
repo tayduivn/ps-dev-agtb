@@ -65,8 +65,10 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
             array('module'=>'ACLRoles',         'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
             array('module'=>'ContractTypes',    'view'=>'admin','edit'=>'admin','delete'=>'admin'),
             array('module'=>'Currencies',       'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'),
+            //BEGIN SUGARCRM flav=ent ONLY
             array('module'=>'CustomQueries',    'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'),
             array('module'=>'DataSets',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'),
+            //END SUGARCRM flav=ent ONLY
             array('module'=>'Expressions',      'view'=>'admin','edit'=>'admin','delete'=>'admin'),
             array('module'=>'Holidays',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
             array('module'=>'Manufacturers',    'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Products'),
@@ -167,10 +169,7 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         } else {
             $this->assertFalse($canDelete,"A module admin was denied the abilitiy to delete.");
         }
-        
     }
-
-    
 }
 
 /*

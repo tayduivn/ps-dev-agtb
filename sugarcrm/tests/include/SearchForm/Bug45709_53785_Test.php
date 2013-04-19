@@ -57,8 +57,8 @@ class Bug45709_53785_Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->task->save();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->team = SugarTestTeamUtilities::createAnonymousTeam();
-    	$this->team->name = 'Test';
-    	$this->team->name_2 = 'Team';
+    	$this->team->name = '45709';
+    	$this->team->name_2 = '53785';
     	$this->team->save();
         //END SUGARCRM flav=pro ONLY
     }

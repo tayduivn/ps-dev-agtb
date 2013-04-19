@@ -92,6 +92,8 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testCheckForecastSpecificIsManager()
     {
+        $this->markTestIncomplete('Move Rest tests to SOAP UI');
+
         $restReply = $this->_restCall("Forecasts/init");
         $userData = $restReply['reply']['initData']['userData'];
         $this->assertArrayHasKey('isManager', $userData, "Forecasts/init did not return isManager");
@@ -104,6 +106,8 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testCheckForecastSpecificShowOpps()
     {
+        $this->markTestIncomplete('Move Rest tests to SOAP UI');
+
         $restReply = $this->_restCall("Forecasts/init");
         $userData = $restReply['reply']['initData']['userData'];
         $this->assertArrayHasKey('showOpps', $userData, "Forecasts/init did not return showOpps");
@@ -116,6 +120,7 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testCheckFavorites()
     {
+        $this->markTestIncomplete('Move Rest tests to SOAP UI');
 
         $restReply = $this->_restCall("Forecasts");
         $this->assertEquals(count($restReply['reply']['records']),0);
@@ -128,6 +133,8 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testCheckTrackFilter()
     {
+        $this->markTestIncomplete('Move Rest tests to SOAP UI');
+
         $body = json_encode(array(
             'filter' => array(
                 '$tracker' => '-7 DAY'
@@ -144,6 +151,8 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testCheckForecastSpecificFirstName()
     {
+        $this->markTestIncomplete('Move Rest tests to SOAP UI');
+
         $restReply = $this->_restCall("Forecasts/init");
         $userData = $restReply['reply']['initData']['userData'];
         $this->assertArrayHasKey('first_name', $userData, "Forecasts/init did not return first_name");
@@ -156,6 +165,8 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testCheckForecastSpecificLastName()
     {
+        $this->markTestIncomplete('Move Rest tests to SOAP UI');
+
         $restReply = $this->_restCall("Forecasts/init");
         $userData = $restReply['reply']['initData']['userData'];
         $this->assertArrayHasKey('last_name', $userData, "Forecasts/init did not return last_name");
@@ -170,6 +181,8 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testGetLocaleFormattedNameUserEndpoint()
     {
+        $this->markTestIncomplete('Move Rest tests to SOAP UI');
+
         global $locale;
         $defaultPreference = $this->_user->getPreference('default_locale_name_format');
         $this->_user->setPreference('default_locale_name_format', 'l, f', 0, 'global');
@@ -192,6 +205,8 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testGetLocaleFormattedNameReporteesEndpoint()
     {
+        $this->markTestIncomplete('Move Rest tests to SOAP UI');
+
         global $locale;
         $db = DBManagerFactory::getInstance();
         $defaultPreference = $this->_user->getPreference('default_locale_name_format');
@@ -213,6 +228,8 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testReportees()
     {
+        $this->markTestIncomplete('Move Rest tests to SOAP UI');
+
         $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id."?level=-1");
         $this->assertEquals($restReply['reply']['metadata']['id'], self::$currentUser->id, "currentUser's id was not found in the Expected place in the rest reply" );
 
@@ -245,6 +262,8 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testDeletedReportees()
     {
+        $this->markTestIncomplete('Move Rest tests to SOAP UI');
+
         $db = DBManagerFactory::getInstance();
 
         // delete one user for this test
@@ -277,6 +296,8 @@ class ForecastsApiTest extends RestTestBase
      */
     public function testTimeperiods()
     {
+        $this->markTestIncomplete('Move Rest tests to SOAP UI');
+
         $restReply = $this->_restCall("Forecasts/timeperiod/");
         $db = DBManagerFactory::getInstance();
         $fiscal_timeperiods = array();

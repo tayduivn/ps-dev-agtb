@@ -74,6 +74,7 @@ class Bug46276Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testhandleMassUpdateForDateFieldsInGMTPlusTimeZone()
 	{
+        $this->markTestIncomplete("date_closed on Opportunities is now a formula on enterprise.");
 		global $current_user, $timedate;
 		$_REQUEST = $_POST = array("module" => "Opportunities",
                                    "action" => "MassUpdate",

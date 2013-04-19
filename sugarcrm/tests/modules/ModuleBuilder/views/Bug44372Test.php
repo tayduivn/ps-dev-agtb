@@ -57,5 +57,7 @@ class Bug44372Test extends Sugar_PHPUnit_Framework_TestCase
         $view = new ViewModule();
         $view->display();
         $this->assertTrue(is_string($view->module), "Assert that view class variable module is not an object");
+        // this is to suppress output. Need to fix properly with a good unit test.
+        $this->expectOutputRegex('//');
     }
 }

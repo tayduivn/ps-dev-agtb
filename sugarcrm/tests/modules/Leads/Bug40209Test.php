@@ -102,5 +102,7 @@ class Bug40209Test extends Sugar_PHPUnit_Framework_OutputTestCase
         //make sure the new contact has the account related and that it matches the lead account
         $this->contact->retrieve($contact_id);
         $this->assertEquals($this->lead->account_id, $this->contact->account_id, "Account id from converted lead does not match the new contact account id, there was an error during conversion.");
+        // to suppress output on phpunit (need to be reviewed when proper tests are made)
+        $this->expectOutputRegex('/LBL_CREATED_NEW Contacts/');
     }
 }

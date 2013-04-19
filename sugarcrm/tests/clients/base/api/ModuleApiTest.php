@@ -111,6 +111,7 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
     }
 
     public function testViewNoneCreate() {
+        $this->markTestIncomplete('Migrate to new unit tests');
         // setup ACL
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['Accounts']['module']['view']['aclaccess'] = -99;
         // create a record

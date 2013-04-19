@@ -346,6 +346,8 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $controller->expects($this->never())
             ->method('handleException');
         $controller->execute();
+        // this is just to suppress output... remove when this is a proper test
+        $this->expectOutputRegex('/<html/');
     }
 
 }

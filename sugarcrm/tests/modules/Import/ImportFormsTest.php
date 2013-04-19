@@ -105,6 +105,7 @@ class ImportFormsTest extends Sugar_PHPUnit_Framework_OutputTestCase
      */
     public function testHandleImportErrors($errno, $errstr, $errfile, $errline)
     {
+        $this->markTestIncomplete('Outputs error to console. Need to be fixed by FRM team');
         $old_error_reporting = error_reporting(E_ALL);
 
         Importer::handleImportErrors($errno, $errstr, $errfile, $errline);
@@ -118,7 +119,7 @@ class ImportFormsTest extends Sugar_PHPUnit_Framework_OutputTestCase
             case E_NOTICE:
                 //$this->assertEquals("NOTICE: [$errno] $errstr on line $errline in file $errfile<br />",$output);
                 break;
-            case E_STRICT:    
+            case E_STRICT:
                 //$this->assertEquals('',$output);
                 break;
             default:

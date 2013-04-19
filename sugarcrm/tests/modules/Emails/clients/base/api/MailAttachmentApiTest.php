@@ -51,6 +51,7 @@ class MailAttachmentApiTest extends RestTestBase
      */
     public function testClearUserCache_UserCacheDirDoesNotExist_CreatedSuccessfully()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         if (file_exists($this->userCacheDir)) {
             rmdir_recursive($this->userCacheDir);
         }
@@ -64,6 +65,7 @@ class MailAttachmentApiTest extends RestTestBase
      */
     public function testClearUserCache_UserCacheDirContainsFiles_ClearedSuccessfully()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         sugar_file_put_contents($this->userCacheDir . "/test.txt", create_guid());
         $this->_restCall("MailAttachment/cache", '', "DELETE");
         $this->_assertCacheDirCreated();
@@ -75,6 +77,7 @@ class MailAttachmentApiTest extends RestTestBase
      */
     public function testSaveAttachment_FileUploaded_CreatedSuccessfully()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         //create the test file
         $uploadFile = 'upload/' . create_guid();
         $fileContents = create_guid();
@@ -96,6 +99,7 @@ class MailAttachmentApiTest extends RestTestBase
      */
     public function testRemoveAttachment_FileExists_RemovedSuccessfully()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         //clear the cache first
         $em = new EmailUI();
         $em->preflightUserCache();

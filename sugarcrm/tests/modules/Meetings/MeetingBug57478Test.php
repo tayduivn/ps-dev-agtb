@@ -29,7 +29,7 @@ class MeetingBug57478Test extends Sugar_PHPUnit_Framework_TestCase
                       "email_reminder_sent" => 0,
                       "repeat_interval" => 1,
                       "assigned_user_id" => $GLOBALS['current_user']->id,
-                      "date_start" => "2012-12-06T00:00:00.000Z",
+                      "date_start" => date('Y-m-d H:i:s'),
                       "direction" => "Inbound",
                       "duration_hours" => "0",
                       "duration_minutes" => "30",

@@ -27,13 +27,16 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
 	{
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
+        parent::setUp();
 	}
 
 	public function tearDown()
 	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
+        parent::tearDown();
 	}
 
 	public function testAddTeamSecurityWhereClauseForRegularUser()

@@ -192,6 +192,7 @@ class AccountsInteractionsApiTest extends RestTestBase
      */
     public function testInterations()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $response = $this->_restCall($this->buildRestUri());
 
         $this->validateResponse($response);
@@ -210,6 +211,7 @@ class AccountsInteractionsApiTest extends RestTestBase
      */
     public function testLimit()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         foreach (array(5, 10) as $limit) {
             foreach ($this->dataKeys as $dataKey) {
                 $response = $this->_restCall($this->buildRestUri(), array(
@@ -240,6 +242,7 @@ class AccountsInteractionsApiTest extends RestTestBase
      */
     public function testLimitIfZero()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         foreach ($this->dataKeys as $dataKey) {
             $response = $this->_restCall($this->buildRestUri(), array(
                 'limit' => 0,
@@ -258,6 +261,7 @@ class AccountsInteractionsApiTest extends RestTestBase
      */
     public function testLimitIfLessThenZero()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         foreach ($this->dataKeys as $dataKey) {
             $response = $this->_restCall($this->buildRestUri(), array(
                 'limit' => -10,
@@ -276,6 +280,7 @@ class AccountsInteractionsApiTest extends RestTestBase
      */
     public function testListTypeFilter()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         foreach (array('me', 'all') as $listType) {
             $response = $this->_restCall($this->buildRestUri(), array(
                 'list' => $listType,
@@ -293,6 +298,7 @@ class AccountsInteractionsApiTest extends RestTestBase
      */
     public function testBaseFilterAsLastDate()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         foreach (array(7, 14, 30, 180) as $filter) {
             $response = $this->_restCall($this->buildRestUri(), array(
                 'filter' => $filter,
@@ -310,6 +316,7 @@ class AccountsInteractionsApiTest extends RestTestBase
      */
     public function testBaseFilterAsFavorites()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $response = $this->_restCall($this->buildRestUri(), array(
             'filter' => 'favorites',
                 ), 'GET');

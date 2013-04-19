@@ -188,6 +188,7 @@ class MailApiTest extends RestTestBase {
      * @group mailer
      */
     public function testCreate_Draft_Success() {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $this->input["status"] = "draft";
 
         $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
@@ -220,6 +221,7 @@ class MailApiTest extends RestTestBase {
      * @group mailer
      */
     public function testCreate_Draft_WithRelationship_Success() {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $this->input["status"] = "draft";
 
         $this->input["related"] = array(
@@ -264,6 +266,7 @@ class MailApiTest extends RestTestBase {
      * @group mailer
      */
     public function testCreate_Draft_WithAttachment_Success() {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $this->input["status"] = "draft";
 
          $this->input["attachments"] = array(
@@ -302,8 +305,9 @@ class MailApiTest extends RestTestBase {
      * @group mailapi04
      * @group mailer
      */
-     public function testCreate_Draft_WithMultipleTeams_Success() {
-
+    public function testCreate_Draft_WithMultipleTeams_Success()
+    {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $this->input["status"] = "draft";
 
         $this->input["teams"] = array(
@@ -345,6 +349,7 @@ class MailApiTest extends RestTestBase {
      * @group mailer
      */
     public function testCreate_Draft_WithSugarDocumentAttached_Success() {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $this->input["status"] = "draft";
 
         $this->input["documents"] = array(
@@ -510,6 +515,7 @@ class MailApiTest extends RestTestBase {
      * @group mailer
      */
     public function testCreate_InvalidStatus() {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $this->input["status"] = "bogus";
 
         $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
