@@ -143,10 +143,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $bean->email1 = $emailAddress->getPrimaryAddress($bean);
         }
 
-        if($bean instanceof SugarBean)
-            $bean->beforeSseIndexing();
-        else
-            debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $bean->beforeSseIndexing();
 
         $keyValues = array();
         foreach ($searchFields as $fieldName => $fieldDef) {
