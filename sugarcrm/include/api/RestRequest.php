@@ -58,102 +58,102 @@ class RestRequest {
 
     /**
      * Get the route
-	 * @return array
-	 */
-	public function getRoute()
-	{
-		return $this->route;
-	}
+     * @return array
+     */
+    public function getRoute()
+    {
+    	return $this->route;
+    }
 
     /**
      * Get the args
-	 * @return array
-	 */
-	public function getArgs()
-	{
-		return $this->args;
-	}
+     * @return array
+     */
+    public function getArgs()
+    {
+    	return $this->args;
+    }
 
-	/**
+    /**
      * Get platform
-	 * @return string
-	 */
-	public function getPlatform()
-	{
-		return $this->platform;
-	}
+     * @return string
+     */
+    public function getPlatform()
+    {
+    	return $this->platform;
+    }
 
-	/**
-	 * Get API version
-	 * @return string
-	 */
-	public function getVersion()
-	{
-		return $this->version;
-	}
+    /**
+     * Get API version
+     * @return string
+     */
+    public function getVersion()
+    {
+    	return $this->version;
+    }
 
-	/**
-	 * Get path components
-	 * @return array
-	 */
-	public function getPath()
-	{
-		return $this->path;
-	}
+    /**
+     * Get path components
+     * @return array
+     */
+    public function getPath()
+    {
+    	return $this->path;
+    }
 
-	/**
-	 * Get HTTP method
-	 * @return string
-	 */
-	public function getMethod()
-	{
-		return $this->method;
-	}
+    /**
+     * Get HTTP method
+     * @return string
+     */
+    public function getMethod()
+    {
+    	return $this->method;
+    }
 
-	/**
-	 * Set the route
-	 * @param array $route
-	 * @return RestRequest
-	 */
-	public function setRoute($route)
-	{
-		$this->route = $route;
-		return $this;
-	}
-
-	/**
-	 * Set the args
-	 * @param array $args
-	 * @return RestRequest
-	 */
-	public function setArgs($args)
-	{
-		$this->args = $args;
-		return $this;
-	}
-
-	/**
-	 * Set API version
-	 * @param string $version
+    /**
+     * Set the route
+     * @param array $route
      * @return RestRequest
-	 */
-	public function setVersion($version)
-	{
-		$this->version = $version;
-		return $this;
-	}
+     */
+    public function setRoute($route)
+    {
+    	$this->route = $route;
+    	return $this;
+    }
 
-	/**
-	 * Set HTTP method
-	 * @param string $method
+    /**
+     * Set the args
+     * @param array $args
      * @return RestRequest
-	 */
-	public function setMethod($method) {
-		$this->method = $method;
-		return $this;
-	}
+     */
+    public function setArgs($args)
+    {
+    	$this->args = $args;
+    	return $this;
+    }
 
-	/**
+    /**
+     * Set API version
+     * @param string $version
+     * @return RestRequest
+     */
+    public function setVersion($version)
+    {
+    	$this->version = $version;
+    	return $this;
+    }
+
+    /**
+     * Set HTTP method
+     * @param string $method
+     * @return RestRequest
+     */
+    public function setMethod($method) {
+    	$this->method = $method;
+    	return $this;
+    }
+
+    /**
      * Create request
      * @param array $server Server environment
      */
