@@ -144,9 +144,7 @@
 
     },
     _dispose: function() {
-        this.model.off("change", null, this);
-        this.model.off("applyDragAndDrop", null, this);
-        this.model.off("setMode", null, this);
+        this.$('.widget-container').droppable('destroy');
         app.view.Layout.prototype._dispose.call(this);
     }
 })

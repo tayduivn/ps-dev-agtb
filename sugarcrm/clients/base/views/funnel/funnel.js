@@ -94,5 +94,11 @@
             });
 
         });
+    },
+
+    unbindData: function() {
+        this.funnelCollection.off();
+        this.funnelCollection = null;
+        app.view.View.prototype.unbindData.call(this);
     }
 })

@@ -126,11 +126,14 @@
             width: '100%'
         });
     },
-    _dispose: function() {
+    unbindData: function() {
         if(this.model.parentModel) {
             this.model.parentModel.off("change", null, this);
         }
-        this.model.off("change", null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+    _dispose: function() {
+        this.$(".select2").select2('destroy');
         app.view.View.prototype._dispose.call(this);
     }
 })

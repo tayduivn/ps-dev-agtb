@@ -410,5 +410,18 @@
     _removeTooltips: function(evt) {
         var $el = this.$(evt.currentTarget);
         if (_.isFunction($el.tooltip)) $el.tooltip('hide');
+    },
+    unbindDom: function() {
+        // Unbind all tooltips on page
+        var unbindTooltips = _.bind(function(sel) {
+            this.$(sel).each(function() {
+                $(this).tooltip('destroy');
+            }, this);
+        }, this);
+        unbindTooltips('.btn-edit');
+        unbindTooltips('.addEmail');
+        unbindTooltips('.removeEmail');
+
+        app.view.Field.prototype.unbindDom.call(this);
     }
 })

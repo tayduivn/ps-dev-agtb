@@ -579,10 +579,11 @@
         }
     },
     _dispose: function () {
+        _.each(this.editableFields, function(field) {
+            field.nextField = null;
+        });
+        this.buttons = null;
+        this.editableFields = null;
         app.view.views.EditableView.prototype._dispose.call(this);
-        if (this.context) {
-            this.context.off(null, null, this);
-            this.context = null;
-        }
     }
 })

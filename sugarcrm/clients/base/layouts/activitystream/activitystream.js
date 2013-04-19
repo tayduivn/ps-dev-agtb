@@ -40,13 +40,11 @@
     },
 
     bindDataChange: function() {
-        var self = this;
-
         if (this.collection) {
             this.collection.on('add', this.renderPost, this);
             this.collection.on('reset', function() {
                 _.each(this.renderedActivities, function(view) {
-                    view._dispose();
+                    view.dispose();
                 });
                 this.renderedActivities = {};
                 this.collection.each(function(post) {
@@ -121,5 +119,23 @@
         } else {
             this.$el.prepend(component.el);
         }
+    },
+
+    unbindData: function() {
+        var model, collection;
+
+        if (this.context.parent) {
+            model = this.context.parent.get("model");
+            collection = this.context.parent.get("collection");
+
+            if (model) {
+                model.off("change sync", null, this);
+            }
+            if (collection) {
+                collection.off("sync", null, this);
+            }
+        }
+
+        app.view.Layout.prototype.unbindData.call(this);
     }
 })

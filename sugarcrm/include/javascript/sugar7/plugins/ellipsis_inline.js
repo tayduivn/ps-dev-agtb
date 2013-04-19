@@ -13,6 +13,22 @@
             addTooltip:function (event) {
                 if (_.isFunction(app.utils.handleTooltip)) {
                     app.utils.handleTooltip(event, this);
+                    if (_.isUndefined(this.tooltips)) {
+                        this.tooltips = [];
+                    }
+                    this.tooltips.push($(event.target));
+                }
+            },
+
+            /**
+             * Destory all tooltips that have been created
+             */
+            onDetach: function() {
+                if (this.tooltips) {
+                    _.each(this.tooltips, function(tooltip) {
+                        tooltip.tooltip('destroy');
+                    });
+                    this.tooltips = null;
                 }
             }
         });

@@ -1,11 +1,8 @@
 ({
     initialize: function(opts) {
-        _.bindAll(this);
-
         app.view.View.prototype.initialize.call(this, opts);
 
-        app.events.off("preview:render", null, this);
-        app.events.on("preview:render", this.togglePreviewList);
+        app.events.on("preview:render", this.togglePreviewList, this);
 
         this.streamCollection = app.data.createBeanCollection("ActivityStream");
         this.bindDataChange();
@@ -43,5 +40,11 @@
         if (this.streamCollection) {
             this.streamCollection.on("reset", this.render, this);
         }
+    },
+
+    unbindData: function() {
+        this.streamCollection.off();
+        this.streamCollection = null;
+        app.view.View.prototype.unbindData.call(this);
     }
 })

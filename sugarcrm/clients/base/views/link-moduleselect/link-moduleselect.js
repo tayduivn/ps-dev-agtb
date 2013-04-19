@@ -19,5 +19,9 @@
                 self.context.trigger("link:module:select", {link: meta.link, module: meta.module});
             }
         });
+    },
+    _dispose: function() {
+        this.$(".select2").select2('destroy');
+        app.view.View.prototype._dispose.call(this);
     }
 })

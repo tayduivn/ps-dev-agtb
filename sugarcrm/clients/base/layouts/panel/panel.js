@@ -4,7 +4,7 @@
     initialize: function(opts) {
         app.view.Layout.prototype.initialize.call(this, opts);
 
-        this.bind("hide", this.toggleChevron);
+        this.on("hide", this.toggleChevron, this);
 
         this.listenTo(this.collection, "reset", function() {
             if (this.collection.length === 0) {

@@ -5,8 +5,6 @@
     },
 
     initialize: function(options) {
-        _.bindAll(this);
-
         this.collections = {
             today: app.data.createBeanCollection('Meetings', []),
             tomorrow: app.data.createBeanCollection('Meetings', []),
@@ -14,7 +12,7 @@
         };
 
         _.each(this.collections, function(collection) {
-            collection.bind("change", this.render);
+            collection.on("change", this.render, this);
         }, this);
 
         app.view.View.prototype.initialize.call(this, options);
@@ -45,5 +43,12 @@
     },
     hideActions: function(e) {
         this.$(e.currentTarget).children("td").children("span").children(".btn-group").hide();
+    },
+
+    unbindData: function() {
+        _.each(this.collections, function(collection) {
+            collection.off();
+        });
+        app.view.View.prototype.unbindData.call(this);
     }
 })

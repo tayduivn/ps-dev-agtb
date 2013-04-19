@@ -15,8 +15,6 @@
     editingFilter: null,
 
     initialize: function(opts) {
-        _.bindAll(this);
-
         this.toggleComponents = [];
         this.componentsList = {};
         this.processMeta();
@@ -128,6 +126,8 @@
             }
         });
         this.componentsList = {};
+        this.toggleComponents = null;
+        this.activityContext = null;
         app.view.Layout.prototype._dispose.call(this);
     },
 

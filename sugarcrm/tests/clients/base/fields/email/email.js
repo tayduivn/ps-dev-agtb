@@ -1,6 +1,6 @@
 describe("Email field", function() {
 
-    var app, field, model, mock_addr;
+    var app, field, model, mock_addr, oldjQueryFn;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -23,6 +23,12 @@ describe("Email field", function() {
         ];
         model = field.model;
         model.set({email:_.clone(mock_addr)});
+
+        if ($.fn.tooltip) {
+            oldjQueryFn = $.fn.tooltip;
+        }
+        $.fn.tooltip = function(){};
+
         field.render();
     });
 
@@ -31,6 +37,10 @@ describe("Email field", function() {
         app.view.reset();
         delete Handlebars.templates;
         field = null;
+        if (oldjQueryFn) {
+            $.fn.tooltip = oldjQueryFn;
+            oldjQueryFn = null;
+        }
     });
 
     describe("adding an email address", function() {

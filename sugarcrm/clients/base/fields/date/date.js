@@ -437,6 +437,11 @@
             return null;
         }
         return jsDate;
+    },
+
+    unbindDom: function() {
+        this.$(".datepicker").datepicker('destroy');
+        app.view.Field.prototype.unbindDom.call(this);
     }
 
 })

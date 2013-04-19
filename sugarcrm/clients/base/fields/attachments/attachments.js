@@ -8,8 +8,6 @@
      * {@inheritdoc}
      */
     initialize: function(options) {
-        _.bindAll(this);
-
         var launchUploadEvent = options.def.uploadEvent || 'attachment:upload';
 
         this.events = _.extend({}, this.events, options.def.events, {
@@ -17,11 +15,11 @@
         });
         app.view.Field.prototype.initialize.call(this, options);
 
-        this.context.on('attachment:add', this.addAttachment);
-        this.context.on(launchUploadEvent, this.launchFilePicker);
-        this.context.on('attachment:upload:remove', this.removeUploadedAttachment);
-        this.context.on('attachments:remove-by-tag', this.removeAttachmentsByTag);
-        this.context.on('attachments:remove-by-id', this.removeAttachmentsById);
+        this.context.on('attachment:add', this.addAttachment, this);
+        this.context.on(launchUploadEvent, this.launchFilePicker, this);
+        this.context.on('attachment:upload:remove', this.removeUploadedAttachment, this);
+        this.context.on('attachments:remove-by-tag', this.removeAttachmentsByTag, this);
+        this.context.on('attachments:remove-by-id', this.removeAttachmentsById, this);
 
         this.clearUserAttachmentCache();
     },
@@ -103,7 +101,7 @@
      */
     bindDomChange: function() {
         this.$node = this.$(this.fieldSelector);
-        this.$node.on("change", this.handleChange);
+        this.$node.on("change", _.bind(this.handleChange, this));
         this.$node.on("open", function() {return false;});
     },
 
@@ -196,7 +194,7 @@
      * @param iterator
      */
     removeAttachmentsByIterator: function(iterator) {
-        attachments = this.getDisplayedAttachments();
+        var attachments = this.getDisplayedAttachments();
         attachments = _.reject(attachments, iterator);
         this.setDisplayedAttachments(attachments);
         this.updateModel();
@@ -334,5 +332,10 @@
     /**
      * Turn off re-rendering of field when model changes - let select2 handle how the field looks
      */
-    bindDataChange:$.noop
+    bindDataChange:$.noop,
+
+    _dispose: function() {
+        this.$node.select2('destroy');
+        app.view.Field.prototype._dispose.call(this);
+    }
 })

@@ -1,7 +1,5 @@
 ({
     initialize: function(options) {
-        _.bindAll(this);
-
         this.firstIsActive = false;
         this.template = app.template.get("l.tabbed-layout");
         this.renderHtml();

@@ -3,10 +3,8 @@
 
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
-        // Select2 callbacks require us to _.bindAll(this).
-        _.bindAll(this);
 
-        this.layout.on("filter:change:module", this.handleChange);
+        this.layout.on("filter:change:module", this.handleChange, this);
         this.layout.on("filter:render:module", this._render, this);
     },
 
@@ -23,14 +21,14 @@
         }
 
         this.filterNode.select2({
-            data: this.filterList,
+            data: _.bind(this.filterList, this),
             multiple: false,
             minimumResultsForSearch: 7,
-            formatSelection: this.formatSelection,
-            formatResult: this.formatResult,
+            formatSelection: _.bind(this.formatSelection, this),
+            formatResult: _.bind(this.formatResult, this),
             dropdownCss: {width:'auto'},
             dropdownCssClass: 'search-related-dropdown',
-            initSelection: this.initSelection
+            initSelection: _.bind(this.initSelection, this)
         });
 
         // Disable the module filter dropdown.
@@ -117,5 +115,10 @@
     formatResult: function (option) {
         // TODO: Determine whether active filters should be highlighted in bold in this menu.
         return '<div><span class="select2-match"></span>'+ app.lang.get(option.text, "Filters") +'</div>';
+    },
+
+    _dispose: function() {
+        this.filterNode.select2('destroy');
+        app.view.View.prototype._dispose.call(this);
     }
 })
