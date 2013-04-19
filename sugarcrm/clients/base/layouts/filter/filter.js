@@ -44,8 +44,8 @@
 
             _.each(ctxList, function(ctx) {
                 var ctxCollection = ctx.get('collection'),
-                    origfilterDef = dynamicFilterDef || ctxCollection.filterDef || [],
-                    filterDef = self.getFilterDef(origfilterDef, query, ctx),
+                    origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [],
+                    filterDef = self.getFilterDef(origFilterDef, query, ctx),
                     options = {
                         //Show alerts for this request
                         showAlerts: true,
@@ -56,13 +56,13 @@
                     }};
 
                 ctxCollection.filterDef = filterDef;
+                ctxCollection.origFilterDef = origFilterDef;
 
                 options = _.extend(options, ctx.get('collectionOptions'));
 
                 ctx.resetLoadFlag(false);
                 ctx.set('skipFetch', false);
                 ctx.loadData(options);
-                ctxCollection.filterDef = origfilterDef;
             });
         }, this);
 
@@ -92,7 +92,7 @@
 
 
             _.each(ctxList, function(ctx) {
-                ctx.get('collection').filterDef = filter.get('filter_definition');
+                ctx.get('collection').origFilterDef = filter.get('filter_definition');
             });
             this.trigger('filter:clear:quicksearch');
         }, this);
