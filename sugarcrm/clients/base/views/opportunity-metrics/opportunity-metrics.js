@@ -44,8 +44,7 @@
             .showTitle(false)
             .tooltips(false)
             .showLegend(false)
-            .colorData('class')
-            .colorFill('default');
+            .colorData('class');
 
         d3.select('svg#' + this.cid)
             .datum(this.chartCollection)
@@ -82,7 +81,7 @@
                 return {
                     'key': value.stageLabel,
                     'value': value.count,
-                    'class': key
+                    'classes': key
                 };
             }),
             properties: {
