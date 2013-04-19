@@ -19,17 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: install_utils.php,v 1.38 2006/03/22 20:21:03 chris Exp
- * $Description: TODO: To be written. Portions created by SugarCRM are Copyright
- * (C) SugarCRM, Inc. All Rights Reserved. Contributor(s):
- * ______________________________________..
- * *******************************************************************************/
-
 require_once('include/utils/zip_utils.php');
-
 require_once('include/upload_file.php');
-
 
 ////////////////
 ////  GLOBAL utility
@@ -860,7 +851,7 @@ function handleSugarConfig() {
        require_once('modules/UpgradeWizard/uw_utils.php');
        merge_config_si_settings(false, 'config.php', 'config_si.php');
     }
-    include('ModuleInstall/ModuleInstaller.php');
+    require_once 'ModuleInstall/ModuleInstaller.php';
     //BEGIN SUGARCRM flav=ent ONLY
     ModuleInstaller::handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
@@ -874,75 +865,18 @@ function handleSugarConfig() {
 /**
  * handles portal config creation
  */
-function getPortalJSConfig()
-{
-    global $sugar_config;
-    $portalConfig = array(
-        'appId' => 'SupportPortal',
-        'appStatus' => 'offline',
-        'env' => 'dev',
-        'platform' => 'portal',
-        'additionalComponents' => array(
-            'header' => array(
-                'target' => '#header',
-                'layout' => 'header'
-            ),
-            'footer' => array(
-                'target' => '#footer',
-                'layout' => 'footer'
-            ),
-            'drawer' => array(
-                'target' => '#drawers',
-                'layout' => 'drawer'
-            ),
-        ),
-        'alertsEl'=> '#alert',
-        'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
-        'siteUrl' => $sugar_config['site_url'],
-        'unsecureRoutes' => array('signup', 'error'),
-        'loadCss' => 'url',
-        'clientID' => 'support_portal',
-        'maxSearchQueryResult'=>'5'
-    );
-    $configString = json_encode($portalConfig);
-    return '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-}
-
 function handlePortalConfig()
 {
-    sugar_file_put_contents('portal2/config.js', getPortalJSConfig());
-
+    require_once 'ModuleInstall/ModuleInstaller.php';
+    return ModuleInstaller::handlePortalConfig();
 }
 //END SUGARCRM flav=ent ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
-function getSidecarJSConfig()
-{
-    global $sugar_config;
-
-    $sidecarConfig = array(
-        'appId' => 'SugarCRM',
-        'env' => 'dev',
-        'platform' => 'base',
-        'additionalComponents' => array(
-            'alert' => array(
-                'target' => '#alerts'
-            )
-        ),
-        'serverUrl' => $sugar_config['site_url'].'/rest/v10',
-        'siteUrl' => $sugar_config['site_url'],
-        'loadCss' => false,
-        'unsecureRoutes' => array('login', 'error'),
-        'clientID' => 'sugar',
-        'authStore'  => 'sugarAuthStore',
-        'keyValueStore' => 'sugarAuthStore'
-    );
-    return '(function(app) {app.augment("config", ' . json_encode($sidecarConfig) . ', false);})(SUGAR.App);';
-}
-
 function handleSidecarConfig()
 {
-    sugar_file_put_contents('config.js', getSidecarJSConfig());
+    require_once 'ModuleInstall/ModuleInstaller.php';
+    return ModuleInstaller::handleBaseConfig();
 }
 //END SUGARCRM flav=pro ONLY
 

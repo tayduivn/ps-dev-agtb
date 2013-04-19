@@ -12,7 +12,7 @@ class SugarUpgradePortalConfig extends UpgradeScript
         if(!$this->toFlavor('ent')) return;
         if(file_exists('portal2/config.js')) return;
 
-        require_once('install/install_utils.php');
-        $this->putFile('portal2/config.js', getPortalJSConfig());
+        require_once 'ModuleInstall/ModuleInstaller.php';
+        $this->putFile('portal2/config.js', ModuleInstaller::getJSConfig(ModuleInstaller::getPortalConfig()));
     }
 }

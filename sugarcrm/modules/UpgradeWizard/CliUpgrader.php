@@ -1,5 +1,5 @@
 <?php
-require_once 'modules/UpgradeWizard/UpgradeDriver.php';
+require_once 'UpgradeDriver.php';
 
 /**
  * Command-line upgrader
@@ -11,8 +11,9 @@ class CliUpgrader extends UpgradeDriver
      */
     public function runStage($stage)
     {
-        $argv[] = $stage;
+        $this->context['argv'][5] = $stage;
         $cmd = "{$this->context['php']} -f {$this->context['script']} " . $this->buildArgString($this->context['argv']);
+        $this->log("Running $cmd");
         passthru($cmd, $retcode);
         return ($retcode == 0);
     }
@@ -37,7 +38,7 @@ $usage =<<<eoq2
 Usage: php -f silentUpgrade.php [upgradeZipFile] [logFile] [pathToSugarInstance] [admin-user]
 
 Example:
-    [path-to-PHP/]php -f silentUpgrade.php [path-to-upgrade-package/]SugarEnt-Upgrade-6.6.x-to-6.7.0.zip [path-to-log-file/]silentupgrade.log  [path-to-sugar-instance/] admin
+    [path-to-PHP/]php -f CliUpgrader.php [path-to-upgrade-package/]SugarEnt-Upgrade-6.6.x-to-6.7.0.zip [path-to-log-file/]silentupgrade.log  [path-to-sugar-instance/] admin
 
 Arguments:
     upgradeZipFile                       : Upgrade package file.
@@ -88,7 +89,8 @@ eoq2;
             'source_dir' => $argv[3],
             'admin' => $argv[4],
             'php' => $php_path."php",
-            'script' => $argv[0]
+            'script' => __FILE__,
+            'argv' => $argv,
         );
         return $context;
     }
@@ -118,10 +120,14 @@ eoq2;
             while(1) {
                 $res = $upgrader->runStep($stage);
                 if($res === false) {
-                    echo "***************         Step \"{$stage}\" FAILED!\n";
+                    if($stage) {
+                        echo "***************         Step \"{$stage}\" FAILED!\n";
+                    }
                     exit(1);
                 }
-                echo "***************         Step \"{$stage}\" OK\n";
+                if($stage) {
+                    echo "***************         Step \"{$stage}\" OK\n";
+                }
                 if($res === true) {
                     // we're done successfully
                     echo "***************         SUCCESS!\n";
@@ -139,7 +145,7 @@ eoq2;
      */
     protected function buildArgString($arguments=array())
     {
-    	if(!is_array($arguments) || count($argumens) == 1) {
+    	if(!is_array($arguments) || count($arguments) == 1) {
     		return '';
     	}
 

@@ -64,7 +64,8 @@ class SugarQuery_Builder_Select
      * @param string $columns
      * @return object this
      */
-	public function field($columns) {
+	public function field($columns)
+	{
         if(!is_array($columns)) {
             $columns = func_get_args();
         }
@@ -82,7 +83,8 @@ class SugarQuery_Builder_Select
      * clear out the objects select array
      * @return object this
      */
-	public function selectReset() {
+	public function selectReset()
+	{
 		$this->select = array();
 		return $this;
 	}

@@ -443,7 +443,7 @@ abstract class UpgradeDriver
             $lang = 'en_us';
         }
         $mod_strings = array();
-        include dirname(__FILE__).'/language/$lang.lang.php';
+        include dirname(__FILE__)."/language/$lang.lang.php";
         $this->mod_strings = $GLOBALS['mod_strings'] = $mod_strings;
         return $mod_strings;
     }
@@ -571,34 +571,49 @@ abstract class UpgradeDriver
      * - custom/upgrade/scripts/
      * - modules/MODULENAME/upgrade/scripts/
      * - custom/modules/MODULENAME/upgrade/scripts/
+     * @param string $dir Sugar directory
      * @param string $stage
      * @return array
      */
-    protected function getScripts($stage)
+    protected function getScripts($dir, $stage)
     {
-        $dirs = array("upgrade/scripts/", "custom/upgrade/scripts/");
-        foreach(array("modules/", "custom/modules/") as $moduledir) {
-            foreach (new FilesystemIterator($moduledir, FilesystemIterator::KEY_AS_FILENAME|FilesystemIterator::SKIP_DOTS) as $filename => $fileInfo) {
-                if(!$fileInfo->isDir()) continue;
-                $dirs[] = $moduledir.$filename."/upgrade/scripts/";
+        $dirs = array("$dir/upgrade/scripts/", "$dir/custom/upgrade/scripts/");
+        foreach(array("$dir/modules/", "$dir/custom/modules/") as $moduledir) {
+            if(!is_dir($moduledir)) continue;
+            try {
+                foreach (new FilesystemIterator($moduledir, FilesystemIterator::KEY_AS_FILENAME|FilesystemIterator::SKIP_DOTS) as $filename => $fileInfo) {
+                    if(!$fileInfo->isDir()) continue;
+                    if(file_exists($moduledir.$filename."/upgrade/scripts/")) {
+                        $dirs[] = $moduledir.$filename."/upgrade/scripts/";
+                    }
+                }
+            } catch(Exception $e) {
+                // ignore Iterator exceptions
+                $this->log("FilesystemIterator: ".$e->getMessage());
             }
         }
         $results = array();
+        $this->log("Checking for scripts: ".var_export($dirs, true));
         foreach($dirs as $dirname) {
             if(!file_exists($dirname.$stage)) continue;
+            try {
+                foreach(new FilesystemIterator($dirname.$stage, FilesystemIterator::SKIP_DOTS) as $fileInfo) {
+                    if(!$fileInfo->isFile() || $fileInfo->getExtension() != "php") continue;
 
-            foreach(new FilesystemIterator($dirname.$stage, FilesystemIterator::SKIP_DOTS) as $fileInfo) {
-                if(!$fileInfo->isFile() || $fileInfo->getExtension() != "php") continue;
-
-                include_once $fileInfo->getPathName();
-                $scriptname = $fileInfo->getBasename(".php");
-                $classname = "SugarUpgrade".preg_replace("/^\d+_/", "", $scriptname); // strip numeric prefix, add SugarUpgrade
-                if(!class_exists($classname)) continue;
-                // add class to results
-                $results[$scriptname] = new $classname($this);
+                    include_once $fileInfo->getPathName();
+                    $scriptname = $fileInfo->getBasename(".php");
+                    $classname = "SugarUpgrade".preg_replace("/^\d+_/", "", $scriptname); // strip numeric prefix, add SugarUpgrade
+                    if(!class_exists($classname)) continue;
+                    // add class to results
+                    $results[$scriptname] = new $classname($this);
+                }
+            } catch(Exception $e) {
+                // ignore Iterator exceptions
+                $this->log("FilesystemIterator: ".$e->getMessage());
             }
         }
-
+        $cnt = count($results);
+        $this->log("Found $cnt scripts");
         uasort($results, array($this, "sortByOrder"));
         return $results;
     }
@@ -734,11 +749,11 @@ abstract class UpgradeDriver
     {
     	$this->initSugar();
     	$mod_strings = $this->loadStrings();
-    	$scripts = $this->getScripts($stage);
     	$this->manifest = $this->getManifest();
     	if(!empty($this->manifest['copy_files']['from_dir'])) {
     	    $this->context['new_source_dir'] = $this->context['temp_dir']."/".$this->manifest['copy_files']['from_dir'];
     	}
+    	$scripts = $this->getScripts($this->context['new_source_dir'], $stage);
     	$this->to_version = $this->manifest['version'];
     	if(!empty($this->manifest['flavor'])) {
     	    $this->to_flavor = $this->manifest['flavor'];
@@ -877,6 +892,7 @@ abstract class UpgradeDriver
         } else {
             ini_set('error_reporting', E_ALL & ~E_STRICT);
         }
+        $this->log("Stage $stage staring");
         try {
             $this->current_stage = $stage;
             $this->state['stage'][$stage] = 'started';
@@ -933,6 +949,7 @@ abstract class UpgradeDriver
         }
         $this->state['stage'][$stage] = 'done';
         $this->saveState();
+        $this->log("Stage $stage done");
         return true;
     }
 

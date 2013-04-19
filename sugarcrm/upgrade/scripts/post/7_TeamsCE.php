@@ -57,9 +57,6 @@ class SugarUpgradeTeamsCE extends UpgradeScript
         $this->log("Start Building the team_set and team_sets_teams");
         require('include/modules.php');
         foreach($beanList as $moduleName=>$beanName) {
-            if(!empty($filter) && array_search($moduleName, $filter) === false) {
-                continue;
-            }
             if($moduleName == 'TeamMemberships' || $moduleName == 'ForecastOpportunities'){
                 continue;
             }

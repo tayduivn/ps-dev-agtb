@@ -36,6 +36,10 @@ class SugarUpgradeRemoveFiles extends UpgradeScript
      */
     protected function backup($file)
     {
+        if(!file_exists($file)) {
+            // no point to backup file that isn't there
+            return;
+        }
         $path = pathinfo($file, PATHINFO_DIRNAME);
         if(!empty($path)) {
             $this->ensureDir($this->backup_dir. '/' .  $path);

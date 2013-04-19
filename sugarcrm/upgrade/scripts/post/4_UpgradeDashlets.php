@@ -13,7 +13,7 @@ class SugarUpgradeUpgradeDashlets extends UpgradeScript
     {
         if (!($this->from_flavor == 'ce' && $this->toFlavor('pro')))
             return;
-
+        $dashletsFiles = array();
         if (file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
             require $cachedfile;
         }
@@ -39,7 +39,7 @@ class SugarUpgradeUpgradeDashlets extends UpgradeScript
             'obm_date_start' => 'OutcomeByMonthDashlet', 'obm_date_end' => 'OutcomeByMonthDashlet',
             'obm_ids' => 'OutcomeByMonthDashlet');
 
-        $result = $this->db->query("SELECT id FROM users where deleted = '0'");
+        $result = $this->db->query("SELECT id FROM users where deleted = '0' AND status != 'Reserved' AND portal_only = 0");
 
         while ($row = $this->db->fetchByAssoc($result)) {
             $current_user = BeanFactory::getBean('Users', $row['id']);

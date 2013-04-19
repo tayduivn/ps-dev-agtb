@@ -1449,11 +1449,8 @@ class ModuleInstaller{
 		$this->rebuild_tabledictionary();
 	}
 
-
-
-
-	function uninstall($base_dir){
-		if(defined('TEMPLATE_URL'))SugarTemplateUtilities::disableCache();
+	function uninstall($base_dir)
+	{
 		global $app_strings;
 		$total_steps = 5; //min steps with no tasks
 		$current_step = 0;
@@ -2350,9 +2347,15 @@ private function dir_file_count($path){
      */
     public static function handlePortalConfig()
     {
-        if (!isset($sugar_config)) {
-            global $sugar_config;
-        }
+        sugar_file_put_contents('portal2/config.js', self::getJSConfig(self::getPortalConfig()));
+    }
+
+    /**
+     * Get portal configuration
+     */
+    public function getPortalConfig()
+    {
+        global $sugar_config;
 
         $portalConfig = array(
             'appId' => 'SupportPortal',
@@ -2383,16 +2386,24 @@ private function dir_file_count($path){
             'clientID' => 'support_portal',
             'maxSearchQueryResult'=>'5'
         );
-        $filePath = 'portal2/config.js';
-        self::writeJSConfig($portalConfig,$filePath);
-
+        return $portalConfig;
     }
 //END SUGARCRM flav=ent ONLY
-    public static function handleBaseConfig() {
-        $filePath = 'config.js';
-        if (!isset($sugar_config)) {
-            global $sugar_config;
-        }
+    /**
+     * Handle base configuration
+     */
+
+    public static function handleBaseConfig()
+    {
+        sugar_file_put_contents('config.js', self::getJSConfig(self::getBaseConfig()));
+    }
+
+    /**
+     * Get base configuration
+     */
+    public static function getBaseConfig()
+    {
+        global $sugar_config;
 
         $sidecarConfig = array(
             'appId' => 'SugarCRM',
@@ -2422,9 +2433,21 @@ private function dir_file_count($path){
             'themeName' => 'default',
             'clientID' => 'sugar'
         );
-        self::writeJSConfig($sidecarConfig,$filePath);
+        return $sidecarConfig;
     }
 
+    /**
+     * Convert config array to JS config for Sidecar 
+     */
+    public static function getJSConfig($config)
+    {
+        $configString = json_encode($config);
+        return '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
+    }
+
+    /**
+     * Write out config as Sidecar config file
+     */
     public static function writeJSConfig($config, $path) {
         $configString = json_encode($config);
         $JSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
