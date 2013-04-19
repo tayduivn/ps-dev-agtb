@@ -50,6 +50,7 @@
         this.isAuthenticated = app.api.isAuthenticated();
         this.currentLang = app.lang.getLanguage() || "en_us";
         app.view.View.prototype._renderHtml.call(this);
+        this.$('[data-toggle="dropdown"]').dropdown();
     },
     setLanguage: function(e) {
         app.lang.hasChanged = true;

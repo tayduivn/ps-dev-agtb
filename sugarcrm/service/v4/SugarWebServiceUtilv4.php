@@ -493,7 +493,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 				else{
 					//since we found a duplicate we should set the sync flag
 					if( $seed->ACLAccess('Save')){
-						$seed = $seed->getCopy();
+						$seed = $seed->getCleanCopy();
 						$seed->id = $duplicate_id;
 						$seed->contacts_users_id = $current_user->id;
 						$seed->save();

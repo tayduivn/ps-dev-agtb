@@ -1,0 +1,14 @@
+<ul class="nav pull-right megamenu" id="userList">
+    <li class="dropdown" id="userActions">
+        <div class="btn-group">
+            <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="btn btn-invisible btn-link dropdown-toggle dtoggle">
+                <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar"><b class="caret"></b></a>
+            <div class="dropdown-menu scroll pull-right">
+                <ul role="menu">
+                    <li><a href="#profile">{{str "LBL_PROFILE"}}</a></li>
+                    <li><a href="#logout/?clear=1">{{str "LBL_LOGOUT"}}</a></li>
+                </ul>
+            </div>
+        </div>
+    </li>
+</ul>

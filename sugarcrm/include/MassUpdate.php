@@ -284,7 +284,7 @@ eoq;
 
 					if($count++ != 0) {
 					   //Create a new instance to clear values and handle additional updates to bean's 2,3,4...
-                       $this->sugarbean = $this->sugarbean->getCopy();
+                       $this->sugarbean = $this->sugarbean->getCleanCopy();
 					}
 
 					$this->sugarbean->retrieve($id);

@@ -56,19 +56,19 @@ class RestRegisterLeadTest extends RestTestBase
             json_encode($leadProps),
             'POST');
 
-        $this->assertTrue(isset($restReply['reply']['id']),
+        $this->assertTrue(isset($restReply['reply']),
             "Lead was not created (or if it was, the ID was not returned)");
-        $this->lead_id = $restReply['reply']['id'];
-
-        $this->assertTrue(isset($restReply['reply']['email']), "A email was not set.");
 
 
         $nlead = new Lead();
-        $nlead->id = $restReply['reply']['id'];
+        $nlead->id = $restReply['reply'];
         $nlead->retrieve();
-        $this->assertEquals($restReply['reply']['first_name'],
+        $this->assertEquals($leadProps['first_name'],
             $nlead->first_name,
-            "Rest Reply and Bean Do Not Match.");
+            "Submitted Lead and Lead Bean Do Not Match.");
+        $this->assertEquals("UT@test.com",
+            $nlead->email1,
+            "Submitted Lead and Lead Bean Do Not Match.");
     }
 
     /**

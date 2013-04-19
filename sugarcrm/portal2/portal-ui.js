@@ -53,7 +53,9 @@
         /**
          * Fix placeholder on global search on IE and old browsers
          */
-        this.$("input[placeholder]").placeholder();
+        if($.fn.placeholder){
+            this.$("input[placeholder]").placeholder();
+        }
     };
 
     /**
@@ -76,7 +78,9 @@
             $(element).tooltip('hide');
         })
         __superFieldRender__.call(this);
-        this.$("input[placeholder]").placeholder();
+        if($.fn.placeholder){
+            this.$("input[placeholder]").placeholder();
+        }
     };
 
 

@@ -672,7 +672,7 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 		//END SUGARCRM flav=pro ONLY
 		while($row = $this->db->fetchByAssoc($result))
 		{
-		    $template = $template->getCopy();
+		    $template = $template->getCleanCopy();
 			//BEGIN SUGARCRM flav=pro ONLY
 			$template->disable_row_level_security = $disable_security_flag;
 			//END SUGARCRM flav=pro ONLY

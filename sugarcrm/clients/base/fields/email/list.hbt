@@ -33,7 +33,7 @@
         <a {{#if ../../../sendEmailFromApp}}class="composeEmail" {{/if}}href="{{#if ../../../sendEmailFromApp}}javascript:void(0);{{else}}mailto:{{../../email_address}}{{/if}}">{{../email_address}}</a>
     </div>
 {{else}}
-    {{../email_address}}
+    <del>{{../email_address}}</del>
 {{/if}}
 {{/eq}}
 {{/each}}

@@ -359,7 +359,7 @@ class SugarFeed extends Basic {
 	}
 
     function fetchReplies($data) {
-        $seedBean = $this->getCopy();
+        $seedBean = $this->getCleanCopy();
 
         $replies = $seedBean->get_list('date_entered',"related_module = 'SugarFeed' AND related_id = '".$data['ID']."'");
 

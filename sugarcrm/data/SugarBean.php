@@ -4202,7 +4202,7 @@ class SugarBean
                 //instantiate a new class each time. This is because php5 passes
                 //by reference by default so if we continually update $this, we will
                 //at the end have a list of all the same objects
-                $temp = $this->getCopy();
+                $temp = $this->getCleanCopy();
 
                 foreach($this->field_defs as $field=>$value)
                 {
@@ -4465,7 +4465,7 @@ class SugarBean
                         }
                         if(!$isFirstTime)
                         {
-                            $current_bean = $current_bean->getCopy();
+                            $current_bean = $current_bean->getCleanCopy();
                         }
 
                         $isFirstTime = false;
@@ -4670,7 +4670,7 @@ class SugarBean
         while (($row = $this->db->fetchByAssoc($result)) != null)
         {
             $row = $this->convertRow($row);
-            $bean = $this->getCopy();
+            $bean = $this->getCleanCopy();
 
             foreach($bean->field_defs as $field=>$value)
             {
@@ -5164,7 +5164,7 @@ class SugarBean
         $list = Array();
         while($row = $this->db->fetchByAssoc($result))
         {
-        	$record = $template->getCopy();
+        	$record = $template->getCleanCopy();
             foreach($field_list as $field)
             {
                 // Copy the relevant fields
@@ -5949,7 +5949,7 @@ class SugarBean
             case 'edit':
             case 'save':
                 if( !$is_owner && $not_set && !empty($this->id)){
-                    $temp = $this->getCopy();
+                    $temp = $this->getCleanCopy();
                     if(!empty($this->fetched_row) && !empty($this->fetched_row['id']) && !empty($this->fetched_row['assigned_user_id']) && !empty($this->fetched_row['created_by'])){
                         $temp->populateFromRow($this->fetched_row);
                     }else{
@@ -6462,12 +6462,21 @@ class SugarBean
 	}
 
 	/**
-	 * Get a fresh copy of this bean
-	 * @return SugarBean
+	 * Returns a clean instance of the same type as this SugarBean.
+	 * Note that this does not mean it duplicates this bean.  This creates a new untouched instance instead.
+	 * @return SugarBean a new instance of this bean
 	 */
-	public function getCopy()
+	public function getCleanCopy()
 	{
-        return BeanFactory::getBean($this->module_name);
+        $bean =  BeanFactory::getBean($this->module_name);
+        /**
+         * If not a common bean, we can create a new instance the old fashioned way.
+         */
+        if($bean == null){
+            $klass = get_class($this);
+            $bean = new $klass();
+        }
+        return $bean;
 	}
 
     /**
