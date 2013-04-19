@@ -252,12 +252,7 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
             throw new SugarApiExceptionPortalNotConfigured();
         }
         
-        // It's a portal user, log them in against the Contacts table
-        $contact = BeanFactory::newBean('Contacts');
-        //BEGIN SUGARCRM flav=pro ONLY
-        $contact->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
-        $contact = $contact->retrieve_by_string_fields(array('portal_name'=>$username,  'portal_active'=>'1', 'deleted'=>0) );
+        $contact = $this->loadUserFromName($username);
         if ( !empty($contact) && !User::checkPassword($password, $contact->portal_password) ) {
            $contact = null;
         }
@@ -281,5 +276,30 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
         } else {
             throw new SugarApiExceptionNeedLogin();
         }
+    }
+
+    /**
+     * Loads the current user from the user name
+     * split out so that portal can load users properly
+     *
+     * @param string $username The name of the user you want to load
+     *
+     * @return SugarBean The user from the name
+     */
+    public function loadUserFromName($username)
+    {
+        // It's a portal user, log them in against the Contacts table
+        $contact = BeanFactory::newBean('Contacts');
+        //BEGIN SUGARCRM flav=pro ONLY
+        $contact->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
+        $contact = $contact->retrieve_by_string_fields(
+            array(
+                'portal_name'=>$username,
+                'portal_active'=>'1',
+                'deleted'=>0,
+            ));
+
+        return $contact;
     }
 }

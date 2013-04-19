@@ -141,6 +141,19 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         $this->getPlatformStore()->setupVisibility();
     }
 
+    /**
+     * Loads the current user from the user name
+     * split out so that portal can load users properly
+     *
+     * @param string $username The name of the user you want to load
+     *
+     * @return SugarBean The user from the name
+     */
+    public function loadUserFromName($username)
+    {
+        return $this->getPlatformStore()->loadUserFromName($username);
+    }
+
     // END METHOD FROM SugarOAuth2StorageInterface
 
     /**

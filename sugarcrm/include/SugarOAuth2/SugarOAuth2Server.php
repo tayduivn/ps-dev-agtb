@@ -141,4 +141,38 @@ class SugarOAuth2Server extends OAuth2
         return $this->verifyAccessToken($token);
     }
 
+    /**
+     * Gets an access token via sudo
+     *
+     * Will modify the session to add in additional information about
+     * who requested the sudo
+     *
+     * @param string $userName The user name (or email address for portal sudo)
+     * @param string $clientId The client id for the access token
+     * @param string $platform Which platform to log this user in as
+     *
+     * @return string The token
+     */
+    public function getSudoToken($userName, $clientId, $platform)
+    {
+        $sudoUserId = $GLOBALS['current_user']->id;
+
+        $this->setPlatform($platform);
+
+        $user = $this->storage->loadUserFromName($userName);
+
+        if ( $user == null ) {
+            throw new SugarApiExceptionNotFound();
+        }
+
+        $token = $this->createAccessToken($clientId, $user->id);
+        $_SESSION['sudo_for'] = $sudoUserId;
+
+        // It's a bit silly to create and then destroy a refresh token,
+        // But the oauth2 library doesn't let us pass enough through to skip that part.
+        $this->storage->unsetRefreshToken($token['refresh_token']);
+        unset($token['refresh_token']);
+        
+        return $token;
+    }
 }
