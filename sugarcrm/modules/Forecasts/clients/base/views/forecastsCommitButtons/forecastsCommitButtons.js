@@ -140,7 +140,7 @@
             }, self);
             this.context.on("forecasts:commitButtons:triggerCommit", this.triggerCommit, self);
             this.context.on("forecasts:commitButtons:triggerSaveDraft", this.triggerSaveDraft, self);
-            this.context.on("change:selectedTimePeriod", function() {
+            this.context.on("change:selectedTimePeriod change:selectedUser", function() {
                 this.context.trigger("forecasts:commitButtons:disabled");
             }, this);
             this.context.on("forecasts:commitButtons:enabled", this.enableCommitButton, this);

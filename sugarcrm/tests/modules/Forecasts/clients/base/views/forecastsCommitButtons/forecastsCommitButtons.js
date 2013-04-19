@@ -164,7 +164,7 @@ describe("forecasts_view_forecastsCommitButtons", function(){
         });
 
         it("context.on should have been called with change:selectedTimePeriod", function(){
-            expect(view.context.on).toHaveBeenCalledWith("change:selectedTimePeriod");
+            expect(view.context.on).toHaveBeenCalledWith("change:selectedTimePeriod change:selectedUser");
         });
 
         it("context.on should have been called with forecasts:worksheet:reloadCommitButton", function(){
