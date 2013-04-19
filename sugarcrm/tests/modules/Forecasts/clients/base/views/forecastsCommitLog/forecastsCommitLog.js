@@ -25,7 +25,11 @@ describe("forecasts_view_forecastsCommitLog", function(){
         app = SugarTest.app;
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../sidecar/src/utils", "date", "js", function(d) { return eval(d); });
-        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../include/javascript/sugar7", "utils", "js", function(d) {
+            app.events.off('app:init');
+            eval(d);
+            app.events.trigger('app:init');
+        });
 
         context = app.context.getContext();
         context.set({

@@ -50,40 +50,24 @@
             handleTabbing: function(event, shiftKey, field) {
                 event.preventDefault();
 
-                var fieldIndex = this.getFieldIndexByCid(field.cid),
-                    fieldIndexKeys = _.keys(this.fields),
-                    beforeIndex = _.filter(fieldIndexKeys, function(value) { return parseInt(value) < fieldIndex }),
-                    afterIndex = _.filter(fieldIndexKeys, function(value) { return parseInt(value) > fieldIndex }),
-                    finalIndexArray = afterIndex.concat(beforeIndex),
-                    newFieldIndex = -1;
+                var indexFound = false,
+                    nextField = {};
 
-                if(shiftKey === true) {
-                    finalIndexArray = finalIndexArray.reverse();
-                }
+                _.find(this.$el.find('div.clickToEdit'), function(el, idx, list) {
+                    var $el = $(el);
+                    if (indexFound === false && $el.data('cid') == field.cid) {
+                        indexFound = true;
+                        var nextIndex = (shiftKey === true) ? idx-1 : idx+1;
+                        if(nextIndex === list.length) {
+                            nextIndex = 0;
+                        }
+                        nextField = list.splice(nextIndex, 1);
+                    }
 
-                _.find(finalIndexArray, function(index) {
-                    newFieldIndex = index;
-                    return (!_.isUndefined(this.fields[index]) &&
-                        this.fields[index].$el.find('div.clickToEdit').length == 1);
-                }, this);
-
-                this.fields[newFieldIndex].$el.find('div.clickToEdit').click();
-            },
-
-            /**
-             * Find a field by a cid
-             *
-             * @param cid
-             * @returns {number}
-             */
-            getFieldIndexByCid: function(cid) {
-                var fieldIndex = -1;
-                _.find(this.fields, function(field, idx) {
-                    fieldIndex = idx;
-                    return (cid == field.cid);
+                    return indexFound;
                 });
 
-                return fieldIndex;
+                $(nextField).click();
             }
         });
 
@@ -142,8 +126,8 @@
                     if (this.isErrorState) {
                         // I am open with an error, send the message
                         this.context.trigger('field:editable:error', this.cid);
-                    } else if(this._isInEdit == true && this.cid !== cid) {
-                        if(this.type == 'enum') {
+                    } else if (this._isInEdit == true && this.cid !== cid) {
+                        if (this.type == 'enum') {
                             this.$("select").select2("close");
                         }
                         this.setMode('detail');
@@ -182,9 +166,11 @@
                     if (this._canEdit) {
                         // add a css_class to the def
                         this.on('render', function() {
-                            if (this.action !== 'edit') {
-                                this.$el.wrapInner('<div class="clickToEdit" data-cid="' + this.cid + '" />');
+                            var cteClass = 'clickToEdit';
+                            if (this.action === 'edit') {
+                                cteClass += ' active'
                             }
+                            this.$el.wrapInner('<div class="' + cteClass + '" data-cid="' + this.cid + '" />');
                         }, this);
                     }
                 }
@@ -236,7 +222,7 @@
              * Show an error message if not already display
              */
             showErrors: function() {
-                if(this.isErrorState === false) {
+                if (this.isErrorState === false) {
                     this.isErrorState = true;
                     this.$el.addClass('error');
                     this.$el.find('.error-tooltip').addClass('add-on local').removeClass('hide').css('display', 'inline-block');
@@ -393,14 +379,16 @@
                     // e.shiftKey: was the shift key pressed
                     // field: the field we are currently on
 
-                    if(field.type !== 'date') {
+                    if (field.type !== 'date') {
                         field.$el.find(field.fieldTag).change();
-                    } else {
-                        this.hideDatepicker();
                     }
 
                     // this even will be listened by the cte-tab plugin on the layout
                     this.context.trigger('field:editable:tabkey', e, e.shiftKey, field);
+
+                    if (field.type === 'date') {
+                        this.hideDatepicker();
+                    }
                 }
             },
 
@@ -445,7 +433,7 @@
              */
             validateField: function(field, newValue) {
 
-                if(_.isUndefined(newValue) || _.isEmpty(newValue)) {
+                if (_.isUndefined(newValue) || _.isEmpty(newValue)) {
                     // try to get the value again
                     newValue = this.$el.find(this.fieldTag).val();
                 }

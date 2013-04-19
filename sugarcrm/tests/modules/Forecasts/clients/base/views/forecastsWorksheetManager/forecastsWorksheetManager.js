@@ -37,8 +37,10 @@ describe("forecasts_view_forecastsWorksheetManager", function() {
             }
         })
 
-        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) {
-            return eval(d);
+        SugarTest.loadFile("../include/javascript/sugar7", "utils", "js", function(d) {
+            app.events.off('app:init');
+            eval(d);
+            app.events.trigger('app:init');
         });
         SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.min", "js", function(d) {
             return eval(d);

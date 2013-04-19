@@ -38,8 +38,10 @@ describe("forecasts_view_forecastsCommitted", function() {
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) {
             return eval(d);
         });
-        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) {
-            return eval(d);
+        SugarTest.loadFile("../include/javascript/sugar7", "utils", "js", function(d) {
+            app.events.off('app:init');
+            eval(d);
+            app.events.trigger('app:init');
         });
 
         context = app.context.getContext();

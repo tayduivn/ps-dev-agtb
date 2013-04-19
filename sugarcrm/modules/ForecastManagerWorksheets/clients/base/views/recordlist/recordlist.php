@@ -25,6 +25,14 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['recordlist'] = array(
                 'icon' => 'icon-eye-open',
                 'acl_action' => 'view',
             ),
+            array(
+                'type' => 'rowaction',
+                'css_class' => 'btn',
+                'tooltip' => 'LBL_HISTORY_LOG',
+                'event' => 'list:commit_log:fire',
+                'icon' => 'icon-exclamation-sign',
+                'acl_action' => 'view',
+            ),
         ),
     ),
 );

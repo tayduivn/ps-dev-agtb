@@ -3,9 +3,10 @@
    data-event="{{def.event}}"
 {{/if}}
 {{#if def.tooltip}}
-   rel="tooltip" 
+   rel="tooltip"
+   data-container="body"
    data-placement="bottom" 
-   data-original-title="{{str def.tooltip}}"
+   data-original-title="{{str def.tooltip module}}"
 {{/if}}
    name="{{name}}">
     {{#if def.tooltip}}

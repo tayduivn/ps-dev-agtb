@@ -26,4 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<a href="javascript:void(0)" class="worksheetManagerLink" data-uid="{{uid}}">{{{value}}}</a>
+<div class="ellipsis_inline" data-placement="bottom" data-container="body"
+     data-original-title="{{#unless value}}{{#if def.placeholder}}{{str def.placeholder this.model.module}}{{/if}}{{/unless}}{{value}}">
+    <a href="javascript:void(0)" class="worksheetManagerLink" data-uid="{{uid}}">{{{value}}}</a>
+</div>

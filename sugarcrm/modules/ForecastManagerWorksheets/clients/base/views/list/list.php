@@ -19,7 +19,6 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' =>
             array(
-
                 array(
                     'name' => 'name',
                     'type' => 'userLink',
@@ -33,7 +32,9 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'related_fields' => array(
-                        'user_id'
+                        'user_id',
+                        'isManager',
+                        'show_history_log',
                     )
                 ),
                 array(
@@ -137,15 +138,13 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     ),
                     'align' => 'right',
                     'click_to_edit' => true,
-                ),
+                )
+            ),
+            'footer' => array(
                 array(
-                    'name' => 'user_history_log',
-                    'type' => 'historyLog',
-                    'label' => '',
-                    'sortable' => false,
-                    'default' => true,
-                    'enabled' => true,
+                    'LBL_TOTALS'
                 ),
+                ''
             ),
         ),
     ),

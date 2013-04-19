@@ -14,11 +14,8 @@
     extendsFrom: 'RecordlistView',
 
     initialize: function(options) {
-
         this.plugins.push('cte-tabbing');
-
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
-
         this.collection.sync = _.bind(this.sync, this);
     },
 

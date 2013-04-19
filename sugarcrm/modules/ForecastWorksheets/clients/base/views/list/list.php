@@ -78,7 +78,8 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                     'maxValue' => 100,
                     'minValue' => 0,
                     'click_to_edit' => true,
-                    'align' => 'right'
+                    'align' => 'right',
+                    'width' => '7%'
                 ),
 
                 array(
@@ -94,7 +95,8 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                         'currency_id'
                     ),
                     'align' => 'right',
-                    'click_to_edit' => true
+                    'click_to_edit' => true,
+                    'width' => '22%'
                 ),
 
                 array(
@@ -110,7 +112,8 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                         'currency_id'
                     ),
                     'align' => 'right',
-                    'click_to_edit' => true
+                    'click_to_edit' => true,
+                    'width' => '22%'
                 ),
                 array(
                     'name' => 'worst_case',
@@ -126,7 +129,8 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                         'currency_id'
                     ),
                     'align' => 'right',
-                    'click_to_edit' => true
+                    'click_to_edit' => true,
+                    'width' => '22%'
                 ),
             ),
         ),
