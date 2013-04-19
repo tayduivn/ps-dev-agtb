@@ -90,7 +90,7 @@
         this.insertRecordViewInPanel(moduleMeta);
 
         //if dupe check is turned on for module, check if dupes found
-        if (moduleMeta.duplicateCheckOnStart && this.enableDuplicateCheck) {
+        if (moduleMeta.duplicateCheckOnStart && this.shouldDupeCheckBePerformed(this.recordView.model)) {
             this.toggleSubViews(this.DUPLICATE_VIEW);
         } else {
             this.toggleSubViews(this.RECORD_VIEW);
