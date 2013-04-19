@@ -45,6 +45,7 @@ class ProductsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMakeUserOnlyOneRecordReturns()
     {
+        $this->markTestIncomplete('Needs to be fixed by FRM team.');
         $return = $this->api->filterList(SugarTestRestUtilities::getRestServiceMock(), array('module' => 'Products'));
 
         $this->assertEquals(1, count($return['records']));
