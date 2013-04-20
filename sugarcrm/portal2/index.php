@@ -1,4 +1,5 @@
-<!--
+<?php
+if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,18 +26,28 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
--->
+$rootDir = dirname(getcwd());// up one
+set_include_path(get_include_path() . PATH_SEPARATOR . $rootDir);
+chdir($rootDir);
+//initialize the various globals we use this is needed so modules.php properly registers the modules globals, otherwise they end up defined in wrong scope
+global $sugar_config, $db, $fileName, $current_user, $locale, $current_language, $beanFiles, $beanList, $objectList, $moduleList, $modInvisList;
+require_once('include/entryPoint.php');
+require_once('jssource/minify_utils.php');
+$minifyUtils = new SugarMinifyUtils();
+ensureCache($minifyUtils, $rootDir);
+?>
 <!DOCTYPE HTML>
 <html>
     <head>
         <title>Customer Self-Service Portal - Powered by SugarCRM.</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=9, IE=10" >
+        <meta http-equiv="X-UA-Compatible" content="IE=9, IE=10">
         <meta name="viewport" content="initial-scale=1.0">
         <link rel="SHORTCUT ICON" href="../themes/default/images/sugar_icon.ico">
-        <!-- Third party library scripts -->
-
-		<!-- App Scripts -->
-        <script src='../sidecar/minified/sidecar.js'></script>
+        <? if(inDeveloperMode()): ?>
+            <script type="text/javascript" src="../sidecar/minified/sidecar.js"></script>
+        <? else: ?>
+            <script type="text/javascript" src="../sidecar/minified/sidecar.min.js"></script>
+        <? endif; ?>
         <script src='../cache/include/javascript/sugar_sidecar.min.js'></script>
         <script language="javascript" src="../include/javascript/sugar7/bwc.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/utils.js"></script>
@@ -44,42 +55,22 @@
         <script language="javascript" src="../include/javascript/sugar7/hacks.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/alert.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/hbt-helpers.js"></script>
-        <script src='error.js'></script>
-		<script src='user.js'></script>
-		<script src='config.js'></script>
-		<script src='portal.js'></script>
 
-        <script src="../sidecar/lib/sinon/sinon.js"></script>
-        <script src="../sidecar/lib/sugarapi/demoServerData.js"></script>
-        <script src="../sidecar/lib/sugarapi/demoRestServer.js"></script>
+        <!-- Portal specific JS -->
+        <script src='../cache/portal2/portal.min.js'></script>
+        <script src='config.js'></script>
+
+        <!-- CSS -->
         <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
-
         <link href="./assets/loading.css" rel="stylesheet" type="text/css">
-
-        <!-- Styleguide scripts that need to be included -->
-        <script src="../styleguide/assets/js/bootstrap-button.js"></script>
-        <script src="../styleguide/assets/js/bootstrap-tooltip.js"></script>
-        <script src="../styleguide/assets/js/bootstrap-popover.js"></script>
-        <script src="../styleguide/assets/js/bootstrap-dropdown.js"></script>
-        <script src="../styleguide/assets/js/bootstrap-modal.js"></script>
-        <script src="../styleguide/assets/js/bootstrap-alert.js"></script>
-        <script src="../styleguide/assets/js/bootstrap-datepicker.js"></script>
-        <script src="../styleguide/assets/js/jquery.timepicker.js"></script>
-        <script src="../include/javascript/jquery/jquery.popoverext.js" type="text/javascript"></script>
-        <script src="../include/javascript/jquery/jquery.effects.custombounce.js" type="text/javascript"></script>
-        <script src="portal-ui.js"></script>
     </head>
     <body>
     	<div>
 			<div id="sidecar">
                 <div id="alert" class="alert-top">
-
                 </div>
                 <div id="header">
-
-                </div>
-                <div id="subnav">
 
                 </div>
 
@@ -102,16 +93,15 @@
                 <div id="tourguide"></div>
 			</div>
 		</div>
-
-		<script language="javascript">
-			var syncResult, view, layout, html;
-			var App = SUGAR.App.init({
+        <script language="javascript">
+            var syncResult, view, layout, html;
+            var App = SUGAR.App.init({
                 el: "#sidecar",
                 callback: function(app){
                     app.start();
                 }
             });
             App.api.debug = App.config.debugSugarApi;
-		</script>
+        </script>
     </body>
 </html>

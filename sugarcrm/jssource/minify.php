@@ -1,12 +1,14 @@
 <?php
 if(!defined('sugarEntry'))define('sugarEntry', true);
 
+$minifyUtils = null;
+
 //assumes jsmin.php is in same directory
-    if(isset($_REQUEST['root_directory'])){
-        require_once('jssource/minify_utils.php');
-    }else{
-        require_once('minify_utils.php');
-    }
+if(isset($_REQUEST['root_directory'])){
+    require_once('jssource/minify_utils.php');
+}else{
+    require_once('minify_utils.php');
+}
 
 //if we are coming from browser
 
@@ -21,8 +23,8 @@ if(isset($_REQUEST['root_directory'])){
     //make sure that the rebuild option has been chosen
     if(isset($_REQUEST['js_rebuild_concat'])){
         if($_REQUEST['js_rebuild_concat'] == 'rebuild'){
-             //rebuild if files have changed
-             $js_groupings = array();
+            //rebuild if files have changed
+            $js_groupings = array();
             if(isset($_REQUEST['root_directory'])){
                 require('jssource/JSGroupings.php');
                 require_once('jssource/minify_utils.php');
@@ -59,8 +61,8 @@ if(isset($_REQUEST['root_directory'])){
         }
         //if boolean has been set, concatenate files
         if($forceReb){
-        ConcatenateFiles("$from");
-
+            $minifyUtils = new SugarMinifyUtils();
+            $minifyUtils->ConcatenateFiles("$from");
         }
 
     }else{
@@ -76,9 +78,9 @@ if(isset($_REQUEST['root_directory'])){
     if(isset($argv[1]) && !empty($argv[1])){
          $from = $argv[1];
     }else{
-     //Root Directory was not specified
-     echo 'Root Directory Input was not provided';
-     return;
+        //Root Directory was not specified
+        echo 'Root Directory Input was not provided';
+        return;
     }
 
     if ($argv[1] != '-?') {
@@ -101,34 +103,30 @@ if(isset($_REQUEST['root_directory'])){
     if($argv[1] == '-?'){
         $argv[2] = '-?';
     }
+    $minifyUtils = new SugarMinifyUtils();
 
     //if second argument is set, then process commands
     if(!empty($argv[2])){
-
-           if($argv[2] == '-r'){
-                //replace the compressed scripts with the backed up version
-                reverseScripts("$from/jssource/src_files",$from);
-
-           }elseif($argv[2] == '-m'){
-                //replace the scripts, and then minify the scripts again
-                reverseScripts("$from/jssource/src_files",$from);
-                BackUpAndCompressScriptFiles($from,"",false,true);
-
-           }elseif($argv[2] == '-c'){
-                //replace the scripts, concatenate the files, and then minify the scripts again
-                reverseScripts("$from/jssource/src_files",$from);
-                BackUpAndCompressScriptFiles($from,"",false,true);
-                ConcatenateFiles($from,true);
-           }elseif($argv[2] == '-mo'){
-                //do not replace the scriptsjust minify the existing scripts again
-                BackUpAndCompressScriptFiles($from,"",false,true);
-
-           }elseif($argv[2] == '-co'){
-                //concatenate the files only
-                ConcatenateFiles($from,true);
-
-           }elseif($argv[2] == '-?'){
-                die("
+        if($argv[2] == '-r'){
+            //replace the compressed scripts with the backed up version
+            $minifyUtils->reverseScripts("$from/jssource/src_files",$from);
+        }elseif($argv[2] == '-m'){
+            //replace the scripts, and then minify the scripts again
+            $minifyUtils->reverseScripts("$from/jssource/src_files",$from);
+            $minifyUtils->BackUpAndCompressScriptFiles($from,"",false,true);
+        }elseif($argv[2] == '-c'){
+            //replace the scripts, concatenate the files, and then minify the scripts again
+            $minifyUtils->reverseScripts("$from/jssource/src_files",$from);
+            $minifyUtils->BackUpAndCompressScriptFiles($from,"",false,true);
+            $minifyUtils->ConcatenateFiles($from,true);
+        }elseif($argv[2] == '-mo'){
+            //do not replace the scriptsjust minify the existing scripts again
+            $minifyUtils->BackUpAndCompressScriptFiles($from,"",false,true);
+        }elseif($argv[2] == '-co'){
+            //concatenate the files only
+            $minifyUtils->ConcatenateFiles($from,true);
+        }elseif($argv[2] == '-?'){
+            die("
     Usage : minify <root path> [[-r]|[-m]|[-c]]
 
     <root path> = path of directory to process.  Should be root of sugar instance.
@@ -154,19 +152,15 @@ if(isset($_REQUEST['root_directory'])){
         minify 'c:/sugar' -c
                                         ");
 
-           }
-
+        }
     }else{
         //default is to concatenate the files, then back up and compress them
         if(empty($from)){
             echo("directory root to process was not specified");
         }
-
-        BackUpAndCompressScriptFiles($from, '', true, true);
-        ConcatenateFiles($from,true);
-
+        $minifyUtils->BackUpAndCompressScriptFiles($from, '', true, true);
+        $minifyUtils->ConcatenateFiles($from,true);
     }
 }
-
 
 ?>

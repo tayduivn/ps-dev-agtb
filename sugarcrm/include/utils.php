@@ -5371,3 +5371,22 @@ function assignConcatenatedValue(SugarBean $bean, $fieldDef, $value)
     }
 }
 
+/**
+ * Ensures that the sugarcrm/cache has been built. If not, this builds.
+ * @param SugarMinifyUtils $minifyUtils
+ * @param string $rootDir Path to start from.
+ * @return  string The path to sugar sidecar min file.
+ */
+function ensureCache($minifyUtils, $rootDir) {
+	$sapiName = php_sapi_name();
+	if ($sapiName !== 'cli') {
+		$_REQUEST['root_directory'] = $rootDir;
+	}
+	$sugarSidecarPath = $rootDir . '/cache/include/javascript/sugar_sidecar.min.js';
+	if(!file_exists($sugarSidecarPath) || !is_file($sugarSidecarPath)) {
+		require_once('jssource/JSGroupings.php');
+		$minifyUtils->ConcatenateFiles($rootDir);
+	}
+	return $sugarSidecarPath;
+}
+

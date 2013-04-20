@@ -34,15 +34,10 @@ class SidecarView extends SugarView
         }
         $this->ss->assign("configFile", $this->configFile);
 
-        $sugarSidecarPath = sugar_cached("include/javascript/sugar_sidecar.min.js");
+        require_once("jssource/minify_utils.php");
+        $minifyUtils = new SugarMinifyUtils();
+        $sugarSidecarPath = ensureCache($minifyUtils, ".");
         $this->ss->assign("sugarSidecarPath", $sugarSidecarPath);
-        //If the files doesn't exist, it probably means the cache has been nuked and we need to rebuild.
-        if (!is_file($sugarSidecarPath))
-        {
-            $_REQUEST['root_directory'] = ".";
-            require_once("jssource/minify_utils.php");
-            ConcatenateFiles(".");
-        }
 
         // TODO: come up with a better way to deal with the various JS files
         // littered in sidecar.tpl.

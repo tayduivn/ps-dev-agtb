@@ -27,8 +27,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2005 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
+class SugarMinifyUtils
+{
     /**get_exclude_files
      *
      * This method returns a predefined array.
@@ -36,13 +36,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      * if a prefix is passed in, then it is prepended to the key value in the array
      * @prefix string to be prepended to key value in array
      */
-    function get_exclude_files($prefix = ''){
+    protected function get_exclude_files($prefix = ''){
         //add slash to prefix if it is not empty
-        if(!empty($prefix)){
+        if (!empty($prefix)){
             $prefix = $prefix . '/';
         }
-      //add prefix to key if it was passed in
-      $compress_exempt_files = array(
+        //add prefix to key if it was passed in
+        $compress_exempt_files = array(
             $prefix.sugar_cached('')                => true,
             $prefix.'include/javascript/tiny_mce'   => true,
             $prefix.'include/javascript/yui'        => true,
@@ -58,12 +58,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             $prefix.'sidecar'                       => true,
             $prefix.'styleguide'                    => true,
         );
-
         return $compress_exempt_files;
-
-}
-
-
+    }
 
     /**ConcatenateFiles($from_path)
      *
@@ -72,13 +68,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      * and places the concatenated file in root directory
      * @from_path root directory where processing should take place
      */
-    function ConcatenateFiles($from_path){
+    public function ConcatenateFiles($from_path){
         // Minifying the group files takes a long time sometimes.
         @ini_set('max_execution_time', 300);
         $js_groupings = array();
         if(isset($_REQUEST['root_directory'])){
             require('jssource/JSGroupings.php');
-        }else{
+        } else {
             require('JSGroupings.php');
         }
         //get array with file sources to concatenate
@@ -86,7 +82,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         $files_opened = array();
         $currPerm = '';
 
-        $excludedFiles = get_exclude_files($from_path);
+        $excludedFiles = $this->get_exclude_files($from_path);
         //for each item in array, concatenate the source files
         foreach($file_groups as $fg){
 
@@ -162,7 +158,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
                 }
             }
-
             //set permissions on this file
             if(!empty($currPerm) && $currPerm !== false){
                 //if we can retrieve permissions from target files, use same
@@ -181,10 +176,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 }
             }
         }
-
     }
 
-    function create_backup_folder($bu_path){
+    protected function create_backup_folder($bu_path){
         $bu_path = str_replace('\\', '/', $bu_path);
         //get path after root
         $jpos = strpos($bu_path,'jssource');
@@ -212,9 +206,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
     }
 
-
-
-
     /**CompressFiles
      * This method will call jsmin libraries to minify passed in files
      * This method takes in 2 string values of the files to process
@@ -223,18 +214,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      * @from_path file name and path to be processed
      * @to_path file name and path to be  used to place newly compressed contents
      */
-    function CompressFiles($from_path,$to_path){
-    if(!defined('JSMIN_AS_LIB')){
-        define('JSMIN_AS_LIB', true);
-    }
-    //assumes jsmin.php is in same directory
-    if(isset($_REQUEST['root_directory']) || defined('INSTANCE_PATH')){
-        require_once('jssource/jsmin.php');
-    }else{
-        require_once('jsmin.php');
-    }
-    $nl='
- ';
+    public function CompressFiles($from_path,$to_path){
+        if(!defined('JSMIN_AS_LIB')){
+            define('JSMIN_AS_LIB', true);
+        }
+        //assumes jsmin.php is in same directory
+        if(isset($_REQUEST['root_directory']) || defined('INSTANCE_PATH')){
+            require_once('jssource/jsmin.php');
+        }else{
+            require_once('jsmin.php');
+        }
+        $nl='
+     ';
 
         //check to make sure from path and to path are not empty
         if(isset($from_path) && !empty($from_path)&&isset($to_path) && !empty($to_path)){
@@ -343,63 +334,59 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         }
     }
 
-    function reverseScripts($from_path,$to_path=''){
-            $from_path = str_replace('\\', '/', $from_path);
-            if(empty($to_path)){
-                $to_path = $from_path;
+    public function reverseScripts($from_path,$to_path=''){
+        $from_path = str_replace('\\', '/', $from_path);
+        if(empty($to_path)){
+            $to_path = $from_path;
+        }
+        $to_path = str_replace('\\', '/', $to_path);
+
+        //check to see if provided paths are legit
+
+        if (!file_exists($from_path)){
+            //log error
+            echo "JS Source directory at $from_path Does Not Exist<p>\n";
+            return;
+        }
+
+        //get correct path for backup
+        $bu_path = $to_path;
+        $bu_path .= substr($from_path, strlen($to_path.'/jssource/src_files'));
+
+        //if this is a directory, then read it and process files
+        if(is_dir($from_path)){
+            //grab file / directory and read it.
+            $handle = opendir($from_path);
+            //loop over the directory and go into each child directory
+            while (false !== ($dir = readdir($handle))) {
+                //make sure you go into directory tree and not out of tree
+                if($dir!= '.' && $dir!= '..'){
+                    //make recursive call to process this directory
+                    $this->reverseScripts($from_path.'/'.$dir, $to_path );
+                }
             }
-            $to_path = str_replace('\\', '/', $to_path);
+        }
 
-            //check to see if provided paths are legit
+        //if this is not a directory, then
+        //check if this is a javascript file, then process
+        $path_parts = pathinfo($from_path);
+        if(is_file("$from_path") && isset($path_parts['extension']) && $path_parts['extension'] =='js'){
 
-            if (!file_exists($from_path))
-            {
-                //log error
-                echo "JS Source directory at $from_path Does Not Exist<p>\n";
+            //create backup directory if needed
+            $bu_dir = dirname($bu_path);
+
+            if(!file_exists($bu_dir)){
+                //directory does not exist, log it and return
+                echo" directory $bu_dir does not exist, could not restore $bu_path";
                 return;
             }
 
-            //get correct path for backup
-            $bu_path = $to_path;
-            $bu_path .= substr($from_path, strlen($to_path.'/jssource/src_files'));
-
-            //if this is a directory, then read it and process files
-            if(is_dir($from_path)){
-                //grab file / directory and read it.
-                $handle = opendir($from_path);
-                //loop over the directory and go into each child directory
-                while (false !== ($dir = readdir($handle))) {
-
-                  //make sure you go into directory tree and not out of tree
-                  if($dir!= '.' && $dir!= '..'){
-                    //make recursive call to process this directory
-                    reverseScripts($from_path.'/'.$dir, $to_path );
-                  }
-                }
+            //delete backup src file if it exists already
+            if(file_exists($bu_path)){
+                unlink($bu_path);
             }
-
-            //if this is not a directory, then
-            //check if this is a javascript file, then process
-            $path_parts = pathinfo($from_path);
-            if(is_file("$from_path") && isset($path_parts['extension']) && $path_parts['extension'] =='js'){
-
-                    //create backup directory if needed
-                    $bu_dir = dirname($bu_path);
-
-                    if(!file_exists($bu_dir)){
-                        //directory does not exist, log it and return
-                        echo" directory $bu_dir does not exist, could not restore $bu_path";
-                        return;
-                    }
-
-                    //delete backup src file if it exists already
-                    if(file_exists($bu_path)){
-                        unlink($bu_path);
-                    }
-                      copy($from_path, $bu_path);
-                }
-
-
+            copy($from_path, $bu_path);
+        }
     }
 
     /**BackUpAndCompressScriptFiles
@@ -411,83 +398,82 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      * @from_path root directory where processing should take place
      * @to_path root directory where processing should take place, this gets filled in dynamically
      */
-    function BackUpAndCompressScriptFiles($from_path,$to_path = '', $backup = true){
-            //check to see if provided paths are legit
-            if (!file_exists($from_path))
-            {
-                //log error
-                echo "The from directory, $from_path Does Not Exist<p>\n";
-                return;
-            }else{
-                $from_path = str_replace('\\', '/', $from_path);
-            }
-
-            if(empty($to_path)){
-                $to_path = $from_path;
-            }elseif (!file_exists($to_path))
-            {
-                //log error
-                echo "The to directory, $to_path Does Not Exist<p>\n";
-                return;
-            }
-
-            //now grab list of files to exclude from minifying
-            $exclude_files = get_exclude_files($to_path);
-
-            //process only if file/directory is not in exclude list
-            if(!isset($exclude_files[$from_path])){
-
-                //get correct path for backup
-                $bu_path = $to_path.'/jssource/src_files';
-                $bu_path .= substr($from_path, strlen($to_path));
-
-                //if this is a directory, then read it and process files
-                if(is_dir("$from_path")){
-                    //grab file / directory and read it.
-                    $handle = opendir("$from_path");
-                    //loop over the directory and go into each child directory
-                    while (false !== ($dir = readdir($handle))) {
-
-                      //make sure you go into directory tree and not out of tree
-                      if($dir!= '.' && $dir!= '..'){
-                        //make recursive call to process this directory
-                        BackUpAndCompressScriptFiles($from_path.'/'.$dir, $to_path,$backup);
-                      }
-                    }
-                }
-
-
-                //if this is not a directory, then
-                //check if this is a javascript file, then process
-                // Also, check if there's a min counterpart, in which case, don't use this file.
-                $path_parts = pathinfo($from_path);
-                if(is_file("$from_path") && isset($path_parts['extension']) && $path_parts['extension'] =='js'){
-                    /*$min_file_path = $path_parts['dirname'].'/'.$path_parts['filename'].'-min.'.$path_parts['extension'];
-                    if(is_file($min_file_path)) {
-                        $from_path = $min_file_path;
-                    }*/
-                    if($backup){
-                        $bu_dir = dirname($bu_path);
-                        if(!file_exists($bu_dir)){
-                            create_backup_folder($bu_dir);
-                        }
-
-                        //delete backup src file if it exists already
-                        if(file_exists($bu_path)){
-                            unlink($bu_path);
-                        }
-                        //copy original file into a source file
-                          rename($from_path, $bu_path);
-                    }else{
-                        //no need to backup, but remove file that is about to be copied
-                        //if it exists in both backed up scripts and working directory
-                        if(file_exists($from_path) && file_exists($bu_path)){unlink($from_path);}
-                    }
-
-                    //now make call to minify and overwrite the original file.
-                    CompressFiles($bu_path, $from_path);
-
-                }
-            }
-
+    public function BackUpAndCompressScriptFiles($from_path,$to_path = '', $backup = true){
+        //check to see if provided paths are legit
+        if (!file_exists($from_path)){
+            //log error
+            echo "The from directory, $from_path Does Not Exist<p>\n";
+            return;
+        }else{
+            $from_path = str_replace('\\', '/', $from_path);
         }
+
+        if(empty($to_path)){
+            $to_path = $from_path;
+        }elseif (!file_exists($to_path))
+        {
+            //log error
+            echo "The to directory, $to_path Does Not Exist<p>\n";
+            return;
+        }
+
+        //now grab list of files to exclude from minifying
+        $exclude_files = $this->get_exclude_files($to_path);
+
+        //process only if file/directory is not in exclude list
+        if(!isset($exclude_files[$from_path])){
+
+            //get correct path for backup
+            $bu_path = $to_path.'/jssource/src_files';
+            $bu_path .= substr($from_path, strlen($to_path));
+
+            //if this is a directory, then read it and process files
+            if(is_dir("$from_path")){
+                //grab file / directory and read it.
+                $handle = opendir("$from_path");
+                //loop over the directory and go into each child directory
+                while (false !== ($dir = readdir($handle))) {
+
+                    //make sure you go into directory tree and not out of tree
+                    if($dir!= '.' && $dir!= '..'){
+                        //make recursive call to process this directory
+                        $this->BackUpAndCompressScriptFiles($from_path.'/'.$dir, $to_path,$backup);
+                    }
+                }
+            }
+
+
+            //if this is not a directory, then
+            //check if this is a javascript file, then process
+            // Also, check if there's a min counterpart, in which case, don't use this file.
+            $path_parts = pathinfo($from_path);
+            if(is_file("$from_path") && isset($path_parts['extension']) && $path_parts['extension'] =='js'){
+                /*$min_file_path = $path_parts['dirname'].'/'.$path_parts['filename'].'-min.'.$path_parts['extension'];
+                if(is_file($min_file_path)) {
+                    $from_path = $min_file_path;
+                }*/
+                if($backup){
+                    $bu_dir = dirname($bu_path);
+                    if(!file_exists($bu_dir)){
+                        $this->create_backup_folder($bu_dir);
+                    }
+
+                    //delete backup src file if it exists already
+                    if(file_exists($bu_path)){
+                        unlink($bu_path);
+                    }
+                    //copy original file into a source file
+                      rename($from_path, $bu_path);
+                }else{
+                    //no need to backup, but remove file that is about to be copied
+                    //if it exists in both backed up scripts and working directory
+                    if(file_exists($from_path) && file_exists($bu_path)){unlink($from_path);}
+                }
+
+                //now make call to minify and overwrite the original file.
+                $this->CompressFiles($bu_path, $from_path);
+            }
+        }
+    }
+
+}

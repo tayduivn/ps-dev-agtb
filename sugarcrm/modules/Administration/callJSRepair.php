@@ -40,25 +40,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             //concatenate mode, call the files that will concatenate javascript group files
             $_REQUEST['js_rebuild_concat'] = 'rebuild';
             require_once('jssource/minify.php');
-         
         }else{
             $_REQUEST['root_directory'] = getcwd();
             require_once('jssource/minify.php');
         
             if($_REQUEST['js_admin_repair'] == 'replace'){
                 //should replace compressed JS with source js
-                reverseScripts("$from/jssource/src_files","$from");    
+                $minifyUtils->reverseScripts("$from/jssource/src_files","$from");    
     
             }elseif($_REQUEST['js_admin_repair'] == 'mini'){
                 //should replace compressed JS with minified version of source js
-                reverseScripts("$from/jssource/src_files","$from");
-                BackUpAndCompressScriptFiles("$from","",false);
-                ConcatenateFiles("$from");
+                $minifyUtils->reverseScripts("$from/jssource/src_files","$from");
+                $minifyUtils->BackUpAndCompressScriptFiles("$from","",false);
+                $minifyUtils->ConcatenateFiles("$from");
     
             }elseif($_REQUEST['js_admin_repair'] == 'repair'){
              //should compress existing javascript (including changes done) without overwriting original source files
-                BackUpAndCompressScriptFiles("$from","",false);
-                ConcatenateFiles("$from");        
+                $minifyUtils->BackUpAndCompressScriptFiles("$from","",false);
+                $minifyUtils->ConcatenateFiles("$from");
             }
         }
     //set execution time back to what it was   
