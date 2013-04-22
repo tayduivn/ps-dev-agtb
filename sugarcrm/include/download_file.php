@@ -330,7 +330,7 @@ class DownloadFileApi extends DownloadFile
             $this->api->setHeader("Content-Type", "application/force-download");
             $this->api->setHeader("Content-type", "application/octet-stream");
             if(empty($info['name'])) {
-                $info['name'] = pathinfo($info['path'], PATHINFO_FILENAME);
+                $info['name'] = pathinfo($info['path'], PATHINFO_BASENAME);
             }
             $this->api->setHeader("Content-Disposition", "attachment; filename=\"".$info['name']."\";");
         }
