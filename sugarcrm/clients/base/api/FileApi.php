@@ -499,14 +499,14 @@ class FileApi extends SugarApi {
                         'path' => $filepath,
                         'width' => empty($filedata[0]) ? 0 : $filedata[0],
                         'height' => empty($filedata[1]) ? 0 : $filedata[1],
-                        'uri' => $api->getResourceURI(array($bean->module_dir, $bean->id, 'file', $field)),
+                        'uri' => $api->getResourceURI(array($bean->module_dir, $bean->id, 'file', $field), array('relative' => true)),
                     );
                 } elseif ($def['type'] == 'file') {
                     require_once 'include/download_file.php';
                     $download = new DownloadFileApi($api);
                     $info = $download->getFileInfo($bean, $field);
                     if (!empty($info) && empty($info['uri'])) {
-                        $info['uri'] = $api->getResourceURI(array($bean->module_dir, $bean->id, 'file', $field));
+                        $info['uri'] = $api->getResourceURI(array($bean->module_dir, $bean->id, 'file', $field), array('relative' => true));
                     }
                 }
             }

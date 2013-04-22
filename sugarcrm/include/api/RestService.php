@@ -338,8 +338,10 @@ class RestService extends ServiceBase
      *                               of path parts or as a string
      * @return string The path to the resource
      */
-    public function getResourceURI($resource)
+    public function getResourceURI($resource, $options = array())
     {
+        $this->setResourceURIBase($options);
+
         // Empty resources are simply the URI for the current request
         if (empty($resource)) {
             $siteUrl = SugarConfig::getInstance()->get('site_url');
@@ -704,17 +706,17 @@ class RestService extends ServiceBase
      *
      * @access protected
      */
-    protected function setResourceURIBase()
+    protected function setResourceURIBase($options = array())
     {
         // Only do this if it hasn't been done already
         if (empty($this->resourceURIBase)) {
             // Default the base part of the request URI
-            $apiBase = '/api/rest.php/';
+            $apiBase = 'api/rest.php/';
 
             // Check rewritten URLs AND request uri vs script name
             if (isset($_REQUEST['__sugar_url']) && strpos($_SERVER['REQUEST_URI'], $_SERVER['SCRIPT_NAME']) === false) {
                 // This is a forwarded rewritten URL
-                $apiBase = '/rest/';
+                $apiBase = 'rest/';
             }
 
             // Get our version
@@ -725,6 +727,12 @@ class RestService extends ServiceBase
 
             // This is for our URI return value
             $siteUrl = SugarConfig::getInstance()->get('site_url');
+
+            if($options['relative'] === true) {
+                $siteUrl = '';
+            } else {
+                $siteUrl .= '/';
+            }
 
             // Get the file uri bas
             $this->resourceURIBase = $siteUrl . $apiBase;
