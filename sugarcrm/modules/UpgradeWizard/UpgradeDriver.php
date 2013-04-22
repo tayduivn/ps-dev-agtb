@@ -79,6 +79,8 @@ abstract class UpgradeDriver
 
     const STATE_FILE = "upgrade_state";
 
+    public $sugar_initialized = false;
+
     /**
      * Launches the next stage
      * @param string $stage
@@ -142,6 +144,9 @@ abstract class UpgradeDriver
     {
         if(is_callable(array('SugarAutoLoader', 'buildCache'))) {
             SugarAutoLoader::buildCache();
+        } else {
+            // delete dangerous files manually
+            @unlink("cache/file_map.php");
         }
         $this->cleanDir($this->cacheDir("smarty"));
         $this->cleanDir($this->cacheDir("modules"));
@@ -525,6 +530,9 @@ abstract class UpgradeDriver
      */
     protected function initSugar()
     {
+        if($this->sugar_initialized) {
+            return;
+        }
         if(!defined('sugarEntry')) define('sugarEntry', true);
 
         global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList, $sugar_config, $locale, $sugar_version, $sugar_flavor, $db, $locale;
@@ -552,6 +560,7 @@ abstract class UpgradeDriver
 		$trackerManager = TrackerManager::getInstance();
         $trackerManager->pause();
         $trackerManager->unsetMonitors();
+        $this->sugar_initialized = true;
     }
 
     /**
@@ -765,10 +774,15 @@ abstract class UpgradeDriver
     protected function runScript(UpgradeScript $script)
     {
         set_error_handler(array($this, 'scriptErrorHandler'), E_ALL & ~E_STRINCT & ~E_DEPRECATED);
+        ob_start();
         try {
             $script->run($this);
         } catch(Exception $e) {
             $this->error("Exception: ".$e->getMessage());
+        }
+        $out = ob_get_clean();
+        if($out) {
+            $this->log("OUTPUT: $out");
         }
         restore_error_handler();
     }
@@ -780,7 +794,6 @@ abstract class UpgradeDriver
      */
     protected function runScripts($stage)
     {
-    	$this->initSugar();
     	$mod_strings = $this->loadStrings();
     	$this->manifest = $this->getManifest();
     	if(!empty($this->manifest['copy_files']['from_dir'])) {
@@ -940,6 +953,7 @@ abstract class UpgradeDriver
                     list($this->from_version, $this->from_flavor) = $this->loadVersion($this->context['source_dir']);
                     $this->state['old_version'] = array($this->from_version, $this->from_flavor);
                     $this->saveState();
+    	            $this->initSugar();
                     if(!$this->runScripts("pre")) {
                         $this->error("Pre-upgrade stage failed!");
                         return false;
@@ -954,8 +968,9 @@ abstract class UpgradeDriver
                     break;
                 case "post":
                     // Run post-upgrade
+    	            $this->initSugar();
                     $this->cleanCaches();
-                    list($this->from_version, $this->from_flavor) = $this->state['old_version'];
+    	            list($this->from_version, $this->from_flavor) = $this->state['old_version'];
                     if(!$this->runScripts("post")) {
                         $this->error("Post-upgrade stage failed!");
                         return false;
