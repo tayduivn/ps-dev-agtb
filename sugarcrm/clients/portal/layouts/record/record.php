@@ -15,11 +15,5 @@ $layout->push('main', array(
         ),
     )
 );
-$layout->push('side', array(
-    'view' => 'subdetail',
-    'context' => array(
-        'link' => 'notes',
-    ),
-));
 $layout->push('preview', array('layout' => 'preview'));
 $viewdefs['portal']['layout']['record'] = $layout->getLayout();

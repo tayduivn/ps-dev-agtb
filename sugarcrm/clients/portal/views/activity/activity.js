@@ -32,47 +32,104 @@
  */
 ({
     events: {
-        'click .search': 'showSearch',
         'click .addNote': 'openNoteModal',
-        'click .activity a': 'loadChildDetailView',
+        'click .activity a': 'loadPreview',
         'click [name=show_more_button]': 'showMoreRecords'
     },
+
+    /**
+     * @override
+     * @param options
+     */
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+        this._addPreviewEvents();
+    },
+
+    /**
+     * @override
+     * @private
+     */
+    _render: function() {
+        // Bug 54597 activity view not respecting list ACL
+        var oViewName = this.name;
+        this.name = 'list';
+        app.view.View.prototype._render.call(this);
+        this.name = oViewName;
+    },
+
+    /**
+     * @override
+     */
     bindDataChange: function() {
         if (this.collection) {
             this.collection.on("reset", this.render, this);
         }
     },
-    showSearch: function() {
-        var $searchEl = $('.search');
-        $searchEl.toggleClass('active');
-        $searchEl.parent().parent().parent().find('.dataTables_filter').toggle();
-        $searchEl.parent().parent().parent().find('.form-search').toggleClass('hide');
-        return false;
-    },
-    openNoteModal: function() {
-        // triggers an event to show the modal
-        this.layout.trigger("app:view:activity:editmodal");
-        this.$('li.open').removeClass('open');
-        return false;
-    },
-    loadChildDetailView: function(e) {
-        // UI fix
-        this.$("li.activity").removeClass("on");
-        var $parent = this.$(e.currentTarget).parents("li.activity");
-        $parent.addClass("on");
 
+    /**
+     * Add preview events
+     * @private
+     */
+    _addPreviewEvents: function() {
+        //When switching to next/previous record from the preview panel, we need to update the highlighted row
+        app.events.on("list:preview:decorate", this.decorateRow, this);
+        this.collection.on("reset", function() {
+            //When fetching more records, we need to update the preview collection
+            app.events.trigger("preview:collection:change", this.collection);
+            if (this._previewed) {
+                this.decorateRow(this._previewed);
+            }
+        }, this);
+    },
+
+    /**
+     * Load Preview
+     * @param event
+     */
+    loadPreview: function(event) {
         // gets the activityId in the data attribute
+        var $parent = this.$(event.currentTarget).parents("li.activity");
         var activityId = $parent.data("id");
 
         // gets the activity model
         var activity = this.collection.get(activityId);
 
-        // clears the current listened model and push the new one
-        this.model.clear().set(activity.toJSON());
+        this.decorateRow(activity);
+        app.events.trigger("preview:render", activity, this.collection, false);
     },
-    showMoreRecords: function(evt) {
+
+    /**
+     * Decorate a row in the list that is being shown in Preview
+     * @param model Model for row to be decorated.  Pass a falsy value to clear decoration.
+     */
+    decorateRow: function(model) {
+        this._previewed = model;
+        // UI fix
+        this.$("li.activity").removeClass("on");
+        if (model) {
+            this.$("li.activity[data-id=" + model.get("id") + "]").addClass("on");
+        }
+    },
+
+    /**
+     * Open the modal for writing a note
+     * @param event
+     */
+    openNoteModal: function(event) {
+        // triggers an event to show the modal
+        this.layout.trigger("app:view:activity:editmodal");
+        this.$('li.open').removeClass('open');
+        return false;
+    },
+
+    /**
+     * Loads more notes
+     * @param event
+     */
+    showMoreRecords: function(event) {
         var self = this, options;
-        app.alert.show('show_more_records', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+        app.alert.show('show_more_records', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
 
         // If in "search mode" (the search filter is toggled open) set q:term param
         options = self.filterOpened ? self.getSearchOptions() : {};
@@ -92,12 +149,5 @@
         };
         options.limit = this.limit;
         this.collection.paginate(options);
-    },
-    _render: function(){
-        // Bug 54597 activity view not respecting list ACL
-        var oViewName = this.name;
-        this.name = 'list';
-        app.view.View.prototype._render.call(this);
-        this.name = oViewName;
     }
 })
