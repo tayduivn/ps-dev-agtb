@@ -114,6 +114,7 @@ abstract class UpgradeDriver
     {
         $statefile = $this->cacheDir('upgrades/').self::STATE_FILE;
         if(file_exists($statefile)) {
+            $state = array();
             include $statefile;
             $this->state = $state;
         }
@@ -165,7 +166,6 @@ abstract class UpgradeDriver
     	$this->context['temp_dir'] = $this->cacheDir("upgrades/temp");
         $this->ensureDir($this->context['temp_dir']);
         $this->loadState();
-        // TODO
     }
 
     /**
@@ -296,6 +296,7 @@ abstract class UpgradeDriver
      */
     protected function loadConfig()
     {
+        $sugar_config = array();
         include($this->context['source_dir']."/config.php");
         if(file_exists($this->context['source_dir']."/config_override.php")) {
             include($this->context['source_dir']."/config_override.php");
@@ -602,7 +603,7 @@ abstract class UpgradeDriver
 
                     include_once $fileInfo->getPathName();
                     $scriptname = $fileInfo->getBasename(".php");
-                    $classname = "SugarUpgrade".preg_replace("/^\d+_/", "", $scriptname); // strip numeric prefix, add SugarUpgrade
+                    $classname = "SugarUpgrade".preg_replace('/^\d+_/', "", $scriptname); // strip numeric prefix, add SugarUpgrade
                     if(!class_exists($classname)) continue;
                     // add class to results
                     $results[$scriptname] = new $classname($this);
@@ -735,9 +736,41 @@ abstract class UpgradeDriver
         }
     }
 
+    /**
+     * Get package manifest
+     * @return array
+     */
     protected function getManifest()
     {
         return $this->dataInclude("{$this->context['temp_dir']}/manifest.php", 'manifest');
+    }
+
+    /**
+     * PHP error handler for upgrade scripts, to log PHP errors
+     * @param int $errno
+     * @param string $errstr
+     * @param string $errfile
+     * @param string $errline
+     * @param array $errcontext
+     */
+    public function scriptErrorHandler($errno, $errstr, $errfile, $errline, $errcontext)
+    {
+        $this->log("PHP: [$errno] $errstr in $errfile at $errline");
+    }
+
+    /**
+     * Run individual upgrade script
+     * @param UpgradeScript $script
+     */
+    protected function runScript(UpgradeScript $script)
+    {
+        set_error_handler(array($this, 'scriptErrorHandler'), E_ALL & ~E_STRINCT & ~E_DEPRECATED);
+        try {
+            $script->run($this);
+        } catch(Exception $e) {
+            $this->error("Exception: ".$e->getMessage());
+        }
+        restore_error_handler();
     }
 
     /**
@@ -769,17 +802,12 @@ abstract class UpgradeDriver
     	    $this->log("Starting script $name");
     	    $this->state['scripts'][$name] = 'started';
     	    $this->saveState();
+    	    $this->runScript($script);
+    	    $this->log("Finished script $name");
     	    // Just in case some script did something wrong, go back to proper dir
     	    chdir($this->context['source_dir']);
-    	    try {
-    	        $script->run($this);
-    	    } catch(Exception $e) {
-    	        $this->error("Exception: ".$e->getMessage());
-    	    }
-    	    $this->log("Finished script $name");
-    	    // script called $this->fail
-
     		if(!$this->success) {
+        	    // script called $this->fail
     		    $this->state['scripts'][$name] = 'failed';
     		    $this->saveState();
     		    return false;
