@@ -689,7 +689,7 @@ abstract class UpgradeDriver
      */
     public function putFile($filename, $data)
     {
-        $this->createFile($file);
+        $this->createFile($filename);
         return file_put_contents($filename, $data);
     }
 
@@ -773,7 +773,7 @@ abstract class UpgradeDriver
      */
     protected function runScript(UpgradeScript $script)
     {
-        set_error_handler(array($this, 'scriptErrorHandler'), E_ALL & ~E_STRINCT & ~E_DEPRECATED);
+        set_error_handler(array($this, 'scriptErrorHandler'), E_ALL & ~E_STRICT & ~E_DEPRECATED);
         ob_start();
         try {
             $script->run($this);
