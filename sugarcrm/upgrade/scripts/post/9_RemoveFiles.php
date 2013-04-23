@@ -25,7 +25,9 @@ class SugarUpgradeRemoveFiles extends UpgradeScript
 	        if(is_dir($file)) {
 	            $this->removeDir($file);
 	        } else {
-	            @unlink($file);
+	            if(file_exists($file)) {
+	                @unlink($file);
+	            }
 	        }
 	    }
     }
