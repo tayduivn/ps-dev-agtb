@@ -142,7 +142,7 @@ class RestResponse extends Zend_Http_Response
     {
         switch($this->type) {
             case self::JSON:
-                $response = json_encode($this->body);
+                $response = json_encode($this->body, JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP);
                 break;
             case self::JSON_HTML:
                 $response = htmlentities(json_encode($this->body));
