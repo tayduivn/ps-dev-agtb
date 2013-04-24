@@ -71,7 +71,7 @@ class SchedulersJob extends Basic
 	var $scheduler; // Scheduler parent
 	public $min_interval = 30; // minimal interval for job reruns
 	protected $job_done = true;
-	protected $old_user;
+    protected $old_user;
 
 	/**
 	 * Job constructor.
@@ -447,9 +447,9 @@ class SchedulersJob extends Basic
             session_regenerate_id();
         }
         $_SESSION['is_valid_session']= true;
-        $_SESSION['user_id'] = $user->id;
-        $_SESSION['type'] = 'user';
-        $_SESSION['authenticated_user_id'] = $user->id;
+    	$_SESSION['user_id'] = $user->id;
+    	$_SESSION['type'] = 'user';
+    	$_SESSION['authenticated_user_id'] = $user->id;
     }
 
     /**
@@ -459,11 +459,11 @@ class SchedulersJob extends Basic
     protected function setJobUser()
     {
         // set up the current user and drop session
-        if(!empty($this->assigned_user_id)) {
+        if (!empty($this->assigned_user_id)) {
             $this->old_user = $GLOBALS['current_user'];
-            if(empty($this->user->id) || $this->assigned_user_id != $this->user->id) {
+            if (empty($this->user->id) || $this->assigned_user_id != $this->user->id) {
                 $this->user = BeanFactory::getBean('Users', $this->assigned_user_id);
-                if(empty($this->user->id)) {
+                if (empty($this->user->id)) {
                     $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_NOSUCHUSER', 'SchedulersJobs'), $this->assigned_user_id));
                     return false;
                 }
@@ -481,7 +481,7 @@ class SchedulersJob extends Basic
      */
     protected function restoreJobUser()
     {
-       if(!empty($this->old_user->id) && $this->old_user->id != $this->user->id) {
+        if(!empty($this->old_user->id) && $this->old_user->id != $this->user->id) {
             $this->sudo($this->old_user);
         }
     }
@@ -525,7 +525,7 @@ class SchedulersJob extends Basic
 			} else {
 			    return $this->resolution != self::JOB_FAILURE;
 			}
-        } elseif($exJob[0] == 'url') {
+		} elseif($exJob[0] == 'url') {
 			if(function_exists('curl_init')) {
 				$GLOBALS['log']->debug('----->SchedulersJob firing URL job: '.$exJob[1]);
                 set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE & ~E_STRICT);
@@ -541,8 +541,7 @@ class SchedulersJob extends Basic
 			} else {
 			    $this->resolveJob(self::JOB_FAILURE, translate('ERR_CURL', 'SchedulersJobs'));
 			}
-        } elseif ($exJob[0] == 'class') {
-            // autoloader will look for this class and include it
+		} elseif ($exJob[0] == 'class') {
             $tmpJob = new $exJob[1]();
             if($tmpJob instanceof RunnableSchedulerJob)
             {
@@ -552,7 +551,12 @@ class SchedulersJob extends Basic
                 }
                 $tmpJob->setJob($this);
                 $res = $tmpJob->run($this->data);
-                $this->restoreJobUser();
+                if ($res) {
+                    $this->succeedJob();
+                } else {
+                    $this->failJob();
+                }
+				$this->restoreJobUser();
                 return $res;
             }
             else {
