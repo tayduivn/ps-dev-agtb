@@ -15,7 +15,7 @@ class SugarUpgradeUpgradeAccess extends UpgradeScript
         }
         require_once "install/install_utils.php";
 
-        if(strpos($_SERVER["SERVER_SOFTWARE"],'Microsoft-IIS') !== false) {
+        if(!empty($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER["SERVER_SOFTWARE"],'Microsoft-IIS') !== false) {
             $this->handleWebConfig();
         } else {
             $this->handleHtaccess();
@@ -29,7 +29,11 @@ class SugarUpgradeUpgradeAccess extends UpgradeScript
 
     protected function handleHtaccess()
     {
-        $ignoreCase = (substr_count(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache/2') > 0)?'(?i)':'';
+        if(!empty($_SERVER['SERVER_SOFTWARE'])) {
+            $ignoreCase = (substr_count(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache/2') > 0)?'(?i)':'';
+        } else {
+            $ignoreCase = false;
+        }
         $htaccess_file = $this->context['source_dir']."/.htaccess";
 
         $status =  $this->putFile($htaccess_file, getHtaccessData($htaccess_file));

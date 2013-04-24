@@ -108,7 +108,7 @@ eoq2;
             $stage = null;
         }
         $upgrader = new self(self::parseArgs($argv));
-        if($stage) {
+        if($stage && $stage != 'continue') {
             // Run one step
             if($upgrader->run($stage)) {
                 exit(0);
@@ -117,6 +117,10 @@ eoq2;
             }
         } else {
             // whole loop
+            if($stage != 'continue') {
+                // reset state
+                $upgrader->cleanState();
+            }
             while(1) {
                 $res = $upgrader->runStep($stage);
                 if($res === false) {

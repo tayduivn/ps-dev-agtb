@@ -10,6 +10,8 @@ class SugarUpgradeUpgradeCustomRels extends UpgradeScript
 
     public function run()
     {
+        global $modules_exempt_from_availability_check;
+        $modules_exempt_from_availability_check = array();
         require_once('modules/Administration/upgrade_custom_relationships.php');
         upgrade_custom_relationships();
     }

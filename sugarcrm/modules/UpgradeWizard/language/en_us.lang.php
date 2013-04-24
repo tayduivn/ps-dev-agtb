@@ -1,38 +1,17 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Enterprise End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: en_us.lang.php 58178 2010-09-15 00:30:38Z kjing $
- * Description:
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- * *******************************************************************************/
-
 $mod_strings = array(
 	'DESC_MODULES_INSTALLED'					=> 'The following modules have been installed:',
 	'DESC_MODULES_QUEUED'						=> 'The following modules are ready to be installed:',
@@ -79,6 +58,7 @@ $mod_strings = array(
     'ERROR_MANIFEST_TYPE'                       => 'Manifest file must specify the package type.',
     'ERROR_PACKAGE_TYPE'                        => 'Manifest file specifies an unrecognized package type: %s',
     'ERROR_VERSION_INCOMPATIBLE'                => 'The upgrade package is not compatible with this version of Sugar: %s',
+    'ERROR_FLAVOR_INCOMPATIBLE'                 => 'The uploaded file is not compatible with this flavor (Community Edition, Professional, or Enterprise) of Sugar: %s',
 
 
     'LBL_BUTTON_BACK'							=> '< Back',
@@ -294,8 +274,6 @@ $mod_strings = array(
     'LBL_UW_CONFIRM_LAYOUT_RESULTS' => 'Confirm Layout Results',
     'LBL_UW_CONFIRM_LAYOUT_RESULTS_DESC' => 'The following layouts were merged successfully:',
 	'LBL_SELECT_FILE' => 'Select File:',
-    'ERROR_VERSION_INCOMPATIBLE' => 'The uploaded file is not compatible with this version of Sugar: ',
-    'ERROR_FLAVOR_INCOMPATIBLE'  => 'The uploaded file is not compatible with this flavor (Community Edition, Professional, or Enterprise) of Sugar: ',
 	'LBL_LANGPACKS' => 'Language Packs' /*for 508 compliance fix*/,
 	'LBL_MODULELOADER' => 'Module Loader' /*for 508 compliance fix*/,
 	'LBL_PATCHUPGRADES' => 'Patch Upgrades' /*for 508 compliance fix*/,

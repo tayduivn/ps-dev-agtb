@@ -5,6 +5,8 @@
  */
 abstract class UpgradeDriver
 {
+    const STATE_FILE = "upgrade_state";
+
     /**
      * If upgrade is successful
      * @var bool
@@ -18,6 +20,7 @@ abstract class UpgradeDriver
      * new_source_dir - directory where new Sugar source files are stored
      * admin - Admin user
      * log - Log file
+     * state_file - file where upgrade state is stored (usually cache/upgrades/upgrade_state)
      * CLI:
      * php - PHP binary
      * Shadow:
@@ -77,8 +80,6 @@ abstract class UpgradeDriver
      */
     public $current_stage;
 
-    const STATE_FILE = "upgrade_state";
-
     public $sugar_initialized = false;
 
     /**
@@ -114,12 +115,20 @@ abstract class UpgradeDriver
      */
     protected function loadState()
     {
-        $statefile = $this->cacheDir('upgrades/').self::STATE_FILE;
-        if(file_exists($statefile)) {
+        if(file_exists($this->context['state_file'])) {
             $state = array();
-            include $statefile;
+            include $this->context['state_file'];
             $this->state = $state;
         }
+    }
+
+    /**
+     * Clean state & save it
+     */
+    public function cleanState()
+    {
+        $this->state = array();
+        $this->saveState();
     }
 
     /**
@@ -127,9 +136,8 @@ abstract class UpgradeDriver
      */
     protected function saveState()
     {
-        $statefile = $this->cacheDir('upgrades/').self::STATE_FILE;
         $data = "<?php \$state = ".var_export($this->state, true).";";
-        file_put_contents($statefile, $data);
+        file_put_contents($this->context['state_file'], $data);
     }
 
     /**
@@ -170,6 +178,7 @@ abstract class UpgradeDriver
         $this->loadConfig();
     	$this->context['temp_dir'] = $this->cacheDir("upgrades/temp");
         $this->ensureDir($this->context['temp_dir']);
+        $this->context['state_file'] = $this->cacheDir('upgrades/').self::STATE_FILE;
         $this->loadState();
     }
 
@@ -534,7 +543,7 @@ abstract class UpgradeDriver
             return;
         }
         if(!defined('sugarEntry')) define('sugarEntry', true);
-
+        $this->log("Initializig SugarCRM environment");
         global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList, $sugar_config, $locale, $sugar_version, $sugar_flavor, $db, $locale;
         include('include/entryPoint.php');
         $GLOBALS['current_language'] = $this->config['default_language'];
@@ -551,16 +560,16 @@ abstract class UpgradeDriver
         if($this->config['dbconfig']['db_type'] == 'mysql'){
         	//Change the db wait_timeout for this session
         	$now_timeout = $this->db->getOne("select @@wait_timeout");
-        	$this->log('Wait Timeout before change ***** '.$now_timeout);
         	$this->db->query("set wait_timeout=28800");
         	$now_timeout = $this->db->getOne("select @@wait_timeout");
-        	$this->log('Wait Timeout after change ***** '.$now_timeout);
+        	$this->log("DB timeout set to $now_timeout");
         }
         // stop trackers
 		$trackerManager = TrackerManager::getInstance();
         $trackerManager->pause();
         $trackerManager->unsetMonitors();
         $this->sugar_initialized = true;
+        $this->log("Done initializig SugarCRM environment");
     }
 
     /**
@@ -631,9 +640,13 @@ abstract class UpgradeDriver
     /**
      * Find files in directory
      * @param string $dir
+     * @return array filenames in the directory
      */
     public function findFiles($dir)
     {
+        if(!file_exists($dir)) {
+            return array();
+        }
         $dirlen = strlen(rtrim($dir, '/'))+1;
         $names = array();
         foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir,
@@ -670,13 +683,13 @@ abstract class UpgradeDriver
             return true;
         }
         if(!empty($this->config['default_permissions']['file_mode'])){
-        	chmod($filename, $this->config['default_permissions']['file_mode']);
+        	chmod($path, $this->config['default_permissions']['file_mode']);
         }
         if(!empty($this->config['default_permissions']['user'])){
-        	chown($filename, $this->config['default_permissions']['user']);
+        	chown($path, $this->config['default_permissions']['user']);
         }
         if(!empty($this->config['default_permissions']['group'])){
-        	chgrp($filename, $this->config['default_permissions']['group']);
+        	chgrp($path, $this->config['default_permissions']['group']);
         }
         return true;
     }
@@ -900,6 +913,22 @@ abstract class UpgradeDriver
      */
     protected function runStep($stage)
     {
+        if($stage == 'continue') {
+            if(!empty($this->state['stage'])) {
+                foreach($this->stages as $stage) {
+                    if(empty($this->state['stage'][$stage]) ||  $this->state['stage'][$stage] != 'done') {
+                        break;
+                    }
+                }
+                if(!empty($this->state['stage'][$stage]) && $this->state['stage'][$stage] == 'done') {
+                    // everything is done
+                    $this->log("Nothing to continue, everything is done.");
+                    return true;
+                }
+                $this->log("Continuing from $stage");
+            }
+        }
+
         if($stage) {
         	$stage_num = array_search($stage, $this->stages);
         } else {
