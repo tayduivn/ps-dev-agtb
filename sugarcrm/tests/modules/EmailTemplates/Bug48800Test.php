@@ -60,9 +60,8 @@ class Bug48800Test extends Sugar_PHPUnit_Framework_TestCase
     public function testAssignedUserName()
     {
         global $locale;
-        require_once('include/Localization/Localization.php');
-        $locale = new Localization();
-        $testName = $locale->getLocaleFormattedName($this->user->first_name, $this->user->last_name);
+        $locale = Localization::getObject();
+        $testName = $locale->formatName($this->user);
         $testTemplate = new EmailTemplate();
         $testTemplate->retrieve($this->emailTemplate->id);
         $this->assertEquals(

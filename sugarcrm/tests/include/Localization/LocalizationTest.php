@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'include/Localization/Localization.php';
 
 class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
@@ -30,11 +30,6 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
      * @var Localization
      */
     private $_locale;
-
-    /**
-     * @var Localization
-     */
-    protected $_locale;
 
     /**
      * @var User
@@ -49,18 +44,22 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
+
+        global $app_list_strings;
+        $app_list_strings['salutation_dom']['Ms.'] = 'Frau';
     }
 
-    public function setUp() 
+    public function setUp()
     {
         global $current_user;
-        $this->_locale = new Localization();
+        $this->_locale = Localization::getObject();
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user = $this->_user;
         $this->_currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
 
     }
-    
+
     public function tearDown()
     {
         // remove test user
@@ -102,10 +101,10 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
                 '',
                 'Hu Mason',
                 ),
-                    
+
             );
     }
-    
+
     /**
      * @dataProvider providerGetLocaleFormattedName
      */
@@ -115,7 +114,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     	$outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, $salutation, $title, '',$this->_user);
     	$this->assertEquals($expectedOutput, $outputName);
     }
-    
+
     /**
      * @dataProvider providerGetLocaleFormattedName
      */
@@ -124,7 +123,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     	$outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, $salutation, $title, $nameFormat,$this->_user);
     	$this->assertEquals($expectedOutput, $outputName);
     }
-    
+
     /**
      * @ticket 26803
      */
@@ -133,10 +132,10 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_user->setPreference('default_locale_name_format', 'l f');
         $expectedOutput = ' ';
         $outputName = $this->_locale->getLocaleFormattedName('', '', '', '', '',$this->_user);
-        
+
         $this->assertEquals($expectedOutput, $outputName);
     }
-    
+
     /**
      * @ticket 26803
      */
@@ -145,96 +144,96 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_user->setPreference('default_locale_name_format', 'l f');
         $expectedOutput = '';
         $outputName = $this->_locale->getLocaleFormattedName('', '', '', '', '',$this->_user,true);
-        
+
         $this->assertEquals($expectedOutput, $outputName);
     }
-    
+
     public function testCurrenciesLoadingCorrectly()
     {
         global $sugar_config;
-        
+
         $currencies = $this->_locale->getCurrencies();
-        
+
         $this->assertEquals($currencies['-99']['name'],$sugar_config['default_currency_name']);
         $this->assertEquals($currencies['-99']['symbol'],$sugar_config['default_currency_symbol']);
         $this->assertEquals($currencies['-99']['conversion_rate'],1);
     }
-    
+
     public function testConvertingUnicodeStringBetweenCharsets()
     {
         $string = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモガギグゲゴザジズゼゾダヂヅデド";
-        
+
         $convertedString = $this->_locale->translateCharset($string,'UTF-8','EUC-CN');
         $this->assertNotEquals($string,$convertedString);
-        
+
         // test for this working by being able to convert back and the string match
         $convertedString = $this->_locale->translateCharset($convertedString,'EUC-CN','UTF-8');
         $this->assertEquals($string,$convertedString);
     }
-    
+
     public function testConvertKS_C_56011987AsCP949()
     {
         if ( !function_exists('iconv') ) {
             $this->markTestSkipped('Requires iconv');
         }
-        
+
         $string = file_get_contents(dirname(__FILE__)."/Bug49619.txt");
-        
+
         $convertedString = $this->_locale->translateCharset($string,'KS_C_5601-1987','UTF-8', true);
         $this->assertNotEquals($string,$convertedString);
-        
+
         // test for this working by being able to convert back and the string match
         $convertedString = $this->_locale->translateCharset($convertedString,'UTF-8','KS_C_5601-1987',true);
         $this->assertEquals($string,$convertedString);
     }
-    
+
     public function testCanDetectAsciiEncoding()
     {
         $string = 'string';
-        
+
         $this->assertEquals(
             $this->_locale->detectCharset($string),
             'ASCII'
             );
     }
-    
+
     public function testCanDetectUtf8Encoding()
     {
         $string = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモガギグゲゴザジズゼゾダヂヅデド';
-        
+
         $this->assertEquals(
             $this->_locale->detectCharset($string),
             'UTF-8'
             );
     }
-    
+
     public function testGetPrecedentPreferenceWithUserPreference()
     {
         $backup = $GLOBALS['sugar_config']['export_delimiter'];
         $GLOBALS['sugar_config']['export_delimiter'] = 'John is Cool';
         $this->_user->setPreference('export_delimiter','John is Really Cool');
-        
+
         $this->assertEquals(
             $this->_locale->getPrecedentPreference('export_delimiter',$this->_user),
             $this->_user->getPreference('export_delimiter')
             );
-        
+
         $GLOBALS['sugar_config']['export_delimiter'] = $backup;
     }
-    
+
     public function testGetPrecedentPreferenceWithNoUserPreference()
     {
         $backup = $GLOBALS['sugar_config']['export_delimiter'];
         $GLOBALS['sugar_config']['export_delimiter'] = 'John is Cool';
-        
+
         $this->assertEquals(
             $this->_locale->getPrecedentPreference('export_delimiter',$this->_user),
             $GLOBALS['sugar_config']['export_delimiter']
             );
-        
+
         $GLOBALS['sugar_config']['export_delimiter'] = $backup;
     }
-    
+
     /**
      * @ticket 33086
      */
@@ -244,16 +243,16 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['sugar_config']['export_delimiter'] = 'John is Cool';
         $this->_user->setPreference('export_delimiter','');
         $GLOBALS['sugar_config']['default_random_setting_for_localization_test'] = 'John is not Cool at all';
-        
+
         $this->assertEquals(
             $this->_locale->getPrecedentPreference('export_delimiter',$this->_user,'default_random_setting_for_localization_test'),
             $GLOBALS['sugar_config']['default_random_setting_for_localization_test']
             );
-        
+
         $backup = $GLOBALS['sugar_config']['export_delimiter'];
         unset($GLOBALS['sugar_config']['default_random_setting_for_localization_test']);
     }
-    
+
     /**
      * @ticket 39171
      */
@@ -261,13 +260,13 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $emailSettings = array('defaultOutboundCharset' => 'something fun');
         $this->_user->setPreference('emailSettings',$emailSettings, 0, 'Emails');
-        
+
         $this->assertEquals(
             $this->_locale->getPrecedentPreference('default_email_charset',$this->_user),
             $emailSettings['defaultOutboundCharset']
             );
     }
-    
+
     /**
      * @ticket 23992
      */
@@ -280,7 +279,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
             '¥'
             );
     }
-    
+
     /**
      * @ticket 23992
      */
@@ -337,14 +336,26 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
         $user1 = new User();
         $user1->first_name = 'John';
         $user1->last_name  = 'Doe';
-
-        $user2 = clone $user1;
-        $user2->name_format_map = array_merge(
+        $user1->user_name  = 'jdoe';
+        $user1->position   = 'Engineer';
+        $user1->name_format_map = array_merge(
             $user1->name_format_map,
             array(
+                'p' => 'position',
+                'u' => 'user_name',
                 'z' => 'non_existing_field',
             )
         );
+
+        $contact1 = new Contact();
+        $contact1->salutation = 'Ms.';
+        $contact1->first_name = 'Barbara';
+        $contact1->last_name  = 'Schulz';
+
+        $contact2 = new Contact();
+        $contact2->salutation = 'Sir';
+        $contact2->first_name = 'Aaron';
+        $contact2->last_name = 'Brown';
 
         return array(
             'invalid-bean-type' => array(null, null, null, false),
@@ -354,14 +365,18 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
                 null,
                 'Users',
                 array(
-                    'first_name' => 'John',
-                    'last_name'  => 'Doe',
+                    'first_name' => 'Judy',
+                    'last_name'  => 'Smith',
                 ),
-                'John Doe',
+                'Judy Smith',
             ),
             'non-existing-token' => array('x f', $user1, null, 'John'),
             'non-existing-field' => array('z l', $user1, null, 'Doe'),
             'empty-result'       => array('x z', $user1, null, ''),
+            'custom-token'       => array('f (u) l', $user1, null, 'John (jdoe) Doe'),
+            'custom-field'       => array('l, f (p)', $user1, null, 'Doe, John (Engineer)'),
+            'enum-is-localized'  => array(null, $contact1, null, 'Frau Barbara Schulz'),
+            'enum-not-found'     => array(null, $contact2, null, 'Sir Aaron Brown'),
         );
     }
 

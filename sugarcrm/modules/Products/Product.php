@@ -314,7 +314,6 @@ class Product extends SugarBean
 
     public function save($check_notify = false)
     {
-
         //If an opportunity_id value is provided, lookup the Account information (if available)
         if (!empty($this->opportunity_id)) {
             $this->setAccountIdForOpportunity($this->opportunity_id);
@@ -381,7 +380,7 @@ class Product extends SugarBean
             }
         }
 
-        
+
         $this->convertDateClosedToTimestamp();
         $this->mapFieldsFromOpportunity();
 
@@ -480,21 +479,11 @@ class Product extends SugarBean
                             ",subtotal_usdollar=" . $subtotal_usdollar . " where id='" . $this->quote_id . "'";
                         $result = $this->db->query($updateQuery);
                     }
+                }
+            }
+        }
 
-		if($row != null)
-		{
-            $this->contact_name = $locale->formatName('Contacts', $row);
-			$this->contact_id = $row['id'];
-			$this->contact_name_owner = $row['assigned_user_id'];
-			$this->contact_name_mod = 'Contacts';
-		}
-		else
-		{
-			$this->contact_name = '';
-			$this->contact_id = '';
-			$this->contact_name_owner = '';
-			$this->contact_name_mod = '';
-		}
+        return $id;
 	}
 
     /*

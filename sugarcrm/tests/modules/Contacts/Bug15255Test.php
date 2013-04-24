@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -29,7 +29,7 @@ class Bug15255Test extends Sugar_PHPUnit_Framework_TestCase
 	var $c = null;
 	var $a = null;
 	var $ac_id = null;
-	
+
 	public function setUp()
     {
         global $current_user, $currentModule ;
@@ -46,7 +46,7 @@ class Bug15255Test extends Sugar_PHPUnit_Framework_TestCase
         $contact->disable_custom_fields = true;
         $contact->save();
 		$this->c = $contact;
-		
+
 		$account = new Account();
 		$account->id = 'a_'.$unid;
         $account->first_name = 'testfirst';
@@ -56,7 +56,7 @@ class Bug15255Test extends Sugar_PHPUnit_Framework_TestCase
         $account->disable_custom_fields = true;
         $account->save();
         $this->a = $account;
-        
+
         $ac_id = 'ac_'.$unid;
         $this->ac_id = $ac_id;
 		$GLOBALS['db']->query("insert into accounts_contacts (id , contact_id, account_id, date_modified, deleted) values ('{$ac_id}', '{$contact->id}', '{$account->id}', '$time', 0)");
@@ -67,18 +67,18 @@ class Bug15255Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['mod_strings']);
-        
+
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c->id}'");
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->a->id}'");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE id = '{$this->ac_id}'");
-        
+
         unset($this->a);
         unset($this->c);
         unset($this->ac_id);
     }
-    
+
 	function testFill_in_additional_detail_fields(){
-		$locale = new Localization();
+		$locale = Localization::getObject();
     	$this->c->fill_in_additional_detail_fields();
     	$localName = $locale->getLocaleFormattedName('testfirst', 'testlast');
     	$this->assertEquals($this->c->name, $localName);

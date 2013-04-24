@@ -33,7 +33,7 @@ class Bug50887Test extends Sugar_PHPUnit_Framework_TestCase
         $this->user = $GLOBALS['current_user'];
 
         $this->user->setPreference('default_decimal_seperator', '.');
-        $this->loc = new Localization();
+        $this->loc = Localization::getObject();
     }
 
     public function tearDown()

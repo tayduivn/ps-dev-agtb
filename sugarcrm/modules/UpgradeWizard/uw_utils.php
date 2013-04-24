@@ -3220,7 +3220,7 @@ function upgradeUserPreferences() {
 function upgradeLocaleNameFormat($name_format) {
     global $sugar_config, $sugar_version;
 
-    $localization = new Localization();
+    $localization = Localization::getObject();
     $localeConfigDefaults = $localization->getLocaleConfigDefaults();
 
     $uw_strings = return_module_language($GLOBALS['current_language'], 'UpgradeWizard');

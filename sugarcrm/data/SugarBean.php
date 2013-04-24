@@ -2889,13 +2889,13 @@ class SugarBean
     /**
      * Returns parts of query needed to compose localized name of related user.
      *
-     * @param string $id_field
-     * @param array  $user_fields
-     * @param string $alias
+     * @param string $id_field    Field of the primary table that should be used as the user ID
+     * @param string $alias       Unique alias of joined table
+     * @param array  $user_fields Fields of users table to be selected
      *
      * @return array
      */
-    protected function getUsersJoin($id_field, array $user_fields, $alias)
+    protected function getUsersJoin($id_field, $alias, array $user_fields)
     {
         $table_alias = 'users_' . $alias;
 
@@ -2954,7 +2954,7 @@ class SugarBean
             foreach ($this->related_user_fields as $id_field => $params) {
                 list($name_field, $alias) = $params;
                 if (!empty($this->field_defs[$id_field]) && !empty($this->field_defs[$name_field])) {
-                    list($select, $from) = $this->getUsersJoin($id_field, $name_format_fields, $alias);
+                    list($select, $from) = $this->getUsersJoin($id_field, $alias, $name_format_fields);
                     $query_select .= $select;
                     $query_from   .= $from;
                 }

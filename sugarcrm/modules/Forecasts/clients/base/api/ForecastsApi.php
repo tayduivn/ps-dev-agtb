@@ -162,7 +162,7 @@ class ForecastsApi extends SugarApi
         $data = array();
         $data['id'] = $user->id;
         $data['user_name'] = $user->user_name;
-        $data['full_name'] = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
+        $data['full_name'] = $locale->formatName($user);
         $data['first_name'] = $user->first_name;
         $data['last_name'] = $user->last_name;
         $data['is_manager'] = User::isManager($user->id);
@@ -218,11 +218,11 @@ class ForecastsApi extends SugarApi
         /* @var $obj SugarForecasting_AbstractForecast */
         $obj = new $klass($args);
         $reportees = $obj->process();
-        
+
         if (($args['level'] < 0 || $args['level'] > 1)) {
             // may contain parent
             $children = isset($reportees['children']) ? $reportees['children'] : $reportees[1]['children'];
-            
+
             foreach ($children as &$child) {
                 if ($child['metadata']['id'] != $args['user_id']) {
                     $childArgs = $args;
@@ -232,7 +232,7 @@ class ForecastsApi extends SugarApi
                     $child['children'] = isset($childReportees['children']) ? $childReportees['children'] : $childReportees[1]['children'];
                 }
             }
-            
+
             isset($reportees['children']) ? $reportees['children'] = $children : $reportees[1]['children'] = $children;
         }
 

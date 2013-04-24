@@ -186,10 +186,8 @@ class vCard
                 //use locale to detect charset automatically
                 $encoding = $locale->detectCharset($line);
 			}
-            if ( $encoding != $GLOBALS['sugar_config']['default_charset'] )
-            {
+            if ( $encoding != $GLOBALS['sugar_config']['default_charset'] ) {
                 $line = $locale->translateCharset($line, $encoding);
-            }
             }
 			$line = trim($line);
 			if($start){

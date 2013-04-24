@@ -18,7 +18,7 @@ class SugarUpgradeUserPrefs extends UpgradeScript
 
     public function run()
     {
-        $this->localization = $localization = new Localization();
+        $this->localization = $localization = Localization::getObject();
         $localeCoreDefaults = $this->localeCoreDefaults = $localization->getLocaleConfigDefaults();
 
         // check the current system wide default_locale_name_format and add it to the list if it's not there

@@ -738,8 +738,21 @@ eoq;
                     }
 
                     if ($value != '') {
-                        if ($field == 'salutation' && !empty($app_list_strings['salutation_dom'][$value])) {
-                            $value = $app_list_strings['salutation_dom'][$value];
+                        if (isset($bean->field_defs[$field])) {
+                            $field_defs = $bean->field_defs[$field];
+                            if (isset($field_defs['type'])) {
+                                switch ($field_defs['type']) {
+                                    case 'enum':
+                                    case 'multienum':
+                                        if (isset($field_defs['options'])) {
+                                            $options = $field_defs['options'];
+                                            if (isset($app_list_strings[$options][$value])) {
+                                                $value = $app_list_strings[$options][$value];
+                                            }
+                                        }
+                                        break;
+                                }
+                            }
                         }
 
                         $isEmpty = false;

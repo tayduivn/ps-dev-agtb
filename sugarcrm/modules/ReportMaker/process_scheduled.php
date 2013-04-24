@@ -93,7 +93,7 @@ foreach ($reportsToEmailEnt as $scheduleId => $scheduleInfo) {
     $recipientEmailAddress = array_shift($recipientEmailAddresses);
 
     // get the recipient name that accompanies the email address
-    $recipientName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
+    $recipientName = $locale->formatName($user);
 
     try {
         $mailer = MailerFactory::getMailerForUser($current_user);

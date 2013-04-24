@@ -6,30 +6,10 @@ require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldFullname extends SugarFieldBase
 {
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
-        global $locale, $app_list_strings;
-
-        $nameparts = array();
-        foreach(array('first_name', 'last_name', 'salutation', 'title') as $field) {
-            if(!empty($bean->$field)) {
-                $nameparts[$field] = $bean->$field;
-            } else {
-                $nameparts[$field] = '';
-            }
-        }
-        $bean->ACLFilterFieldList($nameparts, array(), array("blank_value" => true));
-
-        if(!empty($nameparts['salutation'])
-           && isset($bean->field_defs['salutation']['options'])
-           && isset($app_list_strings[$bean->field_defs['salutation']['options']])
-           && isset($app_list_strings[$bean->field_defs['salutation']['options']][$nameparts['salutation']]) ) {
-            
-        	$nameparts['salutation'] = $app_list_strings[$bean->field_defs['salutation']['options']][$nameparts['salutation']];
-        } else if (empty($nameparts['salutation'])) {
-            $nameparts['salutation'] = '';
-        }
-
-         $data[$fieldName] = $locale->getLocaleFormattedName($nameparts['first_name'], $nameparts['last_name'], $nameparts['salutation'], $nameparts['title']);
+    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties)
+    {
+        global $locale;
+        $data[$fieldName] = $locale->formatName($bean);
     }
 
     function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)

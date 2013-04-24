@@ -42,7 +42,7 @@ class Bug41058Test extends Sugar_PHPUnit_Framework_OutputTestCase {
         $GLOBALS['current_user']->is_admin = '1';
 	    $GLOBALS['current_user']->save();
 
-        $this->loc = new Localization();
+        $this->loc = Localization::getObject();
         if ($this->loc->invalidLocaleNameFormatUpgrade()) {
             rename($this->loc->invalidNameFormatUpgradeFilename, $this->loc->invalidNameFormatUpgradeFilename.'.backup');
         }
