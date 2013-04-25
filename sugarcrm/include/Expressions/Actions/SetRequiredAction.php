@@ -24,6 +24,11 @@ class SetRequiredAction extends AbstractAction
 {
     protected $expression = "";
 
+    /**
+     * array Array of actions on which the Expression Action is not allowed
+     */
+    protected $disallowedActions = array('view');
+
     function SetRequiredAction($params)
     {
         $this->params = $params;

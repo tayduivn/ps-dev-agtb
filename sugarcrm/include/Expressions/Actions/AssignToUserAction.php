@@ -30,6 +30,11 @@ require_once("include/Expressions/Actions/AbstractAction.php");
 class AssignToUserAction extends AbstractAction{
 	protected $expression =  "";
 
+    /**
+     * array Array of actions on which the Expression Action is not allowed
+     */
+    protected $disallowedActions = array('view');
+
 	function AssignToAction($params) {
 		$this->expression = str_replace("\n", "",$params['value']);
 	}
