@@ -5,7 +5,7 @@
  */
 class SugarUpgradeRebuild extends UpgradeScript
 {
-    public $order = 6000;
+    public $order = 2100;
     public $type = self::UPGRADE_ALL;
 
     public function run()
@@ -17,7 +17,8 @@ class SugarUpgradeRebuild extends UpgradeScript
         $rac->clearVardefs();
         $rac->rebuildExtensions();
         $rac->clearExternalAPICache();
-
+        // this is dirty, but otherwise SugarBean caches old defs :(
+        $GLOBALS['reload_vardefs'] = true;
         $repairedTables = array();
         foreach ($beanFiles as $bean => $file) {
     	    if(file_exists($file)){
@@ -73,5 +74,6 @@ class SugarUpgradeRebuild extends UpgradeScript
         $_REQUEST['upgradeWizard'] = true;
         include('modules/ACL/install_actions.php');
         $this->log('Done rebuilding relationships');
+        unset($GLOBALS['reload_vardefs']);
     }
 }
