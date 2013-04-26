@@ -457,8 +457,30 @@ abstract class UpgradeDriver
         } else {
             $lang = 'en_us';
         }
-        $mod_strings = array();
-        include dirname(__FILE__)."/language/$lang.lang.php";
+        $this->mod_strings = $GLOBALS['mod_strings'] = $mod_strings = array();
+        $langdir = dirname(__FILE__)."/language";
+        if(!empty($this->context['new_source_dir']) && !file_exists($langdir)) {
+            $langdir = $this->context['new_source_dir']."/modules/UpgradeWizard/languages";
+        }
+        if(!empty($this->context['source_dir']) && !file_exists($langdir)) {
+            $langdir = $this->context['source_dir']."/modules/UpgradeWizard/languages";
+        }
+        if(!file_exists($langdir)) {
+            // no language, bad
+            $this->log("Failed to find the language dir");
+            return array();
+        }
+        $langfile = "$langdir/$lang.lang.php";
+        if(!file_exists($langfile)) {
+            $langfile = "$langdir/en_us.lang.php";
+        }
+        if(!file_exists($langfile)) {
+            $this->log("Failed to find the language file");
+            // fail, can't find file
+            return array();
+        }
+        $this->log("Loading language from $langfile");
+        include $langfile;
         $this->mod_strings = $GLOBALS['mod_strings'] = $mod_strings;
         return $mod_strings;
     }
@@ -807,11 +829,11 @@ abstract class UpgradeDriver
      */
     protected function runScripts($stage)
     {
-    	$mod_strings = $this->loadStrings();
     	$this->manifest = $this->getManifest();
     	if(!empty($this->manifest['copy_files']['from_dir'])) {
     	    $this->context['new_source_dir'] = $this->context['temp_dir']."/".$this->manifest['copy_files']['from_dir'];
     	}
+    	$mod_strings = $this->loadStrings();
     	$scripts = $this->getScripts($this->context['new_source_dir'], $stage);
     	$this->to_version = $this->manifest['version'];
     	if(!empty($this->manifest['flavor'])) {

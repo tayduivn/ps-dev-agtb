@@ -11,8 +11,9 @@ class CliUpgrader extends UpgradeDriver
      */
     public function runStage($stage)
     {
-        $this->context['argv'][5] = $stage;
-        $cmd = "{$this->context['php']} -f {$this->context['script']} " . $this->buildArgString($this->context['argv']);
+        $argv = $this->context['argv'];
+        $argv[] = $stage;
+        $cmd = "{$this->context['php']} -f {$this->context['script']} " . $this->buildArgString($argv);
         $this->log("Running $cmd");
         passthru($cmd, $retcode);
         return ($retcode == 0);
@@ -35,46 +36,43 @@ class CliUpgrader extends UpgradeDriver
     protected static function usage()
     {
 $usage =<<<eoq2
-Usage: php -f silentUpgrade.php [upgradeZipFile] [logFile] [pathToSugarInstance] [admin-user]
+Usage: php -f CliUpgrader.php upgradeZipFile logFile pathToSugarInstance admin-user
 
 Example:
-    [path-to-PHP/]php -f CliUpgrader.php [path-to-upgrade-package/]SugarEnt-Upgrade-6.6.x-to-6.7.0.zip [path-to-log-file/]silentupgrade.log  [path-to-sugar-instance/] admin
+    [path-to-PHP/]php -f CliUpgrader.php [path-to-upgrade-package/]SugarEnt-Upgrade-6.6.x-to-6.7.0.zip [path-to-log-file/]silentupgrade.log  path-to-sugar-instance/ admin
 
 Arguments:
     upgradeZipFile                       : Upgrade package file.
     logFile                              : Silent Upgarde log file.
     pathToSugarInstance                  : Sugar instance being upgraded.
     admin-user                           : admin user performing the upgrade
-    logFile                              : Upgrade log
 
 eoq2;
         echo $usage;
     }
 
-    protected static function verifyArguments($argv)
+    protected static function verifyArguments($context, $argv)
     {
-        if(count($argv) < 5) {
-            $cnt = count($argv);
-            self::argError("Upgrader requires 4 argumens, $cnt given");
-        }
-        if(empty($argv[3])|| !is_dir($argv[3])) {
-            self::argError("3rd parameter must be a valid directory.  Tried to cd to [ {$argv[3]} ].");
-        } else {
-            chdir($argv[3]);
+        if(empty($context['source_dir']) || !is_dir($context['source_dir'])) {
+            self::argError("3rd parameter must be a valid directory: {$argv[3]}.");
         }
 
-        if(!is_file("{$argv[3]}/include/entryPoint.php") || !is_file("{$argv[3]}/config.php")) {
-            self::argError("$argv[3] is not a SugarCRM directory.");
+        if(!is_file("{$context['source_dir']}/include/entryPoint.php") || !is_file("{$context['source_dir']}/config.php")) {
+            self::argError("{$context['source_dir']} is not a SugarCRM directory.");
         }
 
-        if(!is_file($argv[1])) { // valid zip?
-            self::argError("First argument must be a full path to the patch file. Got [ {$argv[1]} ].");
+        if(!is_file($context['zip'])) { // valid zip?
+            self::argError("First argument must be a full path to the patch file: {$argv[1]}.");
         }
         return true;
     }
 
     public static function parseArgs($argv)
     {
+        if(count($argv) < 5) {
+            $cnt = count($argv);
+            self::argError("Upgrader requires 4 argumens, $cnt given");
+        }
         if(defined('PHP_BINDIR')) {
         	$php_path = PHP_BINDIR."/";
         } else {
@@ -84,9 +82,9 @@ eoq2;
             $php_path = '';
         }
         $context = array(
-            'zip' => $argv[1],
+            'zip' => realpath($argv[1]),
             'log' => $argv[2],
-            'source_dir' => $argv[3],
+            'source_dir' => realpath($argv[3]),
             'admin' => $argv[4],
             'php' => $php_path."php",
             'script' => __FILE__,
@@ -101,13 +99,15 @@ eoq2;
     public static function start()
     {
         global $argv;
-        self::verifyArguments($argv);
+        $context = self::parseArgs($argv);
+        self::verifyArguments($context, $argv);
         if(isset($argv[5])) {
             $stage = $argv[5];
         } else {
             $stage = null;
         }
-        $upgrader = new self(self::parseArgs($argv));
+        chdir($context['source_dir']);
+        $upgrader = new self($context);
         if($stage && $stage != 'continue') {
             // Run one step
             if($upgrader->run($stage)) {
