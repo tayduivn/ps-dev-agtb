@@ -4904,6 +4904,8 @@ Sincerely, SugarCRM',
     'LBL_QUARTER_TIMEPERIOD_FORMAT' => '{1} Q{0}',
     'LBL_MONTH_TIMEPERIOD_FORMAT' => '{0}',
 
+    'LBL_MORE_ACTION' => 'More Actions',
+
     //quickcreate modal dialog
     'LBL_MESSAGE_BOX_TITLE' => 'Alert',
     'LBL_IGNORE_DUPLICATE_AND_SAVE' => 'Ignore Duplicate and Save',
