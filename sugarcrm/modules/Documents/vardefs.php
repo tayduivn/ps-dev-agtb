@@ -338,13 +338,15 @@ $dictionary['Document'] = array('table' => 'documents',
         array(
             'name' => 'related_doc_rev_number',
             'type' => 'relate',
-            'link' => 'related_docs',
-            'rname' => 'latest_revision',
-            'id_name' => 'related_doc_id',
+            'link' => 'revisions',
+            'rname' => 'revision',
+            'id_name' => 'related_doc_rev_id',
+            'table' => 'document_revisions',
+            'join_name' => 'document_revisions',
             'vname' => 'LBL_DET_RELATED_DOCUMENT_VERSION',
             'source' => 'non-db',
             'comment' => 'The related document version number for Meta-Data framework',
-            'module' => 'Documents', // If the module is not set, sidecar should look at the link to determine the module. This is just temp solution.
+            'module' => 'DocumentRevisions', // If the module is not set, sidecar should look at the link to determine the module. This is just temp solution.
         ),
 
         'is_template' =>

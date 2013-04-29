@@ -20,28 +20,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$module_name = 'DocumentRevisions';
-$viewdefs[$module_name]['base']['menu']['header'] = array(
+$moduleName = 'Documents';
+$viewdefs['DocumentRevisions']['base']['menu']['header'] = array(
     array(
-        'route'=>'#'.$module_name.'/create',
-        'label' =>'LNK_NEW_DOCUMENT',
-        'acl_action'=>'create',
-        'acl_module'=>$module_name,
+        'route' => '#bwc/index.php?' . http_build_query(
+            array(
+                'module' => $moduleName,
+                'action' => 'editview',
+            )
+        ),
+        'label' => 'LNK_NEW_DOCUMENT',
+        'acl_action' => 'create',
+        'acl_module' => $moduleName,
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#'.$module_name,
-        'label' =>'LNK_DOCUMENT_LIST',
-        'acl_action'=>'list',
-        'acl_module'=>$module_name,
+        'route' => '#'.$moduleName,
+        'label' => 'LNK_DOCUMENT_LIST',
+        'acl_action' => 'list',
+        'acl_module' => $moduleName,
         'icon' => 'icon-reorder',
-    ),
-    //TODO look at old file and deal with this
-    array(
-        'route'=>'#bwc/index.php?module=MailMerge&action=index&reset=true',
-        'label' =>'LNK_NEW_MAIL_MERGE',
-        'acl_action'=>'',
-        'acl_module'=>'',
-        'icon' => '',
     ),
 );

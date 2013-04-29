@@ -23,7 +23,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'Documents';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#'.$module_name.'/create',
+        'route' => '#bwc/index.php?' . http_build_query(
+            array(
+                'module' => $module_name,
+                'action' => 'editview'
+            )
+        ),
         'label' =>'LNK_NEW_DOCUMENT',
         'acl_action'=>'create',
         'acl_module'=>$module_name,
