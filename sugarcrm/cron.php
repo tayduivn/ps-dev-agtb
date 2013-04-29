@@ -24,7 +24,7 @@
  ********************************************************************************/
 //change directories to where this file is located.
 chdir(dirname(__FILE__));
-
+define('ENTRY_POINT_TYPE', 'api');
 require_once('include/entryPoint.php');
 
 $sapi_type = php_sapi_name();

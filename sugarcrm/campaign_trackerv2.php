@@ -19,13 +19,6 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: campaign_trackerv2.php 56510 2010-05-17 18:54:49Z jenny $
- * Description:  Defines the English language pack for the base application.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 header('HTTP/1.1 301 Moved Permanently');
-header('Location: index.php?entryPoint=campaign_trackerv2&'.$_SERVER["QUERY_STRING"]);
-?>
+header('Location: index.php?entryPoint=campaign_trackerv2&'.urlencode($_SERVER["QUERY_STRING"]));
+exit();

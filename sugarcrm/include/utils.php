@@ -3187,7 +3187,12 @@ function sugar_root_dir()
     return realpath(dirname(__FILE__) . '/..');
 }
 
-function sugar_cleanup($exit = false) {
+/**
+ * Clean up Sugar environment
+ * @param bool $exit Should we exit() after we're done?
+ */
+function sugar_cleanup($exit = false)
+{
 	static $called = false;
 	if($called)return;
 	$called = true;
@@ -3245,9 +3250,9 @@ function sugar_cleanup($exit = false) {
 	if(class_exists('DBManagerFactory')) {
 		$db = DBManagerFactory::getInstance();
 		$db->disconnect();
-		if($exit) {
-			exit;
-		}
+	}
+	if($exit) {
+		exit;
 	}
 }
 

@@ -184,6 +184,7 @@ if(is_dir($cachedir)){
 
 ///////// HERE ALL FILES HAVE BEEN COPIED
 /// We can load some environment now
+define('ENTRY_POINT_TYPE', 'api');
 require_once('include/entryPoint.php');
 
 $GLOBALS['log']	= LoggerManager::getLogger('SugarCRM');

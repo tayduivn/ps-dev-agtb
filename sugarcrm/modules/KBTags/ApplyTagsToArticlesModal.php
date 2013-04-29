@@ -25,7 +25,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  //		PARAM prefixed properties: array of these property/values will be passed to the function as parameter.
 
 require_once('include/JSON.php');
-require_once('include/entryPoint.php');
 require_once('include/upload_file.php');
 require_once('include/ytree/Tree.php');
 require_once('include/ytree/Node.php');
@@ -41,9 +40,9 @@ $tagArticleIds = $json->decode(html_entity_decode($_REQUEST['tagAndArticleIds'])
 $articleIds = $json->decode(html_entity_decode($_REQUEST['articles']));
  if(isset($articleIds['jsonObject']) && $articleIds['jsonObject'] != null){
 	$articleIds = $articleIds['jsonObject'];
-  }	
-  
-$GLOBALS['log']->fatal($articleIds);	
+  }
+
+$GLOBALS['log']->fatal($articleIds);
 */
 $deleted=1;
 $deletedNot=0;
@@ -53,51 +52,49 @@ $deletedNot=0;
    $KBTag = BeanFactory::getBean('KBTags');
    $tagsCount = $tagArticleIds[0];
    $articlesCount =  $tagArticleIds[1];
-   
-  for($i=0;$i<$tagsCount;$i++){      
+
+  for($i=0;$i<$tagsCount;$i++){
 	  $tagId = $tagArticleIds[$i+2];
      //fetch the existing documents
       $qdocs = 'SELECT kbdocument_id FROM kbdocuments_kbtags WHERE kbtag_id=\''.$tagId.'\' and deleted = '.$deletedNot.'';
       $results = $KBTag->db->query($qdocs);
 
-	  for($j=0;$j<$articlesCount;$j++){      
+	  for($j=0;$j<$articlesCount;$j++){
          //check if the article already exists in tag
-         $articleExists = false;          
+         $articleExists = false;
          while (($rows=$GLOBALS['db']->fetchByAssoc($results))!= null) {
-       		if (!empty($rows['kbdocument_id'])) {                   
+       		if (!empty($rows['kbdocument_id'])) {
         		if($rows['kbdocument_id'] == $tagArticleIds[$j+2+$tagsCount]){
         			$articleExists = true;
         			break;
         		}
        		}
-       	  }      
+       	  }
          if(!$articleExists){
 			  $KBDocument = BeanFactory::getBean('KBDocuments', $tagArticleIds[$j+2+$tagsCount]);
-			  $doc_team_id = $KBDocument->team_id;  
-			  $guid = create_guid();		      
-			  $qi =	'INSERT INTO kbdocuments_kbtags (id,kbtag_id,kbdocument_id,team_id) values(\''.$guid.'\',\''.$tagId.'\',\''.$tagArticleIds[$j+2+$tagsCount].'\',\''.$doc_team_id.'\')';	      
+			  $doc_team_id = $KBDocument->team_id;
+			  $guid = create_guid();
+			  $qi =	'INSERT INTO kbdocuments_kbtags (id,kbtag_id,kbdocument_id,team_id) values(\''.$guid.'\',\''.$tagId.'\',\''.$tagArticleIds[$j+2+$tagsCount].'\',\''.$doc_team_id.'\')';
 			  $KBTag->db->query($qi);
-         }        
+         }
 	  }
   }
 	  //new tree
 	  $tagstree=new Tree('tagstree');
-	  $tagstree->set_param('module','KBTags');       
+	  $tagstree->set_param('module','KBTags');
 	  $tagstree->set_param('moduleview','admin');
 	  $nodes=get_tags_nodes(false,true,null);
 	  $root_node = new Node('All_Tags', $mod_strings['LBL_TAGS_ROOT_LABEL']);
-	   foreach ($nodes as $node) {                                         
-	        $root_node->add_node($node);                       
+	   foreach ($nodes as $node) {
+	        $root_node->add_node($node);
 	    }
-	  $root_node->expanded = true;    
-	  $tagstree->add_node($root_node);    
-	  $response = $tagstree->generate_nodes_array(); 
+	  $root_node->expanded = true;
+	  $tagstree->add_node($root_node);
+	  $response = $tagstree->generate_nodes_array();
 	  $response .= "<script>document.getElementById('selected_directory_children').innerHTML=''</script>";
-    
-if (!empty($response)) {	
+
+if (!empty($response)) {
 	echo $response;
 	//return the parameters
 }
-sugar_cleanup();
-exit();
-?>
+sugar_cleanup(true);

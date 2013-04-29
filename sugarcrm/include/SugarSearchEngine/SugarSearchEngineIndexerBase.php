@@ -27,8 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-require_once('include/entryPoint.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 require_once('include/SugarQueue/SugarJobQueue.php');
 require_once('modules/SchedulersJobs/SchedulersJob.php');

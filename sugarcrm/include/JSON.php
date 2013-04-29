@@ -43,24 +43,11 @@ class JSON
      * JSON encode a string
      *
      * @param string $string
-     * @param bool $addSecurityEnvelope defaults to false
-     * @param bool $encodeSpecial
      * @return string
      */
-    public static function encode($string, $addSecurityEnvelope = false, $encodeSpecial = false)
+    public static function encode($string)
     {
-        $encodedString = json_encode($string);
-
-        if ($encodeSpecial)
-        {
-            $charMap = array('<' => '\u003C', '>' => '\u003E', "'" => '\u0027', '&' => '\u0026');
-            foreach($charMap as $c => $enc)
-            {
-                $encodedString = str_replace($c, $enc, $encodedString);
-            }
-        }
-
-        return $encodedString;
+        return json_encode($string, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT);
     }
 
     /**
