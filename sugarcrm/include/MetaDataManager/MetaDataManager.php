@@ -30,7 +30,7 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 require_once('soap/SoapHelperFunctions.php');
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
-
+SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
 /**
  * This class is for access metadata for all sugarcrm modules in a read only
  * state.  This means that you can not modifiy any of the metadata using this
@@ -73,6 +73,13 @@ class MetaDataManager
     );
 
     /**
+     * The metadata hacks class
+     * 
+     * @var metaDataHacks
+     */
+    protected $metaDataHacks;
+
+    /**
      * The constructor for the class.
      *
      * @param User  $user      A User bean
@@ -87,7 +94,8 @@ class MetaDataManager
 
         $this->user = $user;
         $this->platforms = $platforms;
-
+        $className = SugarAutoLoader::customClass('MetaDataHacks');
+        $this->metaDataHacks = new $className();
     }
 
     /**
@@ -452,9 +460,9 @@ class MetaDataManager
                 // get the field names
 
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
-
-                foreach ($fieldsAcl as $field => $fieldAcl) {
-                    switch ($fieldAcl['acl']) {
+                $fieldsAcl = $this->metaDataHacks->fixAcls($fieldsAcl);
+                foreach ( $fieldsAcl as $field => $fieldAcl ) {
+                    switch ( $fieldAcl['acl'] ) {
                         case SugarACL::ACL_READ_WRITE:
                             // Default, don't need to send anything down
                             break;

@@ -88,26 +88,34 @@ class SugarBeanApiHelper
 
             }
 
-            if (isset($bean->field_defs['email']) && (empty($fieldList) || in_array('email',$fieldList))) {
-                if(!empty($bean->emailData)) {
-                    $rawEmails = $bean->emailData;
-                } else if(!empty($bean->emailAddress->addresses)) {
-                    $rawEmails = $bean->emailAddress->addresses;
-                }
-                if(!empty($rawEmails)) {
-                        $data['email'] = array();
-                        $emailProps = array('email_address','opt_out','invalid_email','primary_address');
-                        foreach ($rawEmails as $rawEmail) {
-                            $formattedEmail = array();
-                            foreach ($emailProps as $property) {
-                                if (isset($rawEmail[$property])) {
-                                    $formattedEmail[$property] = $rawEmail[$property];
-                                }
-                            }
-                            $data['email'][] = $formattedEmail;
+            if (isset($bean->field_defs['email']) &&
+                (empty($fieldList) || in_array('email',$fieldList))
+                //BEGIN SUGARCRM flav=pro ONLY
+                 && $bean->ACLFieldAccess('email1', 'access')
+                 //END SUGARCRM flav=pro ONLY
+                 ) {
+                $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
+                $emails = array();
+                $emailProps = array(
+                    'email_address',
+                    'opt_out',
+                    'invalid_email',
+                    'primary_address'
+                );
+                foreach ($emailsRaw as $rawEmail) {
+                    $formattedEmail = array();
+                    foreach ($emailProps as $property) {
+                        if (isset($rawEmail[$property])) {
+                            $formattedEmail[$property] = $rawEmail[$property];
                         }
+                    }
                 }
             }
+            //BEGIN SUGARCRM flav=pro ONLY
+            elseif(!$bean->ACLFieldAccess('email1', 'access')) {
+                unset($data['email']);
+            }
+            //END SUGARCRM flav=pro ONLY
 
 
             //BEGIN SUGARCRM flav=pro ONLY
