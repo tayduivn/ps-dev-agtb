@@ -30,12 +30,12 @@
     <div class="control-group">
         <div class="controls controls-three btn-fit">
             <input type="hidden" name="{{../name}}" class="select2 inherit-width" value="{{name}}" data-id="{{id}}" data-index="{{@index}}">
-            <a href="javascript:void(0);" class="btn third {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}" rel="tooltip" data-original-title="{{str "LBL_TEAM_PRIMARY"}}"><i class="icon-star"></i></a>
+            <button type="button" class="btn third {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}" rel="tooltip" data-original-title="{{str "LBL_TEAM_PRIMARY"}}"><i class="icon-star"></i></button>
         {{#if remove_button}}
-            <a href="javascript:void(0);" class="btn second" name="remove" data-index="{{@index}}" rel="tooltip" data-original-title="{{str "LBL_REMOVE"}}"><i class="icon-minus"></i></a>
+            <button type="button" class="btn second" name="remove" data-index="{{@index}}" rel="tooltip" data-original-title="{{str "LBL_TEAM_REMOVE"}}"><i class="icon-minus"></i></button>
         {{/if}}
         {{#if add_button}}
-            <a href="javascript:void(0);" class="btn first" name="add" data-index="{{@index}}" rel="tooltip" data-original-title="{{str "LBL_TEAM_ADD"}}"><i class="icon-plus"></i></a>
+            <button type="button" class="btn first" name="add" data-index="{{@index}}" rel="tooltip" data-original-title="{{str "LBL_TEAM_ADD"}}"><i class="icon-plus"></i></button>
         {{/if}}
         </div>
     </div>
