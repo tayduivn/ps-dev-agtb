@@ -69,15 +69,29 @@ class ProductsFilterApi extends FilterApi
     public function filterList(RestService $api, array $args)
     {
         // adjust the filter by the rules set forth by PM/PO's
+        //BEGIN SUGARCRM flav=ent ONLY
         $oppFilter = array(
             array('opportunity_id' => array('$not_null' => '')),
             array('opportunity_id' => array('$not_equals' => '')),
         );
+        $oppFilterType = '$and';
+        //END SUGARCRM flav=ent ONLY
+
+        //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+        $oppFilter = array(
+            array('opportunity_id' => array('$is_null' => '')),
+            array('opportunity_id' => array('$equals' => '')),
+        );
+        $oppFilterType = '$or';
+        //END SUGARCRM  flav=pro && flav!=ent ONLY
 
         if (!isset($args['filter']) || empty($args['filter'])) {
+            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            $oppFilter = array(array('$or' => $oppFilter));
+            //END SUGARCRM flav=pro && flav!=ent ONLY
             $args['filter'] = $oppFilter;
         } else {
-            array_push($args['filter'], array('$and' => $oppFilter));
+            array_push($args['filter'], array($oppFilterType => $oppFilter));
         }
 
         return parent::filterList($api, $args);
