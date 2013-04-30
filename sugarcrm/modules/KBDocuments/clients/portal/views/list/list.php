@@ -30,6 +30,7 @@ $viewdefs['KBDocuments']['portal']['view']['list'] = array(
                     'width' => '45%',
                     'label' => 'LBL_NAME',
                     'link' => true,
+                    'bwcLink' => false,
                     'enabled' => true,
                     'default' => true,
                 ),

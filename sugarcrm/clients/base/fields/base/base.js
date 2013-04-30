@@ -47,7 +47,7 @@
 
         // Starts as sidecar href unless we encounter bwc enabled
         href = '#' + app.router.buildRoute(module, this.model.id, defRoute.action, defRoute.options);
-        if (moduleMeta && moduleMeta.isBwcEnabled) {
+        if ((moduleMeta && moduleMeta.isBwcEnabled && _.isUndefined(this.def.bwcLink) || (!_.isUndefined(this.def.bwcLink) && this.def.bwcLink))) {
             href = '#' + app.bwc.buildRoute(module, this.model.id, 'DetailView');
         }
         return href;
