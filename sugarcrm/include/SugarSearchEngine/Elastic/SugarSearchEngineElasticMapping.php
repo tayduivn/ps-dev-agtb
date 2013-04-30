@@ -65,6 +65,7 @@ class SugarSearchEngineElasticMapping
         'fullname'  => 'name',
         'phone'     => 'name',
         'varchar'   => 'name',
+        'text'      => 'name',
         'double'    => array(
                             'type' => 'double',
                         ),
@@ -119,7 +120,7 @@ class SugarSearchEngineElasticMapping
      * @param $fieldDef
      * @return array|bool array if a FTS type mapping is found and false if it isn't
      */
-    protected function getFtsTypeFromDef($fieldDef)
+    public function getFtsTypeFromDef($fieldDef)
     {
         if(isset($fieldDef['full_text_search']['type'])) {
             $sgrType = $fieldDef['full_text_search']['type'];
