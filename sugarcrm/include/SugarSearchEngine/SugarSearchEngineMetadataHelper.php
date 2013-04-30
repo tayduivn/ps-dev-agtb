@@ -21,6 +21,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
+require_once('modules/Home/UnifiedSearchAdvanced.php');
+
 /**
  * Class dealing with searchable modules
  * @api
@@ -33,10 +35,11 @@ class SugarSearchEngineMetadataHelper
     const ENABLE_MODULE_CACHE_KEY = 'ftsEnabledModules';
 
     /**
-     * Cache key for disabled modules
+     *
+     * Cache key prefix for FTS enabled fields per module
+     * @var string
      */
-    const DISABLED_MODULE_CACHE_KEY = 'ftsDisabledModules';
-
+    const FTS_FIELDS_CACHE_KEY_PREFIX = 'fts_fields_';
 
     /**
      * Retrieve all FTS fields for all FTS enabled modules.
@@ -54,7 +57,6 @@ class SugarSearchEngineMetadataHelper
 
         $results = array();
 
-        require_once('modules/Home/UnifiedSearchAdvanced.php');
         $usa = new UnifiedSearchAdvanced();
         $modules = $usa->retrieveEnabledAndDisabledModules();
 
@@ -76,7 +78,6 @@ class SugarSearchEngineMetadataHelper
      */
     public static function getSystemEnabledFTSModules()
     {
-        require_once('modules/Home/UnifiedSearchAdvanced.php');
         $usa = new UnifiedSearchAdvanced();
         $modules = $usa->retrieveEnabledAndDisabledModules();
         $enabledModules = array();
@@ -112,12 +113,11 @@ class SugarSearchEngineMetadataHelper
             return $results;
         }
 
-        if (empty($obj->table_name))
-        {
+        if (empty($obj->module_name)) {
             return $results;
         }
 
-        $cacheKey = "fts_fields_{$obj->table_name}";
+        $cacheKey = self::FTS_FIELDS_CACHE_KEY_PREFIX . $obj->module_name;
         $cacheResults = sugar_cache_retrieve($cacheKey);
         if(!empty($cacheResults))
             return $cacheResults;
@@ -178,5 +178,23 @@ class SugarSearchEngineMetadataHelper
         return in_array($module, $enabledModules);
     }
 
+    /**
+     *
+     * Clear FTS metadata cache
+     */
+    public static function clearCache()
+    {
+        // clear possible cache entries per module
+        $usa = new UnifiedSearchAdvanced();
+        $list = $usa->retrieveEnabledAndDisabledModules();
+        foreach ($list as $modules) {
+            foreach ($modules as $module) {
+                $cacheKey = self::FTS_FIELDS_CACHE_KEY_PREFIX . $module['module'];
+                sugar_cache_clear($cacheKey);
+            }
+        }
 
+        // clear master list of enabled modules
+        sugar_cache_clear(self::ENABLE_MODULE_CACHE_KEY);
+    }
 }
