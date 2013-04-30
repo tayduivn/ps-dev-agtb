@@ -96,7 +96,7 @@
             this.trigger('filter:clear:quicksearch');
         }, this);
 
-        this.layout.on('filterpanel:change', function(name) {
+        this.layout.on('filterpanel:change', function(name, silent) {
             this.showingActivities = name === 'activitystream';
             var module = this.showingActivities ? "Activities" : this.module;
             var link;
@@ -109,8 +109,10 @@
             } else {
                 link = null;
             }
-            this.trigger("filter:render:module");
-            this.trigger("filter:change:module", module, link);
+            if (!silent) {
+                this.trigger("filter:render:module");
+                this.trigger("filter:change:module", module, link);
+            }
         }, this);
 
         //When a filter is saved, update the cache and set the filter to be the currently used filter
