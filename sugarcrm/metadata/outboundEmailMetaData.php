@@ -87,7 +87,7 @@ $dictionary['OutboundEmail'] = array ('table' => 'outbound_email',
 		'mail_smtppass' => array(
 			'name' => 'mail_smtppass',
 			'vname' => 'LBL_MAIL_SMTPPASS',
-			'type' => 'varchar',
+			'type' => 'encrypt',
 			'len' => 100,
 			'reportable' => false,
 		),

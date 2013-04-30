@@ -87,7 +87,7 @@ class EAPM extends Basic {
                $queryArray['validated'] = 1;
            }
            $eapmBean = $eapmBean->retrieve_by_string_fields($queryArray);
-           
+
            // Don't cache the include inactive results
            if ( !$includeInactive ) {
                if ( $eapmBean != null ) {
@@ -100,8 +100,7 @@ class EAPM extends Basic {
        }
 
        if(isset($eapmBean->password)){
-           require_once("include/utils/encryption_utils.php");
-           $eapmBean->password = blowfishDecode(blowfishGetKey('encrypt_field'),$eapmBean->password);;
+           $eapmBean->password = $eapmBean->decrypt_after_retrieve($eapmBean->password);
        }
 
        return $eapmBean;
@@ -113,14 +112,14 @@ class EAPM extends Basic {
         if ( !is_admin($GLOBALS['current_user']) ) {
             // Restrict this so only admins can see other people's records
             $owner_where = $this->getOwnerWhere($current_user->id);
-            
+
             if(empty($where)) {
                 $where = $owner_where;
             } else {
                 $where .= ' AND '.  $owner_where;
             }
         }
-        
+
         return parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted,$join_type, $return_array, $parentbean, $singleSelect);
     }
 
@@ -145,7 +144,7 @@ class EAPM extends Basic {
        if ( isset($_SESSION['EAPM'][$this->application]) ) {
            unset($_SESSION['EAPM'][$this->application]);
        }
-       
+
        return parent::mark_deleted($id);
    }
 

@@ -141,7 +141,7 @@ $dictionary['InboundEmail'] = array('table' => 'inbound_email', 'comment' => 'In
 		'email_password' => array (
 			'name' => 'email_password',
 			'vname' => 'LBL_PASSWORD',
-			'type' => 'varchar',
+			'type' => 'encrypt',
 			'len' => '100',
 			'required' => true,
 			'reportable' => false,
