@@ -13,17 +13,61 @@
 ({
     extendsFrom: 'RecordlistView',
 
+    selectedUser: {},
+
     initialize: function(options) {
         this.plugins.push('cte-tabbing');
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
         this.collection.sync = _.bind(this.sync, this);
     },
 
+    bindDataChange: function() {
+        // these are handlers that we only want to run when the parent module is forecasts
+        if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('model'))) {
+            if (this.context.parent.get('model').module == 'Forecasts') {
+                this.on('render', function() {
+                    var user = this.context.parent.get('selectedUser') || app.user.toJSON();
+                    if (user.isManager && user.showOpps == false) {
+                        console.log('Manager Show', user);
+                        this.show()
+                    } else {
+                        console.log('Manager Hide', user);
+                        this.hide();
+                    }
+                }, this);
+
+                this.context.parent.on('change:selectedUser', function(model, changed) {
+                    // selected user changed
+                    this.selectedUser = changed;
+                    this.collection.fetch();
+                }, this);
+            }
+        }
+        app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+    },
+
     sync: function(method, model, options) {
+
+        if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('selectedUser'))) {
+            var sl = this.context.parent.get('selectedUser');
+
+            if(sl.isManager == false) {
+                return;
+            }
+        }
+
         var callbacks,
             url;
 
         options = options || {};
+
+        options.params = options.params || {};
+
+        if(!_.isUndefined(this.selectedUser.id)) {
+            options.params.user_id = this.selectedUser.id;
+        }
+
+        options.limit = 1000;
         options = app.data.parseOptionsForSync(method, model, options);
 
         // custom success handler
@@ -44,7 +88,7 @@
      *
      * @returns {{default: Array, available: Array, visible: Array, options: Array}}
      */
-    parseFields : function() {
+    parseFields: function() {
         var catalog = {
             'default': [], //Fields visible by default
             'available': [], //Fields hidden by default
@@ -53,9 +97,9 @@
         };
         // TODO: load field prefs and store names in this._fields.available.visible
         // no prefs so use viewMeta as default and assign hidden fields
-        _.each(this.meta.panels, function (panel) {
-            _.each(panel.fields, function (fieldMeta, i) {
-                if(app.utils.getColumnVisFromKeyMap(fieldMeta.name, 'forecastsWorksheetManager')) {
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(fieldMeta, i) {
+                if (app.utils.getColumnVisFromKeyMap(fieldMeta.name, 'forecastsWorksheetManager')) {
                     if (fieldMeta['default'] === false) {
                         catalog.available.push(fieldMeta);
                     } else {

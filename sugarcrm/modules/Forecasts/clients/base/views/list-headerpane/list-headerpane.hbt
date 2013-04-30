@@ -1,0 +1,14 @@
+<div class="headerpane">
+    <h1><span class="module-title pull-left">{{title}}</span>
+        {{#if meta.tree}}
+            {{#each meta.tree}}
+                {{field ../this}}
+            {{/each}}
+        {{/if}}
+    </h1>
+    <div class="btn-toolbar pull-right dropdown">
+        {{#each meta.buttons}}
+            {{field ../this}}
+        {{/each}}
+    </div>
+</div>

@@ -29,4 +29,4 @@
 <a href="{{#if full_route}}#{{full_route}}{{else}}{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}{{else}}javascript:void(0);{{/if}}{{/if}}"
    name="{{name}}"
    data-original-title="{{def.label}}">
-{{#if def.icon}}<i class="{{def.icon}} icon-sm"></i>{{/if}}{{label}}</a>
+{{#if def.icon}}<i class="{{def.icon}} icon-sm"></i> {{/if}}{{label}}</a>
