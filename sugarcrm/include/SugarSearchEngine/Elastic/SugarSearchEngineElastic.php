@@ -39,6 +39,24 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     private $_indexType = 'SugarBean';
 
+    /**
+     *
+     * Ignored elastic field types which are incompatible
+     * with current elastic query construction
+     * @var array
+     */
+    protected $ignoreSearchTypes = array(
+        'date',
+        'integer',
+    );
+
+    /**
+     *
+     * Elastic Mapping object
+     * @var SugarSearchEngineElasticMapping
+     */
+    protected $mapper;
+
     public function __construct($params = array())
     {
         $this->_config = $params;
@@ -55,6 +73,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $this->_config['timeout'] = 15;
         }
         $this->_client = new \Elastica\Client($this->_config);
+
+        // Elastic mapping
+        $mappingClass = SugarAutoLoader::customClass('SugarSearchEngineElasticMapping');
+        $this->mapper = new $mappingClass($this);
+
         parent::__construct();
     }
 
@@ -354,33 +377,37 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     protected function getSearchFields($options)
     {
         $fields = array();
+
+        // determine list of modules/fields
+        $allFieldDefs = array();
         if (!empty($options['moduleFilter'])) {
-            foreach ($options['moduleFilter'] as $mod) {
-                $fieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($mod);
-                foreach ($fieldDef as $fieldName => $def) {
-                    // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
-                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
-                        if (isset($options['addSearchBoosts']) && $options['addSearchBoosts'] == true && isset($def['full_text_search']['boost'])) {
-                            $fieldName .= '^' . $def['full_text_search']['boost'];
-                            $fieldName = $mod . '.' . $fieldName;
-                        }
-                        $fields[] = $fieldName;
-                    }
-                }
+            foreach ($options['moduleFilter'] as $module) {
+                $allFieldDefs[$module] = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($module);
             }
         } else {
-            $allFieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
-            foreach ($allFieldDef as $module => $fieldDef) {
-                foreach ($fieldDef as $fieldName => $def) {
-                    // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
-                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
-                        if (isset($options['addSearchBoosts']) && $options['addSearchBoosts'] == true && isset($def['full_text_search']['boost'])) {
-                            $fieldName .= '^' . $def['full_text_search']['boost'];
-                            $fieldName = $mod . '.' . $fieldName;
-                        }
-                        $fields[] = $fieldName;
-                    }
+            $allFieldDefs = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
+        }
+
+        // build list of fields with optional boost values (i.e. Accouns.name^3)
+        foreach ($allFieldDefs as $module => $fieldDefs) {
+            foreach ($fieldDefs as $fieldName => $fieldDef) {
+
+                // skip non-supported field types
+                $ftsType = $this->mapper->getFtsTypeFromDef($fieldDef);
+                if (!$ftsType || in_array($ftsType['type'], $this->ignoreSearchTypes)) {
+                    $this->logger->debug("Elastic: Ignoring unsupported type in query for $module/$fieldName");
+                    continue;
                 }
+
+                // base field name
+                $fieldName = $module . '.' . $fieldName;
+
+                // add optional boost if set
+                if (!empty($options['addSearchBoosts']) && isset($fieldDef['full_text_search']['boost'])) {
+                    $fieldName .= '^' . $fieldDef['full_text_search']['boost'];
+                }
+
+                $fields[] = $fieldName;
             }
         }
 
@@ -758,9 +785,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $index->create(array(), $recreate);
 
              // create field mappings
-            $mappingClass = SugarAutoLoader::customClass('SugarSearchEngineElasticMapping');
-            $elasticMapping = new $mappingClass($this);
-            $elasticMapping->setFullMapping();
+            $this->mapper->setFullMapping();
         } catch (Exception $e) {
             // ignore the IndexAlreadyExistsException exception
             if (strpos($e->getMessage(), 'IndexAlreadyExistsException') === false) {
