@@ -16,15 +16,15 @@
         var chart = nv.models.pieChart()
                 .x(function(d) { return d.key })
                 .y(function(d) { return d.value })
-                .margin({top:0,right:10,bottom:10,left:10})
+                .margin({top:10,right:10,bottom:15,left:10})
                 .showLabels(true)
                 .showTitle(false)
                 .showLegend(false)
+                .donutRatio(0.4)
                 .donutLabelsOutside(true)
                 .hole(self.totalCases)
-                .colorData( 'class' )
-                .colorFill( 'default' )
-                .tooltip( function(key, x, y, e, graph) {
+                .colorData('class')
+                .tooltipContent( function(key, x, y, e, graph) {
                     return '<p><b>' + key +' '+  parseInt(y) +'</b></p>'
                 }).donut(true)
             ;
