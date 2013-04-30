@@ -171,10 +171,13 @@ class AdministrationController extends SugarController
         $modules = !empty($_REQUEST['modules']) ? explode(",", $_REQUEST['modules']) : array();
         $scheduleIndex = !empty($_REQUEST['sched']) ? TRUE : FALSE;
 
+        // merge current config with new parameters
+        $ftsConfig = $this->mergeFtsConfig($type, array('host' => $host, 'port' => $port));
+
         $this->cfg = new Configurator();
         $this->cfg->config['full_text_engine'] = '';
         $this->cfg->saveConfig();
-        $this->cfg->config['full_text_engine'] = array($type => array('host' => $host, 'port' => $port));
+        $this->cfg->config['full_text_engine'] = array($type => $ftsConfig);
         $this->cfg->handleOverride();
         $scheduled = FALSE;
         if($scheduleIndex)
@@ -195,12 +198,19 @@ class AdministrationController extends SugarController
 
         if(!empty($type) && !empty($host) && !empty($port))
         {
-            $config = array('port' => $port, 'host' => $host);
+            $ftsConfig = $this->mergeFtsConfig($type, array('port' => $port, 'host' => $host));
             require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-            $searchEngine = SugarSearchEngineFactory::getInstance($type, $config);
+            $searchEngine = SugarSearchEngineFactory::getInstance($type, $ftsConfig);
             $result = $searchEngine->getServerStatus();
-            if($result['valid'])
+            if ($result['valid']) {
                 $result['status'] = $GLOBALS['mod_strings']['LBL_FTS_CONN_SUCCESS'];
+            } else {
+                if (!empty($result['status']['message']) && is_string($result['status']['message'])) {
+                    $result['status'] = $result['status']['message'];
+                } else {
+                    $result['status'] = $GLOBALS['mod_strings']['LBL_FTS_CONN_UNKNOWN_FAILURE'];
+                }
+            }
             echo json_encode($result);
         }
         else
@@ -238,6 +248,9 @@ class AdministrationController extends SugarController
              $type = !empty($_REQUEST['type']) ? $_REQUEST['type'] : '';
              $host = !empty($_REQUEST['host']) ? $_REQUEST['host'] : '';
              $port = !empty($_REQUEST['port']) ? $_REQUEST['port'] : '';
+
+             $ftsConfig = $this->mergeFtsConfig($type, array('port' => $port, 'host' => $host));
+
              $this->cfg = new Configurator();
              $this->cfg->config['full_text_engine'] = '';
              $this->cfg->saveConfig();
@@ -246,15 +259,15 @@ class AdministrationController extends SugarController
              if( !empty($type) )
              {
                  //Check if the connection is valid on save:
-                 $config = array('port' => $port, 'host' => $host);
                  require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-                 $searchEngine = SugarSearchEngineFactory::getInstance($type, $config);
+                 $searchEngine = SugarSearchEngineFactory::getInstance($type, $ftsConfig);
                  $result = $searchEngine->getServerStatus();
                  if( !$result['valid'] )
                      $ftsConnectionValid = FALSE;
 
                  // bug 54274 -- only bother with an override if we have data to place there, empty string breaks Sugar On-Demand!
-                 $this->cfg->config['full_text_engine'] = array($type => array('host' => $host, 'port' => $port, 'valid' => $ftsConnectionValid));
+                 $ftsConfig['valid'] = $ftsConnectionValid;
+                 $this->cfg->config['full_text_engine'] = array($type => $ftsConfig);
                  $this->cfg->handleOverride();
              }
 
@@ -271,6 +284,23 @@ class AdministrationController extends SugarController
          {
     	 	 echo "false";
     	 }
+    }
+
+    /**
+     *
+     * Merge current FTS config with the new passed parameters:
+     *
+     * We want to merge the current $sugar_config settings with those passed in
+     * to be able to add additional parameters which are currently not supported
+     * in the UI (i.e. additional curl settings for elastic search for auth)
+     *
+     * @param array $config
+     * @return array
+     */
+    protected function mergeFtsConfig($type, $newConfig)
+    {
+        $currentConfig = SugarConfig::getInstance()->get("full_text_engine.{$type}", array());
+        return array_merge($currentConfig, $newConfig);
     }
 /*
     public function action_UpdateAjaxUI()

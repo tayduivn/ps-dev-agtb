@@ -1222,6 +1222,7 @@ $mod_strings = array (
     'LBL_FTS_ADVANCED_LINK' => 'Enable Modules',
     'LBL_FTS_ADVANCED_LINK_HELP' => 'Select the module(s) that users will be able to search against using the Full Text Search.',
     'LBL_FTS_CONN_SUCCESS' => 'The connection was successfully made. You will need to perform a system index for full-text searching to work for the enabled modules and module fields.',
+    'LBL_FTS_CONN_UNKNOWN_FAILURE' => 'An unknown error occured connecting to the specified full text seach server',
 	'LBL_FTS_CONN_SUCCESS_SHORT' => 'A system index operation has been scheduled to run within the next several minutes.',
     'LBL_FTS_CONN_FAILURE_SHORT' => 'Unable to schedule an index operation.',
 //BEGIN SUGARCRM flav=pro ONLY
