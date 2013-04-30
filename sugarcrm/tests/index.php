@@ -30,7 +30,7 @@ if (file_exists('../config.js')) {
     <script type="text/javascript" src="../include/javascript/jquery/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="../styleguide/assets/js/bootstrap-collapse.js"></script>
     <script type="text/javascript" src="../styleguide/assets/js/bootstrap-dropdown.js"></script>
-    <script type="text/javascript" src="../include/javascript/select2-release-3.2/select2.min.js"></script>
+    <script type="text/javascript" src="../include/javascript/select2-release-3.3.2/select2.js"></script>
 
     <!-- jasmine and sinon core files -->
     <script type="text/javascript" src="../sidecar/lib/sinon/sinon.js"></script>
