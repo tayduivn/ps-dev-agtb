@@ -282,6 +282,30 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals('1',$ret[0]->id);
     }
+    /**
+     * Check that the decryption is not called until the actual value is used
+     * @return void
+     */
+    public function testDecryptCallsNumber()
+    {
+        $oSugarBean = new BeanMockTestObjectName();
+
+        $oSugarBean->field_defs = array(
+            'test_field' => array(
+                'name' => 'test_field',
+                'type' => 'encrypt',
+            ),
+        );
+        $encrypted_value = 'encrypted_value';
+        $oSugarBean->test_field = ''; //initialization to avoid "Indirect modification of overloaded property..." error
+        $oSugarBean->test_field =& $encrypted_value; //use link to avoid calling __get method in assertEquals
+        $oSugarBean->field_name_map['test_field']['type'] = 'encrypt';
+        $oSugarBean->check_date_relationships_load(); //$oSugarBean->test_field shouldn't be changed
+        $this->assertEquals('encrypted_value', $encrypted_value);
+        $decrypted_value = $oSugarBean->test_field; //$oSugarBean->test_field should be changed
+        $this->assertNotEquals($encrypted_value, $decrypted_value);
+    }
+
 }
 
 // Using Mssql here because mysql needs real connection for quoting
