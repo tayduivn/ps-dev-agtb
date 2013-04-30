@@ -416,7 +416,7 @@
         var unbindTooltips = _.bind(function(sel) {
             this.$(sel).each(function() {
                 $(this).tooltip('destroy');
-            }, this);
+            });
         }, this);
         unbindTooltips('.btn-edit');
         unbindTooltips('.addEmail');
