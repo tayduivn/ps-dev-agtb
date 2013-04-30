@@ -612,7 +612,8 @@ protected function checkQuery($sql, $object_name = false)
 		if (empty($string) || !$this->encode) {
 			return $string;
 		}
-		return htmlspecialchars($string, ENT_QUOTES|ENT_HTML401|ENT_SUBSTITUTE);
+		/** Not using ENT_HTML401|ENT_SUBSTITUTE since they are 5.4+ only */
+		return htmlspecialchars($string, ENT_QUOTES, "UTF-8");
 	}
 
 
@@ -627,7 +628,7 @@ protected function checkQuery($sql, $object_name = false)
 		if (!is_string($string) || !$this->encode) {
 			return $string;
 		}
-		return htmlspecialchars_decode($string, ENT_QUOTES|ENT_HTML401);
+		return htmlspecialchars_decode($string, ENT_QUOTES);
 	}
 	/**
 	 * Insert data into table by parameter definition

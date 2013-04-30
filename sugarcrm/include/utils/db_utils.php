@@ -66,13 +66,13 @@ function from_db_convert($string, $type)
  */
 function to_html($string, $encode=true)
 {
+	if (empty($string) || !$encode) {
+		return $string;
+	}
     if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
         return $string;
     }
-	if (empty($string)) {
-		return $string;
-	}
-    return htmlspecialchars($string, ENT_QUOTES|ENT_HTML401|ENT_SUBSTITUTE);
+    return htmlspecialchars($string, ENT_QUOTES, "UTF-8");
 }
 
 
@@ -84,13 +84,13 @@ function to_html($string, $encode=true)
  */
 function from_html($string, $encode=true)
 {
-    if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
-        return $string;
-    }
     if (!is_string($string) || !$encode) {
         return $string;
     }
-    return htmlspecialchars_decode($string, ENT_QUOTES|ENT_HTML401);
+    if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
+        return $string;
+    }
+    return htmlspecialchars_decode($string, ENT_QUOTES);
 }
 
 /*
