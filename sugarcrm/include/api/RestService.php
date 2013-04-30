@@ -24,6 +24,7 @@ require_once('include/api/ServiceBase.php');
 require_once('include/api/ServiceDictionaryRest.php');
 require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 require_once('include/api/RestResponse.php');
+require_once('include/api/RestRequest.php');
 
 class RestService extends ServiceBase {
 
@@ -36,12 +37,6 @@ class RestService extends ServiceBase {
     public $request_headers = array();
 
     public $platform = 'base';
-
-    /**
-     * The leading portion of the URI for building request URIs with in the API
-     * @var
-     */
-    protected $resourceURIBase;
 
     /**
      * The response headers that will be sent
@@ -254,30 +249,31 @@ class RestService extends ServiceBase {
      * @return string The path to the resource
      */
     public function getResourceURI($resource) {
-        if (empty($this->resourceURIBase)) {
-            $this->setResourceURIBase();
-        }
 
         // Empty resources are simply the URI for the current request
         if (empty($resource)) {
             $siteUrl = SugarConfig::get('site_url');
-            return $siteUrl . $_SERVER['REQUEST_URI'];
+            return $siteUrl . (empty($this->request)?$_SERVER['REQUEST_URI']:$this->request->getRequestURI());
         }
 
         if (is_string($resource)) {
-            $parts = explode('/', $resource);
-            return $this->getResourceURI($parts);
+            // split string into path parts
+            return $this->getResourceURI(explode('/', $resource));
         } elseif (is_array($resource)) {
+            $req = $this->getRequest();
+            // Hacky - we're not supposed to mess with this normally, but we need it to set up route
+            $req->path = $resource;
             // Logic here is, if we find a GET route for this resource then it
             // should be valid. In most cases, where there is a POST|PUT|DELETE
             // route that does not have a GET, we're not going to be handing that
             // URI out anyway, so this is a safe validation assumption.
-            list($version,) = $this->parsePath($this->getRawPath());
-            $route = $this->findRoute($resource, $version, 'GET');
+            $req->setMethod('GET');
+            $route = $this->findRoute($req);
             if ($route != false) {
-                return $this->resourceURIBase . implode('/', $resource);
+                return $req->getResourceURIBase() . implode('/', $resource);
             }
         }
+        return '';
     }
 
     /**
@@ -396,15 +392,16 @@ class RestService extends ServiceBase {
             // big to be handled by checking for an empty request body for POST and PUT file requests.
 
             // Grab our path elements of the request and see if this is a files request
-            $pathParts = $this->parsePath($this->getRawPath());
+            $pathParts = $this->request->path;
+            // FIXME: this part is not testable in this form
             if (isset($pathParts[1]) && is_array($pathParts[1]) && in_array('file', $pathParts[1])) {
                 // If this is a POST request then we can inspect the $_FILES and $_POST arrays
-                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if ($this->request->getMethod() == 'POST') {
                     // If the post and files array are both empty on a POST request...
                     if (empty($_FILES) && empty($_POST)) {
                         throw new SugarApiExceptionRequestTooLarge('Request is too large');
                     }
-                } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+                } elseif ($this->request->getMethod() == 'PUT') {
                     // PUT requests need to read the php://input stream
                     // Keep in mind that reading php://input is a one time deal
                     // But since we are bound for an exception here this is a safe

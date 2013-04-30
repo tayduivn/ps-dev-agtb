@@ -72,6 +72,12 @@ class RestRequest
     public $args;
 
     /**
+     * The leading portion of the URI for building request URIs with in the API
+     * @var string
+     */
+    protected $resourceURIBase;
+
+    /**
      * Get the route
      * @return array
      */
@@ -163,14 +169,16 @@ class RestRequest
      * @param string $method
      * @return RestRequest
      */
-    public function setMethod($method) {
+    public function setMethod($method)
+    {
     	$this->method = $method;
     	return $this;
     }
 
     /**
      * Create request
-     * @param array $server Server environment
+     * @param array $server Server environment ($_SERVER)
+     * @param array $request Request array ($_REQUEST)
      */
     public function __construct($server, $request)
     {
@@ -180,6 +188,7 @@ class RestRequest
         $this->rawPath = $this->getRawPath();
         $this->parsePath($this->rawPath);
         $this->method = $server['REQUEST_METHOD'];
+        $this->setResourceURIBase();
     }
 
     /**
@@ -190,8 +199,8 @@ class RestRequest
     public function getRawPath() {
         if ( !empty($this->request['__sugar_url']) ) {
             $rawPath = $this->request['__sugar_url'];
-        } else if ( !empty($this->request['PATH_INFO']) ) {
-            $rawPath = $this->request['PATH_INFO'];
+        } else if ( !empty($this->server['PATH_INFO']) ) {
+            $rawPath = $this->server['PATH_INFO'];
         } else {
             $rawPath = '/';
         }
@@ -266,4 +275,53 @@ class RestRequest
     	return $outputVars;
     }
 
+    /**
+     * Sets the leading portion of any request URI for this API instance
+     *
+     */
+    protected function setResourceURIBase()
+    {
+        // Only do this if it hasn't been done already
+        if (empty($this->resourceURIBase)) {
+            // Default the base part of the request URI
+            $apiBase = '/api/rest.php/';
+
+            // Check rewritten URLs AND request uri vs script name
+            if (isset($this->request['__sugar_url']) && strpos($this->server['REQUEST_URI'], $this->server['SCRIPT_NAME']) === false) {
+                // This is a forwarded rewritten URL
+                $apiBase = '/rest/';
+            }
+
+            // Get our version
+            preg_match('#v(?>\d+)/#', $this->server['REQUEST_URI'], $m);
+            if (isset($m[0])) {
+                $apiBase .= $m[0];
+            }
+
+            // This is for our URI return value
+            $siteUrl = SugarConfig::get('site_url');
+
+            // Get the file uri bas
+            $this->resourceURIBase = $siteUrl . $apiBase;
+        }
+    }
+
+    /**
+     * Get base URI for resources
+     * @return string
+     */
+    public function getResourceURIBase()
+    {
+        return $this->resourceURIBase;
+    }
+
+    /**
+     * Get request URI for current request
+     * @return string
+     */
+    public function getRequestURI()
+    {
+        if(empty($this->server['REQUEST_URI'])) return '';
+        return $this->server['REQUEST_URI'];
+    }
 }
