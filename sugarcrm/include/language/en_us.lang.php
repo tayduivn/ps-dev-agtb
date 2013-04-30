@@ -3813,7 +3813,7 @@ $app_strings = array (
     'ERR_MOBILE_INCOMPATIBLE_CLIENT_VERSION' => 'Your app is outdated and is no longer compatible with the {{{brandName}}} instance you are connecting to. Do you want to download the new version from App Store?',
 
     // Nomad Tutorial
-    'LBL_MOBILE_TUTORIAL_HOME_INTRO' => 'Welcome to SugarCRM.<br/><br/> Allow us to highlight some new features...',
+    'LBL_MOBILE_TUTORIAL_HOME_INTRO' => 'Welcome to {{{brandName}}}.<br/><br/> Allow us to highlight some new features...',
     'LBL_MOBILE_TUTORIAL_HOME_LOGO' => 'Main menu navigation.',
     'LBL_MOBILE_TUTORIAL_HOME_CREATE' => 'Available actions per view.',
     'LBL_MOBILE_TUTORIAL_HOME_SEARCH' => 'Global search for records.',
