@@ -1,6 +1,6 @@
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement (''License'') which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -14,7 +14,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the ''Powered by SugarCRM'' logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -26,214 +26,136 @@
  ********************************************************************************/
 ({
     events: {
-        "click [name=cancel_button]": "cancel",
-        "click [name=signup_button]": "signup",
-        "change select[name=country]": "render"
+        'click [name=cancel_button]': 'cancel',
+        'click [name=signup_button]': 'signup',
+        'change select[name=country]': 'render'
     },
+
+    /**
+     * @override
+     * @param options
+     */
     initialize: function(options) {
-        // Adds the metadata for the Login module
+        // Manually injects app_list_strings
         app.metadata.set(this._metadata);
-        app.data.declareModels();
-
-        // Reprepare the context because it was initially prepared without metadata
-        app.controller.context.prepare(true);
-
-        // Attach the metadata to the view
-        this.options.meta = _.clone(this._metadata.modules[this.options.module].views[this.options.name].meta);
 
         app.view.View.prototype.initialize.call(this, options);
-
-        // use modal template for the fields
-        this.fallbackFieldTemplate = "modal";
-
-        // display the success message on rerendering
-        this.signup_success = false;
+        this._showSignupSuccess = false;
         this.model.set({
-            "email": [
+            'email': [
                 {
-                    "email_address": "",
-                    "primary_address": "1"
+                    'email_address': '',
+                    'primary_address': '1'
                 }
             ]
         }, {silent: true});
-        this.action = "modal";
     },
-    render: function() {
+
+    /**
+     * @override
+     * @private
+     */
+    _render: function() {
         if (app.config && app.config.logoURL) {
-            this.logoURL = app.config.logoURL
+            this.logoURL = app.config.logoURL;
         }
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
 
         this.stateField = this.$('select[name=state]');
         this.countryField = this.$('select[name=country]');
         this.toggleStateField();
         return this;
     },
+
+    /**
+     * For USA country only we need to display the State dropdown
+     */
     toggleStateField: function() {
         if (this.countryField.val() == 'USA') {
             this.stateField.parent().show();
         } else {
             this.stateField.parent().hide();
-            this.context.attributes.model.attributes.state = undefined;
+            this.context.get('model').set('state', undefined);
         }
     },
+
+    /**
+     * Basic cancel button
+     */
     cancel: function() {
         app.router.goBack();
     },
+
+    _prepareRequestPayload: function() {
+        var data = {
+            first_name: this.model.get('first_name'),
+            last_name: this.model.get('last_name'),
+            email: this.model.get('email'),
+            phone_work: this.model.get('phone_work'),
+            primary_address_state: this.model.get('state'),
+            primary_address_country: this.model.get('country'),
+            title: this.model.get('jobtitle'),
+            account_name: this.model.get('company')
+        };
+        // Sets the preferred language based on the current loaded language. Can be undefined.
+        var language = app.lang.getLanguage();
+        if (language) {
+            data.preferred_language = language;
+        }
+        return data;
+    },
+
+    /**
+     * Handles Sign Up
+     */
     signup: function() {
         var self = this;
-        var validFlag = this.model.isValid();
-        if (validFlag) {
-            $('#content').hide();
-            app.alert.show('signup', {level:'process', title:app.lang.getAppString('LBL_PORTAL_SIGNUP_PROCESS'), autoClose:false});
-            
-            var contactData = {
-                first_name: this.model.get("first_name"),
-                last_name: this.model.get("last_name"),
-                email: this.model.get("email"),
-                phone_work: this.model.get("phone_work"),
-                primary_address_state: this.model.get("state"),
-                primary_address_country: this.model.get("country"),
-                title: this.model.get("jobtitle"),
-                account_name: this.model.get("company")
-            };
-            var pref_lang = app.lang.getLanguage();
-            if (pref_lang) {
-                contactData.preferred_language = pref_lang;
-            }
-            app.api.signup(contactData, null,
+
+        if (self.model.isValid()) {
+            app.$contentEl.hide();
+            app.alert.show('signup', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SIGNUP_PROCESS'), autoClose: false});
+
+            var payload = self._prepareRequestPayload();
+            app.api.signup(payload, null,
                 {
-                    error: function() {
-                        app.alert.dismiss('signup');
-                        $('#content').show();
-                    },
                     success: function() {
-                        app.alert.dismiss('signup');
+                        // Flags to know when to render the success
+                        self._showSignupSuccess = true;
 
-                        // display the success message
-                        self.signup_success = true;
-
-                        // show a Back button
+                        // Replace buttons by a unique Back button
                         self.options.meta.buttons = self._backButton;
-                        if(!self.disposed){
+                        if (!self.disposed) {
                             self.render();
-                            $('#content').show();
                         }
+                    },
+                    complete: function() {
+                        app.alert.dismiss('signup');
+                        app.$contentEl.show();
                     }
                 });
         }
     },
+
+    /**
+     * Really basic metadata for the Back button displayed on Sign Up success
+     */
     _backButton: [
         {
-            name: "cancel_button",
-            type: "button",
-            label: "LBL_BACK",
-            value: "signup",
+            name: 'cancel_button',
+            type: 'button',
+            label: 'LBL_BACK',
+            value: 'signup',
             primary: false
         }
     ],
+
+    /**
+     * The signup page is accessible when the user is not authenticated. As the call to Public API doesn't return app_list_strings we need
+     * to hardcode it in this view and manually inject it.
+     * This means this dropdown will always be displayed in english.
+     */
     // Base metadata for Login module and login view
     _metadata: {
-        _hash: '',
-        "modules": {
-            "Signup": {
-                "fields": {
-                    "first_name": {
-                        "name": "first_name",
-                        "type": "varchar",
-                        "required": true
-                    },
-                    "last_name": {
-                        "name": "last_name",
-                        "type": "varchar",
-                        "required": true
-                    },
-                    "email": {
-                        "name": "email",
-                        "type": "email",
-                        "required": true
-                    },
-                    "phone_work": {
-                        "name": "phone_work",
-                        "type": "phone"
-                    },
-                    "state": {
-                        "name": "state",
-                        "type": "enum",
-                        "options": "state_dom"
-                    },
-                    "country": {
-                        "name": "country",
-                        "type": "enum",
-                        "options": "countries_dom",
-                        "required": true
-                    },
-                    "company": {
-                        "name": "company",
-                        "type": "varchar",
-                        "required": true
-                    },
-                    "jobtitle": {
-                        "name": "jobtitle",
-                        "type": "varchar"
-                    },
-                    "hr1": {
-                        "name": "hr1",
-                        "type": "hr"
-                    }
-                },
-                "views": {
-                    "signup": {
-                        "meta": {
-                            "buttons": [
-                                {
-                                    name: "cancel_button",
-                                    type: "button",
-                                    label: "LBL_CANCEL_BUTTON_LABEL",
-                                    value: "signup",
-                                    primary: false,
-                                    'class': 'pull-left'
-                                },
-                                {
-                                    name: "signup_button",
-                                    type: "button",
-                                    label: "LBL_SIGNUP_BUTTON_LABEL",
-                                    value: "signup",
-                                    primary: true,
-                                    'class': 'pull-right'
-                                }
-                            ],
-                            "panels": [
-                                {
-                                    "fields": [
-                                        {name: "first_name", label: "LBL_PORTAL_SIGNUP_FIRST_NAME"},
-                                        {name: "last_name", label: "LBL_PORTAL_SIGNUP_LAST_NAME"},
-                                        {name: "hr1", label: ""},
-                                        {name: "email", label: "LBL_PORTAL_SIGNUP_EMAIL"},
-                                        {name: "phone_work", label: "LBL_PORTAL_SIGNUP_PHONE"},
-                                        {name: "country", label: "LBL_PORTAL_SIGNUP_COUNTRY"},
-                                        {name: "state", label: "LBL_PORTAL_SIGNUP_STATE"},
-                                        {name: "hr1", label: ""},
-                                        {name: "company", label: "LBL_PORTAL_SIGNUP_COMPANY"},
-                                        {name: "jobtitle", label: "LBL_PORTAL_SIGNUP_JOBTITLE"}
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                },
-                "layouts": {
-                    "signup": {
-                        "meta": {
-                            "type": "simple",
-                            "components": [
-                                {view: "signup"}
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         app_list_strings: {
             'countries_dom': {
                 'ABU DHABI': 'Abu Dhabi',
@@ -472,58 +394,58 @@
                 'ZAMBIA': 'Zambia',
                 'ZIMBABWE': 'Zimbabwe'
             },
-            "state_dom": {
-                "AL": "Alabama",
-                "AK": "Alaska",
-                "AZ": "Arizona",
-                "AR": "Arkansas",
-                "CA": "California",
-                "CO": "Colorado",
-                "CT": "Connecticut",
-                "DE": "Delaware",
-                "DC": "District Of Columbia",
-                "FL": "Florida",
-                "GA": "Georgia",
-                "HI": "Hawaii",
-                "ID": "Idaho",
-                "IL": "Illinois",
-                "IN": "Indiana",
-                "IA": "Iowa",
-                "KS": "Kansas",
-                "KY": "Kentucky",
-                "LA": "Louisiana",
-                "ME": "Maine",
-                "MD": "Maryland",
-                "MA": "Massachusetts",
-                "MI": "Michigan",
-                "MN": "Minnesota",
-                "MS": "Mississippi",
-                "MO": "Missouri",
-                "MT": "Montana",
-                "NE": "Nebraska",
-                "NV": "Nevada",
-                "NH": "New Hampshire",
-                "NJ": "New Jersey",
-                "NM": "New Mexico",
-                "NY": "New York",
-                "NC": "North Carolina",
-                "ND": "North Dakota",
-                "OH": "Ohio",
-                "OK": "Oklahoma",
-                "OR": "Oregon",
-                "PA": "Pennsylvania",
-                "RI": "Rhode Island",
-                "SC": "South Carolina",
-                "SD": "South Dakota",
-                "TN": "Tennessee",
-                "TX": "Texas",
-                "UT": "Utah",
-                "VT": "Vermont",
-                "VA": "Virginia ",
-                "WA": "Washington",
-                "WV": "West Virginia",
-                "WI": "Wisconsin",
-                "WY": "Wyoming"
+            'state_dom': {
+                'AL': 'Alabama',
+                'AK': 'Alaska',
+                'AZ': 'Arizona',
+                'AR': 'Arkansas',
+                'CA': 'California',
+                'CO': 'Colorado',
+                'CT': 'Connecticut',
+                'DE': 'Delaware',
+                'DC': 'District Of Columbia',
+                'FL': 'Florida',
+                'GA': 'Georgia',
+                'HI': 'Hawaii',
+                'ID': 'Idaho',
+                'IL': 'Illinois',
+                'IN': 'Indiana',
+                'IA': 'Iowa',
+                'KS': 'Kansas',
+                'KY': 'Kentucky',
+                'LA': 'Louisiana',
+                'ME': 'Maine',
+                'MD': 'Maryland',
+                'MA': 'Massachusetts',
+                'MI': 'Michigan',
+                'MN': 'Minnesota',
+                'MS': 'Mississippi',
+                'MO': 'Missouri',
+                'MT': 'Montana',
+                'NE': 'Nebraska',
+                'NV': 'Nevada',
+                'NH': 'New Hampshire',
+                'NJ': 'New Jersey',
+                'NM': 'New Mexico',
+                'NY': 'New York',
+                'NC': 'North Carolina',
+                'ND': 'North Dakota',
+                'OH': 'Ohio',
+                'OK': 'Oklahoma',
+                'OR': 'Oregon',
+                'PA': 'Pennsylvania',
+                'RI': 'Rhode Island',
+                'SC': 'South Carolina',
+                'SD': 'South Dakota',
+                'TN': 'Tennessee',
+                'TX': 'Texas',
+                'UT': 'Utah',
+                'VT': 'Vermont',
+                'VA': 'Virginia ',
+                'WA': 'Washington',
+                'WV': 'West Virginia',
+                'WI': 'Wisconsin',
+                'WY': 'Wyoming'
             }
         }
     }

@@ -1,7 +1,9 @@
-{{!
+<?php
+
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +17,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,6 +27,43 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<input type="password" class="center" value="{{value}}" placeholder="{{label}}">
-<p class="help-block"></p>
+
+$viewdefs['portal']['view']['login'] = array(
+    'type' => 'edit',
+    'buttons' =>
+        array(
+            array(
+                'name' => 'login_button',
+                'type' => 'button',
+                'label' => 'LBL_LOGIN_BUTTON_LABEL',
+                'primary' => true,
+            ),
+            array(
+                'name' => 'signup_button',
+                'type' => 'button',
+                'label' => 'LBL_SIGNUP_BUTTON_LABEL',
+                'css_class' => 'pull-left',
+            ),
+        ),
+    'panels' =>
+        array(
+            array(
+                'label' => 'LBL_PANEL_DEFAULT',
+                'fields' =>
+                array(
+                    array(
+                        'name' => 'username',
+                        'type' => 'text',
+                        'placeholder' => "LBL_PORTAL_LOGIN_USERNAME",
+                        'required' => true,
+                    ),
+                    array(
+                        'name' => 'password',
+                        'type' => 'password',
+                        'placeholder' => "LBL_PORTAL_LOGIN_PASSWORD",
+                        'required' => true,
+                    ),
+                ),
+            ),
+        ),
+);
