@@ -84,6 +84,29 @@
                 }
             },
             {
+                name: "create",
+                route: ":module/create",
+                callback: function(module){
+
+                    app.controller.loadView({
+                        module: module,
+                        layout: "records"
+                    });
+
+                    app.drawer.open({
+                        layout:'create',
+                        context:{
+                            create:true
+                        }
+                    }, _.bind(function (context, model) {
+                        var module = context.get("module") || model.module,
+                            route  = app.router.buildRoute(module);
+
+                        app.router.navigate(route, {trigger: true});
+                    }, this));
+                }
+            },
+            {
                 name: "profile",
                 route: "profile",
                 callback: function(){
