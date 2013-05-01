@@ -26,6 +26,21 @@ $layout->push(
     0,
     array(
         array(
+            'name' => 'Cases Summary',
+            'view' => 'casessummary',
+            'context' => array(
+                'dashlet' => array(
+                    'name' => 'Cases Summary',
+                    'type' => 'casessummary',
+                ),
+            ),
+        ),
+    )
+);
+$layout->push(
+    0,
+    array(
+        array(
             'name' => 'News Feed',
             'view' => 'news',
             'context' => array(

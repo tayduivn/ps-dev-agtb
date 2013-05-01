@@ -39,6 +39,7 @@
             .margin({top: 5, right: 20, bottom: 20, left: 20})
             .donut(true)
             .donutLabelsOutside(true)
+            .donutRatio(0.4)
             .hole(this.chartCollection.properties.label)
             .showTitle(false)
             .tooltips(false)

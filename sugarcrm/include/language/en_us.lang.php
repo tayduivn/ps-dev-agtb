@@ -3914,6 +3914,10 @@ $app_strings = array (
     'LBL_ORG_CHART' => 'Organization Chart',
     'LBL_ORG_CHART_DESC' => 'Displays the employee structure of your organization.',
 
+    //cases summary chart
+    'LBL_CASE_SUMMARY_CHART' => 'Case Summary',
+    'LBL_CASE_SUMMARY_CHART_DESC' => 'Shows an overview of related cases.',
+
     //top 10 opportunities chart
     'LBL_TOP10_OPPORTUNITIES_CHART' => 'Top 10 sales opportunities',
     'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten opportunities in a bubble chart.',
