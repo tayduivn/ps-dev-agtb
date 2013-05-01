@@ -32,12 +32,7 @@
         this.events = _.extend({}, this.events, options.def.events, {
             'click .disabled' : 'preventClick'
         });
-        var origRender = this._render;
-        this._render = _.debounce(function(){
-            //Because of throttle, calls to render may come in after dispose has been called.
-            if (this.disposed) return;
-            return origRender.call(this);
-        }, 100);
+
         app.view.Field.prototype.initialize.call(this, options);
 
         // take advantage of this hook to do the acl check
@@ -92,8 +87,10 @@
      */
     _show: function() {
         app.view.Field.prototype.show.call(this);
-        this.isHidden = false;
-        this.trigger("show");
+        if(this.isHidden !== false) {
+            this.isHidden = false;
+            this.trigger("show");
+        }
     },
     show: function() {
         if(this.hasAccess()) {
@@ -102,8 +99,10 @@
     },
     hide: function() {
         app.view.Field.prototype.hide.call(this);
-        this.isHidden = true;
-        this.trigger("hide");
+        if(this.isHidden !== true) {
+            this.isHidden = true;
+            this.trigger("hide");
+        }
     },
     /**
      * {@inheritdoc}

@@ -34,9 +34,7 @@
      */
     getPlaceholder: function () {
 
-        var placeholder = app.view.Field.prototype.getPlaceholder.call(this);
-        var $container = $(placeholder.toString());
-
+        var placeholder = '<span sfuuid="' + this.sfId + '">';
         _.each(this.def.fields, function (fieldDef) {
             var field = app.view.createField({
                 def: fieldDef,
@@ -46,10 +44,11 @@
             });
             this.fields.push(field);
             field.parent = this;
-            $container.append(field.getPlaceholder().toString());
+            placeholder += field.getPlaceholder();
         }, this);
+        placeholder += '</span>';
 
-        return new Handlebars.SafeString($container.get(0).outerHTML);
+        return new Handlebars.SafeString(placeholder);
     },
 
     /**

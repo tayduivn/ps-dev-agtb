@@ -276,15 +276,12 @@ describe("Create View", function() {
             view.render();
 
             _.each(view.fields, function(field) {
-                if ((field.type === 'button') || (field.type === 'actiondropdown') || (field.type === 'rowaction')) {
-                    buttons++;
-                } else {
+                if (!view.buttons[field.name]) {
                     fields++;
                 }
             });
-
             expect(fields).toBe(5);
-            expect(buttons).toBe(6);
+            expect(_.values(view.buttons).length).toBe(6);
         });
     });
 
@@ -292,11 +289,11 @@ describe("Create View", function() {
         it("Should hide the restore button when the form is empty", function() {
             view.render();
 
-            expect(view.buttons[view.saveButtonName].getFieldElement().css('display')).not.toBe('none');
-            expect(view.buttons[view.cancelButtonName].getFieldElement().css('display')).not.toBe('none');
-            expect(view.buttons[view.saveAndCreateButtonName].getFieldElement().css('display')).not.toBe('none');
-            expect(view.buttons[view.saveAndViewButtonName].getFieldElement().css('display')).not.toBe('none');
-            expect(view.buttons[view.restoreButtonName].getFieldElement().css('display')).toBe('none');
+            expect(view.buttons[view.saveButtonName].isHidden).toBe(false);
+            expect(view.buttons[view.cancelButtonName].isHidden).toBe(false);
+            expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBe(false);
+            expect(view.buttons[view.saveAndViewButtonName].isHidden).toBe(false);
+            expect(view.buttons[view.restoreButtonName].isHidden).toBe(true);
         });
 
         it("Should hide all buttons except save and cancel when duplicates are found.", function() {
@@ -336,12 +333,12 @@ describe("Create View", function() {
             }, 'handleDuplicateFound should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(view.buttons[view.saveButtonName].getFieldElement().css('display')).not.toBe('none');
+                expect(view.buttons[view.saveButtonName].isHidden).toBe(false);
                 expect(view.buttons[view.saveButtonName].getFieldElement().text()).toBe('LBL_IGNORE_DUPLICATE_AND_SAVE');
-                expect(view.buttons[view.cancelButtonName].getFieldElement().css('display')).not.toBe('none');
-                expect(view.buttons[view.saveAndCreateButtonName].getFieldElement().css('display')).toBe('none');
-                expect(view.buttons[view.saveAndViewButtonName].getFieldElement().css('display')).toBe('none');
-                expect(view.buttons[view.restoreButtonName].getFieldElement().css('display')).toBe('none');
+                expect(view.buttons[view.cancelButtonName].isHidden).toBe(false);
+                expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBe(true);
+                expect(view.buttons[view.saveAndViewButtonName].isHidden).toBe(true);
+                expect(view.buttons[view.restoreButtonName].isHidden).toBe(true);
             });
         });
 
@@ -362,12 +359,12 @@ describe("Create View", function() {
             });
             view.context.trigger('list:dupecheck-list-select-edit:fire', SugarTest.app.data.createBean(moduleName, data));
 
-            expect(view.buttons[view.saveButtonName].getFieldElement().css('display')).not.toBe('none');
+            expect(view.buttons[view.saveButtonName].isHidden).toBe(false);
             expect(view.buttons[view.saveButtonName].getFieldElement().text()).toBe('LBL_SAVE_BUTTON_LABEL');
-            expect(view.buttons[view.cancelButtonName].getFieldElement().css('display')).not.toBe('none');
-            expect(view.buttons[view.saveAndCreateButtonName].getFieldElement().css('display')).toBe('none');
-            expect(view.buttons[view.saveAndViewButtonName].getFieldElement().css('display')).toBe('none');
-            expect(view.buttons[view.restoreButtonName].getFieldElement().css('display')).not.toBe('none');
+            expect(view.buttons[view.cancelButtonName].isHidden).toBe(false);
+            expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBe(true);
+            expect(view.buttons[view.saveAndViewButtonName].isHidden).toBe(true);
+            expect(view.buttons[view.restoreButtonName].isHidden).toBe(false);
         });
 
         it("Should reset to the original form values when restore is clicked.", function() {
@@ -713,6 +710,7 @@ describe("Create View", function() {
                 });
 
             view.render();
+            view.buttons['main_dropdown'].renderDropdown();
             view.model.set({
                 first_name: 'First',
                 last_name: 'Last'
@@ -757,6 +755,7 @@ describe("Create View", function() {
                 });
 
             view.render();
+            view.buttons['main_dropdown'].renderDropdown();
 
             runs(function() {
                 view.buttons[view.saveAndViewButtonName].getFieldElement().click();
