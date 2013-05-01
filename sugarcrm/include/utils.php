@@ -4007,11 +4007,14 @@ function sugarArrayIntersectMerge($gimp, $dom)
     if (is_array($gimp) && is_array($dom)) {
         foreach ($gimp as $domKey => $domVal) {
             if (isset($dom[$domKey])) {
-                if (is_array($dom[$domKey])) {
+                if (is_array($dom[$domKey]) && $dom[$domKey] !== $gimp[$domKey]) {
                     if (is_numeric(key($dom[$domKey]))) {
                         $gimp[$domKey] = array_merge($gimp[$domKey], array_intersect($dom[$domKey], $gimp[$domKey]));
                     } else {
-                        $gimp[$domKey] = array_merge($gimp[$domKey], array_intersect_key($dom[$domKey], $gimp[$domKey]));
+                        $gimp[$domKey] = array_merge(
+                            $gimp[$domKey],
+                            array_intersect_key($dom[$domKey], $gimp[$domKey])
+                        );
                     }
                 } else {
                     $gimp[$domKey] = $dom[$domKey];
