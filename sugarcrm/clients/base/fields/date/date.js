@@ -440,7 +440,7 @@
     },
 
     unbindDom: function() {
-        this.$(".datepicker").datepicker('destroy');
+        this.$(".datepicker").datepicker('hide');
         app.view.Field.prototype.unbindDom.call(this);
     }
 
