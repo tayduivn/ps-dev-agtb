@@ -2393,6 +2393,16 @@ nv.models.bubbleChart = function () {
     return chart;
   };
 
+  chart.tooltip = function(_) {
+    if (!arguments.length) return tooltip;
+    tooltip = _;
+    return chart;
+  };
+
+  chart.colorFill = function(_) {
+    return chart;
+  };
+
 
   //============================================================
 
@@ -3293,6 +3303,16 @@ nv.models.funnelChart = function() {
   chart.noData = function(_) {
     if (!arguments.length) return noData;
     noData = _;
+    return chart;
+  };
+
+  chart.tooltip = function(_) {
+    if (!arguments.length) return tooltip;
+    tooltip = _;
+    return chart;
+  };
+
+  chart.colorFill = function(_) {
     return chart;
   };
 
@@ -9102,6 +9122,16 @@ nv.models.pieChart = function() {
   chart.hole = function(_) {
     if (!arguments.length) return hole;
     hole = _;
+    return chart;
+  };
+
+  chart.tooltip = function(_) {
+    if (!arguments.length) return tooltip;
+    tooltip = _;
+    return chart;
+  };
+
+  chart.colorFill = function(_) {
     return chart;
   };
 

@@ -423,6 +423,16 @@ nv.models.funnelChart = function() {
     return chart;
   };
 
+  chart.tooltip = function(_) {
+    if (!arguments.length) return tooltip;
+    tooltip = _;
+    return chart;
+  };
+
+  chart.colorFill = function(_) {
+    return chart;
+  };
+
   //============================================================
 
 
