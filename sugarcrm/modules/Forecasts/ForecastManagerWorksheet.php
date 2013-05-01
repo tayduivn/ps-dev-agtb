@@ -576,15 +576,36 @@ class ForecastManagerWorksheet extends SugarBean
                 'deleted' => 0,
             )
         );
-
-        if (is_null($return)) {
-            // no record found, just ignore this
+        
+        if (is_null($return) && $isDraft === true) {
+            $user = BeanFactory::getBean('Users', $manager_id);
+            // no draft record found, create it based on the above params
+            $worksheet->user_id = $manager_id;
+            $worksheet->assigned_user_id = $manager_id;
+            $worksheet->timeperiod_id = $timeperiod;
+            $worksheet->draft = intval($isDraft);
+            $worksheet->best_case = 0;
+            $worksheet->best_case_adjusted = 0;
+            $worksheet->likely_case = 0;
+            $worksheet->likely_case_adjusted = 0;
+            $worksheet->worst_case = 0;
+            $worksheet->worst_case_adjusted = 0;
+            $worksheet->opp_count = 0;
+            $worksheet->pipeline_opp_count = 0;
+            $worksheet->pipeline_amount = 0;
+            $worksheet->closed_amount = 0;
+            $worksheet->quota = 0;
+            $worksheet->name = $user->full_name;
+            
+        } else if (!is_null($return) && $isDraft === false){
+            // only update the date_modified if it's a draft version
+            $worksheet->update_date_modified = false;
+        } else if(is_null($return) && $isDraft === false) {
+        	// we didn't find a committed row... we need to bail
             return false;
         }
 
         if ($quota != $worksheet->quota) {
-            // only update the date_modified if it's a draft version
-            $worksheet->update_date_modified = false;
             $worksheet->quota = $quota;
             $worksheet->save();
         }
@@ -601,22 +622,34 @@ class ForecastManagerWorksheet extends SugarBean
      */
     protected function recalcUserQuota($userId, $timeperiodId)
     {
+        global $current_user;
+        
         $reporteeTotal = $this->getQuotaSum($userId, $timeperiodId);
         $managerQuota = $this->getManagerQuota($userId, $timeperiodId);
         $managerAmount = (isset($managerQuota['amount'])) ? $managerQuota['amount'] : '0';
         $newTotal = SugarMath::init($managerAmount, 6)->sub($reporteeTotal)->result();
-        if ($newTotal < 0) {
-            $newTotal = '0';
-        }
-
-        //save Manager quota
-        /* @var $quota Quota */
         $quota = BeanFactory::getBean('Quotas', isset($managerQuota['id']) ? $managerQuota['id'] : null);
-        $quota->user_id = $userId;
-        $quota->timeperiod_id = $timeperiodId;
-        $quota->quota_type = 'Direct';
-        $quota->amount = $newTotal;
-        $quota->save();
+        $directAmount = isset($quota->amount) ? $quota->amount: '0';
+                
+        /* If the newTotal - manager direct amount is < 0, we want to leave the direct amount alone
+         * (making newTotal the direct amount), unless this is a top level manager.  In that case,
+         * just return the direct amount
+        **/
+        if (SugarMath::init($newTotal, 6)->sub($directAmount)->result() < 0 || 
+            (($current_user->id == $userId) && empty($current_user->reports_to_id)))
+        {
+        	$newTotal = $directAmount;
+        }
+                        
+        //save Manager quota
+        if ($newTotal != $directAmount) {            
+            $quota->user_id = $userId;
+            $quota->timeperiod_id = $timeperiodId;
+            $quota->quota_type = 'Direct';
+            $quota->amount = $newTotal;
+            $quota->committed = 1;
+            $quota->save();
+        }
 
         return $newTotal;
     }
