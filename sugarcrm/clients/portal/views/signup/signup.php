@@ -66,6 +66,7 @@ $viewdefs['portal']['view']['signup'] = array(
                 array(
                     'name' => 'hr1',
                     'type' => 'hr',
+                    'view' => 'default',
                 ),
                 array(
                     'name' => 'email',
@@ -95,6 +96,7 @@ $viewdefs['portal']['view']['signup'] = array(
                 array(
                     'name' => 'hr2',
                     'type' => 'hr',
+                    'view' => 'default',
                 ),
                 array(
                     'name' => 'company',
