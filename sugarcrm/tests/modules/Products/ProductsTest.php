@@ -54,10 +54,12 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        /*
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        */
         parent::tearDown();
     }
 
