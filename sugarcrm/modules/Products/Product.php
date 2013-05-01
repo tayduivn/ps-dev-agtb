@@ -652,9 +652,8 @@ class Product extends SugarBean
         if ($this->opportunity_id != $this->fetched_row["opportunity_id"]) {
             $this->resaveOppForRecalc($this->fetched_row["opportunity_id"]);
         }
-        //END SUGARCRM flav=ent ONLY
-
         $this->handleOppSalesStatus();
+        //END SUGARCRM flav=ent ONLY
 
         // We need to update the associated product bundle and quote totals that might be impacted by this product.
         if (isset($id)) {
@@ -871,6 +870,7 @@ class Product extends SugarBean
         return false;
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * helper function to update the opportunity sales status based on parameters
      * @param $opportunity
@@ -911,11 +911,8 @@ class Product extends SugarBean
     {
         if (!empty($this->opportunity_id)) {
             $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
-            if ($opp->load_relationship('products')) {
-                //No need to do anything if there were no products associated to this opportunity
-                if (count($opp->products->rows) == 0) {
-                    return;
-                }
+            $products = $opp->get_linked_beans('products', 'Products');
+            if (count($products) > 0) {
                 //opp currently isn't in status new, but a PLI gets added as status new, so this is assuming it's not just a new opp and new PLI
                 if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false)) {
                     return;
@@ -935,6 +932,7 @@ class Product extends SugarBean
             }
         }
     }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * Code to make sure that the Sales Status field is mapped correctly with the Sales Stage field
