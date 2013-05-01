@@ -266,8 +266,11 @@ class RestRequest
     public function getPathVars($route)
     {
     	$outputVars = array();
+    	if(empty($route['pathVars'])) {
+    	    return $outputVars;
+    	}
     	foreach ( $route['pathVars'] as $i => $varName ) {
-    		if ( !empty($varName) ) {
+    		if ( !empty($varName)  && !empty($this->path[$i])) {
     			$outputVars[$varName] = $this->path[$i];
     		}
     	}
@@ -287,16 +290,14 @@ class RestRequest
             $apiBase = '/api/rest.php/';
 
             // Check rewritten URLs AND request uri vs script name
-            if (isset($this->request['__sugar_url']) && strpos($this->server['REQUEST_URI'], $this->server['SCRIPT_NAME']) === false) {
+            if (isset($this->request['__sugar_url']) &&
+                (empty($this->server['REQUEST_URI']) || empty($this->server['SCRIPT_NAME']) || strpos($this->server['REQUEST_URI'], $this->server['SCRIPT_NAME']) === false)) {
                 // This is a forwarded rewritten URL
                 $apiBase = '/rest/';
             }
 
             // Get our version
-            preg_match('#v(?>\d+)/#', $this->server['REQUEST_URI'], $m);
-            if (isset($m[0])) {
-                $apiBase .= $m[0];
-            }
+            $apiBase .= "v".$this->version;
 
             // This is for our URI return value
             $siteUrl = SugarConfig::get('site_url');
