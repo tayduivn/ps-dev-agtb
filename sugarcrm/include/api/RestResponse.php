@@ -66,6 +66,8 @@ class RestResponse extends Zend_Http_Response
      */
     public function setHeader($header, $info)
     {
+        // Disabled for now because of Content-type hacks
+        // TODO: check if they are required
         //$header = ucwords(strtolower($header));
         $this->headers[$header] = $info;
         return $this;
@@ -80,6 +82,22 @@ class RestResponse extends Zend_Http_Response
     {
         //$header = ucwords(strtolower($header));
         return array_key_exists($header, $this->headers);
+    }
+
+   /**
+     * Get a specific header as string, or null if it is not set
+     *
+     * @param string$header
+     * @return string|null
+     */
+    public function getHeader($header)
+    {
+        //$header = ucwords(strtolower($header));
+        if (! is_string($header) || ! isset($this->headers[$header])) {
+            return null;
+        }
+
+        return $this->headers[$header];
     }
 
     /**
@@ -145,23 +163,43 @@ class RestResponse extends Zend_Http_Response
                 $response = json_encode($this->body, JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP);
                 break;
             case self::JSON_HTML:
-                $response = htmlentities(json_encode($this->body));
+                $response = htmlspecialchars(json_encode($this->body), ENT_QUOTES, "UTF-8");
                 break;
             case self::FILE:
                 // special case
                 return '';
             case self::RAW:
-            default: /* we assume if we don't know they type, it's raw */
+            default: /* we assume if we don't know the type, it's raw */
                 $response = $this->body;
                 break;
         }
     	if(!$this->hasHeader("Content-Type")) {
     	    $this->setContentTypeByType();
     	}
-    	if(!empty($response)) {
+    	if(!empty($response) && is_string($response)) {
     	    $this->setHeader('Content-Length', strlen($response));
     	}
     	return $response;
+    }
+
+    /**
+     * Send out a header
+     * Overridable for tests
+     * @param string $h
+     */
+    protected function sendHeader($h)
+    {
+        return header($h);
+    }
+
+    /**
+     * Check if headers were sent
+     * Overridable for tests
+     * @return boolean
+     */
+    protected function headersSent()
+    {
+        return headers_sent();
     }
 
     /**
@@ -170,16 +208,16 @@ class RestResponse extends Zend_Http_Response
      */
     public function sendHeaders()
     {
-        if(headers_sent()) {
+        if($this->headersSent()) {
     		return false;
     	}
     	if($this->code != 200) {
     	    $text = self::responseCodeAsText($this->code, $this->version != '1.0');
-    	    header("HTTP/{$this->version} {$this->code} {$text}");
+    	    $this->sendHeader("HTTP/{$this->version} {$this->code} {$text}");
     	    $this->headers['Status'] = "{$this->code} {$text}";
     	}
     	foreach($this->headers as $header => $info) {
-    		header("{$header}: {$info}");
+    		$this->sendHeader("{$header}: {$info}");
     	}
     	return true;
     }
@@ -272,8 +310,18 @@ class RestResponse extends Zend_Http_Response
             $this->sendFile($this->filename);
             return;
         }
+        $response = $this->processContent();
         $this->sendHeaders();
-        echo $this->processContent();
+        echo $response;
+    }
+
+    /**
+     * Get response type
+     * @return number
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
 }

@@ -321,7 +321,7 @@ class DownloadFileApi extends DownloadFile
         $this->api->setHeader("Expires", TimeDate::httpTime(time() + 2592000));
 
         if ($type == 'image') {
-            if($info['content-type']) {
+            if(!empty($info['content-type'])) {
                 $this->api->setHeader("Content-Type", $info['content-type']);
             } else {
                 $this->api->setHeader("Content-Type", "application/octet-stream");
