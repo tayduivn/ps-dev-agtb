@@ -116,8 +116,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
 
         foreach ($records as $rec)
         {
-            if (empty($rec['bean_id']) || empty($rec['bean_module']))
-            {
+            if (!is_array($rec) || empty($rec['bean_id']) || empty($rec['bean_module'])) {
                 $this->logger->error('Error populating fts_queue. Empty bean_id or bean_module.');
                 continue;
             }

@@ -120,7 +120,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         if (!$batch) {
             if (self::isSearchEngineDown()) {
-                $this->addRecordsToQueue(array('bean_id'=>$bean->id, 'bean_module'=>get_class($bean)));
+                $this->addRecordsToQueue(array(array('bean_id'=>$bean->id, 'bean_module'=>get_class($bean))));
                 return;
             }
             $this->indexSingleBean($bean);
