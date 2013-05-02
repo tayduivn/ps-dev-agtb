@@ -179,6 +179,7 @@ class CurrentUserPortalApi extends CurrentUserApi {
         $pb = new SugarPortalBrowser();
         $pb->loadModules();
         $moduleList = $this->filterDisplayModules($pb->modules);
+        array_unshift($moduleList, 'Home');
         return $moduleList;
     }
 }
