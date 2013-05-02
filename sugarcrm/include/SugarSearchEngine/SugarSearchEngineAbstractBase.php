@@ -127,7 +127,6 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         // create a cron job consumer to digest the beans
         require_once('include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php');
         $indexer = new SugarSearchEngineSyncIndexer();
-        $indexer->removeExistingFTSSyncConsumer();
         $indexer->createJobQueueConsumer();
     }
 

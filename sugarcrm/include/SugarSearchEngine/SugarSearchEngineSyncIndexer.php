@@ -36,30 +36,19 @@ require_once('include/SugarSearchEngine/SugarSearchEngineIndexerBase.php');
 class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
 {
     /**
-     * Remove existing FTS Consumers that may have been created by a previous scheduled index.
-     *
-     */
-    public function removeExistingFTSSyncConsumer()
-    {
-        $GLOBALS['log']->info("Removing existing FTS Sync Consumers");
-
-        $jobBean = BeanFactory::getBean('SchedulersJobs');
-
-        $res = $this->db->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSSyncConsumer' AND deleted = 0");
-        while ($row = $this->db->fetchByAssoc($res))
-        {
-            $jobBean->mark_deleted($row['id']);
-        }
-    }
-
-    /**
-     * Create a job queue FTS consumer for a specific module
+     * Create a job queue FTS SyncConsumer
      *
      * @return String Id of newly created job
      */
     public function createJobQueueConsumer()
     {
-        $GLOBALS['log']->info("Creating FTS Job queue consumer to sync");
+        // if a job is already present, just return it's id
+        if ($jobId = $this->isJobQueueConsumerPresent()) {
+            $GLOBALS['log']->fatal("Active FTS SyncConsumer job found -> $jobId");
+            return $jobId;
+        }
+
+        $GLOBALS['log']->info("Creating FTS SyncConsumer in Job queue");
 
         global $timedate;
         if (empty($timedate))
@@ -75,6 +64,19 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
         $queue->submitJob($job);
 
         return $job->id;
+    }
+
+    /**
+     *
+     * Check if an FTSSyncConsumer job is present and active (not "done"). If one
+     * is present we return it's id
+     *
+     * @return mixed (boolean|string)
+     */
+    protected function isJobQueueConsumerPresent()
+    {
+        $jobBean = BeanFactory::getBean('SchedulersJobs');
+        return $this->db->getOne("SELECT id FROM {$jobBean->table_name} WHERE name = 'FTSSyncConsumer' AND deleted = 0 AND status != 'done'");
     }
 
     /**
@@ -191,7 +193,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
     }
 
     /**
-     * Main function that handles the indexing of a bean and is called by the job queue system.
+     * Main function that handles the indexing of the queued beans and is called by the job queue system.
      *
      * @param $data
      */
@@ -208,10 +210,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
 
         $GLOBALS['log']->info("Going to sync records in fts queue...");
 
-        // Create the index on the server side
-        $this->SSEngine->createIndex(false);
-
-        // index records for each enabled module
+        // index queued records for each enabled module
         $allFieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
         foreach ($allFieldDef as $module=>$fieldDefinitions) {
             $count = $this->indexRecords($module, $fieldDefinitions);
@@ -234,16 +233,13 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
                 // If no items were processed we've exhausted the list and can therefore succeed job.
                 $GLOBALS['log']->info('succeed job');
                 $this->schedulerJob->succeedJob();
-
-                //Remove any consumers that may be set to run
-                //$this->removeExistingFTSSyncConsumer();
                 $GLOBALS['log']->info("FTS Sync Indexing completed.");
             }
             else
             {
                 // Mark the job that as pending so we can be invoked later.
                 $GLOBALS['log']->info('FTS Sync Indexing partially done, postponing job for next cron');
-                $this->schedulerJob->postponeJob('FTS indexing not completed', self::POSTPONE_JOB_TIME);
+                $this->schedulerJob->postponeJob('FTS indexing from queue not completed', self::POSTPONE_JOB_TIME);
             }
         }
 
