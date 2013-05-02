@@ -34,7 +34,6 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp("app_strings");
-        SugarTestHelper::setUp("mod_strings");
         $GLOBALS['current_user']->is_admin = "1";
         mkdir_recursive("cache/ExtTest");
     }
