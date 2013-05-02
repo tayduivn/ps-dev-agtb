@@ -187,7 +187,7 @@ $beanList['DataSets']  = 'DataSet';
 $beanList['DataSet_Attribute']  = 'DataSet_Attribute';
 $beanList['ReportMaker']  = 'ReportMaker';
 //END SUGARCRM flav=ent ONLY
-$beanList['UserSignature'] = 'UserSignature';
+$beanList['UserSignatures'] = 'UserSignature';
 $beanList['Empty'] = 'EmptyBean';
 $beanList['TeamHierarchy'] = 'TeamHierarchy';
 
@@ -328,7 +328,7 @@ $beanFiles['ReportMaker']= 'modules/ReportMaker/ReportMaker.php';
 
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
 $beanFiles['EmptyBean'] = 'data/EmptyBean.php';
-$beanFiles['UserSignature'] = 'modules/Users/UserSignature.php';
+$beanFiles['UserSignature'] = 'modules/UserSignatures/UserSignature.php';
 
 // added these lists for security settings for tabs
 $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connectors',

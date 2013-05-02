@@ -23,7 +23,7 @@ require_once('include/SugarTinyMCE.php');
 
 
 
-require_once('modules/Users/UserSignature.php');
+require_once('modules/UserSignatures/UserSignature.php');
 global $app_strings;
 global $app_list_strings;
 global $curent_language;
@@ -79,4 +79,3 @@ $xtpl->parse('main.textarea');
 //Add Custom Fields
 $xtpl->parse('main');
 $xtpl->out('main');
-?>
