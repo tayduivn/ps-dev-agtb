@@ -68,12 +68,14 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
     {
         $GLOBALS['log']->info("Removing existing FTS Consumers");
 
-        $jobBean = BeanFactory::getBean('SchedulersJobs');
+        $seed = BeanFactory::getBean('SchedulersJobs');
 
-        $res = $GLOBALS['db']->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0");
+        $res = $GLOBALS['db']->query("SELECT id FROM {$seed->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0 AND status != 'done'");
         while($row = $GLOBALS['db']->fetchByAssoc($res))
         {
-            $jobBean->mark_deleted($row["id"]);
+            if ($job = $seed->retrieve($row['id'])) {
+                $job->succeedJob("Cancelling job because of a newly scheduled full (re)index");
+            }
         }
     }
 
@@ -363,7 +365,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $jobBean = BeanFactory::getBean('SchedulersJobs');
         $totalCount = 0;
         $totalTime = 0;
-        $res = $GLOBALS['db']->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0");
+        $res = $GLOBALS['db']->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0 AND status != 'done'");
         while($row = $GLOBALS['db']->fetchByAssoc($res))
         {
             $tmpBean = BeanFactory::getBean('SchedulersJobs', $row["id"]);
