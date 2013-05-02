@@ -288,10 +288,10 @@
                         if (_.isFunction(this.bindKeyDown)) {
                             this.bindKeyDown(_.bind(this.keyDowned, this));
                         } else {
-                            this.$(this.fieldTag).on("keydown.record", {field: this}, _.bind(this.keyDowned, this));
+                            this.$(this.fieldTag).on("keydown.record" + this.cid, {field: this}, _.bind(this.keyDowned, this));
                         }
 
-                        $(document).on("mousedown.record" + this.name, {field: this}, _.bind(this.mouseClicked, this));
+                        $(document).on("mousedown.record" + this.cid, {field: this}, _.bind(this.mouseClicked, this));
                     }
 
                     if (this.type === "enum") {
@@ -409,6 +409,11 @@
              * @param name
              */
             setMode: function(name) {
+                if(name === "detail") {
+                    // remove handlers
+                    this.$(this.fieldTag).off("keydown.record" + this.cid);
+                    $(document).off("mousedown.record" + this.cid);
+                }
                 app.view.Field.prototype.setMode.call(this, name);
                 this._isInEdit = (this.action === 'edit');
 
