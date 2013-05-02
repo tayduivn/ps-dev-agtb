@@ -101,8 +101,8 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
         while ($row = $this->db->fetchByAssoc($result, FALSE) )
         {
             $beanID = $row['id'];
-            $row['module_dir'] = $module;
-            $bean = (object) $row;
+            $bean = BeanFactory::getBean($module);
+            $bean->fromArray($row);
 
             if($bean !== FALSE)
             {
