@@ -211,13 +211,17 @@
                 this.handleRenderOptions({ranges: value});
             }
         }, this);
-        this.context.on('forecasts:commitButtons:sidebarHidden', function(value){
-            // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
-            this.stopRender = value;
-            // if the sidebar is not hidden
-            if(value == false){
+        this.context.on('forecasts:commitButtons:sidebarHidden', function(sidebarVisible, inspectorVisible){
+            // if the sidebar is visible and the inspector is hidden
+            if(sidebarVisible && !inspectorVisible){
+                // dont stop believing, or rendering
+                this.stopRender = false;
+
                 // we need to force the render to happen again
                 this.renderChart();
+            } else {
+                // sidebar isnt visible or the inspector is up so dont allow render
+                this.stopRender = true;
             }
         }, this);
         // watch for the change event to fire.  if it fires make sure something actually changed in the array

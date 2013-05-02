@@ -195,17 +195,23 @@ describe("forecasts_view_forecastsChart", function () {
                 renderChartStub.restore();
             });
 
-            it("should be true", function(){
-                view.context.trigger('forecasts:commitButtons:sidebarHidden', true);
+            it("with sidebar visible, inspector not visible ", function(){
+                view.context.trigger('forecasts:commitButtons:sidebarHidden', true, false);
+
+                expect(view.stopRender).toBeFalsy();
+                expect(renderChartStub).toHaveBeenCalled();
+            });
+            it("with sidebar visible, inspector visible ", function(){
+                view.context.trigger('forecasts:commitButtons:sidebarHidden', true, true);
 
                 expect(view.stopRender).toBeTruthy();
                 expect(renderChartStub).not.toHaveBeenCalled();
             });
-            it("should be false", function(){
-                view.context.trigger('forecasts:commitButtons:sidebarHidden', false);
+            it("with sidebar not visible, inspector not visible ", function(){
+                view.context.trigger('forecasts:commitButtons:sidebarHidden', false, false);
 
-                expect(view.stopRender).toBeFalsy();
-                expect(renderChartStub).toHaveBeenCalled();
+                expect(view.stopRender).toBeTruthy();
+                expect(renderChartStub).not.toHaveBeenCalled();
             });
         })
     });
