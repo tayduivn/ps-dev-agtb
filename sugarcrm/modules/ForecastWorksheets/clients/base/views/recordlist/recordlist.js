@@ -17,8 +17,9 @@
 
     initialize: function(options) {
         this.plugins.push('cte-tabbing');
-
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
+        this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
+        this.context.set('skipFetch', true); // skip the initial fetch, this will be handled by the changing of the selectedUser
         this.collection.sync = _.bind(this.sync, this);
     },
 
@@ -26,21 +27,61 @@
         // these are handlers that we only want to run when the parent module is forecasts
         if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('model'))) {
             if (this.context.parent.get('model').module == 'Forecasts') {
+                this.before('render', function() {
+                    // set the defaults to make it act like a manager so it doesn't actually render till the selected
+                    // user is updated
+                    var showOpps = (_.isUndefined(this.selectedUser.showOpps)) ? false : this.selectedUser.showOpps,
+                        isManager = (_.isUndefined(this.selectedUser.isManager)) ? true : this.selectedUser.isManager;
+
+                    if (!(showOpps || !isManager) && !this.layout.$el.hasClass('hide')) {
+                        console.log('beforeRender Hide');
+                        this.layout.hide();
+                    } else if ((showOpps || !isManager) && this.layout.$el.hasClass('hide')) {
+                        console.log('beforeRender Show');
+                        this.layout.show();
+                    }
+
+                    console.log('Rep beforeRender will return ', (showOpps || !isManager));
+
+                    return (showOpps || !isManager);
+                });
                 this.on('render', function() {
                     var user = this.context.parent.get('selectedUser') || app.user.toJSON()
                     if (user.showOpps || !user.isManager) {
-                        console.log('Rep Show', user);
-                        this.show()
+                        if (this.layout.$el.hasClass('hide')) {
+                            console.log('Rep Show', user);
+                            this.layout.show();
+                        }
                     } else {
-                        console.log('Rep Hide', user);
-                        this.hide();
+                        if (!this.layout.$el.hasClass('hide')) {
+                            console.log('Rep Hide', user);
+                            this.layout.hide();
+                        }
                     }
                 }, this);
 
                 this.context.parent.on('change:selectedUser', function(model, changed) {
-                    // selected user changed
+                    var doFetch = false;
+                    console.log('Rep SelectedUser Change');
+                    if (this.selectedUser.id != changed.id) {
+                        doFetch = true;
+                    }
+                    // if we are already not going to fetch, check to see if the new user is showingOpps or is not
+                    // a manager, then we want to fetch
+                    if (!doFetch && (changed.showOpps || !changed.isManager)) {
+                        doFetch = true;
+                    }
                     this.selectedUser = changed;
-                    this.collection.fetch();
+
+                    if (doFetch) {
+                        this.collection.fetch();
+                    } else {
+                        if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && !this.layout.$el.hasClass('hide')) {
+                            // we need to hide
+                            console.log('rep fetch hide');
+                            this.layout.hide();
+                        }
+                    }
                 }, this);
             }
         }
@@ -55,7 +96,7 @@
         options = options || {};
         options.params = options.params || {};
 
-        if(!_.isUndefined(this.selectedUser.id)) {
+        if (!_.isUndefined(this.selectedUser.id)) {
             options.params.user_id = this.selectedUser.id;
         }
 

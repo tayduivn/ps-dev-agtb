@@ -15,9 +15,21 @@
 
     selectedUser: {},
 
+    defaultValues: {
+        quota: 0,
+        best_case: 0,
+        best_case_adjusted: 0,
+        likely_case: 0,
+        likely_case_adjusted: 0,
+        worst_case: 0,
+        worst_case_adjusted: 0
+    },
+
     initialize: function(options) {
         this.plugins.push('cte-tabbing');
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
+        this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
+        this.context.set('skipFetch', true);    // skip the initial fetch, this will be handled by the changing of the selectedUser
         this.collection.sync = _.bind(this.sync, this);
     },
 
@@ -25,21 +37,56 @@
         // these are handlers that we only want to run when the parent module is forecasts
         if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('model'))) {
             if (this.context.parent.get('model').module == 'Forecasts') {
+                this.before('render', function() {
+                    // if manager is not set or manager == false
+                    if(_.isUndefined(this.selectedUser.isManager) || this.selectedUser.isManager == false) {
+                        console.log('manager before render return false');
+                        return false;
+                    }
+
+                    // only render if this.selectedUser.showOpps == false which means
+                    // we want to display the manager worksheet view
+                    console.log('manager showOpps before render return: ', !(this.selectedUser.showOpps));
+                    return !(this.selectedUser.showOpps);
+                }, true);
                 this.on('render', function() {
                     var user = this.context.parent.get('selectedUser') || app.user.toJSON();
+                    console.log('Manager Render:', user.isManager, user.showOpps);
                     if (user.isManager && user.showOpps == false) {
-                        console.log('Manager Show', user);
-                        this.show()
+                        if(this.layout.$el.hasClass('hide')) {
+                            console.log('Manager Show', user);
+                            this.layout.show();
+                        }
                     } else {
-                        console.log('Manager Hide', user);
-                        this.hide();
+                        if(!this.layout.$el.hasClass('hide')) {
+                            console.log('Manager Hide', user);
+                            this.layout.hide();
+                        }
                     }
                 }, this);
 
                 this.context.parent.on('change:selectedUser', function(model, changed) {
                     // selected user changed
+                    var doFetch = false;
+                    if(this.selectedUser.id != changed.id) {
+                        doFetch = true;
+                    }
+                    if(!doFetch && this.selectedUser.isManager != changed.isManager) {
+                        doFetch = true;
+                    }
+                    if(!doFetch && this.selectedUser.showOpps != changed.showOpps) {
+                        doFetch = !(changed.showOpps);
+                    }
                     this.selectedUser = changed;
-                    this.collection.fetch();
+
+                    if(doFetch) {
+                        this.collection.fetch();
+                    } else {
+                        if(this.selectedUser.isManager && this.selectedUser.showOpps == true && !this.layout.$el.hasClass('hide')) {
+                            // viewing managers opp worksheet so hide the manager worksheet
+                            this.layout.hide();
+                        }
+                    }
                 }, this);
             }
         }
@@ -52,6 +99,10 @@
             var sl = this.context.parent.get('selectedUser');
 
             if(sl.isManager == false) {
+                // they are not a manager, we should always hide this if it's not already hidden
+                if(!this.layout.$el.hasClass('hide')) {
+                    this.layout.hide();
+                }
                 return;
             }
         }
@@ -72,7 +123,7 @@
 
         // custom success handler
         options.success = _.bind(function(model, data, options) {
-            this.collection.reset(data);
+            this.collectionSuccess(data);
         }, this);
 
         callbacks = app.data.getSyncCallbacks(method, model, options);
@@ -80,6 +131,46 @@
 
         url = app.api.buildURL("ForecastManagerWorksheets", null, null, options.params);
         app.api.call("read", url, null, callbacks);
+    },
+
+    /**
+     * Method to handle the success of a collection call to make sure that all reportee's show up in the table
+     * even if they don't have data for the user that is asking for it.
+     * @param data
+     */
+    collectionSuccess: function(data) {
+        var records = [],
+            users = $.map(this.selectedUser.reportees, function(obj) {
+                return $.extend(true, {}, obj);
+            });
+
+        // put the selected user on top
+        users.unshift({id: this.selectedUser.id, name: this.selectedUser.full_name});
+
+        // get the base currency
+        var currency_id = app.currency.getBaseCurrencyId();
+        var currency_base_rate = app.metadata.getCurrency(app.currency.getBaseCurrencyId()).conversion_rate;
+
+        _.each(users, function(user) {
+            var row = _.find(data, function(rec) {
+                return (rec.user_id == this.id)
+            }, user);
+            if(!_.isUndefined(row)) {
+                // update the name on the row as this will have the correct formatting for the locale
+                row.name = user.name;
+            } else {
+                row = _.clone(this.defaultValues);
+                row.currency_id = currency_id;
+                row.base_rate = currency_base_rate;
+                row.user_id = user.id;
+                row.assigned_user_id = this.selectedUser.id;
+                row.draft = (this.selectedUser.id == app.user.id) ? 1 : 0;
+                row.name = user.name;
+            }
+            records.push(row);
+        }, this);
+
+        this.collection.reset(records);
     },
 
     /**

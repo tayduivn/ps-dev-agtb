@@ -400,6 +400,10 @@
                 getSelectedUsersReportees: function(selectedUser, context) {
 
                     if(selectedUser.isManager) {
+                        // make sure the reportee's array is there
+                        if(_.isUndefined(selectedUser.reportees)) {
+                            selectedUser.reportees = [];
+                        }
                         var url = app.api.buildURL('Users', 'filter'),
                             post_args = {
                                 "filter": [

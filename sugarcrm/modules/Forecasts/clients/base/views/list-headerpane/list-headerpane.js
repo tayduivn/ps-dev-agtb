@@ -19,10 +19,10 @@
 
     bindDataChange: function() {
         this.context.on('change:selectedUser', function(model, changed) {
-            if(_.isUndefined(model.previous('selectedUser')) || model.previous('selectedUser').id !== changed.id) {
+            //if(_.isUndefined(model.previous('selectedUser')) || model.previous('selectedUser').id !== changed.id) {
                 this.title = changed.full_name;
                 if (!this.disposed) this.render();
-            }
+            //}
         }, this);
 
         app.view.views.HeaderpaneView.prototype.bindDataChange.call(this);

@@ -37,8 +37,17 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
     public function process()
     {
 
+        // check if the current users is a manager, if they are not, we will load up their reports to
+        // as the starting user
+        $getReportsTo = (!User::isManager($this->getArg('user_id')));
+
         /* @var $userBean User */
         $userBean = BeanFactory::getBean('Users', $this->getArg('user_id'));
+
+        if($getReportsTo === true) {
+            $userBean = BeanFactory::getBean('Users', $userBean->reports_to_id);
+            $this->setArg('user_id', $userBean->id);
+        }
 
         $user = array(
             'id' => $userBean->id,

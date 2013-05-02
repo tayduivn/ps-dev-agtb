@@ -52,8 +52,9 @@
     },
 
     initForecastsModule: function(data, options) {
-        this.context.set('selectedUser', app.user.attributes);
-
-        app.view.Layout.prototype.loadData.call(this);
+        this.context.once('change:selectedUser', function() {
+            app.view.Layout.prototype.loadData.call(this);
+        }, this);
+        app.utils.getSelectedUsersReportees(app.user.toJSON(), this.context);
     }
 })
