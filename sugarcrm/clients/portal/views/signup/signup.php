@@ -103,7 +103,7 @@ $viewdefs['portal']['view']['signup'] = array(
                     'required' => true,
                 ),
                 array(
-                    'name' => 'jobtitle',
+                    'name' => 'title',
                     'type' => 'varchar',
                     'placeholder' => "LBL_PORTAL_SIGNUP_JOBTITLE",
                 ),

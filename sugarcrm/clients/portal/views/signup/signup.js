@@ -86,17 +86,24 @@
         app.router.goBack();
     },
 
+    /**
+     * Prepares Signup API request payload based on form's model and language preferences
+     * @returns {{first_name: *, last_name: *, email: *, phone_work: *, primary_address_country: *, title: *, account_name: *}}
+     * @private
+     */
     _prepareRequestPayload: function() {
         var data = {
             first_name: this.model.get('first_name'),
             last_name: this.model.get('last_name'),
             email: this.model.get('email'),
             phone_work: this.model.get('phone_work'),
-            primary_address_state: this.model.get('state'),
             primary_address_country: this.model.get('country'),
-            title: this.model.get('jobtitle'),
+            title: this.model.get('title'),
             account_name: this.model.get('company')
         };
+        if(data.primary_address_country === "USA"){
+            data.primary_address_state = this.model.get('state');
+        }
         // Sets the preferred language based on the current loaded language. Can be undefined.
         var language = app.lang.getLanguage();
         if (language) {
