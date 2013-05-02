@@ -31,7 +31,7 @@
         <div class="tcenter">
             <h2 class="brand" {{#if logoURL}} style="background: url({{logoURL}}) 50% 50% no-repeat;"{{/if}}>SugarCRM</h2>
         </div>
-        <form name='{{name}}' class="tcenter form-horizontal">
+        <form name='{{name}}' class="tcenter">
             {{#each meta.panels}}
                 {{#each fields}}
                 <div class="control-group">{{field ../../this ../../model}}</div>
