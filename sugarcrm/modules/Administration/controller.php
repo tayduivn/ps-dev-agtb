@@ -167,7 +167,7 @@ class AdministrationController extends SugarController
         $type = !empty($_REQUEST['type']) ? $_REQUEST['type'] : '';
         $host = !empty($_REQUEST['host']) ? $_REQUEST['host'] : '';
         $port = !empty($_REQUEST['port']) ? $_REQUEST['port'] : '';
-        $clearData = !empty($_REQUEST['clearData']) ? $_REQUEST['clearData'] : FALSE;
+        $clearData = !empty($_REQUEST['clearData']) ? true : false;
         $modules = !empty($_REQUEST['modules']) ? explode(",", $_REQUEST['modules']) : array();
         $scheduleIndex = !empty($_REQUEST['sched']) ? TRUE : FALSE;
 
@@ -184,7 +184,7 @@ class AdministrationController extends SugarController
         {
             require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
             $indexer = new SugarSearchEngineFullIndexer();
-            $indexer->initiateFTSIndexer($modules, (int) $clearData);
+            $indexer->initiateFTSIndexer($modules, $clearData);
             $scheduled = TRUE;
         }
         echo json_encode(array('success' => $scheduled));
