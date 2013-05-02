@@ -13,6 +13,8 @@
 ({
     extendsFrom: 'RecordlistView',
 
+    totals: {},
+
     selectedUser: {},
 
     initialize: function(options) {
@@ -52,6 +54,13 @@
                             console.log('Rep Show', user);
                             this.layout.show();
                         }
+
+                        // insert the footer
+                        if(!_.isEmpty(this.totals)) {
+                            console.log('insert rep footer');
+                            var tpl = app.template.getView('recordlist.totals', this.module);
+                            this.$el.find('tbody').after(tpl(this));
+                        }
                     } else {
                         if (!this.layout.$el.hasClass('hide')) {
                             console.log('Rep Hide', user);
@@ -86,7 +95,77 @@
             }
         }
 
+        this.collection.on('reset change', function() {
+            this.calculateTotals();
+        }, this);
+
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+    },
+
+    calculateTotals: function() {
+        // add up all the currency fields
+        if(this.collection.length == 0) {
+            // no items, just bail
+            return;
+        }
+        var fields = _.filter(this._fields.visible, function(field) {
+                return field.type === 'currency';
+            }),
+            fieldNames = [];
+
+        _.each(fields, function(field) {
+            fieldNames.push(field.name);
+            this.totals[field.name] = 0;
+            this.totals["overall_" + field.name] = 0;
+        }, this);
+
+        if(!_.isUndefined(this.totals.likely_case)) {
+            this.totals.likely_case_display = true
+        }
+        if(!_.isUndefined(this.totals.best_case)) {
+            this.totals.best_case_display = true
+        }
+        if(!_.isUndefined(this.totals.worst_case)) {
+            this.totals.worst_case_display = true
+        }
+
+        //Get the excluded_sales_stage property.  Default to empty array if not set
+        //var sales_stage_won_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_won || [];
+        //var sales_stage_lost_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_lost || [];
+
+        // set up commit_stages that should be processed in included total
+        var forecast_ranges = app.metadata.getModule('Forecasts', 'config').forecast_ranges,
+            commit_stages_in_included_total = [],
+            ranges;
+
+        if ( forecast_ranges == 'show_custom_buckets' ) {
+            ranges = app.metadata.getModule('Forecasts', 'config')[forecast_ranges + '_ranges'];
+            _.each(ranges, function(value, key){
+                if ( !_.isUndefined(value.in_included_total) && value.in_included_total ) {
+                    commit_stages_in_included_total.push(key);
+                }
+            })
+        } else {
+            commit_stages_in_included_total.push('include');
+        }
+
+        this.collection.each(function(model) {
+            _.each(fieldNames, function(field) {
+                // convert the value to base
+                var val = model.get(field);
+                if(_.isUndefined(val) || _.isNaN(val)) {
+                    return;
+                }
+                val = app.currency.convertWithRate(val, model.get('base_rate'));
+                this.totals["overall_" + field] = app.math.add(this.totals["overall_" + field], val);
+                if( _.include(commit_stages_in_included_total, model.get('commit_stage')) ) {
+                    this.totals[field] = app.math.add(this.totals[field], val);
+                }
+            }, this)
+        }, this);
+
+        console.log(this.totals);
+        debugger;
     },
 
     sync: function(method, model, options) {

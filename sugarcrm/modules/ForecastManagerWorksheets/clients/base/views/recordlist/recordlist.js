@@ -74,7 +74,7 @@
                         // insert the footer
                         if(!_.isEmpty(this.totals)) {
                             console.log('insert manager footer');
-                            var tpl = app.template.getView('recordlist.totalsrow', this.module);
+                            var tpl = app.template.getView('recordlist.totals', this.module);
                             this.$el.find('tbody').after(tpl(this));
                         }
                     } else {

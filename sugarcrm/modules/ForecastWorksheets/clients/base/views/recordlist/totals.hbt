@@ -1,0 +1,33 @@
+<tfoot>
+<tr id="forecastsWorksheetTotalsIncludedTotals">
+    <th colspan='5' class="tright">{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
+
+    {{#if this.totals.likely_case_display}}
+        <th class="tright">{{formatCurrency this.totals.likely_case "-99"}}</th>
+    {{/if}}
+
+    {{#if this.totals.best_case_display}}
+        <th class="tright">{{formatCurrency this.totals.best_case "-99"}}</th>
+    {{/if}}
+
+    {{#if this.totals.worst_case_display}}
+        <th class="tright">{{formatCurrency this.totals.worst_case "-99"}}</th>
+    {{/if}}
+</tr>
+
+<tr id="forecastsWorksheetTotalsOverallTotals">
+    <th colspan='5' class="tright">{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
+
+    {{#if this.totals.likely_case_display}}
+        <th class="tright">{{formatCurrency this.totals.overall_likely_case "-99"}}</th>
+    {{/if}}
+
+    {{#if this.totals.best_case_display}}
+        <th class="tright">{{formatCurrency this.totals.overall_best_case "-99"}}</th>
+    {{/if}}
+
+    {{#if this.totals.worst_case_display}}
+        <th class="tright">{{formatCurrency this.totals.overall_worst_case "-99"}}</th>
+    {{/if}}
+</tr>
+</tfoot>
