@@ -41,15 +41,26 @@
             if (this.context.parent.get('model').module == 'Forecasts') {
                 this.before('render', function() {
                     // if manager is not set or manager == false
+                    var ret = true;
                     if(_.isUndefined(this.selectedUser.isManager) || this.selectedUser.isManager == false) {
                         console.log('manager before render return false');
-                        return false;
+                        ret = false;
                     }
 
                     // only render if this.selectedUser.showOpps == false which means
                     // we want to display the manager worksheet view
-                    console.log('manager showOpps before render return: ', !(this.selectedUser.showOpps));
-                    return !(this.selectedUser.showOpps);
+                    if(ret) {
+                        ret = !(this.selectedUser.showOpps);
+                    }
+
+                    if(ret === false && !this.layout.$el.hasClass('hide')) {
+                        // hide the layout
+                        console.log('manager beforeRender hide');
+                        this.layout.hide();
+                    }
+
+                    console.log('manager showOpps before render return: ', ret);
+                    return ret;
                 }, true);
                 this.on('render', function() {
                     var user = this.context.parent.get('selectedUser') || app.user.toJSON();
