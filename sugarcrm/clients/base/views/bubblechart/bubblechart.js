@@ -62,7 +62,7 @@
             .y(function (d) {
                 return d.y;
             })
-            .tooltip(function (key, x, y, e, graph) {
+            .tooltipContent(function (key, x, y, e, graph) {
                 e.point.close_date = d3.time.format('%x')(d3.time.format('%Y-%m-%d').parse(e.point.x));
                 e.point.amount = e.point.currency_symbol + d3.format(',.2d')(e.point.base_amount);
                 return self.tooltiptemplate(e.point);
@@ -73,8 +73,7 @@
             .bubbleClick(function (e) {
                 app.router.navigate(app.router.buildRoute('Products', e.point.id), {trigger: true});
             })
-            .colorData('class', 2)
-            .colorFill('default')
+            .colorData('class', {step:2})
             .groupBy(function (d) {
                 return (self.filterAssigned === 'my') ? d.sales_stage_short : d.assigned_user_name;
             })
@@ -109,6 +108,8 @@
             return;
         }
         var self = this;
+        //clear existing chart
+        d3.select('svg#' + this.cid).select('.nvd3').remove();
 
         d3.select('svg#' + this.cid)
             .datum(self.dataset)

@@ -64,8 +64,7 @@
         chart = nv.models.funnelChart()
             .showTitle(false)
             .tooltips(false)
-            .colorData('graduated', {c1: '#0b274c', c2: '#cbfaff', l: this.results.data.length})
-            .colorFill('default')
+            .colorData('class', {step:2})
             .fmtValueLabel(function(d) {
                 return d.label
             });

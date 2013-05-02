@@ -10,15 +10,22 @@
 
     _renderHtml: function() {
         var self = this,
-            results = this.results;
-
-        // Set constants for the map.
-        var margin = {top: 10, right: 10, bottom: 10, left: 10},
-            usa_view = {rotate:[-97,38], scale:3};
+            results = this.results,
+            svgId = 'svg#' + this.cid,
+            autoSpin = false,
+            // Set constants for the map.
+            margin = {top: 10, right: 10, bottom: 10, left: 10};
 
         // Calculate the maximum balue so that we can generate a colour scale.
-        var max = _.max(_.pluck(results, '_total')),
-            color = d3.scale.linear().domain([0, max]).range(['#999', '#336699']);
+        var colorRange = function(r) {
+                var max = _.max(_.pluck(r, '_total'));
+                return d3.scale.linear().domain([0, max]).range(['#99CCFF', '#336699']);
+            },
+            color = colorRange(results),
+            fill = function(d) {
+                var r = amount(d);
+                return r ? color(r) : '';
+            };
 
 
         app.view.View.prototype._renderHtml.call(this);
@@ -26,59 +33,169 @@
         var m0,
             o0,
             t0,
-            globe,
-            world_data = [],
-            country_data = {},
+            countries,
             active_country = false,
-            current_view = {rotate:[0,0], scale:1},
-            tooltips = true,
-            node = this.$('svg'),
+            world_map = [],
+            country_map = {},
+            country_label = {},
+            world_view = {rotate:[100, -10], scale:1, zoom:1},
+            country_view = {rotate:[null, null], scale:null, zoom:null},
+            node = this.$(svgId),
             width = parseInt(node.width(), 10) - margin.left - margin.right,
             height = parseInt(node.height(), 10) - margin.top - margin.top,
+            iRotation,
             dispatch = d3.dispatch('tooltipShow', 'tooltipHide'),
-            tooltip = function(d) {
+            tooltips = true,
+            tooltip = null,
+            tooltipContent = function(d) {
                 return '<p><b>' + d.name + '</b></p>' +
-                    '<p><b>Amount:</b> $' +  d3.format(',.2f')(d.amount) + '</p>';
+                    '<p><b>Amount:</b> $' +  d3.format(',.0f')(d.amount) + '</p>';
             };
 
         //============================================================
 
-        var projection = d3.geo.azimuthal()
-              .scale(Math.min(height/2,width/2))
-              .origin([-103,10])
-              .mode('orthographic')
-              .translate([width/2+margin.left, height/2+margin.top]);
-
-        var circle = d3.geo.greatCircle()
-              .origin([-103,10]);
+        var projection = d3.geo.orthographic()
+              .scale(Math.min(height, width) * 1 / 2)
+              .translate([width / 2 + margin.left, height / 2 + margin.top])
+              .clipAngle(90)
+              .precision(0.1)
+              .rotate(world_view.rotate);
 
         var path = d3.geo.path()
               .projection(projection);
 
-        var svg = d3.select("svg#" + this.cid)
-            .attr('width', width)
-            .attr('height', height)
-            .on('mousedown', mousedown);
+        var graticule = d3.geo.graticule();
 
-        var backgroundCircle = svg.append('circle')
-            .attr('cx', width / 2)
-            .attr('cy', height / 2)
-            .attr('r', projection.scale())
-            .attr('class', 'globe')
-            .attr('transform', 'translate('+ margin.left +','+ margin.top +')');
+        var svg = d3.select(svgId)
+              .attr('width', width)
+              .attr('height', height)
+              .on('mousedown', mousedown);
+
+            svg.append('path')
+                .datum({type: 'Sphere'})
+                .attr('class', 'sphere')
+                .attr('d', path);
 
         // zoom and pan
         var zoom = d3.behavior.zoom()
             .on('zoom', function () {
-                projection.scale((Math.min(height,width)*d3.event.scale)/2);
-                backgroundCircle.attr('r', projection.scale());
+                projection.scale((Math.min(height, width)*Math.min(Math.max(d3.event.scale, 0.75), 3)) / 2);
                 refresh();
             });
 
-        // Set clipping path function for the great circle.
-        var clip = function (d) {
-            return path(circle.clip(d)) || 'M0,0Z';
-        };
+        svg.call(zoom);
+
+
+        d3.json(app.config.siteUrl + '/styleguide/assets/js/nvd3/data/cldr_fr.json', function (labels) {
+            country_label = labels;
+        });
+
+        d3.json(app.config.siteUrl + '/styleguide/assets/js/nvd3/data/ne_110m_admin_0_countries.json', function (world) {
+            world_map = topojson.feature(world, world.objects.countries).features;
+            loadChart(world_map, 'countries');
+            if (autoSpin) {
+                iRotation = setInterval(spin, 10);
+            }
+        });
+
+        d3.json(app.config.siteUrl + '/styleguide/assets/js/nvd3/data/us-states.json', function (country) {
+            country_map['USA'] = country.features;
+        });
+
+        d3.select('.sphere')
+          .on('click', function(){
+            unLoadCountry();
+          });
+
+        function loadChart(data, classes) {
+
+            countries = svg.append('g')
+                .attr('class', classes)
+              .selectAll('path')
+                .data(data)
+              .enter().append('path')
+                .attr('d', clip)
+                .style('fill', fill);
+
+            countries.on('click', function (d) {
+                if (active_country != d3.select(this)) {
+
+                    unLoadCountry();
+
+                    // If we have country-specific geographic features.
+                    if (country_map[d.id]) {
+                        if (tooltips) nv.tooltip.cleanup();
+
+                        world_view = {
+                            rotate: projection.rotate(),
+                            scale: projection.scale(),
+                            zoom: zoom.scale()
+                        };
+
+                        var centroid = d3.geo.centroid(d);
+                        projection.rotate([-centroid[0], -centroid[1]]);
+
+                        var bounds = path.bounds(d);
+                        var hscale = width  / (bounds[1][0] - bounds[0][0]);
+                        var vscale = height / (bounds[1][1] - bounds[0][1]);
+
+                        if (width * hscale < height * vscale) {
+                            projection.scale(width * hscale / 2);
+                            zoom.scale(hscale);
+                        } else {
+                            projection.scale(height * vscale / 2);
+                            zoom.scale(vscale);
+                        }
+
+                        country_view = {
+                            rotate: projection.rotate(),
+                            scale: projection.scale(),
+                            zoom: zoom.scale()
+                        };
+
+                        // Flatten the results and include the state-level
+                        // results so that we don't need complex tooltip logic.
+                        var obj = _.extend(region_results(d), {
+                            parent: results
+                        });
+                        results = obj;
+
+                        color = colorRange(results);
+
+                        active_country = d3.select(this);
+
+                        loadChart(country_map[d.id], 'states');
+
+                        active_country.style('display','none');
+
+                        refresh();
+                    }
+                }
+            });
+
+            countries.on('mouseover', function (d) {
+                mouseover(d);
+            });
+
+            countries.on('mouseout', function () {
+                mouseout();
+            });
+        }
+
+        function unLoadCountry() {
+            if (active_country) {
+                results = results.parent;
+                active_country.style('display', 'inline');
+                color = colorRange(results);
+                d3.select('.states').remove();
+                active_country = false;
+                country_view = {rotate:[null, null], scale:null, zoom:null};
+                projection.rotate(world_view.rotate);
+                projection.scale(world_view.scale);
+                zoom.scale(world_view.zoom);
+                refresh();
+            }
+        }
 
         var region_results = function(d) {
             if (results[d.id]) {
@@ -96,86 +213,9 @@
             return 0;
         };
 
-        svg.call(zoom);
-
-        backgroundCircle.on('click', function () {
-            unLoadCountry();
-        });
-
-        d3.json(app.config.siteUrl + "/clients/base/views/countrychart/world-countries.json", function (collection) {
-            world_data = collection.features;
-
-            loadChart(world_data);
-        });
-
-        d3.json(app.config.siteUrl + "/clients/base/views/countrychart/us-states.json", function (collection) {
-            country_data['USA'] = collection.features;
-        });
-
-        function loadChart(data) {
-            globe = svg.selectAll('path').data(data);
-            globe.exit().remove();
-            globe.enter().append('svg:path')
-                .attr('d', clip)
-                .style('fill', function (d) {
-                    var value = amount(d);
-                    return color(value);
-                });
-
-            globe.on('click', function (d) {
-                if (active_country != d3.select(this)) {
-                    unLoadCountry();
-                    // If we have country-specific geographic features.
-                    if (country_data[d.id]) {
-                        current_view = {
-                            rotate: projection.origin(),
-                            scale: projection.scale()
-                        };
-
-                        // Flatten the results and include the state-level
-                        // results so that we don't need complex tooltip logic.
-                        var obj = _.extend(region_results(d), results,  {
-                            parent: results
-                        });
-                        results = obj;
-
-                        if (tooltips) nv.tooltip.cleanup();
-                        active_country = d3.select(this);
-                        loadChart(world_data.concat(country_data[d.id]));
-                        active_country.style('display','none');
-                        rotate(usa_view.rotate);
-                        projection.scale(Math.min(height,width)*usa_view.scale/2);
-                        backgroundCircle.attr('r', projection.scale());
-                        refresh();
-                    }
-                }
-            });
-
-            globe.on('mouseover', function (d) {
-                mouseover(d);
-            });
-
-            globe.on('mouseout', function () {
-                mouseout();
-            });
-        }
-
-        function unLoadCountry() {
-            if (active_country) {
-                results = results.parent;
-                active_country.style('display','inline');
-                loadChart(world_data);
-                active_country = false;
-                rotate(current_view.rotate);
-                projection.scale(current_view.scale);
-                backgroundCircle.attr('r', projection.scale());
-                refresh();
-            }
-        }
-
         var showTooltip = function(e, offsetElement) {
             // New addition to calculate position if SVG is scaled with viewBox, may move TODO: consider implementing everywhere else
-            var offsets = {left:0,right:0};
+            var offsets = {left:0, right:0};
 
             if (offsetElement) {
                 var svg = d3.select(offsetElement).select('svg'),
@@ -183,7 +223,7 @@
                 offsets = nv.utils.getAbsoluteXY(offsetElement);
                 if (viewBox) {
                     viewBox = viewBox.split(' ');
-                    var ratio = parseInt(svg.style('width'),10) / viewBox[2];
+                    var ratio = parseInt(svg.style('width'), 10) / viewBox[2];
                     e.pos[0] = e.pos[0] * ratio;
                     e.pos[1] = e.pos[1] * ratio;
                 }
@@ -191,37 +231,45 @@
 
             var left = e.pos[0] + ( offsets.left || 0 ) + margin.left,
                 top = e.pos[1] + ( offsets.top || 0) + margin.top,
-                content = tooltip(e);
+                content = tooltipContent(e);
 
-            nv.tooltip.show([left, top], content, null, null, offsetElement);
+            tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
         };
 
         function mouseover(d) {
             if (tooltips) {
                 var evnt = {
-                    pos:[d3.event.pageX,d3.event.pageY],
-                    name: d.properties.name,
+                    pos:[d3.event.pageX, d3.event.pageY],
+                    name: (country_label[d.properties.iso_a2] || d.properties.name),
                     amount: amount(d)
                 };
-                showTooltip(evnt, d3.select("svg#" + this.cid).parentNode);
+                showTooltip(evnt, svg.parentNode);
             }
         }
 
         function mouseout() {
-          if (tooltips) nv.tooltip.cleanup();
+            if (tooltips) nv.tooltip.cleanup();
         }
 
         function mousedown() {
             m0 = [d3.event.pageX, d3.event.pageY];
-            o0 = projection.origin();
+            o0 = projection.rotate();
             d3.event.preventDefault();
+            if (tooltips) nv.tooltip.cleanup();
+            if (autoSpin) {
+                clearInterval(iRotation);
+            }
         }
 
         function mousemove() {
+            if (tooltip) {
+                var pos = [d3.event.pageX, d3.event.pageY];
+                nv.tooltip.position(tooltip, pos);
+            }
             if (m0) {
                 var m1 = [d3.event.pageX, d3.event.pageY],
-                //o1 = [o0[0] + (m0[0] - m1[0]) / 4, o0[1] - (m0[1] - m1[1]) / 4];
-                o1 = [o0[0] + (m0[0] - m1[0]) / 4, 10];
+                    //o1 = [o0[0] + (m0[0] - m1[0]) / 4, o0[1] - (m0[1] - m1[1]) / 4];
+                    o1 = [o0[0] - (m0[0] - m1[0]) / 4, (country_view.rotate[1] || world_view.rotate[1])];
                 rotate(o1);
             }
         }
@@ -234,20 +282,31 @@
         }
 
         function refresh(duration) {
-            (duration ? globe.transition().duration(20) : globe).attr('d', clip);
+            svg.selectAll('path').attr('d', clip);
         }
 
+        function clip(d) {
+          return path(d) || 'M0,0Z';
+        }
 
-        function autoSpin() {
-            var o0 = projection.origin(),
+        function spin() {
+            var o0 = projection.rotate(),
                 m1 = [10, 0],
-                o1 = [o0[0] - m1[0]/8, 10];
+                o1 = [o0[0] + m1[0] / 8, -10];
             rotate(o1);
         }
 
         function rotate(o) {
-            projection.origin(o);
-            circle.origin(projection.origin());
+            projection.rotate(o);
+            refresh();
+        }
+
+        function resize() {
+            width = parseInt(node.width(), 10) - margin.left - margin.right;
+            height = parseInt(node.height(), 10) - margin.top - margin.top;
+            projection
+                .scale((Math.min(height,width) * Math.min(Math.max(zoom.scale(), 0.75), 3)) / 2)
+                .translate([width / 2 + margin.left, height / 2 + margin.top]);
             refresh();
         }
 
@@ -256,6 +315,8 @@
         d3.select(window)
             .on('mousemove', mousemove)
             .on('mouseup', mouseup);
+
+        nv.utils.windowResize(resize);
     },
 
     loadData: function(options) {

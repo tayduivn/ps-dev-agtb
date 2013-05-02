@@ -165,7 +165,7 @@
                 "styleguide/assets/js/bootstrap-modal.js" => "summer/summer.min.js",
                 "styleguide/assets/js/bootstrap-alert.js" => "summer/summer.min.js",
                 "summer/summer-ui.js" => "summer/summer.min.js",
-                "styleguide/assets/js/nvd3/lib/d3.v2.min.js" => "summer/summer.min.js",
+                "styleguide/assets/js/nvd3/lib/d3.min.js" => "summer/summer.min.js",
                 // To add more models to NV D3, run the makefile in styleguide.
                 "styleguide/assets/js/nvd3/nv.d3.min.js" => "summer/summer.min.js",
                 "modules/Forecasts/clients/base/lib/ForecastsUtils.js" => "summer/summer.min.js",
@@ -355,7 +355,8 @@
                    'include/javascript/select2-release-3.2/select2.min.js' => "include/javascript/sugar_sidecar.min.js",
                    'styleguide/assets/js/bootstrap-collapse.js'   => 'include/javascript/sugar_sidecar.min.js',
                    // D3 library
-                   'styleguide/assets/js/nvd3/lib/d3.v2.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'styleguide/assets/js/nvd3/lib/d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'styleguide/assets/js/nvd3/lib/topojson.js' => 'include/javascript/sugar_sidecar.min.js',
                    // To add more models to NV D3, run the makefile in styleguide/js/nvd3.
                    'styleguide/assets/js/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'portal2/error.js'               => 'include/javascript/sugar_sidecar.min.js',
