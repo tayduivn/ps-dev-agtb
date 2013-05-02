@@ -188,9 +188,20 @@
   }
 
   /*#createList,*/
-  #searchForm,
   #userList {
     display: none !important;
+  }
+
+  #searchForm {
+    right: auto;
+    .navbar-search {
+      .search-query {
+        .box-sizing(inherit);
+        width: inherit;
+        min-width: inherit !important;
+        width: 100px;
+      }
+    }
   }
 
   .thumbnail {
