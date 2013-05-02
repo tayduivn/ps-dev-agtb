@@ -304,22 +304,7 @@ describe("Email field", function() {
         });
 
         it("should return only a single primary email address as the value in the list view", function() {
-            field.view.action = 'list';
-            field.render();
-
-            var new_email_address = 'test@blah.co',
-                new_assigned_email = field.unformat(new_email_address),
-                expected = new_email_address,
-                actual;
-
-            actual = (_.find(new_assigned_email, function(email){
-                return email.primary_address;
-            })).email_address;
-            expect(actual).toBe(expected);
-        });
-
-        it("should return only a single primary email address as the value in the modal view", function() {
-            field.view.action = 'modal';
+            field = SugarTest.createField("base","email", "email", "list");
             field.render();
 
             var new_email_address = 'test@blah.co',

@@ -72,8 +72,7 @@ $viewdefs['portal']['view']['signup'] = array(
                 array(
                     'name' => 'email',
                     'type' => 'email',
-                    'view' => 'modal',
-                    'label' => "LBL_PORTAL_SIGNUP_EMAIL",
+                    'placeholder' => "LBL_PORTAL_SIGNUP_EMAIL",
                     'required' => true,
                 ),
                 array(

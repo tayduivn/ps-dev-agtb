@@ -1,6 +1,6 @@
 {{#each value}}
 {{#eq primary_address "1"}}
-<input type="text" name="{{../../name}}" value="{{../email_address}}"{{#if def.len}} maxlength="{{def.len}}"{{/if}}{{#if def.placeholder}} placeholder="{{str def.placeholder this.model.module}}"{{/if}} class="inherit-width">
+<input type="text" name="{{../../name}}" value="{{../email_address}}"{{#if ../../def.len}} maxlength="{{../../def.len}}"{{/if}}{{#if ../../def.placeholder}} placeholder="{{str ../../../def.placeholder ../../../model.module}}"{{/if}} class="inherit-width">
 {{/eq}}
 {{/each}}
 <p class="help-block"></p>
