@@ -44,7 +44,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * Force asynchronous indexing using fts_queue
      * Defaults to false unless configured
      *
-     * @see $sugar_config['elastic']['force_async_index']
+     * @see $sugar_config['search_engine']['force_async_index']
      * @var boolean
      */
     protected $forceAsyncIndex;
@@ -76,7 +76,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             //Fix a notice error during install when we verify the Elastic Search settings
             $this->_indexName = '';
         }
-        $this->forceAsyncIndex = SugarConfig::getInstance()->get('elastic.force_async_index', false);
+        $this->forceAsyncIndex = SugarConfig::getInstance()->get('search_engine.force_async_index', false);
 
         //Elastica client uses own auto-load schema similar to ZF.
         SugarAutoLoader::addPrefixDirectory('Elastica', 'vendor/');
