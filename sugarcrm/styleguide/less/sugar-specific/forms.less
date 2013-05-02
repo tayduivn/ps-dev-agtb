@@ -173,8 +173,6 @@ input[type=radio] {
     margin-left:-26px;
     position:relative;
     font-size: @baseFontSize;
-    right: 2px;
-    top: 4px;
   }
   span {
     font-size: @baseFontSize;
@@ -185,7 +183,6 @@ input[type=radio] {
   &.radio {
     padding-left:0;
     .add-on {
-      top: 5px;
       background:transparent !important;
       border: none;
     }
@@ -215,8 +212,8 @@ input[type=radio] {
   }
   input{
     .border-radius(@inputBorderRadius);
-    width: 100%;
-    padding-right: 0;
+    /* The size is defined in twitter-bootstrap/forms.less */
+    padding: 4px 6px;
   }
   .ui-timepicker-list {
     font-size: 12px;
