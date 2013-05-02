@@ -44,7 +44,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
     {
         // if a job is already present, just return it's id
         if ($jobId = $this->isJobQueueConsumerPresent()) {
-            $GLOBALS['log']->fatal("Active FTS SyncConsumer job found -> $jobId");
+            $GLOBALS['log']->debug("Active FTS SyncConsumer job found -> $jobId");
             return $jobId;
         }
 
