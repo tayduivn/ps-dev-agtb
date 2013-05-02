@@ -209,6 +209,16 @@ table.dataTable {
         }
       }
       .full-name.list {
+        &:hover {
+          color: @linkColorHover;
+          cursor: pointer;
+          &> .list {
+            text-decoration: underline;
+            a {
+              color: @linkColorHover;
+            }
+          }
+        }
         .ellipsis_inline {
           display: inline !important;
         }
