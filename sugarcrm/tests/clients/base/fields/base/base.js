@@ -70,6 +70,31 @@ describe("Base.Field.Base", function() {
         expect(getModuleStub).toHaveBeenCalled();
         expect(field.href).toEqual("#bwc/index.php?module=Quotes&action=DetailView&record=12345");
     });
+
+    it('should create bwc if defined on def', function() {
+        var getModuleStub = sinonSandbox.stub(app.metadata, 'getModule', function() {
+            return {isBwcEnabled: false};
+        });
+        var def = { link: true, bwcLink: true };
+        field = SugarTest.createField("base","text", "base", "list", def);
+        field.model = new Backbone.Model({id: '12345', _module:"Quotes"});
+        field._render();
+        expect(getModuleStub).toHaveBeenCalled();
+        expect(field.href).toEqual("#bwc/index.php?module=Quotes&action=DetailView&record=12345");
+    });
+
+    it('should not create bwc if defined false on def', function() {
+        var getModuleStub = sinonSandbox.stub(app.metadata, 'getModule', function() {
+            return {isBwcEnabled: false};
+        });
+        var def = { link: true, bwcLink: false };
+        field = SugarTest.createField("base","text", "base", "list", def);
+        field.model = new Backbone.Model({id: '12345', _module:"Quotes"});
+        field._render();
+        expect(getModuleStub).toHaveBeenCalled();
+        expect(field.href).toEqual("#Quotes/12345");
+    });
+
     it('should create normal sidecar if no bwc', function() {
         var getModuleStub = sinonSandbox.stub(app.metadata, 'getModule', function() {
             return {isBwcEnabled: false};
