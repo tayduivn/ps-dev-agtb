@@ -15,6 +15,8 @@
 
     selectedUser: {},
 
+    totals: {},
+
     defaultValues: {
         quota: 0,
         best_case: 0,
@@ -57,6 +59,13 @@
                             console.log('Manager Show', user);
                             this.layout.show();
                         }
+
+                        // insert the footer
+                        if(!_.isEmpty(this.totals)) {
+                            console.log('insert manager footer');
+                            var tpl = app.template.getView('recordlist.totalsrow', this.module);
+                            this.$el.find('tbody').after(tpl(this));
+                        }
                     } else {
                         if(!this.layout.$el.hasClass('hide')) {
                             console.log('Manager Hide', user);
@@ -90,6 +99,12 @@
                 }, this);
             }
         }
+
+        this.collection.on('reset change', function() {
+            this.calculateTotals();
+        }, this);
+
+
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
     },
 
@@ -171,6 +186,45 @@
         }, this);
 
         this.collection.reset(records);
+    },
+
+    calculateTotals: function() {
+        // add up all the currency fields
+        if(this.collection.length == 0) {
+            // no items, just bail
+            return;
+        }
+        var fields = _.filter(this._fields.visible, function(field) {
+                return field.type === 'currency';
+            }),
+            fieldNames = [];
+
+        _.each(fields, function(field) {
+            fieldNames.push(field.name);
+            this.totals[field.name] = 0;
+        }, this);
+
+        if(!_.isUndefined(this.totals.likely_case)) {
+            this.totals.likely_case_display = true
+        }
+        if(!_.isUndefined(this.totals.best_case)) {
+            this.totals.best_case_display = true
+        }
+        if(!_.isUndefined(this.totals.worst_case)) {
+            this.totals.worst_case_display = true
+        }
+
+        this.collection.each(function(model) {
+            _.each(fieldNames, function(field) {
+                // convert the value to base
+                var val = model.get(field);
+                if(_.isUndefined(val) || _.isNaN(val)) {
+                    return;
+                }
+                val = app.currency.convertWithRate(val, model.get('base_rate'));
+                this.totals[field] = app.math.add(this.totals[field], val);
+            }, this)
+        }, this);
     },
 
     /**
