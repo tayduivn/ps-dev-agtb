@@ -30,7 +30,7 @@
     {{#each fields}}
         <span class="record-cell" data-name="{{name}}" data-type="{{type}}">
             <span data-fieldname="{{name}}">
-                {{field ../../view ../../model ../../options.viewName}}
+                {{field ../../view model=../../model template=../../options.viewName}}
             </span>
         </span>
     {{/each}}

@@ -42,7 +42,7 @@
                 </ul>
                 {{#notEq collection.next_offset "-1"}}
                     {{#each meta.buttons}}
-                        {{field ../this ../model}}
+                        {{field ../this model=../model}}
                     {{/each}}
                 {{/notEq}}
             </div>

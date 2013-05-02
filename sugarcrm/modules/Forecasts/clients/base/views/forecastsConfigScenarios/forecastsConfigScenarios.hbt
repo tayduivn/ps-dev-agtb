@@ -31,7 +31,7 @@
     <p><em>{{str "LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO" "Forecasts"}}</em></p>
 {{#each meta.panels}}
     {{#each fields}}
-        <p>{{field ../../this ../../model}}&nbsp;&nbsp;{{str label "Forecasts"}}</p>
+        <p>{{field ../../this model=../../model}}&nbsp;&nbsp;{{str label "Forecasts"}}</p>
     {{/each}}
 {{/each}}
 </div>

@@ -31,7 +31,7 @@
     <div class="row-fluid">
         <div class="span12 pull-right">
             {{#each this.meta.buttons}}
-                {{field ../this ../this.model}}
+                {{field ../this model=../this.model}}
             {{/each}}
         </div>
     </div>

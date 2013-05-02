@@ -35,7 +35,7 @@
     {{#each fields}}
         <li>
             <p>{{{str label "Forecasts"}}}</p>
-            <p>{{field ../../this ../../model}}<p>
+            <p>{{field ../../this model=../../model}}<p>
         </li>
     {{/each}}
     </ol>

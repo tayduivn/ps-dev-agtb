@@ -31,7 +31,7 @@
     <label for="date_filter" class="control-label">{{str label "Forecasts"}}</label>
 
     <div class="controls">
-        {{field ../this ../model}}
+        {{field ../this model=../model}}
     </div>
     {{/with}}
 </div>

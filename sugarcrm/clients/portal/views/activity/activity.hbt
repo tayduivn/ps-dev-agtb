@@ -60,7 +60,7 @@
                 {{#notEq collection.next_offset "-1"}}
                 <div class="block-footer">
                     {{#each meta.buttons}}
-                        {{field ../this ../model}}
+                        {{field ../this model=../model}}
                     {{/each}}
                 </div>
                 {{/notEq}}

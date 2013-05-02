@@ -2,7 +2,7 @@
     <div class="row-fluid">
         <div class="span6">
             {{#each this.meta.buttons}}
-                {{field ../this ../this.model "edit"}}
+                {{field ../this model=../this.model template="edit"}}
             {{/each}}
         </div>
     </div>

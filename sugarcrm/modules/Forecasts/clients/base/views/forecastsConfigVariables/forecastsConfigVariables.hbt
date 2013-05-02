@@ -31,7 +31,7 @@
     <p>{{str "LBL_FORECASTS_CONFIG_VARIABLES_DESC" "Forecasts"}}</p>
     {{#each fields}}
         <label for="{{name}}">{{str label "Forecasts"}}</label>
-        {{field ../../this ../../model}}
+        {{field ../../this model=../../model}}
     {{/each}}
 {{/each}}
 </div>
