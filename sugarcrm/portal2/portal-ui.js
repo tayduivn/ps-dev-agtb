@@ -72,8 +72,8 @@
     /**
      * Overrides Field::_render() to fix placeholders on IE and old browsers
      */
-    var __superFieldRender__ = app.view.SupportPortalField.prototype._render;
-    app.view.SupportPortalField.prototype._render = function() {
+    var __superFieldRender__ = app.view.Field.prototype._render;
+    app.view.Field.prototype._render = function() {
         _.each(this.$('[rel="tooltip"]'), function(element) {
             $(element).tooltip('hide');
         })
