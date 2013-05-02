@@ -887,13 +887,17 @@ function handlePortalConfig()
         'platform' => 'portal',
         'additionalComponents' => array(
             'header' => array(
-                'layout' => 'header',
-                'target' => '#header'
+                'target' => '#header',
+                'layout' => 'header'
             ),
             'footer' => array(
-                'layout' => 'footer',
-                'target' => '#footer'
-            )
+                'target' => '#footer',
+                'layout' => 'footer'
+            ),
+            'drawer' => array(
+                'target' => '#drawers',
+                'layout' => 'drawer'
+            ),
         ),
         'alertsEl'=> '#alert',
         'serverUrl' => $sugar_config['site_url'] . '/rest/v10',

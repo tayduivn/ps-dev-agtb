@@ -2368,9 +2368,10 @@ private function dir_file_count($path){
                     'target' => '#footer',
                     'layout' => 'footer'
                 ),
-                'tourguide' => array(
-                    'target' => '#tourguide'
-                )
+                'drawer' => array(
+                    'target' => '#drawers',
+                    'layout' => 'drawer'
+                ),
             ),
             'alertsEl' => '#alerts',
             'alertAutoCloseDelay' => 2500,
