@@ -25,6 +25,13 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    plugins: ['error-decoration'],
+
+    /**
+     * Sign Up form view.
+     * @class View.Views.SignupView
+     * @alias SUGAR.App.view.views.SignupView
+     */
     events: {
         'click [name=cancel_button]': 'cancel',
         'click [name=signup_button]': 'signup',
@@ -32,10 +39,40 @@
     },
 
     /**
+     * Get the fields metadata from panels and declare a Bean with the metadata attached
+     * @param meta
+     * @private
+     * @see View.Views.LoginView
+     */
+    _declareModel: function(meta) {
+        meta = meta || {};
+
+        var fields = {};
+        _.each(_.flatten(_.pluck(meta.panels, "fields")), function(field) {
+            fields[field.name] = field;
+        });
+        /**
+         * Fields metadata needs to be converted to this format for App.data.declareModel
+         *  {
+          *     "first_name": { "name": "first_name", ... },
+          *     "last_name": { "name": "last_name", ... },
+          *      ...
+          * }
+         */
+        app.data.declareModel('Signup', {fields: fields});
+    },
+
+    /**
      * @override
      * @param options
      */
     initialize: function(options) {
+        // Declare a Bean so we can process field validation
+        this._declareModel(options.meta);
+
+        // Reprepare the context because it was initially prepared without metadata
+        options.context.prepare(true);
+
         // Manually injects app_list_strings
         app.metadata.set(this._metadata);
 
@@ -111,6 +148,7 @@
     signup: function() {
         var self = this;
 
+        this.clearValidationErrors();
         if (self.model.isValid()) {
             app.$contentEl.hide();
             app.alert.show('signup', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SIGNUP_PROCESS'), autoClose: false});
