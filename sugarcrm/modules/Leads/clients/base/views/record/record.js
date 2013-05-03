@@ -95,7 +95,12 @@
         var duplicateBlackList = ["id", "status", "converted", "account_id", "opportunity_id", "contact_id"];
         _.each(duplicateBlackList, function(field){
             if(field && prefill.has(field)){
-                prefill.unset(field);
+                //set blacklist field to the default value if exists
+                if (!_.isUndefined(prefill.fields[field]) && !_.isUndefined(prefill.fields[field].default)) {
+                    prefill.set(field, prefill.fields[field].default);
+                } else {
+                    prefill.unset(field);
+                }
             }
         });
     }
