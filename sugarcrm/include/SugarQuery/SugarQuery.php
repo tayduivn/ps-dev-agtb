@@ -178,6 +178,9 @@ class SugarQuery
     {
         $where = new SugarQuery_Builder_Andwhere();
         $where->addRaw($sql);
+        if(!isset($this->where['and'])) {
+            $this->where['and'] = new SugarQuery_Builder_Andwhere(array());
+        }
         $this->where['and']->add($where);
         return $this->where['and'];
     }
