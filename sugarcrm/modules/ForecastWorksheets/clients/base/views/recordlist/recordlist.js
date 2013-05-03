@@ -17,11 +17,13 @@
 
     selectedUser: {},
 
+    selectedTimeperiod: '',
+
     initialize: function(options) {
         this.plugins.push('cte-tabbing');
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
-        this.context.set('skipFetch', true); // skip the initial fetch, this will be handled by the changing of the selectedUser
+        this.context.set('skipFetch', !(this.selectedUser.showOpps || !this.selectedUser.isManager)); // if user is a manager, skip the initial fetch
         this.collection.sync = _.bind(this.sync, this);
     },
 
@@ -55,9 +57,15 @@
                             this.layout.show();
                         }
 
+                        if (this.collection.length == 0) {
+                            console.log('render rep worksheet empty row');
+                            var tpl = app.template.getView('recordlist.noresults', this.module);
+                            this.$el.find('tbody').html(tpl(this));
+                        }
+
                         // insert the footer
-                        if(!_.isEmpty(this.totals)) {
-                            console.log('insert rep footer');
+                        if (!_.isEmpty(this.totals)) {
+                            console.log('render rep footer');
                             var tpl = app.template.getView('recordlist.totals', this.module);
                             this.$el.find('tbody').after(tpl(this));
                         }
@@ -66,6 +74,22 @@
                             console.log('Rep Hide', user);
                             this.layout.hide();
                         }
+                    }
+                }, this);
+
+                this.context.parent.on('forecasts:worksheet:totals', function(totals, type) {
+                    if (type == "rep") {
+                        console.log('update rep footer');
+                        var tpl = app.template.getView('recordlist.totals', this.module);
+                        this.$el.find('tfoot').remove();
+                        this.$el.find('tbody').after(tpl(this));
+                    }
+                }, this);
+
+                this.context.parent.on('change:selectedTimePeriod', function(model, changed) {
+                    this.selectedTimeperiod = changed;
+                    if (!this.layout.$el.hasClass('hide')) {
+                        this.collection.fetch();
                     }
                 }, this);
 
@@ -103,11 +127,6 @@
     },
 
     calculateTotals: function() {
-        // add up all the currency fields
-        if(this.collection.length == 0) {
-            // no items, just bail
-            return;
-        }
         var fields = _.filter(this._fields.visible, function(field) {
                 return field.type === 'currency';
             }),
@@ -117,16 +136,13 @@
             fieldNames.push(field.name);
             this.totals[field.name] = 0;
             this.totals["overall_" + field.name] = 0;
+            this.totals[field.name + "_display"] = true;
         }, this);
 
-        if(!_.isUndefined(this.totals.likely_case)) {
-            this.totals.likely_case_display = true
-        }
-        if(!_.isUndefined(this.totals.best_case)) {
-            this.totals.best_case_display = true
-        }
-        if(!_.isUndefined(this.totals.worst_case)) {
-            this.totals.worst_case_display = true
+        // add up all the currency fields
+        if (this.collection.length == 0) {
+            // no items, just bail and set back the 0 totals
+            return;
         }
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
@@ -138,10 +154,10 @@
             commit_stages_in_included_total = [],
             ranges;
 
-        if ( forecast_ranges == 'show_custom_buckets' ) {
+        if (forecast_ranges == 'show_custom_buckets') {
             ranges = app.metadata.getModule('Forecasts', 'config')[forecast_ranges + '_ranges'];
-            _.each(ranges, function(value, key){
-                if ( !_.isUndefined(value.in_included_total) && value.in_included_total ) {
+            _.each(ranges, function(value, key) {
+                if (!_.isUndefined(value.in_included_total) && value.in_included_total) {
                     commit_stages_in_included_total.push(key);
                 }
             })
@@ -153,19 +169,20 @@
             _.each(fieldNames, function(field) {
                 // convert the value to base
                 var val = model.get(field);
-                if(_.isUndefined(val) || _.isNaN(val)) {
+                if (_.isUndefined(val) || _.isNaN(val)) {
                     return;
                 }
                 val = app.currency.convertWithRate(val, model.get('base_rate'));
                 this.totals["overall_" + field] = app.math.add(this.totals["overall_" + field], val);
-                if( _.include(commit_stages_in_included_total, model.get('commit_stage')) ) {
+                if (_.include(commit_stages_in_included_total, model.get('commit_stage'))) {
                     this.totals[field] = app.math.add(this.totals[field], val);
                 }
             }, this)
         }, this);
 
-        console.log(this.totals);
-        debugger;
+        var ctx = this.context.parent || this.context;
+        // fire an event on the parent context
+        ctx.trigger('forecasts:worksheet:totals', this.totals, 'rep');
     },
 
     sync: function(method, model, options) {
@@ -177,6 +194,9 @@
 
         if (!_.isUndefined(this.selectedUser.id)) {
             options.params.user_id = this.selectedUser.id;
+        }
+        if (!_.isEmpty(this.selectedTimeperiod)) {
+            options.params.timeperiod_id = this.selectedTimeperiod;
         }
 
         options.limit = 1000;

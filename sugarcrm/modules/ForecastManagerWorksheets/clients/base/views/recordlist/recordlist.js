@@ -15,6 +15,8 @@
 
     selectedUser: {},
 
+    selectedTimeperiod: {},
+
     totals: {},
 
     defaultValues: {
@@ -31,7 +33,7 @@
         this.plugins.push('cte-tabbing');
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
-        this.context.set('skipFetch', true);    // skip the initial fetch, this will be handled by the changing of the selectedUser
+        this.context.set('skipFetch', (this.selectedUser.isManager && this.selectedUser.showOpps));    // skip the initial fetch, this will be handled by the changing of the selectedUser
         this.collection.sync = _.bind(this.sync, this);
     },
 
@@ -82,6 +84,22 @@
                             console.log('Manager Hide', user);
                             this.layout.hide();
                         }
+                    }
+                }, this);
+
+                this.context.parent.on('change:selectedTimePeriod', function(model, changed) {
+                    this.selectedTimeperiod = changed;
+                    if(!this.layout.$el.hasClass('hide')) {
+                        this.collection.fetch();
+                    }
+                }, this);
+
+                this.context.parent.on('forecasts:worksheet:totals', function(totals, type) {
+                    if(type == "mgr") {
+                        console.log('update mgr footer');
+                        var tpl = app.template.getView('recordlist.totals', this.module);
+                        this.$el.find('tfoot').remove();
+                        this.$el.find('tbody').after(tpl(this));
                     }
                 }, this);
 
@@ -144,6 +162,10 @@
             options.params.user_id = this.selectedUser.id;
         }
 
+        if (!_.isEmpty(this.selectedTimeperiod)) {
+            options.params.timeperiod_id = this.selectedTimeperiod;
+        }
+
         options.limit = 1000;
         options = app.data.parseOptionsForSync(method, model, options);
 
@@ -201,10 +223,6 @@
 
     calculateTotals: function() {
         // add up all the currency fields
-        if(this.collection.length == 0) {
-            // no items, just bail
-            return;
-        }
         var fields = _.filter(this._fields.visible, function(field) {
                 return field.type === 'currency';
             }),
@@ -213,16 +231,12 @@
         _.each(fields, function(field) {
             fieldNames.push(field.name);
             this.totals[field.name] = 0;
+            this.totals[field.name + "_display"] = true;
         }, this);
 
-        if(!_.isUndefined(this.totals.likely_case)) {
-            this.totals.likely_case_display = true
-        }
-        if(!_.isUndefined(this.totals.best_case)) {
-            this.totals.best_case_display = true
-        }
-        if(!_.isUndefined(this.totals.worst_case)) {
-            this.totals.worst_case_display = true
+        if(this.collection.length == 0) {
+            // no items, just bail
+            return;
         }
 
         this.collection.each(function(model) {
@@ -236,6 +250,10 @@
                 this.totals[field] = app.math.add(this.totals[field], val);
             }, this)
         }, this);
+
+        var ctx = this.context.parent || this.context;
+        // fire an event on the parent context
+        ctx.trigger('forecasts:worksheet:totals', this.totals, 'mgr');
     },
 
     /**

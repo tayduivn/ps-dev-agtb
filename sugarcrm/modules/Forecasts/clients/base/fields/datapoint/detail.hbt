@@ -1,0 +1,4 @@
+<div class="datapoint pull-left">
+    {{this.label}}<br>
+    <h2 id="{{this.name}}">{{formatCurrency this.total "-99"}}{{#if this.arrow}}&nbsp;<span class="icon-sm committed_arrow{{this.arrow}}"></span>{{/if}}</h2>
+</div>

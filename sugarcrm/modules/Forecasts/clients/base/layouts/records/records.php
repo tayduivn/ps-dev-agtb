@@ -15,13 +15,15 @@ $layout = MetaDataManager::getLayout('SideBarLayout');
 
 $layout->push('main', array('view' => 'list-headerpane'));
 
+$layout->push('main', array('view' => 'info'));
+
 $layout->push('main', array('layout' => 'list', 'context' => array('module' => 'ForecastManagerWorksheets')));
 $layout->push('main', array('layout' => 'list', 'context' => array('module' => 'ForecastWorksheets')));
 
 $layout->push('side', array('layout' => 'list-sidebar'));
 $layout->push('dashboard', array('layout' => 'dashboard', 'context' => array(
     'forceNew' => true,
-    'module' => 'Home',
+    'module' => 'Forecasts',
 )));
 $layout->push('preview', array('layout' => 'preview'));
 

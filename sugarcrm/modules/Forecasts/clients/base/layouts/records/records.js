@@ -15,14 +15,21 @@
     initOptions: {},
 
     initialize: function(options) {
-        app.view.Layout.prototype.initialize.call(this, options);
+
+        this.initOptions = options;
+        this.syncInitData();
     },
 
-    loadData : function() {
-        if(_.isEmpty(this.initOptions)) {
-            this.syncInitData();
-        } else {
-            app.view.Layout.prototype.loadData.call(this);
+    // overwrite load data, we will call this from above
+    loadData: function() {},
+
+    bindDataChange: function() {
+        // we need this here to track when the selectedTimeperiod changes and then also move it up to the context
+        // so the recordlists can listen for it.
+        if (!_.isUndefined(this.model)) {
+            this.model.on('change:selectedTimePeriod', function(model, changed) {
+                this.context.set('selectedTimePeriod', changed);
+            }, this);
         }
     },
 
@@ -31,12 +38,10 @@
             url;
 
         options = options || {};
-
         // custom success handler
         options.success = _.bind(function(model, data, options) {
             // Add Forecasts-specific stuff to the app.user object
             app.user.set(data.initData.userData);
-
             if (data.initData.forecasts_setup === 0) {
                 window.location.hash = "#Forecasts/layout/config";
             } else {
@@ -44,17 +49,35 @@
             }
         }, this);
 
-        callbacks = app.data.getSyncCallbacks('read', this.model, options);
-        this.trigger("data:sync:start", 'read', this.model, options);
+        // since we have not initialized the view yet, pull the model from the initOptions.context
+        var model = this.initOptions.context.get('model');
+        callbacks = app.data.getSyncCallbacks('read', model, options);
+        this.trigger("data:sync:start", 'read', model, options);
 
         url = app.api.buildURL("Forecasts/init", null, null, options.params);
         app.api.call("read", url, null, callbacks);
     },
 
     initForecastsModule: function(data, options) {
-        this.context.once('change:selectedUser', function() {
+        console.log('init_forecast_records_layout');
+        var ctx = this.initOptions.context;
+        ctx.once('change:selectedUser', function(model, change) {
+            console.log('init_forecast change:selecteduser');
+            // init the recordlist view
+            app.view.Layout.prototype.initialize.call(this, this.initOptions);
+            // load the data
             app.view.Layout.prototype.loadData.call(this);
+            // bind the data change
+            this.bindDataChange();
+            // render everything
+            if (!this.disposed) this.render();
         }, this);
-        app.utils.getSelectedUsersReportees(app.user.toJSON(), this.context);
+
+        // skip the fetch on this context as we don't need it from this layout
+        ctx.set('skipFetch', true);
+        // set the selectedTimePeriod
+        ctx.set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
+        ctx.get('model').set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
+        app.utils.getSelectedUsersReportees(app.user.toJSON(), ctx);
     }
 })

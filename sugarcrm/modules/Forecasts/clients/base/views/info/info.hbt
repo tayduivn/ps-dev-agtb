@@ -1,0 +1,20 @@
+<div class="row-fluid topline">
+    <div class="span3">
+        {{#if this.meta.timeperiod}}
+            {{#each this.meta.timeperiod}}
+                <label for="date_filter" class="control-label">{{str this.label "Forecasts"}}</label>
+
+                <div class="controls">
+                    {{field ../this ../this.model}}
+                </div>
+            {{/each}}
+        {{/if}}
+    </div>
+    <div class="span9 datapoints">
+        <div class="pull-right">
+            {{#each this.meta.datapoints}}
+                {{field ../this ../this.model}}
+            {{/each}}
+        </div>
+    </div>
+</div>
