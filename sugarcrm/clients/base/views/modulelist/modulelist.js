@@ -453,8 +453,10 @@
              * @param module
              */
             set:function (module) {
-                var $modules, $module, $next;
-                var updateNav = true;
+                var $modules, $module, $next,
+                    updateNav = true,
+                    // Name of the module this module is mapped to, if it exists
+                    mapped;
                 if (app.controller && app.controller.layout && app.controller.layout.meta && !_.isUndefined(app.controller.layout.meta.updateNav)) {
                     updateNav = app.controller.layout.meta.updateNav;
                 }
@@ -463,19 +465,29 @@
 
                     $modules = this._moduleList.$('#module_list');
                     $module = $modules.find("[data-module='" + module + "']");
-                    // this module doesn't have a menu so create it and add it
-                    if ($module.length < 1 && updateNav) {
-                        var moduleList = {};
-                        moduleList[module] = app.metadata.getFullModuleList()[module];
+                    // If this module doesn't have a menu see if there is a tab mapping
+                    if ($module.length < 1) {
+                        mapped = app.metadata.getTabMappedModule(module);
 
-                        var meta = this._moduleList.completeMenuMeta(moduleList);
-                        if (!_.isUndefined(meta[0])) {
-                            meta[0].menuIndex = -1;
-                            var singleMenuTemplate = app.template.get(this._moduleList.name + '.singlemenuPartial');
-                            this._moduleList.$el.find('.dropdown.more').before(singleMenuTemplate(meta[0]));
-                            $module = $modules.find("[data-module='" + module + "']");
+                        // If the mapped module is different from the module, get
+                        // the mapped module element if it exists
+                        if (mapped != module) {
+                            $module = $modules.find("[data-module='" + mapped + "']");
+                        } else if (updateNav) {
+                            // create the menu and add it
+                            var moduleList = {};
+                            moduleList[module] = app.metadata.getFullModuleList()[module];
+
+                            var meta = this._moduleList.completeMenuMeta(moduleList);
+                            if (!_.isUndefined(meta[0])) {
+                                meta[0].menuIndex = -1;
+                                var singleMenuTemplate = app.template.get(this._moduleList.name + '.singlemenuPartial');
+                                this._moduleList.$el.find('.dropdown.more').before(singleMenuTemplate(meta[0]));
+                                $module = $modules.find("[data-module='" + module + "']");
+                            }
                         }
                     }
+
                     $module.addClass(this._class);
 
                     // remember which module is supposed to be next to the active module so that
