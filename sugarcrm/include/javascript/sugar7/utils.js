@@ -41,7 +41,7 @@
                         likely_arrow = this.getArrowDirectionSpan(likely_direction),
                         worst_arrow = this.getArrowDirectionSpan(worst_direction),
                         num_shown = 0,
-                        hb = Handlebars.compile("{{str_format key module args}}"),
+                        hb = Handlebars.compile("{{{str key module args}}}"),
                         lang_string_key = '',
                         final_args = [],
                         labels = [],
@@ -101,13 +101,13 @@
                     final_args = this.parseArgsAndLabels(final_args, labels);
 
                     //Compile the language string for the log
-                    var text = hb({'key': lang_string_key, 'module': 'Forecasts', 'args': final_args});
+                    var text = hb({'key': lang_string_key, 'module': "Forecasts", 'args': final_args});
 
                     // Check for first time run -- no date_entered for oldestModel
                     var oldestDateEntered = oldestModel.get('date_entered');
 
                     // This will always have a value and Format the date according to the user date and time preferences
-                    var newestModelDate = new Date(Date.parse(newestModel.get('date_entered'))),
+                    /*var newestModelDate = new Date(Date.parse(newestModel.get('date_entered'))),
                         text2 = '',
                         newestModelDisplayDate = app.date.format(newestModelDate, app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'));
 
@@ -126,11 +126,11 @@
                     } else {
                         args = [newestModelDisplayDate];
                         text2 = hb({'key': 'LBL_COMMITTED_THIS_MONTH', 'module': 'Forecasts', 'args': args});
-                    }
+                    }*/
 
                     // need to tell Handelbars not to escape the string when it renders it, since there might be
                     // html in the string, args returned for testing purposes
-                    return {'text': new Handlebars.SafeString(text), 'text2': new Handlebars.SafeString(text2)};
+                    return {'text': new Handlebars.SafeString(text)};
                 },
 
                 /**
@@ -143,11 +143,11 @@
                  * @param attrStr {String} the attr string to get from the newest model
                  */
                 gatherLangArgsByParams: function(dir, arrow, diff, model, attrStr) {
-                    var args = [];
-                    args.push(app.lang.get(dir, 'Forecasts') + arrow);
-                    args.push(app.currency.formatAmountLocale(Math.abs(diff)));
-                    args.push(app.currency.formatAmountLocale(model.get(attrStr)));
-                    return args;
+                    return {
+                        'direction' : new Handlebars.SafeString(app.lang.get(dir, 'Forecasts') + arrow),
+                        'from' :app.currency.formatAmountLocale(Math.abs(diff)),
+                        'to' : app.currency.formatAmountLocale(model.get(attrStr))
+                    };
                 },
 
                 /**
@@ -157,8 +157,8 @@
                  * @return {String}
                  */
                 getArrowDirectionSpan: function(directionClass) {
-                    return directionClass == "LBL_UP" ? '&nbsp;<span class="icon-arrow-up font-green"></span>' :
-                        directionClass == "LBL_DOWN" ? '&nbsp;<span class="icon-arrow-down font-red"></span>' : '';
+                    return directionClass == "LBL_UP" ? '&nbsp;<i class="icon-arrow-up font-green"></i>' :
+                        directionClass == "LBL_DOWN" ? '&nbsp;<i class="icon-arrow-down font-red"></i>' : '';
                 },
 
                 /**
@@ -255,8 +255,9 @@
                  * @return {Array}
                  */
                 parseArgsAndLabels: function(argsArray, labels) {
-                    var retArgs = [],
-                        hb = Handlebars.compile("{{str_format key module args}}");
+                    var retArgs = {},
+                        argsKeys = ['first', 'second', 'third'],
+                        hb = Handlebars.compile("{{{str key module args}}}");
 
                     // labels should have one more item in its array than argsArray
                     // because of the SETUP or UPDATED label which has no args
@@ -267,14 +268,14 @@
                     }
 
                     // get the first argument off the label array
-                    retArgs.push(hb({'key': _.first(labels), 'module': 'Forecasts', 'args': []}));
+                    retArgs.intro = hb({'key': _.first(labels), 'module': 'Forecasts', 'args': []});
 
                     // get the other values, with out the first value
                     labels = _.last(labels, labels.length - 1);
 
                     // loop though all the other values
                     _.each(labels, function(label, index) {
-                        retArgs.push(hb({'key': label, 'module': 'Forecasts', 'args': argsArray[index]}))
+                        retArgs[argsKeys[index]] = hb({'key': label, 'module': 'Forecasts', 'args': argsArray[index]});
                     });
 
                     return retArgs;

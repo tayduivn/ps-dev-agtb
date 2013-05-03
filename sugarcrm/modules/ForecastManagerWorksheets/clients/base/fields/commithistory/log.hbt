@@ -1,0 +1,2 @@
+{{{commit}}}<br />
+{{timeago commit_date "LBL_COMMITTED_TIME_RELATIVE"}}

@@ -29,7 +29,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['recordlist'] = array(
                 'type' => 'rowaction',
                 'css_class' => 'btn',
                 'tooltip' => 'LBL_HISTORY_LOG',
-                'event' => 'list:commit_log:fire',
+                'event' => 'list:history_log:fire',
                 'icon' => 'icon-exclamation-sign',
                 'acl_action' => 'view',
             ),

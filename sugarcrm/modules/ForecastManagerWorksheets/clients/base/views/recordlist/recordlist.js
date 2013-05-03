@@ -26,7 +26,8 @@
         likely_case: 0,
         likely_case_adjusted: 0,
         worst_case: 0,
-        worst_case_adjusted: 0
+        worst_case_adjusted: 0,
+        show_history_log: 0
     },
 
     initialize: function(options) {
@@ -44,18 +45,18 @@
                 this.before('render', function() {
                     // if manager is not set or manager == false
                     var ret = true;
-                    if(_.isUndefined(this.selectedUser.isManager) || this.selectedUser.isManager == false) {
+                    if (_.isUndefined(this.selectedUser.isManager) || this.selectedUser.isManager == false) {
                         console.log('manager before render return false');
                         ret = false;
                     }
 
                     // only render if this.selectedUser.showOpps == false which means
                     // we want to display the manager worksheet view
-                    if(ret) {
+                    if (ret) {
                         ret = !(this.selectedUser.showOpps);
                     }
 
-                    if(ret === false && !this.layout.$el.hasClass('hide')) {
+                    if (ret === false && !this.layout.$el.hasClass('hide')) {
                         // hide the layout
                         console.log('manager beforeRender hide');
                         this.layout.hide();
@@ -68,19 +69,22 @@
                     var user = this.context.parent.get('selectedUser') || app.user.toJSON();
                     console.log('Manager Render:', user.isManager, user.showOpps);
                     if (user.isManager && user.showOpps == false) {
-                        if(this.layout.$el.hasClass('hide')) {
+                        if (this.layout.$el.hasClass('hide')) {
                             console.log('Manager Show', user);
                             this.layout.show();
                         }
 
                         // insert the footer
-                        if(!_.isEmpty(this.totals)) {
+                        if (!_.isEmpty(this.totals)) {
                             console.log('insert manager footer');
                             var tpl = app.template.getView('recordlist.totals', this.module);
                             this.$el.find('tbody').after(tpl(this));
                         }
+
+                        // set the commit button states to match the models
+                        this.setCommitLogButtonStates();
                     } else {
-                        if(!this.layout.$el.hasClass('hide')) {
+                        if (!this.layout.$el.hasClass('hide')) {
                             console.log('Manager Hide', user);
                             this.layout.hide();
                         }
@@ -89,13 +93,13 @@
 
                 this.context.parent.on('change:selectedTimePeriod', function(model, changed) {
                     this.selectedTimeperiod = changed;
-                    if(!this.layout.$el.hasClass('hide')) {
+                    if (!this.layout.$el.hasClass('hide')) {
                         this.collection.fetch();
                     }
                 }, this);
 
                 this.context.parent.on('forecasts:worksheet:totals', function(totals, type) {
-                    if(type == "mgr") {
+                    if (type == "mgr") {
                         console.log('update mgr footer');
                         var tpl = app.template.getView('recordlist.totals', this.module);
                         this.$el.find('tfoot').remove();
@@ -106,21 +110,21 @@
                 this.context.parent.on('change:selectedUser', function(model, changed) {
                     // selected user changed
                     var doFetch = false;
-                    if(this.selectedUser.id != changed.id) {
+                    if (this.selectedUser.id != changed.id) {
                         doFetch = true;
                     }
-                    if(!doFetch && this.selectedUser.isManager != changed.isManager) {
+                    if (!doFetch && this.selectedUser.isManager != changed.isManager) {
                         doFetch = true;
                     }
-                    if(!doFetch && this.selectedUser.showOpps != changed.showOpps) {
+                    if (!doFetch && this.selectedUser.showOpps != changed.showOpps) {
                         doFetch = !(changed.showOpps);
                     }
                     this.selectedUser = changed;
 
-                    if(doFetch) {
+                    if (doFetch) {
                         this.collection.fetch();
                     } else {
-                        if(this.selectedUser.isManager && this.selectedUser.showOpps == true && !this.layout.$el.hasClass('hide')) {
+                        if (this.selectedUser.isManager && this.selectedUser.showOpps == true && !this.layout.$el.hasClass('hide')) {
                             // viewing managers opp worksheet so hide the manager worksheet
                             this.layout.hide();
                         }
@@ -129,12 +133,66 @@
             }
         }
 
+        this.context.on('list:history_log:fire', function(model) {
+            // parent row
+
+            var row_name = model.module + '_' + model.id;
+
+            // check if the row is open, if it is, just destroy it
+            var log_row = this.$el.find('tr[name="' + row_name + '_commit_history"]');
+
+            // if we have a row, just close it and destroy the field
+            if (log_row.length == 1) {
+                // remove it and dispose the field
+                log_row.remove();
+                // find the field
+                var field = _.find(this.fields, function(field, idx) {
+                    return (field.name == row_name + '_commit_history');
+                }, this);
+                field.dispose();
+            } else {
+                var rowTpl = app.template.getView('recordlist.commithistory', this.module);
+                var field = app.view.createField({
+                    def: {
+                        'type': 'commithistory',
+                        'name': row_name + '_commit_history'
+                    },
+                    view: this,
+                    model: model
+                });
+                this.$el.find('tr[name="' + row_name + '"]').after(rowTpl({
+                    module: this.module,
+                    id: model.id,
+                    placeholder: field.getPlaceholder(),
+                    colspan: this._fields.visible.length
+                }));
+                field.render();
+            }
+        }, this);
+
         this.collection.on('reset change', function() {
             this.calculateTotals();
         }, this);
 
-
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+    },
+
+    setCommitLogButtonStates: function() {
+        _.each(this.fields, function(field) {
+            //watch for the field with a specific event, since we can't set a name on it becuase we just want
+            // to show the icon
+            if (field.def.event === 'list:history_log:fire' && (field.model.get('show_history_log') == "0")) {
+                // we have a field that needs to be disabled, listen for the show event as the
+                field.on('show', function() {
+                    // since setDisabled doesn't work on these fields,  when calling setDisabled() it disables all the,
+                    // buttons for every row
+                    // we need to set the action to be `disabled` so the click doesn't happen
+                    field.action = 'disabled';
+                    // and add the class for the css changes
+                    field.getFieldElement().addClass('disabled');
+                });
+            }
+        });
     },
 
     sync: function(method, model, options) {
@@ -142,9 +200,9 @@
         if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('selectedUser'))) {
             var sl = this.context.parent.get('selectedUser');
 
-            if(sl.isManager == false) {
+            if (sl.isManager == false) {
                 // they are not a manager, we should always hide this if it's not already hidden
-                if(!this.layout.$el.hasClass('hide')) {
+                if (!this.layout.$el.hasClass('hide')) {
                     this.layout.hide();
                 }
                 return;
@@ -158,7 +216,7 @@
 
         options.params = options.params || {};
 
-        if(!_.isUndefined(this.selectedUser.id)) {
+        if (!_.isUndefined(this.selectedUser.id)) {
             options.params.user_id = this.selectedUser.id;
         }
 
@@ -203,7 +261,7 @@
             var row = _.find(data, function(rec) {
                 return (rec.user_id == this.id)
             }, user);
-            if(!_.isUndefined(row)) {
+            if (!_.isUndefined(row)) {
                 // update the name on the row as this will have the correct formatting for the locale
                 row.name = user.name;
             } else {
@@ -234,7 +292,7 @@
             this.totals[field.name + "_display"] = true;
         }, this);
 
-        if(this.collection.length == 0) {
+        if (this.collection.length == 0) {
             // no items, just bail
             return;
         }
@@ -243,7 +301,7 @@
             _.each(fieldNames, function(field) {
                 // convert the value to base
                 var val = model.get(field);
-                if(_.isUndefined(val) || _.isNaN(val)) {
+                if (_.isUndefined(val) || _.isNaN(val)) {
                     return;
                 }
                 val = app.currency.convertWithRate(val, model.get('base_rate'));

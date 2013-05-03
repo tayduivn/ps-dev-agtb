@@ -76,6 +76,8 @@
         // skip the fetch on this context as we don't need it from this layout
         ctx.set('skipFetch', true);
         // set the selectedTimePeriod
+        // just hard code this for now, this will be set later on
+        ctx.set({'currentForecastCommitDate': '2013-04-30T18:36:00+00:00'});
         ctx.set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
         ctx.get('model').set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
         app.utils.getSelectedUsersReportees(app.user.toJSON(), ctx);
