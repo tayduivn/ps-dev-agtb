@@ -27,6 +27,6 @@
  ********************************************************************************/
 }}
 <div class="row-fluid">
-<div class="span9"><input type="text" name="{{name}}" value="{{value}}" class="input-large"></div>
-<div class="span3"><span sfuuid="{{currencySfId}}"></span><p class="help-block"></p></div>
+<div class="span8"><input type="text" name="{{name}}" value="{{value}}" class="input-large"></div>
+<div class="span4"><span sfuuid="{{currencySfId}}" class="currency"></span><p class="help-block"></p></div>
 </div>
