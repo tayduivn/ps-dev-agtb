@@ -214,9 +214,8 @@
      * @private
      */
     _previewifyMetadata: function(meta){
-        var trimmed = $.extend(true, {}, meta); //Deep copy
         this.hiddenPanelExists = false; // reset
-        _.each(trimmed.panels, function(panel){
+        _.each(meta.panels, function(panel){
             if(panel.header){
                 panel.header = false;
                 panel.fields = _.filter(panel.fields, function(field){
@@ -229,7 +228,7 @@
                 this.hiddenPanelExists = true;
             }
         }, this);
-        return trimmed;
+        return meta;
     },
     /**
      * Switches preview to left/right model in collection.

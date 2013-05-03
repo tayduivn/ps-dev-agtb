@@ -43,8 +43,8 @@
 
     initialize: function(options) {
         //Grab the record list of fields to display from the base metadata
-        var recordListMeta = JSON.parse(JSON.stringify(app.metadata.getView(null, 'recordlist') || {}));
-        options.meta = _.extend({}, recordListMeta, JSON.parse(JSON.stringify(options.meta || {})));
+        var recordListMeta = app.metadata.getView(null, 'recordlist') || {};
+        options.meta = _.extend({}, recordListMeta, options.meta || {});
 
         app.view.views.FlexListView.prototype.initialize.call(this, options);
     },

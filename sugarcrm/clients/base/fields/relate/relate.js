@@ -234,7 +234,7 @@
             params.offset = searchCollection.next_offset;
         }
         filterDef = self.getFilterDef(searchModule, term);
-        params.filter = JSON.parse(JSON.stringify(filterDef));
+        params.filter = app.utils.deepCopy(filterDef);
 
         searchCollection.fetch({
             //Don't show alerts for this request

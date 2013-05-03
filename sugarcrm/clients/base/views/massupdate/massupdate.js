@@ -23,13 +23,11 @@
     },
     setMetadata: function(options) {
         options.meta.panels = options.meta.panels || [{fields:[]}];
-        options.meta = JSON.parse(JSON.stringify(options.meta));
         if(!options.meta.panels[0].fields || options.meta.panels[0].fields.length == 0) {
             var moduleMetadata = app.metadata.getModule(options.module),
                 massFields = [];
             _.each(moduleMetadata.fields, function(field){
                 if(field.massupdate) {
-                    field = JSON.parse(JSON.stringify(field));
                     field.label = field.label || field.vname;
                     if(!field.label) delete field.label;
                     //TODO: Remove hack code for teamset after metadata return correct team type

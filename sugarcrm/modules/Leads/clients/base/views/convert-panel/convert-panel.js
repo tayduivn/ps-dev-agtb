@@ -177,9 +177,7 @@
      * @return {*}
      */
     removeFieldsFromMeta: function(meta, moduleMeta){
-
-        var newMeta = JSON.parse(JSON.stringify(meta));
-        _.each(newMeta.panels, function(panel){
+        _.each(meta.panels, function(panel){
               _.each(panel.fields, function(field, index, list){
                   if (_.isString(field)) {
                        field = {name: field};
@@ -189,7 +187,7 @@
                   }
                 });
         }, this);
-        return newMeta;
+        return meta;
     },
 
     /**
