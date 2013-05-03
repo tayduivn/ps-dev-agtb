@@ -173,7 +173,9 @@ class ForecastManagerWorksheet extends SugarBean
      */
     public function reporteeForecastRollUp(User $reportee, $data)
     {
-
+        /* @var $quotaSeed Quota */
+        $quotaSeed = BeanFactory::getBean('Quotas');
+        
         if (!isset($data['timeperiod_id']) || !is_guid($data['timeperiod_id'])) {
             $data['timeperiod_id'] = TimePeriod::getCurrentId();
         }
@@ -232,22 +234,25 @@ class ForecastManagerWorksheet extends SugarBean
             'closed_amount'
         );
 
+        //check to see if the manager has a quota, if not, we need to copy over base values to adjusted values
+        $quota = $quotaSeed->getRollupQuota($data['timeperiod_id'], $reportee->id, true);
+         
         // we don't have a row to update, so set the values to the adjusted column
-        if (empty($this->id)) {
+        if (empty($this->id) || $quota['amount'] == 0) {
             // array key equals value on the bean, array value equals field in the data variable
-            if (!isset($data['likely_adjusted'])) {
+            if (!isset($data['likely_adjusted']) || $quota['amount'] == 0) {
                 $copyMap[] = array('likely_case_adjusted' => 'likely_case');
             }
-            if (!isset($data['best_adjusted'])) {
+            if (!isset($data['best_adjusted']) || $quota['amount'] == 0) {
                 $copyMap[] = array('best_case_adjusted' => 'best_case');
             }
-            if (!isset($data['worst_adjusted'])) {
+            if (!isset($data['worst_adjusted']) || $quota['amount'] == 0) {
                 $copyMap[] = array('worst_case_adjusted' => 'worst_case');
             }
-
+        }
+        if (empty($this->id)) {          
             if (!isset($data['quota']) || empty($data['quota'])) {
-                // we need to get the quota if one exists
-                /* @var $quotaSeed Quota */
+                // we need to get a fresh bean to store the quota if one exists
                 $quotaSeed = BeanFactory::getBean('Quotas');
 
                 // check if we need to get the roll up amount
