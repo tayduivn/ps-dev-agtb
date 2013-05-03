@@ -111,18 +111,7 @@
                 route: "profile",
                 callback: function(){
                     app.controller.loadView({
-                        layout: "profile",
-                        module: "Contacts",
-                        modelId: app.user.get("id")
-                    });
-                }
-            },
-            {
-                name: "profileedit",
-                route: "profile/edit",
-                callback: function(){
-                    app.controller.loadView({
-                        layout: "profile-edit",
+                        layout: "record",
                         module: "Contacts",
                         modelId: app.user.get("id")
                     });
