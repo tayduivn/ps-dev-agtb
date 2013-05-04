@@ -102,4 +102,13 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
 
         return $ret;
     }
+
+    /**
+     * Return _source
+     * @return array
+     */
+    public function getSource()
+    {
+        return $this->elasticaResult->getSource();
+    }
 }
