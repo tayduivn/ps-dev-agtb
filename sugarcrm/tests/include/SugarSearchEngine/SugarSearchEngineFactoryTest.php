@@ -24,7 +24,7 @@ class SugarSearchEngineFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         foreach(self::customizationProvider() as $row) {
-            $file = self::getCustomEngineFilePath($row[0], $row[1]);
+            $file = self::getEngineFilePath($row[0], true);
             if(file_exists($file)) unlink($file);   // Clean up customizations
             unset(SugarSearchEngineFactory::$_instance[$row[0]]); // Clear cache
         }
@@ -42,6 +42,10 @@ class SugarSearchEngineFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedClass, get_class($instance));
     }
 
+    /**
+     * SugarSearchEngine factory test
+     * @return array
+     */
     public static function factoryProvider()
     {
         switch(SugarSearchEngineFactory::getFTSEngineNameFromConfig()) {
@@ -58,66 +62,116 @@ class SugarSearchEngineFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * SugarSearchEngine custimization cases to test
+     * SugarSearchEngine customization cases to test
      * @return array
      */
     public static function customizationProvider()
     {
         return array(
-            array('Fake', 'custom/include/SugarSearchEngine/Fake',),
-            array('Fake2', 'custom/include/SugarSearchEngine',),
+            // New search engine type which extends SugarSearchEngine
+            array('Fake1', ''),
+            // New search engine type which extends SugarSearchEngineElastic
+            array('Fake2', 'Elastic'),
+            // Customization of existing Elastic engine
+            array('Elastic', 'Elastic'),
+            // Customization of base class SugarSearchEngine
+            array('', ''),
         );
     }
 
     /**
      * @dataProvider customizationProvider
-     * @param string $typeName      Engine type that we are about to customize
-     * @param string $directory     Location of the customization file
+     * @param string $engineName    Engine type that we are about to customize
+     * @param string $baseClass     The class the custom engine extends on
      */
-    public function testLoadingSearchEngineClassCustimizations($typeName, $directory)
+    public function testLoadingSearchEngineClassCustomizations($engineName, $baseClass)
     {
-        if(!is_dir($directory)) sugar_mkdir($directory, '', true);
-        $file = self::getCustomEngineFilePath($typeName, $directory);
-        if(file_exists($file)) unlink($file);
-        SugarAutoLoader::buildCache();
+        // We need to skip this test for empty $engineName in case a search
+        // engine has been configured on the test instance
+        if (empty($engineName) && SugarSearchEngineFactory::getFTSEngineNameFromConfig() != '') {
+            $this->markTestSkipped(
+                'Cannot test SugarSearchEngine customization because an engine is configured'
+            );
+        }
 
-        $instance = SugarSearchEngineFactory::getInstance($typeName);
-        $this->assertEquals('SugarSearchEngine', get_class($instance));
+        // setup the custom class file
+        self::createCustomEngineClassFile($engineName, $baseClass);
 
-        $fileContents = <<<EOQ
-<?PHP
-require_once('include/SugarSearchEngine/SugarSearchEngine.php');
-class %s extends SugarSearchEngine {
-}
+        // Clearing cache to make sure we pick up the current state
+        unset(SugarSearchEngineFactory::$_instance[$engineName]);
+        $instance = SugarSearchEngineFactory::getInstance($engineName);
 
-EOQ;
-        $className = self::getCustomEngineClassName($typeName);
-        file_put_contents($file, sprintf($fileContents, $className));
-        SugarAutoLoader::buildCache();
-        unset(SugarSearchEngineFactory::$_instance[$typeName]); // Clearing cache to make sure we pick up the current state
-        $instance = SugarSearchEngineFactory::getInstance($typeName);
+        // validate
+        $className = self::getEngineClassName($engineName, true);
         $this->assertEquals($className, get_class($instance));
     }
 
     /**
-     * Returns the path name of the custimization file for a given engine type name and directory
-     * @param string    $typeName   Engine type name
-     * @param string    $directory  Custimization location
-     *
-     * @return string   Path name of the custimization file
+     * Returns (custom) directory of given engine
+     * @return string
      */
-    protected static function getCustomEngineFilePath($typeName, $directory)
+    protected static function getEngineDir($engineName, $custom = false)
     {
-        return $directory.'/'.self::getCustomEngineClassName($typeName).'.php';
+        $dir = rtrim("include/SugarSearchEngine/{$engineName}", "/");
+        return $custom ? "custom/{$dir}" : $dir;
     }
 
     /**
-     * Returns the customization class' name for a given Engine type name
-     * @param string    $engineName   Engine type name
-     * @return string   Class name of the customization
+     * Returns (custom) file path for a given Engine type name
+     * @param string    $engineName Engine type name
+     * @param boolean   $custom     Return custom path
+     *
+     * @return string
      */
-    protected static function getCustomEngineClassName($engineName)
+    protected static function getEngineFilePath($engineName, $custom = false)
     {
-        return 'CustomSugarSearchEngine' . $engineName;
+        $dir = self::getEngineDir($engineName, $custom);
+        return "{$dir}/SugarSearchEngine{$engineName}.php";
+    }
+
+    /**
+     * Returns (custom) class name for a given Engine type name
+     * @param string    $engineName Engine type name
+     * @param boolean   $custom     Return custom class name
+     *
+     * @return string
+     */
+    protected static function getEngineClassName($engineName, $custom = false)
+    {
+        $engineName = "SugarSearchEngine{$engineName}";
+        return $custom ? "Custom{$engineName}" : $engineName;
+    }
+
+    /**
+     * Create a custom engine class file, implicitly rebuilds autoloader cache
+     * @param string    $engineName Engine type name
+     * @param string    $baseClass  The name of the class we extend
+     */
+    protected static function createCustomEngineClassFile($engineName, $baseClass)
+    {
+        // custom directory
+        $directory = self::getEngineDir($engineName, true);
+        if (!is_dir($directory)) {
+            sugar_mkdir($directory, '', true);
+        }
+
+        // custom file
+        $file = self::getEngineFilePath($engineName, true);
+        if (file_exists($file)) {
+            unlink($file);
+        }
+
+        $fileContents = <<<EOQ
+<?php
+require_once('%s');
+class %s %s {
+}
+
+EOQ;
+        $requireOnce = self::getEngineFilePath($baseClass);
+        $className = self::getEngineClassName($engineName, true);
+        $extends = "extends ".self::getEngineClassName($baseClass);
+        file_put_contents($file, sprintf($fileContents, $requireOnce, $className, $extends));
+        SugarAutoLoader::buildCache();
     }
 }
