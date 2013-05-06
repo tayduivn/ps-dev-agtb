@@ -65,6 +65,9 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'default' => true,
                     'sortable' => false,
+                    'related_fields' => array(
+                        0 => 'account_id',
+                    ),
                 ),
                 array (
                     'name'  => 'phone_work',
