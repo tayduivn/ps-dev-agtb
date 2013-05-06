@@ -39,7 +39,11 @@
                  *
                  * @type {Row}
                  */
-                var Row = Backbone.Model.extend({
+                function Row(options) {
+                    this.initialize(options);
+                }
+
+                _.extend(Row.prototype, {
                     initialize: function(options) {
                         this.cells    = []; // the cells on the row
                         this.span     = 0; // keeps track of the span of all cells on the row
@@ -89,8 +93,14 @@
                  * @type {GridBuilder}
                  * @abstract
                  */
-                var GridBuilder = Backbone.Model.extend({
+                function GridBuilder(options) {
+                    this.initialize(options);
+                }
+
+                _.extend(GridBuilder.prototype, {
                     initialize: function(options) {
+                        options         = options || {};
+                        options.fields  = options.fields || {};
                         this.grid       = []; // the rows on the grid
                         this.fields     = app.utils.deepCopy(options.fields); // the fields to be built on the grid
                         this.maxRowSpan = 12; // the maximum span for all cells on a row
@@ -206,7 +216,11 @@
                  * @type {LabelsInlineGridBuilder}
                  * @extends {GridBuilder}
                  */
-                var LabelsInlineGridBuilder = GridBuilder.extend({
+                var LabelsInlineGridBuilder = function(options) {
+                    this.initialize(options);
+                }
+
+                app.utils.extendFrom(LabelsInlineGridBuilder, GridBuilder, {
                     /**
                      * Iterates over the fields and constructs the grid. Cells will account for the spans for both the
                      * labels and the fields.
@@ -246,7 +260,11 @@
                  * @type {LabelsOnTopGridBuilder}
                  * @extends {GridBuilder}
                  */
-                var LabelsOnTopGridBuilder = GridBuilder.extend({
+                var LabelsOnTopGridBuilder = function(options) {
+                    this.initialize(options);
+                }
+
+                app.utils.extendFrom(LabelsOnTopGridBuilder, GridBuilder, {
                     /**
                      * Iterates over the fields and constructs the grid. Cells will only account for the spans for the
                      * fields.
