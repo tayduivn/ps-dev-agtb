@@ -88,6 +88,17 @@ class MassUpdateApi extends SugarApi {
         $this->requireArgs($args, array('massupdate_params', 'module'));
         $this->delete = true;
         $args['massupdate_params']['Delete'] = true;
+        
+        // SC-1021: add 'creation date' filter if 'delete all'
+        if (!empty($args['massupdate_params']['entire'])) { 
+            unset($args['massupdate_params']['uid']);
+
+            if (empty($args['massupdate_params']['filter'])) {
+                $args['massupdate_params']['filter'] = array();
+            }
+
+            $args['massupdate_params']['filter'][] = array('date_entered' => array('$lt' => TimeDate::getInstance()->nowDb()));
+        }
 
         return $this->massUpdate($api, $args);
     }
