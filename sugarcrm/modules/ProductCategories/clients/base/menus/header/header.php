@@ -23,14 +23,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'ProductCategories';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#bwc/index.php?module=ProductTemplates&action=EditView&return_module=ProductTemplates&return_action=DetailView',
+        'route'=>'#ProductTemplates/create',
         'label' =>'LNK_NEW_PRODUCT',
         'acl_action'=>'',
         'acl_module'=>'',
         'icon' => '',
     ),
     array(
-        'route'=>'#bwc/index.php?module=ProductTemplates&action=index&return_module=ProductTemplates&return_action=DetailView',
+        'route'=>'#ProductTemplates',
         'label' =>'LNK_PRODUCT_LIST',
         'acl_action'=>'',
         'acl_module'=>'',
@@ -44,7 +44,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => '',
     ),
     array(
-        'route'=>'#bwc/index.php?module=ProductCategories&action=EditView&return_module=ProductCategories&return_action=DetailView',
+        'route'=>'#ProductCategories/create',
         'label' =>'LNK_NEW_PRODUCT_CATEGORY',
         'acl_action'=>'',
         'acl_module'=>'',
