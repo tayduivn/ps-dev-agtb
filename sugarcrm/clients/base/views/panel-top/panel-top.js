@@ -56,18 +56,49 @@
         });
     },
 
-    openCreateDrawer: function () {
-        var parentModel = this.context.parent.get("model"),
-            link = this.context.get("link"),
-            model = app.data.createRelatedBean(parentModel, null, link),
+    /**
+     * Create a new linked Bean model which is related to the parent bean model
+     * It populates related fields from the parent bean model attributes
+     * All related fields are defined in the relationship metadata
+     *
+     * If the related field contains the auto-populated fields,
+     * it also copies the auto-populate fields
+     *
+     * @param {Model} Parent Bean Model
+     * @param {String} name of relationship link
+     */
+    createLinkModel: function(parentModel, link) {
+        var model = app.data.createRelatedBean(parentModel, null, link),
             relatedFields = app.data.getRelateFields(parentModel.module, link);
 
-        if (!_.isUndefined(relatedFields)) {
-            _.each(relatedFields, function (field) {
+        if(!_.isEmpty(relatedFields)) {
+            model._defaults = model._defaults || {};
+
+            _.each(relatedFields, function(field) {
                 model.set(field.name, parentModel.get(field.rname));
                 model.set(field.id_name, parentModel.get("id"));
+                model._defaults[field.name] = model.get(field.name);
+                model._defaults[field.id_name] = model.get(field.id_name);
+
+                if(field.populate_list) {
+                    _.each(field.populate_list, function (target, source) {
+                        source = _.isNumber(source) ? target : source;
+                        if (!_.isUndefined(parentModel.get(source)) && app.acl.hasAccessToModel('edit', model, target)) {
+                            model.set(target, parentModel.get(source));
+                            model._defaults[target] = model.get(target);
+                        }
+                    }, this);
+                }
             }, this);
         }
+
+        return model;
+    },
+    openCreateDrawer: function() {
+        var parentModel = this.context.parent.get("model"),
+            link = this.context.get("link"),
+            model = this.createLinkModel(parentModel, link);
+
         var self = this;
         app.drawer.open({
             layout: 'create',

@@ -59,6 +59,10 @@
         app.view.Field.prototype.bindDataChange.call(this);
         var currencyField = this.def.currency_field || 'currency_id';
         this.model.on('change:' + currencyField, function(model, value, options) {
+            //When model is reset, it should not be called
+            if(!value) {
+                return;
+            }
             var baseRateField = this.def.base_rate_field || 'base_rate';
             // manually force a change on the base rate in the model when the currency changes
             this.model.set(baseRateField, app.metadata.getCurrency(value).conversion_rate);
