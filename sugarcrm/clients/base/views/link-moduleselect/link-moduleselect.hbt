@@ -1,8 +1,8 @@
-<div class="inset-form">
+<div class="filter-options extend">
     <article class="filter-header clearfix">
         <div class="row-fluid">
             <div class="controls filter-field span3">
-                <label class="tright" for="relationship">{{str "LBL_RELATIONSHIP"}}</label>
+                <label for="relationship">{{str "LBL_RELATIONSHIP"}}</label>
             </div>
             <div class="controls filter-value span7">
                 <select class="select2" id="relationship">

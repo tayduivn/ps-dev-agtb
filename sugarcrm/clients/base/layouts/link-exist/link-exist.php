@@ -1,4 +1,5 @@
 <?php
+
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -13,15 +14,12 @@
  */
 
 $layout = MetaDataManager::getLayout('SideBarLayout');
-$layout->push(
-    'main',
-    array(
-        'view' => array(
-            'name' => 'link-headerpane',
-            'action' => 'create',
-        ),
+$layout->push('main', array(
+    'view' => array(
+        'name' => 'link-headerpane',
+        'action' => 'select'
     )
-);
+));
 $layout->push('main', array('view' => 'link-moduleselect'));
 $layout->push('side', array('layout' => 'sidebar'));
-$viewdefs['base']['layout']['link-create'] = $layout->getLayout();
+$viewdefs['base']['layout']['link-exist'] = $layout->getLayout();
