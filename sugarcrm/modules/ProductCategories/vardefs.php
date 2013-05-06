@@ -40,41 +40,86 @@ $dictionary['ProductCategory'] = array(
             'name' => 'date_entered',
             'vname' => 'LBL_DATE_ENTERED',
             'type' => 'datetime',
-            'required' => true,
-            'comment' => 'Date record created'
+            'group' => 'created_by_name',
+            'comment' => 'Date record created',
+            'enable_range_search' => true,
+            'options' => 'date_range_search_dom',
+            'studio' => array(
+                'portaleditview' => false, // Bug58408 - hide from Portal edit layout
+            ),
         ),
         'date_modified' =>
         array(
             'name' => 'date_modified',
             'vname' => 'LBL_DATE_MODIFIED',
             'type' => 'datetime',
-            'required' => true,
-            'comment' => 'Date record last modified'
+            'group' => 'modified_by_name',
+            'comment' => 'Date record last modified',
+            'enable_range_search' => true,
+            'studio' => array(
+                'portaleditview' => false, // Bug58408 - hide from Portal edit layout
+            ),
+            'options' => 'date_range_search_dom',
         ),
         'modified_user_id' =>
         array(
             'name' => 'modified_user_id',
             'rname' => 'user_name',
             'id_name' => 'modified_user_id',
-            'vname' => 'LBL_MODIFIED_ID',
+            'vname' => 'LBL_MODIFIED',
             'type' => 'assigned_user_name',
             'table' => 'users',
             'isnull' => 'false',
+            'group' => 'modified_by_name',
             'dbType' => 'id',
             'reportable' => true,
-            'comment' => 'User who last modified record'
+            'comment' => 'User who last modified record',
+            'massupdate' => false,
+        ),
+        'modified_by_name' =>
+        array(
+            'name' => 'modified_by_name',
+            'vname' => 'LBL_MODIFIED_NAME',
+            'type' => 'relate',
+            'reportable' => false,
+            'source' => 'non-db',
+            'rname' => 'full_name',
+            'table' => 'users',
+            'id_name' => 'modified_user_id',
+            'module' => 'Users',
+            'link' => 'modified_user_link',
+            'duplicate_merge' => 'disabled',
+            'massupdate' => false,
         ),
         'created_by' =>
         array(
             'name' => 'created_by',
             'rname' => 'user_name',
             'id_name' => 'modified_user_id',
-            'vname' => 'LBL_CREATED_ID',
+            'vname' => 'LBL_CREATED',
             'type' => 'assigned_user_name',
             'table' => 'users',
             'isnull' => 'false',
             'dbType' => 'id',
-            'comment' => 'User who created record'
+            'group' => 'created_by_name',
+            'comment' => 'User who created record',
+            'massupdate' => false,
+        ),
+        'created_by_name' =>
+        array(
+            'name' => 'created_by_name',
+            'vname' => 'LBL_CREATED',
+            'type' => 'relate',
+            'reportable' => false,
+            'link' => 'created_by_link',
+            'rname' => 'full_name',
+            'source' => 'non-db',
+            'table' => 'users',
+            'id_name' => 'created_by',
+            'module' => 'Users',
+            'duplicate_merge' => 'disabled',
+            'importable' => 'false',
+            'massupdate' => false,
         ),
         'name' =>
         array(
