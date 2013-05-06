@@ -34,7 +34,12 @@
     plugins: ['list-disable-sort'],
 
     initialize: function(options) {
-        app.view.views.FlexListView.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'view', 'flex-list', 'initialize', {args:[options]});
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(field) {
+                field.sortable = false;
+            });
+        });
 
         this.on("render", this._removeLinks, this);
 
@@ -49,8 +54,7 @@
     },
 
     addActions: function() {
-        app.view.views.FlexListView.prototype.addActions.call(this);
-
+        app.view.invoke(this, 'view', 'flex-list', 'addActions');
         if (this.meta.showPreview === true) {
             this.rightColumns.push({
                 type: 'rowaction',

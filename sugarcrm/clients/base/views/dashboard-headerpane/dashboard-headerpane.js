@@ -14,13 +14,12 @@
         'click [name=expand_button]': 'expandClicked'
     },
     initialize: function(options) {
-
         if(options.context.parent) {
             options.meta = app.metadata.getView(options.context.parent.get("module"), options.name);
             options.template = app.template.getView(options.name);
         }
-
-        app.view.views.HeaderpaneView.prototype.initialize.call(this, options);
+        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+        app.view.invoke(this, 'view', 'headerpane', 'initialize', {args:[options]});
         this.model.on("change change:layout change:metadata", function() {
             if (this.inlineEditMode) {
                 this.changed = true;
@@ -164,16 +163,20 @@
         this.toggleFields(this.editableFields, isEdit);
     },
     initButtons: function() {
-        app.view.views.RecordView.prototype.initButtons.call(this);
+        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+        app.view.invoke(this, 'view', 'record', 'initButtons');
     },
     registerFieldAsButton: function(buttonName) {
-        app.view.views.RecordView.prototype.registerFieldAsButton.call(this, buttonName);
+        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+        app.view.invoke(this, 'view', 'record', 'registerFieldAsButton', {args: [buttonName]});
     },
     setButtonStates: function(state) {
-        app.view.views.RecordView.prototype.setButtonStates.call(this, state);
+        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+        app.view.invoke(this, 'view', 'record', 'setButtonStates', {args: [state]});
     },
     setEditableFields: function() {
-        app.view.views.RecordView.prototype.setEditableFields.call(this);
+        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+        app.view.invoke(this, 'view', 'record', 'setEditableFields');
     },
     _dispose: function() {
         _.each(this.editableFields, function(field) {
@@ -181,7 +184,7 @@
         });
         this.buttons = null;
         this.editableFields = null;
-        app.view.views.EditableView.prototype._dispose.call(this);
+        app.view.invoke(this, 'view', 'editable', '_dispose');
     }
 
 })

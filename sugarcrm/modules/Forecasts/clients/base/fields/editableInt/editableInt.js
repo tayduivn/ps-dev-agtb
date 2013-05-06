@@ -60,7 +60,7 @@
     },
 
     initialize: function(options) {
-        app.view.fields.IntField.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'field', 'int', 'initialize', {args:[options]});
         this.checkIfCanEdit();
     },
 

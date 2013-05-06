@@ -8,7 +8,7 @@
 
     initialize: function(options) {
         _.bindAll(this);
-        app.view.views.RecordView.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'view', 'record', 'initialize', {args:[options]});
         this.events = _.extend({}, this.events, {
             'click .cc-option': 'showSenderOptionField',
             'click .bcc-option': 'showSenderOptionField',
@@ -25,8 +25,7 @@
     },
 
     _render: function () {
-        app.view.views.RecordView.prototype._render.call(this);
-
+        app.view.invoke(this, 'view', 'record', '_render');
         if (this.createMode) {
             this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
         }

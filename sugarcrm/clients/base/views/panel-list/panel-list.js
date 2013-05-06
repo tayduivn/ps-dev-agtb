@@ -7,9 +7,8 @@
         "list:unlinkrow:fire": "unlinkClicked"
     },
 
-    initialize: function(opts) {
-        app.view.views.RecordlistView.prototype.initialize.call(this, opts);
-
+    initialize: function(options) {
+        app.view.invoke(this, 'view', 'recordlist', 'initialize', {args:[options]});
         this.layout.on("hide", this.toggleList, this);
     },
 

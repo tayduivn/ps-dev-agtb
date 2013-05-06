@@ -21,7 +21,7 @@
      * for the current layout.
      */
     initialize: function (options) {
-        var createViewEvents = {};
+        var createViewEvents = {}, recordView;
         createViewEvents['click a[name=' + this.saveButtonName + ']'] = 'save';
         createViewEvents['click a[name=' + this.cancelButtonName + ']'] = 'cancel';
         createViewEvents['click a[name=' + this.saveAndCreateButtonName + ']'] = 'saveAndCreate';
@@ -35,8 +35,7 @@
             SELECT: 'select',
             DUPLICATE: 'duplicate'
         });
-
-        app.view.views.RecordView.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'view', 'record', 'initialize', {args:[options]});
 
         this.model.off("change", null, this);
 
@@ -81,8 +80,7 @@
     },
 
     _render: function () {
-        app.view.views.RecordView.prototype._render.call(this);
-
+        app.view.invoke(this, 'view', 'record', '_render');
         // Note if fieldset w/date created | modified is NOT set as readonly, this still removes from page
         // We decided that's fine, and better than alternative of looping fields, find date_created_by,
         // check readonly field, hide only if readonly, etc., etc.
@@ -451,8 +449,7 @@
      * @param state
      */
     setButtonStates: function (state) {
-        app.view.views.RecordView.prototype.setButtonStates.call(this, state);
-
+        app.view.invoke(this, 'view', 'record', 'setButtonStates', {args:[state]});
         var $saveButtonEl = this.buttons[this.saveButtonName];
         if ($saveButtonEl) {
             switch (state) {

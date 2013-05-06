@@ -42,7 +42,7 @@ describe("radioenum field", function() {
     });
 
     it("should call loadEnumOptions and set enumOptions during render", function() {
-        var loadEnumSpy = sinon.spy(app.view.fields.EnumField.prototype, "loadEnumOptions");
+        var loadEnumSpy = sinon.spy(app.view.fields.BaseEnumField.prototype, "loadEnumOptions");
         var field = SugarTest.createField("base", fieldName, fieldType, "edit", {options: "bugs_type_dom"});
         field.render();
         expect(loadEnumSpy.called).toBe(true);

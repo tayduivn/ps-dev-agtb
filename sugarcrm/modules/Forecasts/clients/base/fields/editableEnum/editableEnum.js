@@ -52,7 +52,7 @@
      * Initialize
      */
     initialize: function(options){
-        app.view.fields.EnumField.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'field', 'enum', 'initialize', {args:[options]});
         this.currentView = "default";
         //Check to see if the field is editable
         this.isEditable();

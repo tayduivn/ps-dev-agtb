@@ -64,7 +64,7 @@ describe("products_view_record", function() {
 
     describe("initialization", function() {
         beforeEach(function() {
-            sinon.stub(app.view.views.RecordView.prototype, "initialize");
+            sinon.stub(app.view.views.BaseRecordView.prototype, "initialize");
 
             sinon.stub(app.metadata, "getModule", function () {
                 return {
@@ -79,7 +79,7 @@ describe("products_view_record", function() {
         afterEach(function() {
             view._setupCommitStageField.restore();
             app.metadata.getModule.restore();
-            app.view.views.RecordView.prototype.initialize.restore();
+            app.view.views.BaseRecordView.prototype.initialize.restore();
         });
 
         it("should set up the commit_stage field for products", function () {

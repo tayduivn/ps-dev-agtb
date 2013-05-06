@@ -4,7 +4,7 @@
     _dataFetched: false, // flag to determine if we tried to get records already
     initDashlet: function (view) {
         var dashlet = app.utils.deepCopy(this.context.get("dashlet")),
-            filterDef = [];
+            filterDef = [], recordView;
 
         this.model.set("auto_refresh", dashlet.auto_refresh || 0);
 
@@ -27,8 +27,8 @@
                 }, this);
             }
             this.meta.panels = this.meta.dashlet_config_panels;
-
-            app.view.views.RecordView.prototype._buildGridsFromPanelsMetadata.call(this, this.meta.panels);
+            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+            app.view.invoke(this, 'view', 'record', '_buildGridsFromPanelsMetadata', {args:[this.meta.panels]});
         } else {
             this.context.set("limit", dashlet.display_rows || 5);
             var collection = this.context.get("collection");
@@ -70,6 +70,8 @@
                     sortable: true
                 }, field || {});
             }, this);
+
+            this.meta.panels = this.meta.panels || this.meta.dashlet_config_panels;
             this.meta.panels[0].fields = dashlet.display_columns;
 
             // add css class based on module
@@ -80,6 +82,6 @@
         if (this.timerId) {
             clearInterval(this.timerId);
         }
-        app.view.views.ListView.prototype._dispose.call(this);
+        app.view.invoke(this, 'view', 'list', '_dispose');
     }
 })

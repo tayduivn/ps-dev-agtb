@@ -170,7 +170,6 @@
             var sortedModuleList = _.sortBy(app.utils.deepCopy(app.metadata.getModuleNames()), function(name) {
                 return name;
             });
-
             _.each(app.view.views, function(view, name){
                 if(view.prototype.plugins && view.prototype.plugins.indexOf('Dashlet') >= 0) {
 
@@ -210,17 +209,23 @@
     },
     parseComponentName: function(name, modules){
         name = name.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z])/g, '$1-$2');
-        var chunk = name.split('-'),
+        var chunks = name.split('-'),
             module,
             type;
-        if(_.indexOf(modules, chunk[0], true) >= 0) {
-            module = chunk[0];
-            chunk.splice(0, 1);
+        if (chunks && chunks.length) {
+            //Note chunks[0] now has the platform so remove that
+            chunks.splice(0, 1);
+            if(_.indexOf(modules, chunks[0], true) >= 0) {
+                module = chunks[0];
+                chunks.splice(0, 1);
+            }
+            return {
+                module: module,
+                type: chunks.pop(),
+                name: chunks.join('-').toLowerCase()
+            };
         }
-        return {
-            module: module,
-            type: chunk.pop(),
-            name: chunk.join('-').toLowerCase()
-        };
+        app.logger.warn("Unable to parse "+name+", in parseComponentName.");
+        return null;
     }
 })

@@ -26,7 +26,7 @@
  ********************************************************************************/
 ({
     /**
-     * extendsFrom: This needs to be app.view.AlertView since it's extending a Sidecar specific view class.  This is a
+     * extendsFrom: This needs to be app.view.TutorialView since it's extending a Sidecar specific view class.  This is a
      * special case, as the normal method is for it to be a string.
      */
     extendsFrom: app.view.TutorialView,

@@ -5,7 +5,7 @@
     events:              {},
 
     initialize: function(options) {
-        app.view.views.RecordView.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'view', 'record', 'initialize', {args:[options]});
 
         // RecordView only toggles editable fields on render when this.createMode is true. This view is always in an
         // edit state, since user input can be accepted at any time, so force it.

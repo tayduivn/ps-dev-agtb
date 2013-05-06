@@ -31,7 +31,7 @@
             'click .rowaction': 'rowActionSelect',
             'touchstart .rowaction': 'rowActionSelect'
         });
-        app.view.fields.ButtonField.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'field', 'button', 'initialize', {args:[options]});
     },
     rowActionSelect: function(evt) {
         // make sure that we are not disabled first

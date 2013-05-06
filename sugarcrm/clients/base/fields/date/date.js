@@ -46,7 +46,7 @@
      * <pre><code>
      * _render:function(value) {
      *     this.doSpecialPreParentInitialization();
-     *     app.view.fields.DateField.prototype._render.call(this);// Beware to use: app.view.fields
+     *     app.view.invoke(this, 'field', 'date', '_render');
      *     // as it's easy to forget and do app.view.views (notice views not fields at end!)
      *     this.doSomethingElseAfterParentInitialization();
      * },

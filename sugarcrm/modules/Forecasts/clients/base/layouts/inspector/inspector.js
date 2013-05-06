@@ -31,7 +31,7 @@
      * @param options
      */
     initialize: function (options) {
-        app.view.layouts.InspectorLayout.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'layout', 'inspector', 'initialize', {args:[options]});
 
         // setup the bind events
         this.bind();

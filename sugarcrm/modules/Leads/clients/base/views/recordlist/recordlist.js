@@ -28,7 +28,7 @@
     extendsFrom: 'RecordlistView',
 
     initialize: function(options) {
-        app.view.views.RecordlistView.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'view', 'recordlist', 'initialize', {args:[options]});
         this.context.on('list:convertrow:fire', this.initiateDrawer, this);
     },
 
@@ -36,7 +36,7 @@
      * Set the save button to show if the model has been edited.
      */
     bindDataChange: function() {
-        app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+        app.view.invoke(this, 'view', 'recordlist', 'bindDataChange');
         this.collection.on('reset', this.setLeadButtonStates, this);
     },
 

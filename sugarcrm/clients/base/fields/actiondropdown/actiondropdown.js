@@ -33,11 +33,13 @@
         'touchstart [data-toggle=dropdown]' : 'renderDropdown'
     },
     initialize: function(options) {
-        app.view.fields.FieldsetField.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'field', 'fieldset', 'initialize', {args:[options]});
         this.dropdownFields = [];
 
         //Throttle the setPlaceholder function per instance of this field.
-        this.setPlaceholder = _.throttle(app.view.fields.ActiondropdownField.prototype.setPlaceholder, 100);
+        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+        var actiondropdownField = app.view._getController({type:'field',name:'actiondropdown'});
+        this.setPlaceholder = _.throttle(actiondropdownField.prototype.setPlaceholder, 100);
     },
     renderDropdown: function() {
         if(_.isEmpty(this.dropdownFields)) {
@@ -92,7 +94,7 @@
 
     },
     _render: function() {
-        app.view.fields.FieldsetField.prototype._render.call(this);
+        app.view.invoke(this, 'field', 'fieldset', '_render');
         this.setPlaceholder();
     },
     setPlaceholder: function() {
@@ -159,7 +161,7 @@
         }
     },
     setDisabled: function(disable) {
-        app.view.fields.FieldsetField.prototype.setDisabled.call(this, disable);
+        app.view.invoke(this, 'field', 'fieldset', 'setDisabled', {args: [disable]});
         disable = _.isUndefined(disable) ? true : disable;
         if (disable) {
             this.$('.dropdown-toggle').addClass('disabled');

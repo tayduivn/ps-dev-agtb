@@ -22,7 +22,7 @@
     // Model being previewed (if any)
     _previewed: null,
     initialize: function (options) {
-        app.view.views.ListView.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'view', 'list', 'initialize', {args:[options]});
         this.template = app.template.getView('flex-list');
         this.events = _.clone(this.events);
         _.extend(this.events, {
@@ -218,8 +218,9 @@
     },
     unbind: function() {
         $(window).off("resize.flexlist-" + this.cid);
-        app.view.views.ListView.prototype.unbind.call(this);
+        app.view.invoke(this, 'view', 'list', 'unbind');
     },
+
     /**
      * Updates the class of this flex list as scrollable or not.
      *

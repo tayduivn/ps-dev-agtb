@@ -17,7 +17,7 @@
     _canEdit: true,
 
     initialize: function (options) {
-        app.view.fields.DateField.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'field', 'date', 'initialize', {args:[options]});
         this.checkIfCanEdit();
     },
 

@@ -5,7 +5,7 @@
     },
     extendsFrom: 'ButtonField',
     initialize: function (options) {
-        app.view.fields.ButtonField.prototype.initialize.call(this, options);
+        app.view.invoke(this, 'field', 'button', 'initialize', {args:[options]});
         this.type = 'button';
     },
     closeClicked: function () {
@@ -18,7 +18,7 @@
         if (this.model.get('status') === 'Completed') {
             this.hide();
         } else {
-            app.view.fields.ButtonField.prototype._render.call(this);
+            app.view.invoke(this, 'field', 'button', '_render');
         }
     },
     _close: function (createNew) {

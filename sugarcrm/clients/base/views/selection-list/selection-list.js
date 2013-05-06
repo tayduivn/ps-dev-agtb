@@ -20,9 +20,7 @@
     initialize: function (options) {
         options.meta = options.meta || {};
         options.meta.selection = { type: 'single', label: ' ' };
-
-        app.view.views.FlexListView.prototype.initialize.call(this, options);
-
+        app.view.invoke(this, 'view', 'flex-list', 'initialize', {args:[options]});
         this.context.on("change:selection_model", this._selectModel, this);
     },
     _selectModel: function () {
