@@ -105,7 +105,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         self::$manager_quota->timeperiod_id = self::$timeperiod->id;
         self::$manager_quota->save();
 
-        $rollup_quota = SugarTestQuotaUtilities::createQuota(1000);
+        $rollup_quota = SugarTestQuotaUtilities::createQuota(2000);
         $rollup_quota->user_id = self::$manager->id;
         $rollup_quota->quota_type = 'Rollup';
         $rollup_quota->timeperiod_id = self::$timeperiod->id;
@@ -299,7 +299,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $this->assertNotEmpty($quota->amount);
-        $this->assertEquals('400.00', $quota->amount, null, 2);
+        $this->assertEquals('1400.00', $quota->amount, null, 2);
     }
 
 
@@ -417,8 +417,8 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testManagerQuotaReCalcWorks()
     {
-        // from the data created when the class was started, the manager had a quota of 1000
-        // and the user had a quota of 600, so, it should return 400 as that is the difference
+        // from the data created when the class was started, the manager had a rollup quota of 2000, direct 1000, 
+        // and the user had a quota of 600, so, it should return 1400 as that is the difference
         $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
 
         $new_mgr_quota = SugarTestReflection::callProtectedMethod(
@@ -430,6 +430,29 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $this->assertEquals(400, $new_mgr_quota, '', 2);
+        $this->assertEquals(1400, $new_mgr_quota, '', 2);
+    }
+    
+    /**
+     * @group forecasts
+     */
+    public function testManagerQuotaNoRecalc()
+    {
+        // from the data created when the class was started, the manager had a quota of 1000
+        // and the user had a quota of 600. We are going to set the manager direct to 4000, so
+        // that the total is 4600 (2600 over the Rollup of 2000).  It should NOT recalc at that point.
+        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        self::$manager_quota->amount = 4000;
+        self::$manager_quota->save();
+        $new_mgr_quota = SugarTestReflection::callProtectedMethod(
+            $worksheet,
+            'recalcUserQuota',
+            array(
+                self::$manager->id,
+                self::$timeperiod->id
+            )
+        );
+
+        $this->assertEquals(4000, $new_mgr_quota, '', 2);
     }
 }
