@@ -1219,8 +1219,8 @@ function return_module_language($language, $module, $refresh=false)
 	}
 
 	$loaded_mod_strings = LanguageManager::loadModuleLanguage($module, $language,$refresh);
-
-    if ($bean && $bean->module_dir !== $module) {
+	// BR-24 & BR-25, some modules, like Dynamic Fields, don't have a module_dir and this throws a notice
+    if ($bean && !empty($bean->module_dir) && $bean->module_dir !== $module) {
         $loaded_mod_strings = sugarLangArrayMerge(
             LanguageManager::loadModuleLanguage($bean->module_dir, $language, $refresh),
             $loaded_mod_strings
@@ -1233,7 +1233,7 @@ function return_module_language($language, $module, $refresh=false)
             LanguageManager::loadModuleLanguage($module, $sugar_config['default_language'],$refresh),
                 $loaded_mod_strings
             );
-        if ($bean && $bean->module_dir !== $module) {
+        if ($bean && !empty($bean->module_dir) && $bean->module_dir !== $module) {
             $loaded_mod_strings = sugarLangArrayMerge(
                 LanguageManager::loadModuleLanguage($bean->module_dir, $sugar_config['default_language'], $refresh),
                 $loaded_mod_strings
