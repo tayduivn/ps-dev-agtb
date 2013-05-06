@@ -143,7 +143,6 @@ $fields = array(
     ),
     'sales_stage',
     'probability',
-    'sales_status',
     array(
         'name' => 'date_closed',
         'required' => true,
