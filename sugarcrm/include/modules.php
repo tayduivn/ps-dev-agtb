@@ -593,7 +593,6 @@ $bwcModules = array(
     //BEGIN SUGARCRM flav=pro ONLY
     'ProductBundleNotes',
     'ProductBundles',
-    'ProductCategories',
     'ProductTypes',
     //END SUGARCRM flav=pro ONLY
     'Project',

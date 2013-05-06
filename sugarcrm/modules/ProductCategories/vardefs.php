@@ -12,6 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $dictionary['ProductCategory'] = array(
+    'favorites' => false,
     'table' => 'product_categories',
     'comment' => 'Used to categorize products in the product catalog',
     'fields' => array(
@@ -99,7 +100,7 @@ $dictionary['ProductCategory'] = array(
             'name' => 'description',
             'vname' => 'LBL_DESCRIPTION',
             'type' => 'text',
-            'comment' => 'Full desscription of the category'
+            'comment' => 'Full description of the category'
         ),
         //BEGIN SUGARCRM flav=pro ONLY
         'assigned_user_id' =>
@@ -115,8 +116,7 @@ $dictionary['ProductCategory'] = array(
         array(
             'name' => 'parent_id',
             'vname' => 'LBL_PARENT_NAME',
-            'type' => 'varchar',
-            'len' => '36',
+            'type' => 'id',
             'comment' => 'Parent category of this item; used for multi-tiered categorization',
             'reportable' => true
         ),
@@ -133,8 +133,19 @@ $dictionary['ProductCategory'] = array(
         'parent_name' =>
         array(
             'name' => 'parent_name',
-            'type' => 'varchar',
-            'source' => 'non-db'
+            'rname' => 'name',
+            'id_name' => 'parent_id',
+            'vname' => 'LBL_PARENT_CATEGORY',
+            'type' => 'relate',
+            'isnull' => 'true',
+            'module' => 'ProductCategories',
+            'table' => 'product_categories',
+            'massupdate' => false,
+            'source' => 'non-db',
+            'len' => 36,
+            'link' => 'member_categories',
+            'unified_search' => true,
+            'importable' => 'true',
         ),
         'type' =>
         array(
