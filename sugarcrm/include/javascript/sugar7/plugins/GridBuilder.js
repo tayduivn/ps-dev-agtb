@@ -193,11 +193,11 @@
                         if (_.isUndefined(field.span)) {
                             // the field span must be initialized
                             field.span = Math.floor(this.maxRowSpan / this.maxColumns);
+                        }
 
-                            // if the field span was undefined, then prevent a span of 0
-                            if (field.span < 1) {
-                                field.span = 1;
-                            }
+                        // prevent a span of 0
+                        if (field.span < 1) {
+                            field.span = 1;
                         }
 
                         // fields can't be greater than the maximum allowable span
@@ -236,16 +236,27 @@
                                 // 4 for label span because we are using a 1/3 ratio between field span and label span
                                 // with a max of 12
                                 field.labelSpan = Math.floor(4 / this.maxColumns);
-
-                                // if the field span was undefined, then prevent a labelSpan of 0
-                                if (field.labelSpan < 1) {
-                                    field.labelSpan = 1;
-                                }
                             }
 
-                            // take the label span out of the field span
-                            // i.e., upon initialization, the field span includes the space for its label
-                            field.span -= field.labelSpan;
+                            // prevent a labelSpan of 0
+                            if (field.labelSpan < 1) {
+                                field.labelSpan = 1;
+                            }
+
+                            if (_.isUndefined(field.dismiss_label)) {
+                                field.dismiss_label = false;
+                            }
+
+                            if (field.dismiss_label !== true) {
+                                // take the label span out of the field span
+                                // i.e., upon initialization, the field span includes the space for its label
+                                field.span -= field.labelSpan;
+
+                                // need to once more prevent a span of 0
+                                if (field.span < 1) {
+                                    field.span = 1;
+                                }
+                            }
 
                             this.addField(field);
                         }, this);
@@ -278,6 +289,10 @@
                             if (_.isUndefined(field.labelSpan)) {
                                 // the label span should be the same as the field span
                                 field.labelSpan = field.span
+                            }
+
+                            if (_.isUndefined(field.dismiss_label)) {
+                                field.dismiss_label = false;
                             }
 
                             this.addField(field);

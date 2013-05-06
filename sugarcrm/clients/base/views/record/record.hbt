@@ -12,9 +12,9 @@
                         {{#each this}}
                         <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
                             {{#if ../../labels}}
-                                {{#if labelSpan}}
+                                {{#unless dismiss_label}}
                                 <div class="record-label" data-name="{{name}}">{{str label ../../../../../../module}}</div>
-                                {{/if}}
+                                {{/unless}}
                             {{/if}}
                             <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
                                 {{field ../../../../this ../../../../model ../../../../action}}
@@ -56,7 +56,9 @@
                             {{#each this}}
                             <div class="span{{span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                                 {{#if ../../labels}}
-                                <div class="record-label" data-name="{{name}}">{{#if labelSpan}}{{str label ../../../../../../../module}}{{/if}}</div>
+                                    {{#unless dismiss_label}}
+                                    <div class="record-label" data-name="{{name}}">{{#if label}}{{str label ../../../../../../../../module}}{{/if}}</div>
+                                    {{/unless}}
                                 {{/if}}
                                 {{#if name}}
                                 <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
@@ -80,16 +82,14 @@
                             {{#each grid}}
                             <div class="row-fluid control-group {{../name}}{{#if ../hide}} hide{{/if}}">
                                 {{#each this}}
-                                    {{#if labelSpan}}
-                                        {{#if ../../../labels}}
+                                    {{#if ../../labels}}
+                                        {{#unless dismiss_label}}
                                         <div class="control-label span{{labelSpan}} {{label_css_class}}">
-                                            {{#if label}}
                                             <div class="control-label-background span{{labelSpan}}">
-                                                <label class="tright record-label" data-name="{{name}}">{{str label ../../../../../../../../module}}:</label>
+                                                <label class="tright record-label" data-name="{{name}}">{{str label ../../../../../../../module}}</label>
                                             </div>
-                                            {{/if}}
                                         </div>
-                                        {{/if}}
+                                        {{/unless}}
                                     {{/if}}
                                     <div class="controls span{{span}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
                                         {{#if name}}

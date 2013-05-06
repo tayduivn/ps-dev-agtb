@@ -44,7 +44,6 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'label'           => 'LBL_FROM',
                     'type'            => 'sender',
                     'span'            => 12,
-                    'labelSpan'       => 2,
                     'css_class'       => 'inherit-width',
                     'label_css_class' => 'begin-fieldgroup',
                     'endpoint'        => array(
@@ -57,7 +56,6 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'type'           => 'recipients',
                     'label'          => 'LBL_TO_ADDRS',
                     'span'           => 12,
-                    'labelSpan'      => 2,
                     'cell_css_class' => 'controls-one btn-fit',
                     'required'       => true,
                 ),
@@ -66,7 +64,6 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'type'           => 'recipients',
                     'label'          => 'LBL_CC',
                     'span'           => 12,
-                    'labelSpan'      => 2,
                     'cell_css_class' => 'controls-one btn-fit',
                 ),
                 array(
@@ -74,14 +71,12 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'type'           => 'recipients',
                     'label'          => 'LBL_BCC',
                     'span'           => 12,
-                    'labelSpan'      => 2,
                     'cell_css_class' => 'controls-one btn-fit',
                 ),
                 array(
                     'name'            => 'subject',
                     'label'           => 'LBL_SUBJECT',
                     'span'            => 12,
-                    'labelSpan'       => 2,
                     'label_css_class' => 'end-fieldgroup',
                 ),
                 array(
@@ -93,7 +88,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'name'           => 'actionbar',
                     'type'           => 'compose-actionbar',
                     'span'           => 12,
-                    'labelSpan'      => 2,
+                    'dismiss_label'  => true,
                     'buttonSections' => array(
                         array(
                             'name'      => 'attachments_dropdown',
@@ -101,16 +96,16 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                             'type'      => 'actiondropdown',
                             'buttons'   => array(
                                 array(
-                                    'name'    => 'upload_new_button',
-                                    'type'    => 'button',
-                                    'icon'    => 'icon-paper-clip',
-                                    'label'   => 'LBL_UPLOAD_ATTACHMENT',
+                                    'name'  => 'upload_new_button',
+                                    'type'  => 'button',
+                                    'icon'  => 'icon-paper-clip',
+                                    'label' => 'LBL_UPLOAD_ATTACHMENT',
                                 ),
                                 //TODO: Add back once Sugar Documents have been implemented
                                 /*array(
-                                    'name'      => 'attach_sugardoc_button',
-                                    'type' => 'rowaction',
-                                    'label'     => 'LBL_ATTACH_SUGAR_DOC',
+                                    'name'  => 'attach_sugardoc_button',
+                                    'type'  => 'rowaction',
+                                    'label' => 'LBL_ATTACH_SUGAR_DOC',
                                 ),*/
                             ),
                         ),
@@ -137,7 +132,8 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                 array(
                     'name'          => 'html_body',
                     'type'          => 'htmleditable_tinymce',
-                    'labelSpan'     => 0,
+                    'dismiss_label' => true,
+                    'span'          => 12,
                     'tinyConfig'    => array(
                         // Location of TinyMCE script
                         'script_url'                        => 'include/javascript/tiny_mce/tiny_mce.js',
@@ -174,19 +170,17 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
             'fields'       => array(
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
-                    'type'      => 'teamset',
-                    'name'      => 'team_name',
-                    'span'      => 12,
-                    'labelSpan' => 2,
+                    'type' => 'teamset',
+                    'name' => 'team_name',
+                    'span' => 12,
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
-                    'label'     => 'LBL_LIST_RELATED_TO',
-                    'type'      => 'parent',
-                    'name'      => 'parent_name',
-                    'options'   => 'parent_type_display',
-                    'span'      => 12,
-                    'labelSpan' => 2,
+                    'label'   => 'LBL_LIST_RELATED_TO',
+                    'type'    => 'parent',
+                    'name'    => 'parent_name',
+                    'options' => 'parent_type_display',
+                    'span'    => 12,
                 ),
             ),
         ),

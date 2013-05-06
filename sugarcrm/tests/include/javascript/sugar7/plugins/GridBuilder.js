@@ -42,10 +42,10 @@ describe("Plugins.GridBuilder", function() {
                         },
 
                         // case: field.span is 0
-                        // result: field.span should remain 0
+                        // result: field.span should be 1
                         {
                             name: "foo3",
-                            span: 0
+                            span: 1
                         },
 
                         // case: 0 < field.span < 12
@@ -75,7 +75,7 @@ describe("Plugins.GridBuilder", function() {
                 expect(results[1][0].span).toBe(12);
 
                 // case: field.span is 0
-                expect(results[2][0].span).toBe(0);
+                expect(results[2][0].span).toBe(1);
 
                 // case: 0 < field.span < 12
                 expect(results[3][0].span).toBe(6);
@@ -185,11 +185,11 @@ describe("Plugins.GridBuilder", function() {
                             name: "foo8"
                         },
                         {
-                            name: "foo8",
+                            name: "foo9",
                             span: 10
                         },
                         {
-                            name: "foo9"
+                            name: "foo10"
                         }
                     ];
 
@@ -235,25 +235,24 @@ describe("Plugins.GridBuilder", function() {
             it("Should create a one-column panel grid", function() {
                 var results,
                     fields    = [
-                        // case: field.span and field.labelSpan are undefined
+                        // case: field.span is undefined
                         // result: field.span should be 8 and field.labelSpan should be 4
                         {
                             name: "foo1"
                         },
 
-                        // case: field.span is 0 and field.labelSpan is 0
-                        // result: field.span should remain 0 and field.labelSpan should remain 0
+                        // case: field.span is 0
+                        // result: field.span should be 1 and field.labelSpan should be 4
                         {
                             name: "foo2",
-                            span: 0,
-                            labelSpan: 0
+                            span: 0
                         },
 
-                        // case: field.span is undefined and field.labelSpan is 6
-                        // result: field.span should be calculated to 6 to fit nad field.labelSpan should not change
+                        // case: field.span is 10
+                        // result: field.span should be 6 and field.labelSpan should be 4
                         {
                             name: "foo3",
-                            labelSpan: 6
+                            span: 10
                         },
 
                         // case: field.span >= 12
@@ -263,27 +262,36 @@ describe("Plugins.GridBuilder", function() {
                             span: 20
                         },
 
-                        // case: field.span is undefined, field.labelSpan is 0
-                        // result: field.span should be 12 and field.labelSpan should not change
+                        // case: field.span is 12 and field.dismiss_label is true
+                        // result: field.span should remain 12 and field.labelSpan should be 4
                         {
-                            name: "foo5",
-                            labelSpan: 0
+                            name:          "foo5",
+                            span:          12,
+                            dismiss_label: true
                         },
 
-                        // case: field.span is 4, field.labelSpan is 0
-                        // result: field.span and field.labelSpan should not change, effectively hiding the label
+                        // case: field.span is 4 and field.dismiss_label is true
+                        // result: field.span should remain 4 and field.labelSpan should be 4
                         {
-                            name: "foo6",
-                            span: 4,
-                            labelSpan: 0
+                            name:          "foo6",
+                            span:          4,
+                            dismiss_label: true
                         },
 
-                        // case: field.span is 12, field.labelSpan is 2
-                        // result: field.span should be recalculated to fit and field.labelSpan should not change
+                        // case: field.span is 10 and field.dismiss_label is true
+                        // result: field.span should remain 10 and field.labelSpan should be 4
                         {
-                            name: "foo7",
-                            span: 12,
-                            labelSpan: 2
+                            name:          "foo7",
+                            span:          10,
+                            dismiss_label: true
+                        },
+
+                        // case: field.span > 12 and field.dismiss_label is true
+                        // result: field.span should be 12 and field.labelSpan should be 4
+                        {
+                            name:          "foo8",
+                            span:          20,
+                            dismiss_label: true
                         }
                     ];
 
@@ -299,39 +307,43 @@ describe("Plugins.GridBuilder", function() {
                 // each field should be on its own row
                 expect(results.length).toBe(fields.length);
 
-                // case: field.span and field.labelSpan are undefined
+                // case: field.span is undefined
                 expect(results[0][0].span).toBe(8);
                 expect(results[0][0].labelSpan).toBe(4);
 
-                // case: field.span is 0 and field.labelSpan is 0
-                expect(results[1][0].span).toBe(0);
-                expect(results[1][0].labelSpan).toBe(0);
+                // case: field.span is 0
+                expect(results[1][0].span).toBe(1);
+                expect(results[1][0].labelSpan).toBe(4);
 
-                // case: field.span is undefined and field.labelSpan is 6
+                // case: field.span is 10
                 expect(results[2][0].span).toBe(6);
-                expect(results[2][0].labelSpan).toBe(6);
+                expect(results[2][0].labelSpan).toBe(4);
 
                 // case: field.span >= 12
                 expect(results[3][0].span).toBe(8);
                 expect(results[3][0].labelSpan).toBe(4);
 
-                // case: field.span is undefined, field.labelSpan is 0
+                // case: field.span is 12 and field.dismiss_label is true
                 expect(results[4][0].span).toBe(12);
-                expect(results[4][0].labelSpan).toBe(0);
+                expect(results[4][0].labelSpan).toBe(4);
 
-                // case: field.span is 4, field.labelSpan is 0
+                // case: field.span is 4 and field.dismiss_label is true
                 expect(results[5][0].span).toBe(4);
-                expect(results[5][0].labelSpan).toBe(0);
+                expect(results[5][0].labelSpan).toBe(4);
 
-                // field.span is 12, field.labelSpan is 2
+                // field.span is 10 and field.dismiss_label is true
                 expect(results[6][0].span).toBe(10);
-                expect(results[6][0].labelSpan).toBe(2);
+                expect(results[6][0].labelSpan).toBe(4);
+
+                // case: field.span > 12 and field.dismiss_label is true
+                expect(results[7][0].span).toBe(12);
+                expect(results[7][0].labelSpan).toBe(4);
             });
 
             it("Should create a two-column panel grid", function() {
                 var results,
                     fields    = [
-                        // case: field.span >= 12 and field.labelSpan is undefined
+                        // case: field.span >= 12
                         // result: field.span should be 10 and field.labelSpan should be 2; field's span dictates that
                         // the field should be on its own row
                         {
@@ -339,25 +351,16 @@ describe("Plugins.GridBuilder", function() {
                             span: 12
                         },
 
-                        // case: field.span >= 12 and field.labelSpan is 3
-                        // result: field.span should be 9 and field.labelSpan should be 3; field overflows the row and
+                        // case: field.span >= 12 and field.dismiss_label is true
+                        // result: field.span should be 12 and field.labelSpan should be 2; field overflows the row and
                         // its span dictates that the field be on its own row
                         {
-                            name: "foo2",
-                            span: 12,
-                            labelSpan: 3
+                            name:          "foo2",
+                            span:          20,
+                            dismiss_label: true
                         },
 
-                        // case: field.span >= 12 and field.labelSpan is 4
-                        // result: field.span should be 8 and field.labelSpan should be 4; field overflows the row and
-                        // its span dictates that the field be on its own row
-                        {
-                            name: "foo3",
-                            span: 20,
-                            labelSpan: 4
-                        },
-
-                        // case: field.span and field.labelSpan are undefined for both fields
+                        // case: field.span is undefined for both fields
                         // result: field.span should be 4 and field.labelSpan should be 2 for both fields; both fields
                         // should fit on one row
                         {
@@ -369,29 +372,26 @@ describe("Plugins.GridBuilder", function() {
 
                         // case: the sum of the spans for the first two fields and their labels < 12, and a third
                         // field is too large to fit on the row
-                        // result: The first field should have a field span of 3 and a label span of 2. The second
-                        // field should have a field span of 3 and a label span of 1. The sum of these spans is 12, so
-                        // both fields will be on the same row. The third field naturally overflows the row and is
-                        // added to the next row.
+                        // result: The first two fields should have field spans of 3 and label spans of 2. The sum of
+                        // these spans is 10, so both fields will be on the same row. The third field naturally
+                        // overflows the row and is added to the next row.
                         {
                             name: "foo6",
-                            span: 5,
-                            labelSpan: 2
+                            span: 5
                         },
                         {
                             name: "foo7",
-                            span: 4,
-                            labelSpan: 1
+                            span: 5
                         },
                         {
                             name: "foo8"
                         },
 
-                        // case: field.span is undefined and field.labelSpan is 0
-                        // result: field.span should be 6 and field.labelSpan should remain 0
+                        // case: field.span is undefined and field.dismiss_label is true
+                        // result: field.span should be 6 and field.labelSpan should be 2
                         {
-                            name: "foo9",
-                            labelSpan: 0
+                            name:          "foo9",
+                            dismiss_label: true
                         }
                     ];
 
@@ -405,44 +405,39 @@ describe("Plugins.GridBuilder", function() {
                 results = view.meta.panels[0].grid;
 
                 // the number of rows found in this two-column grid
-                expect(results.length).toBe(6);
+                expect(results.length).toBe(5);
 
-                // case: field.span >= 12 and field.labelSpan is undefined
+                // case: field.span >= 12
                 expect(results[0].length).toBe(1);
                 expect(results[0][0].span).toBe(10);
                 expect(results[0][0].labelSpan).toBe(2);
 
-                // case: field.span >= 12 and field.labelSpan is 3
+                // case: field.span >= 12 and field.dismiss_label is true
                 expect(results[1].length).toBe(1);
-                expect(results[1][0].span).toBe(9);
-                expect(results[1][0].labelSpan).toBe(3);
+                expect(results[1][0].span).toBe(12);
+                expect(results[1][0].labelSpan).toBe(2);
 
-                // case: field.span >= 12 and field.labelSpan is 4
-                expect(results[2].length).toBe(1);
-                expect(results[2][0].span).toBe(8);
-                expect(results[2][0].labelSpan).toBe(4);
-
-                // case: field.span and field.labelSpan are undefined for both fields
-                expect(results[3].length).toBe(2);
-                expect(results[3][0].span).toBe(4);
-                expect(results[3][0].labelSpan).toBe(2);
-                expect(results[3][1].span).toBe(4);
-                expect(results[3][1].labelSpan).toBe(2);
+                // case: field.span is undefined for both fields
+                expect(results[2].length).toBe(2);
+                expect(results[2][0].span).toBe(4);
+                expect(results[2][0].labelSpan).toBe(2);
+                expect(results[2][1].span).toBe(4);
+                expect(results[2][1].labelSpan).toBe(2);
 
                 // case: the sum of the spans for the first two fields and their labels < 12, and a third
                 // field is too large to fit on the row
-                expect(results[4].length).toBe(2);
-                expect(results[4][0].span).toBe(3);
+                expect(results[3].length).toBe(2);
+                expect(results[3][0].span).toBe(3);
+                expect(results[3][0].labelSpan).toBe(2);
+                expect(results[3][1].span).toBe(3);
+                expect(results[3][1].labelSpan).toBe(2);
+                expect(results[4].length).toBe(2); // 2 because the next test case adds a field to the fifth row
+                expect(results[4][0].span).toBe(4);
                 expect(results[4][0].labelSpan).toBe(2);
-                expect(results[4][1].span).toBe(3);
-                expect(results[4][1].labelSpan).toBe(1);
-                expect(results[5].length).toBe(2); // 2 because the next test case adds a field to the fifth row
-                expect(results[5][0].span).toBe(4);
-                expect(results[5][0].labelSpan).toBe(2);
 
-                // case: field.span is undefined and field.labelSpan is 0
-                expect(results[5][1].span).toBe(6);
-                expect(results[5][1].labelSpan).toBe(0);
+                // case: field.span is undefined and field.dismiss_label is true
+                expect(results[4][1].span).toBe(6);
+                expect(results[4][1].labelSpan).toBe(2);
             });
 
             it("Should create a five-column panel grid with no field.span's or label.span's less than 1", function() {

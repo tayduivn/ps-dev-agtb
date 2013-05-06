@@ -12,7 +12,6 @@ describe("Fieldset With Labels", function() {
         field = SugarTest.createField('base', 'foo', 'fieldset-with-labels', 'detail', {
             name: 'foo',
             type: 'fieldset-with-labels',
-            labelSpan: 4,
             fields: [{
                 name: 'name',
                 type: 'text',
