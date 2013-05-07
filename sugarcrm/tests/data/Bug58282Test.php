@@ -129,7 +129,7 @@ class Bug58282Test extends Sugar_PHPUnit_Framework_TestCase
         $bean->id = 'Bug58282Test';
 
         if ($shouldBeanBeSaved) {
-            $bean->expects($this->atLeastOnce())
+            $bean->expects($this->any())
                 ->method('save');
         } else {
             $bean->expects($this->never())

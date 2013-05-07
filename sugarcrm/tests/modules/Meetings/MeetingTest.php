@@ -127,6 +127,7 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 		$_POST['lead_invitees'] = $this->lead->id;
 		$_POST['contact_invitees'] = $this->contact->id;
 		$_POST['assigned_user_id'] = $GLOBALS['current_user']->id;
+		$_POST['date_start'] = date('Y-m-d H:i:s');
 		// call handleSave
 		$mfb = new MeetingFormBase();
 		$meeting = $mfb->handleSave(null,false, false);
@@ -155,6 +156,7 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 		$meeting = BeanFactory::newBean('Meetings');
 		$meeting->name = 'Super Awesome Meeting Town USA';
 		$meeting->contact_id = $this->contact->id;
+		$meeting->date_start = date('Y-m-d H:i:s');
 		$meeting->save();
 
 		$q = "SELECT mu.contact_id FROM meetings_contacts mu WHERE mu.meeting_id = '{$meeting->id}'";

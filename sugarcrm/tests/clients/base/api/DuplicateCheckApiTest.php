@@ -146,8 +146,6 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        while ( ob_get_level() > 0 ) { ob_end_clean(); }
-
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestLeadUtilities::removeAllCreatedLeads();
         $GLOBALS["dictionary"]["Lead"]["duplicate_check"] = $this->copyOfLeadsDuplicateCheckVarDef;
@@ -158,7 +156,8 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider duplicatesProvider
      */
-    public function testCheckForDuplicates($args, $expected, $message) {
+    public function testCheckForDuplicates($args, $expected, $message)
+    {
         $args["module"] = "Leads";
         $results = $this->duplicateCheckApi->checkForDuplicates($this->api, $args);
         $actual  = count($results["records"]);

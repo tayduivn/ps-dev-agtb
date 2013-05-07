@@ -26,19 +26,16 @@ require_once 'modules/Import/UsersLastImport.php';
 
 class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $_importModule;
-    private $_importRecordCount;
-    private $_importIds;
+    private $_importModule = 'Notes';
+    private $_importObject = 'Note';
+    private $_importRecordCount = 3;
+    private $_importIds = array();
     private $_usersLastImport;
     private $_usersLastImportIds;
     
     public function setUp() 
     {
         SugarTestHelper::setUp("current_user");
-        $this->_importModule = 'Notes';
-        $this->_importObject = 'Note';
-        $this->_importRecordCount = 3;
-        $this->_importIds = array();
         $this->_usersLastImport = new UsersLastImport();
         $this->_addImportedRecords();
     }
@@ -46,20 +43,18 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown() 
     {
         $focus = $this->_loadBean($this->_importModule);
-        $GLOBALS['db']->query(
-            'DELETE FROM ' . $focus->table_name . ' 
-                WHERE id IN (\'' . 
-                    implode("','",$this->_importIds) . '\')');
-        $GLOBALS['db']->query(
-            'DELETE FROM users_last_import 
-                WHERE id IN (\'' . 
-                    implode("','",$this->_usersLastImportIds) . '\')');
+        
+        $sql = "DELETE FROM {$focus->table_name} WHERE id IN ('" . implode("','", $this->_importIds) . "')";
+        $GLOBALS['db']->query($sql);
+        
+        $sql = 'DELETE FROM users_last_import WHERE id IN (\'' . implode("','",$this->_usersLastImportIds) . '\')';
+        $GLOBALS['db']->query($sql);
         SugarTestHelper::tearDown();
     }
     
-    private function _loadBean()
+    private function _loadBean($module)
     {
-        return loadBean($this->_importModule);
+        return BeanFactory::getBean($module);
     }
     
     private function _addImportedRecords()
@@ -145,11 +140,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
         
-        // teardown
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
-    	
-    	$result = $GLOBALS['db']->query("SELECT * FROM email_addr_bean_rel where id = '{$this->email_addr_bean_rel_id}'");
+        $result = $GLOBALS['db']->query("SELECT * FROM email_addr_bean_rel where id = '{$this->email_addr_bean_rel_id}'");
 		$rows = $GLOBALS['db']->fetchByAssoc($result);
     	$this->assertFalse($rows);
     	

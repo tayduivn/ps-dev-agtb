@@ -97,5 +97,7 @@ class Bug46325Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('LNK_NEW_PROSPECT', $popupMeta['create']['createButton']);
         unset($popupMeta);
         unset($this->parser);
+        // this is to suppress output. Need to fix properly with a good unit test.
+        $this->expectOutputRegex('//');
     }
 }

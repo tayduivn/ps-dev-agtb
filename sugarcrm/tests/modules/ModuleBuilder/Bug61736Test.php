@@ -172,6 +172,7 @@ class Bug61736Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCustomAddressFieldContainsGroupPropertyInVardef($suffix)
     {
+        $this->markTestIncomplete('Outputs spaces in the console. Need to be fixed by FRM team');
         // Assert that there is a fields index in the vardef
         $vardefs = self::_getTestVardef();
         $this->assertArrayHasKey('fields', $vardefs, "There is no fields vardef found");

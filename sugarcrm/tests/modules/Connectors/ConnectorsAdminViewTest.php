@@ -36,15 +36,31 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_OutputTestCase
         unset($app_strings);
     }
 
+    protected function withLinkedInWithoutInsideView($output)
+    {
+        $this->assertRegExp('/ext_rest_linkedin/', $output);
+        $this->assertNotRegExp('/ext_rest_insideview/', $output);
+    }
+
+    protected function withLinkedInAndInsideView($output)
+    {
+        $this->assertRegExp('/ext_rest_linkedin/', $output);
+        $this->assertRegExp('/ext_rest_insideview/', $output);
+    }
+
+    protected function withoutLinkedInAndInsideView($output)
+    {
+        $this->assertNotRegExp('/ext_rest_linkedin/', $output);
+        $this->assertNotRegExp('/ext_rest_insideview/', $output);
+    }
+
     public function testMapConnectorFields()
     {
         require_once 'modules/Connectors/views/view.modifymapping.php';
         $view = new ViewModifyMapping(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->expectOutputRegex('/ext_rest_linkedin/', 'Failed to asssert that LinkedIn connector appears');
-        $this->expectOutputNotRegex('/ext_rest_insideview/', 'Failed to asssert that InsideView text does not appear');
-
+        $this->setOutputCallback(array($this, 'withLinkedInWithoutInsideView'));
     }
 
     public function testEnableConnectors()
@@ -53,9 +69,7 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $view = new ViewModifyDisplay(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->expectOutputRegex('/ext_rest_linkedin/', 'Failed to asssert that LinkedIn connector appears');
-        $this->expectOutputRegex('/ext_rest_insideview/', 'Failed to asssert that InsideView text does not appear');
-
+        $this->setOutputCallback(array($this, 'withLinkedInAndInsideView'));
     }
 
     public function testConnectorProperties()
@@ -64,9 +78,7 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $view = new ViewModifyProperties(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->expectOutputRegex('/ext_rest_linkedin/', 'Failed to asssert that LinkedIn connector appears');
-        $this->expectOutputNotRegex('/ext_rest_insideview/', 'Failed to asssert that InsideView text does not appear');
-
+        $this->setOutputCallback(array($this, 'withLinkedInWithoutInsideView'));
     }
 
     public function testConnectorSearchProperties()
@@ -75,7 +87,6 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $view = new ViewModifySearch(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->expectOutputNotRegex('/ext_rest_linkedin/', 'Failed to asssert that LinkedIn connector appears');
-        $this->expectOutputNotRegex('/ext_rest_insideview/', 'Failed to asssert that InsideView text does not appear');
+        $this->setOutputCallback(array($this, 'withoutLinkedInAndInsideView'));
     }
 }

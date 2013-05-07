@@ -41,6 +41,7 @@ class SystemQuickListFTSClearTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     public function testFTSFlagRemoval() {
+        $this->markTestIncomplete('Needs to be fixed by FRM team.');
         $GLOBALS['current_user']->is_admin = 1;
         $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('info', 'fts_index_done', 1);

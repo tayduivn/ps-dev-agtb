@@ -173,5 +173,7 @@ class Bug44344Test extends Sugar_PHPUnit_Framework_TestCase
         {
             $this->assertContains($tab, $returned_tabs);
         }
+        // just to suppress output remove when proper code is in place.
+        $this->expectOutputRegex('/groupTabs/');
     }
 }

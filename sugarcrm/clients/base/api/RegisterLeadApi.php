@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('data/BeanFactory.php');
 require_once('include/SugarFields/SugarFieldHandler.php');
+require_once('include/api/SugarApi.php');
 
 class RegisterLeadApi extends SugarApi {
     public function registerApiRest() {
@@ -46,21 +47,6 @@ class RegisterLeadApi extends SugarApi {
      * @return id Bean id
      */
     protected function updateBean(SugarBean $bean,ServiceBase $api, $args) {
-        $sfh = new SugarFieldHandler();
-
-        foreach ( $bean->field_defs as $fieldName => $properties ) {
-            if ( !isset($args[$fieldName]) ) {
-                // They aren't trying to modify this field
-                continue;
-            }
-
-            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-            $field = $sfh->getSugarField($type);
-
-            if ( $field != null ) {
-                $field->save($bean, $args, $fieldName, $properties);
-            }
-        }
 
         // Bug 54515: Set modified by and created by users to assigned to user. If not set default to admin.
         $bean->update_modified_by = false;
@@ -77,17 +63,8 @@ class RegisterLeadApi extends SugarApi {
         // Bug 54516 users not getting notified on new record creation
         $bean->save(true);
 
-        /*
-         * Refresh the bean with the latest data.
-         * This is necessary due to BeanFactory caching.
-         * Calling retrieve causes a cache refresh to occur.
-         */
+        return parent::updateBean($bean, $api, $args);
 
-        $id = $bean->id;
-
-        $bean->retrieve($id);
-
-        return $id;
     }
 
     /**

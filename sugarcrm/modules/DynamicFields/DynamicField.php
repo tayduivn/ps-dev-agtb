@@ -25,9 +25,9 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
 
 class DynamicField {
 
+    public $module_dir = 'DynamicFields';
     var $use_existing_labels = false; // this value is set to true by install_custom_fields() in ModuleInstaller.php; everything else expects it to be false
     var $base_path = "";
-
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version

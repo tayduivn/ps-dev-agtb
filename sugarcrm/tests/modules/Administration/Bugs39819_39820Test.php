@@ -22,8 +22,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'PHPUnit/Extensions/OutputTestCase.php';
-
 class Bugs39819_39820Test extends Sugar_PHPUnit_Framework_TestCase
 {
     /**

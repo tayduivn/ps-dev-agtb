@@ -58,6 +58,7 @@ class LeadConvertApiTest extends RestTestBase
     }
 
     public function testConvertLead_AllNewRecords_ConvertSuccessful(){
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $postData = array(
             "leadId" => $this->lead->id,
             "modules" => array(
@@ -126,7 +127,7 @@ class LeadConvertApiTest extends RestTestBase
      }
 
     public function testConvertLead_RecordsExists_ConvertSuccessful(){
-
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $contact = SugarTestContactUtilities::createContact();
         $account = SugarTestAccountUtilities::createAccount();
         $opp = SugarTestOpportunityUtilities::createOpportunity();
@@ -158,7 +159,7 @@ class LeadConvertApiTest extends RestTestBase
     }
 
     public function testConvertLead_LeadDoesNotExist_ConvertFailed(){
-
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $contact = SugarTestContactUtilities::createContact();
         $account = SugarTestAccountUtilities::createAccount();
         $opp = SugarTestOpportunityUtilities::createOpportunity();

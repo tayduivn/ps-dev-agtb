@@ -54,6 +54,8 @@ class Bug46012Test extends Sugar_PHPUnit_Framework_TestCase
         $this->project = new Project();
 
         $this->project->name = 'Bug46012Test';
+        $this->project->estimated_start_date = date('Y-m-d');
+        $this->project->estimated_end_date = date('Y-m-d');
         $this->project->team_id = $this->user->team_id;
         $this->project->team_set_id = $this->user->team_set_id;
         $this->project->save();

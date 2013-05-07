@@ -120,5 +120,7 @@ class Bug44522Test extends Sugar_PHPUnit_Framework_OutputTestCase
         }
         
         $this->assertEquals($contact_id, $test_contact_id);
+        // to suppress output on phpunit (need to be reviewed when proper tests are made)
+        $this->expectOutputRegex('/LBL_CREATED_NEW Contacts/');
     }
 }

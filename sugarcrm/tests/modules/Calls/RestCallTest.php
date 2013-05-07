@@ -51,6 +51,7 @@ class RestCallTest extends RestTestBase {
      * @group rest
      */
     public function testCreateNoMinutes() {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $restReply = $this->_restCall("Calls/",
                                       json_encode(array(
                                                       'name'=>'UNIT TEST - Call with no minutes', 
@@ -80,6 +81,7 @@ class RestCallTest extends RestTestBase {
      * @group rest
      */
     public function testCreateWithParentContact() {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $contact = BeanFactory::newBean('Contacts');
         $contact->first_name = "UNIT";
         $contact->last_name = "TEST";

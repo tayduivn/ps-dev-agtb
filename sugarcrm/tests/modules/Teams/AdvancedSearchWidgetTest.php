@@ -89,7 +89,6 @@ class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_OutputTestCase
 	       	  $this->assertEquals($valueMatches[1][1], 'West', "Check that team 'West' is the first team in widget as specified by arguments");
 	       }
 	    }
-	    return true;
     }
 
     public function testSearchValuesFromRequest()
@@ -105,6 +104,6 @@ class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_OutputTestCase
 	    $_REQUEST['primary_team_name_advanced_collection'] = 0;
 	    $_REQUEST['team_name_advanced_type'] = 'all';
 		$this->_sugarField->render($this->_params, $this->_smarty);
-		$this->setOutputCheck(array($this, "checkSearchValues"));
+		$this->setOutputCallback(array($this, "checkSearchValues"));
     }
 }

@@ -148,6 +148,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
         $call = BeanFactory::newBean('Calls');
         $call->name = 'Super Awesome Call Ville USA';
         $call->contact_id = $this->contact->id;
+        $call->date_start = date('Y-m-d H:i:s');
         $call->save();
 
         $q = "SELECT mu.contact_id FROM calls_contacts mu WHERE mu.call_id = '{$call->id}'";

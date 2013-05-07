@@ -56,19 +56,17 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $modules = array('Accounts', );
         // user can view, list, delete, and export
         $expected_result = array(
-                                'access' => 'yes',
-                                'admin' => 'no',
-                                'create' => 'no',
-                                'view' => 'yes',
-                                'list' => 'no',
-                                'edit' => 'no',
-                                'delete' => 'no',
-                                'import' => 'no',
-                                'export' => 'no',
-                                'massupdate' => 'no',
-                            );
+            'admin' => 'no',
+            'create' => 'no',
+            'list' => 'no',
+            'edit' => 'no',
+            'delete' => 'no',
+            'import' => 'no',
+            'export' => 'no',
+            'massupdate' => 'no',
+        );
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', ));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view'));
 
         SugarTestACLUtilities::setupUser($role);
 
@@ -88,22 +86,19 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testListOnly()
     {
-        $modules = array('Accounts', );
+        $modules = array('Accounts');
         // user can view, list, delete, and export
         $expected_result = array(
-                                'access' => 'yes',
-                                'admin' => 'no',
-                                'create' => 'no',
-                                'view' => 'yes',
-                                'list' => 'yes',
-                                'edit' => 'no',
-                                'delete' => 'no',
-                                'import' => 'no',
-                                'export' => 'no',
-                                'massupdate' => 'no',
-                            );
+            'admin' => 'no',
+            'create' => 'no',
+            'edit' => 'no',
+            'delete' => 'no',
+            'import' => 'no',
+            'export' => 'no',
+            'massupdate' => 'no',
+        );
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', ));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list'));
 
         SugarTestACLUtilities::setupUser($role);
 
@@ -121,22 +116,20 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
     // test view + list owner
     public function testViewListOwner()
     {
-        $modules = array('Accounts', );
+        $modules = array('Accounts');
         // user can view, list, delete, and export
         $expected_result = array(
-                                'access' => 'yes',
-                                'admin' => 'no',
-                                'create' => 'no',
-                                'view' => 'yes',
-                                'list' => 'yes',
-                                'edit' => 'no',
-                                'delete' => 'no',
-                                'import' => 'no',
-                                'export' => 'no',
-                                'massupdate' => 'no',
-                            );
+            'admin' => 'no',
+            'create' => 'no',
+            'edit' => 'no',
+            'delete' => 'no',
+            'import' => 'no',
+            'export' => 'no',
+            'massupdate' => 'no',
+        );
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'list', 'view'), array('list', 'view'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
+            'access', 'list', 'view'), array('list', 'view'));
 
         SugarTestACLUtilities::setupUser($role);
 
@@ -156,22 +149,19 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
     // test view owner + edit owner + create
     public function testViewEditOwnerCreate()
     {
-        $modules = array('Accounts', );
+        $modules = array('Accounts');
         // user can view, list, delete, and export
         $expected_result = array(
-                                'access' => 'yes',
-                                'admin' => 'no',
-                                'create' => 'yes',
-                                'view' => 'yes',
-                                'list' => 'no',
-                                'edit' => 'yes',
-                                'delete' => 'no',
-                                'import' => 'no',
-                                'export' => 'no',
-                                'massupdate' => 'no',
-                            );
+            'admin' => 'no',
+            'list' => 'no',
+            'delete' => 'no',
+            'import' => 'no',
+            'export' => 'no',
+            'massupdate' => 'no',
+        );
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'edit', 'view'), array('edit', 'view'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
+            'access', 'create', 'edit', 'view'), array('edit', 'view'));
 
         SugarTestACLUtilities::setupUser($role);
 
@@ -192,19 +182,11 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $modules = array('Accounts', );
         // user can view, list, delete, and export
         $expected_result = array(
-                                'access' => 'yes',
-                                'admin' => 'no',
-                                'create' => 'yes',
-                                'view' => 'yes',
-                                'list' => 'yes',
-                                'edit' => 'yes',
-                                'delete' => 'yes',
-                                'import' => 'yes',
-                                'export' => 'yes',
-                                'massupdate' => 'yes',
-                            );
+            'admin' => 'no',
+        );
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit', 'delete', 'import', 'export', 'massupdate', ));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
+            'access', 'create', 'view', 'list', 'edit', 'delete', 'import', 'export', 'massupdate'));
 
         SugarTestACLUtilities::setupUser($role);
 
@@ -227,28 +209,20 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $modules = array('Accounts');
         // user can view, list, delete, and export
         $expected_result = array(
-                                'fields' =>
-                                    array(
-                                            'website' => array(
-                                                        'write' => 'no',
-                                                        'create' => 'no',
-                                                ),
-                                        ),
-                                'access' => 'yes',
-                                'admin' => 'no',
-                                'create' => 'yes',
-                                'view' => 'yes',
-                                'list' => 'yes',
-                                'edit' => 'yes',
-                                'delete' => 'yes',
-                                'import' => 'yes',
-                                'export' => 'yes',
-                                'massupdate' => 'yes',
-                            );
+            'fields' =>
+            array(
+                'website' => array(
+                    'write' => 'no',
+                    'create' => 'no',
+                ),
+            ),
+            'admin' => 'no',
+        );
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
+            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
 
-        SugarTestACLUtilities::createField($role->id, 'Accounts', 'webiste', 50);
+        SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', 50);
 
         SugarTestACLUtilities::setupUser($role);
 
@@ -266,22 +240,13 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $modules = array('Accounts');
         // user can view, list, delete, and export
         $expected_result = array(
-                                'fields' =>
-                                    array(
-                                        ),
-                                'access' => 'yes',
-                                'admin' => 'no',
-                                'create' => 'yes',
-                                'view' => 'yes',
-                                'list' => 'yes',
-                                'edit' => 'yes',
-                                'delete' => 'yes',
-                                'import' => 'yes',
-                                'export' => 'yes',
-                                'massupdate' => 'yes',
-                            );
+            'fields' =>
+            array(),
+            'admin' => 'no',
+        );
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
+            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
 
         SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', 60);
 
@@ -301,22 +266,13 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $modules = array('Accounts');
         // user can view, list, delete, and export
         $expected_result = array(
-                                'fields' =>
-                                    array(
-                                        ),
-                                'access' => 'yes',
-                                'admin' => 'no',
-                                'create' => 'yes',
-                                'view' => 'yes',
-                                'list' => 'yes',
-                                'edit' => 'yes',
-                                'delete' => 'yes',
-                                'import' => 'yes',
-                                'export' => 'yes',
-                                'massupdate' => 'yes',
-                            );
+            'fields' =>
+            array(),
+            'admin' => 'no',
+        );
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
+            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
 
         SugarTestACLUtilities::createField($role->id, 'Accounts','website', 40);
 

@@ -88,7 +88,7 @@ class Bug36329Test extends Sugar_PHPUnit_Framework_OutputTestCase
     	$popup->module = 'Accounts';
     	require_once('modules/Accounts/Account.php');
     	$popup->bean = new account();
-    	$this->expectOutputRegex("/Perform a search using the search form above/");
+    	$this->expectOutputRegex('/Perform a search using the search form above/');
     	$popup->display();
     }
 
@@ -96,7 +96,6 @@ class Bug36329Test extends Sugar_PHPUnit_Framework_OutputTestCase
     public function test_populate_only_with_query()
     {
     	$GLOBALS['sugar_config']['save_query'] = 'populate_only';
-    	global $app_strings;
     	$_REQUEST['module'] = 'Accounts';
     	$_REQUEST['action'] = 'Popup';
     	$_REQUEST['mode'] = 'single';

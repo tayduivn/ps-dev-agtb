@@ -164,6 +164,8 @@ require_once('include/MVC/SugarModule.php');
 require_once('include/SugarCache/SugarCache.php');
 require('modules/Currencies/Currency.php');
 require_once('include/MVC/SugarApplication.php');
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
+require_once 'data/SugarACL.php';
 
 require_once('include/upload_file.php');
 UploadStream::register();
@@ -175,8 +177,6 @@ UploadStream::register();
 if (!defined('SUGAR_PATH')) {
     define('SUGAR_PATH', realpath(dirname(__FILE__) . '/..'));
 }
-require_once 'include/SugarObjects/SugarRegistry.php';
-
 if(empty($GLOBALS['installing'])){
 ///////////////////////////////////////////////////////////////////////////////
 ////	SETTING DEFAULT VAR VALUES

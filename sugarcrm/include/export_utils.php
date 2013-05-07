@@ -431,7 +431,7 @@ function getExportContentFromResult(
         $field_labels[$key] = translateForExport($dbname,$focus);
     }
 
-    $user_agent = $_SERVER['HTTP_USER_AGENT'];
+    $user_agent = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : '';
     if ($locale->getExportCharset() == 'UTF-8' &&
         ! preg_match('/macintosh|mac os x|mac_powerpc/i', $user_agent)) // Bug 60377 - Mac Excel doesn't support UTF-8
     {

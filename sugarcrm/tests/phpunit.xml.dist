@@ -1,0 +1,152 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Professional End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You
+ * may not use this file except in compliance with the License.  Under the
+ * terms of the license, You shall not, among other things: 1) sublicense,
+ * resell, rent, lease, redistribute, assign or otherwise transfer Your
+ * rights to the Software, and 2) use the Software for timesharing or service
+ * bureau purposes such as hosting the Software for commercial gain and/or for
+ * the benefit of a third party.  Use of the Software may be subject to
+ * applicable fees and any use of the Software without first paying applicable
+ * fees is strictly prohibited.  You do not have the right to remove SugarCRM
+ * copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
+
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         strict="true"
+         syntaxCheck="false"
+         bootstrap="SugarTestHelper.php"
+        >
+    <php>
+        <ini name="intl.default_locale" value="en"/>
+        <ini name="intl.error_level" value="0"/>
+        <ini name="memory_limit" value="-1"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="Sugar FRM Test Suite">
+            <directory>./modules/ACL/</directory>
+            <directory>./modules/Administration/</directory>
+            <directory>./modules/Configurator/</directory>
+            <directory>./modules/Connectors/</directory>
+            <directory>./modules/DynamicFields/</directory>
+            <directory>./modules/EmailAddresses/</directory>
+            <directory>./modules/Employees/</directory>
+            <directory>./modules/Expression/</directory>
+            <directory>./modules/Home/</directory>
+            <directory>./modules/Import/</directory>
+            <directory>./modules/ModuleBuilder/</directory>
+            <directory>./modules/MySettings/</directory>
+            <directory>./modules/Notifications/</directory>
+            <directory>./modules/OAuthKeys/</directory>
+            <directory>./modules/SNIP/</directory>
+            <directory>./modules/SavedSearch/</directory>
+            <directory>./modules/Schedulers/</directory>
+            <directory>./modules/SchedulersJobs/</directory>
+            <directory>./modules/Studio/</directory>
+            <directory>./modules/SubPanel/</directory>
+            <directory>./modules/SugarFavorites/</directory>
+            <directory>./modules/SugarFeed/</directory>
+            <directory>./modules/Teams/</directory>
+            <directory>./modules/Trackers/</directory>
+            <directory>./modules/UpgradeWizard/</directory>
+            <directory>./modules/UserPreferences/</directory>
+            <directory>./modules/Users/</directory>
+        </testsuite>
+        <testsuite name="Sugar Include Test Suite">
+            <directory>./include/</directory>
+        </testsuite>
+        <testsuite name="Sugar Core Test Suite">
+            <directory>./data/</directory>
+            <directory>./install/</directory>
+            <directory>./jssource/</directory>
+            <directory>./ModuleInstall/</directory>
+        </testsuite>
+        <testsuite name="Sugar API Test Suite">
+            <directory>./clients/base/api/</directory>
+            <directory>./tests/</directory>
+        </testsuite>
+        <testsuite name="Sugar SC Test Suite">
+            <directory>./modules/Accounts/</directory>
+            <directory>./modules/Calendar/</directory>
+            <directory>./modules/Calls/</directory>
+            <directory>./modules/Contacts/</directory>
+            <directory>./modules/Dashboards/</directory>
+            <directory>./modules/Documents/</directory>
+            <directory>./modules/iCals/</directory>
+            <directory>./modules/MassUpdate/</directory>
+            <directory>./modules/Meetings/</directory>
+            <directory>./modules/Notes/</directory>
+            <directory>./modules/Project/</directory>
+            <directory>./modules/ProjectTask/</directory>
+            <directory>./modules/ReportMaker/</directory>
+            <directory>./modules/Reports/</directory>
+            <directory>./modules/Tasks/</directory>
+            <directory>./modules/Workflow/</directory>
+        </testsuite>
+        <testsuite name="Sugar SP Test Suite">
+            <directory>./modules/Bugs/</directory>
+            <directory>./modules/Cases/</directory>
+            <directory>./modules/KBDocuments/</directory>
+        </testsuite>
+        <testsuite name="Sugar MAR Test Suite">
+            <directory>./modules/CampaignLog/</directory>
+            <directory>./modules/Campaigns/</directory>
+            <directory>./modules/CampaignTrackers/</directory>
+            <directory>./modules/EmailMan/</directory>
+            <directory>./modules/EmailTemplates/</directory>
+            <directory>./modules/Emails/</directory>
+            <directory>./modules/InboundEmail/</directory>
+            <directory>./modules/Leads/</directory>
+            <directory>./modules/Mailer/</directory>
+            <directory>./modules/OutboundEmailConfiguration/</directory>
+            <directory>./modules/ProspectLists/</directory>
+            <directory>./modules/Prospects/</directory>
+        </testsuite>
+        <testsuite name="Sugar SFA Test Suite">
+            <directory>./modules/Contracts/</directory>
+            <directory>./modules/Currencies/</directory>
+            <directory>./modules/Forecasts/</directory>
+            <directory>./modules/Opportunities/</directory>
+            <directory>./modules/ProductTemplates/</directory>
+            <directory>./modules/Products/</directory>
+            <directory>./modules/Quotas/</directory>
+            <directory>./modules/Quotes/</directory>
+            <directory>./modules/TimePeriods/</directory>
+        </testsuite>
+        <testsuite name="Sugar ABE Test Suite">
+            <directory>./modules/ActivityStream/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <exclude>
+                <directory>./soap/</directory>
+                <directory>./service/</directory>
+                <directory>./rest/</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

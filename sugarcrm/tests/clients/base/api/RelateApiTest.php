@@ -148,6 +148,7 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
 
 class RelateApiServiceMockUp extends RestService
 {
+    public function __construct() {$this->user = $GLOBALS['current_user'];}
     public function execute() {}
     protected function handleException(Exception $exception) {}
 }

@@ -33,6 +33,7 @@ Before working with SugarCRM, setup your environment with the following software
 
 * Git;
 * PHP version 5.3.3+;
+* PHPUnit 3.6.4+.
 
 #### Configure Git
 
@@ -268,15 +269,15 @@ To run the SugarCRM test suite, install the several flavors of Sugar (CE, PRO, E
 Then, run the test suite from the `tests` root directory of the installed instance with the following command:
 
 ```bash
-$ php phpunit.php
+$ phpunit
 ```
 
 The output should display `OK`. If not, you need to figure out what's going on and if the tests are broken because of your modifications.
 
-> If you want to test a single component type its path after the `php phpunit.php` command, e.g.:
+> If you want to test a single component type its path after the `phpunit` command, e.g.:
 >
 > ```bash
-> $ php phpunit.php include/SugarOAuth2StorageTest.php
+> $ phpunit include/SugarOAuth2StorageTest.php
 > ```
 >
 > Run the test suite before applying your modifications to check that they run fine on your configuration.
@@ -286,7 +287,7 @@ The output should display `OK`. If not, you need to figure out what's going on a
 If you add a new feature, you also need to check the code coverage by using the `coverage-html` option:
 
 ```bash
-$ php phpunit.php --coverage-html=cov/
+$ phpunit --coverage-html=cov/
 ```
 
 Check the code coverage by opening the generated `cov/index.html` page in a browser.

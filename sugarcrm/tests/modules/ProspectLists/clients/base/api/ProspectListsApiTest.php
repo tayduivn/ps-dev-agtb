@@ -47,6 +47,7 @@ class ProspectListsApiTest extends RestTestBase
      */
     public function testAddToList_Contacts_AllRecordsAdded()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $prospectList = SugarTestProspectListsUtilities::createProspectLists();
         $contact1 = SugarTestContactUtilities::createContact();
         $contact2 = SugarTestContactUtilities::createContact();
@@ -76,6 +77,7 @@ class ProspectListsApiTest extends RestTestBase
      */
     public function testAddToList_RecordNotFound_ReturnsFalse()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $prospectList = SugarTestProspectListsUtilities::createProspectLists();
         $contactId = '111-9999';
 
@@ -99,6 +101,7 @@ class ProspectListsApiTest extends RestTestBase
      */
     public function testAddToList_ProspectListNotFound_ThrowsException()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $prospectListId = 'prospect1234';
         $contact1 = SugarTestContactUtilities::createContact();
 
@@ -122,6 +125,7 @@ class ProspectListsApiTest extends RestTestBase
      */
     public function testAddToList_MissingParameters_ThrowsException($moduleName, $prospectListId, $recordIds)
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
          $postData = array(
             "module" => $moduleName,
             "prospectListId" => $prospectListId,

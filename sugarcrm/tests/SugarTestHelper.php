@@ -36,7 +36,6 @@ if (!defined('SUGAR_PHPUNIT_RUNNER'))
 
 // initialize the various globals we use
 global $sugar_config, $db, $fileName, $current_user, $locale, $current_language;
-
 if ( !isset($_SERVER['HTTP_USER_AGENT']) )
     // we are probably running tests from the command line
     $_SERVER['HTTP_USER_AGENT'] = 'cli';
@@ -47,8 +46,11 @@ chdir(dirname(__FILE__) . '/..');
 // this is needed so modules.php properly registers the modules globals, otherwise they
 // end up defined in wrong scope
 global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList;
+
+
 require_once('include/entryPoint.php');
 require_once('include/utils/layout_utils.php');
+
 chdir(sugar_root_dir());
 
 $GLOBALS['db'] = DBManagerFactory::getInstance();
@@ -273,12 +275,11 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 }
 
 // define output testcase subclass
-class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTestCase
+class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Framework_TestCase
 {
     protected $backupGlobals = false;
 
     protected $_notRegex;
-    protected $_outputCheck;
 
     protected function assertPreConditions()
     {
@@ -313,31 +314,9 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
         }
     }
 
-    protected function NotRegexCallback($output)
+    protected function notRegexCallback($output)
     {
-        if(empty($this->_notRegex)) {
-            return true;
-        }
         $this->assertNotRegExp($this->_notRegex, $output);
-        return true;
-    }
-
-    public function setOutputCheck($callback)
-    {
-        if (!is_callable($callback)) {
-            throw new PHPUnit_Framework_Exception;
-        }
-
-        $this->_outputCheck = $callback;
-    }
-
-    protected function runTest()
-    {
-		$testResult = parent::runTest();
-        if($this->_outputCheck) {
-            $this->assertTrue(call_user_func($this->_outputCheck, $this->output));
-        }
-        return $testResult;
     }
 
     public function expectOutputNotRegex($expectedRegex)
@@ -346,7 +325,7 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
             $this->_notRegex = $expectedRegex;
         }
 
-        $this->setOutputCheck(array($this, "NotRegexCallback"));
+        $this->setOutputCallback(array($this, "notRegexCallback"));
     }
 
     public static function tearDownAfterClass()

@@ -32,7 +32,10 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @var DBManager
      */
-    private $_db;
+    private static $db;
+    protected static $opportunities = array();
+    protected static $oppIds = array();
+
     protected $created = array();
 
     protected $backupGlobals = FALSE;
@@ -46,46 +49,68 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
+
+        if(empty(self::$db)){
+            self::$db = DBManagerFactory::getInstance();
+        }
+
+        
+        // "Delete" all the opportunities that may currently exist
+        $sql = "SELECT id FROM opportunities WHERE deleted = 0";
+        $res = self::$db->query($sql);
+        while ($row = self::$db->fetchRow($res)) {
+            self::$oppIds[] = $row['id'];
+        }
+        
+        if (self::$oppIds) {
+            $sql = "UPDATE opportunities SET deleted = 1 WHERE id IN ('" . implode("','", self::$oppIds) . "')";
+            self::$db->query($sql);
+        }
+        
+        for($x=100;$x<=300;$x++) {
+            // create a new contact
+            $opp = BeanFactory::newBean('Opportunities');
+            $opp->name = "SugarQuery Unit Test {$x}";
+            $opp->amount = $x;
+            $opp->date_modifeid = date('Y-m-d');
+            $opp->date_closed = date('Y-m-d');
+            $opp->save();
+            self::$opportunities[] = $opp;
+        }
+
+        unset($opp);
     }
 
     static public function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
-
+        if( !empty(self::$opportunities) ) {
+            $oppList = array();
+            foreach(self::$opportunities as $opp) {
+                $oppList[] = $opp->id;
+            }
+            
+            self::$db->query("DELETE FROM opportunities WHERE id IN ('" . implode("','", $oppList) . "')");
+            
+            if (self::$db->tableExists('opportunities_cstm')) {
+                self::$db->query("DELETE FROM opportunities_cstm WHERE id_c IN ('" . implode("','", $oppList) . "')");
+            }
+        }
+        
+        if (self::$oppIds) {
+            $sql = "UPDATE opportunities SET deleted = 0 WHERE id IN ('" . implode("','", self::$oppIds) . "')";
+            self::$db->query($sql);
+        }
     }
 
     public function setUp()
     {
-        if(empty($this->_db)){
-            $this->_db = DBManagerFactory::getInstance();
-        }
-
         $this->opportunity_bean = BeanFactory::newBean('Opportunities');
-
-        for($x=100;$x<=300;$x++) {
-            // create a new contact
-            $opp = BeanFactory::newBean('Opportunities');
-            $opp->name = "Test {$x}";
-            $opp->amount = $x;
-
-            $opp->save();
-            $this->opportunities[] = $opp;
-        }
-
-        unset($opp);
-
     }
 
     public function tearDown()
     {
-        if( !empty($this->opportunities) ) {
-            $oppList = array();
-            foreach($this->opportunities as $opp) {
-                $oppList[] = $opp->id;
-            }
-            $this->_db->query("DELETE FROM opportunities WHERE id IN ('" . implode("','", $oppList) . "')");
-            $this->_db->query("DELETE FROM opportunities_cstm WHERE id_c IN ('" . implode("','", $oppList) . "')");
-        }
+
     }
 
     public function testEquals()
@@ -111,11 +136,11 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $sq->select(array("name", "amount"));
         $sq->from($this->opportunity_bean);
-        $sq->where()->contains('name', 10, $this->opportunity_bean);
+        $sq->where()->contains('name', 'Query Unit Test 10', $this->opportunity_bean);
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 12, "Wrong row count, actually received: " . count($result) . " back.");
+        $this->assertEquals(count($result), 10, "Wrong row count, actually received: " . count($result) . " back.");
 
         foreach($result AS $opp) {
             $test_string = strstr($opp['name'], '10');
@@ -129,15 +154,15 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $sq->select(array("name", "amount"));
         $sq->from($this->opportunity_bean);
-        $sq->where()->starts('name', 'Test 10', $this->opportunity_bean);
+        $sq->where()->starts('name', 'SugarQuery Unit Test 10', $this->opportunity_bean);
 
         $result = $sq->execute();
 
         $this->assertEquals(count($result), 10, "Wrong row count, actually received: " . count($result) . " back.");
 
         foreach($result AS $opp) {
-            $test_string = stristr($opp['name'], 'Test 10');
-            $this->assertTrue(!empty($test_string), "The name did not start with Test 10 it was: {$opp['name']}");
+            $test_string = stristr($opp['name'], 'SugarQuery Unit Test 10');
+            $this->assertTrue(!empty($test_string), "The name did not start with SugarQuery Unit Test 10 it was: {$opp['name']}");
         }
     }
 
@@ -205,7 +230,7 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(count($result), 101, "Wrong row count, actually received: " . count($result) . " back.");
 
         foreach($result AS $opp) {
-            $this->assertGreaterThanOrEqual(200,$opp['amount'], "The amount was not less than 2000 it was: {$opp['amount']}");
+            $this->assertGreaterThanOrEqual(200,$opp['amount'], "Wrong amount value detected.");
         }
     }
 
@@ -278,7 +303,7 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $sq->select(array("name", "amount"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->addRaw("name = 'Test 131'");
+        $sq->where()->addRaw("name = 'SugarQuery Unit Test 131'");
 
         $result = $sq->execute();
 
@@ -286,7 +311,7 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $result = reset($result);
 
-        $this->assertEquals($result['name'], "Test 131", "Wrong record returned, received: " . $result['name']);
+        $this->assertEquals($result['name'], "SugarQuery Unit Test 131", "Wrong record returned, received: " . $result['name']);
 
     }
 

@@ -81,6 +81,7 @@ class MeetingsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
 class MeetingsServiceMockup extends ServiceBase
 {
+    public function __construct() {$this->user = $GLOBALS['current_user'];}
     public function execute() {}
     protected function handleException(Exception $exception) {}
 }

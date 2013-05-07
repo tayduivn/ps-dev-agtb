@@ -90,6 +90,7 @@ class MailRecipientApiTest extends RestTestBase
      */
     public function testListRecipients_SearchAllModules_ExpectTwoMatches()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $max_num     = 500;
         $module_list = 'all';
         $filter      = 'sam_';
@@ -110,6 +111,7 @@ class MailRecipientApiTest extends RestTestBase
      */
     public function testListRecipients_SearchOnlyAccountsMatchingAnEmail()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $max_num     = 500;
         $module_list = 'accounts';
         $filter      = 'this_account@';
@@ -131,6 +133,7 @@ class MailRecipientApiTest extends RestTestBase
      */
     public function testListRecipients_SearchOnlyContacts_OrderByEmailDesc()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $max_num     = 500;
         $order_by    = 'email:desc';
         $module_list = 'contacts';
@@ -155,6 +158,7 @@ class MailRecipientApiTest extends RestTestBase
      */
     public function testListRecipients_SearchOnlyLeads_ExpectOneMatch()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $max_num     = 500;
         $module_list = 'leads';
         $filter      = 'sam_';
@@ -181,6 +185,7 @@ class MailRecipientApiTest extends RestTestBase
      */
     public function testListRecipients_SearchOnlyLeads_NextOffsetShouldBecomeNegativeOneWhenThereAreNoMoreRecords()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $max_num     = 500; // the database might really have a large number, so set this high to limit the iterations of the for loop
         $module_list = "leads";
         $offset      = 0;

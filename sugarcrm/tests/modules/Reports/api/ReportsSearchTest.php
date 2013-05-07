@@ -36,6 +36,7 @@ class ReportsSearchTest extends RestTestBase
      */
     public function testsNoTrackerReports()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $reply = $this->_restCall('Reports?q=User&fields=id,name,module&max_num=1000');
         foreach ( $reply['reply']['records'] as $record ) {
             $this->assertNotEqual('Tracker',$record['module']);

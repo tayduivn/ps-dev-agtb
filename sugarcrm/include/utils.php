@@ -1178,7 +1178,7 @@ function return_module_language($language, $module, $refresh=false)
 	// Jenny - Bug 8119: Need to check if $module is not empty
 	if (empty($module)) {
 		$message = "Variable module is not in return_module_language ";
-        //If any object in the stack contains a circualr reference,
+        //If any object in the stack contains a circular reference,
         //debug_backtrace will cause a fatal recursive dependency error without DEBUG_BACKTRACE_IGNORE_ARGS
         if (version_compare(PHP_VERSION, '5.3.6') >= 0)
         {

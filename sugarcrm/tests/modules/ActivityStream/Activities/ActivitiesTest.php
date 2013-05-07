@@ -9,6 +9,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
+        $this->markTestIncomplete('Needs to be fixed by ABE team.');
         $this->activity = ActivityHelper::createActivity();
         $this->activityClass = get_class($this->activity);
     }

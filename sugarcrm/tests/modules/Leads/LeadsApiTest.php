@@ -36,6 +36,7 @@ class LeadsApiTest extends RestTestBase
      */
     public function testConvertProspect()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         global $db;
 
         $prospectId = $this->createProspect();
@@ -70,6 +71,7 @@ class LeadsApiTest extends RestTestBase
      */
     public function testEmailToLead()
     {
+        $this->markTestIncomplete('Migrate this to SOAP UI');
         $emailId = $this->createEmail();
 
         $url = 'Leads';

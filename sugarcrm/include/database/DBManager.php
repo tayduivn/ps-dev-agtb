@@ -615,7 +615,7 @@ protected function checkQuery($sql, $object_name = false)
 				if(!empty($auto)) {
 					$values[$field] = $auto;
 				}
-			} elseif ($fieldDef['name'] == 'deleted') {
+			} elseif (!empty($fieldDef['name']) && $fieldDef['name'] == 'deleted') {
 				$values['deleted'] = (int)$val;
 			} else {
 				// need to do some thing about types of values
