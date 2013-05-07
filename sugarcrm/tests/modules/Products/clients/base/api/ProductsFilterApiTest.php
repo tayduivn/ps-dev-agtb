@@ -40,14 +40,31 @@ class ProductsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $db->query('UPDATE products SET deleted = 0');
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @group products
      */
-    public function testMakeUserOnlyOneRecordReturns()
+    public function testEntMakeUserOnlyOneRecordReturns()
     {
         $return = $this->api->filterList(SugarTestRestUtilities::getRestServiceMock(), array('module' => 'Products'));
 
         $this->assertEquals(1, count($return['records']));
+        $this->assertNotEmpty($return['records'][0]['opportunity_id']);
     }
+    //END SUGARCRM flav=ent ONLY
+
+    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+    /**
+     * @group products
+     */
+    public function testProMakeUserOnlyOneRecordReturns()
+    {
+        $return = $this->api->filterList(SugarTestRestUtilities::getRestServiceMock(), array('module' => 'Products'));
+
+        $this->assertEquals(1, count($return['records']));
+        $this->assertFalse(isset($return['records'][0]['opportunity_id']));
+    }
+    //END SUGARCRM flav=pro && flav!=ent ONLY
+
 
 }

@@ -470,6 +470,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @dataProvider dataProviderTestHandleOppStalesStatus
      * @group products
@@ -537,6 +538,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedOppSalesStatus, $opp->sales_status);
     }
 
+
     /**
      * @group products
      * @group opportunities
@@ -552,6 +554,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue($product->handleOppSalesStatusCalled());
     }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * @group products
@@ -899,13 +902,16 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
 class MockProduct extends Product
 {
+    //BEGIN SUGARCRM flav=ent ONLY
     private $handleOppSalesStatusCalled = false;
+    //END SUGARCRM flav=ent ONLY
 
     public function handleSalesStatus()
     {
         parent::handleSalesStatus();
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     public function handleOppSalesStatus()
     {
         $this->handleOppSalesStatusCalled = true;
@@ -916,6 +922,7 @@ class MockProduct extends Product
     {
         return $this->handleOppSalesStatusCalled;
     }
+    //END SUGARCRM flav=ent ONLY
 
     public function setAccountIdForOpportunity($oppId)
     {
