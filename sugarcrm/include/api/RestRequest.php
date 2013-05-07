@@ -187,7 +187,7 @@ class RestRequest
         $this->getRequestHeaders();
         $this->rawPath = $this->getRawPath();
         $this->parsePath($this->rawPath);
-        $this->method = $server['REQUEST_METHOD'];
+        $this->method = isset($server['REQUEST_METHOD'])?$server['REQUEST_METHOD']:'GET';
         $this->setResourceURIBase();
     }
 

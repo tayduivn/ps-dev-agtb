@@ -82,9 +82,15 @@ class ApiHeaderTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-class RestServiceMock extends RestService {
+class RestServiceMock extends RestService
+{
+    public function __construct()
+    {
+        $this->response = new RestResponse(array());
+    }
+
     public function getResponseHeaders() {
-        return $this->response_headers;
+        return $this->response->getHeaders();
     }
     // overloading to return the headers it would send as a string to verify it working
     public function sendHeaders() {
