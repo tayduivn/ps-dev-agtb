@@ -143,6 +143,13 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                 'type',
                 'source',
                 'product_category',
+                'resolution',
+                'assigned_user_name',
+                array(
+                    'name' => 'description',
+                    'nl2br' => true,
+                    'span' => 12,
+                ),
             ),
         ),
         array(
@@ -152,17 +159,15 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'resolution',
-                //BEGIN SUGARCRM flav=ent ONLY
-                'assigned_user_name',
-                //END SUGARCRM flav=ent ONLY
                 array(
-                    'name' => 'description',
-                    'nl2br' => true,
+                    'name' => 'portal_viewable',
                     'span' => 12,
                 ),
                 'found_in_release',
                 'fixed_in_release',
+                //BEGIN SUGARCRM flav=ent ONLY
+                'team_name',
+                //END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,
@@ -181,7 +186,10 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                'team_name',
+                array(
+                    'name' =>'',
+                    'readonly' => true,
+                ),
                 array(
                     'name' => 'date_modified_by',
                     'readonly' => true,
