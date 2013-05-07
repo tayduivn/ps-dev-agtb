@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,18 +24,61 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<ul class="nav pull-right megamenu" >
-    <li class="dropdown" id="createList">
-        <div class="btn-group">
-            <a data-toggle="dropdown" href="javascript:void(0);" role="button" class="btn btn-invisible btn-link dropdown-toggle dtoggle"><i class="icon-plus icon-md"></i></a>
-            <div class="dropdown-menu scroll pull-right">
-                <ul role="menu">
-                    {{#each createMenuItems}}
-                        <li>{{field ../this model ../this.action}}</li>
-                    {{/each}}
-                </ul>
-            </div>
-        </div>
-    </li>
-</ul>
+({
+    events: {
+        'click .actionLink[data-event="true"]' : '_handleActionLink'
+    },
+
+    /**
+     * When menu item is clicked, warn if open drawers, reset drawers and open create
+     * @param evt
+     * @private
+     */
+    _handleActionLink: function(evt) {
+        var $actionLink = $(evt.currentTarget),
+            module = $actionLink.data('module'),
+            layout = $actionLink.data('layout');
+
+        if (app.drawer.count() > 0) {
+            app.alert.show('send_confirmation', {
+                level: 'confirmation',
+                messages: 'WARN_UNSAVED_CHANGES',
+                onConfirm: _.bind(function() {
+                    app.drawer.reset();
+                    this._openCreate(module, layout);
+                }, this)
+            });
+        } else {
+            this._openCreate(module, layout);
+        }
+    },
+
+    /**
+     * Open the appropriate quick create layout in a drawer
+     *
+     * @param module
+     * @param [layout='create'] layout to open in the drawer
+     * @private
+     */
+    _openCreate: function(module, layout) {
+        layout = layout || 'create';
+
+        app.drawer.open({
+            layout: layout,
+            context: {
+                create: true,
+                module: module
+            }
+        }, function (refresh) {
+            if (refresh) {
+                var collection = app.controller.context.get('collection');
+                if (collection && collection.module === module) {
+                    collection.fetch({
+                        //Don't show alerts for this request
+                        showAlerts: false
+                    });
+                }
+            }
+        });
+    }
+})

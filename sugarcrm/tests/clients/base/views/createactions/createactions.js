@@ -54,128 +54,72 @@ describe("Create Actions Dropdown", function() {
         view = null;
     });
 
-    it("Should display create actions for all modules", function() {
+    var filterMenuItemsByModule = function(menuItems, module) {
+        return _.filter(menuItems, function(menuItem) {
+            return menuItem.module === module;
+        });
+    };
+
+    it("Should build create actions for all modules", function() {
         var expectedModules = SugarTest.app.metadata.getModuleNames(true, 'create');
         view.render();
 
         _.each(expectedModules, function(module) {
-            expect(view.$("[data-module='" + module+"']").length).not.toBe(0);
+            expect(filterMenuItemsByModule(view.createMenuItems, module).length).not.toBe(0);
         });
     });
 
-    it("Should display create actions even if visible meta attribute not specified", function() {
+    it("Should build create actions even if visible meta attribute not specified", function() {
         var expectedModules = ['Accounts', 'Contacts', 'Opportunities'];
         delete testMeta.Accounts.menu.createaction.meta.visible;
         view.render();
 
         _.each(expectedModules, function(module) {
-            expect(view.$("[data-module='" + module+"']").length).not.toBe(0);
+            expect(filterMenuItemsByModule(view.createMenuItems, module).length).not.toBe(0);
         });
     });
 
-    it("Should not display modules that don't have createaction meta", function() {
+    it("Should not build modules that don't have createaction meta", function() {
         var expectedModules = ['Accounts', 'Contacts', 'Opportunities'];
         testModules['Foo'] = {visible:true, acl:'create'};
         view.render();
 
         _.each(expectedModules, function(module) {
-            expect(view.$("[data-module='" + module+"']").length).not.toBe(0);
+            expect(filterMenuItemsByModule(view.createMenuItems, module).length).not.toBe(0);
         });
-        expect(view.$("[data-module='Foo']").length).toBe(0);
+        expect(filterMenuItemsByModule(view.createMenuItems, 'Foo').length).toBe(0);
     });
 
-    it("Should not display create action for hidden modules", function() {
+    it("Should not build create action for hidden modules", function() {
         var expectedModules = ['Accounts', 'Contacts'];
         testModules.Opportunities.visible = false;
         view.render();
 
         _.each(expectedModules, function(module) {
-            expect(view.$("[data-module='" + module+"']").length).not.toBe(0);
+            expect(filterMenuItemsByModule(view.createMenuItems, module).length).not.toBe(0);
         });
-        expect(view.$("[data-module='Opportunities']").length).toBe(0);
+        expect(filterMenuItemsByModule(view.createMenuItems, 'Opportunities').length).toBe(0);
     });
 
-    it("Should not display create action for modules user does not have create access to", function() {
+    it("Should not build create action for modules user does not have create access to", function() {
         var expectedModules = ['Contacts', 'Opportunities'];
         testModules.Accounts.acl = 'view';
         view.render();
 
         _.each(expectedModules, function(module) {
-            expect(view.$("[data-module='" + module+"']").length).not.toBe(0);
+            expect(filterMenuItemsByModule(view.createMenuItems, module).length).not.toBe(0);
         });
-        expect(view.$("[data-module='Accounts']").length).toBe(0);
+        expect(filterMenuItemsByModule(view.createMenuItems, 'Accounts').length).toBe(0);
     });
 
-    it("Should not display create actions that are hidden", function() {
+    it("Should not build create actions that are hidden", function() {
         var expectedModules = ['Accounts', 'Opportunities'];
         testMeta.Contacts.menu.createaction.meta.visible = false;
         view.render();
 
         _.each(expectedModules, function(module) {
-            expect(view.$("[data-module='" + module+"']").length).not.toBe(0);
+            expect(filterMenuItemsByModule(view.createMenuItems, module).length).not.toBe(0);
         });
-        expect(view.$("[data-module='Contacts']").length).toBe(0);
+        expect(filterMenuItemsByModule(view.createMenuItems, 'Contacts').length).toBe(0);
     });
-
-    describe("handleActionLink", function () {
-        var drawerBefore, event, alertShowStub, alertConfirm, mockDrawerCount;
-
-        beforeEach(function () {
-            alertConfirm = false;
-            mockDrawerCount = 0;
-
-            alertShowStub = sinon.stub(app.alert, 'show', function(name, options) {
-                if (alertConfirm) options.onConfirm();
-            });
-
-            drawerBefore = app.drawer;
-            app.drawer = {
-                count: function() {
-                    return mockDrawerCount;
-                },
-                reset: sinon.stub(),
-                open: sinon.stub()
-            };
-
-            event = {
-                currentTarget: '<a data-module="Foo" data-layout="Bar"></a>'
-            };
-        });
-
-        afterEach(function () {
-            alertShowStub.restore();
-            app.drawer = drawerBefore;
-        });
-
-        it('should open the drawer without confirm if no drawers open', function() {
-            var drawerOptions;
-            view._handleActionLink(event);
-            drawerOptions = _.first(app.drawer.open.lastCall.args);
-
-            expect(alertShowStub.callCount).toBe(0);
-            expect(drawerOptions.context.module).toEqual('Foo');
-            expect(drawerOptions.layout).toEqual('Bar');
-        });
-
-        it('should show confirmation when drawers are open and not open drawer if not confirmed', function() {
-            alertConfirm = false;
-            mockDrawerCount = 1;
-            view._handleActionLink(event);
-
-            expect(alertShowStub.callCount).toBe(1);
-            expect(app.drawer.reset.callCount).toBe(0);
-            expect(app.drawer.open.callCount).toBe(0);
-        });
-
-        it('should reset drawers and open new drawer if confirmed', function() {
-            alertConfirm = true;
-            mockDrawerCount = 2;
-            view._handleActionLink(event);
-
-            expect(alertShowStub.callCount).toBe(1);
-            expect(app.drawer.reset.callCount).toBe(1);
-            expect(app.drawer.open.callCount).toBe(1);
-        });
-    });
-
 });

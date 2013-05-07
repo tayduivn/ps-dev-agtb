@@ -34,68 +34,62 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe('Render', function() {
-        var setTitleStub, hideFieldStub, toggleSenderOptionsStub, populateToRecipientsStub;
+        var setTitleStub, hideFieldStub, toggleSenderOptionsStub, prepopulateStub;
 
         beforeEach(function() {
-            setTitleStub = sinon.stub(view, 'setTitle'),
-            hideFieldStub = sinon.stub(view, 'hideField'),
-            toggleSenderOptionsStub = sinon.stub(view, 'toggleSenderOptions'),
-            populateToRecipientsStub = sinon.stub(view, 'populateToRecipients');
+            setTitleStub = sinon.stub(view, 'setTitle');
+            hideFieldStub = sinon.stub(view, 'hideField');
+            toggleSenderOptionsStub = sinon.stub(view, 'toggleSenderOptions');
+            prepopulateStub = sinon.stub(view, 'prepopulate');
         });
 
         afterEach(function() {
             setTitleStub.restore();
             hideFieldStub.restore();
             toggleSenderOptionsStub.restore();
-            populateToRecipientsStub.restore();
+            prepopulateStub.restore();
         });
 
-        it("No recipients on context - title should be set no recipients populated", function() {
+        it("No prepopulate on context - title should be set no fields pre-populated", function() {
             view._render();
             expect(setTitleStub).toHaveBeenCalled();
-            expect(populateToRecipientsStub.callCount).toEqual(0);
+            expect(prepopulateStub.callCount).toEqual(0);
         });
 
-        it("Recipients on context - call is made to populate them", function() {
-            var expectedId = '111-29303-2aad-9asdf',
-                expectedModule = 'Accounts',
-                dummyRecipientModel = new Backbone.Model({'foo':'bar', 'id': expectedId});
-            dummyRecipientModel.module = expectedModule;
-            view.context.set('recipientModel', dummyRecipientModel);
+        it("prepopulate on context - call is made to populate them", function() {
+            var dummyPrepopulate = {subject: 'Foo!'};
+            view.context.set('prepopulate', dummyPrepopulate);
             view._render();
-            expect(populateToRecipientsStub.callCount).toEqual(1);
-            expect(populateToRecipientsStub.lastCall.args).toEqual([dummyRecipientModel]);
-            var actualRelated = view.model.get("related");
-            expect(actualRelated.type).toBe(expectedModule);
-            expect(actualRelated.id).toBe(expectedId);
+            expect(prepopulateStub.callCount).toEqual(1);
+            expect(prepopulateStub.lastCall.args).toEqual([dummyPrepopulate]);
         });
 
         //test different sender recipient scenarios
         dataProvider = [
             {
-                'testComment': 'model new, no cc or bcc => both hidden with links',
+                'testComment': 'no cc or bcc => both hidden with links',
                 'model': null,
                 'hideFieldCount': 2,
                 'hideFieldLastCallArgs': null,
                 'toggleSenderLastCallArgs': ["to_addresses", true, true]
             },
             {
-                'testComment': 'model not new and has cc => only bcc hidden with link',
-                'model': {'id':'123','cc_addresses':'foo@bar.com'},
+                'testComment': 'has cc => only bcc hidden with link',
+                'model': {'cc_addresses':'foo@bar.com'},
                 'hideFieldCount': 1,
                 'hideFieldLastCallArgs': ['bcc_addresses'],
                 'toggleSenderLastCallArgs': ["to_addresses", false, true]
             },
             {
-                'testComment': 'model not new and has bcc => only cc hidden with link',
-                'model': {'id':'123','bcc_addresses':'foo@bar.com'},
+                'testComment': 'has bcc => only cc hidden with link',
+                'model': {'bcc_addresses':'foo@bar.com'},
                 'hideFieldCount': 1,
                 'hideFieldLastCallArgs': ['cc_addresses'],
                 'toggleSenderLastCallArgs': ["to_addresses", true, false]
             },
             {
-                'testComment': 'model not new and both cc & bcc => neither hidden, no links',
-                'model': {'id':'123','cc_addresses':'foo@bar.com','bcc_addresses':'foo@bar.com'},
+                'testComment': 'both cc & bcc => neither hidden, no links',
+                'model': {'cc_addresses':'foo@bar.com','bcc_addresses':'foo@bar.com'},
                 'hideFieldCount': 0,
                 'hideFieldLastCallArgs': null,
                 'toggleSenderLastCallArgs': ["to_addresses", false, false]
@@ -118,80 +112,205 @@ describe("Emails.Views.Compose", function() {
         });
     });
 
-    describe('populateToRecipients', function() {
-        var recipientModel, expectedResult, actualResult, contextTriggerStub;
+    describe("prepopulate", function () {
+        var mapRecipientStub, populateRelatedStub, contextTriggerStub;
 
-        beforeEach(function() {
-            expectedResult = {'id': '123', 'module': 'Foo'};
-            recipientModel = new Backbone.Model({
-                'id': expectedResult.id
-            });
-            recipientModel.module = expectedResult.module;
-            contextTriggerStub = sinon.stub(view.context, 'trigger', function(trigger, recipient) {
-                if (recipient) {
-                    actualResult = recipient.attributes;
-                }
-            });
+        beforeEach(function () {
+            mapRecipientStub = sinon.stub(view, 'mapRecipient');
+            populateRelatedStub = sinon.stub(view, 'populateRelated');
+            contextTriggerStub = sinon.stub(view.context, 'trigger');
         });
 
-        afterEach(function() {
-            delete expectedResult;
-            delete recipientModel;
+        afterEach(function () {
+            mapRecipientStub.restore();
+            populateRelatedStub.restore();
             contextTriggerStub.restore();
         });
 
-        it('should send email and name when email1 and name on model', function() {
-            expectedResult.name = 'Tyler';
-            expectedResult.email = 'foo@bar.com';
-            recipientModel.set('name', expectedResult.name);
-            recipientModel.set('email1', expectedResult.email);
-            view.populateToRecipients(recipientModel);
-            expect(actualResult).toEqual(expectedResult);
+        it('should add recipients for to if mapRecipient returns a value', function() {
+            var to1 = {id: '123', email: 'foo@foo.com'};
+            var to2 = {id: '456'};
+            var recipientCollection;
+            toAddresses = [to1, to2];
+            ccAddresses = [
+                {id: '789', email: 'foo@bar.com'}
+            ];
+            mapRecipientStub.withArgs(to1).returns(to1);
+            mapRecipientStub.withArgs(to2).returns(null);
+            view.prepopulate({to_addresses: toAddresses});
+            expect(contextTriggerStub.lastCall.args[0]).toEqual("recipients:to_addresses:add");
+            recipientCollection = contextTriggerStub.lastCall.args[1];
+            expect(recipientCollection.models.length).toBe(1);
+            expect(recipientCollection.models[0].attributes).toEqual(to1);
         });
 
-        it('should send email only when email1 and no name on model', function() {
-            expectedResult.email = 'foo@bar.com';
-            recipientModel.set('email1', expectedResult.email);
-            view.populateToRecipients(recipientModel);
-            expect(actualResult).toEqual(expectedResult);
+        it("should call populateRelated if related value passed", function () {
+            view.prepopulate({related: {id: '123'}});
+            expect(populateRelatedStub.callCount).toBe(1);
         });
 
-        it('should send primary email and name when array on model', function() {
-            expectedResult.name = 'Tyler';
-            expectedResult.email = 'tyler@foo.com';
-            recipientModel.set('email', [
-                {'email_address': 'foo@bar.com'},
-                {'email_address': expectedResult.email, 'primary_address': 1}
-            ]);
-            recipientModel.set('name', expectedResult.name);
-            view.populateToRecipients(recipientModel);
-            expect(actualResult).toEqual(expectedResult);
+        it("should set other values if passed", function () {
+            view.prepopulate({foo: 'bar'});
+            expect(view.model.get('foo')).toEqual('bar');
         });
 
-        it('should not trigger event if no primary address on model', function() {
-            recipientModel.set('email', [
-                {'email_address': 'foo@bar.com'},
-                {'email_address': 'tyler@foo.com'}
-            ]);
-            recipientModel.set('assigned_user_name', expectedResult.name);
-            view.populateToRecipients(recipientModel);
+        it("should not trigger recipient add on context if no recipients are mapped successfully", function () {
+            var toAddresses = [{id: '123'}];
+            mapRecipientStub.returns(null);
+            view.prepopulate({to_addresses: toAddresses});
             expect(contextTriggerStub.callCount).toBe(0);
         });
 
-        it('should not trigger event if primary address is empty', function() {
-            recipientModel.set('email', [
-                {'email_address': 'foo@bar.com'},
-                {'primary_address': 1}
+    });
+
+    describe('mapRecipient', function() {
+        var bean;
+
+        beforeEach(function() {
+            bean = new Backbone.Model({
+                id: 'IdOnBean',
+                name: 'NameOnBean',
+                email1: 'Email1OnBean'
+            });
+            bean.module = 'ModuleOnBean';
+        });
+
+        afterEach(function() {
+            delete bean;
+        });
+
+        it('should pull id, module, name, and email from bean if no values directly passed in', function() {
+            var inputValue = {
+                    bean: bean
+                },
+                expectedResult = {
+                    id: bean.get('id'),
+                    module: bean.module,
+                    name: bean.get('name'),
+                    email: bean.get('email1')
+                },
+                actualResult = view.mapRecipient(inputValue);
+
+            expect(actualResult.attributes).toEqual(expectedResult);
+        });
+
+        it('should pull id, module, name, and email directly from value object if passed in', function() {
+            var inputValue = {
+                    id: 'IdOnValue',
+                    module: 'ModuleOnValue',
+                    name: 'NameOnValue',
+                    email: 'Email1OnValue',
+                    bean: bean
+                },
+                expectedResult = {
+                    id: inputValue.id,
+                    module: inputValue.module,
+                    name: inputValue.name,
+                    email: inputValue.email
+                },
+                actualResult = view.mapRecipient(inputValue);
+
+            expect(actualResult.attributes).toEqual(expectedResult);
+        });
+
+        it('should pull name/email directly from value object and id/module from bean', function() {
+            var inputValue = {
+                    name: 'NameOnValue',
+                    email: 'EmailOnValue',
+                    bean: bean
+                },
+                expectedResult = {
+                    id: bean.get('id'),
+                    module: bean.module,
+                    name: inputValue.name,
+                    email: inputValue.email
+                },
+                actualResult = view.mapRecipient(inputValue);
+
+            expect(actualResult.attributes).toEqual(expectedResult);
+        });
+
+        it('should pull primary email address if email1 not on the bean', function() {
+            var actualResult, expectedEmailAddress;
+
+            bean.unset('email1');
+            expectedEmailAddress = 'winner@chicken.dinner';
+            bean.set('email', [
+                {
+                    email_address: 'foo@bar.com'
+                },
+                {
+                    email_address: expectedEmailAddress,
+                    primary_address: 1
+                }
             ]);
-            view.populateToRecipients(recipientModel);
-            expect(contextTriggerStub.callCount).toBe(0);
+
+            actualResult = view.mapRecipient({bean: bean});
+            expect(actualResult.get('email')).toEqual(expectedEmailAddress);
         });
 
-        it('should not trigger event if no email at all', function() {
-            view.populateToRecipients(recipientModel);
-            expect(contextTriggerStub.callCount).toBe(0);
+        it('should return null if no email address passed in', function() {
+            var actualResult;
+
+            bean.unset('email1');
+            actualResult = view.mapRecipient({bean: bean});
+            expect(actualResult).toBeNull();
+        });
+    });
+
+    describe("populateRelated", function () {
+        var relatedModel, fetchStub, fetchedModel, getFieldStub, parentId, parentValue, inputValues, fetchedValues;
+
+        beforeEach(function () {
+            inputValues = {
+                id: '123',
+                name: 'Input Name'
+            };
+            fetchedValues = {
+                id: inputValues.id,
+                name: 'Fetched Name'
+            };
+            relatedModel = new Backbone.Model(inputValues);
+            fetchedModel = new Backbone.Model(fetchedValues);
+            fetchStub = sinon.stub(relatedModel, 'fetch', function (params) {
+                params.success(fetchedModel);
+            });
+            getFieldStub = sinon.stub(view, 'getField', function () {
+                return {
+                    setValue: function(model) {
+                        parentId = model.id;
+                        parentValue = model.value;
+                    }
+                };
+            });
         });
 
+        afterEach(function () {
+            fetchStub.restore();
+            getFieldStub.restore();
+            parentId = undefined;
+            parentValue = undefined;
+        });
+
+        it("should set the parent_name field with id and name on the relatedModel passed in", function () {
+            view.populateRelated(relatedModel);
+            expect(parentId).toEqual(inputValues.id);
+            expect(parentValue).toEqual(inputValues.name);
+        });
+
+        it("should set the parent_name field with id and name on the fetched model when no name on the relatedModel passed in", function () {
+            relatedModel.unset('name');
+            view.populateRelated(relatedModel);
+            expect(parentId).toEqual(fetchedValues.id);
+            expect(parentValue).toEqual(fetchedValues.name);
+        });
+
+        it("should not set the parent_name field at all if no id on related Model", function () {
+            relatedModel.unset('id');
+            view.populateRelated(relatedModel);
+            expect(parentId).toBeUndefined();
+            expect(parentValue).toBeUndefined();
+        });
     });
 
     describe('saveModel', function() {
@@ -661,6 +780,16 @@ describe("Emails.Views.Compose", function() {
             sendModel = view.initializeSendEmailModel();
             expect(sendModel.get('attachments')).toEqual([]);
             expect(sendModel.get('documents')).toEqual([]);
+        });
+
+        it("should populate the related field according to how the Mail API expects it", function () {
+            var sendModel,
+                parentId = '123',
+                parentType = 'Foo';
+            view.model.set('parent_id', parentId);
+            view.model.set('parent_type', parentType);
+            sendModel = view.initializeSendEmailModel();
+            expect(sendModel.get('related')).toEqual({id: parentId, type: parentType});
         });
     });
 

@@ -399,8 +399,16 @@
             layout : 'compose',
             context: {
                 create: 'true',
-                module: "Emails",
-                recipientModel: model
+                module: 'Emails',
+                prepopulate: {
+                    to_addresses: [
+                        {
+                            email: evt.currentTarget.innerText,
+                            bean: model
+                        }
+                    ],
+                    related: model
+                }
             }
         });
     },

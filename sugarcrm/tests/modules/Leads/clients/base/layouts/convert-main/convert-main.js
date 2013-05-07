@@ -339,6 +339,52 @@ describe("ConvertLeadLayout", function() {
         });
     });
 
+    describe("triggerDuplicateCheck", function () {
+        var layout, dupeCheckTriggerStub, accountPanel;
+
+        beforeEach(function() {
+            layout = initializeLayout();
+            layout.render();
+            accountPanel = layout._components[1];
+            dupeCheckTriggerStub = sinon.stub(accountPanel.duplicateView.context, 'trigger');
+        });
+
+        afterEach(function() {
+            dupeCheckTriggerStub.restore();
+            delete accountPanel;
+            delete layout;
+        });
+
+        it("should kick off the duplicate check if it is enabled and all required dupe check fields are on the model", function () {
+            accountPanel.enableDuplicateCheck = true;
+            accountPanel.meta.duplicateCheckRequiredFields = ['name'];
+            accountPanel.recordView.model.set('name', 'Foo');
+            accountPanel.triggerDuplicateCheck()
+            expect(dupeCheckTriggerStub.callCount).toBe(1);
+        });
+
+        it("should not kick off the duplicate check if it is enabled and a required dupe check field is missing", function () {
+            accountPanel.enableDuplicateCheck = true;
+            accountPanel.meta.duplicateCheckRequiredFields = ['name'];
+            accountPanel.recordView.model.unset('name');
+            accountPanel.triggerDuplicateCheck()
+            expect(dupeCheckTriggerStub.callCount).toBe(0);
+        });
+
+        it("should kick off the duplicate check if it is enabled and no required fields are specified in the metadata", function () {
+            accountPanel.enableDuplicateCheck = true;
+            accountPanel.meta.duplicateCheckRequiredFields = [];
+            accountPanel.triggerDuplicateCheck()
+            expect(dupeCheckTriggerStub.callCount).toBe(1);
+        });
+
+        it("should not kick off the duplicate check if dupe check is disabled for the module", function () {
+            accountPanel.enableDuplicateCheck = false;
+            accountPanel.triggerDuplicateCheck()
+            expect(dupeCheckTriggerStub.callCount).toBe(0);
+        });
+    });
+
     describe('Switching SubViews', function() {
         var layout;
 

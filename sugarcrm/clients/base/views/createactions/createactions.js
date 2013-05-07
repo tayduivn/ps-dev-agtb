@@ -1,4 +1,5 @@
 /*********************************************************************************
+/*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
@@ -27,8 +28,7 @@
 ({
     plugins: ['dropdown'],
     events: {
-      'click .dropdown-toggle':'toggleDropdown',
-      'click .actionLink' : '_handleActionLink'
+      'click .dropdown-toggle':'toggleDropdown'
     },
     toggleDropdown: function(event) {
         var $currentTarget = this.$(event.currentTarget);
@@ -66,64 +66,14 @@
                 menuItem = meta.menu.createaction.meta;
                 if (_.isUndefined(menuItem.visible) || menuItem.visible === true) {
                     menuItem.module = module;
+                    menuItem.type = menuItem.type || 'createaction';
+                    //TODO: refactor sidecar field hbt helper so it can accept the module name directly
+                    menuItem.model = app.data.createBean(module);
                     returnList.push(menuItem);
                 }
             }
         }, this);
         return returnList;
-    },
-
-    /**
-     * When menu item is clicked, warn if open drawers, reset drawers and open create
-     * @param evt
-     * @private
-     */
-    _handleActionLink: function(evt) {
-        var $actionLink = $(evt.currentTarget),
-            module = $actionLink.data('module'),
-            layout = $actionLink.data('layout');
-
-        if (app.drawer.count() > 0) {
-            app.alert.show('send_confirmation', {
-                level: 'confirmation',
-                messages: 'WARN_UNSAVED_CHANGES',
-                onConfirm: _.bind(function() {
-                    app.drawer.reset();
-                    this._openCreate(module, layout);
-                }, this)
-            });
-        } else {
-            this._openCreate(module, layout);
-        }
-    },
-
-    /**
-     * Open the appropriate quick create layout in a drawer
-     *
-     * @param module
-     * @param [layout='create'] layout to open in the drawer
-     * @private
-     */
-    _openCreate: function(module, layout) {
-        layout = layout || 'create';
-
-        app.drawer.open({
-            layout: layout,
-            context: {
-                create: true,
-                module: module
-            }
-        }, function (refresh) {
-            if (refresh) {
-                var collection = app.controller.context.get('collection');
-                if (collection && collection.module === module) {
-                    collection.fetch({
-                        //Don't show alerts for this request
-                        showAlerts: false
-                    });
-                }
-            }
-        });
     },
 
     _dispose: function(){
