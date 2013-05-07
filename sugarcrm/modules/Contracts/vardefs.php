@@ -301,6 +301,7 @@ $dictionary['Contract'] = array(
 		  array (
 		    'name' => 'parent_name',
 		    'vname' => 'LBL_MEMBER_OF',
+		    'id_name' => 'parent_id',
 		    'type' => 'relate',
 		    'required'=>false,
 		    'reportable'=>false,
