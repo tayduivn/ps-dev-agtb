@@ -256,7 +256,7 @@
         }
 
         // toggle the "event" to make the chart stop rendering if the sidebar is hidden
-        this.context.trigger('forecasts:commitButtons:sidebarHidden', this.$el.find('i').hasClass('icon-double-angle-left'));
+        this.context.trigger('forecasts:commitButtons:sidebarHidden', this.$el.find('i').hasClass('icon-double-angle-right'), this.inspectorVisible);
     },
 
     /**
