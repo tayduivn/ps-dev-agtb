@@ -185,6 +185,7 @@ class MassUpdateApi extends SugarApi {
         if (is_array($mu_params)) {
             $this->convertUID($mu_params);
             $this->convertTeamArray($mu_params);
+            $this->convertProspectListsArray($mu_params);
         }
     }
 
@@ -217,6 +218,23 @@ class MassUpdateApi extends SugarApi {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * This function converts team_name to the format expected by downstream classes.
+     * @param $mu_params reference to massupdate parameters
+     */
+    protected function convertProspectListsArray(&$mu_params)
+    {
+        if (!empty($mu_params['prospect_lists'])) {
+            $prospect_lists = implode(',', $mu_params['prospect_lists']);
+            if ($this->delete) {
+                $mu_params['remove_from_prospect_lists'] = $prospect_lists;
+            } else {
+                $mu_params['add_to_prospect_lists'] = $prospect_lists;
+            }
+            unset($mu_params['prospect_lists']);
         }
     }
 }

@@ -221,6 +221,33 @@ eoq;
                     return;
                 }
 
+        /*-- Is Request to Add or Delete  one or more Prospects from One or More Prospect Lists ?? --*/
+        if(isset($_POST['mass']) && is_array($_POST['mass']) &&
+            (!empty($_POST['add_to_prospect_lists']) || !empty($_POST['remove_from_prospect_lists']))){
+
+            if (!empty($_POST['remove_from_prospect_lists'])) {
+                $bean_name = $_POST['module'];
+                $prospect_list_ids = explode(',', $_POST['remove_from_prospect_lists']);
+                $uids = $_POST['mass'];
+                if (count($uids) > 0 && count($prospect_list_ids) > 0) {
+                    foreach($prospect_list_ids as $prospect_list_id) {
+                        $this->remove_prospects_from_prospect_list($bean_name, $prospect_list_id, $uids);
+                    }
+                }
+            } else if (!empty($_POST['add_to_prospect_lists'])) {
+                $bean_name = $_POST['module'];
+                $prospect_list_ids = explode(',', $_POST['add_to_prospect_lists']);
+                $uids = $_POST['mass'];
+                if (count($uids) > 0 && count($prospect_list_ids) > 0) {
+                    foreach($prospect_list_ids as $prospect_list_id) {
+                        $this->add_prospects_to_prospect_list($bean_name, $prospect_list_id, $uids);
+                    }
+                }
+            }
+
+            return;
+        }
+
 		if(isset($_POST['mass']) && is_array($_POST['mass'])  && $_REQUEST['massupdate'] == 'true'){
 			$count = 0;
 
@@ -1449,6 +1476,63 @@ EOQ;
         }
 
         return false;
+    }
+
+    /**
+     * @param $bean_name         - Type of 'bean' referenced by $uids
+     * @param $prospect_list_id  - Prospect List Id
+     * @param $uids              - Array of records of type '$bean_name' to be added
+     */
+    protected function add_prospects_to_prospect_list($bean_name, $prospect_list_id, $uids)
+    {
+        $focus=BeanFactory::getBean($bean_name);
+
+        $relationship = '';
+        foreach($focus->get_linked_fields() as $field => $def) {
+            if ($focus->load_relationship($field)) {
+                if ( $focus->$field->getRelatedModuleName() == 'ProspectLists' ) {
+                    $relationship = $field;
+                    break;
+                }
+            }
+        }
+
+        if ( $relationship != '' ) {
+            foreach ( $uids as $id) {
+                $focus->retrieve($id);
+                $focus->load_relationship($relationship);
+                $focus->$relationship->add($prospect_list_id);
+            }
+        }
+    }
+
+
+    /**
+     * @param $bean_name         - Type of 'bean' referenced by $uids
+     * @param $prospect_list_id  - Prospect List Id
+     * @param $uids              - Array of records of type '$bean_name' to be removed from prospect_list
+     */
+    function remove_prospects_from_prospect_list($bean_name, $prospect_list_id, $uids)
+    {
+        $focus=BeanFactory::getBean($bean_name);
+
+        $relationship = '';
+        foreach($focus->get_linked_fields() as $field => $def) {
+            if ($focus->load_relationship($field)) {
+                if ( $focus->$field->getRelatedModuleName() == 'ProspectLists' ) {
+                    $relationship = $field;
+                    break;
+                }
+            }
+        }
+
+        if ( $relationship != '' ) {
+            foreach ($uids as $id) {
+                $focus->retrieve($id);
+                $focus->load_relationship($relationship);
+                $focus->$relationship->delete($id, $prospect_list_id);
+            }
+        }
     }
 
      /**
