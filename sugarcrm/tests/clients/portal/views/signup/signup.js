@@ -3,9 +3,23 @@ describe("Portal Signup View", function() {
     var view, app;
 
     beforeEach(function() {
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.addViewDefinition('signup', {
+            "panels": [
+                {
+                    "fields": [
+                        {
+                            "name": "first_name"
+                        },
+                        {
+                            "name": "last_name"
+                        }
+                    ]
+                }
+            ]
+        });
+        SugarTest.testMetadata.set();
         view = SugarTest.createView("portal","Signup", "signup");
-        view.context = new Backbone.Model();
-        view.model = view.context.attributes.model = new Backbone.Model();
         app = SUGAR.App;
     });
 
@@ -14,6 +28,16 @@ describe("Portal Signup View", function() {
         app.view.reset();
         delete Handlebars.templates;
         view = null;
+    });
+
+    describe("Declare Sign Up Bean", function() {
+
+        it("should have declared a Bean with the fields metadata", function() {
+            expect(view.model.fields).toBeDefined();
+            expect(_.size(view.model.fields)).toBeGreaterThan(0);
+            expect(_.size(view.model.fields.first_name)).toBeDefined();
+            expect(_.size(view.model.fields.last_name)).toBeDefined();
+        });
     });
 
     describe("signup", function() {

@@ -3,6 +3,22 @@ describe("Login View", function() {
     var view, app;
 
     beforeEach(function() {
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.addViewDefinition('login', {
+            "panels": [
+                {
+                    "fields": [
+                        {
+                            "name": "username"
+                        },
+                        {
+                            "name": "password"
+                        }
+                    ]
+                }
+            ]
+        });
+        SugarTest.testMetadata.set();
         view = SugarTest.createView("base", "Login", "login");
         app = SUGAR.App;
     });
@@ -12,6 +28,17 @@ describe("Login View", function() {
         app.view.reset();
         delete Handlebars.templates;
         view = null;
+    });
+
+    describe("Declare Login Bean", function() {
+
+        //Internet Explorer
+        it("should have declared a Bean with the fields metadata", function() {
+            expect(view.model.fields).toBeDefined();
+            expect(_.size(view.model.fields)).toBeGreaterThan(0);
+            expect(_.size(view.model.fields.username)).toBeDefined();
+            expect(_.size(view.model.fields.password)).toBeDefined();
+        });
     });
 
     describe("Browser support", function() {
@@ -99,4 +126,5 @@ describe("Login View", function() {
             expect(view._isSupportedBrowser()).toBeTruthy();
         });
     });
-});
+})
+;

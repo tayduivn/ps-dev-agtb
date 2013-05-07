@@ -25,6 +25,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    /**
+     * Login form view.
+     * @class View.Views.LoginView
+     * @alias SUGAR.App.view.views.LoginView
+     * @extends View.Views.LoginView
+     */
     events: {
         'click [name=login_button]': 'login',
         'click [name=signup_button]': 'signup',

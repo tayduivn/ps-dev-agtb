@@ -1,4 +1,11 @@
 ({
+    plugins: ['error-decoration'],
+
+    /**
+     * Login form view.
+     * @class View.Views.LoginView
+     * @alias SUGAR.App.view.views.LoginView
+     */
     events: {
         "click [name=login_button]": "login",
         "keypress": "handleKeypress"
@@ -13,6 +20,43 @@
             this.$("input").trigger("blur");
             this.login();
         }
+    },
+
+    /**
+     * Get the fields metadata from panels and declare a Bean with the metadata attached
+     * @param meta
+     * @private
+     */
+    _declareModel: function(meta) {
+        meta = meta || {};
+
+        var fields = {};
+        _.each(_.flatten(_.pluck(meta.panels, "fields")), function(field) {
+            fields[field.name] = field;
+        });
+        /**
+         * Fields metadata needs to be converted to this format for App.data.declareModel
+         *  {
+          *     "username": { "name": "username", ... },
+          *     "password": { "name": "password", ... },
+          *      ...
+          * }
+         */
+        app.data.declareModel('Login', {fields: fields});
+    },
+
+    /**
+     * @override
+     * @param options
+     */
+    initialize: function(options) {
+        // Declare a Bean so we can process field validation
+        this._declareModel(options.meta);
+
+        // Reprepare the context because it was initially prepared without metadata
+        options.context.prepare(true);
+
+        app.view.View.prototype.initialize.call(this, options);
     },
 
     /**
@@ -56,6 +100,7 @@
      */
     login: function() {
         var self = this;
+        this.clearValidationErrors();
         if (this.model.isValid()) {
             app.$contentEl.hide();
             var args = {password: this.model.get("password"), username: this.model.get("username")};
