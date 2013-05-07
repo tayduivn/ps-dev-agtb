@@ -112,7 +112,9 @@
      */
     saveAndClose: function () {
         this.initiateSave(_.bind(function () {
-            app.drawer.close(this.context, this.model);
+            if(app.drawer){
+                app.drawer.close(this.context, this.model);
+            }
         }, this));
     },
 
@@ -120,7 +122,9 @@
      * Handle click on the cancel link
      */
     cancel: function () {
-        app.drawer.close(this.context);
+        if(app.drawer){
+            app.drawer.close(this.context);
+        }
     },
 
     /**
