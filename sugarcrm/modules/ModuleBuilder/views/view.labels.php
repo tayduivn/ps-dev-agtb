@@ -61,8 +61,13 @@ class ViewLabels extends ViewModulefields
 		    $moduleNames = array_change_key_case($app_list_strings['moduleList']);
 		    $translatedEditModule = $moduleNames[strtolower($editModule)];
 		}
-		$selected_lang = (!empty($_REQUEST['selected_lang'])? $_REQUEST['selected_lang']:$_SESSION['authenticated_user_language']);
-		if(empty($selected_lang)){
+        $selected_lang = null;
+        
+        if(!empty($_REQUEST['selected_lang'])) {
+            $selected_lang = $_REQUEST['selected_lang'];
+        } elseif(!empty($_SESSION['authenticated_user_language'])) {
+            $selected_lang = $_SESSION['authenticated_user_language'];
+        } else {
 		    $selected_lang = $GLOBALS['sugar_config']['default_language'];
 		}
 
