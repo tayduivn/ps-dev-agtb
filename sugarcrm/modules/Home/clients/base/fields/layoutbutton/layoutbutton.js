@@ -50,7 +50,7 @@
                         });
                     }, this);
                 }
-                this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
+                this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});
                 this.model.trigger("change:metadata");
             };
             if(value < this.value) {
@@ -74,7 +74,7 @@
                 });
             }, this);
 
-            this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
+            this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});
             this.model.trigger("change:metadata");
         }
     },

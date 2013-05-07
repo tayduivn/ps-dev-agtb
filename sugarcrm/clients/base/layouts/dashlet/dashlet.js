@@ -40,7 +40,7 @@
             this[key] = value;
         }, component);
 
-        this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
+        this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});
         this.model.trigger("change:layout");
         if(this.model.mode === 'view') {
             this.model.save(null, {
@@ -88,7 +88,7 @@
                 delete component[key];
             }
         }, this);
-        this.model.set("metadata", JSON.parse(JSON.stringify(metadata)), {silent: true});
+        this.model.set("metadata", app.util.deepCopy(metadata), {silent: true});
         this.model.trigger("change:layout");
         if(this.model.mode === 'view') {
             this.model.save(null, {

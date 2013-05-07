@@ -167,7 +167,7 @@
         var dashlet_collection = this.context.get("dashlet_collection");
         if(!dashlet_collection) {
             dashlet_collection = [];
-            var sortedModuleList = _.sortBy(JSON.parse(JSON.stringify(app.metadata.getModuleNames())), function(name) {
+            var sortedModuleList = _.sortBy(app.utils.deepCopy(app.metadata.getModuleNames()), function(name) {
                 return name;
             });
 

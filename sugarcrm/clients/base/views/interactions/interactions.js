@@ -40,7 +40,7 @@
     },
 
     initDashlet: function(view) {
-        var dashlet = JSON.parse(JSON.stringify(this.context.get("dashlet")));
+        var dashlet = app.utils.deepCopy(this.context.get("dashlet"));
 
         if(view === 'config') {
             app.view.views.RecordView.prototype._renderPanels.call(this, this.meta.panels);

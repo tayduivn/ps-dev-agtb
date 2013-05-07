@@ -84,7 +84,7 @@
         _.each(position, function(index){
             component = component.rows ? component.rows[index] : component[index];
         }, this);
-        component.rows.push(JSON.parse(JSON.stringify(components)));
+        component.rows.push(app.utils.deepCopy(components));
         this.model.set("metadata", metadata, {silent: true});
         this.model.trigger("change:layout");
 

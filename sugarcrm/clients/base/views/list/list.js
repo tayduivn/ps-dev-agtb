@@ -61,9 +61,9 @@
 
     initialize: function(options) {
         //Grab the list of fields to display from the main list view (assuming initialize is being called from a subclass)
-        var listViewMeta = JSON.parse(JSON.stringify(app.metadata.getView(options.module, 'list') || {}));
+        var listViewMeta = app.metadata.getView(options.module, 'list') || {};
         //Extend from an empty object to prevent polution of the base metadata
-        options.meta = _.extend({}, listViewMeta, JSON.parse(JSON.stringify(options.meta || {})));
+        options.meta = _.extend({}, listViewMeta, options.meta || {});
         options.meta.type = options.meta.type || 'list';
 
         options.meta.action = 'list';

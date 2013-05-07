@@ -44,15 +44,16 @@ describe("Preview View", function() {
     });
 
     describe("_previewifyMetadata", function(){
-        it("should not modify metadata passed in", function(){
-            var trimmed = preview._previewifyMetadata(meta);
-            expect(trimmed).toNotBe(meta);
-            expect(trimmed).toNotEqual(meta);
+        it("should not modify the global metadata", function(){
+            var modified = preview._previewifyMetadata(meta),
+                unmodified = app.metadata.getView('Cases', 'record');
+
+            expect(modified).toNotBe(unmodified);
+            expect(modified).toNotEqual(unmodified);
         });
         it("should convert header to regular panel", function(){
             expect(meta.panels[0].header).toEqual(true);
             var trimmed = preview._previewifyMetadata(meta);
-            expect(meta.panels[0].header).toEqual(true);
             expect(trimmed.panels[0].header).toEqual(false);
             var headers = _.filter(trimmed.panels, function(panel){
                 return panel.header == true;
