@@ -985,8 +985,7 @@ class ModuleBuilderController extends SugarController
         }
 
         switch ($view) {
-            case 'edit' :
-            case 'detail' :
+            case 'record' :
                 $this->view = 'portallayoutView';
                 break;
             case 'list' :

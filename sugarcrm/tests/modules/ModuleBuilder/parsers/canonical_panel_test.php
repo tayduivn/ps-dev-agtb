@@ -7,50 +7,62 @@
  */
 $canonicals = array(
 // canonical panels
-array(array('label' => 'Default', 'fields' => array())),
+    array(array( 'fields' => array())),
 
-array(array('label' => 'Default',
-            'fields' => array(
-                array(
-                    'name' => 'name',
-                    'label' => 'Name',
-                ),
-                array(
-                    'name' => 'status',
-                    'label' => 'Status',
-                ),
-                array(
-                    'name' => 'description',
-                    'label' => 'Description',
-                ),
-                ""
-))),
+    array(array(
+        'fields' => array(
+            array(
+                'name' => 'name',
+                'label' => 'LBL_NAME',
+            ),
+            array(
+                'name' => 'status',
+                'label' => 'LBL_STATUS',
+                'comment' => 'Status of the lead'
+            ),
+            array(
+                'name' => 'description',
+                'label' => 'LBL_DESCRIPTION',
+                'comment' => 'Full text of the note',
+                'span' => 6
+            ),
+            array(
+                'span' => 6
+            )
+        ))),
 
 
-array(array('label' => 'Default',
-            'fields' => array(
-                array(
-                    'name' => 'name',
-                    'label' => 'Name',
-                    'displayParams' => array('colspan' => 2)
-                ),
-                array(
-                    'name' => 'status',
-                    'label' => 'Status',
-                ),
-                array(
-                    'name' => 'description',
-                    'label' => 'Description',
-                ),
+    array(array(
+        'fields' => array(
+            array(
+                'name' => 'name',
+                'label' => 'LBL_NAME',
+                'span' => 12
+            ),
+            array(
+                'name' => 'status',
+                'label' => 'LBL_STATUS',
+                'comment' => 'Status of the lead'
+            ),
+            array(
+                'name' => 'description',
+                'label' => 'LBL_DESCRIPTION',
+                'comment' => 'Full text of the note'
+            ),
 
-))),
+        ))),
 
-array(array('label' => 'Default',
-            'fields' => array(
-                'name',
-                'status',
-                'description',
-                ''
-))),
+    array(array(
+        'fields' => array(
+            'name',
+            'status',
+            array(
+                'name' => 'description',
+                'span' => 6
+            ),
+            array(
+                'span' => 6
+            )
+        ))),
 // end
 );

@@ -398,6 +398,7 @@ $mod_strings = array(
 'LBL_LAYOUT_PREVIEW'=>'Layout Preview',
 'LBL_LAYOUTS'=>'Layouts',
 'LBL_LISTVIEW'=>'ListView',
+'LBL_RECORDVIEW'=>'RecordView',
 'LBL_MODULES'=>'Modules',
 'LBL_MODULE_TITLE' => 'Studio',
 'LBL_NEW_PACKAGE' => 'New Package',

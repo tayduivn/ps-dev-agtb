@@ -91,8 +91,7 @@ class MetaDataFiles
         MB_WIRELESSBASICSEARCH => MB_WIRELESS,
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        MB_PORTALEDITVIEW => MB_PORTAL,
-        MB_PORTALDETAILVIEW => MB_PORTAL,
+        MB_PORTALRECORDVIEW => MB_PORTAL,
         MB_PORTALLISTVIEW => MB_PORTAL,
         MB_PORTALSEARCHVIEW => MB_PORTAL,
         //END SUGARCRM flav=ent ONLY
@@ -125,8 +124,7 @@ class MetaDataFiles
         MB_WIRELESSADVANCEDSEARCH => 'search' ,
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        MB_PORTALEDITVIEW         => 'edit',
-        MB_PORTALDETAILVIEW       => 'detail',
+        MB_PORTALRECORDVIEW         => 'record',
         MB_PORTALLISTVIEW         => 'list',
         MB_PORTALSEARCHVIEW       => 'search',
         //END SUGARCRM flav=ent ONLY
@@ -149,8 +147,7 @@ class MetaDataFiles
         MB_WIRELESSDETAILVIEW => array('mobile','view','detail'),
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        MB_PORTALEDITVIEW => array('portal','view','edit'),
-        MB_PORTALDETAILVIEW => array('portal','view','detail'),
+        MB_PORTALRECORDVIEW => array('portal','view','record'),
         //END SUGARCRM flav=ent ONLY
 
     );
@@ -631,8 +628,7 @@ class MetaDataFiles
         $map = array(
             //BEGIN SUGARCRM flav=ent ONLY
             "portal" => array(
-                'edit' => MB_PORTALEDITVIEW,
-                'detail' => MB_PORTALDETAILVIEW,
+                'record' => MB_PORTALRECORDVIEW,
                 'search' => MB_PORTALSEARCHVIEW,
                 'list' => MB_PORTALLISTVIEW
             ),

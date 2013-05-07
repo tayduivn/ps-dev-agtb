@@ -36,7 +36,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         $GLOBALS['current_user']->is_admin = true;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = array();
-        $this->_parser = new SidecarGridLayoutMetaDataParserTestDerivative(MB_PORTALEDITVIEW, 'Leads', null, null, MB_PORTAL) ;
+        $this->_parser = new SidecarGridLayoutMetaDataParserTestDerivative(MB_PORTALRECORDVIEW, 'Leads', null, null, MB_PORTAL) ;
     }
 
     public function tearDown()
@@ -138,20 +138,23 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         return array(
             array(
                 // canonical panels
-                array(array('label' => 'Default', 'fields' => array(
-                    array(
-                        'name' => 'name',
-                        'label' => 'Name',
-                    ),
-                    array(
-                        'name' => 'status',
-                        'label' => 'Status',
-                    ),
-                    array(
-                        'name' => 'description',
-                        'label' => 'Description',
-                    ),
-                    ""
+                array(array(
+                    'name' => 'Default',
+                    'columns' => 2,
+                    'fields' => array(
+                        array(
+                            'name' => 'name',
+                            'label' => 'Name',
+                        ),
+                        array(
+                            'name' => 'status',
+                            'label' => 'Status',
+                        ),
+                        array(
+                            'name' => 'description',
+                            'label' => 'Description',
+                        ),
+                        ""
                 ))),
                 // internal fieldlist
                 array(
@@ -177,19 +180,19 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                     array( //row 1
                         array(
                             'name' => 'name',
-                            'label' => 'Name',
-                            'displayParams' => array('colspan' => 2)
+                            'label' => 'LBL_NAME',
+                            'span' => 12
                         ),
                         MBConstants::$EMPTY
                     ),
                     array( //row 2
                         array(
                             'name' => 'status',
-                            'label' => 'Status',
+                            'label' => 'LBL_STATUS',
                         ),
                         array(
                             'name' => 'description',
-                            'label' => 'Description',
+                            'label' => 'LBL_DESCRIPTION',
                         ),
                     ),
                 )),
@@ -197,17 +200,17 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                 array(
                     'name' =>  array(
                         'name' => 'name',
-                        'label' => 'Name',
-                        'displayParams' => array('colspan' => 2)
+                        'label' => 'LBL_NAME',
+                        'span' => 12
                     ),
                     '(empty)' => MBConstants::$EMPTY,
                     'status' =>  array(
                         'name' => 'status',
-                        'label' => 'Status',
+                        'label' => 'LBL_STATUS',
                     ),
                     'description' => array(
                         'name' => 'description',
-                        'label' => 'Description',
+                        'label' => 'LBL_DESCRIPTION',
                     ),
 
                 )
@@ -235,7 +238,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
     public function testGetFieldsFromLayoutUsingFullViewdef($input, $expected)
     {
         // put on the additional array path on the input
-        $canonical_input['portal']['view']['edit']['panels'] = $input;
+        $canonical_input['portal']['view']['record']['panels'] = $input;
         $output = $this->_parser->testGetFieldsFromLayout($canonical_input);
         $this->assertEquals($expected, $output);
     }
@@ -249,9 +252,11 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
     public function testConvertToCanonicalForm($expected, $input)
     {
         // need this to prime our viewdefs
-        $this->_parser->testInstallPreviousViewdefs(array('panels' => $expected));
+        $this->_parser->testInstallPreviousViewdefs(array(
+            'panels' => $expected
+        ));
         $output = $this->_parser->testConvertToCanonicalForm($input);
-        //print_r($output);
+
         $this->assertEquals($expected, $output);
 
     }

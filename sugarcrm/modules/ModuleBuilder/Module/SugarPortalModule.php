@@ -88,8 +88,7 @@ class SugarPortalModule{
         
         // These mod_strings are ModuleBuilder module strings
         return array(
-            'edit.php'   => array('name' => $mstrings['LBL_EDITVIEW'],    'type' => 'editView'),
-            'detail.php' => array('name' => $mstrings['LBL_DETAILVIEW'] , 'type' => 'detailView'),
+            'record.php' => array('name' => $mstrings['LBL_RECORDVIEW'] , 'type' => 'recordView'),
             'list.php'   => array('name' => $mstrings['LBL_LISTVIEW'],    'type' => 'list'),
         );
     }

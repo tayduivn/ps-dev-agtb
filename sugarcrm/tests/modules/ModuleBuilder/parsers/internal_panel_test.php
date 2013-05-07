@@ -6,40 +6,40 @@
  */
 $internals = array(
 // internal panels
-array('Default' => array()),
+    array('0' => array()),
 
-array('Default' => array(
-    array( // row 1
+    array('0' => array(
+        array( // row 1
             'name',
             'status'
-    ),
-    array( // row 2
+        ),
+        array( // row 2
             'description',
             MBConstants::$FILLER['name']
-    ),
-)),
+        ),
+    )),
 
-array('Default' => array(
-    array( //row 1
+    array('0' => array(
+        array( //row 1
             'name',
             MBConstants::$EMPTY['name']
-    ),
-    array( //row 2
+        ),
+        array( //row 2
             'status',
             'description',
-    ),
-)),
+        ),
+    )),
 
-array('Default' => array(
-    array( // row 1
-        'name',
-        'status'
-    ),
-    array( // row 2
-        'description',
-        MBConstants::$FILLER['name']
-    ),
-)),
+    array('0' => array(
+        array( // row 1
+            'name',
+            'status'
+        ),
+        array( // row 2
+            'description',
+            MBConstants::$FILLER['name']
+        ),
+    )),
 
 // - end
 );

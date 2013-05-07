@@ -39,8 +39,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     	MB_WIRELESSDETAILVIEW => 'DetailView' ,
     	//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        MB_PORTALEDITVIEW => array('portal','view','edit'),
-        MB_PORTALDETAILVIEW => array('portal','view','detail') ,
+        MB_PORTALRECORDVIEW => array('portal','view','record'),
         //END SUGARCRM flav=ent ONLY
     	) ;
 
@@ -625,7 +624,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 $this->addField($def);
         	}
         }
-        
+
         foreach ( $panels as $panelID => $panel )
         {
             // remove all (empty)s

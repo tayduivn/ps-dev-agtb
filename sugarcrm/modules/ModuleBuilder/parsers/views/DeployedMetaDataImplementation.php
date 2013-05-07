@@ -124,8 +124,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 
                 //BEGIN SUGARCRM flav=ent ONLY
                 case MB_PORTALLISTVIEW:
-                case MB_PORTALEDITVIEW:
-                case MB_PORTALDETAILVIEW:
+                case MB_PORTALRECORDVIEW:
                 //END SUGARCRM flav=ent ONLY
                 //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSEDITVIEW:
@@ -139,7 +138,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 
                 //BEGIN SUGARCRM flav=ent ONLY
                     // Set a view type (ie, portal, wireless)
-                    if(in_array($view, array(MB_PORTALLISTVIEW, MB_PORTALDETAILVIEW, MB_PORTALEDITVIEW, MB_PORTALSEARCHVIEW)))
+                    if(in_array($view, array(MB_PORTALLISTVIEW, MB_PORTALRECORDVIEW, MB_PORTALSEARCHVIEW)))
                     {
                         $_viewtype = 'portal';
                     }
