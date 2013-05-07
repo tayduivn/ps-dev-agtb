@@ -33,7 +33,7 @@ require_once 'clients/base/api/vCardApi.php';
 /*
  * Tests vCard Rest api.
  */
-class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
+class vCardApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp(){
         SugarTestHelper::setUp('current_user');
@@ -43,28 +43,34 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function tearDown()
     {
+        SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
         unset($_FILES);
         unset($_SESSION['ACL']);
+    }
+
+    protected function getApi()
+    {
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+        $api->setResponse(new RestResponse(array()));
+        return $api;
     }
 
     public function testvCardSave()
     {
         $contact = SugarTestContactUtilities::createContact();
 
-        $api = new RestService();
-        $api->user = $GLOBALS['current_user'];
-
+        $api = $this->getApi();
         $args = array(
             'module' => 'Contacts',
             'id' => $contact->id,
         );
 
         $apiClass = new vCardApi();
-        $apiClass->vCardSave($api, $args);
+        $result = $apiClass->vCardSave($api, $args);
 
-        SugarTestContactUtilities::removeAllCreatedContacts();
-        $this->expectOutputRegex('/BEGIN\:VCARD/', 'Failed to get contact vCard.');
+        $this->assertContains('BEGIN:VCARD', $result, 'Failed to get contact vCard.');
     }
 
     /**
@@ -73,8 +79,7 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
     public function testvCardImportPost_NoFilePosted_ReturnsError()
     {
         unset($_FILES);
-        $api = new RestService();
-        $api->user = $GLOBALS['current_user'];
+        $api = $this->getApi();
 
         $args = array(
             'module' => 'Contacts',
@@ -105,8 +110,7 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
             )
         );
 
-        $api = new RestService();
-        $api->user = $GLOBALS['current_user'];
+        $api = $this->getApi();
 
         $args = array(
             'module' => 'Contacts',
@@ -157,8 +161,7 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
         // reset cached ACLs
         SugarACL::$acls = array();
 
-        $api = new RestService();
-        $api->user = $GLOBALS['current_user'];
+        $api = $this->getApi();
 
         $args = array(
             'module' => 'Contacts',
@@ -175,8 +178,7 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
      */
     public function testvCardImportPost_NoFileExists_ThrowsMissingParameterException()
     {
-        $api = new RestService();
-        $api->user = $GLOBALS['current_user'];
+        $api = $this->getApi();
 
         $args = array(
             'module' => 'Contacts',

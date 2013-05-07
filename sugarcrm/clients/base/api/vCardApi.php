@@ -79,7 +79,7 @@ class vCardApi extends SugarApi {
 
         $vcard->loadContact($args['id'], $module);
 
-        $vcard->saveVCardApi($api);
+        return $vcard->saveVCardApi($api);
     }
 
     /**

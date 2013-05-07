@@ -504,7 +504,11 @@ class RestService extends ServiceBase {
      * @param string $info
      * @return bool
      */
-    public function setHeader($header, $info) {
+    public function setHeader($header, $info)
+    {
+        if(empty($this->response)) {
+           return false;
+        }
         return $this->response->setHeader($header, $info);
     }
 
@@ -513,7 +517,11 @@ class RestService extends ServiceBase {
      * @param string $header
      * @return bool
      */
-    public function hasHeader($header) {
+    public function hasHeader($header)
+    {
+        if(empty($this->response)) {
+            return false;
+        }
         return $this->response->hasHeader($header);
     }
 
@@ -521,7 +529,11 @@ class RestService extends ServiceBase {
      * Send the response headers
      * @return bool
      */
-    public function sendHeaders() {
+    public function sendHeaders()
+    {
+        if(empty($this->response)) {
+           return false;
+        }
         return $this->response->sendHeaders();
     }
 
@@ -586,6 +598,9 @@ class RestService extends ServiceBase {
      */
     public function generateETagHeader($etag)
     {
+        if(empty($this->response)) {
+           return false;
+        }
         return $this->response->generateETagHeader($etag);
     }
 
@@ -594,6 +609,9 @@ class RestService extends ServiceBase {
      */
     public function fileResponse($filename)
     {
+        if(empty($this->response)) {
+           return false;
+        }
         $this->response->setType(RestResponse::FILE)->setFilename($filename);
         $this->response->setHeader("Pragma", "public");
         $this->response->setHeader("Cache-Control", "maxage=1, post-check=0, pre-check=0");
