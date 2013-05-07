@@ -571,11 +571,11 @@
      * @param title
      */
     setTitle: function (title) {
-        var $title = this.$('.headerpane h1.title');
+        var $title = this.$('.headerpane .module-title');
         if ($title.length > 0) {
             $title.text(title);
         } else {
-            this.$('.headerpane').prepend('<h1 class="title">' + title + '</h1>');
+            this.$('.headerpane').prepend('<h1><span class="module-title">' + title + '</span></h1>');
         }
     },
     _dispose: function () {
