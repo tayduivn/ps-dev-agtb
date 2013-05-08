@@ -640,7 +640,7 @@ class Product extends SugarBean
         if($this->probability == '') {
             $this->mapProbabilityFromSalesStage();
         }
-        $this->handleSalesStatus();
+        
         $this->convertDateClosedToTimestamp();
         $this->mapFieldsFromProductTemplate();
         $this->mapFieldsFromOpportunity();
@@ -649,7 +649,7 @@ class Product extends SugarBean
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
         $this->saveProductWorksheet();
-        if ($this->opportunity_id != $this->fetched_row["opportunity_id"]) {
+        if ($this->fetched_row != false && $this->opportunity_id != $this->fetched_row["opportunity_id"]) {
             $this->resaveOppForRecalc($this->fetched_row["opportunity_id"]);
         }
         $this->handleOppSalesStatus();
@@ -933,41 +933,7 @@ class Product extends SugarBean
         }
     }
     //END SUGARCRM flav=ent ONLY
-
-    /**
-     * Code to make sure that the Sales Status field is mapped correctly with the Sales Stage field
-     */
-    protected function handleSalesStatus()
-    {
-        // in this class we use the values from the Opportunity module constants as they are directly mapped 1-to-1 with
-        // products
-
-        // only run this when the sales_status doesn't change and the sales_stage does
-        if (($this->fetched_row['sales_status'] == $this->sales_status)
-            && $this->fetched_row['sales_stage'] != $this->sales_stage
-        ) {
-            // handle closed lost and closed won
-            if ($this->sales_stage == Opportunity::STAGE_CLOSED_LOST
-                || $this->sales_stage == Opportunity::STAGE_CLOSED_WON
-            ) {
-                $this->sales_status = $this->sales_stage;
-            } else {
-                // move it to in progress
-                $this->sales_status = Opportunity::STATUS_IN_PROGRESS;
-            }
-        }
-
-        if (empty($this->fetched_row['quote_id']) && !empty($this->quote_id)) {
-            $this->sales_status = Product::STATUS_CONVERTED_TO_QUOTE;
-        }
-
-        // if we have a new bean, set the sales_status to be 'New'
-        if (empty($this->id) || $this->new_with_id == true) {
-            // we have a new record set the sales_status to new;
-            $this->sales_status = Opportunity::STATUS_NEW;
-        }
-    }
-
+    
     /**
      * Handle the mapping of the fields from the product template to the product
      */
