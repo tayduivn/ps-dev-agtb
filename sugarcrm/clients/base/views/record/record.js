@@ -76,7 +76,7 @@
     },
 
     _render: function () {
-        this._buildGridsForPanels(this.meta.panels);
+        this._buildGridsFromPanelsMetadata(this.meta.panels);
 
         app.view.View.prototype._render.call(this);
 
@@ -456,7 +456,7 @@
         app.view.views.EditableView.prototype._dispose.call(this);
     },
 
-    _buildGridsForPanels: function(panels) {
+    _buildGridsFromPanelsMetadata: function(panels) {
         var lastTabIndex  = 0;
         this.noEditFields = [];
 

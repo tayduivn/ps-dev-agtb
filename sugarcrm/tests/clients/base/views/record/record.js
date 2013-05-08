@@ -7,7 +7,7 @@ describe("Record View", function () {
         createListCollection,
         buildRouteStub,
         oRouter,
-        buildGridsForPanelsStub;
+        buildGridsFromPanelsMetadataStub;
 
     beforeEach(function () {
         SugarTest.testMetadata.init();
@@ -118,7 +118,7 @@ describe("Record View", function () {
 
         view = SugarTest.createView("base", moduleName, "record", null, null);
 
-        buildGridsForPanelsStub = sinon.stub(view, "_buildGridsForPanels", function(panels) {
+        buildGridsFromPanelsMetadataStub = sinon.stub(view, "_buildGridsFromPanelsMetadata", function(panels) {
             view.hiddenPanelExists = true;
 
             // The panel grid contains references to the actual fields found in panel.fields, so the fields must
@@ -141,7 +141,7 @@ describe("Record View", function () {
     });
 
     afterEach(function () {
-        buildGridsForPanelsStub.restore();
+        buildGridsFromPanelsMetadataStub.restore();
         view.dispose();
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
@@ -352,7 +352,7 @@ describe("Record View", function () {
             aclFailFields  = ["case_number"];
 
         beforeEach(function() {
-            buildGridsForPanelsStub.restore();
+            buildGridsFromPanelsMetadataStub.restore();
             hasAccessToModelStub = sinon.stub(SugarTest.app.acl, "hasAccessToModel", function (method, model, field) {
                 return _.indexOf(aclFailFields, field) < 0;
             });
@@ -364,7 +364,7 @@ describe("Record View", function () {
 
         describe('Header panel', function () {
             it('Should set isAvatar to false if the header doesn\'t the picture field', function () {
-                view._buildGridsForPanels(view.meta.panels);
+                view._buildGridsFromPanelsMetadata(view.meta.panels);
                 expect(view.meta.panels[0].isAvatar).toBeFalsy();
             });
 
@@ -394,7 +394,7 @@ describe("Record View", function () {
                         }
                     ]
                 };
-                view._buildGridsForPanels(meta.panels);
+                view._buildGridsFromPanelsMetadata(meta.panels);
                 expect(meta.panels[0].isAvatar).toBeTruthy();
             });
         });
@@ -405,7 +405,7 @@ describe("Record View", function () {
                     fields: ["description"]
                 }]
             };
-            view._buildGridsForPanels(meta.panels);
+            view._buildGridsFromPanelsMetadata(meta.panels);
             expect(meta.panels[0].fields[0].name).toBe("description");
         });
 
@@ -431,7 +431,7 @@ describe("Record View", function () {
                 }, this);
             }, this);
 
-            view._buildGridsForPanels(meta.panels);
+            view._buildGridsFromPanelsMetadata(meta.panels);
 
             var actual   = view.noEditFields,
                 expected = _.union(readonlyFields, aclFailFields);
@@ -473,7 +473,7 @@ describe("Record View", function () {
                 return acls;
             });
 
-            view._buildGridsForPanels(meta.panels);
+            view._buildGridsFromPanelsMetadata(meta.panels);
 
             var actual   = view.noEditFields,
                 expected = aclFailFields;

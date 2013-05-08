@@ -95,7 +95,7 @@
         this.viewName = view;
 
         if (view === 'config') {
-            app.view.views.RecordView.prototype._renderPanels.call(this, this.meta.panels);
+            app.view.views.RecordView.prototype._buildGridsFromPanelsMetadata.call(this, this.meta.panels);
         }
     },
 
