@@ -79,17 +79,18 @@ function to_html($string, $encode=true)
 /**
  * Replaces specific HTML entity values with the true characters
  * @param string $string String to check/replace
- * @param bool $encode Default true
+ * @param bool $decode Default true
  * @return string
  */
-function from_html($string, $encode=true)
+function from_html($string, $decode=true)
 {
-    if (!is_string($string) || !$encode) {
+    if (!is_string($string) || !$decode) {
         return $string;
     }
     if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
         return $string;
     }
+
     return htmlspecialchars_decode($string, ENT_QUOTES);
 }
 
