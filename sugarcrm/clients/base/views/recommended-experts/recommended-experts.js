@@ -48,6 +48,9 @@
                 {"title": this.jobTitle});
 
             app.api.call("read", url, null, { success: function(data) {
+                if (self.disposed) {
+                    return;
+                }
                 self.collection.reset();
                 if( data.length ) {
                     _.each(data, function(key, value) {
