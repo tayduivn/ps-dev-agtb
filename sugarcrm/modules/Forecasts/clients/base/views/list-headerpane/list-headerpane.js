@@ -15,6 +15,11 @@
 
     initialize: function(options) {
         app.view.views.HeaderpaneView.prototype.initialize.call(this, options);
+
+        this.on('render', function() {
+            this.getField('save_draft_button').setDisabled();
+            this.getField('commit_button').setDisabled();
+        }, this);
     },
 
     bindDataChange: function() {
@@ -23,6 +28,12 @@
                 this.title = changed.full_name;
                 if (!this.disposed) this.render();
             //}
+        }, this);
+
+        this.context.on('forecast:worksheet:dirty', function(worksheet_type) {
+            console.log('forecast worksheet dirty: ', worksheet_type);
+            this.getField('save_draft_button').setDisabled(false);
+            this.getField('commit_button').setDisabled(false);
         }, this);
 
         app.view.views.HeaderpaneView.prototype.bindDataChange.call(this);

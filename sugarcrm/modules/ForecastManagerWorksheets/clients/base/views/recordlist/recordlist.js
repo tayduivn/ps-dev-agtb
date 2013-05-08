@@ -32,6 +32,7 @@
 
     initialize: function(options) {
         this.plugins.push('cte-tabbing');
+        this.plugins.push('dirty-collection');
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
         this.context.set('skipFetch', (this.selectedUser.isManager && this.selectedUser.showOpps));    // skip the initial fetch, this will be handled by the changing of the selectedUser
@@ -91,6 +92,18 @@
                     }
                 }, this);
 
+                this.context.parent.on('button:save_draft_button:click', function() {
+                    if(this.layout.isVisible()) {
+                        console.log("Manager Worksheet Save Draft Button Clicked");
+                    }
+                }, this);
+
+                this.context.parent.on('button:commit_button:click', function() {
+                    if(this.layout.isVisible()) {
+                        console.log("Manager Worksheet Commit Button Clicked");
+                    }
+                }, this);
+
                 this.context.parent.on('change:selectedTimePeriod', function(model, changed) {
                     this.selectedTimeperiod = changed;
                     if (this.layout.isVisible()) {
@@ -131,6 +144,13 @@
                     }
                 }, this);
             }
+        }
+
+        if(!_.isUndefined(this.dirtyModels)) {
+            this.dirtyModels.on('add', function() {
+                var ctx = this.context.parent || this.context
+                ctx.trigger('forecast:worksheet:dirty', 'mgr');
+            }, this);
         }
 
         this.context.on('list:history_log:fire', function(model) {

@@ -21,6 +21,7 @@
 
     initialize: function(options) {
         this.plugins.push('cte-tabbing');
+        this.plugins.push('dirty-collection');
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
         this.context.set('skipFetch', !(this.selectedUser.showOpps || !this.selectedUser.isManager)); // if user is a manager, skip the initial fetch
@@ -78,7 +79,7 @@
                 }, this);
 
                 this.context.parent.on('forecasts:worksheet:totals', function(totals, type) {
-                    if (type == "rep") {
+                    if (type == "rep" && this.layout.isVisible()) {
                         console.log('update rep footer');
                         var tpl = app.template.getView('recordlist.totals', this.module);
                         this.$el.find('tfoot').remove();
@@ -97,7 +98,8 @@
                     var doFetch = false;
                     console.log('Rep SelectedUser Change');
                     if (this.selectedUser.id != changed.id) {
-                        doFetch = true;
+                        // user changed. make sure it's not a manager view before we say fetch or not
+                        doFetch = (changed.showOpps || !changed.isManager);
                     }
                     // if we are already not going to fetch, check to see if the new user is showingOpps or is not
                     // a manager, then we want to fetch
@@ -116,12 +118,31 @@
                         }
                     }
                 }, this);
+
+                this.context.parent.on('button:save_draft_button:click', function() {
+                    if(this.layout.isVisible()) {
+                        console.log("Rep Worksheet Save Draft Button Clicked");
+                    }
+                }, this);
+
+                this.context.parent.on('button:commit_button:click', function() {
+                    if(this.layout.isVisible()) {
+                        console.log("Rep Worksheet Commit Button Clicked");
+                    }
+                }, this);
             }
         }
 
         this.collection.on('reset change', function() {
             this.calculateTotals();
         }, this);
+
+        if(!_.isUndefined(this.dirtyModels)) {
+            this.dirtyModels.on('add', function() {
+                var ctx = this.context.parent || this.context
+                ctx.trigger('forecast:worksheet:dirty', 'rep');
+            }, this);
+        }
 
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
     },
@@ -180,9 +201,9 @@
             }, this)
         }, this);
 
-        var ctx = this.context.parent || this.context;
         // fire an event on the parent context
         if(this.isVisible()) {
+            var ctx = this.context.parent || this.context;
             ctx.trigger('forecasts:worksheet:totals', this.totals, 'rep');
         }
     },

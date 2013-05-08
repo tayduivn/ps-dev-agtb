@@ -149,7 +149,10 @@
             checkIfCanEdit: function() {
                 if (!_.isUndefined(this.def.click_to_edit) && this.def.click_to_edit === true) {
                     // only worksheet owner can edit
-                    var selectedUser = this.context.get('selectedUser') || app.user.toJSON();
+                    // make sure we get the correct context, if we are in the forecast module
+                    // its this.context.parent otherwise, its this.context
+                    var ctx = this.context.parent || this.context;
+                    var selectedUser = ctx.get('selectedUser') || app.user.toJSON();
                     this._canEdit = _.isEqual(app.user.get('id'), selectedUser.id);
                     // only if sales stage is won/lost can edit
                     if (this._canEdit && this.model.has('sales_stage')) {

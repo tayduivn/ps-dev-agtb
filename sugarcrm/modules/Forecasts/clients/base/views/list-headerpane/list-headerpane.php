@@ -22,19 +22,18 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
     ),
     'buttons' => array(
         array(
-            'name' => 'draft_button',
-            'event' => 'button:draft_button:click',
+            'name' => 'save_draft_button',
+            'event' => 'button:save_draft_button:click',
             'type' => 'button',
             'label' => 'LBL_SAVE_DRAFT',
             'acl_action' => 'current_user',
-            'css_class' => 'disabled'
         ),
         array(
             'name' => 'commit_button',
             'type' => 'button',
             'event' => 'button:commit_button:click',
             'label' => 'LBL_QC_COMMIT_BUTTON',
-            'css_class' => 'btn-primary disabled',
+            'css_class' => 'btn-primary',
             'icon' => 'icon-upload',
             'acl_action' => 'current_user'
         ),
