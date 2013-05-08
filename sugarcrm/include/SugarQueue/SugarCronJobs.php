@@ -78,11 +78,11 @@ class SugarCronJobs
     {
         $this->queue = new SugarJobQueue();
         $this->lockfile = sugar_cached("modules/Schedulers/lastrun");
-        if(!empty($GLOBALS['sugar_config']['cron']['max_jobs'])) {
+        if(!empty($GLOBALS['sugar_config']['cron']['max_cron_jobs'])) {
             $this->max_jobs = $GLOBALS['sugar_config']['cron']['max_cron_jobs'];
         }
         if(!empty($GLOBALS['sugar_config']['cron']['max_cron_runtime'])) {
-            $this->max_jobs = $GLOBALS['sugar_config']['cron']['max_cron_runtime'];
+            $this->max_runtime = $GLOBALS['sugar_config']['cron']['max_cron_runtime'];
         }
         if(isset($GLOBALS['sugar_config']['cron']['min_cron_interval'])) {
             $this->min_interval = $GLOBALS['sugar_config']['cron']['min_cron_interval'];

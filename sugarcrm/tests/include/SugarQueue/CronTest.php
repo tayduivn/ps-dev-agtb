@@ -28,6 +28,7 @@ require_once 'modules/SchedulersJobs/SchedulersJob.php';
 class CronTest extends Sugar_PHPUnit_Framework_TestCase
 {
     static public $jobCalled = false;
+    public $cron_config;
 
     public static function setUpBeforeClass()
     {
@@ -45,11 +46,28 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->jq = $jobq = new SugarCronJobs();
         self::$jobCalled = false;
+        if(isset($GLOBALS['sugar_config']['cron'])) {
+            $this->config_cron = $GLOBALS['sugar_config']['cron'];
+        }
     }
 
     public function tearDown()
     {
         $GLOBALS['db']->query("DELETE FROM job_queue WHERE scheduler_id='unittest'");
+        if(isset($GLOBALS['sugar_config']['cron'])) {
+            $GLOBALS['sugar_config']['cron'] = $this->config_cron;
+        } else {
+            unset($GLOBALS['sugar_config']['cron']);
+        }
+    }
+
+    public function testConfig()
+    {
+        $GLOBALS['sugar_config']['cron'] = array('max_cron_jobs' => 12, 'max_cron_runtime' => 34, 'min_cron_interval' => 56);
+        $jobq = new SugarCronJobs();
+        $this->assertEquals(12, $jobq->max_jobs, "Wrong setting for max_jobs");
+        $this->assertEquals(34, $jobq->max_runtime, "Wrong setting for max_runtime");
+        $this->assertEquals(56, $jobq->min_interval, "Wrong setting for min_interval");
     }
 
     public function testThrottle()
