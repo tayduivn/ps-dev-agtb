@@ -27,26 +27,36 @@
 ({
     extendsFrom: 'FieldsetField',
     fields: null,
+    dropdownFields: null,
+    events: {
+        'click [data-toggle=dropdown]' : 'renderDropdown',
+        'touchstart [data-toggle=dropdown]' : 'renderDropdown'
+    },
     initialize: function(options) {
         app.view.fields.FieldsetField.prototype.initialize.call(this, options);
+        this.dropdownFields = [];
+
         //Throttle the setPlaceholder function per instance of this field.
-        var origRender = this._render;
-        this._render = _.debounce(function(){
-            //Because of throttle, calls to render may come in after dispose has been called.
-            if (this.disposed) return;
-            return origRender.call(this);
-        }, 100);
         this.setPlaceholder = _.throttle(app.view.fields.ActiondropdownField.prototype.setPlaceholder, 100);
     },
-    getPlaceholder: function() {
-        var placeholder = app.view.Field.prototype.getPlaceholder.call(this);
-        var $container = $(placeholder.toString()),
-            $caret = $('<a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"><span class="icon-caret-down"></span></a>'),
-            $dropdown = $('<ul class="dropdown-menu"></ul>');
-
-        if(this.def.primary) {
-            $caret.addClass('btn-primary');
+    renderDropdown: function() {
+        if(_.isEmpty(this.dropdownFields)) {
+            return;
         }
+
+        _.each(this.dropdownFields, function(field) {
+            this.view.fields[field.sfId] = field;
+            field.setElement(this.$("span[sfuuid='" + field.sfId + "']"));
+            field.render();
+        }, this);
+        this.dropdownFields = null;
+    },
+    getPlaceholder: function() {
+        var cssClass = [],
+            container = '',
+            caretClass = this.def.primary ? 'btn btn-primary dropdown-toggle' : 'btn dropdown-toggle',
+            caret = '<a class="' + caretClass + '" data-toggle="dropdown" href="javascript:void(0);"><span class="icon-caret-down"></span></a>',
+            dropdown = '<ul class="dropdown-menu">';
 
         _.each(this.def.buttons, function(fieldDef, index) {
             var field = app.view.createField({
@@ -59,47 +69,73 @@
             field.on('show hide', this.setPlaceholder, this);
             field.parent = this;
             if(index == 0) {
-                $container.append(field.getPlaceholder().toString());
+                container += field.getPlaceholder();
             } else {
+                //first time, unbind the dropdown button fields from the field's list
+                //these fields are will be bound once the dropdown toggle is clicked
+                delete this.view.fields[field.sfId];
+                this.dropdownFields.push(field);
+
                 if(index == 1) {
-                    $container.addClass('actions btn-group')
-                        .append($caret)
-                        .append($dropdown);
+                    cssClass.push('actions', 'btn-group');
+                    container += caret;
+                    container += dropdown;
                 }
-                $dropdown.append('<li>' + field.getPlaceholder().toString() + '</li>');
+                container += '<li>' + field.getPlaceholder() + '</li>';
             }
 
         }, this);
-        return new Handlebars.SafeString($container.get(0).outerHTML);
+        var cssName = cssClass.join(' '),
+            placeholder = '<span sfuuid="' + this.sfId + '" class="' + cssName + '">' + container;
+        placeholder += (_.size(this.def.buttons) > 0) ? '</ul></span>': '</span>';
+        return new Handlebars.SafeString(placeholder);
+
     },
     _render: function() {
         app.view.fields.FieldsetField.prototype._render.call(this);
         this.setPlaceholder();
     },
     setPlaceholder: function() {
-        var index = 0;
+        if(this.disposed) {
+            return;
+        }
+
+        var index = 0,
+            //Using document fragment to reduce calculating dom tree
+            visibleEl = document.createDocumentFragment(),
+            hiddenEl = document.createDocumentFragment();
         _.each(this.fields, function(field){
-            var fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
+            var cssClass = _.unique(field.def.css_class ? field.def.css_class.split(' ') : []),
+                fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
             if(field.isHidden) {
+                cssClass.push('hide');
                 fieldPlaceholder.toggleClass('hide', true);
-                //Drop this field out of the dropdown
-                this.$el.append(fieldPlaceholder);
+                //Drop hidden field out of the dropdown
+                hiddenEl.appendChild(fieldPlaceholder.get(0));
             } else {
+                cssClass = _.without(cssClass, 'hide');
                 fieldPlaceholder.toggleClass('hide', false);
                 if(index == 0) {
+                    cssClass.push('btn');
                     field.getFieldElement().addClass("btn");
                     if(this.def.primary) {
+                        cssClass.push('btn-primary');
                         field.getFieldElement().addClass("btn-primary");
                     }
                     //The first field needs to be out of the dropdown
                     this.$el.prepend(fieldPlaceholder);
                 } else {
+                    cssClass = _.without(cssClass, 'btn', 'btn-primary');
                     field.getFieldElement().removeClass("btn btn-primary");
                     //Append field into the dropdown
-                    this.$(".dropdown-menu").append($('<li>').html(fieldPlaceholder));
+                    var dropdownEl = document.createElement('li');
+                    dropdownEl.appendChild(fieldPlaceholder.get(0));
+                    visibleEl.appendChild(dropdownEl);
                 }
                 index++;
             }
+            cssClass = _.unique(cssClass);
+            field.def.css_class = cssClass.join(' ');
         }, this);
 
         if(index <= 1) {
@@ -109,11 +145,18 @@
             this.$(".dropdown-toggle").show();
             this.$el.addClass('btn-group');
         }
-        this.$(".dropdown-menu").children("li").each(function(index, el){
-            if($(el).html() === '') {
-                $(el).remove();
-            }
-        });
+        //remove all previous built dropdown tree
+        this.$(".dropdown-menu").children("li").remove();
+        //and then set the dropdown list with new button list set
+        this.$(".dropdown-menu").append(visibleEl);
+        this.$el.append(hiddenEl);
+
+        //if the first button is hidden due to the acl,
+        //it will build all other dropdown button and set it use dropdown button set
+        var firstButton = _.first(this.fields);
+        if(firstButton && firstButton.isHidden) {
+            this.renderDropdown();
+        }
     },
     setDisabled: function(disable) {
         app.view.fields.FieldsetField.prototype.setDisabled.call(this, disable);
@@ -123,5 +166,13 @@
         } else {
             this.$('.dropdown-toggle').removeClass('disabled');
         }
+    },
+
+    _dispose: function() {
+        _.each(this.fields, function(field) {
+            field.off('show hide', this.setPlaceholder, this);
+        }, this);
+        this.dropdownFields = null;
+        app.view.fields.FieldsetField.prototype._dispose.call(this);
     }
 })

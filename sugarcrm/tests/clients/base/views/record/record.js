@@ -1049,6 +1049,8 @@ describe("Record View", function () {
                 name: 'Name',
                 case_number: 123,
                 description: 'Description'
+            }, {
+                silent:true
             });
 
             // load up with our spies to detect nefarious activity

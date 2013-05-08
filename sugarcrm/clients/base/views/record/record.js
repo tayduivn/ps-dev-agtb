@@ -267,8 +267,12 @@
             _.each(this.options.meta.buttons, function (button) {
                 this.registerFieldAsButton(button.name);
                 if (button.buttons) {
-                    _.each(button.buttons, function (dropdownButton) {
-                        this.registerFieldAsButton(dropdownButton.name);
+                    var dropdownButton = this.getField(button.name);
+                    if(!dropdownButton) {
+                        return;
+                    }
+                    _.each(dropdownButton.fields, function (ddButton) {
+                        this.buttons[ddButton.name] = ddButton;
                     }, this);
                 }
             }, this);
@@ -563,7 +567,7 @@
             } else {
                 field.hide();
             }
-        });
+        }, this);
     },
 
     /**
