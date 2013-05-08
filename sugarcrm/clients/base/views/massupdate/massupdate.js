@@ -16,10 +16,14 @@
         app.view.View.prototype.initialize.call(this, options);
         this.setDefault();
 
+        this.delegateListFireEvents();
+        this.before('render', this.isVisible);
+    },
+    delegateListFireEvents: function() {
         this.layout.on("list:massupdate:fire", this.show, this);
+        this.layout.on("list:massaction:hide", this.hide, this);
         this.layout.on("list:massdelete:fire", this.confirmDelete, this);
         this.layout.on("list:massexport:fire", this.massExport, this);
-        this.before('render', this.isVisible);
     },
     setMetadata: function(options) {
         options.meta.panels = options.meta.panels || [{fields:[]}];
@@ -65,24 +69,26 @@
         var result = app.view.View.prototype._render.call(this),
             self = this;
 
-        this.$(".select2.mu_attribute")
-            .select2({
-                width: '100%',
-                minimumResultsForSearch: 5
-            })
-            .on("change", function(evt) {
-            var $el = $(this),
-                name = $el.select2('val'),
-                index = $el.data('index');
-            var option = _.find(self.fieldOptions, function(field){
-                return field.name == name;
+        if (this.$(".select2.mu_attribute")) {
+            this.$(".select2.mu_attribute")
+                .select2({
+                    width: '100%',
+                    minimumResultsForSearch: 5
+                })
+                .on("change", function(evt) {
+                    var $el = $(this),
+                        name = $el.select2('val'),
+                        index = $el.data('index');
+                    var option = _.find(self.fieldOptions, function(field){
+                        return field.name == name;
+                    });
+                    self.replaceUpdateField(option, index);
+                    self.placeField($el);
+                });
+            this.$(".select2.mu_attribute").each(function(){
+                self.placeField($(this));
             });
-            self.replaceUpdateField(option, index);
-            self.placeField($el);
-        });
-        this.$(".select2.mu_attribute").each(function(){
-            self.placeField($(this));
-        });
+        }
 
         if(this.fields.length == 0) {
             this.hide();
@@ -189,7 +195,7 @@
     },
     confirmDelete: function(evt) {
         var self = this;
-        this.hide();
+        this.hideAll();
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('NTC_DELETE_CONFIRMATION_MULTIPLE'),
@@ -220,7 +226,7 @@
         });
     },
     massExport: function(evt) {
-        this.hide();
+        this.hideAll();
         var massExport = this.context.get("mass_collection");
         var exportOptions;
 
@@ -246,7 +252,7 @@
     },
     save: function() {
         var massUpdate = this.getMassUpdateModel(this.module),
-            attributes = this.model.attributes,
+            attributes = this.getAttributes(),
             self = this;
 
         var validate = this.checkValidationError();
@@ -302,6 +308,14 @@
             this.handleValidationError(errors);
         }
     },
+
+    /**
+     * By default attributes are retrieved directly off the model, but broken out to allow for manipulation before handing off to the API
+     */
+    getAttributes: function() {
+        return this.model.attributes;
+    },
+
     checkValidationError: function() {
         var emptyValues = [],
             errors = {},
@@ -346,6 +360,7 @@
         });
     },
     show: function() {
+        this.hideAll();
         this.visible = true;
         this.defaultOption = null;
         this.model.clear();
@@ -357,6 +372,12 @@
 
         this.$el.show();
         this.render();
+    },
+    /**
+     * Hide all views that make up the list mass action section (ie. massupdate, massaddtolist)
+     */
+    hideAll: function() {
+        this.layout.trigger("list:massaction:hide");
     },
     hide: function() {
         this.visible = false;
