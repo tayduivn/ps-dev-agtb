@@ -109,7 +109,7 @@
         _.each(this.fields, function(field){
             var cssClass = _.unique(field.def.css_class ? field.def.css_class.split(' ') : []),
                 fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
-            if(field.isHidden) {
+            if(!field.isVisible()) {
                 cssClass.push('hide');
                 fieldPlaceholder.toggleClass('hide', true);
                 //Drop hidden field out of the dropdown
@@ -156,7 +156,7 @@
         //if the first button is hidden due to the acl,
         //it will build all other dropdown button and set it use dropdown button set
         var firstButton = _.first(this.fields);
-        if(firstButton && firstButton.isHidden) {
+        if(firstButton && !firstButton.isVisible()) {
             this.renderDropdown();
         }
     },
@@ -176,5 +176,12 @@
         }, this);
         this.dropdownFields = null;
         app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: '_dispose'});
+    },
+
+    /**
+     *  Visibility Check
+     */
+    isVisible: function() {
+        return !this.getFieldElement().is(':hidden');
     }
 })
