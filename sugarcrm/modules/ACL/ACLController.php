@@ -262,15 +262,4 @@ class ACLController
                 </script>";
         }
     }
-
 }
-
-
-
-
-
-
-
-
-
-?>
