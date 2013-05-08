@@ -28,19 +28,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-require_once('clients/base/api/ListApi.php');
+require_once('clients/base/api/ModuleApi.php');
 require_once('modules/Audit/Audit.php');
-require_once('data/BeanFactory.php');
 
-class AuditApi extends ListApi
+class AuditApi extends ModuleApi
 {
     public function registerApiRest()
     {
         return array(
             'view_change_log' => array(
                 'reqType' => 'GET',
-                'path' => array('Audit'),
-                'pathVars' => array(''),
+                'path' => array('<module>','?', 'audit'),
+                'pathVars' => array('module','record','audit'),
                 'method' => 'viewChangeLog',
                 'shortHelp' => 'View change log in record view',
                 'longHelp' => 'include/api/help/audit_get_help.html',
@@ -53,18 +52,15 @@ class AuditApi extends ListApi
         
         $this->requireArgs($args,array('module', 'record'));
         
-        if(!isset($_REQUEST['record'])) {
-            // Required by Audit::get_audit_list()
-            $_REQUEST['record'] = $args['record'];
-        }
-        
-        $focus = BeanFactory::newBean($args['module']);
-                
+        $focus = BeanFactory::getBean($args['module'], $args['record']);
+
         if(!$focus->ACLAccess('view')) {
             throw new SugarApiExceptionNotAuthorized('no access to the bean');
         }
+ 
+        $auditBean = BeanFactory::newBean('Audit');
+
+        return $auditBean->getAuditLog($focus);
         
-        $records = Audit::get_audit_list();        
-        return array('next_offset'=>-1,'records'=>$records);
     }
 }

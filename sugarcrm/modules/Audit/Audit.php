@@ -89,7 +89,122 @@ class Audit extends SugarBean {
     {
 
     }
+    /**
+     * This method gets the Audit log and formats it specifically for the API.
+     * @param type SugarBean $bean 
+     * @return array
+     */
+    public function getAuditLog(SugarBean $bean)
+    {
+        global $timedate;
 
+        if(!$bean->is_AuditEnabled()) {
+            return array();
+        }
+
+        $auditTable = $bean->get_audit_table_name();
+
+        $query = "SELECT {$auditTable}.*, users.user_name AS created_by_username 
+                FROM {$auditTable}, users 
+                WHERE {$auditTable}.created_by = users.id AND {$auditTable}.parent_id = '{$bean->id}' 
+                ORDER BY {$auditTable}.date_created DESC";
+
+        $db = DBManagerFactory::getInstance();
+
+        $results = $db->query($query);
+        if(empty($results)) {
+            return array();
+        }
+
+        if(!isset($this->fieldDefs)) {
+            require_once 'metadata/audit_templateMetaData.php';
+            $fieldDefs = $dictionary['audit']['fields'];
+        } else {
+            $fieldDefs = $this->fieldDefs;
+        }
+
+        $return = array();
+
+        while($row = $db->fetchByAssoc($results)) {
+            //BEGIN SUGARCRM flav=pro ONLY
+            if(!ACLField::hasAccess($row['field_name'], $bean->module_dir, $GLOBALS['current_user']->id, $bean->isOwner($GLOBALS['current_user']->id))) continue;
+            
+            //If the team_set_id field has a log entry, we retrieve the list of teams to display
+            if($row['field_name'] == 'team_set_id') {
+               $row['field_name'] = 'team_name';
+               require_once('modules/Teams/TeamSetManager.php');
+               $row['before_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['before_value_string']);
+               $row['after_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['after_value_string']);
+            }
+            //END SUGARCRM flav=pro ONLY
+            // convert the date
+            $dateCreated = $timedate->fromDbType($row['date_created'], "datetime");
+            $row['date_created'] = $timedate->asIso($dateCreated);
+
+            $row['before'] = $row['after'] = null;
+
+            if(empty($row['before_value_string']) && empty($row['after_value_string'])) {
+                $row['before'] = $row['before_value_text'];
+                $row['after'] = $row['after_value_text'];
+            } else {
+                $row['before'] = $row['before_value_string'];
+                $row['after'] = $row['after_value_string'];                
+            }
+            unset($row['before_value_string']);
+            unset($row['after_value_string']);
+            unset($row['before_value_text']);
+            unset($row['after_value_text']);
+
+            $fieldType = $db->getFieldType($bean->field_defs[$row['field_name']]);
+            switch($fieldType) {
+                case 'date':
+                    $dateBeforeObj = $timedate->fromDbType($row['before']);
+                    $dateAfterObj = $timedate->fromDbType($row['after']);
+                    $row['before'] = $timedate->asIsoDate($dateBeforeObj);
+                    $row['after'] = $timedate->asIsoDate($dateAfterObj);
+                    break;
+                case 'datetime':
+                    $dateBeforeObj = $timedate->fromDbType($row['before']);
+                    $dateAfterObj = $timedate->fromDbType($row['after']);
+                    $row['before'] = $timedate->asIso($dateBeforeObj);
+                    $row['after'] = $timedate->asIso($dateAfterObj);
+                    break;
+                case 'time':
+                    $dateBeforeObj = $timedate->fromDbType($row['before']);
+                    $dateAfterObj = $timedate->fromDbType($row['after']);
+                    $row['before'] = $timedate->asIsoTime($dateBeforeObj);
+                    $row['after'] = $timedate->asIsoTime($dateAfterObj);
+                    break;
+                case 'enum':
+                case 'multienum':
+                    $row['before'] = explode(',',str_replace('^','', $row['before']));
+                    $row['after'] = explode(',',str_replace('^','', $row['after']));
+                    break;
+                case 'relate':
+                case 'link':
+                    // get the other side
+                    if(isset($bean->field_defs[$row['field_name']['module']])) {
+                        $otherSideBeanBefore = BeanFactory::getBean($bean->field_defs[$row['field_name']['module']], $row['before']);
+                        $otherSideBeanAfter = BeanFactory::getBean($bean->field_defs[$row['field_name']['module']], $row['after']);
+                        if($otherSideBeanBefore instanceof SugarBean) {
+                            $row['before'] = $otherSideBeanBefore->get_summary_text();
+                        }
+                        if($otherSideBeanAfter instanceof SugarBean) {
+                            $row['after'] = $otherSideBeanAfter->get_summary_text();
+                        }
+                    }
+                    break;
+            }
+
+            $return[] = $row;
+        }
+
+        return $return;
+    }
+
+    /**
+     * @Deprecated
+     */
    function get_audit_list()
     {
 
