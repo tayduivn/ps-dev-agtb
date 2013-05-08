@@ -197,6 +197,9 @@ class MassUpdateApi extends SugarApi {
     {
         if (!empty($mu_params['uid'])) {
             $mu_params['uid'] = implode(',', $mu_params['uid']);
+        } else {
+            //downstream classes do not deal well with empty values for uid
+            unset($mu_params['uid']);
         }
     }
 
