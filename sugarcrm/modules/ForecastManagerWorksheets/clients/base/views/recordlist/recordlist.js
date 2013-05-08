@@ -56,7 +56,7 @@
                         ret = !(this.selectedUser.showOpps);
                     }
 
-                    if (ret === false && !this.layout.$el.hasClass('hide')) {
+                    if (ret === false && this.layout.isVisible()) {
                         // hide the layout
                         console.log('manager beforeRender hide');
                         this.layout.hide();
@@ -69,13 +69,13 @@
                     var user = this.context.parent.get('selectedUser') || app.user.toJSON();
                     console.log('Manager Render:', user.isManager, user.showOpps);
                     if (user.isManager && user.showOpps == false) {
-                        if (this.layout.$el.hasClass('hide')) {
+                        if (!this.layout.isVisible()) {
                             console.log('Manager Show', user);
                             this.layout.show();
                         }
 
                         // insert the footer
-                        if (!_.isEmpty(this.totals)) {
+                        if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
                             console.log('insert manager footer');
                             var tpl = app.template.getView('recordlist.totals', this.module);
                             this.$el.find('tbody').after(tpl(this));
@@ -84,7 +84,7 @@
                         // set the commit button states to match the models
                         this.setCommitLogButtonStates();
                     } else {
-                        if (!this.layout.$el.hasClass('hide')) {
+                        if (this.layout.isVisible()) {
                             console.log('Manager Hide', user);
                             this.layout.hide();
                         }
@@ -93,7 +93,7 @@
 
                 this.context.parent.on('change:selectedTimePeriod', function(model, changed) {
                     this.selectedTimeperiod = changed;
-                    if (!this.layout.$el.hasClass('hide')) {
+                    if (this.layout.isVisible()) {
                         this.collection.fetch();
                     }
                 }, this);
@@ -124,7 +124,7 @@
                     if (doFetch) {
                         this.collection.fetch();
                     } else {
-                        if (this.selectedUser.isManager && this.selectedUser.showOpps == true && !this.layout.$el.hasClass('hide')) {
+                        if (this.selectedUser.isManager && this.selectedUser.showOpps == true && this.layout.isVisible()) {
                             // viewing managers opp worksheet so hide the manager worksheet
                             this.layout.hide();
                         }
@@ -202,7 +202,7 @@
 
             if (sl.isManager == false) {
                 // they are not a manager, we should always hide this if it's not already hidden
-                if (!this.layout.$el.hasClass('hide')) {
+                if (this.layout.isVisible()) {
                     this.layout.hide();
                 }
                 return;
@@ -311,7 +311,9 @@
 
         var ctx = this.context.parent || this.context;
         // fire an event on the parent context
-        ctx.trigger('forecasts:worksheet:totals', this.totals, 'mgr');
+        if(this.isVisible()) {
+            ctx.trigger('forecasts:worksheet:totals', this.totals, 'mgr');
+        }
     },
 
     /**

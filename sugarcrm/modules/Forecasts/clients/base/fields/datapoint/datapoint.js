@@ -66,6 +66,13 @@
             return;
         }
 
+        this.context.on('change:selectedUser change:selectedTimePeriod', function() {
+            this.last_commit = undefined;
+            this.initial_total = 0;
+            this.total = 0;
+            this.arrow = '';
+        }, this);
+
         // any time the main forecast collection is reset
         // this contains the commit history
         this.collection.on('reset', function() {
@@ -80,11 +87,14 @@
                 this.total = 0;
                 this.arrow = '';
             }
-
             if(!this.disposed) this.render();
         }, this);
         this.context.on('forecasts:worksheet:totals', function(totals, type) {
-            this.total = totals[this.total_field];
+            var field = this.total_field;
+            if(type == "mgr") {
+                field += '_adjusted'
+            }
+            this.total = totals[field];
             this.previous_type = type;
 
             if(!this.disposed) this.render();

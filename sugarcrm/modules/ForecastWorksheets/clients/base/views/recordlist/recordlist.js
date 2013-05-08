@@ -37,10 +37,10 @@
                     var showOpps = (_.isUndefined(this.selectedUser.showOpps)) ? false : this.selectedUser.showOpps,
                         isManager = (_.isUndefined(this.selectedUser.isManager)) ? true : this.selectedUser.isManager;
 
-                    if (!(showOpps || !isManager) && !this.layout.$el.hasClass('hide')) {
+                    if (!(showOpps || !isManager) && this.layout.isVisible()) {
                         console.log('beforeRender Hide');
                         this.layout.hide();
-                    } else if ((showOpps || !isManager) && this.layout.$el.hasClass('hide')) {
+                    } else if ((showOpps || !isManager) && !this.layout.isVisible()) {
                         console.log('beforeRender Show');
                         this.layout.show();
                     }
@@ -52,7 +52,7 @@
                 this.on('render', function() {
                     var user = this.context.parent.get('selectedUser') || app.user.toJSON()
                     if (user.showOpps || !user.isManager) {
-                        if (this.layout.$el.hasClass('hide')) {
+                        if (!this.layout.isVisible()) {
                             console.log('Rep Show', user);
                             this.layout.show();
                         }
@@ -64,13 +64,13 @@
                         }
 
                         // insert the footer
-                        if (!_.isEmpty(this.totals)) {
+                        if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
                             console.log('render rep footer');
                             var tpl = app.template.getView('recordlist.totals', this.module);
                             this.$el.find('tbody').after(tpl(this));
                         }
                     } else {
-                        if (!this.layout.$el.hasClass('hide')) {
+                        if (this.layout.isVisible()) {
                             console.log('Rep Hide', user);
                             this.layout.hide();
                         }
@@ -88,7 +88,7 @@
 
                 this.context.parent.on('change:selectedTimePeriod', function(model, changed) {
                     this.selectedTimeperiod = changed;
-                    if (!this.layout.$el.hasClass('hide')) {
+                    if (this.layout.isVisible()) {
                         this.collection.fetch();
                     }
                 }, this);
@@ -109,7 +109,7 @@
                     if (doFetch) {
                         this.collection.fetch();
                     } else {
-                        if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && !this.layout.$el.hasClass('hide')) {
+                        if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && this.layout.isVisible()) {
                             // we need to hide
                             console.log('rep fetch hide');
                             this.layout.hide();
@@ -182,7 +182,9 @@
 
         var ctx = this.context.parent || this.context;
         // fire an event on the parent context
-        ctx.trigger('forecasts:worksheet:totals', this.totals, 'rep');
+        if(this.isVisible()) {
+            ctx.trigger('forecasts:worksheet:totals', this.totals, 'rep');
+        }
     },
 
     sync: function(method, model, options) {

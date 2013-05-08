@@ -20,7 +20,7 @@
         this.syncInitData();
     },
 
-    // overwrite load data, we will call this from above
+    // overwrite load data, we will call this later
     loadData: function() {
     },
 
@@ -35,7 +35,11 @@
             }, this);
             // since the selected user change on the context, update the model
             this.context.on('change:selectedUser', function(model, changed) {
-                this.model.set('selectedUserId', changed.id);
+                var update = {
+                    'selectedUserId': changed.id,
+                    'forecastType': app.utils.getForecastType(changed.isManager, changed.showOpps)
+                }
+                this.model.set(update);
             }, this);
             // since the selected timeperiod changes on the model, update the timeperiod
             this.model.on('change:selectedTimePeriod', function(model, changed) {
@@ -82,6 +86,7 @@
             app.view.Layout.prototype.initialize.call(this, this.initOptions);
 
             this.model.set('selectedUserId', change.id, {silent: true});
+            this.model.set('forecastType', app.utils.getForecastType(change.isManager, change.showOpps));
             this.collection.sync = _.bind(this.sync, this);
 
             // load the data
@@ -108,14 +113,6 @@
 
         options.params = options.params || {};
 
-        /*if (!_.isUndefined(this.selectedUser.id)) {
-            options.params.user_id = this.selectedUser.id;
-        }
-
-        if (!_.isEmpty(this.selectedTimeperiod)) {
-            options.params.timeperiod_id = this.selectedTimeperiod;
-        }*/
-
         var args_filter = [],
             filter = null;
         if(this.model.has('selectedTimePeriod')) {
@@ -123,7 +120,9 @@
         }
         if(this.model.has('selectedUserId')) {
             args_filter.push({"user_id": this.model.get('selectedUserId')});
+            args_filter.push({"forecast_type": this.model.get('forecastType')});
         }
+
         if(!_.isEmpty(args_filter)) {
             filter = {"filter": args_filter};
         }
