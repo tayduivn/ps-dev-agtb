@@ -22,7 +22,7 @@ if(!defined("sugarEntry") || !sugarEntry) die("Not A Valid Entry Point");
  ********************************************************************************/
 
 require_once("clients/base/api/ModuleApi.php");
-require_once("modules/Users/UserSignature.php");
+require_once("modules/UserSignatures/UserSignature.php");
 
 class SignaturesApi extends ModuleApi
 {

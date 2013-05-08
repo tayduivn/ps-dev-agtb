@@ -32,7 +32,7 @@ class UserSignature extends SugarBean
 	var $name;
 	var $signature;
 	var $table_name = 'users_signatures';
-	var $module_dir = 'Users';
+	var $module_dir = 'UserSignatures';
 	var $object_name ='UserSignature';
 	var $disable_custom_fields = true;
 	//BEGIN SUGARCRM flav=pro ONLY

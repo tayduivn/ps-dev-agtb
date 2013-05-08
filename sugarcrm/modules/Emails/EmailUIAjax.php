@@ -205,9 +205,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     case "deleteSignature":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: deleteSignature");
         if(isset($_REQUEST['id'])) {
-  			require_once("modules/Users/UserSignature.php");
+  			require_once("modules/UserSignatures/UserSignature.php");
 
-  			BeanFactory::deleteBean('UserSignature', $_REQUEST['id']);
+  			BeanFactory::deleteBean('UserSignatures', $_REQUEST['id']);
             $signatureArray = $current_user->getSignaturesArray();
 	        // clean "none"
 	        foreach($signatureArray as $k => $v) {

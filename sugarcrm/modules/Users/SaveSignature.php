@@ -18,7 +18,7 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('modules/Users/UserSignature.php');
+require_once('modules/UserSignatures/UserSignature.php');
 global $current_user;
 
 $us = new UserSignature();
@@ -38,8 +38,6 @@ if(empty($us->user_id) && isset($_REQUEST['the_user_id'])){
 else{
 	$us->user_id = $current_user->id;
 }
-//_pp($_REQUEST);
-//_pp($us);
 $us->save();
 
 $js = '
@@ -54,4 +52,3 @@ window.close();
 </script>';
 
 echo $js;
-?>
