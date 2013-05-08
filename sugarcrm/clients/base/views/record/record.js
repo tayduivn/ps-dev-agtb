@@ -281,6 +281,11 @@
     showPreviousNextBtnGroup: function () {
         var listCollection = this.context.get('listCollection') || new Backbone.Collection();
         var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
+        if (listCollection && listCollection.models && listCollection.models.length <= 1) {
+            this.showPrevNextBtnGroup = false;
+        } else {
+            this.showPrevNextBtnGroup = true;
+        }
         if (this.collection) {
             this.collection.previous = listCollection.models[recordIndex - 1] ? listCollection.models[recordIndex - 1] : undefined;
             this.collection.next = listCollection.models[recordIndex + 1] ? listCollection.models[recordIndex + 1] : undefined;
