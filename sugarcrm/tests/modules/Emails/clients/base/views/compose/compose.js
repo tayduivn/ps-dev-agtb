@@ -113,35 +113,30 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe("prepopulate", function () {
-        var mapRecipientStub, populateRelatedStub, contextTriggerStub;
+        var populateRelatedStub, contextTriggerStub;
 
         beforeEach(function () {
-            mapRecipientStub = sinon.stub(view, 'mapRecipient');
             populateRelatedStub = sinon.stub(view, 'populateRelated');
             contextTriggerStub = sinon.stub(view.context, 'trigger');
         });
 
         afterEach(function () {
-            mapRecipientStub.restore();
             populateRelatedStub.restore();
             contextTriggerStub.restore();
         });
 
-        it('should add recipients for to if mapRecipient returns a value', function() {
-            var to1 = {id: '123', email: 'foo@foo.com'};
-            var to2 = {id: '456'};
-            var recipientCollection;
-            toAddresses = [to1, to2];
-            ccAddresses = [
-                {id: '789', email: 'foo@bar.com'}
-            ];
-            mapRecipientStub.withArgs(to1).returns(to1);
-            mapRecipientStub.withArgs(to2).returns(null);
-            view.prepopulate({to_addresses: toAddresses});
-            expect(contextTriggerStub.lastCall.args[0]).toEqual("recipients:to_addresses:add");
-            recipientCollection = contextTriggerStub.lastCall.args[1];
-            expect(recipientCollection.models.length).toBe(1);
-            expect(recipientCollection.models[0].attributes).toEqual(to1);
+        it("Should trigger recipient add on context if to_addresses, cc_addresses, or bcc_addresses value is passed in.", function() {
+            view.prepopulate({
+                to_addresses: [{email: "to@foo.com"}, {email: "too@foo.com"}],
+                cc_addresses: [{email: "cc@foo.com"}],
+                bcc_addresses: [{email: "bcc@foo.com"}]
+            });
+            expect(contextTriggerStub.callCount).toBe(3); // once for each recipient type passed in
+        });
+
+        it("Should not trigger recipient add on context if no recipients are passed in.", function() {
+            view.prepopulate({});
+            expect(contextTriggerStub.callCount).toBe(0);
         });
 
         it("should call populateRelated if related value passed", function () {
@@ -152,109 +147,6 @@ describe("Emails.Views.Compose", function() {
         it("should set other values if passed", function () {
             view.prepopulate({foo: 'bar'});
             expect(view.model.get('foo')).toEqual('bar');
-        });
-
-        it("should not trigger recipient add on context if no recipients are mapped successfully", function () {
-            var toAddresses = [{id: '123'}];
-            mapRecipientStub.returns(null);
-            view.prepopulate({to_addresses: toAddresses});
-            expect(contextTriggerStub.callCount).toBe(0);
-        });
-
-    });
-
-    describe('mapRecipient', function() {
-        var bean;
-
-        beforeEach(function() {
-            bean = new Backbone.Model({
-                id: 'IdOnBean',
-                name: 'NameOnBean',
-                email1: 'Email1OnBean'
-            });
-            bean.module = 'ModuleOnBean';
-        });
-
-        afterEach(function() {
-            delete bean;
-        });
-
-        it('should pull id, module, name, and email from bean if no values directly passed in', function() {
-            var inputValue = {
-                    bean: bean
-                },
-                expectedResult = {
-                    id: bean.get('id'),
-                    module: bean.module,
-                    name: bean.get('name'),
-                    email: bean.get('email1')
-                },
-                actualResult = view.mapRecipient(inputValue);
-
-            expect(actualResult.attributes).toEqual(expectedResult);
-        });
-
-        it('should pull id, module, name, and email directly from value object if passed in', function() {
-            var inputValue = {
-                    id: 'IdOnValue',
-                    module: 'ModuleOnValue',
-                    name: 'NameOnValue',
-                    email: 'Email1OnValue',
-                    bean: bean
-                },
-                expectedResult = {
-                    id: inputValue.id,
-                    module: inputValue.module,
-                    name: inputValue.name,
-                    email: inputValue.email
-                },
-                actualResult = view.mapRecipient(inputValue);
-
-            expect(actualResult.attributes).toEqual(expectedResult);
-        });
-
-        it('should pull name/email directly from value object and id/module from bean', function() {
-            var inputValue = {
-                    name: 'NameOnValue',
-                    email: 'EmailOnValue',
-                    bean: bean
-                },
-                expectedResult = {
-                    id: bean.get('id'),
-                    module: bean.module,
-                    name: inputValue.name,
-                    email: inputValue.email
-                },
-                actualResult = view.mapRecipient(inputValue);
-
-            expect(actualResult.attributes).toEqual(expectedResult);
-        });
-
-        it('should pull primary email address if email1 not on the bean', function() {
-            var actualResult, expectedEmailAddress;
-
-            bean.unset('email1');
-            expectedEmailAddress = 'winner@chicken.dinner';
-            bean.set('email', [
-                {
-                    email_address: 'foo@bar.com'
-                },
-                {
-                    email_address: expectedEmailAddress,
-                    primary_address: 1
-                }
-            ]);
-
-            actualResult = view.mapRecipient({bean: bean});
-            expect(actualResult.get('email')).toEqual(expectedEmailAddress);
-        });
-
-        it('should return null if no email address passed in', function() {
-            var actualResult;
-
-            bean.unset('email1');
-            actualResult = view.mapRecipient({bean: bean});
-            expect(actualResult).toBeNull();
         });
     });
 
@@ -340,11 +232,10 @@ describe("Emails.Views.Compose", function() {
 
         it('should call mail api with correctly formatted model', function() {
             var actualModel,
-                recipient      = new Backbone.Model({email: "foo@bar.com"}),
-                expectedStatus = 'ready';
+                expectedStatus = 'ready',
+                to_addresses   = new Backbone.Collection([{id: "1234", email: "foo@bar.com"}]);
 
-            view.model.set('to_addresses', recipient.get("email"));
-            view.model.set('to_addresses_collection', [recipient]);
+            view.model.set('to_addresses', to_addresses);
             view.model.set('foo', 'bar');
             view.saveModel(expectedStatus, 'pending message', 'success message');
 
@@ -353,8 +244,10 @@ describe("Emails.Views.Compose", function() {
 
             actualModel = apiCallStub.lastCall.args[2];
             expect(actualModel.get('status')).toEqual(expectedStatus); //status set on model
-            expect(actualModel.get('to_addresses')).toEqual(view.model.get("to_addresses_collection")); //email formatted correctly
+            expect(actualModel.get('to_addresses')).toEqual(to_addresses); //email formatted correctly
             expect(actualModel.get('foo')).toEqual('bar'); //any other model attributes passed to api
+
+            delete to_addresses;
         });
 
         it('should show pending message before call, then after call dismiss that message and show success', function() {
