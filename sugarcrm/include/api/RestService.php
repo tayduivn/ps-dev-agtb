@@ -146,10 +146,10 @@ class RestService extends ServiceBase {
             // This loads the path variables in, so that on the /Accounts/abcd, $module is set to Accounts, and $id is set to abcd
             $pathVars = $this->request->getPathVars($route);
 
-            if ( count($_GET) > 0 ) {
+            $getVars = array();
+            if ( !empty($_GET)) {
                 // This has some get arguments, let's parse those in
                 // We need to pre-parse this for JSON-encoded arguments because the XSS stuff will mangle them, and to keep symmetrywith POST style data
-                $getVars = $_GET;
                 if ( !empty($route['jsonParams']) ) {
                     foreach ( $route['jsonParams'] as $fieldName ) {
                         if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
@@ -157,32 +157,26 @@ class RestService extends ServiceBase {
                              && ( $_GET[$fieldName]{0} == '{'
                                    || $_GET[$fieldName]{0} == '[' )) {
                             // This may be JSON data
-                            $rawValue = $GLOBALS['RAW_REQUEST'][$fieldName];
-                            $jsonData = json_decode($rawValue,true,32);
+                            $jsonData = @json_decode($_GET[$fieldName],true,32);
                             if ( $jsonData == null ) {
                                 // Did not decode, could be a string that just happens to start with a '{', don't mangle it further
                                 continue;
                             }
                             // Need to dig through this array and make sure all of the elements in here are safe
-                            // FIXME: this should be removed and handled by the DB layer
-                            $getVars[$fieldName] = securexss($jsonData);
+                            $getVars[$fieldName] = $jsonData;
                         }
                     }
                 }
-            } else {
-                $getVars = array();
             }
 
-
+            $postVars = array();
             if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
                 // This route wants the raw post contents
                 // We just ignore it here, the function itself has to know how to deal with the raw post contents
                 // this will mostly be used for binary file uploads.
-                $postVars = array();
-            } else if ( count($_POST) > 0 ) {
+            } else if ( !empty($_POST) ) {
                 // They have normal post arguments
-                // FIXME: this should be removed and handled by the DB layer
-                $postVars = securexss($_POST);
+                $postVars = $_POST;
             } else {
                 $postContents = null;
                 if ( !empty($GLOBALS['HTTP_RAW_POST_DATA']) ) {
@@ -193,16 +187,11 @@ class RestService extends ServiceBase {
                 if ( !empty($postContents) ) {
                     // This looks like the post contents are JSON
                     // Note: If we want to support rest based XML, we will need to change this
-                    $postVars = json_decode($postContents,true);
+                    $postVars = @json_decode($postContents,true,32);
                     if ( !is_array($postVars) ) {
                         // FIXME: Handle improperly encoded JSON
                         $postVars = array();
                     }
-                    // FIXME: this should be removed and handled by the DB layer
-                    $postVars = securexss($postVars);
-                } else {
-                    // No posted variables
-                    $postVars = array();
                 }
             }
 
