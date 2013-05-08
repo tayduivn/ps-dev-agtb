@@ -53,10 +53,15 @@
         this.$('[data-toggle="dropdown"]').dropdown();
     },
     setLanguage: function(e) {
-        app.lang.hasChanged = true;
         var $li = this.$(e.currentTarget),
             langKey = $li.data("lang-key");
-        app.alert.show('language', {level: 'warning', title: 'LBL_LOADING_LANGUAGE', autoclose: false});
-        app.lang.setLanguage(langKey, function() { app.alert.dismiss('language'); });
+        app.alert.show('language', {level: 'warning', title: app.lang.getAppString('LBL_LOADING_LANGUAGE'), autoclose: false});
+        app.lang.setLanguage(langKey, function() {
+            app.alert.dismiss('language');
+            if(!app.api.isAuthenticated()){
+                // Trigger sync:complete to force a rerender
+                app.events.trigger("app:sync:complete");
+            }
+        });
     }
 })
