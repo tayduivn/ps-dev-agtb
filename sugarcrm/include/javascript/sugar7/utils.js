@@ -189,7 +189,7 @@
                  */
                 getForecastType: function(isManager, showOpps) {
                     /**
-                     * Three cases exist when a row is showing historyLog icon:
+                     * Three cases exist when a row is showing commitLog icon:
                      *
                      * Manager  - showOpps=1 - isManager=1 => Manager's Opportunities row - forecast_type = 'Direct'
                      * Manager  - showOpps=0 - isManager=1 => Manager has another manager in their ManagerWorksheet - forecast_type = 'Rollup'

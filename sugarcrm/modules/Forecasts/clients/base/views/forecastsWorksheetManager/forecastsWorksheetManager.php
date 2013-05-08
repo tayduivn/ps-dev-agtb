@@ -131,7 +131,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
 
                 array(
                     'name' => 'user_history_log',
-                    'type' => 'historyLog',
+                    'type' => 'commitLog',
                     'label' => '',
                     'sortable' => false,
                     'default' => true,

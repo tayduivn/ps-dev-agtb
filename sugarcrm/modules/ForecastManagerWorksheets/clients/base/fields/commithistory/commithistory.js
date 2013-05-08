@@ -69,7 +69,7 @@
 
         this.$el.html(tpl({
             commit: outputLog.text,
-            commit_date: app.date.stripIsoTimeDelimterAndTZ(oldestModel.get('date_entered'))
+            commit_date: oldestModel.get('date_modified')
         }));
 
         // kick off the relativetime

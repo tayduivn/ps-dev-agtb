@@ -28,6 +28,18 @@ $viewdefs['Forecasts']['base']['view']['info'] = array(
             'enabled' => true,
         ),
     ),
+    'last_commit' => array(
+        array(
+            'name' => 'lastCommitDate',
+            'type' => 'lastcommit',
+        )
+    ),
+    'commitlog' => array(
+        array(
+            'name' => 'commitLog',
+            'type' => 'commitlog',
+        )
+    ),
     'datapoints' => array(
         array(
             'name' => 'likely_case',

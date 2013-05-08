@@ -62,7 +62,7 @@
     /**
      * Stores the historical log of the Forecast entries
      */
-    historyLog: [],
+    commitLog: [],
 
     /**
      * Previous committed date value to display in the view
@@ -92,7 +92,7 @@
             // the only thing CommitLog cares about is when committed's collection changes
             this.context.on('forecasts:committed:collectionUpdated', function(collection) {
                 this.collection.reset(collection.toJSON());
-                this.buildForecastsCommitted()
+                this.buildCommitLog()
             }, this);
         }
     },
@@ -111,9 +111,9 @@
     /**
      * Does the heavy lifting of looping through models to build the commit history
      */
-    buildForecastsCommitted: function() {
+    buildCommitLog: function() {
         //Reset the history log
-        this.historyLog = [];
+        this.commitLog = [];
 
         // if we have no models, exit out of the method
         if(_.isEmpty(this.collection.models)) {
@@ -139,12 +139,12 @@
         var loopPreviousModel = '';
         var models = _.clone(this.collection.models).reverse();
         _.each(models, function(model) {
-            this.historyLog.push(app.utils.createHistoryLog(loopPreviousModel, model));
+            this.commitLog.push(app.utils.createHistoryLog(loopPreviousModel, model));
             loopPreviousModel = model;
         }, this);
 
         //reset the order of the history log for display
-        this.historyLog.reverse();
+        this.commitLog.reverse();
 
         if (!this.disposed) {
             this.render();

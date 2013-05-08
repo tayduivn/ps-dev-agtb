@@ -33,6 +33,11 @@
     total: 0,
 
     /**
+     * What was the number from the last commit
+     */
+    last_commit: undefined,
+
+    /**
      * Can we actually display this field and have the data binding on it
      */
     hasAccess: true,
@@ -43,10 +48,16 @@
         this.total_field = this.total_field || this.name;
 
         this.hasAccess = app.utils.getColumnVisFromKeyMap(this.name, 'forecastsWorksheet');
-
         // before we try and render, lets see if we can actually render this field
         this.before('render', function() {
-            return this.hasAccess
+            if(!this.hasAccess) {
+                return false;
+            }
+
+            // adjust the arrow
+            this.arrow = app.utils.getArrowIconColorClass(this.total, this.initial_total);
+
+            return true;
         }, this);
     },
 
@@ -54,22 +65,26 @@
         if(!this.hasAccess) {
             return;
         }
-        this.context.on('forecasts:worksheet:totals', function(totals, type) {
 
-            var new_total = totals[this.total_field];
-
-            if(this.previous_type != type) {
-                this.initial_total = new_total
-            }
-
-            if(this.previous_type == type) {
-                // figure out the arrows
-                this.arrow = app.utils.getArrowIconColorClass(new_total, this.initial_total);
+        // any time the main forecast collection is reset
+        // this contains the commit history
+        this.collection.on('reset', function() {
+            // get the first line
+            var model = _.first(this.collection.models)
+            if(!_.isUndefined(model)) {
+                this.last_commit = app.math.round(model.get(this.total_field), 2);
+                this.initial_total = app.math.round(model.get(this.total_field), 2);
             } else {
+                this.last_commit = undefined;
+                this.initial_total = 0;
+                this.total = 0;
                 this.arrow = '';
             }
 
-            this.total = new_total;
+            if(!this.disposed) this.render();
+        }, this);
+        this.context.on('forecasts:worksheet:totals', function(totals, type) {
+            this.total = totals[this.total_field];
             this.previous_type = type;
 
             if(!this.disposed) this.render();

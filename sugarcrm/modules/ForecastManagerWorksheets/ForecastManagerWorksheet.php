@@ -363,7 +363,7 @@ class ForecastManagerWorksheet extends SugarBean
     public function fill_in_additional_detail_fields()
     {
         parent::fill_in_additional_detail_fields();
-        // see if the value should show the historyLog Button
+        // see if the value should show the commitLog Button
         $sq = new SugarQuery();
         $sq->select('date_modified');
         $sq->from(BeanFactory::getBean($this->module_name))->where()
