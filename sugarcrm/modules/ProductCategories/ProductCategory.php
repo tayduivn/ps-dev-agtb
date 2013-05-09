@@ -12,7 +12,12 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-// ProductCategory is used to store customer information.
+/**
+ * Class ProductCategory
+ *
+ * ProductCategory is used to store customer information.
+ * @api
+ */
 class ProductCategory extends SugarBean
 {
     // Stored fields
@@ -85,6 +90,9 @@ class ProductCategory extends SugarBean
         $this->__construct();
     }
 
+    /**
+     * Product Category Constructor
+     */
     public function __construct()
     {
         parent::__construct();
@@ -95,11 +103,22 @@ class ProductCategory extends SugarBean
     }
 
 
+    /**
+     * Return the name of the product category
+     *
+     * @return string
+     */
     public function get_summary_text()
     {
         return "$this->name";
     }
 
+    /**
+     * Returns a list of dropdowns of product categories
+     *
+     * @param bool $add_blank
+     * @return array
+     */
     public function get_product_categories($add_blank = false)
     {
         $query = "SELECT id, name FROM $this->table_name where deleted=0 order by list_order asc";
@@ -123,11 +142,23 @@ class ProductCategory extends SugarBean
     }
 
 
+    /**
+     * Override the save_relationship_changes to not do anything
+     *
+     * @param bool $is_update
+     */
     public function save_relationship_changes($is_update)
     {
     }
 
 
+    /**
+     * Create the export query.
+     *
+     * @param string $order_by
+     * @param string $where
+     * @return string
+     */
     public function create_export_query(&$order_by, &$where)
     {
         $query = "SELECT
@@ -153,11 +184,17 @@ class ProductCategory extends SugarBean
         return $query;
     }
 
+    /**
+     * Fill in additional details for the list view
+     */
     public function fill_in_additional_list_fields()
     {
         $this->fill_in_additional_detail_fields();
     }
 
+    /**
+     * Fill in additional details for the detail view
+     */
     public function fill_in_additional_detail_fields()
     {
 
@@ -177,6 +214,11 @@ class ProductCategory extends SugarBean
 
     }
 
+    /**
+     * Return data for the list view
+     *
+     * @return array
+     */
     public function get_list_view_data()
     {
         $temp_array = $this->get_list_view_array();
@@ -186,8 +228,8 @@ class ProductCategory extends SugarBean
     }
 
     /**
-    builds a generic search based on the query string using or
-    do not include any $this-> because this is called on without having the class instantiated
+     * builds a generic search based on the query string using or
+     * do not include any $this-> because this is called on without having the class instantiated
      */
     public function build_generic_where_clause($the_query_string)
     {
@@ -286,9 +328,13 @@ class ProductCategory extends SugarBean
         "ProductsProd" => array("disable" => "N", "function" => 'javascript: set_return_product(\'$name\');')
     );
 
-
-//TreeView Get Query
-
+    /**
+     * TreeView Get Query
+     *
+     * @deprecated
+     * @param $parent_node_id
+     * @return string
+     */
     public function tree_query($parent_node_id)
     {
 
@@ -327,6 +373,12 @@ class ProductCategory extends SugarBean
         //end function get_query
     }
 
+    /**
+     * Get the disabled alert
+     *
+     * @deprecated
+     * @return string
+     */
     public function get_disable_alert()
     {
 
@@ -351,6 +403,13 @@ class ProductCategory extends SugarBean
 
 //////////////////////////Jason////////////////////////////Start Tree Module Area/////////////////////////////////////////////
 
+    /**
+     * Return a Category Name for the given id
+     *
+     * @deprecated
+     * @param $id
+     * @return mixed
+     */
     public function get_name($id)
     {
 
@@ -363,6 +422,13 @@ class ProductCategory extends SugarBean
     }
 
     //used for category listview
+    /**
+     * Return a node_id for a Product Category Id
+     *
+     * @deprecated
+     * @param $id
+     * @return mixed
+     */
     public function get_node_id($id)
     {
 
@@ -376,8 +442,10 @@ class ProductCategory extends SugarBean
 
 
     //used to get the parent category id for saving purposes
-
-    //used for retrieving based on a node id
+    /**
+     * used for retrieving based on a node id
+     * @deprecated
+     */
     public function get_branch_id()
     {
 
@@ -400,7 +468,10 @@ class ProductCategory extends SugarBean
         //end function get_branch_id
     }
 
-    //used for retrieving based on a normal id
+    /**
+     * used for retrieving based on a normal id
+     * @deprecated
+     */
     public function get_category_tree_info()
     {
         $query = "SELECT * from $this->category_tree_table where self_id = '$this->id'";
@@ -429,6 +500,12 @@ class ProductCategory extends SugarBean
     }
 
 
+    /**
+     * Save a category branch
+     *
+     * @deprecated
+     * @param string $is_update
+     */
     public function save_category_branch($is_update = "")
     {
         $this->default_tree_type = "Category";
@@ -462,7 +539,14 @@ class ProductCategory extends SugarBean
 /////////////////////////////////////////////////////Tree mods delete functions/////////////////////////////////////////////
 
 
-    //This function is for when you only delete a category and not its sub categories and products
+    /**
+     * This function is for when you only delete a category and not its sub categories and products
+     *
+     * @deprecated
+     * @param $id
+     * @param $parent_id
+     * @param $parent_node_id
+     */
     public function graft($id, $parent_id, $parent_node_id)
     {
         if ($parent_node_id == "") {
@@ -501,7 +585,12 @@ class ProductCategory extends SugarBean
         //end function graft
     }
 
-    //This function is for when you delete a category and all its sub categories and products
+    /**
+     * This function is for when you delete a category and all its sub categories and products
+     *
+     * @deprecated
+     * @param $id
+     */
     public function prune($id)
     {
 
@@ -530,6 +619,12 @@ class ProductCategory extends SugarBean
     }
 
 
+    /**
+     * Remove a branch
+     *
+     * @deprecated
+     * @param $id
+     */
     public function clear_branch($id)
     {
         $query = "delete from $this->category_tree_table where self_id='$id'";
@@ -537,6 +632,12 @@ class ProductCategory extends SugarBean
         //end function clear_branch
     }
 
+    /**
+     * Mark the products a deleted
+     *
+     * @deprecated
+     * @param $id
+     */
     public function mark_products_deleted($id)
     {
         $query = "UPDATE $this->products_table SET deleted='1' WHERE id='$id'";
@@ -547,7 +648,10 @@ class ProductCategory extends SugarBean
 
 ////////////////////////////////end tree mods delete functions////////////////////////////////////////////////////
 
-    //remove quotes so the javascript tree works properly
+    /**
+     * remove quotes so the javascript tree works properly
+     * @deprecated
+     */
     public function remove_quotes()
     {
         $this->name = js_escape($this->name, false);
@@ -557,6 +661,12 @@ class ProductCategory extends SugarBean
 ////////////End TreeView 2.0//////////////////////////////////////////////////////////
 //END SUGARCRM flav=pro ONLY
 
+    /**
+     * Save a Product Category
+     *
+     * @param bool $check_notify
+     * @return String|void
+     */
     public function save($check_notify = false)
     {
         parent::save($check_notify);
@@ -567,10 +677,14 @@ class ProductCategory extends SugarBean
         if ($id == $this->id) {
             $isUpdate = true;
         }
-        $this->update_forecast_tree($isUpdate);
     }
 
-    //update forecast_tree after bean was saved
+    /**
+     * update forecast_tree after bean was saved
+     *
+     * @deprecated
+     * @param bool $is_update
+     */
     public function update_forecast_tree($is_update = false)
     {
         if (!$is_update) {
