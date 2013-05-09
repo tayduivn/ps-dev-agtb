@@ -59,7 +59,15 @@ class BeanFactory {
     	}
 
     	// Pull values from $params array
-    	$encode = isset($params['encode']) ? $params['encode'] : true;
+    	if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
+    	    // In API mode, we can cache all beans
+    	    $encode = false;
+    	    $can_cache = true;
+    	} else {
+    	    // In GUI mode, we will cache only encoded beans
+    	    $encode = isset($params['encode']) ? $params['encode'] : true;
+    	    $can_cache = $encode;
+    	}
     	$deleted = isset($params['deleted']) ? $params['deleted'] : $deleted;
 
         if (!isset(self::$loadedBeans[$module])) {
@@ -73,7 +81,7 @@ class BeanFactory {
 
         if (!empty($id))
         {
-            if (!$encode || empty(self::$loadedBeans[$module][$id]))
+            if (!$can_cache || empty(self::$loadedBeans[$module][$id]))
             {
                 // $bean = new $beanClass();
                 $bean = SugarBean::_createBean($beanClass);
@@ -87,7 +95,7 @@ class BeanFactory {
                 $result = $bean->retrieve($id, $encode, $deleted);
 
                 if(empty($result)) {
-                    if(!isset($params['strict_retrieve']) || $params['strict_retrieve'] === false) {
+                    if(empty($params['strict_retrieve'])) {
                         return $bean;
                     } else {
                         return null;
@@ -102,7 +110,6 @@ class BeanFactory {
             }
         } else {
             $bean = SugarBean::_createBean($beanClass);
-            //$bean = new $beanClass();
         }
 
         return $bean;
