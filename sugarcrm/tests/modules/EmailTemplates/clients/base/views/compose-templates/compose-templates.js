@@ -48,10 +48,10 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
     });
 
     it("should turn off sorting on all fields", function(){
-        var allNonSortable;
+        var allNonSortable, fields;
 
-
-        var fields = view.meta.panels[0].fields;
+        view.render();
+        fields = view.meta.panels[0].fields;
 
         expect(fields.length).toBeGreaterThan(0);
         allNonSortable = _.all(fields, function (field) {

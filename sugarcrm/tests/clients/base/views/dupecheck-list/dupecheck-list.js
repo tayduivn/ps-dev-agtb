@@ -46,6 +46,7 @@ describe('Base.View.DupeCheckList', function() {
 
         var view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
         view.layout = layout;
+        view.render();
         var fields = view.meta.panels[0].fields;
 
         expect(fields.length).toBeGreaterThan(0);

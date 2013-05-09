@@ -31,15 +31,10 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
+    plugins: ['list-disable-sort'],
 
     initialize: function(options) {
         app.view.views.FlexListView.prototype.initialize.call(this, options);
-
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(field) {
-                field.sortable = false;
-            });
-        });
 
         this.on("render", this._removeLinks, this);
 

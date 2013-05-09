@@ -31,18 +31,13 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-
+    plugins: ['list-disable-sort'],
     collectionSync: null,
 
     initialize: function(options) {
         _.bindAll(this);
-        //turn off sorting & links for dupe check lists
         app.view.views.FlexListView.prototype.initialize.call(this, options);
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(field) {
-                field.sortable = false;
-            });
-        });
+
         this.on("render", this._removeLinks, this);
 
         this.context.on("dupecheck:fetch:fire", this.fetchDuplicates, this);
