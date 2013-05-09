@@ -122,6 +122,7 @@
                 this.populateDashboards();
             }
             else if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
+                this.clearFavoritesRecents(module);
                 if(moduleMeta.favoritesEnabled){
                     this.populateFavorites(module);
                 }
@@ -132,6 +133,10 @@
             }
 
         }
+    },
+    clearFavoritesRecents: function(module){
+        this.$('[data-module=' + module + '] .recentContainer').html('');
+        this.$('[data-module=' + module + '] .favoritesContainer').html('');
     },
     /**
      * Populates favorites on open menu
