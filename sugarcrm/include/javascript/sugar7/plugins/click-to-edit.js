@@ -382,7 +382,7 @@
                     // e.shiftKey: was the shift key pressed
                     // field: the field we are currently on
 
-                    if (field.type !== 'date') {
+                    if (field.type !== 'date' && this.fieldValueChanged((field))) {
                         field.$el.find(field.fieldTag).change();
                     }
 
@@ -404,7 +404,17 @@
                 // get the field value
                 var elVal = field.$el.find(field.fieldTag).val();
 
-                return !_.isEqual(this.unformat(elVal), this.unformat(field.value));
+                if(field.type == 'currency') {
+                    // for currency we want to make sure the value didn't actually change so get the difference
+                    // and multiple it by 100 (2 decimals out), if it's not equal to 0, then it changed.
+                    var diff = Math.abs(this.unformat(elVal) - this.unformat(field.value));
+                    console.log(this.unformat(elVal), this.unformat(field.value), diff, (Math.round(diff*100)));
+                    return ((Math.round(diff*100)) != 0)
+                } else {
+                    return !_.isEqual(this.unformat(elVal), this.unformat(field.value));
+                }
+
+
             },
 
             /**

@@ -23,15 +23,24 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
     'buttons' => array(
         array(
             'name' => 'save_draft_button',
-            'event' => 'button:save_draft_button:click',
-            'type' => 'button',
+            'events' => array(
+                    'click' => 'function(e){
+                    this.view.context.trigger("button:save_draft_button:click");
+                    }'
+                ),
+            'type' => 'rowaction',
             'label' => 'LBL_SAVE_DRAFT',
             'acl_action' => 'current_user',
+            'css_class' => 'btn'
         ),
         array(
             'name' => 'commit_button',
             'type' => 'button',
-            'event' => 'button:commit_button:click',
+            'events' => array(
+                    'click' => 'function(e){
+                    this.view.context.trigger("button:commit_button:click");
+                    }'
+                ),
             'label' => 'LBL_QC_COMMIT_BUTTON',
             'css_class' => 'btn-primary',
             'icon' => 'icon-upload',
