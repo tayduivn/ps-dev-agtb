@@ -270,5 +270,76 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     }
     //END SUGARCRM flav=pro ONLY
 
+    /**
+     * @ticket 62961
+     */
+    public function testCustomFields()
+    {
+        $contact = new Contact_Mock_Bug62961();
+        $fields = $contact->field_defs;
+        $fields['fields']['bigname_c'] =
+        array (
+                'calculated' => 'true',
+                'formula' => 'strToUpper($last_name)',
+                'enforced' => 'true',
+                'dependency' => '',
+                'required' => false,
+                'source' => 'custom_fields',
+                'name' => 'bigname_c',
+                'vname' => 'LBL_BIGNAME',
+                'type' => 'varchar',
+                'massupdate' => '0',
+                'default' => NULL,
+                'no_default' => false,
+                'importable' => 'false',
+                'duplicate_merge' => 'disabled',
+                'audited' => false,
+                'reportable' => true,
+                'unified_search' => false,
+                'merge_filter' => 'disabled',
+                'len' => '255',
+                'size' => '20',
+                'id' => 'Contactsbigname_c',
+                'custom_module' => 'Contacts',
+        );
+        $fields['fields']['report_to_bigname'] =
+        array(
+        'name' => 'report_to_bigname',
+        'rname' => 'bigname_c',
+        'id_name' => 'reports_to_id',
+        'vname' => 'LBL_REPORTS_TO',
+        'type' => 'relate',
+        'link' => 'reports_to_link',
+        'table' => 'contacts',
+        'isnull' => 'true',
+        'module' => 'Contacts',
+        'dbType' => 'varchar',
+        'len' => 'id',
+        'reportable' => false,
+        'source' => 'non-db',
+        );
+        unset($contact->field_defs);
+        $contact->field_defs = $fields;
 
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name", "bigname_c", "report_to_bigname"));
+        $sq->from($contact);
+        $sq->limit(0,1);
+
+        $sql = $sq->compileSql();
+        // ensure the query looks good
+        $this->assertContains("contacts_cstm.bigname_c", $sql);
+        $this->assertContains("_cstm.bigname_c AS report_to_bigname", $sql);
+        $this->assertContains("LEFT JOIN contacts_cstm ON contacts_cstm.id_c = contacts.id", $sql);
+        $this->assertRegExp('/LEFT JOIN contacts_cstm jt(\d+)_cstm ON \(jt\1_cstm.id_c = jt\1\.id\)/', $sql);
+    }
+
+}
+
+class Contact_Mock_Bug62961 extends Contact
+{
+    public function hasCustomFields()
+    {
+        return true;
+    }
 }

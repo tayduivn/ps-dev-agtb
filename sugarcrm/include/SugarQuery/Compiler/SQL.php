@@ -405,10 +405,13 @@ class SugarQuery_Compiler_SQL
             return array("{$table_name}.{$field}", $alias);
         }
 
-        if (isset($data['source']) && $data['source'] == 'custom') {
-            // FIXME: if we're given table.field with custom field, we should use custom alias
-            $table_name = $bean->get_custom_table_name();
-            return array("{$table_name}.{$field}", $alias);
+        if (isset($data['source']) && $data['source'] == 'custom_fields') {
+            if($table_name != $bean->getTableName()) {
+                $cstm_name = "{$table_name}_cstm";
+            } else {
+                $cstm_name = $bean->get_custom_table_name();
+            }
+            return array("{$cstm_name}.{$field}", $alias);
         }
 
         if ($data['type'] == 'parent') {
@@ -549,7 +552,6 @@ class SugarQuery_Compiler_SQL
     protected function compileFrom($bean)
     {
         $return = array();
-        $alias = false;
         if (is_array($bean)) {
             list($bean, $alias) = $bean;
             $this->from_alias = $alias;
@@ -559,7 +561,7 @@ class SugarQuery_Compiler_SQL
         $table_cstm = '';
         $from_clause = "{$table}";
 
-        if (isset($alias)) {
+        if (!empty($alias)) {
             $from_clause .= " {$alias}";
         }
 
@@ -567,7 +569,7 @@ class SugarQuery_Compiler_SQL
             $table_cstm = $bean->get_custom_table_name();
             if (!empty($table_cstm)) {
                 // TODO: CLEAN THIS UP
-                if (isset($alias)) {
+                if (!empty($alias)) {
                     $sql = "LEFT JOIN {$table_cstm} {$alias}_c ON {$alias}_c.id_c = {$alias}.id";
                 } else {
                     $sql = "LEFT JOIN {$table_cstm} ON {$table_cstm}.id_c = {$table}.id";
