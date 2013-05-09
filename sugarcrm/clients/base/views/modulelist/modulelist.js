@@ -431,13 +431,17 @@
              */
             set:function (module) {
                 var $modules, $module, $next;
+                var updateNav = true;
+                if (app.controller && app.controller.layout && app.controller.layout.meta && !_.isUndefined(app.controller.layout.meta.updateNav)) {
+                    updateNav = app.controller.layout.meta.updateNav;
+                }
                 if (module) {
                     this.reset();
 
                     $modules = this._moduleList.$('#module_list');
                     $module = $modules.find("[data-module='" + module + "']");
                     // this module doesn't have a menu so create it and add it
-                    if ($module.length < 1) {
+                    if ($module.length < 1 && updateNav) {
                         var moduleList = {};
                         moduleList[module] = app.metadata.getFullModuleList()[module];
 
