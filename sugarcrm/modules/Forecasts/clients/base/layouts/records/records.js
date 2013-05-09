@@ -31,7 +31,7 @@
             this.collection.on('reset', function() {
                 // get the first model and set the last commit date
                 var lastCommit = _.first(this.collection.models);
-                this.context.set({'currentForecastCommitDate' : lastCommit.get('date_entered')}, {silent: true});
+                this.context.set({'currentForecastCommitDate' : lastCommit.get('date_entered')});
             }, this);
             // since the selected user change on the context, update the model
             this.context.on('change:selectedUser', function(model, changed) {
@@ -48,6 +48,11 @@
             // if the model changes, run a fetch
             this.model.on('change', function(){
                 this.collection.fetch();
+            }, this);
+
+            // listen on the context for a commit trigger
+            this.context.on('forecasts:worksheet:commit', function(worksheet_type, forecast_totals) {
+                this.commitForecast(worksheet_type, forecast_totals);
             }, this);
         }
     },
@@ -140,5 +145,9 @@
 
         url = app.api.buildURL("Forecasts/filter", null, null, options.params);
         app.api.call("create", url, filter, callbacks);
+    },
+
+    commitForecast : function(worksheet_type, forecast) {
+        console.log('Commit Forecast: ', worksheet_type);
     }
 })

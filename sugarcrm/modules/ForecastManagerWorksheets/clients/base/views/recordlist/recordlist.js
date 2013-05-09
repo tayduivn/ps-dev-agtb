@@ -19,6 +19,21 @@
 
     totals: {},
 
+    /**
+     * A Collection to keep track of draft models
+     */
+    draftModels: new Backbone.Collection(),
+
+    /**
+     * If the timeperiod is changed and we have draftModels, keep the previous one to use if they save the models
+     */
+    draftTimeperiod: undefined,
+
+    /**
+     * If the timeperiod is changed and we have draftModels, keep the previous one to use if they save the models
+     */
+    draftUser: undefined,
+
     defaultValues: {
         quota: 0,
         best_case: 0,
@@ -93,13 +108,13 @@
                 }, this);
 
                 this.context.parent.on('button:save_draft_button:click', function() {
-                    if(this.layout.isVisible()) {
-                        console.log("Manager Worksheet Save Draft Button Clicked");
+                    if (this.layout.isVisible()) {
+                        this.saveWorksheet(true);
                     }
                 }, this);
 
                 this.context.parent.on('button:commit_button:click', function() {
-                    if(this.layout.isVisible()) {
+                    if (this.layout.isVisible()) {
                         console.log("Manager Worksheet Commit Button Clicked");
                     }
                 }, this);
@@ -143,10 +158,33 @@
                         }
                     }
                 }, this);
+
+                this.context.parent.on('change:currentForecastCommitDate', function(context, changed) {
+                    if (this.layout.isVisible()) {
+                        // check to see if anything in the collection is a draft, if it is, then send an event
+                        // to notify the commit button to enable
+                        var items = this.collection.filter(function(item) {
+                            if (item.get('date_modified') > changed) {
+                                if (_.isUndefined(this.draftTimeperiod) || _.isUndefined(this.draftUser)) {
+                                    this.draftTimeperiod = this.selectedTimeperiod;
+                                    this.draftUser = this.selectedUser;
+                                }
+                                this.draftModels.add(item, {merge: true});
+                                return true;
+                            }
+                            return false;
+                        }, this);
+
+                        if (items.length > 0) {
+                            // we have draft items. enable the commit button
+                            this.context.parent.trigger('forecast:worksheet:needs_commit', 'mgr');
+                        }
+                    }
+                }, this);
             }
         }
 
-        if(!_.isUndefined(this.dirtyModels)) {
+        if (!_.isUndefined(this.dirtyModels)) {
             this.dirtyModels.on('add', function() {
                 var ctx = this.context.parent || this.context
                 ctx.trigger('forecast:worksheet:dirty', 'mgr');
@@ -331,7 +369,7 @@
 
         var ctx = this.context.parent || this.context;
         // fire an event on the parent context
-        if(this.isVisible()) {
+        if (this.isVisible()) {
             ctx.trigger('forecasts:worksheet:totals', this.totals, 'mgr');
         }
     },
@@ -367,5 +405,101 @@
             }, this);
         }, this);
         return catalog;
+    },
+
+    /**
+     * Clean Up the Draft Modules Collection and dirtyVariables
+     */
+    cleanUpDraftModels: function() {
+        // clean up the draft records and variables
+        this.draftModels.reset();
+        this.draftTimeperiod = undefined;
+        this.draftUser = undefined;
+    },
+
+    saveWorksheet: function(isDraft) {
+        // only run the save when the worksheet is visible and it has dirty records
+        var saveObj = {
+                totalToSave: 0,
+                saveCount: 0,
+                model: undefined,
+                isDraft: isDraft,
+                timeperiod: this.dirtyTimeperiod,
+                userId: this.dirtyUser.id
+            },
+            ctx = this.context.parent || this.context;
+
+        if (this.layout.isVisible()) {
+            /**
+             * If the sheet is dirty, save the dirty rows. Else, if the save is for a commit, and we have
+             * draft models (things saved as draft), we need to resave those as committed (version 1). If neither
+             * of these conditions are true, then we need to fall through and signal that the save is complete so other
+             * actions listening for this can continue.
+             */
+            if (this.isDirty()) {
+                saveObj.totalToSave = this.dirtyModels.length;
+
+                this.dirtyModels.each(function(model) {
+                    saveObj.model = model;
+                    this._worksheetSaveHelper(saveObj, ctx);
+
+                    //add to draft structure so committing knows what to save as non-draft
+                    if (isDraft == true) {
+                        this.draftModels.add(model, {merge: true});
+                    }
+                }, this);
+
+                this.cleanUpDirtyModels();
+            } else if (!isDraft && this.draftModels.length > 0) {
+                saveObj.totalToSave = this.draftModels.length;
+
+                this.draftModels.each(function(model) {
+                    saveObj.model = model;
+                    this._worksheetSaveHelper(saveObj, ctx);
+                }, this);
+
+                //Need to clean up dirty models too as the save event above triggers a change event on the worksheet.
+                this.cleanUpDirtyModels();
+                this.cleanUpDraftModels();
+            } else {
+                if (isDraft) {
+                    app.alert.show('success', {
+                        level: 'success',
+                        autoClose: true,
+                        title: app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                    });
+                }
+                ctx.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', isDraft);
+            }
+        }
+
+        return saveObj.totalToSave
+    },
+
+    /**
+     * Helper function for worksheet save
+     */
+    _worksheetSaveHelper: function(saveObj, ctx) {
+        saveObj.model.set({
+            timeperiod_id: saveObj.timeperiod || this.selectedTimeperiod,
+            current_user: saveObj.userId || this.selectedUser.id
+        }, {silent: true});
+
+        saveObj.model.save({}, {success: _.bind(function() {
+            saveObj.saveCount++;
+            //if this is the last save, go ahead and trigger the callback;
+            if (saveObj.totalToSave === saveObj.saveCount) {
+                if (saveObj.isDraft) {
+                    app.alert.show('success', {
+                        level: 'success',
+                        autoClose: true,
+                        title: app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                    });
+                }
+                ctx.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', saveObj.isDraft);
+            }
+        }, this), silent: true, alerts: { 'success': false }});
     }
 })

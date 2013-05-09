@@ -36,6 +36,19 @@
             this.getField('commit_button').setDisabled(false);
         }, this);
 
+        this.context.on('forecasts:worksheet:saved', function(totalSaved, worksheet_type, wasDraft){
+            // after any save, always disable the draft button
+            this.getField('save_draft_button').setDisabled(true);
+            if(wasDraft !== true) {
+                // only disable the commit button if the save was a commit
+                this.getField('commit_button').setDisabled(true);
+            }
+        }, this);
+
+        this.context.on('forecast:worksheet:needs_commit', function(worksheet_type) {
+            this.getField('commit_button').setDisabled(false);
+        }, this);
+
         app.view.views.HeaderpaneView.prototype.bindDataChange.call(this);
     },
 

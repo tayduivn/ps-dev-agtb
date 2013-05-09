@@ -16,7 +16,7 @@
         /**
          * This plugin enables tracking of models that are dirty in a collection
          *
-         * This is mainly used on Forecasts
+         * This is currently only used in the Forecasts Module
          */
         app.plugins.register('dirty-collection', ['view'], {
 
@@ -28,12 +28,12 @@
             /**
              * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
              */
-            dirtyTimeperiod: '',
+            dirtyTimeperiod: undefined,
 
             /**
              * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
              */
-            dirtyUser: '',
+            dirtyUser: undefined,
 
             /**
              * Attach code for when the plugin is registered on a view
@@ -56,6 +56,11 @@
                 }, this);
 
                 this.collection.on("change", function(model) {
+                    if(_.isUndefined(this.dirtyTimeperiod) || _.isUndefined(this.dirtyUser)) {
+                        var ctx = this.context.parent || this.context;
+                        this.dirtyTimeperiod = ctx.get('selectedTimePeriod');
+                        this.dirtyUser = ctx.get('selectedUser');
+                    }
                     this.dirtyModels.add(model);
                 }, this);
             },
@@ -74,11 +79,11 @@
             cleanUpDirtyModels: function() {
                 // clean up the dirty records and variables
                 this.dirtyModels.reset();
-                this.dirtyTimeperiod = '';
-                this.dirtyUser = '';
+                this.dirtyTimeperiod = undefined;
+                this.dirtyUser = undefined;
+
+                // TODO: add an event here to trigger when this happens, for a possible undo support
             }
-
-
         });
     });
 })(SUGAR.App);

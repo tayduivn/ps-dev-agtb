@@ -35,6 +35,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                         'user_id',
                         'isManager',
                         'show_history_log',
+                        'draft'
                     )
                 ),
                 array(
@@ -139,12 +140,6 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'align' => 'right',
                     'click_to_edit' => true,
                 )
-            ),
-            'footer' => array(
-                array(
-                    'LBL_TOTALS'
-                ),
-                ''
             ),
         ),
     ),
