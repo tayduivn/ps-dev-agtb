@@ -69,6 +69,23 @@ ul.nav.nav-tabs li.activity > p {
   }
 }
 
+table.dataTable {
+  & > thead {
+    th {
+      &> * {
+        display: inline-block;
+        width: 100%;
+        overflow-x: hidden;
+        white-space: nowrap;
+        word-break: break-word;
+        position: relative;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
 .modal-body > .form-horizontal {
   padding: 20px;
   margin-left: 0;
