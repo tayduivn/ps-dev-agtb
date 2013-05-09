@@ -57,7 +57,7 @@ ensureCache($minifyUtils, $rootDir);
         <script language="javascript" src="../include/javascript/sugar7/hbt-helpers.js"></script>
 
         <!-- Portal specific JS -->
-        <script src='../cache/portal2/portal.min.js'></script>
+        <script src='portal.js'></script>
         <script src='config.js'></script>
 
         <!-- CSS -->
@@ -66,9 +66,10 @@ ensureCache($minifyUtils, $rootDir);
         <link href="./assets/loading.css" rel="stylesheet" type="text/css">
     </head>
     <body>
-    	<div>
-			<div id="sidecar">
+        <div id="sidecar">
+            <div id="portal">
                 <div id="alert" class="alert-top">
+
                 </div>
                 <div id="header">
 
@@ -90,9 +91,8 @@ ensureCache($minifyUtils, $rootDir);
 
                 </div>
                 <div id="drawers"></div>
-                <div id="tourguide"></div>
-			</div>
-		</div>
+            </div>
+        </div>
         <script language="javascript">
             var syncResult, view, layout, html;
             var App = SUGAR.App.init({
