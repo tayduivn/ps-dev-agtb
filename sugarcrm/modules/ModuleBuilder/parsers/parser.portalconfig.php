@@ -49,7 +49,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         $portalConfig = array(
             'platform' => 'portal',
             'debugSugarApi' => true,
-            'logLevel' => 'DEBUG',
+            'logLevel' => 'ERROR',
             'logWriter' => 'ConsoleWriter',
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),
@@ -79,6 +79,9 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                 )
             )
         );
+        if (inDeveloperMode()) {
+            $portalConfig['logLevel'] = 'DEBUG';
+        }
         foreach ($portalFields as $field) {
             if (isset($_REQUEST[$field])) {
                 $portalConfig[$field] = $_REQUEST[$field];
