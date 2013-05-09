@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'GridBuilder'],
 
     events: {
         'click .interactions-chart': 'switchChart'

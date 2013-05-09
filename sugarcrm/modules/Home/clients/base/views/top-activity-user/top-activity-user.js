@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'GridBuilder'],
     events: {
         'change select[name=filter_duration]': 'filterChanged'
     },

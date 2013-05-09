@@ -1,6 +1,6 @@
 ({
 
-    plugins: ['Dashlet', 'timeago'],
+    plugins: ['Dashlet', 'timeago', 'GridBuilder'],
     _dataFetched: false,
     events : {
         'click a.preview-attachment' : 'previewAttachment',

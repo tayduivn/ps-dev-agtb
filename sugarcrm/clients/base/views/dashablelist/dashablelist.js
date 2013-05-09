@@ -1,6 +1,6 @@
 ({
     extendsFrom: 'ListView',
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'GridBuilder'],
     _dataFetched: false, // flag to determine if we tried to get records already
     initDashlet: function (view) {
         var dashlet = app.utils.deepCopy(this.context.get("dashlet")),

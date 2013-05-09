@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet', 'timeago'],
+    plugins: ['Dashlet', 'timeago', 'GridBuilder'],
     statusMapping:{
         'New' : 'important',
         'Assigned' : 'warning',
