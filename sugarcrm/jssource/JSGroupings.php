@@ -386,7 +386,6 @@
            //BEGIN SUGARCRM flav=ent ONLY
             $sugar_grp_portal2 = array_merge(
                 array('sidecar/lib/jquery/jquery.placeholder.min.js' => 'portal2/portal.min.js'), // preserve ordering
-                getSubgroupForTarget('bootstrap', 'portal2/portal.min.js'),
                 array(
                     'portal2/error.js'               => 'portal2/portal.min.js',
                     'portal2/user.js'                => 'portal2/portal.min.js',
