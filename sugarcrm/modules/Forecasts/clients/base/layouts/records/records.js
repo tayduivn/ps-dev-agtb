@@ -31,7 +31,7 @@
             this.collection.on('reset', function() {
                 // get the first model and set the last commit date
                 var lastCommit = _.first(this.collection.models);
-                this.context.set({'currentForecastCommitDate' : lastCommit.get('date_entered')});
+                this.context.set({'currentForecastCommitDate': lastCommit.get('date_entered')});
             }, this);
             // since the selected user change on the context, update the model
             this.context.on('change:selectedUser', function(model, changed) {
@@ -46,13 +46,13 @@
                 this.context.set('selectedTimePeriod', changed);
             }, this);
             // if the model changes, run a fetch
-            this.model.on('change', function(){
+            this.model.on('change', function() {
                 this.collection.fetch();
             }, this);
 
             // listen on the context for a commit trigger
-            this.context.on('forecasts:worksheet:commit', function(worksheet_type, forecast_totals) {
-                this.commitForecast(worksheet_type, forecast_totals);
+            this.context.on('forecasts:worksheet:commit', function(user, worksheet_type, forecast_totals) {
+                this.commitForecast(user, worksheet_type, forecast_totals);
             }, this);
         }
     },
@@ -120,15 +120,15 @@
 
         var args_filter = [],
             filter = null;
-        if(this.model.has('selectedTimePeriod')) {
+        if (this.model.has('selectedTimePeriod')) {
             args_filter.push({"timeperiod_id": this.model.get('selectedTimePeriod')});
         }
-        if(this.model.has('selectedUserId')) {
+        if (this.model.has('selectedUserId')) {
             args_filter.push({"user_id": this.model.get('selectedUserId')});
             args_filter.push({"forecast_type": this.model.get('forecastType')});
         }
 
-        if(!_.isEmpty(args_filter)) {
+        if (!_.isEmpty(args_filter)) {
             filter = {"filter": args_filter};
         }
 
@@ -147,7 +147,38 @@
         app.api.call("create", url, filter, callbacks);
     },
 
-    commitForecast : function(worksheet_type, forecast) {
-        console.log('Commit Forecast: ', worksheet_type);
+    commitForecast: function(user, worksheet_type, forecast_totals) {
+        var forecast = new this.collection.model(),
+            forecastType = app.utils.getForecastType(user.isManager, user.showOpps),
+            forecastData = {},
+            totalsProperty = 'case',
+            likelyProperty = 'amount';
+
+        if (forecastType == 'Rollup') {
+            totalsProperty = 'adjusted';
+            likelyProperty = 'likely_adjusted';
+        }
+
+        forecastData.best_case = forecast_totals['best_' + totalsProperty];
+        forecastData.likely_case = forecast_totals[likelyProperty];
+        forecastData.worst_case = forecast_totals['worst_' + totalsProperty];
+
+        // we need a commit_type so we know what to do on the back end.
+        forecastData.commit_type = worksheet_type;
+        forecastData.timeperiod_id = forecast_totals.timeperiod_id || this.model.get('selectedTimePeriod');
+        forecastData.forecast_type = forecastType;
+        forecastData.amount = forecast_totals.amount || forecastData.likely_case;
+        forecastData.opp_count = forecast_totals.included_opp_count;
+        forecastData.closed_amount = forecast_totals.closed_amount;
+        forecastData.closed_count = forecast_totals.closed_count;
+        forecastData.pipeline_amount = forecast_totals.pipeline_amount || 0;
+        forecastData.pipeline_opp_count = forecast_totals.pipeline_opp_count || 0;
+
+        forecast.save(forecastData, { success: _.bind(function() {
+            // Call sync again so commitLog has the full collection
+            // method gets overridden and options just needs an
+            this.collection.fetch();
+            this.context.trigger("forecasts:worksheet:committed", worksheet_type, forecastData);
+        }, this), silent: true, alerts: { 'success': false }});
     }
 })

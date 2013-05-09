@@ -13,6 +13,8 @@
 ({
     extendsFrom: 'RecordlistView',
 
+    worksheetType: 'manager',
+
     selectedUser: {},
 
     selectedTimeperiod: {},
@@ -115,7 +117,10 @@
 
                 this.context.parent.on('button:commit_button:click', function() {
                     if (this.layout.isVisible()) {
-                        console.log("Manager Worksheet Commit Button Clicked");
+                        this.context.parent.once('forecasts:worksheet:saved', function() {
+                            this.context.parent.trigger('forecasts:worksheet:commit', this.selectedUser, this.worksheetType, this.getCommitTotals())
+                        }, this);
+                        this.saveWorksheet(false);
                     }
                 }, this);
 
@@ -127,7 +132,7 @@
                 }, this);
 
                 this.context.parent.on('forecasts:worksheet:totals', function(totals, type) {
-                    if (type == "mgr") {
+                    if (type == this.worksheetType) {
                         console.log('update mgr footer');
                         var tpl = app.template.getView('recordlist.totals', this.module);
                         this.$el.find('tfoot').remove();
@@ -160,26 +165,11 @@
                 }, this);
 
                 this.context.parent.on('change:currentForecastCommitDate', function(context, changed) {
-                    if (this.layout.isVisible()) {
-                        // check to see if anything in the collection is a draft, if it is, then send an event
-                        // to notify the commit button to enable
-                        var items = this.collection.filter(function(item) {
-                            if (item.get('date_modified') > changed) {
-                                if (_.isUndefined(this.draftTimeperiod) || _.isUndefined(this.draftUser)) {
-                                    this.draftTimeperiod = this.selectedTimeperiod;
-                                    this.draftUser = this.selectedUser;
-                                }
-                                this.draftModels.add(item, {merge: true});
-                                return true;
-                            }
-                            return false;
-                        }, this);
+                    this.checkForDraftRows(changed);
+                }, this);
 
-                        if (items.length > 0) {
-                            // we have draft items. enable the commit button
-                            this.context.parent.trigger('forecast:worksheet:needs_commit', 'mgr');
-                        }
-                    }
+                this.collection.on('reset', function() {
+                    this.checkForDraftRows(this.context.parent.get('currentForecastCommitDate'));
                 }, this);
             }
         }
@@ -187,7 +177,7 @@
         if (!_.isUndefined(this.dirtyModels)) {
             this.dirtyModels.on('add', function() {
                 var ctx = this.context.parent || this.context
-                ctx.trigger('forecast:worksheet:dirty', 'mgr');
+                ctx.trigger('forecast:worksheet:dirty', this.worksheetType);
             }, this);
         }
 
@@ -233,6 +223,25 @@
         }, this);
 
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+    },
+
+    checkForDraftRows: function(lastCommitDate) {
+        if (this.layout.isVisible()) {
+            // check to see if anything in the collection is a draft, if it is, then send an event
+            // to notify the commit button to enable
+            this.collection.find(function(item) {
+                if (item.get('date_modified') > lastCommitDate) {
+                    this.context.parent.trigger('forecast:worksheet:needs_commit', this.worksheetType);
+                    return true;
+                }
+                return false;
+            }, this);
+
+            /*if (items.length > 0) {
+                // we have draft items. enable the commit button
+                this.context.parent.trigger('forecast:worksheet:needs_commit', this.worksheetType);
+            }*/
+        }
     },
 
     setCommitLogButtonStates: function() {
@@ -370,8 +379,63 @@
         var ctx = this.context.parent || this.context;
         // fire an event on the parent context
         if (this.isVisible()) {
-            ctx.trigger('forecasts:worksheet:totals', this.totals, 'mgr');
+            ctx.trigger('forecasts:worksheet:totals', this.totals, this.worksheetType);
         }
+    },
+
+    getCommitTotals: function() {
+        var quota = 0,
+            best_case = 0,
+            best_case_adjusted = 0,
+            likely_case = 0,
+            likely_case_adjusted = 0,
+            worst_case_adjusted = 0,
+            worst_case = 0,
+            included_opp_count = 0,
+            pipeline_opp_count = 0,
+            pipeline_amount = 0,
+            closed_amount = 0;
+
+
+        this.collection.forEach(function(model) {
+            var base_rate = parseFloat(model.get('base_rate')),
+                mPipeline_opp_count = model.get("pipeline_opp_count"),
+                mPipeline_amount = model.get("pipeline_amount"),
+                mClosed_amount = model.get("closed_amount"),
+                mOpp_count = model.get("opp_count");
+
+            quota += app.currency.convertWithRate(model.get('quota'), base_rate);
+            best_case += app.currency.convertWithRate(model.get('best_case'), base_rate);
+            best_case_adjusted += app.currency.convertWithRate(model.get('best_case_adjusted'), base_rate);
+            likely_case += app.currency.convertWithRate(model.get('likely_case'), base_rate);
+            likely_case_adjusted += app.currency.convertWithRate(model.get('likely_case_adjusted'), base_rate);
+            worst_case += app.currency.convertWithRate(model.get('worst_case'), base_rate);
+            worst_case_adjusted += app.currency.convertWithRate(model.get('worst_case_adjusted'), base_rate);
+            included_opp_count += (_.isUndefined(mOpp_count)) ? 0 : parseInt(mOpp_count);
+            pipeline_opp_count += (_.isUndefined(mPipeline_opp_count)) ? 0 : parseInt(mPipeline_opp_count);
+            if (!_.isUndefined(mPipeline_amount)) {
+                pipeline_amount = app.math.add(pipeline_amount, mPipeline_amount);
+            }
+            if (!_.isUndefined(mClosed_amount)) {
+                closed_amount = app.math.add(closed_amount, mClosed_amount);
+            }
+
+        });
+
+        return {
+            'quota': quota,
+            'best_case': best_case,
+            'best_adjusted': best_case_adjusted,
+            'likely_case': likely_case,
+            'likely_adjusted': likely_case_adjusted,
+            'worst_case': worst_case,
+            'worst_adjusted': worst_case_adjusted,
+            'included_opp_count': included_opp_count,
+            'pipeline_opp_count': pipeline_opp_count,
+            'pipeline_amount': pipeline_amount,
+            'closed_amount': closed_amount,
+            'closed_count' : (included_opp_count-pipeline_opp_count)
+        };
     },
 
     /**
@@ -425,11 +489,16 @@
                 model: undefined,
                 isDraft: isDraft,
                 timeperiod: this.dirtyTimeperiod,
-                userId: this.dirtyUser.id
+                userId: this.dirtyUser
             },
             ctx = this.context.parent || this.context;
 
         if (this.layout.isVisible()) {
+
+            if(_.isUndefined(saveObj.userId)) {
+                saveObj.userId = this.selectedUser;
+            }
+            saveObj.userId = saveObj.userId.id;
             /**
              * If the sheet is dirty, save the dirty rows. Else, if the save is for a commit, and we have
              * draft models (things saved as draft), we need to resave those as committed (version 1). If neither
@@ -444,13 +513,13 @@
                     this._worksheetSaveHelper(saveObj, ctx);
 
                     //add to draft structure so committing knows what to save as non-draft
-                    if (isDraft == true) {
+                    /*if (isDraft == true) {
                         this.draftModels.add(model, {merge: true});
-                    }
+                    }*/
                 }, this);
 
                 this.cleanUpDirtyModels();
-            } else if (!isDraft && this.draftModels.length > 0) {
+            /*} else if (!isDraft && this.draftModels.length > 0) {
                 saveObj.totalToSave = this.draftModels.length;
 
                 this.draftModels.each(function(model) {
@@ -460,7 +529,7 @@
 
                 //Need to clean up dirty models too as the save event above triggers a change event on the worksheet.
                 this.cleanUpDirtyModels();
-                this.cleanUpDraftModels();
+                this.cleanUpDraftModels();*/
             } else {
                 if (isDraft) {
                     app.alert.show('success', {
@@ -482,7 +551,6 @@
      */
     _worksheetSaveHelper: function(saveObj, ctx) {
         saveObj.model.set({
-            timeperiod_id: saveObj.timeperiod || this.selectedTimeperiod,
             current_user: saveObj.userId || this.selectedUser.id
         }, {silent: true});
 

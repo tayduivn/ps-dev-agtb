@@ -91,7 +91,7 @@
         }, this);
         this.context.on('forecasts:worksheet:totals', function(totals, type) {
             var field = this.total_field;
-            if(type == "mgr") {
+            if(type == "manager") {
                 field += '_adjusted'
             }
             this.total = totals[field];

@@ -12,6 +12,8 @@
  */
 ({
     extendsFrom: 'RecordlistView',
+    
+    worksheetType: 'sales_rep',
 
     totals: {},
 
@@ -79,7 +81,7 @@
                 }, this);
 
                 this.context.parent.on('forecasts:worksheet:totals', function(totals, type) {
-                    if (type == "rep" && this.layout.isVisible()) {
+                    if (type == this.worksheetType && this.layout.isVisible()) {
                         console.log('update rep footer');
                         var tpl = app.template.getView('recordlist.totals', this.module);
                         this.$el.find('tfoot').remove();
@@ -128,25 +130,18 @@
                 this.context.parent.on('button:commit_button:click', function() {
                     if (this.layout.isVisible()) {
                         this.context.parent.once('forecasts:worksheet:saved', function() {
-                                this.context.parent.trigger('forecasts:worksheet:commit', 'mgr', this.getCommitTotals())
+                            this.context.parent.trigger('forecasts:worksheet:commit', this.selectedUser, this.worksheetType, this.getCommitTotals())
                         }, this);
                         this.saveWorksheet(false);
-                        this.getCommitTotals();
                     }
                 }, this);
 
                 this.context.parent.on('change:currentForecastCommitDate', function(context, changed) {
-                    if (this.layout.isVisible()) {
-                        // check to see if anything in the collection is a draft, if it is, then send an event
-                        // to notify the commit button to enable
-                        this.collection.find(function(item) {
-                            if (item.get('date_modified') > changed) {
-                                this.context.parent.trigger('forecast:worksheet:needs_commit', 'rep');
-                                return true;
-                            }
-                            return false;
-                        }, this);
-                    }
+                    this.checkForDraftRows(changed);
+                }, this);
+
+                this.collection.on('reset', function() {
+                    this.checkForDraftRows(this.context.parent.get('currentForecastCommitDate'));
                 }, this);
             }
         }
@@ -158,11 +153,26 @@
         if (!_.isUndefined(this.dirtyModels)) {
             this.dirtyModels.on('add', function() {
                 var ctx = this.context.parent || this.context
-                ctx.trigger('forecast:worksheet:dirty', 'rep');
+                ctx.trigger('forecast:worksheet:dirty', this.worksheetType);
             }, this);
         }
 
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+    },
+
+
+    checkForDraftRows: function(lastCommitDate) {
+        if (this.layout.isVisible()) {
+            // check to see if anything in the collection is a draft, if it is, then send an event
+            // to notify the commit button to enable
+            this.collection.find(function(item) {
+                if (item.get('date_modified') > lastCommitDate) {
+                    this.context.parent.trigger('forecast:worksheet:needs_commit', this.worksheetType);
+                    return true;
+                }
+                return false;
+            }, this);
+        }
     },
 
     /**
@@ -281,7 +291,7 @@
         // fire an event on the parent context
         if (this.isVisible()) {
             var ctx = this.context.parent || this.context;
-            ctx.trigger('forecasts:worksheet:totals', this.totals, 'rep');
+            ctx.trigger('forecasts:worksheet:totals', this.totals, this.worksheetType);
         }
     },
 

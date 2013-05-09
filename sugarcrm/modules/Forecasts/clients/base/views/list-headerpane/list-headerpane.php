@@ -24,39 +24,39 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
         array(
             'name' => 'save_draft_button',
             'events' => array(
-                    'click' => 'function(e){
+                'click' => 'function(e){
                     this.view.context.trigger("button:save_draft_button:click");
                     }'
-                ),
-            'type' => 'rowaction',
+            ),
+            'type' => 'button',
             'label' => 'LBL_SAVE_DRAFT',
             'acl_action' => 'current_user',
-            'css_class' => 'btn'
-        ),
-        array(
-            'name' => 'commit_button',
-            'type' => 'button',
-            'events' => array(
-                    'click' => 'function(e){
-                    this.view.context.trigger("button:commit_button:click");
-                    }'
-                ),
-            'label' => 'LBL_QC_COMMIT_BUTTON',
-            'css_class' => 'btn-primary',
-            'icon' => 'icon-upload',
-            'acl_action' => 'current_user'
         ),
         array(
             'type' => 'actiondropdown',
             'name' => 'main_dropdown',
-            'primary' => false,
+            'primary' => true,
             'buttons' => array(
+                array(
+                    'name' => 'commit_button',
+                    'type' => 'button',
+                    'events' => array(
+                        'click' => 'function(e){
+                            this.view.context.trigger("button:commit_button:click");
+                        }'
+                    ),
+                    'label' => 'LBL_QC_COMMIT_BUTTON',
+                    'css_class' => 'btn-primary',
+                    'icon' => 'icon-upload',
+                    'acl_action' => 'current_user',
+                    'primary' => true
+                ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:export_button:click',
                     'name' => 'export_button',
                     'label' => 'LBL_EXPORT_CSV',
-                    'primary' => true
+
                 ),
                 array(
                     'type' => 'rowaction',

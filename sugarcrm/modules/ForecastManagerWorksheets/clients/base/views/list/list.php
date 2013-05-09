@@ -35,7 +35,12 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                         'user_id',
                         'isManager',
                         'show_history_log',
-                        'draft'
+                        'draft',
+                        'pipeline_opp_count',
+                        'pipeline_amount',
+                        'closed_amount',
+                        'opp_count',
+                        'timeperiod_id'
                     )
                 ),
                 array(
