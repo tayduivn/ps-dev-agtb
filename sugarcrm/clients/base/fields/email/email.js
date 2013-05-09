@@ -243,7 +243,6 @@
      * @param {String} fieldName field name.
      */
     bindDomChange: function() {
-
         // Bind all tooltips on page
         function bindAll(sel) {
             this.$(sel).each(function (index) {
@@ -256,8 +255,7 @@
         bindAll('.btn-edit');
         bindAll('.addEmail');
         bindAll('.removeEmail');
-
-        if(this.tplName === 'list-edit' || this.view.action === 'modal') {
+        if(this.tplName === 'list-edit') {
             app.view.Field.prototype.bindDomChange.call(this);
         }
     },
@@ -274,7 +272,7 @@
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
                 email.hasAnchor = this.def.link && email.opt_out != "1" && email.invalid_email != "1";
             }, this);
-        } else if ((_.isString(value) && value !== "") || this.view.action === 'list' || this.view.action === "modal") {
+        } else if ((_.isString(value) && value !== "") || this.view.action === 'list') {
             // expected an array with a single address but got a string or an empty array
             value = [{
                 email_address:value,
@@ -316,7 +314,7 @@
      */
     unformat: function(value) {
         var originalNonArrayValue = null;
-        if(this.view.action === 'list' || this.view.action === 'modal') {
+        if(this.view.action === 'list') {
             var emails = this.model.get(this.name),
                 changed = false;
             if(!_.isArray(emails)){ // emails is empty, initialize array
