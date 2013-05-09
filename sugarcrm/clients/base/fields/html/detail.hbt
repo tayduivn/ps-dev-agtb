@@ -26,4 +26,4 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<iframe class="htmlareafield {{#if this.options.def.span}}span{{this.options.def.span}}{{/if}}" frameborder="0"></iframe>
+<span class="htmlareafield">{{#if value}}{{{value}}}{{else}}{{{def.default_value}}}{{/if}}</span>
