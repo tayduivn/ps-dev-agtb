@@ -6,6 +6,7 @@ class SugarUpgradeSidecarConfig extends UpgradeScript
 {
     public $order = 3000;
     public $type = self::UPGRADE_CUSTOM;
+    public $version = "7.0.0";
 
     public function run()
     {
