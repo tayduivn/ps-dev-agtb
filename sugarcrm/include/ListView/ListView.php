@@ -216,6 +216,45 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         }
     }
 
+    /**
+     * @param $linked_field field to get relationsip name from
+     * @param $aItem sugar bean to check against
+     * @param $parentBean parent bean
+     * @return bool
+     */
+    protected function checkUnlinkPermission($linked_field, $aItem, $parentBean)
+    {
+        if (!empty($parentBean)) {
+
+            $parentBean->load_relationship($linked_field);
+
+            if (isset($parentBean->$linked_field) && isset($parentBean->$linked_field->def['relationship'])) {
+
+                $relObj = $parentBean->$linked_field->getRelationshipObject();
+
+                if (!empty($relObj)) {
+                    // relationship def
+                    $relDef = $relObj->def;
+
+                    $fieldsToCheck = array();
+                    foreach (array('rhs_key', 'relationship_role_column') as $field) {
+                        if (!empty($relDef[$field])) {
+                            $fieldsToCheck[] = $relDef[$field];
+                        }
+                    }
+
+                    // check if the field is editable, if any field is not, return false
+                    foreach ($fieldsToCheck as $field) {
+                        if (!empty($field) && !($aItem->ACLFieldAccess($field, 'edit'))) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
 /**
  * @return void
  * @param unknown $data
@@ -386,6 +425,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         $field_acl['ListView'] = $aItem->ACLAccess('ListView');
         $field_acl['EditView'] = $aItem->ACLAccess('EditView');
         $field_acl['Delete'] = $aItem->ACLAccess('Delete');
+        $field_acl['field_edit_relate'] = $this->checkUnlinkPermission($linked_field, $aItem, $thepanel->parent_bean);
         foreach($thepanel->get_list_fields() as $field_name=>$list_field)
         {
             //add linked field attribute to the array.
@@ -474,7 +514,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 		                $this->xTemplate->assign('CELL', $widget_contents);
 		                $this->xTemplate->parse($xtemplateSection.".row.cell");
                 	} elseif (preg_match("/button/i", $list_field['name'])) {
-                        if ( '' != $_content = $layout_manager->widgetDisplay($list_field) )
+                        if ((($list_field['name'] === 'edit_button' && $field_acl['EditView']) || ($list_field['name'] === 'close_button' && $field_acl['EditView']) || ($list_field['name'] === 'remove_button' && $field_acl['field_edit_relate'])) && '' != ($_content = $layout_manager->widgetDisplay($list_field)) )
                         {
                             $button_contents[] = $_content;
                             unset($_content);
