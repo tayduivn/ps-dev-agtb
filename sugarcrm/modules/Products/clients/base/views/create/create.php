@@ -92,17 +92,22 @@ $viewdefs['Products']['base']['view']['create'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'opportunity_name',
                     'required' => true
                 ),
+                //END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'account_name',
                     'readonly' => true
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
                 'sales_stage',
                 'probability',
+                //END SUGARCRM flav=ent ONLY
                 'sales_status',
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'date_closed',
                     'required' => true
@@ -111,6 +116,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'name' => 'commit_stage',
                     'span' => 6
                 ),
+                //END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
                     'span' => 6,
@@ -149,6 +155,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'total_amount',
                     'type' => 'currency',
@@ -174,6 +181,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 )
+                //END SUGARCRM flav=ent ONLY
             ),
         ),
         array(
@@ -183,6 +191,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'worst_case',
                     'type' => 'currency',
@@ -205,6 +214,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
+                //END SUGARCRM flav=ent ONLY
                 'next_step',
                 'product_type',
                 'lead_source',

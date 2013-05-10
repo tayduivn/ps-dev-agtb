@@ -478,6 +478,11 @@ $dictionary['Product'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
+           //END SUGARCRM flav=pro ONLY
+            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            'studio' => false,
+            //END SUGARCRM flav=pro && flav!=ent ONLY
+            //BEGIN SUGARCRM flav=pro ONLY
         ),
         'likely_case' =>  array(
             'name' => 'likely_case',
@@ -485,6 +490,11 @@ $dictionary['Product'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
+            //END SUGARCRM flav=pro ONLY
+            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            'studio' => false,
+            //END SUGARCRM flav=pro && flav!=ent ONLY
+            //BEGIN SUGARCRM flav=pro ONLY
         ),
         'worst_case' =>  array(
             'name' => 'worst_case',
@@ -492,6 +502,11 @@ $dictionary['Product'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
+            //END SUGARCRM flav=pro ONLY
+            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            'studio' => false,
+            //END SUGARCRM flav=pro && flav!=ent ONLY
+            //BEGIN SUGARCRM flav=pro ONLY
         ),
         'date_closed' =>  array(
             'name' => 'date_closed',

@@ -60,6 +60,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_action' => 'create',
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:convert_to_quote:click',
@@ -67,6 +68,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'label' => 'LBL_CONVERT_TO_QUOTE',
                     'acl_action' => 'view',
                 ),
+                //END SUGARCRM flav=ent ONLY
             ),
         ),
         array(
@@ -97,17 +99,22 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'opportunity_name',
                     'required' => true
                 ),
+                //END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'account_name',
                     'readonly' => true,
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
                 'sales_stage',
                 'probability',
+                //END SUGARCRM flav=ent ONLY
                 'sales_status',
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'date_closed',
                     'required' => true,
@@ -116,6 +123,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'commit_stage',
                     'span' => 6
                 ),
+                //END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
                     'span' => 6,
@@ -155,6 +163,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'total_amount',
                     'type' => 'currency',
@@ -192,6 +201,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'readonly' => true,
                     'bwcLink' => true,
                 ),
+                //END SUGARCRM flav=ent ONLY
             ),
         ),
         array(
@@ -201,6 +211,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'best_case',
                     'type' => 'currency',
@@ -227,6 +238,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
+                //END SUGARCRM flav=ent ONLY
                 'next_step',
                 'product_type',
                 'lead_source',
