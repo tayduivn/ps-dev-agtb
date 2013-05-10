@@ -2,8 +2,9 @@
     extendsFrom: 'HeaderpaneView',
 
     _renderHtml: function() {
-        var titleTemplate = Handlebars.compile(app.lang.getAppString("LBL_SEARCH_AND_SELECT"));
-        this.title = titleTemplate({module: this.module});
+        var titleTemplate = Handlebars.compile(app.lang.getAppString("LBL_SEARCH_AND_SELECT")),
+            moduleName = app.lang.get("LBL_MODULE_NAME", this.module);
+        this.title = titleTemplate({module: moduleName});
         app.view.views.HeaderpaneView.prototype._renderHtml.call(this);
     }
 })
