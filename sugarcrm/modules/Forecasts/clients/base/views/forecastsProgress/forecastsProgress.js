@@ -206,8 +206,8 @@
         };
 
         if (app.user.get('id') != this.selectedUser.id) {
-            _model.revenue = app.math.sub(totals.amount, totals.includedClosedAmount);
-            _model.opportunities = app.math.sub(totals.included_opp_count, totals.includedClosedCount);
+            _model.revenue = app.math.sub(totals.amount, totals.closed_amount);
+            _model.opportunities = app.math.sub(totals.included_opp_count, totals.closed_count);
         } else {
             _model.revenue = app.math.sub(totals.overall_amount, app.math.add(totals.lost_amount, totals.won_amount));
             _model.opportunities = app.math.sub(totals.total_opp_count, app.math.add(totals.lost_count, totals.won_count));
