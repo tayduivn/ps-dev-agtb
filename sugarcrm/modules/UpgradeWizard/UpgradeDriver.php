@@ -175,6 +175,7 @@ abstract class UpgradeDriver
     public function __construct($context)
     {
         $this->context = $context;
+        chdir($context['source_dir']);
         $this->loadConfig();
     	$this->context['temp_dir'] = $this->cacheDir("upgrades/temp");
         $this->ensureDir($this->context['temp_dir']);
@@ -322,13 +323,12 @@ abstract class UpgradeDriver
 
     /**
      * Load version file from path
-     * @param string $path
      * @return array
      */
-    protected function loadVersion($path)
+    protected function loadVersion()
     {
         if(!defined('sugarEntry')) define('sugarEntry', true);
-        include("$path/sugar_version.php");
+        include "sugar_version.php";
         $sugar_flavor = strtolower($sugar_flavor);
         return array($sugar_version, $sugar_flavor);
     }
@@ -357,7 +357,7 @@ abstract class UpgradeDriver
         }
 
         // Create target dir
-        $unzip_dir = $this->context['temp_dir'];
+        $unzip_dir = realpath($this->context['temp_dir']);
         $this->cleanDir($unzip_dir);
         // unzip file
         $zip = new ZipArchive;
@@ -377,7 +377,7 @@ abstract class UpgradeDriver
             return $this->error("Package does not contain manifest.php");
         }
         // validate manifest
-        list($this->from_version, $this->from_flavor) = $this->loadVersion($this->context['source_dir']);
+        list($this->from_version, $this->from_flavor) = $this->loadVersion();
         $res = $this->validateManifest("$unzip_dir/manifest.php");
         if($res !== true) {
             return $this->error($res);
@@ -1001,10 +1001,10 @@ abstract class UpgradeDriver
                     // Run pre-upgrade
                     // TODO: pre-script are currently taken from old envt.
                     // We need to consider how to take them from new envt instead.
-                    list($this->from_version, $this->from_flavor) = $this->loadVersion($this->context['source_dir']);
+    	            $this->initSugar();
+                    list($this->from_version, $this->from_flavor) = $this->loadVersion();
                     $this->state['old_version'] = array($this->from_version, $this->from_flavor);
                     $this->saveState();
-    	            $this->initSugar();
                     if(!$this->runScripts("pre")) {
                         $this->error("Pre-upgrade stage failed!");
                         return false;

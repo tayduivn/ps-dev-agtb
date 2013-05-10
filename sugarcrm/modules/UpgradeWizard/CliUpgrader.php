@@ -28,8 +28,8 @@ class CliUpgrader extends UpgradeDriver
 
     protected static function argError($msg)
     {
-        self::bannerError($msg);
-        self::usage();
+        static::bannerError($msg);
+        static::usage();
         exit(1);
     }
 
@@ -51,28 +51,54 @@ eoq2;
         echo $usage;
     }
 
-    protected static function verifyArguments($context, $argv)
+    protected function verifyArguments($argv)
     {
-        if(empty($context['source_dir']) || !is_dir($context['source_dir'])) {
+        if(empty($this->context['source_dir']) || !is_dir($this->context['source_dir'])) {
             self::argError("3rd parameter must be a valid directory: {$argv[3]}.");
         }
 
-        if(!is_file("{$context['source_dir']}/include/entryPoint.php") || !is_file("{$context['source_dir']}/config.php")) {
-            self::argError("{$context['source_dir']} is not a SugarCRM directory.");
+        if(!is_file("{$this->context['source_dir']}/include/entryPoint.php") || !is_file("{$this->context['source_dir']}/config.php")) {
+            self::argError("{$this->context['source_dir']} is not a SugarCRM directory.");
         }
 
-        if(!is_file($context['zip'])) { // valid zip?
+        if(!is_file($this->context['zip'])) { // valid zip?
             self::argError("First argument must be a full path to the patch file: {$argv[1]}.");
         }
         return true;
     }
 
-    public static function parseArgs($argv)
+    /**
+     * Map CLI arguments into context entries
+     * @param array $argv
+     * @return array
+     */
+    public static function mapArgs($argv)
     {
         if(count($argv) < 5) {
             $cnt = count($argv);
-            self::argError("Upgrader requires 4 argumens, $cnt given");
+            static::argError("Upgrader requires 4 argumens, $cnt given");
+            return array(); // never happens
         }
+
+        $context = array(
+                'zip' => realpath($argv[1]),
+                'log' => $argv[2],
+                'source_dir' => realpath($argv[3]),
+                'admin' => $argv[4],
+        );
+        if(isset($argv[5])) {
+            $context['stage'] = $argv[5];
+        }
+        return $context;
+    }
+
+    /**
+     * Parse CLI arguments into context
+     * @param array $argv
+     * @return array
+     */
+    public static function parseArgs($argv)
+    {
         if(defined('PHP_BINDIR')) {
         	$php_path = PHP_BINDIR."/";
         } else {
@@ -81,15 +107,10 @@ eoq2;
         if(!file_exists($php_path . 'php')) {
             $php_path = '';
         }
-        $context = array(
-            'zip' => realpath($argv[1]),
-            'log' => $argv[2],
-            'source_dir' => realpath($argv[3]),
-            'admin' => $argv[4],
-            'php' => $php_path."php",
-            'script' => __FILE__,
-            'argv' => $argv,
-        );
+        $context = static::mapArgs($argv);
+        $context['php'] = $php_path."php";
+        $context['script'] = __FILE__;
+        $context['argv'] = $argv;
         return $context;
     }
 
@@ -99,15 +120,13 @@ eoq2;
     public static function start()
     {
         global $argv;
-        $context = self::parseArgs($argv);
-        self::verifyArguments($context, $argv);
-        if(isset($argv[5])) {
-            $stage = $argv[5];
+        $upgrader = new static(static::parseArgs($argv));
+        $upgrader->verifyArguments($argv);
+        if(isset($upgrader->context['stage'])) {
+            $stage = $upgrader->context['stage'];
         } else {
             $stage = null;
         }
-        chdir($context['source_dir']);
-        $upgrader = new self($context);
         if($stage && $stage != 'continue') {
             // Run one step
             if($upgrader->run($stage)) {
@@ -171,6 +190,8 @@ eoq2;
    }
 
 }
+
+if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
