@@ -42,20 +42,6 @@ $viewdefs['Contacts']['portal']['view']['record'] = array(
             'fields' =>
             array(
                 array(
-                    'name' => 'first_name',
-                    'displayParams' =>
-                    array(
-                        'colspan' => 2,
-                    ),
-                ),
-                array(
-                    'name' => 'last_name',
-                    'displayParams' =>
-                    array(
-                        'colspan' => 2,
-                    ),
-                ),
-                array(
                     'name' => 'title',
                     'displayParams' =>
                     array(
