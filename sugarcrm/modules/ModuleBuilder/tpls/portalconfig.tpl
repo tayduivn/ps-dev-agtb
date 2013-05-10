@@ -132,7 +132,7 @@
             val = $field.val();
             // select2 copies over attributes (including .portalField class) to a temp element and
             // so we end up with an extra fields element; so here we ignore if not both key/val
-            if(key && val) props[key] = val;
+            if(key) props[key] = val;
 
             if ($field.is(':checked')) {
                 // We look for both: isset, and, 'true' on other side ('online' still considered falsy!)
