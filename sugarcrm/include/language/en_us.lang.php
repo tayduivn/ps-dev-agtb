@@ -137,6 +137,7 @@ $app_list_strings = array (
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
     'Products' => 'Revenue Line Item',
+    'ProductCategories' => 'Product Category',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
