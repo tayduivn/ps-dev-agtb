@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$viewdefs['Leads']['base']['view']['recordlist'] = array(
+$viewdefs['Contacts']['base']['view']['recordlist'] = array(
     'selection' => array(
         'type' => 'multi',
         'actions' => array(
@@ -80,48 +80,6 @@ $viewdefs['Leads']['base']['view']['recordlist'] = array(
                     this.view.layout.trigger("list:massexport:fire");
                     }'
                 ),
-            ),
-        ),
-    ),
-    'rowactions' => array(
-        'css_class' => 'pull-right',
-        'actions' => array(
-            array(
-                'type' => 'rowaction',
-                'css_class' => 'btn',
-                'tooltip' => 'LBL_PREVIEW',
-                'event' => 'list:preview:fire',
-                'icon' => 'icon-eye-open',
-                'acl_action' => 'view',
-            ),
-            array(
-                'type' => 'rowaction',
-                'name' => 'edit_button',
-                'icon' => 'icon-pencil',
-                'label' => 'LBL_EDIT_BUTTON',
-                'event' => 'list:editrow:fire',
-                'acl_action' => 'edit',
-            ),
-            array(
-                'type' => 'follow',
-                'name' => 'follow_button',
-                'event' => 'list:follow:fire',
-                'acl_action' => 'view',
-            ),
-            array(
-                'type' => 'rowaction',
-                'icon' => 'icon-trash',
-                'event' => 'list:deleterow:fire',
-                'label' => 'LBL_DELETE_BUTTON',
-                'acl_action' => 'delete',
-            ),
-            array(
-                'type' => 'rowaction',
-                'name' => 'lead_convert_button',
-                'icon' => 'icon-edit',
-                'event' => 'list:convertrow:fire',
-                'label' => 'LBL_CONVERT_BUTTON_LABEL',
-                'acl_action' => 'edit',
             ),
         ),
     ),
