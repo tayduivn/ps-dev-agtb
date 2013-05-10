@@ -41,6 +41,15 @@
         'change [data-toggle=dropdownmenu]' : 'dropdownSelected',
         'touchstart [data-toggle=dropdownmenu]' : 'renderDropdown'
     },
+
+
+    /**
+     * {@inheritDoc}
+     *
+     * This field doesn't support `showNoData`.
+     */
+    showNoData: false,
+
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: 'initialize', args: [options]});
         this.dropdownFields = [];
@@ -160,6 +169,7 @@
         return new Handlebars.SafeString(placeholder);
 
     },
+
     _render: function() {
         app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: '_render'});
         this.setPlaceholder();

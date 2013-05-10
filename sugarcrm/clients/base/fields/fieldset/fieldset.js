@@ -36,6 +36,9 @@
 
         var placeholder = '<span sfuuid="' + this.sfId + '">';
         _.each(this.def.fields, function (fieldDef) {
+            if (this.def.readonly) {
+                fieldDef.readonly = true;
+            }
             var field = app.view.createField({
                 def: fieldDef,
                 view: this.view,
@@ -52,13 +55,42 @@
     },
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
-     * We only render the child fields for this fieldset and for now there is no
-     * support for templates on fieldset widgets.
+     * If current fieldset is not readonly, it always falls back to false
+     * (nodata unsupportable).
+     * If current fieldset is readonly and all dependant fields contains empty
+     * data set, then it falls back to true.
+     *
+     * @return {Boolean} true if this fieldset is readonly and all the data
+     * fields are empty.
      */
-    _render: function () {
+    showNoData: function() {
+
+        if (!this.def.readonly) {
+            return false;
+        }
+
+        return !_.some(this.fields, function(field) {
+            return field.name && field.model.has(field.name);
+        });
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * We only render the child fields for this fieldset and for now there is
+     * no support for templates on fieldset widgets except nodata.
+     * If fieldset is in fallbackactions, DOM will be replaced with fallback
+     * template.
+     */
+    _render: function() {
         this._loadTemplate();
+
+        //If fieldset is in fallbackactions, dom will be replaced with fallback template
+        if (_.contains(this.fallbackActions, this.action)) {
+            this.$el.html(this.template(this) || '');
+        }
 
         // Adds classes to the component based on the metadata.
         if (this.def && this.def.css_class) {

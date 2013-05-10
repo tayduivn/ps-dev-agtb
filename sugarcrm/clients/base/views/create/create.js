@@ -99,11 +99,6 @@
 
     _render: function () {
         app.view.invokeParent(this, {type: 'view', name: 'record', method: '_render'});
-        // Note if fieldset w/date created | modified is NOT set as readonly, this still removes from page
-        // We decided that's fine, and better than alternative of looping fields, find date_created_by,
-        // check readonly field, hide only if readonly, etc., etc.
-        this.$('[data-fieldname="date_entered_by"]').hide();
-        this.$('[data-fieldname="date_modified_by"]').hide();
 
         this.setButtonStates(this.STATE.CREATE);
 
