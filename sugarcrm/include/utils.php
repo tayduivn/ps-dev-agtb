@@ -1011,12 +1011,17 @@ function return_app_list_strings_language($language)
            $app_list_strings = sugarArrayIntersectMerge($app_list_strings, $app_list_strings_array[$lang]);
        }
        foreach(SugarAutoLoader::existing(
-           "custom/application/Ext/Language/$lang.lang.ext.php",
-           "custom/include/language/$lang.lang.php"
+           "custom/application/Ext/Language/$lang.lang.ext.php"
        ) as $file) {
            $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
            $GLOBALS['log']->info("Found extended language file: $file");
        }
+        foreach(SugarAutoLoader::existing(
+            "custom/include/language/$lang.lang.php"
+        ) as $file) {
+            include("custom/include/language/$lang.lang.php");
+            $GLOBALS['log']->info("Found custom language file: $lang.lang.php");
+        }
     }
 
     if (!isset($app_list_strings)) {
