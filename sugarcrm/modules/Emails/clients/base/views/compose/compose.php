@@ -43,6 +43,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'name'            => 'email_config',
                     'label'           => 'LBL_FROM',
                     'type'            => 'sender',
+                    'span'            => 12,
                     'css_class'       => 'inherit-width',
                     'label_css_class' => 'begin-fieldgroup',
                     'endpoint'        => array(
@@ -51,27 +52,31 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     )
                 ),
                 array(
-                    "name"           => "to_addresses",
-                    "type"           => "recipients",
-                    "label"          => "LBL_TO_ADDRS",
+                    'name'           => 'to_addresses',
+                    'type'           => 'recipients',
+                    'label'          => 'LBL_TO_ADDRS',
+                    'span'           => 12,
                     'cell_css_class' => 'controls-one btn-fit',
                     'required'       => true,
                 ),
                 array(
-                    "name"           => "cc_addresses",
-                    "type"           => "recipients",
-                    "label"          => "LBL_CC",
+                    'name'           => 'cc_addresses',
+                    'type'           => 'recipients',
+                    'label'          => 'LBL_CC',
+                    'span'           => 12,
                     'cell_css_class' => 'controls-one btn-fit',
                 ),
                 array(
-                    "name"           => "bcc_addresses",
-                    "type"           => "recipients",
-                    "label"          => "LBL_BCC",
+                    'name'           => 'bcc_addresses',
+                    'type'           => 'recipients',
+                    'label'          => 'LBL_BCC',
+                    'span'           => 12,
                     'cell_css_class' => 'controls-one btn-fit',
                 ),
                 array(
                     'name'            => 'subject',
                     'label'           => 'LBL_SUBJECT',
+                    'span'            => 12,
                     'label_css_class' => 'end-fieldgroup',
                 ),
                 array(
@@ -82,6 +87,8 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                 array(
                     'name'           => 'actionbar',
                     'type'           => 'compose-actionbar',
+                    'span'           => 12,
+                    'dismiss_label'  => true,
                     'buttonSections' => array(
                         array(
                             'name'      => 'attachments_dropdown',
@@ -89,16 +96,16 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                             'type'      => 'actiondropdown',
                             'buttons'   => array(
                                 array(
-                                    'name'    => 'upload_new_button',
-                                    'type'    => 'button',
-                                    'icon'    => 'icon-paper-clip',
-                                    'label'   => 'LBL_UPLOAD_ATTACHMENT',
+                                    'name'  => 'upload_new_button',
+                                    'type'  => 'button',
+                                    'icon'  => 'icon-paper-clip',
+                                    'label' => 'LBL_UPLOAD_ATTACHMENT',
                                 ),
                                 //TODO: Add back once Sugar Documents have been implemented
                                 /*array(
-                                    'name'      => 'attach_sugardoc_button',
-                                    'type' => 'rowaction',
-                                    'label'     => 'LBL_ATTACH_SUGAR_DOC',
+                                    'name'  => 'attach_sugardoc_button',
+                                    'type'  => 'rowaction',
+                                    'label' => 'LBL_ATTACH_SUGAR_DOC',
                                 ),*/
                             ),
                         ),
@@ -133,22 +140,22 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                         'height'                            => 300,
                         'width'                             => '100%',
                         // General options
-                        'theme'                             => "advanced",
-                        'skin'                              => "sugar7",
-                        'plugins'                           => "style,searchreplace,print,contextmenu,paste,noneditable,visualchars,nonbreaking,xhtmlxtras",
-                        'entity_encoding'                   => "raw",
+                        'theme'                             => 'advanced',
+                        'skin'                              => 'sugar7',
+                        'plugins'                           => 'style,searchreplace,print,contextmenu,paste,noneditable,visualchars,nonbreaking,xhtmlxtras',
+                        'entity_encoding'                   => 'raw',
                         'forced_root_block'                 => false,
                         // Theme options
-                        'theme_advanced_buttons1'           => "code,help,separator,bold,italic,underline,strikethrough,separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,justifyfull,separator,forecolor,backcolor,separator,spellchecker,seperator,formatselect,fontselect,fontsizeselect",
-                        'theme_advanced_toolbar_location'   => "top",
-                        'theme_advanced_toolbar_align'      => "left",
-                        'theme_advanced_statusbar_location' => "bottom",
+                        'theme_advanced_buttons1'           => 'code,help,separator,bold,italic,underline,strikethrough,separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,justifyfull,separator,forecolor,backcolor,separator,spellchecker,seperator,formatselect,fontselect,fontsizeselect',
+                        'theme_advanced_toolbar_location'   => 'top',
+                        'theme_advanced_toolbar_align'      => 'left',
+                        'theme_advanced_statusbar_location' => 'bottom',
                         'theme_advanced_resizing'           => false,
-                        'schema'                            => "html5",
-                        'template_external_list_url'        => "lists/template_list.js",
-                        'external_link_list_url'            => "lists/link_list.js",
-                        'external_image_list_url'           => "lists/image_list.js",
-                        'media_external_list_url'           => "lists/media_list.js",
+                        'schema'                            => 'html5',
+                        'template_external_list_url'        => 'lists/template_list.js',
+                        'external_link_list_url'            => 'lists/link_list.js',
+                        'external_image_list_url'           => 'lists/image_list.js',
+                        'media_external_list_url'           => 'lists/media_list.js',
                         'theme_advanced_path'               => false
                     ),
                 ),
@@ -163,15 +170,17 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
             'fields'       => array(
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
-                    "type" => "teamset",
-                    "name" => "team_name",
+                    'type' => 'teamset',
+                    'name' => 'team_name',
+                    'span' => 12,
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
-                    "label"   => "LBL_LIST_RELATED_TO",
+                    'label'   => 'LBL_LIST_RELATED_TO',
                     'type'    => 'parent',
                     'name'    => 'parent_name',
-                    'options' => "parent_type_display"
+                    'options' => 'parent_type_display',
+                    'span'    => 12,
                 ),
             ),
         ),

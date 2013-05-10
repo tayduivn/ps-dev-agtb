@@ -46,7 +46,7 @@
      * @return {Handlebars.SafeString}
      */
     getPlaceholder: function() {
-        var placeholder = app.view.Field.prototype.getPlaceholder.call(this);
+        var placeholder = app.view.fields.FieldsetField.prototype.getPlaceholder.call(this);
         var $container = $(placeholder.toString());
 
         _.each(this.def.buttonSections, function(buttonSection) {

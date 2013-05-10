@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'GridBuilder'],
 
     events: {
         'click .interactions-chart': 'switchChart'
@@ -33,7 +33,7 @@
 
     initDashlet: function(view) {
         if(view === 'config') {
-            app.view.views.RecordView.prototype._renderPanels.call(this, this.meta.panels);
+            app.view.views.RecordView.prototype._buildGridsFromPanelsMetadata.call(this, this.meta.panels);
         }
     },
     updateChart: function () {

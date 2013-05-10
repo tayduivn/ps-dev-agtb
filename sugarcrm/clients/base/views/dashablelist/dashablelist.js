@@ -1,6 +1,6 @@
 ({
     extendsFrom: 'ListView',
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'GridBuilder'],
     _dataFetched: false, // flag to determine if we tried to get records already
     initDashlet: function (view) {
         var dashlet = app.utils.deepCopy(this.context.get("dashlet")),
@@ -28,7 +28,7 @@
             }
             this.meta.panels = this.meta.dashlet_config_panels;
 
-            app.view.views.RecordView.prototype._renderPanels.call(this, this.meta.panels);
+            app.view.views.RecordView.prototype._buildGridsFromPanelsMetadata.call(this, this.meta.panels);
         } else {
             this.context.set("limit", dashlet.display_rows || 5);
             var collection = this.context.get("collection");

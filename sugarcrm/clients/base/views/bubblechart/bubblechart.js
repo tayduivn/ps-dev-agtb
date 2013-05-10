@@ -11,7 +11,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'GridBuilder'],
 
     events: {
         'click .toggle-control': 'switchChart'
@@ -95,7 +95,7 @@
         this.viewName = view;
 
         if (view === 'config') {
-            app.view.views.RecordView.prototype._renderPanels.call(this, this.meta.panels);
+            app.view.views.RecordView.prototype._buildGridsFromPanelsMetadata.call(this, this.meta.panels);
         }
     },
 

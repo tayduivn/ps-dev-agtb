@@ -2,7 +2,7 @@
     inlineEditMode: false,
     createMode: false,
     extendsFrom: 'EditableView',
-    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration'],
+    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration', 'GridBuilder'],
     enableHeaderButtons: true,
     enableHeaderPane: true,
     events: {
@@ -22,6 +22,9 @@
 
     // current button states
     currentState: null,
+
+    // fields that should not be editable
+    noEditFields: null,
 
     initialize: function (options) {
         _.bindAll(this);
@@ -44,6 +47,8 @@
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
+
+        this.noEditFields = [];
     },
 
     /**
@@ -69,150 +74,9 @@
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
         this.context.on('button:find_duplicates_button:click', this.findDuplicatesClicked, this);
     },
-    noEditFields: null,
-    _renderPanels: function (panels) {
-        var totalFieldCount = 0;
-        this.noEditFields = [];
-        _.each(panels, function (panel) {
-            var columns = (panel.columns) || 1,
-                rows = [],
-                row = [],
-                size = panel.fields.length,
-                rowSpan = 0,
-                rowSpanMax = 12,
-                colCount = 0;
-
-            var _startNewRow = function () {
-                rows.push(row); // push the current row onto the grid
-
-                // reset variables that keep track of the current row's state
-                row = [];
-                rowSpan = 0;
-                colCount = 0;
-            };
-
-            // Set flag so that show more link can be displayed to show hidden panel.
-            if (panel.hide) {
-                this.hiddenPanelExists = true;
-            }
-
-            _.each(panel.fields, function (field, index) {
-                var isLabelInline,
-                    fieldSpan,
-                    maxFieldSpan,
-                    maxSpanForFieldWithInlineLabel = 8,
-                    maxSpanForFieldWithLabelOnTop = 12;
-
-                //The code below assumes that the field is an object but can be a string
-                if (_.isString(field)) {
-                    panel.fields[index] = field = {
-                        name: field
-                    };
-                }
-
-                //Disable the pencil icon if the user doesn't have ACLs
-                if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
-                    this.noEditFields.push(field.name);
-                }
-
-                //labels: visibility for the label
-                //labelsOnTop: true for on the top of the field
-                //             false for on the left of the field
-                if (_.isUndefined(panel.labels)) {
-                    panel.labels = true;
-                }
-
-                //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
-                isLabelInline = (panel.labelsOnTop === false && panel.labels);
-                maxFieldSpan = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
-
-                // calculate the 2/3 ratio for the field span
-                if (_.isUndefined(field.span)) {
-                    field.span = Math.floor(maxFieldSpan / columns);
-
-                    // if the field span was undefined, then prevent a span of 0
-                    if (field.span < 1) {
-                        field.span = 1;
-                    }
-                }
-
-                // 4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
-                if (_.isUndefined(field.labelSpan)) {
-                    field.labelSpan = Math.floor(4 / columns);
-
-                    // if the field span was undefined, then prevent a labelSpan of 0
-                    if (field.labelSpan < 1) {
-                        field.labelSpan = 1;
-                    }
-                }
-
-                if (_.isUndefined(field.dismiss_label)) {
-                    field.dismiss_label = false;
-                }
-
-                // if the label is inline and is to be dismissed, then the field should take up its space plus the
-                // space set aside for its label
-                if (isLabelInline && field.dismiss_label === true) {
-                    // add the label span to the field span
-                    field.span += field.labelSpan;
-
-                    // ignore the label span from here on out, since it has now served its purpose
-                    // set it to 0 so it doesn't impact future calculations that may occur
-                    field.labelSpan = 0;
-
-                    // the field should be allowed to take up the space that was originally dedicated for the label,
-                    // which is similar to saying that labels are on top
-                    maxFieldSpan = maxSpanForFieldWithLabelOnTop;
-                }
-
-                // fields can't be greater than the maximum allowable span
-                // however, there is no policing of (field.span + field.labelSpan) so overflow is still possible
-                if (field.span > maxFieldSpan) {
-                    field.span = maxFieldSpan;
-                }
-
-                totalFieldCount++;
-                field.index = totalFieldCount;
-
-                // by default, the field takes up the space specified by its span
-                fieldSpan = field.span;
-
-                // if the labels are to the left of the field then the field takes up the space
-                // specified by its span plus the space its label takes up
-                if (isLabelInline && field.dismiss_label === false) {
-                    fieldSpan += field.labelSpan;
-                }
-
-                // if there isn't enough room remaining on the current row to contain the field or all available
-                // columns in the row have been filled, then start a new row
-                if ((rowSpan + fieldSpan) > rowSpanMax || colCount === columns) {
-                    _startNewRow();
-                }
-
-                row.push(field);
-                rowSpan += fieldSpan; // update rowSpan to account for span of the field that was just added to the row
-
-                // push the last row if there are no more fields in the panel
-                if ((index === size - 1)) {
-                    _startNewRow();
-                }
-
-                colCount++; // increment the column count now that we've filled a column
-            }, this);
-
-            // Display module label in header panel it doesn't contain the picture field
-            if (panel.header) {
-                panel.isAvatar = !!_.find(panel.fields, function (f) {
-                    return f.name === 'picture';
-                });
-            }
-
-            panel.grid = rows;
-        }, this);
-    },
 
     _render: function () {
-        this._renderPanels(this.meta.panels);
+        this._buildGridsFromPanelsMetadata(this.meta.panels);
 
         app.view.View.prototype._render.call(this);
 
@@ -582,6 +446,7 @@
             this.$('.headerpane').prepend('<h1><span class="module-title">' + title + '</span></h1>');
         }
     },
+    
     _dispose: function () {
         _.each(this.editableFields, function(field) {
             field.nextField = null;
@@ -589,5 +454,56 @@
         this.buttons = null;
         this.editableFields = null;
         app.view.views.EditableView.prototype._dispose.call(this);
+    },
+
+    _buildGridsFromPanelsMetadata: function(panels) {
+        var lastTabIndex  = 0;
+        this.noEditFields = [];
+
+        _.each(panels, function(panel) {
+            // it is assumed that a field is an object but it can also be a string
+            // while working with the fields, might as well take the opportunity to check the user's ACLs for the field
+            _.each(panel.fields, function(field, index) {
+                if (_.isString(field)) {
+                    panel.fields[index] = field = {name: field};
+                }
+
+                // disable the pencil icon if the user doesn't have ACLs
+                if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                    this.noEditFields.push(field.name);
+                }
+            }, this);
+
+            // Set flag so that show more link can be displayed to show hidden panel.
+            if (panel.hide) {
+                this.hiddenPanelExists = true;
+            }
+
+            // Display module label in header panel it doesn't contain the picture field
+            if (panel.header) {
+                panel.isAvatar = !!_.find(panel.fields, function(field) {
+                    return field.name === 'picture';
+                });
+            }
+
+            // labels: visibility for the label
+            if (_.isUndefined(panel.labels)) {
+                panel.labels = true;
+            }
+
+            if (_.isFunction(this.getGridBuilder)) {
+                var options = {
+                        fields:      panel.fields,
+                        columns:     panel.columns,
+                        labels:      panel.labels,
+                        labelsOnTop: panel.labelsOnTop,
+                        tabIndex:    lastTabIndex
+                    },
+                    gridResults = this.getGridBuilder(options).build();
+
+                panel.grid   = gridResults.grid;
+                lastTabIndex = gridResults.lastTabIndex;
+            }
+        }, this);
     }
 })

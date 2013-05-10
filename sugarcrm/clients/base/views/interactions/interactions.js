@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet', 'timeago'],
+    plugins: ['Dashlet', 'timeago', 'GridBuilder'],
     statusMapping:{
         'New' : 'important',
         'Assigned' : 'warning',
@@ -43,7 +43,7 @@
         var dashlet = app.utils.deepCopy(this.context.get("dashlet"));
 
         if(view === 'config') {
-            app.view.views.RecordView.prototype._renderPanels.call(this, this.meta.panels);
+            app.view.views.RecordView.prototype._buildGridsFromPanelsMetadata.call(this, this.meta.panels);
         }
     },
     loadData: function(params) {

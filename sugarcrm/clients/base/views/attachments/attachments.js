@@ -1,6 +1,6 @@
 ({
 
-    plugins: ['Dashlet', 'timeago'],
+    plugins: ['Dashlet', 'timeago', 'GridBuilder'],
     _dataFetched: false,
     events : {
         'click a.preview-attachment' : 'previewAttachment',
@@ -16,7 +16,7 @@
         this.viewName = viewName;
 
         if(viewName === "config") {
-            app.view.views.RecordView.prototype._renderPanels.call(this, this.meta.panels);
+            app.view.views.RecordView.prototype._buildGridsFromPanelsMetadata.call(this, this.meta.panels);
         } else if(this.context.get("collection")) {
 
             this.context.set("limit", this.model.get("display_rows"));

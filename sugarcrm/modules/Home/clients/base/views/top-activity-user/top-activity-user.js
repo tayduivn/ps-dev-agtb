@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'GridBuilder'],
     events: {
         'change select[name=filter_duration]': 'filterChanged'
     },
@@ -8,7 +8,7 @@
         if(viewName !== "config") {
             this.collection.on("reset", this.render, this);
         } else {
-            app.view.views.RecordView.prototype._renderPanels.call(this, this.meta.panels);
+            app.view.views.RecordView.prototype._buildGridsFromPanelsMetadata.call(this, this.meta.panels);
         }
     },
     _mapping: {

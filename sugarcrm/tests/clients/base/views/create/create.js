@@ -19,28 +19,53 @@ describe("Create View", function() {
             "panels":[
                 {
                     "name":"panel_header",
+                    "columns": 2,
+                    "labelsOnTop": true,
                     "placeholders":true,
                     "header":true,
                     "fields":[
                         {
                             "name":"first_name",
                             "label":"",
-                            "placeholder":"LBL_NAME"
+                            "placeholder":"LBL_NAME",
+                            "span": 6,
+                            "labelSpan": 6
                         },
                         {
                             "name":"last_name",
                             "label":"",
-                            "placeholder":"LBL_NAME"
+                            "placeholder":"LBL_NAME",
+                            "span": 6,
+                            "labelSpan": 6
                         }
                     ]
                 }, {
                     "name":"panel_body",
+                    "columns": 2,
                     "labelsOnTop":true,
                     "placeholders":true,
                     "fields":[
-                        "phone_work",
-                        "email1",
-                        "full_name"
+                        {
+                            name: "phone_work",
+                            type: "phone",
+                            label: "phone_work",
+                            span: 6,
+                            labelSpan: 6
+                        },
+                        {
+                            name: "email1",
+                            type: "email",
+                            label: "email1",
+                            span: 6,
+                            labelSpan: 6
+                        },
+                        {
+                            name: "full_name",
+                            type: "name",
+                            label: "full_name",
+                            span: 6,
+                            labelSpan: 6
+                        }
                     ]
                 }
             ]
@@ -269,9 +294,22 @@ describe("Create View", function() {
     });
 
     describe('Render', function() {
-        it("Should render 5 buttons and 5 fields", function() {
-            var fields = 0,
-                buttons = 0;
+        it("Should render 6 buttons and 5 fields", function() {
+            var buildGridsFromPanelsMetadataStub = sinon.stub(view, "_buildGridsFromPanelsMetadata", function(panels) {
+                    // The panel grid contains references to the actual fields found in panel.fields, so the fields must
+                    // be modified to include the field attributes that would be calculated during a normal render
+                    // operation and then added to the grid in the correct row and column.
+                    panels[0].isAvatar           = false;
+                    panels[0].grid               = [
+                        [panels[0].fields[0], panels[0].fields[1]]
+                    ];
+                    panels[1].grid               = [
+                        [panels[1].fields[0], panels[1].fields[1]],
+                        [panels[1].fields[2]]
+                    ];
+                }),
+                fields                           = 0,
+                buttons                          = 0;
 
             view.render();
 
@@ -280,8 +318,11 @@ describe("Create View", function() {
                     fields++;
                 }
             });
+
             expect(fields).toBe(5);
             expect(_.values(view.buttons).length).toBe(6);
+
+            buildGridsFromPanelsMetadataStub.restore();
         });
     });
 

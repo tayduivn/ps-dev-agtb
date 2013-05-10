@@ -1,3 +1,5 @@
-<input type="text" name="{{name}}" value="{{value}}"{{#if def.placeholder}} placeholder="{{str def.placeholder this.model.module}}"{{/if}} class="{{#if def.css_class}}{{../def.css_class}}{{else}}inherit-width{{/if}}">
-{{#unless def.hide_address_book}}<a class="btn" href="javascript:void(0);" data-name="{{name}}"><i class="{{#if ../def.icon}}{{../../def.icon}}{{else}}icon-book{{/if}}"></i></a>{{/unless}}
+<input type="text" name="{{name}}" value="{{value}}"{{#if def.placeholder}} placeholder="{{str def.placeholder model.module}}"{{/if}} class="{{#if def.css_class}}{{def.css_class}}{{else}}inherit-width{{/if}}">
+{{#unless def.hide_address_book}}
+<a class="btn" href="javascript:void(0);" data-name="{{name}}"><i class="{{#if def.icon}}{{def.icon}}{{else}}icon-book{{/if}}"></i></a>
+{{/unless}}
 <p class="help-block"></p>

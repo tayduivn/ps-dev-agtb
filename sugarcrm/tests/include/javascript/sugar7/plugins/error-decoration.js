@@ -27,6 +27,20 @@ describe("Plugins.ErrorDecoration", function() {
         app = SugarTest.app;
 
         view = SugarTest.createView("base", moduleName, viewName, null, null);
+        view.getGridBuilder = function() {
+            return {
+                build: function() {
+                    return {
+                        grid: [
+                            [{name: "description", type: "base", label: "description", span: 8, labelSpan: 4}],
+                            [{name: "case_number", type: "float", label: "case_number", span: 8, labelSpan: 4}],
+                            [{name: "type", type: "text", label: "type", span: 8, labelSpan: 4}]
+                        ],
+                        lastTabIndex: 0
+                    }
+                }
+            };
+        };
     });
 
     afterEach(function() {
