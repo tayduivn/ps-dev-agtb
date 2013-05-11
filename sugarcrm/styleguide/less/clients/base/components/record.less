@@ -153,10 +153,6 @@
       }
     }
   }
-  /* Must be same as above margin-top definition */
-  .input-append .add-on {
-    margin-top: -3px;
-  }
 
   .help-block {
     display: none;
@@ -266,7 +262,7 @@
   .form-horizontal {
     .record-cell,
     .normal {
-      min-height: 50px;
+      min-height: 20px;
       padding-left: 0;
     }
     .record-cell {
@@ -413,7 +409,7 @@
     &[data-type="email"] {
       .normal > span {
         display: block !important;
-        margin-bottom: 10px;
+        margin-bottom: 0;
       }
       .detail .control-group.email {
         .ellipsis-cell {
@@ -424,9 +420,11 @@
         padding-right: 132px;
         position: relative;
         margin-bottom: 2px;
-        input[type="text"] {
-          min-height: 18px;
-          margin-bottom: 6px;
+        input[type="text"]{
+            min-height: 20px;
+            padding: 6px 6px 3px;
+            margin-bottom: 2px;
+            .border-radius(0);
         }
         .input-append.widget {
           margin-bottom: 0;
@@ -446,8 +444,7 @@
         }
         .btn-toolbar {
           position: absolute;
-          /* Must be same as input[type="text"] margin-top definition */
-          top: -5px;
+          top: -3px;
           right: 0;
           width: 118px;
           padding: 0;
@@ -679,7 +676,7 @@
   }
 
   .record-edit-link-wrapper {
-    top: 15px;
+    top: 0px;
     left: -18px;
   }
 
