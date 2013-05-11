@@ -30,7 +30,7 @@
     delegateButtonEvents: function() {
         this.context.on('button:convert_button:click', this.convertProspectClicked, this);
         this.context.on('button:manage_subscriptions:click', this.manageSubscriptionsClicked, this);
-        app.view.invoke(this, 'view', 'record', 'delegateButtonEvents');
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'delegateButtonEvents'});
     },
 
     convertProspectClicked: function() {

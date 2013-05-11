@@ -8,7 +8,7 @@
     },
 
     initialize: function(options) {
-        app.view.invoke(this, 'view', 'recordlist', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
         this.layout.on("hide", this.toggleList, this);
     },
 

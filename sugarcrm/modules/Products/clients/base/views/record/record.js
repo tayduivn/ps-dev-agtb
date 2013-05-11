@@ -32,7 +32,7 @@
         //reinitialize array on each init
         this.currencyFields = [];
         this._setupCommitStageField(options.meta.panels);
-        app.view.invoke(this, 'view', 'record', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
 
         //pull the fields in the panels that are editable currency fields
         _.each(options.meta.panels, function(panel) {
@@ -47,7 +47,7 @@
     },
 
     initButtons: function() {
-        app.view.invoke(this, 'view', 'record', 'initButtons');
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initButtons'});
 
         // if the model has a quote_id and it's not empty, disable the convert_to_quote_button
         if(this.model.has('quote_id') && !_.isEmpty(this.model.get('quote_id'))
@@ -60,7 +60,7 @@
      * Bind to model to make it so that it will re-render once it has loaded.
      */
     bindDataChange : function() {
-        app.view.invoke(this, 'view', 'record', 'bindDataChange');
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'bindDataChange'});
         this.model.on('change:base_rate', function() {
             _.debounce(this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id")),500,true);
         }, this);
@@ -68,7 +68,7 @@
 
     delegateButtonEvents: function() {
         this.context.on('button:convert_to_quote:click', this.convertToQuote, this);
-        app.view.invoke(this, 'view', 'record', 'delegateButtonEvents');
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'delegateButtonEvents'});
     },
 
     /**

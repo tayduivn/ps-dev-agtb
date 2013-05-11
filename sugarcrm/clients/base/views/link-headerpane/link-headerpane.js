@@ -12,7 +12,7 @@
         var meta = app.metadata.getView(null, options.name);
 
         options.meta = _.extend({type: 'headerpane'}, options.meta, meta[this.action]);
-        app.view.invoke(this, 'view', 'headerpane', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args:[options]});
         this.context.on("link:module:select", this.setModule, this);
     },
     setModule: function (meta) {
@@ -27,7 +27,7 @@
     },
     _dispose: function () {
         this.context.off("link:module:select", null, this);
-        app.view.invoke(this, 'view', 'headerpane', '_dispose');
+        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: '_dispose'});
     },
 
     /**

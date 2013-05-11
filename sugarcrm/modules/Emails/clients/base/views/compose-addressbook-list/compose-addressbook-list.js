@@ -2,7 +2,7 @@
     extendsFrom: "FlexListView",
 
     initialize: function(options) {
-        app.view.invoke(this, 'view', 'flex-list', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args: [options]});
         this.collection.sync = this.sync;
         this.context.on("compose:addressbook:search", this._search, this);
     },
@@ -53,7 +53,7 @@
         // must do this before rendering the view, which renders the actionmenu field, which creates the listeners
         this.context.unset("mass_collection");
 
-        app.view.invoke(this, 'view', 'list', '_render');
+        app.view.invokeParent(this, {type: 'view', name: 'list', method: '_render'});
 
         var massCollection = this.context.get("mass_collection");
 
@@ -115,6 +115,6 @@
         if(collection) {
             collection.off(null, null, this);
         }
-        app.view.invoke(this, 'view', 'flex-list', 'unbindData');
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'unbindData'});
     }
 })

@@ -8,7 +8,7 @@
     buildRoute: function (module, idName) {
         if (app.acl.hasAccess("admin", "ProductCategories")) {
             this.hasAccess = true;
-            app.view.invoke(this, 'field', 'relate', 'buildRoute', {args:[module, idName]});
+            app.view.invokeParent(this, {type: 'view', name: 'relate', method: 'buildRoute', args: [module, idName]});
         } else {
             this.hasAccess = false;
         }

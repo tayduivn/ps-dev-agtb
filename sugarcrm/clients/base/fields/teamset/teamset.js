@@ -22,7 +22,7 @@
         'change input.select2': 'inputChanged'
     },
     initialize: function (options) {
-        app.view.invoke(this, 'field', 'relate', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'initialize', args:[options]});
 
         //Moving primary teams to top on init
         this.model.set(
@@ -35,7 +35,7 @@
     },
     _render: function () {
         var self = this;
-        app.view.invoke(this, 'field', 'relate', '_render');
+        app.view.invokeParent(this, {type: 'field', name: 'relate', method: '_render'});
 
         if (this.tplName === 'edit') {
             this.$(this.fieldTag).each(function (index, el) {

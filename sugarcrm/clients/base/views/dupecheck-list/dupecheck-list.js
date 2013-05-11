@@ -37,7 +37,8 @@
     initialize: function(options) {
         _.bindAll(this);
         //turn off sorting & links for dupe check lists
-        app.view.invoke(this, 'view', 'flex-list', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
+
         _.each(this.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
                 field.sortable = false;
@@ -63,7 +64,7 @@
     },
 
     _renderHtml: function() {
-        app.view.invoke(this, 'view', 'flex-list', '_renderHtml');
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_renderHtml'});
         this.$('table.table-striped').addClass('duplicates highlight');
     },
 
@@ -88,7 +89,7 @@
     },
 
     addActions: function() {
-        app.view.invoke(this, 'view', 'flex-list', 'addActions');
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
         if (this.meta.showPreview === true) {
             this.rightColumns.push({
                 type: 'rowaction',

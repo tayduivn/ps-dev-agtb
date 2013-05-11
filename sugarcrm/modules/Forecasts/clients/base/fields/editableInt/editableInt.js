@@ -60,7 +60,7 @@
     },
 
     initialize: function(options) {
-        app.view.invoke(this, 'field', 'int', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'field', name: 'int', method: 'initialize', args: [options]});
         this.checkIfCanEdit();
     },
 

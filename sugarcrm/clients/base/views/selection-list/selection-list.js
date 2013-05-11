@@ -20,7 +20,7 @@
     initialize: function (options) {
         options.meta = options.meta || {};
         options.meta.selection = { type: 'single', label: ' ' };
-        app.view.invoke(this, 'view', 'flex-list', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
         this.context.on("change:selection_model", this._selectModel, this);
     },
     _selectModel: function () {

@@ -13,7 +13,7 @@
         var leadsModel = this.context.get('leadsModel');
         var name = !_.isUndefined(leadsModel.get('name')) ? leadsModel.get('name') : leadsModel.get('first_name') + ' ' + leadsModel.get('last_name');
         this.title = app.lang.get("LBL_CONVERTLEAD_TITLE", this.module) + ': ' + name;
-        app.view.invoke(this, 'view', 'headerpane', '_renderHtml');
+        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: '_renderHtml'});
     },
 
     /**

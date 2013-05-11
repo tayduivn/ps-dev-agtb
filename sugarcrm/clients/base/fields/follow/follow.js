@@ -6,8 +6,7 @@
     extendsFrom: 'RowactionField',
 
     initialize: function(options) {
-        app.view.invoke(this, 'field', 'rowaction', 'initialize', {args:[options]});
-
+        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args:[options]});
         var self = this;
         this.context.on("follow:value:toggle", function(model) {
             if(self.model === model) {
@@ -18,7 +17,7 @@
 
     _render: function() {
         var mouseoverText, mouseoverClass, oldText, self = this;
-        app.view.invoke(this, 'field', 'rowaction', '_render');
+        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: '_render'});
 
         this.$(".label").off();
 

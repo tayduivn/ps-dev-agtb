@@ -32,7 +32,7 @@
         //reinitialize array on each init
         this.currencyFields = [];
         this._setupCommitStageField(options.meta.panels);
-        app.view.invoke(this, 'view', 'create', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'create', method: 'initialize', args: [options]});
 
         //pull the fields in the panels that are editable currency fields
         _.each(options.meta.panels, function(panel) {
@@ -51,7 +51,7 @@
      */
     bindDataChange : function() {
         // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invoke(this, 'view', 'create', 'bindDataChange');
+        app.view.invokeParent(this, {type: 'view', name: 'create', method: 'bindDataChange'});
         this.model.on('change:base_rate', function() {
             _.debounce(this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id")),500,true);
         }, this)

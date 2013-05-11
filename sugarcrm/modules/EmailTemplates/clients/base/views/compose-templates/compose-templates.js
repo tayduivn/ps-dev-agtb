@@ -34,7 +34,7 @@
     plugins: ['list-disable-sort'],
 
     initialize: function(options) {
-        app.view.invoke(this, 'view', 'flex-list', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args: [options]});
         _.each(this.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
                 field.sortable = false;
@@ -54,7 +54,7 @@
     },
 
     addActions: function() {
-        app.view.invoke(this, 'view', 'flex-list', 'addActions');
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
         if (this.meta.showPreview === true) {
             this.rightColumns.push({
                 type: 'rowaction',

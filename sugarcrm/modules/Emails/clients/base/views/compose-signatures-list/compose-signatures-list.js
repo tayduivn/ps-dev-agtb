@@ -36,7 +36,7 @@
 
     initialize: function(options) {
         _.bindAll(this);
-        app.view.invoke(this, 'view', 'selection-list', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'selection-list', method: 'initialize', args: [options]});
 
         // remove links
         this.on("render", this._removeLinks);

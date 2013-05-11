@@ -5,7 +5,7 @@
     },
     extendsFrom: 'ButtonField',
     initialize: function(options) {
-        app.view.invoke(this, 'field', 'button', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'field', name: 'button', method: 'initialize', args:[options]});
         if(this.name === 'inline-save') {
             this.model.off("change", null, this);
             this.model.on("change", function() {

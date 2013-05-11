@@ -33,7 +33,7 @@
         'touchstart [data-toggle=dropdown]' : 'renderDropdown'
     },
     initialize: function(options) {
-        app.view.invoke(this, 'field', 'fieldset', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: 'initialize', args:[options]});
         this.dropdownFields = [];
 
         //Throttle the setPlaceholder function per instance of this field.
@@ -94,7 +94,7 @@
 
     },
     _render: function() {
-        app.view.invoke(this, 'field', 'fieldset', '_render');
+        app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: '_render'});
         this.setPlaceholder();
     },
     setPlaceholder: function() {
@@ -161,7 +161,7 @@
         }
     },
     setDisabled: function(disable) {
-        app.view.invoke(this, 'field', 'fieldset', 'setDisabled', {args: [disable]});
+        app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: 'setDisabled', args: [disable]});
         disable = _.isUndefined(disable) ? true : disable;
         if (disable) {
             this.$('.dropdown-toggle').addClass('disabled');
@@ -175,6 +175,6 @@
             field.off('show hide', this.setPlaceholder, this);
         }, this);
         this.dropdownFields = null;
-        app.view.fields.FieldsetField.prototype._dispose.call(this);
+        app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: '_dispose'});
     }
 })

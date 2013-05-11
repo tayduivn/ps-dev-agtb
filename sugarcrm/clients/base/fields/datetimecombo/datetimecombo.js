@@ -51,7 +51,7 @@
 
         // Set our internal time and date values so hbt picks up
         self._presetDateValues();
-        app.view.invoke(self, 'field', 'date', '_render');
+        app.view.invokeParent(this, {type: 'field', name: 'date', method: '_render', platform: 'base'});
 
         viewName = self._getViewName();
         $(function() {

@@ -100,6 +100,8 @@ describe("forecasts_layout_forecastsWizardConfig", function(){
                     components: {}
                 }
             };
+            var WizardConfigController = app.view._getController({type:'layout', name:'forecasts-wizard-config'});
+            testLayout = new WizardConfigController(options);
         });
 
         afterEach(function() {
@@ -108,7 +110,6 @@ describe("forecasts_layout_forecastsWizardConfig", function(){
         });
 
         it("should get a model", function() {
-            testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
             var getModelStub = sinon.stub(testLayout, '_getConfigModel', function() {
                 return {
                     fetch: function(){}
@@ -121,7 +122,6 @@ describe("forecasts_layout_forecastsWizardConfig", function(){
 
         describe("model for config panel", function() {
             it("should be a new model if one does not exist", function () {
-                testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
                 var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
                 expect(testModel).toBeDefined();
                 expect(testModel.attributes).toEqual({});

@@ -100,6 +100,8 @@ describe("forecasts_layout_forecastsTabbedConfig", function(){
                     components: {}
                 }
             };
+            var TabbedConfigController = app.view._getController({type:'layout', name:'forecasts-tabbed-config'});
+            testLayout = new TabbedConfigController(options);
         });
 
         afterEach(function() {
@@ -108,7 +110,6 @@ describe("forecasts_layout_forecastsTabbedConfig", function(){
         });
 
         it("should get a model", function() {
-            testLayout = new app.view.layouts.ForecastsTabbedConfigLayout(options);
             var getModelStub = sinon.stub(testLayout, '_getConfigModel', function() {
                 return {
                     fetch: function(){}
@@ -121,7 +122,6 @@ describe("forecasts_layout_forecastsTabbedConfig", function(){
 
         describe("model for config panel", function() {
             it("should be a new model if one does not exist", function () {
-                testLayout = new app.view.layouts.ForecastsTabbedConfigLayout(options);
                 var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
                 expect(testModel).toBeDefined();
                 expect(testModel.attributes).toEqual({});
@@ -133,8 +133,6 @@ describe("forecasts_layout_forecastsTabbedConfig", function(){
                         test: 'test'
                     }
                 });
-
-                testLayout = new app.view.layouts.ForecastsTabbedConfigLayout(options);
                 var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
                 expect(testModel).not.toBe(options.context.config);
                 expect(testModel.attributes).toEqual(options.context.config.attributes);

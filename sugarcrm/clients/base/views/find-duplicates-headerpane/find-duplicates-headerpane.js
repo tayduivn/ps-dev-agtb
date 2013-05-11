@@ -10,7 +10,7 @@
      * Wait for the mass_collection to be set up so we can add listener
      */
     bindDataChange: function() {
-        app.view.invoke(this, 'view', 'headerpane', 'bindDataChange');
+        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'bindDataChange'});
         this.context.on('change:mass_collection', this.addMassCollectionListener, this);
     },
 

@@ -26,10 +26,24 @@
  ********************************************************************************/
 ({
     extendsFrom:'ResultsView',
+    toggledClosed: false,
+    bindDataChange:function () {
+        this.on('render', this.toggleSidebar);
+    },
+    toggleSidebar: function () {
+        if (!this.toggledClosed) {
+            app.controller.context.trigger('toggleSidebar');
+            this.toggledClosed = true;
+        }
+    },
     /**
      * Loads the right side preview view when clicking icon for a particular search result.
      */
     loadPreview: function(e) {
+        if (this.toggledClosed) {
+            app.controller.context.trigger('toggleSidebar');
+            this.toggledClosed = false;
+        }
         var localGGrandparent, correspondingResultId, model;
         localGGrandparent = this.$(e.currentTarget).closest('li');
 
@@ -43,3 +57,4 @@
         app.events.trigger("preview:render", model);
     }
 })
+

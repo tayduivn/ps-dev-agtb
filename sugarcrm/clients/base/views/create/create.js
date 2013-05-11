@@ -35,7 +35,7 @@
             SELECT: 'select',
             DUPLICATE: 'duplicate'
         });
-        app.view.invoke(this, 'view', 'record', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
 
         this.model.off("change", null, this);
 
@@ -80,7 +80,7 @@
     },
 
     _render: function () {
-        app.view.invoke(this, 'view', 'record', '_render');
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: '_render'});
         // Note if fieldset w/date created | modified is NOT set as readonly, this still removes from page
         // We decided that's fine, and better than alternative of looping fields, find date_created_by,
         // check readonly field, hide only if readonly, etc., etc.
@@ -449,7 +449,7 @@
      * @param state
      */
     setButtonStates: function (state) {
-        app.view.invoke(this, 'view', 'record', 'setButtonStates', {args:[state]});
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'setButtonStates', args:[state]});
         var $saveButtonEl = this.buttons[this.saveButtonName];
         if ($saveButtonEl) {
             switch (state) {

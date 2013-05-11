@@ -17,7 +17,7 @@
     _canEdit: true,
 
     initialize: function (options) {
-        app.view.invoke(this, 'field', 'date', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'field', name: 'date', method: 'initialize', args: [options]});
         this.checkIfCanEdit();
     },
 

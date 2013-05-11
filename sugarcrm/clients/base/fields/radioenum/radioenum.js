@@ -30,7 +30,7 @@
     extendsFrom: 'ListeditableField',
     _render: function(){
         // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        var options = app.view.invoke(this, 'field', 'enum', 'loadEnumOptions', {args: [false,
+        var options = app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'loadEnumOptions', args: [false,
             function() {
                 if(!this.disposed){
                     this.render();
@@ -41,7 +41,7 @@
         if(this.tplName === 'list-edit') {
             var optionsKeys = _.isObject(options) ? _.keys(options) : [];
             // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            var select2Options = app.view.invoke(this, 'field', 'enum', 'getSelect2Options', {args: [optionsKeys]});
+            var select2Options = app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'getSelect2Options', args: [optionsKeys]});
             this.$(this.fieldTag).select2(select2Options);
             this.$(".select2-container").addClass("tleft");
         }
@@ -49,7 +49,7 @@
     bindDomChange: function() {
         if (this.tplName === 'list-edit') {
             // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            app.view.invoke(this, 'field', 'enum', 'bindDomChange');
+            app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'bindDomChange'});
         } else {
             if (!(this.model instanceof Backbone.Model)) return;
             var self = this;
@@ -62,7 +62,7 @@
     format: function(value) {
         if (this.tplName === 'list-edit') {
             // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            return app.view.invoke(this, 'field', 'enum', 'format', {args: [value]});
+            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'format', args: [value]});
         } else {
             return app.view.Field.prototype.format.call(this, value);
         }
@@ -70,13 +70,13 @@
     unformat: function(value) {
         if (this.tplName === 'list-edit') {
             // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            return app.view.invoke(this, 'field', 'enum', 'unformat', {args: [value]});
+            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'unformat', args: [value]});
         } else {
             return app.view.Field.prototype.unformat.call(this, value);
         }
     },
     _loadTemplate: function() {
-        app.view.invoke(this, 'field', 'listeditable', '_loadTemplate');
+        app.view.invokeParent(this, {type: 'field', name: 'listeditable', method: '_loadTemplate'});
 
         //Important to change the fieldTag to bind the dom "change" event
         if(this.tplName === 'list-edit') {
@@ -87,7 +87,7 @@
     },
     decorateError: function(errors) {
         if (this.tplName === 'list-edit') {
-            return app.view.invoke(this, 'field', 'enum', 'decorateError', {args: [errors]});
+            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'decorateError', args: [errors]});
         } else {
 
             var errorMessages = [],
@@ -111,7 +111,7 @@
     clearErrorDecoration: function() {
         if (this.tplName === 'list-edit') {
             // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            return app.view.invoke(this, 'field', 'enum', 'clearErrorDecoration');
+            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'clearErrorDecoration'});
         } else {
             var ftag = this.fieldTag || '';
             // Remove previous exclamation then add back.

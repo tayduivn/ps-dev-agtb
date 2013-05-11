@@ -29,7 +29,7 @@
     initialize: function (options) {
         _.bindAll(this);
         options.meta = _.extend({}, app.metadata.getView(null, 'record'), options.meta);
-        app.view.invoke(this, 'view', 'editable', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'editable', method: 'initialize', args: [options]});
         this.buttons = {};
         this.createMode = this.context.get("create") ? true : false;
 
@@ -401,7 +401,7 @@
     },
 
     handleKeyDown: function (e, field) {
-        app.view.invoke(this, 'view', 'editable', 'handleKeyDown', {args:[e, field]});
+        app.view.invokeParent(this, {type: 'view', name: 'editable', method: 'handleKeyDown', args: [e, field]});
         if (e.which === 9) { // If tab
             e.preventDefault();
             // field isnt done being focused yet so focus some more
@@ -469,7 +469,7 @@
         });
         this.buttons = null;
         this.editableFields = null;
-        app.view.invoke(this, 'view', 'editable', '_dispose');
+        app.view.invokeParent(this, {type: 'view', name: 'editable', method: '_dispose'});
     },
 
     _buildGridsFromPanelsMetadata: function(panels) {

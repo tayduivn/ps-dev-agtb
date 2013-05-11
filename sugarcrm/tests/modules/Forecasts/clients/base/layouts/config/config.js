@@ -105,7 +105,8 @@ describe("forecasts_layout_config", function(){
                     components: {}
                 }
             };
-            baseIndexLayout = new app.view.layouts.ForecastsRecordsLayout(options);
+            var forecastRecordsLayoutController = app.view._getController({type:'layout', name:'forecasts-records'});
+            baseIndexLayout = new forecastRecordsLayoutController(options);
         });
 
         afterEach(function() {
@@ -115,7 +116,8 @@ describe("forecasts_layout_config", function(){
         });
 
         it("should get a model", function() {
-            testLayout = new app.view.layouts.ForecastsConfigLayout(options);
+            var LayoutController = app.view._getController({type:'layout', name:'forecasts-config'});
+            testLayout = new LayoutController(options);
             var getModelStub = sinon.stub(testLayout, '_getConfigModel', function() {
                 return {
                     fetch: function(){}
@@ -130,7 +132,8 @@ describe("forecasts_layout_config", function(){
 
         describe("model for config panel", function() {
             it("should be a new model if one does not exist", function () {
-                testLayout = new app.view.layouts.ForecastsConfigLayout(options);
+                var LayoutController = app.view._getController({type:'layout', name:'forecasts-config'});
+                testLayout = new LayoutController(options);
                 var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
                 expect(testModel).toBeDefined();
                 expect(testModel.attributes).toEqual({});
@@ -142,8 +145,8 @@ describe("forecasts_layout_config", function(){
                         test: 'test'
                     }
                 });
-
-                testLayout = new app.view.layouts.ForecastsConfigLayout(options);
+                var LayoutController = app.view._getController({type:'layout', name:'forecasts-config'});
+                testLayout = new LayoutController(options);
                 var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
                 expect(testModel).not.toBe(options.context.config);
                 expect(testModel.attributes).toEqual(options.context.config.attributes);
@@ -161,8 +164,10 @@ describe("forecasts_layout_config", function(){
                     components: {}
                 }
             };
-            baseIndexLayout = new app.view.layouts.ForecastsRecordsLayout(options);
-            testLayout = new app.view.layouts.ForecastsConfigLayout(options);
+            var forecastRecordsLayoutController = app.view._getController({type:'layout', name:'forecasts-records'});
+            baseIndexLayout = new forecastRecordsLayoutController(options);
+            var LayoutController = app.view._getController({type:'layout', name:'forecasts-config'});
+            testLayout = new LayoutController(options);
             homeLocation = '#Home';
             forecastsLocation = '#Forecasts';
         });

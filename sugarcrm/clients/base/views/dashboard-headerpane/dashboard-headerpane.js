@@ -19,7 +19,7 @@
             options.template = app.template.getView(options.name);
         }
         // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invoke(this, 'view', 'headerpane', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args:[options]});
         this.model.on("change change:layout change:metadata", function() {
             if (this.inlineEditMode) {
                 this.changed = true;
@@ -164,19 +164,19 @@
     },
     initButtons: function() {
         // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invoke(this, 'view', 'record', 'initButtons');
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initButtons'});
     },
     registerFieldAsButton: function(buttonName) {
         // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invoke(this, 'view', 'record', 'registerFieldAsButton', {args: [buttonName]});
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'registerFieldAsButton', args: [buttonName]});
     },
     setButtonStates: function(state) {
         // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invoke(this, 'view', 'record', 'setButtonStates', {args: [state]});
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'setButtonStates', args: [state]});
     },
     setEditableFields: function() {
         // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invoke(this, 'view', 'record', 'setEditableFields');
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'setEditableFields'});
     },
     _dispose: function() {
         _.each(this.editableFields, function(field) {
@@ -184,7 +184,7 @@
         });
         this.buttons = null;
         this.editableFields = null;
-        app.view.invoke(this, 'view', 'editable', '_dispose');
+        app.view.invokeParent(this, {type: 'view', name: 'editable', method: '_dispose'});
     }
 
 })

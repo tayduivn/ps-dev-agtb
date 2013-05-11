@@ -22,7 +22,7 @@
     // Model being previewed (if any)
     _previewed: null,
     initialize: function (options) {
-        app.view.invoke(this, 'view', 'list', 'initialize', {args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'list', method: 'initialize', args: [options]});
         this.template = app.template.getView('flex-list');
         this.events = _.clone(this.events);
         _.extend(this.events, {
@@ -218,7 +218,7 @@
     },
     unbind: function() {
         $(window).off("resize.flexlist-" + this.cid);
-        app.view.invoke(this, 'view', 'list', 'unbind');
+        app.view.invokeParent(this, {type: 'view', name: 'list', method: 'unbind'});
     },
 
     /**

@@ -17,7 +17,7 @@
 
         if(viewName === "config") {
             // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            app.view.invoke(this, 'view', 'record', '_buildGridsFromPanelsMetadata', {args:[this.meta.panels]});
+            app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args:[this.meta.panels]});
         } else if(this.context.get("collection")) {
 
             this.context.set("limit", this.model.get("display_rows"));

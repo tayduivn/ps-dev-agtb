@@ -96,7 +96,7 @@
 
         if (view === 'config') {
             // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            app.view.invoke(this, 'view', 'record', '_buildGridsFromPanelsMetadata', {args:[this.meta.panels]});
+            app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args:[this.meta.panels]});
         }
     },
 
