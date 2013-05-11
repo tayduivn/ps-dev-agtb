@@ -32,7 +32,7 @@
     {{/if}}
     {{#each meta.panels}}
         {{#each fields}}
-            <p>{{field ../../this ../../model}}</p>
+            <p>{{field ../../this model=../../model}}</p>
         {{/each}}
     {{/each}}
 </div>

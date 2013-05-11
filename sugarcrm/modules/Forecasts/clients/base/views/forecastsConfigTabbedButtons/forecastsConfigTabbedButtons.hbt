@@ -37,7 +37,7 @@
 {{#each meta.panels}}
 <div class="modal-footer">
     {{#each buttons}}
-        {{field ../../this ../../model}}
+        {{field ../../this model=../../model}}
     {{/each}}
 </div>
 {{/each}}

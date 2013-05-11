@@ -30,7 +30,7 @@
     <div class="row-fluid">
         <div class="span8">
             {{#each this.meta.filter_duration}}
-                {{field ../this ../this.model "edit"}}
+                {{field ../this model=../this.model template="edit"}}
             {{/each}}
         </div>
         <div class="span4">

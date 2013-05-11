@@ -42,7 +42,7 @@
     <tr>
         {{#each ../fields}}
         {{#if enabled}}
-        <td class="{{fieldClass}}">{{field ../../../../this ../../this}}</td>
+        <td class="{{fieldClass}}">{{field ../../../../this model=../../this}}</td>
         {{/if}}
         {{/each}}
     </tr>

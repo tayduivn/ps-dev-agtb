@@ -33,7 +33,7 @@
             <div class="dropdown-menu scroll pull-right">
                 <ul role="menu">
                     {{#each createMenuItems}}
-                        <li>{{field ../this model ../this.action}}</li>
+                        <li>{{field ../this model=model template=../this.action}}</li>
                     {{/each}}
                 </ul>
             </div>

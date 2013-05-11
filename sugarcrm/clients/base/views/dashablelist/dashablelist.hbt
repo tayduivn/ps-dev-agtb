@@ -31,7 +31,7 @@
     <tr name="{{module}}_{{attributes.id}}" class="single">
         {{#each ../fields}}
             <td>
-              {{field ../../../this ../this ../../../this.viewName}}
+              {{field ../../../this model=../this template=../../../this.viewName}}
             </td>
         {{/each}}
     </tr>

@@ -40,13 +40,13 @@
             {{else}}
                 {{#each meta.panels}}
                     {{#each fields}}
-                    <div class="control-group">{{field ../../this ../../model}}</div>
+                    <div class="control-group">{{field ../../this model=../../model}}</div>
                     {{/each}}
                 {{/each}}
             {{/if}}
             <div class="signup-footer">
                 {{#each meta.buttons}}
-                   {{field ../this ../model}}
+                   {{field ../this model=../model}}
                 {{/each}}
             </div>
         </form>

@@ -20,7 +20,7 @@
         {{#each ../leftColumns}}
         <th data-fieldname="{{name}}">
             <span>
-                {{field ../../this null "list-header"}}
+                {{field ../../this template="list-header"}}
             </span>
         </th>
         {{/each}}
@@ -51,7 +51,7 @@
             {{else}}
             <th data-fieldname="{{name}}">
                 <span>
-                    {{field ../../../this null "list-header"}}
+                    {{field ../../../this template="list-header"}}
                 </span>
             </th>
             {{/if}}
@@ -66,17 +66,17 @@
     <tr name="{{module}}_{{attributes.id}}" class="single">
         {{#each ../../leftColumns}}
         <td>
-             {{field ../../../this ../this ../../../this.viewName}}
+             {{field ../../../this model=../this template=../../../this.viewName}}
         </td>
         {{/each}}
         {{#each ../../_fields.visible}}
             <td>
-              {{field ../../../this ../this ../../../this.viewName}}
+              {{field ../../../this model=../this template=../../../this.viewName}}
             </td>
         {{/each}}
         {{#each ../../rightColumns}}
         <td>
-             {{field ../../../this ../this ../../../this.viewName}}
+             {{field ../../../this model=../this template=../../../this.viewName}}
         </td>
         {{/each}}
     </tr>

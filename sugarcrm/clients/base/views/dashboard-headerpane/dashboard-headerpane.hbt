@@ -2,13 +2,13 @@
     {{#each meta.panels}}
         {{#each fields}}
             <span class="record-cell">
-                <h1>{{field ../../this ../../this.model ../../this.action}}</h1>
+                <h1>{{field ../../this model=../../this.model template=../../this.action}}</h1>
             </span>
         {{/each}}
     {{/each}}
     <div class="btn-toolbar pull-right">
         {{#each meta.buttons}}
-            {{field ../this ../this.model "detail"}}
+            {{field ../this model=../this.model template="detail"}}
         {{/each}}
     </div>
 </div>

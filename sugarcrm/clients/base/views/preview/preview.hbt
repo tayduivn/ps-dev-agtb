@@ -32,7 +32,7 @@
     <div class="row-fluid {{#if ../hide}} hide panel_hidden{{/if}}">
         <div class="span5">{{str  this.label ../../this.model.module}}</div>
         <div class="span7" name="{{this.name}}">
-            {{field ../../this ../../model}}
+            {{field ../../this model=../../model}}
         </div>
     </div>
 {{/each}}
