@@ -45,6 +45,19 @@ class MetaDataConverter
     protected static $converter = null;
 
     /**
+     * Actions associated to their ACLAction type
+     *
+     * @var array
+     */
+    protected $aclActionList = array(
+        'EditView' => 'edit',
+        '' => 'list',
+        'index' => 'list',
+        'Import' => 'import',
+        'DetailView' => 'view',
+    );
+
+    /**
      * Converts edit and detail view defs that contain fieldsets to a compatible
      * defs that does not contain fieldsets. In essence, it splits up any fieldsets
      * and moves them out of their grouping into individual fields within the panel.
@@ -392,5 +405,99 @@ class MetaDataConverter
         }
         $newSubpanelName = $this->fromLegacySubpanelName($pathInfo['filename']);
         return "{$customDir}modules/{$module}/clients/base/views/{$newSubpanelName}/{$newSubpanelName}.php";
+    }
+
+    /**
+     * Converts a legacy menu to the new style menu
+     *
+     * @param $module module converting
+     * @param array $menu menu contents
+     * @param bool $ext is this an Extension
+     * @return string new menu layout
+     */
+    public function fromLegacyMenu($module, array $menu, $ext = false)
+    {
+        $file = '<?php
+$moduleName = "' . $module . '";
+';
+        if ($ext === true) {
+            $file .= '
+$viewdefs[$moduleName]["base"]["menu"]["header"][] = array(
+';
+        } else {
+            $file .= '
+$viewdefs[$moduleName]["base"]["menu"]["header"] = array(
+';
+        }
+        foreach ($menu as $option) {
+            // get the menu manip done
+            $url = parse_url($option[0]);
+            parse_str($url['query'], $menuOptions);
+            $file .= '
+    array(
+        "label" => "' . trim($option[1]) . '",';
+            if (isset($this->aclActionList[$menuOptions['action']])) {
+                $file .= '
+        "acl_action" => "' . trim($this->aclActionList[$menuOptions['action']]) . '",
+        "acl_module"=> "' . trim($menuOptions['module']) . '",';
+            } elseif (isset($this->aclActionList[$menuOptions['module']])) {
+                $file .= '
+        "acl_action" => "' . trim($this->aclActionList[$menuOptions['module']]) . '",
+        "acl_module"=> "' . trim($menuOptions['module']) . '",';
+            }
+            $file .= '
+        "icon" => "icon-plus",';
+            $file .= $this->buildMenuRoute($menuOptions, $option[0]);
+            $file .= '
+            ),
+            ';
+        }
+        $file .= '
+);
+        ';
+
+        return $file;
+    }
+
+    /**
+     * @param array $menuOptions the request variables
+     * @param string $link the legacy link
+     * @return string the correct route for the menu option
+     */
+    protected function buildMenuRoute(array $menuOptions, $link)
+    {
+        global $bwcModules;
+
+        $url = parse_url($link);
+        $currSiteUrl = parse_url($GLOBALS['sugar_config']['site_url']);
+
+        // most likely another server, return the URL provided
+        if (!empty($url['host']) && $url['host'] != $currSiteUrl['host']) {
+            return '
+            "route" => "' . $link . '",';
+        }
+
+        if (in_array($menuOptions['module'], $bwcModules)) {
+            return '
+            "route" => "#bwc/index.php?' . http_build_query(array($menuOptions)) . '",';
+        }
+
+        if ($menuOptions['action'] == 'EditView' && empty($menuOptions['record'])) {
+            $file = '
+            "route" => "#' . $menuOptions['module'] . '/create",';
+        } elseif (($menuOptions['action'] == 'EditView' || $menuOptions['action'] == 'DetailView') &&
+            !empty($menuOptions['record'])
+        ) {
+            $file = '
+            "route" => "#' . $menuOptions['module'] . '/' . $menuOptions['record'] . '",';
+        } elseif (empty($menuOptions['action']) || $menuOptions['action'] == 'index') {
+            $file = '
+            "route" => "#' . $menuOptions['module'] . '",';
+        } else {
+            $file = '
+            "route" => "#bwc/index.php?' . http_build_query(array($menuOptions)) . '",';
+        }
+
+        return $file;
     }
 }
