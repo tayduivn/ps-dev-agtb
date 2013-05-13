@@ -95,6 +95,8 @@
     show: function() {
         if(this.hasAccess()) {
             this._show();
+        } else {
+            this.isHidden = true;
         }
     },
     hide: function() {

@@ -128,6 +128,24 @@ describe("Base.Field.Button", function() {
 
     });
 
+    it('should update ishidden if show is called and hasAccess returns false', function() {
+        var def = {
+            'acl_module' : 'Contacts',
+            'acl_action' : 'edit'
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        var accessStub = sinon.stub(field,'hasAccess', function(){
+            return false;
+        })
+
+        field.show();
+
+        expect(field.isHidden).toBeTruthy();
+
+        accessStub.restore();
+
+    });
+
     it("should differenciate string routes from sidecar route object", function() {
         var def = {
             'route' : {
