@@ -715,3 +715,397 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
  )
 
 );
+
+$dictionary['ForecastWorksheet'] = array(
+    'table' => 'forecast_worksheets',
+    'studio' => false,
+    'acl_fields' => false,
+    'fields' => array(
+        'parent_id' =>
+        array(
+            'name' => 'parent_id',
+            'vname' => 'LBL_PARENT_ACCOUNT_ID',
+            'type' => 'id',
+            'required' => false,
+            'reportable' => false,
+            'audited' => false,
+            'comment' => 'Account ID of the parent of this account',
+            'studio' => false
+        ),
+        'parent_type' =>
+        array(
+            'name' => 'parent_type',
+            'vname' => 'LBL_PARENT_TYPE',
+            'type' => 'parent_type',
+            'dbType' => 'varchar',
+            'group' => 'parent_name',
+            'options' => 'parent_type_display',
+            'len' => '255',
+            'comment' => 'Sugar module the Worksheet is associated with',
+            'studio' => false
+        ),
+        'account_name' =>
+        array(
+            'name' => 'account_name',
+            'rname' => 'name',
+            'id_name' => 'account_id',
+            'vname' => 'LBL_ACCOUNT_NAME',
+            'type' => 'relate',
+            'table' => 'accounts',
+            'join_name' => 'accounts',
+            'isnull' => 'true',
+            'module' => 'Accounts',
+            'dbType' => 'varchar',
+            'link' => 'accounts',
+            'len' => '255',
+            'source' => 'non-db',
+            'unified_search' => true,
+            'required' => true,
+            'importable' => 'required',
+            'studio' => false
+        ),
+        'account_id' =>
+        array(
+            'name' => 'account_id',
+            'vname' => 'LBL_ACCOUNT_ID',
+            'type' => 'id',
+            'source' => 'non-db',
+            'audited' => false,
+            'studio' => false
+        ),
+        'likely_case' =>
+        array(
+            'name' => 'likely_case',
+            'vname' => 'LBL_LIKELY_CASE',
+            'dbType' => 'currency',
+            'type' => 'currency',
+            'len' => '26,6',
+            'validation' => array('type' => 'range', 'min' => 0),
+            'audited' => false,
+            'studio' => false,
+            'convertToBase' => true
+        ),
+        'best_case' =>
+        array(
+            'name' => 'best_case',
+            'vname' => 'LBL_BEST_CASE',
+            'dbType' => 'currency',
+            'type' => 'currency',
+            'len' => '26,6',
+            'validation' => array('type' => 'range', 'min' => 0),
+            'audited' => false,
+            'studio' => false,
+            'convertToBase' => true
+        ),
+        'worst_case' =>
+        array(
+            'name' => 'worst_case',
+            'vname' => 'LBL_WORST_CASE',
+            'dbType' => 'currency',
+            'type' => 'currency',
+            'len' => '26,6',
+            'validation' => array('type' => 'range', 'min' => 0),
+            'audited' => false,
+            'studio' => false,
+            'convertToBase' => true
+        ),
+        'base_rate' =>
+        array(
+            'name' => 'base_rate',
+            'vname' => 'LBL_BASE_RATE',
+            'type' => 'double',
+            'required' => true,
+            'studio' => false
+        ),
+        'currency_id' =>
+        array(
+            'name' => 'currency_id',
+            'type' => 'id',
+            'group' => 'currency_id',
+            'vname' => 'LBL_CURRENCY',
+            'function' => array('name' => 'getCurrencyDropDown', 'returns' => 'html'),
+            'reportable' => false,
+            'comment' => 'Currency used for display purposes',
+            'studio' => false
+        ),
+        'currency_name' =>
+        array(
+            'name' => 'currency_name',
+            'rname' => 'name',
+            'id_name' => 'currency_id',
+            'vname' => 'LBL_CURRENCY_NAME',
+            'type' => 'relate',
+            'isnull' => 'true',
+            'table' => 'currencies',
+            'module' => 'Currencies',
+            'source' => 'non-db',
+            'function' => array('name' => 'getCurrencyNameDropDown', 'returns' => 'html'),
+            'studio' => false,
+            'duplicate_merge' => 'disabled',
+        ),
+        'currency_symbol' =>
+        array(
+            'name' => 'currency_symbol',
+            'rname' => 'symbol',
+            'id_name' => 'currency_id',
+            'vname' => 'LBL_CURRENCY_SYMBOL',
+            'type' => 'relate',
+            'isnull' => 'true',
+            'table' => 'currencies',
+            'module' => 'Currencies',
+            'source' => 'non-db',
+            'function' => array('name' => 'getCurrencySymbolDropDown', 'returns' => 'html'),
+            'studio' => false,
+            'duplicate_merge' => 'disabled',
+        ),
+        'date_closed' =>
+        array(
+            'name' => 'date_closed',
+            'vname' => 'LBL_DATE_CLOSED',
+            'type' => 'date',
+            'audited' => false,
+            'comment' => 'Expected or actual date the oppportunity will close',
+            'importable' => 'required',
+            'required' => true,
+            'enable_range_search' => true,
+            'options' => 'date_range_search_dom',
+            'studio' => false
+        ),
+        'date_closed_timestamp' =>
+        array(
+            'name' => 'date_closed_timestamp',
+            'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
+            'type' => 'int',
+            'studio' => false
+        ),
+        'sales_stage' =>
+        array(
+            'name' => 'sales_stage',
+            'vname' => 'LBL_SALES_STAGE',
+            'type' => 'enum',
+            'options' => 'sales_stage_dom',
+            'len' => '255',
+            'audited' => false,
+            'comment' => 'Indication of progression towards closure',
+            'merge_filter' => 'enabled',
+            'importable' => 'required',
+            'required' => true,
+            'studio' => false
+        ),
+        'probability' =>
+        array(
+            'name' => 'probability',
+            'vname' => 'LBL_PROBABILITY',
+            'type' => 'int',
+            'dbType' => 'double',
+            'audited' => false,
+            'comment' => 'The probability of closure',
+            'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
+            'merge_filter' => 'enabled',
+            'studio' => false
+        ),
+        'commit_stage' =>
+        array(
+            'name' => 'commit_stage',
+            'vname' => 'LBL_COMMIT_STAGE',
+            'type' => 'enum',
+            'options' => 'commit_stage_dom',
+            'len' => '50',
+            'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
+            'studio' => false
+        ),
+        'draft' =>
+        array(
+            'name' => 'draft',
+            'vname' => 'LBL_DRAFT',
+            'default' => 0,
+            'type' => 'int',
+            'comment' => 'Is A Draft Version',
+            'studio' => false
+        ),
+        'opportunity' =>
+        array(
+            'name' => 'opportunity',
+            'type' => 'link',
+            'relationship' => 'opportunity_worksheets',
+            'source' => 'non-db',
+            'vname' => 'LBL_OPPORTUNITY',
+        ),
+        'product' =>
+        array(
+            'name' => 'product',
+            'type' => 'link',
+            'relationship' => 'products_worksheets',
+            'source' => 'non-db',
+            'vname' => 'LBL_PRODUCT',
+        )
+    ),
+    'indices' => array(
+        array('name' => 'idx_worksheets_parent', 'type' => 'index', 'fields' => array('parent_id', 'parent_type')),
+        array(
+            'name' => 'idx_worksheets_assigned_del',
+            'type' => 'index',
+            'fields' => array('deleted', 'assigned_user_id')
+        ),
+        array(
+            'name' => 'idx_worksheets_assigned_del_time_draft',
+            'type' => 'index',
+            'fields' => array('assigned_user_id', 'date_closed_timestamp', 'draft', 'deleted')
+        ),
+    ),
+);
+
+VardefManager::createVardef('ForecastWorksheets', 'ForecastWorksheet', array('default', 'assignable',
+//BEGIN SUGARCRM flav=pro ONLY
+'team_security',
+//END SUGARCRM flav=pro ONLY
+));
+
+$dictionary['ForecastManagerWorksheet'] = array(
+    'table' => 'forecast_manager_worksheets',
+    'acl_fields' => false,
+    'audited' => true,
+    'fields' => array(
+        'quota' =>
+        array(
+            'name' => 'quota',
+            'vname' => 'LBL_QUOTA',
+            'type' => 'currency',
+        ),
+        'best_case' =>
+        array(
+            'name' => 'best_case',
+            'vname' => 'LBL_BEST_CASE',
+            'type' => 'currency',
+            'audited' => true,
+        ),
+        'best_case_adjusted' =>
+        array(
+            'name' => 'best_case_adjusted',
+            'vname' => 'LBL_BEST_CASE_VALUE',
+            'type' => 'currency',
+        ),
+        'likely_case' =>
+        array(
+            'name' => 'likely_case',
+            'vname' => 'LBL_LIKELY_CASE',
+            'type' => 'currency',
+            'audited' => true,
+        ),
+        'likely_case_adjusted' =>
+        array(
+            'name' => 'likely_case_adjusted',
+            'vname' => 'LBL_LIKELY_CASE_VALUE',
+            'type' => 'currency',
+        ),
+        'worst_case' =>
+        array(
+            'name' => 'worst_case',
+            'vname' => 'LBL_WORST_CASE',
+            'type' => 'currency',
+            'audited' => true,
+        ),
+        'worst_case_adjusted' =>
+        array(
+            'name' => 'worst_case_adjusted',
+            'vname' => 'LBL_WORST_CASE_VALUE',
+            'type' => 'currency',
+        ),
+        'currency_id' =>
+        array(
+            'name' => 'currency_id',
+            'vname' => 'LBL_CURRENCY_ID',
+            'type' => 'id',
+        ),
+        'base_rate' =>
+        array(
+            'name' => 'base_rate',
+            'vname' => 'LBL_BASE_RATE',
+            'type' => 'double',
+        ),
+        'timeperiod_id' =>
+        array(
+            'name' => 'timeperiod_id',
+            'vname' => 'LBL_FORECAST_TIME_ID',
+            'type' => 'id',
+        ),
+        'draft' =>
+        array(
+            'name' => 'draft',
+            'vname' => 'LBL_DRAFT',
+            'type' => 'int',
+            'default' => 0,
+        ),
+        'isManager' =>
+        array(
+            'name' => 'isManager',
+            'type' => 'bool',
+            'source' => 'non-db',
+            'comment' => 'needed for commitLog field logic'
+        ),
+        'user_id' =>
+        array(
+            'name' => 'user_id',
+            'vname' => 'LBL_FS_USER_ID',
+            'type' => 'id',
+        ),
+        'opp_count' =>
+        array(
+            'name' => 'opp_count',
+            'vname' => 'LBL_FORECAST_OPP_COUNT',
+            'type' => 'int',
+            'len' => '5',
+            'comment' => 'Number of opportunities represented by this forecast',
+        ),
+        'pipeline_opp_count' =>
+        array(
+            'name' => 'pipeline_opp_count',
+            'vname' => 'LBL_FORECAST_OPP_COUNT',
+            'type' => 'int',
+            'len' => '5',
+            'studio' => false,
+            'default' => '0',
+            'comment' => 'Number of opportunities minus closed won/closed lost represented by this forecast',
+        ),
+        'pipeline_amount' =>
+        array(
+            'name' => 'pipeline_amount',
+            'vname' => 'LBL_PIPELINE_REVENUE',
+            'type' => 'currency',
+            'studio' => false,
+            'default' => '0',
+            'comment' => 'Total of opportunities minus closed won/closed lost represented by this forecast',
+        ),
+        'closed_amount' =>
+            array (
+              'name' => 'closed_amount',
+              'vname' => 'LBL_CLOSED',
+              'type' => 'currency',
+              'studio' => false,
+              'default' => "0",
+              'comment' => 'Total of closed won items in the forecast',
+            ),
+        'show_history_log' =>
+        array(
+            'name' => 'show_history_log',
+            'type' => 'int',
+            'source' => 'non-db'
+        ),
+    ),
+    'relationships' => array(
+        // relationships that might be needed: User_id -> users, quota_id -> Quota,
+    ),
+    'indices' => array(
+        array(
+            'name' => 'idx_manager_worksheets_user_timestamp_assigned_user',
+            'type' => 'index',
+            'fields' => array('assigned_user_id', 'user_id', 'timeperiod_id', 'draft', 'deleted')
+        )
+    )
+);
+
+VardefManager::createVardef('ForecastManagerWorksheets', 'ForecastManagerWorksheet', array('default', 'assignable',
+//BEGIN SUGARCRM flav=pro ONLY
+'team_security',
+//END SUGARCRM flav=pro ONLY
+));
