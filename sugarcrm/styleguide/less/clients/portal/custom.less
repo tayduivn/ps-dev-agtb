@@ -19,21 +19,61 @@ ul.nav.nav-tabs li.activity > p {
     border: none;
 }
 #folded .tab-pane.active {
-  position: fixed !important;
-  top: 93px;
+  position: fixed;
   right: 0;
-  // background: @grayLighter;
   height: 100%;
-  width: inherit;
-  padding: 20px 0;
-  // border-left: 1px solid darken(@grayLighter, 4%);
+  width: 34%;
+  padding: 10px 0 0;
 }
-#folded .tab-pane .block span.label  {margin: 0 10px 0 0;}
-#folded .tab-pane .block {width: 90%; margin-left: 5%;}
+
+#folded .tab-pane.active .card2,
+#folded .tab-pane.active h4 > span {
+  margin-left: 20px
+}
+
+#folded .tab-pane.active h4 {
+  margin-top: 0;
+  margin-right: -5%;
+  line-height: 36px;
+  padding-bottom: 14px;
+  font-weight: normal;
+}
+
+#folded .tab-pane.active .closeSubdetail {
+  margin-top: 10px;
+}
+
+#folded .tab-pane .block {margin-right: 5%;}
 #folded [data-toggle="tab"].actions {top: 0; color: @gray;}
 
 .search-query {
   .border-radius(4px);
 }
+
+#moduleActivity {
+  margin-bottom: 0;
+  h4 {
+    text-indent: 20px;
+    margin-bottom: 0;
+  }
+  .actions {
+    right: 20px;
+    top: 0;
+  }
+  ul.results {
+    margin: 0;
+    &> li {
+      margin-bottom: 0;
+      margin-top: 10px;
+      padding-left: 9px;
+    }
+  }
+}
+
+.modal-body > .form-horizontal {
+  padding: 20px;
+  margin-left: 0;
+}
+
 
 @import "../base/components/drawer.less";
