@@ -220,6 +220,10 @@
           padding: 0;
         }
       }
+      &:before,
+      &:after {
+        display: none !important;
+      }
       .caret-top(auto,auto,8px,7px);
     }
     &.dropdown-toggle {
@@ -299,6 +303,7 @@
           }
           border-left: 1px solid @black;
           border-right: 1px solid @grayDark;
+/*
           &:before {
             content: '';
             display: inline-block;
@@ -322,6 +327,8 @@
             left: 10px;
             z-index:@zindexDropdown;
           }
+*/
+
           /* override twitter bootstrap effect, here we need this outside ul since ul itself we make scrollable */
           .dropdown-menu {
             background: none;
