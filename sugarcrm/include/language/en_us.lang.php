@@ -4877,3 +4877,11 @@ $app_list_strings ['pdfmanager_yes_no_list'] = array (
     'no' => 'No',
 );
 //END SUGARCRM flav=pro ONLY
+
+$app_list_strings['notifications_type_list'] = array(
+    'alert' => 'Alert',
+    'information' => 'Info',
+    'other' => 'Other',
+    'success' => 'Success',
+    'warning' => 'Warning',
+);
