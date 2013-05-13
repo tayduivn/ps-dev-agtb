@@ -80,6 +80,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->$case = 0;
+        $opp->sales_stage = "Prospecting";
         $opp->save();
         $this->assertEquals(0, $opp->$case);
     }
