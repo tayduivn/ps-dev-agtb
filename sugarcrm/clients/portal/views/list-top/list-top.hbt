@@ -30,10 +30,11 @@
     <h1><a href='#{{module}}'>{{str "LBL_MODULE_NAME" module}}</a></h1>
     <div class="btn-toolbar pull-right dropdown">
         {{#if context.attributes.isCreateEnabled}}
-        <a href="#{{buildRoute context model "create" route.options}}" title="{{str "LNK_CREATE" module}}" class="btn btn-primary">Create</a>
+        <a href="#{{buildRoute context model 'create' route.options}}" title='{{str "LNK_CREATE" module}}' class="btn btn-primary">{{str "LNK_CREATE" module}}</a>
         {{/if}}
+        <a href="javascript: void(0);" class="btn btn-primary search"><i class="icon-search icon-2x"></i></a>
         {{#unless context.attributes.removeSidebarToggle}}
-        <a title="Hide Sidebar" class="btn btn-invisible drawerTrig"><i class="icon-double-angle-right"></i></a>
+        <a title="{{str "LBL_HIDE" module}}" class="btn btn-invisible drawerTrig"><i class="icon-double-angle-right"></i></a>
         {{/unless}}
     </div>
 </div>

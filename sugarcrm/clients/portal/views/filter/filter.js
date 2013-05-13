@@ -73,8 +73,7 @@
                     self.setPreviousTerm(term, this.module);
                     self.fireSearchRequest(term);
                 } else if(previousTerm && !term.length) {
-                    // If user removing characters and down to 0 chars reset table to all data
-                    this.collection.fetch({limit: this.context.get('limit') || null });
+                    self.fireSearchRequest();
                 } 
             }, app.config.requiredElapsed || 500);
         } 
@@ -101,9 +100,7 @@
         }
     },
     toggleSearch: function() {
-        var isOpened,
-            previousTerm = this.getPreviousTerm(this.module);
-        this._renderHtml();
+        var isOpened;
         this.$('.dataTables_filter').toggle();
 
         // Trigger toggled event. Presently, this is for the list-bottom view.
@@ -117,7 +114,7 @@
 
         // If toggling filters closed, return to full "unfiltered" records 
         if(!isOpened) {
-            this.collection.fetch({limit: this.context.get('limit') || null });
+            this.fireSearchRequest();
         }
         return false;
     }

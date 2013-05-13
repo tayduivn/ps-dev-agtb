@@ -37,8 +37,8 @@
         // Add components metadata as specified in the module list
         _.each(this.module_list, function(module) {
             options.meta.components.push({
-                layout: "list",
-                context: {limit: 5, module: module, removeSidebarToggle: true}
+                layout: "dashboard-list",
+                context: {limit: 5, module: module}
             });
         }, this);
 

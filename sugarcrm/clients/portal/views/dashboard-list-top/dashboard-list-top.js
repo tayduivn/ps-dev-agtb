@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,13 +24,23 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="headerpane">
-    <h1><a class="module-title" href='#{{module}}'>{{str "LBL_MODULE_NAME" module}}</a></h1>
-    <div class="btn-toolbar pull-right dropdown">
-        {{#if context.attributes.isCreateEnabled}}
-        <a href="#{{buildRoute context model "create" route.options}}" title="{{str "LNK_CREATE" module}}" class="btn btn-primary">{{str "LNK_CREATE" module}}</a>
-        {{/if}}
-        <a title="{{str "LBL_HIDE" module}}" class="btn btn-invisible drawerTrig"><i class="icon-double-angle-right"></i></a>
-    </div>
-</div>
+({
+
+    events: {
+        'click .search': 'showSearch'
+    },
+
+    _renderHtml: function() {
+        if (app.acl.hasAccess('create', this.module)) {
+            this.context.set('isCreateEnabled', true);
+        }
+        app.view.View.prototype._renderHtml.call(this);
+    },
+
+    showSearch: function() {
+        // Toggle on search filter and off the pagination buttons
+        this.$('.search').toggleClass('active');
+        this.layout.trigger("list:search:toggle");
+    }
+
+})

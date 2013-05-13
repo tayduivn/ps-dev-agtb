@@ -27,11 +27,9 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$layout = MetaDataManager::getLayout("GenericLayout");
 $listLayout = MetaDataManager::getLayout("GenericLayout", array("name" => "list"));
 $listLayout->push(array('view' => 'list-top'));
 $listLayout->push(array('view' => 'filter'));
 $listLayout->push(array("view" => "list", "primary" => true));
 $listLayout->push(array('view' => 'list-bottom'));
-$layout->push($listLayout->getLayout(true));
 $viewdefs['portal']['layout']['list'] = $listLayout->getLayout();
