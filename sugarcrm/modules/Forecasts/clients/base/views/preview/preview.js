@@ -14,6 +14,8 @@
 ({
     extendsFrom: 'PreviewView',
 
+    originalModel: undefined,
+
     _renderPreview: function(model, collection, fetch, previewId){
         var self = this;
 
@@ -40,13 +42,13 @@
 
         if (fetch) {
             var mdl = app.data.createBean(model.get('parent_type'), {'id' : model.get('parent_id')});
+            this.originalModel = model;
             mdl.fetch({
                 //Show alerts for this request
                 showAlerts: true,
                 success: function(model) {
                     self.renderPreview(model, collection);
-                },
-                fields: this.getFieldNames(model.module)
+                }
             });
         } else {
             this.renderPreview(model, collection);
@@ -54,6 +56,37 @@
 
         this.previewId = previewId;
     },
+
+    /**
+     * Renders the preview dialog with the data from the current model and collection
+     * @param model Model for the object to preview
+     * @param collection Collection of related objects to the current model
+     */
+    renderPreview: function(model, newCollection) {
+        if(newCollection) {
+            this.collection.reset(newCollection.models);
+        }
+
+        if (model) {
+            this.model = app.data.createBean(model.module, model.toJSON());
+
+            app.view.View.prototype._render.call(this);
+
+            // TODO: Remove when pagination on activity streams is fixed.
+            if (this.previewModule && this.previewModule === "Activities") {
+                this.layout.hideNextPrevious = true;
+                this.layout.trigger("preview:pagination:update");
+            }
+            // Open the preview panel
+            app.events.trigger("preview:open",this);
+            // Highlight the row
+            app.events.trigger("list:preview:decorate", this.originalModel, this);
+            if(!this.$el.is(":visible")) {
+                this.context.trigger("openSidebar",this);
+            }
+        }
+    },
+
     /**
      * Switches preview to left/right model in collection.
      * @param {String} data.direction Direction that we are switching to, either 'left' or 'right'.
@@ -65,16 +98,16 @@
         var self = this,
             currModule = module || this.model.module,
             currID = id || this.model.get("postId") || this.model.get("id"),
-            currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
+            currIndex = index || _.indexOf(this.collection.models, this.collection.get(this.originalModel.get('id')));
 
         if( this.switching || this.collection.models.length < 2) {
             // We're currently switching previews or we don't have enough models, so ignore any pagination click events.
             return;
         }
         this.switching = true;
-
-        if( data.direction === "left" && (currID === _.first(this.collection.models).get("id")) ||
-            data.direction === "right" && (currID === _.last(this.collection.models).get("id")) ) {
+        debugger;
+        if( data.direction === "left" && (currID === _.first(this.collection.models).get("parent_id")) ||
+            data.direction === "right" && (currID === _.last(this.collection.models).get("parent_id")) ) {
             this.switching = false;
             return;
         }
@@ -106,13 +139,14 @@
                     this.model = app.data.createBean(targetModule);
 
                     if( _.isUndefined(this.collection.models[currIndex].get("target_id")) ) {
-                        this.model.set("id", this.collection.models[currIndex].get("id"));
+                        this.model.set("id", this.collection.models[currIndex].get("parent_id"));
                     }
                     else
                     {
                         this.model.set("postId", this.collection.models[currIndex].get("id"));
                         this.model.set("id", this.collection.models[currIndex].get("target_id"));
                     }
+                    this.originalModel = this.collection.models[currIndex];
                     this.model.fetch({
                         //Show alerts for this request
                         showAlerts: true,
