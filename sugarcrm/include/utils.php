@@ -1019,8 +1019,8 @@ function return_app_list_strings_language($language)
         foreach(SugarAutoLoader::existing(
             "custom/include/language/$lang.lang.php"
         ) as $file) {
-            include("custom/include/language/$lang.lang.php");
-            $GLOBALS['log']->info("Found custom language file: $lang.lang.php");
+            include($file);
+            $GLOBALS['log']->info("Found custom language file: $file");
         }
     }
 
