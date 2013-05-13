@@ -16,20 +16,20 @@
 <tfoot>
 <tr>
     <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
-    <td class="tright">{{formatCurrency this.totals.quota "-99"}}</td>
+    <td class="tright">{{formatCurrency this.totals.quota}}</td>
     {{#if this.totals.likely_case_display}}
-        <td class="tright">{{formatCurrency this.totals.likely_case "-99"}}</td>
-        <td class="tright">{{formatCurrency this.totals.likely_case_adjusted "-99"}}</td>
+        <td class="tright">{{formatCurrency this.totals.likely_case}}</td>
+        <td class="tright">{{formatCurrency this.totals.likely_case_adjusted}}</td>
     {{/if}}
 
     {{#if this.totals.best_case_display}}
-        <td class="tright">{{formatCurrency this.totals.best_case "-99"}}</td>
-        <td class="tright">{{formatCurrency this.totals.best_case_adjusted "-99"}}</td>
+        <td class="tright">{{formatCurrency this.totals.best_case}}</td>
+        <td class="tright">{{formatCurrency this.totals.best_case_adjusted}}</td>
     {{/if}}
 
     {{#if this.totals.worst_case_display}}
-        <td class="tright">{{formatCurrency this.totals.worst_case "-99"}}</td>
-        <td class="tright">{{formatCurrency this.totals.worst_case_adjusted "-99"}}</td>
+        <td class="tright">{{formatCurrency this.totals.worst_case}}</td>
+        <td class="tright">{{formatCurrency this.totals.worst_case_adjusted}}</td>
     {{/if}}
 </tr>
 </tfoot>

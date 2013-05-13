@@ -5,26 +5,26 @@
                 <label for="date_filter" class="control-label">{{str this.label "Forecasts"}}</label>
 
                 <div class="controls">
-                    {{field ../this ../this.model}}
+                    {{field ../this model=../this.model}}
                 </div>
             {{/each}}
         {{/if}}
         {{#if this.meta.last_commit}}
             {{#each this.meta.last_commit}}
-                {{field ../this ../this.model}}
+                {{field ../this model=../this.model}}
             {{/each}}
         {{/if}}
     </div>
     <div class="span9 datapoints">
         <div class="pull-right">
             {{#each this.meta.datapoints}}
-                {{field ../this ../this.model}}
+                {{field ../this model=../this.model}}
             {{/each}}
         </div>
     </div>
 </div>
 {{#if this.meta.commitlog}}
     {{#each this.meta.commitlog}}
-        {{field ../this ../this.model}}
+        {{field ../this model=../this.model}}
     {{/each}}
 {{/if}}

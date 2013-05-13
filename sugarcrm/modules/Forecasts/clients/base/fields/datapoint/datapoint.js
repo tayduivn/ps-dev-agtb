@@ -100,6 +100,4 @@
             if(!this.disposed) this.render();
         }, this);
     }
-
-
 })
