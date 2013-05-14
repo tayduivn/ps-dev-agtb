@@ -34,6 +34,9 @@ dl.list {
 .dash .btn-toolbar.pull-right {
     margin-top: 5px;
 }
+.timeaway, .display-cafes, .display-directions {
+    padding: 10px 0 10px 10px;
+}
 
 .main-pane .vcard2 {
   z-index: 0;
@@ -161,7 +164,7 @@ form.well {
   width: auto;
 }
 
-.news-article {
+.news-article, .meetingEvent {
   padding: 10px;
   border-bottom: 1px solid @grayLighter;
   h5 {
@@ -199,6 +202,59 @@ hr.soften {
     }
   }
 }
+
+.record-cell[data-name="title"] {
+    position: absolute !important;
+    top: 20px;
+    left: 114px;
+    font-size: 12px !important;
+}
+
+.btn.btn-invisible.addEventBtn, .gdocNew {
+    position:absolute;
+    top: 4px;
+    right: 70px;
+}
+
+
+.sugarone {
+    font-size: 16px;
+    margin: 12px 10px 0;
+    a {
+        color: @white;
+        b {
+            font-weight: normal;
+            color: @red;
+        }
+    }
+}
+
+.life {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: @fontSizeSmall;
+    color: @grayLight;
+}
+.list li, .listItem {
+    padding: 10px;
+    border-bottom: 1px solid darken(@grayLighter, 5%);
+    position: relative;
+    img.avatar {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+    .description {
+        margin-left: 42px;
+    }
+    .reason {
+        margin-left: 42px;
+        font-size: @fontSizeSmall;
+        color: @grayLight;
+    }
+}
+
 
 .logo {
   background: url('@{baseUrl}/img/sugar-red-sm.png') 0 0 no-repeat;
@@ -353,7 +409,7 @@ hr.soften {
       position: absolute;
       width: 200px;
       color: white;
-      font-size: 14px;
+      font-size: @fontSizeLarge;
       padding: 8px;
       border-radius: 5px;
       line-height: 1.25;
