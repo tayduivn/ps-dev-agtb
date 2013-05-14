@@ -26,16 +26,13 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<span class="editable">
-    {{#if transactionValue}}
-        <label class="original">{{transactionValue}}</label>
-    {{/if}}
-    <div class="converted">
-        <div class="sugareditable">
-            <span class="edit-icon hide">
-                <i class="icon-pencil icon-sm"></i>
-            </span>
-            <span class="click format">{{value}}</span>
+<form class="form-search-related" action="">
+    <div class="control-group">
+        <div class="filter controls controls=two btn-group-fit">
+            <div class="filter-view search">
+                <input type="hidden" class="select2 related-filter">               
+                <input id="{{rangeFilterId}}" class="select2 search-filter" type="hidden">
+            </div>
         </div>
     </div>
-</span>
+</form>

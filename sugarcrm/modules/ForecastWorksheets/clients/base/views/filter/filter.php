@@ -26,23 +26,24 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['Forecasts']['base']['view']['forecastsTimeperiod'] = array(
+$viewdefs['ForecastWorksheetss']['base']['view']['filter'] = array(
     'panels' => array(
-        array(
+        0 => array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'name' => 'selectedTimePeriod',
-                    'label' => 'LBL_TIMEPERIOD_NAME',
+                    'name' => 'ranges',
+                    /*
+                    This is an enum field, however the 'options' string is set dynamically in the view (which is why it
+                    is missing here), since the dropdown shown to the user depends on a config setting
+                    */
                     'type' => 'enum',
-                    'dropdown_class' => 'topline-timeperiod-dropdown',
-                    'dropdown_width' => 'auto',
-                    'view' => 'edit',
-                    // options are set dynamically in the view
-                    'default' => true,
+                    'multi' => true,
+                    'label' => 'LBL_FILTERS',
+                    'default' => false,
                     'enabled' => true,
                 ),
             ),
         ),
-    ),
+    )
 );

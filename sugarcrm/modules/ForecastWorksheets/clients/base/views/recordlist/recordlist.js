@@ -68,6 +68,16 @@
     canEdit: false,
 
     /**
+     * Active Filters
+     */
+    filters: [],
+
+    /**
+     * Filtered Collection
+     */
+    filteredCollection: new Backbone.Collection(),
+
+    /**
      * Selected Timeperiod Storage
      */
     selectedTimeperiod: '',
@@ -76,8 +86,12 @@
         this.plugins.push('cte-tabbing');
         this.plugins.push('dirty-collection');
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
+        // we need to get the flex-list template from the ForecastWorksheets module so it can use the filteredCollection
+        // for display
+        this.template = app.template.getView('flex-list', this.module);
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
         this.context.set('skipFetch', !(this.selectedUser.showOpps || !this.selectedUser.isManager)); // if user is a manager, skip the initial fetch
+        this.filters = this.context.parent.get('selectedRanges') || this.context.get('selectedRanges');
         this.collection.sync = _.bind(this.sync, this);
     },
 
@@ -187,6 +201,13 @@
 
                 this.collection.on('reset', function() {
                     this.checkForDraftRows(this.context.parent.get('currentForecastCommitDate'));
+                    this.filterCollection();
+                }, this);
+
+                this.context.parent.on('change:selectedRanges', function(model, changed) {
+                    this.filters = changed;
+                    this.filterCollection();
+                    if(!this.disposed) this.render();
                 }, this);
             }
         }
@@ -222,6 +243,19 @@
                     return true;
                 }
                 return false;
+            }, this);
+        }
+    },
+
+    filterCollection : function() {
+        this.filteredCollection.reset();
+        if(_.isEmpty(this.filters)) {
+            this.filteredCollection.add(this.collection.models);
+        } else {
+            this.collection.each(function(model) {
+                if(_.indexOf(this.filters, model.get('commit_stage')) !== -1) {
+                    this.filteredCollection.add(model);
+                }
             }, this);
         }
     },
