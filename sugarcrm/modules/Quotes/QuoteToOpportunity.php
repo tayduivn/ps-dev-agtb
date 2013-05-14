@@ -153,6 +153,17 @@ else
 		}
 	}
 
+    //link quote products with the opportunity.
+    $quote->load_relationship('products');
+    $products=$quote->products->get();
+
+    if (is_array($products)) {
+        $opp->load_relationship('products');
+        foreach ($products as $id) {
+            $opp->products->add($id);
+        }
+    }
+
 	$redirect_Url = "Opportunities/" . $opp->id;
 	send_to_url($redirect_Url);
 }
