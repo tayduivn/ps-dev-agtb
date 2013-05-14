@@ -411,17 +411,9 @@ table.dataTable {
         li:first-child a {
           border-top:none;
         }
-        .ext {
-          background: @white;
-          display: inline-block;
-          width: 10px;
-          height: 10px;
-          position: absolute;
-          right: 6px;
-          top: -6px;
-          .rotate(45deg);
-          border-left:1px solid rgba(0, 0, 0, 0.2);
-          border-top:1px solid rgba(0, 0, 0, 0.2);
+        &:before,
+        &:after {
+          display: none;
         }
       }
     }
