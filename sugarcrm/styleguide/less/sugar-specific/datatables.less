@@ -552,6 +552,10 @@ table.dataTable {
       & > thead > tr > th {
         &:nth-last-child(2) {
           padding-right: 75px;
+          background-position: 60% 50%;/* leave this for browsers that potentially don't support calc() function */
+          background-position: ~"-moz-calc(100% - 75px)" 50% !important;
+          background-position: ~"-webkit-calc(100% - 75px)" 50% !important;
+          background-position: ~"calc(100% - 75px)" 50% !important;
         }
         &:last-child {
           max-width: 60px;
