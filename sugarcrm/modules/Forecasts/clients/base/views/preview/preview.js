@@ -36,7 +36,7 @@
         if (model) {
             // Get the corresponding detail view meta for said module.
             // this.meta needs to be set before this.getFieldNames is executed.
-            this.meta = app.metadata.getView(model.get('parent_type'), 'record') || {};
+            this.meta = app.metadata.getView(model.get('parent_type') || model.get('_module'), 'record') || {};
             this.meta = this._previewifyMetadata(this.meta);
         }
 
@@ -55,6 +55,33 @@
         }
 
         this.previewId = previewId;
+    },
+
+    /**
+     * Show previous and next buttons groups on the view.
+     *
+     * This gets called everytime the collection gets updated. It also depends
+     * if we have a current model or layout.
+     *
+     * TODO we should check if we have the preview open instead of doing a bunch
+     * of if statements.
+     */
+    showPreviousNextBtnGroup: function () {
+        if (!this.model || !this.layout || !this.collection) {
+            return;
+        }
+        var collection = this.collection;
+        if (!collection.size()) {
+            this.layout.hideNextPrevious = true;
+        }
+        var model = this.originalModel || this.model;
+        var recordIndex = collection.indexOf(collection.get(model.id));
+        this.layout.previous = collection.models[recordIndex-1] ? collection.models[recordIndex-1] : undefined;
+        this.layout.next = collection.models[recordIndex+1] ? collection.models[recordIndex+1] : undefined;
+        this.layout.hideNextPrevious = _.isUndefined(this.layout.previous) && _.isUndefined(this.layout.next);
+
+        // Need to rerender the preview header
+        this.layout.trigger("preview:pagination:update");
     },
 
     /**
@@ -105,7 +132,6 @@
             return;
         }
         this.switching = true;
-        debugger;
         if( data.direction === "left" && (currID === _.first(this.collection.models).get("parent_id")) ||
             data.direction === "right" && (currID === _.last(this.collection.models).get("parent_id")) ) {
             this.switching = false;
