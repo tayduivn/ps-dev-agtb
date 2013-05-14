@@ -149,8 +149,8 @@
         }
     };
 
-    var oRoutingBefore = app.routing.before;
-    app.routing.before = function(route, args) {
+    var oRoutingBefore = app.routing.beforeRoute;
+    app.routing.beforeRoute = function(route, args) {
         var dm, nonModuleRoutes;
         nonModuleRoutes = [
             "search",
