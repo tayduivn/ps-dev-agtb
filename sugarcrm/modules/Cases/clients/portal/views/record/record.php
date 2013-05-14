@@ -41,6 +41,10 @@ $viewdefs['Cases']['portal']['view']['record'] = array(
                     'name' => 'case_number',
                     'span' => 12,
                 ),
+                array(
+                    'name' => 'name',
+                    'span' => 12,
+                ),
                 'date_entered',
                 'status',
                 'priority',
