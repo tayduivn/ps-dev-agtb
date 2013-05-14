@@ -149,7 +149,7 @@ class RestService extends ServiceBase {
             $getVars = array();
             if ( !empty($_GET)) {
                 // This has some get arguments, let's parse those in
-                // We need to pre-parse this for JSON-encoded arguments because the XSS stuff will mangle them, and to keep symmetrywith POST style data
+                $getVars = $_GET;
                 if ( !empty($route['jsonParams']) ) {
                     foreach ( $route['jsonParams'] as $fieldName ) {
                         if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
