@@ -69,7 +69,6 @@
     toggleSidebar: function(e) {
         e.preventDefault();
         e.stopPropagation();
-        this.$('i').toggleClass('icon-double-angle-left').toggleClass('icon-double-angle-right');
         app.controller.context.trigger('toggleSidebar');
     }
 })

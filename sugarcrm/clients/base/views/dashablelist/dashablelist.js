@@ -4,7 +4,7 @@
     _dataFetched: false, // flag to determine if we tried to get records already
     initDashlet: function (view) {
         var dashlet = app.utils.deepCopy(this.context.get("dashlet")),
-            filterDef = [], recordView;
+            filterDef = [];
 
         this.model.set("auto_refresh", dashlet.auto_refresh || 0);
 

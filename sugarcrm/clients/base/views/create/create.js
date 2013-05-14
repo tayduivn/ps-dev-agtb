@@ -21,7 +21,7 @@
      * for the current layout.
      */
     initialize: function (options) {
-        var createViewEvents = {}, recordView;
+        var createViewEvents = {};
         createViewEvents['click a[name=' + this.saveButtonName + ']'] = 'save';
         createViewEvents['click a[name=' + this.cancelButtonName + ']'] = 'cancel';
         createViewEvents['click a[name=' + this.saveAndCreateButtonName + ']'] = 'saveAndCreate';
