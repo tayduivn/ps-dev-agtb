@@ -26,8 +26,12 @@
  ********************************************************************************/
 ({
     initialize: function(options) {
-        // Figure out the modules that are available to the user.
-        this.module_list = app.metadata.getModuleNames(true);
+        // the home module doesn't have a proper module on the context because it has a context
+        // of mixed module types
+        // set the current module to home to get the mega menu to highlight correctly
+        app.controller.context.set('module','Home');
+        // Figure out the modules that are available to the user. omit home because it doesn't exist
+        this.module_list = _.without(app.metadata.getModuleNames(true), 'Home') ;
 
         options.meta.components = [];
         // Add components metadata as specified in the module list

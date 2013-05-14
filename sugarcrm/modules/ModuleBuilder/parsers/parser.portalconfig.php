@@ -54,6 +54,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),
             'displayModules' => array(
+                'Home',
                 'Bugs',
                 'Cases',
                 'KBDocuments'

@@ -118,6 +118,15 @@
                 }
             },
             {
+                name: "listHome",
+                route: "Home",
+                callback: function(){
+                    app.controller.loadView({
+                        layout: "dashboard"
+                    });
+                }
+            },
+            {
                 name: "list",
                 route: ":module"
             },
