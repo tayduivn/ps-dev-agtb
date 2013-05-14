@@ -10,21 +10,36 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-/**
- * View that displays a list of models pulled from the context's collection.
- * @class View.Views.TreeView
- * @alias SUGAR.App.layout.TreeView
- * @extends View.View
- */
 ({
 
+    /**
+     * The JS Tree Object
+     */
     jsTree: {},
+
+    /**
+     * The end point we need to hit
+     */
     reporteesEndpoint: '',
+
+    /**
+     * Current end point hit
+     */
     currentTreeUrl: '',
+
+    /**
+     * Current root It
+     */
     currentRootId: '',
 
+    /**
+     * Selected User Storage
+     */
     selectedUser: {},
 
+    /**
+     * Has the base init selected the proper user?  This is needed to prevent a double selectedUser change from fireing
+     */
     initHasSelected: false,
 
 
@@ -50,7 +65,6 @@
      */
     _dispose: function() {
         if (app.user.get('isManager') && !_.isEmpty(this.jsTree)) {
-            console.log('jsTree.off');
             this.jsTree.off();
         }
         app.view.Component.prototype._dispose.call(this);
@@ -185,7 +199,6 @@
     },
 
     createTree: function(data) {
-        console.log('jsTree Render');
         // make sure we're using an array
         // if the data coming from the endpoint is an array with one element
         // it gets converted to a JS object in the process of getting here

@@ -10,32 +10,71 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+/**
+ * Forecast Manger Worksheet Record List
+ *
+ * Events
+ *
+ * forecast:worksheet:dirty
+ *  on: this.context.parent || this.context
+ *  by: this.dirtyModels 'add' Event
+ *  when: a model is added to the dirtModels collection
+ *
+ * forecast:worksheet:needs_commit
+ *  on: this.context.parent || this.context
+ *  by: checkForDraftRows
+ *  when: this.collection has a row newer than the last commit date
+ *
+ * forecasts:worksheet:totals
+ *  on: this.context.parent || this.context
+ *  by: calculateTotals
+ *  when: after it's done calculating totals from a collection change or reset event
+ *
+ * forecasts:worksheet:saved
+ *  on: this.context.parent || this.context
+ *  by: saveWorksheet and _worksheetSaveHelper
+ *  when: after it's done saving the worksheets to the db for a save draft
+ *
+ * forecasts:worksheet:commit
+ *  on: this.context.parent || this.context
+ *  by: forecasts:worksheet:saved event
+ *  when: only when the commit button is pressed
+ *
+ */
 ({
+    /**
+     * Who are parent is
+     */
     extendsFrom: 'RecordlistView',
 
+    /**
+     * what type of worksheet are we?
+     */
     worksheetType: 'manager',
 
+    /**
+     * Selected User Storage
+     */
     selectedUser: {},
 
+    /**
+     * Can we edit this worksheet?
+     */
+    canEdit: false,
+
+    /**
+     * Selected Timeperiod Storage
+     */
     selectedTimeperiod: {},
 
+    /**
+     * Totals Storage
+     */
     totals: {},
 
     /**
-     * A Collection to keep track of draft models
+     * Default values for the blank rows
      */
-    draftModels: new Backbone.Collection(),
-
-    /**
-     * If the timeperiod is changed and we have draftModels, keep the previous one to use if they save the models
-     */
-    draftTimeperiod: undefined,
-
-    /**
-     * If the timeperiod is changed and we have draftModels, keep the previous one to use if they save the models
-     */
-    draftUser: undefined,
-
     defaultValues: {
         quota: 0,
         best_case: 0,
@@ -60,11 +99,11 @@
         // these are handlers that we only want to run when the parent module is forecasts
         if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('model'))) {
             if (this.context.parent.get('model').module == 'Forecasts') {
+                // before render has happened, potentially stopping the render from happening
                 this.before('render', function() {
                     // if manager is not set or manager == false
                     var ret = true;
                     if (_.isUndefined(this.selectedUser.isManager) || this.selectedUser.isManager == false) {
-                        console.log('manager before render return false');
                         ret = false;
                     }
 
@@ -74,27 +113,25 @@
                         ret = !(this.selectedUser.showOpps);
                     }
 
+                    // if we are going to stop render but the layout is visible
                     if (ret === false && this.layout.isVisible()) {
                         // hide the layout
-                        console.log('manager beforeRender hide');
                         this.layout.hide();
                     }
 
-                    console.log('manager showOpps before render return: ', ret);
                     return ret;
                 }, true);
+
+                // after render has completed
                 this.on('render', function() {
                     var user = this.context.parent.get('selectedUser') || app.user.toJSON();
-                    console.log('Manager Render:', user.isManager, user.showOpps);
                     if (user.isManager && user.showOpps == false) {
                         if (!this.layout.isVisible()) {
-                            console.log('Manager Show', user);
                             this.layout.show();
                         }
 
                         // insert the footer
                         if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
-                            console.log('insert manager footer');
                             var tpl = app.template.getView('recordlist.totals', this.module);
                             this.$el.find('tbody').after(tpl(this));
                         }
@@ -103,20 +140,22 @@
                         this.setCommitLogButtonStates();
                     } else {
                         if (this.layout.isVisible()) {
-                            console.log('Manager Hide', user);
                             this.layout.hide();
                         }
                     }
                 }, this);
 
+                // trigger the worksheet save draft code
                 this.context.parent.on('button:save_draft_button:click', function() {
                     if (this.layout.isVisible()) {
                         this.saveWorksheet(true);
                     }
                 }, this);
 
+                // trigger the worksheet save draft code and then commit the worksheet
                 this.context.parent.on('button:commit_button:click', function() {
                     if (this.layout.isVisible()) {
+                        // we just need to listen to it once, then we don't want to listen to it any more
                         this.context.parent.once('forecasts:worksheet:saved', function() {
                             this.context.parent.trigger('forecasts:worksheet:commit', this.selectedUser, this.worksheetType, this.getCommitTotals())
                         }, this);
@@ -124,6 +163,9 @@
                     }
                 }, this);
 
+                /**
+                 * Watch for a change to the selectedTimePeriod
+                 */
                 this.context.parent.on('change:selectedTimePeriod', function(model, changed) {
                     this.selectedTimeperiod = changed;
                     if (this.layout.isVisible()) {
@@ -131,15 +173,20 @@
                     }
                 }, this);
 
+                /**
+                 * Watch for a change int he worksheet totals
+                 */
                 this.context.parent.on('forecasts:worksheet:totals', function(totals, type) {
                     if (type == this.worksheetType) {
-                        console.log('update mgr footer');
                         var tpl = app.template.getView('recordlist.totals', this.module);
                         this.$el.find('tfoot').remove();
                         this.$el.find('tbody').after(tpl(this));
                     }
                 }, this);
 
+                /**
+                 * Watch for a change in the selectedUser
+                 */
                 this.context.parent.on('change:selectedUser', function(model, changed) {
                     // selected user changed
                     var doFetch = false;
@@ -154,6 +201,9 @@
                     }
                     this.selectedUser = changed;
 
+                    // Set the flag for use in other places around this controller to suppress stuff if we can't edit
+                    this.canEdit = (this.selectedUser.id == app.user.get('id'));
+
                     if (doFetch) {
                         this.collection.fetch();
                     } else {
@@ -164,23 +214,34 @@
                     }
                 }, this);
 
+                /**
+                 * Watch for the currentForecastCommitDate to be updated
+                 */
                 this.context.parent.on('change:currentForecastCommitDate', function(context, changed) {
                     this.checkForDraftRows(changed);
                 }, this);
 
+                /**
+                 * When the collection is reset, we need checkForDraftRows
+                 */
                 this.collection.on('reset', function() {
                     this.checkForDraftRows(this.context.parent.get('currentForecastCommitDate'));
                 }, this);
             }
         }
 
+        // make sure that the dirtyModels plugin is there
         if (!_.isUndefined(this.dirtyModels)) {
+            // when something gets added, the save_draft and commit buttons need to be enabled
             this.dirtyModels.on('add', function() {
                 var ctx = this.context.parent || this.context
                 ctx.trigger('forecast:worksheet:dirty', this.worksheetType);
             }, this);
         }
 
+        /**
+         * Listener for the list:history_log:fire event, this triggers the inline history log to display or hide
+         */
         this.context.on('list:history_log:fire', function(model) {
             // parent row
 
@@ -218,17 +279,26 @@
             }
         }, this);
 
+        /**
+         * On Collection Reset or Change, caculate the totals
+         */
         this.collection.on('reset change', function() {
             this.calculateTotals();
         }, this);
 
+        // call the parent
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
     },
 
+    /**
+     * Check the collection for any rows that may have been saved as a draft or rolled up from a reportee commit and
+     * trigger the commit button to be enabled
+     *
+     * @trigger forecast:worksheet:needs_commit
+     * @param lastCommitDate
+     */
     checkForDraftRows: function(lastCommitDate) {
-        if (this.layout.isVisible()) {
-            // check to see if anything in the collection is a draft, if it is, then send an event
-            // to notify the commit button to enable
+        if (this.layout.isVisible() && this.canEdit) {
             this.collection.find(function(item) {
                 if (item.get('date_modified') > lastCommitDate) {
                     this.context.parent.trigger('forecast:worksheet:needs_commit', this.worksheetType);
@@ -236,14 +306,12 @@
                 }
                 return false;
             }, this);
-
-            /*if (items.length > 0) {
-                // we have draft items. enable the commit button
-                this.context.parent.trigger('forecast:worksheet:needs_commit', this.worksheetType);
-            }*/
         }
     },
 
+    /**
+     * Handles setting the proper state for the CommitLog Buttons in the row-actions
+     */
     setCommitLogButtonStates: function() {
         _.each(this.fields, function(field) {
             if (field.def.event === 'list:history_log:fire' && (field.model.get('show_history_log') == "0")) {
@@ -253,6 +321,13 @@
         });
     },
 
+    /**
+     * Override the sync method so we can put out custom logic in it
+     *
+     * @param method
+     * @param model
+     * @param options
+     */
     sync: function(method, model, options) {
 
         if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('selectedUser'))) {
@@ -300,6 +375,7 @@
     /**
      * Method to handle the success of a collection call to make sure that all reportee's show up in the table
      * even if they don't have data for the user that is asking for it.
+     *
      * @param data
      */
     collectionSuccess: function(data) {
@@ -337,43 +413,53 @@
         this.collection.reset(records);
     },
 
+    /**
+     * Calculates the display totals for the worksheet
+     *
+     * @triggers forecasts:worksheet:totals
+     */
     calculateTotals: function() {
-        // add up all the currency fields
-        var fields = _.filter(this._fields.visible, function(field) {
-                return field.type === 'currency';
-            }),
-            fieldNames = [];
-
-        _.each(fields, function(field) {
-            fieldNames.push(field.name);
-            this.totals[field.name] = 0;
-            this.totals[field.name + "_display"] = true;
-        }, this);
-
-        if (this.collection.length == 0) {
-            // no items, just bail
-            return;
-        }
-
-        this.collection.each(function(model) {
-            _.each(fieldNames, function(field) {
-                // convert the value to base
-                var val = model.get(field);
-                if (_.isUndefined(val) || _.isNaN(val)) {
-                    return;
-                }
-                val = app.currency.convertWithRate(val, model.get('base_rate'));
-                this.totals[field] = app.math.add(this.totals[field], val);
-            }, this)
-        }, this);
-
-        var ctx = this.context.parent || this.context;
-        // fire an event on the parent context
         if (this.isVisible()) {
+            // add up all the currency fields
+            var fields = _.filter(this._fields.visible, function(field) {
+                    return field.type === 'currency';
+                }),
+                fieldNames = [];
+
+            _.each(fields, function(field) {
+                fieldNames.push(field.name);
+                this.totals[field.name] = 0;
+                this.totals[field.name + "_display"] = true;
+            }, this);
+
+            if (this.collection.length == 0) {
+                // no items, just bail
+                return;
+            }
+
+            this.collection.each(function(model) {
+                _.each(fieldNames, function(field) {
+                    // convert the value to base
+                    var val = model.get(field);
+                    if (_.isUndefined(val) || _.isNaN(val)) {
+                        return;
+                    }
+                    val = app.currency.convertWithRate(val, model.get('base_rate'));
+                    this.totals[field] = app.math.add(this.totals[field], val);
+                }, this)
+            }, this);
+
+            var ctx = this.context.parent || this.context;
+            // fire an event on the parent context
             ctx.trigger('forecasts:worksheet:totals', this.totals, this.worksheetType);
         }
     },
 
+    /**
+     * Gets the numbers needed for a commit
+     *
+     * @returns {{quota: number, best_case: number, best_adjusted: number, likely_case: number, likely_adjusted: number, worst_case: number, worst_adjusted: number, included_opp_count: number, pipeline_opp_count: number, pipeline_amount: number, closed_amount: number, closed_count: number}}
+     */
     getCommitTotals: function() {
         var quota = 0,
             best_case = 0,
@@ -425,7 +511,7 @@
             'pipeline_opp_count': pipeline_opp_count,
             'pipeline_amount': pipeline_amount,
             'closed_amount': closed_amount,
-            'closed_count' : (included_opp_count-pipeline_opp_count)
+            'closed_count': (included_opp_count - pipeline_opp_count)
         };
     },
 
@@ -463,15 +549,12 @@
     },
 
     /**
-     * Clean Up the Draft Modules Collection and dirtyVariables
+     * Call the worksheet save event
+     *
+     * @triggers forecasts:worksheet:saved
+     * @param isDraft
+     * @returns {number}
      */
-    cleanUpDraftModels: function() {
-        // clean up the draft records and variables
-        this.draftModels.reset();
-        this.draftTimeperiod = undefined;
-        this.draftUser = undefined;
-    },
-
     saveWorksheet: function(isDraft) {
         // only run the save when the worksheet is visible and it has dirty records
         var saveObj = {
@@ -486,7 +569,7 @@
 
         if (this.layout.isVisible()) {
 
-            if(_.isUndefined(saveObj.userId)) {
+            if (_.isUndefined(saveObj.userId)) {
                 saveObj.userId = this.selectedUser;
             }
             saveObj.userId = saveObj.userId.id;
@@ -502,25 +585,9 @@
                 this.dirtyModels.each(function(model) {
                     saveObj.model = model;
                     this._worksheetSaveHelper(saveObj, ctx);
-
-                    //add to draft structure so committing knows what to save as non-draft
-                    /*if (isDraft == true) {
-                        this.draftModels.add(model, {merge: true});
-                    }*/
                 }, this);
 
                 this.cleanUpDirtyModels();
-            /*} else if (!isDraft && this.draftModels.length > 0) {
-                saveObj.totalToSave = this.draftModels.length;
-
-                this.draftModels.each(function(model) {
-                    saveObj.model = model;
-                    this._worksheetSaveHelper(saveObj, ctx);
-                }, this);
-
-                //Need to clean up dirty models too as the save event above triggers a change event on the worksheet.
-                this.cleanUpDirtyModels();
-                this.cleanUpDraftModels();*/
             } else {
                 if (isDraft) {
                     app.alert.show('success', {
@@ -539,6 +606,8 @@
 
     /**
      * Helper function for worksheet save
+     *
+     * @triggers forecasts:worksheet:saved
      */
     _worksheetSaveHelper: function(saveObj, ctx) {
         saveObj.model.set({

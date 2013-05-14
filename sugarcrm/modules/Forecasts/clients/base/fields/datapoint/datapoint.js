@@ -10,6 +10,9 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+/**
+ * Datapoints in the info pane for Forecasts
+ */
 ({
 
     /**

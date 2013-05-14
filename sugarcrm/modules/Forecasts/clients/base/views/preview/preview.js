@@ -12,10 +12,25 @@
  */
 
 ({
+    /**
+     * Who is my parent
+     */
     extendsFrom: 'PreviewView',
 
+    /**
+     * Track the original model passed in from the worksheet, this is needed becuase of how the base preview works
+     */
     originalModel: undefined,
 
+    /**
+     * Override _renderPreview to pull in the parent_type and parent_id when we are running a fetch
+     *
+     * @param model
+     * @param collection
+     * @param fetch
+     * @param previewId
+     * @private
+     */
     _renderPreview: function(model, collection, fetch, previewId){
         var self = this;
 
@@ -74,6 +89,7 @@
         if (!collection.size()) {
             this.layout.hideNextPrevious = true;
         }
+        // use the originalModel if one is defined, if not fall back to the basic model
         var model = this.originalModel || this.model;
         var recordIndex = collection.indexOf(collection.get(model.id));
         this.layout.previous = collection.models[recordIndex-1] ? collection.models[recordIndex-1] : undefined;
@@ -87,7 +103,7 @@
     /**
      * Renders the preview dialog with the data from the current model and collection
      * @param model Model for the object to preview
-     * @param collection Collection of related objects to the current model
+     * @param newCollection Collection of related objects to the current model
      */
     renderPreview: function(model, newCollection) {
         if(newCollection) {
@@ -107,6 +123,7 @@
             // Open the preview panel
             app.events.trigger("preview:open",this);
             // Highlight the row
+            // use the original model when going to the list:preview:decorate event
             app.events.trigger("list:preview:decorate", this.originalModel, this);
             if(!this.$el.is(":visible")) {
                 this.context.trigger("openSidebar",this);
@@ -116,7 +133,7 @@
 
     /**
      * Switches preview to left/right model in collection.
-     * @param {String} data.direction Direction that we are switching to, either 'left' or 'right'.
+     * @param {String} data direction Direction that we are switching to, either 'left' or 'right'.
      * @param index Optional current index in list
      * @param id Optional
      * @param module Optional
@@ -125,6 +142,7 @@
         var self = this,
             currModule = module || this.model.module,
             currID = id || this.model.get("postId") || this.model.get("id"),
+            // use the originalModel vs the model
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(this.originalModel.get('id')));
 
         if( this.switching || this.collection.models.length < 2) {
@@ -132,6 +150,7 @@
             return;
         }
         this.switching = true;
+        // get the parent_id from the specific module
         if( data.direction === "left" && (currID === _.first(this.collection.models).get("parent_id")) ||
             data.direction === "right" && (currID === _.last(this.collection.models).get("parent_id")) ) {
             this.switching = false;
@@ -165,6 +184,7 @@
                     this.model = app.data.createBean(targetModule);
 
                     if( _.isUndefined(this.collection.models[currIndex].get("target_id")) ) {
+                        // get the parent_id
                         this.model.set("id", this.collection.models[currIndex].get("parent_id"));
                     }
                     else

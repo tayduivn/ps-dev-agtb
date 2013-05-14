@@ -10,15 +10,66 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+/**
+ * Forecast Sales Rep Worksheet Record List
+ *
+ * Events
+ *
+ * forecast:worksheet:dirty
+ *  on: this.context.parent || this.context
+ *  by: this.dirtyModels 'add' Event
+ *  when: a model is added to the dirtModels collection
+ *
+ * forecast:worksheet:needs_commit
+ *  on: this.context.parent || this.context
+ *  by: checkForDraftRows
+ *  when: this.collection has a row newer than the last commit date
+ *
+ * forecasts:worksheet:totals
+ *  on: this.context.parent || this.context
+ *  by: calculateTotals
+ *  when: after it's done calculating totals from a collection change or reset event
+ *
+ * forecasts:worksheet:saved
+ *  on: this.context.parent || this.context
+ *  by: saveWorksheet
+ *  when: after it's done saving the worksheets to the db for a save draft
+ *
+ * forecasts:worksheet:commit
+ *  on: this.context.parent || this.context
+ *  by: forecasts:worksheet:saved event
+ *  when: only when the commit button is pressed
+ *
+ */
 ({
+    /**
+     * Who is my parent
+     */
     extendsFrom: 'RecordlistView',
-    
+
+    /**
+     * Type of worksheet
+     */
     worksheetType: 'sales_rep',
 
+    /**
+     * Totals Storage
+     */
     totals: {},
 
+    /**
+     * Selected User Storage
+     */
     selectedUser: {},
 
+    /**
+     * Can we edit this worksheet?
+     */
+    canEdit: false,
+
+    /**
+     * Selected Timeperiod Storage
+     */
     selectedTimeperiod: '',
 
     initialize: function(options) {
@@ -41,14 +92,12 @@
                         isManager = (_.isUndefined(this.selectedUser.isManager)) ? true : this.selectedUser.isManager;
 
                     if (!(showOpps || !isManager) && this.layout.isVisible()) {
-                        console.log('beforeRender Hide');
+                        
                         this.layout.hide();
                     } else if ((showOpps || !isManager) && !this.layout.isVisible()) {
-                        console.log('beforeRender Show');
+                        
                         this.layout.show();
                     }
-
-                    console.log('Rep beforeRender will return ', (showOpps || !isManager));
 
                     return (showOpps || !isManager);
                 });
@@ -56,25 +105,21 @@
                     var user = this.context.parent.get('selectedUser') || app.user.toJSON()
                     if (user.showOpps || !user.isManager) {
                         if (!this.layout.isVisible()) {
-                            console.log('Rep Show', user);
                             this.layout.show();
                         }
 
                         if (this.collection.length == 0) {
-                            console.log('render rep worksheet empty row');
                             var tpl = app.template.getView('recordlist.noresults', this.module);
                             this.$el.find('tbody').html(tpl(this));
                         }
 
                         // insert the footer
                         if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
-                            console.log('render rep footer');
                             var tpl = app.template.getView('recordlist.totals', this.module);
                             this.$el.find('tbody').after(tpl(this));
                         }
                     } else {
                         if (this.layout.isVisible()) {
-                            console.log('Rep Hide', user);
                             this.layout.hide();
                         }
                     }
@@ -82,7 +127,6 @@
 
                 this.context.parent.on('forecasts:worksheet:totals', function(totals, type) {
                     if (type == this.worksheetType && this.layout.isVisible()) {
-                        console.log('update rep footer');
                         var tpl = app.template.getView('recordlist.totals', this.module);
                         this.$el.find('tfoot').remove();
                         this.$el.find('tbody').after(tpl(this));
@@ -98,7 +142,6 @@
 
                 this.context.parent.on('change:selectedUser', function(model, changed) {
                     var doFetch = false;
-                    console.log('Rep SelectedUser Change');
                     if (this.selectedUser.id != changed.id) {
                         // user changed. make sure it's not a manager view before we say fetch or not
                         doFetch = (changed.showOpps || !changed.isManager);
@@ -110,12 +153,14 @@
                     }
                     this.selectedUser = changed;
 
+                    // Set the flag for use in other places around this controller to suppress stuff if we can't edit
+                    this.canEdit = (this.selectedUser.id == app.user.get('id'));
+
                     if (doFetch) {
                         this.collection.fetch();
                     } else {
                         if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && this.layout.isVisible()) {
                             // we need to hide
-                            console.log('rep fetch hide');
                             this.layout.hide();
                         }
                     }
@@ -160,9 +205,15 @@
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
     },
 
-
+    /**
+     * Check to make sure that if there are dirty rows, then trigger the needs_commit event to enable
+     * the buttons
+     *
+     * @triggers forecast:worksheet:needs_commit
+     * @param lastCommitDate
+     */
     checkForDraftRows: function(lastCommitDate) {
-        if (this.layout.isVisible()) {
+        if (this.layout.isVisible() && this.canEdit) {
             // check to see if anything in the collection is a draft, if it is, then send an event
             // to notify the commit button to enable
             this.collection.find(function(item) {
@@ -176,6 +227,7 @@
     },
 
     /**
+     * Save the worksheet to the database
      *
      * @triggers forecasts:worksheet:saved
      * @return {Number}
@@ -234,6 +286,9 @@
         return totalToSave
     },
 
+    /**
+     * Calculate the totals for the visible fields
+     */
     calculateTotals: function() {
         var fields = _.filter(this._fields.visible, function(field) {
                 return field.type === 'currency';
@@ -252,10 +307,6 @@
             // no items, just bail and set back the 0 totals
             return;
         }
-
-        //Get the excluded_sales_stage property.  Default to empty array if not set
-        //var sales_stage_won_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_won || [];
-        //var sales_stage_lost_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_lost || [];
 
         // set up commit_stages that should be processed in included total
         var forecast_ranges = app.metadata.getModule('Forecasts', 'config').forecast_ranges,
@@ -295,6 +346,13 @@
         }
     },
 
+    /**
+     * Custom Sync Method
+     *
+     * @param method
+     * @param model
+     * @param options
+     */
     sync: function(method, model, options) {
         var callbacks,
             url;
@@ -357,6 +415,11 @@
         return catalog;
     },
 
+    /**
+     * Get the totals that need to be committed
+     * 
+     * @returns {{amount: number, best_case: number, worst_case: number, overall_amount: number, overall_best: number, overall_worst: number, timeperiod_id: (*|bindDataChange.selectedTimeperiod), lost_count: number, lost_amount: number, won_count: number, won_amount: number, included_opp_count: number, total_opp_count: Number, closed_count: number, closed_amount: number}}
+     */
     getCommitTotals: function() {
         if (this.layout.isVisible()) {
             var includedAmount = 0,

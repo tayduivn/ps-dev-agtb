@@ -20,6 +20,9 @@
         }, this);
     },
 
+    /**
+     * Load Data Method
+     */
     loadData: function() {
 
         var ctx = this.context.parent || this.context,
@@ -42,6 +45,10 @@
         app.api.call('create', url.url, url.filters, options, { context: this });
     },
 
+    /**
+     * Build out the History Log
+     * @param data
+     */
     buildLog: function(data) {
         data = data.records;
         var ctx = this.context.parent || this.context,
@@ -81,6 +88,10 @@
         });
     },
 
+    /**
+     * Override the _render so we can tell it where to render at in the list view
+     * @private
+     */
     _render: function() {
         // set the $el equal to the place holder so it renders in the correct spot
         this.$el = this.view.$el.find('span[sfuuid="' + this.sfId + '"]');

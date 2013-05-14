@@ -10,6 +10,13 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+
+/**
+ * Override the Rowactions Fields to display both next to each other, vs one being in a dropdown.
+ *
+ * ** Note **
+ * This might go away later depending on what UIUX has to say
+ */
 ({
     extendsFrom: 'RowactionsField',
     initialize: function(options) {

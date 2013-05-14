@@ -11,16 +11,30 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
+/**
+ * Forecast Records View
+ *
+ * Events
+ *
+ * forecasts:worksheet:committed
+ *  on: this.context
+ *  by: commitForecast
+ *  when: after a successful Forecast Commit
+ */
 ({
+    /**
+     * The options from the initialize call
+     */
     initOptions: {},
 
     initialize: function(options) {
-
+        // the parent is not called here so we make sure that nothing else renders until after we init the
+        // the forecast module
         this.initOptions = options;
         this.syncInitData();
     },
 
-    // overwrite load data, we will call this later
+    // overwrite load data, we will call this later via the prototype
     loadData: function() {
     },
 
@@ -57,6 +71,10 @@
         }
     },
 
+    /**
+     * Get the Forecast Init Data from the server
+     * @param options
+     */
     syncInitData: function(options) {
         var callbacks,
             url;
@@ -82,16 +100,24 @@
         app.api.call("read", url, null, callbacks);
     },
 
+    /**
+     * Process the Forecast Data
+     *
+     * @param data
+     * @param options
+     */
     initForecastsModule: function(data, options) {
-        console.log('init_forecast_records_layout');
         var ctx = this.initOptions.context;
+        // we watch for the first selectedUser change to actually init the Forecast Module case then we know we have
+        // a proper selected user
         ctx.once('change:selectedUser', function(model, change) {
-            console.log('init_forecast change:selecteduser');
             // init the recordlist view
             app.view.Layout.prototype.initialize.call(this, this.initOptions);
 
+            // set the selected user and forecast type on the model
             this.model.set('selectedUserId', change.id, {silent: true});
             this.model.set('forecastType', app.utils.getForecastType(change.isManager, change.showOpps));
+            // bind the collection sync to our custom sync
             this.collection.sync = _.bind(this.sync, this);
 
             // load the data
@@ -102,14 +128,24 @@
             if (!this.disposed) this.render();
         }, this);
 
+        // set items on the context from the initData payload
         // set the selectedTimePeriod
         // set hte currentForecastDate to the time the page is inited, this will be updated on the page actually loads
         ctx.set({'currentForecastCommitDate': new Date().toISOString()});
         ctx.set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
         ctx.get('model').set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
+
+        // set the selected user to the context
         app.utils.getSelectedUsersReportees(app.user.toJSON(), ctx);
     },
 
+    /**
+     * Custom sync method
+     *
+     * @param method
+     * @param model
+     * @param options
+     */
     sync: function(method, model, options) {
         var callbacks,
             url;
@@ -147,6 +183,14 @@
         app.api.call("create", url, filter, callbacks);
     },
 
+    /**
+     * Commit A Forecast
+     *
+     * @triggers forecasts:worksheet:committed
+     * @param user
+     * @param worksheet_type
+     * @param forecast_totals
+     */
     commitForecast: function(user, worksheet_type, forecast_totals) {
         var forecast = new this.collection.model(),
             forecastType = app.utils.getForecastType(user.isManager, user.showOpps),

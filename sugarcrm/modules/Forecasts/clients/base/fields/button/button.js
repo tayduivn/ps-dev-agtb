@@ -14,6 +14,10 @@
 ({
     extendsFrom: 'ButtonField',
 
+    /**
+     * Override so we can have a custom hasAccess for forecast to check on the header-pane buttons
+     * @returns {*}
+     */
     hasAccess: function() {
         // this is a special use case for forecasts
         // currently the only buttons that set acl_action == 'current_user' are the save_draft and commit buttons
