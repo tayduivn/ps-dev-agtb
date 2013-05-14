@@ -38,7 +38,10 @@
             this.$(".filter-options").hide();
         }, this);
 
-        this.showComponent(this.options.meta['default']);
+        // Needed to initialize this.currentModule.
+        this.trigger('filter:change', this.module);
+
+        this.showComponent(this.options.meta['default'], true);
     },
 
     processMeta: function() {
@@ -101,7 +104,7 @@
         }
     },
 
-    showComponent: function(name) {
+    showComponent: function(name, silent) {
         if (this.componentsList[name]) {
             this.componentsList[name].render();
             this._components.push(this.componentsList[name]);
@@ -116,7 +119,7 @@
                 comp.hide();
             }
         }, this);
-        this.trigger('filterpanel:change', name);
+        this.trigger('filterpanel:change', name, silent);
     },
 
     _dispose: function() {

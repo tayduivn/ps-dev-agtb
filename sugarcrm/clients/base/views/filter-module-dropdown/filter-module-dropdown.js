@@ -21,7 +21,7 @@
         }
 
         this.filterNode.select2({
-            data: _.bind(this.filterList, this),
+            data: this.filterList,
             multiple: false,
             minimumResultsForSearch: 7,
             formatSelection: _.bind(this.formatSelection, this),

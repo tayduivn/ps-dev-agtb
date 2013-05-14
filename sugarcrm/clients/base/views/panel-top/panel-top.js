@@ -1,25 +1,30 @@
 ({
     className: "subpanel-header",
     events: {
-        "click .btn-invisible": "hidePanel",
+        "click": "hidePanel",
         "click a[name=create_button]": "openCreateDrawer",
         "click a[name=select_button]": "openSelectDrawer"
     },
 
-    initialize: function (opts) {
+    initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
         // This is in place to get the lang strings from the right module. See
         // if there is a better way to do this later.
         this.parentModule = this.context.parent.get("module");
     },
 
-    hidePanel: function (e) {
-        var currentlyVisible = this.layout.$(".subpanel").hasClass("out");
+    hidePanel: function(e) {
+        // Make sure we aren't toggling the panel when the user clicks on a dropdown action.
+        var toggleSubpanel = !$(e.target).parents("span.actions").length;
 
-        this.layout.trigger("hide", !currentlyVisible);
+        if (toggleSubpanel) {
+            var currentlyVisible = this.layout.$(".subpanel").hasClass("out");
+
+            this.layout.trigger("hide", !currentlyVisible);
+        }
     },
 
-    openSelectDrawer: function () {
+    openSelectDrawer: function() {
         var parentModel = this.context.parent.get("model"),
             linkModule = this.context.get("module"),
             link = this.context.get("link"),
@@ -30,8 +35,8 @@
             context: {
                 module: linkModule
             }
-        }, function (model) {
-            if (!model) {
+        }, function(model) {
+            if(!model) {
                 return;
             }
             var relatedModel = app.data.createRelatedBean(parentModel, model.id, link),
@@ -39,12 +44,12 @@
                     //Show alerts for this request
                     showAlerts: true,
                     relate: true,
-                    success: function (model) {
+                    success: function(model) {
                         self.context.resetLoadFlag();
                         self.context.set('skipFetch', false);
                         self.context.loadData();
                     },
-                    error: function (error) {
+                    error: function(error) {
                         app.alert.show('server-error', {
                             level: 'error',
                             messages: 'ERR_GENERIC_SERVER_ERROR',
@@ -107,8 +112,8 @@
                 module: model.module,
                 model: model
             }
-        }, function (context, model) {
-            if (!model) {
+        }, function(model) {
+            if(!model) {
                 return;
             }
 
@@ -118,7 +123,7 @@
         });
     },
 
-    bindDataChange: function () {
+    bindDataChange: function() {
         if (this.collection) {
             this.listenTo(this.collection, 'reset', this.render);
         }

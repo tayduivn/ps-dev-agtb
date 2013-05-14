@@ -124,7 +124,7 @@
             showAlerts: false,
             relate: true,
             success: function(collection) {
-                self.model.set("remaining_comments", 0);
+                self.remaining_comments = 0;
                 self.render();
             }
         });
@@ -167,14 +167,17 @@
         };
 
         payload.data.value = this.getText($el);
+
+        if (!payload.data.value) {
+            return;
+        }
+
         if (this.getTags) {
             payload.data.tags = this.getTags($el);
         }
 
         var bean = app.data.createRelatedBean(this.model, null, 'comments');
         bean.save(payload, {
-            //Show alerts for this request
-            showAlerts: true,
             relate: true,
             success: function(model) {
                 $el.html('').trigger('change');

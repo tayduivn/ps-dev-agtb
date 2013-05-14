@@ -96,7 +96,7 @@
             this.trigger('filter:clear:quicksearch');
         }, this);
 
-        this.layout.on('filterpanel:change', function(name) {
+        this.layout.on('filterpanel:change', function(name, silent) {
             this.showingActivities = name === 'activitystream';
             var module = this.showingActivities ? "Activities" : this.module;
             var link;
@@ -109,8 +109,10 @@
             } else {
                 link = null;
             }
-            this.trigger("filter:render:module");
-            this.trigger("filter:change:module", module, link);
+            if (!silent) {
+                this.trigger("filter:render:module");
+                this.trigger("filter:change:module", module, link);
+            }
         }, this);
 
         //When a filter is saved, update the cache and set the filter to be the currently used filter
@@ -159,9 +161,11 @@
         return contextList;
     },
 
-    getFilterDef: function(filterDef, searchTerm, context) {
+    getFilterDef: function(origfilterDef, searchTerm, context) {
         var searchFilter,
+            filterDef = app.utils.deepCopy(origfilterDef),
             moduleQuickSearchFields = this.getModuleQuickSearchFields(context.get('module'));
+
         if (searchTerm) {
             searchFilter = [];
             _.each(moduleQuickSearchFields, function(fieldName) {
@@ -181,7 +185,13 @@
                 filterDef = [searchFilter];
             } else {
                 // We have some filter being applied already.
-                filterDef = {'$and' : [filterDef, searchFilter]};
+                // If it's an array, push the searchFilter into the $and filterDef.
+                if (_.isArray(filterDef)) {
+                    filterDef.push(searchFilter);
+                } else {
+                    filterDef = [filterDef, searchFilter];
+                }
+                filterDef = {'$and': filterDef};
             }
         }
 

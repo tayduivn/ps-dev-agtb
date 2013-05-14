@@ -32,7 +32,6 @@ class ActivityQueueManager
 {
     public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync');
     public static $linkModuleBlacklist = array('ActivityStream/Activities');
-    public static $linkDupeCheck = array();
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs', 'Activities', 'vCals');
     public static $moduleWhitelist = array('Notes', 'Tasks', 'Meetings', 'Calls', 'Emails');
 
@@ -115,33 +114,8 @@ class ActivityQueueManager
         $rhs_module = in_array($args['related_module'], self::$linkModuleBlacklist);
         if ($blacklist || $lhs_module || $rhs_module || !empty($GLOBALS['resavingRelatedBeans'])) {
             return false;
-        } else {
-            foreach (self::$linkDupeCheck as $dupe_args) {
-                if ($dupe_args['relationship'] == $args['relationship']) {
-                    if (self::isLinkDupe($args, $dupe_args)) {
-                        return false;
-                    }
-                }
-            }
         }
         return true;
-    }
-
-    /**
-     * Helper to check if a link or unlink activity is a duplicate.
-     * @param  array $args1
-     * @param  array $args2
-     * @return bool
-     */
-    protected static function isLinkDupe($args1, $args2)
-    {
-        if ($args1['module'] == $args2['related_module'] && $args1['id'] == $args2['related_id']) {
-            return true;
-        }
-        if ($args1['module'] == $args2['module'] && $args1['id'] == $args2['id']) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -242,7 +216,6 @@ class ActivityQueueManager
         $act->parent_type = $lhs->module_name;
         $act->data = $data;
         $act->save();
-        self::$linkDupeCheck[] = $args;
         $this->processRecord($lhs, $act);
         $this->processRecord($rhs, $act);
     }
@@ -270,7 +243,6 @@ class ActivityQueueManager
         $act->parent_type = $lhs->module_name;
         $act->data = $data;
         $act->save();
-        self::$linkDupeCheck[] = $args;
         $this->processRecord($lhs, $act);
         $this->processRecord($rhs, $act);
     }
