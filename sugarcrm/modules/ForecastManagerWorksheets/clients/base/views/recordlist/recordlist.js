@@ -246,18 +246,9 @@
 
     setCommitLogButtonStates: function() {
         _.each(this.fields, function(field) {
-            //watch for the field with a specific event, since we can't set a name on it becuase we just want
-            // to show the icon
             if (field.def.event === 'list:history_log:fire' && (field.model.get('show_history_log') == "0")) {
-                // we have a field that needs to be disabled, listen for the show event as the
-                field.on('show', function() {
-                    // since setDisabled doesn't work on these fields,  when calling setDisabled() it disables all the,
-                    // buttons for every row
-                    // we need to set the action to be `disabled` so the click doesn't happen
-                    field.action = 'disabled';
-                    // and add the class for the css changes
-                    field.getFieldElement().addClass('disabled');
-                });
+                // we have a field that needs to be disabled, so disable it!
+                field.setDisabled(true);
             }
         });
     },

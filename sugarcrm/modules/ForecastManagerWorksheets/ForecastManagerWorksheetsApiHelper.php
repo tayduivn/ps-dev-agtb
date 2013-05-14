@@ -38,16 +38,14 @@ class ForecastManagerWorksheetsApiHelper extends SugarBeanApiHelper
         $beans = $sq->execute();
 
         $data['show_history_log'] = 0;
-        if(empty($beans) && !empty($bean->date_modified)) {
+        if(empty($beans) && !empty($bean->fetched_row['date_modified'])) {
             // When reportee has committed but manager has not
             $data['show_history_log'] = 1;
         } else {
             $fBean = $beans[0];
             $committed_date = $bean->db->fromConvert($fBean["date_modified"], "datetime");
 
-            if (strtotime($committed_date) < strtotime($bean->date_modified)) {
-
-
+            if (strtotime($committed_date) < strtotime($bean->fetched_row['date_modified'])) {
                 $db = DBManagerFactory::getInstance();
                 // find the differences via the audit table
                 // we use a direct query since SugarQuery can't do the audit tables...
