@@ -45,7 +45,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     ),
     //BEGIN SUGARCRM flav=int ONLY
     array(
-        'route'=>'#bwc/index.php?module=Reports&action=index&view=accounts',
+        'route'=>'#bwc/index.php?module=Reports&action=index&view=meetings&query=true&report_module=Meetings',
         'label' =>'LBL_ACTIVITIES_REPORTS',
         'acl_action'=>'',
         'acl_module'=>'',
