@@ -67,7 +67,9 @@ class SugarOAuth2Server extends OAuth2
             // enforce session length limits
             if($this->oldRefreshToken) {
                 // inherit expiration from the old token
-                $this->setVariable(self::CONFIG_REFRESH_LIFETIME, $this->oldRefreshToken["expires"]-time());
+                $tokenSeed = BeanFactory::newBean('OAuthTokens');
+                $token = $tokenSeed->load($this->oldRefreshToken,'oauth2');
+                $this->setVariable(self::CONFIG_REFRESH_LIFETIME, $token->expire_ts-time());
             } else {
                 $this->setVariable(self::CONFIG_REFRESH_LIFETIME, $time_limit);
             }

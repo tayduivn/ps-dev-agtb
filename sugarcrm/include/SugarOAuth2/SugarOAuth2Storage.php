@@ -546,7 +546,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         $token->assigned_user_id = $user_id;
         $token->contact_id = $contact_id;
         $token->expire_ts = $expires;
-        $token->type = OAuthToken::ACCESS;
+        $token->setState(OAuthToken::ACCESS);
 
         $token->save();
 
