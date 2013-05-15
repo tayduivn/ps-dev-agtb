@@ -38,7 +38,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     ),
     //BEGIN SUGARCRM flav=pro ONLY
     array(
-        'route'=>'#bwc/index.php?module=Reports&action=index&view=quotes',
+        'route'=>'#bwc/index.php?module=Reports&action=index&view=quotes&query=true&report_module=Quotes',
         'label' =>'LNK_QUOTE_REPORTS',
         'acl_action'=>'list',
         'acl_module'=>$module_name,

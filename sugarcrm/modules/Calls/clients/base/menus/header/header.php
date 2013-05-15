@@ -40,6 +40,8 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
                 'module' => 'Import',
                 'action' => 'Step1',
                 'import_module' => $moduleName,
+                'query' => 'true',
+                'report_module' => $moduleName,
             )
         ),
         'label' => 'LNK_IMPORT_CALLS',

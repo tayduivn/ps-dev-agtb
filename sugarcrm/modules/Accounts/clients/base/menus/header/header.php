@@ -35,6 +35,8 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
                 'module' => 'Reports',
                 'action' => 'index',
                 'view' => $moduleName,
+                'query' => 'true',
+                'report_module' => $moduleName,
             )
         ),
         'label' =>'LNK_ACCOUNT_REPORTS',
