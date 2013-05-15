@@ -188,7 +188,6 @@ class MailerFactory
     {
         return array(
             OutboundEmailConfigurationPeer::MODE_SMTP => "SmtpMailer",
-            OutboundEmailConfigurationPeer::MODE_WEB  => "WebMailer",
         );
     }
 

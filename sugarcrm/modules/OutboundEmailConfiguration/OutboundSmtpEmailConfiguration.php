@@ -52,12 +52,25 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
     public function loadDefaultConfigs() {
         parent::loadDefaultConfigs(); // load the base defaults
 
+        $this->setMode();
         $this->setHost();
         $this->setPort();
         $this->setSecurityProtocol();
         $this->setAuthenticationRequirement();
         $this->setUsername();
         $this->setPassword();
+    }
+
+    /**
+     * @param null|string $mode
+     * @throws MailerException
+     */
+    public function setMode($mode = null) {
+        if (empty($mode)) {
+            $mode = OutboundEmailConfigurationPeer::MODE_SMTP;
+        }
+
+        parent::setMode($mode);
     }
 
     /**
@@ -270,5 +283,4 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
         );
         return array_merge(parent::toArray(), $fields);
     }
-
 }

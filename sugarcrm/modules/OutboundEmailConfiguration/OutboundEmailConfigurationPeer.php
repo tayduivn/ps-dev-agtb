@@ -37,7 +37,6 @@ class OutboundEmailConfigurationPeer
 {
     const MODE_DEFAULT = "default";
     const MODE_SMTP    = "smtp";
-    const MODE_WEB     = "web";
 
     /**
      * Returns true/false indicating whether or not $mode is a valid sending strategy.
@@ -52,7 +51,6 @@ class OutboundEmailConfigurationPeer
         switch ($mode) {
             case self::MODE_DEFAULT:
             case self::MODE_SMTP:
-            case self::MODE_WEB:
                 return true;
                 break;
             default:
@@ -130,8 +128,7 @@ class OutboundEmailConfigurationPeer
             $configExists = self::isMailConfigurationValid($config);
         } catch (MailerException $me) {
             $GLOBALS["log"]->warn(
-                "An error occurred while searching for a valid system mail configuration: " .
-                $me->getMessage()
+                "An error occurred while searching for a valid system mail configuration: " . $me->getMessage()
             );
         }
 
@@ -202,8 +199,8 @@ class OutboundEmailConfigurationPeer
     ) {
         $mailConfigurations = self::listMailConfigurations($user, $locale, $charset);
         foreach ($mailConfigurations AS $mailConfiguration) {
-            if ($mailConfiguration->getConfigId() == $configuration_id || $mailConfiguration->getInboxId(
-                                                                          ) == $configuration_id
+            if ($mailConfiguration->getConfigId() == $configuration_id ||
+                $mailConfiguration->getInboxId() == $configuration_id
             ) {
                 return $mailConfiguration;
             }
@@ -217,7 +214,6 @@ class OutboundEmailConfigurationPeer
      * @param Localization $locale
      * @param string       $charset
      * @return array MailConfigurations
-     * @throws MailerException
      */
     public static function listValidMailConfigurations(User $user, Localization $locale = null, $charset = null)
     {
@@ -231,8 +227,7 @@ class OutboundEmailConfigurationPeer
             }
         } catch (MailerException $me) {
             $GLOBALS["log"]->warn(
-                "An error occurred while retrieving valid system mail configurations " .
-                    $me->getMessage()
+                "An error occurred while retrieving valid system mail configurations " . $me->getMessage()
             );
         }
         return $configs;

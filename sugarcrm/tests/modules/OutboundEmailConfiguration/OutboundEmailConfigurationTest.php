@@ -92,10 +92,20 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
         $configuration->setMode($invalidMode); // hopefully nothing is actually returned
     }
 
+    public function testSetMode_NoMode_ModeBecomesDefault()
+    {
+        $configuration = new OutboundEmailConfiguration($GLOBALS["current_user"]);
+        $configuration->setMode("");
+
+        $expected = OutboundEmailConfigurationPeer::MODE_DEFAULT;
+        $actual   = $configuration->getMode();
+        self::assertEquals($expected, $actual, "The mode should have been a {$expected}");
+    }
+
     public function testSetFrom_EmailIsInvalid_ThrowsMailerException()
     {
         self::setExpectedException("MailerException");
-        $configuration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $configuration = new OutboundEmailConfiguration($GLOBALS["current_user"]);
         $configuration->setFrom(1234); // an invalid email address
     }
 }
