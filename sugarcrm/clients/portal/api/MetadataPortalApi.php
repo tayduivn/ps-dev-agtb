@@ -43,6 +43,18 @@ class MetadataPortalApi extends MetadataApi {
         return $configs;
     }
 
+    protected function loadMetadata() {
+        $data = parent::loadMetadata();
+        if (!empty($data['modules'])) {
+            foreach($data['modules'] as $modKey => $modMeta) {
+                if (!empty($modMeta['isBwcEnabled'])) {
+                    // portal has no concept of bwc so get rid of it
+                    unset($data['modules'][$modKey]['isBwcEnabled']);
+                }
+            }
+        }
+        return $data;
+    }
 
     /**
      * Fills in additional app list strings data as needed by the client
