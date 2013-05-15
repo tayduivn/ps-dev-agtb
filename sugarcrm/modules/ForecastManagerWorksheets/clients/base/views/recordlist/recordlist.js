@@ -91,6 +91,7 @@
         this.plugins.push('dirty-collection');
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
+        this.selectedTimeperiod = this.context.get('selectedTimePeriod') || this.context.parent.get('selectedTimePeriod') || ''
         this.context.set('skipFetch', (this.selectedUser.isManager && this.selectedUser.showOpps));    // skip the initial fetch, this will be handled by the changing of the selectedUser
         this.collection.sync = _.bind(this.sync, this);
     },
@@ -99,6 +100,11 @@
         // these are handlers that we only want to run when the parent module is forecasts
         if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('model'))) {
             if (this.context.parent.get('model').module == 'Forecasts') {
+                this.context.parent.on('button:export_button:click', function() {
+                    if(this.layout.isVisible()) {
+                        this.exportCallback();
+                    }
+                }, this);
                 // before render has happened, potentially stopping the render from happening
                 this.before('render', function() {
                     return this.beforeRenderCallback();
@@ -218,7 +224,7 @@
         }, this);
 
         /**
-         * On Collection Reset or Change, caculate the totals
+         * On Collection Reset or Change, calculate the totals
          */
         this.collection.on('reset change', function() {
             this.calculateTotals();
@@ -226,6 +232,41 @@
 
         // call the parent
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+    },
+
+    /**
+     * Handle the export callback
+     */
+    exportCallback: function() {
+        var url = 'index.php?module=Forecasts&action=ExportManagerWorksheet';
+        url += '&user_id=' + this.selectedUser.id;
+        url += '&timeperiod_id=' + this.selectedTimeperiod;
+
+        if(this.canEdit && this.isDirty()) {
+            if(confirm(app.lang.get("LBL_WORKSHEET_EXPORT_CONFIRM", "Forecasts"))) {
+                this.runExport(url);
+            }
+        } else {
+            this.runExport(url);
+        }
+    },
+
+    /**
+     * runExport
+     * triggers the browser to download the exported file
+     * @param url URL to the file to download
+     */
+    runExport: function(url) {
+        var dlFrame = $("#forecastsDlFrame");
+        //check to see if we got something back
+        if(dlFrame.length == 0) {
+            //if not, create an element
+            dlFrame = $("<iframe>");
+            dlFrame.attr("id", "forecastsDlFrame");
+            dlFrame.css("display", "none");
+            $("body").append(dlFrame);
+        }
+        dlFrame.attr("src", url);
     },
 
     /**
