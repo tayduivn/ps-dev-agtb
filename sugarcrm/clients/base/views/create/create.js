@@ -170,13 +170,13 @@
      */
     initiateSave: function (callback) {
         this.clearValidationErrors();
-        this.disableVisibleButtons();
+        this.disableButtons();
         async.waterfall([
             _.bind(this.validateModelWaterfall, this),
             _.bind(this.dupeCheckWaterfall, this),
             _.bind(this.createRecordWaterfall, this)
         ], _.bind(function (error) {
-            this.enableVisibleButtons();
+            this.enableButtons();
             if (!error && !this.disposed) {
                 this.context.lastSaveAction = null;
                 callback();
@@ -465,37 +465,35 @@
     },
 
     /**
-     * Disable all visible buttons
+     * Disable buttons
      */
-    disableVisibleButtons: function () {
-        var buttons = [
-            this.cancelButtonName,
-            this.saveButtonName,
-            this.restoreButtonName
-        ];
-
-        _.each(buttons, function (name) {
-            this.buttons[name].getFieldElement().addClass('disabled');
-        }, this);
-
-        this.buttons.main_dropdown.$('a.dropdown-toggle').addClass('disabled');
+    disableButtons: function () {
+        this.toggleButtons(false);
     },
 
     /**
-     * Enable all visible buttons
+     * Enable buttons
      */
-    enableVisibleButtons: function () {
-        var buttons = [
-            this.cancelButtonName,
-            this.saveButtonName,
-            this.restoreButtonName
-        ];
+    enableButtons: function () {
+        this.toggleButtons(true);
+    },
 
-        _.each(buttons, function (name) {
-            this.buttons[name].getFieldElement().removeClass('disabled');
-        }, this);
-
-        this.buttons.main_dropdown.$('a.dropdown-toggle').removeClass('disabled');
+    /**
+     * Enable or disable buttons
+     * @param {boolean} enable
+     */
+    toggleButtons: function(enable) {
+        _.each(this.buttons, function(button) {
+            switch (button.type) {
+                case 'button':
+                case 'rowaction':
+                    button.getFieldElement().toggleClass('disabled', !enable);
+                    break;
+                case 'actiondropdown':
+                    button.$('a.dropdown-toggle').toggleClass('disabled', !enable);
+                    break;
+            }
+        });
     },
 
     alerts: {

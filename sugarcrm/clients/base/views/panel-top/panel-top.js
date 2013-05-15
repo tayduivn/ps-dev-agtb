@@ -106,7 +106,7 @@
 
         var self = this;
         app.drawer.open({
-            layout: 'create',
+            layout: 'create-actions',
             context: {
                 create: true,
                 module: model.module,

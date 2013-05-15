@@ -61,7 +61,7 @@
      * @private
      */
     _openCreate: function(module, layout) {
-        layout = layout || 'create';
+        layout = layout || 'create-actions';
 
         app.drawer.open({
             layout: layout,

@@ -40,7 +40,7 @@
                     }
 
                     app.drawer.open({
-                        layout: 'create',
+                        layout: 'create-actions',
                         context: {
                             create: true,
                             model: prefill
