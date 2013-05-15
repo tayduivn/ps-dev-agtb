@@ -33,6 +33,10 @@
             //}
         }, this);
 
+        this.context.on('button:print_button:click', function() {
+            window.print();
+        }, this);
+
         this.context.on('forecast:worksheet:dirty', function(worksheet_type) {
             console.log('forecast worksheet dirty: ', worksheet_type);
             this.getField('save_draft_button').setDisabled(false);
