@@ -31,7 +31,7 @@
                 components: [
                     {
                         view: 'dashlet-row-empty',
-                        context:{
+                        context: {
                             module:'Home',
                             forceNew:true,
                             create:true
@@ -196,6 +196,7 @@
         this.model.trigger("change:layout");
     },
     _dispose: function() {
+        this.$el.children(".dashlet-row").sortable("destroy");
         this.model.off("applyDragAndDrop", null, this);
         this.model.off("setMode", null, this);
         app.view.Layout.prototype._dispose.call(this);

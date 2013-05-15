@@ -2,7 +2,13 @@
     plugins: ['Dashlet', 'timeago'],
     events: {
         'mouseover .news-article': 'onTweetOver',
-        'mouseout .news-article': 'onTweetOut',
+        'mouseout .news-article': 'onTweetOut'
+    },
+    initDashlet: function() {
+        if(this.meta.config) {
+            var limit = this.settings.get("limit") || "20";
+            this.settings.set("limit", limit);
+        }
     },
     onTweetOver: function(event) {
         if ( !_.isUndefined(event.currentTarget) ) {
@@ -14,31 +20,19 @@
             this.$(event.currentTarget).find('.footer').hide();
         }
     },
-    initialize: function (options) {
-        app.view.View.prototype.initialize.call(this, options);
-        if (this.model.parentModel && this.model.get("requiredModel")) {
-            this.model.parentModel.on("change", this.loadData, this);
-        }
-    },
     _render: function () {
-        if (this.tweets || this.viewName === 'config') {
+        if (this.tweets || this.meta.config) {
             app.view.View.prototype._render.call(this);
         }
     },
-
-    initDashlet: function (view) {
-        this.viewName = view;
-        if (view === 'config' && this.model.get("requiredModel")) {
-            _.each(this.meta.config.fields, function (field, index) {
-                if (field.name === 'twitter') {
-                    this.meta.config.fields.splice(index, 1);
-                }
-            }, this);
+    bindDataChange: function(){
+        if(this.model) {
+            this.model.on("change", this.loadData, this);
         }
     },
     loadData: function (options) {
 
-        if (this.disposed) {
+        if (this.disposed || this.meta.config) {
             return;
         }
 
@@ -47,10 +41,9 @@
                 this.model.get('name') ||
                 this.model.get('account_name') ||
                 this.model.get('full_name'),
-            limit = parseInt(this.settings.get("limit") || 20, 10),
+            limit = parseInt(this.settings.get("limit"), 10),
             self = this;
-
-        this.screen_name = this.model.get('twitter') || false;
+        this.screen_name = this.settings.get('twitter') || false;
         if (!twitter || this.viewName === 'config') {
             return false;
         }
@@ -97,8 +90,8 @@
             complete: (options) ? options.complete : null
         });
     },
-    _dispose: function () {
-        this.model.parentModel.off("change", null, this);
+    _dispose: function() {
+        this.model.off("change", this.loadData, this);
         app.view.View.prototype._dispose.call(this);
     }
 })

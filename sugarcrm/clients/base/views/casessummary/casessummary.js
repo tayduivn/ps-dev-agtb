@@ -4,8 +4,12 @@
 
     initialize: function(o) {
         app.view.View.prototype.initialize.call(this, o);
-        this.model.parentModel.on("change", this.loadData, this);
-        this.render();
+    },
+
+    bindDataChange: function(){
+        if(!this.meta.config) {
+            this.model.on("change", this.loadData, this);
+        }
     },
 
     _render: function() {
@@ -42,7 +46,7 @@
         if (oppID) {
             var accountBean = app.data.createBean('Accounts', {id: oppID});
         }
-        var relatedCollection = app.data.createRelatedCollection(accountBean || this.model.parentModel,'cases');
+        var relatedCollection = app.data.createRelatedCollection(accountBean || this.model,'cases');
         relatedCollection.fetch({
             relate:true,
             success: function(resultCollection) {
@@ -128,7 +132,7 @@
 
     _dispose: function() {
         this.favFields = null;
-        this.model.parentModel.off("change", this.loadData, this);
+        this.model.off("change", this.loadData, this);
         app.view.View.prototype._dispose.call(this);
     }
 

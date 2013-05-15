@@ -16,22 +16,22 @@
         var self = this;
         app.drawer.open({
             layout: 'dashletselect',
-            context: {
-                module: 'Home',
-                model: new app.Bean(),
-                forceNew: true
-            }
+            context: this.layout.context
         }, function(model) {
             if(!model) return;
             var conf = model.toJSON(),
                 dash = {
                     context: {
-                        module: model.get("module") || null
+                        module: model.get("module"),
+                        link: model.get("link")
                     }
                 },
                 type = conf.componentType;
             delete conf.config;
             delete conf.componentType;
+            if(_.isEmpty(dash.context.module) && _.isEmpty(dash.context.link)) {
+                delete dash.context;
+            }
             dash[type] = conf;
             self.layout.addDashlet(dash);
         });

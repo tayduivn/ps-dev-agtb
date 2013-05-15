@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet', 'timeago', 'GridBuilder'],
+    plugins: ['Dashlet', 'timeago'],
     statusMapping:{
         'New' : 'important',
         'Assigned' : 'warning',
@@ -38,11 +38,6 @@
 
     initDashlet: function(view) {
         this.settings.on("change:filter_duration", this.filterSwitcher, this);
-
-        if(view === 'config') {
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args: [this.meta.panels]});
-        }
     },
     loadData: function(params) {
         if(this.disposed || !this.model.get("id")) {

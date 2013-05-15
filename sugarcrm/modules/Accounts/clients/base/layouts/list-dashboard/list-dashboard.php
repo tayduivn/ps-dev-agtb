@@ -10,8 +10,10 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'Sales By Country',
-            'view' => 'countrychart',
+            'view' => array(
+                'name' => 'countrychart',
+                'label' => 'Sales By Country'
+            ),
         ),
     )
 );

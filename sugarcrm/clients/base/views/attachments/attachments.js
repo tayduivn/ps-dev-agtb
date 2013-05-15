@@ -1,6 +1,6 @@
 ({
 
-    plugins: ['Dashlet', 'timeago', 'GridBuilder'],
+    plugins: ['Dashlet', 'timeago'],
     _dataFetched: false,
     events : {
         'click a.preview-attachment' : 'previewAttachment',
@@ -9,18 +9,10 @@
         'click .btn[name=create_button]': 'openCreateDrawer',
         "click .btn[name=select_button]": "openSelectDrawer"
     },
-	initialize : function(options) {
-        app.view.View.prototype.initialize.call(this,options);
-    },
     initDashlet: function(viewName) {
-        this.viewName = viewName;
-
-        if(viewName === "config") {
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args:[this.meta.panels]});
-        } else if(this.context.get("collection")) {
-
-            this.context.set("limit", this.model.get("display_rows"));
+        if(!this.meta.config && this.context.get("collection")) {
+            this.context.set("skipFetch", false);
+            this.context.set("limit", this.settings.get("limit"));
             this.context.get("collection").once("reset", function(){
                 this._dataFetched = true;
             }, this);
@@ -38,7 +30,7 @@
 
     },
     loadData : function(options) {
-        if(this.viewName === "config") {
+        if(this.meta.config) {
             return;
         }
         app.view.View.prototype.loadData.call(this, options);
@@ -71,7 +63,7 @@
 
     _getFileType: function(mimeType) {
         var filetype = mimeType.substr(mimeType.lastIndexOf('/')+1).toUpperCase();
-        return filetype ? filetype : this.meta.defaultType.toUpperCase();
+        return filetype ? filetype : this.dashletConfig.defaultType.toUpperCase();
     },
 
     _isImage: function(mimeType) {
@@ -83,14 +75,13 @@
         }
     },
     showMore: function() {
-        var options = {};
-        this.context.set("limit", parseInt(this.context.get("limit"), 10) + parseInt(this.model.get("display_rows"), 10));
+        this.context.set("limit", parseInt(this.context.get("limit"), 10) + parseInt(this.settings.get("limit"), 10));
         this.context.resetLoadFlag();
         this.context.set('skipFetch', false);
         this.layout.loadData();
     },
     openSelectDrawer: function() {
-        var parentModel = this.model.parentModel,
+        var parentModel = this.context.get("parentModel"),
             linkModule = this.context.get("module"),
             link = this.context.get("link"),
             self = this;
@@ -126,7 +117,7 @@
         });
     },
     openCreateDrawer: function() {
-        var parentModel = this.model.parentModel,
+        var parentModel = this.context.get("parentModel"),
             link = this.context.get("link"),
             model = app.data.createRelatedBean(parentModel, null, link),
             relatedFields = app.data.getRelateFields(parentModel.module, link);

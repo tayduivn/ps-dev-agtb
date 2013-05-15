@@ -42,7 +42,8 @@
     },
     previewDashlet: function(metadata) {
         var layout = this.layout,
-            previewLayout;
+            previewLayout,
+            context = this.context.parent || this.context;
         while(layout) {
             if(layout.getComponent('preview-pane')) {
                 previewLayout = layout.getComponent('preview-pane').getComponent("dashlet-preview");
@@ -59,29 +60,40 @@
                 previewLayout._components[index].dispose();
                 previewLayout.removeComponent(index);
             }
+
+            var contextDef,
+                component = {
+                    label: app.lang.get(metadata.name, metadata.preview.module),
+                    name: metadata.type,
+                    preview: true
+                };
+            if(metadata.preview.module || metadata.preview.link) {
+                contextDef = {
+                    skipFetch: false,
+                    forceNew: true,
+                    module: metadata.preview.module,
+                    link: metadata.preview.link
+                };
+            } else if (metadata.module) {
+                contextDef = {
+                    module: metadata.module
+                };
+            }
+
+            component.view = _.extend({}, metadata.preview, component);
+            if (contextDef) {
+                component.context = contextDef;
+            }
+
             previewLayout._addComponentsFromDef([
                 {
                     layout: {
                         type: 'dashlet',
-                        label: app.lang.get(metadata.name, metadata.config.module),
+                        label: app.lang.get(metadata.name, metadata.preview.module),
                         preview : true,
-                        components: [{
-                            view: metadata.type,
-                            context: _.extend({
-                                forceNew: true,
-                                dashlet: _.extend({
-                                    name: app.lang.get(metadata.name, metadata.config.module),
-                                    type: metadata.type,
-                                    viewName: 'preview'
-                                },metadata.preview)
-                            }, (metadata.config.module || metadata.config.model) ? {
-                                    module: metadata.config.module,
-                                    model: metadata.config.model
-                                } : {
-                                    model: this.model
-                                }
-                            )
-                        }]
+                        components: [
+                            component
+                        ]
                     }
                 }
             ]);
@@ -94,26 +106,23 @@
         var collection = this.context.get("dashlet_collection");
         this.selectDashlet(collection[index].metadata);
     },
-    selectDashlet:function (metadata) {
+    selectDashlet: function(metadata) {
         app.drawer.load({
             layout:{
                 name:'dashletconfiguration',
                 components:[{
-                    view:_.extend({}, metadata.config, {
+                    view: _.extend({}, metadata.config, {
                         label:app.lang.get(metadata.name, metadata.config.module),
                         name:metadata.type,
-                        config:true
-                    }),
-                    context:{
-                        model:new app.Bean(),
-                        module:metadata.config.module
-                    }
+                        config:true,
+                        module: metadata.config.module || metadata.module
+                    })
                 }]
             },
-            context:{
-                module:this.module,
-                model:new app.Bean(),
-                forceNew:true
+            context: {
+                module: metadata.config.module || metadata.module,
+                forceNew: true,
+                skipFetch: true
             }
         });
     },
@@ -121,8 +130,8 @@
         app.view.View.prototype._render.call(this);
         var self = this;
         if(this.context.get("dashlet_collection")) {
-            var parentModule = this.context.parent.get("module"),
-                parentView = this.context.parent.get("layout");
+            var parentModule = app.controller.context.get("module"),
+                parentView = app.controller.context.get("layout");
             this.dataTable = this.$("#dashletList").dataTable({
                 "bFilter": true,
                 "bInfo":false,

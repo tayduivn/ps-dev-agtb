@@ -13,7 +13,12 @@
 
 ({
     plugins: ['Dashlet'],
-
+    initDashlet: function() {
+        if(this.meta.config) {
+            var limit = this.settings.get("limit") || "5";
+            this.settings.set("limit", limit);
+        }
+    },
     loadData: function (options) {
         var name, limit;
 
@@ -21,9 +26,7 @@
             return;
         }
         var name = this.model.get("account_name") || this.model.get('name') || this.model.get('full_name'),
-            limit = parseInt(this.model.get("limit") || 20, 10);
-
-        limit = parseInt(this.model.get('limit') || 8, 10);
+            limit = parseInt(this.settings.get('limit') || 5, 10);
         $.ajax({
             url: 'https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=' +
                 name.toLowerCase() + '&rsz=' + limit,

@@ -32,12 +32,12 @@ $viewdefs['base']['view']['attachments'] = array(
             'name' => 'Attachments',
             'description' => 'Attachments belongs to the record',
             'config' => array(
+                'auto_refresh' => '0',
                 'module' => 'Notes',
                 'link' => 'notes',
-                'auto_refresh' => -1,
             ),
             'preview' => array(
-
+                'module' => 'Notes',
             ),
             'filter' => array(
                 'module' => array(
@@ -76,7 +76,7 @@ $viewdefs['base']['view']['attachments'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'display_rows',
+                    'name' => 'limit',
                     'label' => 'Display Rows',
                     'type' => 'enum',
                     'options' => array(
@@ -90,14 +90,7 @@ $viewdefs['base']['view']['attachments'] = array(
                     'name' => 'auto_refresh',
                     'label' => 'Auto Refresh',
                     'type' => 'enum',
-                    'options' => array(
-                        -1 => "None",
-                        1 => "Every 1 Minutes",
-                        5 => "Every 5 Minutes",
-                        10 => "Every 10 Minutes",
-                        15 => "Every 15 Minutes",
-                        30 => "Every 30 Minutes",
-                    )
+                    'options' => 'sugar7_dashlet_auto_refresh_options',
                 ),
             ),
         ),

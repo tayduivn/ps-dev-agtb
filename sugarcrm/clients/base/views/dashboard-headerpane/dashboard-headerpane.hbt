@@ -1,6 +1,4 @@
 <div class="preview-headerbar">
-    {{log meta}}
-    {{log this}}
     {{#each meta.panels}}
         {{#each fields}}
             <span class="record-cell">

@@ -73,8 +73,9 @@
     },
 
     _dispose: function() {
-        if (this.collection)
+        if(this.collection) {
             this.collection.off("reset", null, this);
+        }
         app.view.View.prototype._dispose.call(this);
     }
 })

@@ -11,15 +11,11 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'Interactions',
-            'view' => 'interactions',
-            'context' => array(
-                'module' => 'Leads',
-                'dashlet' => array(
-                    'name' => 'Interactions',
-                    'type' => 'interactions',
-                    'filter_duration' => '7',
-                ),
+
+            'view' => array(
+                'name' => 'interactions',
+                'label' => 'Interactions',
+                'filter_duration' => '7',
             ),
         ),
     )

@@ -94,6 +94,9 @@
     },
 
     loadData: function (options) {
+        if(this.meta.config) {
+            return;
+        }
         var self = this,
             url = app.api.buildURL(this.model.module, 'opportunity_stats', {
                 id: this.model.get('id')

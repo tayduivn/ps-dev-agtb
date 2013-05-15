@@ -21,10 +21,6 @@ $layout->push(
                 'name' => 'twitter',
                 'label' => 'Recent Tweets - @SugarCRM',
                 'twitter' => 'sugarcrm',
-                'limit' => '20',
-            ),
-            'context' => array(
-                'module' => 'Opportunities',
             ),
         ),
     )
@@ -63,6 +59,9 @@ $layout->push(
                 'label' => 'Pipeline',
                 'display_type' => 'self',
             ),
+            'context' => array(
+                'module' => 'Forecasts',
+            )
         ),
         array(
             'view' => array(
@@ -79,7 +78,7 @@ $layout->push(
 
             'view' => array(
                 'name' => 'bubblechart',
-                'title' => 'Top 10 sales opportunities',
+                'label' => 'Top 10 sales opportunities',
                 'filter_duration' => 0,
                 'filter_assigned' => 'my',
             ),

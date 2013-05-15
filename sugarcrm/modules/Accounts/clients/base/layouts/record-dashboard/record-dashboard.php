@@ -35,7 +35,6 @@ $layout->push(
             'view' => array(
                 'name' => 'news',
                 'label' => 'News Feed',
-                'limit' => '5'
             ),
         ),
     )

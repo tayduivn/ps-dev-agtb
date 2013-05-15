@@ -1,7 +1,7 @@
 ({
     events: {
         'click .widget-edit': 'editClicked',
-        'click .widget-refresh' : 'refreshClicked',
+        'click .widget-refresh' : 'reload',
         'click .widget-remove' : 'removeClicked',
         'click .minify' : 'toggleMinify'
     },
@@ -46,6 +46,7 @@
         this.model.trigger("change:layout");
         if(this.model.mode === 'view') {
             this.model.save(null, {
+                silent: true,
                 //Show alerts for this request
                 showAlerts: true
             });
@@ -68,7 +69,7 @@
         var def = component.view || component.layout || component;
 
         this.meta.empty = false;
-        this.meta.label =  def.label || def.name || "";
+        this.meta.label = def.label || def.name || "";
         //clear previous dashlet
         this._components[0].dispose();
         this.removeComponent(0);
@@ -105,7 +106,11 @@
         this.removeComponent(0);
         this._addComponentsFromDef([
             {
-                view: 'dashlet-cell-empty'
+                view: 'dashlet-cell-empty',
+                context: {
+                    module: 'Home',
+                    skipFetch: true
+                }
             }
         ]);
         this.render();
@@ -116,22 +121,36 @@
     removeClicked: function(evt) {
         this.removeDashlet();
     },
-    refreshClicked: function(evt) {
+    reload: function() {
         var component = _.first(this._components),
             context = component.context,
-            self = this;
+            $el = this.$("[data-action=loading]");
         context._dataFetched = false;
-        this.loadData();
+        $el.removeClass(this.cssIconDefault).addClass(this.cssIconRefresh);
+        var self = this,
+            options = {};
+        options.complete = function() {
+            if(self.disposed) {
+                return;
+            }
+            $el.removeClass(self.cssIconRefresh).addClass(self.cssIconDefault);
+        };
+        this.loadData(options);
     },
     editClicked: function(evt) {
         var self = this,
             meta = app.utils.deepCopy(this.meta.components[0]),
             type = meta.layout ? "layout" : "view";
-        if(_.isString(meta[type]))
-        {
+        if(_.isString(meta[type])) {
             meta[type] = {name:meta[type], config:true};
         } else {
             meta[type].config = true;
+        }
+        meta[type] = _.extend({}, meta[type], meta.context);
+
+        if(meta.context) {
+            meta.context.skipFetch = true;
+            delete meta.context.link;
         }
 
         app.drawer.open({
@@ -144,15 +163,18 @@
                 forceNew: true
             }
         }, function(model) {
-            debugger;
             if(!model) return;
             var conf = model.toJSON(),
                 dash = {
                     context: {
-                        module: model.get("module") || meta.context ? meta.context.module : null
+                        module: model.get("module") || (meta.context ? meta.context.module : null),
+                        link: model.get("link") || null
                     }
                 };
             delete conf.config;
+            if(_.isEmpty(dash.context.module) && _.isEmpty(dash.context.link)) {
+                delete dash.context;
+            }
             dash[type] = conf;
             self.addDashlet(dash);
         });
@@ -167,17 +189,6 @@
         this.$(".minify > i").toggleClass("icon-chevron-up", !collapsed);
         this.$(".thumbnail").toggleClass("collapsed", collapsed);
         this.$(".widget-content").toggleClass("hide", collapsed);
-    },
-    loadData: function(options) {
-        this.$(".dropdown-toggle > i").removeClass(this.cssIconDefault).addClass(this.cssIconRefresh);
-        var self = this;
-        options = options || {};
-        options.complete = function() {
-            self.$(".dropdown-toggle > i")
-                .removeClass(self.cssIconRefresh)
-                .addClass(self.cssIconDefault);
-        };
-        app.view.Layout.prototype.loadData.call(this, options);
     },
     _dispose: function() {
         this.off("render");

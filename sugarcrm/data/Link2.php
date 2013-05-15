@@ -573,10 +573,6 @@ class Link2 {
 
             if($success == false) {
                 $failures[] = $key->id;
-            } else if (!empty($dictionary[$this->fous->object_name]['related_calc_fields'])
-                && in_array($this->name, $dictionary[$this->focus->object_name]['related_calc_fields']))
-            {
-                SugarRelationship::addToResaveList($this->fous);
             }
         }
         if(!empty($failures)) {
@@ -607,11 +603,6 @@ class Link2 {
             }
             else {
                 return $this->relationship->remove($related_id, $this->focus);
-            }
-            if (!empty($dictionary[$this->fous->object_name]['related_calc_fields'])
-                && in_array($this->name, $dictionary[$this->focus->object_name]['related_calc_fields']))
-            {
-                SugarRelationship::addToResaveList($this->fous);
             }
         }
         else

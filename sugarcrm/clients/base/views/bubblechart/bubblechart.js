@@ -11,7 +11,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
-    plugins: ['Dashlet', 'GridBuilder'],
+    plugins: ['Dashlet'],
 
     events: {
         'click .toggle-control': 'switchChart'
@@ -51,7 +51,7 @@
 
         this.tooltiptemplate = app.template.getView(this.name + '.tooltiptemplate');
 
-        this.filterAssigned = this.model.get('filter_assigned');
+        this.filterAssigned = this.settings.get('filter_assigned');
 
         this.setDateRange();
 
@@ -84,20 +84,7 @@
         this.on('data-changed', function () {
             this.updateChart();
         }, this);
-        this.model.on('change:filter_duration', this.changeFilter, this);
-
-        if (this.model.parentModel) {
-            this.model.parentModel.on('change', this.loadData, this);
-        }
-    },
-
-    initDashlet: function (view) {
-        this.viewName = view;
-
-        if (view === 'config') {
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args:[this.meta.panels]});
-        }
+        this.settings.on('change:filter_duration', this.changeFilter, this);
     },
 
     /**
@@ -105,7 +92,7 @@
      * and and set reference to chart
      */
     updateChart: function () {
-        if (this.viewName === 'config') {
+        if (this.meta.config) {
             return;
         }
         var self = this;
@@ -195,7 +182,7 @@
      */
     setDateRange: function () {
         var now = new Date(),
-            duration = parseInt(this.model.get('filter_duration'), 10),
+            duration = parseInt(this.settings.get('filter_duration'), 10),
             startMonth = Math.floor(now.getMonth() / 3) * 3,
             startDate = new Date(now.getFullYear(), (duration === 12 ? 0 : startMonth + duration), 1),
             endDate = new Date(now.getFullYear(), (duration === 12 ? 12 : startDate.getMonth() + 3), 0);
@@ -225,10 +212,6 @@
     },
 
     _dispose: function () {
-        if (this.model.parentModel) {
-            this.model.parentModel.off('change', null, this);
-        }
-        this.model.off('change', null, this);
         this.on('data-changed', null, this);
         if (!_.isEmpty(this.chart)) {
             nv.utils.windowUnResize(this.chart.render);

@@ -10,23 +10,20 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'My Leads',
-            'view' => 'dashablelist',
+            'view' => array(
+                'name' => 'dashablelist',
+                'label' => 'My Leads',
+                'display_columns' => array(
+                    'full_name',
+                    'email',
+                    'phone_work',
+                    'status',
+                ),
+                'my_items' => '1',
+                'display_rows' => 5,
+            ),
             'context' => array(
                 'module' => 'Leads',
-                'dashlet' => array(
-                    'name' => 'My Leads',
-                    'type' => 'dashablelist',
-                    'module' => 'Leads',
-                    'display_columns' => array(
-                        'full_name',
-                        'email',
-                        'phone_work',
-                        'status',
-                    ),
-                    'my_items' => '1',
-                    'display_rows' => 5,
-                ),
             ),
         ),
     )
@@ -35,23 +32,19 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'My Assigned Bugs',
-            'view' => 'dashablelist',
+            'view' => array(
+                'name' => 'dashablelist',
+                'label' => 'My Assigned Bugs',
+                'display_columns' => array(
+                    'bug_number',
+                    'name',
+                    'status',
+                ),
+                'my_items' => '1',
+                'display_rows' => 5,
+            ),
             'context' => array(
                 'module' => 'Bugs',
-                'dashlet' => array(
-                    'name' => 'My Assigned Bugs',
-                    'type' => 'dashablelist',
-                    'module' => 'Bugs',
-                    'display_columns' => array(
-                        'bug_number',
-                        'name',
-                        'status',
-                    ),
-                    'my_items' => '1',
-                    'display_rows' => 5,
-                    'status' => 'Assigned',
-                ),
             ),
         ),
     )

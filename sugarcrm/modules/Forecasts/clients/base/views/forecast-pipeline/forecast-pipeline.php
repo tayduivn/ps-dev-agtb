@@ -1,13 +1,15 @@
 <?php
 
-$viewdefs['base']['view']['forecast-pipeline'] = array(
+$viewdefs['Forecasts']['base']['view']['forecast-pipeline'] = array(
     'dashlets' => array(
         array(
             'name' => 'Forecast Pipeline Chart',
             'description' => 'Displays current pipeline chart.',
             'config' => array(
+                'module' => 'Forecasts'
             ),
             'preview' => array(
+                'module' => 'Forecasts'
             ),
             'filter' => array(
                 'module' => array(
