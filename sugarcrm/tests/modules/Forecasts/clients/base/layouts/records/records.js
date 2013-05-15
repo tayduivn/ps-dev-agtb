@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecasts_layout_records", function(){
+describe("Forecasts.Layout.Records", function(){
 
     var app, layout, stubs;
 
@@ -82,79 +82,5 @@ describe("forecasts_layout_records", function(){
             stub.restore();
         });
         layout = '';
-    });
-
-    describe("_placeComponent function", function() {
-        it("should place a view in the correct div in the DOM if that div exists", function() {
-            var name = "testComp",
-                testEl = '<div id="test">' + name + '</div>',
-                testComp = {
-                    name:name,
-                    $el: $(testEl)
-                };
-            layout.$el = $('<div class="outer"><div class="view-' + name + '"></div></div>');
-            layout._placeComponent(testComp);
-            expect(testComp.$el.parent().html()).toEqual(testEl);
-        });
-
-        it("should place a layout in the correct div in the DOM if the layout has a name and the div exists", function() {
-            var name = "testComp",
-                testEl = '<div id="test">' + name + '</div>',
-                testComp = {
-                    meta: {
-                        name:name
-                    },
-                    $el: $(testEl)
-                };
-
-            layout.$el = $('<div class="outer"><div class="view-' + name + '"></div></div>');
-            layout._placeComponent(testComp);
-            expect(testComp.$el.parent().children().last()[0]).toEqual(testComp.$el[0]);
-        });
-
-        it("should append a view to the end of the sidecar DOM hierarchy if the div does not exist", function() {
-            var name = "testComp",
-                testEl = '<div id="test">' + name + '</div>',
-                testComp = {
-                    name:name,
-                    $el: $(testEl)
-                };
-
-            layout.$el = $('<div class="outer"></div>');
-            layout._placeComponent(testComp);
-            expect(layout.$el.children().last()[0]).toEqual(testComp.$el[0]);
-        });
-
-        it ("should append a layout to the end of the sidecar DOM hierarchy if the div does not exist", function() {
-            var name = "testComp",
-                testEl = '<div id="test">' + name + '</div>',
-                testComp = {
-                    meta: {
-                        name:name
-                    },
-                    $el: $(testEl)
-                };
-
-            layout.$el = $('<div class="outer"></div>');
-            layout._placeComponent(testComp);
-            expect(layout.$el.children().last()[0]).toEqual(testComp.$el[0]);
-        });
-
-        it("should not place components that have placeInLayout set to false in their view metadata", function() {
-            var name = "testComp",
-                testEl = '<div id="test">' + name + '</div>',
-                testComp = {
-                    meta: {
-                        name:name,
-                        placeInLayout: false
-                    },
-                    $el: $(testEl)
-                };
-
-            layout.$el = $('<div class="outer"></div>');
-            layout._placeComponent(testComp);
-            // component should not be placed so html() should be an empty string
-            expect(layout.$el.html()).toBe('');
-        });
     });
 });

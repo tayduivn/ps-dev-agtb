@@ -30,7 +30,7 @@ class ForecastManagerWorksheetsApiHelper extends SugarBeanApiHelper
         $data = parent::formatForApi($bean, $fieldList, $options);
         $sq = new SugarQuery();
         $sq->select('date_modified');
-        $sq->from(BeanFactory::getBean($bean->module_name))->where()
+        $sq->from($bean)->where()
             ->equals('assigned_user_id', $bean->assigned_user_id)
             ->equals('user_id', $bean->user_id)
             ->equals('draft', 0)
@@ -41,7 +41,7 @@ class ForecastManagerWorksheetsApiHelper extends SugarBeanApiHelper
         if(empty($beans) && !empty($bean->fetched_row['date_modified'])) {
             // When reportee has committed but manager has not
             $data['show_history_log'] = 1;
-        } else {
+        } else if(!empty($beans)) {
             $fBean = $beans[0];
             $committed_date = $bean->db->fromConvert($fBean["date_modified"], "datetime");
 

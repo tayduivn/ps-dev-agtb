@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/Forecasts/ForecastWorksheet.php';
+require_once 'modules/ForecastWorksheets/ForecastWorksheet.php';
 
 class SugarTestWorksheetUtilities
 {

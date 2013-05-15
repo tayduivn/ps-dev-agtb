@@ -19,34 +19,46 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecasts_field_bool", function() {
-    var fieldDef, field, model;
+describe("forecastworksheets_view_filter", function () {
 
-    describe("test detail (default) view", function() {
-        it("should show detail (default) view", function() {
-            fieldDef = {
-                "name": "forecast",
-                "type": "bool",
-                "view": "detail"
-            };
-            field = SugarTest.createField("base","checkbox", "bool", "detail", fieldDef);
-            model = new Backbone.Model({forecast: true});
-            field.model = model;
-            expect(field.def.view).toEqual(fieldDef.view);
-        });
+    var app, view;
+
+    beforeEach(function() {
+        app = SugarTest.app;
+        view = SugarTest.loadFile(
+            "../modules/ForecastWorksheets/clients/base/views/filter",
+            "filter",
+            "js",
+            function (d) {
+                return eval(d);
+            }
+        );
     });
 
-    describe("test edit view", function() {
-        it("should show edit view", function() {
-            fieldDef = {
-                "name": "forecast",
-                "type": "bool",
-                "view": "edit"
+    afterEach(function() {
+        view = null;
+        app = null;
+    });
+
+    describe("when rendering", function() {
+        beforeEach(function() {
+            sinon.stub(app.view.View.prototype, "_render");
+            view.$ = function(stuff) {
+                return stuff;
             };
-            field = SugarTest.createField("base","checkbox", "bool", "edit", fieldDef);
-            model = new Backbone.Model({forecast: true});
-            field.model = model;
-            expect(field.def.view).toEqual(fieldDef.view);
+            sinon.stub(view, "_getRangeFilters");
+            sinon.stub(view, "_setUpFilters");
+        });
+
+        afterEach(function() {
+            view._setUpFilters.restore();
+            view._getRangeFilters.restore();
+            app.view.View.prototype._render.restore();
+        });
+
+        it("should set up the filters", function() {
+            view._render();
+            expect(view._setUpFilters).toHaveBeenCalled();
         });
     });
 });

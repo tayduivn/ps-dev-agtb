@@ -20,7 +20,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/SugarForecasting/Chart/Individual.php');
-require_once("modules/Forecasts/clients/base/api/ForecastWorksheetsFilterApi.php");
+require_once("modules/ForecastWorksheets/clients/base/api/ForecastWorksheetsFilterApi.php");
 class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**

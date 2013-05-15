@@ -24,8 +24,8 @@
  ********************************************************************************/
 
 require_once('include/api/RestService.php');
-require_once('modules/Forecasts/clients/base/api/ForecastsWorksheetApi.php');
-require_once('modules/Forecasts/clients/base/api/ForecastWorksheetsFilterApi.php');
+require_once('modules/ForecastWorksheets/clients/base/api/ForecastWorksheetsApi.php');
+require_once('modules/ForecastWorksheets/clients/base/api/ForecastWorksheetsFilterApi.php');
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php

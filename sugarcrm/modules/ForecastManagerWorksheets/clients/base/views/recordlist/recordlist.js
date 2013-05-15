@@ -101,48 +101,12 @@
             if (this.context.parent.get('model').module == 'Forecasts') {
                 // before render has happened, potentially stopping the render from happening
                 this.before('render', function() {
-                    // if manager is not set or manager == false
-                    var ret = true;
-                    if (_.isUndefined(this.selectedUser.isManager) || this.selectedUser.isManager == false) {
-                        ret = false;
-                    }
-
-                    // only render if this.selectedUser.showOpps == false which means
-                    // we want to display the manager worksheet view
-                    if (ret) {
-                        ret = !(this.selectedUser.showOpps);
-                    }
-
-                    // if we are going to stop render but the layout is visible
-                    if (ret === false && this.layout.isVisible()) {
-                        // hide the layout
-                        this.layout.hide();
-                    }
-
-                    return ret;
+                    return this.beforeRenderCallback();
                 }, true);
 
                 // after render has completed
                 this.on('render', function() {
-                    var user = this.context.parent.get('selectedUser') || app.user.toJSON();
-                    if (user.isManager && user.showOpps == false) {
-                        if (!this.layout.isVisible()) {
-                            this.layout.show();
-                        }
-
-                        // insert the footer
-                        if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
-                            var tpl = app.template.getView('recordlist.totals', this.module);
-                            this.$el.find('tbody').after(tpl(this));
-                        }
-
-                        // set the commit button states to match the models
-                        this.setCommitLogButtonStates();
-                    } else {
-                        if (this.layout.isVisible()) {
-                            this.layout.hide();
-                        }
-                    }
+                    this.renderCallback();
                 }, this);
 
                 // trigger the worksheet save draft code
@@ -167,10 +131,7 @@
                  * Watch for a change to the selectedTimePeriod
                  */
                 this.context.parent.on('change:selectedTimePeriod', function(model, changed) {
-                    this.selectedTimeperiod = changed;
-                    if (this.layout.isVisible()) {
-                        this.collection.fetch();
-                    }
+                    this.updateSelectedTimeperiod(changed);
                 }, this);
 
                 /**
@@ -188,30 +149,7 @@
                  * Watch for a change in the selectedUser
                  */
                 this.context.parent.on('change:selectedUser', function(model, changed) {
-                    // selected user changed
-                    var doFetch = false;
-                    if (this.selectedUser.id != changed.id) {
-                        doFetch = true;
-                    }
-                    if (!doFetch && this.selectedUser.isManager != changed.isManager) {
-                        doFetch = true;
-                    }
-                    if (!doFetch && this.selectedUser.showOpps != changed.showOpps) {
-                        doFetch = !(changed.showOpps);
-                    }
-                    this.selectedUser = changed;
-
-                    // Set the flag for use in other places around this controller to suppress stuff if we can't edit
-                    this.canEdit = (this.selectedUser.id == app.user.get('id'));
-
-                    if (doFetch) {
-                        this.collection.fetch();
-                    } else {
-                        if (this.selectedUser.isManager && this.selectedUser.showOpps == true && this.layout.isVisible()) {
-                            // viewing managers opp worksheet so hide the manager worksheet
-                            this.layout.hide();
-                        }
-                    }
+                    this.updateSelectedUser(changed);
                 }, this);
 
                 /**
@@ -288,6 +226,99 @@
 
         // call the parent
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+    },
+
+    /**
+     * Method for the before('render') event
+     */
+    beforeRenderCallback: function() {
+        // if manager is not set or manager == false
+        var ret = true;
+        if (_.isUndefined(this.selectedUser.isManager) || this.selectedUser.isManager == false) {
+            ret = false;
+        }
+
+        // only render if this.selectedUser.showOpps == false which means
+        // we want to display the manager worksheet view
+        if (ret) {
+            ret = !(this.selectedUser.showOpps);
+        }
+
+        // if we are going to stop render but the layout is visible
+        if (ret === false && this.layout.isVisible()) {
+            // hide the layout
+            this.layout.hide();
+        }
+
+        return ret;
+    },
+
+    /**
+     * Method for the on('render') event
+     * @param changed
+     */
+    renderCallback: function() {
+        var user = this.selectedUser || this.context.parent.get('selectedUser') || app.user.toJSON();
+        if (user.isManager && user.showOpps == false) {
+            if (!this.layout.isVisible()) {
+                this.layout.show();
+            }
+
+            // insert the footer
+            if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
+                var tpl = app.template.getView('recordlist.totals', this.module);
+                this.$el.find('tbody').after(tpl(this));
+            }
+
+            // set the commit button states to match the models
+            this.setCommitLogButtonStates();
+        } else {
+            if (this.layout.isVisible()) {
+                this.layout.hide();
+            }
+        }
+    },
+
+    /**
+     * Update the selected timeperiod, and run a fetch if the worksheet is visible
+     * @param changed
+     */
+    updateSelectedTimeperiod: function(changed) {
+        this.selectedTimeperiod = changed;
+        if (this.layout.isVisible()) {
+            this.collection.fetch();
+        }
+    },
+
+    /**
+     * Update the selected user and do a fetch if the criteria is met
+     * @param changed
+     */
+    updateSelectedUser: function(changed) {
+        // selected user changed
+        var doFetch = false;
+        if (this.selectedUser.id != changed.id) {
+            doFetch = true;
+        }
+        if (!doFetch && this.selectedUser.isManager != changed.isManager) {
+            doFetch = true;
+        }
+        if (!doFetch && this.selectedUser.showOpps != changed.showOpps) {
+            doFetch = !(changed.showOpps);
+        }
+        this.selectedUser = changed;
+
+        // Set the flag for use in other places around this controller to suppress stuff if we can't edit
+        this.canEdit = (this.selectedUser.id == app.user.get('id'));
+
+        if (doFetch) {
+            this.collection.fetch();
+        } else {
+            if (this.selectedUser.isManager && this.selectedUser.showOpps == true && this.layout.isVisible()) {
+                // viewing managers opp worksheet so hide the manager worksheet
+                this.layout.hide();
+            }
+        }
     },
 
     /**
@@ -611,7 +642,8 @@
      */
     _worksheetSaveHelper: function(saveObj, ctx) {
         saveObj.model.set({
-            current_user: saveObj.userId || this.selectedUser.id
+            current_user: saveObj.userId || this.selectedUser.id,
+            timeperiod_id: saveObj.timeperiod || this.selectedTimeperiod
         }, {silent: true});
 
         saveObj.model.save({}, {success: _.bind(function() {

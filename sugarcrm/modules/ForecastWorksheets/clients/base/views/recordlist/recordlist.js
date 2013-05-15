@@ -91,7 +91,7 @@
         this.template = app.template.getView('flex-list', this.module);
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
         this.context.set('skipFetch', !(this.selectedUser.showOpps || !this.selectedUser.isManager)); // if user is a manager, skip the initial fetch
-        this.filters = this.context.parent.get('selectedRanges') || this.context.get('selectedRanges');
+        this.filters = this.context.get('selectedRanges') || this.context.parent.get('selectedRanges');
         this.collection.sync = _.bind(this.sync, this);
     },
 
@@ -100,43 +100,10 @@
         if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('model'))) {
             if (this.context.parent.get('model').module == 'Forecasts') {
                 this.before('render', function() {
-                    // set the defaults to make it act like a manager so it doesn't actually render till the selected
-                    // user is updated
-                    var showOpps = (_.isUndefined(this.selectedUser.showOpps)) ? false : this.selectedUser.showOpps,
-                        isManager = (_.isUndefined(this.selectedUser.isManager)) ? true : this.selectedUser.isManager;
-
-                    if (!(showOpps || !isManager) && this.layout.isVisible()) {
-                        
-                        this.layout.hide();
-                    } else if ((showOpps || !isManager) && !this.layout.isVisible()) {
-                        
-                        this.layout.show();
-                    }
-
-                    return (showOpps || !isManager);
-                });
+                    return this.beforeRenderCallback()
+                }, this);
                 this.on('render', function() {
-                    var user = this.context.parent.get('selectedUser') || app.user.toJSON()
-                    if (user.showOpps || !user.isManager) {
-                        if (!this.layout.isVisible()) {
-                            this.layout.show();
-                        }
-
-                        if (this.collection.length == 0) {
-                            var tpl = app.template.getView('recordlist.noresults', this.module);
-                            this.$el.find('tbody').html(tpl(this));
-                        }
-
-                        // insert the footer
-                        if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
-                            var tpl = app.template.getView('recordlist.totals', this.module);
-                            this.$el.find('tbody').after(tpl(this));
-                        }
-                    } else {
-                        if (this.layout.isVisible()) {
-                            this.layout.hide();
-                        }
-                    }
+                    this.renderCallback();
                 }, this);
 
                 this.context.parent.on('forecasts:worksheet:totals', function(totals, type) {
@@ -148,36 +115,11 @@
                 }, this);
 
                 this.context.parent.on('change:selectedTimePeriod', function(model, changed) {
-                    this.selectedTimeperiod = changed;
-                    if (this.layout.isVisible()) {
-                        this.collection.fetch();
-                    }
+                    this.updateSelectedTimeperiod(changed);
                 }, this);
 
                 this.context.parent.on('change:selectedUser', function(model, changed) {
-                    var doFetch = false;
-                    if (this.selectedUser.id != changed.id) {
-                        // user changed. make sure it's not a manager view before we say fetch or not
-                        doFetch = (changed.showOpps || !changed.isManager);
-                    }
-                    // if we are already not going to fetch, check to see if the new user is showingOpps or is not
-                    // a manager, then we want to fetch
-                    if (!doFetch && (changed.showOpps || !changed.isManager)) {
-                        doFetch = true;
-                    }
-                    this.selectedUser = changed;
-
-                    // Set the flag for use in other places around this controller to suppress stuff if we can't edit
-                    this.canEdit = (this.selectedUser.id == app.user.get('id'));
-
-                    if (doFetch) {
-                        this.collection.fetch();
-                    } else {
-                        if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && this.layout.isVisible()) {
-                            // we need to hide
-                            this.layout.hide();
-                        }
-                    }
+                    this.updateSelectedUser(changed)
                 }, this);
 
                 this.context.parent.on('button:save_draft_button:click', function() {
@@ -207,7 +149,7 @@
                 this.context.parent.on('change:selectedRanges', function(model, changed) {
                     this.filters = changed;
                     this.filterCollection();
-                    if(!this.disposed) this.render();
+                    if (!this.disposed) this.render();
                 }, this);
             }
         }
@@ -224,6 +166,90 @@
         }
 
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+    },
+
+    /**
+     * Callback for the before('render') event
+     * @returns {boolean}
+     */
+    beforeRenderCallback: function() {
+        // set the defaults to make it act like a manager so it doesn't actually render till the selected
+        // user is updated
+        var showOpps = (_.isUndefined(this.selectedUser.showOpps)) ? false : this.selectedUser.showOpps,
+            isManager = (_.isUndefined(this.selectedUser.isManager)) ? true : this.selectedUser.isManager;
+
+        if (!(showOpps || !isManager) && this.layout.isVisible()) {
+            this.layout.hide();
+        } else if ((showOpps || !isManager) && !this.layout.isVisible()) {
+            this.layout.show();
+        }
+
+        return (showOpps || !isManager);
+    },
+
+    /**
+     * Callback for the on('render') event
+     */
+    renderCallback: function() {
+        var user = this.selectedUser || this.context.parent.get('selectedUser') || app.user.toJSON()
+        if (user.showOpps || !user.isManager) {
+            if (!this.layout.isVisible()) {
+                this.layout.show();
+            }
+
+            if (this.collection.length == 0) {
+                var tpl = app.template.getView('recordlist.noresults', this.module);
+                this.$el.find('tbody').html(tpl(this));
+            }
+
+            // insert the footer
+            if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
+                var tpl = app.template.getView('recordlist.totals', this.module);
+                this.$el.find('tbody').after(tpl(this));
+            }
+        } else {
+            if (this.layout.isVisible()) {
+                this.layout.hide();
+            }
+        }
+    },
+
+    /**
+     * Code to handle if the selected user changes
+     *
+     * @param changed
+     */
+    updateSelectedUser: function(changed) {
+        var doFetch = false;
+        if (this.selectedUser.id != changed.id) {
+            // user changed. make sure it's not a manager view before we say fetch or not
+            doFetch = (changed.showOpps || !changed.isManager);
+        }
+        // if we are already not going to fetch, check to see if the new user is showingOpps or is not
+        // a manager, then we want to fetch
+        if (!doFetch && (changed.showOpps || !changed.isManager)) {
+            doFetch = true;
+        }
+        this.selectedUser = changed;
+
+        // Set the flag for use in other places around this controller to suppress stuff if we can't edit
+        this.canEdit = (this.selectedUser.id == app.user.get('id'));
+
+        if (doFetch) {
+            this.collection.fetch();
+        } else {
+            if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && this.layout.isVisible()) {
+                // we need to hide
+                this.layout.hide();
+            }
+        }
+    },
+
+    updateSelectedTimeperiod: function(changed) {
+        this.selectedTimeperiod = changed;
+        if (this.layout.isVisible()) {
+            this.collection.fetch();
+        }
     },
 
     /**
@@ -247,13 +273,13 @@
         }
     },
 
-    filterCollection : function() {
+    filterCollection: function() {
         this.filteredCollection.reset();
-        if(_.isEmpty(this.filters)) {
+        if (_.isEmpty(this.filters)) {
             this.filteredCollection.add(this.collection.models);
         } else {
             this.collection.each(function(model) {
-                if(_.indexOf(this.filters, model.get('commit_stage')) !== -1) {
+                if (_.indexOf(this.filters, model.get('commit_stage')) !== -1) {
                     this.filteredCollection.add(model);
                 }
             }, this);
@@ -279,7 +305,7 @@
                     //set properties on model to aid in save
                     model.set({
                         "draft": (isDraft && isDraft == true) ? 1 : 0,
-                        "timeperiod_id": this.dirtyTimeperiod || this.timePeriod,
+                        "timeperiod_id": this.dirtyTimeperiod || this.selectedTimeperiod,
                         "current_user": this.dirtyUser.id || this.selectedUser.id
                     }, {silent: true});
 
@@ -451,7 +477,7 @@
 
     /**
      * Get the totals that need to be committed
-     * 
+     *
      * @returns {{amount: number, best_case: number, worst_case: number, overall_amount: number, overall_best: number, overall_worst: number, timeperiod_id: (*|bindDataChange.selectedTimeperiod), lost_count: number, lost_amount: number, won_count: number, won_amount: number, included_opp_count: number, total_opp_count: Number, closed_count: number, closed_amount: number}}
      */
     getCommitTotals: function() {

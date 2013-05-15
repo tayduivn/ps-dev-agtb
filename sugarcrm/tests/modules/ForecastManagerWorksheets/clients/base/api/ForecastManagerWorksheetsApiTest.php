@@ -29,12 +29,12 @@
  ********************************************************************************/
 
 
-require_once("modules/Forecasts/clients/base/api/ForecastManagerWorksheetsFilterApi.php");
+require_once("modules/ForecastManagerWorksheets/clients/base/api/ForecastManagerWorksheetsFilterApi.php");
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  */
-class ForecastsWorksheetManagerApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastManagerWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var array

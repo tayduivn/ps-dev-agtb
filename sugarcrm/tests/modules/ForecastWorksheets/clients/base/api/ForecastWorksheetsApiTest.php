@@ -27,15 +27,15 @@
  ********************************************************************************/
 
 
-require_once('modules/Forecasts/clients/base/api/ForecastsWorksheetApi.php');
-require_once("modules/Forecasts/clients/base/api/ForecastWorksheetsFilterApi.php");
+require_once('modules/ForecastWorksheets/clients/base/api/ForecastWorksheetsApi.php');
+require_once("modules/ForecastWorksheets/clients/base/api/ForecastWorksheetsFilterApi.php");
 require_once('include/api/RestService.php');
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
  */
-class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /** @var array
      */
@@ -148,7 +148,7 @@ class ForecastsWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->filterApi = new ForecastWorksheetsFilterApi();
-        $this->putApi = new ForecastsWorksheetApi();
+        $this->putApi = new ForecastWorksheetsApi();
     }
 
     public function tearDown()
