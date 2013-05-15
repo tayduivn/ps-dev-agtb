@@ -266,6 +266,7 @@ file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_c
 
 
 require_once("jssource/minify_utils.php");
-CompressFiles(sugar_cached('Expressions/functions_cache_debug.js'), sugar_cached('Expressions/functions_cache.js'));
+$minifyUtils = new SugarMinifyUtils();
+$minifyUtils->CompressFiles(sugar_cached('Expressions/functions_cache_debug.js'), sugar_cached('Expressions/functions_cache.js'));
 if (!$silent) echo "complete.";
 ?>

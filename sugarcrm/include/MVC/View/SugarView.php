@@ -762,7 +762,8 @@ class SugarView
         if (!is_file(sugar_cached("include/javascript/sugar_grp1.js"))) {
             $_REQUEST['root_directory'] = ".";
             require_once("jssource/minify_utils.php");
-            ConcatenateFiles(".");
+            $minifyUtils = new SugarMinifyUtils();
+            $minifyUtils->ConcatenateFiles(".");
         }
         echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery.js');
         echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
@@ -863,7 +864,8 @@ EOHTML;
             if (!is_file(sugar_cached("include/javascript/sugar_grp1.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_yui.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_jquery.js"))) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
-                ConcatenateFiles(".");
+                $minifyUtils = new SugarMinifyUtils();
+                $minifyUtils->ConcatenateFiles(".");
             }
             echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
