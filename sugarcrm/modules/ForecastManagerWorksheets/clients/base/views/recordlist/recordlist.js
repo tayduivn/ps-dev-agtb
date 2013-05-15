@@ -628,7 +628,7 @@
                         messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
                     });
                 }
-                ctx.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', isDraft);
+                ctx.trigger('forecasts:worksheet:saved', saveObj.totalToSave, this.worksheetType, isDraft);
             }
         }
 
@@ -658,7 +658,7 @@
                         messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
                     });
                 }
-                ctx.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', saveObj.isDraft);
+                ctx.trigger('forecasts:worksheet:saved', saveObj.totalToSave, this.worksheetType, saveObj.isDraft);
             }
         }, this), silent: true, alerts: { 'success': false }});
     }

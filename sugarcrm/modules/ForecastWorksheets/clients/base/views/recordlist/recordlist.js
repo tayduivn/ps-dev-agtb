@@ -323,7 +323,7 @@
                                     messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
                                 });
                             }
-                            ctx.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
+                            ctx.trigger('forecasts:worksheet:saved', totalToSave, this.worksheetType, isDraft);
                         }
                     }, this), silent: true, alerts: { 'success': false }});
                 }, this);
@@ -339,7 +339,7 @@
                         messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
                     });
                 }
-                ctx.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
+                ctx.trigger('forecasts:worksheet:saved', totalToSave, this.worksheetType, isDraft);
             }
         }
 
