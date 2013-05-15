@@ -39,6 +39,8 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp() {
         parent::setUp();
+        SugarTestHelper::setUp("current_user");
+
         $this->lead = SugarTestLeadUtilities::createLead();
         $this->leadId = $this->lead->id;
 

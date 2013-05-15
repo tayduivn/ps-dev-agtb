@@ -36,27 +36,19 @@ require_once 'include/SubPanel/SubPanelTiles.php';
  */
 class Bug41523Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Campaign
-     */
     private $campaign;
-
-    /**
-     * @var MysqliManager
-     */
-    private $db;
 
     public function setUp()
     {
-        $this->markTestIncomplete("This test breaks on stack66 - working with dev to fix");
         global $focus;
 
+        SugarTestHelper::setUp("app_strings");
+
         // Init session user settings
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->setPreference('max_tabs', 2);
 
         $this->campaign = SugarTestCampaignUtilities::createCampaign();
-        $this->db       = $GLOBALS['db'];
         $focus          = $this->campaign;
 
         // Setting for SubPanel
@@ -69,36 +61,48 @@ class Bug41523Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         unset($_SERVER['REQUEST_METHOD']);
+        $_REQUEST = array();
 
-        // Delete created campaings
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
-
-        // Delete users
+        SugarTestCampaignUtilities::removeAllCreatedCampaignLogs();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+
+        SugarTestHelper::tearDown();
     }
 
     /**
      * @group 41523
      */
-    public function testDeletedLeadsOnCapmaingStatusPage()
+    public function testDeletedLeadsOnCampaignStatusPage()
     {
-        // Create 2 leads
-        $lead1 = $this->createLeadFromWebForm('User1');
-        $lead2 = $this->createLeadFromWebForm('User2');
+        // create a few leads
+        $leads = array(
+            $this->createLeadFromWebForm('User1:' . create_guid()),
+            $this->createLeadFromWebForm('User2:' . create_guid()),
+            $this->createLeadFromWebForm('User3:' . create_guid()),
+        );
 
-        // Delete one lead
-        $lead1->mark_deleted($lead1->id);
+        // delete one lead
+        $leads[0]->mark_deleted($leads[0]->id);
 
-        $this->assertEquals($this->campaign->getDeletedCampaignLogLeadsCount(), 1);
+        $logDeletedLeadsCount = $this->campaign->getDeletedCampaignLogLeadsCount();
+        $this->assertEquals(1, $logDeletedLeadsCount);
 
-        // Test SubPanel output
+        // test subpanel output
         $subpanel = new SubPanelTiles($this->campaign, 'Campaigns');
-        $html = $subpanel->display();
+        $html     = $subpanel->display();
 
-        preg_match('|<div id="list_subpanel_lead">.*?<table.*?</table>.*?</table>.*?</tr>(.*?)</table>|s', $html, $match);
-        preg_match_all('|<tr|', $match[1], $match);
+        preg_match('|<div id="list_subpanel_lead">.*?<table.*?</table>.*?</tr>(.*?)</table>|s', $html, $match);
+        preg_match_all('|module=Leads&action=DetailView|', $match[1], $match);
 
-        $this->assertEquals(count($match[0]), 2);
+        $expectedLeadsInSubpanel = count($leads) - $logDeletedLeadsCount;
+        $actualLeadsInSubpanel   = count($match[0]);
+        $this->assertEquals(
+            $expectedLeadsInSubpanel,
+            $actualLeadsInSubpanel,
+            "The number of leads listed in the Leads subpanel is not correct"
+        );
     }
 
     /**
@@ -108,29 +112,15 @@ class Bug41523Test extends Sugar_PHPUnit_Framework_TestCase
      */
     private function createLeadFromWebForm($lastName)
     {
-        $postData = array(
-            'last_name' => $lastName,
-            'campaign_id' => $this->campaign->id,
-        );
+        $lead = SugarTestLeadUtilities::createLead("", array("last_name" => $lastName));
 
-        // Send request for add lead
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $GLOBALS['sugar_config']['site_url'] . '/index.php?entryPoint=WebToLeadCapture');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $response = curl_exec($ch);
+        if (!empty($lead)) {
+            $campaignLog = SugarTestCampaignUtilities::createCampaignLog($this->campaign->id, "lead", $lead);
+            $lead->load_relationship("campaigns");
+            $lead->campaigns->add($campaignLog->id);
+            $lead->save(false);
+        }
 
-        $this->assertEquals('Thank You For Your Submission.', $response);
-
-        curl_close($ch);
-
-        // Fetch last created lead
-        $createdLead = new Lead();
-        $query = 'SELECT * FROM leads ORDER BY date_entered DESC LIMIT 1';
-        $createdLead->fromArray($this->db->fetchOne($query));
-
-        return $createdLead;
+        return $lead;
     }
 }
