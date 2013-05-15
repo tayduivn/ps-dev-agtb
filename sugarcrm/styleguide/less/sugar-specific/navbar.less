@@ -84,7 +84,7 @@
   width: 28px;
   z-index: 2000;
   display: block;
-  &.hide { 
+  &.hide {
     display: none;
   }
   &.btn.btn-invisible:hover {
@@ -225,7 +225,6 @@
       &:after {
         display: none !important;
       }
-      .caret-top(auto,auto,8px,7px);
     }
     &.dropdown-toggle {
       right: 31px;
@@ -304,31 +303,6 @@
           }
           border-left: 1px solid @black;
           border-right: 1px solid @grayDark;
-/*
-          &:before {
-            content: '';
-            display: inline-block;
-            border-left:   7px solid transparent;
-            border-right:  7px solid transparent;
-            border-bottom: 7px solid #ccc;
-            border-bottom-color: @dropdownBorder;
-            position: absolute;
-            top: 44px;
-            left: 9px;
-            z-index:@zindexDropdown;
-          }
-          &:after {
-            content: '';
-            display: inline-block;
-            border-left:   6px solid transparent;
-            border-right:  6px solid transparent;
-            border-bottom: 6px solid @dropdownBackground;
-            position: absolute;
-            top: 45px;
-            left: 10px;
-            z-index:@zindexDropdown;
-          }
-*/
 
           /* override twitter bootstrap effect, here we need this outside ul since ul itself we make scrollable */
           .dropdown-menu {
@@ -338,10 +312,6 @@
             top: 42px;
             padding-top: 8px;
             overflow: hidden;
-            &:before,
-            &:after {
-              display: none;
-            }
             &> ul {
               background: @white;
               border: 1px solid rgba(0,0,0,.2);;

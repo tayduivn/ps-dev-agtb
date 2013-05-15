@@ -4,19 +4,11 @@
   .border-radius(4px);
   .rtlLeft(@direction,auto);
   .rtlRight(@direction,-4px);
-  &.carettop {
-    .caret-top(10px,9px,auto,auto);
-    .rtlCaretTop(@direction,auto,auto,10px,9px);
-  }
   &.left {
     left: auto;
     right: 0px;
     .rtlLeft(@direction,0px);
     .rtlRight(@direction,auto);
-    &.carettop {
-      .caret-top(auto,auto,10px,9px);
-      .rtlCaretTop(@direction,10px,9px,auto,auto);
-    }
   }
   &.scroll {
     max-height: 333px;
@@ -169,7 +161,6 @@
 /* Add a caret to action dropdowns */
 .actions {
   .dropdown-menu {
-    .caret-top(auto,auto,8px,7px);
     left: auto;
     right: 0;
     z-index:1001;
