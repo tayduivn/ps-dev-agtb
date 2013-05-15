@@ -2,7 +2,6 @@
     className: 'filter-view search',
 
     initialize: function(opts) {
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
         var filterLayout = app.view._getController({type:'layout',name:'filter'});
         filterLayout.loadedModules = filterLayout.loadedModules || {};
         app.view.Layout.prototype.initialize.call(this, opts);
@@ -282,10 +281,8 @@
                 self.trigger('filter:change:filter', app.cache.get("filters:last:" + moduleName + ":" + self.layoutType) ||  _.first(possibleFilters) || 'all_records', true);
             };
         // TODO: Add filtering on subpanel vs. non-subpanel filters here.
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
         var filterLayout = app.view._getController({type:'layout',name:'filter'});
         if (filterLayout.loadedModules[moduleName] && !_.isEmpty(app.cache.get("filters:" + moduleName)))
-        // if (app.view.layouts.FilterLayout.loadedModules[moduleName] && !_.isEmpty(app.cache.get("filters:" + moduleName)))
         {
             this.filters.reset();
             var filters = app.cache.get("filters:" + moduleName);

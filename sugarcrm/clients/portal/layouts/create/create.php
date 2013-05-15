@@ -6,3 +6,4 @@ $viewdefs['portal']['layout']['create'] = array(
         )
     ),
 );
+
