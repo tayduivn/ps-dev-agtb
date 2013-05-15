@@ -28,6 +28,10 @@ require_once('vendor/oauth2-php/lib/OAuth2.php');
  */
 class SugarOAuth2Server extends OAuth2
 {
+    // Maximum length of the session after which new login if required
+    // and refresh tokens are not allowed
+    const CONFIG_MAX_SESSION = 'max_session_lifetime';
+
     /**
      * This function will return the OAuth2Server class, it will check
      * the custom/ directory so users can customize the authorization
@@ -51,6 +55,24 @@ class SugarOAuth2Server extends OAuth2
         }
 
         return $currentOAuth2Server;
+    }
+
+    protected function createAccessToken($client_id, $user_id, $scope = NULL)
+    {
+        $time_limit = $this->getVariable(self::CONFIG_MAX_SESSION);
+        // If we have session time limit, then:
+        // 1. We limit time for initial refresh token to session length
+        // 2. We inherit this time limit for subsequent refresh tokens
+        if($time_limit) {
+            // enforce session length limits
+            if($this->oldRefreshToken) {
+                // inherit expiration from the old token
+                $this->setVariable(self::CONFIG_REFRESH_LIFETIME, $this->oldRefreshToken["expires"]-time());
+            } else {
+                $this->setVariable(self::CONFIG_REFRESH_LIFETIME, $time_limit);
+            }
+        }
+        return parent::createAccessToken($client_id, $user_id, $scope);
     }
 
     /**
