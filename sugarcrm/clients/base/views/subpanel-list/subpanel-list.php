@@ -31,14 +31,14 @@ $viewdefs['base']['view']['subpanel-list'] = array(
                 'name' => 'merge_button',
                 'type' => 'button',
                 'label' => 'LBL_MERGE',
-                'value' => 'edit',
                 'primary' => true,
                 'events' => array(
                     'click' => 'function(e){
                     this.view.layout.trigger("list:mergeduplicates:fire");
                     }' 
                 ),
-            ),            
+                'acl_action' => 'edit',
+            ),
             array(
     'rowactions' => array(
         'css_class' => 'pull-right',

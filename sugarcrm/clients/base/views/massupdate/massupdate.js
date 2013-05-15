@@ -24,6 +24,7 @@
         this.layout.on("list:massaction:hide", this.hide, this);
         this.layout.on("list:massdelete:fire", this.confirmDelete, this);
         this.layout.on("list:massexport:fire", this.massExport, this);
+        this.layout.on("list:mergeduplicates:fire", this.mergeDuplicates, this);
     },
     setMetadata: function(options) {
         options.meta.panels = options.meta.panels || [{fields:[]}];
@@ -262,15 +263,15 @@
             app.drawer.open({
                 layout: 'merge-duplicates',
                 context: {
-                    selectedDuplicates: mergeCollection.models,
+                    selectedDuplicates: mergeCollection.models
                 }
             }, _.bind(function(refresh) {
                 if (refresh) {
                     this.collection.fetch();
                 }
-            }, this));            
+            }, this));
         }
-    },    
+    },
     save: function() {
         var massUpdate = this.getMassUpdateModel(this.module),
             attributes = this.getAttributes(),
