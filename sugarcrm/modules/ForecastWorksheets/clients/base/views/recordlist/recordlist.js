@@ -129,6 +129,10 @@
 
                 this.context.parent.on('button:save_draft_button:click', function() {
                     if (this.layout.isVisible()) {
+                        // after we save, trigger the needs_commit event
+                        this.context.parent.once('forecast:worksheet:saved', function() {
+                            this.context.parent.trigger('forecast:worksheet:needs_commit', this.worksheetType);
+                        }, this);
                         this.saveWorksheet(true);
                     }
                 }, this);
