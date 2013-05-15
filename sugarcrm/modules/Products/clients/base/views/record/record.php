@@ -336,17 +336,26 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'event' => 'button:delete_button:click',
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'acl_action' => 'delete',
-                ),
-                array(
-                    'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_action' => 'create',
+                ),
+                //BEGIN SUGARCRM flav=ent ONLY
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:convert_to_quote:click',
+                    'name' => 'convert_to_quote_button',
+                    'label' => 'LBL_CONVERT_TO_QUOTE',
+                    'acl_action' => 'view',
+                ),
+                //END SUGARCRM flav=ent ONLY
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'acl_action' => 'delete',
                 ),
             ),
         ),
