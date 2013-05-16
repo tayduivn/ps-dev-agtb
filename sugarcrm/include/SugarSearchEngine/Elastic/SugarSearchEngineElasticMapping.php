@@ -153,6 +153,12 @@ class SugarSearchEngineElasticMapping
     {
         $properties = $this->constructIndexMappingProperties($fieldDefs);
 
+        // add module field which is automatically added in the indexed documents
+        $properties['module'] = array(
+            'index' => 'not_analyzed',
+            'type' => 'string',
+        );
+
         if (is_array($properties) && count($properties) > 0)
         {
             $index = new \Elastica\Index($this->sse->getClient(), $this->sse->getIndexName());
