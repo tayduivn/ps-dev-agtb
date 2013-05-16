@@ -30,7 +30,8 @@
     dropdownFields: null,
     events: {
         'click [data-toggle=dropdown]' : 'renderDropdown',
-        'touchstart [data-toggle=dropdown]' : 'renderDropdown'
+        'change [data-toggle=dropdownmenu]' : 'dropdownSelected',
+        'touchstart [data-toggle=dropdownmenu]' : 'renderDropdown'
     },
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: 'initialize', args:[options]});
@@ -53,12 +54,26 @@
         }, this);
         this.dropdownFields = null;
     },
+    dropdownSelected: function(evt) {
+        var $el = this.$(evt.currentTarget),
+            selectedIndex = $el.val();
+        if(!selectedIndex) {
+            return;
+        }
+        this.fields[selectedIndex].getFieldElement().trigger("click");
+        $el.blur();
+        this.setPlaceholder();
+    },
     getPlaceholder: function() {
         var cssClass = [],
             container = '',
             caretClass = this.def.primary ? 'btn btn-primary dropdown-toggle' : 'btn dropdown-toggle',
             caret = '<a class="' + caretClass + '" data-toggle="dropdown" href="javascript:void(0);"><span class="icon-caret-down"></span></a>',
             dropdown = '<ul class="dropdown-menu">';
+
+        if(app.utils.isTouchDevice()) {
+            caret += '<select data-toggle="dropdownmenu" class="hide dropdown-menu-select"></select>';
+        }
 
         _.each(this.def.buttons, function(fieldDef, index) {
             var field = app.view.createField({
@@ -105,8 +120,10 @@
         var index = 0,
             //Using document fragment to reduce calculating dom tree
             visibleEl = document.createDocumentFragment(),
-            hiddenEl = document.createDocumentFragment();
-        _.each(this.fields, function(field){
+            hiddenEl = document.createDocumentFragment(),
+            selectEl = this.$(".dropdown-menu-select"),
+            html = '<option></option>';
+        _.each(this.fields, function(field, idx){
             var cssClass = _.unique(field.def.css_class ? field.def.css_class.split(' ') : []),
                 fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
             if(field.isHidden) {
@@ -133,6 +150,8 @@
                     var dropdownEl = document.createElement('li');
                     dropdownEl.appendChild(fieldPlaceholder.get(0));
                     visibleEl.appendChild(dropdownEl);
+
+                    html += '<option value=' + idx + '>' + field.label + '</option>';
                 }
                 index++;
             }
@@ -142,9 +161,11 @@
 
         if(index <= 1) {
             this.$(".dropdown-toggle").hide();
+            selectEl.addClass("hide");
             this.$el.removeClass('btn-group');
         } else {
             this.$(".dropdown-toggle").show();
+            selectEl.removeClass("hide");
             this.$el.addClass('btn-group');
         }
         //remove all previous built dropdown tree
@@ -152,6 +173,10 @@
         //and then set the dropdown list with new button list set
         this.$(".dropdown-menu").append(visibleEl);
         this.$el.append(hiddenEl);
+
+        if(app.utils.isTouchDevice()) {
+            selectEl.html(html);
+        }
 
         //if the first button is hidden due to the acl,
         //it will build all other dropdown button and set it use dropdown button set
