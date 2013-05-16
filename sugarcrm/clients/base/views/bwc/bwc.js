@@ -119,14 +119,14 @@
     _rewriteLinksForSidecar: function (frame) {
         var self = this;
 
-        var notSidecar = self._getBlackList();
         frame.$('a[href*="module="]').each(function (i, elem) {
             var $elem = $(elem),
                 href = $elem.attr('href'),
                 module = self.moduleRegex.exec(href);
 
             if (!_.isArray(module) || _.isEmpty(module[1]) ||
-                _.indexOf(notSidecar, module[1]) !== -1
+                _.isUndefined(app.metadata.getModule(module[1])) ||
+                app.metadata.getModule(module[1]).isBwcEnabled
                 ) {
                 return;
             }
@@ -170,107 +170,5 @@
             }
             $elem.attr('href', app.config.siteUrl + '/#bwc/' + $elem.attr('href'));
         });
-    },
-
-    /**
-     * TODO move this to config.js or somewhere where partners/customers can change.
-     * @see https://docs.google.com/a/sugarcrm.com/spreadsheet/ccc?key=0AhZMJewalakadERxWlA3UnByT0dLTC04Q2Z5eGJHbFE#gid=6
-     * @private
-     */
-    _getBlackList: function () {
-        return [
-            'ACLFields',
-            'ACLRoles',
-            'ACLActions',
-            'Administration',
-            'Audit',
-            'Calendar',
-            'Calls',
-            'CampaignLog',
-            'Campaigns',
-            'CampaignTrackers',
-            'Charts',
-            'Configurator',
-            'Contracts',
-            'ContractTypes',
-            'Connectors',
-            'Currencies',
-            'CustomQueries',
-            'DataSets',
-            'DocumentRevisions',
-            'Documents',
-            'EmailAddresses',
-            'EmailMarketing',
-            'EmailMan',
-            'Emails',
-            'EmailTemplates',
-            'Employees',
-            'Exports',
-            'Expressions',
-            'Groups',
-            'History',
-            'Holidays',
-            'iCals',
-            'Import',
-            'InboundEmail',
-            'KBContents',
-            'KBDocuments',
-            'KBDocumentRevisions',
-            'KBTags',
-            'KBDocumentKBTags',
-            'KBContents',
-            'Manufacturers',
-            'Meetings',
-            'MergeRecords',
-            'ModuleBuilder',
-            'MySettings',
-            'Notifications',
-            'OAuthKeys',
-            'OptimisticLock',
-            'OutboundEmailConfiguration',
-            'PdfManager',
-            'ProductBundleNotes',
-            'ProductBundles',
-            'ProductTypes',
-            'Project',
-            'ProjectResources',
-            'ProjectTask',
-            'ProspectLists',
-            'Quotes',
-            'QueryBuilder',
-            'Relationships',
-            'Releases',
-            'ReportMaker',
-            'Reports',
-            'Roles',
-            'SavedSearch',
-            'Schedulers',
-            'SchedulersJobs',
-            'Shippers',
-            'SugarFavorites',
-            'SugarFeed',
-            'TaxRates',
-            'TrackerSessions',
-            'TrackerPerfs',
-            'TrackerQueries',
-            'Teams',
-            'TeamMemberships',
-            'TeamSets',
-            'TeamSetModules',
-            'TeamNotices',
-            'TimePeriods',
-            'Trackers',
-            'UserPreferences',
-            'Users',
-            'vCals',
-            'vCards',
-            'Versions',
-            'WorkFlow',
-            'WorkFlowActions',
-            'WorkFlowActionShells',
-            'WorkFlowAlerts',
-            'WorkFlowAlertShells',
-            'WorkFlowTriggerShells'
-        ];
     }
 })

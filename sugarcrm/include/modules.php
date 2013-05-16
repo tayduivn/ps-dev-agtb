@@ -531,6 +531,7 @@ $adminOnlyList['PdfManager'] = array('all' => 1);
 //END SUGARCRM flav=pro ONLY
 
 
+// TODO: this definition should be grouped with all the others definitions like $beanList, $beanFiles and so on
 $bwcModules = array(
     'ACLFields',
     'ACLRoles',
@@ -601,6 +602,7 @@ $bwcModules = array(
     //END SUGARCRM flav=pro ONLY
     'ProjectTask',
     //BEGIN SUGARCRM flav=pro ONLY
+    'ProspectLists',
     'Quotes',
     'QueryBuilder',
     //END SUGARCRM flav=pro ONLY
