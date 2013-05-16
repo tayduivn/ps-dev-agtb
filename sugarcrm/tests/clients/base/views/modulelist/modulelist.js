@@ -15,13 +15,33 @@ describe("Module List", function() {
 
     describe('Render', function() {
         var view, isAuthenticatedStub, getModuleNamesStub, modStrings;
-
+        afterEach(function() {
+            this.getModuleListStub.restore();
+        });
         beforeEach(function() {
             view = SugarTest.createView("base", moduleName, "modulelist", null, null);
+
             isAuthenticatedStub = sinon.stub(SugarTest.app.api, 'isAuthenticated', function() {
                 return true;
             });
             getModuleNamesStub = sinon.stub(SugarTest.app.metadata, 'getModuleNames', function() {
+                return {
+                    Accounts: 'Accounts',
+                    Bugs: 'Bugs',
+                    Calendar: 'Calendar',
+                    Calls: 'Calls',
+                    Campaigns: 'Campaigns',
+                    Cases: 'Cases',
+                    Contacts: 'Contacts',
+                    Forecasts: 'Forecasts',
+                    Home: 'Home',
+                    Opportunities: 'Opportunities',
+                    Prospects: 'Prospects',
+                    Reports: 'Reports',
+                    Tasks: 'Tasks'
+                }
+            });
+            this.getModuleListStub = sinon.stub(SugarTest.app.metadata, 'getFullModuleList', function() {
                 return {
                     Accounts: 'Accounts',
                     Bugs: 'Bugs',
@@ -59,6 +79,15 @@ describe("Module List", function() {
 
             _.each(modules, function(module, key) {
                 expect(view.$el.find("[data-module='" + module+"']").length).not.toBe(0);
+            });
+        });
+
+        it("Should not complete meta on modules missing from the module list", function() {
+            var modulesList = SugarTest.app.metadata.getModuleNames();
+             modulesList.test = 'test';
+            var output = view.completeMenuMeta(modulesList);
+            _.each(output, function(module, key) {
+                expect(module.name).not.toEqual('test');
             });
         });
 
