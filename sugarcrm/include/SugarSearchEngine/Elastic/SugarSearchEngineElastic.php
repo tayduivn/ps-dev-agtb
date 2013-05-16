@@ -746,16 +746,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $highlighArray = $this->constructHighlightArray($fields, $options);
             $query->setHighlight($highlighArray);
 
-            //Add a type facet so we can see how our results are grouped.
-            if (!empty($options['apply_module_facet'])) {
-                $typeFacet = new \Elastica\Facet\Terms('_type');
-                $typeFacet->setField('_type');
-                // need to add filter for facet too
-                if (isset($mainFilter)) {
-                    $typeFacet->setFilter($mainFilter);
-                }
-                $query->addFacet($typeFacet);
-            }
+            // add facets
+            $this->addFacets($query, $options, $mainFilter);
 
             $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);
@@ -765,6 +757,27 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return null;
         }
         return $results;
+    }
+
+    /**
+     *
+     * Add facets on elastic query object
+     * @param Elastica_Query $query
+     * @param array $options
+     * @param Elastica_Filter_Bool $mainFilter
+     */
+    protected function addFacets(Elastica_Query $query, $options = array(), $mainFilter = null)
+    {
+        // module facet (note: would be less confusing to give another name instead of _type)
+        if (!empty($options['apply_module_facet'])) {
+            $typeFacet = new Elastica_Facet_Terms('_type');
+            $typeFacet->setField('_type');
+            // need to add filter for facet too
+            if (isset($mainFilter)) {
+                $typeFacet->setFilter($mainFilter);
+            }
+            $query->addFacet($typeFacet);
+        }
     }
 
     /**
