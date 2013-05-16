@@ -7,10 +7,29 @@ ul.nav.nav-tabs li.activity > p {
     width: inherit;
 }
 
-.dashboard{
+/**
+  * Portal Dashboard
+  * Overrides normal list view styling to make them 'dashlet-like'
+  **/
+.dashboard {
   padding: 10px 10px 0 10px;
-  .headerpane{
-    .border-radius(3px);
+  .thumbnail {
+    margin-top: 20px;
+    .headerpane{
+      min-height: 0;
+      .border-radius(3px);
+      h1 {
+        font-weight: 600;
+        font-size: 14px;
+        height: auto;
+        padding-top: 8px;
+        padding-bottom: 0px;
+      }
+      .btn-toolbar{
+        height: auto;
+        padding: 2px 2px 2px 2px;
+      }
+    }
   }
 }
 
