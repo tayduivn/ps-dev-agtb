@@ -15,7 +15,7 @@
  *
  * Events
  *
- * forecast:worksheet:dirty
+ * forecast:worksheet:is_dirty
  *  on: this.context.parent || this.context
  *  by: this.dirtyModels 'add' Event
  *  when: a model is added to the dirtModels collection
@@ -87,6 +87,9 @@
     },
 
     initialize: function(options) {
+        // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
+        // registration across ExtendedComponents
+        this.plugins = _.clone(this.plugins)
         this.plugins.push('cte-tabbing');
         this.plugins.push('dirty-collection');
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
@@ -96,12 +99,19 @@
         this.collection.sync = _.bind(this.sync, this);
     },
 
+    _dispose: function() {
+        if (!_.isUndefined(this.context.parent)) {
+            this.context.parent.off(null, null, this);
+        }
+        app.view.views.RecordlistView.prototype._dispose.call(this);
+    },
+
     bindDataChange: function() {
         // these are handlers that we only want to run when the parent module is forecasts
         if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('model'))) {
             if (this.context.parent.get('model').module == 'Forecasts') {
                 this.context.parent.on('button:export_button:click', function() {
-                    if(this.layout.isVisible()) {
+                    if (this.layout.isVisible()) {
                         this.exportCallback();
                     }
                 }, this);
@@ -175,6 +185,12 @@
                 this.collection.on('reset', function() {
                     this.checkForDraftRows(this.context.parent.get('currentForecastCommitDate'));
                 }, this);
+
+                this.context.parent.on('forecast:worksheet:committed', function() {
+                    this.collection.fetch();
+                    var ctx = this.context.parent || this.context
+                    ctx.trigger('forecast:worksheet:is_dirty', this.worksheetType, false);
+                }, this);
             }
         }
 
@@ -183,7 +199,7 @@
             // when something gets added, the save_draft and commit buttons need to be enabled
             this.dirtyModels.on('add', function() {
                 var ctx = this.context.parent || this.context
-                ctx.trigger('forecast:worksheet:dirty', this.worksheetType);
+                ctx.trigger('forecast:worksheet:is_dirty', this.worksheetType, true);
             }, this);
         }
 
@@ -246,8 +262,8 @@
         url += '&user_id=' + this.selectedUser.id;
         url += '&timeperiod_id=' + this.selectedTimeperiod;
 
-        if(this.canEdit && this.isDirty()) {
-            if(confirm(app.lang.get("LBL_WORKSHEET_EXPORT_CONFIRM", "Forecasts"))) {
+        if (this.canEdit && this.isDirty()) {
+            if (confirm(app.lang.get("LBL_WORKSHEET_EXPORT_CONFIRM", "Forecasts"))) {
                 this.runExport(url);
             }
         } else {
@@ -263,7 +279,7 @@
     runExport: function(url) {
         var dlFrame = $("#forecastsDlFrame");
         //check to see if we got something back
-        if(dlFrame.length == 0) {
+        if (dlFrame.length == 0) {
             //if not, create an element
             dlFrame = $("<iframe>");
             dlFrame.attr("id", "forecastsDlFrame");

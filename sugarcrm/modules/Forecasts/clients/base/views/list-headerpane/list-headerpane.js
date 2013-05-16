@@ -37,10 +37,9 @@
             window.print();
         }, this);
 
-        this.context.on('forecast:worksheet:dirty', function(worksheet_type) {
-            console.log('forecast worksheet dirty: ', worksheet_type);
-            this.getField('save_draft_button').setDisabled(false);
-            this.getField('commit_button').setDisabled(false);
+        this.context.on('forecast:worksheet:is_dirty', function(worksheet_type, is_dirty) {
+            this.getField('save_draft_button').setDisabled(!is_dirty);
+            this.getField('commit_button').setDisabled(!is_dirty);
         }, this);
 
         this.context.on('forecasts:worksheet:saved', function(totalSaved, worksheet_type, wasDraft){

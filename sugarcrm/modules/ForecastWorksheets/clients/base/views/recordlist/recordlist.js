@@ -15,7 +15,7 @@
  *
  * Events
  *
- * forecast:worksheet:dirty
+ * forecast:worksheet:is_dirty
  *  on: this.context.parent || this.context
  *  by: this.dirtyModels 'add' Event
  *  when: a model is added to the dirtModels collection
@@ -83,6 +83,9 @@
     selectedTimeperiod: '',
 
     initialize: function(options) {
+        // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
+        // registration across ExtendedComponents
+        this.plugins = _.clone(this.plugins)
         this.plugins.push('cte-tabbing');
         this.plugins.push('dirty-collection');
         app.view.views.RecordlistView.prototype.initialize.call(this, options);
@@ -93,6 +96,13 @@
         this.context.set('skipFetch', !(this.selectedUser.showOpps || !this.selectedUser.isManager)); // if user is a manager, skip the initial fetch
         this.filters = this.context.get('selectedRanges') || this.context.parent.get('selectedRanges');
         this.collection.sync = _.bind(this.sync, this);
+    },
+
+    _dispose : function() {
+        if (!_.isUndefined(this.context.parent)) {
+            this.context.parent.off(null, null, this);
+        }
+        app.view.views.RecordlistView.prototype._dispose.call(this);
     },
 
     bindDataChange: function() {
@@ -160,6 +170,14 @@
                     this.filterCollection();
                     if (!this.disposed) this.render();
                 }, this);
+
+                this.context.parent.on('forecast:worksheet:committed', function() {
+                    if (this.layout.isVisible()) {
+                        this.collection.fetch();
+                        var ctx = this.context.parent || this.context
+                        ctx.trigger('forecast:worksheet:is_dirty', this.worksheetType, false);
+                    }
+                }, this);
             }
         }
 
@@ -170,7 +188,7 @@
         if (!_.isUndefined(this.dirtyModels)) {
             this.dirtyModels.on('add', function() {
                 var ctx = this.context.parent || this.context
-                ctx.trigger('forecast:worksheet:dirty', this.worksheetType);
+                ctx.trigger('forecast:worksheet:is_dirty', this.worksheetType, true);
             }, this);
         }
 

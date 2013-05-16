@@ -47,22 +47,26 @@
                 }, this);
             },
 
+            onDetach: function() {
+                this.dirtyModels.off(null, null, this);
+            },
+
             /**
              * Attach the Listeners
              */
             attachListeners: function() {
-                this.collection.on('reset', function() {
-                    this.cleanUpDirtyModels();
-                }, this);
+                this.collection.on('reset', this.cleanUpDirtyModels, this);
+                this.collection.on("change", this._collectionChangeAddToDirtyModels, this);
+            },
 
-                this.collection.on("change", function(model) {
-                    if(_.isUndefined(this.dirtyTimeperiod) || _.isUndefined(this.dirtyUser)) {
-                        var ctx = this.context.parent || this.context;
-                        this.dirtyTimeperiod = ctx.get('selectedTimePeriod');
-                        this.dirtyUser = ctx.get('selectedUser');
-                    }
-                    this.dirtyModels.add(model);
-                }, this);
+            _collectionChangeAddToDirtyModels: function(model) {
+                debugger;
+                if (_.isUndefined(this.dirtyTimeperiod) || _.isUndefined(this.dirtyUser)) {
+                    var ctx = this.context.parent || this.context;
+                    this.dirtyTimeperiod = ctx.get('selectedTimePeriod');
+                    this.dirtyUser = ctx.get('selectedUser');
+                }
+                this.dirtyModels.add(model);
             },
 
             /**

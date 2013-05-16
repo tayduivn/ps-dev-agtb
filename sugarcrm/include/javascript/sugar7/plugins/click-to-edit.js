@@ -408,7 +408,6 @@
                     // for currency we want to make sure the value didn't actually change so get the difference
                     // and multiple it by 100 (2 decimals out), if it's not equal to 0, then it changed.
                     var diff = Math.abs(this.unformat(elVal) - this.unformat(field.value));
-                    console.log(this.unformat(elVal), this.unformat(field.value), diff, (Math.round(diff*100)));
                     return ((Math.round(diff*100)) != 0)
                 } else {
                     return !_.isEqual(this.unformat(elVal), this.unformat(field.value));
