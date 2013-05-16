@@ -2421,6 +2421,7 @@ $app_strings = array (
     'ERR_NOTHING_SELECTED' =>'Please make a selection before proceeding.',
     'ERR_OPPORTUNITY_NAME_DUPE' => 'An opportunity with the name %s already exists.  Please enter another name below.',
     'ERR_OPPORTUNITY_NAME_MISSING' => 'An opportunity name was not entered.  Please enter an opportunity name below.',
+    'ERR_QUOTE_CONVERTED' => 'This Quote has already been converted to an Opportunity.',
     'ERR_POTENTIAL_SEGFAULT' => 'A potential Apache segmentation fault was detected.  Please notify your system administrator to confirm this problem and have her/him report it to SugarCRM.',
     'ERR_SELF_REPORTING' => 'User cannot report to him or herself.',
     'ERR_SINGLE_QUOTE'  => 'Using the single quote is not supported for this field.  Please change the value.',
