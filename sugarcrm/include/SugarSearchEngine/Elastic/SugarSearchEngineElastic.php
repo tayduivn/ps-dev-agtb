@@ -413,12 +413,21 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 // base field name
                 $fieldName = $module . '.' . $fieldName;
 
-                // add optional boost if set
-                if (!empty($options['addSearchBoosts']) && isset($fieldDef['full_text_search']['boost'])) {
-                    $fieldName .= '^' . $fieldDef['full_text_search']['boost'];
+                // To enable a field for user search we require a boost value. There may be other fields
+                // we index into Elastic but which should not be user searchable. We use the boost value
+                // being set or not to distinguish between both scenarios. For example for extended facets
+                // and related fields we can store additional fields or non analyzed data. While we need
+                // those fields being indexed, we do not want the user to be able to hit those when
+                // performing a search.
+                if (empty($fieldDef['full_text_search']['boost'])) {
+                    $this->logger->debug("Elastic: skipping $module/$fieldName for search field (no boost set)");
+                    continue;
+                } else {
+                    if (!empty($options['addSearchBoosts'])) {
+                        $fieldName .= '^' . $fieldDef['full_text_search']['boost'];
+                    }
+                    $fields[] = $fieldName;
                 }
-
-                $fields[] = $fieldName;
             }
         }
 
