@@ -17,11 +17,11 @@
         // Assets for the activity stream post avatar
         this.user_id = app.user.get('id');
         this.full_name = app.user.get('full_name');
-        this.picture_url = (app.user.get('picture')) ? app.api.buildFileURL({
+        this.picture_url = app.user.get('picture') ? app.api.buildFileURL({
             module: 'Users',
             id: this.user_id,
             field: 'picture'
-        }) : app.config.siteUrl + "/styleguide/assets/img/profile.png";
+        }) : '';
     },
 
     /**
@@ -49,7 +49,7 @@
             bean.save(payload, {
                 success: function(model) {
                     self.$('div.sayit').html('').trigger('change').focus();
-                    model.set('picture_url', self.picture_url);
+                    model.set('picture', app.user.get('picture'));
                     self.collection.add(model);
                     self.layout.prependPost(model);
                 }

@@ -31,11 +31,11 @@
         this.userName = app.user.get("user_name");
 
         var picture = app.user.get("picture");
-        this.pictureUrl = (picture) ? app.api.buildFileURL({
+        this.pictureUrl = picture ? app.api.buildFileURL({
             module: "Users",
             id: app.user.get("id"),
             field: "picture"
-        }) : app.config.siteUrl + "/styleguide/assets/img/profile.png";
+        }) : '';
 
         this.render();
     },
