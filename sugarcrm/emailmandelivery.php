@@ -20,7 +20,7 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+define('ENTRY_POINT_TYPE', 'api');
 require_once('include/entryPoint.php');
 include_once('modules/EmailMan/EmailManDelivery.php');
-sugar_cleanup();
-?>
+sugar_cleanup(true);

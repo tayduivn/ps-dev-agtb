@@ -21,7 +21,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/JSON.php');
-require_once('include/entryPoint.php');
 require_once 'include/upload_file.php';
 
 global $sugar_config;
@@ -50,8 +49,7 @@ if(isset($_FILES['file_1'])){
 if(!$upload_ok) {
     $returnArray['data']='not_recognize';
     echo $json->encode($returnArray);
-    sugar_cleanup();
-    exit();
+    sugar_cleanup(true);
 }
 if(file_exists($file_name) && is_file($file_name)) {
     $encoded_file_name = rawurlencode($upload->get_stored_file_name());
@@ -83,5 +81,4 @@ if(file_exists($file_name) && is_file($file_name)) {
     $returnArray['data']='file_error';
     echo $json->encode($returnArray);
 }
-sugar_cleanup();
-exit();
+sugar_cleanup(true);

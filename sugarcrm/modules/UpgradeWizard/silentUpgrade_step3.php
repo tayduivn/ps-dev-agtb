@@ -67,7 +67,7 @@ $path = realpath($argv[2]); // custom log file, if blank will use ./upgradeWizar
 $errors = array();
 $cwd = $argv[3];
 chdir($cwd);
-
+define('ENTRY_POINT_TYPE', 'api');
 require_once('include/entryPoint.php');
 require_once('modules/UpgradeWizard/uw_utils.php');
 require_once('include/utils/zip_utils.php');

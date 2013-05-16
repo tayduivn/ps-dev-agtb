@@ -2288,7 +2288,11 @@ function str_end($str, $end) {
 	return (substr($str, strlen($str) - strlen($end)) == $end);
 }
 
-function securexss($value) {
+function securexss($value)
+{
+    if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
+        return $value;
+    }
 	if(is_array($value)){
     	$new = array();
         foreach($value as $key=>$val){
@@ -2296,10 +2300,9 @@ function securexss($value) {
         }
         return $new;
     }
-	static $xss_cleanup=  array("&quot;" => "&#38;", '"' =>'&quot;', "'" =>  '&#039;' , '<' =>'&lt;' , '>'=>'&gt;');
 	$value = preg_replace(array('/javascript:/i', '/\0/'), array('java script:', ''), $value);
 	$value = preg_replace('/javascript:/i', 'java script:', $value);
-	return str_replace(array_keys($xss_cleanup), array_values($xss_cleanup), $value);
+	return htmlspecialchars($value, ENT_QUOTES, "UTF-8");
 }
 
 function securexsskey($value, $die=true){
@@ -3184,7 +3187,12 @@ function sugar_root_dir()
     return realpath(dirname(__FILE__) . '/..');
 }
 
-function sugar_cleanup($exit = false) {
+/**
+ * Clean up Sugar environment
+ * @param bool $exit Should we exit() after we're done?
+ */
+function sugar_cleanup($exit = false)
+{
 	static $called = false;
 	if($called)return;
 	$called = true;
@@ -3242,9 +3250,9 @@ function sugar_cleanup($exit = false) {
 	if(class_exists('DBManagerFactory')) {
 		$db = DBManagerFactory::getInstance();
 		$db->disconnect();
-		if($exit) {
-			exit;
-		}
+	}
+	if($exit) {
+		exit;
 	}
 }
 

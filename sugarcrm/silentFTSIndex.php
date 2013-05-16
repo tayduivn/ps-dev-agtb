@@ -26,7 +26,7 @@
 //change directories to where this file is located.
 //this is to make sure it can find dce_config.php
 chdir(dirname(__FILE__));
-
+define('ENTRY_POINT_TYPE', 'api');
 require_once('include/entryPoint.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 

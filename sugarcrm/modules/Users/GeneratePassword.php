@@ -19,25 +19,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: GeneratePassword.php 38040 2008-07-21 17:21:56Z awu $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+require_once('modules/Users/language/en_us.lang.php');
+global $app_strings;
+global $sugar_config;
+global $new_pwd;
+global $current_user;
 
-    require_once('include/entryPoint.php');
-
-    require_once('modules/Users/language/en_us.lang.php');
-    global $app_strings;
-    global $sugar_config;
-    global $new_pwd;
-    global $current_user;
-
-  	$mod_strings=return_module_language('','Users');
-  	$res=$GLOBALS['sugar_config']['passwordsetting'];
-	$regexmail = "/^\w+(['\.\-\+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+\$/";
+$mod_strings=return_module_language('','Users');
+$res=$GLOBALS['sugar_config']['passwordsetting'];
+$regexmail = "/^\w+(['\.\-\+]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+\$/";
 
 ///////////////////////////////////////////////////
 ///////  Retrieve user
@@ -170,5 +160,3 @@ if ($isLink){
     		echo $mod_strings['LBL_EMAIL_NOT_SENT'];
     }
     return;
-
-?>

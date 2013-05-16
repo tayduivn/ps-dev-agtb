@@ -20,14 +20,8 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: campaign_tracker.php 56510 2010-05-17 18:54:49Z jenny $
- * Description:  Defines the English language pack for the base application.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-require_once('include/entryPoint.php');
+ define('ENTRY_POINT_TYPE', 'api');
+ require_once('include/entryPoint.php');
 
 // logic will be added here at a later date to track campaigns
 // this script; currently forwards to site_URL variable of $sugar_config
@@ -57,12 +51,6 @@ if(preg_match('/^[0-9A-Za-z\-]*$/', $track))
 	$row = $db->fetchByAssoc($res);
 
 	$redirect_URL = $row['refer_url'];
-	sugar_cleanup();
 	header("Location: $redirect_URL");
 }
-else
-{
-	sugar_cleanup();
-}
-exit;
-?>
+sugar_cleanup(true);

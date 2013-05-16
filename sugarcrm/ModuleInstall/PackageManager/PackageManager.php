@@ -30,7 +30,6 @@ require_once('include/nusoap/nusoap.php');
 require_once('include/utils/zip_utils.php');
 require_once('ModuleInstall/PackageManager/PackageManagerDisplay.php');
 require_once('ModuleInstall/ModuleInstaller.php');
-require_once('include/entryPoint.php');
 require_once('ModuleInstall/PackageManager/PackageManagerComm.php');
 
 class PackageManager{
@@ -657,7 +656,7 @@ class PackageManager{
                 $target_manifest = remove_file_extension( $upgrade_content ) . '-manifest.php';
                 if(file_exists($target_manifest)) {
 	                require_once($target_manifest);
-	
+
 	                $name = empty($manifest['name']) ? $upgrade_content : $manifest['name'];
 	                $version = empty($manifest['version']) ? '' : $manifest['version'];
 	                $published_date = empty($manifest['published_date']) ? '' : $manifest['published_date'];

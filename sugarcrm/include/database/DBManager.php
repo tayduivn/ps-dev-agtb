@@ -248,6 +248,24 @@ abstract class DBManager
 	protected $options = array();
 
     /**
+     * Do we encode HTML?
+	 * @return bool $encode
+	 */
+	public function getEncode()
+	{
+		return $this->encode;
+	}
+
+	/**
+	 * Set HTML encoding flag
+	 * @param boolean $encode
+	 */
+	public function setEncode($encode)
+	{
+		$this->encode = $encode;
+	}
+
+	/**
      * Create DB Driver
      */
 	public function __construct()
@@ -255,6 +273,9 @@ abstract class DBManager
 		$this->timedate = TimeDate::getInstance();
 		$this->log = $GLOBALS['log'];
 		$this->helper = $this; // compatibility
+		if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
+		    $this->encode = false;
+		}
 	}
 
     /**
@@ -264,7 +285,7 @@ abstract class DBManager
      */
 	public function __get($p)
 	{
-		$this->log->info('Call to DBManager::$'.$p.' is deprecated');
+		$this->log->deprecated('Call to DBManager::$'.$p.' is deprecated');
 		return $this->$p;
 	}
 
@@ -581,6 +602,35 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 	/**
+	 * Replaces specific characters with their HTML entity values
+	 * @param string $string String to check/replace
+	 * @return string
+	 *
+	 */
+	public function encodeHTML($string)
+	{
+		if (empty($string) || !$this->encode) {
+			return $string;
+		}
+		/** Not using ENT_HTML401|ENT_SUBSTITUTE since they are 5.4+ only */
+		return htmlspecialchars($string, ENT_QUOTES, "UTF-8");
+	}
+
+
+	/**
+	 * Replaces specific HTML entity values with the true characters
+	 * @param string $string String to check/replace
+	 * @param bool $encode Default true
+	 * @return string
+	 */
+	public function decodeHTML($string)
+	{
+		if (!is_string($string) || !$this->encode) {
+			return $string;
+		}
+		return htmlspecialchars_decode($string, ENT_QUOTES);
+	}
+	/**
 	 * Insert data into table by parameter definition
 	 * @param string $table Table name
 	 * @param array $field_defs Definitions in vardef-like format
@@ -600,7 +650,7 @@ protected function checkQuery($sql, $object_name = false)
 
 			if(isset($data[$field])) {
 				// clean the incoming value..
-				$val = from_html($data[$field]);
+				$val = $this->decodeHTML($data[$field]);
 			} else {
 				if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
 					$val = $fieldDef['default'];
@@ -1372,6 +1422,20 @@ protected function checkQuery($sql, $object_name = false)
 		return $this->query($sql,true,$msg);
 	}
 
+	/**
+	 * Decode string and quote it
+	 * @param unknown_type $string
+	 * @return string
+	 */
+	protected function quotedDecode($string)
+	{
+	    if($this->encode) {
+	        return $this->quoted($this->decodeHTML($string));
+	    } else {
+	        return $this->quoted($string);
+	    }
+	}
+
     /**
      * Generate a set of Insert statements based on the bean given
      *
@@ -1467,14 +1531,14 @@ protected function checkQuery($sql, $object_name = false)
 						}else{
 							if(isset($type) && $type=='int') {
 								if(!empty($custom_fields[$fieldDef['name']]))
-									$cstm_values[$fieldDef['name']] = $GLOBALS['db']->quote(from_html($val));
+									$cstm_values[$fieldDef['name']] = $this->quote($this->decodeHTML($val));
 								else
-									$values[$fieldDef['name']] = $GLOBALS['db']->quote(from_html($val));
+									$values[$fieldDef['name']] = $this->quote($this->decodeHTML($val));
 							} else {
 								if(!empty($custom_fields[$fieldDef['name']]))
-									$cstm_values[$fieldDef['name']] = "'".$GLOBALS['db']->quote(from_html($val))."'";
+									$cstm_values[$fieldDef['name']] = $this->quotedDecode($val);
 								else
-									$values[$fieldDef['name']] = "'".$GLOBALS['db']->quote(from_html($val))."'";
+									$values[$fieldDef['name']] = $this->quotedDecode($val);
 							}
 						}
 						if(!$built_columns){
@@ -1593,7 +1657,7 @@ protected function checkQuery($sql, $object_name = false)
      */
 	protected function quoteInternal($string)
 	{
-		return from_html($string);
+		return $this->decodeHTML($string);
 	}
 
 	/**
@@ -2027,7 +2091,7 @@ protected function checkQuery($sql, $object_name = false)
     		if($fieldDef['name'] == 'deleted' && empty($bean->deleted)) continue;
 
     		if(isset($bean->$field)) {
-    			$val = from_html($bean->$field);
+    			$val = $this->decodeHTML($bean->$field);
     		} else {
     			continue;
     		}
@@ -3492,7 +3556,7 @@ protected function checkQuery($sql, $object_name = false)
 	    }
 	    $row = $this->fetchRow($result);
 	    if (!empty($row) && $encode && $this->encode) {
-	    	return array_map('to_html', $row);
+	    	return array_map(array($this, "encodeHTML"), $row);
 	    } else {
 	       return $row;
 	    }
@@ -3578,6 +3642,81 @@ protected function checkQuery($sql, $object_name = false)
 		// Generic case - no slashes, no dots
 		return preg_match('#[/.\\\\]#', $name)==0;
 	}
+
+    /**
+     * Generates the a recursive SQL query or equivalent stored procedure implementation.
+     * The DBManager's default implementation is based on SQL-99's recursive common table expressions.
+     * Databases supporting recursive CTEs (such as SQL server) only need to set the recursive_query capability to true
+     * @param string    $tablename       table name
+     * @param string    $key             primary key field name
+     * @param string    $parent_key      foreign key field name self referencing the table
+     * @param string    $fields          list of fields that should be returned. The pseudocolumn "level" may be in the list
+     * @param bool      $lineage         find the lineage, if false, find the children
+     * @param string    $startWith       identifies starting element(s) as in a where clause
+     * @param string    $max_level       when not null is the maximum number of levels to traverse in the the tree
+	 * @return string               Recursive SQL query or equivalent representation.
+     */
+    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null, $whereClause = null)
+    {
+
+        if($lineage) {
+            $connectWhere = "e.$key = sg.$parent_key";  // Search up the tree to get lineage
+        } else {
+            $connectWhere = "sg.$key = e.$parent_key";  // Search down the tree to find children
+        }
+
+        if(!empty($startWith)) {
+            $startWith = 'WHERE ' . $startWith;
+        } else {
+            $startWith = '';
+        }
+
+        // cleanup WHERE clause
+        if (empty($whereClause)) {
+			 $whereClause = '';
+		}
+		else {
+			$whereClause = ltrim($whereClause);
+			if (strtoupper(substr($whereClause, 0, 5)) == 'WHERE' ) {   // remove WHERE
+				$whereClause = substr($whereClause, 6);
+            }
+            if (strtoupper(substr($whereClause, 0, 4)) != 'AND ' ) {  // Add AND
+                $whereClause = "AND $whereClause";
+            }
+            $whereClause .= ' ';  // make sure there is a trailing blank
+		}
+
+        // compose level clause of query if Level is in the fieldList passed
+		$tokens = explode(',', $fields);
+		$fieldsTop = "";
+		$fieldsBottom = "";
+		$delimiter = "";
+		foreach ($tokens as $token) {
+			if (trim($token) == '_level') {
+	            $fieldsTop = $fieldsTop . $delimiter . " 1 as _level";
+		        $fieldsBottom = $fieldsBottom . $delimiter . " sg._level + 1 as _level";
+                $delimiter = ",";
+			}
+			else {
+	            $fieldsTop = $fieldsTop . $delimiter . $token;
+		        $fieldsBottom = $fieldsBottom . $delimiter . "e.$token";
+                $delimiter = ",";
+			}
+		}
+
+        $sql = "WITH search_graph AS (
+                   SELECT $fieldsTop
+                   FROM $tablename e
+                   $startWith $whereClause
+                 UNION ALL
+                   SELECT $fieldsBottom
+                   FROM $tablename e, search_graph sg
+                   WHERE $connectWhere $whereClause
+                )
+                SELECT * FROM search_graph";
+
+        return $sql;
+    }
 
 	/**
 	 * Check special requirements for DB installation.
@@ -3948,84 +4087,6 @@ protected function checkQuery($sql, $object_name = false)
 	 * @return array
 	 */
 	abstract public function installConfig();
-
-    /**
-     * Generates the a recursive SQL query or equivalent stored procedure implementation.
-     * The DBManager's default implementation is based on SQL-99's recursive common table expressions.
-     * Databases supporting recursive CTEs (such as SQL server) only need to set the recursive_query capability to true
-     * @param string    $tablename       table name
-     * @param string    $key             primary key field name
-     * @param string    $parent_key      foreign key field name self referencing the table
-     * @param string    $fields          list of fields that should be returned. The pseudocolumn "level" may be in the list
-     * @param bool      $lineage         find the lineage, if false, find the children
-     * @param string    $startWith       identifies starting element(s) as in a where clause
-     * @param string    $max_level       when not null is the maximum number of levels to traverse in the the tree
-	 * @return string               Recursive SQL query or equivalent representation.
-     */
-    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null, $whereClause = null)
-    {
-
-        if($lineage) {
-            $connectWhere = "e.$key = sg.$parent_key";  // Search up the tree to get lineage
-        } else {
-            $connectWhere = "sg.$key = e.$parent_key";  // Search down the tree to find children
-        }
-
-        if(!empty($startWith)) {
-            $startWith = 'WHERE ' . $startWith;
-        } else {
-            $startWith = '';
-        }
-
-		//$fieldsTop = $fields;
-		//$fieldsBottom = 'e.'.preg_replace('/,\s*/', ',e.', $fields);
-
-        // cleanup WHERE clause
-        if (empty($whereClause)) {
-			 $whereClause = '';
-		}
-		else {
-			$whereClause = ltrim($whereClause);
-			if (strtoupper(substr($whereClause, 0, 5)) == 'WHERE' ) {   // remove WHERE
-				$whereClause = substr($whereClause, 6);
-            }
-            if (strtoupper(substr($whereClause, 0, 4)) != 'AND ' ) {  // Add AND
-                $whereClause = "AND $whereClause";
-            }
-            $whereClause .= ' ';  // make sure there is a trailing blank
-		}
-
-        // compose level clause of query if Level is in the fieldList passed
-		$tokens = explode(',', $fields);
-		$fieldsTop = "";
-		$fieldsBottom = "";
-		$delimiter = "";
-		foreach ($tokens as $token) {
-			if (trim($token) == '_level') {
-	            $fieldsTop = $fieldsTop . $delimiter . " 1 as _level";
-		        $fieldsBottom = $fieldsBottom . $delimiter . " sg._level + 1 as _level";
-                $delimiter = ",";
-			}
-			else {
-	            $fieldsTop = $fieldsTop . $delimiter . $token;
-		        $fieldsBottom = $fieldsBottom . $delimiter . "e.$token";
-                $delimiter = ",";
-			}
-		}
-
-        $sql = "WITH search_graph AS (
-                   SELECT $fieldsTop
-                   FROM $tablename e
-                   $startWith $whereClause
-                 UNION ALL
-                   SELECT $fieldsBottom
-                   FROM $tablename e, search_graph sg
-                   WHERE $connectWhere $whereClause
-                )
-                SELECT * FROM search_graph";
-
-        return $sql;
-    }
 
     /**
      * Returns a DB specific FROM clause which can be used to select against functions.

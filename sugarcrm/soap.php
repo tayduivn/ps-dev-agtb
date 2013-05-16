@@ -20,7 +20,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  *
  ********************************************************************************/
-
+define('ENTRY_POINT_TYPE', 'api');
 require_once('include/entryPoint.php');
 require_once('include/utils/file_utils.php');
 ob_start();
@@ -94,6 +94,4 @@ SugarMetric_Manager::getInstance()->setTransactionName('soap_' . $action);
 
 ob_end_flush();
 flush();
-sugar_cleanup();
-exit();
-?>
+sugar_cleanup(true);

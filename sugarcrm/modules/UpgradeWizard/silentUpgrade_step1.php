@@ -174,7 +174,7 @@ $upgradeType = verifyArguments($argv,$usage_regular);
 //////  Verify that all the arguments are appropriately placed////////////////
 global $sugar_config;
 $errors = array();
-
+define('ENTRY_POINT_TYPE', 'api');
 require_once('include/entryPoint.php');
 require_once('include/utils/zip_utils.php');
 $cwd = $argv[3];
