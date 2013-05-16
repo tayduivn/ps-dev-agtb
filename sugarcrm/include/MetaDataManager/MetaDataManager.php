@@ -27,7 +27,7 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('soap/SoapHelperFunctions.php');
+require_once 'soap/SoapHelperFunctions.php';
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
@@ -44,12 +44,6 @@ SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
  *
  */
 class MetaDataManager {
-    /**
-     * SugarFieldHandler, to assist with cleansing default sugar field values
-     *
-     * @var SugarFieldHandler
-     */
-    protected $sfh;
 
     /**
      * The user bean for the logged in user
@@ -61,7 +55,7 @@ class MetaDataManager {
     /**
      * The metadata hacks class
      * 
-     * @var metaDataHacks
+     * @var MetaDataHacks
      */
     protected $metaDataHacks;
 
@@ -329,13 +323,15 @@ class MetaDataManager {
             if (!isset($data['relationships'])) {
                 $data['relationships'] = array();
             }
-
-            return $data;
+            if(!isset($data['fields'])) {
+                $data['fields'] = array();
+            }
         }
 
         // Bug 56505 - multiselect fields default value wrapped in '^' character
-        if (!empty($data['fields']) && is_array($data['fields']))
-            $data['fields'] = $this->normalizeFielddefs($data['fields']);
+        if (!empty($data['fields'])) {
+            $data['fields'] = $this->metaDataHacks->normalizeFieldDefs($data['fields']);
+        }
 
         if (!isset($data['relationships'])) {
             $data['relationships'] = array();
@@ -600,47 +596,6 @@ class MetaDataManager {
 
         return array_keys($platforms);
     }
-
-    /**
-     * Cleans field def default values before returning them as a member of the
-     * metadata response payload
-     *
-     * Bug 56505
-     * Cleans default value of fields to strip out metacharacters used by the app.
-     * Used initially for cleaning default multienum values.
-     *
-     * @param array $fielddefs
-     * @return array
-     */
-    protected function normalizeFielddefs(Array $fielddefs) {
-        $this->getSugarFieldHandler();
-
-        foreach ($fielddefs as $name => $def) {
-            if (isset($def['type'])) {
-                $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
-
-                $field = $this->sfh->getSugarField($type);
-
-                $fielddefs[$name] = $field->getNormalizedDefs($def);
-            }
-        }
-
-        return $fielddefs;
-    }
-
-    /**
-     * Gets the SugarFieldHandler object
-     *
-     * @return SugarFieldHandler The SugarFieldHandler
-     */
-    protected function getSugarFieldHandler() {
-        if (!$this->sfh instanceof SugarFieldHandler) {
-            $this->sfh = new SugarFieldHandler;
-        }
-
-        return $this->sfh;
-    }
-
 
      /*
      * Factory for layouts.
