@@ -31,19 +31,12 @@
      * @extends View.SelectionListView
      */
     extendsFrom: "SelectionListView",
-
+    plugins: ['list-disable-sort'],
     _beanCollectionSync: null,
 
     initialize: function(options) {
         _.bindAll(this);
         app.view.views.SelectionListView.prototype.initialize.call(this, options);
-
-        // turn off sorting
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(field) {
-                field.sortable = false;
-            });
-        });
 
         // remove links
         this.on("render", this._removeLinks);
