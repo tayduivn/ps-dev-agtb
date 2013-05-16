@@ -127,9 +127,7 @@
     },
 
     _dispose: function() {
-        _.each(this.favFields, function(field) {
-            field._dispose();
-        });
+        this.favFields = null;
         this.model.parentModel.off("change", this.loadData, this);
         app.view.View.prototype._dispose.call(this);
     }
