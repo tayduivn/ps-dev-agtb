@@ -67,6 +67,17 @@
         this.$(".record-label[data-name=" + value.field + "]").text(value.label);
     },
 
+    /**
+     * Called each time a validation pass is completed on the model
+     * @param {boolean} isValid TRUE if model is valid
+     */
+    validationComplete: function(isValid){
+        if (isValid) {
+            this.setButtonStates(this.STATE.VIEW);
+            this.handleSave();
+        }
+    },
+
     delegateButtonEvents: function () {
         this.context.on('button:edit_button:click', this.editClicked, this);
         this.context.on('button:save_button:click', this.saveClicked, this);
@@ -229,9 +240,11 @@
 
     saveClicked: function () {
         this.clearValidationErrors();
-        if (this.model.isValid(this.getFields(this.module))) {
-            this.setButtonStates(this.STATE.VIEW);
-            this.handleSave();
+        var isValid = this.model.isValid(this.getFields(this.module));
+        if(_.isUndefined(isValid)){
+            this.model.once("validation:complete", this.validationComplete, this);
+        } else {
+            this.validationComplete(isValid);
         }
     },
 

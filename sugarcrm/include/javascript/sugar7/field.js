@@ -211,10 +211,15 @@
                 // Add error styling
                 this.$el.closest('.record-cell').addClass('error');
                 this.$el.addClass('error');
-                // For each error add to error help block
-                _.each(errors, function (errorContext, errorName) {
-                    errorMessages.push(app.error.getErrorString(errorName, errorContext));
-                });
+                if(_.isString(errors)){
+                    // A custom validation error was triggered for this field
+                    errorMessages.push(errors);
+                } else {
+                    // For each error add to error help block
+                    _.each(errors, function (errorContext, errorName) {
+                        errorMessages.push(app.error.getErrorString(errorName, errorContext));
+                    });
+                }
                 $ftag.wrap('<div class="input-append error ' + ftag + '">');
                 $ftag.after(this.exclamationMarkTemplate(errorMessages));
                 $tooltip = this.$('.error-tooltip');
