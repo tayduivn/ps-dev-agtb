@@ -71,7 +71,7 @@ $mod_strings = array (
     'LNK_LIST_TEAM' => 'Teams',
 	'LNK_LIST_TEAMNOTICE' => 'Team Notices',
 	'LNK_NEW_TEAM' => 'Create Team',
-
+    'LNK_NEW_TEAM_NOTICE' => 'Create Team Notice',
     'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
 	'NTC_REMOVE_TEAM_MEMBER_CONFIRMATION' => 'Are you sure you want to remove this user\\\'s membership?',
 	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
