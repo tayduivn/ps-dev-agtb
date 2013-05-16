@@ -63,6 +63,7 @@ define('MB_PORTALLISTVIEW', 'portallistview');
 define('MB_PORTALSEARCHVIEW', 'portalsearchview');
 define('MB_PORTAL', 'portal');
 //END SUGARCRM flav=ent ONLY
+define('MB_RECORDVIEW', 'record');
 
 class MBConstants
 {

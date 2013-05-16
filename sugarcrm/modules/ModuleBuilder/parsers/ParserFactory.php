@@ -88,7 +88,10 @@ class ParserFactory
             }
         }
 
-        switch ($lView) {
+        switch ( $lView) {
+            case MB_RECORDVIEW:
+                require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
+                return new SidecarGridLayoutMetaDataParser ( $view, $moduleName, $packageName, 'base' ) ;
             case MB_EDITVIEW :
             case MB_DETAILVIEW :
             case MB_QUICKCREATE :

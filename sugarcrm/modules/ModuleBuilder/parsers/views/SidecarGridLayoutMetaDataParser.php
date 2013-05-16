@@ -190,7 +190,18 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
      * @return string value to add
      */
     protected function _addInternalCell($field) {
-        return is_array($field) ? $field['name'] : $field;
+        // Handle formatting of combination data field defs
+        if (is_array($field)) {
+            if (isset($def['name'])) {
+                $return = $def['name'];
+            } else {
+                $return = isset($def['type']) ? $def['name'] : $this->FILLER;
+            }
+        } else {
+            $return = $field;
+        }
+        
+        return $return;
     }
 
 
@@ -404,8 +415,17 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
                 if (empty($field)) {
                     $fieldToInsert = $this->FILLER;
-                } elseif(is_array($field) && empty($field['name'])) {
-                    $fieldToInsert = $this->FILLER;
+                } elseif(is_array($field)) {
+                    if (isset($field['type']) && $field['type'] == 'fieldset') {
+                        if (isset($field['fields'])) {
+                            foreach ($field['fields'] as $fsfield) {
+                                $row[] = $this->_addInternalCell($fsfield);
+                            }
+                            continue;
+                        }
+                    } 
+                    
+                    $fieldToInsert = empty($field['name']) ? $this->FILLER : $field['name'];
                 } else {
                     $fieldToInsert = $field;
                 }

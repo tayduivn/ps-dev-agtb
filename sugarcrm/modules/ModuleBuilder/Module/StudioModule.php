@@ -56,12 +56,6 @@ class StudioModule
 
     public function __construct ($module)
     {
-           //Sources can be used to override the file name mapping for a specific view or the parser for a view.
-        //The
-        $this->sources = array (	'editviewdefs.php' => array ( 'name' => translate ('LBL_EDITVIEW') , 'type' => MB_EDITVIEW , 'image' => 'EditView' ) ,
-                                    'detailviewdefs.php' => array ( 'name' => translate('LBL_DETAILVIEW') , 'type' => MB_DETAILVIEW , 'image' => 'DetailView' ) ,
-                                    'listviewdefs.php' => array ( 'name' => translate('LBL_LISTVIEW') , 'type' => MB_LISTVIEW , 'image' => 'ListView' ) ) ;
-
         $moduleList = $GLOBALS [ 'app_list_strings' ] [ 'moduleList' ];
         if (empty($moduleList) && !is_array($moduleList)) {
             $moduleList = array();
@@ -74,9 +68,57 @@ class StudioModule
         if ($this->seed) {
             $this->fields = $this->seed->field_defs;
         }
+        $this->setSources();
+        //$GLOBALS['log']->debug ( get_class($this)."->__construct($module): ".print_r($this->fields,true) ) ;
 
         // Set BWC
         $this->bwc = isModuleBWC($module);
+    }
+    
+    protected function setSources()
+    {
+        global $bwcModules;
+        
+        // Backward Compatible modules need the old way of doing things
+        if (in_array($this->module, $bwcModules)) {
+            // Sources can be used to override the file name mapping for a specific 
+            // view or the parser for a view.
+            $this->sources = array(
+                array(
+                    'name'  => translate('LBL_EDITVIEW'), 
+                    'type'  => MB_EDITVIEW, 
+                    'image' => 'EditView',
+                    'path'  => "modules/{$this->module}/metadata/editviewdefs.php"
+                ),
+                array(
+                    'name'  => translate('LBL_DETAILVIEW'), 
+                    'type'  => MB_DETAILVIEW, 
+                    'image' => 'DetailView',
+                    'path'  => "modules/{$this->module}/metadata/detailviewdefs.php"
+                ),
+                array(
+                    'name'  => translate('LBL_LISTVIEW'), 
+                    'type'  => MB_LISTVIEW, 
+                    'image' => 'ListView',
+                    'path'  => "modules/{$this->module}/metadata/listviewdefs.php",
+                ),
+            );
+        } else {
+            $this->sources = array(
+                array(
+                    'name'  => translate('LBL_RECORDVIEW'), 
+                    'type'  => MB_RECORDVIEW, 
+                    'image' => 'Record',
+                    'path'  => "modules/{$this->module}/clients/base/views/record/record.php"
+                ),
+                array(
+                    'name'  => translate('LBL_LISTVIEW'), 
+                    'type'  => MB_LISTVIEW, 
+                    'image' => 'ListView',
+                    'path'  => "modules/{$this->module}/clients/base/views/list/list.php",
+                ),
+            );
+        }
     }
 
      /*
@@ -205,11 +247,12 @@ class StudioModule
     public function getViews()
     {
         $views = array () ;
-        foreach ($this->sources as $file => $def) {
-            if (file_exists ( "modules/{$this->module}/metadata/$file" )
-                || file_exists ( "custom/modules/{$this->module}/metadata/$file" ))
-            {
-                $views [ str_replace ( '.php', '' , $file) ] = $def ;
+        
+        foreach ($this->sources as $def) {
+            $path = $def['path'];
+            if (file_exists($path) || file_exists("custom/$path")) {
+                unset($def['path']);
+                $views[basename($path, '.php')] = $def;
             }
         }
 
