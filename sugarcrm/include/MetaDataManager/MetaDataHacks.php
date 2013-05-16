@@ -1,46 +1,106 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 /**
  * Assists in modifying the Metadata in places that the core cannot handle at this time.
- * 
+ *
  */
-class MetaDataHacks {
+class MetaDataHacks
+{
+    /**
+     * The SugarFieldHandler
+     *
+     * @var SugarFieldHandler
+     */
+    protected $sfh;
+
     /**
      * Fix the ACLs for non-db fields that actually do need ACLs for
      *
-     * @param array $fieldsAcls array of fields that have ACLs
-     * @return array Array of fixed ACL's 
+     * @param  array $fieldsAcls array of fields that have ACLs
+     * @return array Array of fixed ACL's
      */
-	public function fixAcls(array $fieldsAcls) {
-		if(isset($fieldsAcls['email1'])) {
-			$fieldsAcls['email'] = $fieldsAcls['email1'];
-		}
-		return $fieldsAcls;
-	}
+    public function fixAcls(array $fieldsAcls)
+    {
+        if (isset($fieldsAcls['email1'])) {
+            $fieldsAcls['email'] = $fieldsAcls['email1'];
+        }
+
+        return $fieldsAcls;
+    }
+
+    /**
+     * Relate fields are weird.
+     * We need to set the type ot what the
+     * field type really is not relate.
+     *
+     * @param  array $fieldDefs
+     * @return array $fieldDefs
+     */
+    public function fixRelateFields(array $fieldDefs)
+    {
+        if (empty($fieldDefs)) {
+            return $fieldDefs;
+        }
+
+        foreach ($fieldDefs as $name => &$fieldDef) {
+            if ($fieldDef['type'] == 'relate' && (substr($name, -3) == '_id')) {
+                $fieldDef['type'] = 'id';
+            }
+        }
+
+        return $fieldDefs;
+    }
+
+    /**
+     * Cleans field def default values before returning them as a member of the
+     * metadata response payload
+     *
+     * Bug 56505
+     * Cleans default value of fields to strip out metacharacters used by the app.
+     * Used initially for cleaning default multienum values.
+     *
+     * @param  array $fielddefs
+     * @return array
+     */
+    public function normalizeFieldDefs(array $fieldDefs)
+    {
+        $this->getSugarFieldHandler();
+
+        foreach ($fieldDefs as $name => $def) {
+            if (isset($def['type'])) {
+                $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
+
+                $field = $this->sfh->getSugarField($type);
+
+                $fieldDefs[$name] = $field->getNormalizedDefs($def);
+            }
+        }
+
+        return $fieldDefs;
+    }
+
+    /**
+     * Gets the SugarFieldHandler object
+     *
+     * @return SugarFieldHandler The SugarFieldHandler
+     */
+    protected function getSugarFieldHandler()
+    {
+        if (empty($this->sfh)) {
+            $this->sfh = new SugarFieldHandler;
+        }
+
+        return $this->sfh;
+    }
 }
