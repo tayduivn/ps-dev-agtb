@@ -3,13 +3,13 @@
 
     events: {
         'click a[name=cancel_button]': 'cancel',
-        'click a[name=save_button]': 'save',
+        'click a[name=save_button]': 'save'
     },
 
     initialize: function(options) {
         app.view.views.HeaderpaneView.prototype.initialize.call(this, options);
         var records = options.context.get("selectedDuplicates");
-        this.title = app.lang.get('LBL_MERGING')+" "+records.length+" "+app.lang.get('LBL_RECORDS');
+        this.title = app.lang.get('LBL_MERGING_RECORDS',this.module,{ mergeCount: records.length});
     },
     
     /**

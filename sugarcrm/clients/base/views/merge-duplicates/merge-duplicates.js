@@ -1,5 +1,5 @@
 ({
-    extendsFrom: 'BaselistView',
+    extendsFrom: 'ListView',
     events: {
         'click .show_extra' : 'showMore',
         'click .preview' : 'previewRecord'
@@ -20,7 +20,7 @@
         if (!records.length || records.length < 2 || records.length > this.MAX_RECORDS) {
             app.alert.show('invalid-record-count',{
                 level: 'error',
-                messages: 'Invalid number of records passed.',
+                messages: app.lang.get('ERR_MERGE_INVALID_NUMBER_RECORDS',options.module),
                 autoClose: true
             });
             return;
@@ -62,23 +62,22 @@
      * Save primary and delete other records
      */    
     save: function() {
-        var self = this, alternativeModelNames = [];
-        var alternativeModels = this.collection.without(this.primaryRecord); 
-        _.each(alternativeModels, function(model) {
-            alternativeModelNames.push(model.get('name') || "");
-        });
+        var self = this,
+            alternativeModels = this.collection.clone().remove(this.primaryRecord),
+            alternativeModelNames = alternativeModels.pluck('name');
+
         app.alert.show('merge_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('LBL_MERGE_DUPLICATES_CONFIRM') + " "+ alternativeModelNames.join(", ") + ". "+ app.lang.get('LBL_MERGE_DUPLICATES_PROCEED'),
-            onConfirm: function() {
+            onConfirm: function () {
                 self.primaryRecord.save({}, {
                     success: function() {
-                        _.each(alternativeModels, function(model) {
+                        alternativeModels.each(function (model) {
                             model.destroy();
                         }); 
                         app.drawer.close(true);
                     },
-                    error: function() {
+                    error: function () {
                         app.alert.show('server-error', {
                             level: 'error',
                             messages: app.lang.get('ERR_AJAX_LOAD_FAILURE'),
@@ -87,8 +86,8 @@
                     }
                 });
             }
-        });    	
-    },        
+        });
+    },
     /**
      * Create a two panel viewdews metadata (visible, hidden) given list of fields
      * and the collection
@@ -158,10 +157,10 @@
                 app.events.trigger("preview:close");
                 this.isPreviewOpen = false;
                 return;
-            } 
-        }         
+            }
+        }
         var previewModel = this.primaryRecord;
-        var previewModels = [previewModel];        
+        var previewModels = [previewModel];
         var previewCollection = app.data.createBeanCollection(previewModel.get('_module') || previewModel.module, previewModels);
         app.events.trigger("preview:render", previewModel, previewCollection, false);
         this.isPreviewOpen = true;
@@ -210,7 +209,7 @@
     },
     _render:function () {
         this.meta = this.generateMetadata(this.mergeFields, this.collection, this.primaryRecord);
-        app.view.views.BaselistView.prototype._render.call(this);
+        app.view.views.ListView.prototype._render.call(this);
         delete this.rowFields;
         this.rowFields = {};
         _.each(this.fields, function(field) {
@@ -271,7 +270,7 @@
             old_primary_record = this.context.get("primaryRecord");
 
         if(primary_record) {
-            this.setPrimaryRecord(primary_record);               
+            this.setPrimaryRecord(primary_record);
             this.context.set("primaryRecord", primary_record);
             this.toggleFields(this.rowFields[primary_record.id], true);
             //app.view.views.ListView.prototype.toggleRow.call(this, primary_record.id, true);
@@ -297,7 +296,7 @@
             self.recordName = newRecordName;
             app.events.trigger('preview:close');
             this.previewRecord(false);
-        }, this);        
+        }, this);
         this.recordName = this.primaryRecord.get('name') || '';
     }
 })

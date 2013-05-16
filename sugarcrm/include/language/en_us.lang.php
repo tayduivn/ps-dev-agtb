@@ -3077,9 +3077,6 @@ $app_strings = array (
     'LBL_OC_STATUS_TEXT' => 'Indicates whether or not the current user is able to use an Offline Client.',
     'LBL_OC_DEFAULT_STATUS' => 'Inactive',
     //END SUGARCRM flav=pro ONLY
-    'LBL_MERGE'  => 'Merge',
-    'LBL_MERGING'  => 'Merging',
-    'LBL_RECORDS'  => 'Records',
     'LBL_SEARCH_PARENT_RELATED_ITEM' => 'Search ...',
     'LBL_SAVED_SEARCH_SHORTCUT' => 'Saved Searches',
     'LBL_SEARCH_POPULATE_ONLY'=> 'Perform a search using the search form above',
@@ -3610,10 +3607,16 @@ $app_strings = array (
     'LBL_PREVIEW_DISABLED_DELETED_OR_NO_ACCESS' => 'Preview disabled: Record removed or no access to record',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
-    'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
-    'LBL_MERGE_DUPLICATES_CONFIRM' => 'This action will delete following record(s):',
-    'LBL_MERGE_DUPLICATES_PROCEED' => 'Do you want to proceed?',
+
     'LBL_SUCCESS' => 'Success',
+
+    //Merge Duplicates
+    'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
+    'LBL_MERGE_DUPLICATES_PROCEED' => 'Do you want to proceed?',
+    'LBL_MERGE_DUPLICATES_CONFIRM' => 'This action will delete following record(s):',
+    'LBL_MERGE'  => 'Merge',
+    'LBL_MERGING_RECORDS'  => 'Merging {{mergeCount}} Records',
+    'ERR_MERGE_INVALID_NUMBER_RECORDS' => 'Invalid number of records passed.',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
