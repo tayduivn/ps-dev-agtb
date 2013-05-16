@@ -102,8 +102,8 @@ class MetadataApi extends SugarApi {
         $this->setPlatformList($api);
 
         $hash = $this->getCachedMetadataHash();
-        if (!empty($hash)){
-            generateETagHeader($hash);
+        if (!empty($hash) && $api->generateETagHeader($hash)) {
+            return;
         }
 
         // asking for a specific language
@@ -112,7 +112,7 @@ class MetadataApi extends SugarApi {
             $app_strings = return_application_language($current_language);
             $app_list_strings = return_app_list_strings_language($current_language);
 
-        }        
+        }
         // Default the type filter to everything
         $this->typeFilter = array('modules','full_module_list','fields', 'labels', 'module_list', 'views', 'layouts','relationships','currencies', 'jssource', 'server_info');
         if ( !empty($args['type_filter']) ) {
@@ -153,21 +153,23 @@ class MetadataApi extends SugarApi {
             $data = $this->loadMetadata();
             $this->putMetadataCache($data, $this->platforms[0], false);
         }
-        
+
         // Bug 60345 - Default currency id of -99 was failing hard on 64bit 5.2.X
-        // PHP builds. This was causing metadata to store a different value in the 
+        // PHP builds. This was causing metadata to store a different value in the
         // cache than -99. The fix was to add a space arround the -99 to force it
         // to string. This trims that value prior to sending it to the client.
         $data = $this->normalizeCurrencyIds($data);
 
         if(empty($hash) || $hash != $data['_hash']){
             $this->cacheMetadataHash($data['_hash']);
-            generateETagHeader($data['_hash']);
+            if($api->generateETagHeader($data['_hash'])) {
+                return;
+            }
         }
 
         $baseChunks = array('fields','labels','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource', 'server_info');
         $perModuleChunks = array('modules');
-        
+
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
     }
 
@@ -181,8 +183,8 @@ class MetadataApi extends SugarApi {
         $this->setPlatformList($api);
 
         $hash = $this->getCachedMetadataHash(true);
-        if (!empty($hash)){
-            generateETagHeader($hash);
+        if (!empty($hash) && $api->generateETagHeader($hash)) {
+            return;
         }
 
         // Default the type filter to everything available to the public, no module info at this time
@@ -203,20 +205,20 @@ class MetadataApi extends SugarApi {
         }
 
         $hash = $this->getCachedMetadataHash(true);
-        if (!empty($hash)){
-            generateETagHeader($hash);
+        if (!empty($hash) && $api->generateETagHeader($hash)) {
+            return;
         }
 
         $data = $this->getMetadataCache($this->platforms[0],true);
-        
+
         if ( empty($data) ) {
             // since this is a public metadata call pass true to the meta data manager to only get public/
             $mm = $this->getMetadataManager( TRUE );
-            
-            
+
+
             // Start collecting data
             $data = array();
-            
+
             $data['fields']  = $mm->getSugarFields();
             $data['views']   = $mm->getSugarViews();
             $data['layouts'] = $mm->getSugarLayouts();
@@ -226,13 +228,15 @@ class MetadataApi extends SugarApi {
             $data['config']           = $this->getConfigs();
             $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);
             $data["_hash"] = md5(serialize($data));
-            
+
             $this->putMetadataCache($data, $this->platforms[0], TRUE);
 
         }
-        if(empty($hash) || $hash != $data['_hash']){
+        if(empty($hash) || $hash != $data['_hash']) {
             $this->cacheMetadataHash($data['_hash'], true);
-            generateETagHeader($data['_hash']);
+            if($api->generateETagHeader($data['_hash'])) {
+                return;
+            }
         }
 
         $baseChunks = array('fields','labels','views', 'layouts', 'config', 'jssource');
@@ -287,13 +291,13 @@ class MetadataApi extends SugarApi {
     protected function buildJSForComponents(&$data, $isModule = false) {
         $js = "";
         $platforms = array_reverse($this->platforms);
-        
+
         $typeData = array();
-        
+
         if ( $isModule ) {
-            $types = array('fieldTemplates', 'views', 'layouts'); 
+            $types = array('fieldTemplates', 'views', 'layouts');
         } else {
-            $types = array('fields', 'views', 'layouts'); 
+            $types = array('fields', 'views', 'layouts');
         }
 
         foreach($types as $mdType) {
@@ -316,15 +320,15 @@ class MetadataApi extends SugarApi {
                             // remove additional symbols in end of js content - it will be included in content
                             $controller = trim(trim($controller), ",;");
                             $controller = $this->insertHeaderComment($controller, $mdType, $name, $platform);
-                            
+
                             if ( !isset($platControllers[$platform]) ) { $platControllers[$platform] = array(); }
                             $platControllers[$platform][] = "\"$name\": {\"controller\": ".$controller." }";
-                                
+
                         }
                     }
                     unset($data[$mdType][$name]['controller']);
                 }
-                
+
 
                 // We should have all of the controllers for this type, split up by platform
                 $thisTypeStr = "\"$mdType\": {\n";
@@ -341,11 +345,11 @@ class MetadataApi extends SugarApi {
         }
 
         $js = implode(",\n",$typeData)."\n";
-        
+
         return $js;
-        
+
     }
-    
+
     // Helper to insert header comments for controllers
     private function insertHeaderComment($controller, $mdType, $name, $platform) {
         $singularType = substr($mdType, 0, -1);
@@ -370,7 +374,7 @@ class MetadataApi extends SugarApi {
         // tentative to push the following three calls out to $mm. I propose refactor to instead
         // inherit as MetadataPortalDataManager and put all accessors, etc., there.
         $data['currencies'] = $this->getSystemCurrencies();
-        
+
         foreach($data['modules'] as $moduleName => $moduleDef) {
             if (!array_key_exists($moduleName, $data['full_module_list']) && array_key_exists($moduleName, $data['modules'])) {
                 unset($data['modules'][$moduleName]);
@@ -614,14 +618,16 @@ class MetadataApi extends SugarApi {
         $this->setPlatformList($api);
 
         $hash = $this->getCachedLanguageHash($this->platforms[0], $args['lang'], $public);
-        if (!empty($hash)){
-            generateETagHeader($hash);
+        if (!empty($hash) && $api->generateETagHeader($hash)) {
+            return;
         }
 
         $resp = $this->buildLanguageFile($this->platforms[0], $args['lang'], $this->getModuleList(), $public);
-        if(empty($hash) || $hash != $resp['hash']){
+        if(empty($hash) || $hash != $resp['hash']) {
             $this->putCachedLanguageHash($this->platforms[0], $args['lang'], $resp['hash'], $public);
-            generateETagHeader($resp['hash']);
+            if($api->generateETagHeader($resp['hash'])) {
+                return;
+            }
         }
 
         return $resp['data'];
@@ -707,11 +713,11 @@ class MetadataApi extends SugarApi {
                 $currency['name'] = $current->name;
                 $currency['date_entered'] = $current->date_entered;
                 $currency['date_modified'] = $current->date_modified;
-                
+
                 // Bug 60345 - Default currency id of -99 was failing hard on 64bit 5.2.X
                 // PHP builds when writing to the cache because of how PHP was
-                // handling negative int array indexes. This was causing metadata 
-                // to store a different value in the cache than -99. The fix was 
+                // handling negative int array indexes. This was causing metadata
+                // to store a different value in the cache than -99. The fix was
                 // to add a space arround the -99 to force it to string.
                 $id = $current->id == -99 ? '-99 ': $current->id;
                 $currencies[$id] = $currency;
@@ -727,12 +733,12 @@ class MetadataApi extends SugarApi {
         } else {
             $type = 'private';
         }
-        
+
         // Create the cache cirectory if need be
         // The is a fix for the cache/cache/api/metadata problem
         $cacheDir  = 'api/metadata';
         create_cache_directory($cacheDir);
-        
+
         // Handle the cache file
         $cacheFile = sugar_cached($cacheDir . '/metadata_'.$platform.'_'.$type.'.php');
         write_array_to_file('metadata', $data, $cacheFile);
@@ -768,10 +774,10 @@ class MetadataApi extends SugarApi {
 
     /**
      * Bug 60345
-     * 
+     *
      * Normalizes the -99 currency id to remove the space added to the index prior
      * to storing in the cache.
-     * 
+     *
      * @param array $data The metadata
      * @return array
      */
@@ -779,11 +785,11 @@ class MetadataApi extends SugarApi {
         if (isset($data['currencies']['-99 '])) {
             // Change the spaced index back to normal
             $data['currencies']['-99'] = $data['currencies']['-99 '];
-            
+
             // Ditch the spaced index
             unset($data['currencies']['-99 ']);
         }
-        
+
         return $data;
     }
 

@@ -60,7 +60,7 @@ class vCardApi extends SugarApi {
     }
 
     /**
-     * vCardSave 
+     * vCardSave
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
      * @param $args array The arguments array passed in from the API
      * @return String
@@ -79,7 +79,7 @@ class vCardApi extends SugarApi {
 
         $vcard->loadContact($args['id'], $module);
 
-        $vcard->saveVCard();
+        return $vcard->saveVCardApi($api);
     }
 
     /**

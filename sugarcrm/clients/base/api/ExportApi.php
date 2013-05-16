@@ -78,9 +78,6 @@ class ExportApi extends SugarApi {
             throw new SugarApiExceptionNotAuthorized($GLOBALS['app_strings']['ERR_EXPORT_DISABLED']);
         }
 
-        //Bug 30094, If zlib is enabled, it can break the calls to header() due to output buffering. This will only work php5.2+
-        ini_set('zlib.output_compression', 'Off');
-
         ob_start();
         global $sugar_config;
         global $current_user;
@@ -120,18 +117,13 @@ class ExportApi extends SugarApi {
         ///////////////////////////////////////////////////////////////////////////////
         ////	BUILD THE EXPORT FILE
         ob_end_clean();
-        header("Pragma: cache");
-        header("Content-type: application/octet-stream; charset=".$GLOBALS['locale']->getExportCharset());
-        header("Content-Disposition: attachment; filename={$filename}.csv");
-        header("Content-transfer-encoding: binary");
-        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-        header("Last-Modified: " . TimeDate::httpTime() );
-        header("Cache-Control: post-check=0, pre-check=0", false );
-        header("Content-Length: ".mb_strlen($GLOBALS['locale']->translateCharset($content, 'UTF-8', $GLOBALS['locale']->getExportCharset())));
-
-        print $GLOBALS['locale']->translateCharset($content, 'UTF-8', $GLOBALS['locale']->getExportCharset());
-
-        sugar_cleanup(true);
-        return 0;
+        $api->setHeader("Pragma", "cache");
+        $api->setHeader("Content-Type", "application/octet-stream; charset=".$GLOBALS['locale']->getExportCharset());
+        $api->setHeader("Content-Disposition", "attachment; filename={$filename}.csv");
+        $api->setHeader("Content-transfer-encoding", "binary");
+        $api->setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
+        $api->setHeader("Last-Modified", TimeDate::httpTime());
+        $api->setHeader("Cache-Control", "post-check=0, pre-check=0");
+        return $GLOBALS['locale']->translateCharset($content, 'UTF-8', $GLOBALS['locale']->getExportCharset());
     }
 }

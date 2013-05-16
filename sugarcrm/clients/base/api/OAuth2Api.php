@@ -56,21 +56,38 @@ class OAuth2Api extends SugarApi {
 
     public function token($api, $args) {
         $platform = empty($args['platform']) ? 'base' : $args['platform'];
+        ob_start();
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
         $oauth2Server->setPlatform($platform);
 
-        $oauth2Server->grantAccessToken($args);
-        
+        try {
+            $GLOBALS['logic_hook']->call_custom_logic('Users', 'before_login');
+            $oauth2Server->grantAccessToken($args);
+            // if we're here, the login was OK
+            if(!empty($GLOBALS['current_user'])) {
+                $GLOBALS['current_user']->call_custom_logic('after_login');
+            }
+        } catch(OAuth2ServerException $e) {
+            // failed to get token - something went wrong - list as failed login
+            // We catch only OAuth2ServerException exceptions since other ones result from the
+            // AuthController failing to log in, and the controller would call the hook
+            $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
+            throw $e;
+        }
+
         // grantAccessToken directly echo's (BAD), but it's a 3rd party library, so what are you going to do?
-        return '';
+        return ob_get_clean();
     }
 
     public function logout($api, $args) {
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
+        if(!empty($api->user)) {
+            $api->user->call_custom_logic('before_logout');
+        }
 
         if ( isset($args['refresh_token']) ) {
             // Nuke the refresh token as well.
-            // No security checks needed here to make sure the refresh token is theirs, 
+            // No security checks needed here to make sure the refresh token is theirs,
             // because if someone else has your refresh token logging out is the nicest possible thing they could do.
             $oauth2Server->storage->unsetRefreshToken($args['refresh_token']);
         }
@@ -78,6 +95,7 @@ class OAuth2Api extends SugarApi {
         // The OAuth access token is actually just a session, so we can nuke that here.
         $_SESSION = array();
         session_regenerate_id(true);
+        $GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
 
         return array('success'=>true);
     }

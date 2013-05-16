@@ -23,23 +23,23 @@
 require_once 'include/SugarOAuth2/SugarOAuth2StoragePlatform.php';
 
 /**
- * Sugar OAuth2.0 Base Storage system, allows the OAuth2 library we are using to 
+ * Sugar OAuth2.0 Base Storage system, allows the OAuth2 library we are using to
  * store and retrieve data by interacting with our Base client.
- * 
+ *
  * This class should only be used by the OAuth2 library and cannot be relied
- * on as a stable API for any other sources. 
+ * on as a stable API for any other sources.
  */
 class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
     /**
      * The user type for this client
-     * 
+     *
      * @var string
      */
     protected $userType = 'user';
 
     /**
-     * Gets a user bean 
-     * 
+     * Gets a user bean
+     *
      * @param  string $user_id The ID of the User to get
      * @return User
      */
@@ -50,7 +50,7 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
     /**
      * Small validator for child classes to use to determine whether a session can
      * be written to
-     * 
+     *
      * @return boolean
      */
     public function canStartSession() {
@@ -58,13 +58,13 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
     }
     /**
      * Fills in any added session data needed by this client type
-     * 
+     *
      * This method is used by child classes like portal
      */
     public function fillInAddedSessionData() {
         return true;
     }
-    
+
     /**
      * Gets the authentication bean for a given client
      * @param OAuthToken
@@ -75,24 +75,24 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
         if ( $authBean == null || $authBean->status == 'Inactive' ) {
             $authBean = null;
         }
-        
+
         return $authBean;
     }
-    
+
     /**
      * Gets contact and user ids for a user id. Most commonly different for clients
      * like portal
-     * 
+     *
      * @param string $client_id The client id for this check
      * @return array An array of contact_id and user_id
      */
     public function getIdsForUser($user_id, $client_id) {
         return array('contact_id' => '', 'user_id' => $user_id);
     }
-    
+
     /**
      * Sets up necessary visibility for a client. Not all clients will set this
-     * 
+     *
      * @return void
      */
     public function setupVisibility() {}
@@ -140,13 +140,14 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
 
         // Is just a regular Sugar User
         $auth = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
-        $loginSuccess = $auth->login($username,$password,array('passwordEncrypted'=>false,'noRedirect'=>true));
+        // noHooks since we'll take care of the hooks on API level, to make it more generalized
+        $loginSuccess = $auth->login($username,$password,array('passwordEncrypted'=>false,'noRedirect'=>true, 'noHooks'=>true));
         if ( $loginSuccess && !empty($auth->nextStep) ) {
             // Set it here, and then load it in to the session on the next pass
             // TODO: How do we pass the next required step to the client via the REST API?
             $GLOBALS['nextStep'] = $auth->nextStep;
         }
-        
+
         if ( $loginSuccess ) {
             $userBean = BeanFactory::newBean('Users');
             $userBean = $userBean->retrieve_by_string_fields(array('user_name'=>$username));

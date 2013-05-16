@@ -48,7 +48,7 @@ class ApiHeaderTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSetHeaders() {
         $api = new RestServiceMock();
-        
+
         foreach($this->headers AS $header => $info) {
             $api->setHeader($header, $info);
         }
@@ -76,15 +76,21 @@ class ApiHeaderTest extends Sugar_PHPUnit_Framework_TestCase
 
         $api = new RestServiceMock();
 
-        $api->getRequestHeaders();
+        $headers = $api->getRequest()->request_headers;
 
-        $this->assertTrue(!empty($api->request_headers), "The Request Headers Are Empty");
+        $this->assertNotEmpty($headers, "The Request Headers Are Empty");
     }
 }
 
-class RestServiceMock extends RestService {
+class RestServiceMock extends RestService
+{
+    public function __construct()
+    {
+        $this->response = new RestResponse(array());
+    }
+
     public function getResponseHeaders() {
-        return $this->response_headers;
+        return $this->response->getHeaders();
     }
     // overloading to return the headers it would send as a string to verify it working
     public function sendHeaders() {

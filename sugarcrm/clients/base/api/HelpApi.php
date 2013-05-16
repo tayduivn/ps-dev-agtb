@@ -42,7 +42,7 @@ class HelpApi extends SugarApi {
     public function getHelp($api, $args) {
         // This function needs to peer into the deep, twisted soul of the RestServiceDictionary
         $dir = $api->dict->dict;
-        
+
         if ( empty($args['platform']) ) {
             $platform = 'base';
         } else {
@@ -75,7 +75,7 @@ class HelpApi extends SugarApi {
         require('include/api/help/extras/helpList.php');
         $endpointHtml = ob_get_clean();
 
-        header('Content Type: text/html');
+        $api->setHeader('Content Type', 'text/html');
         return $endpointHtml;
     }
 
@@ -94,13 +94,13 @@ class HelpApi extends SugarApi {
 
             return $endpoints;
         }
-        
+
         $newDepth = $depth - 1;
         $endpoints = array();
         foreach ( $dirPart as $subDir ) {
             $endpoints = array_merge($endpoints, $this->getEndpoints($subDir, $newDepth));
         }
-        
+
         return $endpoints;
     }
 

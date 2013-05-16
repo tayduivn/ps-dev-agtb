@@ -204,7 +204,7 @@ class DownloadFile {
                                 if (empty($revision)) {
                                     return false;
                                 }
-                                
+
                                 $fileid = $revision->id;
                                 $name   = $revision->filename;
                                 $fileurl = empty($revision->doc_url) ? '' : $revision->doc_url;
@@ -217,7 +217,7 @@ class DownloadFile {
                                     if (empty($revision)) {
                                         return false;
                                     }
-                                    
+
                                     $fileid = $revision->id;
                                     $name   = $revision->filename;
                                     $fileurl = empty($revision->doc_url) ? '' : $revision->doc_url;
@@ -232,13 +232,13 @@ class DownloadFile {
                     }
 
                     $filepath = $this->getFilePathFromId($fileid);
-                    
-                    // Quick existence check to make sure we are actually working 
+
+                    // Quick existence check to make sure we are actually working
                     // on a real file
                     if (!file_exists($filepath)) {
                         return false;
                     }
-                    
+
                     if (empty($fileurl) && !empty($bean->doc_url)) {
                         $fileurl = $bean->doc_url;
                     }
@@ -281,8 +281,59 @@ class DownloadFile {
             // handle exception elsewhere
             throw new Exception('File could not be retrieved', 'FILE_DOWNLOAD_INCORRECT_DEF_TYPE');
         }
-        
+
         return file_get_contents($file);
 
+    }
+}
+
+/**
+ * File downloading for API
+ */
+class DownloadFileApi extends DownloadFile
+{
+    /**
+     * API object
+     * @var ServiceBase
+     */
+    protected $api;
+
+    public function __construct(ServiceBase $api)
+    {
+        $this->api = $api;
+    }
+
+    /**
+     * Sends an HTTP response with the contents of the request file for download
+     *
+     * @param string $type Field type (image/file)
+     * @param array $info Array containing the file details.
+     * Currently supported:
+     * - content-type - content type for the file
+     *
+     */
+    public function outputFile($type, $info)
+    {
+        if(empty($info['path'])) {
+            throw new SugarApiException('No file name supplied');
+        }
+
+        $this->api->setHeader("Expires", TimeDate::httpTime(time() + 2592000));
+
+        if ($type == 'image') {
+            if(!empty($info['content-type'])) {
+                $this->api->setHeader("Content-Type", $info['content-type']);
+            } else {
+                $this->api->setHeader("Content-Type", "application/octet-stream");
+            }
+        } else {
+            $this->api->setHeader("Content-Type", "application/force-download");
+            $this->api->setHeader("Content-type", "application/octet-stream");
+            if(empty($info['name'])) {
+                $info['name'] = pathinfo($info['path'], PATHINFO_BASENAME);
+            }
+            $this->api->setHeader("Content-Disposition", "attachment; filename=\"".$info['name']."\";");
+        }
+        $this->api->fileResponse($info['path']);
     }
 }

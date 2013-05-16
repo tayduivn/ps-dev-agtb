@@ -147,6 +147,20 @@ class vCard
 		print $locale->translateCharset($content, 'UTF-8', $locale->getExportCharset());
 	}
 
+	public function saveVCardApi(ServiceBase $api)
+	{
+        global $locale;
+        $content = $this->toString();
+        $api->setHeader("Content-Disposition","attachment; filename={$this->name}.vcf");
+        $api->setHeader("Content-Type","text/x-vcard; charset=".$locale->getExportCharset());
+        $api->setHeader("Expires","Mon, 26 Jul 1997 05:00:00 GMT" );
+        $api->setHeader("Last-Modified", TimeDate::httpTime() );
+        $api->setHeader("Cache-Control","max-age=0");
+        $api->setHeader("Pragma","public");
+
+		return $locale->translateCharset($content, 'UTF-8', $locale->getExportCharset());
+	}
+
 	function importVCard($filename, $module='Contacts'){
 		global $current_user;
 		$lines =	file($filename);

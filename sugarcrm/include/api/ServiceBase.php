@@ -27,7 +27,7 @@ abstract class ServiceBase {
     public $user;
     public $platform = 'base';
     public $action = 'view';
-    
+
     abstract public function execute();
     abstract protected function handleException(Exception $exception);
 
@@ -95,4 +95,38 @@ abstract class ServiceBase {
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($current_language);
     }
 
+   /**
+     * Set a response header
+     * @param string $header
+     * @param string $info
+     * @return bool
+     */
+    public function setHeader($header, $info)
+    {
+        // do nothing in base class
+        return $this;
+    }
+
+    /**
+     * Generate suitable ETag for content
+     *
+     * This function generates the necessary cache headers for using ETags with dynamic content. You
+     * simply have to generate the ETag, pass it in, and the function handles the rest.
+     *
+     * @param string $etag ETag to use for this content.
+     * @return bool Did we have a match?
+     */
+    public function generateETagHeader()
+    {
+        // do nothing in base class
+        return false;
+    }
+
+    /**
+     * Set response to be read from file
+     */
+    public function fileResponse($filename)
+    {
+        return false;
+    }
 }
