@@ -468,39 +468,9 @@ class Opportunity extends SugarBean
 
         SugarAutoLoader::requireWithCustom('modules/Opportunities/SaveOverload.php');
         perform_save($this);
-
-        // handle chaing the sales status field
-        $this->handleSalesStatus();
-
+       
         return parent::save($check_notify);
     }
-
-    /**
-     * Code to make sure that the Sales Status field is mapped correctly with the Sales Stage field
-     */
-    protected function handleSalesStatus()
-    {
-        // in this class we use the values from the Opportunity module constants as they are directly mapped 1-to-1 with
-        // products
-
-        // only run this when the sales_status doesn't change and the sales_stage does
-        if(($this->fetched_row['sales_status'] == $this->sales_status) && $this->fetched_row['sales_stage'] != $this->sales_stage) {
-            // handle closed lost and closed won
-            if($this->sales_stage == Opportunity::STAGE_CLOSED_LOST || $this->sales_stage == Opportunity::STAGE_CLOSED_WON) {
-                $this->sales_status = $this->sales_stage;
-            } else {
-                // move it to in progress
-                $this->sales_status = Opportunity::STATUS_IN_PROGRESS;
-            }
-        }
-
-        // if we have a new bean, set the sales_status to be 'New'
-        if(empty($this->id) || $this->new_with_id == true) {
-            // we have a new record set the sales_status to new;
-            $this->sales_status = Opportunity::STATUS_NEW;
-        }
-    }
-
 
     public function save_relationship_changes($is_update)
     {

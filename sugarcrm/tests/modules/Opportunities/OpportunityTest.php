@@ -209,7 +209,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     /*
      * This method tests that a product record is created for new opportunity and that the necessary opportunity
      * field values are mapped to the product record
@@ -279,140 +279,10 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($opp->best_case, $opp->amount);
         $this->assertEquals($opp->worst_case, $opp->amount);
     }
-    //END SUGARCRM flav=pro ONLY
-    
-    /**
-     * @group opportunities
-     */
-    public function testSalesStatusIsNewWhenProductCreatedWithOutId()
-    {
-        $opportunity = new MockOpportunityBean();
-        $opportunity->handleSalesStatus();
-
-        $this->assertEquals('New', $opportunity->sales_status);
-        unset($opportunity);
-    }
-
-    /**
-     * @group opportunities
-     */
-    public function testSalesStatusIsNewWhenProductsCreatedWithId()
-    {
-        $opportunity = new MockOpportunityBean();
-        $opportunity->id = "test_id";
-        $opportunity->new_with_id = true;
-        $opportunity->handleSalesStatus();
-
-        $this->assertEquals('New', $opportunity->sales_status);
-        unset($opportunity);
-    }
-
-    /**
-     * @group opportunities
-     */
-    public function testSalesStatusChangesFromNewToInProgressWhenSalesStageChanges()
-    {
-        $opportunity = new MockOpportunityBean();
-        $opportunity->id = "test_id";
-        $opportunity->sales_status = 'New';
-        $opportunity->sales_stage = 'test2';
-        $opportunity->fetched_row = array(
-            'sales_status' => 'New',
-            'sales_stage' => 'test1'
-        );
-
-        $opportunity->handleSalesStatus();
-
-        $this->assertEquals('In Progress', $opportunity->sales_status);
-        unset($opportunity);
-    }
-
-    /**
-     * @group opportunities
-     */
-    public function testSalesStatusChangesFromInProgressToClosedWonWhenSalesStageEqualsClosedWon()
-    {
-        $opportunity = new MockOpportunityBean();
-        $opportunity->id = "test_id";
-        $opportunity->sales_status = 'In Progress';
-        $opportunity->sales_stage = 'Closed Won';
-        $opportunity->fetched_row = array(
-            'sales_status' => 'In Progress',
-            'sales_stage' => 'test1'
-        );
-
-        $opportunity->handleSalesStatus();
-
-        $this->assertEquals('Closed Won', $opportunity->sales_status);
-        unset($opportunity);
-    }
-
-    /**
-     * @group opportunities
-     */
-    public function testSalesStatusChangesInProgressToClosedLostWhenSalesStageEqualsClosedLost()
-    {
-        $opportunity = new MockOpportunityBean();
-        $opportunity->id = "test_id";
-        $opportunity->sales_status = 'In Progress';
-        $opportunity->sales_stage = 'Closed Lost';
-        $opportunity->fetched_row = array(
-            'sales_status' => 'In Progress',
-            'sales_stage' => 'test1'
-        );
-
-        $opportunity->handleSalesStatus();
-
-        $this->assertEquals('Closed Lost', $opportunity->sales_status);
-        unset($opportunity);
-    }
-
-    /**
-     * @group opportunities
-     */
-    public function testSalesStatusDoesNotChangeWhenStatusAndStageChange()
-    {
-        $opportunity = new MockOpportunityBean();
-        $opportunity->id = "test_id";
-        $opportunity->sales_status = 'In Progress';
-        $opportunity->sales_stage = 'Closed Lost';
-        $opportunity->fetched_row = array(
-            'sales_status' => 'New',
-            'sales_stage' => 'test1'
-        );
-
-        $opportunity->handleSalesStatus();
-
-        $this->assertEquals('In Progress', $opportunity->sales_status);
-        unset($opportunity);
-    }
-
-    /**
-     * @group opportunities
-     */
-    public function testSalesStatusDoesNotChangeWhenSalesStageDoesNotChange()
-    {
-        $opportunity = new MockOpportunityBean();
-        $opportunity->id = "test_id";
-        $opportunity->sales_status = 'New';
-        $opportunity->sales_stage = 'test1';
-        $opportunity->fetched_row = array(
-            'sales_status' => 'New',
-            'sales_stage' => 'test1'
-        );
-
-        $opportunity->handleSalesStatus();
-
-        $this->assertEquals('New', $opportunity->sales_status);
-        unset($opportunity);
-    }
+    //END SUGARCRM flav=pro && flav!=ent ONLY
 }
-
 
 class MockOpportunityBean extends Opportunity
 {
-    public function handleSalesStatus()
-    {
-        parent::handleSalesStatus();
-    }
+    
 }
