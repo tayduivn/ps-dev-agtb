@@ -252,9 +252,19 @@
   display: block;
   padding: 3px;
 }
-
 .currency {
     .select2-choice span {
         min-width: 8px;
     }
+}
+.select2-offscreen {
+  position: absolute !important;
+  left: -10000px;
+  top: -1px;
+}
+.select2-container .select2-choice abbr {
+  display: none;
+}
+.select2-container.select2-allowclear .select2-choice abbr {
+  display: inline;
 }
