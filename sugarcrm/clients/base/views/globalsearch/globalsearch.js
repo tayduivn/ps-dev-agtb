@@ -60,13 +60,56 @@
         }
         this.searchModules = [];
         var modules = app.metadata.getModules() || {};
+        this.searchModules = this.populateSearchableModules({
+            modules: modules,
+            acl: app.acl,
+            checkFtsEnabled: true,
+            checkGlobalSearchEnabled: true
+        });
+        this.render();
+    },
+    /**
+     * Helper that can be called from here in base, or, from derived globalsearch views. Called internally,
+     * so please ensure that you have passed in any required options or results may be undefined
+     * @param {Object} options An object literal with the following properties:
+     * - modules: our current modules (required)
+     * - acl: app.acl that has the hasAccess function (required) (we DI this for testability)
+     * - moduleNames: displayed modules; an array of white listed string names. If used, only modules within
+     * this white list will be added (optional)
+     * - checkFtsEnabled: whether we should check meta.ftsEnabled (optional defaults to false)
+     * - checkGlobalSearchEnabled: whether we should check meta.globalSearchEnabled (optional defaults to false)
+     * @return {Array} An array of searchable modules
+     */
+    populateSearchableModules: function(options) {
+        var modules = options.modules,
+            moduleNames = options.moduleNames || null,
+            acl = options.acl,
+            searchModules = [];
+
         _.each(modules, function(meta, module) {
-            // TODO: remove hard coded Documents below
-            if (module !== 'Documents' && meta.ftsEnabled && app.acl.hasAccess('view', module)) {
-                this.searchModules.push(module);
+            var goodToAdd = true;
+            // First check if we have a "white list" of displayed module names (e.g. portal)
+            // If so, check if it contains the current module we're checking
+            if (moduleNames && !_.contains(moduleNames, module)) {
+                goodToAdd = false;
+            }
+            // First check access the, conditionally, check fts and global search enabled properties
+            if (goodToAdd && acl.hasAccess.call(acl, 'view', module)) {
+                // Check global search enabled if relevant to caller
+                if (options.checkGlobalSearchEnabled && !meta.globalSearchEnabled) {
+                    goodToAdd = false;
+                }
+                // Check global search enabled if relevant to caller
+                if (goodToAdd && options.checkFtsEnabled && !meta.ftsEnabled) {
+                    goodToAdd = false;
+                }
+                // If we got here we've passed all checks so push module to search modules
+                if (goodToAdd) {
+                    searchModules.push(module);
+                }
             }
         }, this);
-        this.render();
+        return searchModules;
     },
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
@@ -93,11 +136,11 @@
                 self.debounceFunction();
             },
             onEnterFn: function(hrefOrTerm, isHref) {
-                // there seems a bug in the function go() in sugar.searchahead.js. 
+                // there seems a bug in the function go() in sugar.searchahead.js.
                 // it will pass the first active record in the results even for 'enter' key
                 // comment out this 'if' statement for now. it's not being used anyway
                 // if full href treat as user clicking link
-                //if(isHref) {  
+                //if(isHref) {
                 //    window.location = hrefOrTerm;
                 //} else {
                     // It's the term only (user didn't select from drop down
@@ -109,14 +152,14 @@
                 //}
             }
         });
-        
+
         // Prevent the form from being submitted
         this.$('.navbar-search').submit(function() {
             return false;
         });
     },
     /**
-     * Get the modules that current user selected for search. 
+     * Get the modules that current user selected for search.
      * @returns {Array}
      */
     _getSearchModuleNames: function() {
@@ -124,7 +167,7 @@
             return this.searchModules;
         }
         else {
-            var searchModuleNames = [], 
+            var searchModuleNames = [],
                 checkedModules = this.$('input:checkbox:checked[data-module!="all"]');
             _.each(checkedModules, function(val,index) {
                 searchModuleNames.push(val.getAttribute('data-module'));
@@ -137,7 +180,7 @@
      * 'this' points to the plugin (not the header view!)
      */
     fireSearchRequest: function (term, plugin) {
-        var searchModuleNames = this._getSearchModuleNames(), 
+        var searchModuleNames = this._getSearchModuleNames(),
             params = {
                 q: term,
                 fields: 'name, id',
