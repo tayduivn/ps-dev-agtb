@@ -97,14 +97,6 @@
 
         this.decorateRow(activity);
         app.events.trigger("preview:render", activity, this.collection, false);
-
-        // Hack: Since headerpane is a "dumb toggle" and doesn't broadcast whether openened or closed
-        // we check here to possibly force our record view to trigger toggleState event.
-        var forceToggle = false;
-        if (this.$el.closest('.main-pane').hasClass('span12')) {
-            forceToggle = true;
-        }
-        this.layout.trigger("app:view:activity:show:preview", forceToggle);
     },
 
     /**
