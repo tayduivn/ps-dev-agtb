@@ -27,7 +27,7 @@
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
 *}
-<link rel="stylesheet" href="include/javascript/select2-release-3.2/select2.css"/>
+<link rel="stylesheet" href="include/javascript/select2-release-3.3.2/select2.css"/>
 <form id='0' name='0'>
     <table class='tabform' width='100%' cellpadding=4>
 

@@ -49,7 +49,8 @@
         this.$node.select2({
             tags: [],
             formatSelection: this.formatSelection,
-            width: '100%'
+            width: '100%',
+            escapeMarkup: function(m) { return m; }
         });
 
         var inp = this.$el.find('.attachments.select2-container .select2-choices .select2-search-field .select2-input');

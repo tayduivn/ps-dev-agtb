@@ -43,7 +43,9 @@
             formatResult:            this.formatResult,
             dropdownCss:             {width: "auto"},
             dropdownCssClass:        "search-filter-dropdown",
-            initSelection:           this.initSelection
+            initSelection:           this.initSelection,
+            escapeMarkup: function(m) { return m; },
+            width: 'off'
         });
 
         this.moduleFilterNode.off("change");

@@ -28,7 +28,9 @@
             formatResult: _.bind(this.formatResult, this),
             dropdownCss: {width:'auto'},
             dropdownCssClass: 'search-related-dropdown',
-            initSelection: _.bind(this.initSelection, this)
+            initSelection: _.bind(this.initSelection, this),
+            escapeMarkup: function(m) { return m; },
+            width: 'off'
         });
 
         // Disable the module filter dropdown.
