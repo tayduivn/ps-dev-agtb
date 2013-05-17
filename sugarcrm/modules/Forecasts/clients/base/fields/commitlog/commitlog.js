@@ -53,6 +53,10 @@
         //Reset the history log
         this.commitLog = [];
 
+        if(_.isEmpty(this.collection.models)) {
+            return;
+        }
+
         // get the first model so we can get the previous date entered
         var previousModel = _.first(this.collection.models);
 

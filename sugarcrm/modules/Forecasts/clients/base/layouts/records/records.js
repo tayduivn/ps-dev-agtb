@@ -45,7 +45,11 @@
             this.collection.on('reset', function() {
                 // get the first model and set the last commit date
                 var lastCommit = _.first(this.collection.models);
-                this.context.set({'currentForecastCommitDate': lastCommit.get('date_entered')});
+                var commitDate = undefined;
+                if(lastCommit instanceof Backbone.Model && lastCommit.has('date_modified')) {
+                    commitDate = lastCommit.get('date_modified');
+                }
+                this.context.set({'currentForecastCommitDate': commitDate});
             }, this);
             // since the selected user change on the context, update the model
             this.context.on('change:selectedUser', function(model, changed) {
@@ -220,10 +224,14 @@
         forecastData.pipeline_opp_count = forecast_totals.pipeline_opp_count || 0;
 
         forecast.save(forecastData, { success: _.bind(function() {
-            // Call sync again so commitLog has the full collection
-            // method gets overridden and options just needs an
-            this.collection.fetch();
-            this.context.trigger("forecasts:worksheet:committed", worksheet_type, forecastData);
+            // we need to make sure we are not disposed, this handles any errors that could come from the router and window
+            // alert events
+            if(!this.disposed) {
+                // Call sync again so commitLog has the full collection
+                // method gets overridden and options just needs an
+                this.collection.fetch();
+                this.context.trigger("forecasts:worksheet:committed", worksheet_type, forecastData);
+            }
         }, this), silent: true, alerts: { 'success': false }});
     }
 })

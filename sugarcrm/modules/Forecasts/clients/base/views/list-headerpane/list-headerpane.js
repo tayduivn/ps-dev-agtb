@@ -37,7 +37,7 @@
             window.print();
         }, this);
 
-        this.context.on('forecast:worksheet:is_dirty', function(worksheet_type, is_dirty) {
+        this.context.on('forecasts:worksheet:is_dirty', function(worksheet_type, is_dirty) {
             this.getField('save_draft_button').setDisabled(!is_dirty);
             this.getField('commit_button').setDisabled(!is_dirty);
         }, this);
@@ -51,7 +51,7 @@
             }
         }, this);
 
-        this.context.on('forecast:worksheet:needs_commit', function(worksheet_type) {
+        this.context.on('forecasts:worksheet:needs_commit', function(worksheet_type) {
             this.getField('commit_button').setDisabled(false);
         }, this);
 

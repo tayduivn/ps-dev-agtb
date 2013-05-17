@@ -31,9 +31,14 @@
             dirtyTimeperiod: undefined,
 
             /**
-             * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
+             * If the User is changed and we have dirtyModels, keep the previous one to use if they save the models
              */
             dirtyUser: undefined,
+
+            /**
+             * Can we edit the dirtyUser worksheet
+             */
+            dirtyCanEdit: undefined,
 
             /**
              * Attach code for when the plugin is registered on a view
@@ -60,11 +65,11 @@
             },
 
             _collectionChangeAddToDirtyModels: function(model) {
-                debugger;
                 if (_.isUndefined(this.dirtyTimeperiod) || _.isUndefined(this.dirtyUser)) {
                     var ctx = this.context.parent || this.context;
                     this.dirtyTimeperiod = ctx.get('selectedTimePeriod');
                     this.dirtyUser = ctx.get('selectedUser');
+                    this.dirtyCanEdit = (this.dirtyUser.id == app.user.get('id'));;
                 }
                 this.dirtyModels.add(model);
             },
@@ -85,6 +90,7 @@
                 this.dirtyModels.reset();
                 this.dirtyTimeperiod = undefined;
                 this.dirtyUser = undefined;
+                this.dirtyCanEdit = undefined;
 
                 // TODO: add an event here to trigger when this happens, for a possible undo support
             }

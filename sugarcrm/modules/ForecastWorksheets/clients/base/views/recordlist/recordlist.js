@@ -15,12 +15,12 @@
  *
  * Events
  *
- * forecast:worksheet:is_dirty
+ * forecasts:worksheet:is_dirty
  *  on: this.context.parent || this.context
  *  by: this.dirtyModels 'add' Event
  *  when: a model is added to the dirtModels collection
  *
- * forecast:worksheet:needs_commit
+ * forecasts:worksheet:needs_commit
  *  on: this.context.parent || this.context
  *  by: checkForDraftRows
  *  when: this.collection has a row newer than the last commit date
@@ -64,8 +64,10 @@
 
     /**
      * Can we edit this worksheet?
+     *
+     * defaults to true as it's always the current user that loads first
      */
-    canEdit: false,
+    canEdit: true,
 
     /**
      * Active Filters
@@ -82,6 +84,26 @@
      */
     selectedTimeperiod: '',
 
+    /**
+     * Navigation Message To Display
+     */
+    navigationMessage: '',
+
+    /**
+     * Special Navigation for the Window Refresh
+     */
+    routeNavigationMessage: '',
+
+    /**
+     * Do we actually need to display a navigation message
+     */
+    displayNavigationMessage: false,
+
+    /**
+     * Only check for draft records once
+     */
+    hasCheckedForDraftRecords: false,
+
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
@@ -93,15 +115,18 @@
         // for display
         this.template = app.template.getView('flex-list', this.module);
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
+        this.selectedTimeperiod = this.context.get('selectedTimePeriod') || this.context.parent.get('selectedTimePeriod') || ''
         this.context.set('skipFetch', !(this.selectedUser.showOpps || !this.selectedUser.isManager)); // if user is a manager, skip the initial fetch
         this.filters = this.context.get('selectedRanges') || this.context.parent.get('selectedRanges');
         this.collection.sync = _.bind(this.sync, this);
     },
 
-    _dispose : function() {
-        if (!_.isUndefined(this.context.parent)) {
+    _dispose: function() {
+        if (!_.isUndefined(this.context.parent) && !_.isNull(this.context.parent)) {
             this.context.parent.off(null, null, this);
         }
+        app.routing.offBefore(null, null, this);
+        $(window).off("beforeUnload");
         app.view.views.RecordlistView.prototype._dispose.call(this);
     },
 
@@ -140,8 +165,10 @@
                 this.context.parent.on('button:save_draft_button:click', function() {
                     if (this.layout.isVisible()) {
                         // after we save, trigger the needs_commit event
-                        this.context.parent.once('forecast:worksheet:saved', function() {
-                            this.context.parent.trigger('forecast:worksheet:needs_commit', this.worksheetType);
+                        this.context.parent.once('forecasts:worksheet:saved', function() {
+                            // clear out the current navigation message
+                            this.setNavigationMessage(false, '', '');
+                            this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
                         }, this);
                         this.saveWorksheet(true);
                     }
@@ -157,11 +184,17 @@
                 }, this);
 
                 this.context.parent.on('change:currentForecastCommitDate', function(context, changed) {
-                    this.checkForDraftRows(changed);
+                    if (this.layout.isVisible()) {
+                        this.checkForDraftRows(changed);
+                    }
                 }, this);
 
                 this.collection.on('reset', function() {
-                    this.checkForDraftRows(this.context.parent.get('currentForecastCommitDate'));
+                    this.setNavigationMessage(false, '', '');
+                    this.cleanUpDirtyModels();
+                    var ctx = this.context.parent || this.context
+                    ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
+                    this.checkForDraftRows(ctx.get('currentForecastCommitDate'));
                     this.filterCollection();
                 }, this);
 
@@ -171,13 +204,50 @@
                     if (!this.disposed) this.render();
                 }, this);
 
-                this.context.parent.on('forecast:worksheet:committed', function() {
+                this.context.parent.on('forecasts:worksheet:committed', function() {
                     if (this.layout.isVisible()) {
-                        this.collection.fetch();
+                        this.setNavigationMessage(false, '', '');
+                        this.cleanUpDirtyModels();
                         var ctx = this.context.parent || this.context
-                        ctx.trigger('forecast:worksheet:is_dirty', this.worksheetType, false);
+                        ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
+
+                        if (this.selectedUser.isManager && app.metadata.get('Forecasts','config').show_forecasts_commit_warnings == 1) {
+                            this.collection.once('reset', function() {
+                                this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_ALERT', '');
+                            }, this)
+                        }
+                        this.refreshData();
                     }
                 }, this);
+
+                this.context.parent.on('forecasts:worksheet:is_dirty', function(worksheetType, is_dirty) {
+                    if (this.worksheetType == worksheetType) {
+                        if (is_dirty) {
+                            this.setNavigationMessage(true, 'LBL_WORKSHEET_SAVE_CONFIRM', 'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD');
+                        } else {
+                            this.setNavigationMessage(false, '', '');
+                        }
+                    }
+                }, this);
+
+                this.context.parent.on('forecasts:worksheet:needs_commit', function(worksheetType) {
+                    if (this.worksheetType == worksheetType && app.metadata.get('Forecasts','config').show_forecasts_commit_warnings == 1) {
+                        // only set this if they are a manager
+                        this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_CONFIRM', '');
+                    }
+                }, this);
+
+                app.routing.before('route', function() {
+                    var ret = this.showNavigationMessage('router');
+                    this.processNavigationMessageReturn(ret);
+                }, {}, this);
+
+                $(window).bind("beforeunload", _.bind(function() {
+                    var ret = this.showNavigationMessage('window');
+                    if (_.isString(ret)) {
+                        return ret;
+                    }
+                }, this));
             }
         }
 
@@ -187,12 +257,57 @@
 
         if (!_.isUndefined(this.dirtyModels)) {
             this.dirtyModels.on('add', function() {
-                var ctx = this.context.parent || this.context
-                ctx.trigger('forecast:worksheet:is_dirty', this.worksheetType, true);
+                if (this.canEdit) {
+                    var ctx = this.context.parent || this.context
+                    ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, true);
+                }
             }, this);
         }
 
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+    },
+
+    /**
+     * Handle Showing of the Navigation messages if any are applicable
+     *
+     * @param type
+     * @returns {*}
+     */
+    showNavigationMessage: function(type) {
+        if (this.layout.isVisible()) {
+            var canEdit = this.dirtyCanEdit || this.canEdit;
+            if (canEdit && this.displayNavigationMessage) {
+                if (type == 'window') {
+                    if (!_.isEmpty(this.routeNavigationMessage)) {
+                        return app.lang.get(this.routeNavigationMessage, 'Forecasts');
+                    }
+                    return false;
+                }
+                if (this.navigationMessage == 'LBL_WORKSHEET_COMMIT_ALERT') {
+                    alert(app.lang.get(this.navigationMessage, 'Forecasts'));
+                    return true;
+                } else {
+                    var ret = confirm(app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"));
+                    return {'message': this.navigationMessage, 'run_action': ret};
+                }
+            }
+            return true;
+        }
+
+        return true;
+    },
+
+    /**
+     * Utility to set the Navigation Message and Flag
+     *
+     * @param display
+     * @param reload_label
+     * @param route_label
+     */
+    setNavigationMessage: function(display, reload_label, route_label) {
+        this.displayNavigationMessage = display;
+        this.navigationMessage = reload_label;
+        this.routeNavigationMessage = route_label;
     },
 
     /**
@@ -292,15 +407,27 @@
         if (!doFetch && (changed.showOpps || !changed.isManager)) {
             doFetch = true;
         }
+
+        if (this.displayNavigationMessage) {
+            // save the user just in case
+            this.dirtyUser = this.selectedUser;
+            this.dirtyCanEdit = this.canEdit;
+        }
+
         this.selectedUser = changed;
 
         // Set the flag for use in other places around this controller to suppress stuff if we can't edit
         this.canEdit = (this.selectedUser.id == app.user.get('id'));
 
         if (doFetch) {
-            this.collection.fetch();
+            this.refreshData();
         } else {
             if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && this.layout.isVisible()) {
+                if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
+                    // we have the same user. show the alert
+                    alert(app.lang.get(this.navigationMessage, 'Forecasts'));
+                }
+                this.cleanUpDirtyModels();
                 // we need to hide
                 this.layout.hide();
             }
@@ -308,9 +435,13 @@
     },
 
     updateSelectedTimeperiod: function(changed) {
+        if (this.displayNavigationMessage) {
+            // save the time period just in case
+            this.dirtyTimeperiod = this.selectedTimeperiod;
+        }
         this.selectedTimeperiod = changed;
         if (this.layout.isVisible()) {
-            this.collection.fetch();
+            this.refreshData();
         }
     },
 
@@ -318,16 +449,17 @@
      * Check to make sure that if there are dirty rows, then trigger the needs_commit event to enable
      * the buttons
      *
-     * @triggers forecast:worksheet:needs_commit
+     * @triggers forecasts:worksheet:needs_commit
      * @param lastCommitDate
      */
     checkForDraftRows: function(lastCommitDate) {
-        if (this.layout.isVisible() && this.canEdit) {
+        if (this.layout.isVisible() && this.canEdit && this.hasCheckedForDraftRecords === false && !_.isEmpty(this.collection.models)) {
             // check to see if anything in the collection is a draft, if it is, then send an event
             // to notify the commit button to enable
+            this.hasCheckedForDraftRecords = true;
             this.collection.find(function(item) {
                 if (item.get('date_modified') > lastCommitDate) {
-                    this.context.parent.trigger('forecast:worksheet:needs_commit', this.worksheetType);
+                    this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
                     return true;
                 }
                 return false;
@@ -335,6 +467,9 @@
         }
     },
 
+    /**
+     * Filter the Collection so we only show what the filter says we should show
+     */
     filterCollection: function() {
         this.filteredCollection.reset();
         if (_.isEmpty(this.filters)) {
@@ -466,6 +601,41 @@
             var ctx = this.context.parent || this.context;
             ctx.trigger('forecasts:worksheet:totals', this.totals, this.worksheetType);
         }
+    },
+
+    /**
+     * Custom Method to handle the refreshing of the worksheet Data
+     */
+    refreshData: function() {
+        var ret = this.showNavigationMessage('forecast');
+
+        if (this.processNavigationMessageReturn(ret)) {
+            this.collection.fetch();
+        }
+    },
+
+    /**
+     * Utility to process the return from the Navigation Message
+     *
+     * @param message_result
+     * @returns {boolean}
+     */
+    processNavigationMessageReturn: function(message_result) {
+        if (_.isObject(message_result) && message_result.run_action === true) {
+            if (message_result.message == 'LBL_WORKSHEET_SAVE_CONFIRM') {
+                this.context.parent.once('forecasts:worksheet:saved', function() {
+                    this.collection.fetch();
+                }, this);
+                this.saveWorksheet(true);
+            } else if (message_result.message == 'LBL_WORKSHEET_COMMIT_CONFIRM') {
+                // once the commit happens, it will trigger a new fetch.
+                this.context.parent.trigger('forecasts:worksheet:commit', this.dirtyUser || this.selectedUser, this.worksheetType, this.getCommitTotals());
+            }
+
+            return false
+        }
+
+        return true;
     },
 
     /**
@@ -620,7 +790,7 @@
                 'overall_amount': overallAmount,
                 'overall_best': overallBest,
                 'overall_worst': overallWorst,
-                'timeperiod_id': this.selectedTimeperiod,
+                'timeperiod_id': this.dirtyTimeperiod || this.selectedTimeperiod,
                 'lost_count': lostCount,
                 'lost_amount': lostAmount,
                 'won_count': wonCount,

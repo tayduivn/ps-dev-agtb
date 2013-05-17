@@ -15,12 +15,12 @@
  *
  * Events
  *
- * forecast:worksheet:is_dirty
+ * forecasts:worksheet:is_dirty
  *  on: this.context.parent || this.context
  *  by: this.dirtyModels 'add' Event
  *  when: a model is added to the dirtModels collection
  *
- * forecast:worksheet:needs_commit
+ * forecasts:worksheet:needs_commit
  *  on: this.context.parent || this.context
  *  by: checkForDraftRows
  *  when: this.collection has a row newer than the last commit date
@@ -100,7 +100,7 @@
     },
 
     _dispose: function() {
-        if (!_.isUndefined(this.context.parent)) {
+        if (!_.isUndefined(this.context.parent) && !_.isNull(this.context.parent)) {
             this.context.parent.off(null, null, this);
         }
         app.view.views.RecordlistView.prototype._dispose.call(this);
@@ -129,8 +129,8 @@
                 this.context.parent.on('button:save_draft_button:click', function() {
                     if (this.layout.isVisible()) {
                         // after we save, trigger the needs_commit event
-                        this.context.parent.once('forecast:worksheet:saved', function() {
-                            this.context.parent.trigger('forecast:worksheet:needs_commit', this.worksheetType);
+                        this.context.parent.once('forecasts:worksheet:saved', function() {
+                            this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
                         }, this);
                         this.saveWorksheet(true);
                     }
@@ -186,10 +186,12 @@
                     this.checkForDraftRows(this.context.parent.get('currentForecastCommitDate'));
                 }, this);
 
-                this.context.parent.on('forecast:worksheet:committed', function() {
-                    this.collection.fetch();
-                    var ctx = this.context.parent || this.context
-                    ctx.trigger('forecast:worksheet:is_dirty', this.worksheetType, false);
+                this.context.parent.on('forecasts:worksheet:committed', function() {
+                    if(this.layout.isVisible()) {
+                        this.collection.fetch();
+                        var ctx = this.context.parent || this.context
+                        ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
+                    }
                 }, this);
             }
         }
@@ -199,7 +201,7 @@
             // when something gets added, the save_draft and commit buttons need to be enabled
             this.dirtyModels.on('add', function() {
                 var ctx = this.context.parent || this.context
-                ctx.trigger('forecast:worksheet:is_dirty', this.worksheetType, true);
+                ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, true);
             }, this);
         }
 
@@ -386,14 +388,14 @@
      * Check the collection for any rows that may have been saved as a draft or rolled up from a reportee commit and
      * trigger the commit button to be enabled
      *
-     * @trigger forecast:worksheet:needs_commit
+     * @trigger forecasts:worksheet:needs_commit
      * @param lastCommitDate
      */
     checkForDraftRows: function(lastCommitDate) {
         if (this.layout.isVisible() && this.canEdit) {
             this.collection.find(function(item) {
                 if (item.get('date_modified') > lastCommitDate) {
-                    this.context.parent.trigger('forecast:worksheet:needs_commit', this.worksheetType);
+                    this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
                     return true;
                 }
                 return false;
