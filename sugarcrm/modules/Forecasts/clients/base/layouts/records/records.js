@@ -135,7 +135,7 @@
         // set items on the context from the initData payload
         // set the selectedTimePeriod
         // set hte currentForecastDate to the time the page is inited, this will be updated on the page actually loads
-        ctx.set({'currentForecastCommitDate': new Date().toISOString()});
+        ctx.set({'currentForecastCommitDate': undefined});
         ctx.set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
         ctx.set({'selectedRanges' : data.defaultSelections.ranges}, {silent: true});
         ctx.get('model').set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});

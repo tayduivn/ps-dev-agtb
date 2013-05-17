@@ -60,7 +60,7 @@
     /**
      * Can we edit this worksheet?
      */
-    canEdit: false,
+    canEdit: true,
 
     /**
      * Selected Timeperiod Storage
@@ -86,6 +86,26 @@
         show_history_log: 0
     },
 
+    /**
+     * Navigation Message To Display
+     */
+    navigationMessage: '',
+
+    /**
+     * Special Navigation for the Window Refresh
+     */
+    routeNavigationMessage: '',
+
+    /**
+     * Do we actually need to display a navigation message
+     */
+    displayNavigationMessage: false,
+
+    /**
+     * Only check for draft records once
+     */
+    hasCheckedForDraftRecords: false,
+
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
@@ -103,6 +123,8 @@
         if (!_.isUndefined(this.context.parent) && !_.isNull(this.context.parent)) {
             this.context.parent.off(null, null, this);
         }
+        app.routing.offBefore(null, null, this);
+        $(window).off("beforeUnload");
         app.view.views.RecordlistView.prototype._dispose.call(this);
     },
 
@@ -129,7 +151,10 @@
                 this.context.parent.on('button:save_draft_button:click', function() {
                     if (this.layout.isVisible()) {
                         // after we save, trigger the needs_commit event
+
                         this.context.parent.once('forecasts:worksheet:saved', function() {
+                            // clear out the current navigation message
+                            this.setNavigationMessage(false, '', '');
                             this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
                         }, this);
                         this.saveWorksheet(true);
@@ -176,23 +201,51 @@
                  * Watch for the currentForecastCommitDate to be updated
                  */
                 this.context.parent.on('change:currentForecastCommitDate', function(context, changed) {
-                    this.checkForDraftRows(changed);
+                    if(this.layout.isVisible()) {
+                        this.checkForDraftRows(changed);
+                    }
                 }, this);
 
                 /**
                  * When the collection is reset, we need checkForDraftRows
                  */
                 this.collection.on('reset', function() {
-                    this.checkForDraftRows(this.context.parent.get('currentForecastCommitDate'));
+                    var ctx = this.context.parent || this.context
+                    ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
+                    this.checkForDraftRows(ctx.get('currentForecastCommitDate'));
                 }, this);
 
                 this.context.parent.on('forecasts:worksheet:committed', function() {
-                    if(this.layout.isVisible()) {
-                        this.collection.fetch();
+                    if (this.layout.isVisible()) {
                         var ctx = this.context.parent || this.context
                         ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
+                        this.refreshData();
                     }
                 }, this);
+
+                this.context.parent.on('forecasts:worksheet:is_dirty', function(worksheetType, is_dirty) {
+                    if (this.worksheetType == worksheetType) {
+                        if (is_dirty) {
+                            this.setNavigationMessage(true, 'LBL_WORKSHEET_SAVE_CONFIRM', 'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD');
+                        } else {
+                            // worksheet is not dirty,
+                            this.cleanUpDirtyModels();
+                            this.setNavigationMessage(false, '', '');
+                        }
+                    }
+                }, this);
+
+                app.routing.before('route', function() {
+                    var ret = this.showNavigationMessage('router');
+                    this.processNavigationMessageReturn(ret);
+                }, {}, this);
+
+                $(window).bind("beforeunload", _.bind(function() {
+                    var ret = this.showNavigationMessage('window');
+                    if (_.isString(ret)) {
+                        return ret;
+                    }
+                }, this));
             }
         }
 
@@ -208,7 +261,7 @@
         /**
          * Listener for the list:history_log:fire event, this triggers the inline history log to display or hide
          */
-        this.context.on('list:history_log:fire', function(model) {
+        this.context.on('list:history_log:fire', function(model, e) {
             // parent row
 
             var row_name = model.module + '_' + model.id;
@@ -254,6 +307,77 @@
 
         // call the parent
         app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+    },
+
+    /**
+     * Handle Showing of the Navigation messages if any are applicable
+     *
+     * @param type
+     * @returns {*}
+     */
+    showNavigationMessage: function(type) {
+        if (this.layout.isVisible()) {
+            var canEdit = this.dirtyCanEdit || this.canEdit;
+            if (canEdit && this.displayNavigationMessage) {
+                if (type == 'window') {
+                    if (!_.isEmpty(this.routeNavigationMessage)) {
+                        return app.lang.get(this.routeNavigationMessage, 'Forecasts');
+                    }
+                    return false;
+                }
+
+                var ret = confirm(app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"));
+                return {'message': this.navigationMessage, 'run_action': ret};
+            }
+            return true;
+        }
+
+        return true;
+    },
+
+    /**
+     * Utility to set the Navigation Message and Flag
+     *
+     * @param display
+     * @param reload_label
+     * @param route_label
+     */
+    setNavigationMessage: function(display, reload_label, route_label) {
+        this.displayNavigationMessage = display;
+        this.navigationMessage = reload_label;
+        this.routeNavigationMessage = route_label;
+    },
+
+    /**
+     * Custom Method to handle the refreshing of the worksheet Data
+     */
+    refreshData: function() {
+        var ret = this.showNavigationMessage('forecast');
+
+        if (this.processNavigationMessageReturn(ret)) {
+            this.collection.fetch();
+        }
+    },
+
+    /**
+     * Utility to process the return from the Navigation Message
+     *
+     * @param message_result
+     * @returns {boolean}
+     */
+    processNavigationMessageReturn: function(message_result) {
+        if (_.isObject(message_result) && message_result.run_action === true) {
+            if (message_result.message == 'LBL_WORKSHEET_SAVE_CONFIRM') {
+                this.context.parent.once('forecasts:worksheet:saved', function() {
+                    this.collection.fetch();
+                }, this);
+                this.saveWorksheet(true);
+            }
+
+            return false
+        }
+
+        return true;
     },
 
     /**
@@ -347,9 +471,15 @@
      * @param changed
      */
     updateSelectedTimeperiod: function(changed) {
+        if (this.displayNavigationMessage) {
+            // save the time period just in case
+            this.dirtyTimeperiod = this.selectedTimeperiod;
+        }
+
         this.selectedTimeperiod = changed;
+        this.hasCheckedForDraftRecords = false;
         if (this.layout.isVisible()) {
-            this.collection.fetch();
+            this.refreshData();
         }
     },
 
@@ -369,13 +499,22 @@
         if (!doFetch && this.selectedUser.showOpps != changed.showOpps) {
             doFetch = !(changed.showOpps);
         }
+
+        if (this.displayNavigationMessage) {
+            // save the user just in case
+            this.dirtyUser = this.selectedUser;
+            this.dirtyCanEdit = this.canEdit;
+        }
+
         this.selectedUser = changed;
 
         // Set the flag for use in other places around this controller to suppress stuff if we can't edit
         this.canEdit = (this.selectedUser.id == app.user.get('id'));
 
+        this.hasCheckedForDraftRecords = false;
+
         if (doFetch) {
-            this.collection.fetch();
+            this.refreshData();
         } else {
             if (this.selectedUser.isManager && this.selectedUser.showOpps == true && this.layout.isVisible()) {
                 // viewing managers opp worksheet so hide the manager worksheet
@@ -392,7 +531,9 @@
      * @param lastCommitDate
      */
     checkForDraftRows: function(lastCommitDate) {
-        if (this.layout.isVisible() && this.canEdit) {
+        if (this.layout.isVisible() && this.canEdit && !_.isUndefined(lastCommitDate)
+            && this.collection.length !== 0 && this.hasCheckedForDraftRecords === false) {
+            this.hasCheckedForDraftRecords = true;
             this.collection.find(function(item) {
                 if (item.get('date_modified') > lastCommitDate) {
                     this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
@@ -408,9 +549,10 @@
      */
     setCommitLogButtonStates: function() {
         _.each(this.fields, function(field) {
-            if (field.def.event === 'list:history_log:fire' && (field.model.get('show_history_log') == "0")) {
+            if (field.def.event === 'list:history_log:fire') {
                 // we have a field that needs to be disabled, so disable it!
-                field.setDisabled(true);
+                field.setDisabled((field.model.get('show_history_log') == "0"));
+                field.render();
             }
         });
     },

@@ -55,7 +55,7 @@ class ForecastManagerWorksheetsApiHelper extends SugarBeanApiHelper
                         WHERE parent_id = '%s' AND date_created >= '%s'",
                         $bean->table_name,
                         $db->quote($bean->id),
-                        $db->quote($bean->fetched_row['date_modified'])
+                        $db->quote($committed_date)
                     );
 
                     $results = $db->query($sql);

@@ -231,7 +231,7 @@
                 }, this);
 
                 this.context.parent.on('forecasts:worksheet:needs_commit', function(worksheetType) {
-                    if (this.worksheetType == worksheetType && app.metadata.get('Forecasts','config').show_forecasts_commit_warnings == 1) {
+                    if (this.worksheetType == worksheetType && app.metadata.getModule('Forecasts','config').show_forecasts_commit_warnings == 1) {
                         // only set this if they are a manager
                         this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_CONFIRM', '');
                     }
@@ -418,6 +418,7 @@
 
         // Set the flag for use in other places around this controller to suppress stuff if we can't edit
         this.canEdit = (this.selectedUser.id == app.user.get('id'));
+        this.hasCheckedForDraftRecords = false;
 
         if (doFetch) {
             this.refreshData();
@@ -440,6 +441,7 @@
             this.dirtyTimeperiod = this.selectedTimeperiod;
         }
         this.selectedTimeperiod = changed;
+        this.hasCheckedForDraftRecords = false;
         if (this.layout.isVisible()) {
             this.refreshData();
         }
@@ -453,7 +455,8 @@
      * @param lastCommitDate
      */
     checkForDraftRows: function(lastCommitDate) {
-        if (this.layout.isVisible() && this.canEdit && this.hasCheckedForDraftRecords === false && !_.isEmpty(this.collection.models)) {
+        if (this.layout.isVisible() && this.canEdit && !_.isUndefined(lastCommitDate)
+            && this.hasCheckedForDraftRecords === false && !_.isEmpty(this.collection.models)) {
             // check to see if anything in the collection is a draft, if it is, then send an event
             // to notify the commit button to enable
             this.hasCheckedForDraftRecords = true;
