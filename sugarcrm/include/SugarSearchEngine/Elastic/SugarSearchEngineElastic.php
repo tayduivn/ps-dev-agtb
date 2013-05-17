@@ -579,7 +579,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      *
      * @return \Elastica\Filter\BoolAnd
      */
-    protected function constructModuleLevelFilter($module)
+    protected function constructModuleLevelFilter($module, $options = array())
     {
         $moduleFilter = new \Elastica\Filter\Bool();
         $typeTermFilter = $this->getTypeTermFilter($module);
@@ -600,7 +600,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     {
         $mainFilter = new \Elastica\Filter\Bool();
         foreach ($finalTypes as $module) {
-            $moduleFilter = $this->constructModuleLevelFilter($module);
+            $moduleFilter = $this->constructModuleLevelFilter($module, $options);
             // if we want myitems add more to the module filter
             if (isset($options['my_items']) && $options['my_items'] !== false) {
                 $moduleFilter = $this->myItemsSearch($moduleFilter);
