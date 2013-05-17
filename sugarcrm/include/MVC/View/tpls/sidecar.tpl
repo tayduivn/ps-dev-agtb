@@ -35,6 +35,9 @@
         <link rel="icon" href="themes/default/images/sugar_icon.ico">
         <!-- CSS -->
         <link rel="stylesheet" href="{$css_url}"/>
+        <!--[if lt IE 10]>
+        <link rel="stylesheet" type="text/css" href="themes/default/css/ie.css">
+        <![endif]-->
     </head>
     <body>
         <div id="sugarcrm">
