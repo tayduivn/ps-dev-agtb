@@ -113,6 +113,28 @@ class RestMetadataGlobalSearchEnabledTest extends RestTestBase
                 'seed' => true,
                 'vardefs' => array(
                     'globalSearchEnabled' => array(
+                        'base' => true,
+                    )
+                ),
+                'expects' => true,
+                'failMessage' => "When globalSearchEnabled used as array with platform and the platform is not set in the meta, it should check to see if base is set; if so, it should return THAT value (truthy check)"
+            ),
+            array(
+                'platform' => 'portal',
+                'seed' => true,
+                'vardefs' => array(
+                    'globalSearchEnabled' => array(
+                        'base' => false,
+                    )
+                ),
+                'expects' => false,
+                'failMessage' => "When globalSearchEnabled used as array with platform and the platform is not set in the meta, it should check to see if base is set; if so, it should return THAT value (false check)"
+            ),
+            array(
+                'platform' => 'portal',
+                'seed' => true,
+                'vardefs' => array(
+                    'globalSearchEnabled' => array(
                         'notportal1' => false,
                         'notportal2' => false,
                     )
