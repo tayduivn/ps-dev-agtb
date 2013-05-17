@@ -1076,13 +1076,24 @@ class ModuleBuilderController extends SugarController
         }
     }
     
+    /**
+     * Nomalizes module strings.
+     * 
+     * In most cases this method won't do much in the way of transformation. But
+     * in the case of the backward compatibility indicator in studio, it will 
+     * parse the indicator and add it to the help text that appears on the right
+     * hand pane.
+     */
     protected function normalizeModStrings()
     {
         global $mod_strings;
         
         // Handle BC for studio help
         if (isset($mod_strings['help']['studioWizard']['studioHelp']) && isset($mod_strings['help']['studioWizard']['studioBCHelp'])) {
-            $mod_strings['help']['studioWizard']['studioHelp'] .= '<br><br><b>' . StudioModule::getBWCIndicator() . '</b>' . $mod_strings['help']['studioWizard']['studioBCHelp'];
+            // Keep it clean... make this assignment on more lines so it is more readable
+            $add  = '<br><br><b>' . StudioModule::$bwcIndicator . '</b>';
+            $add .= $mod_strings['help']['studioWizard']['studioBCHelp'];
+            $mod_strings['help']['studioWizard']['studioHelp'] .= $add;
         }
     }
 }

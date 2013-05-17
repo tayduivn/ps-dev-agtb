@@ -5398,3 +5398,15 @@ function ensureCache($minifyUtils, $rootDir) {
 	return $sugarSidecarPath;
 }
 
+/**
+ * Checks backward compatibility state of a module
+ * 
+ * @param  string  $module The name of the module to check
+ * @return boolean
+ */
+function isModuleBWC($module) 
+{
+	global $bwcModules;
+	return in_array($module, $bwcModules);
+}
+

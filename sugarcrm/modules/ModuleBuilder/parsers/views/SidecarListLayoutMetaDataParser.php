@@ -38,6 +38,14 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
         //END SUGARCRM flav=ent ONLY
     );
 
+    /**
+     * List of allowed views for this parser.
+     * 
+     * This is checked in the constructor and will throw an exception if the
+     * requested view is not allowed.
+     * 
+     * @var array
+     */
     protected $allowedViews = array(
         MB_SIDECARLISTVIEW,
         //BEGIN SUGARCRM flav=pro ONLY
@@ -74,7 +82,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
                 foreach ($def['fields'] as $field) {
                     if (!empty($field['name'])) {
                         if (
-                            !empty($field['default']) &&
+                            !empty($field['default']) && !empty($field['enabled']) &&
                             (!isset($field['studio']) || ($field['studio'] !== false && $field['studio'] != 'false'))
                         ) {
                             if (isset($this->_fielddefs[$field['name']])) {

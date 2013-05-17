@@ -52,7 +52,7 @@ class StudioModule
      * 
      * @var string
      */
-    protected static $bwcIndicator = '*'; 
+    public static $bwcIndicator = '*'; 
 
     function __construct ($module)
     {
@@ -73,10 +73,10 @@ class StudioModule
         $this->seed = BeanFactory::getBean($this->module);
         if($this->seed) {
             $this->fields = $this->seed->field_defs;
-            
-            // Set BWC
-            $this->bwc = $this->seed->isBWC();
         }
+        
+        // Set BWC
+        $this->bwc = isModuleBWC($module);
     }
 
      /*
@@ -159,7 +159,14 @@ class StudioModule
     function getNodes ()
     {
         $bwc = $this->bwc ? ' ' . self::$bwcIndicator : '';
-        return array ( 'name' => $this->name . $bwc, 'module' => $this->module , 'type' => 'StudioModule' , 'action' => "module=ModuleBuilder&action=wizard&view_module={$this->module}" , 'children' => $this->getModule(), 'bwc' => $this->bwc ) ;
+        return array(
+            'name' => $this->name . $bwc, 
+            'module' => $this->module, 
+            'type' => 'StudioModule', 
+            'action' => "module=ModuleBuilder&action=wizard&view_module={$this->module}", 
+            'children' => $this->getModule(), 
+            'bwc' => $this->bwc,
+        );
     }
 
     function getModule ()
@@ -549,25 +556,4 @@ class StudioModule
         );
     }
     //END SUGARCRM flav=ent ONLY
-
-    /**
-     * Sets the backward compatibility indicator
-     * 
-     * @param string $indicator
-     */
-    public static function setBWCIndicator($indicator)
-    {
-        self::$bwcIndicator = $indicator;
-    }
-
-    /**
-     * Gets the backward compatibility indicator
-     * 
-     * @return string
-     */
-    public static function getBWCIndicator()
-    {
-        return self::$bwcIndicator;
-    }
 }
-?>
