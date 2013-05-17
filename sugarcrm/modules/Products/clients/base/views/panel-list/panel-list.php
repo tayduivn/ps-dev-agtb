@@ -44,6 +44,18 @@ $viewdefs['Products']['base']['view']['panel-list'] = array(
                 'acl_action' => 'massupdate',
             ),
             array(
+                'name' => 'quote_button',
+                'type' => 'button',
+                'label' => 'LBL_CREATE_QUOTE',
+                'primary' => true,
+                'events' => array(
+                    'click' => 'function(e){
+                    this.view.layout.trigger("list:massquote:fire");
+                    }'
+                ),
+                'acl_action' => 'massquote',
+            ),
+            array(
                 'name' => 'delete_button',
                 'type' => 'button',
                 'label' => 'LBL_DELETE',
