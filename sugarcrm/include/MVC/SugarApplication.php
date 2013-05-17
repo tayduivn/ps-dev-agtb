@@ -806,7 +806,9 @@ class SugarApplication
         $_COOKIE[$name] = $value;
     }
 
-    protected $redirectVars = array('module', 'action', 'record', 'token', 'oauth_token', 'mobile', 'view');
+    protected $redirectVars = array('module', 'action', 'record', 'token', 'oauth_token', 'mobile',
+                                    'view', /* Reports */
+                                    'return_module', 'import_module'); /* Import */
 
     /**
      * Create string to attach to login URL with vars to preserve post-login
