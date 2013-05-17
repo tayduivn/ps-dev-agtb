@@ -73,6 +73,7 @@ $mod_strings = array(
 'LBL_ASSISTANT_PHONE'=>'Assistant Phone',
 'LBL_WORK_PHONE'=>'Work Phone',
 'LNK_IMPORT_VCARD' => 'Create From vCard',
+'LBL_IMPORT_VCARDTEXT' => 'Automatically create a new record by importing a vCard from your file system.',
 'LBL_ANY_EMAIL' => 'Any Email',
 //BEGIN SUGARCRM flav!=com ONLY
 'LBL_PICTURE_FILE' => 'Avatar',
