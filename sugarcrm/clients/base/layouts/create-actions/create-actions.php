@@ -12,6 +12,6 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $layout = MetaDataManager::getLayout('SideBarLayout');
-$layout->push('main', array('view'=>'create'));
+$layout->push('main', array('view'=>'create-actions'));
 $layout->push('preview', array('layout' => 'preview'));
-$viewdefs['base']['layout']['create'] = $layout->getLayout();
+$viewdefs['base']['layout']['create-actions'] = $layout->getLayout();

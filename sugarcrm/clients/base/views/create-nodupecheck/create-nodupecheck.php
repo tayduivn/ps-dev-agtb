@@ -16,7 +16,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$viewdefs['base']['view']['create'] = array(
+$viewdefs['base']['view']['create-nodupecheck'] = array(
     'type'    => 'record',
     'buttons' => array(
         array(
@@ -24,13 +24,6 @@ $viewdefs['base']['view']['create'] = array(
             'type'      => 'button',
             'label'     => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
-        ),
-        array(
-            'name'      => 'restore_button',
-            'type'      => 'button',
-            'label'     => 'LBL_RESTORE',
-            'css_class' => 'btn-invisible btn-link',
-            'showOn'    => 'select',
         ),
         array(
             'name'    => 'save_button',

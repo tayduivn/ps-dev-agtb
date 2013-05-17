@@ -512,7 +512,7 @@ describe("Create View", function() {
             expect(ajaxSpy.getCall(0).args[0].url).toContain('?viewed=1');
             ajaxSpy.restore();
         });
-    })
+    });
 
     describe('Save', function() {
         it("Should save data when save button is clicked, form data are valid, and no duplicates are found.", function() {
@@ -814,6 +814,45 @@ describe("Create View", function() {
                 isValidStub.restore();
                 checkForDuplicateStub.restore();
                 navigateStub.restore();
+            });
+        });
+    });
+
+    describe('Disable Duplicate Check', function() {
+        it("Should save data and not run duplicate check when duplicate check is disabled", function() {
+            var flag = false,
+                isValidStub = sinon.stub(view.model, 'isValid', function() {
+                    return true;
+                }),
+                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate'),
+                saveModelStub = sinon.stub(view, 'saveModel', function(success) {
+                    success();
+                }),
+                drawerCloseStub = sinon.stub(SugarTest.app.drawer, 'close', function() {
+                    flag = true;
+                });
+
+            view.enableDuplicateCheck = false;
+            view.render();
+
+            runs(function() {
+                view.buttons[view.saveButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'Drawer should have been closed but timeout expired', 1000);
+
+            runs(function() {
+                expect(isValidStub.calledOnce).toBe(true);
+                expect(checkForDuplicateStub.called).toBe(false);
+                expect(saveModelStub.calledOnce).toBe(true);
+                expect(drawerCloseStub.calledOnce).toBe(true);
+
+                saveModelStub.restore();
+                isValidStub.restore();
+                checkForDuplicateStub.restore();
+                drawerCloseStub.restore();
             });
         });
     });
