@@ -33,7 +33,8 @@
 
     initDashlet: function(view) {
         if(view === 'config') {
-            app.view.views.RecordView.prototype._buildGridsFromPanelsMetadata.call(this, this.meta.panels);
+            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+            app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args:[this.meta.panels]});
         }
     },
     updateChart: function () {
@@ -139,7 +140,7 @@
         if (querystring.length > 0) {
             url += "?" + querystring;
         }
-        app.api.call("read", url, null, 
+        app.api.call("read", url, null,
                      {
                          success: function(data) {
                              if (self.params.list == "all") {

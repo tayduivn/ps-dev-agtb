@@ -22,7 +22,8 @@
         'change input.select2': 'inputChanged'
     },
     initialize: function (options) {
-        app.view.fields.RelateField.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'initialize', args:[options]});
+
         //Moving primary teams to top on init
         this.model.set(
             this.name,
@@ -34,7 +35,8 @@
     },
     _render: function () {
         var self = this;
-        app.view.fields.RelateField.prototype._render.call(this);
+        app.view.invokeParent(this, {type: 'field', name: 'relate', method: '_render'});
+
         if (this.tplName === 'edit') {
             this.$(this.fieldTag).each(function (index, el) {
                 var plugin = $(el).data("select2");

@@ -31,7 +31,7 @@
      * @param options
      */
     initialize: function (options) {
-        app.view.layouts.InspectorLayout.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {type: 'layout', name: 'inspector', method: 'initialize', args: [options]});
 
         // setup the bind events
         this.bind();

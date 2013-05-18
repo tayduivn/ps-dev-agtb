@@ -51,7 +51,8 @@
 
         // Set our internal time and date values so hbt picks up
         self._presetDateValues();
-        app.view.fields.DateField.prototype._render.call(self);
+        app.view.invokeParent(this, {type: 'field', name: 'date', method: '_render', platform: 'base'});
+
         viewName = self._getViewName();
         $(function() {
             if (self._isEditView(viewName)) {

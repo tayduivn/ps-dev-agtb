@@ -27,8 +27,8 @@
                 }, this);
             }
             this.meta.panels = this.meta.dashlet_config_panels;
-
-            app.view.views.RecordView.prototype._buildGridsFromPanelsMetadata.call(this, this.meta.panels);
+            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+            app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args:[this.meta.panels]});
         } else {
             this.context.set("limit", dashlet.display_rows || 5);
             var collection = this.context.get("collection");
@@ -70,6 +70,8 @@
                     sortable: true
                 }, field || {});
             }, this);
+
+            this.meta.panels = this.meta.panels || this.meta.dashlet_config_panels;
             this.meta.panels[0].fields = dashlet.display_columns;
 
             // add css class based on module
@@ -80,6 +82,6 @@
         if (this.timerId) {
             clearInterval(this.timerId);
         }
-        app.view.views.ListView.prototype._dispose.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'list', method: '_dispose'});
     }
 })

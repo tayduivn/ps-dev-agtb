@@ -36,8 +36,14 @@
 
     initialize: function(options) {
         _.bindAll(this);
-        app.view.views.FlexListView.prototype.initialize.call(this, options);
+        //turn off sorting & links for dupe check lists
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
 
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(field) {
+                field.sortable = false;
+            });
+        });
         this.on("render", this._removeLinks, this);
 
         this.context.on("dupecheck:fetch:fire", this.fetchDuplicates, this);
@@ -58,7 +64,7 @@
     },
 
     _renderHtml: function() {
-        app.view.views.FlexListView.prototype._renderHtml.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_renderHtml'});
         this.$('table.table-striped').addClass('duplicates highlight');
     },
 
@@ -83,8 +89,7 @@
     },
 
     addActions: function() {
-        app.view.views.FlexListView.prototype.addActions.call(this);
-
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
         if (this.meta.showPreview === true) {
             this.rightColumns.push({
                 type: 'rowaction',

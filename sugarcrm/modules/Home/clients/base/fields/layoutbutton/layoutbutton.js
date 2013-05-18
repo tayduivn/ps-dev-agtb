@@ -7,7 +7,8 @@
         return this.$el;
     },
     _render: function() {
-        app.view.fields.ButtonField.prototype._render.call(this);
+        var buttonField = app.view._getController({type: 'field', name: 'button', platform: app.config.platform});
+        buttonField.prototype._render.call(this);
         this.$("[rel=tooltip]").tooltip({placement: 'bottom'});
     },
     _loadTemplate: function() {

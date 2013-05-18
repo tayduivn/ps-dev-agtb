@@ -2,7 +2,8 @@
     className: 'filter-view search',
 
     initialize: function(opts) {
-        app.view.layouts.FilterLayout.loadedModules = app.view.layouts.FilterLayout.loadedModules || {};
+        var filterLayout = app.view._getController({type:'layout',name:'filter'});
+        filterLayout.loadedModules = filterLayout.loadedModules || {};
         app.view.Layout.prototype.initialize.call(this, opts);
 
         this.layoutType = this.context.get('layout') || this.context.get('layoutName') || app.controller.context.get('layout');
@@ -279,9 +280,9 @@
                 self.trigger('filter:render:filter');
                 self.trigger('filter:change:filter', app.cache.get("filters:last:" + moduleName + ":" + self.layoutType) ||  _.first(possibleFilters) || 'all_records', true);
             };
-
         // TODO: Add filtering on subpanel vs. non-subpanel filters here.
-        if (app.view.layouts.FilterLayout.loadedModules[moduleName] && !_.isEmpty(app.cache.get("filters:" + moduleName)))
+        var filterLayout = app.view._getController({type:'layout',name:'filter'});
+        if (filterLayout.loadedModules[moduleName] && !_.isEmpty(app.cache.get("filters:" + moduleName)))
         {
             this.filters.reset();
             var filters = app.cache.get("filters:" + moduleName);
@@ -296,7 +297,8 @@
                 showAlerts: false,
                 filter: filter,
                 success:function(){
-                    app.view.layouts.FilterLayout.loadedModules[moduleName] = true;
+                    filterLayout.loadedModules[moduleName] = true;
+                    // app.view.layouts.FilterLayout.loadedModules[moduleName] = true;
                     app.cache.set("filters:" + moduleName, self.filters.toJSON());
                     callback();
                 }

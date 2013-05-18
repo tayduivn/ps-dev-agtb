@@ -30,14 +30,14 @@
     delegateButtonEvents: function() {
         this.context.on('button:lead_convert_button:click', this.initiateDrawer, this);
         this.context.on('button:manage_subscriptions:click', this.manageSubscriptionsClicked, this);
-        app.view.views.RecordView.prototype.delegateButtonEvents.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'delegateButtonEvents'});
     },
 
     /**
      * Set the save button to show if the model has been edited.
      */
     bindDataChange: function() {
-        app.view.views.RecordView.prototype.bindDataChange.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'bindDataChange'});
         this.model.on('change', this.setLeadButtonStates, this);
     },
 

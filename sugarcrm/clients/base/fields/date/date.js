@@ -42,11 +42,11 @@
      *
      * Any methods defined in date.js may called from derived classes and should work as expected. If
      * core methods like _render, initialize, etc., are overriden, you should consider calling this
-     * parent at some point in overriden method. For exmaple, in a DateChild widget you may do:
+     * parent at some point in overriden method. For example, in a DateChild widget you may do:
      * <pre><code>
      * _render:function(value) {
      *     this.doSpecialPreParentInitialization();
-     *     app.view.fields.DateField.prototype._render.call(this);// Beware to use: app.view.fields
+     *     app.view.invokeParent(this, {type: 'field', name: 'date', method: '_render', platform: 'base'});
      *     // as it's easy to forget and do app.view.views (notice views not fields at end!)
      *     this.doSomethingElseAfterParentInitialization();
      * },

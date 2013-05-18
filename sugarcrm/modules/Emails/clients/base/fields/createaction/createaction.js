@@ -34,6 +34,6 @@
             options.def.href = "mailto:"; // use the user's default mail client instead of email compose view
         }
 
-        app.view.fields.CreateactionField.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {type: 'field', name: 'createaction', method: 'initialize', args:[options]});
     }
 })

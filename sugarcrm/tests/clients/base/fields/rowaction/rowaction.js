@@ -28,7 +28,7 @@ describe('Base.Field.Rowaction', function() {
     //Essentially a no-op test
     xit('should render action if the user has acls', function() {
         field.model._acl = { "view": "yes" };
-        var stub_render = sinon.stub(app.view.fields.ButtonField.prototype, "_render");
+        var stub_render = sinon.stub(app.view.fields.BaseButtonField.prototype, "_render");
         field.module = moduleName;
         field._render();
         expect(stub_render).toHaveBeenCalled();

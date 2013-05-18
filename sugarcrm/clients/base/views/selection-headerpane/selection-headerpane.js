@@ -5,6 +5,6 @@
         var titleTemplate = Handlebars.compile(app.lang.getAppString("LBL_SEARCH_AND_SELECT")),
             moduleName = app.lang.get("LBL_MODULE_NAME", this.module);
         this.title = titleTemplate({module: moduleName});
-        app.view.views.HeaderpaneView.prototype._renderHtml.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: '_renderHtml'});
     }
 })

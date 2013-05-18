@@ -66,7 +66,7 @@
      * Hide the view if we were not able to find the appropriate list field and somehow render is triggered
      */
     _render: function() {
-        var result = app.view.views.MassupdateView.prototype._render.call(this);
+        var result = app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: '_render'});
 
         if(_.isUndefined(this.addToListField)) {
             this.hide();

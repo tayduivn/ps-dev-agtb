@@ -29,22 +29,27 @@
     // we want the radio buttons to be replaced by a select so each method must call the EnumField method instead.
     extendsFrom: 'ListeditableField',
     _render: function(){
-        var options = app.view.fields.EnumField.prototype.loadEnumOptions.call(this, false, function(){
-            if(!this.disposed){
-                this.render();
-            }
+        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+        var options = app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'loadEnumOptions', args: [false,
+            function() {
+                if(!this.disposed){
+                    this.render();
+                }
+            }]
         });
         app.view.Field.prototype._render.call(this);
         if(this.tplName === 'list-edit') {
             var optionsKeys = _.isObject(options) ? _.keys(options) : [];
-            var select2Options = app.view.fields.EnumField.prototype.getSelect2Options.call(this, optionsKeys);
+            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+            var select2Options = app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'getSelect2Options', args: [optionsKeys]});
             this.$(this.fieldTag).select2(select2Options);
             this.$(".select2-container").addClass("tleft");
         }
     },
     bindDomChange: function() {
         if (this.tplName === 'list-edit') {
-            app.view.fields.EnumField.prototype.bindDomChange.call(this);
+            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+            app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'bindDomChange'});
         } else {
             if (!(this.model instanceof Backbone.Model)) return;
             var self = this;
@@ -56,20 +61,22 @@
     },
     format: function(value) {
         if (this.tplName === 'list-edit') {
-            return app.view.fields.EnumField.prototype.format.call(this, value);
+            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'format', args: [value]});
         } else {
             return app.view.Field.prototype.format.call(this, value);
         }
     },
     unformat: function(value) {
         if (this.tplName === 'list-edit') {
-            return app.view.fields.EnumField.prototype.unformat.call(this, value);
+            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'unformat', args: [value]});
         } else {
             return app.view.Field.prototype.unformat.call(this, value);
         }
     },
     _loadTemplate: function() {
-        app.view.fields.ListeditableField.prototype._loadTemplate.call(this);
+        app.view.invokeParent(this, {type: 'field', name: 'listeditable', method: '_loadTemplate'});
 
         //Important to change the fieldTag to bind the dom "change" event
         if(this.tplName === 'list-edit') {
@@ -80,7 +87,7 @@
     },
     decorateError: function(errors) {
         if (this.tplName === 'list-edit') {
-            return app.view.fields.EnumField.prototype.decorateError.call(this, errors);
+            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'decorateError', args: [errors]});
         } else {
 
             var errorMessages = [],
@@ -103,7 +110,8 @@
     },
     clearErrorDecoration: function() {
         if (this.tplName === 'list-edit') {
-            return app.view.fields.EnumField.prototype.clearErrorDecoration.call(this);
+            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'clearErrorDecoration'});
         } else {
             var ftag = this.fieldTag || '';
             // Remove previous exclamation then add back.

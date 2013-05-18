@@ -8,7 +8,8 @@
         if(viewName !== "config") {
             this.collection.on("reset", this.render, this);
         } else {
-            app.view.views.RecordView.prototype._buildGridsFromPanelsMetadata.call(this, this.meta.panels);
+            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+            app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args: [this.meta.panels]});
         }
     },
     _mapping: {

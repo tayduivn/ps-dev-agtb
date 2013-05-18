@@ -7,8 +7,7 @@
 
     _render: function() {
         var result, self = this;
-        result = app.view.fields.RelateField.prototype._render.call(this);
-
+        app.view.invokeParent(this, {type: 'field', name: 'relate', method: '_render'});
         if(this.tplName === 'edit') {
             this.checkAcl('access', this.model.get('parent_type'));
             this.$(this.typeFieldTag).select2({
@@ -45,7 +44,7 @@
         if (!this.value || this.value !== this.hiddenValue) {
             module = this._getRelateModule();
             idName = this._getRelateId();
-            app.view.fields.RelateField.prototype.buildRoute.call(this, module, idName);
+            app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'buildRoute', args: [module, idName]});
         }
     },
     _getRelateModule: function() {
@@ -92,7 +91,7 @@
     },
     unbindDom: function() {
         this.$(this.typeFieldTag).select2('destroy');
-        app.view.fields.RelateField.prototype.unbindDom.call(this);
+        app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'unbindDom'});
     }
 
 })

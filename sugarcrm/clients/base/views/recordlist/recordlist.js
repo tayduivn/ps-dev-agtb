@@ -45,14 +45,12 @@
         //Grab the record list of fields to display from the base metadata
         var recordListMeta = app.metadata.getView(null, 'recordlist') || {};
         options.meta = _.extend({}, recordListMeta, options.meta || {});
-
-        app.view.views.FlexListView.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
     },
 
     addActions:function () {
         if (this.actionsAdded) return;
-        app.view.views.FlexListView.prototype.addActions.call(this);
-
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
         //Add Favorite to left
         this.addFavorite();
 
@@ -90,8 +88,7 @@
     },
 
     _render:function () {
-        app.view.views.FlexListView.prototype._render.call(this);
-
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_render'});
         this.rowFields = {};
         _.each(this.fields, function(field) {
             //TODO: Modified date should not be an editable field
@@ -147,7 +144,7 @@
      * @private
      */
     _dispose: function(){
-        app.view.views.FlexListView.prototype._dispose.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_dispose'});
         this.rowFields = null;
     },
 

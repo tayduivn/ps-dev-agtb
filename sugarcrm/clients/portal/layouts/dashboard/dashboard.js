@@ -36,7 +36,10 @@
         options.meta.components = [];
         // Add components metadata as specified in the module list
         _.each(this.module_list, function(module) {
-            options.meta.components.push({layout: "list", context: {limit: 5, module: module}});
+            options.meta.components.push({
+                layout: "list",
+                context: {limit: 5, module: module, removeSidebarToggle: true}
+            });
         }, this);
 
         app.view.Layout.prototype.initialize.call(this, options);

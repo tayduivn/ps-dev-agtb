@@ -62,7 +62,7 @@
     },
 
     initialize: function(options) {
-        app.view.fields.CurrencyField.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {type: 'field', name: 'currency', method: 'initialize', args: [options]});
         this.checkIfCanEdit();
         this.symbol = app.currency.getCurrencySymbol(this.model.get('currency_id'));
     },

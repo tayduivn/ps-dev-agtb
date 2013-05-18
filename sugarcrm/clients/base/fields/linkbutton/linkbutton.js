@@ -6,7 +6,7 @@
             'click a[name=link_create]': 'createClicked',
             'click a[name=link_exist]': 'selectClicked'
         });
-        app.view.fields.RowactionField.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args:[options]});
         this.type = 'rowaction';
 
         this.linkModules = [];
