@@ -13,17 +13,19 @@
 ********************************************************************************/
 
 require_once 'modules/Emails/ArchivedEmailsBeanLink.php';
+
 /**
  * Links connected emails for a case
  */
 class CaseEmailsLink extends ArchivedEmailsBeanLink
 {
+
     protected function getEmailsJoin($params = array())
     {
         $join = parent::getEmailsJoin($params);
-        if($this->focus instanceof aCase && !empty($this->focus->case_number)) {
+        if ($this->focus instanceof aCase && !empty($this->focus->case_number)) {
             $where = str_replace("%1", $this->focus->case_number, $this->focus->getEmailSubjectMacro());
-            if(!empty($params['join_table_alias'])) {
+            if (!empty($params['join_table_alias'])) {
                 $table_name = $params['join_table_alias'];
             } else {
                 $table_name = 'emails';
