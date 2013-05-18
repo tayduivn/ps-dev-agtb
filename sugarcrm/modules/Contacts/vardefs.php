@@ -320,7 +320,8 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_EMAILS',
             'module' => 'Emails',
-            'type' => 'many',
+            'link_type' => 'many',
+            'relationship' => '',
         ),
         'documents' => array(
             'name' => 'documents',

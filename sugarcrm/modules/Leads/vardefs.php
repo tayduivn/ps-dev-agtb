@@ -516,8 +516,9 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
         'source' => 'non-db',
         'vname' => 'LBL_EMAILS',
         'module' => 'Emails',
-        'type' => 'many',
-  ),
+        'link_type' => 'many',
+        'relationship' => '',
+    ),
   'email_addresses' =>
    array (
 		'name' => 'email_addresses',

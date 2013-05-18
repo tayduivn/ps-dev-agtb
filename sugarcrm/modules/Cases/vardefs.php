@@ -158,6 +158,8 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search'
     'link' => 'contacts',
     'source' => 'non-db',
     'vname' => 'LBL_EMAILS',
+    'link_type' => 'many',
+    'relationship' => '',
   ),
   'documents'=>
   array (
