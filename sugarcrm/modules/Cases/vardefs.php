@@ -150,6 +150,15 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search'
     'source'=>'non-db',
 		'vname'=>'LBL_EMAILS',
   ),
+  'archived_emails' => array(
+    'name' => 'archived_emails',
+    'type' => 'link',
+    'link_file' => 'modules/Cases/CaseEmailsLink.php',
+    'link_class' => 'CaseEmailsLink',
+    'link' => 'contacts',
+    'source' => 'non-db',
+    'vname' => 'LBL_EMAILS',
+  ),
   'documents'=>
   array (
       'name' => 'documents',

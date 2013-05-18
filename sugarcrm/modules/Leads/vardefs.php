@@ -183,7 +183,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 	'vname' => 'LBL_ACCOUNT',
     'duplicate_merge'=> 'disabled',
   ),
-  
+
   'account_description' =>
   array (
     'name' => 'account_description',
@@ -416,7 +416,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 		'type' => 'date',
 		'comment' => 'The birthdate of the contact'
 	),
-  
+
   'portal_name' =>
   array (
     'name' => 'portal_name',
@@ -440,7 +440,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 	//BEGIN SUGARCRM flav!=ent
     'studio' => 'false',
   ),
-   'website' => 
+   'website' =>
   array (
     'name' => 'website',
     'vname' => 'LBL_WEBSITE',
@@ -497,7 +497,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
     'type' => 'link',
     'relationship' => 'lead_calls',
     'source'=>'non-db',
-		'vname'=>'LBL_CALLS',
+	'vname'=>'LBL_CALLS',
   ),
   'emails' =>
   array (
@@ -507,9 +507,19 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
     'source'=>'non-db',
     'unified_search'=>true,
 	'vname'=>'LBL_EMAILS',
+    ),
+  'archived_emails' => array(
+        'name' => 'archived_emails',
+        'type' => 'link',
+        'link_file' => 'modules/Emails/ArchivedEmailsLink.php',
+        'link_class' => 'ArchivedEmailsLink',
+        'source' => 'non-db',
+        'vname' => 'LBL_EMAILS',
+        'module' => 'Emails',
+        'type' => 'many',
   ),
-	'email_addresses' =>
-	array (
+  'email_addresses' =>
+   array (
 		'name' => 'email_addresses',
         'type' => 'link',
 		'relationship' => 'leads_email_addresses',

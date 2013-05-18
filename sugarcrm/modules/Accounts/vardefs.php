@@ -183,6 +183,17 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
     'vname'=>'LBL_EMAILS',
     'studio' => array("formula" => false),
   ),
+  'archived_emails' => array(
+    'name' => 'archived_emails',
+    'type' => 'link',
+    'link_file' => 'modules/Emails/ArchivedEmailsBeanLink.php',
+    'link_class' => 'ArchivedEmailsBeanLink',
+    'link' => 'contacts',
+    'source' => 'non-db',
+    'vname' => 'LBL_EMAILS',
+    'module' => 'Emails',
+    'type' => 'many',
+  ),
   'documents'=>
   array (
       'name' => 'documents',
@@ -299,7 +310,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
     	'source'=>'non-db',
 		'vname'=>'LBL_CAMPAIGNLOG',
         'studio' => array("formula" => false),
-  ),  
+  ),
   'campaign_accounts' =>
     array (
       'name' => 'campaign_accounts',
@@ -443,7 +454,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
     ,'account_calls' => array('lhs_module'=> 'Accounts', 'lhs_table'=> 'accounts', 'lhs_key' => 'id',
                               'rhs_module'=> 'Calls', 'rhs_table'=> 'calls', 'rhs_key' => 'parent_id',
                               'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
-                              'relationship_role_column_value'=>'Accounts')       
+                              'relationship_role_column_value'=>'Accounts')
 
 /*,'accounts_emails' => array(
     'rhs_module'        => 'Emails',

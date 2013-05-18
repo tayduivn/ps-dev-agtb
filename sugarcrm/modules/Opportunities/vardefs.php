@@ -384,7 +384,18 @@ $dictionary['Opportunity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_EMAILS',
         ),
-        'documents' => array(
+      'archived_emails' => array(
+        'name' => 'archived_emails',
+        'type' => 'link',
+        'link_file' => 'modules/Emails/ArchivedEmailsBeanLink.php',
+        'link_class' => 'ArchivedEmailsBeanLink',
+        'link' => 'contacts',
+        'source' => 'non-db',
+        'vname' => 'LBL_EMAILS',
+        'module' => 'Emails',
+        'type' => 'many',
+      ),
+    'documents' => array(
             'name' => 'documents',
             'type' => 'link',
             'relationship' => 'documents_opportunities',
