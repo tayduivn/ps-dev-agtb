@@ -2,7 +2,7 @@
     extendsFrom: 'CreateView',
 
     initialize: function(options) {
-        app.view.views.CreateView.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {type: 'view', name: 'create', method: 'initialize', platform: 'base', args:[options]});
         this.enableDuplicateCheck = false;
     }
 })
