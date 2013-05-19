@@ -112,7 +112,7 @@
         this.plugins = _.clone(this.plugins)
         this.plugins.push('cte-tabbing');
         this.plugins.push('dirty-collection');
-        app.view.views.RecordlistView.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
         this.selectedTimeperiod = this.context.get('selectedTimePeriod') || this.context.parent.get('selectedTimePeriod') || ''
         this.context.set('skipFetch', (this.selectedUser.isManager && this.selectedUser.showOpps));    // skip the initial fetch, this will be handled by the changing of the selectedUser
@@ -125,7 +125,7 @@
         }
         app.routing.offBefore(null, null, this);
         $(window).off("beforeUnload");
-        app.view.views.RecordlistView.prototype._dispose.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: '_dispose'});
     },
 
     bindDataChange: function() {
@@ -306,7 +306,7 @@
         }, this);
 
         // call the parent
-        app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'bindDataChange'});
     },
 
     /**

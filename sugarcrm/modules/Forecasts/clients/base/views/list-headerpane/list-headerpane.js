@@ -17,7 +17,7 @@
     extendsFrom: 'HeaderpaneView',
 
     initialize: function(options) {
-        app.view.views.HeaderpaneView.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args: [options]});
 
         this.on('render', function() {
             this.getField('save_draft_button').setDisabled();
@@ -55,13 +55,13 @@
             this.getField('commit_button').setDisabled(false);
         }, this);
 
-        app.view.views.HeaderpaneView.prototype.bindDataChange.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'bindDataChange'});
     },
 
     _renderHtml: function() {
         var user = this.context.get('selectedUser') || app.user.toJSON();
         this.title = this.title || user.full_name;
 
-        app.view.View.prototype._renderHtml.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: '_renderHtml'});
     }
 })

@@ -67,7 +67,7 @@
         if (app.user.get('isManager') && !_.isEmpty(this.jsTree)) {
             this.jsTree.off();
         }
-        app.view.Component.prototype._dispose.call(this);
+        app.view.Field.prototype._dispose.call(this);
     },
 
     /**

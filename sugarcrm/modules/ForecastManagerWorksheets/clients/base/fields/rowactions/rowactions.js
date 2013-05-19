@@ -20,7 +20,7 @@
 ({
     extendsFrom: 'RowactionsField',
     initialize: function(options) {
-        app.view.fields.RowactionsField.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {type: 'field', name: 'rowactions', method: 'initialize', args: [options]});
         this.setPlaceholder = _.throttle(this.customSetPlaceholder, 100);
     },
     getPlaceholder: function() {

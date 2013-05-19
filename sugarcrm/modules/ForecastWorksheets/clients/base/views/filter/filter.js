@@ -67,7 +67,9 @@
             dropdownCss: {display:"none"},
             initSelection: function(element, callback) {
                 callback(this.data[0]);
-            }
+            },
+            escapeMarkup: function(m) { return m; },
+            width: 'off'
         });
 
         this.node.select2({
@@ -87,7 +89,10 @@
             containerCssClass: "select2-choices-pills-close",
             containerCss: "border: none",
             formatSelection: this.formatCustomSelection,
-            dropdownCssClass: "search-filter-dropdown"
+            dropdownCssClass: "search-filter-dropdown",
+            escapeMarkup: function(m) { return m; },
+            width: 'off'
+
         });
 
         //run this to "hard code" the module filter to Forecasts

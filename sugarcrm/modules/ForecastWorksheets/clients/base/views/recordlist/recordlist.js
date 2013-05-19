@@ -110,7 +110,7 @@
         this.plugins = _.clone(this.plugins)
         this.plugins.push('cte-tabbing');
         this.plugins.push('dirty-collection');
-        app.view.views.RecordlistView.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
         // we need to get the flex-list template from the ForecastWorksheets module so it can use the filteredCollection
         // for display
         this.template = app.template.getView('flex-list', this.module);
@@ -127,7 +127,7 @@
         }
         app.routing.offBefore(null, null, this);
         $(window).off("beforeUnload");
-        app.view.views.RecordlistView.prototype._dispose.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: '_dispose'});
     },
 
     bindDataChange: function() {
@@ -264,7 +264,7 @@
             }, this);
         }
 
-        app.view.views.RecordlistView.prototype.bindDataChange.call(this);
+        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'bindDataChange'});
     },
 
     /**
