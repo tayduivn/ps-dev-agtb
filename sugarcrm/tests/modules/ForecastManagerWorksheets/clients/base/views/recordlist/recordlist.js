@@ -13,7 +13,7 @@
 
 describe("ForecastManagerWorksheets.View.RecordList", function() {
 
-    var app, view, layout;
+    var app, view, layout, moduleName = 'ForecastManagerWorksheets';
 
     beforeEach(function() {
         app = SUGAR.App;
@@ -29,12 +29,12 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
             app.events.trigger('app:init');
         });
 
-        app.user.set({'id': 'test_userid'});
+        app.user.set({'id': 'test_userid', full_name: 'Selected User'});
 
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'recordlist');
-        SugarTest.loadComponent('base', 'view', 'recordlist', 'ForecastManagerWorksheets');
+        SugarTest.loadComponent('base', 'view', 'recordlist', moduleName);
         SugarTest.testMetadata.addViewDefinition("list", {
             "favorite": false,
             "selection": {
@@ -51,12 +51,15 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                     "fields": ["name", "quota", "likely_case", "likely_case_adjusted", "best_case", "best_case_adjusted", "worst_case", "worst_case_adjusted"]
                 }
             ]
-        }, "ForecastManagerWorksheets");
+        }, moduleName);
         SugarTest.testMetadata.set();
+
+        app.data.reset();
+        app.data.declareModel(moduleName, SugarTest.app.metadata.getModule(moduleName));
 
         context = app.context.getContext();
         context.set({
-            module: 'ForecastWorksheets',
+            module: moduleName,
             'selectedUser': app.user.toJSON(),
             'selectedRanges': [],
             'selectedTimePeriod': 'test_timeperiod'
@@ -64,8 +67,8 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
         context.parent = undefined;
         context.prepare();
 
-        view = SugarTest.createView("base", "ForecastManagerWorksheets", "recordlist", null, context);
-        layout = SugarTest.createLayout("base", "ForecastManagerWorksheets", "list", null, null);
+        view = SugarTest.createView("base", moduleName, "recordlist", null, context);
+        layout = SugarTest.createLayout("base", moduleName, "list", null, null);
         view.layout = layout;
 
     });
@@ -149,7 +152,8 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
             });
             layoutHideStub = sinon.stub(view.layout, 'hide', function() {
             });
-            setCommitLogButtonStatesStub = sinon.stub(view, 'setCommitLogButtonStates', function() {});
+            setCommitLogButtonStatesStub = sinon.stub(view, 'setCommitLogButtonStates', function() {
+            });
         });
         afterEach(function() {
             layoutShowStub.restore();
@@ -175,8 +179,9 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                 return false;
             });
 
-            tplViewStub = sinon.stub(app.template, 'getView', function(){
-                return function() {};
+            tplViewStub = sinon.stub(app.template, 'getView', function() {
+                return function() {
+                };
             });
 
             view.selectedUser.isManager = true;
@@ -392,6 +397,98 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                 expect(m.get('current_user')).toEqual('test_userid');
                 expect(view.selectedUser.id).toEqual('my_new_user_id');
                 expect(view.dirtyUser).toEqual(undefined);
+            });
+        });
+    });
+
+    describe("collectionSuccess", function() {
+        var collectionResetStub, models = [], sortedModels = [];
+        beforeEach(function() {
+            collectionResetStub = sinon.stub(view.collection, 'reset', function(models) {
+                sortedModels = models;
+            });
+            view.selectedUser.reportees = [
+                {id: 'test1', name: 'Test One'},
+                {id: 'asdf', name: 'AS DF'},
+                {id: 'ghkl', name: 'GH KL'}
+            ];
+            models = [
+                {user_id: 'test1', best_case: 1234},
+                {user_id: 'asdf', best_case: 5678},
+                {user_id: 'ghkl', best_case: 854}
+            ];
+        });
+        afterEach(function() {
+            collectionResetStub.restore();
+            view.selectedUser.reportees = []
+        });
+
+        it("should have 4 rows after run", function(){
+            view.collectionSuccess(models);
+            expect(sortedModels.length).toEqual(4);
+        });
+
+        it("first row should be selected user when sorting is not applied", function() {
+            view.collectionSuccess(models);
+            expect(sortedModels[0].user_id).toEqual(view.selectedUser.id);
+        });
+
+        it("selectedUser should contain default values since no model was found", function() {
+            view.collectionSuccess(models);
+            _.each(view.defaultValues, function(value, key) {
+                expect(sortedModels[0][key]).toEqual(value);
+            });
+        })
+
+        describe("should sort", function() {
+            describe("desc correctly", function() {
+                afterEach(function() {
+                    view.orderBy = undefined;
+                    sortedModels = [];
+                });
+                it("currency_field", function() {
+                    view.orderBy = {field: 'best_case', direction: '_desc'};
+                    view.collectionSuccess(models);
+
+                    expect(sortedModels[0].best_case).toEqual(5678);
+                    expect(sortedModels[1].best_case).toEqual(1234);
+                    expect(sortedModels[2].best_case).toEqual(854);
+                    expect(sortedModels[3].best_case).toEqual(0);
+                });
+                it("name_field", function() {
+                    view.orderBy = {field: 'name', direction: '_desc'};
+                    view.collectionSuccess(models);
+
+                    expect(sortedModels[0].name).toEqual('AS DF');
+                    expect(sortedModels[1].name).toEqual('GH KL');
+                    expect(sortedModels[2].name).toEqual('Selected User');
+                    expect(sortedModels[3].name).toEqual('Test One');
+                });
+            });
+
+            describe("asc correctly", function() {
+                afterEach(function() {
+                    view.orderBy = undefined;
+                    sortedModels = [];
+                });
+                it("currency_field", function() {
+                    view.orderBy = {field: 'best_case', direction: '_asc'};
+                    view.collectionSuccess(models);
+
+                    expect(sortedModels[3].best_case).toEqual(5678);
+                    expect(sortedModels[2].best_case).toEqual(1234);
+                    expect(sortedModels[1].best_case).toEqual(854);
+                    expect(sortedModels[0].best_case).toEqual(0);
+                });
+                it("name_field", function() {
+                    view.orderBy = {field: 'name', direction: '_asc'};
+                    view.collectionSuccess(models);
+
+                    expect(sortedModels[3].name).toEqual('AS DF');
+                    expect(sortedModels[2].name).toEqual('GH KL');
+                    expect(sortedModels[1].name).toEqual('Selected User');
+                    expect(sortedModels[0].name).toEqual('Test One');
+                });
             });
         });
     });

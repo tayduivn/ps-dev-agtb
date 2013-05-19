@@ -201,7 +201,7 @@
                  * Watch for the currentForecastCommitDate to be updated
                  */
                 this.context.parent.on('change:currentForecastCommitDate', function(context, changed) {
-                    if(this.layout.isVisible()) {
+                    if (this.layout.isVisible()) {
                         this.checkForDraftRows(changed);
                     }
                 }, this);
@@ -645,6 +645,32 @@
             }
             records.push(row);
         }, this);
+
+        if (!_.isUndefined(this.orderBy)) {
+            // lets sort the collection
+            if (this.orderBy.field !== 'name') {
+                records = _.sortBy(records, function(item) {
+
+                    if (this.orderBy.direction == "_desc") {
+                        return -item[this.orderBy.field];
+                    } else {
+                        return item[this.orderBy.field];
+                    }
+                }, this);
+            } else {
+                // we have the name
+                records.sort(_.bind(function(a, b) {
+                    if(this.orderBy.direction == '_asc') {
+                        if (a.name.toString() < b.name.toString()) return 1;
+                        if (a.name.toString() > b.name.toString()) return -1;
+                    } else {
+                        if (a.name.toString() < b.name.toString()) return -1;
+                        if (a.name.toString() > b.name.toString()) return 1;
+                    }
+                    return 0;
+                }, this));
+            }
+        }
 
         this.collection.reset(records);
     },

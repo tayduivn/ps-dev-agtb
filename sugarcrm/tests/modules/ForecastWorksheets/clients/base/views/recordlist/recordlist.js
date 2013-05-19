@@ -13,7 +13,7 @@
 
 describe("ForecastWorksheets.View.RecordList", function() {
 
-    var app, view, layout;
+    var app, view, layout, moduleName = 'ForecastWorksheets';
 
     beforeEach(function() {
         app = SUGAR.App;
@@ -34,7 +34,7 @@ describe("ForecastWorksheets.View.RecordList", function() {
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'recordlist');
-        SugarTest.loadComponent('base', 'view', 'recordlist', 'ForecastWorksheets');
+        SugarTest.loadComponent('base', 'view', 'recordlist', moduleName);
         SugarTest.testMetadata.addViewDefinition("list", {
             "favorite": false,
             "selection": {
@@ -52,11 +52,15 @@ describe("ForecastWorksheets.View.RecordList", function() {
                 }
             ]
         }, "ForecastWorksheets");
+
         SugarTest.testMetadata.set();
+        app.data.reset();
+
+        app.data.declareModel(moduleName, SugarTest.app.metadata.getModule(moduleName));
 
         context = app.context.getContext();
         context.set({
-            module: 'ForecastWorksheets',
+            module: moduleName,
             'selectedUser': app.user.toJSON(),
             'selectedRanges': [],
             'selectedTimePeriod': 'test_timeperiod'
@@ -64,8 +68,8 @@ describe("ForecastWorksheets.View.RecordList", function() {
         context.parent = undefined;
         context.prepare();
 
-        view = SugarTest.createView("base", "ForecastWorksheets", "recordlist", null, context);
-        layout = SugarTest.createLayout("base", "ForecastWorksheets", "list", null, null);
+        view = SugarTest.createView("base", moduleName, "recordlist", null, context);
+        layout = SugarTest.createLayout("base", moduleName, "list", null, null);
         view.layout = layout;
 
     });
@@ -430,4 +434,82 @@ describe("ForecastWorksheets.View.RecordList", function() {
             });
         });
     });
+
+    describe('sync', function() {
+        var stubs = [], options = {};
+        beforeEach(function() {
+            stubs.push(sinon.stub(app.api, 'buildURL', function() {}));
+            stubs.push(sinon.stub(app.api, 'call', function() {}));
+            stubs.push(sinon.stub(app.data, 'getSyncCallbacks', function() {}));
+        });
+
+        afterEach(function() {
+            _.each(stubs, function(stub) {
+                stub.restore();
+            });
+            options = {}
+        });
+
+        describe('timeperiod_id', function(){
+            afterEach(function() {
+               options = {}
+            });
+
+            it('should be set to view.selectedTimeperiod', function() {
+                view.sync('read', view.collection, options);
+                expect(_.isUndefined(options.params.timeperiod_id)).toBeFalsy();
+                expect(options.params.timeperiod_id).toEqual(view.selectedTimeperiod);
+            });
+        });
+
+        describe('user_id', function(){
+            afterEach(function() {
+               options = {}
+            });
+
+            it('should be set to view.selectedUser.id', function() {
+                view.sync('read', view.collection, options);
+                expect(_.isUndefined(options.params.user_id)).toBeFalsy();
+                expect(options.params.user_id).toEqual(view.selectedUser.id);
+            });
+        });
+
+        describe("orderBy should", function() {
+            beforeEach(function() {
+                options = {}
+            });
+
+            afterEach(function() {
+                delete view.collection.orderBy;
+                options = {}
+            });
+
+            it('not be set', function() {
+                view.sync('read', view.collection, options);
+                expect(_.isUndefined(options.params.order_by)).toBeTruthy();
+            });
+
+            it('be set', function() {
+                view.collection.orderBy = {
+                    'field' : 'best_case',
+                    'direction' : '_desc',
+                    'column_name' : 'best_case'
+                }
+                view.sync('read', view.collection, options);
+                expect(_.isUndefined(options.params.order_by)).toBeFalsy();
+                expect(options.params.order_by).toEqual('best_case:_desc');
+            });
+
+            it('should convert parent_name to name', function() {
+                view.collection.orderBy = {
+                    'field' : 'parent_name',
+                    'direction' : '_desc',
+                    'column_name' : 'parent_name'
+                }
+                view.sync('read', view.collection, options);
+                expect(options.params.order_by).toEqual('name:_desc');
+                expect(view.collection.orderBy.field).toEqual('parent_name');
+            })
+        })
+    })
 });

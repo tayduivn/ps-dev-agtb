@@ -665,6 +665,12 @@
         options.limit = 1000;
         options = app.data.parseOptionsForSync(method, model, options);
 
+        // Since parent_name breaks the XHR call in the order by, just use the name field instead
+        // they are the same anyways.
+        if(!_.isUndefined(options.params.order_by) && options.params.order_by.indexOf('parent_name') === 0) {
+            options.params.order_by = options.params.order_by.replace('parent_','');
+        }
+
         // custom success handler
         options.success = _.bind(function(model, data, options) {
             this.collection.reset(data);
