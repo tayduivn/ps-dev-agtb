@@ -122,6 +122,12 @@
          */
         select2Options.dropdownCssClass = this.def.dropdown_class ? this.def.dropdown_class : '';
 
+        /* To get the Select2 multi-select pills to have our styling, we need to be able
+         * to either pass a classname to the constructor to allow for custom styling
+         * or set the 'select2-choices-pills-close' if the isMultiSelect option is set in def
+         */
+        select2Options.containerCssClass = this.def.container_class ? this.def.container_class : (this.def.isMultiSelect ? 'select2-choices-pills-close' : '');
+
         /* Because the select2 dropdown is calculated at render to be as wide as container
          * to make it differ the dropdownCss.width must be set (i.e.,100%,auto)
          */
