@@ -312,6 +312,17 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_EMAILS',
         ),
+        'archived_emails' => array(
+            'name' => 'archived_emails',
+            'type' => 'link',
+            'link_file' => 'modules/Emails/ArchivedEmailsLink.php',
+            'link_class' => 'ArchivedEmailsLink',
+            'source' => 'non-db',
+            'vname' => 'LBL_EMAILS',
+            'module' => 'Emails',
+            'link_type' => 'many',
+            'relationship' => '',
+        ),
         'documents' => array(
             'name' => 'documents',
             'type' => 'link',

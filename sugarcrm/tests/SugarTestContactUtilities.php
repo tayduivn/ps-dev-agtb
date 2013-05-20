@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'modules/Contacts/Contact.php';
 
 class SugarTestContactUtilities
@@ -30,6 +30,12 @@ class SugarTestContactUtilities
 
     private function __construct() {}
 
+    /**
+     *
+     * @param string $id
+     * @param array $contactValues
+     * @return Contact
+     */
     public static function createContact($id = '', $contactValues = array())
     {
         $time = mt_rand();
@@ -69,8 +75,8 @@ class SugarTestContactUtilities
         	self::$_createdContacts[] = $contact;
     	} // foreach
     } // fn
-    
-    public static function removeAllCreatedContacts() 
+
+    public static function removeAllCreatedContacts()
     {
         $contact_ids = self::getCreatedContactIds();
         $GLOBALS['db']->query('DELETE FROM contacts WHERE id IN (\'' . implode("', '", $contact_ids) . '\')');
@@ -95,8 +101,8 @@ class SugarTestContactUtilities
     	$contact_ids = self::getCreatedContactIds();
         $GLOBALS['db']->query('DELETE FROM contacts_users WHERE contact_id IN (\'' . implode("', '", $contact_ids) . '\')');
     }
-    
-    public static function getCreatedContactIds() 
+
+    public static function getCreatedContactIds()
     {
         $contact_ids = array();
         foreach (self::$_createdContacts as $contact) {
