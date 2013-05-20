@@ -20,6 +20,10 @@ require_once 'modules/Emails/ArchivedEmailsBeanLink.php';
 class CaseEmailsLink extends ArchivedEmailsBeanLink
 {
 
+    /**
+     * We need this one because cases have match by subject macro
+     * @see ArchivedEmailsBeanLink::getEmailsJoin()
+     */
     protected function getEmailsJoin($params = array())
     {
         $join = parent::getEmailsJoin($params);

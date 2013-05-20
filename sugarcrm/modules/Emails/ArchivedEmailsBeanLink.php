@@ -21,6 +21,10 @@ require_once 'modules/Emails/ArchivedEmailsLink.php';
 class ArchivedEmailsBeanLink extends ArchivedEmailsLink
 {
 
+    /**
+     * Override to go to both direct emails and linked bean
+     * @see ArchivedEmailsLink::getEmailsJoin()
+     */
     protected function getEmailsJoin($params = array())
     {
         $relation = $this->def['link'];

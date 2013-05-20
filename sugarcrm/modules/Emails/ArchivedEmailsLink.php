@@ -48,6 +48,10 @@ class ArchivedEmailsLink extends Link2
         return true;
     }
 
+    /**
+     * Get all beans from link
+     * @see Link2::query()
+     */
     public function query($params)
     {
         unset($params['return_as_array']);
@@ -60,37 +64,61 @@ class ArchivedEmailsLink extends Link2
         return array("rows" => $rows);
     }
 
+    /**
+     * @see Link2::getRelatedModuleName()
+     */
     public function getRelatedModuleName()
     {
         return 'Emails';
     }
 
+    /**
+     * @see Link2::getRelatedModuleLinkName()
+     */
     public function getRelatedModuleLinkName()
     {
         // this is one-side link, other side (Emails) won't have the link
         return false;
     }
 
+    /**
+     * @see Link2::getType()
+     */
     public function getType()
     {
         return "many";
     }
 
+    /**
+     * @see Link2::getSide()
+     */
     public function getSide()
     {
         return REL_LHS;
     }
 
+    /**
+     * @see Link2::is_self_relationship()
+     */
     public function is_self_relationship()
     {
         return false;
     }
 
+    /**
+     * @see Link2::isParentRelationship()
+     */
     public function isParentRelationship()
     {
         return false;
     }
 
+    /**
+     * This function may not actually be useful due to the fact it's true M2M relationship, so
+     * you'd get multiple rows for each original row.
+     *
+     * @see Link2::buildJoinSugarQuery()
+     */
     public function buildJoinSugarQuery($sugar_query, $options = array())
     {
         $join_type = isset($options['joinType']) ? $options['joinType'] : 'INNER';
@@ -100,13 +128,13 @@ class ArchivedEmailsLink extends Link2
     }
 
     /**
+     * This function may not actually be useful due to the fact it's true M2M relationship, so
+     * you'd get multiple rows for each original row.
      *
      * @param $params array
      *            of parameters. Possible parameters include:
-     *            'join_table_link_alias': alias the relationship join table in
-     *            the query (for M2M relationships),
-     *            'join_table_alias': alias for the final table to be joined
-     *            against (usually a module main table)
+     *            'join_table_link_alias': alias the relationship join table in the query (for M2M relationships),
+     *            'join_table_alias': alias for the final table to be joined against (usually a module main table)
      * @param bool $return_array
      *            if true the query is returned as a array broken up into
      *            select, join, where, type, rel_key, and joined_tables
@@ -132,6 +160,11 @@ class ArchivedEmailsLink extends Link2
         }
     }
 
+    /**
+     * Builds main join for archived emails
+     * @param string $params
+     * @return string JOIN clause
+     */
     protected function getEmailsJoin($params = array())
     {
         $bean_id = $this->db->quoted($this->focus->id);
@@ -140,9 +173,6 @@ class ArchivedEmailsLink extends Link2
         } else {
             $table_name = 'emails';
         }
-
-        // $join_type= !empty($params['join_type']) ? $params['join_type'] : '
-        // INNER JOIN ';
 
         return "INNER JOIN (\n".
                 // directly assigned emails
@@ -157,7 +187,7 @@ class ArchivedEmailsLink extends Link2
     }
 
     /**
-     *
+     * Get query for retrieving beans from this link
      * @param array $params
      *            optional parameters. Possible Values;
      *            'return_as_array': returns the query broken into
