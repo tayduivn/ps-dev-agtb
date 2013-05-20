@@ -527,16 +527,26 @@ class MBModule
         }
     }
 
-    function createMenu ($path)
+    function createMenu($path)
     {
-        $smarty = new Sugar_Smarty ( ) ;
-        $smarty->assign ( 'moduleName', $this->key_name ) ;
-        $smarty->assign ( 'showvCard', in_array ( 'person', array_keys($this->config[ 'templates' ]) ) ) ;
-        $smarty->assign ( 'showimport', $this->config['importable'] );
-        //write sugar generated class
-        $fp = sugar_fopen ( $path . '/' . 'Menu.php', 'w' ) ;
-        fwrite ( $fp, $smarty->fetch ( 'modules/ModuleBuilder/tpls/MBModule/Menu.tpl' ) ) ;
-        fclose ( $fp ) ;
+        $s = new Sugar_Smarty();
+        $s->assign('moduleName', $this->key_name);
+        $s->assign('showVcard', isset($this->config['templates']['person']));
+        $s->assign('showImport', $this->config['importable']);
+
+        $menu = $s->fetch(
+            'modules/ModuleBuilder/tpls/clients/base/menus/header/header.tpl'
+        );
+
+        $target = "$path/clients/base/menus/header/header.php";
+
+        mkdir_recursive(
+            dirname($target)
+        );
+
+        $fp = sugar_fopen($target, 'w');
+        fwrite($fp, $menu);
+        fclose($fp);
     }
 
     function addInstallDefs (&$installDefs)
