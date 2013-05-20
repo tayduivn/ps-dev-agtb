@@ -26,20 +26,9 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class RestMetadataGlobalSearchEnabledTest extends RestTestBase
 {
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /**
      * Tests the getGlobalSearchEnabled method in the MetadataManager
      * @dataProvider moduleVardefDataProvider
-     * @group rest
      */
     public function testGlobalSearchEnabled($platform, $seed, $vardefs, $expects, $failMessage)
     {

@@ -246,8 +246,7 @@ class MetaDataManager {
         if (isset($vardefs['globalSearchEnabled'])) {
             // Is it an array of platforms or a simple boolean
             if (is_array($vardefs['globalSearchEnabled'])) {
-                // if the platform is set use that value; otherwise default to true
-                // return isset($vardefs['globalSearchEnabled'][$platform]) ? $vardefs['globalSearchEnabled'][$platform] : true;
+                // if the platform is set use that value; otherwise check if set in 'base'; lastly, fallback to true
                 if (isset($vardefs['globalSearchEnabled'][$platform])) {
                     return $vardefs['globalSearchEnabled'][$platform];
                 } else {
