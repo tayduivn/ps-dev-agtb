@@ -46,7 +46,7 @@
                 // get the first model and set the last commit date
                 var lastCommit = _.first(this.collection.models);
                 var commitDate = undefined;
-                if(lastCommit instanceof Backbone.Model && lastCommit.has('date_modified')) {
+                if (lastCommit instanceof Backbone.Model && lastCommit.has('date_modified')) {
                     commitDate = lastCommit.get('date_modified');
                 }
                 this.context.set({'currentForecastCommitDate': commitDate});
@@ -137,7 +137,7 @@
         // set hte currentForecastDate to the time the page is inited, this will be updated on the page actually loads
         ctx.set({'currentForecastCommitDate': undefined});
         ctx.set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
-        ctx.set({'selectedRanges' : data.defaultSelections.ranges}, {silent: true});
+        ctx.set({'selectedRanges': data.defaultSelections.ranges}, {silent: true});
         ctx.get('model').set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
 
         // set the selected user to the context
@@ -226,11 +226,17 @@
         forecast.save(forecastData, { success: _.bind(function() {
             // we need to make sure we are not disposed, this handles any errors that could come from the router and window
             // alert events
-            if(!this.disposed) {
+            if (!this.disposed) {
                 // Call sync again so commitLog has the full collection
                 // method gets overridden and options just needs an
                 this.collection.fetch();
                 this.context.trigger("forecasts:worksheet:committed", worksheet_type, forecastData);
+                app.alert.show('success', {
+                    level: 'success',
+                    autoClose: true,
+                    title: app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                    messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS", "Forecasts")]
+                });
             }
         }, this), silent: true, alerts: { 'success': false }});
     }
