@@ -39,7 +39,7 @@ class BugsApiHelper extends SugarBeanApiHelper
                 $bean->id = create_guid();
                 $bean->new_with_id = true;
             }
-            $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
+            $contact = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
             $account = $contact->account_id;
 
             $bean->assigned_user_id = $contact->assigned_user_id;
@@ -54,11 +54,6 @@ class BugsApiHelper extends SugarBeanApiHelper
             $bean->contacts->add($contact->id);
             $bean->load_relationship('accounts');
             $bean->accounts->add($account);
-        }
-        // not support_ports
-        else
-        {
-            $bean->assigned_user_id = $_SESSION['authenticated_user_id'];
         }
         return $data;
     }
