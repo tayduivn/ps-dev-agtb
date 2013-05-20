@@ -25,7 +25,7 @@
     /**
      * The options from the initialize call
      */
-    initOptions: {},
+    initOptions: undefined,
 
     initialize: function(options) {
         // the parent is not called here so we make sure that nothing else renders until after we init the
@@ -114,27 +114,9 @@
         var ctx = this.initOptions.context;
         // we watch for the first selectedUser change to actually init the Forecast Module case then we know we have
         // a proper selected user
-        ctx.once('change:selectedUser', function(model, change) {
-            // init the recordlist view
-            app.view.Layout.prototype.initialize.call(this, this.initOptions);
-
-            // set the selected user and forecast type on the model
-            this.model.set('selectedUserId', change.id, {silent: true});
-            this.model.set('forecastType', app.utils.getForecastType(change.isManager, change.showOpps));
-            // bind the collection sync to our custom sync
-            this.collection.sync = _.bind(this.sync, this);
-
-            // load the data
-            app.view.Layout.prototype.loadData.call(this);
-            // bind the data change
-            this.bindDataChange();
-            // render everything
-            if (!this.disposed) this.render();
-        }, this);
+        ctx.once('change:selectedUser', this._onceInitSelectedUser, this);
 
         // set items on the context from the initData payload
-        // set the selectedTimePeriod
-        // set hte currentForecastDate to the time the page is inited, this will be updated on the page actually loads
         ctx.set({'currentForecastCommitDate': undefined});
         ctx.set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
         ctx.set({'selectedRanges': data.defaultSelections.ranges}, {silent: true});
@@ -142,6 +124,32 @@
 
         // set the selected user to the context
         app.utils.getSelectedUsersReportees(app.user.toJSON(), ctx);
+    },
+
+    /**
+     * Method that is ran when the selectedUser is set for the first time.  This actually kicks off
+     * the init of the record view by calling the prototype initialize for the layout component
+     *
+     * @param model
+     * @param change
+     * @private
+     */
+    _onceInitSelectedUser: function(model, change) {
+        // init the recordlist view
+        app.view.Layout.prototype.initialize.call(this, this.initOptions);
+
+        // set the selected user and forecast type on the model
+        this.model.set('selectedUserId', change.id, {silent: true});
+        this.model.set('forecastType', app.utils.getForecastType(change.isManager, change.showOpps));
+        // bind the collection sync to our custom sync
+        this.collection.sync = _.bind(this.sync, this);
+
+        // load the data
+        app.view.Layout.prototype.loadData.call(this);
+        // bind the data change
+        this.bindDataChange();
+        // render everything
+        if (!this.disposed) this.render();
     },
 
     /**
