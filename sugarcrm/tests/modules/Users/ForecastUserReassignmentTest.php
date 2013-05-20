@@ -165,30 +165,13 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
      * @param $user
      * @return array
      */
-    private function _getReporteesForUser($user)
+    private function getReporteeCountForUser($user)
     {
         $userID = $this->_users[$user]->id;
 
-        require_once('include/SugarForecasting/ReportingUsers.php');
-        $object = new SugarForecasting_ReportingUsers( array('user_id' => $this->_users['sarah']->id) );
-        $return = $object->process();
+        $children = User::getReporteesWithLeafCount($userID);
 
-        $children = array();
-        if ( isset($return['children']) )
-        {
-            $children = $return['children'];
-        }
-        else
-        {
-            foreach ( $return as $reply )
-            {
-                if ( $reply['metadata'] && $reply['metadata']['id'] == $userID )
-                {
-                    $children = $reply['children'];
-                }
-            }
-        }
-        return $children;
+        return count($children);
     }
 
     /**
@@ -225,10 +208,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('mod_strings', array('Users'));
-        $admin = BeanFactory::getBean('Administration');
-        $adminConfig = $admin->getConfigForModule('Forecasts');
-        self::$_isSetup = $adminConfig['is_setup'];
-        $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
+        SugarTestForecastUtilities::setUpForecastConfig();
     }
 
     public function setUp()
@@ -270,8 +250,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
     }
 
     public static function tearDownAfterClass() {
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'is_setup', self::$_isSetup, 'base');
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestHelper::tearDown();
     }
 
@@ -283,7 +262,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
      */
     public function testReassignRepToRep()
     {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
+        $this->markTestIncomplete('Failing. Need to be fixed by SFA team, Currently its setup to work in PRO but not ENT. Should be fixed with SFA-687');
         //Create 10 opportunities for sally
         $this->_createOpportunityForUser('sally', 10);
         $this->_created_items = ForecastsSeedData::populateSeedData( array($this->_timeperiod->id => $this->_timeperiod) );
@@ -475,23 +454,20 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
      */
     public function testInactiveChildren()
     {
-        global $current_user;
-        $db = DBManagerFactory::getInstance();
-
         $this->_createOpportunityForUser('sarah', 10);
 
-        $children = $this->_getReporteesForUser('sarah');
-        $this->assertEquals(3, sizeof($children)); // sally, max and opportunities
+        $childCount = $this->getReporteeCountForUser('sarah');
+        $this->assertEquals(2, $childCount); // sally & max
 
         $this->_users['sally']->status = 'Inactive';
         $this->_users['sally']->save();
-        $children = $this->_getReporteesForUser('sarah');
-        $this->assertEquals(2, sizeof($children)); // max and opportunities
+        $childCount = $this->getReporteeCountForUser('sarah');
+        $this->assertEquals(1, $childCount); // max
 
         $this->_users['max']->status = 'Inactive';
         $this->_users['max']->save();
-        $children = $this->_getReporteesForUser('sarah');
-        $this->assertEquals(0, sizeof($children));
+        $childCount = $this->getReporteeCountForUser('sarah');
+        $this->assertEquals(0, $childCount);
     }
 
     /**
@@ -501,23 +477,20 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
      */
     public function testDeletedChildren()
     {
-        global $current_user;
-        $db = DBManagerFactory::getInstance();
-
         $this->_createOpportunityForUser('sarah', 10);
 
-        $children = $this->_getReporteesForUser('sarah');
-        $this->assertEquals(3, sizeof($children)); // sally, max and opportunities
+        $childCount = $this->getReporteeCountForUser('sarah');
+        $this->assertEquals(2, $childCount); // sally, max
 
         $this->_users['sally']->deleted = 1;
         $this->_users['sally']->save();
-        $children = $this->_getReporteesForUser('sarah');
-        $this->assertEquals(2, sizeof($children)); // max and opportunities
+        $childCount = $this->getReporteeCountForUser('sarah');
+        $this->assertEquals(1, $childCount); // max
 
         $this->_users['max']->deleted = 1;
         $this->_users['max']->save();
-        $children = $this->_getReporteesForUser('sarah');
-        $this->assertEquals(0, sizeof($children));
+        $childCount = $this->getReporteeCountForUser('sarah');
+        $this->assertEquals(0, $childCount);
     }
 
     /**
