@@ -586,7 +586,6 @@ $bwcModules = array(
     'MergeRecords',
     'ModuleBuilder',
     'MySettings',
-    'Notifications',
     'OAuthKeys',
     'OptimisticLock',
     'OutboundEmailConfiguration',

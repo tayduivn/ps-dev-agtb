@@ -1,16 +1,25 @@
-<ul class="nav pull-right megamenu">
-    <li class="dropdown notificationList" id="notificationList">
-        <div class="btn-group">
-            <a data-toggle="dropdown" id="notificationDrop" href="javascript:void(0);" role="button" class="btn btn-danger dropdown-toggle dtoggle">0</a>
-            <div class="dropdown-menu scroll pull-right">
-                <ul role="menu">
-                    <li><a class="row-fluid" href=""><span class="span9 ellipsis_inline"><span class="label label-important">Alert</span> System is going offline</span><time class="span3 pull-right">10 minutes ago</time></a></li>
-                    <li><a class="row-fluid" href=""><span class="span9 ellipsis_inline"><span class="label label-pending">Warning</span> You are using 85% of your storage</span><time class="span3 pull-right">12 hours ago</time></a></li>
-                    <li><a class="row-fluid" href=""><span class="span9 ellipsis_inline"><span class="label label-info">Info</span> App upgrade 7.0.1 is available</span><time class="span3 pull-right">1 day ago</time></a></li>
-                    <li><a class="row-fluid" href=""><span class="span9 ellipsis_inline"><span class="label label-success">Success</span> System successfully upgraded to 7.0.1</span><time class="span3 pull-right">1 year ago</time></a></li>
-                    <li><a class="row-fluid" href=""><span class="span12">More notifications...</span></a></li>
-                </ul>
-            </div>
+<li class="dropdown notification-list">
+    <div class="btn-group">
+        <button class="btn {{#if this.collection.length}}btn-danger{{else}}btn-inverse{{/if}} dropdown-toggle dtoggle"
+                data-toggle="dropdown"
+                data-action="open">
+            {{{this.collection.length}}
+            {{#if this.collection.next_offset}}{{#notEq this.collection.next_offset "-1"}}+{{/notEq}}{{/if}}
+        </button>
+        <div class="dropdown-menu scroll pull-right">
+            <ul role="menu">
+                {{#each this.collection.models}}
+                    <li><a class="row-fluid"
+                           href="#{{modelRoute this "detail"}}"><span
+                            class="span8 ellipsis_inline"
+                            data-original-title="{{this.attributes.name}}"
+                            data-placement="bottom"><span
+                            class="label {{this.attributes.typeCss}}">{{this.attributes.typeLabel}}</span>{{this.attributes.name}}</span>
+                        <time class="span3 pull-right">{{timeago this.attributes.date_entered "{{relativetime}}"}}</time>
+                    </a></li>
+                {{/each}}
+                <li><a class="row-fluid" href="#{{module}}"><span class="span12">{{str "LBL_SHOW_NOTIFICATIONS" module}}</span></a></li>
+            </ul>
         </div>
-    </li>
-</ul>
+    </div>
+</li>
