@@ -260,12 +260,18 @@
     },
 
     completeMenuMeta: function(module_list) {
-        var actions, meta, returnList = [], self = this, listLength;
+        var actions, meta, returnList = [], self = this, listLength,
+            fullModuleList = app.metadata.getFullModuleList()  ;
         _.each(module_list, function(value, key) {
+
+            if (!_.isString(fullModuleList[value])) {
+                return;
+            }
             actions = {
                 label: app.lang.get('LBL_MODULE_NAME', value),
                 name: key
             };
+
             meta = app.metadata.getModule(key);
             if (meta && meta.menu && meta.menu.header) {
                 actions.menu = self.filterAvailableMenuActions(meta.menu.header.meta);
