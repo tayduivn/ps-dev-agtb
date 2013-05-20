@@ -11,6 +11,7 @@
     isPreviewOpen: false,
     initialize: function(options) {
         var meta = app.metadata.getView(options.module, 'record'),
+            fieldDefs = app.metadata.getModule(options.module).fields,
             mergeCollection = options.context.get('collection'),
             records = options.context.get("selectedDuplicates"),
             primary,
@@ -23,7 +24,7 @@
                 messages: app.lang.get('ERR_MERGE_INVALID_NUMBER_RECORDS',options.module),
                 autoClose: true
             });
-            return;
+            app.drawer.close(false);
         }
 
         // standardize primary record from list of records,
@@ -40,7 +41,7 @@
         this.mergeFields = _.chain(meta.panels)
             .map(function(panel) {return this.flattenFieldsets(panel.fields); }, this)
             .flatten()
-            .reject(function(field) { return !field.name; })
+            .filter(function(field) { return field.name && this.validMergeField(fieldDefs[field.name]); }, this)
             .value();
 
         // enforce the order of the ids so that primaryRecord always appears first
@@ -65,7 +66,6 @@
         var self = this,
             alternativeModels = this.collection.clone().remove(this.primaryRecord),
             alternativeModelNames = alternativeModels.pluck('name');
-
         app.alert.show('merge_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('LBL_MERGE_DUPLICATES_CONFIRM') + " "+ alternativeModelNames.join(", ") + ". "+ app.lang.get('LBL_MERGE_DUPLICATES_PROCEED'),
@@ -164,7 +164,106 @@
         var previewCollection = app.data.createBeanCollection(previewModel.get('_module') || previewModel.module, previewModels);
         app.events.trigger("preview:render", previewModel, previewCollection, false);
         this.isPreviewOpen = true;
-    },    
+    },
+    /**
+     * utility method for determining if a field is mergable from its fielddef.
+     * @param fieldDef
+     * @return {Boolean} is this field a valid field to merge?
+     */
+    validMergeField: function(fieldDef) {
+        // these field names won't be mergeable.
+        var fieldNameBlacklist = [
+            'date_entered','date_modified','modified_user_id','created_by','deleted'
+            ],
+            // these attribute combos will be allowed to merge
+            validArrayAttributes = [{
+                type: 'datetimecombo',
+                source: 'db'
+            }, {
+                type: 'datetime',
+                source: 'db'
+            }, {
+                type: 'varchar',
+                source:'db'
+            }, {
+                type: 'enum',
+                source: 'db'
+            }, {
+                type: 'multienum',
+                source: 'db'
+            }, {
+                type: 'text',
+                source: 'db'
+            }, {
+                type: 'date',
+                source: 'db'
+            }, {
+                type: 'time',
+                source: 'db'
+            }, {
+                type: 'int',
+                source: 'db'
+            }, {
+                type: 'long',
+                source: 'db'
+            }, {
+                type: 'double',
+                source: 'db'
+            }, {
+                type: 'float',
+                source: 'db'
+            }, {
+                type: 'short',
+                source: 'db'
+            }, {
+                dbType: 'varchar',
+                source: 'db'
+            }, {
+                dbType: 'double',
+                source: 'db'
+            }, {
+                type: 'relate'
+            }];
+
+        // need a field def to play.
+        if (!fieldDef) {
+            return false;
+        }
+
+        if(_.contains(fieldNameBlacklist, fieldDef.name)) {
+            return false;
+        }
+
+        // the explicit merge flag
+        if(_.has(fieldDef,'duplicate_merge')) {
+            if (fieldDef.duplicate_merge === 'disabled' || fieldDef.duplicate_merge === false) {
+                return false;
+            }
+
+            if(fieldDef.duplicate_merge === 'enabled' || fieldDef.duplicate_merge === true) {
+                return true;
+            }
+        }
+
+        // no autoincrement field please
+        if(fieldDef.auto_increment === true) {
+            return false;
+        }
+
+        // normalize fields that might not be there
+        fieldDef.dbType = fieldDef.dbType || fieldDef.type;
+        fieldDef.source = fieldDef.source || 'db';
+
+        // compare to values in the list of acceptable attributes
+        return _.some(validArrayAttributes, function(o) {
+            return _.chain(o)
+                    .keys()
+                    .every(function(key) {
+                        return o[key] === fieldDef[key];
+                     })
+                    .value();
+        });
+    },
     /**
      * utility method for taking a fieldlist with possible nested fields,
      * and returning a flat array of fields
