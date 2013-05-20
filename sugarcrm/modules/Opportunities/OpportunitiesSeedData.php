@@ -186,6 +186,10 @@ public static function populateSeedData($records, $app_list_strings, $accounts
 
         //END SUGARCRM flav=pro ONLY
 
+        // set the acccount on the opps, just for saving to the worksheet table
+        $opp->account_id = $account->id;
+        $opp->account_name = $account->name;
+
         // save the opp again
         $opp->save();
 

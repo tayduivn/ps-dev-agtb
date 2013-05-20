@@ -56,21 +56,10 @@ $dictionary['ForecastWorksheet'] = array(
         'account_name' =>
         array(
             'name' => 'account_name',
-            'rname' => 'name',
             'id_name' => 'account_id',
             'vname' => 'LBL_ACCOUNT_NAME',
-            'type' => 'relate',
-            'table' => 'accounts',
-            'join_name' => 'accounts',
-            'isnull' => 'true',
-            'module' => 'Accounts',
-            'dbType' => 'varchar',
-            'link' => 'accounts',
+            'type' => 'varchar',
             'len' => '255',
-            'source' => 'non-db',
-            'unified_search' => true,
-            'required' => true,
-            'importable' => 'required',
             'studio' => false
         ),
         'account_id' =>
@@ -78,7 +67,6 @@ $dictionary['ForecastWorksheet'] = array(
             'name' => 'account_id',
             'vname' => 'LBL_ACCOUNT_ID',
             'type' => 'id',
-            'source' => 'non-db',
             'audited' => false,
             'studio' => false
         ),

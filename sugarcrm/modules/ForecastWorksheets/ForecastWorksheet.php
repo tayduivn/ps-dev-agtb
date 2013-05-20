@@ -35,6 +35,8 @@ class ForecastWorksheet extends SugarBean
     public $draft = 0; // default to 0, it will be set to 1 by the args that get passed in;
     public $parent_type;
     public $parent_id;
+    public $account_name;
+    public $account_id;
     public $object_name = 'ForecastWorksheet';
     public $module_name = 'ForecastWorksheets';
     public $module_dir = 'ForecastWorksheets';
@@ -106,6 +108,7 @@ class ForecastWorksheet extends SugarBean
         $fields = array(
             'name',
             'account_id',
+            'account_name',
             array('likely_case' => 'amount'),
             'best_case',
             'base_rate',
@@ -123,6 +126,11 @@ class ForecastWorksheet extends SugarBean
             'team_id',
             'team_set_id'
         );
+
+        // load the account
+        if (empty($opp->account_name) && !empty($opp->account_id)) {
+            $opp->account_name = $this->getAccountName($opp->account_id);
+        }
 
         $this->copyValues($fields, $opp);
 
@@ -217,6 +225,7 @@ class ForecastWorksheet extends SugarBean
         $fields = array(
             'name',
             'account_id',
+            'account_name',
             'likely_case',
             'best_case',
             'base_rate',
@@ -235,6 +244,11 @@ class ForecastWorksheet extends SugarBean
             'team_set_id'
         );
 
+        // load the account
+        if (empty($product->account_name) && !empty($product->account_id)) {
+            $product->account_name = $this->getAccountName($product->account_id);
+        }
+
         $this->copyValues($fields, $product);
 
         // set the parent types
@@ -246,6 +260,30 @@ class ForecastWorksheet extends SugarBean
         $this->removeMigratedRow($product);
 
         $this->save(false);
+    }
+
+    /**
+     * Look up an Account name
+     *
+     * @param string $account_id        The Account Id that we need to find the name for
+     * @return string                   The name for the account, or empty if one is not found
+     */
+    protected function getAccountName($account_id)
+    {
+        // get the account_name
+        $sugar_query = new SugarQuery();
+        $sugar_query->select('name');
+        $sugar_query->from(BeanFactory::getBean('Accounts'))->where()->equals('id', $account_id);
+        $account = $sugar_query->execute();
+
+        error_log(var_export($account, true));
+
+        if (!empty($account)) {
+            return $account[0]['name'];
+        }
+
+        // if one is not found, just return empty
+        return '';
     }
 
     /**
@@ -328,8 +366,8 @@ class ForecastWorksheet extends SugarBean
         $sq->from(BeanFactory::getBean($type))->where()
             ->equals('assigned_user_id', $user_id)
             ->queryAnd()
-                ->gte('date_closed_timestamp', $tp->start_date_timestamp)
-                ->lte('date_closed_timestamp', $tp->end_date_timestamp);
+            ->gte('date_closed_timestamp', $tp->start_date_timestamp)
+            ->lte('date_closed_timestamp', $tp->end_date_timestamp);
         $beans = $sq->execute();
 
         if (empty($beans)) {
@@ -569,8 +607,8 @@ class ForecastWorksheet extends SugarBean
             ->equals('deleted', 0)
             ->equals('draft', 1)
             ->queryAnd()
-                ->gte('date_closed_timestamp', $tp->start_date_timestamp)
-                ->lte('date_closed_timestamp', $tp->end_date_timestamp);
+            ->gte('date_closed_timestamp', $tp->start_date_timestamp)
+            ->lte('date_closed_timestamp', $tp->end_date_timestamp);
         $results = $sq->execute();
 
         foreach ($results as $row) {
