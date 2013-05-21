@@ -1,4 +1,3 @@
-//FILE SUGARCRM flav=ent ONLY
 describe("ContactsBean", function() {
     describe("isValid", function(){
         var app, bean;
