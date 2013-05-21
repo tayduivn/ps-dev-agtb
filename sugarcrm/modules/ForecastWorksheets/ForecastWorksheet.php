@@ -276,8 +276,6 @@ class ForecastWorksheet extends SugarBean
         $sugar_query->from(BeanFactory::getBean('Accounts'))->where()->equals('id', $account_id);
         $account = $sugar_query->execute();
 
-        error_log(var_export($account, true));
-
         if (!empty($account)) {
             return $account[0]['name'];
         }

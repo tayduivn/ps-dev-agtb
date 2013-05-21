@@ -17,7 +17,7 @@ require_once('data/SugarBeanApiHelper.php');
 class ForecastManagerWorksheetsApiHelper extends SugarBeanApiHelper
 {
     /**
-     * Formats the bean so it is ready to be handed back to the API's client. Certian fields will get extra processing
+     * Formats the bean so it is ready to be handed back to the API's client. Certain fields will get extra processing
      * to make them easier to work with from the client end.
      *
      * @param $bean SugarBean|ForecastManagerWorksheet The bean you want formatted
