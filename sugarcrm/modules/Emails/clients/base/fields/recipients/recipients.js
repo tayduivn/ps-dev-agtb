@@ -80,19 +80,16 @@
         var data = {
             results: [{
                 id: '1',
-                name: 'one',
-                email: 'one@email.com',
-                text: 'One'
+                name: 'One',
+                email: 'one@email.com'
             }, {
                 id: '2',
-                name: 'two',
-                email: 'two@email.com',
-                text: 'Two'
+                name: 'Two',
+                email: 'two@email.com'
             }, {
                 id: '3',
-                name: 'three',
-                email: 'three@email.com',
-                text: 'Three'
+                name: 'Three',
+                email: 'three@email.com'
             }],
             more: false // there are no more results by default
         };
