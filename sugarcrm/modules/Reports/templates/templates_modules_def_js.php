@@ -128,10 +128,6 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 
 			foreach($module->field_defs as $field_def)
 			{
-
-				//if (ACLField::hasAccess($field_def, $module, $GLOBALS['current_user']->id,))
-				//$field, $category,$user_id, $is_owner
-
 			    if(isset($field_def['reportable']) &&
 			           $field_def['reportable'] == false)
 			    {

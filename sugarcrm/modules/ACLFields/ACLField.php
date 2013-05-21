@@ -289,22 +289,34 @@ class ACLField  extends ACLAction
     * @internal
     * @param String $field The name of the field to retrieve ACL access for
     * @param String $module The name of the module that contains the field to lookup ACL access for
-    * @param String $user_id The user id of the user instance to check ACL access for
+    * @param string|User|null $user_id The user id of the user instance to check ACL access for, or the User object,
+    *                                  or null which means current user. Using User is recommended since it's fastest.
     * @param boolean $is_owner Boolean value indicating whether or not the field access should also take into account ownership access
     * @return Integer value indicating the ACL field level access
     */
-    static function hasAccess($field, $module,$user_id, $is_owner){
-        static $is_admin = null;
-        if (is_null($is_admin)) {
-            $is_admin = is_admin(BeanFactory::retrieveBean('Users', $user_id));
-        }
-        if ($is_admin) {
-            return 4;
-        }
+    static function hasAccess($field, $module,$user_id, $is_owner)
+    {
+        if(is_null($user_id)) {
+			$user = $GLOBALS['current_user'];
+            $user_id = $GLOBALS['current_user']->id;
+        } elseif($user_id instanceof User) {
+			$user = $user_id;
+			$user_id = $user->id;
+		}
 
+		// check ACL first since if we have no ACL we don't care if the user is admin
         if(!isset($_SESSION['ACL'][$user_id][$module]['fields'][$field])){
             return 4;
         }
+
+		if(empty($user)) {
+			$user = BeanFactory::getBean("Users", $user_id);
+		}
+
+        if (!empty($user) && $user->isAdmin()) {
+            return 4;
+        }
+
         $access = $_SESSION['ACL'][$user_id][$module]['fields'][$field];
 
         if($access == ACL_READ_WRITE || ($is_owner && ($access == ACL_READ_OWNER_WRITE || $access == ACL_OWNER_READ_WRITE))){
