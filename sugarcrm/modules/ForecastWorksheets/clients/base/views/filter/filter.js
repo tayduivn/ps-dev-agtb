@@ -12,20 +12,12 @@
  */
 ({
     /**
-     * Used to hold the id of the filter field
-     */
-    rangeFilterId: '',
-
-    /**
      * Initialize because we need to set the selectedUser variable
      * @param options
      */
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
-
         this.selectedUser = {id:app.user.get('id'), isManager:app.user.get('isManager'), showOpps:false};
-
-        this.rangeFilterId = _.uniqueId("search_filter");
     },
 
     // prevent excessive renders when things change.
@@ -39,7 +31,7 @@
     _render:function () {
         app.view.View.prototype._render.call(this);
 
-        this.node = this.$("#" + this.rangeFilterId);
+        this.node = this.$el.find("#" + this.cid);
 
         // set up the filters
         this._setUpFilters();
@@ -56,7 +48,7 @@
     _setUpFilters: function() {
         var ctx = this.context.parent || this.context,
             selectedRanges = ctx.has("selectedRanges") ? ctx.get("selectedRanges") : app.defaultSelections.ranges,
-            moduleFilterNode = this.$(".related-filter");
+            moduleFilterNode = this.$el.find(".related-filter");
 
         moduleFilterNode.select2({
             data: [{id: ctx.get('module'), text: ctx.get('module')}],
