@@ -33,22 +33,34 @@
     fieldTag: 'input.select2',
 
     /**
-     * Sets up event handlers for adding and replacing recipients on the field.
+     * Sets up event handlers for syncing between the model and the recipients field.
      *
-     * ADD: this.context.trigger('recipients:to_addresses:add', recipients);
-     * REPLACE: this.model.set('to_addresses', recipients);
-     *
-     * Recipients should be either an object or an array of objects defined by
+     * Recipients should be either a collection or an array of objects defined by
      * _addRecipients() method.
      */
     bindDataChange: function() {
-        this.context.on("recipients:" + this.name + ":add", function(recipients) {
-            this._addRecipients(recipients);
-        }, this);
+        this.model.on("change:" + this.name, function(model, recipients) {
+            this._replaceRecipients(this.format(recipients));
 
-        this.model.on("change:" + this.name, function(model,recipients) {
-            this._replaceRecipients(recipients);
+            if (recipients instanceof Backbone.Collection) {
+                recipients.off("add remove", null, this);
+                recipients.on("add remove", function(model, collection) {
+                    this._replaceRecipients(this.format(collection));
+                }, this);
+            }
         }, this);
+    },
+
+    /**
+     * Remove events from the field value if it is a collection
+     */
+    unbindData: function() {
+        var value = this.model.get(this.name);
+        if (value instanceof Backbone.Collection) {
+            value.off("add remove", null, this);
+        }
+
+        app.view.Field.prototype.unbindData.call(this);
     },
 
     /**
@@ -68,6 +80,10 @@
                 formatSelection: _.bind(this.formatSelection, this),
                 formatResult:    _.bind(this.formatResult, this)
             });
+
+            if (!!this.def.disabled) {
+                $recipientsField.select2('disable');
+            }
         }
     },
 
@@ -118,12 +134,54 @@
     },
 
     /**
-     * Gets the recipients directly from select2
+     * Translates a collection into an array of objects that select2 understands.
      *
+     * @param data {Collection}
      * @returns {Array}
      */
-    unformat: function() {
-        return this.getFieldElement().select2('data');
+    format: function(data) {
+        var results = [];
+
+        if (data instanceof Backbone.Collection) {
+            data.each(function(model) {
+                results.push(this._translateRecipient(model));
+            }, this);
+        } else {
+            results = data;
+        }
+
+        return results;
+    },
+
+    /**
+     * Translates an array of objects into a collection.
+     *
+     * @param data {Array}
+     * @returns {Collection}
+     */
+    unformat: function(data) {
+        var results = new Backbone.Collection();
+
+        _.each(data, function(recipient) {
+            if (recipient.bean) {
+                results.add(recipient.bean);
+            } else {
+                results.add(new Backbone.Model(recipient));
+            }
+        });
+
+        return results;
+    },
+
+    /**
+     * Any changes to the recipient field should be reflected in the model
+     */
+    bindDomChange: function() {
+        var self = this;
+        this.getFieldElement().on("change", function() {
+            var value = $(this).select2('data');
+            self.model.set(self.name, self.unformat(value), {silent: true});
+        });
     },
 
     unbindDom: function() {
@@ -141,7 +199,7 @@
      * @private
      */
     _addRecipients: function(newRecipients) {
-        var existingRecipients = this.model.get(this.name) || [],
+        var existingRecipients = this.format(this.model.get(this.name)) || [],
             filteredRecipients = [];
 
         if (_.isObject(newRecipients) && !_.isArray(newRecipients)) {
@@ -157,7 +215,9 @@
             }
         }, this);
 
-        this.getFieldElement().select2('data', _.union(existingRecipients, filteredRecipients));
+        this.getFieldElement()
+            .select2('data', _.union(existingRecipients, filteredRecipients))
+            .trigger('change');
     },
 
     /**
@@ -175,7 +235,9 @@
             recipients[index] = this._translateRecipient(recipient);
         }, this);
 
-        this.getFieldElement().select2('data', recipients);
+        this.getFieldElement()
+            .select2('data', recipients)
+            .trigger('change');
     },
 
     /**
@@ -191,8 +253,7 @@
                 layout:  "compose-addressbook",
                 context: {
                     module:   "Emails",
-                    mixed:    true,
-                    forceNew: true
+                    mixed:    true
                 }
             },
             _.bind(this._addressbookDrawerCallback, this)
@@ -200,7 +261,7 @@
     },
 
     _addressbookDrawerCallback: function(recipients) {
-        this.model.set(this.name, this._addRecipients(recipients));
+        this._addRecipients(this.format(recipients));
     },
 
     /**
@@ -275,22 +336,32 @@
      */
     _translateRecipient: function(recipient) {
         var translatedRecipient = {},
-            bean = {},
+            bean,
             id,
             module,
             name,
             email;
 
-        // grab values off the bean
-        if (recipient.hasOwnProperty("bean") && recipient.bean instanceof Backbone.Model) {
-            bean = this._getDataFromBean(recipient.bean);
-        }
+        if (recipient instanceof Backbone.Model) {
+            bean   = this._getDataFromBean(recipient);
+            id     = bean.id || bean.email;
+            module = bean.module;
+            name   = bean.name;
+            email  = bean.email;
+        } else {
+            bean = {};
 
-        // try to grab values directly first, otherwise use the bean
-        id     = recipient.id || bean.id || recipient.email || bean.email;
-        module = recipient.module || bean.module;
-        name   = recipient.name || bean.name;
-        email  = recipient.email || bean.email;
+            // grab values off the bean
+            if (recipient.hasOwnProperty("bean") && recipient.bean instanceof Backbone.Model) {
+                bean = this._getDataFromBean(recipient.bean);
+            }
+
+            // try to grab values directly first, otherwise use the bean
+            id     = recipient.id || bean.id || recipient.email || bean.email;
+            module = recipient.module || bean.module;
+            name   = recipient.name || bean.name;
+            email  = recipient.email || bean.email;
+        }
 
         // don't bother with the recipient unless an id is present
         if (!_.isEmpty(id)) {
@@ -309,6 +380,11 @@
             if (!_.isEmpty(name)) {
                 // only set the name if it's actually available
                 translatedRecipient.name = name;
+            }
+
+            if (!_.isEmpty(bean)) {
+                // only set the name if it's actually available
+                translatedRecipient.bean = (recipient instanceof Backbone.Model) ? recipient : recipient.bean;
             }
         }
 

@@ -46,6 +46,7 @@ $viewdefs["Emails"]["base"]["view"]["compose-addressbook-recipientscontainer"] =
                     "css_class_container" => "controls-one btn-fit",
                     "hide_address_book"   => true,
                     "span"                => 12,
+                    "disabled"            => true,
                 ),
             ),
         ),

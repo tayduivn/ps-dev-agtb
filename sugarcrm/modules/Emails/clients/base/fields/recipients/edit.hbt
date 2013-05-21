@@ -27,5 +27,7 @@
  ********************************************************************************/
 }}
 <input type="hidden" name="{{name}}" class="select2{{#if def.css_class}} {{def.css_class}}{{/if}}"/>
+{{#unless def.hide_address_book}}
 <a class="btn" href="javascript:void(0);" data-name="{{name}}"><i class="{{#if def.icon}}{{def.icon}}{{else}}icon-book{{/if}}"></i></a>
+{{/unless}}
 <p class="help-block"></p>
