@@ -59,6 +59,13 @@
             var module = self.moduleRegex.exec(this.contentWindow.location.search);
             module = (_.isArray(module)) ? module[1] : null;
             if (module) {
+                // on BWC import we want to try and take the import module as the module
+                if (module === 'Import') {
+                    var importModule = /import_module=([^&]*)/.exec(this.contentWindow.location.search);
+                    if (!_.isNull(importModule) && !_.isEmpty(importModule[1])) {
+                        module = importModule[1];
+                    }
+                }
                 // update bwc context
                 var app = window.parent.SUGAR.App;
                 app.controller.context.set('module', module);
