@@ -73,6 +73,8 @@
         this.closeOpenDrops();
         this.activeModule.set(app.controller.context.get("module"));
         this.layout.trigger("header:update:route");
+        // ensure our events are on dropdowns
+        _.defer(this.delegateDropDowns, this);
     },
     /**
      * toggles dropdowns on mouseover
@@ -353,6 +355,16 @@
         $moduleList.remove();
         this.$el.append($moduleListClone);
         $cloneContainer.remove();
+        // ensure our events are on dropdowns
+        _.defer(this.delegateDropDowns, this);
+    },
+    /**
+     * Offs bootstrap dropdown events and redelegates our own
+     * @param view
+     */
+    delegateDropDowns: function(view) {
+        view.$('.dtoggle').off();
+        view.delegateEvents();
     },
 
     /**
